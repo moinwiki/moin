@@ -56,12 +56,16 @@ try:
         coverage.erase()
         coverage.start()
 
-    py.test.config.addoptions('MoinMoin options', py.test.config.Option('-C',
-        '--coverage', action='callback', callback=callback,
-        help='Output information about code coverage (slow!)'))
+    def pytest_addoption(parser):
+        group = parser.getgroup('MoinMoin options')
+        group.addoption(
+            '-C', '--coverage',
+            action='callback', callback=callback,
+            help='Output information about code coverage (slow!)')
 
 except ImportError:
     coverage = None
+
 
 
 def init_test_app(given_config):
