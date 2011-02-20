@@ -1,0 +1,17 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+{% block content %}
+<div class="moin-form">
+<h1>{{ _("Delete '%(item_name)s'", item_name=item.name) }}</h1>
+<form action="{{ url_for('frontend.delete_item', item_name=item.name) }}" method="POST" enctype="multipart/form-data">
+    <dl>
+        <dt><label for="comment">{{ _("Comment") }}</label></dt>
+        <dd><input type="text" id="comment" name="comment" size="80" maxlength="200" value="" /></dd>
+    </dl>
+    <input class="button" type="submit" name="button_ok" value="{{ _('Delete') }}" />
+    <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
+    <br />
+    {{ forms.render_textcha(gen, form) }}
+</form>
+</div>
+{% endblock %}
