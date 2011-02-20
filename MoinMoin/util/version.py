@@ -12,17 +12,20 @@ import re
 
 class Version(tuple):
     """
-    Version objects store versions like 1.2.3-4.5alpha6 in a structured
+    Version objects store versions like 1.2.3a4 in a structured
     way and support version comparisons and direct version component access.
     1: major version (digits only)
     2: minor version (digits only)
     3: (maintenance) release version (digits only)
-    4.5alpha6: optional additional version specification (str)
+    a4: optional additional version specification (str)
+
+    See PEP386 for more details.
+    TODO: use 3rd party code for PEP386 version numbers later.
 
     You can create a Version instance either by giving the components, like:
-        Version(1,2,3,'4.5alpha6')
+        Version(1,2,3,'a4')
     or by giving the composite version string, like:
-        Version(version="1.2.3-4.5alpha6").
+        Version(version="1.2.3a4").
 
     Version subclasses tuple, so comparisons to tuples should work.
     Also, we inherit all the comparison logic from tuple base class.
@@ -33,9 +36,7 @@ class Version(tuple):
             (?P<minor>\d+)
             \.
             (?P<release>\d+)
-            (-
-             (?P<additional>.+)
-            )?""",
+            (?P<additional>[abc]\d+)?""",
             re.VERBOSE)
 
     @classmethod
@@ -44,9 +45,10 @@ class Version(tuple):
         if match is None:
             raise ValueError("Unexpected version string format: %r" % version)
         v = match.groupdict()
-        return int(v['major']), int(v['minor']), int(v['release']), str(v['additional'] or '')
+        return int(v['major']), int(v['minor']), int(v['release']), str(v['additional'] or 'd0')
 
-    def __new__(cls, major=0, minor=0, release=0, additional='', version=None):
+    def __new__(cls, major=0, minor=0, release=0, additional='d0', version=None):
+        # HACK: Use "d0" for release, as "d0" > "c99".
         if version:
             major, minor, release, additional = cls.parse_version(version)
         return tuple.__new__(cls, (major, minor, release, additional))
@@ -55,11 +57,11 @@ class Version(tuple):
     major = property(lambda self: self[0])
     minor = property(lambda self: self[1])
     release = property(lambda self: self[2])
-    additional = property(lambda self: self[3])
+    additional = property(lambda self: self[3] if self[3] != 'd0' else '')
 
     def __str__(self):
         version_str = "%d.%d.%d" % (self.major, self.minor, self.release)
-        if self.additional:
-            version_str += "-%s" % self.additional
+        if self.additional != 'd0':
+            version_str += self.additional
         return version_str
 
