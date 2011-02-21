@@ -209,3 +209,17 @@ use `assert` statements.
 For more information, please read on there: http://pytest.org/ - but keep in
 mind that we currently still use **py.test 1.3.4**.
 
+Documentation
+=============
+We use Sphinx (see http://sphinx.pocoo.org/) and reST markup for documenting
+moin. Documentation reST source code, example files and some other text files
+are located in the `docs/` directory in the source tree.
+
+Creating docs
+-------------
+Sphinx can create all kinds of documentation formats, we'll just list the most
+popular ones below::
+
+    cd docs
+    make html  # create html docs (to browse online or in the filesystem)
+
