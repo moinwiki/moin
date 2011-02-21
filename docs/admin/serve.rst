@@ -51,9 +51,9 @@ Flup also has its own docs, see http://trac.saddi.com/flup.
 
 test.wsgi first
 ---------------
-The first thing you should get working is the `test.wsgi` we provide. Make
-sure it works with your server setup (it will emit some infos about your
-server / setup).
+The first thing you should get working is the `test.wsgi` we provide (see
+`docs/examples/deployment/`). Make sure it works with your server setup (it
+will emit some infos about your server / setup).
 
 If `test.wsgi` does not work, you are *not* having a moin problem,
 but a problem with your web server (or flup middleware, in case
@@ -64,8 +64,9 @@ works, please return to here.
 moin scripts next
 -----------------
 OK, so if you got `test.wsgi` working, you'll easily get the moin WSGI app
-working, too. Please read the contents of the moin script you want to use,
-there might be something you need to adapt to your setup (e.g. pathes to fix).
+working, too. Please read the contents of the moin script you want to use (see
+`docs/examples/deployment/`), there might be something you need to adapt to
+your setup (e.g. pathes to fix).
 
 For Apache2 + mod_wsgi, use `moin.wsgi` (you can also use it as a starting
 point for other servers maybe).

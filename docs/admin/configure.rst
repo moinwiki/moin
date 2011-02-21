@@ -93,6 +93,9 @@ Let's go through this line-by-line:
 9. UPPERCASE stuff at the bottom, outside the Config class - this is framework
    configuration (usually something for Flask or some Flask extension).
 
+A real-life example of a `wikiconfig.py` can be found in the
+`docs/examples/config/` directory.
+
 =========================
 Wiki Engine Configuration
 =========================
@@ -976,7 +979,8 @@ The configuration file format is described there:
 http://www.python.org/doc/current/library/logging.html#configuring-logging
 
 
-There are also some logging configurations in the `examples/` directory.
+There are also some logging configurations in the
+`docs/examples/config/logging/` directory.
 
 Logging configuration needs to be done very early, usually it will be done
 from your adaptor script (e.g. moin.wsgi)::
