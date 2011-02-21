@@ -16,12 +16,16 @@ Wikis:
 
 * http://moinmo.in/
 
+Issue tracker:
+
+* http://bitbucket.org/thomaswaldmann/moin-2.0/issues
+
 We use Mercurial DVCS (hg) for distributed version control.
 
 Repositories:
 
-* http://hg.moinmo.in/moin/2.0-dev (main repository)
-* http://bitbucket.org/thomaswaldmann/moin-2.0-dev (bb mirror for your
+* http://hg.moinmo.in/moin/2.0 (main repository)
+* http://bitbucket.org/thomaswaldmann/moin-2.0 (bb mirror for your
   convenience, simplifying forking and contributing)
 
 If you are not using Mercurial, you can of course also just send us patches.
