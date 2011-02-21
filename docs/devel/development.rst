@@ -171,3 +171,41 @@ When rendering a template, the template is expanded within an environment of
 values it can use. Additionally to this (general) environment, parameters can
 be also given directly to the render call.
 
+Testing
+=======
+
+We use py.test for automated testing (it is currently automatically installed
+into your virtualenv as a dependency).
+
+Running the tests
+-----------------
+To run the tests you first need to enter your virtualenv::
+
+    . env/bin/activate
+
+To run tests, enter::
+
+    py.test  # runs all tests
+    py.test -k somekeyword  # just run the tests matching somekeyword
+    py.test sometests.py  # just run the tests contained in sometests.py
+
+Tests output
+------------
+Most is quite self-explaining, the characters mean::
+
+    . test ran OK
+    s test was skipped
+    E error happened while running the test
+    F test failed
+    x test was expected to fail (xfail)
+
+If something went wrong, you'll also see some traceback and stdout/stderr.
+
+Writing tests
+-------------
+Writing tests with `py.test` is easy and low on overhead. You basically just
+use `assert` statements.
+
+For more information, please read on there: http://pytest.org/ - but keep in
+mind that we currently still use **py.test 1.3.4**.
+
