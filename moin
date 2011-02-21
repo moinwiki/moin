@@ -68,8 +68,8 @@ from MoinMoin.script.account.create import Create_User
 manager.add_command("account_create", Create_User())
 from MoinMoin.script.account.disable import Disable_User
 manager.add_command("account_disable", Disable_User())
-from MoinMoin.script.account.resetpw import Reset_Users_Password
-manager.add_command("account_resetpw", Reset_Users_Password())
+from MoinMoin.script.account.resetpw import Set_Password
+manager.add_command("account_password", Set_Password())
 
 if __name__ == "__main__":
     if sys.argv == ['./moin']:
