@@ -42,11 +42,12 @@ What you need to achieve is that your web server can talk to a WSGI
 application. General infos about WSGI can be found on http://wsgi.org/.
 
 For example, for Apache2 there is mod_wsgi, which is a very good choice and
-has nice own documentation.
+has nice own documentation, see http://code.google.com/p/modwsgi/.
 
 If your web server can't directly talk via WSGI to moin, you maybe want to use
-some middleware like flup translating fastcgi, ajp, scgi, cgi to WSGI. Flup
-also has its own docs. Avoid using cgi, if possible, it is SLOW.
+some middleware like flup translating fastcgi, ajp, scgi, cgi to WSGI.
+Avoid using cgi, if possible, it is SLOW.
+Flup also has its own docs, see http://trac.saddi.com/flup.
 
 test.wsgi first
 ---------------

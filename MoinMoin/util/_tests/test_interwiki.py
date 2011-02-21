@@ -120,7 +120,7 @@ class TestInterWikiMapBackend(object):
         assert testiwm.iwmap['MoinMaster'] == 'http://master.moinmo.in/'
         assert 'PythonInfo' in testiwm.iwmap
         assert 'this' not in testiwm.iwmap
-        assert testiwm.iwmap['MoinCVS'] == 'http://hg.moinmo.in/moin/2.0-dev?f=-1;file='
+        assert testiwm.iwmap['MoinCVS'] == 'http://hg.moinmo.in/moin/2.0?f=-1;file='
 
 
 coverage_modules = ['MoinMoin.util.interwiki']

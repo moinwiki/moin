@@ -14,9 +14,9 @@
 
 # MoinMoin additions
 MoinMaster http://master.moinmo.in/
-MoinCVS http://hg.moinmo.in/moin/2.0-dev?f=-1;file=
-MoinSrc http://hg.moinmo.in/moin/2.0-dev?f=-1;file=
-MoinDoc http://hg.moinmo.in/moin/2.0-dev/
+MoinCVS http://hg.moinmo.in/moin/2.0?f=-1;file=
+MoinSrc http://hg.moinmo.in/moin/2.0?f=-1;file=
+MoinDoc http://hg.moinmo.in/moin/2.0/
 
 # for Germany: bookzilla.de instead of amazon == supporting GNU/Linux and 5% for FSF Europe
 # ISBN http://bookzilla.de/shop/action/advancedSearch?action=search&isbn=

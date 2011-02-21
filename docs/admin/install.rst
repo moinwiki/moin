@@ -9,10 +9,10 @@ it from the repository:
 
 Alternative 1 (using Mercurial DVCS)::
 
- $ hg clone http://hg.moinmo.in/moin/2.0-dev moin2
+ $ hg clone http://hg.moinmo.in/moin/2.0 moin2
 
 Alternative 2:
-Visit http://hg.moinmo.in/moin/2.0-dev with your web browser, download the tgz
+Visit http://hg.moinmo.in/moin/2.0 with your web browser, download the tgz
 and unpack it.
 
 Installing
