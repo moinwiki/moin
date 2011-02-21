@@ -1,14 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 """
-    MoinMoin - User Accounts Script Package
+    MoinMoin - User Accounts Management Scripts
 
-    @copyright: 2006 MoinMoin:ThomasWaldmann
+    @copyright: 2006,2011 MoinMoin:ThomasWaldmann
     @license: GNU GPL, see COPYING for details.
 """
-
-from MoinMoin.util import pysupport
-
-# create a list of extension scripts from the subpackage directory
-account_scripts = pysupport.getPackageModules(__file__)
-modules = account_scripts
-

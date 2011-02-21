@@ -2,15 +2,15 @@
 """
 MoinMoin - disable a user account
 
-TODO: Currently works on unprotected user backend
-
 @copyright: 2006 MoinMoin:ThomasWaldmann,
             2011 MoinMoin:ReimarBauer
 @license: GNU GPL, see COPYING for details.
 """
+
 from flask import flaskg
 from flask import current_app as app
 from flaskext.script import Command, Option
+
 from MoinMoin import user
 
 
@@ -18,11 +18,10 @@ class Disable_User(Command):
     description = 'This command allows you to disable user accounts.'
     option_list = (
         Option('--name', '-n', required=False, dest='name', type=unicode,
-               help='Disable the user with user name NAME.'
-               ),
+               help='Disable the user with user name NAME.'),
         Option('--uid', '-u', required=False, dest='uid', type=unicode,
-               help='Disable the user with user id UID.' )
-        )
+               help='Disable the user with user id UID.'),
+    )
 
     def run(self, name, uid):
         flaskg.unprotected_storage = app.unprotected_storage
