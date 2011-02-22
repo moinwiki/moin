@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+"""
+moin script - issue moin commands (including starting the builtin server)
+
+Usage:
+
+start server on 127.0.0.1:8080 (using wikiconfig_local.py / wikiconfig.py
+from same directory then):
+$ moin moin
+$ moin            # works also
+$ moin runserver  # works also, but port 5000
+
+start server with some specific config:
+$ moin moin -c configfile
+
+start server without debugger / reloader and on different host/port:
+$ moin moin --host=0.0.0.0 --port=8888 --no-debug --no-reload
+
+start shell:
+$ moin shell
+
+@copyright: 2010 MoinMoin:ThomasWaldmann
+@license: GNU GPL, see COPYING for details.
+"""
+
+import sys
+from os import path
+
+MANUALLY = False # use True and adjust values below if False doesn't work for you
+
+if MANUALLY:
+    # hint: use None as value if the code already is in sys.path
+    moin_code = '/path/to/code'
+    wiki_config = '/path/to/configs/wikiconfig.py'
+
+else:
+    # try magic for users who just unpack the moin archive or
+    # developers who just run wikiserver.py from their workdir
+
+    # directory where THIS file is located
+    here = path.abspath(path.dirname(__file__))
+
+    # moin's own code:
+    moin_code = here
+    if not path.exists(path.join(moin_code, 'MoinMoin')):
+        moin_code = None # no idea where it is
+
+    # wiki configuration:
+    wiki_config = path.join(here, 'wikiconfig_local.py') # for development
+    if not path.exists(wiki_config):
+        wiki_config = path.join(here, 'wikiconfig.py') # normal usage
+
+
+if moin_code:
+    # add the parent dir of the MoinMoin code to sys.path,
+    # to make import work:
+    sys.path.insert(0, moin_code)
+
+
+from MoinMoin.app import create_app
+from flaskext.script import Manager, Server
+
+manager = Manager(create_app)
+manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
+manager.add_command("moin", Server(host='127.0.0.1', port=8080))
+
+from MoinMoin.script.account.create import Create_User
+manager.add_command("account_create", Create_User())
+from MoinMoin.script.account.disable import Disable_User
+manager.add_command("account_disable", Disable_User())
+from MoinMoin.script.account.resetpw import Set_Password
+manager.add_command("account_password", Set_Password())
+from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
+manager.add_command("maint_reduce_revisions", Reduce_Revisions())
+
+if __name__ == "__main__":
+    if sys.argv == ['./moin']:
+    	manager.run(default_command='moin')
+    else:
+        manager.run(default_command=sys.argv[1])
