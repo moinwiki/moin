@@ -75,6 +75,6 @@ manager.add_command("maint_reduce_revisions", Reduce_Revisions())
 
 if __name__ == "__main__":
     if sys.argv == ['./moin']:
-    	manager.run(default_command='moin')
+        manager.run(default_command='moin')
     else:
         manager.run(default_command=sys.argv[1])
