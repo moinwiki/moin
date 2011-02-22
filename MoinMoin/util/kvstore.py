@@ -150,7 +150,7 @@ class KVStore(object):
                    wanted_value_type, value_type, name, value)
         else:
             res = key_table.insert().values(name=name, value_type=value_type).execute()
-            key_id = res.last_inserted_ids()[0]
+            key_id = res.inserted_primary_key[0]
         return key_id
 
     def _get_value_id(self, value):
@@ -166,7 +166,7 @@ class KVStore(object):
             value_id = result[0]
         else:
             res = value_table.insert().values(value=value).execute()
-            value_id = res.last_inserted_ids()[0]
+            value_id = res.inserted_primary_key[0]
         return value_id
 
     def _associate(self, ref_id, key_id, value_id):

@@ -263,7 +263,7 @@ class ItemIndex(object):
         item_id = self.get_item_id(uuid)
         if item_id is None:
             res = item_table.insert().values(uuid=uuid, name=name).execute()
-            item_id = res.last_inserted_ids()[0]
+            item_id = res.inserted_primary_key[0]
         self.item_kvstore.store_kv(item_id, metas)
         return item_id
 
@@ -314,7 +314,7 @@ class ItemIndex(object):
         else:
             dt = datetime.datetime.utcfromtimestamp(timestamp)
             res = rev_table.insert().values(revno=revno, item_id=item_id, datetime=dt).execute()
-            rev_id = res.last_inserted_ids()[0]
+            rev_id = res.inserted_primary_key[0]
 
         self.rev_kvstore.store_kv(rev_id, metas)
 
