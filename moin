@@ -70,9 +70,11 @@ from MoinMoin.script.account.disable import Disable_User
 manager.add_command("account_disable", Disable_User())
 from MoinMoin.script.account.resetpw import Set_Password
 manager.add_command("account_password", Set_Password())
+from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
+manager.add_command("maint_reduce_revisions", Reduce_Revisions())
 
 if __name__ == "__main__":
     if sys.argv == ['./moin']:
-    	manager.run(default_command='moin')
+        manager.run(default_command='moin')
     else:
         manager.run(default_command=sys.argv[1])
