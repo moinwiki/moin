@@ -1,0 +1,46 @@
+    # This is a sample configuration snippet that shows how to configure
+    # Xapian indexing search. For further help see HelpOnXapian.
+
+    # You need Xapian and its Python bindings (xapian-core and xapian-bindings). 
+    # On Windows, you additionally need pywin32 (http://sourceforge.net/projects/pywin32/). 
+
+    # Setting this to True, enables Xapian indexed search.
+    #xapian_search = False
+
+    # IMPORTANT: After enabling (and also after changing any xapian related setting), you
+    # need to completely (re-)build the index.
+    # There are 2 ways:
+    # A. Unsafe 1-stage xapian index rebuilding:
+    #    moin --config-dir=/where/your/configdir/is --wiki-url=wiki-url/ index build --mode=rebuild
+    #    Use this if your wiki is not running at that time or if it is unlikely that
+    #    someone uses the search index or if you can live with a few failing searches when
+    #    it is switching from old to new index.
+    #    "rebuild" is the same as "buildnewindex" immediately followed by "usenewindex".
+    # B. Safe 2-stage xapian index rebuilding:
+    #    moin ... index build --mode=buildnewindex
+    #    <stop wiki>
+    #    moin ... index build --mode=usenewindex
+    #    <start wiki>
+    #    buildnewindex will build a SEPARATE new index while the wiki is running and it
+    #    will NOT interfere with wiki operations at all (except that it consumes some
+    #    server resources like cpu, disk, ram) - the wiki will NOT use the new index.
+    #    This phase can take some minutes up to many hours, depending on the size of your wiki.
+    #    usenewindex is the switching command that will switch from the current to the
+    #    new index. If you like to avoid trouble with a few failing searches (but rather want
+    #    the wiki offline for a short moment), you can stop the wiki, switch index, start
+    #    the wiki. usenewindex will just take some milliseconds.
+
+    # If set to True means that ALL page revisions will be indexed (not only
+    # the latest revision).
+    # Thus, they optionally will be searchable [see FindPage search options]).
+    #xapian_index_history = False
+
+    # If set to True, words will be indexed in their original AND their stemmed
+    # forms. This means that searching for "testing" will also find "tested",
+    # "tester", "testings", etc.
+    #xapian_stemming = False
+
+    # This option lets you specify a non-default directory for storing the index.
+    # If set to None (default), it gets stored into <data_dir>/cache/xapian/. 
+    #xapian_index_dir = None
+
