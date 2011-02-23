@@ -83,7 +83,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Jinja2>=2.5', # template engine
         'parsedatetime>=0.8.6', # parsing dates and times
         'pygments>=1.1.1', # src code / text file highlighting
-        'sqlalchemy>=0.5.6', # metadata index and other stuff
+        'sqlalchemy>=0.6.0', # metadata index and other stuff
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
         'Werkzeug==0.6.2', # use this if 0.7dev fails
         #'xappy>=0.5', # xapian python OO interface, not used (yet?)
