@@ -613,7 +613,7 @@ There is no help, you're doomed!
     data = property(fget=get_data)
 
     def _render_meta(self):
-        return "<pre>%s</pre>" % self.meta_dict_to_text(self.meta, use_filter=False)
+        return "<pre>%s</pre>" % escape(self.meta_dict_to_text(self.meta, use_filter=False))
 
     def get_templates(self, mimetype=None):
         """ create a list of templates (for some specific mimetype) """
