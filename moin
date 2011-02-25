@@ -72,6 +72,8 @@ from MoinMoin.script.account.resetpw import Set_Password
 manager.add_command("account_password", Set_Password())
 from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
 manager.add_command("maint_reduce_revisions", Reduce_Revisions())
+from MoinMoin.script.maint.set_meta import Set_Meta
+manager.add_command("maint_set_meta", Set_Meta())
 
 if __name__ == "__main__":
     if sys.argv == ['./moin']:
