@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     Thread monitor - Check the state of all threads.
 

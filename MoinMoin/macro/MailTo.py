@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - MailTo Macro displays an E-Mail address (either a valid mailto:
     link for logged in users or an obfuscated display as given as the macro argument.

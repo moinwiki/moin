@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - helpers for flatfile meta/data stores
 

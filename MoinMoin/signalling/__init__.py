@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - signalling support
 

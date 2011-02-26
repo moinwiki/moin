@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - PageSize Macro displays an ordered list with page sizes and names
 

@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin DateTime macro - outputs the date and time for some specific point in time,
     adapted to the TZ settings of the user viewing the content.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     LDAPTestBase: LDAP testing support for py.test based unit tests
 

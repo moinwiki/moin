@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - Anchor Macro to put an anchor at the place where it is used.
 

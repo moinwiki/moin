@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - form helpers for flatland / jinja2
 

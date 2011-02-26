@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - parameter parsing and invoking of extension functions
 

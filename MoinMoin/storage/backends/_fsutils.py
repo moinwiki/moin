@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - helper for fs based backends
 

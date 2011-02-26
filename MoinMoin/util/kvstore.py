@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 kvstore - a flexible key/value store using sqlalchemy
 

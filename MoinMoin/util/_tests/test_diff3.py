@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     MoinMoin - MoinMoin.util.diff3 Tests
 

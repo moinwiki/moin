@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MoinMoin - CSV text data to DOM converter
 

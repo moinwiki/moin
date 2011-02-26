@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     PagenameList - list pages with names matching a string or regex
 

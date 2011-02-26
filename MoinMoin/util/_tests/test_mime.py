@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MoinMoin - Tests for MoinMoin.util.mime
 

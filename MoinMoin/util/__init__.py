@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - Utility Functions
     General helper functions that are not directly wiki related.

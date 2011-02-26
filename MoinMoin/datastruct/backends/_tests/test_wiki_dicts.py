@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - MoinMoin.datastruct.backends.wiki_dicts tests
 

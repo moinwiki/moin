@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     MoinMoin - basic tests for feeds
 

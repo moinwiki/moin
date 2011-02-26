@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin GetVal macro - gets a value for a specified key from a dict.
 

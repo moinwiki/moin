@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - "moin" is the main script command and calls other stuff as
     a sub-command.

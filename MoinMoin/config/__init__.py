@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - site-wide configuration defaults (NOT per single wiki!)
 

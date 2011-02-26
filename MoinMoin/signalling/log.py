@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - logging signal handlers
 

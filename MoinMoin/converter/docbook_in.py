@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
 MoinMoin - DocBook input converter
 Converts a DocBook document into an internal document tree.
