@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 """
     MoinMoin - Configuration defaults class
 
@@ -282,7 +282,7 @@ def _default_password_checker(cfg, username, password):
         return _("Password is too easy to guess (password contains name or name contains password).")
 
     keyboards = (ur"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./", # US kbd
-                 ur"^1234567890ߴqwertzuiop�+asdfghjkl��#yxcvbnm,.-", # german kbd
+                 ur"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-", # german kbd
                 ) # add more keyboards!
     for kbd in keyboards:
         rev_kbd = kbd[::-1]
