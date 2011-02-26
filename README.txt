@@ -8,26 +8,6 @@ a company knowledge base deployed on an intranet, or an Internet server
 open to individuals sharing the same interests, goals or projects.
 
 
-Copyright (c) 2000-2006 by Juergen Hermann <jh@web.de>
-Copyright (c) 2006-2011 The MoinMoin development team, see
-                        http://moinmo.in/MoinCoreTeamGroup
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-(see docs/licenses/COPYING for details)
-
-
 Documentation and Support
 =========================
 
