@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
 MoinMoin - i18n (internationalization) and l10n (localization) support
 

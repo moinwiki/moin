@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - feed views
 

@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - simple text diff (uses difflib)
 

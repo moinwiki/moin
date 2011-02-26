@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
 MoinMoin - dict access via various backends.
 

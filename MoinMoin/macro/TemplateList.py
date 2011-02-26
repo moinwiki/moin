@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     TemplateList - compatibility wrapper around PagenameList
 

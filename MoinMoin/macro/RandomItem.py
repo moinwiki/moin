@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - RandomItem Macro displays one or multiple random item links.
 

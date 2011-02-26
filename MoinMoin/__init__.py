@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
 MoinMoin - a wiki engine in Python.
 

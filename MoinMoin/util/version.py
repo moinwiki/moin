@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
     MoinMoin - dealing with version numbers
 

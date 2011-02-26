@@ -1,4 +1,3 @@
-# -*- coding: ascii -*-
 """
 MoinMoin - wsgi application setup and related code
 

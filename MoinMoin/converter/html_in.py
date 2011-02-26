@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
 MoinMoin - HTML input converter
 Converts an XHTML document into an internal document tree.

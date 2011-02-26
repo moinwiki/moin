@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MoinMoin - table data to DOM conversion support
 

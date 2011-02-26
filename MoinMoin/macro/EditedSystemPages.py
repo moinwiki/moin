@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     EditedSystemPages - list system pages that has been edited in this wiki.
 

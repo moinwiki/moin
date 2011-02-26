@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """ MoinMoin errors
 
     Supply Error class and sub classes used to raise various errors
