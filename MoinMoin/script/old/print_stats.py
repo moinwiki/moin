@@ -14,9 +14,10 @@
 
     Currently CGI and twisted also have a hotshot profiler integration.
 
-    @copyright: 2005 by Thomas Waldmann (MoinMoin:ThomasWaldmann)
+    @copyright: 2005 by MoinMoin:ThomasWaldmann
     @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 def run():
     import sys
     from hotshot import stats

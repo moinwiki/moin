@@ -4,6 +4,10 @@ Enhanced subprocess.Popen subclass, supporting:
 
 Sample usage:
     out, err = Popen(...).communicate(input, timeout=300)
+
+@copyright: 2003-2005 by Peter Astrand <astrand@lysator.liu.se>,
+            2009,2010 by Thomas Waldmann (modifications)
+@license: Python license (http://www.python.org/2.4/license)
 """
 
 import os

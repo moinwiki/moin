@@ -1,11 +1,9 @@
 """
 pycdb.py - Python implementation of cdb
 
-  by Yusuke Shinyama
-  * public domain *
-
-  Coding style fixes (and tcdb removal) by Johannes Berg
-  PEP8 fixes by MoinMoin:ReimarBauer
+@copyright: Yusuke Shinyama (author),
+            Johannes Berg (coding style fixes and tcdb removal)
+@license: Public Domain
 """
 
 import os
