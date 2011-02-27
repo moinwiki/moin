@@ -1,3 +1,8 @@
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2008 MoinMoin:AlexanderSchremmer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MemoryBackend + TracingBackend
 
@@ -12,12 +17,8 @@
     backend for any production site that needs persistant storage.
 
     ---
-
-    @copyright: 2008 MoinMoin:ChristopherDenter,
-                2008 MoinMoin:JohannesBerg,
-                2008 MoinMoin:AlexanderSchremmer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import StringIO
 from threading import Lock

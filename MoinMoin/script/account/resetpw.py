@@ -1,11 +1,12 @@
+# Copyright: 2006 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2011 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - set a user password
-
-@copyright: 2006 MoinMoin:ThomasWaldmann,
-            2008 MoinMoin:JohannesBerg,
-            2011 MoinMoin:ReimarBauer
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 from flask import current_app as app

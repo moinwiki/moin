@@ -1,9 +1,10 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.macro._base
-
-@copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 py.test.skip("test is out of sync with tested code")

@@ -1,13 +1,14 @@
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Test - XML (de)serialization
 
     TODO: provide fresh backend per test class (or even per test method?).
     TODO: use xpath for testing (or any other way so sequence of metadata
           keys does not matter)
-
-    @copyright: 2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py
 

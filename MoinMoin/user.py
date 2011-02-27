@@ -1,3 +1,11 @@
+# Copyright: 2000-2004 Juergen Hermann <jh@web.de>
+# Copyright: 2003-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2007 MoinMoin:JohannesBerg
+# Copyright: 2007 MoinMoin:HeinrichWendel
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - User Accounts
 
@@ -6,15 +14,8 @@
     This module contains functions to access user accounts (list all users, get
     some specific user). User instances are used to access the user profile of
     some specific user (name, password, email, bookmark, trail, settings, ...).
-
-    @copyright: 2000-2004 Juergen Hermann <jh@web.de>,
-                2003-2011 MoinMoin:ThomasWaldmann,
-                2007 MoinMoin:JohannesBerg,
-                2007 MoinMoin:HeinrichWendel,
-                2008 MoinMoin:ChristopherDenter,
-                2010 MoinMoin:DiogenesAugusto
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import time, base64
 import copy

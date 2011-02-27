@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2008 MoinMoin:PawelPacana
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2008 MoinMoin:JohannesBerg
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Backend tests
 
@@ -8,12 +13,8 @@
     This class should be inherited by descendant backend test classes.
     Add tests general for all backends here. Your backend-specific tests
     put in class inherited from this one.
-
-    @copyright: 2008 MoinMoin:PawelPacana,
-                2008 MoinMoin:ChristopherDenter,
-                2008 MoinMoin:JohannesBerg
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test, re
 

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# Copyright: 2010 by Thomas Waldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 kvstore - a flexible key/value store using sqlalchemy
-
-@copyright: 2010 by Thomas Waldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from UserDict import DictMixin
 

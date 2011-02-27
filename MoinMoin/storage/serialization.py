@@ -1,3 +1,6 @@
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - XML serialization support
 
@@ -20,10 +23,8 @@
     c) serialize just some items:
     some_items = [u'FrontPage', u'HelpOnLinking', u'HelpOnMoinWikiSyntax', ]
     serialize(backend, 'some_items.xml', ItemNameList, some_items)
-
-    @copyright: 2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

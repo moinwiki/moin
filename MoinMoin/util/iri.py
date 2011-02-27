@@ -1,11 +1,12 @@
+# Copyright: 2008,2009 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Generic? IRI implementation
 
 Implements the generic IRI form as defined in RFC 3987.
-
-@copyright: 2008,2009 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import codecs
 import re

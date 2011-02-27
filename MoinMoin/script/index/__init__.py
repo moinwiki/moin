@@ -1,12 +1,13 @@
+# Copyright: 2006 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Fullsearch Index Script Package
 
     TODO: rename this module back to xapian when script framework is
     fixed to not confuse it with the xapian.org "xapian" module.
-
-    @copyright: 2006 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.util import pysupport
 

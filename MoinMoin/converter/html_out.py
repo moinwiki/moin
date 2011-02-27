@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - HTML output converter
 
 Converts an internal document tree into a HTML tree.
-
-@copyright: 2008 MoinMoin:BastianBlank
-            2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

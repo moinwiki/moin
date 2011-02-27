@@ -1,11 +1,12 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Archives converter (e.g. zip, tar)
 
 Make a DOM Tree representation of an archive (== list contents of it in a table).
-
-@copyright: 2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from datetime import datetime
 import tarfile

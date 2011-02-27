@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.mail.sendmail Tests
-
-    @copyright: 2003-2004 by Juergen Hermann <jh@web.de>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from email.Charset import Charset, QP
 from email.Header import Header

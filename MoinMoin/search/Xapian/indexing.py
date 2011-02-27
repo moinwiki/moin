@@ -1,11 +1,12 @@
+# Copyright: 2006-2009 MoinMoin:ThomasWaldmann
+# Copyright: 2006 MoinMoin:FranzPletz
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - xapian search engine indexing
-
-    @copyright: 2006-2009 MoinMoin:ThomasWaldmann,
-                2006 MoinMoin:FranzPletz,
-                2009 MoinMoin:DmitrijsMilajevs
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, re
 import xapian

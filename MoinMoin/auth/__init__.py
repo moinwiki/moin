@@ -1,3 +1,10 @@
+# Copyright: 2005-2006 Bastian Blank, Florian Festi
+# Copyright: MoinMoin:AlexanderSchremmer, Nick Phillips
+# Copyright: MoinMoin:FrankieChow, MoinMoin:NirSoffer
+# Copyright: 2005-2009 MoinMoin:ThomasWaldmann
+# Copyright: 2007      MoinMoin:JohannesBerg
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - modular authentication handling
 
@@ -119,15 +126,8 @@
     not be changed by the user in their preferences.
     You also have to give the keyword argument "auth_method" containing the
     name of the authentication method.
-
-    @copyright: 2005-2006 Bastian Blank, Florian Festi,
-                          MoinMoin:AlexanderSchremmer, Nick Phillips,
-                          MoinMoin:FrankieChow, MoinMoin:NirSoffer,
-                2005-2009 MoinMoin:ThomasWaldmann,
-                2007      MoinMoin:JohannesBerg
-
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

@@ -1,13 +1,14 @@
+# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:FlorianKrupicka
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - frontend views
 
     This shows the usual things users see when using the wiki.
-
-    @copyright: 2003-2010 MoinMoin:ThomasWaldmann,
-                2008 MoinMoin:FlorianKrupicka,
-                2010 MoinMoin:DiogenesAugusto
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 import difflib

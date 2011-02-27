@@ -1,13 +1,14 @@
+# Copyright: 2006 Alexander Schremmer <alex AT alexanderweb DOT de>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     Thread monitor - Check the state of all threads.
 
     Just call activate_hook() as early as possible in program execution.
     Then you can trigger the output of tracebacks of all threads
     by calling trigger_dump().
-
-    @copyright: 2006 Alexander Schremmer <alex AT alexanderweb DOT de>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 
 __all__ = "activate_hook trigger_dump dump_regularly".split()

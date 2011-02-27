@@ -1,10 +1,11 @@
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2006 MoinMoin:FranzPletz
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - A text analyzer for wiki syntax
-
-    @copyright: 2006-2008 MoinMoin:ThomasWaldmann,
-                2006 MoinMoin:FranzPletz
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 import xapian

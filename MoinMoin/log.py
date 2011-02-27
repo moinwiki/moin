@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2007 MoinMoin:JohannesBerg
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - init "logging" system
 
@@ -45,11 +49,8 @@
     The logger can optionally get configured in the logging configuration.
     If you don't configure it, some upperlevel logger (e.g. the root logger)
     will do the logging.
-
-    @copyright: 2008 MoinMoin:ThomasWaldmann,
-                2007 MoinMoin:JohannesBerg
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working

@@ -1,13 +1,14 @@
+# Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
+# Copyright: 2007 MoinMoin:AlexanderSchremmer
+# Copyright: 2009 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.module_tested Tests
 
     Module names must start with 'test_' to be included in the tests.
-
-    @copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
-                2007 MoinMoin:AlexanderSchremmer
-                2009 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 # include here the module that you want to test:
 from MoinMoin import module_tested

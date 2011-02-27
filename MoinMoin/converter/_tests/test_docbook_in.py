@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.converter.docbook_in
-
-@copyright: 2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 import StringIO

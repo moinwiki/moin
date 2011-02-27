@@ -1,12 +1,13 @@
+# Copyright: 2000-2002 Juergen Hermann <jh@web.de>
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2007 MoinMoin:ReimarBauer
+# Copyright: 2008-2010 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Moin Wiki 1.9 input converter
-
-@copyright: 2000-2002 Juergen Hermann <jh@web.de>,
-            2006-2008 MoinMoin:ThomasWaldmann,
-            2007 MoinMoin:ReimarBauer,
-            2008-2010 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

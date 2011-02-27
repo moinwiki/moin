@@ -1,10 +1,11 @@
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Show Wiki Configuration Help
-
-    @copyright: 2008 MoinMoin:JohannesBerg,
-                2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.config import default as defaultconfig

@@ -1,12 +1,13 @@
+# Copyright: 2010 by MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Tickets
 
     Tickets are usually used in forms to make sure that form submissions
     are in response to a form the same user got from moin.
-
-    @copyright: 2010 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import time
 import hmac, hashlib

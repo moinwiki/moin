@@ -1,11 +1,12 @@
+# Copyright: 2007 MoinMoin:KarolNowak
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008, 2010 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - some common code for testing
-
-    @copyright: 2007 MoinMoin:KarolNowak,
-                2008 MoinMoin:ThomasWaldmann,
-                2008, 2010 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, shutil
 

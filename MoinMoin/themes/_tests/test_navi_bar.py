@@ -1,10 +1,11 @@
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Navibar Tests
-
-    @copyright: 2010 MoinMoin:DiogenesAugusto,
-                2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import current_app as app
 

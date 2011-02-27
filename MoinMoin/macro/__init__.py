@@ -1,3 +1,6 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - New style macros
 
@@ -7,10 +10,8 @@ These new-style macros uses a class interface and always works on the internal
 tree representation of the document.
 
 TODO: Merge with converters
-
-@copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.util import pysupport
 

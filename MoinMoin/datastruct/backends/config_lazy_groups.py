@@ -1,3 +1,6 @@
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - config group lazy backend.
 
@@ -6,10 +9,8 @@
 
     NOTE that this is proof-of-concept implementation. LDAP backend
     should be based on this concept.
-
-    @copyright: 2009 MoinMoin:DmitrijsMilajevs
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.datastruct.backends import LazyGroup, LazyGroupsBackend
 

@@ -1,11 +1,12 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Test - SQLAlchemyBackend
 
     This defines tests for the SQLAlchemyBackend.
-
-    @copyright: 2009 MoinMoin:ChristopherDenter
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from StringIO import StringIO
 

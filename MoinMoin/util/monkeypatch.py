@@ -1,13 +1,14 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: the individual patches have same license as the code they are patching
+
 """
 This module contains some monkeypatching for 3rd party code we use.
 
 We hope that any 3rd party might find this code useful and will adopt it,
 so we don't need to patch it any more. If you adopt some code from here,
 please notify us, so we can remove it from here.
-
-@copyright: 2010 MoinMoin:ThomasWaldmann
-@license: the individual patches have same license as the code they are patching
 """
+
 
 # werkzeug patching ----------------------------------------------------------
 

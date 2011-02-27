@@ -1,14 +1,15 @@
+# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2001-2003 Juergen Hermann <jh@web.de>
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2010 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - admin views
 
     This shows the user interface for wiki admins.
-
-    @copyright: 2008-2010 MoinMoin:ThomasWaldmann,
-                2001-2003 Juergen Hermann <jh@web.de>,
-                2010 MoinMoin:DiogenesAugusto,
-                2010 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import request, url_for, flash, redirect
 from flask import current_app as app

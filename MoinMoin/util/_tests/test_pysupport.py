@@ -1,10 +1,11 @@
+# Copyright: 2004 Oliver Graf <ograf@bitart.de>
+# Copyright: 2007 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.util.pysupport Tests
-
-    @copyright: 2004 Oliver Graf <ograf@bitart.de>,
-                2007 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, errno
 

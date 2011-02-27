@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Simple text input converter.
 
@@ -6,11 +10,8 @@ It just puts all text into a code block. It acts as a wildcard for text/* input.
 We keep it at MIDDLE+2 prio in the registry, one after pygments converter, so
 it is a fallback for the case we have no pygments or pygments has no support
 for the input mimetype.
-
-@copyright: 2008 MoinMoin:ThomasWaldmann,
-            2008 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

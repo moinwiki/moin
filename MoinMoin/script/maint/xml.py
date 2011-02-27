@@ -1,3 +1,7 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2009 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - XML (un)serialization of storage contents.
 
@@ -7,11 +11,8 @@
     Note that before unserializing stuff, you should first create an
     appropriate namespace_mapping in your wiki configuration so that the
     items get written to the backend where you want them.
-
-    @copyright: 2009 MoinMoin:ChristopherDenter,
-                2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import sys, time
 

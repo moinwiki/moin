@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Copyright: 2005 by MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Print statistics gathered by hotshot profiler
 
@@ -13,10 +16,8 @@
      5. Run this tool: print_stats.py moin.prof
 
     Currently CGI and twisted also have a hotshot profiler integration.
-
-    @copyright: 2005 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 def run():
     import sys

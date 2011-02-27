@@ -1,3 +1,6 @@
+# Copyright: 2009 DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - group access via various backends.
 
@@ -5,10 +8,8 @@ The composite_groups is a backend that does not have direct storage,
 but composes other backends to a new one, so group definitions are
 retrieved from several backends. This allows to mix different
 backends.
-
-@copyright: 2009 DmitrijsMilajevs
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.datastruct.backends import BaseGroupsBackend, GroupDoesNotExistError
 

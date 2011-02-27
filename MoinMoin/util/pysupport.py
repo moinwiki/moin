@@ -1,9 +1,10 @@
+# Copyright: 2002 Juergen Hermann <jh@web.de>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Supporting function for Python magic
-
-    @copyright: 2002 Juergen Hermann <jh@web.de>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 #############################################################################
 ### Module import / Plugins

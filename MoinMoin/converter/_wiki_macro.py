@@ -1,11 +1,12 @@
+# Copyright: 2008,2009 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Macro and pseudo-macro handling
 
 Base class for wiki parser with macro support.
-
-@copyright: 2008,2009 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from emeraldtree import ElementTree as ET
 

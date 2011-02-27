@@ -1,3 +1,6 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Converter support
 
@@ -12,10 +15,8 @@ There are usually three types of converters:
   types or macro expansion.
 
 TODO: Merge with new-style macros.
-
-@copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from ..util.registry import RegistryBase
 

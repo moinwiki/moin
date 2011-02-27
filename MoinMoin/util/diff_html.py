@@ -1,10 +1,11 @@
+# Copyright: 2002 Juergen Hermann <jh@web.de>
+# Copyright: 2002 Scott Moonen <smoonen@andstuff.org>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Side by side diffs
-
-    @copyright: 2002 Juergen Hermann <jh@web.de>,
-                2002 Scott Moonen <smoonen@andstuff.org>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import difflib
 

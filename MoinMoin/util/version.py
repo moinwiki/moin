@@ -1,9 +1,10 @@
+# Copyright: 2011 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - dealing with version numbers
-
-    @copyright: 2011 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 # see MoinMoin/_tests/test_version.py for examples how to use this:
 

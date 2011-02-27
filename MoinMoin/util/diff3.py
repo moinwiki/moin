@@ -1,9 +1,10 @@
+# Copyright: 2002 Florian Festi
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - diff3 algorithm
-
-    @copyright: 2002 Florian Festi
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 default_markers = ('<<<<<<<<<<<<<<<<<<<<<<<<<\n',
                    '=========================\n',

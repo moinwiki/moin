@@ -1,14 +1,15 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:DmitryAndreev
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - reStructuredText markup output converter
 
 Converts an internal document tree into reStructuredText markup.
 
 This converter based on ReStructuredText 2006-09-22.
-
-@copyright: 2008 MoinMoin:BastianBlank
-            2010 MoinMoin:DmitryAndreev
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

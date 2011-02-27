@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2003 Juergen Hermann <jh@web.de>
+# Copyright: 2008-2009 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - email helper functions
-
-    @copyright: 2003 Juergen Hermann <jh@web.de>,
-                2008-2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, re
 from email.Header import Header

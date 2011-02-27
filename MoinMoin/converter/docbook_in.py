@@ -1,3 +1,6 @@
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - DocBook input converter
 Converts a DocBook document into an internal document tree.
@@ -7,10 +10,8 @@ Currently supports DocBook v5.
 Some elements of DocBook v4 specification are also supported
 for backward compatibility :
   * ulink
-
-@copyright: 2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

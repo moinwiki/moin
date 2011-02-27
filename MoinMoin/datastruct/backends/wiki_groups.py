@@ -1,3 +1,8 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# Copyright: 2010 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - wiki group backend
 
@@ -7,12 +12,8 @@ Normally, the name of the group item has to end with Group like
 FriendsGroup. This lets MoinMoin recognize it as a group. This default
 pattern could be changed (e.g. for non-english languages etc.), see
 HelpOnConfiguration.
-
-@copyright: 2008 MoinMoin:ThomasWaldmann,
-            2009 MoinMoin:DmitrijsMilajevs,
-            2010 MoinMoin:ReimarBauer
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from flask import flaskg
 from MoinMoin.items import USERGROUP
 from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError

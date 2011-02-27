@@ -1,11 +1,12 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Test - ACLMiddleWare
 
     This defines tests for the ACLMiddleWare
-
-    @copyright: 2009 MoinMoin:ChristopherDenter,
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py
 

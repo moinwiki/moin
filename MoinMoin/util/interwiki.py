@@ -1,10 +1,11 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2010 MoinMoin:MicheleOrru
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - interwiki support code
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann,
-                2010 MoinMoin:MicheleOrru
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from __future__ import with_statement
 
 from werkzeug import url_quote

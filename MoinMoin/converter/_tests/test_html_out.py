@@ -1,10 +1,11 @@
+# Copyright: 2007 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.converter.html_out
-
-@copyright: 2007 MoinMoin:BastianBlank
-            2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 import StringIO

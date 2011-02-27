@@ -1,12 +1,13 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - feed views
 
     This contains all sort of feeds.
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann
-                2010 MoinMoin:DiogenesAugusto
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from datetime import datetime
 

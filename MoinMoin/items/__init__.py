@@ -1,18 +1,19 @@
+# Copyright: 2009 MoinMoin:ThomasWaldmann
+# Copyright: 2009 MoinMoin:ReimarBauer
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2009 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - misc. mimetype items
 
     While MoinMoin.storage cares for backend storage of items,
     this module cares for more high-level, frontend items,
     e.g. showing, editing, etc. of wiki items.
-
-    @copyright: 2009 MoinMoin:ThomasWaldmann,
-                2009 MoinMoin:ReimarBauer,
-                2009 MoinMoin:ChristopherDenter,
-                2009 MoinMoin:BastianBlank,
-                2010 MoinMoin:ValentinJaniaut,
-                2010 MoinMoin:DiogenesAugusto
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, re, time, datetime, shutil, base64
 import tarfile

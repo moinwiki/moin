@@ -1,11 +1,12 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     PagenameList - list pages with names matching a string or regex
 
     Note: PageList is a similar thing using the search engine.
-
-    @copyright: 2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 

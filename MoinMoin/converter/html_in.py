@@ -1,12 +1,13 @@
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - HTML input converter
 Converts an XHTML document into an internal document tree.
 
 TODO : Add support for style
-
-@copyright: 2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

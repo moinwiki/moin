@@ -1,9 +1,10 @@
+# Copyright: 2010 MoinMoin:DmitryAndreev
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.converter.rst_out
-
-@copyright: 2010 MoinMoin:DmitryAndreev
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 import re

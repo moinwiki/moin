@@ -1,3 +1,6 @@
+# Copyright: 2008 MoinMoin:PawelPacana
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MercurialBackend
 
@@ -15,10 +18,8 @@
           graphical history view for hg backend was removed at 2010-09-25,
           because it needed refactoring for flask/jinja2, but was unmaintained.
           If you'ld like to work on it, pull it from repo history.
-
-    @copyright: 2008 MoinMoin:PawelPacana
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from __future__ import with_statement
 
 import os

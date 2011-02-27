@@ -1,10 +1,11 @@
+# Copyright: 2004 Juergen Hermann, Thomas Waldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Utility Functions
     General helper functions that are not directly wiki related.
-
-    @copyright: 2004 Juergen Hermann, Thomas Waldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re, random
 

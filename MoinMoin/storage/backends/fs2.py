@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:JohannesBerg ("fs2" is originally based on "fs" from JB)
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - FS2 backend
 
@@ -6,11 +10,8 @@
     * use uuids for item storage names
     * uses content hash addressing for revision data storage
     * use sqlalchemy/sqlite (not cdb/self-made DBs like fs does)
-
-    @copyright: 2008 MoinMoin:JohannesBerg ("fs2" is originally based on "fs" from JB),
-                2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, tempfile, errno, shutil
 from uuid import uuid4 as make_uuid

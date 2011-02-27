@@ -1,3 +1,6 @@
+# Copyright: 2011 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - i18n (internationalization) and l10n (localization) support
 
@@ -8,10 +11,8 @@ from MoinMoin.i18n import _, L_, N_
 _ == gettext
 N_ == ngettext
 L_ == lazy_gettext
-
-@copyright: 2011 MoinMoin:ThomasWaldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import current_app, request, flaskg
 

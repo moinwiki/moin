@@ -1,10 +1,11 @@
+# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin DateTime macro - outputs the date and time for some specific point in time,
     adapted to the TZ settings of the user viewing the content.
-
-    @copyright: 2008-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 from flaskext.babel import format_datetime

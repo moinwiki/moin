@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - fs19 read-only backend tests
-
-    @copyright: 2008-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, re, tempfile, shutil
 

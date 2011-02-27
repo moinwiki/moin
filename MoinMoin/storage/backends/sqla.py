@@ -1,3 +1,7 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2009 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Backends - SQLAlchemy Backend
 
@@ -59,12 +63,8 @@
           instead.
         * Currently there only is SQLARevision. Make sure that operations that are not allowed (such as modifying
           the data of an already stored revision) raise the appropriate exceptions.
-
-
-    @copyright: 2009 MoinMoin:ChristopherDenter,
-                2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from threading import Lock
 

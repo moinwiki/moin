@@ -1,10 +1,11 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2010 MoinMoin:MicheleOrru
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.util.interwiki Tests
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann,
-                2010 MoinMoin:MicheleOrru
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import with_statement
 import py

@@ -1,13 +1,14 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2011 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Set Metadata of a revision
 
     This script duplicates the last revision of the selected item
     and sets or removes metadata.
-
-    @copyright: 2009 MoinMoin:ChristopherDenter,
-                2011 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 from ast import literal_eval

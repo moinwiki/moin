@@ -1,13 +1,14 @@
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - FS (filesystem) backend
 
     XXX: Does NOT work on win32. some problems are documented below (see XXX),
          some are maybe NOT.
-
-    @copyright: 2008 MoinMoin:JohannesBerg,
-                2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, struct, tempfile, random, errno, shutil
 import cPickle as pickle

@@ -1,13 +1,14 @@
+# Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
+# Copyright: 2007,2009 by MoinMoin:ThomasWaldmann
+# Copyright: 2008 by MoinMoin:MelitaMihaljevic
+# Copyright: 2009 by MoinMoin:DmitrijsMilajevs
+# Copyright: 2010 by MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - MoinMoin.backends.wiki_group tests
-
-@copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
-            2007,2009 by MoinMoin:ThomasWaldmann,
-            2008 by MoinMoin:MelitaMihaljevic,
-            2009 by MoinMoin:DmitrijsMilajevs,
-            2010 by MoinMoin:ReimarBauer
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py
 
