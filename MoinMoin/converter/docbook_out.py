@@ -4,7 +4,7 @@ Converts an internal document tree into a DocBook v5 document.
 
 @copyright: 2010 MoinMoin:ValentinJaniaut,
             table conversion based on html_out table conversion by Bastian Blank
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from __future__ import absolute_import

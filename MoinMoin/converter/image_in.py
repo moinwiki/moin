@@ -4,7 +4,7 @@ MoinMoin - Image converter
 Convert image to <object> tag for the DOM Tree.
 
 @copyright: 2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from emeraldtree import ElementTree as ET

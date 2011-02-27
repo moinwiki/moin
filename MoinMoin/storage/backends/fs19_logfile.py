@@ -4,7 +4,7 @@
     This module supports buffered log reads, iterating forward and backward line-by-line, etc.
 
     @copyright: 2005-2007 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin import log

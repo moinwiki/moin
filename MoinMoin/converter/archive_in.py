@@ -4,7 +4,7 @@ MoinMoin - Archives converter (e.g. zip, tar)
 Make a DOM Tree representation of an archive (== list contents of it in a table).
 
 @copyright: 2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from datetime import datetime

@@ -7,7 +7,7 @@ We mostly want to have default values here, except for stuff that doesn't
 work without setting them (like data_dir).
 
 @copyright: 2000-2004 by Juergen Hermann <jh@web.de>
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import os

@@ -48,7 +48,7 @@
 
     @copyright: 2008 MoinMoin:ThomasWaldmann,
                 2007 MoinMoin:JohannesBerg
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 # This is the "last resort" fallback logging configuration for the case

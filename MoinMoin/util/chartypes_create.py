@@ -3,7 +3,7 @@
     UCS-2 character types (upper/lower/digits/spaces).
 
     @copyright: 2004 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 uppercase = []

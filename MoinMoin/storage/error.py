@@ -4,7 +4,7 @@
     @copyright: 2007 MoinMoin:HeinrichWendel,
                 2008 MoinMoin:ChristopherDenter,
                 2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.i18n import _, L_, N_

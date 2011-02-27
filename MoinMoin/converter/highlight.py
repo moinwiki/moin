@@ -2,7 +2,7 @@
 MoinMoin - Text highlighting converter
 
 @copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from __future__ import absolute_import

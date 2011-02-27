@@ -7,7 +7,7 @@
                 2005-2010 MoinMoin:ThomasWaldmann,
                 2007 MoinMoin:ReimarBauer,
                 2008 MoinMoin:ChristopherDenter
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import os, sys

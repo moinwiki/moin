@@ -7,7 +7,7 @@
                 2001-2003 Juergen Hermann <jh@web.de>,
                 2010 MoinMoin:DiogenesAugusto,
                 2010 MoinMoin:ReimarBauer
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from flask import request, url_for, flash, redirect

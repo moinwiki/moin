@@ -34,7 +34,7 @@ You can customize the profiler when you create it:
 Based on code by Oliver Graf
 
 @copyright: 2004 Nir Soffer
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import os, time, gc

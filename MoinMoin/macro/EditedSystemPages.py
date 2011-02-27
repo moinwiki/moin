@@ -3,7 +3,7 @@
 
     @copyright: 2004 Nir Soffer <nirs@freeshell.org>,
                 2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from flask import flaskg

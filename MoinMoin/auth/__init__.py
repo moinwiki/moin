@@ -126,7 +126,7 @@
                 2005-2009 MoinMoin:ThomasWaldmann,
                 2007      MoinMoin:JohannesBerg
 
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin import log

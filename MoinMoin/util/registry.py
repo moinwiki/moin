@@ -6,7 +6,7 @@ priority.  During the lookup each factory is called with the given arguments and
 can return a callable to consider itself as a match.
 
 @copyright: 2008-2010 MoinMoin:BastianBlank
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 

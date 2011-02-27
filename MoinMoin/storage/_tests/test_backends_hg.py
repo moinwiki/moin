@@ -5,7 +5,7 @@
     of Mercurial.
 
     @copyright: 2008 MoinMoin:PawelPacana
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 from tempfile import mkdtemp, mkstemp, gettempdir
 import shutil

@@ -3,7 +3,7 @@
 MoinMoin - Tests for MoinMoin.converter.docbook_in
 
 @copyright: 2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import re

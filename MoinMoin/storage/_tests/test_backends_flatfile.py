@@ -2,7 +2,7 @@
     MoinMoin - Test - FlatFileBackend
 
     @copyright: 2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import py

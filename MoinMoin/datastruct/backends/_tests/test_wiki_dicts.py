@@ -5,7 +5,7 @@
                 2007 by MoinMoin:ThomasWaldmann,
                 2009 by MoinMoin:DmitrijsMilajevs,
                 2010 by MoinMoin:ReimarBauer
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.datastruct.backends._tests import DictsBackendTest

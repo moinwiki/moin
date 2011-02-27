@@ -4,7 +4,7 @@ MoinMoin - converter for all items (fallback)
 Convert any item to a DOM Tree (we just create a link to download it).
 
 @copyright: 2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from emeraldtree import ElementTree as ET

@@ -3,7 +3,7 @@
     General helper functions that are not directly wiki related.
 
     @copyright: 2004 Juergen Hermann, Thomas Waldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import re, random

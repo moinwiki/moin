@@ -9,7 +9,7 @@
 
     @copyright: 2008 MoinMoin:PawelPacana,
                 2008-2009 MoinMoin:ChristopherDenter
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import shutil, sys

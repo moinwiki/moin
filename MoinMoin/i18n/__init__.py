@@ -10,7 +10,7 @@ N_ == ngettext
 L_ == lazy_gettext
 
 @copyright: 2011 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from flask import current_app, request, flaskg

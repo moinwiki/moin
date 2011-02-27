@@ -4,7 +4,7 @@ MoinMoin.datastruct.backends.composite_dicts test
 
 @copyright: 2009 MoinMoin:DmitrijsMilajevs
             2008 MoinMoin: MelitaMihaljevic
-@license: GPL, see COPYING for details
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from py.test import raises
