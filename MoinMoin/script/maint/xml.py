@@ -1,5 +1,6 @@
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2009 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -17,60 +18,38 @@
 import sys, time
 
 from flask import flaskg
+from flask import current_app as app
+from flaskext.script import Command, Option
 
-from MoinMoin.script import MoinScript, fatal
-from MoinMoin.wsgiapp import init_unprotected_backends
+from MoinMoin.script import fatal
 
 from MoinMoin.storage.serialization import unserialize, serialize, \
                                            NLastRevs, SinceTime
 
+class XML(Command):
+    description = "This command can be used to save items to a file or to create items by loading from a file"
+    option_list = (
+        Option('--save', '-s', dest='save', action='store_true',
+            help='Save (serialize) storage contents to a xml file.'),
+        Option('--load', '-l', dest='load', action='store_true',
+            help='Load (unserialize) storage contents from a xml file.'),
+        Option('--file', '-f', dest='xml_file', type=unicode,
+            help='Filename of xml file to use [Default: use stdin/stdout].'),
+        Option('--nrevs', dest='nrevs', type=int, default=0,
+            help='Serialize only the last n revisions of each item [Default: all everything].'),
+        Option('--exceptnrevs', dest='exceptnrevs', type=int, default=0,
+            help='Serialize everything except the last n revisions of each item [Default: everything].'),
+        Option('--ndays', dest='ndays', type=int, default=0,
+            help='Serialize only the last n days of each item [Default: everything].'),
+        Option('--exceptndays', dest='exceptndays', type=int, default=0,
+            help='Serialize everything except the last n days of each item [Default: everything].'),
+        Option('--nhours', dest='nhours', type=int, default=0,
+            help='Serialize only the last n hours of each item [Default: everything].'),
+        Option('--exceptnhours', dest='exceptnhours', type=int, default=0,
+            help='Serialize everything except the last n hours of each item [Default: everything].')
+    )
 
-class PluginScript(MoinScript):
-    """XML Load/Save Script"""
-    def __init__(self, argv, def_values):
-        MoinScript.__init__(self, argv, def_values)
-        self.parser.add_option(
-            "-s", "--save", dest="save", action="store_true",
-            help="Save (serialize) storage contents to a xml file."
-        )
-        self.parser.add_option(
-            "-l", "--load", dest="load", action="store_true",
-            help="Load (unserialize) storage contents from a xml file."
-        )
-        self.parser.add_option(
-            "-f", "--file", dest="xml_file", action="store", type="string",
-            help="Filename of xml file to use [Default: use stdin/stdout]."
-        )
-        self.parser.add_option(
-            "--nrevs", dest="nrevs", action="store", type="int", default=0,
-            help="Serialize only the last n revisions of each item [Default: all everything]."
-        )
-        self.parser.add_option(
-            "--exceptnrevs", dest="exceptnrevs", action="store", type="int", default=0,
-            help="Serialize everything except the last n revisions of each item [Default: everything]."
-        )
-        self.parser.add_option(
-            "--ndays", dest="ndays", action="store", type="int", default=0,
-            help="Serialize only the last n days of each item [Default: everything]."
-        )
-        self.parser.add_option(
-            "--exceptndays", dest="exceptndays", action="store", type="int", default=0,
-            help="Serialize everything except the last n days of each item [Default: everything]."
-        )
-        self.parser.add_option(
-            "--nhours", dest="nhours", action="store", type="int", default=0,
-            help="Serialize only the last n hours of each item [Default: everything]."
-        )
-        self.parser.add_option(
-            "--exceptnhours", dest="exceptnhours", action="store", type="int", default=0,
-            help="Serialize everything except the last n hours of each item [Default: everything]."
-        )
-
-    def mainloop(self):
-        load = self.options.load
-        save = self.options.save
-        xml_file = self.options.xml_file
-
+    def run(self, save, load, xml_file, nrevs, exceptnrevs, ndays, exceptndays, nhours, exceptnhours):
         if load == save: # either both True or both False
             fatal("You need to give either --load or --save!")
         if not xml_file:
@@ -79,15 +58,7 @@ class PluginScript(MoinScript):
             elif save:
                 xml_file = sys.stdout
 
-        self.init_request()
-        request = self.request
-        init_unprotected_backends(request)
-        storage = flaskg.unprotected_storage
-
-        ndays = self.options.ndays
-        exceptndays = self.options.exceptndays
-        nhours = self.options.nhours
-        exceptnhours = self.options.exceptnhours
+        storage = app.unprotected_storage
         now = time.time()
 
         sincetime = 0
@@ -103,9 +74,7 @@ class PluginScript(MoinScript):
             sincetime = now - exceptnhours * 3600
             sincetime_invert = True
 
-        nrevs = self.options.nrevs
         nrevs_invert = False
-        exceptnrevs = self.options.exceptnrevs
         if exceptnrevs:
             nrevs = exceptnrevs
             nrevs_invert = True
