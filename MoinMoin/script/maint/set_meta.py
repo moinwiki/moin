@@ -29,7 +29,7 @@ class Set_Meta(Command):
                help="The key you want to set/change in the new revision"),
         Option('--value', '-v', dest="text", type=unicode,
                help='The value to set for the given key.'),
-        Option('--remove', '-r', dest="remove", default=False,
+        Option('--remove', '-r', dest="remove", action='store_true', default=False,
                help='If you want to delete the key given, add this flag.'),
         Option('--pattern', '-p', dest="pattern", type=unicode, default='.*',
                help='Only perform the operation on items whose names match the pattern.')
