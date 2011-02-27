@@ -2,8 +2,8 @@
 """
 kvstore - a flexible key/value store using sqlalchemy
 
-@license: GPL v2 or later
-@copyright: Thomas Waldmann
+@copyright: 2010 by Thomas Waldmann
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from UserDict import DictMixin

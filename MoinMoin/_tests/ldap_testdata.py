@@ -1,3 +1,10 @@
+"""
+    MoinMoin - LDAP test data
+
+    @copyright: 2008 MoinMoin:ThomasWaldmann
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+"""
+
 BASEDN = "ou=testing,dc=example,dc=org"
 ROOTDN = "cn=root,%s" % BASEDN
 ROOTPW = "secret"

@@ -13,8 +13,9 @@ As we forked send_file, we later modified it (without trying to stay
 compatible), because we can easily adapt anyway and the code can be much
 simpler without compatibility code.
 
-This code is under same license as flask.
-Modifications were done by Thomas Waldmann.
+@copyright: 2010 by Armin Ronacher (initial implementation),
+            2011 by MoinMoin:ThomasWaldmann (modifications)
+@license: BSD (see license of flask)
 """
 
 import os

@@ -1,4 +1,3 @@
-
 """
 MoinMoin.datastruct.backends.composite_groups test
 
