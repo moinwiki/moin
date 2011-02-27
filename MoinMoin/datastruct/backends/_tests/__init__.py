@@ -1,13 +1,13 @@
+# Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
+# Copyright: 2007 by MoinMoin:ThomasWaldmann
+# Copyright: 2008 by MoinMoin:MelitaMihaljevic
+# Copyright: 2009 by MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.datastruct.backends base test classes.
-
-    @copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
-                2007 by MoinMoin:ThomasWaldmann
-                2008 by MoinMoin:MelitaMihaljevic
-                2009 by MoinMoin:DmitrijsMilajevs
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
-
 """
+
 
 from py.test import raises
 

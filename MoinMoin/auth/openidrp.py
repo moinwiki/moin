@@ -1,11 +1,12 @@
+# Copyright: 2010 MoinMoin:Nichita Utiu
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - OpenID authentication
 
     This code handles login requests for openid multistage authentication.
-
-    @copyright: 2010 MoinMoin:Nichita Utiu
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

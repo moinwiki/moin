@@ -1,12 +1,13 @@
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - logging auth plugin
 
     This does nothing except logging the auth parameters (the password is NOT
     logged, of course).
-
-    @copyright: 2006-2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

@@ -1,13 +1,14 @@
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2008 MoinMoin:AlexanderSchremmer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Test - MemoryBackend
 
     This defines tests for the MemoryBackend.
-
-    @copyright: 2008 MoinMoin:ChristopherDenter,
-                2008 MoinMoin:JohannesBerg,
-                2008 MoinMoin:AlexanderSchremmer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.memory import MemoryBackend, TracingBackend

@@ -1,3 +1,6 @@
+# Copyright: 2007 by MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Text CAPTCHAs
 
@@ -14,10 +17,8 @@
      * make sure a q/a pair in the POST is for the q in the GET before
     * make some nice CSS
     * make similar changes to GUI editor
-
-    @copyright: 2007 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 import random

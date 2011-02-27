@@ -1,9 +1,10 @@
+# Copyright: 2010 Thomas Waldmann, Jason Kirtland, Scott Wilson
+# License: see flatland license
+
 """
     MoinMoin - form helpers for flatland / jinja2
-
-    @copyright: 2010 Thomas Waldmann, Jason Kirtland, Scott Wilson
-    @license: see flatland license
 """
+
 
 from jinja2 import Markup
 

@@ -1,3 +1,8 @@
+# Copyright: 2005 MoinMoin:NirSoffer
+# Copyright: 2007 MoinMoin:AlexanderSchremmer
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin Testing Framework
 --------------------------
@@ -8,12 +13,8 @@ test_package_module.
 
 Tests that require a certain configuration, like section_numbers = 1, must
 use a Config class to define the required configuration within the test class.
-
-@copyright: 2005 MoinMoin:NirSoffer,
-            2007 MoinMoin:AlexanderSchremmer,
-            2008 MoinMoin:ThomasWaldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 # exclude some directories from py.test test discovery, pathes relative to this file
 collect_ignore = ['static',  # same

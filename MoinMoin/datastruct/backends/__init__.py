@@ -1,9 +1,10 @@
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - base classes for datastructs.
-
-@copyright: 2009 MoinMoin:DmitrijsMilajevs
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from UserDict import DictMixin
 

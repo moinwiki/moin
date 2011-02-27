@@ -1,3 +1,8 @@
+# Copyright: 2007 MoinMoin:RadomirDopieralski (creole 0.5 implementation)
+# Copyright: 2007 MoinMoin:ThomasWaldmann (updates)
+# Copyright: 2008-2010 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Creole input converter
 
@@ -14,12 +19,8 @@
     * We do not allow ":" before "//" italic markup to avoid urls with
       unrecognized schemes (like wtf://server/path) triggering italic rendering
       for the rest of the paragraph.
-
-    @copyright: 2007 MoinMoin:RadomirDopieralski (creole 0.5 implementation),
-                2007 MoinMoin:ThomasWaldmann (updates)
-                2008-2010 MoinMoin:BastianBlank
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

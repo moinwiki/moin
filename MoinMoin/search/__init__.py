@@ -1,13 +1,14 @@
+# Copyright: 2005 MoinMoin:FlorianFesti
+# Copyright: 2005 MoinMoin:NirSoffer
+# Copyright: 2005 MoinMoin:AlexanderSchremmer
+# Copyright: 2006 MoinMoin:ThomasWaldmann
+# Copyright: 2006 MoinMoin:FranzPletz
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - search engine
-
-    @copyright: 2005 MoinMoin:FlorianFesti,
-                2005 MoinMoin:NirSoffer,
-                2005 MoinMoin:AlexanderSchremmer,
-                2006 MoinMoin:ThomasWaldmann,
-                2006 MoinMoin:FranzPletz
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

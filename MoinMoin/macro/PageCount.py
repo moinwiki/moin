@@ -1,10 +1,11 @@
+# Copyright: 2007 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     Outputs the page count of the wiki.
-
-    @copyright: 2007 MoinMoin:ThomasWaldmann
-    @copyright: 2008 MoinMoin:BastianBlank
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.macro._base import MacroInlineBase
 

@@ -1,11 +1,12 @@
+# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:RadomirDopieralski
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Theme Support
-
-    @copyright: 2003-2010 MoinMoin:ThomasWaldmann,
-                2008 MoinMoin:RadomirDopieralski,
-                2010 MoinMoin:DiogenesAugusto
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os
 import urllib

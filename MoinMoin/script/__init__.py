@@ -1,10 +1,11 @@
+# Copyright: 2000-2002 Juergen Hermann <jh@web.de>
+# Copyright: 2006 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Extension Script Package
-
-    @copyright: 2000-2002 Juergen Hermann <jh@web.de>,
-                2006 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, sys, time
 from StringIO import StringIO

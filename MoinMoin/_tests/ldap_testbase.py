@@ -1,3 +1,6 @@
+# Copyright: 2008 by Thomas Waldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     LDAPTestBase: LDAP testing support for py.test based unit tests
 
@@ -30,10 +33,8 @@
     so you need to disable apparmor by invoking this as root:
 
     # /etc/init.d/apparmor stop
-
-    @copyright: 2008 by Thomas Waldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 SLAPD_EXECUTABLE = 'slapd'  # filename of LDAP server executable - if it is not
                             # in your PATH, you have to give full path/filename.

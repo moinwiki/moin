@@ -1,10 +1,11 @@
+# Copyright: Yusuke Shinyama (author)
+# Copyright: Johannes Berg (coding style fixes and tcdb removal)
+# License: Public Domain
+
 """
 pycdb.py - Python implementation of cdb
-
-@copyright: Yusuke Shinyama (author),
-            Johannes Berg (coding style fixes and tcdb removal)
-@license: Public Domain
 """
+
 
 import os
 from struct import pack, unpack

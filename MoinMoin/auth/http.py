@@ -1,3 +1,6 @@
+# Copyright: 2009 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - http authentication
 
@@ -13,10 +16,8 @@
     auth = [HTTPAuthMoin()]
     # check if you want 'http' auth name in there:
     auth_methods_trusted = ['http', ]
-
-    @copyright: 2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

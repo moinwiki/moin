@@ -1,9 +1,10 @@
+# Copyright: 2007 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.converter.link
-
-@copyright: 2007 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 

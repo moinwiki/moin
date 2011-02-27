@@ -1,13 +1,14 @@
+# Copyright: 2005 by Thomas Waldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - make a test wiki
 
 Usage:
 
     maketestwiki.py
-
-@copyright: 2005 by Thomas Waldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, sys, shutil, errno
 import tarfile

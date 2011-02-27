@@ -1,12 +1,13 @@
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2011 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Reduce Revisions of a backend
 
     This script removes all revisions but the last one from all selected items.
-
-    @copyright: 2009 MoinMoin:ChristopherDenter,
-                2011 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 from flask import current_app as app

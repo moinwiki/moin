@@ -1,3 +1,8 @@
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Backends - Storage API Definition.
 
@@ -31,12 +36,8 @@
     that holds the revision), thus making it a StoredRevision.
     Item metadata, on the other hand, as infrequently used as it may be, is mutable.
     Hence, it can only be modified under a read lock.
-
-    @copyright: 2008 MoinMoin:ChristopherDenter,
-                2008 MoinMoin:JohannesBerg,
-                2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os
 import sys

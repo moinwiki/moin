@@ -1,11 +1,12 @@
+# Copyright: 2005-2007 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - LogFile package
 
     This module supports buffered log reads, iterating forward and backward line-by-line, etc.
-
-    @copyright: 2005-2007 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

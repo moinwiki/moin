@@ -1,9 +1,10 @@
+# Copyright: 2009 by MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.backends.config_dicts tests
-
-    @copyright: 2009 by MoinMoin:DmitrijsMilajevs
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from  MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct import ConfigDicts

@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Backend for moin 1.9 compatible filesystem data storage.
 
@@ -8,11 +12,8 @@
 
     Note: we do not support emulation of trashbin-like deletion, you have to
           choose a deleted_mode (see below) when creating a FSPageBackend.
-
-    @copyright: 2008 MoinMoin:JohannesBerg,
-                2008-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os
 from StringIO import StringIO

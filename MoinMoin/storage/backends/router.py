@@ -1,3 +1,7 @@
+# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - routing backend
 
@@ -8,11 +12,8 @@
     a MercurialBackend and similarly tmp/<youritemnamehere> is for
     temporary items in a MemoryBackend() that are discarded when the
     process terminates.
-
-    @copyright: 2008-2010 MoinMoin:ThomasWaldmann,
-                2009 MoinMoin:ChristopherDenter
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 

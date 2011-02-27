@@ -1,9 +1,10 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - basic tests for feeds
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 class TestFeeds(object):
     def test_global_atom(self):

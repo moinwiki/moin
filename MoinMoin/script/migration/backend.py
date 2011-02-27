@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:PawelPacana
+# Copyright: 2008-2009 MoinMoin:ChristopherDenter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - backend migration script
 
@@ -6,11 +10,8 @@
     Assumptions:
     - defined namespace_mapping in wikiconfig (Contains destination backends.)
     - defined old_instance_path in wikiconfig (may be removed after conversion)
-
-    @copyright: 2008 MoinMoin:PawelPacana,
-                2008-2009 MoinMoin:ChristopherDenter
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import shutil, sys
 from os.path import join

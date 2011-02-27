@@ -1,9 +1,10 @@
+# Copyright: 2006-2011 The MoinMoin development team
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Edit Locking
-
-    @copyright: 2006-2011 The MoinMoin development team
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 EDIT_LOCK_TIMESTAMP = "edit_lock_timestamp"
 EDIT_LOCK_ADDR = "edit_lock_addr"

@@ -1,3 +1,6 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Indexing Mixin Classes
 
@@ -13,10 +16,8 @@
     The wiki item name is contained in the item revision's metadata.
     If you rename an item, this is done by creating a new revision with a different
     (new) name in its revision metadata.
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os
 import time, datetime

@@ -1,13 +1,14 @@
+# Copyright: 2005 MoinMoin:FlorianFesti
+# Copyright: 2005 MoinMoin:NirSoffer
+# Copyright: 2005 MoinMoin:AlexanderSchremmer
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2006 MoinMoin:FranzPletz
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - search query parser
-
-    @copyright: 2005 MoinMoin:FlorianFesti,
-                2005 MoinMoin:NirSoffer,
-                2005 MoinMoin:AlexanderSchremmer,
-                2006-2008 MoinMoin:ThomasWaldmann,
-                2006 MoinMoin:FranzPletz
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 

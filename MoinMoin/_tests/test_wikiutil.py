@@ -1,10 +1,11 @@
+# Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
+# Copyright: 2007 by MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.wikiutil Tests
-
-    @copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
-                2007 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py
 

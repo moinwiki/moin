@@ -1,10 +1,11 @@
+# Copyright: 2000-2006 by Juergen Hermann <jh@web.de>
+# Copyright: 2002-2011 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - a wiki engine in Python.
-
-@copyright: 2000-2006 by Juergen Hermann <jh@web.de>,
-            2002-2011 MoinMoin:ThomasWaldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os
 import sys

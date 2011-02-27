@@ -1,3 +1,7 @@
+# Copyright: 2010 by Armin Ronacher (initial implementation)
+# Copyright: 2011 by MoinMoin:ThomasWaldmann (modifications)
+# License: BSD (see license of flask)
+
 """
 A better send_file
 ------------------
@@ -12,11 +16,8 @@ described in the bug report.
 As we forked send_file, we later modified it (without trying to stay
 compatible), because we can easily adapt anyway and the code can be much
 simpler without compatibility code.
-
-@copyright: 2010 by Armin Ronacher (initial implementation),
-            2011 by MoinMoin:ThomasWaldmann (modifications)
-@license: BSD (see license of flask)
 """
+
 
 import os
 import mimetypes

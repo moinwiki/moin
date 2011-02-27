@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+# Copyright: 2006 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - "moin" is the main script command and calls other stuff as
     a sub-command.
 
     Usage: moin cmdmodule cmdname [options]
-
-    @copyright: 2006 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 def run():
     from MoinMoin.script import MoinScript

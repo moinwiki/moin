@@ -1,12 +1,13 @@
+# Copyright: 2008 MoinMoin:PawelPacana
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MercurialBackend tests
 
     Testcases for MercurialBackend based on stable version
     of Mercurial.
-
-    @copyright: 2008 MoinMoin:PawelPacana
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from tempfile import mkdtemp, mkstemp, gettempdir
 import shutil
 import os

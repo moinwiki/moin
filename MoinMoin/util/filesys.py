@@ -1,10 +1,11 @@
+# Copyright: 2002 Juergen Hermann <jh@web.de>
+# Copyright: 2006-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - File System Utilities
-
-    @copyright: 2002 Juergen Hermann <jh@web.de>,
-                2006-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import sys, os, shutil, time, errno
 from stat import S_ISDIR, ST_MODE, S_IMODE

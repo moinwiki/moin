@@ -1,11 +1,12 @@
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - config dict backend
 
 The config group backend enables you to define dicts in a configuration file.
-
-@copyright: 2009 MoinMoin:DmitrijsMilajevs
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 

@@ -1,14 +1,15 @@
+# Copyright: 2000-2006 by Juergen Hermann <jh@web.de>
+# Copyright: 2002-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2008 MoinMoin:FlorianKrupicka
+# Copyright: 2010 MoinMoin:DiogenesAugusto
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - wsgi application setup and related code
 
 Use create_app(config) to create the WSGI application (using Flask).
-
-@copyright: 2000-2006 by Juergen Hermann <jh@web.de>,
-            2002-2011 MoinMoin:ThomasWaldmann,
-            2008 MoinMoin:FlorianKrupicka,
-            2010 MoinMoin:DiogenesAugusto
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 import os
 
 # do this early, but not in MoinMoin/__init__.py because we need to be able to

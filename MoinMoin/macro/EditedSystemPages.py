@@ -1,10 +1,11 @@
+# Copyright: 2004 Nir Soffer <nirs@freeshell.org>
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     EditedSystemPages - list system pages that has been edited in this wiki.
-
-    @copyright: 2004 Nir Soffer <nirs@freeshell.org>,
-                2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 

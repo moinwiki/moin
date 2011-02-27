@@ -1,14 +1,15 @@
+# Copyright: 2000-2004 Juergen Hermann <jh@web.de>
+# Copyright: 2004 by Florian Festi
+# Copyright: 2006 by Mikko Virkkil
+# Copyright: 2005-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2007 MoinMoin:ReimarBauer
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - plugin loader
-
-    @copyright: 2000-2004 Juergen Hermann <jh@web.de>,
-                2004 by Florian Festi,
-                2006 by Mikko Virkkil,
-                2005-2010 MoinMoin:ThomasWaldmann,
-                2007 MoinMoin:ReimarBauer,
-                2008 MoinMoin:ChristopherDenter
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, sys
 import imp

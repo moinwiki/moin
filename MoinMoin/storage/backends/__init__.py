@@ -1,14 +1,15 @@
+# Copyright: 2007 MoinMoin:HeinrichWendel
+# Copyright: 2008 MoinMoin:PawelPacana
+# Copyright: 2009 MoinMoin:ChristopherDenter
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Backends
 
     This package contains code for the backends of the new storage layer.
-
-    @copyright: 2007 MoinMoin:HeinrichWendel,
-                2008 MoinMoin:PawelPacana,
-                2009 MoinMoin:ChristopherDenter,
-                2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 

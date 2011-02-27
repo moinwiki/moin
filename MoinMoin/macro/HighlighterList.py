@@ -1,14 +1,15 @@
+# Copyright: 2009 MoinMoin:EugeneSyromyatnikov
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - HighlighterList Macro
 
     A simple macro for displaying a table with list of available Pygments lexers.
 
     Usage: <<HighlighterList>>
-
-    @copyright: 2009 MoinMoin:EugeneSyromyatnikov,
-                2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import pygments.lexers
 

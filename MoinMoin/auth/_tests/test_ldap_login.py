@@ -1,11 +1,11 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2010 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.auth.ldap Tests
-
-    @copyright: 2008 MoinMoin:ThomasWaldmann,
-                2010 MoinMoin:ReimarBauer
-
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 

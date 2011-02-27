@@ -1,12 +1,13 @@
+# Copyright: 2003-2007 MoinMoin:ThomasWaldmann
+# Copyright: 2003 by Gustavo Niemeyer
+# Copyright: 2009 MoinMoin:DmitrijsMilajevs
+# Copyright: 2010 MoinMoin:ReimarBauer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - WikiDict functions.
-
-    @copyright: 2003-2007 MoinMoin:ThomasWaldmann,
-                2003 by Gustavo Niemeyer,
-                2009 MoinMoin:DmitrijsMilajevs,
-                2010 MoinMoin:ReimarBauer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 from MoinMoin.items import SOMEDICT

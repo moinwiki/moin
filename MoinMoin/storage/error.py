@@ -1,11 +1,12 @@
+# Copyright: 2007 MoinMoin:HeinrichWendel
+# Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2009 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin storage errors
-
-    @copyright: 2007 MoinMoin:HeinrichWendel,
-                2008 MoinMoin:ChristopherDenter,
-                2009 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.error import CompositeError

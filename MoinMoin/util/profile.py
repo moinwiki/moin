@@ -1,3 +1,6 @@
+# Copyright: 2004 Nir Soffer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """ profile - moin profiling utilities
 
 This module provides profilers used to profile the memory usage of a
@@ -32,10 +35,8 @@ You can customize the profiler when you create it:
    real world memory usage of the application.
 
 Based on code by Oliver Graf
-
-@copyright: 2004 Nir Soffer
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, time, gc
 

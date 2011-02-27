@@ -1,3 +1,6 @@
+# Copyright: 2008 MoinMoin:JohannesBerg
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - search expression object representation
 
@@ -19,10 +22,8 @@
 
     TODO: Should we write some generic code for picking apart expressions
           like that?
-
-    @copyright: 2008 MoinMoin:JohannesBerg
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import re
 

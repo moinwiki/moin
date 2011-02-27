@@ -1,3 +1,7 @@
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2006 Nick Phillips
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - LDAP / Active Directory authentication
 
@@ -11,11 +15,8 @@
     support in libldap2 (see dependency on gnutls) and also in python-ldap.
 
     TODO: allow more configuration (alias name, ...) by using callables as parameters
-
-    @copyright: 2006-2008 MoinMoin:ThomasWaldmann,
-                2006 Nick Phillips
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 

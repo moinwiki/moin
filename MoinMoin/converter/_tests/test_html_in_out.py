@@ -1,12 +1,13 @@
+# Copyright: 2010 MoinMoin:ValentinJaniaut
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.converter.html_in and
            MoinMoin.converter.html_out.
 
            It will check that roundtrip conversion is working well.
-
-@copyright: 2010 MoinMoin:ValentinJaniaut
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import StringIO
 import re

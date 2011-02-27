@@ -1,3 +1,11 @@
+# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2000-2004 Juergen Hermann <jh@web.de>
+# Copyright: 2003 Gustavo Niemeyer
+# Copyright: 2005 Oliver Graf
+# Copyright: 2007 Alexander Schremmer
+# Copyright: 2009 Christopher Denter
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - ACL Middleware
 
@@ -31,15 +39,8 @@
     be wrapped itself, as is the case when items or revisions are returned.
 
     All wrapped classes must, of course, adhere to the normal storage API.
-
-    @copyright: 2003-2010 MoinMoin:ThomasWaldmann,
-                2000-2004 Juergen Hermann <jh@web.de>,
-                2003 Gustavo Niemeyer,
-                2005 Oliver Graf,
-                2007 Alexander Schremmer,
-                2009 Christopher Denter
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from UserDict import DictMixin
 

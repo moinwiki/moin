@@ -1,9 +1,10 @@
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - helpers for flatfile meta/data stores
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 
 def split_body(body):

@@ -1,12 +1,13 @@
+# Copyright: 2005 by Nir Soffer <nirs@freeshell.org>
+# Copyright: 2007-2010 by MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MoinMoin.search Tests
 
     We exclude underlay/system pages for some search tests to save time.
-
-    @copyright: 2005 by Nir Soffer <nirs@freeshell.org>,
-                2007-2010 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 
 import os, StringIO, time

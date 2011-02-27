@@ -1,3 +1,9 @@
+# Copyright: Docutils:David Goodger <goodger@python.org>
+# Copyright: 2004 Matthew Gilbert <gilbert AT voxmea DOT net>
+# Copyright: 2004 Alexander Schremmer <alex AT alexanderweb DOT de>
+# Copyright: 2010 MoinMoin:DmitryAndreev
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - ReStructured Text input converter
 
@@ -6,13 +12,8 @@ Conversion of docutils document tree to moinmoin document tree.
 
 This converter based on ReStructuredText 2006-09-22.
 Works with docutils version 0.5 (2008-06-25) or higher.
-
-@copyright: Docutils:David Goodger <goodger@python.org>
-            2004 Matthew Gilbert <gilbert AT voxmea DOT net>,
-            2004 Alexander Schremmer <alex AT alexanderweb DOT de>
-            2010 MoinMoin:DmitryAndreev
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 

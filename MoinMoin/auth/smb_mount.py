@@ -1,14 +1,15 @@
+# Copyright: 2006-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2007 MoinMoin:JohannesBerg
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - auth plugin for (un)mounting a smb share
 
     (u)mount a SMB server's share for username (using username/password for
     authentication at the SMB server). This can be used if you need access
     to files on some share via the wiki, but needs more code to be useful.
-
-    @copyright: 2006-2008 MoinMoin:ThomasWaldmann
-                2007 MoinMoin:JohannesBerg
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

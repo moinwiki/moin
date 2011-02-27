@@ -1,3 +1,10 @@
+# Copyright: 2000-2004 Juergen Hermann <jh@web.de>
+# Copyright: 2003-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2003 Gustavo Niemeyer
+# Copyright: 2005 Oliver Graf
+# Copyright: 2007 Alexander Schremmer
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Wiki Security Interface and Access Control Lists
 
@@ -9,14 +16,8 @@
 
     Then assign your new class to "SecurityPolicy" in wikiconfig;
     and I mean the class, not an instance of it!
-
-    @copyright: 2000-2004 Juergen Hermann <jh@web.de>,
-                2003-2008 MoinMoin:ThomasWaldmann,
-                2003 Gustavo Niemeyer,
-                2005 Oliver Graf,
-                2007 Alexander Schremmer
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import current_app as app
 

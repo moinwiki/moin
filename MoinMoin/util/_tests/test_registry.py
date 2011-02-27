@@ -1,9 +1,10 @@
+# Copyright: 2008,2009 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for MoinMoin.util.registry
-
-@copyright: 2008,2009 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 

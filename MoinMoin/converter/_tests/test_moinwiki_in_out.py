@@ -1,12 +1,13 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:DmitryAndreev
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Tests for moinwiki->DOM->moinwiki using moinwiki_in and moinwiki_out converters
 
 It is merege of test_moinwiki_in and test_moinwiki_out, looks bad but works.
-
-@copyright: 2008 MoinMoin:BastianBlank
-            2010 MoinMoin:DmitryAndreev
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import py.test
 import re

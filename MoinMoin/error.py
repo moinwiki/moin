@@ -1,10 +1,11 @@
+# Copyright: 2004-2005 Nir Soffer <nirs@freeshell.org>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """ MoinMoin errors
 
     Supply Error class and sub classes used to raise various errors
-
-    @copyright: 2004-2005 Nir Soffer <nirs@freeshell.org>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import sys
 

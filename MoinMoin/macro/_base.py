@@ -1,9 +1,10 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Macro base class
-
-@copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from MoinMoin.util import iri
 from MoinMoin.util.tree import moin_page, xlink

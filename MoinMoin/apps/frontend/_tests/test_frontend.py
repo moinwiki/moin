@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - basic tests for frontend
-
-    @copyright: 2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 from MoinMoin.apps.frontend import views
 from werkzeug import ImmutableMultiDict
 from flask import flaskg

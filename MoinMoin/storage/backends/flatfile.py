@@ -1,3 +1,7 @@
+# Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - flat file backend
 
@@ -14,11 +18,8 @@
 
     The backend _does_ store some revision metadata, namely that which
     used to traditionally be part of the page header.
-
-    @copyright: 2008 MoinMoin:JohannesBerg,
-                2009-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import os, re, errno
 from cStringIO import StringIO

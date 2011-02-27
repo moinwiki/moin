@@ -1,10 +1,11 @@
+# Copyright: 2001-2003 Juergen Hermann <jh@web.de>
+# Copyright: 2003-2006 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - Clock
-
-    @copyright: 2001-2003 Juergen Hermann <jh@web.de>,
-                2003-2006 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 import time
 from MoinMoin import log

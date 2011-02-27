@@ -1,10 +1,11 @@
+# Copyright: 2008 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - MailTo Macro displays an E-Mail address (either a valid mailto:
     link for logged in users or an obfuscated display as given as the macro argument.
-
-    @copyright: 2008 MoinMoin:ThomasWaldmann
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from flask import flaskg
 

@@ -1,12 +1,13 @@
+# Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2010 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
 MoinMoin - Include handling
 
 Expands include elements in a internal Moin document.
-
-@copyright: 2008 MoinMoin:BastianBlank,
-            2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
+
 
 from __future__ import absolute_import
 
