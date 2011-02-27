@@ -6,7 +6,7 @@
                 2005-2010 MoinMoin:ThomasWaldmann,
                 2008      MoinMoin:JohannesBerg,
                 2010      MoinMoin:DiogenesAugusto
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import re

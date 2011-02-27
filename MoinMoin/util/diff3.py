@@ -2,7 +2,7 @@
     MoinMoin - diff3 algorithm
 
     @copyright: 2002 Florian Festi
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 default_markers = ('<<<<<<<<<<<<<<<<<<<<<<<<<\n',

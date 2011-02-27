@@ -11,7 +11,7 @@ Works with docutils version 0.5 (2008-06-25) or higher.
             2004 Matthew Gilbert <gilbert AT voxmea DOT net>,
             2004 Alexander Schremmer <alex AT alexanderweb DOT de>
             2010 MoinMoin:DmitryAndreev
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from __future__ import absolute_import

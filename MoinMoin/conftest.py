@@ -12,7 +12,7 @@ use a Config class to define the required configuration within the test class.
 @copyright: 2005 MoinMoin:NirSoffer,
             2007 MoinMoin:AlexanderSchremmer,
             2008 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 # exclude some directories from py.test test discovery, pathes relative to this file

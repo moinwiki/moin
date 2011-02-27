@@ -3,7 +3,7 @@
 
     @copyright: 2002 Juergen Hermann <jh@web.de>,
                 2002 Scott Moonen <smoonen@andstuff.org>
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import difflib

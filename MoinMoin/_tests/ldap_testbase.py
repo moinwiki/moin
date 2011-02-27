@@ -32,7 +32,7 @@
     # /etc/init.d/apparmor stop
 
     @copyright: 2008 by Thomas Waldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 SLAPD_EXECUTABLE = 'slapd'  # filename of LDAP server executable - if it is not

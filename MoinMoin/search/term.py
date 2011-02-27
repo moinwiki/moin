@@ -21,7 +21,7 @@
           like that?
 
     @copyright: 2008 MoinMoin:JohannesBerg
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import re

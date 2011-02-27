@@ -2,7 +2,7 @@
 MoinMoin - Macro base class
 
 @copyright: 2008 MoinMoin:BastianBlank
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.util import iri

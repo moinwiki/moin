@@ -11,7 +11,7 @@ HelpOnConfiguration.
 @copyright: 2008 MoinMoin:ThomasWaldmann,
             2009 MoinMoin:DmitrijsMilajevs,
             2010 MoinMoin:ReimarBauer
-@license: GPL, see COPYING for details
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 from flask import flaskg
 from MoinMoin.items import USERGROUP

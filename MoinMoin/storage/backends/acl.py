@@ -38,7 +38,7 @@
                 2005 Oliver Graf,
                 2007 Alexander Schremmer,
                 2009 Christopher Denter
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from UserDict import DictMixin

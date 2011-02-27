@@ -4,7 +4,7 @@
     This code handles login requests for openid multistage authentication.
 
     @copyright: 2010 MoinMoin:Nichita Utiu
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin import log

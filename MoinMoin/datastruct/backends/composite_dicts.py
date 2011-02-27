@@ -2,7 +2,7 @@
 MoinMoin - dict access via various backends.
 
 @copyright: 2009 DmitrijsMilajevs
-@license: GPL, see COPYING for details
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.datastruct.backends import BaseDictsBackend, DictDoesNotExistError

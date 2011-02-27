@@ -6,7 +6,7 @@
     @copyright: 2003-2010 MoinMoin:ThomasWaldmann,
                 2008 MoinMoin:FlorianKrupicka,
                 2010 MoinMoin:DiogenesAugusto
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import re
@@ -1363,7 +1363,7 @@ def similar_names(item_name):
 
     @copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>,
                 2001 Juergen Hermann <jh@web.de>
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
     """
     start, end, matches = findMatches(item_name)
     keys = matches.keys()

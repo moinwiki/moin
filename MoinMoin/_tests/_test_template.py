@@ -6,7 +6,7 @@
     @copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
                 2007 MoinMoin:AlexanderSchremmer
                 2009 MoinMoin:ReimarBauer
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 # include here the module that you want to test:

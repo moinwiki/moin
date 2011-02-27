@@ -5,7 +5,7 @@ MoinMoin - Moin Wiki 1.9 input converter
             2006-2008 MoinMoin:ThomasWaldmann,
             2007 MoinMoin:ReimarBauer,
             2008-2010 MoinMoin:BastianBlank
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from __future__ import absolute_import

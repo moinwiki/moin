@@ -4,7 +4,7 @@
     @copyright: 2003-2004 by Juergen Hermann <jh@web.de>,
                 2007 by MoinMoin:ReimarBauer,
                 2007,2009 by MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import py

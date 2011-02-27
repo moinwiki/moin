@@ -6,7 +6,7 @@
     @copyright: 2008 MoinMoin:ChristopherDenter,
                 2008 MoinMoin:JohannesBerg,
                 2008 MoinMoin:AlexanderSchremmer
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.storage._tests.test_backends import BackendTest

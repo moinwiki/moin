@@ -17,7 +17,7 @@
           If you'ld like to work on it, pull it from repo history.
 
     @copyright: 2008 MoinMoin:PawelPacana
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 from __future__ import with_statement
 

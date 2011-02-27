@@ -5,7 +5,7 @@ The config_groups backend enables one to define groups and their
 members in a configuration file.
 
 @copyright: 2009 MoinMoin:DmitrijsMilajevs
-@license: GPL, see COPYING for details
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError

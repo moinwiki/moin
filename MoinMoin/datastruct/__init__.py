@@ -2,7 +2,7 @@
 MoinMoin - datastruct (groups and dicts) support.
 
 @copyright: 2009 MoinMoin:DmitrijsMilajevs
-@license: GPL, see COPYING for details
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.datastruct.backends.wiki_dicts import WikiDicts

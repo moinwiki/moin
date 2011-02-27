@@ -5,7 +5,7 @@
     fixed to not confuse it with the xapian.org "xapian" module.
 
     @copyright: 2006 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from MoinMoin.util import pysupport

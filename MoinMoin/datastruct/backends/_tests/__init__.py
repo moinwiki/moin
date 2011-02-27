@@ -5,7 +5,7 @@
                 2007 by MoinMoin:ThomasWaldmann
                 2008 by MoinMoin:MelitaMihaljevic
                 2009 by MoinMoin:DmitrijsMilajevs
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
 

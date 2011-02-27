@@ -3,7 +3,7 @@ MoinMoin - disable a user account
 
 @copyright: 2006 MoinMoin:ThomasWaldmann,
             2011 MoinMoin:ReimarBauer
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from flask import flaskg

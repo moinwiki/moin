@@ -2,7 +2,7 @@
     MoinMoin - Supporting function for Python magic
 
     @copyright: 2002 Juergen Hermann <jh@web.de>
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 #############################################################################

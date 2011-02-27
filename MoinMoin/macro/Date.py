@@ -3,7 +3,7 @@
     adapted to the TZ settings of the user viewing the content.
 
     @copyright: 2008-2010 MoinMoin:ThomasWaldmann
-    @license: GNU GPL, see COPYING for details
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 import time

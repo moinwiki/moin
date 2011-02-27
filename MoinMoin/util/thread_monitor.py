@@ -6,7 +6,7 @@
     by calling trigger_dump().
 
     @copyright: 2006 Alexander Schremmer <alex AT alexanderweb DOT de>
-    @license: GNU GPL Version 2
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 

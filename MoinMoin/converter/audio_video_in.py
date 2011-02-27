@@ -6,7 +6,7 @@ Convert audio/video to <object> tag for the DOM Tree.
 Note: currently this is quite same as image_in.
 
 @copyright: 2010 MoinMoin:ThomasWaldmann
-@license: GNU GPL, see COPYING for details.
+@license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from emeraldtree import ElementTree as ET

@@ -5,7 +5,7 @@
                 2003 by Gustavo Niemeyer,
                 2009 MoinMoin:DmitrijsMilajevs,
                 2010 MoinMoin:ReimarBauer
-    @license: GNU GPL, see COPYING for details.
+    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 
 from flask import flaskg
