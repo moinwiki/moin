@@ -1,0 +1,81 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block head_links %}
+    {{ super() }}
+    <link rel="alternate" title="{{ item_name }} changes" href="{{ url_for('feed.atom', item_name=item_name) }}" type="application/atom+xml" />
+    {# universal edit button support #}
+    {%- if user.may.write(item_name) and 'modify' not in cfg.actions_excluded -%}
+    <link rel="alternate" type="application/wiki" title="{{ _('Modify') }}" href="{{ url_for('frontend.modify_item', item_name=item_name) }}" />
+    {%- endif %}
+{% endblock %}
+
+{% import "editbar.html" as editbar with context %}
+
+{% block header_editbar %}
+    {{ editbar }}
+{% endblock %}
+
+{% macro rev_navigation(view='frontend.show_item') %}
+    <ul id="moin-rev-navigation">
+        <li class="moin-rev-navigation-older">
+        {% if rev.revno > 0 -%}
+            <a href="{{ url_for(view, rev=rev.revno-1, item_name=item_name) }}">&lt;-- {{ _('older') }}</a>
+        {%- else -%}
+            <span class="moin-disabled">{{ _('no older revision') }}</span>
+        {%- endif %}
+        </li>
+        <li class="moin-rev-navigation-current">rev {{ rev.revno }}</li>
+        <li class="moin-rev-navigation-newer">
+            {% if rev.revno < last_rev_no -%}
+                <a href="{{ url_for(view, rev=rev.revno+1, item_name=item_name) }}">{{ _('newer') }} --&gt;</a>
+            {%- else -%}
+                <span class="moin-disabled">{{ _('no newer revision') }}</span>
+            {%- endif %}
+        </li>
+    </ul>
+{% endmacro %}
+
+{% block content %}
+    {% if show_navigation %}
+        {% block rev_navigation %}
+            {{ rev_navigation(view='frontend.show_item') }}
+        {% endblock %}
+    {% endif %}
+    
+    {% if not rev %}
+    {{ _("This item exists, but it has no revisions.") }}
+    {% else %}
+    {% block headline %}
+    {# <h1>{{ rev.item.name }} {% if rev.revno != last_rev_no %}(Revision {{ rev.revno }}){% endif %}</h1> #}
+    {% endblock %}
+    {% block content_data %}
+    {% if data_rendered %}
+    <div id="moin-content-data">
+        {{ data_rendered }}
+    </div>
+    {% endif %}
+    {% endblock %}
+    {% endif %}
+{% endblock %}
+
+{% block footer_hr %}{% endblock %}
+
+{% block footer_editbar %}
+    {{ editbar }}
+{% endblock %}
+
+{% block footer_meta %}
+    {% if rev %}
+    <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
+        {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revno}}),
+        {{ _("modified") }} {{ rev.timestamp|datetimeformat }}
+        {{ _("by") }} {{ utils.editor_info(rev) }}{% if rev.tags %},
+        {{ _("tagged") }}
+        {% for tag in rev.tags -%}
+        <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+    {%- endif -%}.
+    </p>
+    {% endif %}
+{% endblock %}

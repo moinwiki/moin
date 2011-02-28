@@ -1,0 +1,12 @@
+{% extends theme("layout.html") %}
+
+{% block item %}
+    <h1>{{ _("Global Index") }}</h1>
+    {% if index %}
+        <ul>
+        {% for fullname, relname, mimetype in index %}
+            <li><a href="{{ url_for('show_item', item_name=fullname) }}">{{ relname }} ({{ mimetype }})</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
