@@ -71,7 +71,7 @@ class RegistryBase(object):
         """
         Unregister a factory
 
-        @param: factory: Factory to unregister
+        @param factory: Factory to unregister
         """
         old_entries = self._entries
         entries = [i for i in old_entries if not i.factory is factory]

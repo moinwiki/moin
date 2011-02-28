@@ -119,7 +119,7 @@ def builtinPlugins(kind):
 
 def wikiPlugins(kind, cfg):
     """
-    Gets a dict containing the names of all plugins of @kind
+    Gets a dict containing the names of all plugins of <kind>
     as the key and the containing module name as the value.
 
     @param kind: what kind of modules we look for

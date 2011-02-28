@@ -1,6 +1,8 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
+# Copyright: 2001 Juergen Hermann <jh@web.de>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -1361,10 +1363,6 @@ def _diff_raw(item, revno1, revno2):
 def similar_names(item_name):
     """
     list similar item names
-
-    @copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>,
-                2001 Juergen Hermann <jh@web.de>
-    @license: GNU GPL v2 (or any later version), see LICENSE.txt for details.
     """
     start, end, matches = findMatches(item_name)
     keys = matches.keys()
