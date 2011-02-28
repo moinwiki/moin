@@ -2,14 +2,9 @@
 Server options
 ==============
 
-There are basically 2 things needing configuration:
-
-* the web server (IP address, port, hostname, ...)
-* the MoinMoin wiki engine (how the wiki behaves)
-
 Builtin Web Server (easy)
 =========================
-Moin comes with some simple builtin web server (provided by werkzeug), which
+Moin comes with a simple builtin web server (provided by werkzeug), which
 is suitable for development, debugging, personal and small group wikis.
 
 It is not made for serving bigger loads, but it is easy to use.

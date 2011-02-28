@@ -40,7 +40,7 @@ Authorization
 =============
 * Access Control Lists (ACLs)
 
-  - global (per backend)
+  - global (per storage backend)
   - local (per wiki item)
   - give rights like:
 
@@ -67,7 +67,7 @@ Item Types
 * we store data of any type (text, images, audio, binary)
 * we separately store any metadata
 * everything is revisioned
-* all important metadata items are indexed
+* all important metadata is indexed
 
 Storage Backend Types
 ---------------------
@@ -104,7 +104,7 @@ Wiki features
 * Tags / Tag Cloud
 * Missing Items
 * Orphaned Items
-* What refers here?
+* "What refers here?" functionality
 * Sitemap
 * Macro support
 

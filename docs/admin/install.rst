@@ -9,7 +9,7 @@ it from the repository:
 
 Alternative 1 (using Mercurial DVCS)::
 
- $ hg clone http://hg.moinmo.in/moin/2.0 moin2
+ $ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
 
 Alternative 2:
 Visit http://hg.moinmo.in/moin/2.0 with your web browser, download the tgz
@@ -28,7 +28,7 @@ from your mercurial moin2 work dir::
 
  ./quickinstall  # for linux (or other posix OSes)
  # or
- quickinstall.cmd  # for windows
+ quickinstall.bat  # for windows
 
 This will use virtualenv to create a directory `env/` and create a virtual
 environment for moin there and then install moin2 including all dependencies
