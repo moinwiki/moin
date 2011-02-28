@@ -15,9 +15,9 @@ language doesn't exist yet`_.
 1. Make sure you have the latest version of the source tree (hg).
    You will also need to have python installed.
 
-2. Go to the top directory and execute
-   ::
-     python setup.py update_catalog -l <locale>
+2. Go to the top directory and execute::
+
+       python setup.py update_catalog -l <locale>
    
    where locale is the short language descriptor of your desired
    language. It should be the name of a folder in MoinMoin/translations.
@@ -58,9 +58,9 @@ language doesn't exist yet`_.
      
      
 
-4. Save the messages.po file and execute
-   ::
-     python setup.py compile_catalog -l <locale>
+4. Save the messages.po file and execute::
+
+       python setup.py compile_catalog -l <locale>
 
 
 Guidelines for translators
@@ -82,9 +82,9 @@ the developers, but ...
   1 translation and it needs to be German because that is what many
   moin developers can maintain themselves.
 
-1. Initialize a new catalog:
-   ::
-     python setup.py init_catalog -l <locale>
+1. Initialize a new catalog::
+
+       python setup.py init_catalog -l <locale>
    
 2. Adjust the ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po`` .
 
@@ -94,8 +94,8 @@ the developers, but ...
 
 3. Follow the steps above (`If your language already exists`_).
 
-First steps with a new *.po file
-````````````````````````````````
+First steps with a new ``*.po`` file
+````````````````````````````````````
 
 A newly created translation needs a few initial preparations.
 
@@ -139,7 +139,8 @@ string replacement.
 
 If you made changes to any gettext string, please update the .pot file
 using::
-  python setup.py extract_messages
+
+    python setup.py extract_messages
 
 Because this sometimes creates large diffs, just because of a slight
 change in line numbers, you can of course use this command sparingly.
@@ -151,3 +152,4 @@ for this.
 
 .. [#] For more information on locale strings, see
    http://www.gnu.org/software/hello/manual/gettext/Locale-Names.html.
+
