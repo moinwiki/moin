@@ -11,7 +11,7 @@ function searchChange(e) {
     // Update search buttons status according to search box content.
     // Ignore empty or whitespace search term.
     var value = e.value.replace(/\s+/, '');
-    if (value == '' || searchIsDisabled) { 
+    if (value == '' || searchIsDisabled) {
         searchSetDisabled(true);
     } else {
         searchSetDisabled(false);
@@ -102,7 +102,7 @@ function can_use_gui_editor() {
 
 /*
   // disable safari : until fck devteam fix http://dev.fckeditor.net/ticket/2333
-  
+
     // Adobe AIR
     // Checked before Safari because AIR have the WebKit rich text editor
     // features from Safari 3.0.4, but the version reported is 420.
@@ -136,7 +136,7 @@ function update_edit_links() {
 
 function add_gui_editor_links() {
     // Add gui editor link after the text editor link
-    
+
     // If the variable is not set or browser is not compatible, exit
     try {gui_editor_link_href}
     catch (e) {
@@ -164,12 +164,12 @@ function add_gui_editor_links() {
         //alert("add_gui_editor_links: added gui editor link");
     }
 }
- 
+
 
 function show_switch2gui() {
     // Show switch to gui editor link if the browser is compatible
     if (can_use_gui_editor() == false) return;
-    
+
     var switch2gui = document.getElementById('switch2gui')
     if (switch2gui) {
         switch2gui.style.display = 'inline';
@@ -208,24 +208,24 @@ function show_toggleComments() {
 function load() {
     // Do not name this "onload", it does not work with IE :-)
     // TODO: create separate onload for each type of view and set the
-    // correct function name in the html. 
+    // correct function name in the html.
     // e.g <body onlod='editor_onload()'>
 
     // login focus
     if (document.forms['loginform']) {
         document.forms['loginform'].elements['name'].focus();
     }
-    
+
     // Page view stuff
     update_edit_links();
     add_gui_editor_links();
-    
+
     // Editor stuff
     show_switch2gui();
 
     // Enable menu item "ToggleComments" if inline comments exist
     show_toggleComments();
- 
+
     // data browser widget
     dbw_hide_buttons();
 }
@@ -315,7 +315,7 @@ function dbw_hide_buttons() {
     Developed by Robert Nyman, http://www.robertnyman.com
     Code/licensing: http://code.google.com/p/getelementsbyclassname/ (MIT license)
     Version: 1.0.1
-*/  
+*/
 var getElementsByClassName = function (className, tag, elm){
     if (document.getElementsByClassName) {
         getElementsByClassName = function (className, tag, elm) {
@@ -455,10 +455,10 @@ function doMouseOut(e) {
     targ.removeAttribute('title');
 }
 // add leading zeros to hours, minutes, seconds, milliseconds
-function leadingZeros (nbr,count) { 
+function leadingZeros (nbr,count) {
     var strNbr = nbr + '';
     while (strNbr.length < count) {
-        strNbr = "0" + strNbr; 
+        strNbr = "0" + strNbr;
     }
     return strNbr;
 }
@@ -498,7 +498,7 @@ function showStartStopTimes (startTime) {
 // this scrolls the textarea after a doubleclick - jumpLine is scroll-to line
 function scrollTextarea(jumpLine) {
     var txtBox = document.getElementById('editor-textarea');
-    scroll(0,0); 
+    scroll(0,0);
     if (txtBox) {
         // Calculate the cursor position - IE supports innerText, not textContent
         var textLines = txtBox.textContent || txtBox.innerText;
@@ -541,18 +541,18 @@ function scrollTextarea(jumpLine) {
             range.select();
             txtBox.__column = 1;
         }
-    } 
+    }
 }
 
 // stop event bubbling
 function stopBubbling(e) {
     if (e.stopPropagation) {
-        e.stopPropagation(); 
+        e.stopPropagation();
     }
     e.cancelBubble = true;
 }
 
-// stop bubbling and return event node 
+// stop bubbling and return event node
 function getNode(e) {
     // window.event and e.srcElement are IE
     var e = e || window.event;
@@ -586,15 +586,15 @@ function setCallback(node, line, isPreview) {
         return;
     } else {
         node.scrollLine = line;
-        if(window.addEventListener){ 
+        if(window.addEventListener){
             if (isPreview) {
                 node.addEventListener('dblclick',doTextareaScroll,false);
             } else {
                 node.addEventListener('dblclick',doActionEdit,false);
             }
             if (autoScrollDebugOn) {
-                node.addEventListener('mouseover', doMouseOver,false); 
-                node.addEventListener('mouseout',doMouseOut,false); 
+                node.addEventListener('mouseover', doMouseOver,false);
+                node.addEventListener('mouseout',doMouseOut,false);
             }
         } else {
             // IE
@@ -604,7 +604,7 @@ function setCallback(node, line, isPreview) {
                 node.attachEvent('ondblclick',doActionEdit);
             }
             if (autoScrollDebugOn) {
-                node.attachEvent('onmouseover', doMouseOver,false); 
+                node.attachEvent('onmouseover', doMouseOver,false);
                 node.attachEvent('onmouseout',doMouseOut,false);
             }
         }
@@ -669,14 +669,14 @@ function setSpanTags(isPreview) {
     var bottom = document.getElementById('bottom');
     // add expected stopping point to end of array for convenience
     if (bottom) {
-        marks.push(bottom); 
+        marks.push(bottom);
     } else {
         if (autoScrollDebugOn) {
             alert("auto scroll debug 1: document.getElementById('bottom') failed");
         }
     }
-    var skipTo = -1; 
-    // loop through span tags and apply double-click events to appropriate node(s) 
+    var skipTo = -1;
+    // loop through span tags and apply double-click events to appropriate node(s)
     for (i = 0; i < marks.length-1; ++i) {
         var mark = marks[i];
         // skip span tags generated by embedded parsers
@@ -695,7 +695,7 @@ function setSpanTags(isPreview) {
                 // determine how many lines, starting line number, and add double-click events
                 var nbrParsedLines = j - i;
                 var parsedLineNbr = lineParts[1] - nbrParsedLines - 1;
-                for (var k = 0; k < nbrParsedLines; ++k) { 
+                for (var k = 0; k < nbrParsedLines; ++k) {
                     if (marks[i+k] && marks[i+k+1] && marks[i+k+1].id) {
                         walkDom (marks[i+k], parsedLineNbr+k, isPreview, marks[i+k+1].id, top.id);
                     } else {
@@ -705,7 +705,7 @@ function setSpanTags(isPreview) {
                     }
                 }
                 // done with embedded parser lines, tell main loop to skip these
-                skipTo = j - 1; 
+                skipTo = j - 1;
             } else {
                 // walk part of DOM and apply doubleclick function to every node with a tagname
                 if (marks[i+1] && marks[i+1].id) {
@@ -727,7 +727,7 @@ function setSpanTags(isPreview) {
 }
 
 // test to see if this user has selected or defaulted to edit_on_doubleclick AND
-// whether we are viewing a page, editing a page, or previewing an edit draft 
+// whether we are viewing a page, editing a page, or previewing an edit draft
 function scrollTextareaInit() {
     // look for meta tag -- is edit_on_doubleclick present?
     if (!document.getElementsByName('edit_on_doubleclick').length) {
@@ -744,7 +744,7 @@ function scrollTextareaInit() {
     if (lineMatch) {
         scrollTextarea(lineMatch[1]);
         return;
-    } 
+    }
     if (document.getElementById('preview')) {
         // is an editor preview
         setSpanTags(1);
@@ -753,7 +753,7 @@ function scrollTextareaInit() {
 
 // Now to resolve the problem of how to best execute scrollTextareaInit
 // -- We want to run as soon as DOM is loaded, perhaps many seconds before last big image is loaded
-// -- If we wait for body.onload, the user may see and doubleclick on text before we are ready 
+// -- If we wait for body.onload, the user may see and doubleclick on text before we are ready
 // -- If every browser supported DOMContentLoaded, we could do:
 //         document.addEventListener("DOMContentLoaded", scrollTextareaInit, false);
 // -- If we had jQuery, we could do:
@@ -765,7 +765,7 @@ function scrollTextareaInit() {
 // run scrollTextareaInit one time;  this function will be called twice for almost all browsers,
 scrollTextareaInitComplete = 0;
 function runScrollTextareaInitOnce() {
-    // uncomment next line to test - most browsers will display this alert twice 
+    // uncomment next line to test - most browsers will display this alert twice
     //~ alert('scrollTextareaInitComplete=' + scrollTextareaInitComplete);
     if (scrollTextareaInitComplete) {
         return;
@@ -780,7 +780,7 @@ function runScrollTextareaInitOnce() {
 
 // speed up most browsers -- run my function As Soon As Possible
 function runASAP(func) {
-    if (document.addEventListener) { 
+    if (document.addEventListener) {
         // Firefox 3.6, Chrome 4.0.249.89, Safari for Windows 4.04, Opera 10.5beta, and maybe older versions
         // schedule func to be run when DOM complete
         document.addEventListener("DOMContentLoaded", func, false);
@@ -820,7 +820,7 @@ $(function() {
     var e = document.getElementById('moin-searchinput');
     searchChange(e);
     searchBlur(e);
-    
+
     $('#moin-searchinput').blur(function(){
         searchBlur(this);
     });
@@ -837,7 +837,7 @@ $(function() {
         searchChange(this);
     });
 
-    
+
 });
 
 // Firefox 3.6 does not support CSS with {word-wrap: break-word;} within td elements
@@ -852,7 +852,7 @@ function moinInsertZWS(target) {
         target.textContent = words.join(" ");
     }
 }
-// find TD nodes that require word-breaking and break them 
+// find TD nodes that require word-breaking and break them
 function moinFirefoxWordBreak() {
     if (!jQuery.browser.mozilla) {
         return;
@@ -889,15 +889,15 @@ function attachHoverToObjects() {
                 }, 10)
             }
         })
-        
+
         $(elements.slice(1)).hide()
     })
 }
 
 $(document).ready(attachHoverToObjects)
 
-/* 
-    For the quicklinks patch that 
+/*
+    For the quicklinks patch that
     makes all quicklinks after the 5th visible only by mousing over an icon.
 */
 function getLinks() {
@@ -907,16 +907,16 @@ function getLinks() {
 function createIcon(txt) {
     var li = document.createElement("li");
     li.setAttribute("class", "moin-userlink moin-navibar-icon");
-    
+
     var txt = document.createTextNode(txt);
     li.appendChild(txt);
-    
+
     return li
 }
 
 function appendIcon(txt) {
     var elem = createIcon(txt);
-    
+
     document.getElementById("moin-navibar").appendChild(elem);
     return elem
 }
@@ -955,36 +955,36 @@ function QuicklinksExpander() {
     this.getHideableLinks = getHideableLinks;
     this.hideLinks = hideLinks;
     this.showLinks = showLinks;
-    
+
     this.navibar = $("#moin-header");
     this.links = this.getLinks();
     this.hideable = this.getHideableLinks();
-    
+
     // If there's less than 5 items, don't bother doing anything.
     if (this.shouldHide(this.links)) {
         this.expandIcon = $(this.appendIcon(QUICKLINKS_EXPAND));
         this.closeIcon = $(this.appendIcon(QUICKLINKS_COLLAPSE));
-        
+
         this.closeIcon.hide();
-        
+
         // Hide everything after the first 5
         this.hideLinks();
-        
-        /* 
+
+        /*
         TODO: when FF4.0 becomes stable/popular, delete the following hack
         and use function.bind(this)
         */
         var newThis = this;
-        
+
         // When the user mouses over the icon link,
         // Show the hidden links
         this.expandIcon.mouseenter(function(e) {
             newThis.showLinks();
             newThis.expandIcon.hide();
             newThis.closeIcon.show();
-            
+
         });
-        
+
         this.closeIcon.mouseenter(function(e) {
             newThis.hideLinks();
             newThis.expandIcon.show();
