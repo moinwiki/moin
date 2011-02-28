@@ -78,7 +78,7 @@ from MoinMoin.script.maint.xml import XML
 manager.add_command("maint_xml", XML())
 
 if __name__ == "__main__":
-    if sys.argv == ['./moin']:
+    if sys.argv == ['./moin'] or sys.argv == ['moin']:
         manager.run(default_command='moin')
     else:
         manager.run(default_command=sys.argv[1])
