@@ -54,7 +54,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
                               otherwise it'll use MOINCFG from flask config. If that
                               also is not there, it'll use the DefaultConfig built
                               into MoinMoin.
-    @oaram warn_default: emit a warning if moin falls back to its builtin default
+    @param warn_default: emit a warning if moin falls back to its builtin default
                          config (maybe user forgot to specify MOINCFG?)
     @param **kwargs: if you give additional key/values here, they'll get patched
                      into the moin configuration class (before it instance is created)

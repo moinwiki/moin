@@ -665,7 +665,7 @@ class Item(object, DictMixin):
 
         @type key: str or unicode
         @param key: The key refering to the value we want to return.
-        @return self._metadata[key]
+        @return: self._metadata[key]
         """
         self._read_accessed = True
         if not isinstance(key, (unicode, str)):

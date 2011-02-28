@@ -276,7 +276,7 @@ class SearchResults(object):
         @param formatter: formatter to use
         @param hitsFrom: current position in the hits
         @rtype: unicode
-        @return formatted statistics
+        @return: formatted statistics
         """
         if not self.estimated_hits:
             self.estimated_hits = ('', len(self.hits))
@@ -313,7 +313,7 @@ class SearchResults(object):
         @param hitsFrom: current position in the hits
         @param hitsInfo: toggle hits info line
         @rtype: unicode
-        @return formatted page list
+        @return: formatted page list
         """
         self._reset(request, formatter)
         f = formatter
@@ -394,7 +394,7 @@ class SearchResults(object):
         @param hitsFrom: current position in the hits
         @param hitsInfo: toggle hits info line
         @rtype: unicode
-        @return formatted page list with context
+        @return: formatted page list with context
         """
         self._reset(request, formatter)
         f = formatter
