@@ -34,7 +34,7 @@ class BaseGroup(object):
         Initialize a group.
 
         @param name: moin group name
-        @backend: backend object which created this object
+        @param backend: backend object which created this object
         """
         self.name = name
         self._backend = backend
@@ -263,7 +263,7 @@ class BaseDict(object, DictMixin):
         items internally.
 
         @param name: moin dict name
-        @backend: backend object which created this object
+        @param backend: backend object which created this object
         """
         self.name = name
         self._backend = backend
