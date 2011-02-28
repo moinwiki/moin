@@ -840,39 +840,40 @@ $(function() {
 
 });
 
-// Firefox 3.6 does not support CSS with {word-wrap: break-word;} within td elements
-// insert zero-width-space into long words after every 5 characters
-function moinInsertZWS(target) {
-    var words;
-    if (target.tagName && target.textContent && target.textContent.length > 5) {
-        words = target.textContent.split(" ");
-        for (var i = 0; i < words.length; i++) {
-            words[i] = words[i].replace(/(.{5})/g,"$1\u200B");
-        }
-        target.textContent = words.join(" ");
-    }
-}
-// find TD nodes that require word-breaking and break them
+// Insert Zero-Width-Space characters into long text strings of textNode elements.
+// Firefox does not support CSS with {word-wrap: break-word;} within tables.
+// As a result, Firefox may display tables with long urls or page names as very wide tables.
+// This function alters tables by inserting a zero-width-space into long text strings after every 5 characters.
+// The moin-wordbreak class is intended for use on TD elements, but may be used on TABLE, TR, THEAD, TBODY, or TFOOT.
 function moinFirefoxWordBreak() {
+    // TODO:  Test for browser version when/if a future Firefox supports break-word within tables.
     if (!jQuery.browser.mozilla) {
         return;
     }
-    var wrapElements = document.getElementsByClassName("moin-wordbreak");
     var child;
-    for (var i = 0; i < wrapElements.length; i++) {
-        if (wrapElements[i].tagName == 'TD') {
-            moinInsertZWS(wrapElements[i]);
-            child = wrapElements[i].firstChild;
-            while (child) {
-                moinInsertZWS(child);
-                child = child.nextSibling;
+    var words;
+    var parents;
+    var i, j;
+    // Only textNodes are of interest, but there is no way to select them directly.
+    // Select all elements with the moin-wordbreak class and add all selectable descendants of those elements.
+    // Then search for children that are textNodes; TDs or THs and elements descended from them are likely parents of textNodes.
+    parents = jQuery(".moin-wordbreak").add(".moin-wordbreak *");
+    for (i = 0; i < parents.length; i++) {
+        child = parents[i].firstChild;
+        while(child) {
+            if (child.nodeType === 3) {
+                words = child.textContent.split(" ");
+                for (j = 0; j < words.length; j++) {
+                    // \u200B denotes a zero-width-space character (for easy testing, replace with a visible character like Q)
+                    words[j] = words[j].replace(/(.{5})/g,"$1\u200B");
+                }
+                child.textContent = words.join(" ");
             }
+            child = child.nextSibling;
         }
     }
 }
-// TODO BUG disable the word break - it also breaks the links in the
-// (item) Name column on the global history view!
-//jQuery(moinFirefoxWordBreak);
+jQuery(moinFirefoxWordBreak);
 
 /* For the overlays on transcluded objects */
 function removeURLPrefixes(url) {
