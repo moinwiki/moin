@@ -46,7 +46,7 @@ class Term(object):
         Evaluate this term and return True or False if the
         item identified by the parameters matches.
 
-        @param item: the item
+        :param item: the item
         """
         assert hasattr(self, '_result')
 

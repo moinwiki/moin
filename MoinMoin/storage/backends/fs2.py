@@ -107,7 +107,7 @@ class FS2Backend(BackendBase):
         """
         Initialise filesystem backend, creating initial files and some internal structures.
 
-        @param path: storage path
+        :param path: storage path
         """
         self._path = path
 
@@ -140,7 +140,7 @@ class FS2Backend(BackendBase):
         """
         Get ID of item (or None if no such item exists)
 
-        @param itemname: name of item (unicode)
+        :param itemname: name of item (unicode)
         """
         name2id = self._name2id
         results = name2id.select(name2id.c.item_name==itemname).execute()
@@ -155,7 +155,7 @@ class FS2Backend(BackendBase):
         """
         Get name of item (or None if no such item exists)
 
-        @param itemid: id of item (str)
+        :param itemid: id of item (str)
         """
         name2id = self._name2id
         results = name2id.select(name2id.c.item_id==itemid).execute()
@@ -304,9 +304,9 @@ class FS2Backend(BackendBase):
         If the item's name already exists, it doesn't do anything but raise
         a ItemAlreadyExistsError; if the newrev was given the file is unlinked.
 
-        @param revmeta: new revision's temporary meta file path
-        @param revdata: new revision's temporary data file path
-        @param itemmeta: item metadata dict
+        :param revmeta: new revision's temporary meta file path
+        :param revdata: new revision's temporary data file path
+        :param itemmeta: item metadata dict
         """
         self._do_locked(self._make_path('name-mapping.lock'),
                         self._add_item_internally_locked, (item, revmeta, revdata, revdata_target, itemmeta))

@@ -75,8 +75,8 @@ class ThemeSupport(object):
         Get a translated item name.
         If a translated item exists return its name, if not return item name in English.
 
-        @param item_name: unicode
-        @rtype: unicode
+        :param item_name: unicode
+        :rtype: unicode
         """
         item_lang_request = _(item_en)
         if self.storage.has_item(item_lang_request):
@@ -91,8 +91,8 @@ class ThemeSupport(object):
         """
         Assemble the location using breadcrumbs (was: title)
 
-        @rtype: list
-        @return: location breadcrumbs items in tuple (segment_name, item_name, exists)
+        :rtype: list
+        :returns: location breadcrumbs items in tuple (segment_name, item_name, exists)
         """
         breadcrumbs = []
         current_item = ''
@@ -106,8 +106,8 @@ class ThemeSupport(object):
         """
         Assemble the path breadcrumbs (a.k.a.: trail)
 
-        @rtype: list
-        @return: path breadcrumbs items in tuple (wiki_name, item_name, url, exists, err)
+        :rtype: list
+        :returns: path breadcrumbs items in tuple (wiki_name, item_name, url, exists, err)
         """
         user = self.user
         breadcrumbs = []
@@ -128,8 +128,8 @@ class ThemeSupport(object):
         """
         Assemble arguments used to build user homepage link
 
-        @rtype: tuple
-        @return: arguments of user homepage link in tuple (wiki_href, aliasname, title, exists)
+        :rtype: tuple
+        :returns: arguments of user homepage link in tuple (wiki_href, aliasname, title, exists)
         """
         user = self.user
         name = user.name
@@ -165,9 +165,9 @@ class ThemeSupport(object):
             * url
             * all targets as seen above with title: [[target|title]]
 
-        @param text: the text used in config or user preferences
-        @rtype: tuple
-        @return: pagename or url, link to page or url
+        :param text: the text used in config or user preferences
+        :rtype: tuple
+        :returns: pagename or url, link to page or url
         """
         title = None
         wiki_local = ''  # means local wiki
@@ -220,8 +220,8 @@ class ThemeSupport(object):
         """
         Assemble the navibar
 
-        @rtype: list
-        @return: list of tuples (css_class, url, link_text, title)
+        :rtype: list
+        :returns: list of tuples (css_class, url, link_text, title)
         """
         items = []  # navibar items
         current = item_name
@@ -273,8 +273,8 @@ class ThemeSupport(object):
         """
         Return name of parent item for the current item
 
-        @rtype: unicode
-        @return: parent item name
+        :rtype: unicode
+        :returns: parent item name
         """
         parent_item_name = wikiutil.ParentItemName(item_name)
         if item_name and parent_item_name:
@@ -288,8 +288,8 @@ class ThemeSupport(object):
         """
         Return URL usable for user login
 
-        @rtype: unicode (or None, if no login url is supported)
-        @return: url for user login
+        :rtype: unicode (or None, if no login url is supported)
+        :returns: url for user login
         """
         url = None
         if self.cfg.auth_login_inputs == ['special_no_input']:
@@ -310,8 +310,8 @@ class ThemeSupport(object):
         enabled browsers, and acceptable behavior for those who prefer
         not to use Javascript.
 
-        @rtype: list
-        @return: options of actions menu
+        :rtype: list
+        :returns: options of actions menu
         """
         not_exists = not flaskg.storage.has_item(item_name)
         menu = [
@@ -401,10 +401,10 @@ def shorten_item_name(name, length=25):
     interface. The short name is usually fine, unless really stupid
     long names are used (WYGIWYD).
 
-    @param name: item name, unicode
-    @param length: maximum length for shortened item names, int
-    @rtype: unicode
-    @return: shortened version.
+    :param name: item name, unicode
+    :param length: maximum length for shortened item names, int
+    :rtype: unicode
+    :returns: shortened version.
     """
     # First use only the sub page name, that might be enough
     if len(name) > length:

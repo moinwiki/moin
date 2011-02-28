@@ -74,7 +74,7 @@ class RegistryConverter(RegistryBase):
         """
         Register a factory
 
-        @param factory: Factory to register. Callable, must return an object
+        :param factory: Factory to register. Callable, must return an object
         """
         return self._register(self.Entry(factory, type_input, type_output, priority))
 

@@ -44,12 +44,12 @@ def importPlugin(cfg, kind, name, function="execute"):
     specific plugin, use either importWikiPlugin or importBuiltinPlugin
     directly.
 
-    @param cfg: wiki config instance
-    @param kind: what kind of module we want to import
-    @param name: the name of the module
-    @param function: the function name
-    @rtype: any object
-    @return: "function" of module "name" of kind "kind", or None
+    :param cfg: wiki config instance
+    :param kind: what kind of module we want to import
+    :param name: the name of the module
+    :param function: the function name
+    :rtype: any object
+    :returns: "function" of module "name" of kind "kind", or None
     """
     try:
         return importWikiPlugin(cfg, kind, name, function)
@@ -109,9 +109,9 @@ def importNameFromPlugin(moduleName, name):
 def builtinPlugins(kind):
     """ Gets a list of modules in MoinMoin.'kind'
 
-    @param kind: what kind of modules we look for
-    @rtype: list
-    @return: module names
+    :param kind: what kind of modules we look for
+    :rtype: list
+    :returns: module names
     """
     modulename = "MoinMoin." + kind
     return pysupport.importName(modulename, "modules")
@@ -122,9 +122,9 @@ def wikiPlugins(kind, cfg):
     Gets a dict containing the names of all plugins of <kind>
     as the key and the containing module name as the value.
 
-    @param kind: what kind of modules we look for
-    @rtype: dict
-    @return: plugin name to containing module name mapping
+    :param kind: what kind of modules we look for
+    :rtype: dict
+    :returns: plugin name to containing module name mapping
     """
     # short-cut if we've loaded the dict already
     # (or already failed to load it)
@@ -150,9 +150,9 @@ def wikiPlugins(kind, cfg):
 def getPlugins(kind, cfg):
     """ Gets a list of plugin names of kind
 
-    @param kind: what kind of modules we look for
-    @rtype: list
-    @return: module names
+    :param kind: what kind of modules we look for
+    :rtype: list
+    :returns: module names
     """
     # Copy names from builtin plugins - so we dont destroy the value
     all_plugins = builtinPlugins(kind)[:]

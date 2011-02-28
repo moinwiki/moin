@@ -31,7 +31,7 @@ class Error(Exception):
     def __init__(self, message):
         """ Initialize an error, decode if needed
 
-        @param message: unicode, str or object that support __unicode__
+        :param message: unicode, str or object that support __unicode__
             and __str__. __str__ should use config.charset.
         """
         self.message = message

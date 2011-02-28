@@ -267,7 +267,7 @@ def _default_password_checker(cfg, username, password):
 
         If you don't want to check passwords, use password_checker = None.
 
-        @return: None if there is no problem with the password,
+        :returns: None if there is no problem with the password,
                  some unicode object with an error msg, if the password is problematic.
     """
     # in any case, do a very simple built-in check to avoid the worst passwords

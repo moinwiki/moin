@@ -136,7 +136,7 @@ class ConverterMacro(object):
         """
         Should be overriden to format text in some macros according to the
         input type.
-        @return: Sequence of (ET.Element, unicode)
+        :returns: Sequence of (ET.Element, unicode)
         """
         return [text]
 

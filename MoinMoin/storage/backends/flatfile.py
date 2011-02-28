@@ -40,7 +40,7 @@ class FlatFileBackend(Backend):
         """
         Initialise filesystem backend, creating initial files and some internal structures.
 
-        @param path: storage path
+        :param path: storage path
         """
         self._path = path
         try:

@@ -31,9 +31,9 @@ class QueryParser(object):
 
     def __init__(self, **kw):
         """
-        @keyword titlesearch: treat all terms as title searches
-        @keyword case: do case sensitive search
-        @keyword regex: treat all terms as regular expressions
+        :keyword titlesearch: treat all terms as title searches
+        :keyword case: do case sensitive search
+        :keyword regex: treat all terms as regular expressions
         """
         self.titlesearch = kw.get('titlesearch', 0)
         self.case = kw.get('case', 0)

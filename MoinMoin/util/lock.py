@@ -79,9 +79,9 @@ class ExclusiveLock:
     def __init__(self, dir, timeout=None):
         """ Init a write lock
 
-        @param dir: the lock directory. Since this lock uses a empty
+        :param dir: the lock directory. Since this lock uses a empty
             filename, the dir is the lockDir.
-        @param timeout: while trying to acquire, the lock will expire
+        :param timeout: while trying to acquire, the lock will expire
             other exclusive locks older than timeout.
             WARNING: because of file system timing limitations, timeouts
             must be at least 2 seconds.
@@ -199,11 +199,11 @@ class WriteLock(ExclusiveLock):
     def __init__(self, dir, timeout=None, readlocktimeout=None):
         """ Init a write lock
 
-        @param dir: the lock directory. Every resource should have one
+        :param dir: the lock directory. Every resource should have one
             lock directory, which may contain read or write locks.
-        @param timeout: while trying to acquire, the lock will expire
+        :param timeout: while trying to acquire, the lock will expire
             other unreleased write locks older than timeout.
-        @param readlocktimeout: while trying to acquire, the lock will
+        :param readlocktimeout: while trying to acquire, the lock will
             expire other read locks older than readlocktimeout.
         """
         ExclusiveLock.__init__(self, dir, timeout)
@@ -276,9 +276,9 @@ class ReadLock(ExclusiveLock):
     def __init__(self, dir, timeout=None):
         """ Init a read lock
 
-        @param dir: the lock directory. Every resource should have one
+        :param dir: the lock directory. Every resource should have one
             lock directory, which may contain read or write locks.
-        @param timeout: while trying to acquire, the lock will expire
+        :param timeout: while trying to acquire, the lock will expire
             other unreleased write locks older than timeout.
         """
         ExclusiveLock.__init__(self, dir, timeout)

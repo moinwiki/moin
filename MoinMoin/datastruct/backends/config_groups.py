@@ -20,7 +20,7 @@ class ConfigGroups(BaseGroupsBackend):
 
     def __init__(self, groups):
         """
-        @param groups: Dictionary of groups where key is group name,
+        :param groups: Dictionary of groups where key is group name,
         and value is list of members of that group.
         """
         super(ConfigGroups, self).__init__()

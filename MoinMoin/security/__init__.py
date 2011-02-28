@@ -56,9 +56,9 @@ class Permissions(object):
         if attr is one of the rights in acl_rights_valid, then return a
         checking function for it. Else raise an AttributeError.
 
-        @param attr: one of ACL rights as defined in acl_rights_valid
-        @rtype: function
-        @return: checking function for that right, accepting an itemname
+        :param attr: one of ACL rights as defined in acl_rights_valid
+        :rtype: function
+        :returns: checking function for that right, accepting an itemname
         """
         if attr not in app.cfg.acl_rights_valid:
             raise AttributeError(attr)
@@ -199,8 +199,8 @@ class AccessControlList(object):
 
         This can be used in multiple subsequent calls to process longer lists.
 
-        @param aclstring: acl string from item or configuration
-        @param remember: should add the line to self.acl_lines
+        :param aclstring: acl string from item or configuration
+        :param remember: should add the line to self.acl_lines
         """
         # Remember lines
         if remember:
@@ -300,8 +300,8 @@ class ACLStringIterator(object):
     def __init__(self, rights, aclstring):
         """ Initialize acl iterator
 
-        @param rights: the acl rights to consider when parsing
-        @param aclstring: string to parse
+        :param rights: the acl rights to consider when parsing
+        :param aclstring: string to parse
         """
         self.rights = rights
         self.rest = aclstring.strip()
@@ -318,8 +318,8 @@ class ACLStringIterator(object):
         raises a StopIteration. The iterator finishes as soon as the
         string is fully parsed or can not be parsed any more.
 
-        @rtype: 3 tuple - (modifier, [entry, ...], [right, ...])
-        @return: values for one item in an acl string
+        :rtype: 3 tuple - (modifier, [entry, ...], [right, ...])
+        :returns: values for one item in an acl string
         """
         # Handle finished state, required by iterator protocol
         if self.rest == '':

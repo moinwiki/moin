@@ -44,7 +44,7 @@ class WikiAnalyzer(object):
 
     def __init__(self, language=None):
         """
-        @param language: if given, the language in which to stem words
+        :param language: if given, the language in which to stem words
         """
         self.stemmer = None
         if app.cfg.xapian_stemming and language:
@@ -77,7 +77,7 @@ class WikiAnalyzer(object):
     def raw_tokenize(self, value):
         """ Yield a stream of words from a string.
 
-        @param value: string to split, must be an unicode object or a list of
+        :param value: string to split, must be an unicode object or a list of
                       unicode objects
         """
         if isinstance(value, list): # used for page links
@@ -104,7 +104,7 @@ class WikiAnalyzer(object):
         """
         Yield a stream of raw lower cased and stemmed words from a string.
 
-        @param value: string to split, must be an unicode object or a list of
+        :param value: string to split, must be an unicode object or a list of
                       unicode objects
         """
         if self.stemmer:

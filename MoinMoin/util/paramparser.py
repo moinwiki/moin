@@ -86,17 +86,17 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     multiple keys, e.g.
         "a=b=c" -> ('a', 'b', 'c')
 
-    @param args: arguments to parse
-    @param separator: the argument separator, defaults to None, meaning any
+    :param args: arguments to parse
+    :param separator: the argument separator, defaults to None, meaning any
         space separates arguments
-    @param name_value_separator: separator for name=value, default '=',
+    :param name_value_separator: separator for name=value, default '=',
         name=value keywords not parsed if evaluates to False
-    @param brackets: a list of two-character strings giving
+    :param brackets: a list of two-character strings giving
         opening and closing brackets
-    @param seplimit: limits the number of parsed arguments
-    @param multikey: multiple keys allowed for a single value
-    @rtype: list
-    @returns: list of unicode strings and tuples containing
+    :param seplimit: limits the number of parsed arguments
+    :param multikey: multiple keys allowed for a single value
+    :rtype: list
+    :returns: list of unicode strings and tuples containing
         unicode strings, or lists containing the same for
         bracketing support
     """
@@ -288,11 +288,11 @@ def get_bool(arg, name=None, default=None):
     Valid input is 'true'/'false', 'yes'/'no' and '1'/'0' or None for
     the default value.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param default: default value if arg is None
-    @rtype: boolean or None
-    @returns: the boolean value of the string according to above rules
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param default: default value if arg is None
+    :rtype: boolean or None
+    :returns: the boolean value of the string according to above rules
               (or default value)
     """
     assert default is None or isinstance(default, bool)
@@ -321,11 +321,11 @@ def get_int(arg, name=None, default=None):
     containing the decimal representation of a number.
     None is a valid input and yields the default value.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param default: default value if arg is None
-    @rtype: int or None
-    @returns: the integer value of the string (or default value)
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param default: default value if arg is None
+    :rtype: int or None
+    :returns: the integer value of the string (or default value)
     """
     assert default is None or isinstance(default, (int, long))
     if arg is None:
@@ -349,11 +349,11 @@ def get_float(arg, name=None, default=None):
     as macro parameters, return a float from a unicode string.
     None is a valid input and yields the default value.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param default: default return value if arg is None
-    @rtype: float or None
-    @returns: the float value of the string (or default value)
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param default: default return value if arg is None
+    :rtype: float or None
+    :returns: the float value of the string (or default value)
     """
     assert default is None or isinstance(default, (int, long, float))
     if arg is None:
@@ -377,11 +377,11 @@ def get_complex(arg, name=None, default=None):
     as macro parameters, return a complex from a unicode string.
     None is a valid input and yields the default value.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param default: default return value if arg is None
-    @rtype: complex or None
-    @returns: the complex value of the string (or default value)
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param default: default return value if arg is None
+    :rtype: complex or None
+    :returns: the complex value of the string (or default value)
     """
     assert default is None or isinstance(default, (int, long, float, complex))
     if arg is None:
@@ -407,11 +407,11 @@ def get_unicode(arg, name=None, default=None):
     as macro parameters, return a unicode string from a unicode string.
     None is a valid input and yields the default value.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param default: default return value if arg is None;
-    @rtype: unicode or None
-    @returns: the unicode string (or default value)
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param default: default return value if arg is None;
+    :rtype: unicode or None
+    :returns: the unicode string (or default value)
     """
     assert default is None or isinstance(default, unicode)
     if arg is None:
@@ -429,15 +429,15 @@ def get_choice(arg, name=None, choices=[None], default_none=False):
     choices given. None is a valid input and yields first of the valid
     choices.
 
-    @param arg: The argument, may be None or a unicode string
-    @param name: Name of the argument, for error messages
-    @param choices: the possible choices
-    @param default_none: If False (default), get_choice returns first available
+    :param arg: The argument, may be None or a unicode string
+    :param name: Name of the argument, for error messages
+    :param choices: the possible choices
+    :param default_none: If False (default), get_choice returns first available
                          choice if arg is None. If True, get_choice returns
                          None if arg is None. This is useful if some arg value
                          is required (no default choice).
-    @rtype: unicode or None
-    @returns: the unicode string (or default value)
+    :rtype: unicode or None
+    :returns: the unicode string (or default value)
     """
     assert isinstance(choices, (tuple, list))
     if arg is None:
@@ -542,7 +542,7 @@ class required_arg:
     def __init__(self, argtype):
         """
         Initialise a required_arg
-        @param argtype: the type the argument should have
+        :param argtype: the type the argument should have
         """
         if not (argtype in (bool, int, long, float, complex, unicode) or
                 isinstance(argtype, (IEFArgument, tuple, list))):
@@ -561,10 +561,10 @@ def invoke_extension_function(function, args, fixed_args=[]):
     it to the macro function. That way, macros need not call the
     wikiutil.get_* functions for any arguments that have a default.
 
-    @param function: the function to invoke
-    @param args: unicode string with arguments (or evaluating to False)
-    @param fixed_args: fixed arguments to pass as the first arguments
-    @returns: the return value from the function called
+    :param function: the function to invoke
+    :param args: unicode string with arguments (or evaluating to False)
+    :param fixed_args: fixed arguments to pass as the first arguments
+    :returns: the return value from the function called
     """
     from inspect import getargspec, isfunction, isclass, ismethod
 

@@ -34,9 +34,9 @@ class BaseExpression(object):
     def __init__(self, pattern, use_re=False, case=False):
         """ Init a text search
 
-        @param pattern: pattern to search for, ascii string or unicode
-        @param use_re: treat pattern as re of plain text, bool
-        @param case: do case sensitive search, bool
+        :param pattern: pattern to search for, ascii string or unicode
+        :param use_re: treat pattern as re of plain text, bool
+        :param case: do case sensitive search, bool
         """
         self._pattern = unicode(pattern)
         self.negated = 0
@@ -283,7 +283,7 @@ class OrExpression(AndExpression):
     def search(self, page):
         """ Search page with terms
 
-        @param page: the page instance
+        :param page: the page instance
         """
         # XXX Do we have any reason to sort here? we are not breaking out
         # of the search in any case.
@@ -442,9 +442,9 @@ class LinkSearch(BaseFieldSearch):
     def __init__(self, pattern, use_re=False, case=True):
         """ Init a link search
 
-        @param pattern: pattern to search for, ascii string or unicode
-        @param use_re: treat pattern as re of plain text, bool
-        @param case: do case sensitive search, bool
+        :param pattern: pattern to search for, ascii string or unicode
+        :param use_re: treat pattern as re of plain text, bool
+        :param case: do case sensitive search, bool
         """
 
         super(LinkSearch, self).__init__(pattern, use_re, case)
@@ -487,9 +487,9 @@ class LanguageSearch(BaseFieldSearch):
     def __init__(self, pattern, use_re=False, case=False):
         """ Init a language search
 
-        @param pattern: pattern to search for, ascii string or unicode
-        @param use_re: treat pattern as re of plain text, bool
-        @param case: do case sensitive search, bool
+        :param pattern: pattern to search for, ascii string or unicode
+        :param use_re: treat pattern as re of plain text, bool
+        :param case: do case sensitive search, bool
         """
         # iso language code, always lowercase and not case-sensitive
         super(LanguageSearch, self).__init__(pattern.lower(), use_re, case=False)
@@ -512,9 +512,9 @@ class MimetypeSearch(BaseFieldSearch):
     def __init__(self, pattern, use_re=False, case=False):
         """ Init a mimetype search
 
-        @param pattern: pattern to search for, ascii string or unicode
-        @param use_re: treat pattern as re of plain text, bool
-        @param case: do case sensitive search, bool
+        :param pattern: pattern to search for, ascii string or unicode
+        :param use_re: treat pattern as re of plain text, bool
+        :param case: do case sensitive search, bool
         """
         # always lowercase and not case-sensitive
         super(MimetypeSearch, self).__init__(pattern.lower(), use_re, case=False)
@@ -539,9 +539,9 @@ class DomainSearch(BaseFieldSearch):
     def __init__(self, pattern, use_re=False, case=False):
         """ Init a domain search
 
-        @param pattern: pattern to search for, ascii string or unicode
-        @param use_re: treat pattern as re of plain text, bool
-        @param case: do case sensitive search, bool
+        :param pattern: pattern to search for, ascii string or unicode
+        :param use_re: treat pattern as re of plain text, bool
+        :param case: do case sensitive search, bool
         """
         # always lowercase and not case-sensitive
         super(DomainSearch, self).__init__(pattern.lower(), use_re, case=False)

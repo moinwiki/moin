@@ -12,11 +12,11 @@ def diff(oldlines, newlines, **kw):
     """
     Find changes between oldlines and newlines.
 
-    @param oldlines: list of old text lines
-    @param newlines: list of new text lines
-    @keyword ignorews: if 1: ignore whitespace
-    @rtype: list
-    @return: lines like diff tool does output.
+    :param oldlines: list of old text lines
+    :param newlines: list of new text lines
+    :keyword ignorews: if 1: ignore whitespace
+    :rtype: list
+    :returns: lines like diff tool does output.
     """
     false = lambda s: None
     if kw.get('ignorews', 0):

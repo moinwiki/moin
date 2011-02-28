@@ -70,18 +70,18 @@ class AclWrapperBackend(object):
     """
     def __init__(self, cfg, backend, hierarchic=False, before=u"", default=u"", after=u"", valid=None):
         """
-        @type backend: Some object that implements the storage API.
-        @param backend: The unprotected backend that we want to protect.
-        @type hierarchic: bool
-        @param hierarchic: Indicate whether we want to process ACLs in hierarchic mode.
-        @type before: unicode
-        @param before: ACL to be applied before all the other ACLs.
-        @type default: unicode
-        @param default: If no ACL information is given on the item in question, use this default.
-        @type after: unicode
-        @param after: ACL to be applied after all the other ACLs.
-        @type valid: list of strings or None
-        @param valid: If a list is given, only strings in the list are treated as valid acl privilege descriptors.
+        :type backend: Some object that implements the storage API.
+        :param backend: The unprotected backend that we want to protect.
+        :type hierarchic: bool
+        :param hierarchic: Indicate whether we want to process ACLs in hierarchic mode.
+        :type before: unicode
+        :param before: ACL to be applied before all the other ACLs.
+        :type default: unicode
+        :param default: If no ACL information is given on the item in question, use this default.
+        :type after: unicode
+        :param after: ACL to be applied after all the other ACLs.
+        :type valid: list of strings or None
+        :param valid: If a list is given, only strings in the list are treated as valid acl privilege descriptors.
                       If None is give, the global wiki default is used.
         """
         self.cfg = cfg
@@ -194,11 +194,11 @@ class AclWrapperBackend(object):
         `default` is only used if there is no ACL on the item (and none on
         any of the item's parents when using hierarchic.)
 
-        @param itemname: item to get permissions from
-        @param right: the right to check
+        :param itemname: item to get permissions from
+        :param right: the right to check
 
-        @rtype: bool
-        @return: True if you have permission or False
+        :rtype: bool
+        :returns: True if you have permission or False
         """
         username = flaskg.user.name
 
@@ -253,10 +253,10 @@ class AclWrapperItem(Item):
     """
     def __init__(self, item, aclbackend):
         """
-        @type item: Object adhering to the storage item API.
-        @param item: The unprotected item we want to wrap.
-        @type aclbackend: Instance of AclWrapperBackend.
-        @param aclbackend: The AMW this item belongs to.
+        :type item: Object adhering to the storage item API.
+        :param item: The unprotected item we want to wrap.
+        :type aclbackend: Instance of AclWrapperBackend.
+        :param aclbackend: The AMW this item belongs to.
         """
         self._backend = aclbackend
         self._item = item
@@ -284,8 +284,8 @@ class AclWrapperItem(Item):
         that represent the permissions to check, such as READ and WRITE
         (see module level constants; don't pass strings, please).
 
-        @type privileges: List of strings.
-        @param privileges: Represent the privileges to check.
+        :type privileges: List of strings.
+        :param privileges: Represent the privileges to check.
         """
         def wrap(f):
             def wrapped_f(self, *args, **kwargs):
@@ -424,10 +424,10 @@ class AclWrapperRevision(object, DictMixin):
     """
     def __init__(self, revision, item):
         """
-        @type revision: Object adhering to the storage revision API.
-        @param revision: The revision we want to protect.
-        @type item: Object adhering to the storage item API.
-        @param item: The item this revision belongs to
+        :type revision: Object adhering to the storage revision API.
+        :param revision: The revision we want to protect.
+        :type item: Object adhering to the storage item API.
+        :param item: The item this revision belongs to
         """
         self._revision = revision
         self._item = item

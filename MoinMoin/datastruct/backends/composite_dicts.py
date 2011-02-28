@@ -16,7 +16,7 @@ class CompositeDicts(BaseDictsBackend):
 
     def __init__(self, *backends):
         """
-        @param backends: list of dict backends which are used to get
+        :param backends: list of dict backends which are used to get
                          access to the dict definitions.
         """
         super(CompositeDicts, self).__init__()

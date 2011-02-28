@@ -30,8 +30,8 @@ def diff(old, new):
     """ Find changes between old and new and return
         HTML markup visualising them.
 
-        @param old: old text [unicode]
-        @param new: new text [unicode]
+        :param old: old text [unicode]
+        :param new: new text [unicode]
     """
     seq1 = old.splitlines()
     seq2 = new.splitlines()

@@ -73,10 +73,10 @@ def importName(modulename, name):
 
     Any error raised here must be handled by the caller.
 
-    @param modulename: full qualified mudule name, e.g. x.y.z
-    @param name: name to import from modulename
-    @rtype: any object
-    @return: name from module
+    :param modulename: full qualified mudule name, e.g. x.y.z
+    :param name: name to import from modulename
+    :rtype: any object
+    :returns: name from module
     """
     module = __import__(modulename, globals(), {}, [name])
     return getattr(module, name)
@@ -90,10 +90,10 @@ def makeThreadSafe(function, lock=None):
     functions use same lock, e.g. all functions that change same data
     structure.
 
-    @param function: function to make thread safe
-    @param lock: threading.Lock instance or None
-    @rtype: function
-    @return: function decorated with locking
+    :param function: function to make thread safe
+    :param lock: threading.Lock instance or None
+    :rtype: function
+    :returns: function decorated with locking
     """
     if lock is None:
         import threading

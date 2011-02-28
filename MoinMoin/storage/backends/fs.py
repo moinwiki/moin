@@ -56,8 +56,8 @@ class FSBackend(BackendBase):
         Initialise filesystem backend, creating initial files and
         some internal structures.
 
-        @param path: storage path
-        @param reserved_metadata_space: space reserved for revision metadata
+        :param path: storage path
+        :param reserved_metadata_space: space reserved for revision metadata
                                         initially, increase if you expect a
                                         lot of very long ACL strings or so.
                                         We need four additional bookkeeping bytes
@@ -93,7 +93,7 @@ class FSBackend(BackendBase):
         """
         Get ID of item (or None if no such item exists)
 
-        @param itemname: name of item (unicode)
+        :param itemname: name of item (unicode)
         """
         c = cdb.init(self._name_db)
         return c.get(itemname.encode('utf-8'))
@@ -314,8 +314,8 @@ class FSBackend(BackendBase):
         If the item's name already exists, it doesn't do anything but raise
         a ItemAlreadyExistsError; if the newrev was given the file is unlinked.
 
-        @param newrev: new revision's temporary file path
-        @param metadata: item metadata dict
+        :param newrev: new revision's temporary file path
+        :param metadata: item metadata dict
         """
         self._do_locked(os.path.join(self._path, 'name-mapping.lock'),
                         self._add_item_internally_locked, (item, newrev, metadata))

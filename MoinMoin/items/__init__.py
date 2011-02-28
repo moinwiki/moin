@@ -464,8 +464,8 @@ class Item(object):
         hook that can be used to add more meta data to a revision before
         it is committed.
 
-        @param newrev: new (still uncommitted) revision - modify as wanted
-        @param data: either str or open file (we can avoid having to read/seek
+        :param newrev: new (still uncommitted) revision - modify as wanted
+        :param data: either str or open file (we can avoid having to read/seek
                      rev's data with this)
         """
         remote_addr = request.remote_addr
@@ -730,7 +730,7 @@ class TarMixin(object):
         """
         return a file-like object with the member file data
 
-        @param name: name of the data in the container file
+        :param name: name of the data in the container file
         """
         self.rev.seek(0)
         tf = tarfile.open(fileobj=self.rev, mode='r')
@@ -742,10 +742,10 @@ class TarMixin(object):
         If all expected members have been put, it saves the tar container
         to a new item revision.
 
-        @param name: name of the data in the container file
-        @param content: the data to store into the tar file (str or file-like)
-        @param content_length: byte-length of content (for str, None can be given)
-        @param expected_members: set of expected member file names
+        :param name: name of the data in the container file
+        :param content: the data to store into the tar file (str or file-like)
+        :param content_length: byte-length of content (for str, None can be given)
+        :param expected_members: set of expected member file names
         """
         if not name in expected_members:
             raise StorageError("tried to add unexpected member %r to container item %r" % (name, self.name))
@@ -805,7 +805,7 @@ class ZipMixin(object):
         """
         return a file-like object with the member file data
 
-        @param name: name of the data in the zip file
+        :param name: name of the data in the zip file
         """
         self.rev.seek(0)
         zf = zipfile.ZipFile(self.rev, mode='r')

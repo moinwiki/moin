@@ -91,8 +91,8 @@ if pygments:
             """
             Create a Pygments Converter.
 
-            @param lexer: pygments lexer instance
-            @param mimetype: mimetype to get a lexer for
+            :param lexer: pygments lexer instance
+            :param mimetype: mimetype to get a lexer for
             """
             if lexer is None and mimetype is not None:
                 try:

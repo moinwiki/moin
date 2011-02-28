@@ -27,9 +27,9 @@ def split_interwiki(wikiurl):
     'MoinMoin:Page with blanks' -> "MoinMoin", "Page with blanks"
     'MoinMoin:' -> "MoinMoin", ""
 
-    @param wikiurl: the url to split
-    @rtype: tuple
-    @return: (wikiname, pagename)
+    :param wikiurl: the url to split
+    :rtype: tuple
+    :returns: (wikiname, pagename)
     """
     try:
         wikiname, pagename = wikiurl.split(":", 1)
@@ -41,10 +41,10 @@ def split_interwiki(wikiurl):
 def resolve_interwiki(wikiname, pagename):
     """ Resolve an interwiki reference (wikiname:pagename).
 
-    @param wikiname: interwiki wiki name
-    @param pagename: interwiki page name
-    @rtype: tuple
-    @return: (wikitag, wikiurl, wikitail, err)
+    :param wikiname: interwiki wiki name
+    :param pagename: interwiki page name
+    :rtype: tuple
+    :returns: (wikitag, wikiurl, wikitail, err)
     """
     this_wiki_url = request.script_root + '/'
     if wikiname in ('Self', app.cfg.interwikiname):
@@ -63,10 +63,10 @@ def join_wiki(wikiurl, wikitail):
     Note: We can't know what kind of URL quoting a remote wiki expects.
           We just use a utf-8 encoded string with standard URL quoting.
 
-    @param wikiurl: wiki url, maybe including a $PAGE placeholder
-    @param wikitail: page name
-    @rtype: string
-    @return: generated URL of the page in the other wiki
+    :param wikiurl: wiki url, maybe including a $PAGE placeholder
+    :param wikitail: page name
+    :rtype: string
+    :returns: generated URL of the page in the other wiki
     """
     wikitail = url_quote(wikitail, charset=config.charset, safe='/')
     if '$PAGE' in wikiurl:
@@ -85,9 +85,9 @@ def getInterwikiHome(username):
 
     'SomeOtherWiki' means we store user homepages in another wiki.
 
-    @param username: the user's name
-    @rtype: tuple
-    @return: (wikiname, itemname)
+    :param username: the user's name
+    :rtype: tuple
+    :returns: (wikiname, itemname)
     """
     homewiki = app.cfg.user_homewiki
     if homewiki == app.cfg.interwikiname:

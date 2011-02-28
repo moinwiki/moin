@@ -37,8 +37,8 @@ def parse(input):
     Parse <input> for positional and keyword arguments, with value quoting and
     quotes escaping.
 
-    @param input: can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
-    @return: Argument instance
+    :param input: can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
+    :returns: Argument instance
     """
     ret = Arguments()
 
@@ -63,8 +63,8 @@ def unparse(args):
     Argument values that need quoting will be quoted.
     Keyword names must never need quoting (would raise ValueError).
 
-    @param args: Argument instance
-    @return: argument unicode object
+    :param args: Argument instance
+    :returns: argument unicode object
     """
     ret = []
 

@@ -176,9 +176,9 @@ def serialize(obj, xmlfile, xmlgen_cls=XMLSelectiveGenerator, *args, **kwargs):
     use some of XMLSelectiveGenerator child classes to do selective serialization,
     e.g. of just a list of items or just of items that match some search term.
 
-    @arg obj: object to serialize (must mix in Serializable)
-    @arg xmlfile: output file (file-like or filename)
-    @arg xmlgen_cls: XMLSelectiveGenerator (sub)class instance (all args/kwargs
+    :arg obj: object to serialize (must mix in Serializable)
+    :arg xmlfile: output file (file-like or filename)
+    :arg xmlgen_cls: XMLSelectiveGenerator (sub)class instance (all args/kwargs
                      given after this will be given to xmlgen_cls.__init__()
     """
     xg = xmlgen_cls(xmlfile, *args, **kwargs)
@@ -202,8 +202,8 @@ def unserialize(obj, xmlfile, context_cls=XMLUnserializationContext, *args, **kw
     """
     Unserialize <xmlfile> to <obj>.
 
-    @arg obj: object to write unserialized data to (must mix in Serializable)
-    @arg xmlfile: input file (file-like or filename)
+    :arg obj: object to write unserialized data to (must mix in Serializable)
+    :arg xmlfile: input file (file-like or filename)
     """
     context = context_cls(xmlfile, *args, **kwargs)
     obj.unserialize(context)

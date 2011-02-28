@@ -45,8 +45,8 @@ class FileServerBackend(Backend):
         """
         Initialise file serving backend.
 
-        @type root_dir: unicode
-        @param root_dir: root directory below which we serve files
+        :type root_dir: unicode
+        :param root_dir: root directory below which we serve files
         """
         root_dir = root_dir.rstrip('/')
         assert root_dir

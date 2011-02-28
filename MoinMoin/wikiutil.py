@@ -51,9 +51,9 @@ def decodeUnknownInput(text):
     WARNING: Use this function only for data that you view, not for data
     that you save in the wiki.
 
-    @param text: the text to decode, string
-    @rtype: unicode
-    @return: decoded text (maybe wrong)
+    :param text: the text to decode, string
+    :rtype: unicode
+    :returns: decoded text (maybe wrong)
     """
     # Shortcut for unicode input
     if isinstance(text, unicode):
@@ -74,10 +74,10 @@ def decodeUserInput(s, charsets=[config.charset]):
     """
     Decodes input from the user.
 
-    @param s: the string to unquote
-    @param charsets: list of charsets to assume the string is in
-    @rtype: unicode
-    @return: the unquoted string as unicode
+    :param s: the string to unquote
+    :param charsets: list of charsets to assume the string is in
+    :rtype: unicode
+    :returns: the unquoted string as unicode
     """
     for charset in charsets:
         try:
@@ -92,9 +92,9 @@ def clean_input(text, max_len=201):
         replace CR, LF, TAB by whitespace
         delete control chars
 
-        @param text: unicode text to clean (if we get str, we decode)
-        @rtype: unicode
-        @return: cleaned text
+        :param text: unicode text to clean (if we get str, we decode)
+        :rtype: unicode
+        :returns: cleaned text
     """
     # we only have input fields with max 200 chars, but spammers send us more
     length = len(text)
@@ -130,9 +130,9 @@ def make_breakable(text, maxlen):
 def isSystemItem(itemname):
     """ Is this a system page?
 
-    @param itemname: the item name
-    @rtype: bool
-    @return: True if page is a system item
+    :param itemname: the item name
+    :rtype: bool
+    :returns: True if page is a system item
     """
     from MoinMoin.items import IS_SYSITEM
     try:
@@ -147,9 +147,9 @@ def isSystemItem(itemname):
 def isGroupItem(itemname):
     """ Is this a name of group item?
 
-    @param itemname: the item name
-    @rtype: bool
-    @return: True if item is a group item
+    :param itemname: the item name
+    :rtype: bool
+    :returns: True if item is a group item
     """
     return app.cfg.cache.item_group_regexact.search(itemname) is not None
 
@@ -158,10 +158,10 @@ def AbsItemName(context, itemname):
     """
     Return the absolute item name for a (possibly) relative item name.
 
-    @param context: name of the item where "itemname" appears on
-    @param itemname: the (possibly relative) item name
-    @rtype: unicode
-    @return: the absolute item name
+    :param context: name of the item where "itemname" appears on
+    :param itemname: the (possibly relative) item name
+    :rtype: unicode
+    :returns: the absolute item name
     """
     if itemname.startswith(PARENT_PREFIX):
         while context and itemname.startswith(PARENT_PREFIX):
@@ -179,10 +179,10 @@ def RelItemName(context, itemname):
     """
     Return the relative item name for some context.
 
-    @param context: name of the item where "itemname" appears on
-    @param itemname: the absolute item name
-    @rtype: unicode
-    @return: the relative item name
+    :param context: name of the item where "itemname" appears on
+    :param itemname: the absolute item name
+    :rtype: unicode
+    :returns: the relative item name
     """
     if context == '':
         # special case, context is some "virtual root" item with name == ''
@@ -212,9 +212,9 @@ def ParentItemName(itemname):
     """
     Return the parent item name.
 
-    @param itemname: the absolute item name (unicode)
-    @rtype: unicode
-    @return: the parent item name (or empty string for toplevel items)
+    :param itemname: the absolute item name (unicode)
+    :rtype: unicode
+    :returns: the parent item name (or empty string for toplevel items)
     """
     if itemname:
         pos = itemname.rfind('/')
@@ -426,9 +426,9 @@ def normalize_pagename(name, cfg):
 
     Restrict even more group pages, so they can be used inside acl lines.
 
-    @param name: page name, unicode
-    @rtype: unicode
-    @return: decoded and sanitized page name
+    :param name: page name, unicode
+    :rtype: unicode
+    :returns: decoded and sanitized page name
     """
     # Strip invalid characters
     name = config.page_invalid_chars_regex.sub(u'', name)
@@ -478,9 +478,9 @@ def getUnicodeIndexGroup(name):
     Return a group letter for `name`, which must be a unicode string.
     Currently supported: Hangul Syllables (U+AC00 - U+D7AF)
 
-    @param name: a string
-    @rtype: string
-    @return: group letter or None
+    :param name: a string
+    :rtype: string
+    :returns: group letter or None
     """
     c = name[0]
     if u'\uAC00' <= c <= u'\uD7AF': # Hangul Syllables
@@ -571,11 +571,11 @@ def file_headers(filename=None,
         """
         Compute http headers for sending a file
 
-        @param filename: filename for content-disposition header and for autodetecting
+        :param filename: filename for content-disposition header and for autodetecting
                          content_type (unicode, default: None)
-        @param content_type: content-type header value (str, default: autodetect from filename)
-        @param content_disposition: type for content-disposition header (str, default: None)
-        @param content_length: for content-length header (int, default:None)
+        :param content_type: content-type header value (str, default: autodetect from filename)
+        :param content_disposition: type for content-disposition header (str, default: None)
+        :param content_length: for content-length header (int, default:None)
         """
         if filename:
             # make sure we just have a simple filename (without path)
@@ -610,7 +610,7 @@ def cache_key(**kw):
     * The key must be different for different **kw.
     * Key is pure ascii
 
-    @param **kw: keys/values to compute cache key from
+    :param **kw: keys/values to compute cache key from
     """
     return hashlib.md5(repr(kw)).hexdigest()
 

@@ -34,7 +34,7 @@ class UnicodeQuery(xapian.Query):
 
     def __init__(self, *args, **kwargs):
         """
-        @keyword encoding: specify the encoding manually (default: value of config.charset)
+        :keyword encoding: specify the encoding manually (default: value of config.charset)
         """
         self.encoding = kwargs.get('encoding', config.charset)
 
@@ -149,9 +149,9 @@ class XapianIndex(BaseIndex):
         """
         Perform the search using xapian
 
-        @param query: the search query objects
-        @param sort: the sorting of the results (default: 'weight')
-        @param historysearch: whether to search in all page revisions (default: 0) TODO: use/implement this
+        :param query: the search query objects
+        :param sort: the sorting of the results (default: 'weight')
+        :param historysearch: whether to search in all page revisions (default: 0) TODO: use/implement this
         """
         while True:
             try:
@@ -184,7 +184,7 @@ class XapianIndex(BaseIndex):
     def do_queued_updates(self, amount=-1):
         """ Index <amount> entries from the indexer queue.
 
-            @param amount: amount of queue entries to process (default: -1 == all)
+            :param amount: amount of queue entries to process (default: -1 == all)
         """
         try:
             request = self._indexingRequest(self.request)
@@ -264,7 +264,7 @@ class XapianIndex(BaseIndex):
     def _get_languages(self, page):
         """ Get language of a page and the language to stem it in
 
-        @param page: the page instance
+        :param page: the page instance
         """
         lang = None
         default_lang = app.cfg.language_default
@@ -290,7 +290,7 @@ class XapianIndex(BaseIndex):
     def _get_domains(self, page):
         """ Returns a generator with all the domains the page belongs to
 
-        @param page: page
+        :param page: page
         """
         if page.isStandardPage():
             yield 'standard'
@@ -302,10 +302,10 @@ class XapianIndex(BaseIndex):
 
         Index all revisions (if wanted by configuration) and all attachments.
 
-        @param request: request suitable for indexing
-        @param connection: the Indexer connection object
-        @param pagename: a page name
-        @param mode: 'add' = just add, no checks
+        :param request: request suitable for indexing
+        :param connection: the Indexer connection object
+        :param pagename: a page name
+        :param mode: 'add' = just add, no checks
                      'update' = check if already in index and update if needed (mtime)
         """
         page = Page(request, pagename)
@@ -355,11 +355,11 @@ class XapianIndex(BaseIndex):
     def _index_page_rev(self, request, connection, pagename, revno, mode='update'):
         """ Index a page revision.
 
-        @param request: request suitable for indexing
-        @param connection: the Indexer connection object
-        @param pagename: the page name
-        @param revno: page revision number (int)
-        @param mode: 'add' = just add, no checks
+        :param request: request suitable for indexing
+        :param connection: the Indexer connection object
+        :param pagename: the page name
+        :param revno: page revision number (int)
+        :param mode: 'add' = just add, no checks
                      'update' = check if already in index and update if needed (mtime)
         """
         page = Page(request, pagename, rev=revno)
@@ -404,10 +404,10 @@ class XapianIndex(BaseIndex):
     def _remove_page_rev(self, request, connection, pagename, revno):
         """ Remove a page revision from the index.
 
-        @param request: request suitable for indexing
-        @param connection: the Indexer connection object
-        @param pagename: the page name
-        @param revno: a real revision number (int), > 0
+        :param request: request suitable for indexing
+        :param connection: the Indexer connection object
+        :param pagename: the page name
+        :param revno: a real revision number (int), > 0
         """
         wikiname = app.cfg.interwikiname or u"Self"
         revision = str(revno)
@@ -418,11 +418,11 @@ class XapianIndex(BaseIndex):
     def _index_attachment(self, request, connection, pagename, attachmentname, mode='update'):
         """ Index an attachment
 
-        @param request: request suitable for indexing
-        @param connection: the Indexer connection object
-        @param pagename: the page name
-        @param attachmentname: the attachment's name
-        @param mode: 'add' = just add, no checks
+        :param request: request suitable for indexing
+        :param connection: the Indexer connection object
+        :param pagename: the page name
+        :param attachmentname: the attachment's name
+        :param mode: 'add' = just add, no checks
                      'update' = check if already in index and update if needed (mtime)
         """
         from MoinMoin.action import AttachFile
@@ -466,10 +466,10 @@ class XapianIndex(BaseIndex):
     def _index_file(self, request, connection, filename, mode='update'):
         """ index files (that are NOT attachments, just arbitrary files)
 
-        @param request: request suitable for indexing
-        @param connection: the Indexer connection object
-        @param filename: a filesystem file name
-        @param mode: 'add' = just add, no checks
+        :param request: request suitable for indexing
+        :param connection: the Indexer connection object
+        :param filename: a filesystem file name
+        :param mode: 'add' = just add, no checks
                      'update' = check if already in index and update if needed (mtime)
         """
         wikiname = app.cfg.interwikiname or u"Self"
@@ -508,11 +508,11 @@ class XapianIndex(BaseIndex):
 
         This should be called from indexPages only!
 
-        @param request: request suitable for indexing
-        @param files: an optional list of files to index
-        @param mode: 'add' = just add, no checks
+        :param request: request suitable for indexing
+        :param files: an optional list of files to index
+        :param mode: 'add' = just add, no checks
                      'update' = check if already in index and update if needed (mtime)
-        @param pages: list of pages to index, if not given, all pages are indexed
+        :param pages: list of pages to index, if not given, all pages are indexed
         """
         if pages is None:
             # Index all pages

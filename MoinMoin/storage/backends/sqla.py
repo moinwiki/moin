@@ -94,11 +94,11 @@ class SQLAlchemyBackend(Backend):
     """
     def __init__(self, db_uri=None, verbose=False):
         """
-        @type db_uri: str
-        @param db_uri: The database uri that we pass on to SQLAlchemy.
+        :type db_uri: str
+        :param db_uri: The database uri that we pass on to SQLAlchemy.
                        May contain user/password/host/port/etc.
-        @type verbose: bool
-        @param verbose: Verbosity setting. If set to True this will print all SQL queries
+        :type verbose: bool
+        :param verbose: Verbosity setting. If set to True this will print all SQL queries
                         to the console.
         """
         if db_uri is None:
@@ -477,8 +477,8 @@ class Data(Base):
         This does *only* support sequential writing of data, because otherwise
         we'd need to re-order potentially all chunks after the cursor position.
 
-        @type data: str
-        @param data: The data we want to split and write to the DB in chunks.
+        :type data: str
+        :param data: The data we want to split and write to the DB in chunks.
         """
         # XXX This currently relies on the autoflush feature of the session. It should ideally
         #     flush after every chunk.
@@ -499,8 +499,8 @@ class Data(Base):
 
         Behaves like file-API's read().
 
-        @type amount: int
-        @param amount: amount of bytes we want to read.
+        :type amount: int
+        :param amount: amount of bytes we want to read.
         """
         chunksize = self._last_chunk.chunksize
 

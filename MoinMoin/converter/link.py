@@ -83,12 +83,12 @@ class ConverterBase(object):
         """
         Converts a relative iri path into an absolute one
 
-        @param path: the relative path to be converted
-        @type path: Iri.path
-        @param current_page_path: the path of the page where the link is
-        @type current_page_path: Iri.path
-        @return: the absolute equivalent of the relative path
-        @rtype: Iri.path
+        :param path: the relative path to be converted
+        :type path: Iri.path
+        :param current_page_path: the path of the page where the link is
+        :type current_page_path: Iri.path
+        :returns: the absolute equivalent of the relative path
+        :rtype: Iri.path
         """
         quoted_path = path.quoted
         # starts from 1 because 0 is always / for the current page
@@ -213,9 +213,9 @@ class ConverterItemRefs(ConverterBase):
     def handle_wikilocal_links(self, elem, input, page):
         """
         Adds the link item from the input param to self.links
-        @param elem: the element of the link
-        @param input: the iri of the link
-        @param page: the iri of the page where the link is
+        :param elem: the element of the link
+        :param input: the iri of the link
+        :param page: the iri of the page where the link is
         """
         path = input.path
         if not path or ':' in path:
@@ -227,9 +227,9 @@ class ConverterItemRefs(ConverterBase):
     def handle_wikilocal_transclusions(self, elem, input, page):
         """
         Adds the transclusion item from input argument to self.transclusions
-        @param elem: the element of the transclusion
-        @param input: the iri of the transclusion
-        @param page: the iri of the page where the transclusion is
+        :param elem: the element of the transclusion
+        :param input: the iri of the transclusion
+        :param page: the iri of the page where the transclusion is
         """
         path = input.path
         if not path or ':' in path:
