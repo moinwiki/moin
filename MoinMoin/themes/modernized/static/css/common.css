@@ -119,26 +119,15 @@ th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1pt solid #ADB9CC; vertical
 td p { margin: 0; padding: 0; }
 
 /* TableOfContents macro */
-div.moin-table-of-contents {
-    background: -moz-linear-gradient(center top , #F9FFFF 1%, #EFEFFF 101%) repeat scroll 0 0 transparent;
-    border: 1px solid #BBBBBB;
-    color: black;
-    display: inline-table;
-    font-size: 80%;
-    margin: 0.5em 0 0.5em 1em;
-    max-width: 50%;
-    padding: 0.5em 0.75em 0.5em 0.5em;
-    text-align: left;
-    box-shadow: 3px 3px 11px -7px;
-    /* support for firefox 3.5/3.6 and safari */
-    -moz-box-shadow: 3px 3px 11px -7px;
-    -webkit-box-shadow: 3px 3px 11px -7px;
-}
-.moin-table-of-contents ol { margin: 0; padding: 0 0 0 2em; }
-.moin-table-of-contents ul { margin: 0; list-style: none; }
-.moin-table-of-contents li { margin: 0; padding: 0; }
-.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 0;
-            letter-spacing: 0.075em; }
+div.moin-table-of-contents { border: 1px solid #BBB; color: black;
+    font-size: 80%; margin: 0.5em 0 0.5em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
+    max-width: 35%; text-align: left; float: right; clear: both;
+    box-shadow: 10px 10px 5px #679; border-radius: 15px;
+    -moz-box-shadow: 10px 10px 5px #679; -moz-border-radius: 15px;
+    -webkit-box-shadow: 10px 10px 5px #679; -webkit-border-radius: 15px; }
+.moin-table-of-contents ol { margin: 0; padding: 0 0 0 .92em; }
+.moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none;}
+.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 1em; letter-spacing: 0.075em; }
 .moin-showhide { margin-left: 10px; }
 
 /* Navigation macro */
