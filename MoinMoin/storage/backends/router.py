@@ -53,8 +53,8 @@ class BareRouterBackend(BackendBase):
               that all items that don't lie in the namespace of any other
               backend are stored there.
 
-        @type mapping: list of tuples of mountpoint -> backend mappings
-        @param mapping: [(mountpoint, backend), ...]
+        :type mapping: list of tuples of mountpoint -> backend mappings
+        :param mapping: [(mountpoint, backend), ...]
         """
         super(BareRouterBackend, self).__init__(*args, **kw)
         self.mapping = [(mountpoint.rstrip('/'), backend) for mountpoint, backend in mapping]
@@ -68,9 +68,9 @@ class BareRouterBackend(BackendBase):
         Note: Internally (i.e. in all Router* classes) we always use the normalized
               item name for consistency reasons.
 
-        @type itemname: str
-        @param itemname: fully-qualified itemname
-        @return: tuple of (backend, itemname, mountpoint)
+        :type itemname: str
+        :param itemname: fully-qualified itemname
+        :returns: tuple of (backend, itemname, mountpoint)
         """
         if not isinstance(itemname, (str, unicode)):
             raise TypeError("Item names must have string type, not %s" % (type(itemname)))
@@ -85,8 +85,8 @@ class BareRouterBackend(BackendBase):
         """
         Given a namespace, return the backend mounted there.
 
-        @type namespace: basestring
-        @param namespace: The namespace of which we look the backend up.
+        :type namespace: basestring
+        :param namespace: The namespace of which we look the backend up.
         """
         return self._get_backend(namespace)[0]
 
@@ -162,14 +162,14 @@ class BareRouterItem(ItemBase):
     """
     def __init__(self, backend, item_name, item, mountpoint, *args, **kw):
         """
-        @type backend: Object adhering to the storage API.
-        @param backend: The backend this item belongs to.
-        @type itemname: basestring.
-        @param itemname: The name of the item (not the FQIN).
-        @type item: Object adhering to the storage item API.
-        @param item: The item we want to wrap.
-        @type mountpoint: basestring.
-        @param mountpoint: The mountpoint where this item is located.
+        :type backend: Object adhering to the storage API.
+        :param backend: The backend this item belongs to.
+        :type itemname: basestring.
+        :param itemname: The name of the item (not the FQIN).
+        :type item: Object adhering to the storage item API.
+        :param item: The item we want to wrap.
+        :type mountpoint: basestring.
+        :param mountpoint: The mountpoint where this item is located.
         """
         self._get_backend = backend._get_backend
         self._itemname = item_name
@@ -189,8 +189,8 @@ class BareRouterItem(ItemBase):
     @property
     def name(self):
         """
-        @rtype: str
-        @return: the item's fully-qualified name
+        :rtype: str
+        :returns: the item's fully-qualified name
         """
         mountpoint = self._mountpoint
         if mountpoint:

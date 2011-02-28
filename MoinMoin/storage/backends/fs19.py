@@ -87,8 +87,8 @@ class Index(object):
         """
         Get uuid for user name, create a new uuid if we don't already have one.
 
-        @param name: name of user (unicode)
-        @param old_id: moin 1.x user id (str)
+        :param name: name of user (unicode)
+        :param old_id: moin 1.x user id (str)
         """
         idx = self.users
         if old_id:
@@ -123,7 +123,7 @@ class Index(object):
         """
         Get old_id for some user with uuid <uuid>.
 
-        @param name: uuid - uuid of user (str)
+        :param name: uuid - uuid of user (str)
         """
         idx = self.users
         results = idx.select(idx.c.uuid==uuid).execute()
@@ -137,7 +137,7 @@ class Index(object):
         """
         Get uuid for a content name, create a new uuid if we don't already have one.
 
-        @param name: name of content item (page or page/attachment, unicode)
+        :param name: name of content item (page or page/attachment, unicode)
         """
         idx = self.content
         results = idx.select(idx.c.name==name).execute()
@@ -168,10 +168,10 @@ class FSPageBackend(Backend):
         """
         Initialise filesystem backend.
 
-        @param path: storage path (data_dir)
-        @param idx_path: path for index storage
-        @param syspages: either False (not syspages) or revision number of syspages
-        @param deleted_mode: 'kill' - just ignore deleted pages (pages with
+        :param path: storage path (data_dir)
+        :param idx_path: path for index storage
+        :param syspages: either False (not syspages) or revision number of syspages
+        :param deleted_mode: 'kill' - just ignore deleted pages (pages with
                                       non-existing current revision) and their attachments
                                       as if they were not there.
                                       Non-deleted pages (pages with an existing current
@@ -179,7 +179,7 @@ class FSPageBackend(Backend):
                                       will be treated as for 'keep'.
                              'keep' - keep deleted pages as items with empty revisions,
                                       keep their attachments. (default)
-        @param default_markup: used if a page has no #format line, moin 1.9's default
+        :param default_markup: used if a page has no #format line, moin 1.9's default
                                'wiki' and we also use this default here.
         """
         self._path = path
@@ -605,9 +605,9 @@ class FSUserBackend(Backend):
         """
         Initialise filesystem backend.
 
-        @param path: storage path (user_dir)
-        @param idx_path: path for index storage
-        @param data_path: storage path (data_dir) - only used for index storage
+        :param path: storage path (user_dir)
+        :param idx_path: path for index storage
+        :param data_path: storage path (data_dir) - only used for index storage
         """
         self._path = path
         if kill_save:
@@ -766,9 +766,9 @@ def _decode_list(line):
     """
     Decode list of items from user data file
 
-    @param line: line containing list of items, encoded with _encode_list
-    @rtype: list of unicode strings
-    @return: list of items in encoded in line
+    :param line: line containing list of items, encoded with _encode_list
+    :rtype: list of unicode strings
+    :returns: list of items in encoded in line
     """
     items = [item.strip() for item in line.split('\t')]
     items = [item for item in items if item]
@@ -778,9 +778,9 @@ def _decode_dict(line):
     """
     Decode dict of key:value pairs from user data file
 
-    @param line: line containing a dict, encoded with _encode_dict
-    @rtype: dict
-    @return: dict  unicode:unicode items
+    :param line: line containing a dict, encoded with _encode_dict
+    :rtype: dict
+    :returns: dict  unicode:unicode items
     """
     items = [item.strip() for item in line.split('\t')]
     items = [item for item in items if item]

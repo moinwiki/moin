@@ -45,18 +45,18 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     """
     Factory for moin wsgi apps
 
-    @param flask_config_file: a flask config file name (may have a MOINCFG class),
+    :param flask_config_file: a flask config file name (may have a MOINCFG class),
                               if not given, a config pointed to by MOINCFG env var
                               will be loaded (if possible).
-    @param flask_config_dict: a dict used to update flask config (applied after
+    :param flask_config_dict: a dict used to update flask config (applied after
                               flask_config_file was loaded [if given])
-    @param moin_config_class: if you give this, it'll be instantiated as app.cfg,
+    :param moin_config_class: if you give this, it'll be instantiated as app.cfg,
                               otherwise it'll use MOINCFG from flask config. If that
                               also is not there, it'll use the DefaultConfig built
                               into MoinMoin.
-    @param warn_default: emit a warning if moin falls back to its builtin default
+    :param warn_default: emit a warning if moin falls back to its builtin default
                          config (maybe user forgot to specify MOINCFG?)
-    @param **kwargs: if you give additional key/values here, they'll get patched
+    :param **kwargs: if you give additional key/values here, they'll get patched
                      into the moin configuration class (before it instance is created)
     """
     clock = Clock()

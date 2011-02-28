@@ -28,13 +28,13 @@ def encodeAddress(address, charset):
     e.g. '"Jürgen Hermann" <jh@web.de>'. According to the RFC, the name
     part should be encoded, the address should not.
 
-    @param address: email address, possibly using '"name" <address>' format
-    @type address: unicode
-    @param charset: specifying both the charset and the encoding, e.g
+    :param address: email address, possibly using '"name" <address>' format
+    :type address: unicode
+    :param charset: specifying both the charset and the encoding, e.g
                     quoted printable or base64.
-    @type charset: email.Charset.Charset instance
-    @rtype: string
-    @return: encoded address
+    :type charset: email.Charset.Charset instance
+    :rtype: string
+    :returns: encoded address
     """
     assert isinstance(address, unicode)
     composite = re.compile(r'(?P<phrase>.*?)(?P<blanks>\s*)\<(?P<addr>.*)\>', re.UNICODE)
@@ -62,13 +62,13 @@ def sendmail(to, subject, text, mail_from=None):
 
     Return a tuple of success or error indicator and message.
 
-    @param to: recipients (list)
-    @param subject: subject of email (unicode)
-    @param text: email body text (unicode)
-    @param mail_from: override default mail_from
-    @type mail_from: unicode
-    @rtype: tuple
-    @return: (is_ok, Description of error or OK message)
+    :param to: recipients (list)
+    :param subject: subject of email (unicode)
+    :param text: email body text (unicode)
+    :param mail_from: override default mail_from
+    :type mail_from: unicode
+    :rtype: tuple
+    :returns: (is_ok, Description of error or OK message)
     """
     import smtplib, socket
     from email.Message import Message
@@ -179,12 +179,12 @@ def sendmail(to, subject, text, mail_from=None):
 
 def encodeSpamSafeEmail(email_address, obfuscation_text=''):
     """ Encodes a standard email address to an obfuscated address
-    @param email_address: mail address to encode.
+    :param email_address: mail address to encode.
                           Known characters and their all-uppercase words translation:
                           "." -> " DOT "
                           "@" -> " AT "
                           "-" -> " DASH "
-    @param obfuscation_text: optional text to obfuscate the email.
+    :param obfuscation_text: optional text to obfuscate the email.
                              All characters in the string must be alphabetic
                              and they will be added in uppercase.
     """
@@ -214,9 +214,9 @@ def decodeSpamSafeEmail(address):
 
     Blanks (spaces) simply get stripped.
 
-    @param address: obfuscated email address string
-    @rtype: string
-    @return: decoded email address
+    :param address: obfuscated email address string
+    :rtype: string
+    :returns: decoded email address
     """
     email = []
 

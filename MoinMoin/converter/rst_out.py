@@ -87,7 +87,7 @@ class Table(object):
         """
         Adds cell to the row.
 
-        @param cs: number of columns spanned
+        :param cs: number of columns spanned
         """
         if cs < 1 or rs < 1:
             return
@@ -103,13 +103,13 @@ class Table(object):
 
     def height(self):
         """
-        @return: number of rows in the table
+        :returns: number of rows in the table
         """
         return len(self.table)
 
     def width(self):
         """
-        @return: width of rows in the table or zero if rows have different width
+        :returns: width of rows in the table or zero if rows have different width
         """
         if not self.table:
             return 0
@@ -123,8 +123,8 @@ class Table(object):
         """
         Counts the width of the column in ReSturcturedText representation.
 
-        @param col: index of the column
-        @return: number of characters
+        :param col: index of the column
+        :returns: number of characters
         """
         if self.width() <= col:
             return 0
@@ -138,8 +138,8 @@ class Table(object):
         """
         Counts lines in ReSturcturedText representation of the row
 
-        @param row: index of the row
-        @return: number of lines
+        :param row: index of the row
+        :returns: number of lines
         """
         if self.height() <= row:
             return 0

@@ -149,8 +149,8 @@ def get_multistage_continuation_url(auth_name, extra_fields={}):
        authentication at the auth method requesting it (parameter auth_name.)
        Additional fields are added to the URL from the extra_fields dict.
 
-       @param auth_name: name of the auth method requesting the continuation
-       @param extra_fields: extra GET fields to add to the URL
+       :param auth_name: name of the auth method requesting the continuation
+       :param extra_fields: extra GET fields to add to the URL
     """
     # logically, this belongs to request, but semantically it should
     # live in auth so people do auth.get_multistage_continuation_url()

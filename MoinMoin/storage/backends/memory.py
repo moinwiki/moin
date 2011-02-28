@@ -243,8 +243,8 @@ class MemoryBackend(BackendBase):
         Item a unique ID.
         Not defined by superclass.
 
-        @type item: Object of class Item.
-        @param item: Item we want to add.
+        :type item: Object of class Item.
+        :param item: Item we want to add.
         """
         item._item_id = self._last_itemid
         self._itemmap[item.name] = item._item_id
@@ -326,9 +326,9 @@ class MemoryBackend(BackendBase):
         """
         Load metadata for a given item, return dict.
 
-        @type item: Object of class Item.
-        @param item: Item for which we want to get the metadata dict.
-        @return: dict
+        :type item: Object of class Item.
+        :param item: Item for which we want to get the metadata dict.
+        :returns: dict
         """
         try:
             return dict(self._item_metadata[item._item_id])
@@ -339,9 +339,9 @@ class MemoryBackend(BackendBase):
         """
         Load metadata for a given Revision, returns dict.
 
-        @type revision: Object of subclass of Revision.
-        @param revision: Revision for which we want to get the metadata dict.
-        @return: dict
+        :type revision: Object of subclass of Revision.
+        :param revision: Revision for which we want to get the metadata dict.
+        :returns: dict
         """
         item = revision._item
         return self._item_revisions[item._item_id][revision.revno][1]

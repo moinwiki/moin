@@ -487,9 +487,9 @@ def backrefs(item_name):
     """
     Returns the list of all items that link or transclude item_name
 
-    @param item_name: the name of the current item
-    @type item_name: unicode
-    @return: a page with all the items which link or transclude item_name
+    :param item_name: the name of the current item
+    :type item_name: unicode
+    :returns: a page with all the items which link or transclude item_name
     """
     refs_here = _backrefs(flaskg.storage.iteritems(), item_name)
     return render_template('item_link_list.html',
@@ -503,11 +503,11 @@ def _backrefs(items, item_name):
     """
     Returns a list with all names of items which ref item_name
 
-    @param items: all the items
-    @type items: iteratable sequence
-    @param item_name: the name of the item transcluded or linked
-    @type item_name: unicode
-    @return: the list of all items which ref item_name
+    :param items: all the items
+    :type items: iteratable sequence
+    :param item_name: the name of the item transcluded or linked
+    :type item_name: unicode
+    :returns: the list of all items which ref item_name
     """
     refs_here = []
     for item in items:
@@ -570,9 +570,9 @@ def _wanteds(items):
     Returns a dict with all the names of non-existing items which are refed by
     other items and the items which are refed by
 
-    @param items: all the items
-    @type items: iteratable sequence
-    @return: a dict with all the wanted items and the items which are beign refed by
+    :param items: all the items
+    :type items: iteratable sequence
+    :returns: a dict with all the wanted items and the items which are beign refed by
     """
     all_items = set()
     wanteds = {}
@@ -616,9 +616,9 @@ def _orphans(items):
     """
     Returns a list with the names of all existing items not being refed by any other item
 
-    @param items: the list of all items
-    @type items: iteratable sequence
-    @return: the list of all orphaned items
+    :param items: the list of all items
+    :type items: iteratable sequence
+    :returns: the list of all orphaned items
     """
     linked_items = set()
     transcluded_items = set()
@@ -1388,11 +1388,11 @@ def similar_names(item_name):
 def findMatches(item_name, s_re=None, e_re=None):
     """ Find similar item names.
 
-    @param item_name: name to match
-    @param s_re: start re for wiki matching
-    @param e_re: end re for wiki matching
-    @rtype: tuple
-    @return: start word, end word, matches dict
+    :param item_name: name to match
+    :param s_re: start re for wiki matching
+    :param e_re: end re for wiki matching
+    :rtype: tuple
+    :returns: start word, end word, matches dict
     """
     item_names = [item.name for item in flaskg.storage.iteritems()]
     if item_name in item_names:
@@ -1425,12 +1425,12 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
         2 - match end
         1 - match start
 
-    @param item_name: item name to match
-    @param item_names: list of item names
-    @param start_re: start word re (compile regex)
-    @param end_re: end word re (compile regex)
-    @rtype: tuple
-    @return: start, end, matches dict
+    :param item_name: item name to match
+    :param item_names: list of item names
+    :param start_re: start word re (compile regex)
+    :param end_re: end word re (compile regex)
+    :rtype: tuple
+    :returns: start, end, matches dict
     """
     if start_re is None:
         start_re = re.compile('([%s][%s]+)' % (config.chars_upper,
@@ -1475,10 +1475,10 @@ def closeMatches(item_name, item_names):
 
     Return all matching item names with rank above cutoff value.
 
-    @param item_name: item name to match
-    @param item_names: list of item names
-    @rtype: list
-    @return: list of matching item names, sorted by rank
+    :param item_name: item name to match
+    :param item_names: list of item names
+    :rtype: list
+    :returns: list of matching item names, sorted by rank
     """
     # Match using case insensitive matching
     # Make mapping from lower item names to item names.

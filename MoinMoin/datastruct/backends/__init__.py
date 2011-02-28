@@ -33,8 +33,8 @@ class BaseGroup(object):
         """
         Initialize a group.
 
-        @param name: moin group name
-        @param backend: backend object which created this object
+        :param name: moin group name
+        :param backend: backend object which created this object
         """
         self.name = name
         self._backend = backend
@@ -68,7 +68,7 @@ class BaseGroupsBackend(object):
         """
         Iterate over moin group names of the groups defined in this backend.
 
-        @return: moin group names
+        :returns: moin group names
         """
         raise NotImplementedError()
 
@@ -88,8 +88,8 @@ class BaseGroupsBackend(object):
         """
         List all group names of groups containing <member>.
 
-        @param member: member name [unicode]
-        @return: list of group names [unicode]
+        :param member: member name [unicode]
+        :returns: list of group names [unicode]
         """
         for group_name in self:
             try:
@@ -194,8 +194,8 @@ class GreedyGroup(BaseGroup):
         <processed_groups> is needed to avoid infinite recursion, if
         groups are defined recursively.
 
-        @param member: member name [unicode]
-        @param processed_groups: groups which were checked for containment before [set]
+        :param member: member name [unicode]
+        :param processed_groups: groups which were checked for containment before [set]
         """
 
         if processed_groups is None:
@@ -222,8 +222,8 @@ class GreedyGroup(BaseGroup):
            OneGroup: Something, OtherGroup
            OtherGroup: OneGroup, SomethingOther
 
-        @param yielded_members: members which have been already yielded before [set]
-        @param processed_groups: group names which have been iterated before [set]
+        :param yielded_members: members which have been already yielded before [set]
+        :param processed_groups: group names which have been iterated before [set]
         """
 
         if processed_groups is None:
@@ -262,8 +262,8 @@ class BaseDict(object, DictMixin):
         Initialize a dict. Dicts are greedy, it stores all keys and
         items internally.
 
-        @param name: moin dict name
-        @param backend: backend object which created this object
+        :param name: moin dict name
+        :param backend: backend object which created this object
         """
         self.name = name
         self._backend = backend

@@ -102,8 +102,8 @@ def get_user_backend():
 def getUserList():
     """ Get a list of all (numerical) user IDs.
 
-    @rtype: list
-    @return: all user IDs
+    :rtype: list
+    :returns: all user IDs
     """
     all_users = get_user_backend().iteritems()
     return [item.name for item in all_users]
@@ -128,10 +128,10 @@ def get_by_openid(openid):
     """
     Searches for a user using an openid identifier.
 
-    @param openid: the openid to filter with
-    @type openid: unicode
-    @return: the user whose openid is this one
-    @rtype: user object or None
+    :param openid: the openid to filter with
+    :type openid: unicode
+    :returns: the user whose openid is this one
+    :rtype: user object or None
     """
     users = get_by_filter('openid', openid)
     if len(users) > 0:
@@ -140,9 +140,9 @@ def get_by_openid(openid):
 def getUserId(searchName):
     """ Get the user ID for a specific user NAME.
 
-    @param searchName: the user name to look up
-    @rtype: string
-    @return: the corresponding user ID or None
+    :param searchName: the user name to look up
+    :rtype: string
+    :returns: the corresponding user ID or None
     """
     from MoinMoin.search import term
     try:
@@ -178,10 +178,10 @@ def get_editor(userid, addr, hostname):
 def encodePassword(pwd, salt=None):
     """ Encode a cleartext password
 
-    @param pwd: the cleartext password, (unicode)
-    @param salt: the salt for the password (string)
-    @rtype: string
-    @return: the password in SHA256-encoding
+    :param pwd: the cleartext password, (unicode)
+    :param salt: the salt for the password (string)
+    :rtype: string
+    :returns: the password in SHA256-encoding
     """
     pwd = pwd.encode('utf-8')
 
@@ -206,9 +206,9 @@ def normalizeName(name):
 
     Prevent using ':' and ',' which are reserved by acl.
 
-    @param name: user name, unicode
-    @rtype: unicode
-    @return: user name that can be used in acl lines
+    :param name: user name, unicode
+    :rtype: unicode
+    :returns: user name that can be used in acl lines
     """
     username_allowedchars = "'@.-_" # ' for names like O'Brian or email addresses.
                                     # "," and ":" must not be allowed (ACL delimiters).
@@ -226,7 +226,7 @@ def normalizeName(name):
 def isValidName(name):
     """ Validate user name
 
-    @param name: user name, unicode
+    :param name: user name, unicode
     """
     normalized = normalizeName(name)
     return (name == normalized) and not wikiutil.isGroupItem(name)
@@ -238,14 +238,14 @@ class User(object):
     def __init__(self, uid=None, name="", password=None, auth_username="", **kw):
         """ Initialize User object
 
-        @param uid: (optional) user ID
-        @param name: (optional) user name
-        @param password: (optional) user password (unicode)
-        @param auth_username: (optional) already authenticated user name
+        :param uid: (optional) user ID
+        :param name: (optional) user name
+        :param password: (optional) user password (unicode)
+        :param auth_username: (optional) already authenticated user name
                               (e.g. when using http basic auth) (unicode)
-        @keyword auth_method: method that was used for authentication,
+        :keyword auth_method: method that was used for authentication,
                               default: 'internal'
-        @keyword auth_attribs: tuple of user object attribute names that are
+        :keyword auth_attribs: tuple of user object attribute names that are
                                determined by auth method and should not be
                                changeable by preferences, default: ().
                                First tuple element was used for authentication.
@@ -331,7 +331,7 @@ class User(object):
     def create_or_update(self, changed=False):
         """ Create or update a user profile
 
-        @param changed: bool, set this to True if you updated the user profile values
+        :param changed: bool, set this to True if you updated the user profile values
         """
         if not self.valid and not self.disabled or changed: # do we need to save/update?
             self.save() # yes, create/update user profile
@@ -339,8 +339,8 @@ class User(object):
     def exists(self):
         """ Do we have a user account for this user?
 
-        @rtype: bool
-        @return: true, if we have a user account
+        :rtype: bool
+        :returns: true, if we have a user account
         """
         return self._user_backend.has_item(self.id)
 
@@ -352,7 +352,7 @@ class User(object):
         This loads all member variables, except "id" and "valid" and
         those starting with an underscore.
 
-        @param password: If not None, then the given password must match the
+        :param password: If not None, then the given password must match the
                          password in the user account file.
         """
         if not self.exists():
@@ -397,10 +397,10 @@ class User(object):
 
         This is a private method and should not be used by clients.
 
-        @param data: dict with user data (from storage)
-        @param password: password to verify [unicode]
-        @rtype: 2 tuple (bool, bool)
-        @return: password is valid, enc_password changed
+        :param data: dict with user data (from storage)
+        :param password: password to verify [unicode]
+        :rtype: 2 tuple (bool, bool)
+        :returns: password is valid, enc_password changed
         """
         epwd = data['enc_password']
 
@@ -520,7 +520,7 @@ class User(object):
     def setBookmark(self, tm):
         """ Set bookmark timestamp.
 
-        @param tm: timestamp
+        :param tm: timestamp
         """
         if self.valid:
             interwikiname = self._cfg.interwikiname or u''
@@ -531,8 +531,8 @@ class User(object):
     def getBookmark(self):
         """ Get bookmark timestamp.
 
-        @rtype: int
-        @return: bookmark timestamp or None
+        :rtype: int
+        :returns: bookmark timestamp or None
         """
         bm = None
         interwikiname = self._cfg.interwikiname or u''
@@ -546,8 +546,8 @@ class User(object):
     def delBookmark(self):
         """ Removes bookmark timestamp.
 
-        @rtype: int
-        @return: 0 on success, 1 on failure
+        :rtype: int
+        :returns: 0 on success, 1 on failure
         """
         interwikiname = self._cfg.interwikiname or u''
         if self.valid:
@@ -565,8 +565,8 @@ class User(object):
     def getSubscriptionList(self):
         """ Get list of pages this user has subscribed to
 
-        @rtype: list
-        @return: pages this user has subscribed to
+        :rtype: list
+        :returns: pages this user has subscribed to
         """
         return self.subscribed_items
 
@@ -579,9 +579,9 @@ class User(object):
         TODO: check if it's fast enough when getting called for many
               users from page.getSubscribersList()
 
-        @param pagelist: list of pages to check for subscription
-        @rtype: bool
-        @return: if user is subscribed any page in pagelist
+        :param pagelist: list of pages to check for subscription
+        :rtype: bool
+        :returns: if user is subscribed any page in pagelist
         """
         if not self.valid:
             return False
@@ -614,10 +614,10 @@ class User(object):
         To enable shared farm users, if the wiki has an interwiki name,
         page names are saved as interwiki names.
 
-        @param pagename: name of the page to subscribe
-        @type pagename: unicode
-        @rtype: bool
-        @return: if page was subscribed
+        :param pagename: name of the page to subscribe
+        :type pagename: unicode
+        :rtype: bool
+        :returns: if page was subscribed
         """
         if self._cfg.interwikiname:
             pagename = self._interWikiName(pagename)
@@ -644,10 +644,10 @@ class User(object):
         must check if the user is still subscribed to the page after we
         try to remove names from the list.
 
-        @param pagename: name of the page to subscribe
-        @type pagename: unicode
-        @rtype: bool
-        @return: if unsubscrieb was successful. If the user has a
+        :param pagename: name of the page to subscribe
+        :type pagename: unicode
+        :rtype: bool
+        :returns: if unsubscrieb was successful. If the user has a
             regular expression that match, it will always fail.
         """
         changed = False
@@ -670,17 +670,17 @@ class User(object):
     def getQuickLinks(self):
         """ Get list of pages this user wants in the navibar
 
-        @rtype: list
-        @return: quicklinks from user account
+        :rtype: list
+        :returns: quicklinks from user account
         """
         return self.quicklinks
 
     def isQuickLinkedTo(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
 
-        @param pagelist: list of pages to check for quicklinks
-        @rtype: bool
-        @return: if user has quicklinked any page in pagelist
+        :param pagelist: list of pages to check for quicklinks
+        :rtype: bool
+        :returns: if user has quicklinked any page in pagelist
         """
         if not self.valid:
             return False
@@ -700,10 +700,10 @@ class User(object):
         If the wiki has an interwiki name, all links are saved as
         interwiki names. If not, as simple page name.
 
-        @param pagename: page name
-        @type pagename: unicode
-        @rtype: bool
-        @return: if pagename was added
+        :param pagename: page name
+        :type pagename: unicode
+        :rtype: bool
+        :returns: if pagename was added
         """
         changed = False
         interWikiName = self._interWikiName(pagename)
@@ -728,10 +728,10 @@ class User(object):
 
         Remove both interwiki and simple name from quicklinks.
 
-        @param pagename: page name
-        @type pagename: unicode
-        @rtype: bool
-        @return: if pagename was removed
+        :param pagename: page name
+        :type pagename: unicode
+        :rtype: bool
+        :returns: if pagename was removed
         """
         changed = False
         interWikiName = self._interWikiName(pagename)
@@ -749,8 +749,8 @@ class User(object):
     def _interWikiName(self, pagename):
         """ Return the inter wiki name of a page name
 
-        @param pagename: page name
-        @type pagename: unicode
+        :param pagename: page name
+        :type pagename: unicode
         """
         if not self._cfg.interwikiname:
             return None
@@ -763,7 +763,7 @@ class User(object):
     def addTrail(self, item_name):
         """ Add item name to trail.
 
-        @param item_name: the item name (unicode) to add to the trail
+        :param item_name: the item name (unicode) to add to the trail
         """
         # Save interwiki links internally
         if self._cfg.interwikiname:
@@ -779,8 +779,8 @@ class User(object):
     def getTrail(self):
         """ Return list of recently visited item names.
 
-        @rtype: list
-        @return: item names (unicode) in trail
+        :rtype: list
+        :returns: item names (unicode) in trail
         """
         return session.get('trail', [])
 

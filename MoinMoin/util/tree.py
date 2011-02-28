@@ -25,8 +25,8 @@ class Namespace(unicode):
         """
         Create a Name within this namespace
 
-        @param name: The name within this namespace.
-        @return: A Name
+        :param name: The name within this namespace.
+        :returns: A Name
         """
         return Name(name, self)
 
@@ -39,7 +39,7 @@ class Namespace(unicode):
          - a trailing "_" (underscore) is removed and
          - all included "_" (underscore) are replaced by "-" (hyphen).
 
-        @return: A Name
+        :returns: A Name
         """
         if '_' in key:
             if key.startswith('_'):

@@ -53,9 +53,9 @@ class Profiler:
     def __init__(self, name, requestsPerSample=100, collect=0):
         """ Initialize a profiler
 
-        @param name: profiler name, used in the log file name
-        @param requestsPerSample: how many request to run between samples
-        @param collect: should call gc.collect() in each sample
+        :param name: profiler name, used in the log file name
+        :param requestsPerSample: how many request to run between samples
+        :param collect: should call gc.collect() in each sample
         """
         logname = '%s--%s.log' % (name, time.strftime('%Y-%m-%d--%H-%M'))
         self.logfile = file(logname, 'a')

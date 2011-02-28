@@ -49,7 +49,7 @@ class TextCha(object):
     def __init__(self, form):
         """ Initialize the TextCha.
 
-            @param form: flatland form to use; must subclass TextChaizedForm
+            :param form: flatland form to use; must subclass TextChaizedForm
         """
         self.user_info = flaskg.user.valid and flaskg.user.name or request.remote_addr
         self.textchas = self._get_textchas()
@@ -83,7 +83,7 @@ class TextCha(object):
     def init_qa(self, question=None):
         """ Initialize the question / answer.
 
-         @param question: If given, the given question will be used.
+         :param question: If given, the given question will be used.
                           If None, a new question will be generated.
         """
         if self.is_enabled():

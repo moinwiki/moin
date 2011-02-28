@@ -22,8 +22,8 @@ from flask import flaskg
 def createTicket(tm=None, **kw):
     """ Create a ticket using a configured secret
 
-        @param tm: unix timestamp (optional, uses current time if not given)
-        @param kw: key/value stuff put into ticket, must be same for ticket
+        :param tm: unix timestamp (optional, uses current time if not given)
+        :param kw: key/value stuff put into ticket, must be same for ticket
                    creation and ticket check
     """
     if tm is None:
@@ -48,8 +48,8 @@ def createTicket(tm=None, **kw):
 def checkTicket(ticket, **kw):
     """ Check validity of a previously created ticket.
 
-        @param ticket: a str as created by createTicket
-        @param kw: see createTicket kw
+        :param ticket: a str as created by createTicket
+        :param kw: see createTicket kw
     """
     try:
         timestamp_str = ticket.split('.')[0]

@@ -30,7 +30,7 @@ class XapianSearch(BaseSearch):
     def _xapian_index(self):
         """ Get the xapian index if possible
 
-        @param request: current request
+        :param request: current request
         """
         index = XapianIndex(self.request)
 

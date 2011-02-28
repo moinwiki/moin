@@ -140,13 +140,13 @@ def fuid(filename, max_staleness=3600):
               using file's mtime though.
               max_staleness tries to avoid the worst for these cases.
 
-        @param filename: file name of the file to look at
-        @param max_staleness: if a file is older than that, we may consider
+        :param filename: file name of the file to look at
+        :param max_staleness: if a file is older than that, we may consider
                               it stale and return a different uid - this is a
                               dirty trick to work around changes never being
                               detected. Default is 3600 seconds, use None to
                               disable this trickery. See below for more details.
-        @return: an object that changes value if the file changed,
+        :returns: an object that changes value if the file changed,
                  None is returned if there were problems accessing the file
     """
     try:

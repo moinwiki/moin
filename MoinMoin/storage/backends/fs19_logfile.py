@@ -34,11 +34,11 @@ class LineBuffer:
 
         TODO: when this gets refactored, don't use "file" (is a builtin)
 
-        @param file: open file object
-        @param offset: position in file to start from
-        @param size: aproximate number of bytes to read
-        @param forward : read from offset on or from offset-size to offset
-        @type forward: boolean
+        :param file: open file object
+        :param offset: position in file to start from
+        :param size: aproximate number of bytes to read
+        :param forward : read from offset on or from offset-size to offset
+        :type forward: boolean
         """
         self.loglevel = logging.NOTSET
         if forward:
@@ -89,8 +89,8 @@ class LogFile:
 
     def __init__(self, filename, buffer_size=4096):
         """
-        @param filename: name of the log file
-        @param buffer_size: approx. size of one buffer in bytes
+        :param filename: name of the log file
+        :param buffer_size: approx. size of one buffer in bytes
         """
         self.loglevel = logging.NOTSET
         self.__filename = filename
@@ -107,7 +107,7 @@ class LogFile:
     def reverse(self):
         """ yield log entries in reverse direction starting from last one
 
-        @rtype: iterator
+        :rtype: iterator
         """
         self.to_end()
         while 1:
@@ -121,7 +121,7 @@ class LogFile:
     def sanityCheck(self):
         """ Check for log file write access.
 
-        @rtype: string (error message) or None
+        :rtype: string (error message) or None
         """
         if not os.access(self.__filename, os.W_OK):
             return "The log '%s' is not writable!" % (self.__filename, )
@@ -169,8 +169,8 @@ class LogFile:
 
         Return 0 if the file does not exist. Raises other OSError.
 
-        @return: size of log file in bytes
-        @rtype: Int
+        :returns: size of log file in bytes
+        :rtype: Int
         """
         try:
             return os.path.getsize(self.__filename)
@@ -186,8 +186,8 @@ class LogFile:
 
         Expensive for big log files - O(n)
 
-        @return: size of log file in lines
-        @rtype: Int
+        :returns: size of log file in lines
+        :rtype: Int
         """
         try:
             f = file(self.__filename, 'r')
@@ -209,9 +209,9 @@ class LogFile:
         It adjusts .__lineno if set.
         This function is not aware of filters!
 
-        @param lines: number of lines, may be negative to move backward
-        @rtype: boolean
-        @return: True if moving more than to the beginning and moving
+        :param lines: number of lines, may be negative to move backward
+        :rtype: boolean
+        :returns: True if moving more than to the beginning and moving
                  to the end or beyond
         """
         logging.log(self.loglevel, "LogFile.peek %s" % self.__filename)
@@ -280,7 +280,7 @@ class LogFile:
 
     def next(self):
         """get next line that passes through the filter
-        @return: next entry
+        :returns: next entry
         raises StopIteration at file end
         """
         result = None
@@ -300,7 +300,7 @@ class LogFile:
 
     def previous(self):
         """get previous line that passes through the filter
-        @return: previous entry
+        :returns: previous entry
         raises StopIteration at file begin
         """
         result = None
@@ -402,7 +402,7 @@ class LogFile:
         self.__lineno = line_no
 
     def line_no(self):
-        """@return: the current line number or None if line number is unknown"""
+        """:returns: the current line number or None if line number is unknown"""
         return self.__lineno
 
     def calculate_line_no(self):
@@ -418,8 +418,8 @@ class LogFile:
 
     def parser(self, line):
         """
-        @param line: line as read from file
-        @return: parsed line or None on error
+        :param line: line as read from file
+        :returns: parsed line or None on error
         Converts the line from file to program representation
         This implementation uses TAB separated strings.
         This method should be overwritten by the sub classes.
@@ -437,8 +437,8 @@ class LogFile:
 
     def _add(self, line):
         """
-        @param line: flat line
-        @type line: String
+        :param line: flat line
+        :type line: String
         write on entry in the log file
         """
         if line is not None:

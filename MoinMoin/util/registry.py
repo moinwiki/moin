@@ -71,7 +71,7 @@ class RegistryBase(object):
         """
         Unregister a factory
 
-        @param factory: Factory to unregister
+        :param factory: Factory to unregister
         """
         old_entries = self._entries
         entries = [i for i in old_entries if not i.factory is factory]
@@ -86,6 +86,6 @@ class Registry(RegistryBase):
         """
         Register a factory
 
-        @param factory: Factory to register. Callable, have to return a class
+        :param factory: Factory to register. Callable, have to return a class
         """
         return self._register(self.Entry(factory, priority))

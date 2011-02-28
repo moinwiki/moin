@@ -308,9 +308,9 @@ class _Value(unicode):
         """
         Quote all illegal characters.
 
-        @param rules: List of unicode ranges
-        @param requote: Input string is already quoted
-        @return: Quoted string
+        :param rules: List of unicode ranges
+        :param requote: Input string is already quoted
+        :returns: Quoted string
         """
         quote_filter = cls.quote_filter
 
@@ -333,8 +333,8 @@ class _Value(unicode):
         """
         Unquotes percent-encoded strings.
 
-        @param s: Input string
-        @return: Tuple of full decoded and minimal quoted string
+        :param s: Input string
+        :returns: Tuple of full decoded and minimal quoted string
         """
         ret1 = []
         ret2 = []

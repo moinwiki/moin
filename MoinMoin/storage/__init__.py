@@ -82,9 +82,9 @@ class Backend(object):
         Takes a MoinMoin search term and returns an iterator (maybe empty) over
         matching item objects (NOT item names!).
 
-        @type searchterm: MoinMoin search term
-        @param searchterm: The term for which to search.
-        @rtype: iterator of item objects
+        :type searchterm: MoinMoin search term
+        :param searchterm: The term for which to search.
+        :rtype: iterator of item objects
         """
         # Very simple implementation because we have no indexing
         # or anything like that. If you want to optimize this, override it.
@@ -100,10 +100,10 @@ class Backend(object):
 
         When implementing this, don't rely on has_item unless you've overridden it.
 
-        @type itemname: unicode
-        @param itemname: The name of the item we want to get.
-        @rtype: item object
-        @raise NoSuchItemError: No item with name 'itemname' is known to this backend.
+        :type itemname: unicode
+        :param itemname: The name of the item we want to get.
+        :rtype: item object
+        :raises NoSuchItemError: No item with name 'itemname' is known to this backend.
         """
         raise NotImplementedError()
 
@@ -114,9 +114,9 @@ class Backend(object):
         This method is added for convenience. With it you don't need to try get_item
         and catch an exception that may be thrown if the item doesn't exist yet.
 
-        @type itemname: unicode
-        @param itemname: The name of the item of which we want to know whether it exists.
-        @rtype: bool
+        :type itemname: unicode
+        :param itemname: The name of the item of which we want to know whether it exists.
+        :rtype: bool
         """
         try:
             self.get_item(itemname)
@@ -129,10 +129,10 @@ class Backend(object):
         Creates an item with a given itemname. If that item already exists,
         raise an exception.
 
-        @type itemname: unicode
-        @param itemname: Name of the item we want to create.
-        @rtype: item object
-        @raise ItemAlreadyExistsError: The item you were trying to create already exists.
+        :type itemname: unicode
+        :param itemname: Name of the item we want to create.
+        :rtype: item object
+        :raises ItemAlreadyExistsError: The item you were trying to create already exists.
         """
         raise NotImplementedError()
 
@@ -141,7 +141,7 @@ class Backend(object):
         Returns an iterator over all items available in this backend (like the
         dict method).
 
-        @rtype: iterator of item objects
+        :rtype: iterator of item objects
         """
         raise NotImplementedError()
 
@@ -156,9 +156,9 @@ class Backend(object):
               another) requires that the iterator goes over really every
               revision we have.
 
-        @type reverse: bool
-        @param reverse: Indicate whether the iterator should go in reverse order.
-        @rtype: iterator of revision objects
+        :type reverse: bool
+        :param reverse: Indicate whether the iterator should go in reverse order.
+        :rtype: iterator of revision objects
         """
         # generic and slow history implementation
         revs = []
@@ -179,13 +179,13 @@ class Backend(object):
         of that item.
         Note: If you pass -1 as revno, this shall return the latest revision of the item.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @type revno: int
-        @param revno: Indicate which revision is wanted precisely. If revno is
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :type revno: int
+        :param revno: Indicate which revision is wanted precisely. If revno is
         -1, return the most recent revision.
-        @rtype: Object of class Revision
-        @raise NoSuchRevisionError: No revision with that revno was found on item.
+        :rtype: Object of class Revision
+        :raises NoSuchRevisionError: No revision with that revno was found on item.
         """
         raise NotImplementedError()
 
@@ -197,9 +197,9 @@ class Backend(object):
         Since we allow to totally destroy certain revisions, list_revisions does
         not need to return subsequent, but only monotone revision numbers.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @return: list of ints (possibly empty)
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :returns: list of ints (possibly empty)
         """
         raise NotImplementedError()
 
@@ -210,15 +210,15 @@ class Backend(object):
         greater than the revision number of the item's most recent revision.
         The newly created revision object is returned to the caller.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @type revno: int
-        @param revno: Indicate which revision we want to create.
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :type revno: int
+        :param revno: Indicate which revision we want to create.
         @precondition: item.get_revision(-1).revno < revno
-        @return: Object of class Revision.
-        @raise RevisionAlreadyExistsError: Raised if a revision with that number
+        :returns: Object of class Revision.
+        :raises RevisionAlreadyExistsError: Raised if a revision with that number
         already exists on item.
-        @raise RevisionNumberMismatchError: Raised if precondition is not
+        :raises RevisionNumberMismatchError: Raised if precondition is not
         fulfilled.
         """
         raise NotImplementedError()
@@ -238,9 +238,9 @@ class Backend(object):
               least ignore the existence of the revision in question. (The only hint will
               be the gap in item.list_revisions().
 
-        @type revision: Object of class StoredRevision
-        @param revision: The revision we want to destroy completely.
-        @raises CouldNotDestroyError: Raised in case the revision could not be destroyed.
+        :type revision: Object of class StoredRevision
+        :param revision: The revision we want to destroy completely.
+        :raises CouldNotDestroyError: Raised in case the revision could not be destroyed.
         """
         raise NotImplementedError()
 
@@ -249,15 +249,15 @@ class Backend(object):
         Renames a given item. Raises Exception if the item you are trying to rename
         does not exist or if the newname is already chosen by another item.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @type newname: string
-        @param newname: Name of item after this operation has succeeded.
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :type newname: string
+        :param newname: Name of item after this operation has succeeded.
         @precondition: self.has_item(newname) == False
         @postcondition: self.has_item(newname) == True
-        @raises ItemAlreadyExistsError: Raised if an item with name 'newname'
+        :raises ItemAlreadyExistsError: Raised if an item with name 'newname'
         already exists.
-        @return: None
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -268,9 +268,9 @@ class Backend(object):
         commit() it. You need to pass the revision you want to commit. The item
         can be looked up by the revision's 'item' property.
 
-        @type revision: Object of class NewRevision.
-        @param revision: The revision we want to commit to  storage.
-        @return: None
+        :type revision: Object of class NewRevision.
+        :param revision: The revision we want to commit to  storage.
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -279,9 +279,9 @@ class Backend(object):
         This method is invoked when external events happen that cannot be handled in a
         sane way and thus the changes that have been made must be rolled back.
 
-        @type revision: Object of class NewRevision.
-        @param revision: The revision we want to roll back.
-        @return: None
+        :type revision: Object of class NewRevision.
+        :param revision: The revision we want to roll back.
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -313,10 +313,10 @@ class Backend(object):
               from time to time to get rid of the stuff, or not choose a backend of this
               kind (in case disk space is limited and large items are uploaded).
 
-        @type item: Object of class Item
-        @param item: The item we want to destroy
-        @raises CouldNotDestroyError: Raised in case the revision could not be destroyed.
-        @return: None
+        :type item: Object of class Item
+        :param item: The item we want to destroy
+        :raises CouldNotDestroyError: Raised in case the revision could not be destroyed.
+        :returns: None
         """
         # XXX Should this perhaps return a bool indicating whether erasure was actually performed on disk or something like that?
         raise NotImplementedError()
@@ -334,10 +334,10 @@ class Backend(object):
         As you can see, the lock acquired by this method is released by calling
         the publish_metadata() method on the item.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
         @precondition: item not already locked
-        @return: None
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -353,10 +353,10 @@ class Backend(object):
 
         The lock this method releases is acquired by the _change_metadata method.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @raise AssertionError: item was not locked XXX use more special exception
-        @return: None
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :raises AssertionError: item was not locked XXX use more special exception
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -365,11 +365,11 @@ class Backend(object):
         Called to read a given amount of bytes of a revision's data. By default, all
         data is read.
 
-        @type revision: Object of class StoredRevision.
-        @param revision: The revision on which we want to operate.
-        @type chunksize: int
-        @param chunksize: amount of bytes to be read at a time
-        @return: string
+        :type revision: Object of class StoredRevision.
+        :param revision: The revision on which we want to operate.
+        :type chunksize: int
+        :param chunksize: amount of bytes to be read at a time
+        :returns: string
         """
         raise NotImplementedError()
 
@@ -377,11 +377,11 @@ class Backend(object):
         """
         When this method is called, the passed data is written to the revision's data.
 
-        @type revision: Object of class NewRevision.
-        @param revision: The revision on which we want to operate.
-        @type data: str
-        @param data: The data to be written on the revision.
-        @return: None
+        :type revision: Object of class NewRevision.
+        :param revision: The revision on which we want to operate.
+        :type data: str
+        :param data: The data to be written on the revision.
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -389,9 +389,9 @@ class Backend(object):
         """
         Load metadata for a given item, return dict.
 
-        @type item: Object of class Item.
-        @param item: The Item on which we want to operate.
-        @return: dict of metadata key / value pairs.
+        :type item: Object of class Item.
+        :param item: The Item on which we want to operate.
+        :returns: dict of metadata key / value pairs.
         """
         raise NotImplementedError()
 
@@ -399,9 +399,9 @@ class Backend(object):
         """
         Load metadata for a given revision, returns dict.
 
-        @type revision: Object of a subclass of Revision.
-        @param revision: The revision on which we want to operate.
-        @return: dict of metadata key / value pairs.
+        :type revision: Object of a subclass of Revision.
+        :param revision: The revision on which we want to operate.
+        :returns: dict of metadata key / value pairs.
         """
         raise NotImplementedError()
 
@@ -411,9 +411,9 @@ class Backend(object):
         be given as a parameter to StoredRevision instantiation instead.
         Return the timestamp (a long).
 
-        @type revision: Object of a subclass of Revision.
-        @param revision: The revision on which we want to operate.
-        @return: long
+        :type revision: Object of a subclass of Revision.
+        :param revision: The revision on which we want to operate.
+        :returns: long
         """
         raise NotImplementedError()
 
@@ -423,9 +423,9 @@ class Backend(object):
         if all StoredRevision objects are instantiated with the size= keyword
         parameter.
 
-        @type revision: Object of a subclass of Revision.
-        @param revision: The revision on which we want to operate.
-        @return: int
+        :type revision: Object of a subclass of Revision.
+        :param revision: The revision on which we want to operate.
+        :returns: int
         """
         raise NotImplementedError()
 
@@ -433,14 +433,14 @@ class Backend(object):
         """
         Set the revision's cursor on the revision's data.
 
-        @type revision: Object of StoredRevision.
-        @param revision: The revision on which we want to operate.
-        @type position: int
-        @param position: Indicates where to position the cursor
-        @type mode: int
-        @param mode: 0 for 'absolute positioning', 1 to seek 'relatively to the
+        :type revision: Object of StoredRevision.
+        :param revision: The revision on which we want to operate.
+        :type position: int
+        :param position: Indicates where to position the cursor
+        :type mode: int
+        :param mode: 0 for 'absolute positioning', 1 to seek 'relatively to the
         current position', 2 to seek 'relative to the files end'.
-        @return: None
+        :returns: None
         """
         raise NotImplementedError()
 
@@ -448,9 +448,9 @@ class Backend(object):
         """
         Tell the revision's cursor's position on the revision's data.
 
-        @type revision: Object of type StoredRevision.
-        @param revision: The revision on which tell() was invoked.
-        @return: int indicating the cursor's position.
+        :type revision: Object of type StoredRevision.
+        :param revision: The revision on which tell() was invoked.
+        :returns: int indicating the cursor's position.
         """
         raise NotImplementedError()
 
@@ -580,10 +580,10 @@ class Item(object, DictMixin):
         """
         Initialize an item. Memorize the backend to which it belongs.
 
-        @type backend: Object of a subclass of Backend.
-        @param backend: The backend that stores this item.
-        @type itemname: unicode
-        @param itemname: The name representing this item in the backend. Unique
+        :type backend: Object of a subclass of Backend.
+        :param backend: The backend that stores this item.
+        :type itemname: unicode
+        :param itemname: The name representing this item in the backend. Unique
         within the backend.
         """
         self._backend = backend
@@ -625,10 +625,10 @@ class Item(object, DictMixin):
         You must wrap write accesses to metadata in change_metadata/publish_metadata calls.
         Keys starting with two underscores are reserved and cannot be used.
 
-        @type key: str or unicode
-        @param key: The keyword that is used to look up the corresponding value.
-        @type value: str, unicode, int, long, float, bool, complex or a nested tuple thereof.
-        @param value: The value that is referenced by the keyword `key` in this
+        :type key: str or unicode
+        :param key: The keyword that is used to look up the corresponding value.
+        :type value: str, unicode, int, long, float, bool, complex or a nested tuple thereof.
+        :param value: The value that is referenced by the keyword `key` in this
         specific item's metadata dict.
         """
         if not self._locked:
@@ -646,8 +646,8 @@ class Item(object, DictMixin):
         """
         Delete an item metadata key/value pair.
 
-        @type key: str or unicode
-        @param key: Key identifying a unique key/value pair in this item's metadata.
+        :type key: str or unicode
+        :param key: Key identifying a unique key/value pair in this item's metadata.
         @postcondition: self[key] raises KeyError
         """
         if not self._locked:
@@ -663,9 +663,9 @@ class Item(object, DictMixin):
         See __setitem__.__doc__ -- You may use my_item["key"] to get the corresponding
         metadata value. Note however, that the key you pass must be of type str or unicode.
 
-        @type key: str or unicode
-        @param key: The key refering to the value we want to return.
-        @return: self._metadata[key]
+        :type key: str or unicode
+        :param key: The key refering to the value we want to return.
+        :returns: self._metadata[key]
         """
         self._read_accessed = True
         if not isinstance(key, (unicode, str)):
@@ -682,7 +682,7 @@ class Item(object, DictMixin):
         This method returns a list of all metadata keys of this item (i.e., a list of Strings.)
         That allows using Python's `for mdkey in itemobj: do_something` syntax.
 
-        @return: list of metadata keys not starting with two leading underscores
+        :returns: list of metadata keys not starting with two leading underscores
         """
         if self._metadata is None:
             self._metadata = self._backend._get_item_metadata(self)
@@ -799,12 +799,12 @@ class Revision(object, DictMixin):
         """
         Initialize the revision.
 
-        @type item: Object of class Item.
-        @param item: The item to which this revision belongs.
-        @type revno: int
-        @param revno: The unique number identifying this revision on the item.
-        @type timestamp: int
-        @param timestamp: int representing the UNIX time this revision was
+        :type item: Object of class Item.
+        :param item: The item to which this revision belongs.
+        :type revno: int
+        :param revno: The unique number identifying this revision on the item.
+        :type timestamp: int
+        :param timestamp: int representing the UNIX time this revision was
         created. (UNIX time: seconds since the epoch, i.e. 1st of January 1970, 00:00 UTC)
         """
         self._revno = revno
@@ -956,10 +956,10 @@ class NewRevision(Revision):
         Internal method used for dict-like access to the NewRevisions metadata-dict.
         Keys starting with two underscores are reserved and cannot be used.
 
-        @type key: str or unicode
-        @param key: The keyword that is used to look up the corresponding value.
-        @type value: str, unicode, int, long, float, bool, complex or a nested tuple thereof.
-        @param value: The value that is referenced by the keyword `key` in this
+        :type key: str or unicode
+        :param key: The keyword that is used to look up the corresponding value.
+        :type value: str, unicode, int, long, float, bool, complex or a nested tuple thereof.
+        :param value: The value that is referenced by the keyword `key` in this
         specific items metadata-dict.
         """
         if not isinstance(key, (str, unicode)):
@@ -992,9 +992,9 @@ def check_value_type_is_valid(value):
     str, unicode, bool, int, long, float, complex and tuple.
     Since tuples can contain other types, we need to check the types recursively.
 
-    @type value: str, unicode, int, long, float, complex, tuple
-    @param value: A value of which we want to know if it is a valid metadata value.
-    @return: bool
+    :type value: str, unicode, int, long, float, complex, tuple
+    :param value: A value of which we want to know if it is a valid metadata value.
+    :returns: bool
     """
     accepted = (bool, str, unicode, int, long, float, complex)
     if isinstance(value, accepted):

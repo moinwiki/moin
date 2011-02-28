@@ -21,7 +21,7 @@ class CompositeGroups(BaseGroupsBackend):
 
     def __init__(self, *backends):
         """
-        @param backends: list of group backends which are used to get
+        :param backends: list of group backends which are used to get
                          access to the group definitions.
         """
         super(CompositeGroups, self).__init__()
@@ -58,7 +58,7 @@ class CompositeGroups(BaseGroupsBackend):
         """
         Check if a group called group_name is available in any of the backends.
 
-        @param group_name: name of the group [unicode]
+        :param group_name: name of the group [unicode]
         """
         for backend in self._backends:
             if group_name in backend:

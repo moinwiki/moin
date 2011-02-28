@@ -23,10 +23,10 @@ def quoteWikinameFS(wikiname, charset=config.charset):
     charset. The default value of config.charset, 'utf-8' can encode any
     character.
 
-    @param wikiname: wiki name [unicode]
-    @param charset: charset to encode string (before quoting)
-    @rtype: string
-    @return: quoted name, safe for any file system
+    :param wikiname: wiki name [unicode]
+    :param charset: charset to encode string (before quoting)
+    :rtype: string
+    :returns: quoted name, safe for any file system
     """
     filename = wikiname.encode(charset)
 
@@ -57,10 +57,10 @@ def unquoteWikiname(filename, charset=config.charset):
 
     raises an InvalidFileNameError in case of unquoting problems.
 
-    @param filename: quoted wiki name
-    @param charset: charset to use for decoding (after unquoting)
-    @rtype: unicode
-    @return: WikiName
+    :param filename: quoted wiki name
+    :param charset: charset to use for decoding (after unquoting)
+    :rtype: unicode
+    :returns: WikiName
     """
     # From some places we get called with Unicode strings
     if isinstance(filename, unicode):

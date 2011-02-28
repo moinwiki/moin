@@ -9,22 +9,22 @@ MoinMoin - MIME helpers
 
 class Type(object):
     """
-    @ivar type: Type part
-    @type type: unicode
-    @ivar subtype: Subtype part
-    @type subtype: unicode
-    @ivar parameters: Parameters part
-    @type parameters: dict
+    :ivar type: Type part
+    :type type: unicode
+    :ivar subtype: Subtype part
+    :type subtype: unicode
+    :ivar parameters: Parameters part
+    :type parameters: dict
     """
 
     __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~""")
 
     def __init__(self, _type=None, type=None, subtype=None, parameters=None):
         """
-        @param _type: Type object or string representation
-        @keyword type: Type part
-        @keyword subtype: Subtype part
-        @keyword parameters: Parameters part
+        :param _type: Type object or string representation
+        :keyword type: Type part
+        :keyword subtype: Subtype part
+        :keyword parameters: Parameters part
         """
         if isinstance(_type, Type):
             self.type = _type.type

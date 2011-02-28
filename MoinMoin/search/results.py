@@ -112,9 +112,9 @@ class FoundPage(object):
 
         Summarize the weight of all page matches
 
-        @param unique: ignore identical matches
-        @rtype: int
-        @return: page weight
+        :param unique: ignore identical matches
+        :rtype: int
+        :returns: page weight
         """
         weight = 0
         for match in self.get_matches(unique=unique):
@@ -132,11 +132,11 @@ class FoundPage(object):
     def get_matches(self, unique=1, sort='start', type=Match):
         """ Return all matches of type sorted by sort
 
-        @param unique: return only unique matches (bool)
-        @param sort: match attribute to sort by (string)
-        @param type: type of match to return (Match or sub class)
-        @rtype: list
-        @return: list of matches
+        :param unique: return only unique matches (bool)
+        :param sort: match attribute to sort by (string)
+        :param type: type of match to return (Match or sub class)
+        :rtype: list
+        :returns: list of matches
         """
         if unique:
             matches = self._unique_matches(type=type)
@@ -164,9 +164,9 @@ class FoundPage(object):
         The result is sorted by match.start, because its easy to remove
         duplicates like this.
 
-        @param type: type of match to return
-        @rtype: list
-        @return: list of matches of type, sorted by match.start
+        :param type: type of match to return
+        :rtype: list
+        :returns: list of matches of type, sorted by match.start
         """
         # Filter by type and sort by match.start using fast schwartzian transform.
         tmp = [(match.start, match) for match in self._matches if isinstance(match, type)]
@@ -272,11 +272,11 @@ class SearchResults(object):
     def stats(self, request, formatter, hitsFrom):
         """ Return search statistics, formatted with formatter
 
-        @param request: current request
-        @param formatter: formatter to use
-        @param hitsFrom: current position in the hits
-        @rtype: unicode
-        @return: formatted statistics
+        :param request: current request
+        :param formatter: formatter to use
+        :param hitsFrom: current position in the hits
+        :rtype: unicode
+        :returns: formatted statistics
         """
         if not self.estimated_hits:
             self.estimated_hits = ('', len(self.hits))
@@ -305,15 +305,15 @@ class SearchResults(object):
             paging=True, hitsFrom=0, hitsInfo=0):
         """ Format a list of found pages
 
-        @param request: current request
-        @param formatter: formatter to use
-        @param info: show match info in title
-        @param numbered: use numbered list for display
-        @param paging: toggle paging
-        @param hitsFrom: current position in the hits
-        @param hitsInfo: toggle hits info line
-        @rtype: unicode
-        @return: formatted page list
+        :param request: current request
+        :param formatter: formatter to use
+        :param info: show match info in title
+        :param numbered: use numbered list for display
+        :param paging: toggle paging
+        :param hitsFrom: current position in the hits
+        :param hitsInfo: toggle hits info line
+        :rtype: unicode
+        :returns: formatted page list
         """
         self._reset(request, formatter)
         f = formatter
@@ -385,16 +385,16 @@ class SearchResults(object):
                             maxlines=1, paging=True, hitsFrom=0, hitsInfo=0):
         """ Format a list of found pages with context
 
-        @param request: current request
-        @param formatter: formatter to use
-        @param info: show match info near the page link
-        @param context: how many characters to show around each match.
-        @param maxlines: how many contexts lines to show.
-        @param paging: toggle paging
-        @param hitsFrom: current position in the hits
-        @param hitsInfo: toggle hits info line
-        @rtype: unicode
-        @return: formatted page list with context
+        :param request: current request
+        :param formatter: formatter to use
+        :param info: show match info near the page link
+        :param context: how many characters to show around each match.
+        :param maxlines: how many contexts lines to show.
+        :param paging: toggle paging
+        :param hitsFrom: current position in the hits
+        :param hitsInfo: toggle hits info line
+        :rtype: unicode
+        :returns: formatted page list with context
         """
         self._reset(request, formatter)
         f = formatter
@@ -554,8 +554,8 @@ class SearchResults(object):
         Try to find the first match in the page text. If we can't find
         one, we return the first match and start=0.
 
-        @rtype: tuple
-        @return: index of first match, start of text
+        :rtype: tuple
+        :returns: index of first match, start of text
         """
         header = page.page.getPageHeader()
         start = len(header)
@@ -572,13 +572,13 @@ class SearchResults(object):
         Add context around each match. If there is no room for context
         before or after the match, show more context on the other side.
 
-        @param context: context length
-        @param match: current match
-        @param start: context should not start before that index, unless
+        :param context: context length
+        :param match: current match
+        :param start: context should not start before that index, unless
                       end is past the last character.
-        @param last: last character index
-        @rtype: tuple
-        @return: start, end of context
+        :param last: last character index
+        :rtype: tuple
+        :returns: start, end of context
         """
         # Start by giving equal context on both sides of match
         contextlen = max(context - len(match), 0)
@@ -605,9 +605,9 @@ class SearchResults(object):
 
         Invoke format match on all unique matches in page title.
 
-        @param page: found page
-        @rtype: unicode
-        @return: formatted title
+        :param page: found page
+        :rtype: unicode
+        :returns: formatted title
         """
         # Get unique title matches sorted by match.start
         matches = page.get_matches(unique=1, sort='start', type=TitleMatch)
@@ -646,11 +646,11 @@ class SearchResults(object):
         text. Matches behind location are ignored and an empty string is
         returned.
 
-        @param body: text containing match
-        @param match: search match in text
-        @param location: current location in text
-        @rtype: unicode
-        @return: formatted match or empty string
+        :param body: text containing match
+        :param match: search match in text
+        :param location: current location in text
+        :rtype: unicode
+        :returns: formatted match or empty string
         """
         start = max(location, match.start)
         if start < match.end:
@@ -666,11 +666,11 @@ class SearchResults(object):
     def formatPageLinks(self, hitsFrom, hitsPerPage, hitsNum):
         """ Format previous and next page links in page
 
-        @param hitsFrom: current position in the hits
-        @param hitsPerPage: number of hits per page
-        @param hitsNum: number of hits
-        @rtype: unicode
-        @return: links to previous and next pages (if exist)
+        :param hitsFrom: current position in the hits
+        :param hitsPerPage: number of hits per page
+        :param hitsNum: number of hits
+        :rtype: unicode
+        :returns: links to previous and next pages (if exist)
         """
         f = self.formatter
         querydict = dict(wikiutil.parseQueryString(self.request.query_string))
@@ -731,7 +731,7 @@ class SearchResults(object):
     def formatHitInfoBar(self, page):
         """ Returns the code for the information below a search hit
 
-        @param page: the FoundPage instance
+        :param page: the FoundPage instance
         """
         request = self.request
         f = self.formatter
@@ -757,7 +757,7 @@ class SearchResults(object):
     def querystring(self, querydict=None):
         """ Return query string, used in the page link
 
-        @keyword querydict: use these parameters (default: None)
+        :keyword querydict: use these parameters (default: None)
         """
         if querydict is None:
             querydict = {}
@@ -771,8 +771,8 @@ class SearchResults(object):
     def formatInfo(self, formatter, page):
         """ Return formatted match info
 
-        @param formatter: the formatter instance to use
-        @param page: the current page instance
+        :param formatter: the formatter instance to use
+        :param page: the current page instance
         """
         template = u' . . . %s %s'
         template = u"%s%s%s" % (formatter.span(1, css_class="info"),
@@ -799,8 +799,8 @@ class SearchResults(object):
 
         Each request might need different translations or other user preferences.
 
-        @param request: current request
-        @param formatter: the formatter instance to use
+        :param request: current request
+        :param formatter: the formatter instance to use
         """
         self.buffer = StringIO.StringIO()
         self.formatter = formatter
@@ -812,12 +812,12 @@ class SearchResults(object):
 def getSearchResults(request, query, hits, start, sort, estimated_hits):
     """ Return a SearchResults object with the specified properties
 
-    @param request: current request
-    @param query: the search query object tree
-    @param hits: list of hits
-    @param start: position to start showing the hits
-    @param sort: sorting of the results, either 'weight' or 'page_name'
-    @param estimated_hits: if true, use this estimated hit count
+    :param request: current request
+    :param query: the search query object tree
+    :param hits: list of hits
+    :param start: position to start showing the hits
+    :param sort: sorting of the results, either 'weight' or 'page_name'
+    :param estimated_hits: if true, use this estimated hit count
     """
     result_hits = []
     for wikiname, page, attachment, match, rev in hits:

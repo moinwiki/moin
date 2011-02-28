@@ -41,10 +41,10 @@ class IndexerQueue(object):
 
     def __init__(self, request, xapian_dir, queuename, timeout=10.0):
         """
-        @param request: request object
-        @param xapian_dir: the xapian main directory
-        @param queuename: name of the queue (used for caching key)
-        @param timeout: lock acquire timeout
+        :param request: request object
+        :param xapian_dir: the xapian main directory
+        :param queuename: name of the queue (used for caching key)
+        :param timeout: lock acquire timeout
         """
         self.request = request
         self.xapian_dir = xapian_dir
@@ -66,9 +66,9 @@ class IndexerQueue(object):
     def put(self, pagename, attachmentname=None, revno=None):
         """ Put an entry into the queue (append at end)
 
-        @param pagename: page name [unicode]
-        @param attachmentname: attachment name [unicode]
-        @param revno: revision number (int) or None (all revs)
+        :param pagename: page name [unicode]
+        :param attachmentname: attachment name [unicode]
+        :param revno: revision number (int) or None (all revs)
         """
         cache = self.get_cache(locking=False) # we lock manually
         cache.lock('w', 60.0)
@@ -101,7 +101,7 @@ class BaseIndex(object):
 
     def __init__(self, request):
         """
-        @param request: current request
+        :param request: current request
         """
         self.request = request
         self.main_dir = self._main_dir()
@@ -127,24 +127,24 @@ class BaseIndex(object):
     def _search(self, query):
         """ Actually perfom the search
 
-        @param query: the search query objects tree
+        :param query: the search query objects tree
         """
         raise NotImplemented('...')
 
     def search(self, query, **kw):
         """ Search for items in the index
 
-        @param query: the search query objects to pass to the index
+        :param query: the search query objects to pass to the index
         """
         return self._search(query, **kw)
 
     def update_item(self, pagename, attachmentname=None, revno=None, now=True):
         """ Update a single item (page or attachment) in the index
 
-        @param pagename: the name of the page to update
-        @param attachmentname: the name of the attachment to update
-        @param revno: a specific revision number (int) or None (all revs)
-        @param now: do all updates now (default: True)
+        :param pagename: the name of the page to update
+        :param attachmentname: the name of the attachment to update
+        :param revno: a specific revision number (int) or None (all revs)
+        :param now: do all updates now (default: True)
         """
         self.update_queue.put(pagename, attachmentname, revno)
         if now:
@@ -153,9 +153,9 @@ class BaseIndex(object):
     def indexPages(self, files=None, mode='update', pages=None):
         """ Index pages (and files, if given)
 
-        @param files: iterator or list of files to index additionally
-        @param mode: set the mode of indexing the pages, either 'update' or 'add'
-        @param pages: list of pages to index, if not given, all pages are indexed
+        :param files: iterator or list of files to index additionally
+        :param mode: set the mode of indexing the pages, either 'update' or 'add'
+        :param pages: list of pages to index, if not given, all pages are indexed
         """
         start = time.time()
         request = self._indexingRequest(self.request)
@@ -168,10 +168,10 @@ class BaseIndex(object):
 
         This should be called from indexPages only!
 
-        @param request: current request
-        @param files: iterator or list of files to index additionally
-        @param mode: set the mode of indexing the pages, either 'update' or 'add'
-        @param pages: list of pages to index, if not given, all pages are indexed
+        :param request: current request
+        :param files: iterator or list of files to index additionally
+        :param mode: set the mode of indexing the pages, either 'update' or 'add'
+        :param pages: list of pages to index, if not given, all pages are indexed
 
         """
         raise NotImplemented('...')
@@ -179,8 +179,8 @@ class BaseIndex(object):
     def do_queued_updates(self, amount=-1):
         """ Perform updates in the queues
 
-        @param request: the current request
-        @keyword amount: how many updates to perform at once (default: -1 == all)
+        :param request: the current request
+        :keyword amount: how many updates to perform at once (default: -1 == all)
         """
         raise NotImplemented('...')
 
@@ -191,7 +191,7 @@ class BaseIndex(object):
     def contentfilter(self, filename):
         """ Get a filter for content of filename and return unicode content.
 
-        @param filename: name of the file
+        :param filename: name of the file
         """
         mt = wikiutil.MimeType(filename=filename)
         return mt.mime_type(), u'not implemented' # XXX see moin 1.9 code about how it was done there
@@ -203,7 +203,7 @@ class BaseIndex(object):
         read any page. Without this policy some pages will not render,
         which will create broken pagelinks index.
 
-        @param request: current request
+        :param request: current request
         """
         import copy
         from MoinMoin.security import Permissions
@@ -228,11 +228,11 @@ class BaseSearch(object):
 
     def __init__(self, request, query, sort='weight', mtime=None, historysearch=0):
         """
-        @param request: current request
-        @param query: search query objects tree
-        @keyword sort: the sorting of the results (default: 'weight')
-        @keyword mtime: only show items newer than this timestamp (default: None)
-        @keyword historysearch: whether to show old revisions of a page (default: 0)
+        :param request: current request
+        :param query: search query objects tree
+        :keyword sort: the sorting of the results (default: 'weight')
+        :keyword mtime: only show items newer than this timestamp (default: None)
+        :keyword historysearch: whether to show old revisions of a page (default: 0)
         """
         self.request = request
         self.query = query
@@ -271,7 +271,7 @@ class BaseSearch(object):
         """
         Filter out deleted or acl protected pages
 
-        @param hits: list of hits
+        :param hits: list of hits
         """
         userMayRead = flaskg.user.may.read
         fs_rootpage = self.fs_rootpage + "/"
@@ -291,7 +291,7 @@ class BaseSearch(object):
         """
         Get all matches
 
-        @param page: the current page instance
+        :param page: the current page instance
         """
         if page:
             return self.query.search(page)
