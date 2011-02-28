@@ -6,22 +6,22 @@
     License: GNU GPL v2 or later, see COPYING for details.
 */
 
-/* 
+/*
 Copied from:  http://code.google.com/p/html5resetcss/
 
 html5doctor.com Reset Stylesheet
 v1.6.1
 Last Updated: 2010-09-17
-Author: Richard Clark - http: //richclarkdesign.com 
+Author: Richard Clark - http: //richclarkdesign.com
 Twitter: @rich_clark
 */
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, 
-blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, 
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins,
 kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, figcaption, figure, footer, header, hgroup, 
-menu, nav, section, summary, time, mark, audio, 
-video { margin: 0; padding: 0; border: 0; outline: 0; 
+article, aside, canvas, details, figcaption, figure, footer, header, hgroup,
+menu, nav, section, summary, time, mark, audio,
+video { margin: 0; padding: 0; border: 0; outline: 0;
             font-size: 100%; vertical-align: baseline; background: transparent; }
 body { line-height: 1; }
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
@@ -65,7 +65,7 @@ a { text-decoration: none; }
 a:link { color: blue; }
 a:visited { color: purple; }
 a:hover { color: red; }
-a:active { color: red; } 
+a:active { color: red; }
 
 /* dead links */
 a.moin-nonexistent:visited,
@@ -108,7 +108,7 @@ hr { height: 1px; background-color: #9C9C9C; border: 0; margin: .9em 0; }
 strong.highlight { background-color: #CCE0FF; padding: 1px; }
 
 /* pre */
-pre { border: 1pt solid #AEBDCC; background-color: #F3F5F7; padding: 5pt; 
+pre { border: 1pt solid #AEBDCC; background-color: #F3F5F7; padding: 5pt;
             font-family: courier, monospace; margin: .33em 0; white-space: pre; }
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
@@ -119,7 +119,7 @@ th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1pt solid #ADB9CC; vertical
 td p { margin: 0; padding: 0; }
 
 /* TableOfContents macro */
-div.moin-table-of-contents { 
+div.moin-table-of-contents {
     background: -moz-linear-gradient(center top , #F9FFFF 1%, #EFEFFF 101%) repeat scroll 0 0 transparent;
     border: 1px solid #BBBBBB;
     color: black;
@@ -137,7 +137,7 @@ div.moin-table-of-contents {
 .moin-table-of-contents ol { margin: 0; padding: 0 0 0 2em; }
 .moin-table-of-contents ul { margin: 0; list-style: none; }
 .moin-table-of-contents li { margin: 0; padding: 0; }
-.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 0; 
+.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 0;
             letter-spacing: 0.075em; }
 .moin-showhide { margin-left: 10px; }
 
@@ -189,12 +189,12 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .searchresults dd,
 .searchresults p { font-size: 0.85em; }
 .searchresults .searchhitinfobar { color: #008000; margin-left: 15px; margin-top: 0; }
-p.searchstats { font-size: 0.8em; text-align: right; width: 100%; background-color: #E6EAF0; 
+p.searchstats { font-size: 0.8em; text-align: right; width: 100%; background-color: #E6EAF0;
             border-top: 1px solid #9088DC; padding: 2px; }
 p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2px; }
 .searchpages { margin-left: auto; margin-right: auto; }
 .searchpages tr,
-.searchpages td { border: 0; padding: 5px; margin: 0; text-align: center; vertical-align: middle; 
+.searchpages td { border: 0; padding: 5px; margin: 0; text-align: center; vertical-align: middle;
             color: #b93a58; font-weight: bold; font-size: 1.05em; }
 .searchpages td a,
 .searchpages td a:link { text-decoration: underline; }
@@ -204,7 +204,7 @@ textarea { border: 1px solid #8cacbb; font-family: monospace; margin: .33em 0; p
 input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; padding: 3px; width: 70%; }
 /*  placeholder
 #editor-help { font-size: small; background-color: #EEEEFF; }
-#editor-comment { font-size: 100%; border: 1px solid #8cacbb; color: black; background-color: white; 
+#editor-comment { font-size: 100%; border: 1px solid #8cacbb; color: black; background-color: white;
             vertical-align: middle; padding: 1px; display: inline; width: 70%; }
 #preview,
 #previewbelow { border: 1px solid #6C7680; padding: 10px 30px 20px 30px; background: url(../img/draft.png); margin-top: 0.5em; }
@@ -234,14 +234,14 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-diff-header { vertical-align: top; font-size: 92%; }
 .moin-diff-info { margin: .33em .25em; }
 .moin-diff-info-value { white-space: normal; }
-.moin-diff-info-heading { background-color: #E8E8E8; width: 100%; padding: 0.25em 0.5em; 
+.moin-diff-info-heading { background-color: #E8E8E8; width: 100%; padding: 0.25em 0.5em;
             margin: -0.25em -0.5em; margin-bottom: 0.25em; text-align: center; }
 .moin-diff-info-caption {display: inline-block; min-width: 5em; }
 
 .moin-diff-line-number { background-color: #C0C0C0; }
-.moin-diff-added { background-color: #E0FFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word; 
+.moin-diff-added { background-color: #E0FFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
             font-family: courier, monospace; }
-.moin-diff-removed { background-color: #FFFFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word; 
+.moin-diff-removed { background-color: #FFFFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
             font-family: courier, monospace; }
 .moin-diff-added span { background-color: #80FF80; }
 .moin-diff-removed span { background-color: #FFFF80; }
@@ -275,7 +275,7 @@ td.cal-invalidday { background-color: #CCC; }
 a.cal-link { color: #000; text-decoration: none; }
 th.cal-header { background-color: #DBF; text-align: center; }
 /* for MonthCalendar mouseover info boxes */
-TABLE.tip { color: black; background-color: #F88; font-size: small; font-weight: normal; 
+TABLE.tip { color: black; background-color: #F88; font-size: small; font-weight: normal;
             border-style: solid; border-width: 1px; }
 TH.tip { background-color: #F44; font-weight: bold; text-align: center; }
 TD.tip { text-align: left; }
@@ -300,8 +300,8 @@ TD.tip { text-align: left; }
 #moin-content div.important,
 #moin-content div.note,
 #moin-content div.tip,
-#moin-content div.warning { border: 1px solid #E5E5E5; background-color: #F9F9FF; 
-            background-repeat: no-repeat; background-position: 8px 8px;  color: black; 
+#moin-content div.warning { border: 1px solid #E5E5E5; background-color: #F9F9FF;
+            background-repeat: no-repeat; background-position: 8px 8px;  color: black;
             margin: 10px 30px 10px 30px; min-height: 64px; padding-left: 64px; }
 #moin-content div.caution p,
 #moin-content div.important p,
