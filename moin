@@ -74,6 +74,8 @@ from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
 manager.add_command("maint_reduce_revisions", Reduce_Revisions())
 from MoinMoin.script.maint.set_meta import Set_Meta
 manager.add_command("maint_set_meta", Set_Meta())
+from MoinMoin.script.maint.xml import XML
+manager.add_command("maint_xml", XML())
 
 if __name__ == "__main__":
     if sys.argv == ['./moin'] or sys.argv == ['moin']:
