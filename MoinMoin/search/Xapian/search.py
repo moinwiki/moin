@@ -10,7 +10,6 @@
 """
 
 
-
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
