@@ -1,13 +1,14 @@
-# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2001-2003 Juergen Hermann <jh@web.de>
+# Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2010 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - admin views
+MoinMoin - admin views
 
-    This shows the user interface for wiki admins.
+This shows the user interface for wiki admins.
 """
 
 
@@ -108,4 +109,53 @@ def sysitems_upgrade():
         else:
             flash(_('System items have been upgraded successfully!'))
         return redirect(url_for('admin.index'))
+
+
+from MoinMoin.config import default as defaultconfig
+
+@admin.route('/wikiconfig', methods=['GET', ])
+def wikiconfig():
+    if not flaskg.user or not flaskg.user.isSuperUser():
+        return ''
+
+    settings = {}
+    for groupname in defaultconfig.options:
+        heading, desc, opts = defaultconfig.options[groupname]
+        for name, default, description in opts:
+            name = groupname + '_' + name
+            if isinstance(default, defaultconfig.DefaultExpression):
+                default = default.value
+            settings[name] = default
+    for groupname in defaultconfig.options_no_group_name:
+        heading, desc, opts = defaultconfig.options_no_group_name[groupname]
+        for name, default, description in opts:
+            if isinstance(default, defaultconfig.DefaultExpression):
+                default = default.value
+            settings[name] = default
+
+    def iter_vnames(cfg):
+        dedup = {}
+        for name in cfg.__dict__:
+            dedup[name] = True
+            yield name, cfg.__dict__[name]
+        for cls in cfg.__class__.mro():
+            if cls == defaultconfig.ConfigFunctionality:
+                break
+            for name in cls.__dict__:
+                if not name in dedup:
+                    dedup[name] = True
+                    yield name, cls.__dict__[name]
+
+    found = []
+    for vname, value in iter_vnames(app.cfg):
+        if hasattr(defaultconfig.ConfigFunctionality, vname):
+            continue
+        if vname in settings and settings[vname] == value:
+            continue
+        found.append((vname, value))
+
+    found.sort()
+    return render_template('admin/wikiconfig.html',
+                           item_name="+admin/wikiconfig",
+                           found=found, settings=settings)
 
