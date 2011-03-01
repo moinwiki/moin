@@ -18,9 +18,6 @@ from MoinMoin.storage.error import NoSuchItemError, RevisionAlreadyExistsError
 from MoinMoin.error import ConfigurationError
 from MoinMoin.storage.backends import router, fs, fs2, fs19, memory
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 CONTENT = 'content'
 USERPROFILES = 'userprofiles'
 TRASH = 'trash'
@@ -106,7 +103,6 @@ def create_simple_mapping(backend_uri='fs:instance', content_acl=None, user_prof
         # special case: old moin19 stuff
         from os import path
         data_dir = backend_uri[len(FS19_PREFIX):]
-        logging.debug("backend: %s" % data_dir)
         userprofile = fs19.FSUserBackend(path.join(data_dir, 'user'), '/dev/shm') # assumes user below data_dir
         content = fs19.FSPageBackend(data_dir, '/dev/shm', deleted_mode='keep', default_markup=u'wiki')
         namespace_mapping = [
