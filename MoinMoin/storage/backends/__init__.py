@@ -18,7 +18,6 @@ from MoinMoin.storage.error import NoSuchItemError, RevisionAlreadyExistsError
 from MoinMoin.error import ConfigurationError
 from MoinMoin.storage.backends import router, fs, fs2, fs19, memory
 
-
 CONTENT = 'content'
 USERPROFILES = 'userprofiles'
 TRASH = 'trash'
