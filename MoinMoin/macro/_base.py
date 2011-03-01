@@ -17,8 +17,8 @@ class MacroBase(object):
     # The output of a immutable macro only depends on the arguments and the content
     immutable = False
 
-    def __init__(self, request):
-        self.request = request
+    def __init__(self):
+        pass
 
     def __call__(self, content, arguments, page_url, alternative, context_block):
         raise NotImplementedError
@@ -35,7 +35,7 @@ class MacroBlockBase(MacroBase):
             return self.macro(content, arguments, page_url, alternative)
         return self.alt
 
-    def macro(self, content, page_url, args, alt):
+    def macro(self, content, arguments, page_url, alternative):
         raise NotImplementedError
 
 class MacroInlineBase(MacroBase):
@@ -77,7 +77,7 @@ class MacroPageLinkListBase(MacroBlockBase):
 class MacroNumberPageLinkListBase(MacroBlockBase):
     def create_number_pagelink_list(self, num_pagenames, ordered=False):
         """ creates an ET with a list of pagelinks from a list of pagenames """
-        page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
+        num_page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
         for num, pagename in num_pagenames:
             num_code = moin_page.code(children=["%6d " % num])
             # This link can never reach pagelinks
@@ -98,5 +98,4 @@ class MacroDefinitionListBase(MacroBlockBase):
             item = moin_page.list_item(children=[item_label, item_body])
             def_list.append(item)
         return def_list
-
 

@@ -1,9 +1,9 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Show Wiki Configuration
+MoinMoin - Show Wiki Configuration
 """
 
 
@@ -17,7 +17,7 @@ from MoinMoin.macro._base import MacroBlockBase
 from MoinMoin.util.tree import moin_page
 
 class Macro(MacroBlockBase):
-    def macro(self):
+    def macro(self, content, arguments, page_url, alternative):
         if not flaskg.user or not flaskg.user.isSuperUser():
             return ''
 

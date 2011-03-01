@@ -1,16 +1,18 @@
 # Copyright: 2000 Juergen Hermann <jh@web.de>
-# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - RandomItem Macro displays one or multiple random item links.
+MoinMoin - RandomItem Macro displays one or multiple random item links.
 
-    TODO: add mimetype param and only show items matching this mimetype
+TODO: add mimetype param and only show items matching this mimetype
 """
 
 
 import random
 random.seed()
+
+from flask import flaskg
 
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
@@ -20,15 +22,12 @@ from MoinMoin.macro._base import MacroInlineBase
 
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
-        request = self.request
-
         if arguments:
             item_count = int(arguments[0])
         else:
             item_count = 1
 
-        rootitem = Item(request, u'')
-        all_item_names = [i.name for i in rootitem.list_items()]
+        all_item_names = [i.name for i in flaskg.storage.iteritems()]
 
         # Now select random item from the full list, and if it exists and
         # we can read it, save.

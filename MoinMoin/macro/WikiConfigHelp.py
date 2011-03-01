@@ -1,9 +1,9 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Show Wiki Configuration Help
+MoinMoin - Show Wiki Configuration Help
 """
 
 
@@ -13,9 +13,7 @@ from MoinMoin.macro._base import MacroBlockBase
 from MoinMoin.util.tree import moin_page
 
 class Macro(MacroBlockBase):
-    def macro(self):
-        request = self.request
-
+    def macro(self, content, arguments, page_url, alternative):
         groups = []
         for groupname in defaultconfig.options:
             groups.append((groupname, True, defaultconfig.options))

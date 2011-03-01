@@ -1,8 +1,8 @@
-# Copyright: 2007-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2007-2008,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    Outputs the interwiki map.
+Outputs the interwiki map.
 """
 
 
@@ -13,7 +13,7 @@ from MoinMoin.util.interwiki import join_wiki
 from MoinMoin.macro._base import MacroBlockBase
 
 class Macro(MacroBlockBase):
-    def macro(self):
+    def macro(self, content, arguments, page_url, alternative):
         iwlist = app.cfg.interwiki_map.items()
         iwlist.sort()
 

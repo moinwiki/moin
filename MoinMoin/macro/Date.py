@@ -1,13 +1,14 @@
-# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin Date macro - outputs the date for some specific point in time,
-    adapted to the TZ settings of the user viewing the content.
+MoinMoin Date macro - outputs the date for some specific point in time,
+adapted to the TZ settings of the user viewing the content.
 """
 
 
 import time
+from datetime import datetime
 
 from flask import flaskg
 from flaskext.babel import format_date
@@ -22,9 +23,7 @@ class MacroDateTimeBase(MacroInlineBase):
                      float/int UNIX timestamp
         :returns: UNIX timestamp (UTC)
         """
-        if args is None:
-            tm = time.time() # always UTC
-        elif (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
+        if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
               args[10] == 'T' and args[13] == ':' and args[16] == ':'):
             # we ignore any time zone offsets here, assume UTC,
             # and accept (and ignore) any trailing stuff
@@ -58,7 +57,12 @@ class MacroDateTimeBase(MacroInlineBase):
         return tm
 
 class Macro(MacroDateTimeBase):
-    def macro(self, stamp=None):
-        tm = self.parse_time(stamp)
-        return format_date(tm)
+    def macro(self, content, arguments, page_url, alternative):
+        if arguments is None:
+            tm = time.time() # always UTC
+        else:
+            # XXX looks like args are split at ':' -> <Arguments([u'2010-12-31T23', u'59', u'00'], {})>
+            stamp = arguments[0]
+            tm = self.parse_time(stamp)
+        return format_date(datetime.utcfromtimestamp(tm))
 
