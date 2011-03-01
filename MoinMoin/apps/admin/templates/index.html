@@ -1,0 +1,9 @@
+{% extends theme("layout.html") %}
+{% block content %}
+<h1>{{ _("Admin Menu") }}</h1>
+<ul>
+    <li><a href="{{ url_for('admin.userbrowser') }}">{{ _("User Browser") }}</a></li>
+    <li><a href="{{ url_for('admin.sysitems_upgrade') }}">{{ _("Upgrade system items") }}</a></li>
+</ul>
+{% endblock %}
+
