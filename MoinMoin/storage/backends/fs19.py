@@ -548,6 +548,7 @@ class EditLog(LogFile):
             if meta['__rev'] == revno:
                 break
         else:
+            self.to_end()
             raise KeyError
         del meta['__rev']
         meta = dict([(k, v) for k, v in meta.items() if v]) # remove keys with empty values
@@ -564,6 +565,7 @@ class EditLog(LogFile):
                 meta[EXTRA] == attachname):
                 break
         else:
+            self.to_begin()
             raise KeyError
         del meta['__rev']
         del meta[EXTRA] #  we have full name in NAME
