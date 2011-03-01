@@ -9,6 +9,7 @@
     See http://wikicreole.org/ for latest specs.
 
     Notes:
+
     * No markup allowed in headings.
       Creole 1.0 does not require us to support this.
     * No markup allowed in table headings.

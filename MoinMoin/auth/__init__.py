@@ -10,12 +10,14 @@
 
     Each authentication method is an object instance containing
     four methods:
-      * login(user_obj, **kw)
-      * logout(user_obj, **kw)
-      * request(user_obj, **kw)
-      * login_hint()
+
+      * ``login(user_obj, **kw)``
+      * ``logout(user_obj, **kw)``
+      * ``request(user_obj, **kw)``
+      * ``login_hint()``
 
     The kw arguments that are passed in are currently:
+
        attended: boolean indicating whether a user (attended=True) or
                  a machine is requesting login, multistage auth is not
                  currently possible for machine logins [login only]
@@ -37,15 +39,18 @@
     The request method is called for each request except login/logout.
 
     The 'request' and 'logout' methods must return a tuple (user_obj, continue)
-    where 'user_obj' can be
+    where 'user_obj' can be:
+
       * None, to throw away any previous user_obj from previous auth methods
       * the passed in user_obj for no changes
       * a newly created MoinMoin.user.User instance
+
     and 'continue' is a boolean to indicate whether the next authentication
     method should be tried.
 
     The 'login' method must return an instance of MoinMoin.auth.LoginReturn
-    which contains the members
+    which contains the members:
+
       * user_obj
       * continue_flag
       * multistage
@@ -97,7 +102,8 @@
     the auth item that requested the multistage login and its login method is
     called with the 'multistage' keyword parameter set to True.
 
-    Each authentication method instance must also contain the members
+    Each authentication method instance must also contain the members:
+
      * login_inputs: a list of required inputs, currently supported are
                       - 'username': username entry field
                       - 'password': password entry field

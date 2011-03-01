@@ -35,16 +35,16 @@ class Permissions(object):
 
     When sub classing this class, you must extend the class methods, not
     replace them, or you might break the ACLs in the wiki.
-    Correct sub classing looks like this:
+    Correct sub classing looks like this::
 
-    def read(self, itemname):
-        # Your special security rule
-        if something:
-            return False
+        def read(self, itemname):
+            # Your special security rule
+            if something:
+                return False
 
-        # Do not just return True or you break (ignore) ACLs!
-        # This call will return correct permissions by checking ACLs:
-        return Permissions.read(itemname)
+            # Do not just return True or you break (ignore) ACLs!
+            # This call will return correct permissions by checking ACLs:
+            return Permissions.read(itemname)
     """
 
     def __init__(self, user):
@@ -291,7 +291,8 @@ class ACLStringIterator(object):
     Parse acl string and return the next entry on each call to next.
     Implements the Iterator protocol.
 
-    Usage:
+    Usage::
+
         iter = ACLStringIterator(cfg.acl_rights_valid, 'user name:right')
         for modifier, entries, rights in iter:
             # process data

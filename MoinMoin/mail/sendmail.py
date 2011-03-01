@@ -23,9 +23,10 @@ _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
 
 def encodeAddress(address, charset):
-    """ Encode email address to enable non ascii names
+    """
+    Encode email address to enable non ascii names
 
-    e.g. '"Jürgen Hermann" <jh@web.de>'. According to the RFC, the name
+    E.g. '"Jürgen Hermann" <jh@web.de>'. According to the RFC, the name
     part should be encoded, the address should not.
 
     :param address: email address, possibly using '"name" <address>' format
@@ -177,13 +178,17 @@ def sendmail(to, subject, text, mail_from=None):
     logging.debug("Mail sent successfully")
     return (1, _("Mail sent successfully"))
 
+
 def encodeSpamSafeEmail(email_address, obfuscation_text=''):
-    """ Encodes a standard email address to an obfuscated address
+    """
+    Encodes a standard email address to an obfuscated address
+
     :param email_address: mail address to encode.
-                          Known characters and their all-uppercase words translation:
-                          "." -> " DOT "
-                          "@" -> " AT "
-                          "-" -> " DASH "
+                          Known characters and their all-uppercase words translation::
+
+                              "." -> " DOT "
+                              "@" -> " AT "
+                              "-" -> " DASH "
     :param obfuscation_text: optional text to obfuscate the email.
                              All characters in the string must be alphabetic
                              and they will be added in uppercase.

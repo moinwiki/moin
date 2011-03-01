@@ -13,8 +13,9 @@
     could adapt to that).
 
     TODO:
-    * roundtrip the question in some other way:
-     * make sure a q/a pair in the POST is for the q in the GET before
+
+    * roundtrip the question in some other way, make sure a q/a pair in
+      the POST is for the q in the GET before
     * make some nice CSS
     * make similar changes to GUI editor
 """
@@ -130,15 +131,16 @@ class TextCha(object):
         """ check if textchas are enabled.
 
             They can be disabled for all languages if you use textchas = None or = {},
-            also they can be disabled for some specific language, like:
-            textchas = {
-                'en': {
-                    'some question': 'some answer',
+            also they can be disabled for some specific language, like::
+
+                textchas = {
+                    'en': {
+                        'some question': 'some answer',
+                        # ...
+                    },
+                    'de': {}, # having no questions for 'de' means disabling textchas for 'de'
                     # ...
-                },
-                'de': {}, # having no questions for 'de' means disabling textchas for 'de'
-                # ...
-            }
+                }
         """
         return not not self.textchas # we don't want to return the dict
 

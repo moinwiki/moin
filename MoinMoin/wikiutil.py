@@ -348,7 +348,7 @@ class MimeType(object):
     def sanitize(self):
         """ convert to some representation that makes sense - this is not necessarily
             conformant to /etc/mime.types or IANA listing, but if something is
-            readable text, we will return some text/* mimetype, not application/*,
+            readable text, we will return some ``text/*`` mimetype, not ``application/*``,
             because we need text/plain as fallback and not application/octet-stream.
         """
         self.major, self.minor = MIMETYPES_sanitize_mapping.get((self.major, self.minor), (self.major, self.minor))
@@ -401,8 +401,9 @@ class MimeType(object):
             module is not found) - e.g. first "text_python", next "text".
             Finally, we yield "application_octet_stream" as the most general
             mimetype we have.
+
             Hint: the fallback handler module for text/* should be implemented
-                  in module "text" (not "text_plain")
+            in module "text" (not "text_plain")
         """
         mimetype = self.mime_type()
         modname = mimetype.replace("/", "_").replace("-", "_").replace(".", "_")
@@ -510,13 +511,14 @@ def containsConflictMarker(text):
     return "/!\\ '''Edit conflict" in text
 
 def anchor_name_from_text(text):
-    '''
+    """
     Generate an anchor name from the given text.
     This function generates valid HTML IDs matching: [A-Za-z][A-Za-z0-9:_.-]*
+
     Note: this transformation has a special feature: when you feed it with a
-          valid ID/name, it will return it without modification (identity
-          transformation).
-    '''
+    valid ID/name, it will return it without modification (identity
+    transformation).
+    """
     quoted = werkzeug.url_quote_plus(text, charset='utf-7', safe=':')
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
@@ -607,10 +609,11 @@ def cache_key(**kw):
     Calculate a cache key (ascii only)
 
     Important key properties:
-    * The key must be different for different **kw.
+
+    * The key must be different for different <kw>.
     * Key is pure ascii
 
-    :param **kw: keys/values to compute cache key from
+    :param kw: keys/values to compute cache key from
     """
     return hashlib.md5(repr(kw)).hexdigest()
 

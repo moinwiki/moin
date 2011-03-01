@@ -317,8 +317,10 @@ class LazyReadLock(ReadLock):
     at all in that case.
 
     Of course this doesn't work for us on the win32 platform:
+
     * using MoveFileEx requires opening the file with some FILE_SHARE_DELETE
       mode - we currently don't do that
+
     We currently solve by using the non-lazy locking code in ReadLock class.
     """
     def __init__(self, dir, timeout=None):

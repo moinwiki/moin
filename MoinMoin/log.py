@@ -9,6 +9,7 @@
     -------
     logging must be configured VERY early, before the code in log.getLogger
     gets executed. Thus, logging is configured either by:
+
     a) an environment variable MOINLOGGINGCONF that contains the path/filename
        of a logging configuration file - this method overrides all following
        methods (except if it can't read or use that configuration, then it
@@ -26,10 +27,10 @@
     MOINLOGGINGCONF=/path/to/logging.conf
     export MOINLOGGINGCONF
 
-    Or, modify your server adaptor script (e.g. moin.cgi) to do this:
+    Or, modify your server adaptor script (e.g. moin.cgi) to do this::
 
-    from MoinMoin import log
-    log.load_config('wiki/config/logging/logfile') # XXX please fix this path!
+        from MoinMoin import log
+        log.load_config('wiki/config/logging/logfile') # XXX please fix this path!
 
     You have to fix that path to use a logging configuration matching your
     needs (we provide some examples in the path given there, it is relative to
@@ -40,10 +41,10 @@
 
     Usage (for developers)
     ----------------------
-    If you write code for moin, do this at top of your module:
+    If you write code for moin, do this at top of your module::
 
-    from MoinMoin import log
-    logging = log.getLogger(__name__)
+       from MoinMoin import log
+       logging = log.getLogger(__name__)
 
     This will create a logger with 'MoinMoin.your.module' as name.
     The logger can optionally get configured in the logging configuration.
@@ -139,6 +140,7 @@ def load_config(conf_fname=None):
 
 def getLogger(name):
     """ wrapper around logging.getLogger, so we can do some more stuff:
+
         - preprocess logger name
         - patch loglevel constants into logger object, so it can be used
           instead of the logging module

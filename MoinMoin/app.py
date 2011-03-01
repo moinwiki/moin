@@ -56,8 +56,8 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
                               into MoinMoin.
     :param warn_default: emit a warning if moin falls back to its builtin default
                          config (maybe user forgot to specify MOINCFG?)
-    :param **kwargs: if you give additional key/values here, they'll get patched
-                     into the moin configuration class (before it instance is created)
+    :param kwargs: if you give additional keyword args, the keys/values will get patched
+                   into the moin configuration class (before its instance is created)
     """
     clock = Clock()
     clock.start('create_app total')

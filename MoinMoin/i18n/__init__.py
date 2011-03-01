@@ -4,13 +4,13 @@
 """
 MoinMoin - i18n (internationalization) and l10n (localization) support
 
-To use this, please use exactly this line (no less, no more):
+To use this, please use exactly this line (no less, no more)::
 
-from MoinMoin.i18n import _, L_, N_
+    from MoinMoin.i18n import _, L_, N_
 
-_ == gettext
-N_ == ngettext
-L_ == lazy_gettext
+    # _ == gettext
+    # N_ == ngettext
+    # L_ == lazy_gettext
 """
 
 

@@ -24,10 +24,11 @@ class LogMissing(LogError):
 class LineBuffer:
     """
     Reads lines from a file
-        self.len      number of lines in self.lines
-        self.lines    list of lines (unicode)
-        self.offsets  list of file offsets for each line. additionally the position
-                      after the last read line is stored into self.offsets[-1]
+
+    :ivar len: number of lines in self.lines
+    :ivar lines: list of lines (unicode)
+    :ivar offsets: list of file offsets for each line. additionally the position
+                   after the last read line is stored into self.offsets[-1]
     """
     def __init__(self, file, offset, size, forward=True):
         """
@@ -84,6 +85,7 @@ class LogFile:
     """
     .filter: function that gets the values from .parser.
              must return True to keep it or False to remove it
+
     Overwrite .parser() and .add() to customize this class to special log files
     """
 
@@ -418,11 +420,12 @@ class LogFile:
 
     def parser(self, line):
         """
-        :param line: line as read from file
-        :returns: parsed line or None on error
-        Converts the line from file to program representation
+        Converts the line from file to program representation.
         This implementation uses TAB separated strings.
         This method should be overwritten by the sub classes.
+
+        :param line: line as read from file
+        :returns: parsed line or None on error
         """
         return line.split("\t")
 

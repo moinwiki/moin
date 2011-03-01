@@ -8,6 +8,7 @@ Converters are used to convert between formats or between different featuresets
 of one format.
 
 There are usually three types of converters:
+
 - Between an input format like Moin Wiki or Creole and the internal tree
   representation.
 - Between the internal tree and an output format like HTML.

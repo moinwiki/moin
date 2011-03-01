@@ -7,6 +7,7 @@
     This package contains code for MoinMoin storage backend using a
     Mercurial (hg) distributed version control system. This backend provides
     several advantages compared to MoinMoin's default filesystem backend:
+
     - revisioning and concurrency issues handled using Mercurial's internal
       mechanisms
     - cloning of the page database, allowing easy backup, synchronization and

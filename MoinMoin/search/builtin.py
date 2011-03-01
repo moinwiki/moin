@@ -32,11 +32,12 @@ class IndexerQueue(object):
     """
     Represents a locked on-disk queue with jobs for the xapian indexer
 
-    Each job is a tuple like: (PAGENAME, ATTACHMENTNAME, REVNO)
-    PAGENAME: page name (unicode)
-    ATTACHMENTNAME: attachment name (unicode) or None (for pages)
-    REVNO: revision number (int) - meaning "look at that revision",
-           or None - meaning "look at all revisions"
+    Each job is a tuple like: (PAGENAME, ATTACHMENTNAME, REVNO)::
+
+        PAGENAME: page name (unicode)
+        ATTACHMENTNAME: attachment name (unicode) or None (for pages)
+        REVNO: revision number (int) - meaning "look at that revision",
+               or None - meaning "look at all revisions"
     """
 
     def __init__(self, request, xapian_dir, queuename, timeout=10.0):

@@ -66,12 +66,16 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     them out afterwards.
 
     The function can also do bracketing, i.e. parse expressions
-    that contain things like
+    that contain things like::
+
         "(a (a b))" to ['(', 'a', ['(', 'a', 'b']],
+
     in this case, as in this example, the returned list will
     contain sub-lists and the brackets parameter must be a list
-    of opening and closing brackets, e.g.
+    of opening and closing brackets, e.g.::
+
         brackets = ['()', '<>']
+
     Each sub-list's first item is the opening bracket used for
     grouping.
     Nesting will be observed between the different types of
@@ -83,7 +87,8 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
 
     If multikey is True (along with setting name_value_separator),
     then the returned tuples for (key, value) pairs can also have
-    multiple keys, e.g.
+    multiple keys, e.g.::
+
         "a=b=c" -> ('a', 'b', 'c')
 
     :param args: arguments to parse

@@ -8,7 +8,8 @@ Converts a DocBook document into an internal document tree.
 Currently supports DocBook v5.
 
 Some elements of DocBook v4 specification are also supported
-for backward compatibility :
+for backward compatibility:
+
   * ulink
 """
 

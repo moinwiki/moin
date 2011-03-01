@@ -46,6 +46,7 @@
     ====
     The following is a list of things that need to be done before this backend can be used productively
     (not including beta tests):
+
         * Data.read must be changed to operate on dynamically loaded chunks. I.e., the data._chunks must
           be set to lazy='dynamic', which will then be a query instead of a collection.
         * Find a proper solution for methods that issue many SQL queries. Especially search_items is

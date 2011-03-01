@@ -326,6 +326,7 @@ class ItemIndex(object):
         remove a revision <revno> of item <uuid>
 
         Note:
+
         * does not update metadata values cached in item (this is only a
           problem if you delete latest revision AND you don't delete the
           whole item anyway)
