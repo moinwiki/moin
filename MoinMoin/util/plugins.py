@@ -16,7 +16,7 @@ import imp
 import hashlib
 
 from MoinMoin import error
-
+from MoinMoin.util import pysupport
 
 class PluginError(Exception):
     """ Base class for plugin errors """
