@@ -159,3 +159,34 @@ def wikiconfig():
                            item_name="+admin/wikiconfig",
                            found=found, settings=settings)
 
+
+@admin.route('/wikiconfighelp', methods=['GET', ])
+def wikiconfighelp():
+    if not flaskg.user or not flaskg.user.isSuperUser():
+        return ''
+
+    def format_default(default):
+        if isinstance(default, defaultconfig.DefaultExpression):
+            default_txt = default.text
+        else:
+            default_txt = '%r' % (default, )
+            if len(default_txt) > 30:
+                default_txt = '...'
+        return default_txt
+
+    groups = []
+    for groupname in defaultconfig.options:
+        heading, desc, opts = defaultconfig.options[groupname]
+        opts = sorted([(groupname + '_' + name, format_default(default), description)
+                       for name, default, description in opts])
+        groups.append((heading, desc, opts))
+    for groupname in defaultconfig.options_no_group_name:
+        heading, desc, opts = defaultconfig.options_no_group_name[groupname]
+        opts = sorted([(name, format_default(default), description)
+                       for name, default, description in opts])
+        groups.append((heading, desc, opts))
+    groups.sort()
+    return render_template('admin/wikiconfighelp.html',
+                           item_name="+admin/wikiconfighelp",
+                           groups=groups)
+
