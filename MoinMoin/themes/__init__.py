@@ -70,23 +70,6 @@ class ThemeSupport(object):
         self.content_dir = 'ltr' # XXX
         self.meta_items = [] # list of (name, content) for html head <meta>
 
-    def translated_item_name(self, item_en):
-        """
-        Get a translated item name.
-        If a translated item exists return its name, if not return item name in English.
-
-        :param item_name: unicode
-        :rtype: unicode
-        """
-        item_lang_request = _(item_en)
-        if self.storage.has_item(item_lang_request):
-            return item_lang_request
-
-        item_lang_default = item_en # FIXME, was: i18n.getText(item_en, request, self.cfg.language_default)
-        if self.storage.has_item(item_lang_default):
-            return item_lang_default
-        return item_en
-
     def location_breadcrumbs(self, item_name):
         """
         Assemble the location using breadcrumbs (was: title)
