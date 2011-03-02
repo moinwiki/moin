@@ -166,14 +166,11 @@ class Converter(object):
                 new.append(child)
         return new
 
-    def new(self, tag, attrib={}, children=[]):
-        return ET.Element(tag, attrib=attrib, children=children)
-
     def new_copy(self, tag, element, attrib={}):
         attrib_new = Attributes(element).convert()
         attrib_new.update(attrib)
         children = self.do_children(element)
-        return self.new(tag, attrib_new, children)
+        return tag(attrib_new, children)
 
     def visit(self, elem):
         uri = elem.tag.uri
@@ -221,8 +218,7 @@ class Converter(object):
 
         # TODO: Unify somehow
         if elem.get(moin_page.class_) == 'codearea':
-            attrib = {html.class_: 'codearea'}
-            div = self.new(html.div, attrib)
+            div = html.div(attrib={html.class_: 'codearea'})
             div.append(pre)
             return div
 
@@ -282,7 +278,7 @@ class Converter(object):
 
     def visit_moinpage_line_break(self, elem):
         # TODO: attributes?
-        return self.new(html.br)
+        return html.br()
 
     def visit_moinpage_list(self, elem):
         attrib = Attributes(elem)
@@ -304,16 +300,16 @@ class Converter(object):
                 start_number = attrib.get('list-start')
                 if start_number:
                     attrib_new[html('start')] = start_number
-                ret = self.new(html.ol, attrib_new)
+                ret = html.ol(attrib_new)
             elif generate == 'unordered':
                 style = attrib.get('list-style-type')
                 if style and style == 'no-bullet':
                     attrib_new[html('class')] = 'moin-nobullet-list'
-                ret = self.new(html.ul, attrib_new)
+                ret = html.ul(attrib=attrib_new)
             else:
                 raise ElementException('page:item-label-generate does not support "%s"' % generate)
         else:
-            ret = self.new(html.dl, attrib_new)
+            ret = html.dl(attrib=attrib_new)
 
         for item in elem:
             if isinstance(item, ET.Element):
@@ -382,7 +378,7 @@ class Converter(object):
             alt = ''.join(str(e) for e in elem) # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
-            new_elem = self.new(html.img, attrib)
+            new_elem = html.img(attrib=attrib)
 
         else:
             if obj_type != "object":
@@ -482,7 +478,7 @@ class Converter(object):
 
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
-        ret = self.new(html.table, attrib)
+        ret = html.table(attrib=attrib)
         for item in elem:
             tag = None
             if item.tag.uri == moin_page:
@@ -671,7 +667,7 @@ class ConverterPage(Converter):
             level = 1
         elif level > 6:
             level = 6
-        elem = self.new_copy(ET.QName('h%d' % level, html), elem)
+        elem = self.new_copy(html('h%d' % level), elem)
 
         id = elem.get(html.id)
         if not id:
@@ -709,7 +705,7 @@ class ConverterPage(Converter):
         level = int(elem.get(moin_page.outline_level, 6))
 
         attrib = {html.class_: 'moin-table-of-contents'}
-        elem = self.new(html.div, attrib)
+        elem = html.div(attrib=attrib)
 
         self._special_stack[-1].add_toc(elem, level)
         return elem
