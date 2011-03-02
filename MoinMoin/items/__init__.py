@@ -214,8 +214,6 @@ class Item(object):
             input_conv = reg.get(Type(self.mimetype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
-            link_conv = reg.get(type_moin_document, type_moin_document,
-                    links='extern', url_root=Iri(request.url_root))
             smiley_conv = reg.get(type_moin_document, type_moin_document,
                     icon='smiley')
 
@@ -231,8 +229,6 @@ class Item(object):
             for conv in converters:
                 if conv == 'smiley':
                     doc = smiley_conv(doc)
-                elif conv == 'link':
-                    doc = link_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
         flaskg.clock.stop('conv_in_dom')
@@ -240,15 +236,21 @@ class Item(object):
 
     def _expand_document(self, doc):
         from MoinMoin.converter import default_registry as reg
+        from MoinMoin.util.iri import Iri
         from MoinMoin.util.mime import type_moin_document
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
+        link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
+                url_root=Iri(request.url_root))
         flaskg.clock.start('conv_include')
         doc = include_conv(doc)
         flaskg.clock.stop('conv_include')
         flaskg.clock.start('conv_macro')
         doc = macro_conv(doc)
         flaskg.clock.stop('conv_macro')
+        flaskg.clock.start('conv_link')
+        doc = link_conv(doc)
+        flaskg.clock.stop('conv_link')
         return doc
 
     def _render_data(self):
