@@ -240,7 +240,9 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        return self.new_copy(ET.QName('h%d' % level, html), elem)
+        ret = self.new_copy(html('h%d' % level), elem)
+        ret.level = level
+        return ret
 
     def visit_moinpage_inline_part(self, elem):
         body = error = None
@@ -649,24 +651,16 @@ class ConverterPage(Converter):
         else:
             return super(ConverterPage, self).visit(elem)
 
-    def visit_moinpage_h(self, elem):
-        level = elem.get(moin_page.outline_level, 1)
-        try:
-            level = int(level)
-        except ValueError:
-            raise ElementException('page:outline-level needs to be an integer')
-        if level < 1:
-            level = 1
-        elif level > 6:
-            level = 6
-        elem = self.new_copy(html('h%d' % level), elem)
+    def visit_moinpage_h(self, elem,
+            _tag_html_id=html.id):
+        elem = super(ConverterPage, self).visit_moinpage_h(elem)
 
-        id = elem.get(html.id)
+        id = elem.get(_tag_html_id)
         if not id:
             id = self._id.gen_text(''.join(elem.itertext()))
-            elem.set(html.id, id)
+            elem.set(_tag_html_id, id)
 
-        self._special_stack[-1].add_heading(elem, level, id)
+        self._special_stack[-1].add_heading(elem, elem.level, id)
         return elem
 
     def visit_moinpage_note(self, elem):
