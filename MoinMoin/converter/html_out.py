@@ -148,8 +148,6 @@ class Converter(object):
     direct_inline_tags = set(['abbr', 'address', 'dfn', 'kbd'])
 
     def __call__(self, element):
-        # Base URL extracted from xml:base
-        self.base_url = ''
         return self.visit(element)
 
     def do_children(self, element):
@@ -185,8 +183,6 @@ class Converter(object):
         return self.new_copy(elem.tag, elem)
 
     def visit_moinpage(self, elem):
-        # Get base_url from xml:base
-        self.base_url = elem.get(xml.base) or self.base_url
         n = 'visit_moinpage_' + elem.tag.name.replace('-', '_')
         f = getattr(self, n, None)
         if f:
@@ -200,8 +196,6 @@ class Converter(object):
         attrib = {}
         href = elem.get(_tag_xlink_href)
         if href:
-            if self.base_url:
-                href = ''.join([self.base_url, href])
             attrib[_tag_html_href] = href
         # XXX should support more tag attrs
         return self.new_copy(_tag_html_a, elem, attrib)
@@ -350,8 +344,6 @@ class Converter(object):
             return "object"
     def visit_moinpage_object(self, elem):
         href = elem.get(xlink.href, None)
-        if self.base_url:
-            href = ''.join([self.base_url, href])
         if href:
             if isinstance(href, unicode): # XXX sometimes we get Iri, sometimes unicode - bug?
                 h = href
