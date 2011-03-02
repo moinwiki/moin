@@ -149,14 +149,12 @@ class ThemeSupport(object):
         wiki_href = join_wiki(wiki_base_url, item_name)
         return wiki_href, aliasname, title, exists
 
-    def split_navilink(self, text, localize=1):
+    def split_navilink(self, text):
         """
         Split navibar links into pagename, link to page
 
         Admin or user might want to use shorter navibar items by using
-        the [[page|title]] or [[url|title]] syntax. In this case, we don't
-        use localization, and the links goes to page or to the url, not
-        the localized version of page.
+        the [[page|title]] or [[url|title]] syntax.
 
         Supported syntax:
             * PageName
@@ -179,7 +177,6 @@ class ThemeSupport(object):
                 target, title = text.split('|', 1)
                 target = target.strip()
                 title = title.strip()
-                localize = 0
             except (ValueError, TypeError):
                 # Just use the text as is.
                 target = text.strip()
@@ -207,10 +204,6 @@ class ThemeSupport(object):
         # Handle regular pagename like "FrontPage"
         item_name = wikiutil.normalize_pagename(item_name, self.cfg)
 
-        # Use localized pages for the current user
-        if localize:
-            item_name = self.translated_item_name(item_name)
-
         if not title:
             title = item_name
         href = url_for('frontend.show_item', item_name=item_name)
@@ -223,6 +216,7 @@ class ThemeSupport(object):
         :rtype: list
         :returns: list of tuples (css_class, url, link_text, title)
         """
+        flaskg.clock.start('navibar')
         items = []  # navibar items
         current = item_name
 
@@ -234,8 +228,7 @@ class ThemeSupport(object):
         # Add user links to wiki links.
         userlinks = self.user.getQuickLinks()
         for text in userlinks:
-            # Split text without localization, user knows what he wants
-            url, link_text, title = self.split_navilink(text, localize=0)
+            url, link_text, title = self.split_navilink(text)
             items.append(('userlink', url, link_text, title))
 
         # Add sister pages (see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide )
@@ -267,6 +260,7 @@ class ThemeSupport(object):
                 if current in sisteritems:
                     url = sisteritems[current]
                     items.append(('sisterwiki', url, sistername, ''))
+        flaskg.clock.stop('navibar')
         return items
 
     def parent_item(self, item_name):
