@@ -12,7 +12,6 @@
 
 import re
 import os
-import sys
 
 from babel import parse_locale
 
@@ -20,11 +19,9 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin import config, error, util
+from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
-import MoinMoin.auth as authmodule
-from MoinMoin.security import AccessControlList
 from MoinMoin.util import plugins
 
 

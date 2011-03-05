@@ -15,7 +15,7 @@
 """
 
 
-import os, re, time, datetime, shutil, base64
+import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile

@@ -8,7 +8,6 @@
 """
 
 
-import os
 import urllib
 
 from flask import current_app as app
