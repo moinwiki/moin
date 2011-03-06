@@ -84,7 +84,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
-        'parsedatetime>=0.8.6', # parsing dates and times
         'pygments>=1.1.1', # src code / text file highlighting
         'sqlalchemy>=0.6.0', # metadata index and other stuff
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
