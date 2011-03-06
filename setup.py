@@ -89,7 +89,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'sqlalchemy>=0.6.0', # metadata index and other stuff
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
         'Werkzeug==0.6.2', # use this if 0.7dev fails
-        #'xappy>=0.5', # xapian python OO interface, not used (yet?)
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
     ],
