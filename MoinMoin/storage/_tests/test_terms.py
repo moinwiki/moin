@@ -8,7 +8,7 @@
 
 import re
 
-from MoinMoin.search import term
+from MoinMoin.storage import terms as term
 from MoinMoin.storage.backends.memory import MemoryBackend
 
 
@@ -286,4 +286,4 @@ class TestTerms:
         for item, expected in [('c', False), ('Lorem', True), ('lorem', True), ('LOREM', True), ('NR', False)]:
             yield self._evaluate, t, item, expected
 
-coverage_modules = ['MoinMoin.search.terms']
+coverage_modules = ['MoinMoin.storage.terms']

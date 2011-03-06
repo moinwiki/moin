@@ -111,9 +111,8 @@ def getUserList():
 
 def get_by_filter(key, value):
     """ Searches for an user with a given filter """
-    from MoinMoin.search import term
-    filter = term.ItemMetaDataMatch(key, value)
-    items = get_user_backend().search_items(filter)
+    from MoinMoin.storage.terms import ItemMetaDataMatch
+    items = get_user_backend().search_items(ItemMetaDataMatch(key, value))
     users = [User(item.name) for item in items]
     return users
 
@@ -144,10 +143,10 @@ def getUserId(searchName):
     :rtype: string
     :returns: the corresponding user ID or None
     """
-    from MoinMoin.search import term
+    from MoinMoin.storage.terms import ItemMetaDataMatch
     try:
         backend = get_user_backend()
-        for user in backend.search_items(term.ItemMetaDataMatch('name', searchName)):
+        for user in backend.search_items(ItemMetaDataMatch('name', searchName)):
             return user.name
         return None
     except IndexError:

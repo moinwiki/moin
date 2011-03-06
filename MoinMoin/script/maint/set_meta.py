@@ -19,7 +19,7 @@ from flask import current_app as app
 from flaskext.script import Command, Option
 
 from MoinMoin.script import fatal
-from MoinMoin.search import term
+from MoinMoin.storage.terms import NameRE
 from MoinMoin.storage.error import NoSuchRevisionError
 
 class Set_Meta(Command):
@@ -42,7 +42,7 @@ class Set_Meta(Command):
             fatal("You need to either specify a proper key/value pair or "
                   "only a key you want to delete (with -r set).")
 
-        query = term.NameRE(re.compile(pattern))
+        query = NameRE(re.compile(pattern))
         for item in storage.search_items(query):
             try:
                 last_rev = item.get_revision(-1)

@@ -23,7 +23,7 @@ from flask import flaskg
 from MoinMoin.storage import Item, NewRevision
 from MoinMoin.storage.backends import memory
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError, RevisionAlreadyExistsError
-from MoinMoin.search import term
+from MoinMoin.storage import terms
 
 item_names = (u"quite_normal",
               u"äöüßłóąćółąńśćżź",
@@ -175,7 +175,7 @@ class BackendTest(object):
             self.create_rev_item_helper(name)
         self.create_meta_item_helper(u"new_song_player")
         query_string = u"song"
-        query = term.Name(query_string, True)
+        query = terms.Name(query_string, True)
         for num, item in enumerate(self.backend.search_items(query)):
             assert item.name.find(query_string) != -1
         assert num == 2
@@ -191,11 +191,11 @@ class BackendTest(object):
             assert len(found) == expected
 
         # must be /part/ of the name
-        yield _test_search, term.Name(u'AbCdEf', False), 3
-        yield _test_search, term.Name(u'AbCdEf', True), 0
-        yield _test_search, term.Name(u'abcdef', True), 3
-        yield _test_search, term.NameRE(re.compile(u'abcde.*')), 4
-        yield _test_search, term.NameFn(lambda n: n == u'abcdef'), 1
+        yield _test_search, terms.Name(u'AbCdEf', False), 3
+        yield _test_search, terms.Name(u'AbCdEf', True), 0
+        yield _test_search, terms.Name(u'abcdef', True), 3
+        yield _test_search, terms.NameRE(re.compile(u'abcde.*')), 4
+        yield _test_search, terms.NameFn(lambda n: n == u'abcdef'), 1
 
     def test_iteritems_1(self):
         for num in range(10, 20):
