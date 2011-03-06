@@ -61,8 +61,6 @@ class ThemeSupport(object):
         self.cfg = cfg
         self.user = flaskg.user
         self.storage = flaskg.storage
-        self.output_mimetype = 'text/html'  # was: page.output_mimetype
-        self.output_charset = 'utf-8'  # was: page.output_charset
         self.ui_lang = 'en' # XXX
         self.ui_dir = 'ltr' # XXX
         self.content_lang = flaskg.content_lang # XXX
