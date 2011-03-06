@@ -504,7 +504,7 @@ class Item(object):
     def get_index(self):
         """ create an index of sub items of this item """
         import re
-        from MoinMoin.search.term import NameRE
+        from MoinMoin.storage.terms import NameRE
 
         if self.name:
             prefix = self.name + u'/'
@@ -619,7 +619,7 @@ There is no help, you're doomed!
 
     def get_templates(self, mimetype=None):
         """ create a list of templates (for some specific mimetype) """
-        from MoinMoin.search.term import AND, LastRevisionMetaDataMatch
+        from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
         term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
         if mimetype:
             term = AND(term, LastRevisionMetaDataMatch(MIMETYPE, mimetype))
