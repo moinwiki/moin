@@ -37,15 +37,11 @@ pip will fetch all dependencies from pypi and install them, so this may take
 a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
 
-Note: in this special mode, it won't copy moin to the env/ directory, it will
-run everything from your work dir, so you can modify code and directly try it
-out (you only need to do this installation procedure once).
+Further, it will create a "moin" script for your platform which you can use
+for starting moin (the builtin server) or invoke moin script commands. It will
+be in the PATH, so just type "moin" on the shell / cmd.
 
-After successfully installing, you can enter the virtual env and start moin by::
-
- source env/bin/activate
- ./moin
-
-We activate that virtual environment, so moin will find all its dependencies
-and finally start the builtin server using the `moin` script.
+Note: in this special mode, it won't copy the MoinMoin code to the env/
+directory, it will run everything from your work dir, so you can modify code
+and directly try it out (you only need to do this installation procedure once).
 
