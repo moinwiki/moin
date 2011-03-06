@@ -7,7 +7,7 @@
 {% block headline %}
 <h1>
     {{ _("Metadata of '%(item_name)s'", item_name=item_name) }}
-    {% if rev.revno != last_rev_no %}({{ _("Revision") }} {{ rev.revno }}){% endif %}
+    {% if show_revision %}({{ _("Revision") }} {{ rev.revno }}){% endif %}
 </h1>
 {% endblock %}
 
