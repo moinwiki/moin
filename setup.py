@@ -103,7 +103,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'hg': ["mercurial"], # used by mercurial backend
     },
     entry_points = dict(
-        console_scripts = ['moin = MoinMoin.cmdline:main'], # TODO
+        console_scripts = ['moin = MoinMoin.script:main'], # TODO
     ),
 
     # stuff for babel:

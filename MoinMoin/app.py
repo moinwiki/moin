@@ -66,7 +66,16 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     if flask_config_file:
         app.config.from_pyfile(flask_config_file)
     else:
-        app.config.from_envvar('MOINCFG', silent=True)
+        if not app.config.from_envvar('MOINCFG', silent=True):
+            # no MOINCFG env variable set, try stuff in cwd:
+            from os import path
+            flask_config_file = path.abspath('wikiconfig_local.py')
+            if not path.exists(flask_config_file):
+                flask_config_file = path.abspath('wikiconfig.py')
+                if not path.exists(flask_config_file):
+                    flask_config_file = None
+            if flask_config_file:
+                app.config.from_pyfile(flask_config_file)
     if flask_config_dict:
         app.config.update(flask_config_dict)
     Config = moin_config_class
