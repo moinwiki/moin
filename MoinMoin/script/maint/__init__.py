@@ -5,10 +5,3 @@
     MoinMoin - Maintenance Script Package
 """
 
-
-from MoinMoin.util import pysupport
-
-# create a list of extension scripts from the subpackage directory
-maint_scripts = pysupport.getPackageModules(__file__)
-modules = maint_scripts
-
