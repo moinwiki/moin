@@ -14,3 +14,26 @@
     </span>
   {%- endif -%}
 {% endmacro %}
+
+
+{% macro table(headings, rows) %}
+<table>
+<thead>
+    <tr>
+        {% for heading in headings %}
+        <td><strong>{{ heading }}</strong></td>
+        {% endfor %}
+    </tr>
+</thead>
+<tbody>
+{% for row in rows %}
+    <tr>
+        {% for col in row %}
+        <td>{{ col }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endmacro %}
+
