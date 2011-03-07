@@ -1,5 +1,4 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
-# Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -470,10 +469,6 @@ def index(item_name):
     except AccessDeniedError:
         abort(403)
     index = item.flat_index()
-    reverse = request.values.get('reverse', False)
-    index.sort()
-    if reverse:
-        index.reverse()
     return render_template(item.index_template,
                            item=item, item_name=item_name,
                            index=index,
@@ -484,10 +479,6 @@ def index(item_name):
 def global_index():
     item = Item.create('') # XXX hack: item_name='' gives toplevel index
     index = item.flat_index()
-    index.sort()
-    reverse = request.values.get('reverse', False)
-    if reverse:
-        index.reverse()
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
                            item_name=item_name, # XXX no item
