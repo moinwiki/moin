@@ -1,4 +1,4 @@
-# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2007-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2001-2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2009 MoinMoin:EugeneSyromyatnikov
@@ -206,6 +206,18 @@ def highlighterhelp():
                    for desc, names, patterns, mimetypes in lexers])
     return render_template('admin/highlighterhelp.html',
                            item_name="+admin/highlighterhelp",
+                           headings=headings,
+                           rows=rows)
+
+@admin.route('/interwikihelp', methods=['GET', ])
+def interwikihelp():
+    """display a table with list of known interwiki names / urls"""
+    headings = [_('InterWiki name'),
+                _('URL'),
+               ]
+    rows = sorted(app.cfg.interwiki_map.items())
+    return render_template('admin/interwikihelp.html',
+                           item_name="+admin/interwikihelp",
                            headings=headings,
                            rows=rows)
 
