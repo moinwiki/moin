@@ -21,6 +21,8 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
+from MoinMoin.storage.error import NoSuchRevisionError
+
 
 @admin.route('/')
 def index():
@@ -209,6 +211,7 @@ def highlighterhelp():
                            headings=headings,
                            rows=rows)
 
+
 @admin.route('/interwikihelp', methods=['GET', ])
 def interwikihelp():
     """display a table with list of known interwiki names / urls"""
@@ -220,4 +223,27 @@ def interwikihelp():
                            item_name="+admin/interwikihelp",
                            headings=headings,
                            rows=rows)
+
+
+@admin.route('/itemsize', methods=['GET', ])
+def itemsize():
+    """display a table with item sizes"""
+    headings = [_('Size'),
+                _('Item name'),
+               ]
+    rows = []
+    for item in flaskg.storage.iteritems():
+        try:
+            rev = item.get_revision(-1)
+        except NoSuchRevisionError:
+            # XXX we currently also get user items, they have no revisions -
+            # but in the end, they should not be readable by the user anyways
+            continue
+        rows.append((rev.size, item.name))
+    rows = sorted(rows, reverse=True)
+    return render_template('admin/itemsize.html',
+                           item_name="+admin/itemsize",
+                           headings=headings,
+                           rows=rows)
+
 
