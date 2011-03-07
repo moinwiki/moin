@@ -1,6 +1,7 @@
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2001-2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2009 MoinMoin:EugeneSyromyatnikov
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2010 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -189,4 +190,22 @@ def wikiconfighelp():
     return render_template('admin/wikiconfighelp.html',
                            item_name="+admin/wikiconfighelp",
                            groups=groups)
+
+
+@admin.route('/highlighterhelp', methods=['GET', ])
+def highlighterhelp():
+    """display a table with list of available Pygments lexers"""
+    import pygments.lexers
+    headings = [_('Lexer description'),
+                _('Lexer names'),
+                _('File patterns'),
+                _('Mimetypes'),
+               ]
+    lexers = pygments.lexers.get_all_lexers()
+    rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
+                   for desc, names, patterns, mimetypes in lexers])
+    return render_template('admin/highlighterhelp.html',
+                           item_name="+admin/highlighterhelp",
+                           headings=headings,
+                           rows=rows)
 
