@@ -32,6 +32,8 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("maint_set_meta", Set_Meta())
     from MoinMoin.script.maint.create_item import Create_Item
     manager.add_command("maint_create_item", Create_Item())
+    from MoinMoin.script.maint.modified_systemitems import Modified_SystemItems
+    manager.add_command("maint_modified_systemitems", Modified_SystemItems())
     from MoinMoin.script.maint.xml import XML
     manager.add_command("maint_xml", XML())
 
