@@ -1,22 +1,26 @@
 # Copyright: 2004 Nir Soffer <nirs@freeshell.org>
 # Copyright: 2008,2011 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-EditedSystemPages - list system pages that has been edited in this wiki.
+    MoinMoin - list system items that has been edited in this wiki.
+
 """
 
 
-from flask import flaskg
-
-from MoinMoin.macro._base import MacroPageLinkListBase
-from MoinMoin.items import IS_SYSITEM
+from flask import current_app as app
+from flaskext.script import Command
+from MoinMoin.items import IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchRevisionError
 
-class Macro(MacroPageLinkListBase):
-    def macro(self, content, arguments, page_url, alternative):
+class Modified_SystemItems(Command):
+    description = 'This command can be used to list system items that has been edited in this wiki.'
+
+    def run(self):
+        storage = app.unprotected_storage
         edited_sys_items = []
-        for item in flaskg.storage.iteritems():
+        for item in storage.iteritems():
             try:
                 rev = item.get_revision(-1)
             except NoSuchRevisionError:
@@ -30,6 +34,10 @@ class Macro(MacroPageLinkListBase):
 
         # Format as numbered list, sorted by item name
         edited_sys_items.sort()
-
-        return self.create_pagelink_list(edited_sys_items, ordered=True)
+        if edited_sys_items:
+            print "Edited system items:"
+            for item_name in edited_sys_items:
+                print item_name
+        else:
+            print "Not any modified system items found!"
 
