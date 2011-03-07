@@ -57,14 +57,6 @@ macro Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`GoTo` Module
-------------------
-
-.. automodule:: MoinMoin.macro.GoTo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`HighlighterList` Module
 -----------------------------
 
@@ -85,14 +77,6 @@ macro Package
 --------------------
 
 .. automodule:: MoinMoin.macro.MailTo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`PageCount` Module
------------------------
-
-.. automodule:: MoinMoin.macro.PageCount
     :members:
     :undoc-members:
     :show-inheritance:
@@ -121,34 +105,10 @@ macro Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`TemplateList` Module
---------------------------
-
-.. automodule:: MoinMoin.macro.TemplateList
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`Verbatim` Module
 ----------------------
 
 .. automodule:: MoinMoin.macro.Verbatim
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`WikiConfig` Module
-------------------------
-
-.. automodule:: MoinMoin.macro.WikiConfig
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`WikiConfigHelp` Module
-----------------------------
-
-.. automodule:: MoinMoin.macro.WikiConfigHelp
     :members:
     :undoc-members:
     :show-inheritance:
