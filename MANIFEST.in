@@ -1,5 +1,4 @@
 include README.txt LICENSE.txt
-include moin moin.bat
 include quickinstall quickinstall.bat
 include wikiconfig.py
 include Makefile
