@@ -57,8 +57,6 @@ class ConfigFunctionality(object):
         # define directories
         data_dir = os.path.normpath(self.data_dir)
         self.data_dir = data_dir
-        if not getattr(self, 'plugin_dir', None):
-            setattr(self, 'plugin_dir', os.path.abspath(os.path.join(data_dir, 'plugin')))
 
         # Try to decode certain names which allow unicode
         self._decode()
@@ -382,8 +380,7 @@ options_no_group_name = {
   # ==========================================================================
   'data': ('Data storage', None, (
     ('data_dir', './data/', "Path to the data directory."),
-    ('plugin_dir', None, "Plugin directory, by default computed to be `data_dir`/plugin."),
-    ('plugin_dirs', [], "Additional plugin directories."),
+    ('plugin_dirs', [], "Plugin directories."),
 
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),

@@ -194,14 +194,13 @@ def _loadPluginModule(cfg):
     Since each configured plugin path has unique plugins, we load the
     plugin packages as "moin_plugin_<sha1(path)>.plugin".
     """
-    plugin_dirs = [cfg.plugin_dir] + cfg.plugin_dirs
     cfg._plugin_modules = []
 
     try:
         # Lock other threads while we check and import
         imp.acquire_lock()
         try:
-            for pdir in plugin_dirs:
+            for pdir in cfg.plugin_dirs:
                 csum = 'p_%s' % hashlib.new('sha1', pdir).hexdigest()
                 modname = '%s.%s' % (cfg.siteid, csum)
                 # If the module is not loaded, try to load it
