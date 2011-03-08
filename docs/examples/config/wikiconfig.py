@@ -54,13 +54,8 @@ class Config(DefaultConfig):
     # Site name, used by default for wiki name-logo [Unicode]
     sitename = u'Untitled Wiki'
 
-    # name of entry page / front page [Unicode], choose one of those:
-
-    # a) if most wiki content is in a single language
-    #item_root = u"MyStartingPage"
-
-    # b) if wiki content is maintained in many languages
-    #item_root = u"FrontPage"
+    # name of entry page / front page [Unicode]
+    #item_root = u"Home"
 
     # The interwiki name used in interwiki links (set it and never change!)
     #interwikiname = u'UntitledWiki'
@@ -73,7 +68,7 @@ class Config(DefaultConfig):
 
     # This is checked by some rather critical and potentially harmful actions,
     # like despam or PackageInstaller action:
-    #superuser = [u"YourName", ]
+    #superusers = [u"YourName", ]
 
     # The default (ENABLED) password_checker will keep users from choosing too
     # short or too easy passwords. If you don't like this and your site has
@@ -106,7 +101,6 @@ class Config(DefaultConfig):
     navi_bar = [
         # If you want to show your item_root here:
         #u'%(item_root)s',
-        u'HelpContents',
     ]
 
     # The default theme anonymous or new users get
@@ -123,13 +117,11 @@ class Config(DefaultConfig):
 
     # the following regexes should match the complete name when used in free text
     # the group 'all' shall match all, while the group 'key' shall match the key only
-    # e.g. CategoryFoo -> group 'all' ==  CategoryFoo, group 'key' == Foo
+    # e.g. FooGroup -> 'all' ==  FooGroup, 'key' == Foo
     # moin's code will add ^ / $ at beginning / end when needed
     # You must use Unicode strings here [Unicode]
-    item_category_regex = ur'(?P<all>Category(?P<key>(?!Template)\S+))'
     item_dict_regex = ur'(?P<all>(?P<key>\S+)Dict)'
     item_group_regex = ur'(?P<all>(?P<key>\S+)Group)'
-    item_template_regex = ur'(?P<all>(?P<key>\S+)Template)'
 
     # Content options ---------------------------------------------------
 
