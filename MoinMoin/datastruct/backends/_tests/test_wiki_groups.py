@@ -16,7 +16,7 @@ from flask import current_app as app
 from flask import flaskg
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
-from MoinMoin.items import USERGROUP
+from MoinMoin.config import USERGROUP
 from MoinMoin import security
 from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item

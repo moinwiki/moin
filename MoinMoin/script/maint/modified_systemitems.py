@@ -11,7 +11,7 @@
 
 from flask import current_app as app
 from flaskext.script import Command
-from MoinMoin.items import IS_SYSITEM, SYSITEM_VERSION
+from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchRevisionError
 
 class Modified_SystemItems(Command):

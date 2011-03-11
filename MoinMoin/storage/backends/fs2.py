@@ -44,7 +44,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
 PICKLEPROTOCOL = 1
 
 MAX_NAME_LEN = 500
-from MoinMoin.storage import HASH_ALGORITHM
+from MoinMoin.config import HASH_ALGORITHM
 
 UUID_LEN = len(make_uuid().hex)
 

@@ -48,13 +48,12 @@ from flask import current_app as app
 
 from flask import flaskg
 
-from MoinMoin.items import ACL
 from MoinMoin.security import AccessControlList
 
 from MoinMoin.storage import Item, NewRevision, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
 
-from MoinMoin.config import ADMIN, READ, WRITE, CREATE, DESTROY
+from MoinMoin.config import ACL, ADMIN, READ, WRITE, CREATE, DESTROY
 
 
 class AclWrapperBackend(object):

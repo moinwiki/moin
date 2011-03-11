@@ -13,7 +13,7 @@ import py.test
 
 from flask import current_app as app
 
-from MoinMoin.items import TAGS
+from MoinMoin.config import TAGS
 from MoinMoin.storage import Item
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends.fs19 import FSPageBackend, regenerate_acl, process_categories

@@ -22,7 +22,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.items import SIZE
+from MoinMoin.config import SIZE
 
 @admin.route('/')
 def index():

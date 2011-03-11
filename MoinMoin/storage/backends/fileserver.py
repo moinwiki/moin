@@ -23,7 +23,7 @@ from MoinMoin import wikiutil, config
 from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
-from MoinMoin.items import ACL, MIMETYPE, ACTION, COMMENT, SIZE
+from MoinMoin.config import ACL, MIMETYPE, ACTION, COMMENT, SIZE
 MTIME = '__timestamp' # does not exist in storage any more
 
 class FSError(Exception):

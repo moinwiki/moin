@@ -15,7 +15,7 @@ HelpOnConfiguration.
 """
 
 from flask import flaskg
-from MoinMoin.items import USERGROUP
+from MoinMoin.config import USERGROUP
 from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 
 
