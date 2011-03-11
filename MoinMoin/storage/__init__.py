@@ -51,6 +51,10 @@ from MoinMoin.storage.error import RevisionNumberMismatchError, AccessError, \
                                    BackendError, NoSuchItemError, \
                                    RevisionAlreadyExistsError, ItemAlreadyExistsError
 
+#XXX doesn't work, cyclic imports:
+#from MoinMoin.items import SIZE
+SIZE = "size"
+
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
 # some backends may use this also for other purposes.
@@ -417,18 +421,6 @@ class Backend(object):
         """
         raise NotImplementedError()
 
-    def _get_revision_size(self, revision):
-        """
-        Lazily access the revision's data size. This needs not be implemented
-        if all StoredRevision objects are instantiated with the size= keyword
-        parameter.
-
-        :type revision: Object of a subclass of Revision.
-        :param revision: The revision on which we want to operate.
-        :returns: int
-        """
-        raise NotImplementedError()
-
     def _seek_revision_data(self, revision, position, mode):
         """
         Set the revision's cursor on the revision's data.
@@ -467,8 +459,6 @@ class Backend(object):
             for k, v in rev1.iteritems():
                 if rev2[k] != v:
                     return False
-            if rev1.size != rev2.size:
-                return False
             return True
 
         if name is None:
@@ -741,6 +731,7 @@ class Item(object, DictMixin):
         rev = self._uncommitted_revision
         assert rev is not None
         rev[HASH_ALGORITHM] = unicode(rev._rev_hash.hexdigest())
+        rev[SIZE] = rev._size
         self._backend._commit_item(rev)
         self._uncommitted_revision = None
 
@@ -862,12 +853,11 @@ class StoredRevision(Revision):
     Do NOT create instances of this class directly, but use item.get_revision or
     one of the other methods intended for getting stored revisions.
     """
-    def __init__(self, item, revno, timestamp=None, size=None):
+    def __init__(self, item, revno, timestamp=None):
         """
         Initialize the StoredRevision
         """
         Revision.__init__(self, item, revno, timestamp)
-        self._size = size
 
     def _get_ts(self):
         if self._timestamp is None:
@@ -875,15 +865,6 @@ class StoredRevision(Revision):
         return self._timestamp
 
     timestamp = property(_get_ts, doc="This property returns the creation timestamp of the revision")
-
-    def _get_size(self):
-        if self._size is None:
-            self._size = self._backend._get_revision_size(self)
-            assert self._size is not None
-
-        return self._size
-
-    size = property(_get_size, doc="Size of revision's data")
 
     def __setitem__(self, key, value):
         """
@@ -934,6 +915,8 @@ class NewRevision(Revision):
         """
         Revision.__init__(self, item, revno, None)
         self._metadata = {}
+        # these values need to be kept uptodate to that item.commit() can
+        # use them to update the metadata of the rev before committing it:
         self._size = 0
         self._rev_hash = hashlib.new(HASH_ALGORITHM)
 
@@ -945,11 +928,6 @@ class NewRevision(Revision):
         self._timestamp = ts
 
     timestamp = property(_get_ts, _set_ts, doc="This property accesses the creation timestamp of the revision")
-
-    def _get_size(self):
-        return self._size
-
-    size = property(_get_size, doc="Size of data written so far")
 
     def __setitem__(self, key, value):
         """

@@ -695,7 +695,7 @@ There is no help, you're doomed!
             mt = wikiutil.MimeType(mimestr=mimestr)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
-            content_length = rev.size
+            content_length = rev[SIZE]
             file_to_send = rev
 
         # TODO: handle content_disposition is not None
