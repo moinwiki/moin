@@ -11,7 +11,7 @@ import py
 from flask import current_app as app
 from flask import flaskg
 
-from MoinMoin.items import IS_SYSITEM, SYSITEM_VERSION
+from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
 
 from MoinMoin._tests import wikiconfig

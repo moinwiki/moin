@@ -10,7 +10,7 @@
 
 
 from flask import flaskg
-from MoinMoin.items import SOMEDICT
+from MoinMoin.config import SOMEDICT
 from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 

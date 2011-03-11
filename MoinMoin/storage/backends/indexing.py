@@ -26,8 +26,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
-from MoinMoin.items import ACL, MIMETYPE, UUID, NAME, NAME_OLD, \
-                           TAGS
+from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, TAGS
 
 
 class IndexingBackendMixin(object):

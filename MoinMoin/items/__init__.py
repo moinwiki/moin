@@ -51,46 +51,15 @@ from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
-from MoinMoin.storage import HASH_ALGORITHM
+from MoinMoin.config import UUID, NAME, NAME_OLD, REVERTED_TO, ACL, \
+                            IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
+                            MIMETYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
+                            TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
+                            HASH_ALGORITHM
 
 COLS = 80
 ROWS_DATA = 20
 ROWS_META = 10
-
-UUID = "uuid"
-NAME = "name"
-NAME_OLD = "name_old"
-
-# if an item is reverted, we store the revision number we used for reverting there:
-REVERTED_TO = "reverted_to"
-
-# some metadata key constants:
-ACL = "acl"
-
-# This says: I am a system item
-IS_SYSITEM = "is_syspage"
-# This says: original sysitem as contained in release: <release>
-SYSITEM_VERSION = "syspage_version"
-
-# keys for storing group and dict information
-# group of user names, e.g. for ACLs:
-USERGROUP = "usergroup"
-# needs more precise name / use case:
-SOMEDICT = "somedict"
-
-MIMETYPE = "mimetype"
-SIZE = "size"
-LANGUAGE = "language"
-ITEMLINKS = "itemlinks"
-ITEMTRANSCLUSIONS = "itemtransclusions"
-TAGS = "tags"
-
-ACTION = "action"
-ADDRESS = "address"
-HOSTNAME = "hostname"
-USERID = "userid"
-EXTRA = "extra"
-COMMENT = "comment"
 
 
 class DummyRev(dict):

@@ -32,15 +32,14 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil, config
+from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
+                            ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
+                            IS_SYSITEM, SYSITEM_VERSION, \
+                            TAGS, SIZE, HASH_ALGORITHM
 from MoinMoin.storage import Backend, Item, StoredRevision
-from MoinMoin.items import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
-                           ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                           IS_SYSITEM, SYSITEM_VERSION, \
-                           TAGS, SIZE
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import split_body
 
-from MoinMoin.storage import HASH_ALGORITHM
 
 MTIME = '__timestamp' # does not exist in storage any more
 

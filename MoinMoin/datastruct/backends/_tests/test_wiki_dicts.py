@@ -11,7 +11,7 @@
 
 from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct.backends import wiki_dicts
-from MoinMoin.items import SOMEDICT
+from MoinMoin.config import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
 
 DATA = "This is a dict item."

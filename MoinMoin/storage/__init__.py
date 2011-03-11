@@ -51,14 +51,7 @@ from MoinMoin.storage.error import RevisionNumberMismatchError, AccessError, \
                                    BackendError, NoSuchItemError, \
                                    RevisionAlreadyExistsError, ItemAlreadyExistsError
 
-#XXX doesn't work, cyclic imports:
-#from MoinMoin.items import SIZE
-SIZE = "size"
-
-# we need a specific hash algorithm to store hashes of revision data into meta
-# data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
-# some backends may use this also for other purposes.
-HASH_ALGORITHM = 'sha1'
+from MoinMoin.config import SIZE, HASH_ALGORITHM
 
 import hashlib
 

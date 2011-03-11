@@ -20,6 +20,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
+from MoinMoin.config import USERID, ADDRESS, HOSTNAME
 from MoinMoin.util.interwiki import split_interwiki, resolve_interwiki, join_wiki, getInterwikiHome
 
 
@@ -312,7 +313,6 @@ class ThemeSupport(object):
 
 
 def get_editor_info(rev, external=False):
-    from MoinMoin.items import USERID, ADDRESS, HOSTNAME
     addr = rev.get(ADDRESS)
     hostname = rev.get(HOSTNAME)
     text = _('anonymous')  # link text
