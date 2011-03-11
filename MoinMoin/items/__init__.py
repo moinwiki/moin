@@ -281,6 +281,7 @@ class Item(object):
                      # are automatically implanted when saving
                      NAME,
                      HASH_ALGORITHM,
+                     SIZE,
                      COMMENT,
                      ACTION,
                      ADDRESS, HOSTNAME, USERID,
