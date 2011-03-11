@@ -622,6 +622,7 @@ class SQLARevision(NewRevision, Base):
         Write the given amount of data.
         """
         self._data.write(data)
+        self._size = self._data.size
 
     def read(self, amount=None):
         """
@@ -649,10 +650,6 @@ class SQLARevision(NewRevision, Base):
 
     def __setitem__(self, key, value):
         NewRevision.__setitem__(self, key, value)
-
-    @property
-    def size(self):
-        return self._data.size
 
     def destroy(self):
         """

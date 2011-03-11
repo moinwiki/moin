@@ -22,7 +22,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
-
+from MoinMoin.items import SIZE
 
 @admin.route('/')
 def index():
@@ -239,7 +239,7 @@ def itemsize():
             # XXX we currently also get user items, they have no revisions -
             # but in the end, they should not be readable by the user anyways
             continue
-        rows.append((rev.size, item.name))
+        rows.append((rev[SIZE], item.name))
     rows = sorted(rows, reverse=True)
     return render_template('admin/itemsize.html',
                            item_name="+admin/itemsize",

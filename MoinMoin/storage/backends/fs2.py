@@ -420,9 +420,6 @@ class FS2Backend(BackendBase):
     def _get_revision_timestamp(self, rev):
         return rev._fs_metadata['__timestamp']
 
-    def _get_revision_size(self, rev):
-        return os.stat(rev._fs_path_data).st_size
-
     def _open_revision_data(self, rev, mode='rb'):
         if rev._fs_file_data is None:
             rev._fs_file_data = open(rev._fs_path_data, mode) # XXX keeps file open as long as rev exists

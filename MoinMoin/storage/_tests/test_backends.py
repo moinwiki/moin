@@ -24,6 +24,7 @@ from MoinMoin.storage import Item, NewRevision
 from MoinMoin.storage.backends import memory
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError, RevisionAlreadyExistsError
 from MoinMoin.storage import terms
+from MoinMoin.items import SIZE
 
 item_names = (u"quite_normal",
               u"äöüßłóąćółąńśćżź",
@@ -549,32 +550,26 @@ class BackendTest(object):
         item = self.backend.create_item(u'size1')
         rev = item.create_revision(0)
         rev.write('asdf')
-        assert rev.size == 4
         rev.write('asdf')
-        assert rev.size == 8
         item.commit()
         rev = item.get_revision(0)
-        assert rev.size == 8
+        assert rev[SIZE] == 8
 
         for nrev in self.backend.history():
-            assert nrev.size == 8
+            assert nrev[SIZE] == 8
 
     def test_size_2(self):
         item = self.backend.create_item(u'size2')
         rev0 = item.create_revision(0)
         data0 = 'asdf'
         rev0.write(data0)
-        assert rev0.size == len(data0)
         item.commit()
         rev1 = item.create_revision(1)
-        rev1["size"] = "should be 0" # invalid
-        assert rev1.size == 0
-        data1 = '' # we never write this to the rev1!
         item.commit()
         rev1 = item.get_revision(1)
-        assert rev1.size == len(data1)
+        assert rev1[SIZE] == 0
         rev0 = item.get_revision(0)
-        assert rev0.size == len(data0)
+        assert rev0[SIZE] == len(data0)
 
     def test_various_revision_metadata_values(self):
         def test_value(value, no):

@@ -452,13 +452,6 @@ class AclWrapperRevision(object, DictMixin):
 
     timestamp = property(_get_ts, _set_ts, doc="This property accesses the creation timestamp of the revision")
 
-    @property
-    def size(self):
-        """
-        @see: NewRevision.size.__doc__
-        """
-        return self._revision.size
-
     def __setitem__(self, key, value):
         """
         In order to change an ACL on an item you must have the ADMIN privilege.
