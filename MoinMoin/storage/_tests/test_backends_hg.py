@@ -82,7 +82,7 @@ class TestMercurialBackend(BackendTest):
         item.commit()
         item = self.backend.get_item('existing')
         rev = item.get_revision(-1)
-        assert len(dict(rev)) == 10000 + 2 # 'sha1' and 'size' key is added automatically on commit
+        assert len(dict(rev)) == 10000 + 3 # 'sha1', 'size', 'mtime' key is added automatically on commit
         for num in xrange(10000):
             revval = "revision metadata value for key %d" % num
             assert rev["%s" % num] == revval * 10

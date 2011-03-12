@@ -5,7 +5,7 @@
     MoinMoin - helpers for flatfile meta/data stores
 """
 
-from MoinMoin.config import NAME, ACL, MIMETYPE, LANGUAGE
+from MoinMoin.config import NAME, ACL, MIMETYPE, MTIME, LANGUAGE
 
 
 def split_body(body):
@@ -58,7 +58,7 @@ def add_metadata_to_body(metadata, data):
     """
     Adds the processing instructions to the data.
     """
-    meta_keys = [NAME, ACL, MIMETYPE, LANGUAGE, ]
+    meta_keys = [NAME, ACL, MIMETYPE, MTIME, LANGUAGE, ]
 
     metadata_data = ""
     for key, value in metadata.iteritems():

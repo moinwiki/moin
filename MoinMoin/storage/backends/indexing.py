@@ -26,7 +26,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
-from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, TAGS
+from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
 
 
 class IndexingBackendMixin(object):
@@ -149,8 +149,8 @@ class IndexingRevisionMixin(object):
         name = self.item.name
         uuid = name # XXX
         revno = self.revno
-        if self.timestamp is None:
-            self.timestamp = time.time()
+        if MTIME not in self:
+            self[MTIME] = int(time.time())
         if NAME not in self:
             self[NAME] = name
         if UUID not in self:
@@ -161,7 +161,7 @@ class IndexingRevisionMixin(object):
         logging.debug("item %r revno %d update index:" % (name, revno))
         for k, v in metas.items():
             logging.debug(" * rev meta %r: %r" % (k, v))
-        self._index.add_rev(uuid, revno, self.timestamp, metas)
+        self._index.add_rev(uuid, revno, metas)
 
     def remove_index(self):
         """
@@ -293,7 +293,7 @@ class ItemIndex(object):
             self.item_kvstore.store_kv(item_id, {})
             item_table.delete().where(item_table.c.id == item_id).execute()
 
-    def add_rev(self, uuid, revno, timestamp, metas):
+    def add_rev(self, uuid, revno, metas):
         """
         add a new revision <revno> for item <uuid> with metadata <metas>
 
@@ -311,7 +311,7 @@ class ItemIndex(object):
         if result:
             rev_id = result[0]
         else:
-            dt = datetime.datetime.utcfromtimestamp(timestamp)
+            dt = datetime.datetime.utcfromtimestamp(metas[MTIME])
             res = rev_table.insert().values(revno=revno, item_id=item_id, datetime=dt).execute()
             rev_id = res.inserted_primary_key[0]
 

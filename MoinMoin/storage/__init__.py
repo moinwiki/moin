@@ -42,6 +42,7 @@
 import os
 import sys
 import shutil
+import time
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -51,7 +52,7 @@ from MoinMoin.storage.error import RevisionNumberMismatchError, AccessError, \
                                    BackendError, NoSuchItemError, \
                                    RevisionAlreadyExistsError, ItemAlreadyExistsError
 
-from MoinMoin.config import SIZE, HASH_ALGORITHM
+from MoinMoin.config import SIZE, MTIME, HASH_ALGORITHM
 
 import hashlib
 
@@ -402,18 +403,6 @@ class Backend(object):
         """
         raise NotImplementedError()
 
-    def _get_revision_timestamp(self, revision):
-        """
-        Lazily load the revision's timestamp. If accessing it is cheap, it can
-        be given as a parameter to StoredRevision instantiation instead.
-        Return the timestamp (a long).
-
-        :type revision: Object of a subclass of Revision.
-        :param revision: The revision on which we want to operate.
-        :returns: long
-        """
-        raise NotImplementedError()
-
     def _seek_revision_data(self, revision, position, mode):
         """
         Set the revision's cursor on the revision's data.
@@ -447,8 +436,6 @@ class Backend(object):
 
     def copy_item(self, item, verbose=False, name=None):
         def same_revision(rev1, rev2):
-            if rev1.timestamp != rev2.timestamp:
-                return False
             for k, v in rev1.iteritems():
                 if rev2[k] != v:
                     return False
@@ -485,7 +472,6 @@ class Backend(object):
             else:
                 for k, v in revision.iteritems():
                     new_rev[k] = v
-                new_rev.timestamp = revision.timestamp
                 shutil.copyfileobj(revision, new_rev)
                 new_item.commit()
                 st = 'converts'
@@ -725,6 +711,8 @@ class Item(object, DictMixin):
         assert rev is not None
         rev[HASH_ALGORITHM] = unicode(rev._rev_hash.hexdigest())
         rev[SIZE] = rev._size
+        if MTIME not in rev:
+            rev[MTIME] = int(time.time())
         self._backend._commit_item(rev)
         self._uncommitted_revision = None
 
@@ -779,7 +767,7 @@ class Revision(object, DictMixin):
     care must be taken in that case to create monotone timestamps!
     This timestamp is also retrieved via the backend's history() method.
     """
-    def __init__(self, item, revno, timestamp=None):
+    def __init__(self, item, revno):
         """
         Initialize the revision.
 
@@ -795,7 +783,6 @@ class Revision(object, DictMixin):
         self._item = item
         self._backend = item._backend
         self._metadata = None
-        self._timestamp = timestamp
 
     def _get_item(self):
         return self._item
@@ -810,6 +797,11 @@ class Revision(object, DictMixin):
 
     revno = property(get_revno, doc=("This property stores the revno of the revision object. "
                                      "Only read-only access is allowed."))
+
+    @property
+    def timestamp(self):
+        """This property returns the creation timestamp of the revision"""
+        return self[MTIME]
 
     def _load_metadata(self):
         self._metadata = self._backend._get_revision_metadata(self)
@@ -846,18 +838,11 @@ class StoredRevision(Revision):
     Do NOT create instances of this class directly, but use item.get_revision or
     one of the other methods intended for getting stored revisions.
     """
-    def __init__(self, item, revno, timestamp=None):
+    def __init__(self, item, revno):
         """
         Initialize the StoredRevision
         """
-        Revision.__init__(self, item, revno, timestamp)
-
-    def _get_ts(self):
-        if self._timestamp is None:
-            self._timestamp = self._backend._get_revision_timestamp(self)
-        return self._timestamp
-
-    timestamp = property(_get_ts, doc="This property returns the creation timestamp of the revision")
+        Revision.__init__(self, item, revno)
 
     def __setitem__(self, key, value):
         """
@@ -906,21 +891,12 @@ class NewRevision(Revision):
         """
         Initialize the NewRevision
         """
-        Revision.__init__(self, item, revno, None)
+        Revision.__init__(self, item, revno)
         self._metadata = {}
         # these values need to be kept uptodate to that item.commit() can
         # use them to update the metadata of the rev before committing it:
         self._size = 0
         self._rev_hash = hashlib.new(HASH_ALGORITHM)
-
-    def _get_ts(self):
-        return self._timestamp
-
-    def _set_ts(self, ts):
-        ts = long(ts)
-        self._timestamp = ts
-
-    timestamp = property(_get_ts, _set_ts, doc="This property accesses the creation timestamp of the revision")
 
     def __setitem__(self, key, value):
         """

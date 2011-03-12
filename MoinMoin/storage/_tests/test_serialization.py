@@ -26,7 +26,7 @@ class TestSerializeRev(object):
 
     def test_serialize_rev(self):
         become_trusted()
-        params = (u'foo1', 0, dict(m1=u"m1"), 'bar1')
+        params = (u'foo1', 0, dict(m1=u"m1", mtime=1234), 'bar1')
         item = update_item(*params)
         rev = item.get_revision(0)
         xmlfile = StringIO()
@@ -38,12 +38,15 @@ class TestSerializeRev(object):
                     '<entry key="mimetype"><str>application/octet-stream</str>\n</entry>\n'
                     '<entry key="sha1"><str>763675d6a1d8d0a3a28deca62bb68abd8baf86f3</str>\n</entry>\n'
                     '<entry key="m1"><str>m1</str>\n</entry>\n'
-                    '<entry key="name"><str>foo1</str>\n</entry>\n'
-                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '<entry key="uuid"><str>foo1</str>\n</entry>\n'
+                    '<entry key="name"><str>foo1</str>\n</entry>\n'
+                    '<entry key="mtime"><int>1234</int>\n</entry>\n'
+                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '</meta>\n'
                     '<data coding="base64"><chunk>YmFyMQ==</chunk>\n</data>\n'
                     '</revision>\n')
+        print expected
+        print xml
         assert expected == xml
 
 
@@ -52,8 +55,8 @@ class TestSerializeItem(object):
     def test_serialize_item(self):
         become_trusted()
         testparams = [
-            (u'foo2', 0, dict(m1=u"m1r0"), 'bar2'),
-            (u'foo2', 1, dict(m1=u"m1r1"), 'baz2'),
+            (u'foo2', 0, dict(m1=u"m1r0", mtime=1234), 'bar2'),
+            (u'foo2', 1, dict(m1=u"m1r1", mtime=1235), 'baz2'),
         ]
         for params in testparams:
             item = update_item(*params)
@@ -68,9 +71,10 @@ class TestSerializeItem(object):
                     '<entry key="mimetype"><str>application/octet-stream</str>\n</entry>\n'
                     '<entry key="sha1"><str>033c4846b506a4a48e32cdf54515c91d3499adb3</str>\n</entry>\n'
                     '<entry key="m1"><str>m1r0</str>\n</entry>\n'
-                    '<entry key="name"><str>foo2</str>\n</entry>\n'
-                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '<entry key="uuid"><str>foo2</str>\n</entry>\n'
+                    '<entry key="name"><str>foo2</str>\n</entry>\n'
+                    '<entry key="mtime"><int>1234</int>\n</entry>\n'
+                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '</meta>\n'
                     '<data coding="base64"><chunk>YmFyMg==</chunk>\n</data>\n'
                     '</revision>\n'
@@ -79,13 +83,16 @@ class TestSerializeItem(object):
                     '<entry key="mimetype"><str>application/octet-stream</str>\n</entry>\n'
                     '<entry key="sha1"><str>f91d8fc20a5de853e62105cc1ee0bf47fd7ded0f</str>\n</entry>\n'
                     '<entry key="m1"><str>m1r1</str>\n</entry>\n'
-                    '<entry key="name"><str>foo2</str>\n</entry>\n'
-                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '<entry key="uuid"><str>foo2</str>\n</entry>\n'
+                    '<entry key="name"><str>foo2</str>\n</entry>\n'
+                    '<entry key="mtime"><int>1235</int>\n</entry>\n'
+                    '<entry key="size"><int>4</int>\n</entry>\n'
                     '</meta>\n'
                     '<data coding="base64"><chunk>YmF6Mg==</chunk>\n</data>\n'
                     '</revision>\n'
                     '</item>\n')
+        print expected
+        print xml
         assert expected == xml
 
 class TestSerializeBackend(object):

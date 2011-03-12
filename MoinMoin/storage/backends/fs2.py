@@ -313,8 +313,7 @@ class FS2Backend(BackendBase):
 
     def _commit_item(self, rev):
         item = rev.item
-        metadata = {'__timestamp': rev.timestamp}
-        metadata.update(rev)
+        metadata = dict(rev)
         md = pickle.dumps(metadata, protocol=PICKLEPROTOCOL)
 
         rev._fs_file_meta.write(md)
@@ -416,9 +415,6 @@ class FS2Backend(BackendBase):
 
     def _get_revision_metadata(self, rev):
         return rev._fs_metadata
-
-    def _get_revision_timestamp(self, rev):
-        return rev._fs_metadata['__timestamp']
 
     def _open_revision_data(self, rev, mode='rb'):
         if rev._fs_file_data is None:
