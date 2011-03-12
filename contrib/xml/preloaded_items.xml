@@ -14,11 +14,17 @@
 <str>docbook</str>
 </list>
 </entry>
-<entry key="address"><str>127.0.0.1</str>
-</entry>
 <entry key="hostname"><str>localhost</str>
 </entry>
+<entry key="uuid"><str>Home</str>
+</entry>
+<entry key="mtime"><int>1299968390</int>
+</entry>
 <entry key="action"><str>SAVE</str>
+</entry>
+<entry key="address"><str>127.0.0.1</str>
+</entry>
+<entry key="size"><int>242</int>
 </entry>
 </meta>
 <data coding="base64"><chunk>PSBtb2luMiB0ZXN0IGNvbnRlbnQgPQ0KDQpUaGUgcHJlbG9hZGVkX2l0ZW1zLnhtbCBjdXJyZW50bHkgb25seSBoYXMgbWluaW1hbCBjb250ZW50IGZvciB0ZXN0aW5nOg0KICogW1ttb2lufE1vaW4gV2lraSBtYXJrdXAgaXRlbV1dDQogKiBbW2NyZW9sZXxDcmVvbGUgV2lraSBtYXJrdXAgaXRlbV1dDQogKiBbW3JzdHxyZVNUIG1hcmt1cCBpdGVtXV0=</chunk>
@@ -37,11 +43,17 @@
 </entry>
 <entry key="itemlinks"><list></list>
 </entry>
-<entry key="address"><str>127.0.0.1</str>
-</entry>
 <entry key="hostname"><str>localhost</str>
 </entry>
+<entry key="uuid"><str>rst</str>
+</entry>
+<entry key="mtime"><int>1299968391</int>
+</entry>
 <entry key="action"><str>SAVE</str>
+</entry>
+<entry key="address"><str>127.0.0.1</str>
+</entry>
+<entry key="size"><int>216</int>
 </entry>
 </meta>
 <data coding="base64"><chunk>QSBSZVN0cnVjdHVyZWRUZXh0IERvY3VtZW50DQo9PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KV2UgbmVlZCBhICoqYmV0dGVyKiogZGVtbyBkb2N1bWVudCBoZXJlLCB0aGF0Og0KDQotIGRlbW9uc3RyYXRlcyB0aGUgbW9zdCBpbXBvcnRhbnQgZWxlbWVudHMgb2YgcmVTVA0KLSBkb2Vzbid0IGNyYXNoIChsaWtlIHRoZSByc3QgcHJpbWVyIGM=</chunk>
@@ -65,11 +77,17 @@
 <str>Item/SubItem</str>
 </list>
 </entry>
-<entry key="address"><str>127.0.0.1</str>
-</entry>
 <entry key="hostname"><str>localhost</str>
 </entry>
+<entry key="uuid"><str>moin</str>
+</entry>
+<entry key="mtime"><int>1299968391</int>
+</entry>
 <entry key="action"><str>SAVE</str>
+</entry>
+<entry key="address"><str>127.0.0.1</str>
+</entry>
+<entry key="size"><int>4218</int>
 </entry>
 </meta>
 <data coding="base64"><chunk>PSBNb2luIFdpa2kgU3ludGF4ID0NCg0KPT0gSGVhZGluZ3MgPT0NCg0KPT09IGhlYWRpbmcgM3JkIGxldmVsID09PQ0KPT09PSBoZWFkaW5nIDR0aCBsZXZlbCA9PT09DQo9PT09PSBoZWFkaW5nIDV0aCBsZXZlbCA9PT09PQ0KPT09PT09IG5vIGhlYWRpbmcgNnRoIGxldmVsID09PT09PQ0KDQo9PSBUZXh0IEZvcm1hdHRpbmcgPT0NCg0KfHw8cm93Ymc=</chunk>
@@ -115,11 +133,17 @@
 <str>creole/SubItem</str>
 </list>
 </entry>
-<entry key="address"><str>127.0.0.1</str>
-</entry>
 <entry key="hostname"><str>localhost</str>
 </entry>
+<entry key="uuid"><str>creole</str>
+</entry>
+<entry key="mtime"><int>1299968391</int>
+</entry>
 <entry key="action"><str>SAVE</str>
+</entry>
+<entry key="address"><str>127.0.0.1</str>
+</entry>
+<entry key="size"><int>2167</int>
 </entry>
 </meta>
 <data coding="base64"><chunk>PSBDcmVvbGUgU3ludGF4ID0NCg0KKipDcmVvbGUqKiA8PEZvb3ROb3RlKGh0dHA6Ly93d3cud2lraWNyZW9sZS5vcmcvKT4+IGlzIGEgbmV3IHdpa2kgbWFya3VwIGxhbmd1YWdlIC0gaXRzIGdvYWwgaXMgdG8gYmVjb21lIHRoZSBvbmUgY29tbW9uIHdpa2kgc3ludGF4IGFuZCBlbmFibGUgYmV0dGVyIGV4Y2hhbmdlIG9mIGNvbnRlbnQgYmV0d2VlbiA=</chunk>
@@ -145,9 +169,15 @@
 </entry>
 <entry key="hostname"><str>localhost</str>
 </entry>
-<entry key="address"><str>127.0.0.1</str>
+<entry key="uuid"><str>docbook</str>
+</entry>
+<entry key="mtime"><int>1299968392</int>
 </entry>
 <entry key="action"><str>SAVE</str>
+</entry>
+<entry key="address"><str>127.0.0.1</str>
+</entry>
+<entry key="size"><int>3082</int>
 </entry>
 </meta>
 <data coding="base64"><chunk>PGFydGljbGUgeG1sbnM9J2h0dHA6Ly9kb2Nib29rLm9yZy9ucy9kb2Nib29rJyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayc+DQogIDxhcnRpY2xlaW5mbz4NCiAgICA8dGl0bGU+QSBkb2Nib29rIGRvY3VtZW50PC90aXRsZT4NCiAgPC9hcnRpY2xlaW5mbz4NCg0KPHNpbXBhcmE+DQpUaGlzIHBhZ2Ugc2hvd3MgdGhlIGQ=</chunk>
