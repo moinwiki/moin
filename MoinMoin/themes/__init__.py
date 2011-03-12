@@ -313,7 +313,7 @@ class ThemeSupport(object):
             (_('Delete Item'), 'delete', 'frontend.delete_item', not_exists, ),
             (_('Destroy Item'), 'destroy', 'frontend.destroy_item', not_exists, ),
             (_('-----------------------------------'), 'show', 'frontend.show_item', True),
-            (_('Administration'), 'admin', 'admin.index', False, ),
+            (_('Administration & Docs'), 'admin', 'admin.index', False, ),
         ]
         return [(title, disabled, endpoint)
                 for title, action, endpoint, disabled in menu
