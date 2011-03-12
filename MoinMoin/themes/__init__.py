@@ -31,7 +31,13 @@ def get_current_theme():
         theme_name = u.theme_name
     else:
         theme_name = app.cfg.theme_default
-    return get_theme(theme_name)
+    try:
+        return get_theme(theme_name)
+    except KeyError:
+        logging.warning("theme %s was not found; using default of %s instead." % (theme_name,app.cfg.theme_default))
+        theme_name = app.cfg.theme_default
+        return get_theme(theme_name)
+
 
 
 def render_template(template, **context):
