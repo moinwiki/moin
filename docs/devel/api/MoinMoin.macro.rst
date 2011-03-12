@@ -33,14 +33,6 @@ macro Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`EditedSystemPages` Module
--------------------------------
-
-.. automodule:: MoinMoin.macro.EditedSystemPages
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`GetText` Module
 ---------------------
 
@@ -57,34 +49,10 @@ macro Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`HighlighterList` Module
------------------------------
-
-.. automodule:: MoinMoin.macro.HighlighterList
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`InterWiki` Module
------------------------
-
-.. automodule:: MoinMoin.macro.InterWiki
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`MailTo` Module
 --------------------
 
 .. automodule:: MoinMoin.macro.MailTo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`PageSize` Module
-----------------------
-
-.. automodule:: MoinMoin.macro.PageSize
     :members:
     :undoc-members:
     :show-inheritance:
