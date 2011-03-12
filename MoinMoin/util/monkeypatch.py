@@ -25,6 +25,11 @@ class BaseRequestHandler(werkzeug.serving.BaseRequestHandler):
 werkzeug.serving.BaseRequestHandler = BaseRequestHandler
 werkzeug.serving.WSGIRequestHandler = BaseRequestHandler
 
+# werkzeug 0.6.2 has a missing import sys in posixemulation
+from werkzeug import posixemulation
+import sys
+posixemulation.sys = sys
+
 
 # flask patching -------------------------------------------------------------
 

@@ -7,11 +7,9 @@ MoinMoin - a wiki engine in Python.
 """
 
 
-import os
-import sys
-
 project = "MoinMoin"
 
+import sys
 if sys.hexversion < 0x2060000:
     sys.exit("%s requires Python 2.6 or greater.\n" % project)
 

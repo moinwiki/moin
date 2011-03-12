@@ -157,7 +157,7 @@ class ItemNameList(XMLSelectiveGenerator):
 
 class TermMatch(XMLSelectiveGenerator):
     def __init__(self, out, term):
-        self.term = term  # see MoinMoin.search.term
+        self.term = term  # see MoinMoin.storage.terms
         XMLSelectiveGenerator.__init__(self, out)
 
     def shall_serialize(self, item=None, rev=None,

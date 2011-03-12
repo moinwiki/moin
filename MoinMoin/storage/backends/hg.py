@@ -56,7 +56,7 @@ try:
 except ImportError:
     from MoinMoin.util import pycdb as cdb
 
-from MoinMoin.items import USERID, COMMENT
+from MoinMoin.config import USERID, COMMENT
 from MoinMoin.storage import Backend, Item, StoredRevision, NewRevision
 from MoinMoin.storage.error import (BackendError, NoSuchItemError, NoSuchRevisionError,
                                    RevisionNumberMismatchError, ItemAlreadyExistsError,
@@ -435,10 +435,6 @@ class MercurialBackend(Backend):
         """Return given Revision timestamp"""
         return long(self._get_filectx(revision).date()[0])
 
-    def _get_revision_size(self, revision):
-        """Return size of given Revision in bytes."""
-        return self._get_filectx(revision).size()
-
     def _seek_revision_data(self, revision, position, mode):
         """Set the Revisions cursor on the Revisions data."""
         self._open_revision_data(revision)
@@ -652,8 +648,8 @@ class MercurialBackend(Backend):
 
 class MercurialStoredRevision(StoredRevision):
 
-    def __init__(self, item, revno, timestamp=None, size=None):
-        StoredRevision.__init__(self, item, revno, timestamp, size)
+    def __init__(self, item, revno, timestamp=None):
+        StoredRevision.__init__(self, item, revno, timestamp)
         self._data = None
 
     def get_parents(self):

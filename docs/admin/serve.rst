@@ -9,22 +9,41 @@ is suitable for development, debugging, personal and small group wikis.
 
 It is not made for serving bigger loads, but it is easy to use.
 
-To start moin using the builtin web server, just run "moin".
+Entering the virtual env
+------------------------
+If you installed to a virtualenv, you need to activate it first, so it will
+find the moin script, the moin code and all its library dependencies::
 
-If you'ld like to see all subcommands and options of the moin command, use::
+ source env/bin/activate  # for linux (or other posix OSes)
+ # or
+ call env\bin\activate  # for windows
 
- $ ./moin help
- $ ./moin moin --help
+Running the builtin server
+--------------------------
+Then you can run the moin builtin server by::
 
-**Example**::
+ moin
+ # or, if you need another ip/port:
+ moin moin --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
 
- $ ./moin moin --config /srv/wiki/wikiconfig.py --host 1.2.3.4 --port 7777
+Now moin starts the builtin server and tries to locate the wiki configuration
+from (please use an absolute path):
 
-Use an absolute path for the wikiconfig.py!
+- commandline argument `--config /path/to/wikiconfig.py`
+- environment variable `MOINCFG=/path/to/wikiconfig.py`
+- current directory, file `wikiconfig_local.py`
+- current directory, file `wikiconfig.py`
 
-.. todo::
+While the moin server is starting up, you will see some log output like::
 
-   add stuff above to man page and reference man page from here
+ 2011-03-06 23:35:11,445 INFO werkzeug:116  * Running on http://127.0.0.1:8080/
+
+Now point your browser at that URL - your moin wiki is running!
+
+Stopping the builtin server
+---------------------------
+To stop the wiki server, either use `Ctrl-C` or close the window.
+
 
 External Web Server (advanced)
 ==============================

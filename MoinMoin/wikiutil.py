@@ -24,6 +24,8 @@ from flask import flaskg
 from flask import request
 
 from MoinMoin import config
+from MoinMoin.config import IS_SYSITEM
+
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util import pysupport, lock
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
@@ -134,7 +136,6 @@ def isSystemItem(itemname):
     :rtype: bool
     :returns: True if page is a system item
     """
-    from MoinMoin.items import IS_SYSITEM
     try:
         item = flaskg.storage.get_item(itemname)
         return item.get_revision(-1)[IS_SYSITEM]

@@ -9,6 +9,14 @@ maint Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`create_item` Module
+-------------------------
+
+.. automodule:: MoinMoin.script.maint.create_item
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`reduce_revisions` Module
 ------------------------------
 

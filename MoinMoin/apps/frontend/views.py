@@ -36,9 +36,10 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.items import Item, NonExistent, MIMETYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
+from MoinMoin.config import MIMETYPE, ITEMLINKS, ITEMTRANSCLUSIONS
 from MoinMoin.util.forms import make_generator
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -109,16 +110,17 @@ def show_item(item_name, rev):
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_no=rev)
-        rev_nos = item.rev.item.list_revisions()
     except AccessDeniedError:
         abort(403)
-    if rev_nos:
-        first_rev = rev_nos[0]
-        last_rev = rev_nos[-1]
-    else:
-        # Note: rev.revno of DummyRev is None
-        first_rev = None
-        last_rev = None
+    show_revision = show_navigation = rev >= 0
+    # Note: rev.revno of DummyRev is None
+    first_rev = None
+    last_rev = None
+    if show_navigation:
+        rev_nos = item.rev.item.list_revisions()
+        if rev_nos:
+            first_rev = rev_nos[0]
+            last_rev = rev_nos[-1]
     if isinstance(item, NonExistent):
         status = 404
     else:
@@ -130,7 +132,8 @@ def show_item(item_name, rev):
                               first_rev_no=first_rev,
                               last_rev_no=last_rev,
                               data_rendered=Markup(item._render_data()),
-                              show_navigation=(rev>=0),
+                              show_revision=show_revision,
+                              show_navigation=show_navigation,
                              )
     return Response(content, status)
 
@@ -165,14 +168,15 @@ def show_item_meta(item_name, rev):
         item = Item.create(item_name, rev_no=rev)
     except AccessDeniedError:
         abort(403)
-    rev_nos = item.rev.item.list_revisions()
-    if rev_nos:
-        first_rev = rev_nos[0]
-        last_rev = rev_nos[-1]
-    else:
-        # Note: rev.revno of DummyRev is None
-        first_rev = None
-        last_rev = None
+    show_revision = show_navigation = rev >= 0
+    # Note: rev.revno of DummyRev is None
+    first_rev = None
+    last_rev = None
+    if show_navigation:
+        rev_nos = item.rev.item.list_revisions()
+        if rev_nos:
+            first_rev = rev_nos[0]
+            last_rev = rev_nos[-1]
     return render_template('meta.html',
                            item=item, item_name=item.name,
                            rev=item.rev,
@@ -180,7 +184,8 @@ def show_item_meta(item_name, rev):
                            first_rev_no=first_rev,
                            last_rev_no=last_rev,
                            meta_rendered=Markup(item._render_meta()),
-                           show_navigation=(rev>=0),
+                           show_revision=show_revision,
+                           show_navigation=show_navigation,
                           )
 
 

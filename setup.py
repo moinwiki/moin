@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# Copyright: 2001 by Juergen Hermann <jh@web.de>
+# Copyright: 2011 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import sys, os
 
@@ -81,12 +84,10 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
-        'parsedatetime>=0.8.6', # parsing dates and times
         'pygments>=1.1.1', # src code / text file highlighting
         'sqlalchemy>=0.6.0', # metadata index and other stuff
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
         'Werkzeug==0.6.2', # use this if 0.7dev fails
-        #'xappy>=0.5', # xapian python OO interface, not used (yet?)
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
     ],
@@ -102,7 +103,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'hg': ["mercurial"], # used by mercurial backend
     },
     entry_points = dict(
-        console_scripts = ['moin = MoinMoin.cmdline:main'], # TODO
+        console_scripts = ['moin = MoinMoin.script:main'], # TODO
     ),
 
     # stuff for babel:

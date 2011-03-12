@@ -23,7 +23,8 @@ from flask import flaskg
 from MoinMoin.storage import Item, NewRevision
 from MoinMoin.storage.backends import memory
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError, RevisionAlreadyExistsError
-from MoinMoin.search import term
+from MoinMoin.storage import terms
+from MoinMoin.config import SIZE
 
 item_names = (u"quite_normal",
               u"äöüßłóąćółąńśćżź",
@@ -175,7 +176,7 @@ class BackendTest(object):
             self.create_rev_item_helper(name)
         self.create_meta_item_helper(u"new_song_player")
         query_string = u"song"
-        query = term.Name(query_string, True)
+        query = terms.Name(query_string, True)
         for num, item in enumerate(self.backend.search_items(query)):
             assert item.name.find(query_string) != -1
         assert num == 2
@@ -191,11 +192,11 @@ class BackendTest(object):
             assert len(found) == expected
 
         # must be /part/ of the name
-        yield _test_search, term.Name(u'AbCdEf', False), 3
-        yield _test_search, term.Name(u'AbCdEf', True), 0
-        yield _test_search, term.Name(u'abcdef', True), 3
-        yield _test_search, term.NameRE(re.compile(u'abcde.*')), 4
-        yield _test_search, term.NameFn(lambda n: n == u'abcdef'), 1
+        yield _test_search, terms.Name(u'AbCdEf', False), 3
+        yield _test_search, terms.Name(u'AbCdEf', True), 0
+        yield _test_search, terms.Name(u'abcdef', True), 3
+        yield _test_search, terms.NameRE(re.compile(u'abcde.*')), 4
+        yield _test_search, terms.NameFn(lambda n: n == u'abcdef'), 1
 
     def test_iteritems_1(self):
         for num in range(10, 20):
@@ -549,32 +550,26 @@ class BackendTest(object):
         item = self.backend.create_item(u'size1')
         rev = item.create_revision(0)
         rev.write('asdf')
-        assert rev.size == 4
         rev.write('asdf')
-        assert rev.size == 8
         item.commit()
         rev = item.get_revision(0)
-        assert rev.size == 8
+        assert rev[SIZE] == 8
 
         for nrev in self.backend.history():
-            assert nrev.size == 8
+            assert nrev[SIZE] == 8
 
     def test_size_2(self):
         item = self.backend.create_item(u'size2')
         rev0 = item.create_revision(0)
         data0 = 'asdf'
         rev0.write(data0)
-        assert rev0.size == len(data0)
         item.commit()
         rev1 = item.create_revision(1)
-        rev1["size"] = "should be 0" # invalid
-        assert rev1.size == 0
-        data1 = '' # we never write this to the rev1!
         item.commit()
         rev1 = item.get_revision(1)
-        assert rev1.size == len(data1)
+        assert rev1[SIZE] == 0
         rev0 = item.get_revision(0)
-        assert rev0.size == len(data0)
+        assert rev0[SIZE] == len(data0)
 
     def test_various_revision_metadata_values(self):
         def test_value(value, no):

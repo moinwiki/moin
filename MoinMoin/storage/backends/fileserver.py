@@ -23,7 +23,7 @@ from MoinMoin import wikiutil, config
 from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
-from MoinMoin.items import ACL, MIMETYPE, ACTION, COMMENT
+from MoinMoin.config import ACL, MIMETYPE, ACTION, COMMENT, SIZE
 MTIME = '__timestamp' # does not exist in storage any more
 
 class FSError(Exception):
@@ -113,9 +113,6 @@ class FileServerBackend(Backend):
     def _get_revision_timestamp(self, rev):
         return rev._fs_meta[MTIME]
 
-    def _get_revision_size(self, rev):
-        return rev._fs_meta['__size']
-
 
 # Specialized Items/Revisions
 
@@ -161,7 +158,7 @@ class FileDirRevision(StoredRevision):
         meta = { # make something up
             MTIME: st.st_mtime,
             ACTION: 'SAVE',
-            '__size': st.st_size,
+            SIZE: st.st_size,
         }
         self._fs_meta = meta
         self._fs_data_fname = filepath

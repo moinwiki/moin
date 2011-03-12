@@ -12,7 +12,6 @@
 
 import re
 import os
-import sys
 
 from babel import parse_locale
 
@@ -20,11 +19,9 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin import config, error, util
+from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
-import MoinMoin.auth as authmodule
-from MoinMoin.security import AccessControlList
 from MoinMoin.util import plugins
 
 
@@ -49,7 +46,6 @@ class ConfigFunctionality(object):
     auth_have_login = None
     auth_login_inputs = None
     _site_plugin_lists = None
-    xapian_searchers = None
 
     def __init__(self):
         """ Init Config instance """
@@ -61,10 +57,6 @@ class ConfigFunctionality(object):
         # define directories
         data_dir = os.path.normpath(self.data_dir)
         self.data_dir = data_dir
-        if not getattr(self, 'plugin_dir', None):
-            setattr(self, 'plugin_dir', os.path.abspath(os.path.join(data_dir, 'plugin')))
-        if not getattr(self, 'xapian_index_dir', None):
-            setattr(self, 'xapian_index_dir', os.path.abspath(os.path.join(data_dir, 'xapian')))
 
         # Try to decode certain names which allow unicode
         self._decode()
@@ -120,17 +112,6 @@ class ConfigFunctionality(object):
         # we replace any string placeholders with config values
         # e.g u'%(item_root)s' % self
         self.navi_bar = [elem % self for elem in self.navi_bar]
-
-        # check if python-xapian is installed
-        if self.xapian_search:
-            try:
-                import xapian
-            except ImportError, err:
-                self.xapian_search = False
-                logging.error("xapian_search was auto-disabled because python-xapian is not installed [%s]." % str(err))
-
-        # list to cache xapian searcher objects
-        self.xapian_searchers = []
 
         # check if mail is possible and set flag:
         self.mail_enabled = (self.mail_smarthost is not None or self.mail_sendmail is not None) and self.mail_from
@@ -399,8 +380,7 @@ options_no_group_name = {
   # ==========================================================================
   'data': ('Data storage', None, (
     ('data_dir', './data/', "Path to the data directory."),
-    ('plugin_dir', None, "Plugin directory, by default computed to be `data_dir`/plugin."),
-    ('plugin_dirs', [], "Additional plugin directories."),
+    ('plugin_dirs', [], "Plugin directories."),
 
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),
@@ -508,8 +488,6 @@ options_no_group_name = {
     ('refresh', None,
      "refresh = (minimum_delay_s, targets_allowed) enables use of `#refresh 5 PageName` processing instruction, targets_allowed must be either `'internal'` or `'external'`"),
 
-    ('search_results_per_page', 25, "Number of hits shown per page in the search results"),
-
     ('siteid', 'MoinMoin', None), # XXX just default to some existing module name to
                                   # make plugin loader etc. work for now
   )),
@@ -554,17 +532,6 @@ options = {
       ('user_profile', 'UserProfile/', 'User profiles (i.e. user data, not their homepage) are stored in this namespace.'),
       ('user_homepage', 'User/', 'All user homepages are stored below this namespace.'),
       ('trash', 'Trash/', 'This is the namespace in which an item ends up when it is deleted.')
-    )),
-
-    'xapian': ('Xapian search', "Configuration of the Xapian based indexed search, see HelpOnXapian.", (
-      ('search', False,
-       "True to enable the fast, indexed search (based on the Xapian search library)"),
-      ('index_dir', None,
-       "Directory where the Xapian search index is stored (None = auto-configure wiki local storage)"),
-      ('stemming', False,
-       "True to enable Xapian word stemmer usage for indexing / searching."),
-      ('index_history', False,
-       "True to enable indexing of non-current page revisions."),
     )),
 
     'user': ('Users / User settings', None, (

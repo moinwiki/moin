@@ -14,8 +14,9 @@ To use this, please use exactly this line (no less, no more)::
 """
 
 
-from flask import current_app, request, flaskg
+from babel import Locale
 
+from flask import current_app, request, flaskg
 from flaskext.babel import Babel, gettext, ngettext, lazy_gettext
 
 _ = gettext
@@ -41,13 +42,20 @@ def get_locale():
     if u and u.locale is not None:
         # locale is given in user profile, use it
         locale = u.locale
+        logging.debug("user locale = %r" % locale)
     else:
         # try to guess the language from the user accept
         # header the browser transmits. The best match wins.
-        supported_languages = ['de', 'fr', 'en'] # XXX
-        locale = request.accept_languages.best_match(supported_languages)
+        logging.debug("request.accept_languages = %r" % request.accept_languages)
+        supported_locales = [Locale('en')] + current_app.babel_instance.list_translations()
+        logging.debug("supported_locales = %r" % supported_locales)
+        supported_languages = [str(l) for l in supported_locales]
+        logging.debug("supported_languages = %r" % supported_languages)
+        locale = request.accept_languages.best_match(supported_languages, 'en')
+        logging.debug("best match locale = %r" % locale)
     if not locale:
         locale = current_app.cfg.locale_default
+        logging.debug("default locale = %r" % locale)
     return locale
 
 

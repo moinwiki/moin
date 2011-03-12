@@ -33,7 +33,8 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    RevisionAlreadyExistsError
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import add_metadata_to_body, split_body
-from MoinMoin.items import MIMETYPE, ACTION
+from MoinMoin.config import MIMETYPE, ACTION
+
 
 class FlatFileBackend(Backend):
     def __init__(self, path):
@@ -101,8 +102,8 @@ class FlatFileBackend(Backend):
         data = open(revpath, 'rb').read()
         rev._metadata, data = split_body(data)
         rev._metadata[ACTION] = 'SAVE'
+        rev._metadata[SIZE] = len(data)
         rev._data = StringIO(data)
-        rev._data_size = len(data)
         return rev
 
     def _list_revisions(self, item):
@@ -175,9 +176,6 @@ class FlatFileBackend(Backend):
     def _get_revision_timestamp(self, rev):
         revpath = self._rev_path(rev.item.name)
         return os.stat(revpath).st_ctime
-
-    def _get_revision_size(self, rev):
-        return rev._data_size
 
     def _seek_revision_data(self, rev, position, mode):
         rev._data.seek(position, mode)

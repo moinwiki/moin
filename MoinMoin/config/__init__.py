@@ -63,11 +63,52 @@ url_schemas = ['http', 'https', 'ftp', 'file',
               ]
 
 
-# rights that are valid in moin2
+# ACL rights that are valid in moin2
 ADMIN = 'admin'
 READ = 'read'
 WRITE = 'write'
 CREATE = 'create'
 DESTROY = 'destroy'
 ACL_RIGHTS_VALID = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
+
+# metadata keys
+UUID = "uuid"
+NAME = "name"
+NAME_OLD = "name_old"
+
+# if an item is reverted, we store the revision number we used for reverting there:
+REVERTED_TO = "reverted_to"
+
+# some metadata key constants:
+ACL = "acl"
+
+# This says: I am a system item
+IS_SYSITEM = "is_syspage"
+# This says: original sysitem as contained in release: <release>
+SYSITEM_VERSION = "syspage_version"
+
+# keys for storing group and dict information
+# group of user names, e.g. for ACLs:
+USERGROUP = "usergroup"
+# needs more precise name / use case:
+SOMEDICT = "somedict"
+
+MIMETYPE = "mimetype"
+SIZE = "size"
+LANGUAGE = "language"
+ITEMLINKS = "itemlinks"
+ITEMTRANSCLUSIONS = "itemtransclusions"
+TAGS = "tags"
+
+ACTION = "action"
+ADDRESS = "address"
+HOSTNAME = "hostname"
+USERID = "userid"
+EXTRA = "extra"
+COMMENT = "comment"
+
+# we need a specific hash algorithm to store hashes of revision data into meta
+# data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
+# some backends may use this also for other purposes.
+HASH_ALGORITHM = 'sha1'
 

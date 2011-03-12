@@ -13,7 +13,7 @@ import re
 from flask import current_app as app
 from flaskext.script import Command, Option
 
-from MoinMoin.search import term
+from MoinMoin.storage.terms import NameRE
 
 
 class Reduce_Revisions(Command):
@@ -25,7 +25,7 @@ class Reduce_Revisions(Command):
 
     def run(self, pattern):
         storage = app.unprotected_storage
-        query = term.NameRE(re.compile(pattern))
+        query = NameRE(re.compile(pattern))
         # If no pattern is given, the default regex will match every item.
         for item in storage.search_items(query):
             current_revno = item.next_revno - 1

@@ -347,10 +347,6 @@ class BareNewRouterRevision(NewRevisionBase):
 
     timestamp = property(_get_ts, _set_ts, doc="This property accesses the creation timestamp of the revision")
 
-    @property
-    def size(self):
-        return self._revision.size
-
     def __setitem__(self, key, value):
         """
         We only need to redirect this manually here because python doesn't do that
@@ -421,10 +417,6 @@ class BareStoredRouterRevision(StoredRevisionBase):
     @property
     def timestamp(self):
         return self._revision.timestamp
-
-    @property
-    def size(self):
-        return self._revision.size
 
     def __getitem__(self, key):
         return self._revision.__getitem__(key)

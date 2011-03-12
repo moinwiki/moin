@@ -196,7 +196,7 @@ class Converter(object):
 
                 elif xp_include_pages:
                     # We have a regex of pages to include
-                    from MoinMoin.search.term import NameFn
+                    from MoinMoin.storage.terms import NameFn
                     inc_match = re.compile(xp_include_pages)
                     root_item = Item(name=u'')
                     pagelist = [item.name for item in root_item.list_items(NameFn(inc_match))]
