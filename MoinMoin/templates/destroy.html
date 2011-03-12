@@ -1,0 +1,23 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+{% block content %}
+{% if rev_no == None %}
+    <h1>{{ _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) }}</h1>
+    <div class="moin-form">
+    <form action="{{ url_for('frontend.destroy_item', item_name=item.name) }}" method="POST" enctype="multipart/form-data">
+{% else %}
+    <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_no)d)", item_name=item.name, rev_no=rev_no) }}</h1>
+    <div class="moin-form">
+    <form action="{{ url_for('frontend.destroy_item', item_name=item.name, rev=rev_no) }}" method="POST" enctype="multipart/form-data">
+{% endif %}
+    <dl>
+        <dt><label for="comment">{{ _("Comment") }}</label></dt>
+        <dd><input type="text" id="comment" name="comment" size="80" maxlength="200" value="{{ comment }}" /></dd>
+    </dl>
+    <br/>
+    {{ forms.render_textcha(gen, form) }}
+    <input class="button" type="submit" name="button_ok" value="{{ _('DESTROY') }}" />
+    <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
+</form>
+</div>
+{% endblock %}
