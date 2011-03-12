@@ -33,15 +33,13 @@ logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil, config
 from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
-                            ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
+                            ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
                             TAGS, SIZE, HASH_ALGORITHM
 from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import split_body
 
-
-MTIME = '__timestamp' # does not exist in storage any more
 
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
@@ -268,9 +266,6 @@ class FSPageBackend(Backend):
             rev._fs_data_file = open(rev._fs_data_fname, 'rb') # XXX keeps file open as long as rev exists
         return rev._fs_data_file.seek(position, mode)
 
-    def _get_revision_timestamp(self, rev):
-        return rev._fs_meta[MTIME]
-
 
 # Specialized Items/Revisions
 
@@ -367,7 +362,7 @@ class FsPageRevision(StoredRevision):
                 if 0 <= revno <= item._fs_current:
                     editlog_data = { # make something up
                         NAME: item.name,
-                        MTIME: os.path.getmtime(revpath),
+                        MTIME: int(os.path.getmtime(revpath)),
                         ACTION: u'SAVE',
                     }
             meta, data = split_body(content)
@@ -478,7 +473,7 @@ class FsAttachmentRevision(StoredRevision):
             editlog_data = editlog.find_attach(item._fs_attachname)
         except KeyError:
             editlog_data = { # make something up
-                MTIME: os.path.getmtime(attpath),
+                MTIME: int(os.path.getmtime(attpath)),
                 ACTION: u'SAVE',
             }
         meta = editlog_data

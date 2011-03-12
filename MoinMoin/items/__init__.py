@@ -51,7 +51,7 @@ from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
-from MoinMoin.config import UUID, NAME, NAME_OLD, REVERTED_TO, ACL, \
+from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             MIMETYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
@@ -283,6 +283,7 @@ class Item(object):
                      HASH_ALGORITHM,
                      SIZE,
                      COMMENT,
+                     MTIME,
                      ACTION,
                      ADDRESS, HOSTNAME, USERID,
                     ]

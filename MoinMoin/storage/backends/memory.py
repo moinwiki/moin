@@ -166,7 +166,7 @@ class MemoryBackend(BackendBase):
         except KeyError:
             raise NoSuchRevisionError("No Revision #%d on Item %s - Available revisions: %r" % (revno, item.name, revisions))
         else:
-            revision = self.StoredRevision(item, revno, timestamp=metadata['__timestamp'])
+            revision = self.StoredRevision(item, revno)
             revision._data = StringIO.StringIO(data)
             revision._metadata = metadata
             return revision
@@ -270,7 +270,6 @@ class MemoryBackend(BackendBase):
 
         if revision._metadata is None:
             revision._metadata = {}
-        revision._metadata['__timestamp'] = revision.timestamp
         self._item_revisions[item._item_id][revision.revno] = (revision._data.getvalue(), revision._metadata.copy())
         revision = item.get_revision(revision.revno)
         self._revision_history.append(revision)

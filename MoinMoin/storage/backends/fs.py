@@ -322,8 +322,7 @@ class FSBackend(BackendBase):
 
     def _commit_item(self, rev):
         item = rev.item
-        metadata = {'__timestamp': rev.timestamp}
-        metadata.update(rev)
+        metadata = dict(rev)
         md = pickle.dumps(metadata, protocol=PICKLEPROTOCOL)
 
         hasdata = rev._fs_file.tell() > self._revmeta_reserved_space + 4
@@ -459,11 +458,6 @@ class FSBackend(BackendBase):
         rev._fs_metadata = pickle.load(f)
         f.seek(pos)
         return rev._fs_metadata
-
-    def _get_revision_timestamp(self, rev):
-        if rev._fs_metadata is None:
-            self._get_revision_metadata(rev)
-        return rev._fs_metadata['__timestamp']
 
     def _seek_revision_data(self, rev, position, mode):
         if rev._fs_file is None:

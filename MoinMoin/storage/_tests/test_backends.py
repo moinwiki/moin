@@ -16,7 +16,7 @@
 """
 
 
-import py.test, re
+import py.test, re, time
 
 from flask import g as flaskg
 
@@ -538,13 +538,13 @@ class BackendTest(object):
         py.test.raises(RevisionAlreadyExistsError, item2.commit)
 
     def test_timestamp(self):
+        tnow = int(time.time())
         item = self.backend.create_item(u'ts1')
         rev = item.create_revision(0)
-        assert rev.timestamp is None
-        rev.timestamp = 42
         item.commit()
         item = self.backend.get_item(u'ts1')
-        assert item.get_revision(0).timestamp == 42
+        ts = item.get_revision(0).timestamp
+        assert tnow <= ts <= ts + 60
 
     def test_size(self):
         item = self.backend.create_item(u'size1')

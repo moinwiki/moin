@@ -589,12 +589,10 @@ class SQLARevision(NewRevision, Base):
     _item = relation(SQLAItem, backref=backref('_revisions', cascade='delete, delete-orphan', lazy=True), cascade='', uselist=False, lazy=False)
     _revno = Column(Integer, index=True)
     _metadata = Column(PickleType)
-    _timestamp = Column(Integer)
 
     def __init__(self, item, revno, *args, **kw):
         super(SQLARevision, self).__init__(item, revno, *args, **kw)
         self._revno = revno
-        self._timestamp = kw.get('timestamp')
         self.setup(item._backend)
         self._item = item
 

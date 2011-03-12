@@ -339,13 +339,9 @@ class BareNewRouterRevision(NewRevisionBase):
     def revno(self):
         return self._revision.revno
 
-    def _get_ts(self):
+    @property
+    def timestamp(self):
         return self._revision.timestamp
-
-    def _set_ts(self, ts):
-        self._revision.timestamp = ts
-
-    timestamp = property(_get_ts, _set_ts, doc="This property accesses the creation timestamp of the revision")
 
     def __setitem__(self, key, value):
         """
