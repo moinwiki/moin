@@ -10,7 +10,7 @@
 
 import py
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.config import ACL
 from MoinMoin.storage.error import AccessDeniedError

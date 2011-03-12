@@ -22,7 +22,7 @@ import re
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri

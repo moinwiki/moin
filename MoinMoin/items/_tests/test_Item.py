@@ -8,7 +8,7 @@
 
 import py
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage

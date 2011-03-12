@@ -6,7 +6,7 @@ MoinMoin GetVal macro - gets a value for a specified key from a dict.
 """
 
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.macro._base import MacroInlineBase
 

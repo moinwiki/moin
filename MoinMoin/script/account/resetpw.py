@@ -8,8 +8,8 @@ MoinMoin - set a user password
 """
 
 
-from flask import flaskg
 from flask import current_app as app
+from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin import user

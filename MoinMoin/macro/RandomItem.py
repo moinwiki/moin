@@ -12,7 +12,7 @@ TODO: add mimetype param and only show items matching this mimetype
 import random
 random.seed()
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink

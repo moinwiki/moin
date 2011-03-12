@@ -14,7 +14,8 @@ pattern could be changed (e.g. for non-english languages etc.), see
 HelpOnConfiguration.
 """
 
-from flask import flaskg
+from flask import g as flaskg
+
 from MoinMoin.config import USERGROUP
 from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 

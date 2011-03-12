@@ -9,7 +9,8 @@
 """
 
 
-from flask import flaskg
+from flask import g as flaskg
+
 from MoinMoin.config import SOMEDICT
 from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 

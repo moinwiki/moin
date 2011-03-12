@@ -39,7 +39,7 @@ except ImportError:
     import simplejson as json
 
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
 
 from flask import request, url_for, Response, abort, escape
 from werkzeug import is_resource_modified

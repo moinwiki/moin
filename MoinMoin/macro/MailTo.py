@@ -7,7 +7,7 @@ link for logged in users or an obfuscated display as given as the macro argument
 """
 
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.util.tree import moin_page, xlink
 from MoinMoin.macro._base import MacroInlineBase

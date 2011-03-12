@@ -11,7 +11,7 @@
 import py
 
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin import user
 

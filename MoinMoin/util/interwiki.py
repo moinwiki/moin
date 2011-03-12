@@ -12,7 +12,7 @@ from werkzeug import url_quote
 
 from flask import current_app as app
 from flask import request
-from flask import flaskg
+from flask import g as flaskg
 
 import os.path
 

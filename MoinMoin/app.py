@@ -16,8 +16,9 @@ import os
 # "import MoinMoin" from setup.py even before flask, werkzeug, ... is installed.
 from MoinMoin.util import monkeypatch
 
-from flask import Flask, request, session, flaskg
+from flask import Flask, request, session
 from flask import current_app as app
+from flask import g as flaskg
 
 from flaskext.cache import Cache
 from flaskext.themes import setup_themes

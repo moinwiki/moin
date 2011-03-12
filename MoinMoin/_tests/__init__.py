@@ -11,8 +11,7 @@
 import os, shutil
 
 from flask import current_app as app
-from flask import flaskg
-
+from flask import g as flaskg
 
 from MoinMoin import config, security, user
 from MoinMoin.items import Item
