@@ -80,12 +80,6 @@ def create_random_string_list(length=14, count=10):
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     return [u"%s" % random_string(length, chars) for counter in range(count)]
 
-def nuke_xapian_index():
-    """ completely delete everything in xapian index dir """
-    fpath = app.cfg.xapian_index_dir
-    if os.path.exists(fpath):
-        shutil.rmtree(fpath, True)
-
 def nuke_item(name):
     """ complete destroys an item """
     item = Item.create(name)

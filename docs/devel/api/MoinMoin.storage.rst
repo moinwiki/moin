@@ -25,6 +25,14 @@ storage Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`terms` Module
+-------------------
+
+.. automodule:: MoinMoin.storage.terms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 

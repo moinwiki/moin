@@ -15,7 +15,7 @@
 ^.project
 ^.pydevproject
 ^.settings
-^MANIFEST
+^MANIFEST$
 .DS_Store
 .sqlite$
 .orig$

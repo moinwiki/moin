@@ -8,7 +8,6 @@
 """
 
 
-import os
 import urllib
 
 from flask import current_app as app
@@ -21,6 +20,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
+from MoinMoin.config import USERID, ADDRESS, HOSTNAME
 from MoinMoin.util.interwiki import split_interwiki, resolve_interwiki, join_wiki, getInterwikiHome
 
 
@@ -34,7 +34,7 @@ def get_current_theme():
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning("theme %s was not found; using default of %s instead." % (theme_name,app.cfg.theme_default))
+        logging.warning("theme %s was not found; using default of %s instead." % (theme_name, app.cfg.theme_default))
         theme_name = app.cfg.theme_default
         return get_theme(theme_name)
 
@@ -68,8 +68,6 @@ class ThemeSupport(object):
         self.cfg = cfg
         self.user = flaskg.user
         self.storage = flaskg.storage
-        self.output_mimetype = 'text/html'  # was: page.output_mimetype
-        self.output_charset = 'utf-8'  # was: page.output_charset
         self.ui_lang = 'en' # XXX
         self.ui_dir = 'ltr' # XXX
         self.content_lang = flaskg.content_lang # XXX
@@ -321,7 +319,6 @@ class ThemeSupport(object):
 
 
 def get_editor_info(rev, external=False):
-    from MoinMoin.items import USERID, ADDRESS, HOSTNAME
     addr = rev.get(ADDRESS)
     hostname = rev.get(HOSTNAME)
     text = _('anonymous')  # link text

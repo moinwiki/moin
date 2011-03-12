@@ -148,8 +148,6 @@ class Converter(object):
     direct_inline_tags = set(['abbr', 'address', 'dfn', 'kbd'])
 
     def __call__(self, element):
-        # Base URL extracted from xml:base
-        self.base_url = ''
         return self.visit(element)
 
     def do_children(self, element):
@@ -166,14 +164,11 @@ class Converter(object):
                 new.append(child)
         return new
 
-    def new(self, tag, attrib={}, children=[]):
-        return ET.Element(tag, attrib=attrib, children=children)
-
     def new_copy(self, tag, element, attrib={}):
         attrib_new = Attributes(element).convert()
         attrib_new.update(attrib)
         children = self.do_children(element)
-        return self.new(tag, attrib_new, children)
+        return tag(attrib_new, children)
 
     def visit(self, elem):
         uri = elem.tag.uri
@@ -188,8 +183,6 @@ class Converter(object):
         return self.new_copy(elem.tag, elem)
 
     def visit_moinpage(self, elem):
-        # Get base_url from xml:base
-        self.base_url = elem.get(xml.base) or self.base_url
         n = 'visit_moinpage_' + elem.tag.name.replace('-', '_')
         f = getattr(self, n, None)
         if f:
@@ -203,8 +196,6 @@ class Converter(object):
         attrib = {}
         href = elem.get(_tag_xlink_href)
         if href:
-            if self.base_url:
-                href = ''.join([self.base_url, href])
             attrib[_tag_html_href] = href
         # XXX should support more tag attrs
         return self.new_copy(_tag_html_a, elem, attrib)
@@ -221,8 +212,7 @@ class Converter(object):
 
         # TODO: Unify somehow
         if elem.get(moin_page.class_) == 'codearea':
-            attrib = {html.class_: 'codearea'}
-            div = self.new(html.div, attrib)
+            div = html.div(attrib={html.class_: 'codearea'})
             div.append(pre)
             return div
 
@@ -250,7 +240,9 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        return self.new_copy(ET.QName('h%d' % level, html), elem)
+        ret = self.new_copy(html('h%d' % level), elem)
+        ret.level = level
+        return ret
 
     def visit_moinpage_inline_part(self, elem):
         body = error = None
@@ -282,7 +274,7 @@ class Converter(object):
 
     def visit_moinpage_line_break(self, elem):
         # TODO: attributes?
-        return self.new(html.br)
+        return html.br()
 
     def visit_moinpage_list(self, elem):
         attrib = Attributes(elem)
@@ -304,16 +296,16 @@ class Converter(object):
                 start_number = attrib.get('list-start')
                 if start_number:
                     attrib_new[html('start')] = start_number
-                ret = self.new(html.ol, attrib_new)
+                ret = html.ol(attrib_new)
             elif generate == 'unordered':
                 style = attrib.get('list-style-type')
                 if style and style == 'no-bullet':
                     attrib_new[html('class')] = 'moin-nobullet-list'
-                ret = self.new(html.ul, attrib_new)
+                ret = html.ul(attrib=attrib_new)
             else:
                 raise ElementException('page:item-label-generate does not support "%s"' % generate)
         else:
-            ret = self.new(html.dl, attrib_new)
+            ret = html.dl(attrib=attrib_new)
 
         for item in elem:
             if isinstance(item, ET.Element):
@@ -354,8 +346,6 @@ class Converter(object):
             return "object"
     def visit_moinpage_object(self, elem):
         href = elem.get(xlink.href, None)
-        if self.base_url:
-            href = ''.join([self.base_url, href])
         if href:
             if isinstance(href, unicode): # XXX sometimes we get Iri, sometimes unicode - bug?
                 h = href
@@ -382,7 +372,7 @@ class Converter(object):
             alt = ''.join(str(e) for e in elem) # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
-            new_elem = self.new(html.img, attrib)
+            new_elem = html.img(attrib=attrib)
 
         else:
             if obj_type != "object":
@@ -482,7 +472,7 @@ class Converter(object):
 
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
-        ret = self.new(html.table, attrib)
+        ret = html.table(attrib=attrib)
         for item in elem:
             tag = None
             if item.tag.uri == moin_page:
@@ -661,24 +651,16 @@ class ConverterPage(Converter):
         else:
             return super(ConverterPage, self).visit(elem)
 
-    def visit_moinpage_h(self, elem):
-        level = elem.get(moin_page.outline_level, 1)
-        try:
-            level = int(level)
-        except ValueError:
-            raise ElementException('page:outline-level needs to be an integer')
-        if level < 1:
-            level = 1
-        elif level > 6:
-            level = 6
-        elem = self.new_copy(ET.QName('h%d' % level, html), elem)
+    def visit_moinpage_h(self, elem,
+            _tag_html_id=html.id):
+        elem = super(ConverterPage, self).visit_moinpage_h(elem)
 
-        id = elem.get(html.id)
+        id = elem.get(_tag_html_id)
         if not id:
             id = self._id.gen_text(''.join(elem.itertext()))
-            elem.set(html.id, id)
+            elem.set(_tag_html_id, id)
 
-        self._special_stack[-1].add_heading(elem, level, id)
+        self._special_stack[-1].add_heading(elem, elem.level, id)
         return elem
 
     def visit_moinpage_note(self, elem):
@@ -709,7 +691,7 @@ class ConverterPage(Converter):
         level = int(elem.get(moin_page.outline_level, 6))
 
         attrib = {html.class_: 'moin-table-of-contents'}
-        elem = self.new(html.div, attrib)
+        elem = html.div(attrib=attrib)
 
         self._special_stack[-1].add_toc(elem, level)
         return elem

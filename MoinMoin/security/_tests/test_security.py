@@ -19,7 +19,7 @@ acliter = security.ACLStringIterator
 AccessControlList = security.AccessControlList
 
 from MoinMoin.user import User
-from MoinMoin.items import ACL
+from MoinMoin.config import ACL
 
 from MoinMoin._tests import update_item
 from MoinMoin._tests import become_trusted

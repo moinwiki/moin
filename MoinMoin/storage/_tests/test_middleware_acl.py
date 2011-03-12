@@ -12,7 +12,7 @@ import py
 
 from flask import flaskg
 
-from MoinMoin.items import ACL
+from MoinMoin.config import ACL
 from MoinMoin.storage.error import AccessDeniedError
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin._tests import wikiconfig

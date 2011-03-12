@@ -1,6 +1,7 @@
-# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2007-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2001-2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008 MoinMoin:JohannesBerg
+# Copyright: 2009 MoinMoin:EugeneSyromyatnikov
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2010 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -20,6 +21,8 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
+from MoinMoin.storage.error import NoSuchRevisionError
+from MoinMoin.config import SIZE
 
 @admin.route('/')
 def index():
@@ -189,4 +192,58 @@ def wikiconfighelp():
     return render_template('admin/wikiconfighelp.html',
                            item_name="+admin/wikiconfighelp",
                            groups=groups)
+
+
+@admin.route('/highlighterhelp', methods=['GET', ])
+def highlighterhelp():
+    """display a table with list of available Pygments lexers"""
+    import pygments.lexers
+    headings = [_('Lexer description'),
+                _('Lexer names'),
+                _('File patterns'),
+                _('Mimetypes'),
+               ]
+    lexers = pygments.lexers.get_all_lexers()
+    rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
+                   for desc, names, patterns, mimetypes in lexers])
+    return render_template('admin/highlighterhelp.html',
+                           item_name="+admin/highlighterhelp",
+                           headings=headings,
+                           rows=rows)
+
+
+@admin.route('/interwikihelp', methods=['GET', ])
+def interwikihelp():
+    """display a table with list of known interwiki names / urls"""
+    headings = [_('InterWiki name'),
+                _('URL'),
+               ]
+    rows = sorted(app.cfg.interwiki_map.items())
+    return render_template('admin/interwikihelp.html',
+                           item_name="+admin/interwikihelp",
+                           headings=headings,
+                           rows=rows)
+
+
+@admin.route('/itemsize', methods=['GET', ])
+def itemsize():
+    """display a table with item sizes"""
+    headings = [_('Size'),
+                _('Item name'),
+               ]
+    rows = []
+    for item in flaskg.storage.iteritems():
+        try:
+            rev = item.get_revision(-1)
+        except NoSuchRevisionError:
+            # XXX we currently also get user items, they have no revisions -
+            # but in the end, they should not be readable by the user anyways
+            continue
+        rows.append((rev[SIZE], item.name))
+    rows = sorted(rows, reverse=True)
+    return render_template('admin/itemsize.html',
+                           item_name="+admin/itemsize",
+                           headings=headings,
+                           rows=rows)
+
 

@@ -47,7 +47,7 @@
     {{ _("This item exists, but it has no revisions.") }}
     {% else %}
     {% block headline %}
-    {# <h1>{{ rev.item.name }} {% if rev.revno != last_rev_no %}(Revision {{ rev.revno }}){% endif %}</h1> #}
+    {# <h1>{{ rev.item.name }} {% if show_revision %}(Revision {{ rev.revno }}){% endif %}</h1> #}
     {% endblock %}
     {% block content_data %}
     {% if data_rendered %}

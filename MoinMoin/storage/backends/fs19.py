@@ -32,15 +32,14 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil, config
+from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
+                            ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
+                            IS_SYSITEM, SYSITEM_VERSION, \
+                            TAGS, SIZE, HASH_ALGORITHM
 from MoinMoin.storage import Backend, Item, StoredRevision
-from MoinMoin.items import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
-                           ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                           IS_SYSITEM, SYSITEM_VERSION, \
-                           TAGS
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import split_body
 
-from MoinMoin.storage import HASH_ALGORITHM
 
 MTIME = '__timestamp' # does not exist in storage any more
 
@@ -272,9 +271,6 @@ class FSPageBackend(Backend):
     def _get_revision_timestamp(self, rev):
         return rev._fs_meta[MTIME]
 
-    def _get_revision_size(self, rev):
-        return rev._fs_meta['__size']
-
 
 # Specialized Items/Revisions
 
@@ -383,9 +379,9 @@ class FsPageRevision(StoredRevision):
             meta[SYSITEM_VERSION] = item._syspages
         data = self._process_data(meta, data)
         data = data.encode(config.charset)
-        meta['__size'] = len(data) # needed for converter checks
-        hash_name, hash_digest = hash_hexdigest(data)
+        size, hash_name, hash_digest = hash_hexdigest(data)
         meta[hash_name] = hash_digest
+        meta[SIZE] = size
         self._fs_meta = {}
         for k, v in meta.iteritems():
             if isinstance(v, list):
@@ -486,13 +482,13 @@ class FsAttachmentRevision(StoredRevision):
                 ACTION: u'SAVE',
             }
         meta = editlog_data
-        meta['__size'] = 0 # not needed for converter
         # attachments in moin 1.9 were protected by their "parent" page's acl
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
         meta[MIMETYPE] = unicode(wikiutil.MimeType(filename=item._fs_attachname).mime_type())
-        hash_name, hash_digest = hash_hexdigest(open(attpath, 'rb'))
+        size, hash_name, hash_digest = hash_hexdigest(open(attpath, 'rb'))
         meta[hash_name] = hash_digest
+        meta[SIZE] = size
         if item._syspages:
             meta[IS_SYSITEM] = True
             meta[SYSITEM_VERSION] = item._syspages
@@ -790,16 +786,19 @@ def _decode_dict(line):
     return dict(items)
 
 def hash_hexdigest(content, bufsize=4096):
+    size = 0
     hash = hashlib.new(HASH_ALGORITHM)
     if hasattr(content, "read"):
         while True:
             buf = content.read(bufsize)
             hash.update(buf)
+            size += len(buf)
             if not buf:
                 break
     elif isinstance(content, str):
         hash.update(content)
+        size = len(content)
     else:
         raise ValueError("unsupported content object: %r" % content)
-    return HASH_ALGORITHM, unicode(hash.hexdigest())
+    return size, HASH_ALGORITHM, unicode(hash.hexdigest())
 

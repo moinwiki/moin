@@ -44,7 +44,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
 PICKLEPROTOCOL = 1
 
 MAX_NAME_LEN = 500
-from MoinMoin.storage import HASH_ALGORITHM
+from MoinMoin.config import HASH_ALGORITHM
 
 UUID_LEN = len(make_uuid().hex)
 
@@ -419,9 +419,6 @@ class FS2Backend(BackendBase):
 
     def _get_revision_timestamp(self, rev):
         return rev._fs_metadata['__timestamp']
-
-    def _get_revision_size(self, rev):
-        return os.stat(rev._fs_path_data).st_size
 
     def _open_revision_data(self, rev, mode='rb'):
         if rev._fs_file_data is None:

@@ -15,7 +15,7 @@
 """
 
 
-import os, re, time, datetime, shutil, base64
+import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile
@@ -51,46 +51,15 @@ from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
-from MoinMoin.storage import HASH_ALGORITHM
+from MoinMoin.config import UUID, NAME, NAME_OLD, REVERTED_TO, ACL, \
+                            IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
+                            MIMETYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
+                            TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
+                            HASH_ALGORITHM
 
 COLS = 80
 ROWS_DATA = 20
 ROWS_META = 10
-
-UUID = "uuid"
-NAME = "name"
-NAME_OLD = "name_old"
-
-# if an item is reverted, we store the revision number we used for reverting there:
-REVERTED_TO = "reverted_to"
-
-# some metadata key constants:
-ACL = "acl"
-
-# This says: I am a system item
-IS_SYSITEM = "is_syspage"
-# This says: original sysitem as contained in release: <release>
-SYSITEM_VERSION = "syspage_version"
-
-# keys for storing group and dict information
-# group of user names, e.g. for ACLs:
-USERGROUP = "usergroup"
-# needs more precise name / use case:
-SOMEDICT = "somedict"
-
-MIMETYPE = "mimetype"
-SIZE = "size"
-LANGUAGE = "language"
-ITEMLINKS = "itemlinks"
-ITEMTRANSCLUSIONS = "itemtransclusions"
-TAGS = "tags"
-
-ACTION = "action"
-ADDRESS = "address"
-HOSTNAME = "hostname"
-USERID = "userid"
-EXTRA = "extra"
-COMMENT = "comment"
 
 
 class DummyRev(dict):
@@ -214,8 +183,6 @@ class Item(object):
             input_conv = reg.get(Type(self.mimetype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
-            link_conv = reg.get(type_moin_document, type_moin_document,
-                    links='extern', url_root=Iri(request.url_root))
             smiley_conv = reg.get(type_moin_document, type_moin_document,
                     icon='smiley')
 
@@ -231,8 +198,6 @@ class Item(object):
             for conv in converters:
                 if conv == 'smiley':
                     doc = smiley_conv(doc)
-                elif conv == 'link':
-                    doc = link_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
         flaskg.clock.stop('conv_in_dom')
@@ -240,15 +205,21 @@ class Item(object):
 
     def _expand_document(self, doc):
         from MoinMoin.converter import default_registry as reg
+        from MoinMoin.util.iri import Iri
         from MoinMoin.util.mime import type_moin_document
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
+        link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
+                url_root=Iri(request.url_root))
         flaskg.clock.start('conv_include')
         doc = include_conv(doc)
         flaskg.clock.stop('conv_include')
         flaskg.clock.start('conv_macro')
         doc = macro_conv(doc)
         flaskg.clock.stop('conv_macro')
+        flaskg.clock.start('conv_link')
+        doc = link_conv(doc)
+        flaskg.clock.stop('conv_link')
         return doc
 
     def _render_data(self):
@@ -310,6 +281,7 @@ class Item(object):
                      # are automatically implanted when saving
                      NAME,
                      HASH_ALGORITHM,
+                     SIZE,
                      COMMENT,
                      ACTION,
                      ADDRESS, HOSTNAME, USERID,
@@ -470,8 +442,10 @@ class Item(object):
         """
         remote_addr = request.remote_addr
         if remote_addr:
-            newrev[ADDRESS] = unicode(remote_addr)
-            newrev[HOSTNAME] = unicode(wikiutil.get_hostname(remote_addr))
+            if app.cfg.log_remote_addr:
+                newrev[ADDRESS] = unicode(remote_addr)
+                if app.cfg.log_reverse_dns_lookups:
+                    newrev[HOSTNAME] = unicode(wikiutil.get_hostname(remote_addr))
         if flaskg.user.valid:
             newrev[USERID] = unicode(flaskg.user.id)
 
@@ -502,7 +476,7 @@ class Item(object):
     def get_index(self):
         """ create an index of sub items of this item """
         import re
-        from MoinMoin.search.term import NameRE
+        from MoinMoin.storage.terms import NameRE
 
         if self.name:
             prefix = self.name + u'/'
@@ -617,7 +591,7 @@ There is no help, you're doomed!
 
     def get_templates(self, mimetype=None):
         """ create a list of templates (for some specific mimetype) """
-        from MoinMoin.search.term import AND, LastRevisionMetaDataMatch
+        from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
         term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
         if mimetype:
             term = AND(term, LastRevisionMetaDataMatch(MIMETYPE, mimetype))
@@ -691,7 +665,7 @@ There is no help, you're doomed!
             mt = wikiutil.MimeType(mimestr=mimestr)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
-            content_length = rev.size
+            content_length = rev[SIZE]
             file_to_send = rev
 
         # TODO: handle content_disposition is not None

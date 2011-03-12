@@ -35,6 +35,8 @@ class XML(Command):
             help='Load (unserialize) storage contents from a xml file.'),
         Option('--file', '-f', dest='xml_file', type=unicode,
             help='Filename of xml file to use [Default: use stdin/stdout].'),
+        Option('--moin19data', dest='moin19data', type=unicode,
+            help='For migration from moin 1.9, gives the path to the moin 1.9 data_dir.'),
         Option('--nrevs', dest='nrevs', type=int, default=0,
             help='Serialize only the last n revisions of each item [Default: all everything].'),
         Option('--exceptnrevs', dest='exceptnrevs', type=int, default=0,
@@ -49,7 +51,8 @@ class XML(Command):
             help='Serialize everything except the last n hours of each item [Default: everything].')
     )
 
-    def run(self, save, load, xml_file, nrevs, exceptnrevs, ndays, exceptndays, nhours, exceptnhours):
+    def run(self, save, load, xml_file, moin19data,
+            nrevs, exceptnrevs, ndays, exceptndays, nhours, exceptnhours):
         if load == save: # either both True or both False
             fatal("You need to give either --load or --save!")
         if not xml_file:
@@ -58,7 +61,17 @@ class XML(Command):
             elif save:
                 xml_file = sys.stdout
 
-        storage = app.unprotected_storage
+        if moin19data:
+            # this is for backend migration scenario from moin 1.9
+            from MoinMoin.storage.backends import create_simple_mapping, router
+            namespace_mapping, router_index_uri = \
+                create_simple_mapping(backend_uri='fs19:%s' % moin19data)
+            storage = router.RouterBackend(
+                    [(ns, be) for ns, be, acls in namespace_mapping],
+                    index_uri=router_index_uri)
+        else:
+            # this deals with the normal storage
+            storage = app.unprotected_storage
         now = time.time()
 
         sincetime = 0

@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - creates an item 
+    MoinMoin - creates an item
 
-    This script creates a new revision of an item
+    This script creates a new revision of an item.
 """
 
 

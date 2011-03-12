@@ -7,7 +7,7 @@
 <head>
 {% block head %}
     {% block head_meta %}
-    <meta charset="{{ theme_supp.output_charset }}" />{# must be at the beginning #}
+    <meta charset="utf-8" />{# must be at the beginning #}
     {% if pi_refresh -%}
         {{ '<meta http-equiv="refresh" content="%d;URL=%s" />' % pi_refresh }}
     {%- endif %}
