@@ -32,7 +32,8 @@ except ImportError:
 from babel import parse_locale
 
 from flask import current_app as app
-from flask import flaskg, session, request, url_for
+from flask import g as flaskg
+from flask import session, request, url_for
 
 from MoinMoin import config, wikiutil
 from MoinMoin.i18n import _, L_, N_

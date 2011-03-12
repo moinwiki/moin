@@ -6,9 +6,10 @@
     MoinMoin - basic tests for frontend
 """
 
-from MoinMoin.apps.frontend import views
+from flask import g as flaskg
 from werkzeug import ImmutableMultiDict
-from flask import flaskg
+
+from MoinMoin.apps.frontend import views
 from MoinMoin import user
 
 class TestFrontend(object):

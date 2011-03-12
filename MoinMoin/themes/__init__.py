@@ -11,7 +11,7 @@
 import urllib
 
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
 from flask import url_for, request
 from flaskext.themes import get_theme, render_theme_template
 

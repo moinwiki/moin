@@ -15,7 +15,7 @@ This shows the user interface for wiki admins.
 
 from flask import request, url_for, flash, redirect, abort
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template

@@ -11,7 +11,7 @@ special wiki links.
 
 from __future__ import absolute_import
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.util.interwiki import resolve_interwiki, join_wiki
 from MoinMoin.util.iri import Iri, IriPath

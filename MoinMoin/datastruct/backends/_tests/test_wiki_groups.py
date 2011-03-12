@@ -13,7 +13,8 @@ MoinMoin - MoinMoin.backends.wiki_group tests
 import py
 
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
+
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
 from MoinMoin.config import USERGROUP

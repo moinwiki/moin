@@ -8,7 +8,7 @@ MoinMoin.datastruct.backends.composite_groups test
 
 from py.test import raises
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import ConfigGroups, CompositeGroups, GroupDoesNotExistError

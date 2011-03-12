@@ -9,7 +9,7 @@
 import py
 
 from flask import current_app as app
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError

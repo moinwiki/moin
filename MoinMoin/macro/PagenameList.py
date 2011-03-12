@@ -10,7 +10,7 @@ Note: PageList is a similar thing using the search engine.
 
 import re
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.macro._base import MacroPageLinkListBase
 

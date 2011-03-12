@@ -14,8 +14,8 @@ import re
 from ast import literal_eval
 from shutil import copyfileobj
 
-from flask import flaskg
 from flask import current_app as app
+from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin.script import fatal

@@ -18,7 +18,7 @@
 
 import py.test, re
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.storage import Item, NewRevision
 from MoinMoin.storage.backends import memory

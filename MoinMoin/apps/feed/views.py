@@ -12,9 +12,8 @@
 from datetime import datetime
 
 from flask import request, url_for, Response
-from flask import flaskg
-
 from flask import current_app as app
+from flask import g as flaskg
 
 from werkzeug.contrib.atom import AtomFeed
 

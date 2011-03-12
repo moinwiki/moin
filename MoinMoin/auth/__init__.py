@@ -140,7 +140,7 @@ logging = log.getLogger(__name__)
 
 from werkzeug import redirect, abort, url_quote, url_quote_plus
 from flask import url_for, session, request
-from flask import flaskg
+from flask import g as flaskg
 from flask import current_app as app
 from jinja2 import Markup
 

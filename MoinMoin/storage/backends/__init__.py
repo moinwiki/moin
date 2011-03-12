@@ -11,7 +11,7 @@
 """
 
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin.storage.serialization import unserialize
 from MoinMoin.storage.error import NoSuchItemError, RevisionAlreadyExistsError

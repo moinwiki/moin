@@ -16,7 +16,8 @@ To use this, please use exactly this line (no less, no more)::
 
 from babel import Locale
 
-from flask import current_app, request, flaskg
+from flask import current_app, request
+from flask import g as flaskg
 from flaskext.babel import Babel, gettext, ngettext, lazy_gettext
 
 _ = gettext

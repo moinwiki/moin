@@ -30,10 +30,3 @@ from werkzeug import posixemulation
 import sys
 posixemulation.sys = sys
 
-
-# flask patching -------------------------------------------------------------
-
-# creating a custom alias for the single-letter "g"
-import flask
-flask.flaskg = flask.g
-

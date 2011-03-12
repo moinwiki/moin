@@ -8,9 +8,10 @@
 """
 
 
-from flask import flaskg
 from flask import current_app as app
+from flask import g as flaskg
 from flaskext.script import Command, Option
+
 from MoinMoin.storage.error import ItemAlreadyExistsError, NoSuchItemError
 
 

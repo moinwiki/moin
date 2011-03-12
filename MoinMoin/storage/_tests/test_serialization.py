@@ -14,7 +14,7 @@ import py
 
 from StringIO import StringIO
 
-from flask import flaskg
+from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.storage.serialization import Entry, create_value_object, serialize, unserialize

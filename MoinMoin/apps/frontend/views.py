@@ -18,8 +18,8 @@ import time
 from itertools import chain
 
 from flask import request, url_for, flash, Response, redirect, session, abort
-from flask import flaskg
 from flask import current_app as app
+from flask import g as flaskg
 from flaskext.themes import get_themes_list
 
 from flatland import Form, String, Integer, Boolean, Enum
