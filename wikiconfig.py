@@ -60,6 +60,7 @@ class Config(DefaultConfig):
         anywikidraw = os.path.join(wikiconfig_dir, 'env', 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         twikidraw = os.path.join(wikiconfig_dir, 'env', 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, 'env', 'svg-edit'),
+        docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
     )
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
