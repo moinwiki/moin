@@ -13,7 +13,7 @@ This shows the user interface for wiki admins.
 """
 
 
-from flask import request, url_for, flash, redirect
+from flask import request, url_for, flash, redirect, abort
 from flask import current_app as app
 from flask import flaskg
 
@@ -34,7 +34,9 @@ def userbrowser():
     """
     User Account Browser
     """
-    # XXX add superuser check
+    if not flaskg.user or not flaskg.user.isSuperUser():
+        abort(403)
+
     groups = flaskg.groups
     user_accounts = []
     for uid in user.getUserList():
@@ -54,7 +56,9 @@ def userprofile(user_name):
     """
     Set values in user profile
     """
-    # XXX add superuser check
+    if not flaskg.user or not flaskg.user.isSuperUser():
+        abort(403)
+
     uid = user.getUserId(user_name)
     u = user.User(uid)
     if request.method == 'GET':
@@ -96,6 +100,9 @@ def mail_recovery_token():
 
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
 def sysitems_upgrade():
+    if not flaskg.user or not flaskg.user.isSuperUser():
+        abort(403)
+
     from MoinMoin.storage.backends import upgrade_sysitems
     from MoinMoin.storage.error import BackendError
     if request.method == 'GET':
@@ -119,7 +126,7 @@ from MoinMoin.config import default as defaultconfig
 @admin.route('/wikiconfig', methods=['GET', ])
 def wikiconfig():
     if not flaskg.user or not flaskg.user.isSuperUser():
-        return ''
+        abort(403)
 
     settings = {}
     for groupname in defaultconfig.options:
@@ -166,7 +173,7 @@ def wikiconfig():
 @admin.route('/wikiconfighelp', methods=['GET', ])
 def wikiconfighelp():
     if not flaskg.user or not flaskg.user.isSuperUser():
-        return ''
+        abort(403)
 
     def format_default(default):
         if isinstance(default, defaultconfig.DefaultExpression):
