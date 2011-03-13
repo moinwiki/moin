@@ -50,6 +50,9 @@ from MoinMoin.signalling import item_displayed, item_modified
 def dispatch():
     args = request.values.to_dict()
     endpoint = str(args.pop('endpoint'))
+    # filter args given to url_for, so that no unneeded args end up in query string:
+    args = dict([(k, args[k]) for k in args
+                 if app.url_map.is_endpoint_expecting(endpoint, k)])
     return redirect(url_for(endpoint, **args))
 
 
