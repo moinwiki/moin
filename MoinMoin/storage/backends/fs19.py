@@ -509,7 +509,7 @@ class EditLog(LogFile):
         keys = (MTIME, '__rev', ACTION, NAME, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT)
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
-        result[MTIME] = int(result[MTIME] or 0) / 1000000 # convert usecs to secs
+        result[MTIME] = int(long(result[MTIME] or 0) / 1000000) # convert usecs to secs
         result['__rev'] = int(result['__rev']) - 1 # old storage is 1-based, we want 0-based
         result[NAME] = unquoteWikiname(result[NAME])
         action = result[ACTION]
