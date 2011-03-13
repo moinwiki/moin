@@ -524,8 +524,7 @@ class User(object):
         """
         if self.valid:
             interwikiname = self._cfg.interwikiname or u''
-            bookmark = unicode(tm)
-            self.bookmarks[interwikiname] = bookmark
+            self.bookmarks[interwikiname] = int(tm)
             self.save()
 
     def getBookmark(self):
@@ -538,7 +537,7 @@ class User(object):
         interwikiname = self._cfg.interwikiname or u''
         if self.valid:
             try:
-                bm = int(self.bookmarks[interwikiname])
+                bm = self.bookmarks[interwikiname]
             except (ValueError, KeyError):
                 pass
         return bm
