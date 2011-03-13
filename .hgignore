@@ -8,7 +8,7 @@
 ^wiki/data/userprofiles/
 ^wiki/data/trash/
 ^instance/
-^wikiconfig_local.*
+^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
 ^docs/_build/
 .coverage
