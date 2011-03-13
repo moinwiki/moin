@@ -20,7 +20,7 @@ from StringIO import StringIO
 import hashlib
 
 from uuid import uuid4
-make_uuid = lambda: uuid4().hex
+make_uuid = lambda: unicode(uuid4().hex)
 
 MAX_NAME_LEN = 1000 # max length of a page name, page+attach name, user name
 UUID_LEN = len(make_uuid())
@@ -69,13 +69,13 @@ class Index(object):
         metadata = MetaData()
         metadata.bind = engine
         self.users = Table('users', metadata,
-                           Column('uuid', String, index=True, unique=True),
+                           Column('uuid', Unicode, index=True, unique=True),
                            Column('name', Unicode, index=True, unique=username_unique),
                            Column('old_id', String, index=True, unique=True),
                            Column('refcount', Integer), # reference count in edit-log
                      )
         self.content = Table('content', metadata,
-                             Column('uuid', String, index=True, unique=True),
+                             Column('uuid', Unicode, index=True, unique=True),
                              Column('name', Unicode, index=True, unique=True),
                        )
         metadata.create_all()
