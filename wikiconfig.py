@@ -84,6 +84,11 @@ SECRET_KEY = 'you need to change this so it is really secret'
 # DEVELOPERS! Do not add your configuration items here - you could accidentally
 # commit them! Instead, create a wikiconfig_local.py file containing this:
 #
+#from wikiconfig_editme import *
+#
+# In wikiconfig_editme.py (the indirection is needed so that the auto reload
+# mechanism of the builtin server works) you do this:
+#
 #from wikiconfig import *
 #
 #class LocalConfig(Config):
