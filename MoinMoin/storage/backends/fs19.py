@@ -711,11 +711,15 @@ class FsUserItem(Item):
         for key, default in int_defaults:
             metadata[key] = int(metadata.get(key, default))
 
-        # int last_saved timestamp should be enough:
-        metadata['last_saved'] = int(float(metadata.get('last_saved', '0')))
+        # rename last_saved to MTIME, int MTIME should be enough:
+        metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
 
         # rename subscribed_pages to subscribed_items
         metadata['subscribed_items'] = metadata['subscribed_pages']
+
+        # convert bookmarks from usecs (and str) to secs (int)
+        metadata['bookmarks'] = [(interwiki, int(long(bookmark)/1000000))
+                                 for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:
         kill = ['real_language', # crap (use 'language')
@@ -727,6 +731,7 @@ class FsUserItem(Item):
                 'passwd', # ancient, not used any more (use enc_passwd)
                 'show_emoticons', # ancient, not used any more
                 'show_fancy_diff', # kind of diff display now depends on mimetype
+                'show_fancy_links', # not used any more (now link rendering depends on theme)
                 'show_toolbar', # not used any more
                 'show_topbottom', # crap
                 'show_nonexist_qm', # crap, can be done by css
@@ -739,6 +744,9 @@ class FsUserItem(Item):
                 'tz_offset', # we have real timezone now
                 'date_fmt', # not used any more
                 'datetime_fmt', # not used any more
+                'last_saved', # renamed to MTIME
+                'email_subscribed_events', # XXX no support yet
+                'jabber_subscribed_events', # XXX no support yet
                ]
         for key in kill:
             if key in metadata:
