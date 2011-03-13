@@ -253,6 +253,7 @@ class FS2Backend(BackendBase):
         name2id = self._name2id
         try:
             results = name2id.update().where(name2id.c.item_id==item_id).values(item_name=newname).execute()
+            results.close()
         except IntegrityError:
             raise ItemAlreadyExistsError("Target item '%r' already exists!" % newname)
 
@@ -271,6 +272,7 @@ class FS2Backend(BackendBase):
         name2id = self._name2id
         try:
             results = name2id.insert().values(item_id=item_id, item_name=item_name).execute()
+            results.close()
         except IntegrityError:
             raise ItemAlreadyExistsError("Item '%r' already exists!" % item_name)
 
@@ -352,6 +354,7 @@ class FS2Backend(BackendBase):
 
         name2id = self._name2id
         results = name2id.delete().where(name2id.c.item_id==item_id).execute()
+        results.close()
 
         path = self._make_path('meta', item_id)
         try:
