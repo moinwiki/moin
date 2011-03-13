@@ -27,7 +27,7 @@ setup_args = dict(
     # maintainer(_email) not active because distutils/register can't handle author and maintainer at once
     download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (version, ),
     url="http://moinmo.in/",
-    license="GNU GPL",
+    license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
     platforms="any",
     classifiers="""\
