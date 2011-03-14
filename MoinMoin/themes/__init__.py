@@ -396,8 +396,24 @@ def shorten_item_name(name, length=25):
     return name
 
 
+MIMETYPE_TO_CLASS = {
+    'application/pdf': 'pdf',
+}
+
+def mimetype_to_class(mimetype):
+    """
+    Convert a mimetype string to a css class.
+    """
+    cls = MIMETYPE_TO_CLASS.get(mimetype)
+    if not cls:
+        # just use the major part of mimetype
+        cls = mimetype.split('/', 1)[0]
+    return 'moin-mime-%s' % cls
+
+
 def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
+    app.jinja_env.filters['mimetype_to_class'] = mimetype_to_class
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 

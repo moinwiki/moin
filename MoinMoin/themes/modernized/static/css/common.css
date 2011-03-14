@@ -349,6 +349,16 @@ a.moin-badinterwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2e
 a.moin-interwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
 a.moin-action:before { content: url(../img/moin-action.png); margin: 0 0.2em; }
 
+/* icons for links to different mimetypes */
+/* major types */
+a.moin-mime-text:before {}
+a.moin-mime-image:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-mime-audio:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-mime-video:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-mime-application:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+/* some common specific types */
+a.moin-mime-pdf:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+
 /* Flash messages used by Flask */
 .moin-flash { margin: 0; padding: 6px 6px 6px 38px; background-color: #f0f2f5;
             border-bottom: 1px solid #ccc; background-repeat: no-repeat;
