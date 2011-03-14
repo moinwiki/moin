@@ -300,8 +300,6 @@ class ThemeSupport(object):
             (_('Global History'), 'global_history', 'frontend.global_history', False, ),
             (_('Global Items Index'), 'global_index', 'frontend.global_index', False, ),
             (_('Global Tags Index'), 'global_tags', 'frontend.global_tags', False, ),
-            (_('Wanted Items'), 'wanted_items', 'frontend.wanted_items', False, ),
-            (_('Orphaned Items'), 'orphaned_items', 'frontend.orphaned_items', False, ),
             # Translation may need longer or shorter separator:
             (_('-----------------------------------'), 'show', 'frontend.show_item', True),
             (_('What refers here?'), 'backrefs', 'frontend.backrefs', False, ),

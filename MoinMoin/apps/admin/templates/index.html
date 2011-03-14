@@ -13,6 +13,8 @@
 </ul>
 <h1>{{ _("User Menu") }}</h1>
 <ul>
+    <li><a href="{{ url_for('frontend.wanted_items') }}">{{ _("Wanted Items") }}</a></li>
+    <li><a href="{{ url_for('frontend.orphaned_items') }}">{{ _("Orphaned Items") }}</a></li>
     <li><a href="{{ url_for('admin.itemsize') }}">{{ _("Item sizes (latest revision)") }}</a></li>
     <li><a href="{{ url_for('admin.interwikihelp') }}">{{ _("Known InterWiki names") }}</a></li>
     <li><a href="{{ url_for('admin.highlighterhelp') }}">{{ _("Available Highlighters") }}</a></li>
