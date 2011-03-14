@@ -280,6 +280,7 @@ class Item(object):
                      NAME_OLD,
                      # are automatically implanted when saving
                      NAME,
+                     UUID,
                      HASH_ALGORITHM,
                      SIZE,
                      COMMENT,

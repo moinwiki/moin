@@ -294,6 +294,7 @@ class FsPageItem(Item):
                 raise NoSuchItemError('deleted_mode wants killing/ignoring of page %r and its attachments' % itemname)
         uuid = backend.idx.content_uuid(itemname)
         self.uuid = self._fs_meta[UUID] = uuid
+        self._fs_meta[NAME] = itemname
 
     def iter_attachments(self):
         attachmentspath = self._backend._get_item_path(self.name, 'attachments')
@@ -459,6 +460,7 @@ class FsAttachmentItem(Item):
         self._syspages = backend._syspages
         uuid = backend.idx.content_uuid(name)
         self.uuid = self._fs_meta[UUID] = uuid
+        self._fs_meta[NAME] = name
 
 class FsAttachmentRevision(StoredRevision):
     """ A moin 1.9 filesystem item revision (attachment) """
