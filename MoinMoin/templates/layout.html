@@ -89,7 +89,7 @@
             {%- if wiki_name -%}
                 <a href="{{ item_href }}"{{ " " }}
                    title="{{ wiki_name }}"
-                   class="{% if err %}moin-badinterwiki{% else %}interwiki{% endif %}">
+                   class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
                    {{ item_name|shorten_item_name }}
                 </a>
             {%- else -%}
