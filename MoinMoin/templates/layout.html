@@ -86,15 +86,18 @@
     {% if trail_items %}
         <div id="moin-pagetrail">
         {% for wiki_name, item_name, item_href, exists, err in trail_items %}
-            <a href="{{ url_for('frontend.show_item', item_name=item_href) }}"{{ " " }}
             {%- if wiki_name -%}
-                title="{{ wiki_name }}"
-                class="{% if err %}moin-badinterwiki{% else %}interwiki{% endif %}"
+                <a href="{{ item_href }}"{{ " " }}
+                   title="{{ wiki_name }}"
+                   class="{% if err %}moin-badinterwiki{% else %}interwiki{% endif %}">
+                   {{ item_name|shorten_item_name }}
+                </a>
             {%- else -%}
-                {% if not exists -%}class="moin-nonexistent"{%- endif -%}
-            {%- endif %}>
-                {{ item_name|shorten_item_name }}
-            </a>
+                <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                   {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                   {{ item_name|shorten_item_name }}
+                </a>
+            {%- endif %}
             {% if not loop.last %}<span class="sep"> &raquo; </span>{% endif %}
         {% endfor %}
         </div>
