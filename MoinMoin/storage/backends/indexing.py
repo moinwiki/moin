@@ -147,14 +147,14 @@ class IndexingRevisionMixin(object):
         this is automatically called by item.commit() and can be used by a indexer script also.
         """
         name = self.item.name
-        uuid = name # XXX
+        uuid = self.item[UUID]
         revno = self.revno
         if MTIME not in self:
             self[MTIME] = int(time.time())
         if NAME not in self:
             self[NAME] = name
         if UUID not in self:
-            self[UUID] = uuid
+            self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
         if MIMETYPE not in self:
             self[MIMETYPE] = 'application/octet-stream'
         metas = self
@@ -168,10 +168,10 @@ class IndexingRevisionMixin(object):
         update the index, removing everything related to this revision
         """
         name = self.item.name
+        uuid = self.item[UUID]
         revno = self.revno
         metas = self
         logging.debug("item %r revno %d remove index!" % (name, revno))
-        uuid = name # XXX
         self._index.remove_rev(uuid, revno)
 
     # TODO maybe use this class later for data indexing also,
@@ -256,8 +256,8 @@ class ItemIndex(object):
 
         note: if item does not exist already, it is added
         """
-        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name) XXX not there yet
-        uuid = metas.get(UUID, name) # item uuid (never changes) XXX we use name as long we have no uuid
+        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name)
+        uuid = metas.get(UUID, '') # item uuid (never changes)
         item_table = self.item_table
         item_id = self.get_item_id(uuid)
         if item_id is None:
@@ -286,8 +286,8 @@ class ItemIndex(object):
         note: does not remove revisions, these should be removed first
         """
         item_table = self.item_table
-        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name) XXX not there yet
-        uuid = metas.get(UUID, name) # item uuid (never changes) XXX we use name as long we have no uuid
+        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name)
+        uuid = metas.get(UUID, '') # item uuid (never changes)
         item_id = self.get_item_id(uuid)
         if item_id is not None:
             self.item_kvstore.store_kv(item_id, {})
