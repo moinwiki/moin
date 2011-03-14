@@ -1,0 +1,1126 @@
+# Translations template for MoinMoin.
+# Copyright: 2011 AUTHOR <EMAIL@ADDRESS>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: moin 2.0.0a0\n"
+"Report-Msgid-Bugs-To: English <moin-user@lists.sourceforge.net>\n"
+"POT-Creation-Date: 2011-03-06 17:36+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.5\n"
+
+#: MoinMoin/user.py:52
+#, python-format
+msgid ""
+"Invalid user name '%(name)s'.\n"
+"Name may contain any Unicode alpha numeric character, with optional one\n"
+"space between words. Group page name is not allowed."
+msgstr ""
+
+#: MoinMoin/user.py:58
+msgid "This user name already belongs to somebody else."
+msgstr ""
+
+#: MoinMoin/user.py:64
+#, python-format
+msgid "Password not acceptable: %(msg)s"
+msgstr ""
+
+#: MoinMoin/user.py:76
+msgid ""
+"Please provide your email address. If you lose your login information, "
+"you can get it by email."
+msgstr ""
+
+#: MoinMoin/user.py:82
+msgid "This email already belongs to somebody else."
+msgstr ""
+
+#: MoinMoin/user.py:87
+msgid "This OpenID already belongs to somebody else."
+msgstr ""
+
+#: MoinMoin/user.py:800
+msgid "<unknown>"
+msgstr ""
+
+#: MoinMoin/user.py:873
+#, python-format
+msgid ""
+"Somebody has requested to email you a password recovery link.\n"
+"\n"
+"Please use the link below to change your password to a known value:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"If you didn't forget your password, please ignore this email.\n"
+"\n"
+msgstr ""
+
+#: MoinMoin/user.py:876
+#, python-format
+msgid "[%(sitename)s] Your wiki password recovery link"
+msgstr ""
+
+#: MoinMoin/apps/admin/views.py:59
+#, python-format
+msgid "User profile of %(username)s: %(email)r"
+msgstr ""
+
+#: MoinMoin/apps/admin/views.py:108
+#, python-format
+msgid "System items upgrade failed due to the following error: %(error)s."
+msgstr ""
+
+#: MoinMoin/apps/admin/views.py:110
+msgid "System items have been upgraded successfully!"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/index.html:3
+msgid "Admin Menu"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/index.html:5
+msgid "User Browser"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/index.html:6
+#: MoinMoin/apps/admin/templates/sysitems_upgrade.html:10
+msgid "Upgrade system items"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/index.html:7
+msgid "Show Wiki Configuration"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/index.html:8
+msgid "Show Wiki Configuration Help"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/sysitems_upgrade.html:3
+msgid "System items upgrade"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/sysitems_upgrade.html:5
+msgid ""
+"You can upgrade your system items by uploading an xml file with new items"
+" below."
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:5
+msgid "User name"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:6
+msgid "Member of Groups"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:7
+msgid "Email address"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:8
+#: MoinMoin/templates/history.html:18
+msgid "Actions"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:12
+msgid "disabled"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:23
+msgid "Enable user"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:23
+msgid "Disable user"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/userbrowser.html:28
+msgid "Mail account data"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfig.html:3
+msgid "Wiki configuration"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfig.html:5
+msgid ""
+"This table shows all settings in this wiki that do not have default "
+"values. Settings that the configuration system doesn't know about are "
+"shown in italic, those may be due to third-party extensions needing "
+"configuration or settings that were removed from Moin."
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfig.html:14
+#: MoinMoin/apps/admin/templates/wikiconfighelp.html:12
+msgid "Variable name"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfig.html:15
+msgid "Setting"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfighelp.html:3
+msgid "WikiConfig Help"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfighelp.html:13
+msgid "Default"
+msgstr ""
+
+#: MoinMoin/apps/admin/templates/wikiconfighelp.html:14
+msgid "Description"
+msgstr ""
+
+#: MoinMoin/apps/feed/views.py:63
+msgid "MoinMoin feels unhappy."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:501
+msgid "Refers Here"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:567 MoinMoin/themes/__init__.py:296
+msgid "Wanted Items"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:615 MoinMoin/themes/__init__.py:297
+msgid "Orphaned Items"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:651 MoinMoin/apps/frontend/views.py:670
+#, python-format
+msgid "You must login to use this action: %(action)s."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:654
+msgid "A quicklink to this page could not be added for you."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:657
+msgid "Your quicklink to this page could not be removed."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:672
+msgid "You are not allowed to subscribe to an item you may not read."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:674
+msgid "This wiki is not enabled for mail processing."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:676
+msgid "Add your email address in your user settings to use subscriptions."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:680
+msgid "Can't remove regular expression subscription!"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:681
+msgid "Edit the subscription regular expressions in your settings."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:685
+msgid "You could not get subscribed to this item."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:694 MoinMoin/apps/frontend/views.py:898
+#: MoinMoin/apps/frontend/views.py:1058
+msgid "The passwords do not match."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:710 MoinMoin/apps/frontend/views.py:726
+#: MoinMoin/apps/frontend/views.py:849 MoinMoin/apps/frontend/views.py:916
+#: MoinMoin/apps/frontend/views.py:991 MoinMoin/apps/frontend/views.py:1124
+#: MoinMoin/templates/global_history.html:16 MoinMoin/templates/history.html:10
+msgid "Name"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:711 MoinMoin/apps/frontend/views.py:712
+#: MoinMoin/apps/frontend/views.py:727 MoinMoin/apps/frontend/views.py:728
+#: MoinMoin/apps/frontend/views.py:992
+msgid "Password"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:713 MoinMoin/apps/frontend/views.py:730
+#: MoinMoin/apps/frontend/views.py:850 MoinMoin/apps/frontend/views.py:1090
+msgid "E-Mail"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:714 MoinMoin/apps/frontend/views.py:731
+#: MoinMoin/apps/frontend/views.py:993 MoinMoin/apps/frontend/views.py:1126
+msgid "OpenID"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:715
+#: MoinMoin/templates/openid_register.html:21
+msgid "Register"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:794 MoinMoin/apps/frontend/views.py:821
+msgid "Account created, please log in now."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:834
+msgid "Your user name or your email address is needed."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:851
+msgid "Recover password"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:886
+msgid "If this account exists, you will be notified."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:899 MoinMoin/apps/frontend/views.py:1060
+msgid "New password is unacceptable, encoding trouble."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:917
+msgid "Recovery token"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:918 MoinMoin/apps/frontend/views.py:1082
+msgid "New password"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:919 MoinMoin/apps/frontend/views.py:1083
+msgid "New password (repeat)"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:920 MoinMoin/apps/frontend/views.py:1084
+#: MoinMoin/templates/usersettings.html:9
+msgid "Change password"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:947
+msgid "Your password has been changed, you can log in now."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:949
+msgid "Your token is invalid!"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:963
+msgid "Either your username or password was invalid."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:964
+msgid "Failed to authenticate with this OpenID."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1048
+msgid "You are now logged out."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1059
+msgid "The current password was wrong."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1081
+msgid "Current Password"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1091 MoinMoin/apps/frontend/views.py:1097
+#: MoinMoin/apps/frontend/views.py:1112 MoinMoin/apps/frontend/views.py:1135
+#: MoinMoin/apps/frontend/views.py:1145 MoinMoin/templates/modify_binary.html:4
+msgid "Save"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1108
+msgid "Publish my email (not my wiki homepage) in author info"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1109
+msgid "Open editor on double click"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1110
+msgid "Show comment sections"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1111
+msgid "Disable this account forever"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1125
+msgid "Alias-Name"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1129
+msgid "Timezone"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1134
+msgid "Locale"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1142
+msgid "Theme name"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1143
+msgid "User CSS URL"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1144
+msgid "Editor size"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1179
+msgid "Your password has been changed."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1184
+msgid "This openid is already in use."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1188
+msgid "This username is already in use."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1194
+msgid "This email is already in use"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1233
+msgid "You must log in to use bookmarks."
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1387 MoinMoin/themes/__init__.py:302
+msgid "Items with similar names"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1588
+msgid "All tags in this wiki"
+msgstr ""
+
+#: MoinMoin/apps/frontend/views.py:1600
+#, python-format
+msgid "Items tagged with %(tag)s"
+msgstr ""
+
+#: MoinMoin/auth/__init__.py:242 MoinMoin/auth/ldap_login.py:129
+msgid "Missing password. Please enter user name and password."
+msgstr ""
+
+#: MoinMoin/auth/__init__.py:250 MoinMoin/auth/ldap_login.py:199
+#: MoinMoin/auth/ldap_login.py:245
+msgid "Invalid username or password."
+msgstr ""
+
+#: MoinMoin/auth/__init__.py:254
+#, python-format
+msgid ""
+"If you do not have an account, <a href=\"%(register_url)s\">you can "
+"create one now</a>. "
+msgstr ""
+
+#: MoinMoin/auth/__init__.py:256
+#, python-format
+msgid "<a href=\"%(recover_url)s\">Forgot your password?</a>"
+msgstr ""
+
+#: MoinMoin/auth/http.py:62
+msgid "Please log in first."
+msgstr ""
+
+#: MoinMoin/auth/ldap_login.py:259
+#, python-format
+msgid "LDAP server %(server)s failed."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:63
+msgid "OpenID Error"
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:70
+msgid "OpenID verification cancelled."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:104
+msgid "This OpenID provider is not trusted."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:109
+msgid "OpenID failure."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:143
+msgid "Failed to resolve OpenID."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:145
+msgid "OpenID discovery failure, not a valid OpenID."
+msgstr ""
+
+#: MoinMoin/auth/openidrp.py:149
+msgid "No OpenID service at this URL."
+msgstr ""
+
+#: MoinMoin/config/default.py:258
+msgid "Password is too short."
+msgstr ""
+
+#: MoinMoin/config/default.py:260
+msgid "Password has not enough different characters."
+msgstr ""
+
+#: MoinMoin/config/default.py:266
+msgid ""
+"Password is too easy to guess (password contains name or name contains "
+"password)."
+msgstr ""
+
+#: MoinMoin/config/default.py:275
+msgid "Password is too easy to guess (keyboard sequence)."
+msgstr ""
+
+#: MoinMoin/converter/html_out.py:595
+msgid "Contents"
+msgstr ""
+
+#: MoinMoin/converter/macro.py:81
+#, python-format
+msgid "<<%(macro_name)s: execution failed [%(error_msg)s] (see also the log)>>"
+msgstr ""
+
+#: MoinMoin/converter/moinwiki_in.py:1005
+msgid "Error:"
+msgstr ""
+
+#: MoinMoin/converter/moinwiki_in.py:1006
+msgid "is invalid within"
+msgstr ""
+
+#: MoinMoin/converter/nonexistent_in.py:30
+#, python-format
+msgid "%(item_name)s does not exist. Create it?"
+msgstr ""
+
+#: MoinMoin/items/__init__.py:656
+msgid ""
+"The items have the same data hash code (that means they very likely have "
+"the same data)."
+msgstr ""
+
+#: MoinMoin/items/__init__.py:658
+msgid "The items have different data."
+msgstr ""
+
+#: MoinMoin/items/__init__.py:665
+#, python-format
+msgid "Impossible to convert the data to the mimetype: %(mimetype)s"
+msgstr ""
+
+#: MoinMoin/items/__init__.py:1265 MoinMoin/items/__init__.py:1341
+#, python-format
+msgid "Edit drawing %(filename)s (opens in new window)"
+msgstr ""
+
+#: MoinMoin/items/__init__.py:1280 MoinMoin/items/__init__.py:1358
+#, python-format
+msgid "Clickable drawing: %(filename)s"
+msgstr ""
+
+#: MoinMoin/macro/HighlighterList.py:24
+msgid "Lexer description"
+msgstr ""
+
+#: MoinMoin/macro/HighlighterList.py:25
+msgid "Lexer names"
+msgstr ""
+
+#: MoinMoin/macro/HighlighterList.py:26
+msgid "File patterns"
+msgstr ""
+
+#: MoinMoin/macro/HighlighterList.py:27
+msgid "Mimetypes"
+msgstr ""
+
+#: MoinMoin/mail/sendmail.py:86
+msgid "No recipients, nothing to do"
+msgstr ""
+
+#: MoinMoin/mail/sendmail.py:162
+#, python-format
+msgid "Connection to mailserver '%(server)s' failed: %(reason)s"
+msgstr ""
+
+#: MoinMoin/mail/sendmail.py:176
+msgid "Mail not sent"
+msgstr ""
+
+#: MoinMoin/mail/sendmail.py:179
+msgid "Mail sent successfully"
+msgstr ""
+
+#: MoinMoin/security/textcha.py:163
+msgid "The entered TextCha was incorrect."
+msgstr ""
+
+#: MoinMoin/security/textcha.py:164
+msgid "The TextCha question is invalid or has expired. Please try again."
+msgstr ""
+
+#: MoinMoin/security/textcha.py:183
+msgid "TextCha"
+msgstr ""
+
+#: MoinMoin/storage/error.py:42
+msgid "Permission denied!"
+msgstr ""
+
+#: MoinMoin/storage/error.py:44
+msgid "You"
+msgstr ""
+
+#: MoinMoin/storage/error.py:46
+#, python-format
+msgid "%(username)s may not %(priv)s '%(item)s'."
+msgstr ""
+
+#: MoinMoin/templates/base.html:63 MoinMoin/templates/layout.html:24
+msgid "Search"
+msgstr ""
+
+#: MoinMoin/templates/base.html:69
+msgid "More"
+msgstr ""
+
+#: MoinMoin/templates/copy.html:3
+#, python-format
+msgid "Copy '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/copy.html:7 MoinMoin/templates/rename.html:8
+msgid "Target"
+msgstr ""
+
+#: MoinMoin/templates/copy.html:10 MoinMoin/templates/delete.html:8
+#: MoinMoin/templates/destroy.html:14 MoinMoin/templates/global_history.html:20
+#: MoinMoin/templates/history.html:17 MoinMoin/templates/rename.html:11
+#: MoinMoin/templates/revert.html:8
+msgid "Comment"
+msgstr ""
+
+#: MoinMoin/templates/copy.html:14
+msgid "Copy"
+msgstr ""
+
+#: MoinMoin/templates/copy.html:15 MoinMoin/templates/delete.html:12
+#: MoinMoin/templates/destroy.html:20 MoinMoin/templates/modify_binary.html:5
+#: MoinMoin/templates/rename.html:15 MoinMoin/templates/revert.html:14
+msgid "Cancel"
+msgstr ""
+
+#: MoinMoin/templates/delete.html:5
+#, python-format
+msgid "Delete '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/delete.html:11
+msgid "Delete"
+msgstr ""
+
+#: MoinMoin/templates/destroy.html:5
+#, python-format
+msgid "DESTROY COMPLETE item '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/destroy.html:9
+#, python-format
+msgid "DESTROY REVISION '%(item_name)s' (rev %(rev_no)d)"
+msgstr ""
+
+#: MoinMoin/templates/destroy.html:19
+msgid "DESTROY"
+msgstr ""
+
+#: MoinMoin/templates/diff.html:4
+#, python-format
+msgid "Item: %(item_name)s (Diff bettween revision %(oldrevno)s and %(newrevno)s)"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:28
+msgid "No older revision"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:32
+msgid "Use older revision"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:34
+#, python-format
+msgid "Revision %(revno)d as of %(date_time)s"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:37
+msgid "No newer revision"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:41
+msgid "Use newer revision"
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:75
+msgid "Deletions are marked like this."
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:76
+msgid "Additions are marked like this."
+msgstr ""
+
+#: MoinMoin/templates/diff_text.html:80 MoinMoin/templates/diff_text.html:81
+msgid "Line"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:5
+msgid "Show"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:10
+msgid "Highlight"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:15
+msgid "Meta"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:21 MoinMoin/templates/show.html:9
+msgid "Modify"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:23
+msgid "Immutable Item"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:29
+msgid "Download"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:34
+msgid "History"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:42
+msgid "Remove Link"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:44
+msgid "Add Link"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:54
+msgid "Unsubscribe"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:56
+msgid "Subscribe"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:63
+msgid "Comments"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:68
+msgid "Index"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:88
+msgid "More Actions:"
+msgstr ""
+
+#: MoinMoin/templates/editbar.html:94
+msgid "Do"
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:10 MoinMoin/themes/__init__.py:293
+msgid "Global History"
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:14 MoinMoin/templates/history.html:12
+msgid "Timestamp"
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:15
+msgid "Action"
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:17 MoinMoin/templates/history.html:11
+msgid "Rev."
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:18 MoinMoin/templates/history.html:16
+msgid "Mime Type"
+msgstr ""
+
+#: MoinMoin/templates/global_history.html:19 MoinMoin/templates/history.html:15
+msgid "Editor"
+msgstr ""
+
+#: MoinMoin/templates/global_index.html:4
+msgid "Global Index"
+msgstr ""
+
+#: MoinMoin/templates/highlight.html:4
+#, python-format
+msgid "Syntax highlighting for Item: %(name)s"
+msgstr ""
+
+#: MoinMoin/templates/history.html:5
+#, python-format
+msgid "History of '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/history.html:13
+msgid "Size"
+msgstr ""
+
+#: MoinMoin/templates/history.html:35
+msgid "show"
+msgstr ""
+
+#: MoinMoin/templates/history.html:36
+msgid "meta"
+msgstr ""
+
+#: MoinMoin/templates/history.html:37
+msgid "download"
+msgstr ""
+
+#: MoinMoin/templates/history.html:38
+msgid "highlight"
+msgstr ""
+
+#: MoinMoin/templates/history.html:39
+msgid "revert"
+msgstr ""
+
+#: MoinMoin/templates/history.html:40
+msgid "destroy"
+msgstr ""
+
+#: MoinMoin/templates/index.html:4
+#, python-format
+msgid "Index of subitems of '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/layout.html:26
+msgid "Titles"
+msgstr ""
+
+#: MoinMoin/templates/layout.html:27
+msgid "Text"
+msgstr ""
+
+#: MoinMoin/templates/layout.html:46 MoinMoin/templates/usersettings.html:6
+msgid "Settings"
+msgstr ""
+
+#: MoinMoin/templates/layout.html:52
+msgid "Logout"
+msgstr ""
+
+#: MoinMoin/templates/layout.html:58
+msgid "Login"
+msgstr ""
+
+#: MoinMoin/templates/login.html:9
+msgid "Moin login"
+msgstr ""
+
+#: MoinMoin/templates/login.html:21 MoinMoin/templates/login.html:35
+msgid "Log in"
+msgstr ""
+
+#: MoinMoin/templates/login.html:28
+msgid "OpenID login"
+msgstr ""
+
+#: MoinMoin/templates/lostpass.html:5
+msgid "Lost Password"
+msgstr ""
+
+#: MoinMoin/templates/lostpass.html:7
+msgid "Please note that you only need to fill out one form field."
+msgstr ""
+
+#: MoinMoin/templates/meta.html:9
+#, python-format
+msgid "Metadata of '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/meta.html:10
+msgid "Revision"
+msgstr ""
+
+#: MoinMoin/templates/modify_anywikidraw.html:18
+#: MoinMoin/templates/modify_twikidraw.html:13
+msgid "NOTE:"
+msgstr ""
+
+#: MoinMoin/templates/modify_anywikidraw.html:18
+#: MoinMoin/templates/modify_twikidraw.html:13
+msgid "You need a Java enabled browser to edit the drawing."
+msgstr ""
+
+#: MoinMoin/templates/modify_applet.html:3
+#, python-format
+msgid "Modifying %(item_name)s"
+msgstr ""
+
+#: MoinMoin/templates/modify_applet.html:12
+msgid "Upload file:"
+msgstr ""
+
+#: MoinMoin/templates/modify_binary.html:8
+msgid "Comment:"
+msgstr ""
+
+#: MoinMoin/templates/modify_show_template_selection.html:3
+#: MoinMoin/templates/modify_show_type_selection.html:3
+msgid "Create new item?"
+msgstr ""
+
+#: MoinMoin/templates/modify_show_template_selection.html:5
+#, python-format
+msgid ""
+"You can either <a href='%(modifyhref)s'>create the item from scratch</a> "
+"or select a template."
+msgstr ""
+
+#: MoinMoin/templates/modify_show_template_selection.html:8
+msgid "Available template items"
+msgstr ""
+
+#: MoinMoin/templates/modify_show_type_selection.html:5
+msgid ""
+"This item does not exist (yet), but you can try creating it now. Please "
+"select the type of the item you want to create."
+msgstr ""
+
+#: MoinMoin/templates/openid_register.html:5 MoinMoin/templates/register.html:5
+msgid "Create Account"
+msgstr ""
+
+#: MoinMoin/templates/recoverpass.html:5
+msgid "Recover Password"
+msgstr ""
+
+#: MoinMoin/templates/rename.html:4
+#, python-format
+msgid "Rename '%(item_name)s'"
+msgstr ""
+
+#: MoinMoin/templates/rename.html:14
+msgid "Rename"
+msgstr ""
+
+#: MoinMoin/templates/revert.html:4
+#, python-format
+msgid "Revert '%(item_name)s' (rev %(rev_no)d)"
+msgstr ""
+
+#: MoinMoin/templates/revert.html:13
+msgid "Revert"
+msgstr ""
+
+#: MoinMoin/templates/show.html:23
+msgid "older"
+msgstr ""
+
+#: MoinMoin/templates/show.html:25
+msgid "no older revision"
+msgstr ""
+
+#: MoinMoin/templates/show.html:31
+msgid "newer"
+msgstr ""
+
+#: MoinMoin/templates/show.html:33
+msgid "no newer revision"
+msgstr ""
+
+#: MoinMoin/templates/show.html:47
+msgid "This item exists, but it has no revisions."
+msgstr ""
+
+#: MoinMoin/templates/show.html:72
+msgid "modified"
+msgstr ""
+
+#: MoinMoin/templates/show.html:73
+msgid "by"
+msgstr ""
+
+#: MoinMoin/templates/show.html:74
+msgid "tagged"
+msgstr ""
+
+#: MoinMoin/templates/sitemap.html:3
+#, python-format
+msgid "SiteMap of %(item_name)s"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:8
+#: MoinMoin/templates/usersettings.html:17
+msgid "Personal Settings"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:10
+#: MoinMoin/templates/usersettings.html:47
+msgid "Notification Settings"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:11
+#: MoinMoin/templates/usersettings.html:59
+msgid "Wiki Appearance Settings"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:12
+#: MoinMoin/templates/usersettings.html:73
+msgid "Navigation Settings"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:13
+#: MoinMoin/templates/usersettings.html:85
+msgid "Options"
+msgstr ""
+
+#: MoinMoin/templates/usersettings.html:33
+msgid "Change Password"
+msgstr ""
+
+#: MoinMoin/templates/wanteds.html:7
+#, python-format
+msgid "Total: %(total)s"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:45
+msgid "Access denied"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:46
+msgid "You are not allowed to access this resource."
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:294
+msgid "Global Items Index"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:295
+msgid "Global Tags Index"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:299 MoinMoin/themes/__init__.py:303
+msgid "-----------------------------------"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:300
+msgid "What refers here?"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:301
+msgid "Local Site Map"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:304
+msgid "Copy Item"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:305
+msgid "Rename Item"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:306
+msgid "Delete Item"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:307
+msgid "Destroy Item"
+msgstr ""
+
+#: MoinMoin/themes/__init__.py:318
+msgid "anonymous"
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:316
+#, python-format
+msgid "Argument \"%(name)s\" must be a boolean value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:319
+#, python-format
+msgid "Argument must be a boolean value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:345
+#, python-format
+msgid "Argument \"%(name)s\" must be an integer value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:348
+#, python-format
+msgid "Argument must be an integer value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:373
+#, python-format
+msgid "Argument \"%(name)s\" must be a floating point value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:376
+#, python-format
+msgid "Argument must be a floating point value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:403
+#, python-format
+msgid "Argument \"%(name)s\" must be a complex value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:406
+#, python-format
+msgid "Argument must be a complex value, not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:460
+#, python-format
+msgid "Argument \"%(name)s\" must be one of \"%(choices)s\", not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:465
+#, python-format
+msgid "Argument must be one of \"%(choices)s\", not \"%(value)s\""
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:690
+msgid "Too many arguments"
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:695
+msgid "Cannot have arguments without name following named arguments"
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:711
+#, python-format
+msgid "Argument \"%(name)s\" is required"
+msgstr ""
+
+#: MoinMoin/util/paramparser.py:723
+#, python-format
+msgid "No argument named \"%(name)s\""
+msgstr ""
+

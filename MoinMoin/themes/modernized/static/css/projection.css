@@ -1,0 +1,37 @@
+/*  projection.css - MoinMoin Slide Styles
+
+    Copyright: 2003 MoinMoin:JuergenHermann
+    Copyright: 2010 MoinMoin:RogerHaase
+    License: GNU GPL v2 or later, see COPYING for details.
+*/
+
+@import url(screen.css);
+
+html { line-height: 1.8em; }
+
+body, b, em, a, span, div, p, td { font-size: 18pt; }
+
+h1 { font-size: 26pt; }
+h2 { font-size: 22pt; }
+h3 { font-size: 20pt; }
+h4 { font-size: 18pt; }
+h5 { font-size: 16pt; }
+h6 { font-size: 14pt; }
+
+tt, pre { font-size: 16pt; }
+sup, sub { font-size: 12pt; }
+
+table.navigation { float: right; margin: 2px; }
+
+.navigation td, .navigation a {  font-size: 10pt; padding: 2px; }
+
+#moin-interwiki, #moin-pagelocation, #moin-pageinfo { display: none; }
+
+
+/* user interface styles */
+#moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki, 
+#moin-pagelocation { display: none; }
+
+/* page-bottom */
+#moin-pageinfo { color: gray; font-size: .67em; float: right; }
+#moin-pageinfo a { color: gray; }

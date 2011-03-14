@@ -1,0 +1,379 @@
+.. role:: bolditalic
+
+==========================
+WikiCreole markup overview
+==========================
+
+Features currently not working with moin's WikiCreole parser are marked with **CREOLETODO**.
+
+Features currently not working with moin's rst parser are marked with **RSTTODO**.
+
+Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
+
+Headings
+========
+
+**Markup**: ::
+
+    = Level 1
+    == Level 2
+    === Level 3
+    ==== Level 4
+    ===== Level 5
+    ====== Level 6
+
+**Result**:
+
+Level 1
+=======
+
+**Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+
+Level 2
+=======
+
+Level 3
+-------
+
+Level 4
+*******
+
+Level 5
+:::::::
+
+Level 6
++++++++
+
+**Notes**:
+
+Closing equals signs are optional, and if they are used they will not affect the output.
+Also, whitespace between the first word of the heading and the opening equals sign will not be shown in the output (ie. leading whitespace is stripped).
+
+Text formatting
+===============
+
+The following is a table of inline markup that can be used to control text formatting in Creole.
+
++-------------------------------------+---------------------------------------+
+| Markup                              | Result                                |
++=====================================+=======================================+
+| ``**Bold Text**``                   | **Bold text**                         |
++-------------------------------------+---------------------------------------+
+| ``//Italic Text//``                 | *Italic Text*                         |
++-------------------------------------+---------------------------------------+
+| ``//**Bold and Italic**//``         | :bolditalic:`Bold and Italic`         |
++-------------------------------------+---------------------------------------+
+| ``First line\\Second line``         | | First line                          |
+|                                     | | Second line                         | 
++-------------------------------------+---------------------------------------+
+
+**SPHINXTODO** **RSTTODO**: Restructured Text does not allow text to be both **bold** and *italic*. This is because bold and italic are simply
+treated as different levels of emphasis. It should be noted that this is a problem with the spec rather than Sphinx or Moin itself.
+
+It requires the following CSS to rectify: ::
+
+   .bolditalic{font-weight:bold;font-style:italic;}
+
+**RSTTODO**: reStructuredText line blocks are not working in Moin2
+
+Hyperlinks
+==========
+
+Internal links
+--------------
+
+.. _Item name: 
+.. _ItemName/Subitem: 
+.. _/SubItem: 
+.. _../SiblingItem: 
+.. _Named Item: 
+.. _#AnchorName:
+.. _Named anchor: 
+.. _ItemName#AnchorName:
+.. _Filename.txt: #
+
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| Markup                                | Result                            | Comment                                   |
++=======================================+===================================+===========================================+
+| ``[[ItemName]]``                      | `Item name`_                      | Link to an item                           |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[ItemName|Named Item]]``           | `Named Item`_                     | Named link to an internal item            |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[#AnchorName]]``                   | `#AnchorName`_                    | Link to an anchor in the current item     |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[#AnchorName|Named anchor]]``      | `Named anchor`_                   | Link to a named anchor.                   |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[ItemName#AnchorName]]``           | `ItemName#AnchorName`_            | Link to an anchor in an internal item     |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[ItemName/SubItem]]``              | `ItemName/Subitem`_               | Link to a sub-item of an internal item    |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[../SiblingItem]]``                | `../SiblingItem`_                 | Link to a sibling of the current item     |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[/SubItem]]``                      | `/SubItem`_                       | Link to a sub-item                        |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+| ``[[attachment:Filename.txt]]``       | `Filename.txt`_                   | Link to a sub-item called Filename.txt.   |
+|                                       |                                   | Note that this is for MoinMoin 1.x        |
+|                                       |                                   | compatability and is deprecated in favour |
+|                                       |                                   | of the more convenient ``[[/SubItem]]``   |
+|                                       |                                   | syntax                                    |
++---------------------------------------+-----------------------------------+-------------------------------------------+
+
+**CREOLETODO**: Links to attachments, files and email addresses are not recognised as such (ie. given a special icon, etc), and instead treated as links to normal wiki items. This should be rectified before release.
+
+External links
+--------------
+
+.. _http\://www.example.com: http://www.example.com
+.. _http\://www.example.com: http://www.example.com
+.. _InterWiki item on MeatBall: http://meatballwiki.org/wiki/InterWiki
+.. _mailto\:user@example.org: user@example.org
+
++-------------------------------------------------------+-------------------------------+-------------------------------------+
+| Markup                                                | Result                        | Comment                             |
++=======================================================+===============================+=====================================+
+| ``http://www.example.com``                            | `http://www.example.com`_     | External link                       |
++-------------------------------------------------------+-------------------------------+-------------------------------------+
+| ``[[http://www.example.com]]``                        | `http://www.example.com`_     | External link                       |
++-------------------------------------------------------+-------------------------------+-------------------------------------+
+| ``[[MeatBall:InterWiki|InterWiki item on MeatBall]]`` | `InterWiki item on MeatBall`_ | Link to an item on an external Wiki |
++-------------------------------------------------------+-------------------------------+-------------------------------------+
+| ``[[mailto:user@example.org]]``                       | `mailto:user@example.org`_    | Mailto link                         |
++-------------------------------------------------------+-------------------------------+-------------------------------------+
+
+Images and Transclusions
+========================
+
++------------------------------------+---------------------------------------+
+| Markup                             | Comment                               |
++====================================+=======================================+
+| ``{{example.png}}``                | Embed example.png inline              |
++------------------------------------+---------------------------------------+
+| ``{{example.png|Alt text}}``       | Embed example.png inline or display   |
+|                                    | "Alt text" if not available           |
++------------------------------------+---------------------------------------+
+| ``{{ItemName}}``                   | Transclude (embed the contents of)    |
+|                                    | ItemName inline.                      |
++------------------------------------+---------------------------------------+
+| ``{{/SubItem}}``                   | Transclude SubItem inline.            |
++------------------------------------+---------------------------------------+
+
+Paragraphs
+==========
+
+**Markup**: ::
+
+ You can leave an empty line to start a new paragraph.
+ 
+ Single breaks are ignored.
+ To force a line break, use <<BR>> or \\.
+
+**Result**:
+
+You can leave an empty line to start a new paragraph.
+
+| Single breaks are ignored. To force a line break, use
+| or 
+| .
+
+**RSTTODO**: reStructuredText line blocks are not working in Moin2
+
+Horizontal rules
+================
+
+**Markup**: ::
+
+    A horizontal rule can be added by typing four dashes.
+
+    ----
+
+    This text will be displayed below the rule.
+
+**Result**:
+
+A horizontal rule can be added by typing four dashes.
+
+----
+
+This text will be displayed below the rule.
+
+Preformatted text 
+=================
+
+**Markup**:  ::
+
+    {{{
+    This text will [[escape]] **special** WikiCreole //markup//
+        It will also preserve indents
+    
+    And whitespace.
+    }}}
+    ~[[This text will not be a link, because it uses the tilde (~) escape character]]
+
+**Result**: ::
+
+    This text will [[escape]] **special** WikiCreole //markup//
+        It will also preserve indents
+
+    And whitespace.
+
+[[This text will not be a link, because it uses the tilde (~) escape character]]
+
+**Notes**:
+
+This tilde character (``~``) makes the parser ignore the character following it, which can be used to prevent links from appearing as links or prevent bold text from appearing as bold. For example "``~**Not bold~**``" would output "\**Not bold**").
+
+Syntax Highlighting
+-------------------
+
+**Markup**: ::
+
+    {{{
+    #!python
+    #Python syntax highlighting
+    import this
+
+    def spam():
+        print('Spam, glorious spam!')
+
+    spam()
+    }}}
+
+**Result**: ::
+
+    #Python syntax highlighting
+    import this
+
+    def spam():
+        print('Spam, glorious spam!')
+
+    spam()
+
+**CREOLETODO**: Use of syntax highlighting currently crashes moin.
+
+Lists
+=====
+
+Ordered lists
+-------------
+
+Ordered lists are formed of lines that start with number signs (``#``).
+The count of number signs at the beginning of a line determines the level.
+
+**Markup**: ::
+
+ # First item
+ # Second item
+ ## First item (second level)
+ ## Second item (second level)
+ ### First item (third level)
+ # Third item
+
+**Result**:
+
+1. First item
+2. Second item
+
+ #. First item (second level)
+ #. Second item (second level)
+ 
+  #. First item (third level)
+  
+3. Third item
+
+Unordered lists
+---------------
+
+**Markup**: ::
+
+ * List item
+ * List item
+ ** List item (second level)
+ *** List item (third level)
+ * List item
+
+**Result**:
+
+- List item
+- List item
+
+ - List item (second level)
+ 
+  - List item (third level)
+  
+- List item
+
+Mixed lists
+-----------
+
+**Markup**: ::
+
+  # First item
+  # Second item
+  ** Bullet point one
+  ** Bullet point two
+  # Third item
+  # Fourth item
+
+**Result**:
+
+1. First item
+2. Second item
+
+  - Bullet point one
+  - Bullet point two
+
+3. Third item
+4. Fourth item
+
+Tables
+======
+
+**Markup**: ::
+
+|= Header one |= Header two |
+| Cell one    | Cell two    
+| Cell three  | Cell four   |
+
+**Result**:
+
++------------+------------+
+| Header one | Header two |
++============+============+
+| Cell one   | Cell two   |
++------------+------------+
+| Cell three | Cell four  |
++------------+------------+
+
+**Notes**:
+
+Table cells start with a pipe symbol (``|``), and header cells start with a pipe symbol and equals sign (``|=``).
+The closing pipe symbol at the end of a row is completely optional.
+
+**CREOLETODO** **RSTTODO**: Table headers are not interpreted as such when rendered.
+
+Macros
+======
+
+Macros are extensions to standard Creole markup that allow developers to add extra features. The following is a table of MoinMoin's Creole macros.
+
++-----------------------------------------+------------------------------------------------------------+
+| Markup                                  | Comment                                                    |
++=========================================+============================================================+
+| ``<<Anchor(anchorname)>>``              | Inserts an anchor named "anchorname" **CREOLETODO**:       |
+|                                         | attempting to use an anchor yields an exception.           |
++-----------------------------------------+------------------------------------------------------------+
+| ``<<BR>>``                              | Inserts a forced linebreak                                 |
++-----------------------------------------+------------------------------------------------------------+
+| ``<<FootNote(Note here)>>``             | Inserts a footnote saying "Note here"                      |
++-----------------------------------------+------------------------------------------------------------+
+| ``<<Include(ItemOne/SubItem)>>``        | Embeds the contents of ``ItemOne/SubItem`` inline          |
++-----------------------------------------+------------------------------------------------------------+
+| ``<<MailTo(user AT example DOT org)>>`` | If the user is logged in this macro will display           |
+|                                         | ``user@example.org``, otherwise it will display the        |
+|                                         | obfuscated email address supplied                          |
+|                                         | (``user AT example DOT org``)                              |
+|                                         | **CREOLETODO**: attempting to use the MailTo macro         |
+|                                         | yields an exception.                                       |
++-----------------------------------------+------------------------------------------------------------+
+| ``<<TableOfContents(2)>>``              | Shows a table of contents up to level 2                    |
++-----------------------------------------+------------------------------------------------------------+
