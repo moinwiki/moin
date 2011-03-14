@@ -22,6 +22,9 @@
 import os
 import time, datetime
 
+from uuid import uuid4
+make_uuid = lambda: unicode(uuid4().hex)
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -38,6 +41,19 @@ class IndexingBackendMixin(object):
         index_uri = kw.pop('index_uri', None)
         super(IndexingBackendMixin, self).__init__(*args, **kw)
         self._index = ItemIndex(index_uri)
+
+    def create_item(self, itemname):
+        """
+        intercept new item creation and make sure there is NAME / UUID in the item
+        """
+        item = super(IndexingBackendMixin, self).create_item(itemname)
+        item.change_metadata()
+        if NAME not in item:
+            item[NAME] = itemname
+        if UUID not in item:
+            item[UUID] = make_uuid()
+        item.publish_metadata()
+        return item
 
     def index_rebuild(self):
         return self._index.index_rebuild(self)
@@ -180,8 +196,6 @@ class IndexingRevisionMixin(object):
 
     # TODO maybe use this class later for data indexing also,
     # TODO by intercepting write() to index data written to a revision
-
-from uuid import uuid4 as gen_uuid
 
 from MoinMoin.util.kvstore import KVStoreMeta, KVStore
 
