@@ -25,7 +25,8 @@ import time, datetime
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
+                                   AccessDeniedError
 from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
 
 
@@ -60,6 +61,9 @@ class IndexingBackendMixin(object):
             try:
                 item = self.get_item(name)
                 yield item.get_revision(rev_no)
+            except AccessDeniedError, e:
+                # just skip items we may not access
+                pass
             except (NoSuchItemError, NoSuchRevisionError), e:
                 logging.exception("history processing catched exception")
 
