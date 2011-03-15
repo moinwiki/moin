@@ -120,13 +120,13 @@ td p { margin: 0; padding: 0; }
 
 /* TableOfContents macro */
 div.moin-table-of-contents { border: 1px solid #BBB; color: black;
-    font-size: 80%; margin: 0.5em 0 0.5em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
-    max-width: 35%; text-align: left; float: right; clear: both;
-    box-shadow: 10px 10px 5px #679; border-radius: 15px;
-    -moz-box-shadow: 10px 10px 5px #679; -moz-border-radius: 15px;
-    -webkit-box-shadow: 10px 10px 5px #679; -webkit-border-radius: 15px; }
+            font-size: 80%; margin: 0.5em 0 0.5em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
+            max-width: 35%; text-align: left; float: right; clear: both;
+            box-shadow: 10px 10px 5px #679; border-radius: 15px;
+            -moz-box-shadow: 10px 10px 5px #679; -moz-border-radius: 15px;
+            -webkit-box-shadow: 10px 10px 5px #679; -webkit-border-radius: 15px; }
 .moin-table-of-contents ol { margin: 0; padding: 0 0 0 .92em; }
-.moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none;}
+.moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none; }
 .moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 1em; letter-spacing: 0.075em; }
 .moin-showhide { margin-left: 10px; }
 
@@ -443,14 +443,9 @@ a.moin-mime-pdf:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
 body { background-color: #F3F7FD; }
 
 /* moin-content */
-#moin-page {
-margin: 0;
-padding: 2px 20px 20px;
-box-shadow: 1px 1px 33px -11px inset;
+#moin-page { margin: 0; padding: 2px 20px 20px; box-shadow: 1px 1px 33px -11px inset;
 /* support for firefox 3.5/3.6 and safari */
--moz-box-shadow: 1px 1px 33px -11px inset;
--webkit-box-shadow: inset 1px 1px 33px -11px black;
-}
+-moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
 
 /* links */
 a:link { color: #47F; text-decoration: none; }
@@ -467,14 +462,14 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header */
 #moin-header { margin: 0px; padding: 0px;
-               background: url(../img/white_clouds.png); /* background: #E6EAF0; */
-               line-height: 1.12em; }
+            background: url(../img/white_clouds.png); /* background: #E6EAF0; */
+            line-height: 1.12em; }
 
 /* moin-header searchform */
 #moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: right; }
 #moin-searchform input { font-size: 100%; vertical-align: middle;
-                         background-color: #F3F7FD; /* same as body bg col */
-                         border: 1px solid #A4B9DF; }
+            background-color: #F3F7FD; /* same as body bg col */
+            border: 1px solid #A4B9DF; }
 #moin-searchform label { display:none; }
 #moin-searchform div { margin: 0; }
 
@@ -528,7 +523,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-wikilicense,
 #moin-credits,
 #moin-version,
-#moin-timings{ margin: 10px 20px; text-align: left; font-size: 0.7em; color: #6C7680; }
+#moin-timings { margin: 10px 20px; text-align: left; font-size: 0.7em; color: #6C7680; }
 #moin-timings li { display: inline-block; margin: 0 20px 0 0; }
 #moin-credits span {display: inline-block; margin: 0 5px; }
 #moin-creditlogos { float: right; list-style: none; margin: 0 10px; }
@@ -537,87 +532,34 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 /* wikiconfig -- page_footer1/2 and page_header1/2 if defined */
 /* placeholder, not working yet */
 
-.page-object {
-    margin: 0px;
-    width: auto;
-    height: auto;
-    display:block;
-    position:relative;
-}
-
-.object-overlay {
-    background-color:black;
-    position:absolute;
-    padding: 5px;
-    border-radius: 1em;
-    -moz-border-radius:1em;
-    text-align: center;
-    white-space: nowrap;
-    font-size: 120%;
-    font-weight: bold;
-    display:none;
-    margin:0;
-    opacity: .5;
-}
-
-.object-overlay-wrapper {
-    width: 20px;
-    height: 20px;
-    position:absolute;
-    z-index:100;
-    top:0px;
-    left:0px;
-    margin:0;
-}
-
-.object-overlay-wrapper:hover  .object-overlay {
-    display:block;
-    top:-20px;
-    left:0px;
-}
-
-.page-object:hover .object-overlay:hover {
-    opacity: .8;
-    filter: alpha(opacity=90);
-}
-
+.page-object { margin: 0px; width: auto; height: auto; display: block; position: relative; }
+.object-overlay { background-color: black; position: absolute; padding: 5px; border-radius: 1em;
+            -moz-border-radius: 1em; -webkit-border-radius: 1em; text-align: center; white-space: nowrap; font-size: 120%;
+            font-weight: bold; 	display: none; margin: 0; opacity: .5; }
+.object-overlay-wrapper { width: 20px; height: 20px; position: absolute; z-index: 100; top: 0px; left: 0px; margin: 0; }
+.object-overlay-wrapper:hover  .object-overlay { display: block; top: -20px; left: 0px; }
+.page-object:hover .object-overlay:hover { opacity: .8; filter: alpha(opacity=90); }
 .object-overlay a:link,
-.object-overlay a:visited {
-    color:white;
-}
+.object-overlay a:visited { color: white; }
 
 /* special style for heading with mouseover permalinks */
-.permalink {
-    display:none;
-    cursor:pointer;
-    font-size: 80%;
-    margin-left: 3px;
-}
-
-a.permalink {
-    color:#95A09F
-}
-
-a:hover.permalink {
-    color:#C1CFCD
-}
-
+.permalink { display: none; cursor: pointer; font-size: 80%; margin-left: 3px; }
+a.permalink { color: #95A09F; }
+a:hover.permalink { color: #C1CFCD; }
 h1:hover .permalink,
 h2:hover .permalink,
 h3:hover .permalink,
 h4:hover .permalink,
 h5:hover .permalink,
-h6:hover .permalink {
-    display:inline;
-}
+h6:hover .permalink { display: inline; }
 
 } /* end of @media screen, projection */
 
 
 @media print {
 
-html { font-family: Times, serif; font-size: 12pt; width: 100%;}
-body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0}
+html { font-family: Times, serif; font-size: 12pt; width: 100%; }
+body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
 
 a, a:visited, a.nonexistent,
 a.badinterwiki { color: black !important; text-decoration: none !important; }
@@ -639,7 +581,6 @@ a.permalink, a.moin-showhide, a.showhide,
 }   /* end of @media print */
 
 
-
 @media projection {
 
 html { line-height: 1.8em; }
@@ -657,17 +598,13 @@ tt, pre { font-size: 16pt; }
 sup, sub { font-size: 12pt; }
 
 table.navigation { float: right; margin: 2px; }
-
 .navigation td, .navigation a {  font-size: 10pt; padding: 2px; }
 
 #moin-interwiki, #moin-pagelocation, #moin-pageinfo { display: none; }
 
-
-/* user interface styles */
 #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
 #moin-pagelocation { display: none; }
 
-/* page-bottom */
 #moin-pageinfo { color: gray; font-size: .67em; float: right; }
 #moin-pageinfo a { color: gray; }
 
