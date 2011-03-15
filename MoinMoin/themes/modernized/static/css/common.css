@@ -433,3 +433,243 @@ a.moin-mime-pdf:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
 .highlight .vg { color: #19177C; } /* Name.Variable.Global */
 .highlight .vi { color: #19177C; } /* Name.Variable.Instance */
 .highlight .il { color: #666666; } /* Literal.Number.Integer.Long */
+
+/* end of CSS declarations common to all devices */
+
+
+@media screen, projection {
+
+/* general */
+body { background-color: #F3F7FD; }
+
+/* moin-content */
+#moin-page {
+margin: 0;
+padding: 2px 20px 20px;
+box-shadow: 1px 1px 33px -11px inset;
+/* support for firefox 3.5/3.6 and safari */
+-moz-box-shadow: 1px 1px 33px -11px inset;
+-webkit-box-shadow: inset 1px 1px 33px -11px black;
+}
+
+/* links */
+a:link { color: #47F; text-decoration: none; }
+a:visited { text-decoration: none; color: #04A; }
+a:visited:hover { text-decoration: none; color: red; }
+a:hover,
+a:active { text-decoration: underline; color: green; }
+a.moin-nonexistent:link { color: #666; }
+a.moin-nonexistent:hover { color: black; text-decoration: underline; }
+/* placeholder - not used yet
+a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; background: #E7E7E7;
+            border: 1px solid #9C9C9C; padding: 0.5em; text-align: center; }
+*/
+
+/* moin-header */
+#moin-header { margin: 0px; padding: 0px;
+               background: url(../img/white_clouds.png); /* background: #E6EAF0; */
+               line-height: 1.12em; }
+
+/* moin-header searchform */
+#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: right; }
+#moin-searchform input { font-size: 100%; vertical-align: middle;
+                         background-color: #F3F7FD; /* same as body bg col */
+                         border: 1px solid #A4B9DF; }
+#moin-searchform label { display:none; }
+#moin-searchform div { margin: 0; }
+
+/* moin-header moin-logo -- logos may be text only */
+#moin-logo { float: left; margin: 5px 10px; padding: 0; font-size: 1.4em; line-height: 1em; font-weight: bold; }
+#moin-logo img { vertical-align: middle; }
+#moin-logo a { color: black; text-decoration: none; }
+
+/* moin-header moin-username */
+#moin-username { display: block; margin: 0px 12px 4px 12px; padding: 0; font-size: 0.82em; }
+#moin-username form { display: inline; }
+#moin-username input { display: inline; padding: 0; margin: 0; border: none; background: transparent; color: blue; font-size: 0.82em; cursor: pointer; }
+#moin-username input:hover { color: red; }
+
+/* moin-header moin-locationline */
+#moin-locationline { padding: 0; font-size: 100%; font-weight: normal; margin: 0.25em 12px 5px 12px; }
+#moin-pagelocation { font-size: 1.5em; letter-spacing: 0.05em; }
+
+/* moin-header moin-pagetrail */
+#moin-pagetrail { margin: 0 0.88em 0.25em 12px; padding: 0; font-size: 0.88em; }
+
+/* moin-header moin-navibar */
+#moin-navibar { clear: both;  display: block; margin: 0; padding: 0 10px; font-size: 0.82em; }
+#moin-navibar li { float: left; display: inline; margin: 0 2px; padding: 2px 5px; border: 1px solid #A4B9DF;
+            border-bottom: none; white-space: nowrap; font-size: .88em; }
+#moin-navibar li.wikilink { background: #F3F7FD; } /* same as body background */
+#moin-navibar li.userlink { background: #C4D9FF; }
+#moin-navibar a,
+#moin-navibar a:visited { color: black; text-decoration: none; }
+#moin-navibar li:hover { background: #A4B9DF; }
+
+/* moin-header moin-pageline  */
+#moin-pageline { clear: both; margin: 0; padding: 0; width: 100%; height: 4px;
+            border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; background: #81BBF2; }
+
+/* moin-header moin-editbar -- also applies to moin-footer */
+.moin-editbar { clear: both; display: block; margin: 0; padding: 2px 8px; background: #C4D9FF;
+            font-size: 0.8em; border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; margin-top: -1px; }
+.moin-editbar li { display: inline; padding: 0; margin: 4px 6px; }
+.moin-editbar a,
+.moin-editbar a:visited { color: #0044B3; }
+.moin-editbar a:hover { text-decoration: underline; }
+.moin-editbar form,
+.moin-editbar form div { display: inline; margin: 0; }
+.moin-editbar select { font-size: 100%; vertical-align: middle; }
+
+/* moin-page moin-footer */
+#moin-footer { clear: both; margin: 0 0; }
+#moin-footer hr { margin: 0; background-color: #ccc; }
+#moin-pageinfo,
+#moin-wikilicense,
+#moin-credits,
+#moin-version,
+#moin-timings{ margin: 10px 20px; text-align: left; font-size: 0.7em; color: #6C7680; }
+#moin-timings li { display: inline-block; margin: 0 20px 0 0; }
+#moin-credits span {display: inline-block; margin: 0 5px; }
+#moin-creditlogos { float: right; list-style: none; margin: 0 10px; }
+#moin-creditlogos li { display: inline-block; margin: 10px 0 10px 10px; }
+
+/* wikiconfig -- page_footer1/2 and page_header1/2 if defined */
+/* placeholder, not working yet */
+
+.page-object {
+    margin: 0px;
+    width: auto;
+    height: auto;
+    display:block;
+    position:relative;
+}
+
+.object-overlay {
+    background-color:black;
+    position:absolute;
+    padding: 5px;
+    border-radius: 1em;
+    -moz-border-radius:1em;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 120%;
+    font-weight: bold;
+    display:none;
+    margin:0;
+    opacity: .5;
+}
+
+.object-overlay-wrapper {
+    width: 20px;
+    height: 20px;
+    position:absolute;
+    z-index:100;
+    top:0px;
+    left:0px;
+    margin:0;
+}
+
+.object-overlay-wrapper:hover  .object-overlay {
+    display:block;
+    top:-20px;
+    left:0px;
+}
+
+.page-object:hover .object-overlay:hover {
+    opacity: .8;
+    filter: alpha(opacity=90);
+}
+
+.object-overlay a:link,
+.object-overlay a:visited {
+    color:white;
+}
+
+/* special style for heading with mouseover permalinks */
+.permalink {
+    display:none;
+    cursor:pointer;
+    font-size: 80%;
+    margin-left: 3px;
+}
+
+a.permalink {
+    color:#95A09F
+}
+
+a:hover.permalink {
+    color:#C1CFCD
+}
+
+h1:hover .permalink,
+h2:hover .permalink,
+h3:hover .permalink,
+h4:hover .permalink,
+h5:hover .permalink,
+h6:hover .permalink {
+    display:inline;
+}
+
+} /* end of @media screen, projection */
+
+
+@media print {
+
+/* content */
+html { font-family: Times, serif; font-size: 12pt; width: 100%;}
+body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0}
+
+a, a:visited, a.nonexistent,
+a.badinterwiki { color: black; text-decoration: none; }
+
+a.interwiki:before, a.badinterwiki:before { content: attr(title) ":"; }
+a.interwiki img, a.badinterwiki img { display: none; }
+
+pre { font-size: 10pt; }
+.footnotes div { width: 5em; border-top: 1pt solid gray; }
+
+/* user interface - do not display */
+#moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+#moin-pagelocation { display: none; }
+
+/* page-bottom */
+#moin-pageinfo { color: gray; font-size: .67em; float: right; }
+#moin-pageinfo a { color: gray; }
+
+}   /* end of @media print */
+
+
+
+@media projection {
+
+html { line-height: 1.8em; }
+
+body, b, em, a, span, div, p, td { font-size: 18pt; }
+
+h1 { font-size: 26pt; }
+h2 { font-size: 22pt; }
+h3 { font-size: 20pt; }
+h4 { font-size: 18pt; }
+h5 { font-size: 16pt; }
+h6 { font-size: 14pt; }
+
+tt, pre { font-size: 16pt; }
+sup, sub { font-size: 12pt; }
+
+table.navigation { float: right; margin: 2px; }
+
+.navigation td, .navigation a {  font-size: 10pt; padding: 2px; }
+
+#moin-interwiki, #moin-pagelocation, #moin-pageinfo { display: none; }
+
+
+/* user interface styles */
+#moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+#moin-pagelocation { display: none; }
+
+/* page-bottom */
+#moin-pageinfo { color: gray; font-size: .67em; float: right; }
+#moin-pageinfo a { color: gray; }
+
+}   /* end of @media projection */

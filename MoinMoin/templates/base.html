@@ -39,9 +39,6 @@
 
     {% block theme_stylesheets %}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/common.css') }}" />
-    <link media="screen" rel="stylesheet" href="{{ theme_static('css/screen.css') }}" />
-    <link media="print" rel="stylesheet" href="{{ theme_static('css/print.css') }}" />
-    <link media="projection" rel="stylesheet" href="{{ theme_static('css/projection.css') }}" />
     {% endblock %}
     {{ stylesheets }}
     {% if user.valid and user.css_url -%}
