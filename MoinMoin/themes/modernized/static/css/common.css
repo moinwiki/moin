@@ -616,24 +616,23 @@ h6:hover .permalink {
 
 @media print {
 
-/* content */
 html { font-family: Times, serif; font-size: 12pt; width: 100%;}
 body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0}
 
 a, a:visited, a.nonexistent,
-a.badinterwiki { color: black; text-decoration: none; }
+a.badinterwiki { color: black !important; text-decoration: none !important; }
 
 a.interwiki:before, a.badinterwiki:before { content: attr(title) ":"; }
 a.interwiki img, a.badinterwiki img { display: none; }
 
 pre { font-size: 10pt; }
 .footnotes div { width: 5em; border-top: 1pt solid gray; }
+div.moin-table-of-contents { box-shadow: none; -moz-box-shadow:  none; -webkit-box-shadow:  none;  }
 
-/* user interface - do not display */
+a.permalink, a.moin-showhide, a.showhide,
 #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
 #moin-pagelocation { display: none; }
 
-/* page-bottom */
 #moin-pageinfo { color: gray; font-size: .67em; float: right; }
 #moin-pageinfo a { color: gray; }
 
