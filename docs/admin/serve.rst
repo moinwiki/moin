@@ -9,6 +9,12 @@ is suitable for development, debugging, personal and small group wikis.
 
 It is not made for serving bigger loads, but it is easy to use.
 
+Please note that by default the builtin server uses port 8080. As this is
+>1024, root (Administrator) privileges are not required and we strongly
+recommend that you just use a normal (unprivileged) user account. If you
+are running a desktop wiki or doing moin development, just use your normal
+login user.
+
 Entering the virtual env
 ------------------------
 If you installed to a virtualenv, you need to activate it first, so it will
