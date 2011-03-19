@@ -8,7 +8,7 @@ Expands all macro elements in a internal Moin document.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from flask import current_app as app
 

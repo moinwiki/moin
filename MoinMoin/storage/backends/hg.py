@@ -21,7 +21,8 @@
           If you'ld like to work on it, pull it from repo history.
 """
 
-from __future__ import with_statement
+
+from __future__ import absolute_import, division
 
 import os
 import time

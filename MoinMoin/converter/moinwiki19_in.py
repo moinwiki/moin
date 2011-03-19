@@ -9,7 +9,7 @@ MoinMoin - Moin Wiki 1.9 input converter
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import re
 
