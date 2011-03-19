@@ -10,6 +10,8 @@ MoinMoin - wsgi application setup and related code
 Use create_app(config) to create the WSGI application (using Flask).
 """
 
+from __future__ import absolute_import, division
+
 import os
 
 # do this early, but not in MoinMoin/__init__.py because we need to be able to

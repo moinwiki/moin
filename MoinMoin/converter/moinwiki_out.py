@@ -9,7 +9,7 @@ Converts an internal document tree into moinwiki markup.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from MoinMoin.util.tree import moin_page, xlink
 

@@ -9,7 +9,7 @@ Expands include elements in a internal Moin document.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from emeraldtree import ElementTree as ET
 import re

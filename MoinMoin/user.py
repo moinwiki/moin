@@ -17,6 +17,8 @@
 """
 
 
+from __future__ import absolute_import, division
+
 import time, base64
 import copy
 import hashlib

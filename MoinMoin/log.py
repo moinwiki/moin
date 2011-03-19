@@ -53,6 +53,8 @@
 """
 
 
+from __future__ import absolute_import, division
+
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working
 # logging configuration.
