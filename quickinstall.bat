@@ -13,13 +13,6 @@ virtualenv --no-site-packages env
 echo Activating virtual environment ...
 call env\Scripts\activate.bat
 
-echo Installing all required python packages from pypi ...
-pip install -e .
-
-echo Compiling translations (not required if wiki is English only) ...
-python setup.py compile_catalog --statistics
-
-
 echo Getting some 3rd party stuff and unpack them into env/, where the default
 echo wikiconfig.py expects them (should be replaced by packaging) ...
 
@@ -46,3 +39,15 @@ wget -nc http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywik
 xcopy "env\AnyWikiDraw 0.14" env\AnyWikiDraw\ /Y /E /H
 
 del /q env\*.tar
+
+echo Installing babel first ...
+pip install babel
+
+echo Installing all required python packages from pypi ...
+pip install -e .
+
+echo Compiling translations (not required if wiki is English only) ...
+python setup.py compile_catalog --statistics
+
+
+
