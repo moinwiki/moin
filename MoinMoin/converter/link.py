@@ -64,7 +64,7 @@ class ConverterBase(object):
                 self.handle_wikilocal_links(elem, xlink_href, page)
             elif xlink_href.scheme == 'wiki':
                 self.handle_wiki_links(elem, xlink_href)
-            else:
+            elif xlink_href.scheme:
                 elem.set(html.class_, 'moin-' + xlink_href.scheme)
 
         elif xinclude_href:
