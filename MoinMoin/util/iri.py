@@ -621,6 +621,12 @@ class IriPath(object):
     def __unicode__(self):
         return u'/'.join(self._list)
 
+    def __repr__(self):
+        return '%s(%r)' % (
+                self.__class__.__name__,
+                unicode(self),
+                )
+
     def _remove_dots(self, segments):
         if not segments or segments[0] != '':
             return segments
