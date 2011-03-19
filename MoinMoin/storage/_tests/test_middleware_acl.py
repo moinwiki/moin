@@ -44,7 +44,7 @@ class TestACLMiddleware(BackendTest):
 
 
     def test_noaccess(self):
-        name = "noaccess"
+        name = u"noaccess"
         self.create_item_acl(name, "All:")
         assert py.test.raises(AccessDeniedError, self.get_item, name)
 
@@ -54,9 +54,9 @@ class TestACLMiddleware(BackendTest):
             content_acl = dict(default=u"All:admin,read,write,destroy")
 
         backend = flaskg.storage
-        assert py.test.raises(AccessDeniedError, backend.create_item, "I will never exist")
+        assert py.test.raises(AccessDeniedError, backend.create_item, u"I will never exist")
 
-        item = self.create_item_acl("i will exist!", "All:read,write")
+        item = self.create_item_acl(u"i will exist!", "All:read,write")
         rev = item.create_revision(1)
         data = "my very existent data"
         rev.write(data)
@@ -64,7 +64,7 @@ class TestACLMiddleware(BackendTest):
         assert item.get_revision(1).read() == data
 
     def test_read_access_allowed(self):
-        name = "readaccessallowed"
+        name = u"readaccessallowed"
         self.create_item_acl(name, "All:read")
         # Should simply pass...
         item = self.get_item(name)
@@ -74,12 +74,12 @@ class TestACLMiddleware(BackendTest):
         assert py.test.raises(AccessDeniedError, item.change_metadata)
 
     def test_write_after_create(self):
-        name = "writeaftercreate"
+        name = u"writeaftercreate"
         item = self.create_item_acl(name, "All:")
         assert py.test.raises(AccessDeniedError, item.create_revision, 1)
 
     def test_modify_without_acl_change(self):
-        name = "copy_without_acl_change"
+        name = u"copy_without_acl_change"
         acl = "All:read,write"
         self.create_item_acl(name, acl)
         item = self.get_item(name)
@@ -89,7 +89,7 @@ class TestACLMiddleware(BackendTest):
         item.commit()
 
     def test_copy_with_acl_change(self):
-        name = "copy_with_acl_change"
+        name = u"copy_with_acl_change"
         acl = "All:read,write"
         self.create_item_acl(name, acl)
         item = self.get_item(name)
@@ -97,7 +97,7 @@ class TestACLMiddleware(BackendTest):
         py.test.raises(AccessDeniedError, rev.__setitem__, ACL, acl + ",write")
 
     def test_write_without_read(self):
-        name = "write_but_not_read"
+        name = u"write_but_not_read"
         acl = "All:write"
         item = flaskg.storage.create_item(name)
         rev = item.create_revision(0)

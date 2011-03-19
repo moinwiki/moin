@@ -74,25 +74,25 @@ class TestMercurialBackend(BackendTest):
             shutil.rmtree(datadir)
 
     def test_large_revision_meta(self):
-        item = self.backend.create_item('existing')
+        item = self.backend.create_item(u'existing')
         rev = item.create_revision(0)
         for num in xrange(10000):
             revval = "revision metadata value for key %d" % num
-            rev["%s" % num] = revval * 10
+            rev[u"%s" % num] = revval * 10
         item.commit()
-        item = self.backend.get_item('existing')
+        item = self.backend.get_item(u'existing')
         rev = item.get_revision(-1)
         assert len(dict(rev)) == 10000 + 3 # 'sha1', 'size', 'mtime' key is added automatically on commit
         for num in xrange(10000):
             revval = "revision metadata value for key %d" % num
-            assert rev["%s" % num] == revval * 10
+            assert rev[u"%s" % num] == revval * 10
 
     def test_data_after_rename(self):
-        item = self.backend.create_item('before')
+        item = self.backend.create_item(u'before')
         rev = item.create_revision(0)
         rev.write("aaa")
         item.commit()
-        item.rename("after")
+        item.rename(u'after')
         rev = item.create_revision(1)
         rev.write("bbb")
         item.commit()
@@ -102,29 +102,29 @@ class TestMercurialBackend(BackendTest):
         assert rev.read() == "bbb"
 
     def test_revision_metadata_key_name(self):
-        item = self.backend.create_item('metakey')
+        item = self.backend.create_item(u'metakey')
         rev = item.create_revision(0)
-        rev['_meta_'] = "dummy"
+        rev[u'_meta_'] = u"dummy"
         item.commit()
-        item = self.backend.get_item('metakey')
+        item = self.backend.get_item(u'metakey')
         rev = item.get_revision(-1)
-        assert rev['_meta_'] == "dummy"
+        assert rev[u'_meta_'] == u"dummy"
 
     def test_index_files_in_repository(self):
-        item = self.backend.create_item('indexed')
+        item = self.backend.create_item(u'indexed')
         rev = item.create_revision(0)
         item.commit()
         repo_items = [i for i in self.backend._repo['']]
         assert len(repo_items) == 2
         assert item._id in repo_items
-        assert "%s.rev" % (item._id) in repo_items
+        assert u"%s.rev" % (item._id) in repo_items
         rev = item.get_revision(-1)
         rev.destroy()
         repo_items = [i for i in self.backend._repo['']]
         assert len(repo_items) == 3
-        assert "%s.rip" % (item._id) in repo_items
+        assert u"%s.rip" % (item._id) in repo_items
         item.destroy()
         repo_items = [i for i in self.backend._repo['']]
         assert len(repo_items) == 1
-        assert "%s.rip" % (item._id) in repo_items
+        assert u"%s.rip" % (item._id) in repo_items
 
