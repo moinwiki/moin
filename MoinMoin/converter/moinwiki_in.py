@@ -586,8 +586,12 @@ class Converter(ConverterMacro):
     """
 
     def inline_comment_repl(self, stack, comment, comment_begin=None, comment_end=None):
-        # TODO
-        pass
+        if comment_begin:
+            attrib = {moin_page('class'): 'comment'}
+            elem = moin_page.span(attrib=attrib)
+            stack.push(elem)
+        else:
+            stack.pop()
 
     inline_emphstrong = r"""
         (?P<emphstrong>
