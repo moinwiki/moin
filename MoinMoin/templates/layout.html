@@ -41,7 +41,7 @@
                 <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
                     {{ aliasname }}
                 </a>
-                {% if 'usersettings' not in cfg.actions_excluded -%}
+                {% if 'frontend.usersettings' not in cfg.actions_excluded -%}
                     <span class="sep"> | </span>
                     <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">{{ _('Settings') }}</a>
                 {%- endif %}
