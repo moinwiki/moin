@@ -58,7 +58,6 @@ Configuration::
     interwikiname = ... # critical, make sure it is same as in 1.9!
     sitename = ... # same as in 1.9
     item_root = ... # see page_front_page in 1.9
-    navi_bar = ... # similar as in 1.9
     theme_default = ... # (only supported value is "modernized")
     language_default = ...
     mail_smarthost = ...

@@ -204,13 +204,10 @@ class ThemeSupport(object):
         :returns: list of tuples (css_class, url, link_text, title)
         """
         flaskg.clock.start('navibar')
-        items = []  # navibar items
         current = item_name
-
         # Process config navi_bar
-        for text in self.cfg.navi_bar:
-            url, link_text, title = self.split_navilink(text)
-            items.append(('wikilink', url, link_text, title))
+        items = [(cls, url_for(endpoint, **args), link_text, title)
+                 for cls, endpoint, args, link_text, title in self.cfg.navi_bar]
 
         # Add user links to wiki links.
         userlinks = self.user.getQuickLinks()

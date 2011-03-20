@@ -109,10 +109,6 @@ class ConfigFunctionality(object):
         # internal dict for plugin `modules' lists
         self._site_plugin_lists = {}
 
-        # we replace any string placeholders with config values
-        # e.g u'%(item_root)s' % self
-        self.navi_bar = [elem % self for elem in self.navi_bar]
-
         # check if mail is possible and set flag:
         self.mail_enabled = (self.mail_smarthost is not None or self.mail_sendmail is not None) and self.mail_from
         self.mail_enabled = self.mail_enabled and True or False
@@ -195,7 +191,7 @@ file. It should match the actual charset of the configuration file.
 """
 
         decode_names = (
-            'sitename', 'interwikiname', 'user_homewiki', 'navi_bar',
+            'sitename', 'interwikiname', 'user_homewiki',
             'interwiki_preferred',
             'item_root', 'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
@@ -334,8 +330,14 @@ options_no_group_name = {
      "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]"),
     ('interwikiname', None, "unique and stable InterWiki name (prefix, moniker) of the site [Unicode], or None"),
     ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of `sitename`) [Unicode]"),
-    ('navi_bar', [u'FindPage', u'HelpContents', ],
-     'Most important page names. Users can add more names in their quick links in user preferences. To link to URL, use `u"[[url|link title]]"`, to use a shortened name for long page name, use `u"[[LongLongPageName|title]]"`. [list of Unicode]'),
+    ('navi_bar', [
+        ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
+        ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
+        ('wikilink', 'frontend.global_index', dict(), L_('Index'), L_('Global Index')),
+        ('wikilink', 'frontend.global_tags', dict(), L_('Tags'), L_('Global Tags Index')),
+        ('wikilink', 'admin.index', dict(), L_('More'), L_('Administration & Docs')),
+     ],
+     'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
 
     ('theme_default', u'modernized', "Default theme."),
 
@@ -375,12 +377,6 @@ options_no_group_name = {
         ('frontend.rename_item', L_('Rename'), True, ),
         ('frontend.delete_item', L_('Delete'), True, ),
         ('frontend.destroy_item', L_('Destroy'), True, ),
-        ('special.delimiter', None, None, ),
-        ('frontend.global_history', L_('Global History'), False, ),
-        ('frontend.global_index', L_('Global Items Index'), False, ),
-        ('frontend.global_tags', L_('Global Tags Index'), False, ),
-        ('special.delimiter', None, None, ),
-        ('admin.index', L_('Administration & Docs'), False, ),
      ],
      'list of edit bar entries (list of tuples (endpoint, label))'),
     ('history_count', (100, 200), "number of revisions shown for info/history action (default_count_shown, max_count_shown)"),

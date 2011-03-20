@@ -92,17 +92,6 @@ class Config(DefaultConfig):
 
     # User interface ----------------------------------------------------
 
-    # Add your wikis important pages at the end. It is not recommended to
-    # remove the default links.  Leave room for user links - don't use
-    # more than 6 short items.
-    # You MUST use Unicode strings here, but you need not use localized
-    # page names for system and help pages, those will be used automatically
-    # according to the user selected language. [Unicode]
-    navi_bar = [
-        # If you want to show your item_root here:
-        #u'%(item_root)s',
-    ]
-
     # The default theme anonymous or new users get
     theme_default = u'modernized'
 
