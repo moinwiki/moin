@@ -74,8 +74,7 @@ class Type(object):
     def __unicode__(self):
         ret = [u'%s/%s' % (self.type or '*', self.subtype or '*')]
 
-        parameters = self.parameters.items()
-        parameters.sort()
+        parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
                 ret.append(u'%s=%s' % (key, value))

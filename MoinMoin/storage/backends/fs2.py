@@ -204,8 +204,7 @@ class FS2Backend(BackendBase):
         p = self._make_path('meta', item._fs_item_id)
         l = os.listdir(p)
         suffix = '.rev'
-        ret = [int(i[:-len(suffix)]) for i in l if i.endswith(suffix)]
-        ret.sort()
+        ret = sorted([int(i[:-len(suffix)]) for i in l if i.endswith(suffix)])
         return ret
 
     def _create_revision(self, item, revno):

@@ -53,7 +53,7 @@ def dump_regularly(seconds):
     activate_hook()
 
     def background_dumper(seconds):
-        while 1:
+        while True:
             sleep(seconds)
             trigger_dump()
 

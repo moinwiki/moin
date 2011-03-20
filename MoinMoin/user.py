@@ -493,8 +493,7 @@ class User(object):
 
         self.last_saved = int(time.time())
 
-        attrs = self.persistent_items()
-        attrs.sort()
+        attrs = sorted(self.persistent_items())
         for key, value in attrs:
             if isinstance(value, list):
                 value = tuple(value)

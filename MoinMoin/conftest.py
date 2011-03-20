@@ -48,8 +48,7 @@ try:
 
     def report_coverage():
         coverage.stop()
-        module_list = [sys.modules[mod] for mod in coverage_modules]
-        module_list.sort()
+        module_list = sorted([sys.modules[mod] for mod in coverage_modules])
         coverage.report(module_list)
 
     def callback(option, opt_str, value, parser):
