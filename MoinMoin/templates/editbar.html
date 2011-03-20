@@ -1,142 +1,71 @@
 {% set exists = storage.has_item(item_name) %}
 <ul class="moin-editbar">
-    {% if 'Show' in cfg.edit_bar and 'show' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.show_item', item_name=item_name) }}" rel="nofollow"> {{ _('Show') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Highlight' in cfg.edit_bar and 'highlight' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.highlight_item', item_name=item_name) }}" rel="nofollow"> {{ _('Highlight') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Meta' in cfg.edit_bar and 'meta' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.show_item_meta', item_name=item_name) }}" rel="nofollow"> {{ _('Meta') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Download' in cfg.edit_bar and 'get' not in cfg.actions_excluded -%}
-        <li>
-            <a href="{{ url_for('frontend.get_item', item_name=item_name) }}" rel="nofollow">{{ _('Download') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'History' in cfg.edit_bar and 'history' not in cfg.actions_excluded -%}
-        <li>
-            <a href="{{ url_for('frontend.history', item_name=item_name) }}" rel="nofollow">{{ _('History') }}</a>
-        </li>
-    {%- endif %}
-    {% if 'Quicklink' in cfg.edit_bar and 'quicklink' not in cfg.actions_excluded
-       and user.valid -%}
-        <li>
-            <a class="nbquicklink" href="{{ url_for('frontend.quicklink_item', item_name=item_name) }}" rel="nofollow">
-            {% if user.isQuickLinkedTo([item_name]) -%}
-                {{ _('Remove Link') }}
-            {% else -%}
-                {{ _('Add Link') }}
-            {%- endif %}
-            </a>
-        </li>
-    {%- endif %}
-    {% if 'Subscribe' in cfg.edit_bar and 'subscribe' not in cfg.actions_excluded
-       and user.valid and cfg.mail_enabled -%}
-        <li>
-            <a class="nbsubscribe" href="{{ url_for('frontend.subscribe_item', item_name=item_name) }}" rel="nofollow">
-            {% if user.isSubscribedTo([item_name]) %}
-                    {{ _('Unsubscribe') }}
-            {% else %}
-                    {{ _('Subscribe') }}
-            {% endif %}
-            </a>
-        </li>
-    {%- endif %}
-    {% if 'Comments' in cfg.edit_bar and 'comments' not in cfg.actions_excluded -%}
-        <li class="toggleCommentsButton" style="display:none;">
-            <a href="#" class="nbcomment" onClick="toggleComments();return false;">{{ _('Comments') }}</a>
-        </li>
-    {%- endif %}
-    {% if 'Index' in cfg.edit_bar and 'index' not in cfg.actions_excluded -%}
-        <li>
-            <a class="nbindex" href="{{ url_for('frontend.index', item_name=item_name) }}" rel="nofollow">{{ _('Index') }}</a>
-        </li>
-    {%- endif %}
-    {% if 'Supplementation' in cfg.edit_bar and 'supplementation' not in cfg.actions_excluded -%}
-        {%- for sub_item_name in cfg.supplementation_item_names -%}
-            {% set current_sub = item_name.rsplit('/', 1)[-1] %}
-            {%- if not current_sub in cfg.supplementation_item_names -%}
-                {% set supp_name = '%s/%s' % (item_name, sub_item_name) -%}
-                {% if storage.has_item(supp_name) or user.may.write(supp_name) %}
-                    <li>
-                        <a class="nbsupplementation" href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">{{ _(sub_item_name) }}</a>
-                    </li>
+    {% for endpoint, label, check_exists in cfg.edit_bar if not endpoint in cfg.actions_excluded %}
+        {% if (not check_exists or check_exists and exists) and endpoint in [
+               'frontend.show_item', 'frontend.index',
+               'frontend.highlight_item', 'frontend.show_item_meta', 'frontend.get_item',
+               'frontend.get_item', 'frontend.history', 'frontend.backrefs', 'frontend.sitemap',
+               'frontend.similar_names',
+               'frontend.modify_item',
+               'frontend.copy_item', 'frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
+           ] -%}
+            <li>
+            <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow"> {{ label }}</a>
+            </li>
+        {%- endif %}
+
+        {% if endpoint in [
+            'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
+            'admin.index',
+           ] -%}
+            <li>
+            <a href="{{ url_for(endpoint) }}" rel="nofollow"> {{ label }}</a>
+            </li>
+        {%- endif %}
+
+        {% if endpoint == 'frontend.quicklink_item' and user.valid -%}
+            <li>
+                <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow">
+                {% if user.isQuickLinkedTo([item_name]) -%}
+                    {{ _('Remove Link') }}
+                {% else -%}
+                    {{ _('Add Link') }}
                 {%- endif %}
-            {%- endif %}
-        {%- endfor -%}
-    {%- endif %}
-    {% if exists and 'WhatRefersHere' in cfg.edit_bar and 'backrefs' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.backrefs', item_name=item_name) }}" rel="nofollow"> {{ _('What refers here?') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'SiteMap' in cfg.edit_bar and 'sitemap' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.sitemap', item_name=item_name) }}" rel="nofollow"> {{ _('Local Site Map') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'SimilarItems' in cfg.edit_bar and 'similar_names' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.similar_names', item_name=item_name) }}" rel="nofollow"> {{ _('Items with similar names') }}</a>
-        </li>
-    {%- endif %}
-    <li>*</li>
-    {% if 'Modify' in cfg.edit_bar and 'modify' not in cfg.actions_excluded -%}
-        <li>
-        {% if user.may.write(item_name) %}
-            <a href="{{ url_for('frontend.modify_item', item_name=item_name) }}" rel="nofollow"> {{ _('Modify') }}</a>
-        {% else %}
-            {{ _('Immutable Item')}}
-        {% endif %}
-        </li>
-    {%- endif %}
-    {% if exists and 'Copy' in cfg.edit_bar and 'copy' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.copy_item', item_name=item_name) }}" rel="nofollow"> {{ _('Copy') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Rename' in cfg.edit_bar and 'rename' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.rename_item', item_name=item_name) }}" rel="nofollow"> {{ _('Rename') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Delete' in cfg.edit_bar and 'delete' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.delete_item', item_name=item_name) }}" rel="nofollow"> {{ _('Delete') }}</a>
-        </li>
-    {%- endif %}
-    {% if exists and 'Destroy' in cfg.edit_bar and 'destroy' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.destroy_item', item_name=item_name) }}" rel="nofollow"> {{ _('Destroy') }}</a>
-        </li>
-    {%- endif %}
-    <li>*</li>
-    {% if 'GlobalHistory' in cfg.edit_bar and 'global_history' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.global_history') }}" rel="nofollow"> {{ _('Global History') }}</a>
-        </li>
-    {%- endif %}
-    {% if 'GlobalIndex' in cfg.edit_bar and 'global_index' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.global_index') }}" rel="nofollow"> {{ _('Global Items Index') }}</a>
-        </li>
-    {%- endif %}
-    {% if 'GlobalTags' in cfg.edit_bar and 'global_tags' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('frontend.global_tags') }}" rel="nofollow"> {{ _('Global Tags Index') }}</a>
-        </li>
-    {%- endif %}
-    <li>*</li>
-    {% if 'Administration' in cfg.edit_bar and 'admin' not in cfg.actions_excluded -%}
-        <li>
-        <a href="{{ url_for('admin.index') }}" rel="nofollow"> {{ _('Administration & Docs') }}</a>
-        </li>
-    {%- endif %}
+                </a>
+            </li>
+        {%- endif %}
+        {% if endpoint == 'frontend.subscribe_item' and user.valid -%}
+            <li>
+                <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow">
+                {% if user.isSubscribedTo([item_name]) %}
+                        {{ _('Unsubscribe') }}
+                {% else %}
+                        {{ _('Subscribe') }}
+                {% endif %}
+                </a>
+            </li>
+        {%- endif %}
+
+        {% if endpoint == 'special.delimiter' -%}
+            <li>*</li>
+        {%- endif %}
+        {% if endpoint == 'special.comments' -%}
+            <li class="toggleCommentsButton" style="display:none;">
+                <a href="#" onClick="toggleComments();return false;">{{ _('Comments') }}</a>
+            </li>
+        {%- endif %}
+        {% if endpoint == 'special.supplementation' -%}
+            {%- for sub_item_name in cfg.supplementation_item_names -%}
+                {% set current_sub = item_name.rsplit('/', 1)[-1] %}
+                {%- if not current_sub in cfg.supplementation_item_names -%}
+                    {% set supp_name = '%s/%s' % (item_name, sub_item_name) -%}
+                    {% if storage.has_item(supp_name) or user.may.write(supp_name) %}
+                        <li>
+                            <a href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">{{ _(sub_item_name) }}</a>
+                        </li>
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor -%}
+        {%- endif %}
+    {% endfor %}
 </ul>
