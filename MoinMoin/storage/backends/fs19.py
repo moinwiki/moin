@@ -111,7 +111,7 @@ class Index(object):
             try:
                 refs = refcount and 1 or 0
                 idx.insert().values(name=name, uuid=uuid, old_id=old_id, refcount=refs).execute()
-            except IntegrityError, err:
+            except IntegrityError as err:
                 # input maybe has duplicate names in user profiles
                 logging.warning("Multiple user profiles for name: %r" % name)
         return uuid
@@ -147,7 +147,7 @@ class Index(object):
             uuid = make_uuid()
             try:
                 idx.insert().values(name=name, uuid=uuid).execute()
-            except IntegrityError, err:
+            except IntegrityError as err:
                 # shouldn't happen
                 logging.warning(str(err))
             return uuid

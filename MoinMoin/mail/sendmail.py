@@ -152,10 +152,10 @@ def sendmail(to, subject, text, mail_from=None):
                 except AttributeError:
                     # in case the connection failed, SMTP has no "sock" attribute
                     pass
-        except smtplib.SMTPException, e:
+        except smtplib.SMTPException as e:
             logging.exception("smtp mail failed with an exception.")
             return (0, str(e))
-        except (os.error, socket.error), e:
+        except (os.error, socket.error) as e:
             logging.exception("smtp mail failed with an exception.")
             return (0, _("Connection to mailserver '%(server)s' failed: %(reason)s",
                 server=cfg.mail_smarthost,

@@ -279,7 +279,7 @@ def before_wiki():
 
         try:
             flaskg.user = setup_user()
-        except HTTPException, e:
+        except HTTPException as e:
             # this makes stuff like abort(redirect(...)) work
             return app.handle_http_exception(e)
 

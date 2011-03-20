@@ -69,7 +69,7 @@ space between words. Group page name is not allowed.""", name=theuser.name)
     # Encode password
     try:
         theuser.enc_password = encodePassword(password)
-    except UnicodeError, err:
+    except UnicodeError as err:
         # Should never happen
         return "Can't encode password: %(msg)s" % dict(msg=str(err))
 
