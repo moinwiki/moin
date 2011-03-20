@@ -1,6 +1,6 @@
 {% set exists = storage.has_item(item_name) %}
 <ul class="moin-itemviews">
-    {% for endpoint, label, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+    {% for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {% if (not check_exists or check_exists and exists) and endpoint in [
                'frontend.show_item', 'frontend.index',
                'frontend.highlight_item', 'frontend.show_item_meta', 'frontend.get_item',
@@ -10,7 +10,7 @@
                'frontend.copy_item', 'frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
            ] -%}
             <li>
-            <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow"> {{ label }}</a>
+            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow"> {{ label }}</a>
             </li>
         {%- endif %}
 
@@ -19,36 +19,36 @@
             'admin.index',
            ] -%}
             <li>
-            <a href="{{ url_for(endpoint) }}" rel="nofollow"> {{ label }}</a>
+            <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow"> {{ label }}</a>
             </li>
         {%- endif %}
 
         {% if endpoint == 'frontend.quicklink_item' and user.valid -%}
             <li>
-                <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow">
+            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                 {% if user.isQuickLinkedTo([item_name]) -%}
                     {{ _('Remove Link') }}
                 {% else -%}
                     {{ _('Add Link') }}
                 {%- endif %}
-                </a>
+            </a>
             </li>
         {%- endif %}
         {% if endpoint == 'frontend.subscribe_item' and user.valid -%}
             <li>
-                <a href="{{ url_for(endpoint, item_name=item_name) }}" rel="nofollow">
+            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                 {% if user.isSubscribedTo([item_name]) %}
                         {{ _('Unsubscribe') }}
                 {% else %}
                         {{ _('Subscribe') }}
                 {% endif %}
-                </a>
+            </a>
             </li>
         {%- endif %}
 
         {% if endpoint == 'special.comments' -%}
             <li class="toggleCommentsButton" style="display:none;">
-                <a href="#" onClick="toggleComments();return false;">{{ _('Comments') }}</a>
+            <a href="#" onClick="toggleComments();return false;" title="{{ title }}">{{ label }}</a>
             </li>
         {%- endif %}
         {% if endpoint == 'special.supplementation' -%}
