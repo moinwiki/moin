@@ -22,6 +22,7 @@ from flask import current_app as app
 
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Unicode, Integer
 from sqlalchemy.exceptions import IntegrityError
+from sqlalchemy.pool import NullPool
 
 from werkzeug import cached_property
 
@@ -121,7 +122,7 @@ class FS2Backend(BackendBase):
                 if err.errno != errno.EEXIST:
                     raise BackendError(str(err))
 
-        engine = create_engine('sqlite:///%s' % self._make_path('index.db'), echo=False)
+        engine = create_engine('sqlite:///%s' % self._make_path('index.db'), poolclass=NullPool, echo=False)
         metadata = MetaData()
         metadata.bind = engine
 
