@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0.0a0\n"
 "Report-Msgid-Bugs-To: English <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2011-03-20 22:08+0100\n"
+"POT-Creation-Date: 2011-03-20 23:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -451,7 +451,7 @@ msgstr ""
 msgid "You must log in to use bookmarks."
 msgstr ""
 
-#: MoinMoin/apps/frontend/views.py:1386 MoinMoin/config/default.py:373
+#: MoinMoin/apps/frontend/views.py:1386 MoinMoin/config/default.py:380
 msgid "Items with similar names"
 msgstr ""
 
@@ -548,7 +548,7 @@ msgstr ""
 msgid "Home Page"
 msgstr ""
 
-#: MoinMoin/config/default.py:335 MoinMoin/config/default.py:365
+#: MoinMoin/config/default.py:335 MoinMoin/config/default.py:363
 msgid "History"
 msgstr ""
 
@@ -556,7 +556,7 @@ msgstr ""
 msgid "Global History"
 msgstr ""
 
-#: MoinMoin/config/default.py:336 MoinMoin/config/default.py:369
+#: MoinMoin/config/default.py:336 MoinMoin/config/default.py:368
 msgid "Index"
 msgstr ""
 
@@ -585,43 +585,107 @@ msgid "Show"
 msgstr ""
 
 #: MoinMoin/config/default.py:362
-msgid "Highlight"
-msgstr ""
-
-#: MoinMoin/config/default.py:363
-msgid "Meta"
-msgstr ""
-
-#: MoinMoin/config/default.py:364
 msgid "Download"
 msgstr ""
 
-#: MoinMoin/config/default.py:371
-msgid "What refers here?"
+#: MoinMoin/config/default.py:363
+msgid "Revision History"
 msgstr ""
 
-#: MoinMoin/config/default.py:372
-msgid "Local Site Map"
-msgstr ""
-
-#: MoinMoin/config/default.py:375 MoinMoin/templates/show.html:9
+#: MoinMoin/config/default.py:366 MoinMoin/templates/show.html:9
 msgid "Modify"
 msgstr ""
 
-#: MoinMoin/config/default.py:376 MoinMoin/templates/copy.html:14
+#: MoinMoin/config/default.py:366
+msgid "Edit or Upload"
+msgstr ""
+
+#: MoinMoin/config/default.py:368
+msgid "List sub-items"
+msgstr ""
+
+#: MoinMoin/config/default.py:369
+msgid "Comments"
+msgstr ""
+
+#: MoinMoin/config/default.py:369
+msgid "Switch showing comments on or off"
+msgstr ""
+
+#: MoinMoin/config/default.py:370
+msgid "Highlight"
+msgstr ""
+
+#: MoinMoin/config/default.py:370
+msgid "Show with Syntax-Highlighting"
+msgstr ""
+
+#: MoinMoin/config/default.py:371
+msgid "Meta"
+msgstr ""
+
+#: MoinMoin/config/default.py:371
+msgid "Display Metadata"
+msgstr ""
+
+#: MoinMoin/config/default.py:372
+msgid "Create or remove a navigation link to this item"
+msgstr ""
+
+#: MoinMoin/config/default.py:373
+msgid "Switch notifications about item changes on or off"
+msgstr ""
+
+#: MoinMoin/config/default.py:374 MoinMoin/templates/copy.html:14
 msgid "Copy"
 msgstr ""
 
-#: MoinMoin/config/default.py:377 MoinMoin/templates/rename.html:14
+#: MoinMoin/config/default.py:374
+msgid "Create a copy of this item"
+msgstr ""
+
+#: MoinMoin/config/default.py:375 MoinMoin/templates/rename.html:14
 msgid "Rename"
 msgstr ""
 
-#: MoinMoin/config/default.py:378 MoinMoin/templates/delete.html:11
+#: MoinMoin/config/default.py:375
+msgid "Rename this item"
+msgstr ""
+
+#: MoinMoin/config/default.py:376 MoinMoin/templates/delete.html:11
 msgid "Delete"
 msgstr ""
 
-#: MoinMoin/config/default.py:379
+#: MoinMoin/config/default.py:376
+msgid "Move this item to the trash"
+msgstr ""
+
+#: MoinMoin/config/default.py:377
 msgid "Destroy"
+msgstr ""
+
+#: MoinMoin/config/default.py:377
+msgid "Completely destroy this item"
+msgstr ""
+
+#: MoinMoin/config/default.py:378
+msgid "Referrers"
+msgstr ""
+
+#: MoinMoin/config/default.py:378
+msgid "What refers here?"
+msgstr ""
+
+#: MoinMoin/config/default.py:379
+msgid "Site Map"
+msgstr ""
+
+#: MoinMoin/config/default.py:379
+msgid "Local Site Map of this item"
+msgstr ""
+
+#: MoinMoin/config/default.py:380
+msgid "Similar"
 msgstr ""
 
 #: MoinMoin/converter/html_out.py:595
@@ -869,10 +933,6 @@ msgstr ""
 
 #: MoinMoin/templates/itemviews.html:43
 msgid "Subscribe"
-msgstr ""
-
-#: MoinMoin/templates/itemviews.html:54
-msgid "Comments"
 msgstr ""
 
 #: MoinMoin/templates/layout.html:26
