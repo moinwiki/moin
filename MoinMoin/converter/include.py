@@ -199,8 +199,7 @@ class Converter(object):
                     from MoinMoin.storage.terms import NameFn
                     inc_match = re.compile(xp_include_pages)
                     root_item = Item(name=u'')
-                    pagelist = [item.name for item in root_item.list_items(NameFn(inc_match))]
-                    pagelist.sort()
+                    pagelist = sorted([item.name for item in root_item.list_items(NameFn(inc_match))])
                     if xp_include_sort == 'descending':
                         pagelist.reverse()
                     if xp_include_skipitems is not None:

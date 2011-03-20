@@ -1373,8 +1373,7 @@ def similar_names(item_name):
     list similar item names
     """
     start, end, matches = findMatches(item_name)
-    keys = matches.keys()
-    keys.sort()
+    keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
     # 8 item_name
     # 4 "%s/..." % item_name

@@ -71,8 +71,7 @@ def urls_names():
     See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
     """
     # XXX we currently also get user items, fix this
-    item_names = [item.name for item in flaskg.storage.iteritems()]
-    item_names.sort()
+    item_names = sorted([item.name for item in flaskg.storage.iteritems()])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')
 

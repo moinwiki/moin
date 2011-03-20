@@ -65,8 +65,7 @@ def rangelist(numbers):
     """ Convert a list of integers to a range string in the form
         '1,2-5,7'.
     """
-    numbers = numbers[:]
-    numbers.sort()
+    numbers = sorted(numbers[:])
     numbers.append(999999)
     pattern = ','
     for i in range(len(numbers)-1):

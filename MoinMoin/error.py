@@ -87,7 +87,7 @@ class CompositeError(Error):
     def exceptions(self):
         """ Return a list of all inner exceptions """
         all = [self.innerException]
-        while 1:
+        while True:
             lastException = all[-1][1]
             try:
                 all.append(lastException.innerException)

@@ -112,7 +112,7 @@ class LogFile:
         :rtype: iterator
         """
         self.to_end()
-        while 1:
+        while True:
             try:
                 logging.log(self.loglevel, "LogFile.reverse %s" % self.__filename)
                 result = self.previous()

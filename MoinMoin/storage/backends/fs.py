@@ -159,8 +159,7 @@ class FSBackend(BackendBase):
             return []
         p = os.path.join(self._path, item._fs_item_id)
         l = os.listdir(p)
-        ret = [int(i[4:]) for i in l if i.startswith('rev.')]
-        ret.sort()
+        ret = sorted([int(i[4:]) for i in l if i.startswith('rev.')])
         return ret
 
     def _create_revision(self, item, revno):

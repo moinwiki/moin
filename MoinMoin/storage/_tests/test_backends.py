@@ -203,8 +203,7 @@ class BackendTest(object):
             self.create_rev_item_helper(u"item_" + str(num).zfill(2))
         for num in range(10):
             self.create_meta_item_helper(u"item_" + str(num).zfill(2))
-        itemlist = [item.name for item in self.backend.iteritems()]
-        itemlist.sort()
+        itemlist = sorted([item.name for item in self.backend.iteritems()])
         for num, itemname in enumerate(itemlist):
             assert itemname == u"item_" + str(num).zfill(2)
         assert len(itemlist) == 20
