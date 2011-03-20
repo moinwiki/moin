@@ -46,9 +46,6 @@
             </li>
         {%- endif %}
 
-        {% if endpoint == 'special.delimiter' -%}
-            <li>*</li>
-        {%- endif %}
         {% if endpoint == 'special.comments' -%}
             <li class="toggleCommentsButton" style="display:none;">
                 <a href="#" onClick="toggleComments();return false;">{{ _('Comments') }}</a>

@@ -371,8 +371,9 @@ options_no_group_name = {
         ('frontend.backrefs', L_('What refers here?'), False, ),
         ('frontend.sitemap', L_('Local Site Map'), True, ),
         ('frontend.similar_names', L_('Items with similar names'), False, ),
-        ('special.delimiter', None, None, ),
-        ('frontend.modify_item', L_('Modify'), False, ),
+        # note: when rendering a non-existing item, you'll be offered to
+        # create it (in the content area), so we do not offer "Modify":
+        ('frontend.modify_item', L_('Modify'), True, ),
         ('frontend.copy_item', L_('Copy'), True, ),
         ('frontend.rename_item', L_('Rename'), True, ),
         ('frontend.delete_item', L_('Delete'), True, ),
