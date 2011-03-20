@@ -65,7 +65,7 @@ def check_environ():
         rc = p.wait()
         if pid and rc == 1:
             slapd = True  # it works
-    except OSError, err:
+    except OSError as err:
         import errno
         if not (err.errno == errno.ENOENT or
                 (err.errno == 3 and os.name == 'nt')):
@@ -116,7 +116,7 @@ class Slapd(object):
                 try:
                     lo.simple_bind_s('', '')
                     started = True
-                except ldap.SERVER_DOWN, err:
+                except ldap.SERVER_DOWN as err:
                     time.sleep(0.1)
                 else:
                     break

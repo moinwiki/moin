@@ -16,6 +16,8 @@ use a Config class to define the required configuration within the test class.
 """
 
 
+from __future__ import absolute_import, division
+
 # exclude some directories from py.test test discovery, pathes relative to this file
 collect_ignore = ['static',  # same
                   '../wiki', # no tests there
@@ -46,8 +48,7 @@ try:
 
     def report_coverage():
         coverage.stop()
-        module_list = [sys.modules[mod] for mod in coverage_modules]
-        module_list.sort()
+        module_list = sorted([sys.modules[mod] for mod in coverage_modules])
         coverage.report(module_list)
 
     def callback(option, opt_str, value, parser):

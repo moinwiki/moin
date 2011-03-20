@@ -10,7 +10,7 @@ MoinMoin - Media Wiki input converter
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import re
 

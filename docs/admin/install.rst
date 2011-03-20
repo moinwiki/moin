@@ -24,7 +24,8 @@ Developer install
 Please make sure you have `virtualenv` installed (it includes `pip`).
 
 If you just want to run moin in-place in your mercurial workdir, run this
-from your mercurial moin2 work dir::
+from your mercurial moin2 work dir (you should do this using your normal
+user login, no root or Administrator privileges needed)::
 
  ./quickinstall  # for linux (or other posix OSes)
  # or
@@ -37,11 +38,46 @@ pip will fetch all dependencies from pypi and install them, so this may take
 a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
 
+Please review the output of the quickinstall script, whether there were fatal
+errors. In case you have a bad network connection that makes the downloads
+fail, you can try to do the steps in quickinstall manually.
+
 Further, it will create a "moin" script for your platform which you can use
-for starting moin (the builtin server) or invoke moin script commands. It will
-be in the PATH, so just type "moin" on the shell / cmd.
+for starting moin (the builtin server) or invoke moin script commands.
+After you activated the virtual environment, the moin script will be in the
+PATH, so you can just type "moin" on the shell / cmd.
 
 Note: in this special mode, it won't copy the MoinMoin code to the env/
 directory, it will run everything from your work dir, so you can modify code
 and directly try it out (you only need to do this installation procedure once).
+
+Troubleshooting
+~~~~~~~~~~~~~~~
+If you have a bad or limited network connection, you may run into trouble
+with the commands issued by the quickinstall script.
+
+You may see tracebacks from pip, timeout errors, error messages from wget
+(see the output of the quickinstall script).
+
+If this is the case, try it manually::
+
+ # enter your virtual environment:
+ source env/bin/activate
+
+ # confirm the problems by running:
+ pip install -e .
+
+Now install each package into your virtual env manually:
+
+* Find the required packages by looking into setup.py (see install_requires).
+* Download the package from http://pypi.python.org/
+* Install each of them individually by::
+ 
+    pip install package.tar
+
+* Now try again::
+
+    pip install -e .
+
+Repeat these steps until you don't see fatal errors any more.
 

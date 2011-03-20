@@ -222,7 +222,7 @@ def _loadPluginModule(cfg):
                     cfg._plugin_modules.append(modname)
         finally:
             imp.release_lock()
-    except ImportError, err:
+    except ImportError as err:
         msg = """
 Could not import plugin package "%(path)s" because of ImportError:
 %(err)s.

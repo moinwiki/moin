@@ -9,7 +9,7 @@ MoinMoin - Moin Wiki input converter
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import re
 
@@ -951,8 +951,8 @@ class Converter(ConverterMacro):
         element = moin_page.table_cell()
         stack.push(element)
 
-        if len(cell_marker) / 2 > 1:
-            element.set(moin_page.number_columns_spanned, len(cell_marker) / 2)
+        if len(cell_marker) // 2 > 1:
+            element.set(moin_page.number_columns_spanned, len(cell_marker) // 2)
 
         if cell_args:
             cell_args = _TableArguments()(cell_args)

@@ -203,8 +203,7 @@ class BackendTest(object):
             self.create_rev_item_helper(u"item_" + str(num).zfill(2))
         for num in range(10):
             self.create_meta_item_helper(u"item_" + str(num).zfill(2))
-        itemlist = [item.name for item in self.backend.iteritems()]
-        itemlist.sort()
+        itemlist = sorted([item.name for item in self.backend.iteritems()])
         for num, itemname in enumerate(itemlist):
             assert itemname == u"item_" + str(num).zfill(2)
         assert len(itemlist) == 20
@@ -221,7 +220,7 @@ class BackendTest(object):
         self.create_rev_item_helper(u"with_meta")
         item = self.backend.get_item(u"with_meta")
         item.change_metadata()
-        item["meta"] = "data"
+        item[u"meta"] = u"data"
         item.publish_metadata()
         itemlist = [item for item in self.backend.iteritems()]
         assert len(itemlist) == 2
@@ -334,7 +333,7 @@ class BackendTest(object):
         item = self.backend.create_item(u"item_13")
         for revno in range(0, 10):
             rev = item.create_revision(revno)
-            rev["revno"] = "%s" % revno
+            rev[u"revno"] = u"%s" % revno
             item.commit()
         assert item.list_revisions() == range(0, 10)
 
@@ -388,15 +387,15 @@ class BackendTest(object):
     def test_item_metadata_change_and_publish(self):
         item = self.backend.create_item(u"test item metadata change")
         item.change_metadata()
-        item["creator"] = "Vincent van Gogh"
+        item[u"creator"] = u"Vincent van Gogh"
         item.publish_metadata()
         item2 = self.backend.get_item(u"test item metadata change")
-        assert item2["creator"] == "Vincent van Gogh"
+        assert item2[u"creator"] == u"Vincent van Gogh"
 
     def test_item_metadata_invalid_change(self):
         item = self.backend.create_item(u"test item metadata invalid change")
         try:
-            item["this should"] = "FAIL!"
+            item[u"this should"] = "FAIL!"
             assert False
         except AttributeError:
             pass
@@ -404,7 +403,7 @@ class BackendTest(object):
     def test_item_metadata_without_publish(self):
         item = self.backend.create_item(u"test item metadata invalid change")
         item.change_metadata()
-        item["change but"] = "don't publish"
+        item[u"change but"] = u"don't publish"
         py.test.raises(NoSuchItemError, self.backend.get_item, "test item metadata invalid change")
 
     def test_item_create_existing_mixed_1(self):
@@ -424,31 +423,31 @@ class BackendTest(object):
         py.test.raises(ItemAlreadyExistsError, item1.publish_metadata)
 
     def test_item_multiple_change_metadata_after_create(self):
-        name = "foo"
+        name = u"foo"
         item1 = self.backend.create_item(name)
         item2 = self.backend.create_item(name)
         item1.change_metadata()
         item2.change_metadata()
-        item1["a"] = "a"
-        item2["a"] = "b"
+        item1[u"a"] = u"a"
+        item2[u"a"] = u"b"
         item1.publish_metadata()
         py.test.raises(ItemAlreadyExistsError, item2.publish_metadata)
         item = self.backend.get_item(name)
-        assert item["a"] == "a"
+        assert item[u"a"] == u"a"
 
     def test_existing_item_change_metadata(self):
         self.create_meta_item_helper(u"existing now 2")
         item = self.backend.get_item(u'existing now 2')
         item.change_metadata()
-        item['asdf'] = 'b'
+        item[u'asdf'] = u'b'
         item.publish_metadata()
         item = self.backend.get_item(u'existing now 2')
-        assert item['asdf'] == 'b'
+        assert item[u'asdf'] == u'b'
 
     def test_metadata(self):
         self.create_rev_item_helper(u'no metadata')
         item = self.backend.get_item(u'no metadata')
-        py.test.raises(KeyError, item.__getitem__, 'asdf')
+        py.test.raises(KeyError, item.__getitem__, u'asdf')
 
     def test_revision(self):
         self.create_meta_item_helper(u'no revision')
@@ -458,47 +457,47 @@ class BackendTest(object):
     def test_create_revision_change_meta(self):
         item = self.backend.create_item(u"double")
         rev = item.create_revision(0)
-        rev["revno"] = "0"
+        rev[u"revno"] = u"0"
         item.commit()
         item.change_metadata()
-        item["meta"] = "data"
+        item[u"meta"] = u"data"
         item.publish_metadata()
         item = self.backend.get_item(u"double")
-        assert item["meta"] == "data"
+        assert item[u"meta"] == u"data"
         rev = item.get_revision(0)
-        assert rev["revno"] == "0"
+        assert rev[u"revno"] == u"0"
 
     def test_create_revision_change_empty_meta(self):
         item = self.backend.create_item(u"double")
         rev = item.create_revision(0)
-        rev["revno"] = "0"
+        rev[u"revno"] = u"0"
         item.commit()
         item.change_metadata()
         item.publish_metadata()
         item = self.backend.get_item(u"double")
         rev = item.get_revision(0)
-        assert rev["revno"] == "0"
+        assert rev[u"revno"] == u"0"
 
     def test_change_meta_create_revision(self):
         item = self.backend.create_item(u"double")
         item.change_metadata()
-        item["meta"] = "data"
+        item[u"meta"] = u"data"
         item.publish_metadata()
         rev = item.create_revision(0)
-        rev["revno"] = "0"
+        rev[u"revno"] = u"0"
         item.commit()
         item = self.backend.get_item(u"double")
-        assert item["meta"] == "data"
+        assert item[u"meta"] == u"data"
         rev = item.get_revision(0)
-        assert rev["revno"] == "0"
+        assert rev[u"revno"] == u"0"
 
     def test_meta_after_rename(self):
         item = self.backend.create_item(u"re")
         item.change_metadata()
-        item["previous_name"] = "re"
+        item[u"previous_name"] = u"re"
         item.publish_metadata()
         item.rename(u"er")
-        assert item["previous_name"] == "re"
+        assert item[u"previous_name"] == u"re"
 
     def test_long_names_back_and_forth(self):
         item = self.backend.create_item(u"long_name_" * 100 + u"with_happy_end")
@@ -512,7 +511,7 @@ class BackendTest(object):
         item = self.backend.create_item(u"first one")
         for revno in xrange(10):
             rev = item.create_revision(revno)
-            rev["revno"] = str(revno)
+            rev[u"revno"] = unicode(revno)
             item.commit()
         assert item.list_revisions() == range(10)
         item.rename(u"second one")
@@ -526,7 +525,7 @@ class BackendTest(object):
         assert item2.list_revisions() == range(10)
         for revno in xrange(10):
             rev = item2.get_revision(revno)
-            assert rev["revno"] == str(revno)
+            assert rev[u"revno"] == unicode(revno)
 
     def test_concurrent_create_revision(self):
         self.create_rev_item_helper(u"concurrent")
@@ -575,7 +574,7 @@ class BackendTest(object):
         def test_value(value, no):
             item = self.backend.create_item(u'valid_values_%d' % no)
             rev = item.create_revision(0)
-            key = "key%d" % no
+            key = u"key%d" % no
             rev[key] = value
             item.commit()
             rev = item.get_revision(0)
@@ -637,7 +636,7 @@ class BackendTest(object):
         assert len([rev for rev in self.backend.history()]) == 2
 
     def test_destroy_item(self):
-        itemname = "I will be completely destroyed"
+        itemname = u"I will be completely destroyed"
         rev_data = "I will be completely destroyed, too, hopefully"
         item = self.backend.create_item(itemname)
         rev = item.create_revision(0)
@@ -658,7 +657,7 @@ class BackendTest(object):
 
 
     def test_destroy_revision(self):
-        itemname = "I will see my children die :-("
+        itemname = u"I will see my children die :-("
         rev_data = "I will die!"
         persistent_rev = "I will see my sibling die :-("
         item = self.backend.create_item(itemname)
@@ -698,17 +697,17 @@ class BackendTest(object):
         src = flaskg.storage
         dst = memory.MemoryBackend()
 
-        dollys_name = "Dolly The Sheep"
+        dollys_name = u"Dolly The Sheep"
         item = src.create_item(dollys_name)
         rev = item.create_revision(0)
         rev.write("maeh")
-        rev['origin'] = 'reagenzglas'
+        rev[u'origin'] = u'reagenzglas'
         item.commit()
 
-        brothers_name = "Dolly's brother"
+        brothers_name = u"Dolly's brother"
         item = src.create_item(brothers_name)
         item.change_metadata()
-        item['no revisions'] = True
+        item[u'no revisions'] = True
         item.publish_metadata()
 
         dst.clone(src, verbose=False)
@@ -720,14 +719,14 @@ class BackendTest(object):
         data = rev.read()
         assert data == "maeh"
         meta = dict(rev.iteritems())
-        assert 'origin' in meta
-        assert meta['origin'] == 'reagenzglas'
+        assert u'origin' in meta
+        assert meta[u'origin'] == u'reagenzglas'
 
         assert dst.has_item(brothers_name)
         item = dst.get_item(brothers_name)
         meta = dict(item.iteritems())
-        assert 'no revisions' in meta
-        assert meta['no revisions'] is True
+        assert u'no revisions' in meta
+        assert meta[u'no revisions'] is True
 
     def test_iteritems_item_names_after_rename(self):
         item = self.backend.create_item(u'first')
@@ -739,11 +738,11 @@ class BackendTest(object):
         # iteritems provides actual name
         items = [item for item in self.backend.iteritems()]
         assert len(items) == 1
-        assert items[0].name == 'second'
+        assert items[0].name == u'second'
         rev0 = items[0].get_revision(0)
-        assert rev0.item.name == 'second'
+        assert rev0.item.name == u'second'
         rev1 = items[0].get_revision(1)
-        assert rev1.item.name == 'second'
+        assert rev1.item.name == u'second'
 
     def test_iteritems_after_destroy(self):
         item = self.backend.create_item(u'first')
@@ -767,8 +766,8 @@ class BackendTest(object):
         item.commit()
         revs_in_create_order = [rev for rev in self.backend.history(reverse=False)]
         assert revs_in_create_order[0].revno == 0
-        assert revs_in_create_order[0].item.name == 'second'
+        assert revs_in_create_order[0].item.name == u'second'
         assert revs_in_create_order[1].revno == 1
-        assert revs_in_create_order[1].item.name == 'second'
+        assert revs_in_create_order[1].item.name == u'second'
 
 

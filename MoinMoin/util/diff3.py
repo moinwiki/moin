@@ -125,7 +125,7 @@ def tripple_match(old, other, new, other_match, new_match):
     """find next matching pattern unchanged in both other and new
        return the position in all three lists
     """
-    while 1:
+    while True:
         difference = new_match[0] - other_match[0]
         # new changed more lines
         if difference > 0:

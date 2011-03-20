@@ -117,7 +117,7 @@ class FS2Backend(BackendBase):
         for path in (self._path, meta_path, data_path):
             try:
                 os.makedirs(path)
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise BackendError(str(err))
 
@@ -204,8 +204,7 @@ class FS2Backend(BackendBase):
         p = self._make_path('meta', item._fs_item_id)
         l = os.listdir(p)
         suffix = '.rev'
-        ret = [int(i[:-len(suffix)]) for i in l if i.endswith(suffix)]
-        ret.sort()
+        ret = sorted([int(i[:-len(suffix)]) for i in l if i.endswith(suffix)])
         return ret
 
     def _create_revision(self, item, revno):
@@ -229,7 +228,7 @@ class FS2Backend(BackendBase):
             os.unlink(rev._fs_path_meta)
             # XXX do refcount data files and if zero, kill it
             #os.unlink(rev._fs_path_data)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise CouldNotDestroyError("Could not destroy revision #%d of item '%r' [errno: %d]" % (
                     rev.revno, rev.item.name, err.errno))
@@ -331,14 +330,14 @@ class FS2Backend(BackendBase):
         else:
             try:
                 filesys.rename_no_overwrite(rev._fs_path_data, pd, delete_old=True)
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise
 
             pm = self._make_path('meta', item._fs_item_id, '%d.rev' % rev.revno)
             try:
                 filesys.rename_no_overwrite(rev._fs_path_meta, pm, delete_old=True)
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise
                 raise RevisionAlreadyExistsError("")
@@ -359,7 +358,7 @@ class FS2Backend(BackendBase):
         path = self._make_path('meta', item_id)
         try:
             shutil.rmtree(path)
-        except OSError, err:
+        except OSError as err:
             raise CouldNotDestroyError("Could not destroy item '%r' [errno: %d]" % (
                 item.name, err.errno))
         # XXX do refcount data files and if zero, kill it
@@ -387,7 +386,7 @@ class FS2Backend(BackendBase):
                 # metadata now empty, just rm the metadata file
                 try:
                     os.unlink(self._make_path('meta', item._fs_item_id, 'item'))
-                except OSError, err:
+                except OSError as err:
                     if err.errno != errno.ENOENT:
                         raise
                     # ignore, there might not have been metadata
@@ -408,7 +407,7 @@ class FS2Backend(BackendBase):
                 f = open(p, 'rb')
                 metadata = pickle.load(f)
                 f.close()
-            except IOError, err:
+            except IOError as err:
                 if err.errno != errno.ENOENT:
                     raise
                 # no such file means no metadata was stored

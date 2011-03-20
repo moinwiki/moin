@@ -30,7 +30,7 @@ class TestFS2Backend(BackendTest):
             shutil.rmtree(self.tempdir)
 
     def test_large(self):
-        i = self.backend.create_item('large')
+        i = self.backend.create_item(u'large')
         r = i.create_revision(0)
         r['0'] = 'x' * 100
         r['1'] = 'y' * 200
@@ -39,7 +39,7 @@ class TestFS2Backend(BackendTest):
             r.write('lalala! ' * 10)
         i.commit()
 
-        i = self.backend.get_item('large')
+        i = self.backend.get_item(u'large')
         r = i.get_revision(0)
         assert r['0'] == 'x' * 100
         assert r['1'] == 'y' * 200
@@ -49,10 +49,10 @@ class TestFS2Backend(BackendTest):
         assert r.read() == ''
 
     def test_all_unlocked(self):
-        i1 = self.backend.create_item('existing now 1')
+        i1 = self.backend.create_item(u'existing now 1')
         i1.create_revision(0)
         i1.commit()
-        i2 = self.backend.get_item('existing now 1')
+        i2 = self.backend.get_item(u'existing now 1')
         i2.change_metadata()
         # if we leave out the latter line, it fails
         i2.publish_metadata()

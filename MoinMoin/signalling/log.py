@@ -6,7 +6,7 @@
 """
 
 
-from signals import *
+from .signals import *
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

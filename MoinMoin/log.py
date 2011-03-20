@@ -53,6 +53,8 @@
 """
 
 
+from __future__ import absolute_import, division
+
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working
 # logging configuration.
@@ -123,7 +125,7 @@ def load_config(conf_fname=None):
             l = getLogger(__name__)
             l.info('using logging configuration read from "%s"' % conf_fname)
             warnings.showwarning = _log_warning
-        except Exception, err: # XXX be more precise
+        except Exception as err: # XXX be more precise
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
