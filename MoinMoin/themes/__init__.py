@@ -240,9 +240,10 @@ class ThemeSupport(object):
                                 pass # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)
-                        logging.info(u"Site: %s Status: Updated. Pages: %d" % (sistername, len(sisteritems)))
-                    except IOError, (title, code, msg, headers): # code e.g. 304
-                        logging.warning(u"Site: %s Status: Not updated." % sistername)
+                        logging.info("Site: %s Status: Updated. Pages: %d" % (sistername, len(sisteritems)))
+                    except IOError as err:
+                        (title, code, msg, headers) = err.args # code e.g. 304
+                        logging.warning("Site: %s Status: Not updated." % sistername)
                         logging.exception("exception was:")
                 if current in sisteritems:
                     url = sisteritems[current]

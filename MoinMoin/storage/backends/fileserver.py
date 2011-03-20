@@ -119,7 +119,7 @@ class FileDirItem(Item):
         filepath = backend._item2path(name)
         try:
             self._fs_stat = os.stat(filepath)
-        except OSError, err:
+        except OSError as err:
             raise NoSuchItemError("No such item, %r" % name)
         self._fs_revisions = [0] # there is only 1 revision of each file/dir
         self._fs_meta = {} # no item level metadata
@@ -185,7 +185,7 @@ class DirRevision(FileDirRevision):
             content.extend(u" * [[/%s|%s/]]" % (name, name) for name in sorted(dirs))
             content.extend(u" * [[/%s|%s]]" % (name, name) for name in sorted(files))
             content = u'\r\n'.join(content)
-        except OSError, err:
+        except OSError as err:
             content = unicode(err)
         self._fs_data_file = StringIO(content.encode(config.charset))
 

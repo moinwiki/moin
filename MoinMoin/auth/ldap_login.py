@@ -22,7 +22,7 @@ logging = log.getLogger(__name__)
 
 try:
     import ldap
-except ImportError, err:
+except ImportError as err:
     logging.error("You need to have python-ldap installed (%s)." % str(err))
     raise
 
@@ -161,7 +161,7 @@ class LDAPAuth(BaseAuth):
                     try:
                         l.start_tls_s()
                         logging.debug("Using TLS to %r." % server)
-                    except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR), err:
+                    except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR) as err:
                         logging.warning("Couldn't establish TLS to %r (err: %s)." % (server, str(err)))
                         raise
 
@@ -240,7 +240,7 @@ class LDAPAuth(BaseAuth):
                 u.aliasname = aliasname
                 logging.debug("creating user object with name %r email %r alias %r" % (username, email, aliasname))
 
-            except ldap.INVALID_CREDENTIALS, err:
+            except ldap.INVALID_CREDENTIALS as err:
                 logging.debug("invalid credentials (wrong password?) for dn %r (username: %r)" % (dn, username))
                 return CancelLogin(_("Invalid username or password."))
 
@@ -249,7 +249,7 @@ class LDAPAuth(BaseAuth):
                 u.create_or_update(True)
             return ContinueLogin(u)
 
-        except ldap.SERVER_DOWN, err:
+        except ldap.SERVER_DOWN as err:
             # looks like this LDAP server isn't working, so we just try the next
             # authenticator object in cfg.auth list (there could be some second
             # ldap authenticator that queries a backup server or any other auth

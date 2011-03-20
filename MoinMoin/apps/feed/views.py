@@ -57,7 +57,7 @@ def atom(item_name):
                     # full html rendering for new items
                     content = hl_item._render_data()
                 content_type = 'xhtml'
-            except Exception, e:
+            except Exception as e:
                 logging.exception("content rendering crashed")
                 content = _(u'MoinMoin feels unhappy.')
                 content_type = 'text'

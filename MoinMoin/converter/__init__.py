@@ -97,7 +97,7 @@ def _load():
                 try:
                     try:
                         imp.load_module(module_complete, *info)
-                    except Exception, e:
+                    except Exception as e:
                         import MoinMoin.log as logging
                         logger = logging.getLogger(__name__)
                         logger.exception("Failed to import converter package %s: %s" % (module, e))

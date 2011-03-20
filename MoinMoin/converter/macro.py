@@ -8,7 +8,7 @@ Expands all macro elements in a internal Moin document.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from flask import current_app as app
 
@@ -70,7 +70,7 @@ class Converter(object):
             ret = macro((), args, page, alt, context_block)
 
             elem_body.append(ret)
-        except Exception, e:
+        except Exception as e:
             # we do not want that a faulty macro aborts rendering of the page
             # and makes the wiki UI unusable (by emitting a Server Error),
             # thus, in case of exceptions, we just log the problem and return

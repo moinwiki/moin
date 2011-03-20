@@ -77,10 +77,10 @@ class IndexingBackendMixin(object):
             try:
                 item = self.get_item(name)
                 yield item.get_revision(rev_no)
-            except AccessDeniedError, e:
+            except AccessDeniedError as e:
                 # just skip items we may not access
                 pass
-            except (NoSuchItemError, NoSuchRevisionError), e:
+            except (NoSuchItemError, NoSuchRevisionError) as e:
                 logging.exception("history processing catched exception")
 
     def all_tags(self):

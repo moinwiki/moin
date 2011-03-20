@@ -26,7 +26,7 @@ class Macro(MacroPageLinkListBase):
         if regex:
             try:
                 needle_re = re.compile(needle, re_flags)
-            except re.error, err:
+            except re.error as err:
                 raise ValueError("Error in regex %r: %s" % (needle, err))
         else:
             needle_re = re.compile(re.escape(needle), re_flags)

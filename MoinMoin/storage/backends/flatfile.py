@@ -46,7 +46,7 @@ class FlatFileBackend(Backend):
         self._path = path
         try:
             os.makedirs(path)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.EEXIST:
                 raise BackendError(str(err))
 
@@ -122,7 +122,7 @@ class FlatFileBackend(Backend):
         revpath = self._rev_path(revision.item.name)
         try:
             os.unlink(revpath)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise CouldNotDestroyError("Could not destroy revision #%d of item '%r' [errno: %d]" % (
                     revision.revno, revision.item.name, err.errno))
@@ -148,7 +148,7 @@ class FlatFileBackend(Backend):
         revpath = self._rev_path(item.name)
         try:
             os.unlink(revpath)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise CouldNotDestroyError("Could not destroy item '%r' [errno: %d]" % (
                     item.name, err.errno))

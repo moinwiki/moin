@@ -17,6 +17,8 @@
 """
 
 
+from __future__ import absolute_import, division
+
 import time, base64
 import copy
 import hashlib
@@ -67,7 +69,7 @@ space between words. Group page name is not allowed.""", name=theuser.name)
     # Encode password
     try:
         theuser.enc_password = encodePassword(password)
-    except UnicodeError, err:
+    except UnicodeError as err:
         # Should never happen
         return "Can't encode password: %(msg)s" % dict(msg=str(err))
 
@@ -491,8 +493,7 @@ class User(object):
 
         self.last_saved = int(time.time())
 
-        attrs = self.persistent_items()
-        attrs.sort()
+        attrs = sorted(self.persistent_items())
         for key, value in attrs:
             if isinstance(value, list):
                 value = tuple(value)

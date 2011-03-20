@@ -11,7 +11,7 @@ This converter based on ReStructuredText 2006-09-22.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from MoinMoin.util.tree import moin_page, xlink
 

@@ -10,8 +10,8 @@
 
 
 # import all signals so they can be imported from here:
-from signals import *
+from .signals import *
 
 # import all signal handler modules so they install their handlers:
-import log
+from . import log
 

@@ -8,7 +8,7 @@ Converts an internal document tree into a DocBook v5 document.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from emeraldtree import ElementTree as ET
 

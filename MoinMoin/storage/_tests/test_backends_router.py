@@ -49,17 +49,17 @@ class TestRouterBackend(BackendTest):
             assert self.backend._get_backend(itemname)[0] is backend
 
     def test_store_and_get(self):
-        itemname = 'child/foo'
+        itemname = u'child/foo'
         item = self.backend.create_item(itemname)
         assert item.name == itemname
         assert item._backend is self.child
         item.change_metadata()
-        item['just'] = 'testing'
+        item[u'just'] = u'testing'
         item.publish_metadata()
 
         item = self.backend.get_item(itemname)
         assert item._backend is self.child
-        assert item['just'] == 'testing'
+        assert item[u'just'] == u'testing'
         assert item.name == itemname
 
     def test_traversal(self):
@@ -91,10 +91,10 @@ class TestRouterBackend(BackendTest):
         assert items_in == items_out
 
     def test_user_in_traversal(self):
-        userid = '1249291178.45.20407'
+        userid = u'1249291178.45.20407'
         user = self.backend.create_item(self.ns_user_profile + userid)
         user.change_metadata()
-        user["name"] = "joe"
+        user[u"name"] = u"joe"
         user.publish_metadata()
 
         all_items = list(self.backend.iteritems())
@@ -103,28 +103,28 @@ class TestRouterBackend(BackendTest):
         assert self.backend.has_item(self.ns_user_profile + userid)
 
     def test_nonexisting_namespace(self):
-        itemname = 'nonexisting/namespace/somewhere/deep/below'
+        itemname = u'nonexisting/namespace/somewhere/deep/below'
         item = self.backend.create_item(itemname)
         rev = item.create_revision(0)
         item.commit()
         assert self.root.has_item(itemname)
 
     def test_cross_backend_rename(self):
-        itemname = 'i_will_be_moved'
-        item = self.backend.create_item('child/' + itemname)
+        itemname = u'i_will_be_moved'
+        item = self.backend.create_item(u'child/' + itemname)
         item.create_revision(0)
         item.commit()
         assert self.child.has_item(itemname)
-        newname = 'i_was_moved'
-        item.rename('other/' + newname)
+        newname = u'i_was_moved'
+        item.rename(u'other/' + newname)
         print [item.name for item in self.child.iteritems()]
         assert not self.child.has_item(itemname)
         assert not self.child.has_item(newname)
-        assert not self.child.has_item('other/' + newname)
+        assert not self.child.has_item(u'other/' + newname)
         assert self.other.has_item(newname)
 
     def test_itemname_equals_namespace(self):
-        itemname = 'child'
+        itemname = u'child'
         backend, name, mountpoint = self.backend._get_backend(itemname)
         assert backend is self.child
         assert name == ''

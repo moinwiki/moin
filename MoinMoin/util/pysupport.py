@@ -30,9 +30,8 @@ def getPluginModules(packagedir):
     pyre = re.compile(r"^([^_].*)\.py$")
     dirlist = os.listdir(packagedir)
     matches = [pyre.match(fn) for fn in dirlist]
-    modules = [match.group(1) for match in matches if match]
+    modules = sorted([match.group(1) for match in matches if match])
 
-    modules.sort()
     return modules
 
 
@@ -59,9 +58,8 @@ def getPackageModules(packagefile):
         dirlist = os.listdir(packagedir)
 
     matches = [pyre.match(fn) for fn in dirlist]
-    modules = [match.group(1) for match in matches if match]
+    modules = sorted([match.group(1) for match in matches if match])
 
-    modules.sort()
     return modules
 
 

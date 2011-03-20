@@ -15,7 +15,7 @@ Works with docutils version 0.5 (2008-06-25) or higher.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import re
 
