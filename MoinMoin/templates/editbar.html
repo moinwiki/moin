@@ -1,6 +1,6 @@
 {% set exists = storage.has_item(item_name) %}
 <ul class="moin-editbar">
-    {% for endpoint, label, check_exists in cfg.edit_bar if not endpoint in cfg.actions_excluded %}
+    {% for endpoint, label, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {% if (not check_exists or check_exists and exists) and endpoint in [
                'frontend.show_item', 'frontend.index',
                'frontend.highlight_item', 'frontend.show_item_meta', 'frontend.get_item',
