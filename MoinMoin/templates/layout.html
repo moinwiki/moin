@@ -118,7 +118,7 @@
         <hr style="display:none;" />
     </div>
 
-    {% block header_editbar %}{% endblock %}
+    {% block header_itemviews %}{% endblock %}
 
     {% for category, msg in get_flashed_messages(with_categories=true) %}
         <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
@@ -131,7 +131,7 @@
 
 <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
     {% block item -%}
-        {# If you want editbar in your template, extend from show.html, not from here. #}
+        {# If you want itemviews in your template, extend from show.html, not from here. #}
         <div id="moin-content">
         {% block content %}
             {# All content templates should have implement this block. #}
@@ -144,7 +144,7 @@
 
 <div id="moin-footer">
 {% block footer %}
-    {% block footer_editbar %}{% endblock %}
+    {% block footer_itemviews %}{% endblock %}
     {% block footer_hr %}<hr/>{% endblock %}
     {{ creditlogos }}
     {% block footer_meta %}{% endblock %}

@@ -505,16 +505,16 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-pageline { clear: both; margin: 0; padding: 0; width: 100%; height: 4px;
             border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; background: #81BBF2; }
 
-/* moin-header moin-editbar -- also applies to moin-footer */
-.moin-editbar { clear: both; display: block; margin: 0; padding: 2px 8px; background: #C4D9FF;
-            font-size: 0.8em; border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; margin-top: -1px; }
-.moin-editbar li { display: inline; padding: 0; margin: 4px 6px; }
-.moin-editbar a,
-.moin-editbar a:visited { color: #0044B3; }
-.moin-editbar a:hover { text-decoration: underline; }
-.moin-editbar form,
-.moin-editbar form div { display: inline; margin: 0; }
-.moin-editbar select { font-size: 100%; vertical-align: middle; }
+/* moin-header moin-itemviews -- also applies to moin-footer */
+.moin-itemviews { clear: both; display: block; margin: 0; padding: 2px 8px; background: #C4D9FF;
+                  font-size: 0.8em; border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; margin-top: -1px; }
+.moin-itemviews li { display: inline; padding: 0; margin: 4px 6px; }
+.moin-itemviews a,
+.moin-itemviews a:visited { color: #0044B3; }
+.moin-itemviews a:hover { text-decoration: underline; }
+.moin-itemviews form,
+.moin-itemviews form div { display: inline; margin: 0; }
+.moin-itemviews select { font-size: 100%; vertical-align: middle; }
 
 /* moin-page moin-footer */
 #moin-footer { clear: both; margin: 0 0; }

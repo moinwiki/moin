@@ -132,10 +132,10 @@ function add_gui_editor_links() {
         guiEditorLink.appendChild(text);
         var listItem = document.createElement('li')
         listItem.appendChild(guiEditorLink);
-        // Insert in the editbar
-        var editbar = textEditorLink.parentNode.parentNode
+        // Insert in the itemviews
+        var itemviews = textEditorLink.parentNode.parentNode
         var nextListItem = textEditorLink.parentNode.nextSibling;
-        editbar.insertBefore(listItem, nextListItem);
+        itemviews.insertBefore(listItem, nextListItem);
         //alert("add_gui_editor_links: added gui editor link");
     }
 }
