@@ -10,10 +10,10 @@
     {%- endif %}
 {% endblock %}
 
-{% import "editbar.html" as editbar with context %}
+{% import "itemviews.html" as itemviews with context %}
 
-{% block header_editbar %}
-    {{ editbar }}
+{% block header_itemviews %}
+    {{ itemviews }}
 {% endblock %}
 
 {% macro rev_navigation(view='frontend.show_item') %}
@@ -61,8 +61,8 @@
 
 {% block footer_hr %}{% endblock %}
 
-{% block footer_editbar %}
-    {{ editbar }}
+{% block footer_itemviews %}
+    {{ itemviews }}
 {% endblock %}
 
 {% block footer_meta %}
