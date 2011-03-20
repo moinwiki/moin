@@ -25,7 +25,7 @@ def removeTestWiki():
     dir = 'data'
     try:
         shutil.rmtree(os.path.join(WIKI, dir))
-    except OSError, err:
+    except OSError as err:
         if not (err.errno == errno.ENOENT or
                 (err.errno == 3 and os.name == 'nt')):
             raise
@@ -41,7 +41,7 @@ def copyData():
 def run(skip_if_existing=False):
     try:
         os.makedirs(WIKI)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise
 

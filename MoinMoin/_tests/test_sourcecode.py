@@ -11,7 +11,7 @@ Additionally, we check that the files have no crlf (Windows style) line endings.
 
 import re, time
 import py
-import pep8
+from . import pep8
 
 
 moindir = py.path.local(__file__).pypkgpath()

@@ -114,7 +114,7 @@ class ExclusiveLock:
                 self._locked = True
                 logging.debug('acquired exclusive lock: %s' % (self.lockDir, ))
                 return True
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise
                 if self.expire():
@@ -149,7 +149,7 @@ class ExclusiveLock:
         try:
             lock_age = time.time() - filesys.stat(self.lockDir).st_mtime
             return lock_age > self.timeout
-        except OSError, err:
+        except OSError as err:
             if err.errno == errno.ENOENT:
                 # No such lock file, therefore "expired"
                 return True
@@ -170,7 +170,7 @@ class ExclusiveLock:
         try:
             filesys.mkdir(self.dir)
             logging.debug('created directory: %s' % self.dir)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.EEXIST:
                 raise
 
@@ -179,7 +179,7 @@ class ExclusiveLock:
         try:
             filesys.rmdir(self.lockDir)
             logging.debug('removed directory: %s' % self.dir)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise
 

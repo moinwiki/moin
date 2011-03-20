@@ -57,7 +57,7 @@ class ArchiveConverter(TableMixin):
                          self.process_name(name),
                         ) for size, dt, name in contents]
             return self.build_dom_table(contents)
-        except ArchiveException, err:
+        except ArchiveException as err:
             logging.exception("An exception within archive file handling occurred:")
             # XXX we also use a table for error reporting, could be
             # something more adequate, though:
@@ -91,7 +91,7 @@ class TarConverter(ArchiveConverter):
                     tinfo.name,
                 ))
             return rows
-        except tarfile.TarError, err:
+        except tarfile.TarError as err:
             raise ArchiveException(str(err))
 
 
@@ -110,7 +110,7 @@ class ZipConverter(ArchiveConverter):
                     zinfo.filename,
                 ))
             return rows
-        except (RuntimeError, zipfile.BadZipfile), err:
+        except (RuntimeError, zipfile.BadZipfile) as err:
             # RuntimeError is raised by zipfile stdlib module in case of
             # problems (like inconsistent slash and backslash usage in the
             # archive or a defective zip file).

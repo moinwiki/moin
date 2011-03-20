@@ -71,7 +71,7 @@ class FSBackend(BackendBase):
 
         try:
             os.makedirs(path)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.EEXIST:
                 raise BackendError(str(err))
 
@@ -190,7 +190,7 @@ class FSBackend(BackendBase):
             revision._fs_file.close()
         try:
             os.unlink(revision._fs_revpath)
-        except OSError, err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise CouldNotDestroyError("Could not destroy revision #%d of item '%r' [errno: %d]" % (
                     revision.revno, revision.item.name, err.errno))
@@ -249,7 +249,7 @@ class FSBackend(BackendBase):
             try:
                 os.mkdir(ipath)
                 done = True
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise
             if cntr > 2 and not done and self._itemspace <= 2 ** 31:
@@ -355,7 +355,7 @@ class FSBackend(BackendBase):
             rp = os.path.join(self._path, item._fs_item_id, 'rev.%d' % rev.revno)
             try:
                 filesys.rename_no_overwrite(rev._fs_revpath, rp, delete_old=True)
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise
                 raise RevisionAlreadyExistsError("")
@@ -379,7 +379,7 @@ class FSBackend(BackendBase):
         path = os.path.join(self._path, item._fs_item_id)
         try:
             shutil.rmtree(path)
-        except OSError, err:
+        except OSError as err:
             raise CouldNotDestroyError("Could not destroy item '%r' [errno: %d]" % (
                 item.name, err.errno))
 
@@ -406,7 +406,7 @@ class FSBackend(BackendBase):
                 # metadata now empty, just rm the metadata file
                 try:
                     os.unlink(os.path.join(self._path, item._fs_item_id, 'meta'))
-                except OSError, err:
+                except OSError as err:
                     if err.errno != errno.ENOENT:
                         raise
                     # ignore, there might not have been metadata
@@ -435,7 +435,7 @@ class FSBackend(BackendBase):
                 f = open(p, 'rb')
                 metadata = pickle.load(f)
                 f.close()
-            except IOError, err:
+            except IOError as err:
                 if err.errno != errno.ENOENT:
                     raise
                 # no such file means no metadata was stored

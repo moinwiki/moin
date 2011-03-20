@@ -298,7 +298,7 @@ class MemoryBackend(BackendBase):
         @see: Backend._publish_item_metadata.__doc__
         """
         if item._item_id is None and self.has_item(item.name):
-            raise  ItemAlreadyExistsError, "The Item whose metadata you tried to publish already exists."
+            raise  ItemAlreadyExistsError("The Item whose metadata you tried to publish already exists.")
         if item._item_id is None:
             # not committed yet, no locking, store item
             self._add_item_internally(item)
@@ -420,7 +420,7 @@ def _get_thingie_wrapper(thingie):
             try:
                 try:
                     retval = func(*args, **kwargs)
-                except Exception, e:
+                except Exception as e:
                     exc = type(e).__name__ # yes, not very exact
                     log(" " * level + "try:")
                     level += 4

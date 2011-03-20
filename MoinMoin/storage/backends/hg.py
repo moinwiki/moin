@@ -90,7 +90,7 @@ class MercurialBackend(Backend):
         for path in (self._path, self._rev_path, self._meta_path):
             try:
                 os.makedirs(path)
-            except OSError, err:
+            except OSError as err:
                 if err.errno != errno.EEXIST:
                     raise BackendError(str(err))
         try:
@@ -294,7 +294,7 @@ class MercurialBackend(Backend):
                 dst = os.path.join(self._meta_path, "%s.meta" % newid)
                 try:
                     util.rename(src, dst)
-                except OSError, err:
+                except OSError as err:
                     if err == errno.EEXIST:
                         pass  # if metadata is empty, there is no file, only entry in cdb
                 self._add_to_cdb(newid, newname, replace=item._id)
@@ -357,7 +357,7 @@ class MercurialBackend(Backend):
         self._commit_files(['%s.rev' % item._id, '%s.rip' % item._id, item._id], message='(item destroy)')
         try:
             os.remove(os.path.join(self._meta_path, "%s.meta" % item._id))
-        except OSError, err:
+        except OSError as err:
             if err.errno == errno.EACCES:
                 raise CouldNotDestroyError
 
