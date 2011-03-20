@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
 "Report-Msgid-Bugs-To: German <moin-user@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2010-12-28 14:16+0100\n"
-"PO-Revision-Date: 2011-03-20 22:08+0100\n"
+"PO-Revision-Date: 2011-03-20 23:37+0100\n"
 "Last-Translator: Julian Brost <julian.brost@googlemail.com>\n"
 "Language-Team: German <moin-user@lists.sourceforge.net>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -486,7 +486,7 @@ msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 msgid "You must log in to use bookmarks."
 msgstr "Sie müssen sich anmelden, um Lesezeichen verwenden zu können."
 
-#: MoinMoin/apps/frontend/views.py:1386 MoinMoin/config/default.py:373
+#: MoinMoin/apps/frontend/views.py:1386 MoinMoin/config/default.py:380
 msgid "Items with similar names"
 msgstr "Items mit ähnlichen Namen"
 
@@ -587,7 +587,7 @@ msgstr "Start"
 msgid "Home Page"
 msgstr "HomePage"
 
-#: MoinMoin/config/default.py:335 MoinMoin/config/default.py:365
+#: MoinMoin/config/default.py:335 MoinMoin/config/default.py:363
 msgid "History"
 msgstr "Historie"
 
@@ -595,7 +595,7 @@ msgstr "Historie"
 msgid "Global History"
 msgstr "Globale Historie"
 
-#: MoinMoin/config/default.py:336 MoinMoin/config/default.py:369
+#: MoinMoin/config/default.py:336 MoinMoin/config/default.py:368
 msgid "Index"
 msgstr "Index"
 
@@ -624,44 +624,108 @@ msgid "Show"
 msgstr "Anzeigen"
 
 #: MoinMoin/config/default.py:362
-msgid "Highlight"
-msgstr "Hervorheben"
-
-#: MoinMoin/config/default.py:363
-msgid "Meta"
-msgstr "Metadaten"
-
-#: MoinMoin/config/default.py:364
 msgid "Download"
 msgstr "Herunterladen"
 
-#: MoinMoin/config/default.py:371
-msgid "What refers here?"
-msgstr "Was linkt hierauf?"
+#: MoinMoin/config/default.py:363
+msgid "Revision History"
+msgstr "Revisions-Historie"
 
-#: MoinMoin/config/default.py:372
-msgid "Local Site Map"
-msgstr "Lokale Sitemap"
-
-#: MoinMoin/config/default.py:375 MoinMoin/templates/show.html:9
+#: MoinMoin/config/default.py:366 MoinMoin/templates/show.html:9
 msgid "Modify"
 msgstr "Bearbeiten"
 
-#: MoinMoin/config/default.py:376 MoinMoin/templates/copy.html:14
+#: MoinMoin/config/default.py:366
+msgid "Edit or Upload"
+msgstr "Bearbeiten oder Hochladen"
+
+#: MoinMoin/config/default.py:368
+msgid "List sub-items"
+msgstr "Liste untergeordneter Items"
+
+#: MoinMoin/config/default.py:369
+msgid "Comments"
+msgstr "Kommentare"
+
+#: MoinMoin/config/default.py:369
+msgid "Switch showing comments on or off"
+msgstr "Anzeige von Kommentaren ein- oder ausschalten"
+
+#: MoinMoin/config/default.py:370
+msgid "Highlight"
+msgstr "Hervorheben"
+
+#: MoinMoin/config/default.py:370
+msgid "Show with Syntax-Highlighting"
+msgstr "Mit Syntax-Highlighting anzeigen"
+
+#: MoinMoin/config/default.py:371
+msgid "Meta"
+msgstr "Meta"
+
+#: MoinMoin/config/default.py:371
+msgid "Display Metadata"
+msgstr "Metadaten anzeigen"
+
+#: MoinMoin/config/default.py:372
+msgid "Create or remove a navigation link to this item"
+msgstr "Einen Navigations-Link zu diesem Item anlegen oder entfernen"
+
+#: MoinMoin/config/default.py:373
+msgid "Switch notifications about item changes on or off"
+msgstr "Benachrichtigungen über Item-Änderungen an- oder abschalten"
+
+#: MoinMoin/config/default.py:374 MoinMoin/templates/copy.html:14
 msgid "Copy"
 msgstr "Kopieren"
 
-#: MoinMoin/config/default.py:377 MoinMoin/templates/rename.html:14
+#: MoinMoin/config/default.py:374
+msgid "Create a copy of this item"
+msgstr "Eine Kopie dieses Items erzeugen"
+
+#: MoinMoin/config/default.py:375 MoinMoin/templates/rename.html:14
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: MoinMoin/config/default.py:378 MoinMoin/templates/delete.html:11
+#: MoinMoin/config/default.py:375
+msgid "Rename this item"
+msgstr "Dieses Item umbenennen"
+
+#: MoinMoin/config/default.py:376 MoinMoin/templates/delete.html:11
 msgid "Delete"
 msgstr "Löschen"
 
-#: MoinMoin/config/default.py:379
+#: MoinMoin/config/default.py:376
+msgid "Move this item to the trash"
+msgstr "Dieses Item in den Mülleimer verschieben"
+
+#: MoinMoin/config/default.py:377
 msgid "Destroy"
 msgstr "Vernichten"
+
+#: MoinMoin/config/default.py:377
+msgid "Completely destroy this item"
+msgstr "Dieses Item vollständig zerstören"
+
+#: MoinMoin/config/default.py:378
+msgid "Referrers"
+msgstr "Referenzen"
+
+#: MoinMoin/config/default.py:378
+msgid "What refers here?"
+msgstr "Was linkt hierauf?"
+
+#: MoinMoin/config/default.py:379
+msgid "Site Map"
+msgstr "Sitemap"
+
+#: MoinMoin/config/default.py:379
+msgid "Local Site Map of this item"
+msgstr "Lokale Sitemap dieses Items"
+
+#: MoinMoin/config/default.py:380
+msgid "Similar"
+msgstr "Ähnliches"
 
 #: MoinMoin/converter/html_out.py:595
 msgid "Contents"
@@ -917,10 +981,6 @@ msgstr "Nicht abonnieren"
 #: MoinMoin/templates/itemviews.html:43
 msgid "Subscribe"
 msgstr "Abonnieren"
-
-#: MoinMoin/templates/itemviews.html:54
-msgid "Comments"
-msgstr "Kommentare"
 
 #: MoinMoin/templates/layout.html:26
 msgid "Titles"
@@ -1194,4 +1254,7 @@ msgstr "Argument \"%(name)s\" wird benötigt"
 #, python-format
 msgid "No argument named \"%(name)s\""
 msgstr "Kein Argument mit dem Namen \"%(name)s\""
+
+#~ msgid "Local Site Map"
+#~ msgstr "Lokale Sitemap"
 
