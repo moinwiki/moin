@@ -280,44 +280,6 @@ class ThemeSupport(object):
             url = url or url_for('frontend.login')
         return url
 
-    def actions_menu_options(self, item_name):
-        """
-        Create actions menu list and items data dict
-
-        The menu will contain the same items always, but items that are
-        not available will be disabled (some broken browsers will let
-        you select disabled options though).
-
-        The menu should give best user experience for javascript
-        enabled browsers, and acceptable behavior for those who prefer
-        not to use Javascript.
-
-        :rtype: list
-        :returns: options of actions menu
-        """
-        not_exists = not flaskg.storage.has_item(item_name)
-        menu = [
-            # title, internal name, endpoint, disabled
-            (_('Global History'), 'global_history', 'frontend.global_history', False, ),
-            (_('Global Items Index'), 'global_index', 'frontend.global_index', False, ),
-            (_('Global Tags Index'), 'global_tags', 'frontend.global_tags', False, ),
-            # Translation may need longer or shorter separator:
-            (_('-----------------------------------'), 'show', 'frontend.show_item', True),
-            (_('What refers here?'), 'backrefs', 'frontend.backrefs', False, ),
-            (_('Local Site Map'), 'sitemap', 'frontend.sitemap', not_exists, ),
-            (_('Items with similar names'), 'similar_names', 'frontend.similar_names', False, ),
-            (_('-----------------------------------'), 'show', 'frontend.show_item', True),
-            (_('Copy Item'), 'copy', 'frontend.copy_item', not_exists, ),
-            (_('Rename Item'), 'rename', 'frontend.rename_item', not_exists, ),
-            (_('Delete Item'), 'delete', 'frontend.delete_item', not_exists, ),
-            (_('Destroy Item'), 'destroy', 'frontend.destroy_item', not_exists, ),
-            (_('-----------------------------------'), 'show', 'frontend.show_item', True),
-            (_('Administration & Docs'), 'admin', 'admin.index', False, ),
-        ]
-        return [(title, disabled, endpoint)
-                for title, action, endpoint, disabled in menu
-                if action not in self.cfg.actions_excluded]
-
 
 def get_editor_info(rev, external=False):
     addr = rev.get(ADDRESS)

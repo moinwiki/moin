@@ -15,15 +15,6 @@
         <a href="{{ url_for('frontend.show_item_meta', item_name=item_name) }}" rel="nofollow"> {{ _('Meta') }}</a>
         </li>
     {%- endif %}
-    {% if 'Modify' in cfg.edit_bar and 'modify' not in cfg.actions_excluded -%}
-        <li>
-        {% if user.may.write(item_name) %}
-            <a href="{{ url_for('frontend.modify_item', item_name=item_name) }}" rel="nofollow"> {{ _('Modify') }}</a>
-        {% else %}
-            {{ _('Immutable Item')}}
-        {% endif %}
-        </li>
-    {%- endif %}
     {% if exists and 'Download' in cfg.edit_bar and 'get' not in cfg.actions_excluded -%}
         <li>
             <a href="{{ url_for('frontend.get_item', item_name=item_name) }}" rel="nofollow">{{ _('Download') }}</a>
@@ -81,23 +72,71 @@
             {%- endif %}
         {%- endfor -%}
     {%- endif %}
-    {% if 'ActionsMenu' in cfg.edit_bar %}
+    {% if exists and 'WhatRefersHere' in cfg.edit_bar and 'backrefs' not in cfg.actions_excluded -%}
         <li>
-            <form class="moin-actionsmenu" method="GET" action="{{ url_for('frontend.dispatch') }}">
-                <div>
-                    <label>{{ _('More Actions:') }}</label>
-                    <select name="endpoint" class="moin-actionsmenu-select">
-                        {% for title, disabled, endpoint in theme_supp.actions_menu_options(item_name) %}
-                            <option value="{{ endpoint }}"{% if disabled %} disabled class="disabled"{% endif %}>{{ title }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" value="{{ _('Do') }}" /> {# XXX current js relies in this being first input elem! #}
-                    <input type="hidden" name="item_name" value="{{ item_name }}" />
-                    {% if rev %}
-                        <input type="hidden" name="rev" value="{{ rev.revno }}" />
-                    {% endif %}
-                </div>
-            </form>
+        <a href="{{ url_for('frontend.backrefs', item_name=item_name) }}" rel="nofollow"> {{ _('What refers here?') }}</a>
+        </li>
+    {%- endif %}
+    {% if exists and 'SiteMap' in cfg.edit_bar and 'sitemap' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.sitemap', item_name=item_name) }}" rel="nofollow"> {{ _('Local Site Map') }}</a>
+        </li>
+    {%- endif %}
+    {% if exists and 'SimilarItems' in cfg.edit_bar and 'similar_names' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.similar_names', item_name=item_name) }}" rel="nofollow"> {{ _('Items with similar names') }}</a>
+        </li>
+    {%- endif %}
+    <li>*</li>
+    {% if 'Modify' in cfg.edit_bar and 'modify' not in cfg.actions_excluded -%}
+        <li>
+        {% if user.may.write(item_name) %}
+            <a href="{{ url_for('frontend.modify_item', item_name=item_name) }}" rel="nofollow"> {{ _('Modify') }}</a>
+        {% else %}
+            {{ _('Immutable Item')}}
+        {% endif %}
+        </li>
+    {%- endif %}
+    {% if exists and 'Copy' in cfg.edit_bar and 'copy' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.copy_item', item_name=item_name) }}" rel="nofollow"> {{ _('Copy') }}</a>
+        </li>
+    {%- endif %}
+    {% if exists and 'Rename' in cfg.edit_bar and 'rename' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.rename_item', item_name=item_name) }}" rel="nofollow"> {{ _('Rename') }}</a>
+        </li>
+    {%- endif %}
+    {% if exists and 'Delete' in cfg.edit_bar and 'delete' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.delete_item', item_name=item_name) }}" rel="nofollow"> {{ _('Delete') }}</a>
+        </li>
+    {%- endif %}
+    {% if exists and 'Destroy' in cfg.edit_bar and 'destroy' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.destroy_item', item_name=item_name) }}" rel="nofollow"> {{ _('Destroy') }}</a>
+        </li>
+    {%- endif %}
+    <li>*</li>
+    {% if 'GlobalHistory' in cfg.edit_bar and 'global_history' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.global_history') }}" rel="nofollow"> {{ _('Global History') }}</a>
+        </li>
+    {%- endif %}
+    {% if 'GlobalIndex' in cfg.edit_bar and 'global_index' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.global_index') }}" rel="nofollow"> {{ _('Global Items Index') }}</a>
+        </li>
+    {%- endif %}
+    {% if 'GlobalTags' in cfg.edit_bar and 'global_tags' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('frontend.global_tags') }}" rel="nofollow"> {{ _('Global Tags Index') }}</a>
+        </li>
+    {%- endif %}
+    <li>*</li>
+    {% if 'Administration' in cfg.edit_bar and 'admin' not in cfg.actions_excluded -%}
+        <li>
+        <a href="{{ url_for('admin.index') }}" rel="nofollow"> {{ _('Administration & Docs') }}</a>
         </li>
     {%- endif %}
 </ul>

@@ -42,31 +42,6 @@ function searchBlur(e) {
     }
 }
 
-function actionsMenuInit(title) {
-    // Initialize action menu
-    for (i = 0; i < document.forms.length; i++) {
-        var form = document.forms[i];
-        if (form.className == 'moin-actionsmenu') {
-            // Check if this form needs update
-            var div = form.getElementsByTagName('div')[0];
-            var label = div.getElementsByTagName('label')[0];
-            if (label) {
-                // This is the first time: remove label and do buton.
-                div.removeChild(label);
-                var dobutton = div.getElementsByTagName('input')[0];
-                div.removeChild(dobutton);
-                // and add menu title
-                var select = div.getElementsByTagName('select')[0];
-                var item = document.createElement('option');
-                item.appendChild(document.createTextNode(title));
-                item.value = 'frontend.show_item';
-                select.insertBefore(item, select.options[0]);
-                select.selectedIndex = 0;
-            }
-        }
-    }
-}
-
 // use this instead of assigning to window.onload directly:
 function addLoadEvent(func) {
     // alert("addLoadEvent " + func)
