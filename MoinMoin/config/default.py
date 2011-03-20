@@ -355,7 +355,7 @@ options_no_group_name = {
     ('trail_size', 5,
      "Number of items in the trail of recently visited items"),
 
-    ('edit_bar', ['Show', 'Highlight', 'Meta', 'Modify', 'Comments', 'Download', 'History', 'Subscribe', 'Quicklink', 'Index', 'Supplementation', 'ActionsMenu'],
+    ('edit_bar', ['Show', 'Highlight', 'Meta', 'Modify', 'Comments', 'Download', 'History', 'Subscribe', 'Quicklink', 'Index', 'Supplementation', 'GlobalHistory', 'GlobalIndex', 'GlobalTags', 'WhatRefersHere', 'SiteMap', 'SimilarItems', 'Copy', 'Rename', 'Delete', 'Destroy', 'Administration', ],
      'list of edit bar entries'),
     ('history_count', (100, 200), "number of revisions shown for info/history action (default_count_shown, max_count_shown)"),
 
