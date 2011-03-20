@@ -307,7 +307,7 @@ options_no_group_name = {
     ('SecurityPolicy',
      None,
      "Class object hook for implementing security restrictions or relaxations"),
-    ('actions_excluded',
+    ('endpoints_excluded',
      [],
      "Exclude unwanted endpoints (list of strings)"),
 
@@ -354,7 +354,7 @@ options_no_group_name = {
     ('trail_size', 5,
      "Number of items in the trail of recently visited items"),
 
-    ('edit_bar', [
+    ('item_views', [
         # (endpointname, label, check_item_exists
         ('frontend.show_item', L_('Show'), False, ),
         ('frontend.highlight_item', L_('Highlight'), True, ),

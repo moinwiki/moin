@@ -5,7 +5,7 @@
     {{ super() }}
     <link rel="alternate" title="{{ item_name }} changes" href="{{ url_for('feed.atom', item_name=item_name) }}" type="application/atom+xml" />
     {# universal edit button support #}
-    {%- if user.may.write(item_name) and 'frontend.modify_item' not in cfg.actions_excluded -%}
+    {%- if user.may.write(item_name) and 'frontend.modify_item' not in cfg.endpoints_excluded -%}
     <link rel="alternate" type="application/wiki" title="{{ _('Modify') }}" href="{{ url_for('frontend.modify_item', item_name=item_name) }}" />
     {%- endif %}
 {% endblock %}
