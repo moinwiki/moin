@@ -1,3 +1,4 @@
+{% import "forms.html" as forms %}
 {% extends theme("layout.html") %}
 {% block content %}
 <h1>{{ _("Copy '%(item_name)s'", item_name=item.name) }}</h1>
@@ -13,6 +14,8 @@
 
     <input class="button" type="submit" name="button_ok" value="{{ _('Copy') }}" />
     <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
+    <br/>
+    {{ forms.render_textcha(gen, form) }}
 </form>
 </div>
 {% endblock %}

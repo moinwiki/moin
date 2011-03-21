@@ -349,14 +349,26 @@ def copy_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
+    form = TextChaizedForm.from_flat(request.form)
+    TextCha(form).amend_form()
     if request.method == 'GET':
         return render_template(item.copy_template,
                                item=item, item_name=item_name,
+                               form=form,
+                               gen=make_generator(),
                               )
     if request.method == 'POST':
         if 'button_ok' in request.form:
             target = request.form.get('target')
             comment = request.form.get('comment')
+            valid = form.validate()
+            if not valid:
+                return render_template(item.copy_template,
+                                       item=item, item_name=item_name,
+                                       form=form,
+                                       gen=make_generator(),
+                                       comment=comment,
+                                      )
             item.copy(target, comment)
             redirect_to = target
         else:
