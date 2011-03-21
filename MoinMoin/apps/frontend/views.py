@@ -354,7 +354,7 @@ def copy_item(item_name):
     if request.method == 'GET':
         return render_template(item.copy_template,
                                item=item, item_name=item_name,
-                               form=form,
+                               form=form, target=item.name,
                                gen=make_generator(),
                               )
     if request.method == 'POST':
@@ -365,7 +365,7 @@ def copy_item(item_name):
             if not valid:
                 return render_template(item.copy_template,
                                        item=item, item_name=item_name,
-                                       form=form,
+                                       form=form, target=target,
                                        gen=make_generator(),
                                        comment=comment,
                                       )
