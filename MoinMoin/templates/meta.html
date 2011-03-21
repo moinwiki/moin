@@ -1,0 +1,22 @@
+{% extends theme("show.html") %}
+
+{% block rev_navigation %}
+    {{ rev_navigation(view='frontend.show_item_meta') }}
+{% endblock %}
+
+{% block headline %}
+<h1>
+    {{ _("Metadata of '%(item_name)s'", item_name=item_name) }}
+    {% if show_revision %}({{ _("Revision") }} {{ rev.revno }}){% endif %}
+</h1>
+{% endblock %}
+
+{% block content_data %}
+{% if meta_rendered %}
+<div id="moin-content-meta">
+    {{ meta_rendered }}
+</div>
+{% endif %}
+{% endblock %}
+
+
