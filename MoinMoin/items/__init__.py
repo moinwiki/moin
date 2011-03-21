@@ -1055,6 +1055,14 @@ class MarkupItem(Text):
         """
         super(MarkupItem, self).before_revision_commit(newrev, data)
 
+        if hasattr(data, "read"):
+            data.seek(0)
+            data = data.read()
+        elif isinstance(data, str):
+            pass
+        else:
+            raise StorageError("unsupported content object: %r" % data)
+
         from MoinMoin.converter import default_registry as reg
         from MoinMoin.util.iri import Iri
         from MoinMoin.util.mime import Type, type_moin_document
