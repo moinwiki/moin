@@ -508,7 +508,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 /* moin-header moin-itemviews -- also applies to moin-footer */
 .moin-itemviews { clear: both; display: block; margin: 0; padding: 2px 8px; background: #C4D9FF;
                   font-size: 0.8em; border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; margin-top: -1px; }
-.moin-itemviews li { display: inline; padding: 0; margin: 4px 6px; }
+.moin-itemviews li { display: inline-block; padding: 0; margin: 4px 6px; line-height: 1em; }
 .moin-itemviews a,
 .moin-itemviews a:visited { color: #0044B3; }
 .moin-itemviews a:hover { text-decoration: underline; }
