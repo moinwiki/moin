@@ -108,14 +108,14 @@ hr { height: 1px; background-color: #9C9C9C; border: 0; margin: .9em 0; }
 strong.highlight { background-color: #CCE0FF; padding: 1px; }
 
 /* pre */
-pre { border: 1pt solid #AEBDCC; background-color: #F3F5F7; padding: 5pt; clear: both;
+pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear: both;
             font-family: courier, monospace; margin: .33em 0; white-space: pre; }
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
 
 /* tables */
 table { margin: 0.5em 0 0 0.5em; border-collapse: collapse; }
-th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1pt solid #ADB9CC; vertical-align: middle; }
+th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1px solid #ADB9CC; vertical-align: middle; }
 td p { margin: 0; padding: 0; }
 
 /* TableOfContents macro */
@@ -136,7 +136,7 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 /* footnotes */
 .moin-footnote a,
 .moin-footnotes sup a {font-size: .87em; }
-.moin-footnotes {border-top: 1pt solid gray; margin: 0 1em; }
+.moin-footnotes {border-top: 1px solid gray; margin: 0 1em; }
 .moin-footnotes p {margin: 0 0 .33em 1em; font-size: .92em; }
 
 /* revision navigation */
