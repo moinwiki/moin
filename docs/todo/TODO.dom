@@ -1,5 +1,4 @@
 * Moin Wiki input converter:
-  - Support inline comments.
   - Support table attributes.
   - Use config.url_schemas.
 
