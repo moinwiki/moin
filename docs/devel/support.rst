@@ -29,7 +29,7 @@ others searching for support there.
 
 Found a bug?
 ------------
-* File a bug report on the wiki.
+* File a bug report on the issue tracker (on bitbucket).
 * Even better: fix the bug, file a bug report and submit a patch (consider
   adding a unit test)
 
