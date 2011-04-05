@@ -51,6 +51,26 @@ Note: in this special mode, it won't copy the MoinMoin code to the env/
 directory, it will run everything from your work dir, so you can modify code
 and directly try it out (you only need to do this installation procedure once).
 
+Installing PIL
+~~~~~~~~~~~~~~
+For some image processing functions (like resizing, rotating) of moin, you
+need PIL (Python Imaging Library). If you install it with pip, it'll try to
+find some jpeg support library and development headers on your system and
+in case you don't have that, there will be no jpeg support in PIL.
+
+So, if you want jpeg support, make sure you have the jpeg libs/headers::
+
+ # install jpeg library and dev. headers (ubuntu / debian)
+ sudo apt-get install libjpeg62-dev
+
+Now install PIL into your virtual environment::
+
+ # enter your virtual environment:
+ source env/bin/activate
+
+ # install Python Imaging Library:
+ pip install pil
+
 Troubleshooting
 ~~~~~~~~~~~~~~~
 If you have a bad or limited network connection, you may run into trouble
