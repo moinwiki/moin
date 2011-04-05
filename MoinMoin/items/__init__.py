@@ -13,7 +13,7 @@
     this module cares for more high-level, frontend items,
     e.g. showing, editing, etc. of wiki items.
 """
-
+# TODO: split this huge module into multiple ones after code has stabilized
 
 import os, re, time, datetime, base64
 import tarfile

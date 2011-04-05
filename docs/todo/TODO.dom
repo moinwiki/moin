@@ -1,16 +1,3 @@
-* Moin Wiki input converter:
-  - Support table attributes.
-  - Use config.url_schemas.
-
-* Creole input converter:
-  - Parse interwiki the same way as Moin Wiki.
-  - Support table headings.
-  - Use config.url_schemas.
-
-* Link converter:
-  - Handle attachment and drawing links. Depends on the outcome of the storage
-    merge.
-
 * Include converter:
   - Handle URIs using the Uri class.
 

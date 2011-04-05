@@ -28,7 +28,7 @@ from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
-#### TODO: try block
+#### TODO: try block (do not crash if we don't have docutils)
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block

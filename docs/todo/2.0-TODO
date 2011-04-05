@@ -1,8 +1,7 @@
-TODO: moin export dump
-
-MoinMoin.items has a Item hierarchy for highlevel items (!= storage items), like:
-Item, NonExistent, Binary, Image, Text, ...
-TODO: Currently it is all in one file, can be split later.
+TODO: moin export dump (create a static html dump that can be opened directly
+from the filesystem using a browser). Problem: URL generation (relative URLs).
+For specific, absolute URLs (like serving html files with a web server),
+Frozen-Flask could be used.
 
 index pages: could filter by name (thus not displaying Trash/*, except if wanted)
 

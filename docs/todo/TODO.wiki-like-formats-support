@@ -8,22 +8,19 @@ If someone adds a new type of node in the Moinmoin DOM tree:
 ReStructuredText
 ________________
 
-ReStructuredText->DOM converter requires docutils(>=0.5), this must be
-in REQUIREMENTS and there must be some message in code if docutils is missing.
-
 Some syntax of ReStructuredText is ignored because it can't be converted to
-the current DOM tree(like inline style/classe/templete replacement via directives).
+the current DOM tree (like inline style/class/template replacement via directives).
 Moin needs some page about unsupported things or changes in DOM tree.
 
 Mediawiki
 _________
 
 Mediawiki->DOM converter based on moinwiki->DOM parsing model. Moinwiki parser
-has blocks(multiline markup) and inline markup, but Mediawiki has tags that are
-inline and can be extended to next lines(until closing tag or end of the file).
-This create a problem, for some tags it can be solved by implemented
-preprocessor, but it's doesn't work with tags that have multiline
-output(like <blockquote>).
+has blocks (multiline markup) and inline markup, but Mediawiki has tags that are
+inline and can be extended to next lines (until closing tag or end of the file).
+This creates a problem, for some tags it can be solved by implemented
+preprocessor, but it doesn't work with tags that have multiline output
+(like <blockquote>).
 
 There are to ways to fix it:
 
