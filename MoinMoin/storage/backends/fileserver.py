@@ -18,10 +18,11 @@ from StringIO import StringIO
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil, config
+from MoinMoin import config
 
 from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
+from MoinMoin.util.mimetype import MimeType
 
 from MoinMoin.config import ACL, MIMETYPE, ACTION, COMMENT, MTIME, SIZE
 
@@ -193,7 +194,7 @@ class FileRevision(FileDirRevision):
     """ A filesystem file """
     def __init__(self, item, revno):
         FileDirRevision.__init__(self, item, revno)
-        mimetype = wikiutil.MimeType(filename=self._fs_data_fname).mime_type()
+        mimetype = MimeType(filename=self._fs_data_fname).mime_type()
         self._fs_meta.update({
             MIMETYPE: mimetype,
         })
