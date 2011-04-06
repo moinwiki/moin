@@ -44,53 +44,7 @@ CHILD_PREFIX_LEN = len(CHILD_PREFIX)
 ### Getting data from user/Sending data to user
 #############################################################################
 
-def decodeUnknownInput(text):
-    """ Decode input in unknown encoding
-
-    First we try utf-8 because it has special format, and it will decode
-    only utf-8 files. Then we try config.charset, then iso-8859-1 using
-    'replace'. We will never raise an exception, but may return junk
-    data.
-
-    WARNING: Use this function only for data that you view, not for data
-    that you save in the wiki.
-
-    :param text: the text to decode, string
-    :rtype: unicode
-    :returns: decoded text (maybe wrong)
-    """
-    # Shortcut for unicode input
-    if isinstance(text, unicode):
-        return text
-
-    try:
-        return unicode(text, 'utf-8')
-    except UnicodeError:
-        if config.charset not in ['utf-8', 'iso-8859-1']:
-            try:
-                return unicode(text, config.charset)
-            except UnicodeError:
-                pass
-        return unicode(text, 'iso-8859-1', 'replace')
-
-
-def decodeUserInput(s, charsets=[config.charset]):
-    """
-    Decodes input from the user.
-
-    :param s: the string to unquote
-    :param charsets: list of charsets to assume the string is in
-    :rtype: unicode
-    :returns: the unquoted string as unicode
-    """
-    for charset in charsets:
-        try:
-            return s.decode(charset)
-        except UnicodeError:
-            pass
-    raise UnicodeError('The string %r cannot be decoded.' % s)
-
-
+# TODO: use similar code in a flatland validator
 def clean_input(text, max_len=201):
     """ Clean input:
         replace CR, LF, TAB by whitespace
@@ -110,21 +64,6 @@ def clean_input(text, max_len=201):
             # str, we try to decode it using the usual coding:
             text = text.decode(config.charset)
         return text.translate(config.clean_input_translation_map)
-
-
-def make_breakable(text, maxlen):
-    """ make a text breakable by inserting spaces into nonbreakable parts
-    """
-    text = text.split(" ")
-    newtext = []
-    for part in text:
-        if len(part) > maxlen:
-            while part:
-                newtext.append(part[:maxlen])
-                part = part[maxlen:]
-        else:
-            newtext.append(part)
-    return " ".join(newtext)
 
 
 #############################################################################
