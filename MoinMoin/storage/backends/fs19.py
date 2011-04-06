@@ -31,7 +31,7 @@ from sqlalchemy.exceptions import IntegrityError
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil, config
+from MoinMoin import config
 from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
                             ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
@@ -39,9 +39,9 @@ from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
 from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import split_body
-
-
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
+from MoinMoin.util.mimetype import MimeType
+
 
 DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
@@ -482,7 +482,7 @@ class FsAttachmentRevision(StoredRevision):
         # attachments in moin 1.9 were protected by their "parent" page's acl
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
-        meta[MIMETYPE] = unicode(wikiutil.MimeType(filename=item._fs_attachname).mime_type())
+        meta[MIMETYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
         size, hash_name, hash_digest = hash_hexdigest(open(attpath, 'rb'))
         meta[hash_name] = hash_digest
         meta[SIZE] = size
