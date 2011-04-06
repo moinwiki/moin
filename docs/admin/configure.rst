@@ -306,7 +306,7 @@ With GivenAuth moin relies on the webserver doing the authentication and giving
 the result to moin (usually via environment variable REMOTE_USER)::
 
     from MoinMoin.auth import GivenAuth
-    auth = [GivenAuth(autocreate=True)]
+    auth = [GivenAuth(autocreate=True, coding='utf-8')]
 
 Using this has some pros and cons:
 
@@ -316,6 +316,20 @@ Using this has some pros and cons:
   stuff stored in the LDAP directory.
 * all the stuff you won't get (but you need) will need to be manually stored
   and updated in the user's profile (e.g. the user's email address, etc.)
+
+Please note that you must give the correct coding (character set) so that moin
+can decode the username to unicode, if necessary. For environment variables
+like REMOTE_USER, the coding might depend on your operating system.
+
+If you do not know the correct coding, try: 'utf-8', 'iso-8859-1', ...
+
+.. todo::
+
+   add the usual coding(s) for some platforms (like windows)
+
+To try it out, change configuration, restart moin and then use some non-ASCII
+username (like with german umlauts or accented characters). If moin does not
+crash (log a Unicode Error), you have likely found the correct coding.
 
 OpenID
 ------
