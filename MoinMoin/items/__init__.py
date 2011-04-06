@@ -446,8 +446,9 @@ class Item(object):
         if remote_addr:
             if app.cfg.log_remote_addr:
                 newrev[ADDRESS] = unicode(remote_addr)
-                if app.cfg.log_reverse_dns_lookups:
-                    newrev[HOSTNAME] = unicode(wikiutil.get_hostname(remote_addr))
+                hostname = wikiutil.get_hostname(remote_addr)
+                if hostname:
+                    newrev[HOSTNAME] = hostname
         if flaskg.user.valid:
             newrev[USERID] = unicode(flaskg.user.id)
 
