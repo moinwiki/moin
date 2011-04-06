@@ -557,18 +557,18 @@ def split_anchor(pagename):
 
 def get_hostname(addr):
     """
-    Looks up the hostname depending on the configuration.
+    Looks up the DNS hostname for some IP address.
+
+    :param addr: IP address to look up (str)
+    :returns: host dns name (unicode) or
+              None (if lookup is disallowed or failed)
     """
     if app.cfg.log_reverse_dns_lookups:
         import socket
         try:
-            hostname = socket.gethostbyaddr(addr)[0]
-            hostname = unicode(hostname, config.charset)
+            return unicode(socket.gethostbyaddr(addr)[0], config.charset)
         except (socket.error, UnicodeError):
-            hostname = addr
-    else:
-        hostname = addr
-    return hostname
+            pass
 
 
 def file_headers(filename=None,
