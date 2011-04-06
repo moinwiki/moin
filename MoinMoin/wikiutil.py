@@ -41,7 +41,7 @@ CHILD_PREFIX = "/"
 CHILD_PREFIX_LEN = len(CHILD_PREFIX)
 
 #############################################################################
-### Getting data from user/Sending data to user
+### Data validation / cleanup
 #############################################################################
 
 # TODO: use similar code in a flatland validator
@@ -66,8 +66,51 @@ def clean_input(text, max_len=201):
         return text.translate(config.clean_input_translation_map)
 
 
+# TODO: use similar code in a flatland validator
+def normalize_pagename(name, cfg):
+    """ Normalize page name
+
+    Prevent creating page names with invisible characters or funny
+    whitespace that might confuse the users or abuse the wiki, or
+    just does not make sense.
+
+    Restrict even more group pages, so they can be used inside acl lines.
+
+    :param name: page name, unicode
+    :rtype: unicode
+    :returns: decoded and sanitized page name
+    """
+    # Strip invalid characters
+    name = config.page_invalid_chars_regex.sub(u'', name)
+
+    # Split to pages and normalize each one
+    pages = name.split(u'/')
+    normalized = []
+    for page in pages:
+        # Ignore empty or whitespace only pages
+        if not page or page.isspace():
+            continue
+
+        # Cleanup group pages.
+        # Strip non alpha numeric characters, keep white space
+        if isGroupItem(page):
+            page = u''.join([c for c in page
+                             if c.isalnum() or c.isspace()])
+
+        # Normalize white space. Each name can contain multiple
+        # words separated with only one space. Split handle all
+        # 30 unicode spaces (isspace() == True)
+        page = u' '.join(page.split())
+
+        normalized.append(page)
+
+    # Assemble components into full pagename
+    name = u'/'.join(normalized)
+    return name
+
+
 #############################################################################
-### Item types (based on item names)
+### Item types / Item names
 #############################################################################
 
 def isSystemItem(itemname):
@@ -360,47 +403,6 @@ class MimeType(object):
 #############################################################################
 ### Misc
 #############################################################################
-def normalize_pagename(name, cfg):
-    """ Normalize page name
-
-    Prevent creating page names with invisible characters or funny
-    whitespace that might confuse the users or abuse the wiki, or
-    just does not make sense.
-
-    Restrict even more group pages, so they can be used inside acl lines.
-
-    :param name: page name, unicode
-    :rtype: unicode
-    :returns: decoded and sanitized page name
-    """
-    # Strip invalid characters
-    name = config.page_invalid_chars_regex.sub(u'', name)
-
-    # Split to pages and normalize each one
-    pages = name.split(u'/')
-    normalized = []
-    for page in pages:
-        # Ignore empty or whitespace only pages
-        if not page or page.isspace():
-            continue
-
-        # Cleanup group pages.
-        # Strip non alpha numeric characters, keep white space
-        if isGroupItem(page):
-            page = u''.join([c for c in page
-                             if c.isalnum() or c.isspace()])
-
-        # Normalize white space. Each name can contain multiple
-        # words separated with only one space. Split handle all
-        # 30 unicode spaces (isspace() == True)
-        page = u' '.join(page.split())
-
-        normalized.append(page)
-
-    # Assemble components into full pagename
-    name = u'/'.join(normalized)
-    return name
-
 
 def drawing2fname(drawing):
     config.drawing_extensions = ['.tdraw', '.adraw',
