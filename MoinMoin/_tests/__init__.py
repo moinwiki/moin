@@ -15,7 +15,7 @@ from flask import g as flaskg
 
 from MoinMoin import config, security, user
 from MoinMoin.items import Item
-from MoinMoin.util import random_string
+from MoinMoin.util.crypto import random_string
 from MoinMoin.storage.error import ItemAlreadyExistsError
 
 # Promoting the test user -------------------------------------------

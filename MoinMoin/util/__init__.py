@@ -7,7 +7,7 @@
 """
 
 
-import re, random
+import re
 
 # do the pickle magic once here, so we can just import from here:
 # cPickle can encode normal and Unicode strings
@@ -82,17 +82,3 @@ def rangelist(numbers):
         return pattern[1:-1]
     return pattern[1:]
 
-
-def random_string(length, allowed_chars=None):
-    """ Generate a random string with given length consisting
-        of the given characters.
-
-        :param length: length of the string
-        :param allowed_chars: string with allowed characters or None
-                              to indicate all 256 byte values should be used
-        :returns: random string
-    """
-    if allowed_chars is None:
-        return ''.join([chr(random.randint(0, 255)) for dummy in xrange(length)])
-
-    return ''.join([random.choice(allowed_chars) for dummy in xrange(length)])
