@@ -41,6 +41,7 @@ from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
 from MoinMoin.config import MIMETYPE, ITEMLINKS, ITEMTRANSCLUSIONS
 from MoinMoin.util.forms import make_generator
+from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
 from MoinMoin.signalling import item_displayed, item_modified
@@ -915,7 +916,7 @@ class ValidPasswordRecovery(Validator):
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
         try:
-            user.encodePassword(element['password1'].value)
+            crypto.crypt_password(element['password1'].value)
         except UnicodeError:
             return self.note_error(element, state, 'password_encoding_problem_msg')
 
@@ -1082,7 +1083,7 @@ class ValidChangePass(Validator):
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
         try:
-            user.encodePassword(element['password1'].value)
+            crypto.crypt_password(element['password1'].value)
         except UnicodeError:
             return self.note_error(element, state, 'password_encoding_problem_msg')
         return True
@@ -1187,7 +1188,8 @@ def usersettings(part):
             # successfully modified everything
             success = True
             if part == 'password':
-                flaskg.user.enc_password = user.encodePassword(form['password1'].value)
+                flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
+                flaskg.user.save()
                 flash(_("Your password has been changed."), "info")
             else:
                 if part == 'personal':

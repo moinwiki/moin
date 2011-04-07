@@ -16,7 +16,6 @@ from __future__ import absolute_import, division
 import os
 import re
 import time
-import hashlib
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -355,18 +354,4 @@ def file_headers(filename=None,
         if content_disposition:
             headers.append(('Content-Disposition', content_disposition))
         return headers
-
-
-def cache_key(**kw):
-    """
-    Calculate a cache key (ascii only)
-
-    Important key properties:
-
-    * The key must be different for different <kw>.
-    * Key is pure ascii
-
-    :param kw: keys/values to compute cache key from
-    """
-    return hashlib.md5(repr(kw)).hexdigest()
 

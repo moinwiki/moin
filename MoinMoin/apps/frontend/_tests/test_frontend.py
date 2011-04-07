@@ -11,6 +11,7 @@ from werkzeug import ImmutableMultiDict
 
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
+from MoinMoin.util import crypto
 
 class TestFrontend(object):
     def test_root(self):
@@ -139,7 +140,7 @@ class TestUsersettings(object):
         self.user.name = name
         self.user.email = email
         if not pwencoded:
-            password = user.encodePassword(password)
+            password = crypto.crypt_password(password)
         self.user.enc_password = password
 
         # Validate that we are not modifying existing user data file!
