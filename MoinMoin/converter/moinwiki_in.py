@@ -580,7 +580,7 @@ class Converter(ConverterMacro):
             (?P<comment_end>
                 \s+
                 \*/
-                (?=\s)
+                ((?=\s)|$)
             )
         )
     """

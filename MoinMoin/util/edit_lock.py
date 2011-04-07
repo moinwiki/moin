@@ -19,7 +19,7 @@ def get_edit_lock(item):
     """
     for key in EDIT_LOCK:
         if not key in item:
-            return (False, 0.0, "", "", "")
+            return (False, 0.0, "", u"", "")
         else:
             return (True, float(item[EDIT_LOCK_TIMESTAMP]), item[EDIT_LOCK_ADDR],
                     item[EDIT_LOCK_HOSTNAME], item[EDIT_LOCK_USERID])
@@ -30,7 +30,7 @@ def set_edit_lock(item):
     """
     timestamp = time.time()
     addr = request.remote_addr
-    hostname = wikiutil.get_hostname(addr)
+    hostname = wikiutil.get_hostname(addr) or u''
     userid = flaskg.user.valid and flaskg.user.id or ''
 
     item.change_metadata()
