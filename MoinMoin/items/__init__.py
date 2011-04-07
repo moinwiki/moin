@@ -13,15 +13,17 @@
     this module cares for more high-level, frontend items,
     e.g. showing, editing, etc. of wiki items.
 """
-
+# TODO: split this huge module into multiple ones after code has stabilized
 
 import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile
 from StringIO import StringIO
+
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import make_generator
+from MoinMoin.util.mimetype import MimeType
 
 try:
     import PIL
@@ -371,7 +373,7 @@ class Item(object):
         if data_file and data_file.filename:
             # user selected a file to upload
             data = data_file.stream
-            mimetype = wikiutil.MimeType(filename=data_file.filename).mime_type()
+            mimetype = MimeType(filename=data_file.filename).mime_type()
         else:
             # take text from textarea
             data = request.form.get('data_text', '')
@@ -446,8 +448,9 @@ class Item(object):
         if remote_addr:
             if app.cfg.log_remote_addr:
                 newrev[ADDRESS] = unicode(remote_addr)
-                if app.cfg.log_reverse_dns_lookups:
-                    newrev[HOSTNAME] = unicode(wikiutil.get_hostname(remote_addr))
+                hostname = wikiutil.get_hostname(remote_addr)
+                if hostname:
+                    newrev[HOSTNAME] = hostname
         if flaskg.user.valid:
             newrev[USERID] = unicode(flaskg.user.id)
 
@@ -653,7 +656,7 @@ There is no help, you're doomed!
         filename = None
         if member: # content = file contained within a archive item revision
             path, filename = os.path.split(member)
-            mt = wikiutil.MimeType(filename=filename)
+            mt = MimeType(filename=filename)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
             content_length = None
@@ -664,7 +667,7 @@ There is no help, you're doomed!
                 mimestr = rev[MIMETYPE]
             except KeyError:
                 mimestr = mimetypes.guess_type(rev.item.name)[0]
-            mt = wikiutil.MimeType(mimestr=mimestr)
+            mt = MimeType(mimestr=mimestr)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
             content_length = rev[SIZE]
@@ -1172,7 +1175,7 @@ class DocBook(MarkupItem):
         tree.write(file_to_send, namespaces=output_namespaces)
 
         # We determine the different parameters for the reply
-        mt = wikiutil.MimeType(mimestr='application/docbook+xml')
+        mt = MimeType(mimestr='application/docbook+xml')
         content_disposition = mt.content_disposition(app.cfg)
         content_type = mt.content_type()
         # After creation of the StringIO, we are at the end of the file

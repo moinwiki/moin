@@ -275,7 +275,7 @@ class GivenAuth(BaseAuth):
                  strip_windomain=False,  # DOMAIN\joe -> joe
                  titlecase=False,  # joe doe -> Joe Doe
                  remove_blanks=False,  # Joe Doe -> JoeDoe
-                 coding=None,  # for decoding REMOTE_USER correctly (default: auto)
+                 coding='utf-8',  # for decoding REMOTE_USER correctly
                 ):
         self.env_var = env_var
         self.user_name = user_name
@@ -290,12 +290,7 @@ class GivenAuth(BaseAuth):
     def decode_username(self, name):
         """ decode the name we got from the environment var to unicode """
         if isinstance(name, str):
-            if self.coding:
-                name = name.decode(self.coding)
-            else:
-                # XXX we have no idea about REMOTE_USER encoding, please help if
-                # you know how to do that cleanly
-                name = wikiutil.decodeUnknownInput(name)
+            name = name.decode(self.coding)
         return name
 
     def transform_username(self, name):

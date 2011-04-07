@@ -367,6 +367,7 @@ class Converter(ConverterMacro):
     def inline_escape_repl(self, stack, escape, escaped_char):
         stack.top_append(escaped_char)
 
+    # TODO: Parse interwiki the same way as Moin Wiki.
     inline_link = r"""
         (?P<link>
             \[\[
@@ -599,7 +600,7 @@ class Converter(ConverterMacro):
         element = moin_page.table_cell()
         stack.push(element)
 
-        # TODO: How to handle table headings
+        # TODO: support table headings
         self.parse_inline(cell_text, stack)
 
         stack.pop_name('table-cell')
