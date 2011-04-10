@@ -59,6 +59,12 @@ class BareRouterBackend(BackendBase):
         super(BareRouterBackend, self).__init__(*args, **kw)
         self.mapping = [(mountpoint.rstrip('/'), backend) for mountpoint, backend in mapping]
 
+    def close(self):
+        super(BareRouterBackend, self).close()
+        for mountpoint, backend in self.mapping:
+            backend.close()
+        self.mapping = []
+
     def _get_backend(self, itemname):
         """
         For a given fully-qualified itemname (i.e. something like Company/Bosses/Mr_Joe)
