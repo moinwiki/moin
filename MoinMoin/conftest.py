@@ -118,7 +118,7 @@ class MoinClassCollector(py.test.collect.Class):
 
         try:
             # Wrap the actual teardown_method in our decorator.
-            cls.teardown_method = setup_method(cls.teardown_method)
+            cls.teardown_method = teardown_method(cls.teardown_method)
         except AttributeError:
             # Perhaps the test class did not define a teardown_method.
             def no_teardown(self, method):
