@@ -1,6 +1,6 @@
 # Copyright: 2005 MoinMoin:NirSoffer
 # Copyright: 2007 MoinMoin:AlexanderSchremmer
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -91,10 +91,10 @@ class MoinClassCollector(py.test.collect.Class):
             given_config = cls.Config
         else:
             given_config = wikiconfig.Config
-        cls.app, cls.ctx = init_test_app(given_config)
 
         def setup_method(f):
             def wrapper(self, *args, **kwargs):
+                # Important: FIRST init the test app, then call the wrapped function.
                 self.app, self.ctx = init_test_app(given_config)
                 # Don't forget to call the class' setup_method if it has one.
                 return f(self, *args, **kwargs)
@@ -102,9 +102,12 @@ class MoinClassCollector(py.test.collect.Class):
 
         def teardown_method(f):
             def wrapper(self, *args, **kwargs):
-                deinit_test_app(self.ctx)
                 # Don't forget to call the class' teardown_method if it has one.
-                return f(self, *args, **kwargs)
+                # Important: FIRST call the wrapped function, so it can still
+                # access the stuff removed by deinit_test_app:
+                ret = f(self, *args, **kwargs)
+                deinit_test_app(self.ctx)
+                return ret
             return wrapper
 
         try:
@@ -128,19 +131,11 @@ class MoinClassCollector(py.test.collect.Class):
         super(MoinClassCollector, self).setup()
 
     def teardown(self):
-        cls = self.obj
-        deinit_test_app(cls.ctx)
         super(MoinClassCollector, self).teardown()
 
 
 class Module(py.test.collect.Module):
     Class = MoinClassCollector
-
-    def __init__(self, *args, **kwargs):
-        given_config = wikiconfig.Config
-        self.app, self.ctx = init_test_app(given_config)
-        # XXX do ctx.pop() in ... (where?)
-        super(Module, self).__init__(*args, **kwargs)
 
     def run(self, *args, **kwargs):
         if coverage is not None:
