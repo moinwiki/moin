@@ -75,6 +75,18 @@ class Backend(object):
     # _create_revision() method of the item's backend is
     # invoked and the item passes itself as parameter.
     #
+    def __init__(self, *args, **kw):
+        """
+        Create the backend instance.
+        """
+        pass
+
+    def close(self):
+        """
+        Close all resources the backend is using.
+        """
+        pass
+
     def search_items(self, searchterm):
         """
         Takes a MoinMoin search term and returns an iterator (maybe empty) over

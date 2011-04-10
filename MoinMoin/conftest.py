@@ -30,7 +30,7 @@ import sys
 
 import py
 
-from MoinMoin.app import create_app_ext, before_wiki, after_wiki
+from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 
@@ -78,9 +78,10 @@ def init_test_app(given_config):
     before_wiki()
     return app, ctx
 
-def deinit_test_app(ctx):
+def deinit_test_app(app, ctx):
     after_wiki('')
     ctx.pop()
+    destroy_app(app)
 
 
 class MoinClassCollector(py.test.collect.Class):
@@ -106,7 +107,7 @@ class MoinClassCollector(py.test.collect.Class):
                 # Important: FIRST call the wrapped function, so it can still
                 # access the stuff removed by deinit_test_app:
                 ret = f(self, *args, **kwargs)
-                deinit_test_app(self.ctx)
+                deinit_test_app(self.app, self.ctx)
                 return ret
             return wrapper
 
@@ -125,7 +126,7 @@ class MoinClassCollector(py.test.collect.Class):
         except AttributeError:
             # Perhaps the test class did not define a teardown_method.
             def no_teardown(self, method):
-                deinit_test_app(self.ctx)
+                deinit_test_app(self.app, self.ctx)
             cls.teardown_method = no_teardown
 
         super(MoinClassCollector, self).setup()

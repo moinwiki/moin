@@ -42,6 +42,10 @@ class IndexingBackendMixin(object):
         super(IndexingBackendMixin, self).__init__(*args, **kw)
         self._index = ItemIndex(index_uri)
 
+    def close(self):
+        self._index.close()
+        super(IndexingBackendMixin, self).close()
+
     def create_item(self, itemname):
         """
         intercept new item creation and make sure there is NAME / UUID in the item
@@ -245,6 +249,10 @@ class ItemIndex(object):
         self.metadata = metadata
         self.item_kvstore = KVStore(item_kvmeta)
         self.rev_kvstore = KVStore(rev_kvmeta)
+
+    def close(self):
+        engine = self.metadata.bind
+        engine.dispose()
 
     def index_rebuild(self, backend):
         self.metadata.drop_all()
