@@ -13,6 +13,7 @@ from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.util import crypto
 
 
 class Set_Password(Command):
@@ -44,7 +45,7 @@ class Set_Password(Command):
             print 'This user "%s" does not exists!' % u.name
             return
 
-        u.enc_password = user.encodePassword(password)
+        u.enc_password = crypto.crypt_password(password)
         u.save()
         print 'Password set.'
 

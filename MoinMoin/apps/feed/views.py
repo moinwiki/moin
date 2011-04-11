@@ -26,6 +26,7 @@ from MoinMoin.apps.feed import feed
 from MoinMoin.config import NAME, ACL, MIMETYPE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
+from MoinMoin.util.crypto import cache_key
 
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
@@ -35,7 +36,7 @@ def atom(item_name):
     # - full item in html is nice
     # - diffs in textmode are OK, but look very simple
     # - full-item content in textmode is OK, but looks very simple
-    cid = wikiutil.cache_key(usage="atom", item_name=item_name)
+    cid = cache_key(usage="atom", item_name=item_name)
     content = app.cache.get(cid)
     if content is None:
         title = app.cfg.sitename

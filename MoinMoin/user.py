@@ -19,17 +19,8 @@
 
 from __future__ import absolute_import, division
 
-import time, base64
+import time
 import copy
-import hashlib
-import hmac
-
-from MoinMoin.util import md5crypt
-
-try:
-    import crypt
-except ImportError:
-    crypt = None
 
 from babel import parse_locale
 
@@ -39,8 +30,10 @@ from flask import session, request, url_for
 
 from MoinMoin import config, wikiutil
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util import random_string
 from MoinMoin.util.interwiki import getInterwikiHome
+from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
+                                 generate_token, valid_token
+
 
 
 def create_user(username, password, email, openid=None):
@@ -68,7 +61,7 @@ space between words. Group page name is not allowed.""", name=theuser.name)
 
     # Encode password
     try:
-        theuser.enc_password = encodePassword(password)
+        theuser.enc_password = crypt_password(password)
     except UnicodeError as err:
         # Should never happen
         return "Can't encode password: %(msg)s" % dict(msg=str(err))
@@ -177,25 +170,6 @@ def get_editor(userid, addr, hostname):
     return result
 
 
-def encodePassword(pwd, salt=None):
-    """ Encode a cleartext password
-
-    :param pwd: the cleartext password, (unicode)
-    :param salt: the salt for the password (string)
-    :rtype: string
-    :returns: the password in SHA256-encoding
-    """
-    pwd = pwd.encode('utf-8')
-
-    if salt is None:
-        salt = random_string(32)
-    assert isinstance(salt, str)
-    hash = hashlib.new('sha256', pwd)
-    hash.update(salt)
-
-    return '{SSHA256}' + base64.encodestring(hash.digest() + salt).rstrip()
-
-
 def normalizeName(name):
     """ Make normalized user name
 
@@ -273,7 +247,7 @@ class User(object):
         self.recoverpass_key = None
 
         if password:
-            self.enc_password = encodePassword(password)
+            self.enc_password = crypt_password(password)
 
         self._stored = False
         self.last_saved = 0
@@ -297,7 +271,7 @@ class User(object):
         if not self.id:
             self.id = self.make_id()
             if password is not None:
-                self.enc_password = encodePassword(password)
+                self.enc_password = crypt_password(password)
 
         # "may" so we can say "if user.may.read(pagename):"
         if self._cfg.SecurityPolicy:
@@ -404,68 +378,23 @@ class User(object):
         :rtype: 2 tuple (bool, bool)
         :returns: password is valid, enc_password changed
         """
-        epwd = data['enc_password']
+        pw_hash = data['enc_password']
 
-        # If we have no password set, we don't accept login with username
-        if not epwd:
+        # If we have no password set, we don't accept login with username.
+        # Require non-empty password.
+        if not pw_hash or not password:
             return False, False
 
-        # require non empty password
-        if not password:
+        # check the password against the password hash
+        if not valid_password(password, pw_hash):
             return False, False
-        # encode password
-        pw_utf8 = password.encode('utf-8')
 
-        # Check and/or upgrade passwords from earlier MoinMoin versions and
-        # passwords imported from other wiki systems.
-        for method in ['{SSHA256}', '{SSHA}', '{SHA}', '{APR1}', '{MD5}', '{DES}']:
-            if epwd.startswith(method):
-                d = epwd[len(method):]
+        new_pw_hash = upgrade_password(password, pw_hash)
+        if not new_pw_hash:
+            return True, False
 
-                if method == '{SSHA256}':
-                    pw_hash = base64.decodestring(d)
-                    # pw_hash is of the form "<hash><salt>"
-                    salt = pw_hash[32:]
-                    hash = hashlib.new('sha256', pw_utf8)
-                    hash.update(salt)
-                    enc = base64.encodestring(hash.digest() + salt).rstrip()
-                elif method == '{SSHA}':
-                    pw_hash = base64.decodestring(d)
-                    # pw_hash is of the form "<hash><salt>"
-                    salt = pw_hash[20:]
-                    hash = hashlib.new('sha1', pw_utf8)
-                    hash.update(salt)
-                    enc = base64.encodestring(hash.digest() + salt).rstrip()
-                elif method == '{SHA}':
-                    hash = hashlib.new('sha1', pw_utf8)
-                    enc = base64.encodestring(hash.digest()).rstrip()
-                elif method == '{APR1}':
-                    # d is of the form "$apr1$<salt>$<hash>"
-                    salt = d.split('$')[2]
-                    enc = md5crypt.apache_md5_crypt(pw_utf8, salt.encode('ascii'))
-                elif method == '{MD5}':
-                    # d is of the form "$1$<salt>$<hash>"
-                    salt = d.split('$')[2]
-                    enc = md5crypt.unix_md5_crypt(pw_utf8, salt.encode('ascii'))
-                elif method == '{DES}':
-                    if crypt is None:
-                        return False, False
-                    # d is 2 characters salt + 11 characters hash
-                    salt = d[:2]
-                    enc = crypt.crypt(pw_utf8, salt.encode('ascii'))
-
-                if epwd == method + enc:
-                    # SSHA256 current password hash
-                    if method == '{SSHA256}':
-                        return True, False
-                    else:
-                        # stored password hashed with old hash method
-                        data['enc_password'] = encodePassword(password) # upgrade to SSHA256
-                        return True, True
-                return False, False
-
-        # No encoded password match, this must be wrong password
-        return False, False
+        data['enc_password'] = new_pw_hash
+        return True, True
 
     def persistent_items(self):
         """ items we want to store into the user profile """
@@ -827,31 +756,16 @@ class User(object):
             return self.host()
 
     def generate_recovery_token(self):
-        key = random_string(64, "abcdefghijklmnopqrstuvwxyz0123456789")
-        msg = str(int(time.time()))
-        h = hmac.new(key, msg, digestmod=hashlib.sha1).hexdigest()
+        key, token = generate_token()
         self.recoverpass_key = key
         self.save()
-        return msg + '-' + h
+        return token
 
-    def apply_recovery_token(self, tok, newpass):
-        parts = tok.split('-')
-        if len(parts) != 2:
-            return False
-        try:
-            stamp = int(parts[0])
-        except ValueError:
-            return False
-        # only allow it to be valid for twelve hours
-        if stamp + 12*60*60 < time.time():
-            return False
-        # check hmac
-        # key must be of type string
-        h = hmac.new(str(self.recoverpass_key), str(stamp), digestmod=hashlib.sha1).hexdigest()
-        if h != parts[1]:
+    def apply_recovery_token(self, token, newpass):
+        if not valid_token(self.recoverpass_key, token):
             return False
         self.recoverpass_key = None
-        self.enc_password = encodePassword(newpass)
+        self.enc_password = crypt_password(newpass)
         self.save()
         return True
 

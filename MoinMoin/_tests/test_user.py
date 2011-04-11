@@ -14,26 +14,7 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin import user
-
-
-class TestEncodePassword(object):
-    """user: encode passwords tests"""
-
-    def testAscii(self):
-        """user: encode ascii password"""
-        # u'MoinMoin' and 'MoinMoin' should be encoded to same result
-        expected = "{SSHA256}n0JB8FCTQCpQeg0bmdgvTGwPKvxm8fVNjSRD+JGNs50xMjM0NQ=="
-
-        result = user.encodePassword("MoinMoin", salt='12345')
-        assert result == expected
-        result = user.encodePassword(u"MoinMoin", salt='12345')
-        assert result == expected
-
-    def testUnicode(self):
-        """ user: encode unicode password """
-        result = user.encodePassword(u'סיסמה סודית בהחלט', salt='12345') # Hebrew
-        expected = "{SSHA256}pdYvYv+4Vph259sv/HAm7zpZTv4sBKX9ITOX/m00HMsxMjM0NQ=="
-        assert result == expected
+from MoinMoin.util import crypto
 
 
 class TestLoginWithPassword(object):
@@ -328,7 +309,7 @@ class TestLoginWithPassword(object):
         self.user.name = name
         self.user.email = email
         if not pwencoded:
-            password = user.encodePassword(password)
+            password = crypto.crypt_password(password)
         self.user.enc_password = password
 
         # Validate that we are not modifying existing user data file!

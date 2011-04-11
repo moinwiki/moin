@@ -1,6 +1,6 @@
 # Copyright: 2005 MoinMoin:NirSoffer
 # Copyright: 2007 MoinMoin:AlexanderSchremmer
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -30,7 +30,7 @@ import sys
 
 import py
 
-from MoinMoin.app import create_app_ext, before_wiki, after_wiki
+from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 
@@ -82,9 +82,10 @@ def init_test_app(given_config):
     before_wiki()
     return app, ctx
 
-def deinit_test_app(ctx):
+def deinit_test_app(app, ctx):
     after_wiki('')
     ctx.pop()
+    destroy_app(app)
 
 
 class MoinClassCollector(py.test.collect.Class):
@@ -95,10 +96,10 @@ class MoinClassCollector(py.test.collect.Class):
             given_config = cls.Config
         else:
             given_config = wikiconfig.Config
-        cls.app, cls.ctx = init_test_app(given_config)
 
         def setup_method(f):
             def wrapper(self, *args, **kwargs):
+                # Important: FIRST init the test app, then call the wrapped function.
                 self.app, self.ctx = init_test_app(given_config)
                 # Don't forget to call the class' setup_method if it has one.
                 return f(self, *args, **kwargs)
@@ -106,9 +107,12 @@ class MoinClassCollector(py.test.collect.Class):
 
         def teardown_method(f):
             def wrapper(self, *args, **kwargs):
-                deinit_test_app(self.ctx)
                 # Don't forget to call the class' teardown_method if it has one.
-                return f(self, *args, **kwargs)
+                # Important: FIRST call the wrapped function, so it can still
+                # access the stuff removed by deinit_test_app:
+                ret = f(self, *args, **kwargs)
+                deinit_test_app(self.app, self.ctx)
+                return ret
             return wrapper
 
         try:
@@ -122,18 +126,16 @@ class MoinClassCollector(py.test.collect.Class):
 
         try:
             # Wrap the actual teardown_method in our decorator.
-            cls.teardown_method = setup_method(cls.teardown_method)
+            cls.teardown_method = teardown_method(cls.teardown_method)
         except AttributeError:
             # Perhaps the test class did not define a teardown_method.
             def no_teardown(self, method):
-                deinit_test_app(self.ctx)
+                deinit_test_app(self.app, self.ctx)
             cls.teardown_method = no_teardown
 
         super(MoinClassCollector, self).setup()
 
     def teardown(self):
-        cls = self.obj
-        deinit_test_app(cls.ctx)
         super(MoinClassCollector, self).teardown()
 
 
@@ -148,12 +150,6 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
 
 class Module(py.test.collect.Module):
     Class = MoinClassCollector
-
-    def __init__(self, *args, **kwargs):
-        given_config = wikiconfig.Config
-        self.app, self.ctx = init_test_app(given_config)
-        # XXX do ctx.pop() in ... (where?)
-        super(Module, self).__init__(*args, **kwargs)
 
     def run(self, *args, **kwargs):
         if coverage is not None:

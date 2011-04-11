@@ -152,6 +152,9 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     del clock
     return app
 
+def destroy_app(app):
+    deinit_backends(app)
+
 
 from MoinMoin.util.clock import Clock
 from MoinMoin.storage.error import StorageError
@@ -186,6 +189,10 @@ def init_backends(app):
     protected_mapping = [(ns, amw(app.cfg, backend, **acls)) for ns, backend, acls in ns_mapping]
     storage = router.RouterBackend(protected_mapping, index_uri=index_uri)
     return unprotected_storage, storage
+
+def deinit_backends(app):
+    app.storage.close()
+    app.unprotected_storage.close()
 
 
 def import_export_xml(app):
