@@ -122,6 +122,9 @@ class SQLAlchemyBackend(Backend):
         # {id : Lockobject} -- lock registry for item metadata locks
         self._item_metadata_lock = {}
 
+    def close(self):
+        self.engine.dispose()
+
     def has_item(self, itemname):
         """
         @see: Backend.has_item.__doc__

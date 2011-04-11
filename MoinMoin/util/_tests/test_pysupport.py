@@ -13,7 +13,7 @@ import py
 
 from flask import current_app as app
 
-from MoinMoin.util import pysupport, random_string
+from MoinMoin.util import pysupport, crypto
 from MoinMoin.util import plugins
 
 
@@ -108,7 +108,7 @@ class TestImportExisting(TestImportNameFromPlugin):
         if self.pluginExists():
             self.shouldDeleteTestPlugin = False
             py.test.skip("Won't overwrite existing plugin: %s" % self.plugin)
-        self.key = random_string(32, 'abcdefg')
+        self.key = crypto.random_string(32, 'abcdefg')
         data = '''
 # If you find this file in your wiki plugin directory, you can safely
 # delete it.

@@ -22,6 +22,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.config import USERID, ADDRESS, HOSTNAME
 from MoinMoin.util.interwiki import split_interwiki, resolve_interwiki, join_wiki, getInterwikiHome
+from MoinMoin.util.crypto import cache_key
 
 
 def get_current_theme():
@@ -220,7 +221,7 @@ class ThemeSupport(object):
             if sistername == self.cfg.interwikiname:  # it is THIS wiki
                 items.append(('sisterwiki current', sisterurl, sistername))
             else:
-                cid = wikiutil.cache_key(usage="SisterSites", sistername=sistername)
+                cid = cache_key(usage="SisterSites", sistername=sistername)
                 sisteritems = app.cache.get(cid)
                 if sisteritems is None:
                     uo = urllib.URLopener()

@@ -24,6 +24,7 @@ from StringIO import StringIO
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.crypto import cache_key
 
 try:
     import PIL
@@ -167,9 +168,9 @@ class Item(object):
         hash_name = HASH_ALGORITHM
         hash_hexdigest = self.rev.get(hash_name)
         if hash_hexdigest:
-            cid = wikiutil.cache_key(usage="internal_representation",
-                                     hash_name=hash_name,
-                                     hash_hexdigest=hash_hexdigest)
+            cid = cache_key(usage="internal_representation",
+                            hash_name=hash_name,
+                            hash_hexdigest=hash_hexdigest)
             doc = app.cache.get(cid)
         else:
             # likely a non-existing item
@@ -731,7 +732,7 @@ class TarMixin(object):
         if isinstance(name, unicode):
             name = name.encode('utf-8')
         temp_fname = os.path.join(tempfile.gettempdir(), 'TarContainer_' +
-                                  wikiutil.cache_key(usage='TarContainer', name=self.name))
+                                  cache_key(usage='TarContainer', name=self.name))
         tf = tarfile.TarFile(temp_fname, mode='a')
         ti = tarfile.TarInfo(name)
         if isinstance(content, str):
@@ -908,10 +909,10 @@ class TransformableBitmapImage(RenderableBitmapImage):
             # resize requested, XXX check ACL behaviour! XXX
             hash_name = HASH_ALGORITHM
             hash_hexdigest = self.rev[hash_name]
-            cid = wikiutil.cache_key(usage="ImageTransform",
-                                     hash_name=hash_name,
-                                     hash_hexdigest=hash_hexdigest,
-                                     width=width, height=height, transpose=transpose)
+            cid = cache_key(usage="ImageTransform",
+                            hash_name=hash_name,
+                            hash_hexdigest=hash_hexdigest,
+                            width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
                 content_type = self.rev[MIMETYPE]
@@ -935,10 +936,10 @@ class TransformableBitmapImage(RenderableBitmapImage):
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
-        cid = wikiutil.cache_key(usage="ImageDiff",
-                                 hash_name=hash_name,
-                                 hash_old=oldrev[hash_name],
-                                 hash_new=newrev[hash_name])
+        cid = cache_key(usage="ImageDiff",
+                        hash_name=hash_name,
+                        hash_old=oldrev[hash_name],
+                        hash_new=newrev[hash_name])
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:

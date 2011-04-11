@@ -80,6 +80,10 @@ class Index(object):
                        )
         metadata.create_all()
 
+    def close(self):
+        engine = self.users.metadata.bind
+        engine.dispose()
+
     def user_uuid(self, name='', old_id='', refcount=False):
         """
         Get uuid for user name, create a new uuid if we don't already have one.
@@ -186,6 +190,9 @@ class FSPageBackend(Backend):
         self.format_default = default_markup
         self.item_category_regex = re.compile(item_category_regex, re.UNICODE)
         self.idx = Index(idx_path)
+
+    def close(self):
+        self.idx.close()
 
     def _get_item_path(self, name, *args):
         """

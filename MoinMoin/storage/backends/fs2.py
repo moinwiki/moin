@@ -134,6 +134,10 @@ class FS2Backend(BackendBase):
 
         metadata.create_all()
 
+    def close(self):
+        engine = self._name2id.metadata.bind
+        engine.dispose()
+
     def _make_path(self, *args):
         return os.path.join(self._path, *args)
 
