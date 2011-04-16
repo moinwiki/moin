@@ -1,5 +1,7 @@
 #!/bin/bash
 # create a virtual environment in directory env/
+# needs: curl or wget, unzip, gzip, tar, pip
+
 virtualenv --no-site-packages env
 source env/bin/activate
 
@@ -19,29 +21,23 @@ download()
 # wikiconfig.py expects them. should be replaced by packaging.
 # we do this FIRST, so that breakage with pip install is better visible.
 
-URL=http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
-download env/ckeditor.tgz $URL 
+download env/ckeditor.tgz http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
 tar xz -C env/ -f env/ckeditor.tgz
 
-URL=http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
-download env/twd.tgz $URL
+download env/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
 tar xz -C env/ -f env/twd.tgz
 
-URL=http://static.moinmo.in/files/packages/svg-edit.tar.gz
-download env/svgedit.tgz $URL
+download env/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
 tar xz -C env/ -f env/svgedit.tgz
 
-URL=http://code.jquery.com/jquery-1.4.4.min.js
 mkdir env/jquery
-download env/jquery/jquery.min.js $URL
+download env/jquery/jquery.min.js http://code.jquery.com/jquery-1.4.4.min.js
 
-URL=http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
-download env/svgweb.zip $URL
+download env/svgweb.zip http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
 unzip -q -o -d env/ env/svgweb.zip
 
-URL='http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
 DIR='AnyWikiDraw 0.14'
-download env/awd.zip $URL
+download env/awd.zip 'http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
 unzip -q -o -d env/ env/awd.zip
 cd env/
 ln -s "$DIR" AnyWikiDraw
