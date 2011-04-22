@@ -189,7 +189,7 @@ file. It should match the actual charset of the configuration file.
             'interwiki_preferred',
             'item_root', 'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
-            'textchas_disabled_group', 'supplementation_item_names', 'html_pagetitle',
+            'supplementation_item_names', 'html_pagetitle',
             'theme_default', 'timezone_default', 'locale_default',
         )
 
@@ -309,8 +309,6 @@ options_no_group_name = {
   (
     ('textchas', None,
      "Spam protection setup using site-specific questions/answers, see HelpOnSpam."),
-    ('textchas_disabled_group', None,
-     "Name of a group of trusted users who do not get asked !TextCha questions. [Unicode]"),
     ('textchas_expiry_time', 600,
      "Time [s] for a !TextCha to expire."),
   )),
