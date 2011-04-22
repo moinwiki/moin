@@ -15,9 +15,6 @@ parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html'
                        'xml', 'python', 'perl', 'php', 'ruby', 'javascript',
                        'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole', )
 
-# When creating files, we use e.g. 0666 & config.umask for the mode:
-umask = 0770
-
 # Charset - we support only 'utf-8'. While older encodings might work,
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!
