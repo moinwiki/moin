@@ -41,18 +41,6 @@ def become_trusted(username=u"TrustedUser"):
     flaskg.user.auth_method = app.cfg.auth_methods_trusted[0]
 
 
-def become_superuser(username=u"SuperUser"):
-    """ modify flaskg.user so it is in the superusers list,
-        also make the user valid (see notes in become_valid()),
-        also make the user trusted (and thus in "Trusted" ACL pseudo group).
-
-        Note: being superuser is completely unrelated to ACL rights,
-              especially it is not related to ACL admin rights.
-    """
-    become_trusted(username)
-    if username not in app.cfg.superusers:
-        app.cfg.superusers.append(username)
-
 # Creating and destroying test items --------------------------------
 def update_item(name, revno, meta, data):
     """ creates or updates an item  """

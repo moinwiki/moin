@@ -69,12 +69,6 @@ class ConfigFunctionality(object):
         self.cache.item_dict_regexact = re.compile(u'^%s$' % self.item_dict_regex, re.UNICODE)
         self.cache.item_group_regexact = re.compile(u'^%s$' % self.item_group_regex, re.UNICODE)
 
-        if not isinstance(self.superusers, list):
-            msg = """The superusers setting in your wiki configuration is not
-                    a list (e.g. ['Sample User', 'AnotherUser']).  Please change
-                    it in your wiki configuration and try again."""
-            raise error.ConfigurationError(msg)
-
         plugins._loadPluginModule(self)
 
         if self.user_defaults['timezone'] is None:
@@ -195,7 +189,7 @@ file. It should match the actual charset of the configuration file.
             'interwiki_preferred',
             'item_root', 'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
-            'superusers', 'textchas_disabled_group', 'supplementation_item_names', 'html_pagetitle',
+            'textchas_disabled_group', 'supplementation_item_names', 'html_pagetitle',
             'theme_default', 'timezone_default', 'locale_default',
         )
 
@@ -293,8 +287,6 @@ options_no_group_name = {
   )),
   # ==========================================================================
   'auth': ('Authentication / Authorization / Security settings', None, (
-    ('superusers', [],
-     "List of trusted user names [Unicode] with wiki system administration super powers (not to be confused with ACL admin rights!). Used for e.g. software installation, language installation via SystemPagesSetup and more. See also HelpOnSuperUser."),
     ('auth', DefaultExpression('[MoinAuth()]'),
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('auth_methods_trusted', ['http', 'given', ], # Note: 'http' auth method is currently just a redirect to 'given'
