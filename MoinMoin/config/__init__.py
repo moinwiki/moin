@@ -1,8 +1,8 @@
-# Copyright: 2005-2006 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2006,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - site-wide configuration defaults (NOT per single wiki!)
+MoinMoin - site-wide configuration defaults (NOT per single wiki!)
 """
 
 import re

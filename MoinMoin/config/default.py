@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2005-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Configuration defaults class
+MoinMoin - Configuration defaults class
 """
 
 
