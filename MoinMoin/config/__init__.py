@@ -62,12 +62,13 @@ url_schemas = ['http', 'https', 'ftp', 'file',
 
 # ACL rights that are valid in moin2
 SUPERUSER = 'superuser'
+NOTEXTCHA = 'notextcha'
 ADMIN = 'admin'
 READ = 'read'
 WRITE = 'write'
 CREATE = 'create'
 DESTROY = 'destroy'
-ACL_RIGHTS_VALID = [READ, WRITE, CREATE, ADMIN, DESTROY, SUPERUSER, ]
+ACL_RIGHTS_VALID = [READ, WRITE, CREATE, ADMIN, DESTROY, SUPERUSER, NOTEXTCHA, ]
 
 # metadata keys
 UUID = "uuid"

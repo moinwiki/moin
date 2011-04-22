@@ -584,7 +584,6 @@ Tips for configuration:
 
 In your wiki config, do something like this::
 
-    textchas_disabled_group = u"TrustedEditorGroup" # members of this don't get textchas
     textchas = {
         'en': { # silly english example textchas (do not use them!)
                 u"Enter the first 9 digits of Pi.": ur"3\.14159265",
@@ -600,7 +599,7 @@ In your wiki config, do something like this::
     }
 
 
-Note that TrustedEditorGroup from above example can have groups as members.
+Note that users with 'notextcha' ACL capability won't get TextChas to answer.
 
 
 Secrets
