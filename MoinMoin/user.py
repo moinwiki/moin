@@ -720,10 +720,6 @@ class User(object):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
 
-    def isSuperUser(self):
-        """ Check if this user is superuser """
-        return self.valid and self.name and self.name in app.cfg.superusers
-
     def host(self):
         """ Return user host """
         host = self.isCurrentUser() and self._cfg.show_hosts and request.remote_addr

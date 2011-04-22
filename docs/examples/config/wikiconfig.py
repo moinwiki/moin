@@ -66,10 +66,6 @@ class Config(DefaultConfig):
 
     # Security ----------------------------------------------------------
 
-    # This is checked by some rather critical and potentially harmful actions,
-    # like despam or PackageInstaller action:
-    #superusers = [u"YourName", ]
-
     # The default (ENABLED) password_checker will keep users from choosing too
     # short or too easy passwords. If you don't like this and your site has
     # rather low security requirements, feel free to DISABLE the checker by:
