@@ -163,18 +163,6 @@ from MoinMoin.storage.backends import router, acl, memory
 from MoinMoin import auth, config, user
 
 
-def set_umask(new_mask=0777^config.umask):
-    """ Set the OS umask value (and ignore potential failures on OSes where
-        this is not supported).
-        Default: the bitwise inverted value of config.umask
-    """
-    try:
-        old_mask = os.umask(new_mask)
-    except:
-        # maybe we are on win32?
-        pass
-
-
 def init_backends(app):
     """ initialize the backend """
     # A ns_mapping consists of several lines, where each line is made up like this:
@@ -279,9 +267,6 @@ def before_wiki():
     flaskg.clock.start('total')
     flaskg.clock.start('init')
     try:
-        set_umask() # do it once per request because maybe some server
-                    # software sets own umask
-
         flaskg.unprotected_storage = app.unprotected_storage
 
         try:
