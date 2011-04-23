@@ -12,8 +12,7 @@ MoinMoin - admin views
 This shows the user interface for wiki admins.
 """
 
-
-from flask import request, url_for, flash, redirect, abort
+from flask import request, url_for, flash, redirect
 from flask import current_app as app
 from flask import g as flaskg
 
@@ -23,6 +22,8 @@ from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.config import SIZE
+from MoinMoin.config import SUPERUSER
+from MoinMoin.security import require_permission
 
 @admin.route('/')
 def index():
@@ -30,13 +31,11 @@ def index():
 
 
 @admin.route('/userbrowser')
+@require_permission(SUPERUSER)
 def userbrowser():
     """
     User Account Browser
     """
-    if not flaskg.user.may.superuser():
-        abort(403)
-
     groups = flaskg.groups
     user_accounts = []
     for uid in user.getUserList():
@@ -52,13 +51,11 @@ def userbrowser():
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
 def userprofile(user_name):
     """
     Set values in user profile
     """
-    if not flaskg.user.may.superuser():
-        abort(403)
-
     uid = user.getUserId(user_name)
     u = user.User(uid)
     if request.method == 'GET':
@@ -99,10 +96,8 @@ def mail_recovery_token():
 
 
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
 def sysitems_upgrade():
-    if not flaskg.user.may.superuser():
-        abort(403)
-
     from MoinMoin.storage.backends import upgrade_sysitems
     from MoinMoin.storage.error import BackendError
     if request.method == 'GET':
@@ -124,10 +119,8 @@ def sysitems_upgrade():
 from MoinMoin.config import default as defaultconfig
 
 @admin.route('/wikiconfig', methods=['GET', ])
+@require_permission(SUPERUSER)
 def wikiconfig():
-    if not flaskg.user.may.superuser():
-        abort(403)
-
     settings = {}
     for groupname in defaultconfig.options:
         heading, desc, opts = defaultconfig.options[groupname]
@@ -171,10 +164,8 @@ def wikiconfig():
 
 
 @admin.route('/wikiconfighelp', methods=['GET', ])
+@require_permission(SUPERUSER)
 def wikiconfighelp():
-    if not flaskg.user.may.superuser():
-        abort(403)
-
     def format_default(default):
         if isinstance(default, defaultconfig.DefaultExpression):
             default_txt = default.text

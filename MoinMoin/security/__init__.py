@@ -19,11 +19,26 @@
 """
 
 
+from functools import wraps
+
 from flask import current_app as app
 from flask import g as flaskg
+from flask import abort
 
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
+
+
+def require_permission(permission):
+    def wrap(f):
+        @wraps(f)
+        def wrapped_f(*args, **kw):
+            has_permission = getattr(flaskg.user.may, permission)
+            if not has_permission():
+                abort(403)
+            return f(*args, **kw)
+        return wrapped_f
+    return wrap
 
 
 class Permissions(object):
