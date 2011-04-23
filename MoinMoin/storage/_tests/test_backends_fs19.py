@@ -215,7 +215,7 @@ class TestAclRegeneration(object):
             (u'Joe Doe,Jane Doe:delete,read,write All:',
              u'Joe Doe,Jane Doe:read,write All:'), # multiple entries, blanks in names, remove 'delete'
         ]
-        acl_rights_valid = app.cfg.acl_rights_valid
+        acl_rights_valid = app.cfg.acl_rights_contents
         for acl, expected in tests:
             result = regenerate_acl(acl, acl_rights_valid)
             assert result == expected

@@ -23,6 +23,7 @@ from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
+from MoinMoin.security import FunctionACL
 
 
 class CacheClass(object):
@@ -68,6 +69,9 @@ class ConfigFunctionality(object):
         # the ..._regexact versions only match if nothing is left (exact match)
         self.cache.item_dict_regexact = re.compile(u'^%s$' % self.item_dict_regex, re.UNICODE)
         self.cache.item_group_regexact = re.compile(u'^%s$' % self.item_group_regex, re.UNICODE)
+
+        # compiled functions ACL
+        self.cache.acl_functions = FunctionACL(self, [self.acl_functions])
 
         plugins._loadPluginModule(self)
 
@@ -189,7 +193,7 @@ file. It should match the actual charset of the configuration file.
             'interwiki_preferred',
             'item_root', 'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
-            'supplementation_item_names', 'html_pagetitle',
+            'acl_functions', 'supplementation_item_names', 'html_pagetitle',
             'theme_default', 'timezone_default', 'locale_default',
         )
 
@@ -301,7 +305,6 @@ options_no_group_name = {
 
     ('password_checker', DefaultExpression('_default_password_checker'),
      'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
-
   )),
   # ==========================================================================
   'spam_leech_dos': ('Anti-Spam/Leech/DOS',
@@ -507,10 +510,14 @@ options_no_group_name = {
 #
 options = {
     'acl': ('Access control lists',
-    'ACLs control who may do what, see HelpOnAccessControlLists.',
+    'ACLs control who may do what.',
     (
-      ('rights_valid', config.ACL_RIGHTS_VALID,
-       "Valid tokens for right sides of ACL entries."),
+      ('functions', u'',
+       'Access Control List for functions.'),
+      ('rights_contents', config.ACL_RIGHTS_CONTENTS,
+       'Valid tokens for right sides of content ACL entries.'),
+      ('rights_functions', config.ACL_RIGHTS_FUNCTIONS,
+       'Valid tokens for right sides of function ACL entries.'),
     )),
 
     'ns': ('Storage Namespaces',

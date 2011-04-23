@@ -34,7 +34,7 @@ def userbrowser():
     """
     User Account Browser
     """
-    if not flaskg.user.may.superuser(u''):
+    if not flaskg.user.may.superuser():
         abort(403)
 
     groups = flaskg.groups
@@ -56,7 +56,7 @@ def userprofile(user_name):
     """
     Set values in user profile
     """
-    if not flaskg.user.may.superuser(u''):
+    if not flaskg.user.may.superuser():
         abort(403)
 
     uid = user.getUserId(user_name)
@@ -100,7 +100,7 @@ def mail_recovery_token():
 
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
 def sysitems_upgrade():
-    if not flaskg.user.may.superuser(u''):
+    if not flaskg.user.may.superuser():
         abort(403)
 
     from MoinMoin.storage.backends import upgrade_sysitems
@@ -125,7 +125,7 @@ from MoinMoin.config import default as defaultconfig
 
 @admin.route('/wikiconfig', methods=['GET', ])
 def wikiconfig():
-    if not flaskg.user.may.superuser(u''):
+    if not flaskg.user.may.superuser():
         abort(403)
 
     settings = {}
@@ -172,7 +172,7 @@ def wikiconfig():
 
 @admin.route('/wikiconfighelp', methods=['GET', ])
 def wikiconfighelp():
-    if not flaskg.user.may.superuser(u''):
+    if not flaskg.user.may.superuser():
         abort(403)
 
     def format_default(default):

@@ -66,7 +66,7 @@ class TextCha(object):
         user = flaskg.user
         textchas = cfg.textchas
 
-        if textchas and not user.may.notextcha(u''):
+        if textchas and not user.may.notextcha():
             locales = [user.locale, cfg.locale_default, 'en', ]
             for locale in locales:
                 logging.debug(u"TextCha: trying locale == '%s'." % locale)

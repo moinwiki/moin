@@ -13,9 +13,7 @@ import py
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin import security
-acliter = security.ACLStringIterator
-AccessControlList = security.AccessControlList
+from MoinMoin.security import ContentACL, ACLStringIterator
 
 from MoinMoin.user import User
 from MoinMoin.config import ACL
@@ -23,56 +21,64 @@ from MoinMoin.config import ACL
 from MoinMoin._tests import update_item
 from MoinMoin._tests import become_trusted
 
+
+def acliter(acl):
+    """
+    return a acl string iterator (using cfg.acl_rights_contents as valid acl rights)
+    """
+    return ACLStringIterator(app.cfg.acl_rights_contents, acl)
+
+
 class TestACLStringIterator(object):
 
     def testEmpty(self):
         """ security: empty acl string raise StopIteration """
-        acl_iter = acliter(app.cfg.acl_rights_valid, '')
+        acl_iter = acliter('')
         py.test.raises(StopIteration, acl_iter.next)
 
     def testWhiteSpace(self):
         """ security: white space acl string raise StopIteration """
-        acl_iter = acliter(app.cfg.acl_rights_valid, '       ')
+        acl_iter = acliter('       ')
         py.test.raises(StopIteration, acl_iter.next)
 
     def testDefault(self):
         """ security: default meta acl """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'Default Default')
+        acl_iter = acliter('Default Default')
         for mod, entries, rights in acl_iter:
             assert entries == ['Default']
             assert rights == []
 
     def testEmptyRights(self):
         """ security: empty rights """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'WikiName:')
+        acl_iter = acliter('WikiName:')
         mod, entries, rights = acl_iter.next()
         assert entries == ['WikiName']
         assert rights == []
 
     def testSingleWikiNameSingleRight(self):
         """ security: single wiki name, single right """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'WikiName:read')
+        acl_iter = acliter('WikiName:read')
         mod, entries, rights = acl_iter.next()
         assert entries == ['WikiName']
         assert rights == ['read']
 
     def testMultipleWikiNameAndRights(self):
         """ security: multiple wiki names and rights """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne,UserTwo:read,write')
+        acl_iter = acliter('UserOne,UserTwo:read,write')
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne', 'UserTwo']
         assert rights == ['read', 'write']
 
     def testMultipleWikiNameAndRightsSpaces(self):
         """ security: multiple names with spaces """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'user one,user two:read')
+        acl_iter = acliter('user one,user two:read')
         mod, entries, rights = acl_iter.next()
         assert entries == ['user one', 'user two']
         assert rights == ['read']
 
     def testMultipleEntries(self):
         """ security: multiple entries """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne:read,write UserTwo:read All:')
+        acl_iter = acliter('UserOne:read,write UserTwo:read All:')
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne']
         assert rights == ['read', 'write']
@@ -85,14 +91,14 @@ class TestACLStringIterator(object):
 
     def testNameWithSpaces(self):
         """ security: single name with spaces """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'user one:read')
+        acl_iter = acliter('user one:read')
         mod, entries, rights = acl_iter.next()
         assert entries == ['user one']
         assert rights == ['read']
 
     def testMultipleEntriesWithSpaces(self):
         """ security: multiple entries with spaces """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'user one:read,write user two:read')
+        acl_iter = acliter('user one:read,write user two:read')
         mod, entries, rights = acl_iter.next()
         assert entries == ['user one']
         assert rights == ['read', 'write']
@@ -102,7 +108,7 @@ class TestACLStringIterator(object):
 
     def testMixedNames(self):
         """ security: mixed wiki names and names with spaces """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne,user two:read,write user three,UserFour:read')
+        acl_iter = acliter('UserOne,user two:read,write user three,UserFour:read')
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
@@ -112,7 +118,7 @@ class TestACLStringIterator(object):
 
     def testModifier(self):
         """ security: acl modifiers """
-        acl_iter = acliter(app.cfg.acl_rights_valid, '+UserOne:read -UserTwo:')
+        acl_iter = acliter('+UserOne:read -UserTwo:')
         mod, entries, rights = acl_iter.next()
         assert mod == '+'
         assert entries == ['UserOne']
@@ -128,7 +134,7 @@ class TestACLStringIterator(object):
         The last part of this acl can not be parsed. If it ends with :
         then it will be parsed as one name with spaces.
         """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne:read user two is ignored')
+        acl_iter = acliter('UserOne:read user two is ignored')
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne']
         assert rights == ['read']
@@ -140,7 +146,7 @@ class TestACLStringIterator(object):
         The documents does not talk about this case, may() should ignore
         the rights because there is no entry.
         """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne:read :read All:')
+        acl_iter = acliter('UserOne:read :read All:')
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne']
         assert rights == ['read']
@@ -152,18 +158,17 @@ class TestACLStringIterator(object):
         assert rights == []
 
     def testIgnoreInvalidRights(self):
-        """ security: ignore rights not in acl_rights_valid
+        """ security: ignore rights not in acl_rights_contents
 
         Note: this is also important for ACL regeneration (see also acl
               regeneration test for storage.backends.fs19).
         """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne:read,sing,write,drink,sleep')
+        acl_iter = acliter('UserOne:read,sing,write,drink,sleep')
         mod, entries, rights = acl_iter.next()
         assert rights == ['read', 'write']
 
         # we use strange usernames that include invalid rights as substrings
-        acls = list(acliter(app.cfg.acl_rights_valid,
-                    u"JimAdelete,JoeArevert:admin,read,delete,write,revert"))
+        acls = list(acliter(u"JimAdelete,JoeArevert:admin,read,delete,write,revert"))
         # now check that we have lost the invalid rights 'delete' and 'revert',
         # but the usernames should be still intact.
         assert acls == [('', [u'JimAdelete', u'JoeArevert'], ['admin', 'read', 'write', ])]
@@ -173,7 +178,7 @@ class TestACLStringIterator(object):
 
         This test was failing on the apply acl rights test.
         """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne:read,write BadGuy: All:read')
+        acl_iter = acliter('UserOne:read,write BadGuy: All:read')
         mod, entries, rights = acl_iter.next()
         mod, entries, rights = acl_iter.next()
         assert entries == ['BadGuy']
@@ -181,7 +186,7 @@ class TestACLStringIterator(object):
 
     def testAllowExtraWhitespace(self):
         """ security: allow extra white space between entries """
-        acl_iter = acliter(app.cfg.acl_rights_valid, 'UserOne,user two:read,write   user three,UserFour:read  All:')
+        acl_iter = acliter('UserOne,user two:read,write   user three,UserFour:read  All:')
         mod, entries, rights = acl_iter.next()
         assert  entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
@@ -222,7 +227,7 @@ class TestAcl(object):
             "BadGuy:  "
             "All:read  "
             ]
-        acl = security.AccessControlList(app.cfg, acl_rights)
+        acl = ContentACL(app.cfg, acl_rights)
 
         # Should apply these rights:
         users = (
@@ -251,7 +256,7 @@ class TestAcl(object):
 
         # Check rights
         for user, may in users:
-            mayNot = [right for right in app.cfg.acl_rights_valid
+            mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             # User should have these rights...
             for right in may:
@@ -338,7 +343,7 @@ class TestItemAcls(object):
                 assert not can_access, "%r may not %s %r (normal)" % (u.name, right, itemname)
 
             # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_valid
+            mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
                 yield _not_have_right, u, right, itemname
@@ -423,7 +428,7 @@ class TestItemHierachicalAcls(object):
                 assert not can_access, "%r may not %s %r (hierarchic)" % (u.name, right, itemname)
 
             # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_valid
+            mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
                 yield _not_have_right, u, right, itemname

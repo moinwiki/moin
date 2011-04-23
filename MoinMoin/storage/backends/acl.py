@@ -47,7 +47,7 @@ from UserDict import DictMixin
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.security import AccessControlList
+from MoinMoin.security import ContentACL
 
 from MoinMoin.storage import Item, NewRevision, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -86,9 +86,9 @@ class AclWrapperBackend(object):
         self.backend = backend
         self.hierarchic = hierarchic
         self.valid = valid
-        self.before = AccessControlList(cfg, [before], default=default, valid=valid)
-        self.default = AccessControlList(cfg, [default], default=default, valid=valid)
-        self.after = AccessControlList(cfg, [after], default=default, valid=valid)
+        self.before = ContentACL(cfg, [before], default=default, valid=valid)
+        self.default = ContentACL(cfg, [default], default=default, valid=valid)
+        self.after = ContentACL(cfg, [after], default=default, valid=valid)
 
     def __getattr__(self, attr):
         # Attributes that this backend does not define itself are just looked
@@ -173,7 +173,7 @@ class AclWrapperBackend(object):
         if not isinstance(acls, (tuple, list)):
             acls = (acls, )
         default = self.default.default
-        return AccessControlList(self.cfg, acls, default=default, valid=self.valid)
+        return ContentACL(self.cfg, acls, default=default, valid=self.valid)
 
     def _may(self, itemname, right):
         """ Check if self.username may have <right> access on item <itemname>.
@@ -198,7 +198,7 @@ class AclWrapperBackend(object):
         :rtype: bool
         :returns: True if you have permission or False
         """
-        username = flaskg.user.name
+        username = flaskg.user.name # XXX this is likely too inflexible / wrong
 
         allowed = self.before.may(username, right)
         if allowed is not None:

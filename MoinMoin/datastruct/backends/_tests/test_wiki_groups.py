@@ -18,7 +18,7 @@ from flask import g as flaskg
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
 from MoinMoin.config import USERGROUP
-from MoinMoin import security
+from MoinMoin.security import ContentACL
 from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item
 
@@ -110,7 +110,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         update_item(u'NewGroup', 0, {USERGROUP: ["ExampleUser"]}, DATA)
 
         acl_rights = ["NewGroup:read,write"]
-        acl = security.AccessControlList(app.cfg, acl_rights)
+        acl = ContentACL(app.cfg, acl_rights)
 
         has_rights_before = acl.may(u"AnotherUser", "read")
 

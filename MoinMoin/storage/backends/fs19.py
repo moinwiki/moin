@@ -395,8 +395,7 @@ class FsPageRevision(StoredRevision):
 
         acl_line = self._fs_meta.get(ACL)
         if acl_line is not None:
-            self._fs_meta[ACL] = regenerate_acl(acl_line, config.ACL_RIGHTS_VALID)
-
+            self._fs_meta[ACL] = regenerate_acl(acl_line, config.ACL_RIGHTS_CONTENTS)
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
