@@ -50,20 +50,23 @@ class Permissions(object):
         self.name = user.name
 
     def __getattr__(self, attr):
-        """ Shortcut to export getPermission function for all known ACL rights
+        """ Shortcut to handle all known ACL rights.
 
-        if attr is one of the rights in acl_rights_valid, then return a
-        checking function for it. Else raise an AttributeError.
+        if attr is a valid acl right, return a checking function for it.
+        Else raise an AttributeError.
 
-        :param attr: one of ACL rights as defined in acl_rights_valid
+        :param attr: one of ACL rights as defined in acl_rights_(contents|functions)
         :rtype: function
-        :returns: checking function for that right, accepting an itemname
+        :returns: checking function for that right
         """
-        if attr not in app.cfg.acl_rights_valid:
-            raise AttributeError(attr)
-        ns_content = app.cfg.ns_content
-        may = flaskg.storage.get_backend(ns_content)._may
-        return lambda itemname: may(itemname, attr)
+        if attr in app.cfg.acl_rights_contents:
+            ns_content = app.cfg.ns_content # XXX always uses content backend
+            may = flaskg.storage.get_backend(ns_content)._may
+            return lambda itemname: may(itemname, attr) # XXX does not use self.name XXX
+        if attr in app.cfg.acl_rights_functions:
+            may = app.cfg.cache.acl_functions.may
+            return lambda: may(self.name, attr)
+        raise AttributeError(attr)
 
 
 # make an alias for the default policy
@@ -72,9 +75,7 @@ Default = Permissions
 
 class AccessControlList(object):
     """
-    Access Control List
-
-    Control who may do what on or with a wiki item.
+    Access Control List - controls who may do what.
 
     Syntax of an ACL string:
 
@@ -94,7 +95,7 @@ class AccessControlList(object):
         "All" is a special group containing all users (Known and Anonymous users).
 
         "right" may be an arbitrary word like read, write or admin.
-        Only words in cfg.acl_rights_valid are accepted, others are ignored.
+        Only valid words are accepted, others are ignored (see valid param).
         It is allowed to specify no rights, which means that no rights are given.
 
     How ACL is processed
@@ -149,7 +150,7 @@ class AccessControlList(object):
        For each backend in the namespace, you can configure the following
        ACL presets:
 
-        default acls:
+       default acls:
            These are ONLY used when no item ACLs are found.
            Default: "Known:read,write,create All:read,write",
 
@@ -160,21 +161,14 @@ class AccessControlList(object):
        after acls:
            This will be inserted AFTER any item/default ACL entries.
            Default: ""
-
-       cfg.acl_rights_valid
-           These are the acceptable (known) rights (and the place to
-           extend, if necessary).
-           Default: ["read", "write", "create", "destroy", "admin"]
     """
 
     special_users = ["All", "Known", "Trusted"] # order is important
 
     def __init__(self, cfg, lines=[], default='', valid=None):
         """ Initialize an ACL, starting from <nothing>. """
-        if valid is None:
-            self.acl_rights_valid = cfg.acl_rights_valid
-        else:
-            self.acl_rights_valid = valid
+        assert valid is not None
+        self.acl_rights_valid = valid
         self.default = default
         self.auth_methods_trusted = cfg.auth_methods_trusted
         assert isinstance(lines, (list, tuple))
@@ -284,6 +278,30 @@ class AccessControlList(object):
         return self.acl_lines != other.acl_lines
 
 
+class ContentACL(AccessControlList):
+    """
+    Content AccessControlList
+
+    Uses cfg.acl_rights_contents if no list of valid rights is explicitly given.
+    """
+    def __init__(self, cfg, lines=[], default='', valid=None):
+        if valid is None:
+            valid = cfg.acl_rights_contents
+        super(ContentACL, self).__init__(cfg, lines, default, valid)
+
+
+class FunctionACL(AccessControlList):
+    """
+    Function AccessControlList
+
+    Uses cfg.acl_rights_functions if no list of valid rights is explicitly given.
+    """
+    def __init__(self, cfg, lines=[], default='', valid=None):
+        if valid is None:
+            valid = cfg.acl_rights_functions
+        super(FunctionACL, self).__init__(cfg, lines, default, valid)
+
+
 class ACLStringIterator(object):
     """ Iterator for acl string
 
@@ -292,7 +310,7 @@ class ACLStringIterator(object):
 
     Usage::
 
-        iter = ACLStringIterator(cfg.acl_rights_valid, 'user name:right')
+        iter = ACLStringIterator(rights_valid, 'user name:right')
         for modifier, entries, rights in iter:
             # process data
     """
