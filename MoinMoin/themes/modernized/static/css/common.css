@@ -69,9 +69,7 @@ a:active { color: red; }
 
 /* dead links */
 a.moin-nonexistent:visited,
-a.moin-nonexistent,
-a.moin-badinterwiki:visited,
-a.moin-badinterwiki { color: #444; }
+a.moin-nonexistent { color: #444; }
 
 /* lists */
 ol, ul { margin-left: 3em; }
@@ -345,7 +343,6 @@ a.moin-irc:before,
 a.moin-ircs:before { content: url(../img/moin-telnet.png); margin: 0 0.2em; }
 a.moin-mailto:before { content: url(../img/moin-email.png); margin: 0 0.2em; }
 a.moin-attachment:before { content: url(../img/moin-attach.png); margin: 0 0.2em; }
-a.moin-badinterwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
 a.moin-interwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
 a.moin-action:before { content: url(../img/moin-action.png); margin: 0 0.2em; }
 
@@ -561,11 +558,11 @@ h6:hover .permalink { display: inline; }
 html { font-family: Times, serif; font-size: 12pt; width: 100%; }
 body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
 
-a, a:visited, a.nonexistent,
-a.badinterwiki { color: black !important; text-decoration: none !important; }
+a, a:visited,
+a.nonexistent { color: black !important; text-decoration: none !important; }
 
-a.interwiki:before, a.badinterwiki:before { content: attr(title) ":"; }
-a.interwiki img, a.badinterwiki img { display: none; }
+a.interwiki:before { content: attr(title) ":"; }
+a.interwiki img { display: none; }
 
 pre { font-size: 10pt; }
 .footnotes div { width: 5em; border-top: 1pt solid gray; }
