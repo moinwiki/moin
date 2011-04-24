@@ -75,9 +75,10 @@ class Permissions(object):
         :returns: checking function for that right
         """
         if attr in app.cfg.acl_rights_contents:
-            ns_content = app.cfg.ns_content # XXX always uses content backend
-            may = flaskg.storage.get_backend(ns_content)._may
-            return lambda itemname: may(itemname, attr, username=self.name)
+            def may(itemname):
+                backend = flaskg.storage._get_backend(itemname)[0]
+                return backend._may(itemname, attr, username=self.name)
+            return may
         if attr in app.cfg.acl_rights_functions:
             may = app.cfg.cache.acl_functions.may
             return lambda: may(self.name, attr)
