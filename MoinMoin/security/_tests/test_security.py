@@ -11,7 +11,6 @@
 import py
 
 from flask import current_app as app
-from flask import g as flaskg
 
 from MoinMoin.security import ContentACL, ACLStringIterator
 
@@ -203,14 +202,6 @@ class TestAcl(object):
 
     TO DO: test unknown user?
     """
-    def setup_method(self, method):
-        # Backup user
-        self.savedUser = flaskg.user.name
-
-    def teardown_method(self, method):
-        # Restore user
-        flaskg.user.name = self.savedUser
-
     def testApplyACLByUser(self):
         """ security: applying acl by user name"""
         # This acl string...
@@ -329,7 +320,6 @@ class TestItemAcls(object):
             u.valid = True
 
             def _have_right(u, right, itemname):
-                flaskg.user = u
                 can_access = getattr(u.may, right)(itemname)
                 assert can_access, "%r may %s %r (normal)" % (u.name, right, itemname)
 
@@ -338,7 +328,6 @@ class TestItemAcls(object):
                 yield _have_right, u, right, itemname
 
             def _not_have_right(u, right, itemname):
-                flaskg.user = u
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, "%r may not %s %r (normal)" % (u.name, right, itemname)
 
@@ -414,7 +403,6 @@ class TestItemHierachicalAcls(object):
             u.valid = True
 
             def _have_right(u, right, itemname):
-                flaskg.user = u
                 can_access = getattr(u.may, right)(itemname)
                 assert can_access, "%r may %s %r (hierarchic)" % (u.name, right, itemname)
 
@@ -423,7 +411,6 @@ class TestItemHierachicalAcls(object):
                 yield _have_right, u, right, itemname
 
             def _not_have_right(u, right, itemname):
-                flaskg.user = u
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, "%r may not %s %r (hierarchic)" % (u.name, right, itemname)
 

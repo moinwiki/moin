@@ -77,7 +77,7 @@ class Permissions(object):
         if attr in app.cfg.acl_rights_contents:
             ns_content = app.cfg.ns_content # XXX always uses content backend
             may = flaskg.storage.get_backend(ns_content)._may
-            return lambda itemname: may(itemname, attr) # XXX does not use self.name XXX
+            return lambda itemname: may(itemname, attr, username=self.name)
         if attr in app.cfg.acl_rights_functions:
             may = app.cfg.cache.acl_functions.may
             return lambda: may(self.name, attr)
