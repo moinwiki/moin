@@ -549,6 +549,102 @@ Password storage
 Moin never stores passwords in cleartext, but always as cryptographic hash
 with random salt (currently ssha256 is the default).
 
+
+Authorization
+=============
+Moin uses Access Control Lists (ACLs) to specify who is authorized to do
+something.
+
+Please note that wikis usually make much use of so-called *soft security*,
+that means that they are rather open and give freedom to the users, while
+providing means to revert damage in case it happens.
+
+*Hard security* means to lock down everything, so that users are not able
+to do anything without being allowed to.
+
+Moin's default configuration tries to give a sane compromise of both soft
+and hard security. But, depending on the situation the wiki
+admin/owner/community has to deal with, you may need different settings.
+
+So just keep in mind:
+
+* if your wiki is rather open, you make it easy to contribute (like e.g. a
+  user who is not a regular user of your wiki could fix some typos he has just
+  found). But: a hostile user (or bot) also might put some spam into your wiki
+  (you can revert the spam later).
+* if you are rather closed (like requiring every user to first apply for an
+  account and to log in before being able to do changes), you'll never get
+  contributions from casual users and maybe also less from members of your
+  community. But: likely you won't get spam either.
+ 
+
+ACL for functions
+-----------------
+This ACL controls access to some specific functions / views of moin::
+
+    # we just show the default value of acl_rights_functions for information,
+    # you usually do not have to change it:
+    #acl_rights_functions = ['superuser', 'notextcha', ]
+    acl_functions = u'+YourName:superuser TrustedEditorGroup:notextcha'
+
+Supported capabilities (rights):
+
+* superuser - used for misc. administrative functions, give this only to
+  highly trusted people
+* notextcha - if you have TextChas enabled, users with notextcha capability
+  won't get questions to answer. Give this to known and trusted users who
+  regularly edit in your wiki.
+
+ACLs for content
+----------------
+These ACLs control access to content stored in the wiki - they are configured
+per storage backend (see also there) and (optionally) in the metadata of wiki
+items::
+
+    # we just show the default value of acl_rights_contents for information,
+    # you usually do not have to change it:
+    #acl_rights_contents = ['read', 'write', 'create', 'destroy', 'admin', ]
+    ... backend configuration ...
+    ... before=u'YourName:read,write,create,destroy,admin',
+    ... default=u'All:read,write,create',
+    ... after=u'',
+    ... hierarchic=False,
+
+Usually, you have a `before`, `on item` or `default` and a `after` ACL which
+are processed exactly in this order. The `default` ACL is only used if no ACL
+is specified in the metadata of the item in question.
+
+.. todo::
+
+   Insert some nice picture about processing sequence
+
+When configuring content ACLs, you can choose between standard (flat) ACL
+processing and hierarchic ACL processing. Hierarchic processing means that
+subitems inherit ACLs from their parent items if they have no own ACL.
+
+Note: while hierarchic ACLs are rather convenient sometimes, they make the
+system more complex. You have to be very careful with potential permissions
+changes happening due to changes in the hierarchy, like when you create,
+rename or delete items.
+
+Supported capabilities (rights):
+
+* read - read content
+* write - write (edit, modify) content
+* create - create new items
+* destroy - completely destroy revisions or items (never give to not fully
+  trusted users)
+* admin - change (create, remove) ACLs for the item (never give to not fully
+  trusted users)
+
+ACL syntax
+----------
+
+.. todo::
+
+   reuse content from HelpOnAccessControlLists
+
+
 Anti-Spam
 =========
 TextChas
