@@ -175,8 +175,8 @@ class AclWrapperBackend(object):
         default = self.default.default
         return ContentACL(self.cfg, acls, default=default, valid=self.valid)
 
-    def _may(self, itemname, right):
-        """ Check if self.username may have <right> access on item <itemname>.
+    def _may(self, itemname, right, username=None):
+        """ Check if username may have <right> access on item <itemname>.
 
         For hierarchic=False we just check the item in question.
 
@@ -194,11 +194,13 @@ class AclWrapperBackend(object):
 
         :param itemname: item to get permissions from
         :param right: the right to check
-
+        :param username: username to use for permissions check (default is to
+                         use the username doing the current request)
         :rtype: bool
         :returns: True if you have permission or False
         """
-        username = flaskg.user.name # XXX this is likely too inflexible / wrong
+        if username is None:
+            username = flaskg.user.name
 
         allowed = self.before.may(username, right)
         if allowed is not None:
