@@ -1,21 +1,21 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2003-2008 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2008,2011 MoinMoin:ThomasWaldmann
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
 # Copyright: 2007 Alexander Schremmer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Wiki Security Interface and Access Control Lists
+MoinMoin - Wiki Security Interface and Access Control Lists
 
 
-    This implements the basic interface for user permissions and
-    system policy. If you want to define your own policy, inherit
-    from the base class 'Permissions', so that when new permissions
-    are defined, you get the defaults.
+This implements the basic interface for user permissions and
+system policy. If you want to define your own policy, inherit
+from the base class 'Permissions', so that when new permissions
+are defined, you get the defaults.
 
-    Then assign your new class to "SecurityPolicy" in wikiconfig;
-    and I mean the class, not an instance of it!
+Then assign your new class to "SecurityPolicy" in wikiconfig;
+and I mean the class, not an instance of it!
 """
 
 
@@ -30,6 +30,11 @@ from MoinMoin.i18n import _, L_, N_
 
 
 def require_permission(permission):
+    """
+    view decorator to require a specific permission
+
+    if the permission is not granted, abort with 403
+    """
     def wrap(f):
         @wraps(f)
         def wrapped_f(*args, **kw):
@@ -60,7 +65,6 @@ class Permissions(object):
             # This call will return correct permissions by checking ACLs:
             return Permissions.read(itemname)
     """
-
     def __init__(self, user):
         self.name = user.name
 
@@ -161,22 +165,6 @@ class AccessControlList(object):
         Note that you probably would not want to use the second and
         third examples in ACL entries of some item. They are very
         useful in the wiki configuration though.
-
-   Configuration options
-       For each backend in the namespace, you can configure the following
-       ACL presets:
-
-       default acls:
-           These are ONLY used when no item ACLs are found.
-           Default: "Known:read,write,create All:read,write",
-
-       before acls:
-           This will be inserted BEFORE any item/default ACL entries.
-           Default: ""
-
-       after acls:
-           This will be inserted AFTER any item/default ACL entries.
-           Default: ""
     """
 
     special_users = ["All", "Known", "Trusted"] # order is important

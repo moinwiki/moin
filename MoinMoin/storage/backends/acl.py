@@ -1,4 +1,4 @@
-# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
@@ -7,38 +7,38 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - ACL Middleware
+MoinMoin - ACL Middleware
 
-    This backend is a middleware implementing access control using ACLs (access
-    control lists) and is referred to as AMW (ACL MiddleWare) hereafter.
-    It does not store any data, but uses a given backend for this.
-    This middleware is injected between the user of the storage API and the actual
-    backend used for storage. It is independent of the backend being used.
-    Instances of the AMW are bound to individual request objects. The user whose
-    permissions the AMW checks is hence obtained by a lookup on the request object.
-    The backend itself (and the objects it returns) need to be wrapped in order
-    to make sure that no object of the real backend is (directly or indirectly)
-    made accessible to the user of the API.
-    The real backend is still available as an attribute of the request and can
-    be used by conversion utilities or for similar tasks (flaskg.unprotected_storage).
-    Regular users of the storage API, such as the views that modify an item,
-    *MUST NOT*, in any way, use the real backend unless the author knows *exactly*
-    what he's doing (as this may introduce security bugs without the code actually
-    being broken).
+This backend is a middleware implementing access control using ACLs (access
+control lists) and is referred to as AMW (ACL MiddleWare) hereafter.
+It does not store any data, but uses a given backend for this.
+This middleware is injected between the user of the storage API and the actual
+backend used for storage. It is independent of the backend being used.
+Instances of the AMW are bound to individual request objects. The user whose
+permissions the AMW checks is hence obtained by a lookup on the request object.
+The backend itself (and the objects it returns) need to be wrapped in order
+to make sure that no object of the real backend is (directly or indirectly)
+made accessible to the user of the API.
+The real backend is still available as an attribute of the request and can
+be used by conversion utilities or for similar tasks (flaskg.unprotected_storage).
+Regular users of the storage API, such as the views that modify an item,
+*MUST NOT*, in any way, use the real backend unless the author knows *exactly*
+what he's doing (as this may introduce security bugs without the code actually
+being broken).
 
-    The classes wrapped are:
-        * AclWrapperBackend (wraps MoinMoin.storage.Backend)
-        * AclWrapperItem (wraps MoinMoin.storage.Item)
-        * AclWrapperRevision (wraps MoinMoin.storage.Revision)
+The classes wrapped are:
+    * AclWrapperBackend (wraps MoinMoin.storage.Backend)
+    * AclWrapperItem (wraps MoinMoin.storage.Item)
+    * AclWrapperRevision (wraps MoinMoin.storage.Revision)
 
-    When an attribute is 'wrapped' it means that, in this context, the user's
-    permissions are checked prior to attribute usage. If the user may not perform
-    the action he intended to perform, an AccessDeniedError is raised.
-    Otherwise the action is performed on the respective attribute of the real backend.
-    It is important to note here that the outcome of such an action may need to
-    be wrapped itself, as is the case when items or revisions are returned.
+When an attribute is 'wrapped' it means that, in this context, the user's
+permissions are checked prior to attribute usage. If the user may not perform
+the action he intended to perform, an AccessDeniedError is raised.
+Otherwise the action is performed on the respective attribute of the real backend.
+It is important to note here that the outcome of such an action may need to
+be wrapped itself, as is the case when items or revisions are returned.
 
-    All wrapped classes must, of course, adhere to the normal storage API.
+All wrapped classes must, of course, adhere to the normal storage API.
 """
 
 
