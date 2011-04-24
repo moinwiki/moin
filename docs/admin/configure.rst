@@ -614,9 +614,11 @@ Usually, you have a `before`, `on item` or `default` and a `after` ACL which
 are processed exactly in this order. The `default` ACL is only used if no ACL
 is specified in the metadata of the item in question.
 
-.. todo::
+.. digraph:: acl_order
 
-   Insert some nice picture about processing sequence
+   rankdir=LR;
+   "before" -> "item acl from metadata (if specified)" -> "after";
+   "before" -> "default (otherwise)"                   -> "after";
 
 When configuring content ACLs, you can choose between standard (flat) ACL
 processing and hierarchic ACL processing. Hierarchic processing means that
