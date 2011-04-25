@@ -312,16 +312,20 @@ class Item(object):
     data = property(fget=get_data)
 
     def _write_stream(self, content, new_rev, bufsize=8192):
+        written = 0
         if hasattr(content, "read"):
             while True:
                 buf = content.read(bufsize)
                 if not buf:
                     break
                 new_rev.write(buf)
+                written += len(buf)
         elif isinstance(content, str):
             new_rev.write(content)
+            written += len(content)
         else:
             raise StorageError("unsupported content object: %r" % content)
+        return written
 
     def copy(self, name, comment=u''):
         """
@@ -386,9 +390,12 @@ class Item(object):
                 data = '' # could've been u'' also!
                 mimetype = None
         meta_text = request.form.get('meta_text', '')
-        meta = self.meta_text_to_dict(meta_text)
+        try:
+            meta = self.meta_text_to_dict(meta_text)
+        except ValueError:
+            meta = {} # XXX maybe rather validate and reject invalid json
         comment = request.form.get('comment')
-        self._save(meta, data, mimetype=mimetype, comment=comment)
+        return self._save(meta, data, mimetype=mimetype, comment=comment)
 
     def _save(self, meta, data, name=None, action=u'SAVE', mimetype=None, comment=u''):
         if name is None:
@@ -406,7 +413,8 @@ class Item(object):
                 mimetype = currentrev.get(MIMETYPE)
         except NoSuchRevisionError:
             rev_no = -1
-        newrev = storage_item.create_revision(rev_no + 1)
+        new_rev_no = rev_no + 1
+        newrev = storage_item.create_revision(new_rev_no)
         for k, v in meta.iteritems():
             # TODO Put metadata into newrev here for now. There should be a safer way
             #      of input for this.
@@ -419,7 +427,7 @@ class Item(object):
             newrev[NAME_OLD] = oldname
         newrev[NAME] = name
 
-        self._write_stream(data, newrev)
+        size = self._write_stream(data, newrev)
         timestamp = time.time()
         # XXX if meta is from old revision, and user did not give a non-empty
         # XXX comment, re-using the old rev's comment is wrong behaviour:
@@ -435,6 +443,7 @@ class Item(object):
         self.before_revision_commit(newrev, data)
         storage_item.commit()
         # XXX Event ?
+        return new_rev_no, size
 
     def before_revision_commit(self, newrev, data):
         """
