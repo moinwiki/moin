@@ -17,7 +17,7 @@ import difflib
 import time
 from itertools import chain
 
-from flask import request, url_for, flash, Response, redirect, session, abort
+from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
 from flaskext.themes import get_themes_list
@@ -77,6 +77,8 @@ Disallow: /+destroy/
 Disallow: /+rename/
 Disallow: /+revert/
 Disallow: /+index/
+Disallow: /+index2/
+Disallow: /+jfu-server/
 Disallow: /+sitemap/
 Disallow: /+similar_names/
 Disallow: /+quicklink/
@@ -477,6 +479,48 @@ def destroy_item(item_name, rev):
                                       )
             item.destroy(comment=comment, destroy_item=destroy_item)
         return redirect(url_for('frontend.show_item', item_name=item_name))
+
+
+# XXX this has some functional redundancy with "index", solve that later
+@frontend.route('/+index2/<itemname:item_name>', methods=['GET'])
+def index2(item_name):
+    # flat index using jquery.file-upload (see also jfu_server)
+    return render_template('index2.html',
+                           item_name=item_name,
+                          )
+
+@frontend.route('/+jfu-server/<itemname:item_name>', methods=['GET', 'POST'])
+def jfu_server(item_name):
+    """jquery-file-upload server component
+    """
+    if request.method == 'GET':
+        try:
+            item = Item.create(item_name)
+        except AccessDeniedError:
+            abort(403)
+        files = []
+        for full_name, rel_name, mimetype in item.flat_index():
+            url = url_for('show_item', item_name=full_name)
+            url_download = url_for('get_item', item_name=full_name)
+            files.append(dict(name=rel_name, url=url, url_download=url_download, size=0))
+        return jsonify(files=files)
+    if request.method == 'POST':
+        data_file = request.files.get('data_file')
+        subitem_name = data_file.filename
+        item_name = item_name + u'/' + subitem_name
+        try:
+            item = Item.create(item_name)
+            revno, size = item.modify()
+            item_modified.send(app._get_current_object(),
+                               item_name=item_name)
+            return jsonify(name=subitem_name,
+                           size=size,
+                           url=url_for('show_item', item_name=item_name, rev=revno),
+                           url_download=url_for('get_item', item_name=item_name, rev=revno),
+                          )
+        except AccessDeniedError:
+            abort(403)
+
 
 
 @frontend.route('/+index/<itemname:item_name>')

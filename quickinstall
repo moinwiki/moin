@@ -12,8 +12,9 @@ download()
         echo /usr/bin/curl -L -o $1 $2
         /usr/bin/curl -L -o $1 $2
     else
-        echo wget -nc -O $1 $2
-        wget -nc -O $1 $2
+        # github redirects to a url where its cert does not match :(
+        echo wget -nc --no-check-certificate -O $1 $2
+        wget -nc --no-check-certificate -O $1 $2
     fi
 }
 
@@ -29,6 +30,12 @@ tar xz -C env/ -f env/twd.tgz
 
 download env/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
 tar xz -C env/ -f env/svgedit.tgz
+
+mkdir env/jquery.fu
+download env/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
+download env/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
+download env/jquery.fu/jquery.fileupload-ui.css https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.css
+download env/jquery.fu/pbar-ani.gif https://www.github.com/blueimp/jQuery-File-Upload/raw/master/pbar-ani.gif
 
 mkdir env/jquery
 download env/jquery/jquery.min.js http://code.jquery.com/jquery-1.4.4.min.js
