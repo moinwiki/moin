@@ -359,6 +359,7 @@ options_no_group_name = {
         ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
         ('special.supplementation', None, None, False, ),
         ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
+        ('frontend.index2', L_('Index'), L_('List sub-items'), False, ),
         ('special.comments', L_('Comments'), L_('Switch showing comments on or off'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),

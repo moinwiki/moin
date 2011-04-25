@@ -61,6 +61,7 @@ class Config(DefaultConfig):
         twikidraw = os.path.join(wikiconfig_dir, 'env', 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, 'env', 'svg-edit'),
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
+        fileupload = os.path.join(wikiconfig_dir, 'env', 'jquery.fu'),
     )
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
