@@ -20,7 +20,7 @@ from MoinMoin.util import plugins
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.converter._args import Arguments
 from MoinMoin.util import iri
-from MoinMoin.util.mime import type_moin_document
+from MoinMoin.util.mime import type_moin_document, Type
 from MoinMoin.util.tree import html, moin_page
 
 
@@ -34,10 +34,14 @@ class Converter(object):
         type = elem.get(moin_page.content_type)
         alt = elem.get(moin_page.alt)
 
-        # TODO
-        if not type or not type.startswith('x-moin/macro;name='):
+        if not type:
             return
-        name = type[18:]
+
+        type = Type(type)
+        if not (type.type == 'x-moin' and type.subtype == 'macro'):
+            return
+
+        name = type.parameters['name']
 
         context_block = elem.tag == moin_page.part
 
