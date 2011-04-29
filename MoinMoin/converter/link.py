@@ -137,9 +137,9 @@ class ConverterExternOutput(ConverterBase):
         do, query = self._get_do(input.query)
         link = Iri(query=query, fragment=input.fragment)
 
-        if input.authority:
+        if input.authority and input.authority.host:
             # interwiki link
-            wikitag, wikiurl, wikitail, err = resolve_interwiki(input.authority, input.path[1:])
+            wikitag, wikiurl, wikitail, err = resolve_interwiki(unicode(input.authority.host), unicode(input.path[1:]))
             if not err:
                 elem.set(html.class_, 'interwiki')
                 if do is not None:
