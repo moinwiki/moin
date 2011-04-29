@@ -306,7 +306,7 @@ class Converter(ConverterMacro):
             (?P<nowiki_interpret>
                 \#!
                 \s*
-                (?P<nowiki_name> [\w/-]+ )?
+                (?P<nowiki_name> [\w/.-]+ )?  # stuff like creole or text/x.moin.creole or text/x-python
                 \s*
                 (:?
                     \(
