@@ -161,7 +161,7 @@ def show_dom(item_name, rev):
     else:
         status = 200
     content = render_template('dom.xml',
-                              data_xml=item._render_data_xml(),
+                              data_xml=Markup(item._render_data_xml()),
                              )
     return Response(content, status, mimetype='text/xml')
 
