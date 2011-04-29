@@ -160,7 +160,7 @@ class Item(object):
     def feed_input_conv(self):
         return self.name
 
-    def internal_representation(self, converters=['smiley', 'link']):
+    def internal_representation(self, converters=['smiley']):
         """
         Return the internal representation of a document using a DOM Tree
         """
@@ -182,7 +182,7 @@ class Item(object):
             from MoinMoin.converter import default_registry as reg
             from MoinMoin.util.iri import Iri
             from MoinMoin.util.mime import Type, type_moin_document
-            from MoinMoin.util.tree import moin_page, xlink
+            from MoinMoin.util.tree import moin_page
             input_conv = reg.get(Type(self.mimetype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
@@ -247,9 +247,9 @@ class Item(object):
         flaskg.clock.stop('conv_serialize')
         return out
 
-    def _render_data_xml(self, converters):
+    def _render_data_xml(self):
         from MoinMoin.util.tree import moin_page, xlink, html
-        doc = self.internal_representation(converters)
+        doc = self.internal_representation()
 
         from array import array
         out = array('u')
