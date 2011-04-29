@@ -259,6 +259,8 @@ class TestConverter(object):
                '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),
             (u'{{{#!text/plain\ntext\n}}}',
                u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
+            (u'{{{#!text/x.moin.creole\ntext\n}}}',
+               u'<page><body><part content-type="text/x.moin.creole"><body>text</body></part></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
