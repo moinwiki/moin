@@ -10,6 +10,8 @@ import py.test
 
 from emeraldtree import tree as ET
 
+from flask import current_app as app
+
 from MoinMoin.converter.link import *
 from MoinMoin.util.iri import Iri
 
@@ -19,6 +21,7 @@ class TestConverterExternOutput(object):
         self.conv = ConverterExternOutput(url_root=url_root)
 
     def test_wiki(self):
+        assert 'MoinMoin' in app.cfg.interwiki_map
         pairs = [
             ('wiki:///Test',
                 './Test'),
@@ -28,6 +31,8 @@ class TestConverterExternOutput(object):
                 './Test#anchor'),
             ('wiki:///Test?mode=raw#anchor',
                 './Test?mode=raw#anchor'),
+            ('wiki://MoinMoin/Test',
+                'http://moinmo.in/Test'),
         ]
         for i in pairs:
             yield (self._do_wiki, ) + i

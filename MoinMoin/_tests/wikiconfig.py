@@ -22,4 +22,5 @@ class Config(DefaultConfig):
     _test_items_xml = join(_here, 'testitems.xml')
     content_acl = None
     item_root = 'FrontPage'
+    interwiki_map = dict(MoinMoin='http://moinmo.in/')
 
