@@ -103,7 +103,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'hg': ["mercurial"], # used by mercurial backend
     },
     entry_points = dict(
-        console_scripts = ['moin = MoinMoin.script:main'], # TODO
+        console_scripts = ['moin = MoinMoin.script:main'],
     ),
 
     # stuff for babel:
@@ -112,8 +112,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
             ('MoinMoin/templates/**.html', 'jinja2', None),
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
             ('MoinMoin/**/_tests/**', 'ignore', None),
-            ('MoinMoin/script/old/**', 'ignore', None),
-            ('MoinMoin/filter/EXIF.py', 'ignore', None),
             ('MoinMoin/static/**', 'ignore', None),
             ('MoinMoin/**.py', 'python', None),
         ],
