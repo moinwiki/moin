@@ -136,7 +136,7 @@ class MercurialBackend(Backend):
         item._id = None
         return item
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
         Return generator for iterating through collection of Items
         in repository.
@@ -156,6 +156,8 @@ class MercurialBackend(Backend):
             item._id = record[0]
             yield item
             record = c.each()
+
+    iteritems = iter_items_noindex
 
     def history(self, reverse=True):
         """

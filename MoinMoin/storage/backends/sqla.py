@@ -191,7 +191,7 @@ class SQLAlchemyBackend(Backend):
             yield rev
         session.close()
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
         Returns an iterator over all items available in this backend.
         (Like the dict method).
@@ -201,7 +201,7 @@ class SQLAlchemyBackend(Backend):
         The benefit is that we do not issue a query for each individual item, but
         only a single query.
 
-        @see: Backend.history.__doc__
+        @see: Backend.iter_items_noindex.__doc__
         """
         session = self.Session()
         all_items = session.query(SQLAItem).all()
@@ -209,6 +209,8 @@ class SQLAlchemyBackend(Backend):
         for item in all_items:
             item.setup(self)
             yield item
+
+    iteritems = iter_items_noindex
 
     def _create_revision(self, item, revno):
         """

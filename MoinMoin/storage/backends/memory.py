@@ -144,12 +144,14 @@ class MemoryBackend(BackendBase):
         rev_hist = [rev for rev in self._revision_history if rev.item.name != item.name]
         self._revision_history = rev_hist
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
-        @see: Backend.iteritems.__doc__
+        @see: Backend.iter_items_noindex.__doc__
         """
         for itemname in self._itemmap.keys():
             yield self.get_item(itemname)
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         """

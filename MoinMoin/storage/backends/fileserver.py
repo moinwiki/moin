@@ -63,7 +63,7 @@ class FileServerBackend(Backend):
         assert path.startswith(root)
         return path[len(root)+1:]
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
             yield DirItem(self, self._path2item(dirpath))
             for filename in filenames:
@@ -73,6 +73,8 @@ class FileServerBackend(Backend):
                     pass  # not a regular file, maybe socket or ...
                 else:
                     yield item
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         try:

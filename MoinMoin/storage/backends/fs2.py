@@ -189,7 +189,7 @@ class FS2Backend(BackendBase):
 
         return Item(self, itemname, _fs_metadata={})
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         name2id = self._name2id
         results = name2id.select().execute()
         for row in results:
@@ -199,6 +199,8 @@ class FS2Backend(BackendBase):
             item = Item(self, item_name, _fs_item_id=item_id)
             yield item
         results.close()
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         return StoredRevision(item, revno)

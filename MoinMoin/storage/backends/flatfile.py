@@ -85,10 +85,12 @@ class FlatFileBackend(Backend):
             raise ItemAlreadyExistsError("An Item with the name %r already exists!" % (itemname))
         return Item(self, itemname)
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         filenames = os.listdir(self._path)
         for filename in filenames:
             yield Item(self, self._unquote(filename))
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         if revno > 0:

@@ -125,7 +125,7 @@ class FSBackend(BackendBase):
 
         return item
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         c = cdb.init(self._name_db)
         r = c.each()
         while r:
@@ -133,6 +133,8 @@ class FSBackend(BackendBase):
             item._fs_item_id = r[1]
             yield item
             r = c.each()
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         item_id = item._fs_item_id
