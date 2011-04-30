@@ -52,16 +52,17 @@ class Config(DefaultConfig):
 
     # for now we load some 3rd party stuff from the place within moin where it is currently located,
     # but soon we'll get rid of this stuff:
+    env_dir = 'env'
     serve_files = dict(
-        # see "quickinstall" script about how to get those files there
-        ckeditor = os.path.join(wikiconfig_dir, 'env', 'ckeditor'),
-        jquery = os.path.join(wikiconfig_dir, 'env', 'jquery'),
-        svgweb = os.path.join(wikiconfig_dir, 'env', 'svgweb', 'src'),
-        anywikidraw = os.path.join(wikiconfig_dir, 'env', 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
-        twikidraw = os.path.join(wikiconfig_dir, 'env', 'TWikiDrawPlugin'),
-        svgedit = os.path.join(wikiconfig_dir, 'env', 'svg-edit'),
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
-        fileupload = os.path.join(wikiconfig_dir, 'env', 'jquery.fu'),
+        # see "quickinstall" script about how to get those files there
+        ckeditor = os.path.join(wikiconfig_dir, env_dir, 'ckeditor'),
+        jquery = os.path.join(wikiconfig_dir, env_dir, 'jquery'),
+        svgweb = os.path.join(wikiconfig_dir, env_dir, 'svgweb', 'src'),
+        anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
+        twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
+        svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
+        fileupload = os.path.join(wikiconfig_dir, env_dir, 'jquery.fu'),
     )
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^

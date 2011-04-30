@@ -1,9 +1,13 @@
 #!/bin/bash
-# create a virtual environment in directory env/
+# create a virtual environment in directory $DIR/
 # needs: curl or wget, unzip, gzip, tar, pip
 
-virtualenv --no-site-packages env
-source env/bin/activate
+DIR=env
+PYTHON=python
+
+virtualenv --no-site-packages --python $PYTHON $DIR
+
+source $DIR/bin/activate
 
 download()
 {
@@ -18,36 +22,36 @@ download()
     fi
 }
 
-# get some 3rd party stuff and unpack them into env/, where the default
+# get some 3rd party stuff and unpack them into $DIR/, where the default
 # wikiconfig.py expects them. should be replaced by packaging.
 # we do this FIRST, so that breakage with pip install is better visible.
 
-download env/ckeditor.tgz http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
-tar xz -C env/ -f env/ckeditor.tgz
+download $DIR/ckeditor.tgz http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
+tar xz -C $DIR/ -f $DIR/ckeditor.tgz
 
-download env/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
-tar xz -C env/ -f env/twd.tgz
+download $DIR/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
+tar xz -C $DIR/ -f $DIR/twd.tgz
 
-download env/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
-tar xz -C env/ -f env/svgedit.tgz
+download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
+tar xz -C $DIR/ -f $DIR/svgedit.tgz
 
-mkdir env/jquery.fu
-download env/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
-download env/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
-download env/jquery.fu/jquery.fileupload-ui.css https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.css
-download env/jquery.fu/pbar-ani.gif https://www.github.com/blueimp/jQuery-File-Upload/raw/master/pbar-ani.gif
+mkdir $DIR/jquery.fu
+download $DIR/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
+download $DIR/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
+download $DIR/jquery.fu/jquery.fileupload-ui.css https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.css
+download $DIR/jquery.fu/pbar-ani.gif https://www.github.com/blueimp/jQuery-File-Upload/raw/master/pbar-ani.gif
 
-mkdir env/jquery
-download env/jquery/jquery.min.js http://code.jquery.com/jquery-1.4.4.min.js
+mkdir $DIR/jquery
+download $DIR/jquery/jquery.min.js http://code.jquery.com/jquery-1.4.4.min.js
 
-download env/svgweb.zip http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
-unzip -q -o -d env/ env/svgweb.zip
+download $DIR/svgweb.zip http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
+unzip -q -o -d $DIR/ $DIR/svgweb.zip
 
-DIR='AnyWikiDraw 0.14'
-download env/awd.zip 'http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
-unzip -q -o -d env/ env/awd.zip
-cd env/
-ln -s "$DIR" AnyWikiDraw
+AWDDIR='AnyWikiDraw 0.14'
+download $DIR/awd.zip 'http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
+unzip -q -o -d $DIR/ $DIR/awd.zip
+cd $DIR/
+ln -s "$AWDDIR" AnyWikiDraw
 cd ..
 
 # first install babel, moin's setup.py will emit a warning if it is not there
