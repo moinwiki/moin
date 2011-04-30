@@ -152,7 +152,7 @@ msgstr "Dokumentation (lokal)"
 
 #: MoinMoin/apps/admin/templates/index.html:7
 msgid "Admin Menu"
-msgstr "Admin Menü"
+msgstr "Admin-Menü"
 
 #: MoinMoin/apps/admin/templates/index.html:9
 msgid "User Browser"
@@ -713,7 +713,7 @@ msgstr "Referenzen"
 
 #: MoinMoin/config/default.py:378
 msgid "What refers here?"
-msgstr "Was linkt hierauf?"
+msgstr "Was verweist hierher?"
 
 #: MoinMoin/config/default.py:379
 msgid "Site Map"
