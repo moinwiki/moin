@@ -20,6 +20,7 @@ import tarfile
 import zipfile
 import tempfile
 from StringIO import StringIO
+from array import array
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import make_generator
@@ -66,6 +67,15 @@ from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
 COLS = 80
 ROWS_DATA = 20
 ROWS_META = 10
+
+
+def conv_serialize(doc, namespaces):
+    out = array('u')
+    flaskg.clock.start('conv_serialize')
+    doc.write(out.fromunicode, namespaces=namespaces, method='xml')
+    out = out.tounicode()
+    flaskg.clock.stop('conv_serialize')
+    return out
 
 
 class DummyRev(dict):
@@ -234,27 +244,15 @@ class Item(object):
         flaskg.clock.start('conv_dom_html')
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
-
-        from array import array
-        out = array('u')
-        flaskg.clock.start('conv_serialize')
-        doc.write(out.fromunicode, namespaces={html.namespace: ''}, method='xml')
-        out = out.tounicode()
-        flaskg.clock.stop('conv_serialize')
-        return out
+        return conv_serialize(doc, {html.namespace: ''})
 
     def _render_data_xml(self):
         doc = self.internal_representation()
-
-        from array import array
-        out = array('u')
-        doc.write(out.fromunicode,
-                  namespaces={moin_page.namespace: '',
-                              xlink.namespace: 'xlink',
-                              html.namespace: 'html',
-                             },
-                  method='xml')
-        return out.tounicode()
+        return conv_serialize(doc,
+                              {moin_page.namespace: '',
+                               xlink.namespace: 'xlink',
+                               html.namespace: 'html',
+                              })
 
     def _render_data_highlight(self):
         # override this in child classes
@@ -1042,10 +1040,7 @@ class Text(Binary):
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = html_conv(doc)
-        from array import array
-        out = array('u')
-        doc.write(out.fromunicode, namespaces={html.namespace: ''}, method='xml')
-        return out.tounicode()
+        return conv_serialize(doc, {html.namespace: ''})
 
     def do_modify(self, template_name):
         form = TextChaizedForm.from_defaults()
