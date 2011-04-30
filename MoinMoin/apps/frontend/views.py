@@ -166,6 +166,19 @@ def show_dom(item_name, rev):
     return Response(content, status, mimetype='text/xml')
 
 
+@frontend.route('/+highlight/<int:rev>/<itemname:item_name>')
+@frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=-1))
+def highlight_item(item_name, rev):
+    try:
+        item = Item.create(item_name, rev_no=rev)
+    except AccessDeniedError:
+        abort(403)
+    return render_template('highlight.html',
+                           item=item, item_name=item.name,
+                           data_text=Markup(item._render_data_highlight()),
+                          )
+
+
 @frontend.route('/+meta/<itemname:item_name>', defaults=dict(rev=-1))
 @frontend.route('/+meta/<int:rev>/<itemname:item_name>')
 def show_item_meta(item_name, rev):
@@ -229,40 +242,6 @@ def convert_item(item_name):
     except AccessDeniedError:
         abort(403)
     return converted_item._convert(item.internal_representation())
-
-@frontend.route('/+highlight/<int:rev>/<itemname:item_name>')
-@frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=-1))
-def highlight_item(item_name, rev):
-    from MoinMoin.items import Text, NonExistent
-    from MoinMoin.util.tree import html
-    try:
-        item = Item.create(item_name, rev_no=rev)
-    except AccessDeniedError:
-        abort(403)
-    if isinstance(item, Text):
-        from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        data_text = item.data_storage_to_internal(item.data)
-        # TODO: use registry as soon as it is in there
-        from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
-        pygments_conv = PygmentsConverter(mimetype=item.mimetype)
-        doc = pygments_conv(data_text.split(u'\n'))
-        # TODO: Real output format
-        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
-        doc = html_conv(doc)
-        from array import array
-        out = array('u')
-        doc.write(out.fromunicode, namespaces={html.namespace: ''}, method='xml')
-        content = Markup(out.tounicode())
-    elif isinstance(item, NonExistent):
-        return redirect(url_for('frontend.show_item', item_name=item_name))
-    else:
-        content = u"highlighting not supported"
-    return render_template('highlight.html',
-                           item=item, item_name=item.name,
-                           data_text=content,
-                          )
-
 
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
 def modify_item(item_name):

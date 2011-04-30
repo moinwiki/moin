@@ -261,6 +261,10 @@ class Item(object):
                   method='xml')
         return out.tounicode()
 
+    def _render_data_highlight(self):
+        # override this in child classes
+        return ''
+
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_nos = []
@@ -1032,6 +1036,23 @@ class Text(Binary):
         newlines = self.data_storage_to_internal(newrev.read()).split('\n')
         difflines = diff_text.diff(oldlines, newlines)
         return '\n'.join(difflines)
+
+    def _render_data_highlight(self):
+        from MoinMoin.converter import default_registry as reg
+        from MoinMoin.util.mime import Type, type_moin_document
+        from MoinMoin.util.tree import html
+        data_text = self.data_storage_to_internal(self.data)
+        # TODO: use registry as soon as it is in there
+        from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
+        pygments_conv = PygmentsConverter(mimetype=self.mimetype)
+        doc = pygments_conv(data_text.split(u'\n'))
+        # TODO: Real output format
+        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
+        doc = html_conv(doc)
+        from array import array
+        out = array('u')
+        doc.write(out.fromunicode, namespaces={html.namespace: ''}, method='xml')
+        return out.tounicode()
 
     def do_modify(self, template_name):
         form = TextChaizedForm.from_defaults()
