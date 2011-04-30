@@ -57,6 +57,17 @@ class CDBReader:
         self._keyiter = None
         self._eachiter = None
 
+    def close(self):
+        if self._fp:
+            self._fp.close()
+            self._fp = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
     def __getstate__(self):
         raise TypeError
 
@@ -149,6 +160,18 @@ class CDBMaker:
         self._pos = 2048
         self._bucket = [array('I') for _ in xrange(256)]
 
+    def close(self):
+        # you don't need to call this if you called finish()
+        if self._fp:
+            self._fp.close()
+            self._fp = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.finish()
+
     def __len__(self):
         return self.numentries
 
@@ -198,7 +221,7 @@ class CDBMaker:
             a.append(len(b1))
             pos_hash += len(b1) * 8
         self._fp.write(encode(a))
-        self._fp.close()
+        self.close()
         os.rename(self.fntmp, self.fn)
 
 cdbmake = CDBMaker
