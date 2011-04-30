@@ -4,7 +4,7 @@
 """
 MoinMoin - Link converter
 
-Expands all links in a internal Moin document. This includes interwiki and
+Expands all links in an internal Moin document, including interwiki and
 special wiki links.
 """
 

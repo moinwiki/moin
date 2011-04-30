@@ -4,22 +4,22 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Creole input converter
+MoinMoin - Creole input converter
 
-    See http://wikicreole.org/ for latest specs.
+See http://wikicreole.org/ for latest specs.
 
-    Notes:
+Notes:
 
-    * No markup allowed in headings.
-      Creole 1.0 does not require us to support this.
-    * No markup allowed in table headings.
-      Creole 1.0 does not require us to support this.
-    * No (non-bracketed) generic url recognition: this is "mission impossible"
-      except if you want to risk lots of false positives. Only known protocols
-      are recognized.
-    * We do not allow ":" before "//" italic markup to avoid urls with
-      unrecognized schemes (like wtf://server/path) triggering italic rendering
-      for the rest of the paragraph.
+- No markup allowed in headings.
+  Creole 1.0 does not require us to support this.
+- No markup allowed in table headings.
+  Creole 1.0 does not require us to support this.
+- No (non-bracketed) generic url recognition: this is "mission impossible"
+  except if you want to risk lots of false positives. Only known protocols
+  are recognized.
+- We do not allow ":" before "//" italic markup to avoid urls with
+  unrecognized schemes (like wtf://server/path) triggering italic rendering
+  for the rest of the paragraph.
 """
 
 
@@ -702,3 +702,4 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_creole
 default_registry.register(Converter.factory, type_moin_creole, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=creole'), type_moin_document)
+

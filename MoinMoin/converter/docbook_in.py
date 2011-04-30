@@ -10,7 +10,7 @@ Currently supports DocBook v5.
 Some elements of DocBook v4 specification are also supported
 for backward compatibility:
 
-  * ulink
+- ulink
 """
 
 
@@ -1157,3 +1157,4 @@ class Converter(object):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('application/docbook+xml'), type_moin_document)
+
