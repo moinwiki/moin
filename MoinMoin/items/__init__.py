@@ -24,6 +24,9 @@ from StringIO import StringIO
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page, html, xlink, docbook
+from MoinMoin.util.iri import Iri
 from MoinMoin.util.crypto import cache_key
 
 try:
@@ -180,9 +183,6 @@ class Item(object):
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
             from MoinMoin.converter import default_registry as reg
-            from MoinMoin.util.iri import Iri
-            from MoinMoin.util.mime import Type, type_moin_document
-            from MoinMoin.util.tree import moin_page
             input_conv = reg.get(Type(self.mimetype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
@@ -208,8 +208,6 @@ class Item(object):
 
     def _expand_document(self, doc):
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.iri import Iri
-        from MoinMoin.util.mime import type_moin_document
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
@@ -227,8 +225,6 @@ class Item(object):
 
     def _render_data(self):
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import html
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         # TODO: Real output format
@@ -248,7 +244,6 @@ class Item(object):
         return out
 
     def _render_data_xml(self):
-        from MoinMoin.util.tree import moin_page, xlink, html
         doc = self.internal_representation()
 
         from array import array
@@ -1039,8 +1034,6 @@ class Text(Binary):
 
     def _render_data_highlight(self):
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import html
         data_text = self.data_storage_to_internal(self.data)
         # TODO: use registry as soon as it is in there
         from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
@@ -1098,9 +1091,6 @@ class MarkupItem(Text):
             raise StorageError("unsupported content object: %r" % data)
 
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.iri import Iri
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import moin_page
 
         input_conv = reg.get(Type(self.mimetype), type_moin_document)
         item_conv = reg.get(type_moin_document, type_moin_document,
@@ -1180,8 +1170,6 @@ class DocBook(MarkupItem):
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import docbook, xlink
 
         doc = self._expand_document(doc)
 
