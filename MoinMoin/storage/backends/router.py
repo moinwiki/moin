@@ -96,15 +96,20 @@ class BareRouterBackend(BackendBase):
         """
         return self._get_backend(namespace)[0]
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
-        Iterate over all items. Necessary for traversal.
+        Iterate over all items.
 
-        @see: Backend.iteritems.__doc__
+        Must not use the index as this method is used to *build* the index.
+
+        @see: Backend.iter_items_noindex.__doc__
         """
         for mountpoint, backend in self.mapping:
-            for item in backend.iteritems():
+            for item in backend.iter_items_noindex():
                 yield RouterItem(self, item.name, item, mountpoint)
+
+    # TODO: implement a faster iteritems using the index
+    iteritems = iter_items_noindex
 
     def has_item(self, itemname):
         """

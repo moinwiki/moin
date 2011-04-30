@@ -222,7 +222,7 @@ class FSPageBackend(Backend):
     def has_item(self, itemname):
         return os.path.isfile(self._current_path(itemname))
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         pages_dir = os.path.join(self._path, 'pages')
         for f in os.listdir(pages_dir):
             itemname = unquoteWikiname(f)
@@ -234,6 +234,8 @@ class FSPageBackend(Backend):
                 yield item
                 for attachitem in item.iter_attachments():
                     yield attachitem
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         try:
@@ -628,7 +630,7 @@ class FSUserBackend(Backend):
     def has_item(self, itemname):
         return os.path.isfile(self._get_item_path(itemname))
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         for old_id in os.listdir(self._path):
             try:
                 item = FsUserItem(self, old_id=old_id)
@@ -636,6 +638,8 @@ class FSUserBackend(Backend):
                 continue
             else:
                 yield item
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         return FsUserItem(self, itemname)

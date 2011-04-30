@@ -257,7 +257,7 @@ class ItemIndex(object):
     def index_rebuild(self, backend):
         self.metadata.drop_all()
         self.metadata.create_all()
-        for item in backend.iteritems():
+        for item in backend.iter_items_noindex():
             item.update_index()
             for revno in item.list_revisions():
                 rev = item.get_revision(revno)

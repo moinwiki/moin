@@ -136,13 +136,15 @@ class AclWrapperBackend(object):
         wrapped_item = AclWrapperItem(real_item, self)
         return wrapped_item
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
-        @see: Backend.iteritems.__doc__
+        @see: Backend.iter_items_noindex.__doc__
         """
         for item in self.backend.iteritems():
             if self._may(item.name, READ):
                 yield AclWrapperItem(item, self)
+
+    iteritems = iter_items_noindex
 
     def history(self, reverse=True):
         """
