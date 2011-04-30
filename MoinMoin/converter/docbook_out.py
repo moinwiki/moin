@@ -4,6 +4,7 @@
 
 """
 MoinMoin - DocBook output converter
+
 Converts an internal document tree into a DocBook v5 document.
 """
 
@@ -516,3 +517,4 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document,
     Type('application/docbook+xml'))
+

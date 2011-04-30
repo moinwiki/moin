@@ -4,7 +4,7 @@
 """
 MoinMoin - Macro handling
 
-Expands all macro elements in a internal Moin document.
+Expands all macro elements in an internal Moin document.
 """
 
 
@@ -70,9 +70,8 @@ class Converter(object):
         cls = plugins.importPlugin(app.cfg, 'macro', name, function='Macro')
 
         try:
-            macro = cls() # XXX refactor all macros so they are OK without "request"
+            macro = cls()
             ret = macro((), args, page, alt, context_block)
-
             elem_body.append(ret)
         except Exception as e:
             # we do not want that a faulty macro aborts rendering of the page
@@ -112,3 +111,4 @@ class Converter(object):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)
+
