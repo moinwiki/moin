@@ -8,6 +8,20 @@
 
 """
 MoinMoin - Cryptographic and random functions
+
+Features:
+
+- generate strong, salted cryptographic password hashes for safe pw storage
+- verify cleartext password against any supported crypto (see METHODS)
+- support old (weak) password crypto so one can import existing password
+  databases
+- supports password hash upgrades to stronger methods if the cleartext
+  password is available (usually at login time)
+- generate password recovery tokens
+- verify password recovery tokens
+- generate random strings of given length (for salting)
+
+Code is tested on Python 2.6/2.7.
 """
 
 from __future__ import absolute_import, division
@@ -17,12 +31,21 @@ import hashlib
 import hmac
 import random
 
+# Note: have the (strong) method that crypt_password() uses at index 0:
+METHODS = ['{SSHA256}', '{SSHA}', '{SHA}', ]
+
+try:
+    from . import md5crypt
+    METHODS.extend(['{APR1}', '{MD5}', ])
+except ImportError:
+    pass
+
 try:
     import crypt
+    METHODS.extend(['{DES}', ])
 except ImportError:
-    crypt = None
+    pass
 
-from . import md5crypt
 
 # random stuff
 
@@ -88,12 +111,7 @@ def valid_password(password, pw_hash):
     # encode password
     pw_utf8 = password.encode('utf-8')
 
-    methods = ['{SSHA256}', '{SSHA}', '{SHA}', '{APR1}', '{MD5}', ]
-    if crypt:
-        # we have the crypt module
-        methods.append('{DES}')
-
-    for method in methods:
+    for method in METHODS:
         if pw_hash.startswith(method):
             d = pw_hash[len(method):]
             if method == '{SSHA256}':
