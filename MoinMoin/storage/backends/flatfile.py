@@ -101,7 +101,8 @@ class FlatFileBackend(Backend):
             raise NoSuchRevisionError("No Revision #%d on Item %s" % (revno, item.name))
 
         rev = StoredRevision(item, 0)
-        data = open(revpath, 'rb').read()
+        with open(revpath, 'rb') as f:
+            data = f.read()
         rev._metadata, data = split_body(data)
         rev._metadata[ACTION] = 'SAVE'
         rev._metadata[SIZE] = len(data)
@@ -139,12 +140,11 @@ class FlatFileBackend(Backend):
 
     def _commit_item(self, rev):
         revpath = self._rev_path(rev.item.name)
-        f = open(revpath, 'wb')
         rev._data.seek(0)
         data = rev._data.read()
         data = add_metadata_to_body(rev, data)
-        f.write(data)
-        f.close()
+        with open(revpath, 'wb') as f:
+            f.write(data)
 
     def _destroy_item(self, item):
         revpath = self._rev_path(item.name)

@@ -224,9 +224,8 @@ class FSBackend(BackendBase):
                     r = c.each()
 
         filesys.rename(self._name_db + '.ndb', self._name_db)
-        nf = open(npath, mode='wb')
-        nf.write(nn)
-        nf.close()
+        with open(npath, mode='wb') as nf:
+            nf.write(nn)
 
     def _rename_item(self, item, newname):
         self._do_locked(os.path.join(self._path, 'name-mapping.lock'),
@@ -288,15 +287,13 @@ class FSBackend(BackendBase):
         if metadata:
             # only write metadata file if we have any
             meta = os.path.join(self._path, itemid, 'meta')
-            f = open(meta, 'wb')
-            pickle.dump(metadata, f, protocol=PICKLEPROTOCOL)
-            f.close()
+            with open(meta, 'wb') as f:
+                pickle.dump(metadata, f, protocol=PICKLEPROTOCOL)
 
         # write 'name' file of item
         npath = os.path.join(ipath, 'name')
-        nf = open(npath, mode='wb')
-        nf.write(nn)
-        nf.close()
+        with open(npath, mode='wb') as nf:
+            nf.write(nn)
 
         # make item retrievable (by putting the name-mapping in place)
         filesys.rename(self._name_db + '.ndb', self._name_db)
@@ -412,9 +409,8 @@ class FSBackend(BackendBase):
                     # ignore, there might not have been metadata
             else:
                 tmp = os.path.join(self._path, item._fs_item_id, 'meta.tmp')
-                f = open(tmp, 'wb')
-                pickle.dump(md, f, protocol=PICKLEPROTOCOL)
-                f.close()
+                with open(tmp, 'wb') as f:
+                    pickle.dump(md, f, protocol=PICKLEPROTOCOL)
 
                 filesys.rename(tmp, os.path.join(self._path, item._fs_item_id, 'meta'))
             item._fs_metadata_lock.release()
@@ -432,9 +428,8 @@ class FSBackend(BackendBase):
         if item._fs_item_id is not None:
             p = os.path.join(self._path, item._fs_item_id, 'meta')
             try:
-                f = open(p, 'rb')
-                metadata = pickle.load(f)
-                f.close()
+                with open(p, 'rb') as f:
+                    metadata = pickle.load(f)
             except IOError as err:
                 if err.errno != errno.ENOENT:
                     raise
