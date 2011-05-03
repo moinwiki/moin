@@ -286,7 +286,8 @@ class FsPageItem(Item):
         editlogpath = self._backend._get_item_path(itemname, 'edit-log')
         self._fs_meta = {} # 'current' is the only page metadata and handled elsewhere
         try:
-            current = int(open(currentpath, 'r').read().strip()) - 1 # new api is 0-based, old is 1-based
+            with open(currentpath, 'r') as f:
+                current = int(f.read().strip()) - 1 # new api is 0-based, old is 1-based
         except (OSError, IOError):
             # no current file means no item
             raise NoSuchItemError("No such item, %r" % itemname)
@@ -333,7 +334,8 @@ class FsPageRevision(StoredRevision):
         editlog = item._fs_editlog
         # we just read the page and parse it here, makes the rest of the code simpler:
         try:
-            content = codecs.open(revpath, 'r', config.charset).read()
+            with codecs.open(revpath, 'r', config.charset) as f:
+                content = f.read()
         except (IOError, OSError):
             if revno == item._fs_current and item._backend.deleted_mode == DELETED_MODE_KILL:
                 raise NoSuchRevisionError('deleted_mode wants killing/ignoring')
@@ -491,7 +493,8 @@ class FsAttachmentRevision(StoredRevision):
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
         meta[MIMETYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
-        size, hash_name, hash_digest = hash_hexdigest(open(attpath, 'rb'))
+        with open(attpath, 'rb') as f:
+            size, hash_name, hash_digest = hash_hexdigest(f)
         meta[hash_name] = hash_digest
         meta[SIZE] = size
         if item._syspages:
@@ -684,24 +687,23 @@ class FsUserItem(Item):
         self.uuid = meta[UUID] = uuid
 
     def _parse_userprofile(self, old_id):
-        meta_file = codecs.open(self._backend._get_item_path(old_id), "r", config.charset)
-        metadata = {}
-        for line in meta_file:
-            if line.startswith('#') or line.strip() == "":
-                continue
-            key, value = line.strip().split('=', 1)
-            # Decode list values
-            if key.endswith('[]'):
-                key = key[:-2]
-                value = _decode_list(value)
+        with codecs.open(self._backend._get_item_path(old_id), "r", config.charset) as meta_file:
+            metadata = {}
+            for line in meta_file:
+                if line.startswith('#') or line.strip() == "":
+                    continue
+                key, value = line.strip().split('=', 1)
+                # Decode list values
+                if key.endswith('[]'):
+                    key = key[:-2]
+                    value = _decode_list(value)
 
-            # Decode dict values
-            elif key.endswith('{}'):
-                key = key[:-2]
-                value = _decode_dict(value)
+                # Decode dict values
+                elif key.endswith('{}'):
+                    key = key[:-2]
+                    value = _decode_dict(value)
 
-            metadata[key] = value
-        meta_file.close()
+                metadata[key] = value
         return metadata
 
     def _process_usermeta(self, metadata):

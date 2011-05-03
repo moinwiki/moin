@@ -41,7 +41,6 @@ class Create_Item(Command):
         rev['action'] = u'SAVE'
         rev['name'] = name
         rev['mimetype'] = mimetype
-        data = open(data_file, 'rb')
-        rev.write(data.read())
-        item.commit()
-        data.close()
+        with open(data_file, 'rb') as data:
+            rev.write(data.read())
+            item.commit()
