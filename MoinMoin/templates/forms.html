@@ -15,13 +15,16 @@ Helpers for using flatland with jinja2 to create html forms.
   {% endif %}
 {% endmacro %}
 
-{% macro render_field(gen, field, field_type) %}
-  {% set f_class = "optional" if field.optional else "required" %}
+{% macro render_field(gen, field, field_type, class="optional") %}
   <dt>
-    {{ gen.label(field, class=f_class) }}
+    {{ gen.label(field, class=class) }}
   </dt>
   <dd>
-    {{ gen.input(field, class=f_class, type=field_type) }}
+    {% if class == "optional" %}
+      {{ gen.input(field, class="optional", type=field_type) }}
+    {% else %}
+      {{ gen.input(field, class="required", type=field_type, required="required") }}
+    {% endif %}
     {{ render_errors(field) }}
   </dd>
 {% endmacro %}
@@ -50,7 +53,7 @@ Helpers for using flatland with jinja2 to create html forms.
         {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
         {{ form.textcha_question.value[:-51] }}
         {{ gen.input(form.textcha_question, class=f_class, type='hidden') }}<br />
-        {{ gen.input(form.textcha, class="required") }}
+        {{ gen.input(form.textcha, class="required", required="required") }}
         {{ render_errors(form.textcha) }}
     </dd>
     {% endif %}
