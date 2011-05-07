@@ -60,7 +60,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessD
                                    StorageError
 from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
-                            MIMETYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
+                            CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
                             HASH_ALGORITHM
 
@@ -80,8 +80,8 @@ def conv_serialize(doc, namespaces):
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, mimetype):
-        self[MIMETYPE] = mimetype
+    def __init__(self, item, contenttype):
+        self[CONTENTTYPE] = contenttype
         self.item = item
         self.timestamp = 0
         self.revno = None
@@ -104,11 +104,11 @@ class DummyItem(object):
 class Item(object):
     """ Highlevel (not storage) Item """
     @classmethod
-    def create(cls, name=u'', mimetype=None, rev_no=None, item=None):
+    def create(cls, name=u'', contenttype=None, rev_no=None, item=None):
         if rev_no is None:
             rev_no = -1
-        if mimetype is None:
-            mimetype = 'application/x-nonexistent'
+        if contenttype is None:
+            contenttype = 'application/x-nonexistent'
 
         try:
             if item is None:
@@ -118,8 +118,8 @@ class Item(object):
         except NoSuchItemError:
             logging.debug("No such item: %r" % name)
             item = DummyItem(name)
-            rev = DummyRev(item, mimetype)
-            logging.debug("Item %r, created dummy revision with mimetype %r" % (name, mimetype))
+            rev = DummyRev(item, contenttype)
+            logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
         else:
             logging.debug("Got item: %r" % name)
             try:
@@ -130,37 +130,37 @@ class Item(object):
                     # XXX add some message about invalid revision
                 except NoSuchRevisionError:
                     logging.debug("Item %r has no revisions." % name)
-                    rev = DummyRev(item, mimetype)
-                    logging.debug("Item %r, created dummy revision with mimetype %r" % (name, mimetype))
+                    rev = DummyRev(item, contenttype)
+                    logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
             logging.debug("Got item %r, revision: %r" % (name, rev_no))
-        mimetype = rev.get(MIMETYPE) or mimetype # XXX: Why do we need ... or ... ?
-        logging.debug("Item %r, got mimetype %r from revision meta" % (name, mimetype))
+        contenttype = rev.get(CONTENTTYPE) or contenttype # XXX: Why do we need ... or ... ?
+        logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
         logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev)))
 
-        def _find_item_class(mimetype, BaseClass, best_match_len=-1):
-            #logging.debug("_find_item_class(%r,%r,%r)" % (mimetype, BaseClass, best_match_len))
+        def _find_item_class(contenttype, BaseClass, best_match_len=-1):
+            #logging.debug("_find_item_class(%r,%r,%r)" % (contenttype, BaseClass, best_match_len))
             Class = None
             for ItemClass in BaseClass.__subclasses__():
                 for supported_mimetype in ItemClass.supported_mimetypes:
-                    if mimetype.startswith(supported_mimetype):
+                    if contenttype.startswith(supported_mimetype):
                         match_len = len(supported_mimetype)
                         if match_len > best_match_len:
                             best_match_len = match_len
                             Class = ItemClass
                             #logging.debug("_find_item_class: new best match: %r by %r)" % (supported_mimetype, ItemClass))
-                best_match_len, better_Class = _find_item_class(mimetype, ItemClass, best_match_len)
+                best_match_len, better_Class = _find_item_class(contenttype, ItemClass, best_match_len)
                 if better_Class:
                     Class = better_Class
             return best_match_len, Class
 
-        ItemClass = _find_item_class(mimetype, cls)[1]
-        logging.debug("ItemClass %r handles %r" % (ItemClass, mimetype))
-        return ItemClass(name=name, rev=rev, mimetype=mimetype)
+        ItemClass = _find_item_class(contenttype, cls)[1]
+        logging.debug("ItemClass %r handles %r" % (ItemClass, contenttype))
+        return ItemClass(name=name, rev=rev, contenttype=contenttype)
 
-    def __init__(self, name, rev=None, mimetype=None):
+    def __init__(self, name, rev=None, contenttype=None):
         self.name = name
         self.rev = rev
-        self.mimetype = mimetype
+        self.contenttype = contenttype
 
     def get_meta(self):
         return self.rev or {}
@@ -193,9 +193,9 @@ class Item(object):
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
             from MoinMoin.converter import default_registry as reg
-            input_conv = reg.get(Type(self.mimetype), type_moin_document)
+            input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
-                raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
+                raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.contenttype)
             smiley_conv = reg.get(type_moin_document, type_moin_document,
                     icon='smiley')
 
@@ -261,11 +261,11 @@ class Item(object):
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_nos = []
-        item_templates = self.get_templates(self.mimetype)
+        item_templates = self.get_templates(self.contenttype)
         return render_template('modify_show_template_selection.html',
                                item_name=self.name,
                                rev=self.rev,
-                               mimetype=self.mimetype,
+                               contenttype=self.contenttype,
                                templates=item_templates,
                                first_rev_no=rev_nos and rev_nos[0],
                                last_rev_no=rev_nos and rev_nos[-1],
@@ -371,30 +371,30 @@ class Item(object):
     def modify(self):
         # called from modify UI/POST
         data_file = request.files.get('data_file')
-        mimetype = request.values.get('mimetype', 'text/plain')
+        contenttype = request.values.get('contenttype', 'text/plain') # XXX
         if data_file and data_file.filename:
             # user selected a file to upload
             data = data_file.stream
-            mimetype = MimeType(filename=data_file.filename).mime_type()
+            contenttype = MimeType(filename=data_file.filename).mime_type()
         else:
             # take text from textarea
             data = request.form.get('data_text', '')
             if data:
                 data = self.data_form_to_internal(data)
                 data = self.data_internal_to_storage(data)
-                mimetype = 'text/plain'
+                contenttype = 'text/plain'
             else:
                 data = '' # could've been u'' also!
-                mimetype = None
+                contenttype = None
         meta_text = request.form.get('meta_text', '')
         try:
             meta = self.meta_text_to_dict(meta_text)
         except ValueError:
             meta = {} # XXX maybe rather validate and reject invalid json
         comment = request.form.get('comment')
-        return self._save(meta, data, mimetype=mimetype, comment=comment)
+        return self._save(meta, data, contenttype=contenttype, comment=comment)
 
-    def _save(self, meta, data, name=None, action=u'SAVE', mimetype=None, comment=u''):
+    def _save(self, meta, data, name=None, action=u'SAVE', contenttype=None, comment=u''):
         if name is None:
             name = self.name
         backend = flaskg.storage
@@ -405,9 +405,9 @@ class Item(object):
         try:
             currentrev = storage_item.get_revision(-1)
             rev_no = currentrev.revno
-            if mimetype is None:
-                # if we didn't get mimetype info, thus reusing the one from current rev:
-                mimetype = currentrev.get(MIMETYPE)
+            if contenttype is None:
+                # if we didn't get contenttype info, thus reusing the one from current rev:
+                contenttype = currentrev.get(CONTENTTYPE)
         except NoSuchRevisionError:
             rev_no = -1
         new_rev_no = rev_no + 1
@@ -431,11 +431,11 @@ class Item(object):
         comment = unicode(comment or meta.get(COMMENT, ''))
         if comment:
             newrev[COMMENT] = comment
-        # allow override by form- / qs-given mimetype:
-        mimetype = request.values.get('mimetype', mimetype)
+        # allow override by form- / qs-given contenttype:
+        contenttype = request.values.get('contenttype', contenttype)
         # allow override by give metadata:
-        assert mimetype is not None
-        newrev[MIMETYPE] = unicode(meta.get(MIMETYPE, mimetype))
+        assert contenttype is not None
+        newrev[CONTENTTYPE] = unicode(meta.get(CONTENTTYPE, contenttype))
         newrev[ACTION] = unicode(action)
         self.before_revision_commit(newrev, data)
         storage_item.commit()
@@ -503,14 +503,14 @@ class Item(object):
 
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        items = [(item.name, item.name[prefix_len:], item.meta.get(MIMETYPE))
+        items = [(item.name, item.name[prefix_len:], item.meta.get(CONTENTTYPE))
                  for item in item_iterator]
         return sorted(items)
 
     def flat_index(self):
         index = self.get_index()
-        index = [(fullname, relname, mimetype)
-                 for fullname, relname, mimetype in index
+        index = [(fullname, relname, contenttype)
+                 for fullname, relname, contenttype in index
                  if u'/' not in relname]
         return index
 
@@ -519,7 +519,7 @@ class Item(object):
 
 class NonExistent(Item):
     supported_mimetypes = ['application/x-nonexistent']
-    mimetype_groups = [
+    contenttype_groups = [
         ('markup text items', [
             ('text/x.moin.wiki', 'Wiki (MoinMoin)'),
             ('text/x.moin.creole', 'Wiki (Creole)'),
@@ -576,7 +576,7 @@ class NonExistent(Item):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
-                               mimetype_groups=self.mimetype_groups,
+                               contenttype_groups=self.contenttype_groups,
                               )
 
 
@@ -601,12 +601,12 @@ There is no help, you're doomed!
     def _render_meta(self):
         return "<pre>%s</pre>" % escape(self.meta_dict_to_text(self.meta, use_filter=False))
 
-    def get_templates(self, mimetype=None):
-        """ create a list of templates (for some specific mimetype) """
+    def get_templates(self, contenttype=None):
+        """ create a list of templates (for some specific contenttype) """
         from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
         term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
-        if mimetype:
-            term = AND(term, LastRevisionMetaDataMatch(MIMETYPE, mimetype))
+        if contenttype:
+            term = AND(term, LastRevisionMetaDataMatch(CONTENTTYPE, contenttype))
         item_iterator = self.search_items(term)
         items = [item.name for item in item_iterator]
         return sorted(items)
@@ -645,8 +645,8 @@ There is no help, you're doomed!
     _render_data_diff_raw = _render_data_diff
 
     def _convert(self):
-        return _("Impossible to convert the data to the mimetype: %(mimetype)s",
-                 mimetype=request.values.get('mimetype'))
+        return _("Impossible to convert the data to the contenttype: %(contenttype)s",
+                 contenttype=request.values.get('contenttype'))
 
     def do_get(self):
         hash = self.rev.get(HASH_ALGORITHM)
@@ -671,7 +671,7 @@ There is no help, you're doomed!
         else: # content = item revision
             rev = self.rev
             try:
-                mimestr = rev[MIMETYPE]
+                mimestr = rev[CONTENTTYPE]
             except KeyError:
                 mimestr = mimetypes.guess_type(rev.item.name)[0]
             mt = MimeType(mimestr=mimestr)
@@ -760,9 +760,9 @@ class TarMixin(object):
             raise StorageError(msg)
         if tf_members == expected_members:
             # everything we expected has been added to the tar file, save the container as revision
-            meta = {"mimetype": self.mimetype}
+            meta = {CONTENTTYPE: self.contenttype}
             data = open(temp_fname, 'rb')
-            self._save(meta, data, name=self.name, action=u'SAVE', mimetype=self.mimetype, comment='')
+            self._save(meta, data, name=self.name, action=u'SAVE', contenttype=self.contenttype, comment='')
             data.close()
             os.remove(temp_fname)
 
@@ -921,7 +921,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                             width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
-                content_type = self.rev[MIMETYPE]
+                content_type = self.rev[CONTENTTYPE]
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
@@ -951,7 +951,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             if PIL is None:
                 abort(404)
 
-            content_type = newrev[MIMETYPE]
+            content_type = newrev[CONTENTTYPE]
             if content_type == 'image/jpeg':
                 output_type = 'JPEG'
             elif content_type == 'image/png':
@@ -1035,7 +1035,7 @@ class Text(Binary):
         data_text = self.data_storage_to_internal(self.data)
         # TODO: use registry as soon as it is in there
         from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
-        pygments_conv = PygmentsConverter(mimetype=self.mimetype)
+        pygments_conv = PygmentsConverter(mimetype=self.contenttype)
         doc = pygments_conv(data_text.split(u'\n'))
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
@@ -1087,7 +1087,7 @@ class MarkupItem(Text):
 
         from MoinMoin.converter import default_registry as reg
 
-        input_conv = reg.get(Type(self.mimetype), type_moin_document)
+        input_conv = reg.get(Type(self.contenttype), type_moin_document)
         item_conv = reg.get(type_moin_document, type_moin_document,
                 items='refs', url_root=Iri(request.url_root))
 

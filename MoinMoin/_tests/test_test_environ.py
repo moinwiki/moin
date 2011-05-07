@@ -11,7 +11,7 @@ import py
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
+from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
 
 from MoinMoin._tests import wikiconfig
@@ -35,8 +35,8 @@ class TestStorageEnvironWithoutConfig(object):
         assert py.test.raises(NoSuchItemError, storage.get_item, itemname)
         item = storage.create_item(itemname)
         new_rev = item.create_revision(0)
-        new_rev['name'] = itemname
-        new_rev['mimetype'] = u'text/plain'
+        new_rev[NAME] = itemname
+        new_rev[CONTENTTYPE] = u'text/plain'
         item.commit()
         assert storage.has_item(itemname)
         assert not storage.has_item("FrontPage")
@@ -68,16 +68,16 @@ class TestStorageEnvironWithConfig(object):
             assert rev[SYSITEM_VERSION] == 1
             # check whether this dirties the backend for the second iteration of the test
             new_rev = item.create_revision(1)
-            new_rev['name'] = pagename
-            new_rev['mimetype'] = u'text/plain'
+            new_rev[NAME] = pagename
+            new_rev[CONTENTTYPE] = u'text/plain'
             item.commit()
 
         itemname = u"OnlyForThisTest"
         assert not storage.has_item(itemname)
         new_item = storage.create_item(itemname)
         new_rev = new_item.create_revision(0)
-        new_rev['name'] = itemname
-        new_rev['mimetype'] = u'text/plain'
+        new_rev[NAME] = itemname
+        new_rev[CONTENTTYPE] = u'text/plain'
         new_item.commit()
         assert storage.has_item(itemname)
 
