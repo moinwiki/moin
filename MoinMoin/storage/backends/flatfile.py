@@ -33,7 +33,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    RevisionAlreadyExistsError
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import add_metadata_to_body, split_body
-from MoinMoin.config import MIMETYPE, ACTION, MTIME
+from MoinMoin.config import ACTION, MTIME
 
 
 class FlatFileBackend(Backend):
