@@ -920,8 +920,8 @@ msgid "Rev."
 msgstr "Rev."
 
 #: MoinMoin/templates/global_history.html:18 MoinMoin/templates/history.html:16
-msgid "Mime Type"
-msgstr "MIME-Typ"
+msgid "Content-Type"
+msgstr "Content-Type"
 
 #: MoinMoin/templates/global_history.html:19 MoinMoin/templates/history.html:15
 msgid "Editor"

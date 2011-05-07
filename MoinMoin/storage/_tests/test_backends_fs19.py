@@ -13,7 +13,7 @@ import py.test
 
 from flask import current_app as app
 
-from MoinMoin.config import TAGS
+from MoinMoin.config import CONTENTTYPE, TAGS
 from MoinMoin.storage import Item
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends.fs19 import FSPageBackend, regenerate_acl, process_categories
@@ -271,7 +271,7 @@ what ever\r
         ]
         item_category_regex = re.compile(ur'(?P<all>Category(?P<key>(?!Template)\S+))', re.UNICODE)
         for data, expected_data, expected_tags in tests:
-            meta = dict(MIMETYPE='text/x.moin.wiki')
+            meta = {CONTENTTYPE: 'text/x.moin.wiki'}
             data = process_categories(meta, data, item_category_regex)
             assert meta.get(TAGS, []) == expected_tags
             assert data == expected_data

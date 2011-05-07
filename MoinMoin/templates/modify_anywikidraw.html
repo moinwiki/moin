@@ -9,7 +9,7 @@
 <param name="DrawingURL" value="{{ url_for('frontend.get_item', item_name=item_name, member='drawing.svg') }}" />
 {% endif %}
 <param name="PageURL" value="{{ url_for('frontend.show_item', item_name=item_name) }}" />
-<param name="UploadURL" value="{{ url_for('frontend.modify_item', item_name=item_name, mimetype='application/x-anywikidraw') }}" />
+<param name="UploadURL" value="{{ url_for('frontend.modify_item', item_name=item_name, contenttype='application/x-anywikidraw') }}" />
 <param name="Locale" value="en" />
 <param name="codebase_lookup" value="false" />
 <param name="classloader_cache" value="false" />
