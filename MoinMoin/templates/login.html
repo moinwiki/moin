@@ -12,10 +12,10 @@
   {{ gen.input(form['submit'], type='hidden') }}
 
   {% if 'username' in login_inputs %}
-  {{ forms.render_field(gen, form['username'], 'text', 'required') }}
+  {{ forms.render_field(gen, form['username'], 'text') }}
   {% endif %}
   {% if 'password' in login_inputs %}
-  {{ forms.render_field(gen, form['password'], 'password', 'required') }}
+  {{ forms.render_field(gen, form['password'], 'password') }}
   {% endif %}
 
   <input type="submit" value="{{ _('Log in') }}" />

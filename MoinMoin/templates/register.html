@@ -7,10 +7,10 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.register')) }}
   {{ forms.render_errors(form) }}
   <dl>
-    {{ forms.render_field(gen, form['username'], 'text', 'required') }}
-    {{ forms.render_field(gen, form['password1'], 'password', 'required') }}
-    {{ forms.render_field(gen, form['password2'], 'password', 'required') }}
-    {{ forms.render_field(gen, form['email'], 'text', 'required') }}
+    {{ forms.render_field(gen, form['username'], 'text') }}
+    {{ forms.render_field(gen, form['password1'], 'password') }}
+    {{ forms.render_field(gen, form['password2'], 'password') }}
+    {{ forms.render_field(gen, form['email'], 'text') }}
     {{ forms.render_field(gen, form['openid'], 'text') }}
     {{ forms.render_textcha(gen, form) }}
   </dl>
