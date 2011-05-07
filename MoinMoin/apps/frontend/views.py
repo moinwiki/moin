@@ -39,7 +39,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
-from MoinMoin.config import MIMETYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -134,7 +134,7 @@ def show_item(item_name, rev):
     content = render_template('show.html',
                               item=item, item_name=item.name,
                               rev=item.rev,
-                              mimetype=item.mimetype,
+                              contenttype=item.contenttype,
                               first_rev_no=first_rev,
                               last_rev_no=last_rev,
                               data_rendered=Markup(item._render_data()),
@@ -199,7 +199,7 @@ def show_item_meta(item_name, rev):
     return render_template('meta.html',
                            item=item, item_name=item.name,
                            rev=item.rev,
-                           mimetype=item.mimetype,
+                           contenttype=item.contenttype,
                            first_rev_no=first_rev,
                            last_rev_no=last_rev,
                            meta_rendered=Markup(item._render_meta()),
@@ -228,7 +228,7 @@ def convert_item(item_name):
     To get the converted item, we just feed his converter,
     with the internal representation of the item.
     """
-    mimetype = request.values.get('mimetype')
+    contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, rev_no=-1)
     except AccessDeniedError:
@@ -238,7 +238,7 @@ def convert_item(item_name):
     # XXX Maybe use a random name to be sure it does not exist
     item_name_converted = item_name + 'converted'
     try:
-        converted_item = Item.create(item_name_converted, mimetype=mimetype)
+        converted_item = Item.create(item_name_converted, contenttype=contenttype)
     except AccessDeniedError:
         abort(403)
     return converted_item._convert(item.internal_representation())
@@ -251,10 +251,10 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input, or cancelled).
     After successful POST, redirects to the page.
     """
-    mimetype = request.values.get('mimetype')
+    contenttype = request.values.get('contenttype')
     template_name = request.values.get('template')
     try:
-        item = Item.create(item_name, mimetype=mimetype)
+        item = Item.create(item_name, contenttype=contenttype)
     except AccessDeniedError:
         abort(403)
     if request.method == 'GET':
@@ -287,7 +287,7 @@ def modify_item(item_name):
                 item.modify()
                 item_modified.send(app._get_current_object(),
                                    item_name=item_name)
-                if mimetype in ('application/x-twikidraw', 'application/x-anywikidraw', 'application/x-svgdraw'):
+                if contenttype in ('application/x-twikidraw', 'application/x-anywikidraw', 'application/x-svgdraw'):
                     # TWikiDraw/AnyWikiDraw/SvgDraw POST more than once, redirecting would break them
                     return "OK"
             except AccessDeniedError:
@@ -1346,15 +1346,15 @@ def _normalize_revnos(item, revno1, revno2):
     return oldrevno, newrevno
 
 
-def _common_mimetype(rev1, rev2):
-    mt1 = rev1.get(MIMETYPE)
-    mt2 = rev2.get(MIMETYPE)
-    if mt1 == mt2:
-        # easy, exactly the same mimetype, call do_diff for it
-        commonmt = mt1
+def _common_type(rev1, rev2):
+    ct1 = rev1.get(CONTENTTYPE)
+    ct2 = rev2.get(CONTENTTYPE)
+    if ct1 == ct2:
+        # easy, exactly the same content type, call do_diff for it
+        commonmt = ct1
     else:
-        major1 = mt1.split('/')[0]
-        major2 = mt2.split('/')[0]
+        major1 = ct1.split('/')[0]
+        major2 = ct2.split('/')[0]
         if major1 == major2:
             # at least same major mimetype, use common base item class
             commonmt = major1 + '/'
@@ -1369,10 +1369,10 @@ def _diff(item, revno1, revno2):
     oldrev = item.get_revision(oldrevno)
     newrev = item.get_revision(newrevno)
 
-    commonmt = _common_mimetype(oldrev, newrev)
+    commonmt = _common_type(oldrev, newrev)
 
     try:
-        item = Item.create(item.name, mimetype=commonmt, rev_no=newrevno)
+        item = Item.create(item.name, contenttype=commonmt, rev_no=newrevno)
     except AccessDeniedError:
         abort(403)
     rev_nos = item.rev.item.list_revisions()
@@ -1391,10 +1391,10 @@ def _diff_raw(item, revno1, revno2):
     oldrev = item.get_revision(oldrevno)
     newrev = item.get_revision(newrevno)
 
-    commonmt = _common_mimetype(oldrev, newrev)
+    commonmt = _common_type(oldrev, newrev)
 
     try:
-        item = Item.create(item.name, mimetype=commonmt, rev_no=newrevno)
+        item = Item.create(item.name, contenttype=commonmt, rev_no=newrevno)
     except AccessDeniedError:
         abort(403)
     return item._render_data_diff_raw(oldrev, newrev)

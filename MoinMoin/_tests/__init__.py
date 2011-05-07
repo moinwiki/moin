@@ -14,6 +14,7 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin import config, security, user
+from MoinMoin.config import NAME, CONTENTTYPE
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import random_string
 from MoinMoin.storage.error import ItemAlreadyExistsError
@@ -54,10 +55,10 @@ def update_item(name, revno, meta, data):
     rev = item.create_revision(revno)
     for key, value in meta.items():
         rev[key] = value
-    if not 'name' in rev:
-        rev['name'] = name
-    if not 'mimetype' in rev:
-        rev['mimetype'] = u'application/octet-stream'
+    if not NAME in rev:
+        rev[NAME] = name
+    if not CONTENTTYPE in rev:
+        rev[CONTENTTYPE] = u'application/octet-stream'
     rev.write(data)
     item.commit()
     return item

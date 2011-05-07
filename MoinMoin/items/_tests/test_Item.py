@@ -12,40 +12,40 @@ from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage
-from MoinMoin.config import MIMETYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 class TestItem(object):
     def testNonExistent(self):
         item = Item.create('DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.data
-        assert meta == {MIMETYPE: 'application/x-nonexistent'}
+        assert meta == {CONTENTTYPE: 'application/x-nonexistent'}
         assert data == ''
 
     def testClassFinder(self):
-        for mimetype, ExpectedClass in [
+        for contenttype, ExpectedClass in [
                 ('application/x-foobar', Binary),
                 ('text/plain', Text),
                 ('image/tiff', Image),
                 ('image/png', TransformableBitmapImage),
             ]:
-            item = Item.create('foo', mimetype=mimetype)
+            item = Item.create('foo', contenttype=contenttype)
             assert isinstance(item, ExpectedClass)
 
     def testCRUD(self):
         name = u'NewItem'
-        mimetype = 'text/plain'
+        contenttype = 'text/plain'
         data = 'foobar'
         meta = dict(foo='bar')
         comment = u'saved it'
         become_trusted()
         item = Item.create(name)
         # save rev 0
-        item._save(meta, data, mimetype=mimetype, comment=comment)
+        item._save(meta, data, contenttype=contenttype, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
-        assert saved_meta[MIMETYPE] == mimetype
+        assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
         assert item.rev.revno == 0
@@ -53,11 +53,11 @@ class TestItem(object):
         data = rev1_data = data * 10000
         comment = comment + u' again'
         # save rev 1
-        item._save(meta, data, mimetype=mimetype, comment=comment)
+        item._save(meta, data, contenttype=contenttype, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
-        assert saved_meta[MIMETYPE] == mimetype
+        assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
         assert item.rev.revno == 1
@@ -65,11 +65,11 @@ class TestItem(object):
         data = ''
         comment = 'saved empty data'
         # save rev 2 (auto delete)
-        item._save(meta, data, mimetype=mimetype, comment=comment)
+        item._save(meta, data, contenttype=contenttype, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
-        assert saved_meta[MIMETYPE] == mimetype
+        assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
         assert item.rev.revno == 2
@@ -83,7 +83,7 @@ class TestItem(object):
         basename = u'Foo'
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij/kl', ]:
             item = Item.create(basename + name)
-            item._save({}, "foo", mimetype='text/plain')
+            item._save({}, "foo", contenttype='text/plain')
 
         # check index
         baseitem = Item.create(basename)
@@ -108,14 +108,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, mimetype='application/x-tar')
+        item = Item.create(item_name, contenttype='application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, mimetype='application/x-tar')
+        item = Item.create(item_name, contenttype='application/x-tar')
         tf_names = set(item.list_members())
         assert tf_names == members
         assert item.get_member('example1.txt').read() == filecontent
@@ -125,7 +125,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, mimetype='application/x-tar')
+        item = Item.create(item_name, contenttype='application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -137,7 +137,7 @@ class TestTarItems(object):
         item = flaskg.storage.get_item(item_name)
         assert item.next_revno == 2
 
-        item = Item.create(item_name, mimetype='application/x-tar')
+        item = Item.create(item_name, contenttype='application/x-tar')
         assert item.get_member('example1.txt').read() == filecontent
 
 coverage_modules = ['MoinMoin.items']

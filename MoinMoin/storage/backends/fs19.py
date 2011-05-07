@@ -32,7 +32,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import config
-from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
+from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
                             ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
                             TAGS, SIZE, HASH_ALGORITHM
@@ -46,12 +46,12 @@ from MoinMoin.util.mimetype import MimeType
 DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
 
-mimetype_default = u'text/plain'
-mimetype_moinwiki = u'text/x.moin.wiki'
-format_to_mimetype = {
+CONTENTTYPE_DEFAULT = u'text/plain'
+CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki'
+FORMAT_TO_CONTENTTYPE = {
     'wiki': u'text/x.moin.wiki',
-    'text/wiki': mimetype_moinwiki,
-    'text/moin-wiki': mimetype_moinwiki,
+    'text/wiki': CONTENTTYPE_MOINWIKI,
+    'text/moin-wiki': CONTENTTYPE_MOINWIKI,
     'creole': u'text/x.moin.creole',
     'text/creole': u'text/x.moin.creole',
     'rst': u'text/rst',
@@ -350,7 +350,7 @@ class FsPageRevision(StoredRevision):
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
                 # (non-deleted) revision revno-1:
-                for key in [ACL, NAME, MIMETYPE, MTIME, ]:
+                for key in [ACL, NAME, CONTENTTYPE, MTIME, ]:
                     if key in previous_meta:
                         meta[key] = previous_meta[key]
             except NoSuchRevisionError:
@@ -380,7 +380,7 @@ class FsPageRevision(StoredRevision):
             meta, data = split_body(content)
         meta.update(editlog_data)
         format = meta.pop('format', backend.format_default)
-        meta[MIMETYPE] = format_to_mimetype.get(format, mimetype_default)
+        meta[CONTENTTYPE] = FORMAT_TO_CONTENTTYPE.get(format, CONTENTTYPE_DEFAULT)
         if item._syspages:
             meta[IS_SYSITEM] = True
             meta[SYSITEM_VERSION] = item._syspages
@@ -406,7 +406,7 @@ class FsPageRevision(StoredRevision):
             E.g. categories are stored in the footer of the page content. For
             moin2, we extract that stuff from content and put it into metadata.
         """
-        if meta[MIMETYPE] == mimetype_moinwiki:
+        if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self._backend.item_category_regex)
         return data
 
@@ -492,7 +492,7 @@ class FsAttachmentRevision(StoredRevision):
         # attachments in moin 1.9 were protected by their "parent" page's acl
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
-        meta[MIMETYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
+        meta[CONTENTTYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
         with open(attpath, 'rb') as f:
             size, hash_name, hash_digest = hash_hexdigest(f)
         meta[hash_name] = hash_digest
