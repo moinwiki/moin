@@ -1024,8 +1024,8 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = String.using(label=L_('Name'), optional=True).validated_by(Present())
-    password = String.using(label=L_('Password'), optional=True).validated_by(Present())
+    username = String.using(label=L_('Name'), optional=False).validated_by(Present())
+    password = String.using(label=L_('Password'), optional=False).validated_by(Present())
     openid = String.using(label=L_('OpenID'), optional=True).validated_by(Present(), URLValidator())
 
     # the submit hidden field
