@@ -1,7 +1,7 @@
 # Copyright: 2009 MoinMoin:ThomasWaldmann
 # Copyright: 2009 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
-# Copyright: 2009 MoinMoin:BastianBlank
+# Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -69,6 +69,60 @@ ROWS_DATA = 20
 ROWS_META = 10
 
 
+from ..util.registry import RegistryBase
+
+
+class RegistryItem(RegistryBase):
+    class Entry(object):
+        def __init__(self, factory, content_type, priority):
+            self.factory = factory
+            self.content_type = content_type
+            self.priority = priority
+
+        def __call__(self, name, content_type, kw):
+            if self.content_type.issupertype(content_type):
+                return self.factory(name, content_type, **kw)
+
+        def __eq__(self, other):
+            if isinstance(other, self.__class__):
+                return (self.factory == other.factory and
+                        self.content_type == other.content_type and
+                        self.priority == other.priority)
+            return NotImplemented
+
+        def __lt__(self, other):
+            if isinstance(other, self.__class__):
+                if self.priority < other.priority:
+                    return True
+                if self.content_type != other.content_type:
+                    return other.content_type.issupertype(self.content_type)
+                return False
+            return NotImplemented
+
+        def __repr__(self):
+            return '<%s: %s, prio %d [%r]>' % (self.__class__.__name__,
+                    self.content_type,
+                    self.priority,
+                    self.factory)
+
+    def get(self, name, content_type, **kw):
+        for entry in self._entries:
+            item = entry(name, content_type, kw)
+            if item is not None:
+                return item
+
+    def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
+        """
+        Register a factory
+
+        :param factory: Factory to register. Callable, must return an object.
+        """
+        return self._register(self.Entry(factory, content_type, priority))
+
+
+item_registry = RegistryItem()
+
+
 def conv_serialize(doc, namespaces):
     out = array('u')
     flaskg.clock.start('conv_serialize')
@@ -104,6 +158,10 @@ class DummyItem(object):
 class Item(object):
     """ Highlevel (not storage) Item """
     @classmethod
+    def _factory(cls, name=u'', contenttype=None, **kw):
+        return cls(name, contenttype=unicode(contenttype), **kw)
+
+    @classmethod
     def create(cls, name=u'', contenttype=None, rev_no=None, item=None):
         if rev_no is None:
             rev_no = -1
@@ -138,26 +196,9 @@ class Item(object):
         logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
         logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev)))
 
-        def _find_item_class(contenttype, BaseClass, best_match_len=-1): # XXX use MoinMoin.util.registry for this?
-            #logging.debug("_find_item_class(%r,%r,%r)" % (contenttype, BaseClass, best_match_len))
-            ct = Type(contenttype)
-            Class = None
-            for ItemClass in BaseClass.__subclasses__():
-                for supported_type in ItemClass.supported_types:
-                    if Type(supported_type).issupertype(ct): # XXX optimize by directly putting Type(...) into supported_types list
-                        match_len = len(supported_type)
-                        if match_len > best_match_len:
-                            best_match_len = match_len
-                            Class = ItemClass
-                            #logging.debug("_find_item_class: new best match: %r by %r)" % (supported_type, ItemClass))
-                best_match_len, better_Class = _find_item_class(contenttype, ItemClass, best_match_len)
-                if better_Class:
-                    Class = better_Class
-            return best_match_len, Class
-
-        ItemClass = _find_item_class(contenttype, cls)[1]
-        logging.debug("ItemClass %r handles %r" % (ItemClass, contenttype))
-        return ItemClass(name=name, rev=rev, contenttype=contenttype)
+        item = item_registry.get(name, Type(contenttype), rev=rev)
+        logging.debug("ItemClass %r handles %r" % (item.__class__, contenttype))
+        return item
 
     def __init__(self, name, rev=None, contenttype=None):
         self.name = name
@@ -520,7 +561,6 @@ class Item(object):
 
 
 class NonExistent(Item):
-    supported_types = ['application/x-nonexistent', ]
     contenttype_groups = [
         ('markup text items', [
             ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
@@ -581,11 +621,11 @@ class NonExistent(Item):
                                contenttype_groups=self.contenttype_groups,
                               )
 
+item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
+
 
 class Binary(Item):
     """ An arbitrary binary item, fallback class for every item mimetype. """
-    supported_types = ['*/*']
-
     modify_help = """\
 There is no help, you're doomed!
 """
@@ -692,14 +732,15 @@ There is no help, you're doomed!
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
+item_registry.register(Binary._factory, Type('*/*'))
+
 
 class RenderableBinary(Binary):
-    """ This is a base class for some binary stuff that renders with a object tag. """
-    supported_types = []
+    """ Base class for some binary stuff that renders with a object tag. """
 
 
 class Application(Binary):
-    supported_types = []
+    """ Base class for application/* """
 
 
 class TarMixin(object):
@@ -771,10 +812,11 @@ class TarMixin(object):
 
 
 class ApplicationXTar(TarMixin, Application):
-    supported_types = ['application/x-tar', 'application/x-gtar', ]
-
     def feed_input_conv(self):
         return self.rev
+
+item_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
+item_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
 
 
 class ZipMixin(object):
@@ -805,49 +847,53 @@ class ZipMixin(object):
 
 
 class ApplicationZip(ZipMixin, Application):
-    supported_types = ['application/zip', ]
-
     def feed_input_conv(self):
         return self.rev
 
+item_registry.register(ApplicationZip._factory, Type('application/zip'))
+
 
 class PDF(Application):
-    supported_types = ['application/pdf', ]
+    """ PDF """
+
+item_registry.register(PDF._factory, Type('application/pdf'))
 
 
 class Video(Binary):
-    supported_types = ['video/*', ]
+    """ Base class for video/* """
+
+item_registry.register(Video._factory, Type('video/*'))
 
 
 class Audio(Binary):
-    supported_types = ['audio/*', ]
+    """ Base class for audio/* """
+
+item_registry.register(Audio._factory, Type('audio/*'))
 
 
 class Image(Binary):
-    """ Any Image mimetype """
-    supported_types = ['image/*', ]
+    """ Base class for image/* """
+
+item_registry.register(Image._factory, Type('image/*'))
 
 
 class RenderableImage(RenderableBinary):
-    """ Any Image mimetype """
-    supported_types = []
+    """ Base class for renderable Image mimetypes """
 
 
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
-    supported_types = ['image/svg+xml', ]
+
+item_registry.register(SvgImage._factory, Type('image/svg+xml'))
 
 
 class RenderableBitmapImage(RenderableImage):
     """ PNG/JPEG/GIF images use <img> tag (better browser support than <object>) """
-    supported_types = [] # if mimetype is also transformable, please list
-                         # in TransformableImage ONLY!
+    # if mimetype is also transformable, please register in TransformableImage ONLY!
 
 
 class TransformableBitmapImage(RenderableBitmapImage):
     """ We can transform (resize, rotate, mirror) some image types """
-    supported_types = ['image/png', 'image/jpeg', 'image/gif', ]
-
     def _transform(self, content_type, size=None, transpose_op=None):
         """ resize to new size (optional), transpose according to exif infos,
             result data should be content_type.
@@ -983,11 +1029,13 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff_text(self, oldrev, newrev):
         return super(TransformableBitmapImage, self)._render_data_diff_text(oldrev, newrev)
 
+item_registry.register(TransformableBitmapImage._factory, Type('image/png'))
+item_registry.register(TransformableBitmapImage._factory, Type('image/jpeg'))
+item_registry.register(TransformableBitmapImage._factory, Type('image/gif'))
+
 
 class Text(Binary):
-    """ Any kind of text """
-    supported_types = ['text/*', ]
-
+    """ Base class for text/* """
     template = "modify_text.html"
 
     # text/plain mandates crlf - but in memory, we want lf only
@@ -1068,6 +1116,8 @@ class Text(Binary):
                                gen=make_generator(),
                               )
 
+item_registry.register(Text._factory, Type('text/*'))
+
 
 class MarkupItem(Text):
     """
@@ -1103,24 +1153,29 @@ class MarkupItem(Text):
         newrev[ITEMLINKS] = item_conv.get_links()
         newrev[ITEMTRANSCLUSIONS] = item_conv.get_transclusions()
 
+
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
-    supported_types = ['text/x.moin.wiki', ]
+
+item_registry.register(MoinWiki._factory, Type('text/x.moin.wiki'))
 
 
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
-    supported_types = ['text/x.moin.creole', ]
+
+item_registry.register(CreoleWiki._factory, Type('text/x.moin.creole'))
 
 
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
-    supported_types = ['text/x-mediawiki', ]
+
+item_registry.register(MediaWiki._factory, Type('text/x-mediawiki'))
 
 
 class ReST(MarkupItem):
     """ ReStructured Text markup """
-    supported_types = ['text/x-rst', ]
+
+item_registry.register(ReST._factory, Type('text/x-rst'))
 
 
 class HTML(Text):
@@ -1133,8 +1188,6 @@ class HTML(Text):
 
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
-    supported_types = ['text/html', ]
-
     template = "modify_text_html.html"
 
     def do_modify(self, template_name):
@@ -1160,11 +1213,11 @@ class HTML(Text):
                                gen=make_generator(),
                               )
 
+item_registry.register(HTML._factory, Type('text/html'))
+
 
 class DocBook(MarkupItem):
     """ DocBook Document """
-    supported_types = ['application/docbook+xml', ]
-
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
         from MoinMoin.converter import default_registry as reg
@@ -1208,12 +1261,13 @@ class DocBook(MarkupItem):
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
+item_registry.register(DocBook._factory, Type('application/docbook+xml'))
+
 
 class TWikiDraw(TarMixin, Image):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_types = ["application/x-twikidraw", ]
     modify_help = ""
     template = "modify_twikidraw.html"
 
@@ -1285,11 +1339,13 @@ class TWikiDraw(TarMixin, Image):
         else:
             return Markup('<img src="%s" alt="%s" />' % (png_url, title))
 
+item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
+
+
 class AnyWikiDraw(TarMixin, Image):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_types = ["application/x-anywikidraw", ]
     modify_help = ""
     template = "modify_anywikidraw.html"
 
@@ -1362,10 +1418,11 @@ class AnyWikiDraw(TarMixin, Image):
         else:
             return Markup('<img src="%s" alt="%s" />' % (png_url, title))
 
+item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
+
+
 class SvgDraw(TarMixin, Image):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
-
-    supported_types = ['application/x-svgdraw', ]
     modify_help = ""
     template = "modify_svg-edit.html"
 
@@ -1406,3 +1463,6 @@ class SvgDraw(TarMixin, Image):
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
         return Markup('<img src="%s" alt="%s" />' % (png_url, drawing_url))
+
+item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
+
