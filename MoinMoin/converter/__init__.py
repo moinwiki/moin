@@ -32,8 +32,8 @@ class RegistryConverter(RegistryBase):
 
         def __call__(self, type_input, type_output, kw):
             if (self.type_output.issupertype(type_output) and
-                    self.type_input.issupertype(type_input)):
-                    return self.factory(type_input, type_output, **kw)
+                self.type_input.issupertype(type_input)):
+                return self.factory(type_input, type_output, **kw)
 
         def __eq__(self, other):
             if isinstance(other, self.__class__):
@@ -48,13 +48,9 @@ class RegistryConverter(RegistryBase):
                 if self.priority < other.priority:
                     return True
                 if self.type_output != other.type_output:
-                    if other.type_output.issupertype(self.type_output):
-                        return True
-                    return False
+                    return other.type_output.issupertype(self.type_output)
                 if self.type_input != other.type_input:
-                    if other.type_input.issupertype(self.type_input):
-                        return True
-                    return False
+                    return other.type_input.issupertype(self.type_input)
                 return False
             return NotImplemented
 
@@ -75,7 +71,7 @@ class RegistryConverter(RegistryBase):
         """
         Register a factory
 
-        :param factory: Factory to register. Callable, must return an object
+        :param factory: Factory to register. Callable, must return an object.
         """
         return self._register(self.Entry(factory, type_input, type_output, priority))
 
