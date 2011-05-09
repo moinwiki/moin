@@ -492,7 +492,7 @@ class FsAttachmentRevision(StoredRevision):
         # attachments in moin 1.9 were protected by their "parent" page's acl
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
-        meta[CONTENTTYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
+        meta[CONTENTTYPE] = unicode(MimeType(filename=item._fs_attachname).content_type())
         with open(attpath, 'rb') as f:
             size, hash_name, hash_digest = hash_hexdigest(f)
         meta[hash_name] = hash_digest

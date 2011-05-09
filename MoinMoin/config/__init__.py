@@ -96,7 +96,7 @@ USERGROUP = "usergroup"
 # needs more precise name / use case:
 SOMEDICT = "somedict"
 
-CONTENTTYPE = "mimetype" # XXX change later to "content-type"
+CONTENTTYPE = "contenttype"
 SIZE = "size"
 LANGUAGE = "language"
 ITEMLINKS = "itemlinks"

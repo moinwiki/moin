@@ -26,6 +26,7 @@ class TestItem(object):
         for contenttype, ExpectedClass in [
                 ('application/x-foobar', Binary),
                 ('text/plain', Text),
+                ('text/plain;charset=utf-8', Text),
                 ('image/tiff', Image),
                 ('image/png', TransformableBitmapImage),
             ]:
@@ -34,7 +35,7 @@ class TestItem(object):
 
     def testCRUD(self):
         name = u'NewItem'
-        contenttype = 'text/plain'
+        contenttype = 'text/plain;charset=utf-8'
         data = 'foobar'
         meta = dict(foo='bar')
         comment = u'saved it'
@@ -83,19 +84,19 @@ class TestItem(object):
         basename = u'Foo'
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij/kl', ]:
             item = Item.create(basename + name)
-            item._save({}, "foo", contenttype='text/plain')
+            item._save({}, "foo", contenttype='text/plain;charset=utf-8')
 
         # check index
         baseitem = Item.create(basename)
         index = baseitem.get_index()
-        assert index == [(u'Foo/ab', u'ab', 'text/plain'),
-                         (u'Foo/cd/ef', u'cd/ef', 'text/plain'),
-                         (u'Foo/gh', u'gh', 'text/plain'),
-                         (u'Foo/ij/kl', u'ij/kl', 'text/plain'),
+        assert index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
+                         (u'Foo/cd/ef', u'cd/ef', 'text/plain;charset=utf-8'),
+                         (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
+                         (u'Foo/ij/kl', u'ij/kl', 'text/plain;charset=utf-8'),
                         ]
         flat_index = baseitem.flat_index()
-        assert flat_index == [(u'Foo/ab', u'ab', 'text/plain'),
-                              (u'Foo/gh', u'gh', 'text/plain'),
+        assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
+                              (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
                              ]
 
 

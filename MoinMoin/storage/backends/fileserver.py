@@ -196,7 +196,7 @@ class FileRevision(FileDirRevision):
     """ A filesystem file """
     def __init__(self, item, revno):
         FileDirRevision.__init__(self, item, revno)
-        contenttype = MimeType(filename=self._fs_data_fname).mime_type()
+        contenttype = MimeType(filename=self._fs_data_fname).content_type()
         self._fs_meta.update({
             CONTENTTYPE: contenttype,
         })

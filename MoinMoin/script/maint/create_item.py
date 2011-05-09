@@ -23,8 +23,8 @@ class Create_Item(Command):
             help='Name of the item to create'),
         Option('--file', '-f', dest='data_file', type=unicode, required=True,
             help='Filename of file to read in and store as item.'),
-        Option('--contenttype', '-m', dest='contenttype', type=unicode, required=True,
-            help='contenttype of item'),
+        Option('--content-type', '-m', dest='contenttype', type=unicode, required=True,
+            help='content-type of item'),
         Option('--comment', '-c', dest='comment', type=unicode,
             help='comment for item')
     )

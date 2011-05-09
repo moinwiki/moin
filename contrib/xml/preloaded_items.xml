@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <backend><item name="Home"><meta></meta>
-<revision revno="0"><meta><entry key="mimetype"><str>text/x.moin.wiki</str>
+<revision revno="0"><meta><entry key="contenttype"><str>text/x.moin.wiki;charset=utf-8</str>
 </entry>
 <entry key="sha1"><str>71b13de8c73fe3c3b9dd1cac8848dd1ad2f5d1be</str>
 </entry>
@@ -33,7 +33,7 @@
 </revision>
 </item>
 <item name="rst"><meta></meta>
-<revision revno="0"><meta><entry key="mimetype"><str>text/x-rst</str>
+<revision revno="0"><meta><entry key="contenttype"><str>text/x-rst;charset=utf-8</str>
 </entry>
 <entry key="sha1"><str>f4785f356c041ddfd1e1efbafc73b32141805a50</str>
 </entry>
@@ -62,7 +62,7 @@
 </revision>
 </item>
 <item name="moin"><meta></meta>
-<revision revno="0"><meta><entry key="mimetype"><str>text/x.moin.wiki</str>
+<revision revno="0"><meta><entry key="contenttype"><str>text/x.moin.wiki;charset=utf-8</str>
 </entry>
 <entry key="sha1"><str>7042df8e761faffbbf1f08a87c1404f75f7b3e64</str>
 </entry>
@@ -116,7 +116,7 @@
 </revision>
 </item>
 <item name="creole"><meta></meta>
-<revision revno="0"><meta><entry key="mimetype"><str>text/x.moin.creole</str>
+<revision revno="0"><meta><entry key="contenttype"><str>text/x.moin.creole;charset=utf-8</str>
 </entry>
 <entry key="sha1"><str>342b4fb55122cd53583639792218c501b9f36488</str>
 </entry>
@@ -161,7 +161,7 @@
 </revision>
 </item>
 <item name="docbook"><meta></meta>
-<revision revno="0"><meta><entry key="mimetype"><str>application/docbook+xml</str>
+<revision revno="0"><meta><entry key="contenttype"><str>application/docbook+xml;charset=utf-8</str>
 </entry>
 <entry key="sha1"><str>20187313253eb0ffc0a608fcc73999da61147826</str>
 </entry>

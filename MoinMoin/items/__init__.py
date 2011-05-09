@@ -124,6 +124,7 @@ class Item(object):
             logging.debug("Got item: %r" % name)
             try:
                 rev = item.get_revision(rev_no)
+                contenttype = 'application/octet-stream' # it exists
             except NoSuchRevisionError:
                 try:
                     rev = item.get_revision(-1) # fall back to current revision
@@ -133,21 +134,22 @@ class Item(object):
                     rev = DummyRev(item, contenttype)
                     logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
             logging.debug("Got item %r, revision: %r" % (name, rev_no))
-        contenttype = rev.get(CONTENTTYPE) or contenttype # XXX: Why do we need ... or ... ?
+        contenttype = rev.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
         logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
         logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev)))
 
-        def _find_item_class(contenttype, BaseClass, best_match_len=-1):
+        def _find_item_class(contenttype, BaseClass, best_match_len=-1): # XXX use MoinMoin.util.registry for this?
             #logging.debug("_find_item_class(%r,%r,%r)" % (contenttype, BaseClass, best_match_len))
+            ct = Type(contenttype)
             Class = None
             for ItemClass in BaseClass.__subclasses__():
-                for supported_mimetype in ItemClass.supported_mimetypes:
-                    if contenttype.startswith(supported_mimetype):
-                        match_len = len(supported_mimetype)
+                for supported_type in ItemClass.supported_types:
+                    if Type(supported_type).issupertype(ct): # XXX optimize by directly putting Type(...) into supported_types list
+                        match_len = len(supported_type)
                         if match_len > best_match_len:
                             best_match_len = match_len
                             Class = ItemClass
-                            #logging.debug("_find_item_class: new best match: %r by %r)" % (supported_mimetype, ItemClass))
+                            #logging.debug("_find_item_class: new best match: %r by %r)" % (supported_type, ItemClass))
                 best_match_len, better_Class = _find_item_class(contenttype, ItemClass, best_match_len)
                 if better_Class:
                     Class = better_Class
@@ -371,18 +373,18 @@ class Item(object):
     def modify(self):
         # called from modify UI/POST
         data_file = request.files.get('data_file')
-        contenttype = request.values.get('contenttype', 'text/plain') # XXX
+        contenttype = request.values.get('contenttype', 'text/plain;charset=utf-8')
         if data_file and data_file.filename:
             # user selected a file to upload
             data = data_file.stream
-            contenttype = MimeType(filename=data_file.filename).mime_type()
+            contenttype = MimeType(filename=data_file.filename).content_type()
         else:
             # take text from textarea
-            data = request.form.get('data_text', '')
+            data = request.form.get('data_text', u'') # we get unicode from the form
             if data:
                 data = self.data_form_to_internal(data)
                 data = self.data_internal_to_storage(data)
-                contenttype = 'text/plain'
+                contenttype = 'text/plain;charset=utf-8' # XXX is there a way to get the charset of the form?
             else:
                 data = '' # could've been u'' also!
                 contenttype = None
@@ -518,22 +520,22 @@ class Item(object):
 
 
 class NonExistent(Item):
-    supported_mimetypes = ['application/x-nonexistent']
+    supported_types = ['application/x-nonexistent', ]
     contenttype_groups = [
         ('markup text items', [
-            ('text/x.moin.wiki', 'Wiki (MoinMoin)'),
-            ('text/x.moin.creole', 'Wiki (Creole)'),
-            ('text/x-mediawiki', 'Wiki (MediaWiki)'),
-            ('text/x-rst', 'ReST'),
-            ('application/docbook+xml', 'DocBook'),
-            ('text/html', 'HTML'),
+            ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
+            ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
+            ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
+            ('text/x-rst;charset=utf-8', 'ReST'),
+            ('application/docbook+xml;charset=utf-8', 'DocBook'),
+            ('text/html;charset=utf-8', 'HTML'),
         ]),
         ('other text items', [
-            ('text/plain', 'plain text'),
-            ('text/x-diff', 'diff/patch'),
-            ('text/x-python', 'python code'),
-            ('text/csv', 'csv'),
-            ('text/x-irclog', 'IRC log'),
+            ('text/plain;charset=utf-8', 'plain text'),
+            ('text/x-diff;charset=utf-8', 'diff/patch'),
+            ('text/x-python;charset=utf-8', 'python code'),
+            ('text/csv;charset=utf-8', 'csv'),
+            ('text/x-irclog;charset=utf-8', 'IRC log'),
         ]),
         ('image items', [
             ('image/jpeg', 'JPEG'),
@@ -582,7 +584,7 @@ class NonExistent(Item):
 
 class Binary(Item):
     """ An arbitrary binary item, fallback class for every item mimetype. """
-    supported_mimetypes = [''] # fallback, because every mimetype starts with ''
+    supported_types = ['*/*']
 
     modify_help = """\
 There is no help, you're doomed!
@@ -673,8 +675,9 @@ There is no help, you're doomed!
             try:
                 mimestr = rev[CONTENTTYPE]
             except KeyError:
-                mimestr = mimetypes.guess_type(rev.item.name)[0]
-            mt = MimeType(mimestr=mimestr)
+                mt = MimeType(filename=rev.item.name)
+            else:
+                mt = MimeType(mimestr=mimestr)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
             content_length = rev[SIZE]
@@ -692,11 +695,11 @@ There is no help, you're doomed!
 
 class RenderableBinary(Binary):
     """ This is a base class for some binary stuff that renders with a object tag. """
-    supported_mimetypes = []
+    supported_types = []
 
 
 class Application(Binary):
-    supported_mimetypes = []
+    supported_types = []
 
 
 class TarMixin(object):
@@ -768,7 +771,7 @@ class TarMixin(object):
 
 
 class ApplicationXTar(TarMixin, Application):
-    supported_mimetypes = ['application/x-tar', 'application/x-gtar']
+    supported_types = ['application/x-tar', 'application/x-gtar', ]
 
     def feed_input_conv(self):
         return self.rev
@@ -802,48 +805,48 @@ class ZipMixin(object):
 
 
 class ApplicationZip(ZipMixin, Application):
-    supported_mimetypes = ['application/zip']
+    supported_types = ['application/zip', ]
 
     def feed_input_conv(self):
         return self.rev
 
 
 class PDF(Application):
-    supported_mimetypes = ['application/pdf', ]
+    supported_types = ['application/pdf', ]
 
 
 class Video(Binary):
-    supported_mimetypes = ['video/', ]
+    supported_types = ['video/*', ]
 
 
 class Audio(Binary):
-    supported_mimetypes = ['audio/', ]
+    supported_types = ['audio/*', ]
 
 
 class Image(Binary):
     """ Any Image mimetype """
-    supported_mimetypes = ['image/', ]
+    supported_types = ['image/*', ]
 
 
 class RenderableImage(RenderableBinary):
     """ Any Image mimetype """
-    supported_mimetypes = []
+    supported_types = []
 
 
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
-    supported_mimetypes = ['image/svg+xml']
+    supported_types = ['image/svg+xml', ]
 
 
 class RenderableBitmapImage(RenderableImage):
     """ PNG/JPEG/GIF images use <img> tag (better browser support than <object>) """
-    supported_mimetypes = [] # if mimetype is also transformable, please list
-                             # in TransformableImage ONLY!
+    supported_types = [] # if mimetype is also transformable, please list
+                         # in TransformableImage ONLY!
 
 
 class TransformableBitmapImage(RenderableBitmapImage):
     """ We can transform (resize, rotate, mirror) some image types """
-    supported_mimetypes = ['image/png', 'image/jpeg', 'image/gif', ]
+    supported_types = ['image/png', 'image/jpeg', 'image/gif', ]
 
     def _transform(self, content_type, size=None, transpose_op=None):
         """ resize to new size (optional), transpose according to exif infos,
@@ -983,7 +986,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
 
 class Text(Binary):
     """ Any kind of text """
-    supported_mimetypes = ['text/']
+    supported_types = ['text/*', ]
 
     template = "modify_text.html"
 
@@ -1035,7 +1038,7 @@ class Text(Binary):
         data_text = self.data_storage_to_internal(self.data)
         # TODO: use registry as soon as it is in there
         from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
-        pygments_conv = PygmentsConverter(mimetype=self.contenttype)
+        pygments_conv = PygmentsConverter(contenttype=self.contenttype)
         doc = pygments_conv(data_text.split(u'\n'))
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
@@ -1102,22 +1105,22 @@ class MarkupItem(Text):
 
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
-    supported_mimetypes = ['text/x.moin.wiki']
+    supported_types = ['text/x.moin.wiki', ]
 
 
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
-    supported_mimetypes = ['text/x.moin.creole']
+    supported_types = ['text/x.moin.creole', ]
 
 
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
-    supported_mimetypes = ['text/x-mediawiki']
+    supported_types = ['text/x-mediawiki', ]
 
 
 class ReST(MarkupItem):
     """ ReStructured Text markup """
-    supported_mimetypes = ['text/x-rst']
+    supported_types = ['text/x-rst', ]
 
 
 class HTML(Text):
@@ -1130,7 +1133,7 @@ class HTML(Text):
 
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
-    supported_mimetypes = ['text/html']
+    supported_types = ['text/html', ]
 
     template = "modify_text_html.html"
 
@@ -1160,7 +1163,7 @@ class HTML(Text):
 
 class DocBook(MarkupItem):
     """ DocBook Document """
-    supported_mimetypes = ['application/docbook+xml']
+    supported_types = ['application/docbook+xml', ]
 
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
@@ -1189,7 +1192,7 @@ class DocBook(MarkupItem):
         tree.write(file_to_send, namespaces=output_namespaces)
 
         # We determine the different parameters for the reply
-        mt = MimeType(mimestr='application/docbook+xml')
+        mt = MimeType(mimestr='application/docbook+xml;charset=utf-8')
         content_disposition = mt.content_disposition(app.cfg)
         content_type = mt.content_type()
         # After creation of the StringIO, we are at the end of the file
@@ -1210,7 +1213,7 @@ class TWikiDraw(TarMixin, Image):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_mimetypes = ["application/x-twikidraw"]
+    supported_types = ["application/x-twikidraw", ]
     modify_help = ""
     template = "modify_twikidraw.html"
 
@@ -1286,7 +1289,7 @@ class AnyWikiDraw(TarMixin, Image):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_mimetypes = ["application/x-anywikidraw"]
+    supported_types = ["application/x-anywikidraw", ]
     modify_help = ""
     template = "modify_anywikidraw.html"
 
@@ -1362,7 +1365,7 @@ class AnyWikiDraw(TarMixin, Image):
 class SvgDraw(TarMixin, Image):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
 
-    supported_mimetypes = ['application/x-svgdraw']
+    supported_types = ['application/x-svgdraw', ]
     modify_help = ""
     template = "modify_svg-edit.html"
 
