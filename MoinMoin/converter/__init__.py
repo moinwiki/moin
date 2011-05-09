@@ -20,6 +20,7 @@ TODO: Merge with new-style macros.
 
 
 from ..util.registry import RegistryBase
+from ..util.pysupport import load_package_modules
 
 
 class RegistryConverter(RegistryBase):
@@ -76,30 +77,6 @@ class RegistryConverter(RegistryBase):
         return self._register(self.Entry(factory, type_input, type_output, priority))
 
 
-# TODO: Move somewhere else. Also how to do that for per-wiki modules?
-def _load():
-    import imp, os, sys
-    for path in __path__:
-        for root, dirs, files in os.walk(path):
-            del dirs[:]
-            for file in files:
-                if file.startswith('_') or not file.endswith('.py'):
-                    continue
-                module = file[:-3]
-                module_complete = __name__ + '.' + module
-                if module_complete in sys.modules:
-                    continue
-                info = imp.find_module(module, [root])
-                try:
-                    try:
-                        imp.load_module(module_complete, *info)
-                    except Exception as e:
-                        import MoinMoin.log as logging
-                        logger = logging.getLogger(__name__)
-                        logger.exception("Failed to import converter package %s: %s" % (module, e))
-                finally:
-                    info[0].close()
-
 default_registry = RegistryConverter()
-_load()
+load_package_modules(__name__, __path__)
 
