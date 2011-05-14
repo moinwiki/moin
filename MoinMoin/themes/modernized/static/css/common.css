@@ -535,7 +535,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 .page-object { margin: 0px; width: auto; height: auto; display: block; position: relative; }
 .object-overlay { background-color: black; position: absolute; padding: 5px; border-radius: 1em;
             -moz-border-radius: 1em; -webkit-border-radius: 1em; text-align: center; white-space: nowrap; font-size: 120%;
-            font-weight: bold; 	display: none; margin: 0; opacity: .5; }
+            font-weight: bold; display: none; margin: 0; opacity: .5; }
 .object-overlay-wrapper { width: 20px; height: 20px; position: absolute; z-index: 100; top: 0px; left: 0px; margin: 0; }
 .object-overlay-wrapper:hover  .object-overlay { display: block; top: -20px; left: 0px; }
 .page-object:hover .object-overlay:hover { opacity: .8; filter: alpha(opacity=90); }
