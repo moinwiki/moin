@@ -3,15 +3,14 @@
 {% block content %}
 <h1>{{ _("Revert '%(item_name)s' (rev %(rev_no)d)", item_name=item.name, rev_no=rev_no) }}</h1>
 <div class="moin-form">
-<form action="{{ url_for('frontend.revert_item', item_name=item.name, rev=rev_no) }}" method="POST" enctype="multipart/form-data">
-    <dl>
-        <dt><label for="comment">{{ _("Comment") }}</label></dt>
-        <dd><input type="text" id="comment" name="comment" size="80" maxlength="200" value="{{ comment }}" /></dd>
-    </dl>
+{{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.name, rev=rev_no)) }}
+  {{ forms.render_errors(form) }}
+  <dl>
+    {{ forms.render_field(gen, form['comment'], 'text') }}
     {{ forms.render_textcha(gen, form) }}
-    <br />
-    <input class="button" type="submit" name="button_ok" value="{{ _('Revert') }}" />
-    <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
-</form>
+  </dl>
+  {{ gen.input(form['submit'], type='submit') }}
+{{ gen.form.close() }}
 </div>
 {% endblock %}
+

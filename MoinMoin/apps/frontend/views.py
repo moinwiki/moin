@@ -295,34 +295,51 @@ def modify_item(item_name):
         return redirect(url_for('frontend.show_item', item_name=item_name))
 
 
+class CommentForm(TextChaizedForm):
+    comment = String.using(label=L_('Comment'), optional=True).with_properties(placeholder=L_("Comment about your change"))
+    submit = String.using(default=L_('OK'), optional=True)
+
+class TargetCommentForm(CommentForm):
+    target = String.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item")).validated_by(Present())
+
+class RevertItemForm(CommentForm):
+    name = 'revert_item'
+
+class DeleteItemForm(CommentForm):
+    name = 'delete_item'
+
+class DestroyItemForm(CommentForm):
+    name = 'destroy_item'
+
+class CopyItemForm(TargetCommentForm):
+    name = 'copy_item'
+
+class RenameItemForm(TargetCommentForm):
+    name = 'rename_item'
+
+
 @frontend.route('/+revert/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_no=rev)
     except AccessDeniedError:
         abort(403)
-    form = TextChaizedForm.from_flat(request.form)
-    TextCha(form).amend_form()
     if request.method == 'GET':
-        return render_template(item.revert_template, rev_no=rev,
-                               item=item, item_name=item_name,
-                               form=form,
-                               gen=make_generator(),
-                              )
+        form = RevertItemForm.from_defaults()
+        TextCha(form).amend_form()
     elif request.method == 'POST':
-        if 'button_ok' in request.form:
-            valid = form.validate()
-            if not valid:
-                comment = request.values.get('comment')
-                return render_template(item.revert_template,
-                                       item=item, item_name=item_name,
-                                       rev_no=rev,
-                                       form=form,
-                                       gen=make_generator(),
-                                       comment=comment,
-                                      )
+        form = RevertItemForm.from_flat(request.form)
+        TextCha(form).amend_form()
+        valid = form.validate()
+        if valid:
             item.revert()
-        return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('frontend.show_item', item_name=item_name))
+    return render_template(item.revert_template,
+                           item=item, item_name=item_name,
+                           rev_no=rev,
+                           form=form,
+                           gen=make_generator(),
+                          )
 
 
 @frontend.route('/+copy/<itemname:item_name>', methods=['GET', 'POST'])
@@ -331,31 +348,24 @@ def copy_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
-    form = TextChaizedForm.from_flat(request.form)
-    TextCha(form).amend_form()
     if request.method == 'GET':
-        return render_template(item.copy_template,
-                               item=item, item_name=item_name,
-                               form=form, target=item.name,
-                               gen=make_generator(),
-                              )
-    if request.method == 'POST':
-        if 'button_ok' in request.form:
-            target = request.form.get('target')
-            comment = request.form.get('comment')
-            valid = form.validate()
-            if not valid:
-                return render_template(item.copy_template,
-                                       item=item, item_name=item_name,
-                                       form=form, target=target,
-                                       gen=make_generator(),
-                                       comment=comment,
-                                      )
+        form = CopyItemForm.from_defaults()
+        TextCha(form).amend_form()
+        form['target'] = item.name
+    elif request.method == 'POST':
+        form = CopyItemForm.from_flat(request.form)
+        TextCha(form).amend_form()
+        valid = form.validate()
+        if valid:
+            target = form['target'].value
+            comment = form['comment'].value
             item.copy(target, comment)
-            redirect_to = target
-        else:
-            redirect_to = item_name
-        return redirect(url_for('frontend.show_item', item_name=redirect_to))
+            return redirect(url_for('frontend.show_item', item_name=target))
+    return render_template(item.copy_template,
+                           item=item, item_name=item_name,
+                           form=form,
+                           gen=make_generator(),
+                          )
 
 
 @frontend.route('/+rename/<itemname:item_name>', methods=['GET', 'POST'])
@@ -364,31 +374,24 @@ def rename_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
-    form = TextChaizedForm.from_flat(request.form)
-    TextCha(form).amend_form()
     if request.method == 'GET':
-        return render_template(item.rename_template,
-                               item=item, item_name=item_name,
-                               form=form,
-                               gen=make_generator(),
-                              )
-    if request.method == 'POST':
-        if 'button_ok' in request.form:
-            target = request.form.get('target')
-            comment = request.form.get('comment')
-            valid = form.validate()
-            if not valid:
-                return render_template(item.rename_template,
-                                       item=item, item_name=item_name,
-                                       form=form,
-                                       gen=make_generator(),
-                                       comment=comment,
-                                      )
+        form = RenameItemForm.from_defaults()
+        TextCha(form).amend_form()
+        form['target'] = item.name
+    elif request.method == 'POST':
+        form = RenameItemForm.from_flat(request.form)
+        TextCha(form).amend_form()
+        valid = form.validate()
+        if valid:
+            target = form['target'].value
+            comment = form['comment'].value
             item.rename(target, comment)
-            redirect_to = target
-        else:
-            redirect_to = item_name
-        return redirect(url_for('frontend.show_item', item_name=redirect_to))
+            return redirect(url_for('frontend.show_item', item_name=target))
+    return render_template(item.rename_template,
+                           item=item, item_name=item_name,
+                           form=form,
+                           gen=make_generator(),
+                          )
 
 
 @frontend.route('/+delete/<itemname:item_name>', methods=['GET', 'POST'])
@@ -397,28 +400,22 @@ def delete_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
-    form = TextChaizedForm.from_flat(request.form)
-    TextCha(form).amend_form()
     if request.method == 'GET':
-        return render_template(item.delete_template,
-                               item=item, item_name=item_name,
-                               form=form,
-                               gen=make_generator(),
-                              )
+        form = DeleteItemForm.from_defaults()
+        TextCha(form).amend_form()
     elif request.method == 'POST':
-        if 'button_ok' in request.form:
-            valid = form.validate()
-            if not valid:
-                comment = request.values.get('comment')
-                return render_template(item.delete_template,
-                                       item=item, item_name=item_name,
-                                       form=form,
-                                       gen=make_generator(),
-                                       comment=comment,
-                                      )
-            comment = request.form.get('comment')
+        form = DeleteItemForm.from_flat(request.form)
+        TextCha(form).amend_form()
+        valid = form.validate()
+        if valid:
+            comment = form['comment'].value
             item.delete(comment)
-        return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('frontend.show_item', item_name=item_name))
+    return render_template(item.delete_template,
+                           item=item, item_name=item_name,
+                           form=form,
+                           gen=make_generator(),
+                          )
 
 
 @frontend.route('/+destroy/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -435,29 +432,23 @@ def destroy_item(item_name, rev):
         item = Item.create(item_name, rev_no=_rev)
     except AccessDeniedError:
         abort(403)
-    form = TextChaizedForm.from_flat(request.form)
-    TextCha(form).amend_form()
     if request.method == 'GET':
-        return render_template(item.destroy_template,
-                               item=item, item_name=item_name,
-                               rev_no=rev,
-                               form=form,
-                               gen=make_generator(),
-                              )
-    if request.method == 'POST':
-        if 'button_ok' in request.form:
-            comment = request.form.get('comment')
-            valid = form.validate()
-            if not valid:
-                return render_template(item.destroy_template,
-                                       item=item, item_name=item_name,
-                                       rev_no=rev,
-                                       form=form,
-                                       gen=make_generator(),
-                                       comment=comment,
-                                      )
+        form = DestroyItemForm.from_defaults()
+        TextCha(form).amend_form()
+    elif request.method == 'POST':
+        form = DestroyItemForm.from_flat(request.form)
+        TextCha(form).amend_form()
+        valid = form.validate()
+        if valid:
+            comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
-        return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('frontend.show_item', item_name=item_name))
+    return render_template(item.destroy_template,
+                           item=item, item_name=item_name,
+                           rev_no=rev,
+                           form=form,
+                           gen=make_generator(),
+                          )
 
 
 # XXX this has some functional redundancy with "index", solve that later
