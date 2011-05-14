@@ -743,11 +743,11 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = String.using(label=L_('Name')).validated_by(Present())
-    password1 = String.using(label=L_('Password')).validated_by(Present())
-    password2 = String.using(label=L_('Password')).validated_by(Present())
-    email = String.using(label=L_('E-Mail')).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID'), optional=True).validated_by(URLValidator())
+    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
+    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
+    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
+    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
+    openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
     submit = String.using(default=L_('Register'), optional=True)
 
     validators = [ValidRegistration()]
@@ -759,12 +759,12 @@ class OpenIDForm(TextChaizedForm):
     """
     name = 'openid'
 
-    username = String.using(label=L_('Name')).validated_by(Present())
-    password1 = String.using(label=L_('Password')).validated_by(Present())
-    password2 = String.using(label=L_('Password')).validated_by(Present())
+    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
+    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
+    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
 
-    email = String.using(label=L_('E-Mail')).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID')).validated_by(URLValidator())
+    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
+    openid = String.using(label=L_('OpenID')).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
     submit = String.using(optional=True)
 
     validators = [ValidRegistration()]
@@ -882,8 +882,8 @@ class PasswordLostForm(Form):
     """a simple password lost form"""
     name = 'lostpass'
 
-    username = String.using(label=L_('Name'), optional=True)
-    email = String.using(label=L_('E-Mail'), optional=True).validated_by(IsEmail())
+    username = String.using(label=L_('Name'), optional=True).with_properties(placeholder=L_("Your login name"))
+    email = String.using(label=L_('E-Mail'), optional=True).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
     submit = String.using(default=L_('Recover password'), optional=True)
 
     validators = [ValidLostPassword()]
@@ -949,10 +949,10 @@ class PasswordRecoveryForm(Form):
     """a simple password recovery form"""
     name = 'recoverpass'
 
-    username = String.using(label=L_('Name')).validated_by(Present())
-    token = String.using(label=L_('Recovery token')).validated_by(Present())
-    password1 = String.using(label=L_('New password')).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).validated_by(Present())
+    username = String.using(label=L_('Name')).with_properties(placeholder=L_("Your login name")).validated_by(Present())
+    token = String.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you")).validated_by(Present())
+    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
+    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
     submit = String.using(default=L_('Change password'), optional=True)
 
     validators = [ValidPasswordRecovery()]
@@ -1024,7 +1024,7 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = String.using(label=L_('Name'), optional=False).validated_by(Present())
+    username = String.using(label=L_('Name'), optional=False).with_properties(autofocus=True).validated_by(Present())
     password = String.using(label=L_('Password'), optional=False).validated_by(Present())
     openid = String.using(label=L_('OpenID'), optional=True).validated_by(Present(), URLValidator())
 
@@ -1114,16 +1114,16 @@ class ValidChangePass(Validator):
 
 class UserSettingsPasswordForm(Form):
     name = 'usersettings_password'
-    password_current = String.using(label=L_('Current Password')).validated_by(Present())
-    password1 = String.using(label=L_('New password')).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).validated_by(Present())
+    password_current = String.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password")).validated_by(Present())
+    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
+    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
     submit = String.using(default=L_('Change password'), optional=True)
     validators = [ValidChangePass()]
 
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
-    email = String.using(label=L_('E-Mail')).validated_by(IsEmail())
+    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
     submit = String.using(default=L_('Save'), optional=True)
 
 
@@ -1157,9 +1157,9 @@ def usersettings(part):
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = String.using(label=L_('Name')).validated_by(Present())
-        aliasname = String.using(label=L_('Alias-Name'), optional=True)
-        openid = String.using(label=L_('OpenID'), optional=True).validated_by(URLValidator())
+        name = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
+        aliasname = String.using(label=L_('Alias-Name'), optional=True).with_properties(placeholder=L_("Your alias name (informational)"))
+        openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
         timezone = Enum.using(label=L_('Timezone')).valued(*timezones_keys)
@@ -1176,8 +1176,8 @@ def usersettings(part):
                                   key=lambda x: x[1])
         themes_keys = [t[0] for t in themes_available]
         theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
-        css_url = String.using(label=L_('User CSS URL'), optional=True).validated_by(URLValidator())
-        edit_rows = Integer.using(label=L_('Editor size')).validated_by(Converted())
+        css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
+        edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
         submit = String.using(default=L_('Save'), optional=True)
 
     dispatch = dict(
