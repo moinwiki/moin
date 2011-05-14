@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - LDAP test data
+MoinMoin - LDAP test data
 """
 
 
@@ -13,12 +13,12 @@ ROOTPW = "secret"
 SLAPD_CONFIG = """\
 # See slapd.conf(5) for details on configuration options.
 
-include		%(schema_dir)s/core.schema
-include		%(schema_dir)s/cosine.schema
-include		%(schema_dir)s/inetorgperson.schema
-#include	%(schema_dir)s/misc.schema
+include %(schema_dir)s/core.schema
+include %(schema_dir)s/cosine.schema
+include %(schema_dir)s/inetorgperson.schema
+#include %(schema_dir)s/misc.schema
 
-moduleload	back_bdb.la
+moduleload back_bdb.la
 
 threads 2
 
@@ -36,15 +36,15 @@ allow bind_anon_dn
 
 # Test-Datenbank ou=testing,dc=example,dc=org ################
 
-database	bdb
+database bdb
 
-directory	%(ldap_db_dir)s
-suffix		"%(basedn)s"
-rootdn		"%(rootdn)s"
-rootpw		%(rootpw)s
-lastmod		on
+directory %(ldap_db_dir)s
+suffix "%(basedn)s"
+rootdn "%(rootdn)s"
+rootpw %(rootpw)s
+lastmod on
 
-index 		uid eq
+index uid eq
 
 checkpoint 200 5
 
@@ -53,7 +53,7 @@ cachesize 500
 # Search results to cache in memory
 idlcachesize 50
 
-sizelimit	-1
+sizelimit -1
 """
 
 LDIF_CONTENT = """\
