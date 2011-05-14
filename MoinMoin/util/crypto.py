@@ -30,6 +30,7 @@ import base64
 import hashlib
 import hmac
 import random
+import time
 
 # Note: have the (strong) method that crypt_password() uses at index 0:
 METHODS = ['{SSHA256}', '{SSHA}', '{SHA}', ]
@@ -179,7 +180,7 @@ def generate_token(key=None, stamp=None):
     if stamp is None:
         stamp = int(time.time())
     h = hmac.new(str(key), str(stamp), digestmod=hashlib.sha1).hexdigest()
-    token = stamp + '-' + h
+    token = str(stamp) + '-' + h
     return key, token
 
 
