@@ -890,12 +890,7 @@ def lostpass():
 
     if request.method == 'GET':
         form = PasswordLostForm.from_defaults()
-        return render_template('lostpass.html',
-                               item_name=item_name,
-                               gen=make_generator(),
-                               form=form,
-                              )
-    if request.method == 'POST':
+    elif request.method == 'POST':
         form = PasswordLostForm.from_flat(request.form)
         valid = form.validate()
         if valid:
@@ -912,12 +907,11 @@ def lostpass():
                     flash(msg, "error")
             flash(_("If this account exists, you will be notified."), "info")
             return redirect(url_for('frontend.show_root'))
-        else:
-            return render_template('lostpass.html',
-                                   item_name=item_name,
-                                   gen=make_generator(),
-                                   form=form,
-                                  )
+    return render_template('lostpass.html',
+                           item_name=item_name,
+                           gen=make_generator(),
+                           form=form,
+                          )
 
 class ValidPasswordRecovery(Validator):
     """Validator for a valid password recovery form
@@ -960,12 +954,7 @@ def recoverpass():
     if request.method == 'GET':
         form = PasswordRecoveryForm.from_defaults()
         form.update(request.values)
-        return render_template('recoverpass.html',
-                               item_name=item_name,
-                               gen=make_generator(),
-                               form=form,
-                              )
-    if request.method == 'POST':
+    elif request.method == 'POST':
         form = PasswordRecoveryForm.from_flat(request.form)
         valid = form.validate()
         if valid:
@@ -975,12 +964,11 @@ def recoverpass():
             else:
                 flash(_('Your token is invalid!'), "error")
             return redirect(url_for('frontend.show_root'))
-        else:
-            return render_template('recoverpass.html',
-                                   item_name=item_name,
-                                   gen=make_generator(),
-                                   form=form,
-                                  )
+    return render_template('recoverpass.html',
+                           item_name=item_name,
+                           gen=make_generator(),
+                           form=form,
+                          )
 
 
 class ValidLogin(Validator):
@@ -1032,18 +1020,7 @@ def login():
 
     # multistage return
     if flaskg._login_multistage_name == 'openid':
-            return Response(flaskg._login_multistage, mimetype='text/html')
-
-    # get the form contents
-    form = LoginForm.from_flat(request.form)
-    valid = form.validate()
-    if valid:
-        # we have a logged-in, valid user
-        return redirect(url_for('frontend.show_root'))
-
-    # flash the error messages (if any)
-    for msg in flaskg._login_messages:
-            flash(msg, "error")
+        return Response(flaskg._login_multistage, mimetype='text/html')
 
     if request.method == 'GET':
         form = LoginForm.from_defaults()
@@ -1051,23 +1028,21 @@ def login():
             hint = authmethod.login_hint()
             if hint:
                 flash(hint, "info")
-
-        # initialise form
-        form.set_default()
-        return render_template('login.html',
-                               item_name=item_name,
-                               login_inputs=app.cfg.auth_login_inputs,
-                               gen=make_generator(),
-                               form=form,
-                              )
-    if request.method == 'POST':
-        # if no valid user, show form again (with hints)
-        return render_template('login.html',
-                               item_name=item_name,
-                               login_inputs=app.cfg.auth_login_inputs,
-                               gen=make_generator(),
-                               form=form,
-                              )
+    elif request.method == 'POST':
+        form = LoginForm.from_flat(request.form)
+        valid = form.validate()
+        if valid:
+            # we have a logged-in, valid user
+            return redirect(url_for('frontend.show_root'))
+        # flash the error messages (if any)
+        for msg in flaskg._login_messages:
+            flash(msg, "error")
+    return render_template('login.html',
+                           item_name=item_name,
+                           login_inputs=app.cfg.auth_login_inputs,
+                           gen=make_generator(),
+                           form=form,
+                          )
 
 
 @frontend.route('/+logout')
@@ -1189,13 +1164,7 @@ def usersettings(part):
     if request.method == 'GET':
         form = FormClass.from_object(flaskg.user)
         form['submit'].set('Save') # XXX why does from_object() kill submit value?
-        return render_template('usersettings.html',
-                               item_name=item_name,
-                               part=part,
-                               gen=make_generator(),
-                               form=form,
-                              )
-    if request.method == 'POST':
+    elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
         valid = form.validate()
         if valid:
@@ -1228,13 +1197,12 @@ def usersettings(part):
                 else:
                     # reset to valid values
                     form = FormClass.from_object(flaskg.user)
-
-        return render_template('usersettings.html',
-                               item_name=item_name,
-                               part=part,
-                               gen=make_generator(),
-                               form=form,
-                              )
+    return render_template('usersettings.html',
+                           item_name=item_name,
+                           part=part,
+                           gen=make_generator(),
+                           form=form,
+                          )
 
 
 @frontend.route('/+bookmark')
