@@ -1163,7 +1163,7 @@ def usersettings(part):
                               )
     if request.method == 'GET':
         form = FormClass.from_object(flaskg.user)
-        form['submit'].set('Save') # XXX why does from_object() kill submit value?
+        form['submit'].set_default() # XXX from_object() kills all values
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
         valid = form.validate()
@@ -1191,12 +1191,13 @@ def usersettings(part):
                         flash(_('This email is already in use'), 'error')
                         success = False
                 if success:
-                    form.update_object(flaskg.user)
+                    form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
                     flaskg.user.save()
                     return redirect(url_for('frontend.usersettings'))
                 else:
                     # reset to valid values
                     form = FormClass.from_object(flaskg.user)
+                    form['submit'].set_default() # XXX from_object() kills all values
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
