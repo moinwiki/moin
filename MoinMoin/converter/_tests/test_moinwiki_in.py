@@ -12,7 +12,7 @@ import re
 
 from MoinMoin.util.tree import moin_page, xlink
 
-from ..moinwiki_in import Converter
+from MoinMoin.converter.moinwiki_in import Converter
 
 
 class TestConverter(object):
