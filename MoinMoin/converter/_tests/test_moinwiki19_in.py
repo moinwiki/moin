@@ -8,9 +8,9 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki19_in
 
 import py.test
 
-from ..moinwiki19_in import ConverterFormat19
+from MoinMoin.converter.moinwiki19_in import ConverterFormat19
 
-from .test_moinwiki_in import TestConverter as _Base
+from test_moinwiki_in import TestConverter as _Base
 
 
 class TestConverterFormat19(_Base):
