@@ -413,31 +413,46 @@ class Item(object):
 
     def modify(self):
         # called from modify UI/POST
+        meta = data = contenttype_guessed = None
+        contenttype_qs = request.values.get('contenttype')
         data_file = request.files.get('data_file')
-        contenttype = request.values.get('contenttype', 'text/plain;charset=utf-8')
-        if data_file and data_file.filename:
-            # user selected a file to upload
+        if data_file and data_file.filename: # XXX is this the right way to check if there was a file uploaded?
             data = data_file.stream
-            contenttype = MimeType(filename=data_file.filename).content_type()
-        else:
-            # take text from textarea
-            data = request.form.get('data_text', u'') # we get unicode from the form
-            if data:
+            # this is likely a guess by the browser, based on the filename
+            contenttype_guessed = data_file.content_type # comes from form multipart data
+        if data is None:
+            # no file upload, try taking stuff from textarea
+            data = request.form.get('data_text')
+            if data is not None:
+                # there was a data_text field with (possibly empty) content
+                assert isinstance(data, unicode) # we get unicode from the form
                 data = self.data_form_to_internal(data)
                 data = self.data_internal_to_storage(data)
-                contenttype = 'text/plain;charset=utf-8' # XXX is there a way to get the charset of the form?
-            else:
-                data = '' # could've been u'' also!
-                contenttype = None
-        meta_text = request.form.get('meta_text', '')
-        try:
-            meta = self.meta_text_to_dict(meta_text)
-        except ValueError:
-            meta = {} # XXX maybe rather validate and reject invalid json
-        comment = request.form.get('comment')
-        return self._save(meta, data, contenttype=contenttype, comment=comment)
+                # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
+                contenttype_guessed = 'text/plain;charset=utf-8'
+        # data might be None here, if we have a form with just the data_file field, no file was uploaded
+        # and no data_text field. this can happen if just metadata of a non-text item is edited.
 
-    def _save(self, meta, data, name=None, action=u'SAVE', contenttype=None, comment=u''):
+        meta_text = request.form.get('meta_text')
+        if meta_text is not None:
+            # there was a meta_text field with (possibly empty) content
+            try:
+                meta = self.meta_text_to_dict(meta_text)
+            except ValueError:
+                # XXX maybe rather validate and reject invalid json
+                pass
+        if meta is None:
+            # no form metadata - reuse some stuff from previous metadata?
+            meta = {}
+
+        if contenttype_qs:
+            # we use querystring param to FORCE content type
+            meta[CONTENTTYPE] = contenttype_qs
+
+        comment = request.form.get('comment')
+        return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
+
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u''):
         if name is None:
             name = self.name
         backend = flaskg.storage
@@ -448,11 +463,10 @@ class Item(object):
         try:
             currentrev = storage_item.get_revision(-1)
             rev_no = currentrev.revno
-            if contenttype is None:
-                # if we didn't get contenttype info, thus reusing the one from current rev:
-                contenttype = currentrev.get(CONTENTTYPE)
+            contenttype_current = currentrev.get(CONTENTTYPE)
         except NoSuchRevisionError:
             rev_no = -1
+            contenttype_current = None
         new_rev_no = rev_no + 1
         newrev = storage_item.create_revision(new_rev_no)
         for k, v in meta.iteritems():
@@ -467,18 +481,22 @@ class Item(object):
             newrev[NAME_OLD] = oldname
         newrev[NAME] = name
 
+        if data is None:
+            # we don't have (new) data, just copy the old one.
+            # a valid usecase of this is to just edit metadata.
+            data = currentrev
         size = self._write_stream(data, newrev)
-        timestamp = time.time()
+
         # XXX if meta is from old revision, and user did not give a non-empty
         # XXX comment, re-using the old rev's comment is wrong behaviour:
         comment = unicode(comment or meta.get(COMMENT, ''))
         if comment:
             newrev[COMMENT] = comment
-        # allow override by form- / qs-given contenttype:
-        contenttype = request.values.get('contenttype', contenttype)
-        # allow override by give metadata:
-        assert contenttype is not None
-        newrev[CONTENTTYPE] = unicode(meta.get(CONTENTTYPE, contenttype))
+
+        if CONTENTTYPE not in newrev:
+            # make sure we have CONTENTTYPE
+            newrev[CONTENTTYPE] = unicode(contenttype_current or contenttype_guessed or 'application/octet-stream')
+
         newrev[ACTION] = unicode(action)
         self.before_revision_commit(newrev, data)
         storage_item.commit()
@@ -806,7 +824,7 @@ class TarMixin(object):
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
             data = open(temp_fname, 'rb')
-            self._save(meta, data, name=self.name, action=u'SAVE', contenttype=self.contenttype, comment='')
+            self._save(meta, data, name=self.name, action=u'SAVE', comment='')
             data.close()
             os.remove(temp_fname)
 
