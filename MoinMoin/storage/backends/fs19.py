@@ -26,7 +26,7 @@ MAX_NAME_LEN = 1000 # max length of a page name, page+attach name, user name
 UUID_LEN = len(make_uuid())
 
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Unicode, Integer
-from sqlalchemy.exceptions import IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
