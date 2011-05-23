@@ -48,4 +48,5 @@ class TestEncodePassword(object):
 
 
 coverage_modules = ['MoinMoin.util.crypto']
+pytest.main("-x test_crypto.py")
 
