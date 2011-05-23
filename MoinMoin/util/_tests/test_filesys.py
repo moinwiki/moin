@@ -9,8 +9,12 @@ import sys, os, time
 import shutil, tempfile
 
 import py.test
+import pytest
 
 from MoinMoin.util import filesys
+
+win32_only = pytest.mark.skipif("sys.platform != 'win32'")
+win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
 class TestFuid:
     """ test filesys.fuid (a better mtime() alternative for up-to-date checking) """
@@ -50,12 +54,11 @@ class TestFuid:
         uid2 = filesys.fuid(self.fname)
 
         assert uid2 != uid1 # we changed size and maybe mtime
-
+    
+    @win32_incompatible
     def testUpdateFileMovingFromTemp(self):
         # update file by moving another file over it
         # changing inode, maybe mtime, but not size
-        if sys.platform == 'win32':
-            py.test.skip("Inode change detection not supported on win32")
 
         self.makefile(self.fname, "foo")
         uid1 = filesys.fuid(self.fname)
@@ -66,10 +69,9 @@ class TestFuid:
 
         assert uid2 != uid1 # we didn't change size, but inode and maybe mtime
 
+    @win32_only
     def testStale(self):
         # is a file with mtime older than max_staleness considered stale?
-        if sys.platform != 'win32':
-            py.test.skip("max_staleness check only done on win32 because it doesn't support inode change detection")
 
         self.makefile(self.fname, "foo")
         uid1 = filesys.fuid(self.fname)
