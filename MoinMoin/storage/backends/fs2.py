@@ -21,7 +21,12 @@ import cPickle as pickle
 from flask import current_app as app
 
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Unicode, Integer
-from sqlalchemy.exc import IntegrityError
+
+try:
+    from sqlalchemy.exc import IntegrityError
+except ImportError:
+    from sqlalchemy.exceptions import IntegrityError
+
 from sqlalchemy.pool import NullPool
 
 from werkzeug import cached_property
