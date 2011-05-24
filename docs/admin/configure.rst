@@ -549,6 +549,218 @@ Password storage
 Moin never stores passwords in cleartext, but always as cryptographic hash
 with random salt (currently ssha256 is the default).
 
+
+Authorization
+=============
+Moin uses Access Control Lists (ACLs) to specify who is authorized to do
+something.
+
+Please note that wikis usually make much use of so-called *soft security*,
+that means that they are rather open and give freedom to the users, while
+providing means to revert damage in case it happens.
+
+*Hard security* means to lock stuff so that no damage can happen.
+
+Moin's default configuration tries to give a sane compromise of both soft
+and hard security. But, depending on the situation the wiki
+admin/owner/community has to deal with, you may need different settings.
+
+So just keep in mind:
+
+* if your wiki is rather open, you make it easy to contribute (like e.g. a
+  user who is not a regular user of your wiki could fix some typos he has just
+  found). But: a hostile user (or bot) also might put some spam into your wiki
+  (you can revert the spam later).
+* if you are rather closed (like requiring every user to first apply for an
+  account and to log in before being able to do changes), you'll never get
+  contributions from casual users and maybe also less from members of your
+  community. But: likely you won't get spam either.
+ 
+
+ACL for functions
+-----------------
+This ACL controls access to some specific functions / views of moin::
+
+    # we just show the default value of acl_rights_functions for information,
+    # you usually do not have to change it:
+    #acl_rights_functions = ['superuser', 'notextcha', ]
+    acl_functions = u'+YourName:superuser TrustedEditorGroup:notextcha'
+
+Supported capabilities (rights):
+
+* superuser - used for misc. administrative functions, give this only to
+  highly trusted people
+* notextcha - if you have TextChas enabled, users with notextcha capability
+  won't get questions to answer. Give this to known and trusted users who
+  regularly edit in your wiki.
+
+ACLs for contents
+-----------------
+These ACLs control access to contents stored in the wiki - they are configured
+per storage backend (see also there) and (optionally) in the metadata of wiki
+items::
+
+    # we just show the default value of acl_rights_contents for information,
+    # you usually do not have to change it:
+    #acl_rights_contents = ['read', 'write', 'create', 'destroy', 'admin', ]
+    ... backend configuration ...
+    ... before=u'YourName:read,write,create,destroy,admin',
+    ... default=u'All:read,write,create',
+    ... after=u'',
+    ... hierarchic=False,
+
+Usually, you have a `before`, `on item` or `default` and a `after` ACL which
+are processed exactly in this order. The `default` ACL is only used if no ACL
+is specified in the metadata of the item in question.
+
+.. digraph:: acl_order
+
+   rankdir=LR;
+   "before" -> "item acl from metadata (if specified)" -> "after";
+   "before" -> "default (otherwise)"                   -> "after";
+
+How to use before/default/after:
+
+* `before` is usually used to force stuff (e.g. if you want to give some
+  wiki admin all permissions no matter what)
+* `default` is behaviour if nothing special has been specified (no ACL in
+  item metadata)
+* `after` is (rarely) used to "not forget something unless otherwise specified".
+
+When configuring content ACLs, you can choose between standard (flat) ACL
+processing and hierarchic ACL processing. Hierarchic processing means that
+subitems inherit ACLs from their parent items if they have no own ACL.
+
+Note: while hierarchic ACLs are rather convenient sometimes, they make the
+system more complex. You have to be very careful with potential permissions
+changes happening due to changes in the hierarchy, like when you create,
+rename or delete items.
+
+Supported capabilities (rights):
+
+* read - read content
+* write - write (edit, modify) content
+* create - create new items
+* destroy - completely destroy revisions or items (never give this to not
+  fully trusted users)
+* admin - change (create, remove) ACLs for the item (never give this to not
+  fully trusted users)
+
+ACLs - special groups
+---------------------
+Additionally to the groups provided by the group backend(s), there are some
+special group names available within ACLs:
+
+* All - a virtual group containing every user
+* Known - a virtual group containing every logged-in user
+* Trusted - a virtual group containing every logged-in user, who was logged
+  in by some specific "trusted" authentication methods
+
+
+ACLs - basic syntax
+-------------------
+An ACL is a (unicode) string with one or multiple access control entries
+(space separated).
+
+An entry has:
+
+* a left side with user and/or group names (comma separated)
+* a colon ':' as separator and
+* a right side with rights / capabilities (comma separated).
+
+An ACL is processed from left to right, first left-side match counts.
+
+Example::
+
+    u"SuperMan:read,write,create,destroy,admin All:read,write"
+
+If "SuperMan" is currently logged in and moin processes this ACL, it'll find
+a name match in the first entry. If moin wants to know whether he may destroy,
+the answer will be "yes", as destroy is one of the capabilities/rights listed
+on the right side of this entry.
+
+If "JoeDoe" is currently logged in and moin processes this ACL, the first entry
+won't match, so moin will proceed left-to-right and look at the second entry.
+Here we have the special group name "All" (and JoeDoe obviously is a member of
+this group), so we have a match here.
+If moin wants to know whether he may destroy, the answer will be "no", as
+destroy is not listed on the right side of this entry. If moin wants to know
+whether he may write, the answer will be "yes".
+
+Notes:
+
+* As a consequence of the left-to-right and first-match-counts processing,
+  you must order ACL entries so that the more specific ones (like for
+  "SuperMan") are left of the less specific ones.
+  Usually you want this order:
+
+  1) usernames
+  2) special groups
+  3) more general groups
+  4) Trusted
+  5) Known
+  6) All
+
+* Do not put any spaces into an ACL entry (except if it is part of a user or
+  group name)
+
+* A right that is not explicitly given by an applicable ACL is denied.
+
+* For most ACLs there are builtin defaults, which give some rights.
+
+ACLs - entry prefixes
+---------------------
+To make the system more flexible, there are also two ACL entry modifiers: the prefixes '+' and '-'.
+
+If you use them, matches will have to be left-side *and* right-side (otherwise
+it will just continue with the next entry).
+
+'+' means to give the permission(s) specified on the right side.
+
+'-' means to deny the permission(s) specified on the right side.
+
+Example::
+
+    u"+SuperMan:create,destroy,admin -Idiot:write All:read,write"
+
+If "SuperMan" is currently logged in and moin wants to know whether he may
+destroy, it'll find a match in the first entry (name matches *and* permission
+in question matches). As the prefix is '+', the answer is "yes".
+If moin wants to know whether he may write, the first entry will not match
+on both sides, so moin will proceed and look at the second entry. It doesn't
+match, so it'll look at the third entry. Of course "SuperMan" is a member of
+group "All", so we have a match here. As "write" is listed on the right side,
+the answer will be "yes".
+
+If "Idiot" is currently logged in and moin wants to know whether he may write,
+it'll find no match in the first entry, but the second entry will match. As
+the prefix is '-', the answer will be "no" (and it will not even proceed and
+look at the third entry).
+
+Notes:
+
+* you usually use these modifiers if most of the rights shall be as specified
+  later, but a special user or group should be treated slightly different for
+  a few special rights.
+
+ACLs - Default entry
+--------------------
+There is a special ACL entry "Default" which expands itself in-place to the
+default ACL.
+
+This is useful if e.g. for some items you mostly want the default ACL, but
+with a slight modification - but you don't want to type in the default ACL
+all the time (and you also want to be able to change the default ACL without
+having to edit lots of items).
+
+Example::
+
+    u"-NotThisGuy:write Default"
+
+This will behave as usual, except that "NotThisGuy" will never be given write
+permission.
+
+
 Anti-Spam
 =========
 TextChas
@@ -584,7 +796,6 @@ Tips for configuration:
 
 In your wiki config, do something like this::
 
-    textchas_disabled_group = u"TrustedEditorGroup" # members of this don't get textchas
     textchas = {
         'en': { # silly english example textchas (do not use them!)
                 u"Enter the first 9 digits of Pi.": ur"3\.14159265",
@@ -600,7 +811,7 @@ In your wiki config, do something like this::
     }
 
 
-Note that TrustedEditorGroup from above example can have groups as members.
+Note that users with 'notextcha' ACL capability won't get TextChas to answer.
 
 
 Secrets

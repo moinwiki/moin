@@ -52,10 +52,7 @@ try:
 except ImportError:
     pass
 
-try:
-    import cdb
-except ImportError:
-    from MoinMoin.util import pycdb as cdb
+from MoinMoin.util import pycdb as cdb
 
 from MoinMoin.config import USERID, COMMENT, MTIME
 from MoinMoin.storage import Backend, Item, StoredRevision, NewRevision
@@ -136,7 +133,7 @@ class MercurialBackend(Backend):
         item._id = None
         return item
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
         Return generator for iterating through collection of Items
         in repository.
@@ -149,13 +146,15 @@ class MercurialBackend(Backend):
             item = Item(self, self._name(id))
             item._id = id
             yield item
-        c = cdb.init(self._meta_db)
-        record = c.each()
-        while record:
-            item = Item(self, record[1])
-            item._id = record[0]
-            yield item
+        with cdb.init(self._meta_db) as c:
             record = c.each()
+            while record:
+                item = Item(self, record[1])
+                item._id = record[0]
+                yield item
+                record = c.each()
+
+    iteritems = iter_items_noindex
 
     def history(self, reverse=True):
         """
@@ -455,8 +454,8 @@ class MercurialBackend(Backend):
             meta = fctx.changectx().extra()
             return self._decode_metadata(meta, BACKEND_METADATA_PREFIX)['name']
         except LookupError:
-            c = cdb.init(self._meta_db)
-            return c.get(itemid)
+            with cdb.init(self._meta_db) as c:
+                return c.get(itemid)
 
     def _iter_changelog(self, reverse=True, filter_id=None, start_rev=None, filter_meta=None):
         """
@@ -582,34 +581,38 @@ class MercurialBackend(Backend):
 
     def _has_meta(self, itemid):
         """Return True if Item with given ID has Metadata. Otherwise return None."""
-        c = cdb.init(self._meta_db)
-        return c.get(itemid)
+        with cdb.init(self._meta_db) as c:
+            return c.get(itemid)
 
     def _add_to_cdb(self, itemid, itemname, replace=None):
         """Add Item Metadata file to name-mapping."""
-        c = cdb.init(self._meta_db)
-        maker = cdb.cdbmake("%s.ndb" % self._meta_db, "%s.tmp" % self._meta_db)
-        record = c.each()
-        while record:
-            id, name = record
-            if id == itemid:
-                maker.finish()
-                os.unlink(self._meta_db + '.ndb')
-                raise ItemAlreadyExistsError("Destination item already exists: %s" % itemname)
-            elif id == replace:
-                pass
-            else:
-                maker.add(id, name)
-            record = c.each()
-        maker.add(itemid, itemname.encode('utf-8'))
-        maker.finish()
-        util.rename("%s.ndb" % self._meta_db, self._meta_db)
+        class DuplicateError(Exception):
+            """ raise for duplicate item names """
+
+        try:
+            with cdb.init(self._meta_db) as c:
+                with cdb.cdbmake("%s.ndb" % self._meta_db, "%s.tmp" % self._meta_db) as maker:
+                    record = c.each()
+                    while record:
+                        id, name = record
+                        if id == itemid:
+                            raise DuplicateError
+                        elif id == replace:
+                            pass
+                        else:
+                            maker.add(id, name)
+                        record = c.each()
+                    maker.add(itemid, itemname.encode('utf-8'))
+                util.rename("%s.ndb" % self._meta_db, self._meta_db)
+        except DuplicateError:
+            os.unlink(self._meta_db + '.ndb')
+            raise ItemAlreadyExistsError("Destination item already exists: %s" % itemname)
 
     def _create_cdb(self):
         """Create name-mapping file for storing Item Metadata files mappings."""
         if not os.path.exists(self._meta_db):
-            maker = cdb.cdbmake(self._meta_db, "%s.tmp" % self._meta_db)
-            maker.finish()
+            with cdb.cdbmake(self._meta_db, "%s.tmp" % self._meta_db) as maker:
+                pass
 
     def _destroyed_index(self, item, create=False):
         return Index(os.path.join(self._rev_path, "%s.rip" % item._id), create)

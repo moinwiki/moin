@@ -20,6 +20,7 @@ TODO: Merge with new-style macros.
 
 
 from ..util.registry import RegistryBase
+from ..util.pysupport import load_package_modules
 
 
 class RegistryConverter(RegistryBase):
@@ -32,8 +33,8 @@ class RegistryConverter(RegistryBase):
 
         def __call__(self, type_input, type_output, kw):
             if (self.type_output.issupertype(type_output) and
-                    self.type_input.issupertype(type_input)):
-                    return self.factory(type_input, type_output, **kw)
+                self.type_input.issupertype(type_input)):
+                return self.factory(type_input, type_output, **kw)
 
         def __eq__(self, other):
             if isinstance(other, self.__class__):
@@ -48,13 +49,9 @@ class RegistryConverter(RegistryBase):
                 if self.priority < other.priority:
                     return True
                 if self.type_output != other.type_output:
-                    if other.type_output.issupertype(self.type_output):
-                        return True
-                    return False
+                    return other.type_output.issupertype(self.type_output)
                 if self.type_input != other.type_input:
-                    if other.type_input.issupertype(self.type_input):
-                        return True
-                    return False
+                    return other.type_input.issupertype(self.type_input)
                 return False
             return NotImplemented
 
@@ -75,34 +72,11 @@ class RegistryConverter(RegistryBase):
         """
         Register a factory
 
-        :param factory: Factory to register. Callable, must return an object
+        :param factory: Factory to register. Callable, must return an object.
         """
         return self._register(self.Entry(factory, type_input, type_output, priority))
 
 
-# TODO: Move somewhere else. Also how to do that for per-wiki modules?
-def _load():
-    import imp, os, sys
-    for path in __path__:
-        for root, dirs, files in os.walk(path):
-            del dirs[:]
-            for file in files:
-                if file.startswith('_') or not file.endswith('.py'):
-                    continue
-                module = file[:-3]
-                module_complete = __name__ + '.' + module
-                if module_complete in sys.modules:
-                    continue
-                info = imp.find_module(module, [root])
-                try:
-                    try:
-                        imp.load_module(module_complete, *info)
-                    except Exception as e:
-                        import MoinMoin.log as logging
-                        logger = logging.getLogger(__name__)
-                        logger.exception("Failed to import converter package %s: %s" % (module, e))
-                finally:
-                    info[0].close()
-
 default_registry = RegistryConverter()
-_load()
+load_package_modules(__name__, __path__)
+

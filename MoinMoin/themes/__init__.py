@@ -361,20 +361,20 @@ MIMETYPE_TO_CLASS = {
     'application/pdf': 'pdf',
 }
 
-def mimetype_to_class(mimetype):
+def contenttype_to_class(contenttype):
     """
-    Convert a mimetype string to a css class.
+    Convert a contenttype string to a css class.
     """
-    cls = MIMETYPE_TO_CLASS.get(mimetype)
+    cls = MIMETYPE_TO_CLASS.get(contenttype)
     if not cls:
         # just use the major part of mimetype
-        cls = mimetype.split('/', 1)[0]
+        cls = contenttype.split('/', 1)[0]
     return 'moin-mime-%s' % cls
 
 
 def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
-    app.jinja_env.filters['mimetype_to_class'] = mimetype_to_class
+    app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 

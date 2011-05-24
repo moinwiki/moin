@@ -4,20 +4,31 @@
 {% if rev_no == None %}
     <h1>{{ _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) }}</h1>
     <div class="moin-form">
-    <form action="{{ url_for('frontend.destroy_item', item_name=item.name) }}" method="POST" enctype="multipart/form-data">
+    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name)) }}
+      {{ forms.render_errors(form) }}
+      <dl>
+        {{ forms.render_field(gen, form['comment'], 'text') }}
+        {{ forms.render_textcha(gen, form) }}
+      </dl>
+      {{ gen.input(form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    </div>
 {% else %}
     <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_no)d)", item_name=item.name, rev_no=rev_no) }}</h1>
     <div class="moin-form">
-    <form action="{{ url_for('frontend.destroy_item', item_name=item.name, rev=rev_no) }}" method="POST" enctype="multipart/form-data">
+    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name, rev=rev_no)) }}
+      {{ forms.render_errors(form) }}
+      <dl>
+        {{ forms.render_field(gen, form['comment'], 'text') }}
+        {{ forms.render_textcha(gen, form) }}
+      </dl>
+      {{ gen.input(form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    </div>
 {% endif %}
-    <dl>
-        <dt><label for="comment">{{ _("Comment") }}</label></dt>
-        <dd><input type="text" id="comment" name="comment" size="80" maxlength="200" value="{{ comment }}" /></dd>
-    </dl>
-    <br/>
-    {{ forms.render_textcha(gen, form) }}
-    <input class="button" type="submit" name="button_ok" value="{{ _('DESTROY') }}" />
-    <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
-</form>
-</div>
 {% endblock %}
+
+
+
+
+

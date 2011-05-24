@@ -34,6 +34,29 @@ def button_filter(tagname, attributes, contents, context, bind):
     return contents
 button_filter.tags = set(['input', 'button'])
 
+def required_filter(tagname, attributes, contents, context, bind):
+    if (bind is not None and not bind.optional):
+        attributes[u'class'] = u'required'
+        if tagname == 'input':
+            attributes[u'required'] = u'required'
+    return contents
+required_filter.tags = set(['input', 'label'])
+
+def autofocus_filter(tagname, attributes, contents, context, bind):
+    if bind is not None:
+        autofocus = bind.properties.get('autofocus')
+        if autofocus:
+            attributes[u'autofocus'] = u'autofocus'
+    return contents
+autofocus_filter.tags = set(['input', 'textarea', ])
+
+def placeholder_filter(tagname, attributes, contents, context, bind):
+    if bind is not None:
+        placeholder = bind.properties.get('placeholder')
+        if placeholder:
+            attributes[u'placeholder'] = placeholder
+    return contents
+placeholder_filter.tags = set(['input', 'textarea', ])
 
 def error_filter_factory(class_='moin-error'):
     """Returns an HTML generation filter annotating field CSS class on error.
@@ -58,5 +81,7 @@ def make_generator():
     """make an html generator"""
     return Generator(auto_domid=True, auto_for=True, auto_filter=True,
                      markup_wrapper=Markup,
-                     filters=[label_filter, button_filter, error_filter])
+                     filters=[label_filter, button_filter,
+                              error_filter,
+                              required_filter, placeholder_filter, autofocus_filter])
 

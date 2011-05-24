@@ -19,10 +19,10 @@ You can use anything that speaks WSGI to moin:
 * the builtin "moin" server (recommended for desktop wikis, testing,
   debugging, development, adhoc-wikis)
 * apache with mod_wsgi (recommended for bigger/busier wikis)
+* other WSGI-compatible servers or middlewares
 * For cgi, fastcgi, scgi, ajp, ... you can use the "flup" middleware:
   http://trac.saddi.com/flup
 * IIS with ISAPI-WSGI gateway: http://code.google.com/p/isapi-wsgi/
-* other WSGI-compatible servers or middlewares
 
 
 Dependencies (Python code)
@@ -67,4 +67,9 @@ anywikidraw
 JQuery
 ------
 1.4.2 works, use dist package or download at homepage.
+
+JQuery.File-Upload
+------------------
+revision 8655ff9394794d9bad0b5b664425f8d5e77fe540 of 2011-04-26 works, likely
+also more recent versions.
 

@@ -24,7 +24,7 @@ from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 
-from MoinMoin.config import ACL, MIMETYPE, ACTION, COMMENT, MTIME, SIZE
+from MoinMoin.config import ACL, CONTENTTYPE, ACTION, COMMENT, MTIME, SIZE
 
 class FSError(Exception):
     """ file serving backend error """
@@ -63,7 +63,7 @@ class FileServerBackend(Backend):
         assert path.startswith(root)
         return path[len(root)+1:]
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
             yield DirItem(self, self._path2item(dirpath))
             for filename in filenames:
@@ -73,6 +73,8 @@ class FileServerBackend(Backend):
                     pass  # not a regular file, maybe socket or ...
                 else:
                     yield item
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         try:
@@ -166,7 +168,7 @@ class DirRevision(FileDirRevision):
     def __init__(self, item, revno):
         FileDirRevision.__init__(self, item, revno)
         self._fs_meta.update({
-            MIMETYPE: 'text/x.moin.wiki',
+            CONTENTTYPE: 'text/x.moin.wiki',
         })
         # create a directory "page" in wiki markup:
         try:
@@ -194,8 +196,8 @@ class FileRevision(FileDirRevision):
     """ A filesystem file """
     def __init__(self, item, revno):
         FileDirRevision.__init__(self, item, revno)
-        mimetype = MimeType(filename=self._fs_data_fname).mime_type()
+        contenttype = MimeType(filename=self._fs_data_fname).content_type()
         self._fs_meta.update({
-            MIMETYPE: mimetype,
+            CONTENTTYPE: contenttype,
         })
 

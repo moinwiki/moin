@@ -16,10 +16,7 @@ import cPickle as pickle
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-try:
-    import cdb
-except ImportError:
-    from MoinMoin.util import pycdb as cdb
+from MoinMoin.util import pycdb as cdb
 
 from MoinMoin.util.lock import ExclusiveLock
 from MoinMoin.util import filesys
@@ -86,8 +83,8 @@ class FSBackend(BackendBase):
         call this under the name-mapping.lock.
         """
         if not os.path.exists(self._name_db):
-            maker = cdb.cdbmake(self._name_db, self._name_db + '.tmp')
-            maker.finish()
+            with cdb.cdbmake(self._name_db, self._name_db + '.tmp') as maker:
+                pass
 
     def _get_item_id(self, itemname):
         """
@@ -95,8 +92,8 @@ class FSBackend(BackendBase):
 
         :param itemname: name of item (unicode)
         """
-        c = cdb.init(self._name_db)
-        return c.get(itemname.encode('utf-8'))
+        with cdb.init(self._name_db) as c:
+            return c.get(itemname.encode('utf-8'))
 
     def get_item(self, itemname):
         item_id = self._get_item_id(itemname)
@@ -125,14 +122,16 @@ class FSBackend(BackendBase):
 
         return item
 
-    def iteritems(self):
-        c = cdb.init(self._name_db)
-        r = c.each()
-        while r:
-            item = Item(self, r[0].decode('utf-8'))
-            item._fs_item_id = r[1]
-            yield item
+    def iter_items_noindex(self):
+        with cdb.init(self._name_db) as c:
             r = c.each()
+            while r:
+                item = Item(self, r[0].decode('utf-8'))
+                item._fs_item_id = r[1]
+                yield item
+                r = c.each()
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         item_id = item._fs_item_id
@@ -211,24 +210,22 @@ class FSBackend(BackendBase):
         nn = newname.encode('utf-8')
         npath = os.path.join(self._path, item._fs_item_id, 'name')
 
-        c = cdb.init(self._name_db)
-        maker = cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp')
-        r = c.each()
-        while r:
-            i, v = r
-            if i == nn:
-                raise ItemAlreadyExistsError("Target item '%r' already exists!" % newname)
-            elif v == item._fs_item_id:
-                maker.add(nn, v)
-            else:
-                maker.add(i, v)
-            r = c.each()
-        maker.finish()
+        with cdb.init(self._name_db) as c:
+            with cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp') as maker:
+                r = c.each()
+                while r:
+                    i, v = r
+                    if i == nn:
+                        raise ItemAlreadyExistsError("Target item '%r' already exists!" % newname)
+                    elif v == item._fs_item_id:
+                        maker.add(nn, v)
+                    else:
+                        maker.add(i, v)
+                    r = c.each()
 
         filesys.rename(self._name_db + '.ndb', self._name_db)
-        nf = open(npath, mode='wb')
-        nf.write(nn)
-        nf.close()
+        with open(npath, mode='wb') as nf:
+            nf.write(nn)
 
     def _rename_item(self, item, newname):
         self._do_locked(os.path.join(self._path, 'name-mapping.lock'),
@@ -260,24 +257,28 @@ class FSBackend(BackendBase):
 
         nn = item.name.encode('utf-8')
 
-        c = cdb.init(self._name_db)
-        maker = cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp')
-        r = c.each()
-        while r:
-            i, v = r
-            if i == nn:
-                # Oops. This item already exists! Clean up and error out.
-                maker.finish()
-                os.unlink(self._name_db + '.ndb')
-                os.rmdir(ipath)
-                if newrev is not None:
-                    os.unlink(newrev)
-                raise ItemAlreadyExistsError("Item '%r' already exists!" % item.name)
-            else:
-                maker.add(i, v)
-            r = c.each()
-        maker.add(nn, itemid)
-        maker.finish()
+        class DuplicateError(Exception):
+            """ raise if we have a duplicate name """
+
+        try:
+            with cdb.init(self._name_db) as c:
+                with cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp') as maker:
+                    r = c.each()
+                    while r:
+                        i, v = r
+                        if i == nn:
+                            raise DuplicateError
+                        else:
+                            maker.add(i, v)
+                        r = c.each()
+                    maker.add(nn, itemid)
+        except DuplicateError:
+            # Oops. This item already exists! Clean up and error out.
+            os.unlink(self._name_db + '.ndb')
+            os.rmdir(ipath)
+            if newrev is not None:
+                os.unlink(newrev)
+            raise ItemAlreadyExistsError("Item '%r' already exists!" % item.name)
 
         if newrev is not None:
             rp = os.path.join(self._path, itemid, 'rev.0')
@@ -286,15 +287,13 @@ class FSBackend(BackendBase):
         if metadata:
             # only write metadata file if we have any
             meta = os.path.join(self._path, itemid, 'meta')
-            f = open(meta, 'wb')
-            pickle.dump(metadata, f, protocol=PICKLEPROTOCOL)
-            f.close()
+            with open(meta, 'wb') as f:
+                pickle.dump(metadata, f, protocol=PICKLEPROTOCOL)
 
         # write 'name' file of item
         npath = os.path.join(ipath, 'name')
-        nf = open(npath, mode='wb')
-        nf.write(nn)
-        nf.close()
+        with open(npath, mode='wb') as nf:
+            nf.write(nn)
 
         # make item retrievable (by putting the name-mapping in place)
         filesys.rename(self._name_db + '.ndb', self._name_db)
@@ -364,15 +363,14 @@ class FSBackend(BackendBase):
         os.unlink(rev._fs_revpath)
 
     def _destroy_item_locked(self, item):
-        c = cdb.init(self._name_db)
-        maker = cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp')
-        r = c.each()
-        while r:
-            i, v = r
-            if v != item._fs_item_id:
-                maker.add(i, v)
-            r = c.each()
-        maker.finish()
+        with cdb.init(self._name_db) as c:
+            with cdb.cdbmake(self._name_db + '.ndb', self._name_db + '.tmp') as maker:
+                r = c.each()
+                while r:
+                    i, v = r
+                    if v != item._fs_item_id:
+                        maker.add(i, v)
+                    r = c.each()
 
         filesys.rename(self._name_db + '.ndb', self._name_db)
         path = os.path.join(self._path, item._fs_item_id)
@@ -411,9 +409,8 @@ class FSBackend(BackendBase):
                     # ignore, there might not have been metadata
             else:
                 tmp = os.path.join(self._path, item._fs_item_id, 'meta.tmp')
-                f = open(tmp, 'wb')
-                pickle.dump(md, f, protocol=PICKLEPROTOCOL)
-                f.close()
+                with open(tmp, 'wb') as f:
+                    pickle.dump(md, f, protocol=PICKLEPROTOCOL)
 
                 filesys.rename(tmp, os.path.join(self._path, item._fs_item_id, 'meta'))
             item._fs_metadata_lock.release()
@@ -431,9 +428,8 @@ class FSBackend(BackendBase):
         if item._fs_item_id is not None:
             p = os.path.join(self._path, item._fs_item_id, 'meta')
             try:
-                f = open(p, 'rb')
-                metadata = pickle.load(f)
-                f.close()
+                with open(p, 'rb') as f:
+                    metadata = pickle.load(f)
             except IOError as err:
                 if err.errno != errno.ENOENT:
                     raise

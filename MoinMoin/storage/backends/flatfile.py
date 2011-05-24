@@ -33,7 +33,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    RevisionAlreadyExistsError
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import add_metadata_to_body, split_body
-from MoinMoin.config import MIMETYPE, ACTION, MTIME
+from MoinMoin.config import ACTION, MTIME
 
 
 class FlatFileBackend(Backend):
@@ -85,10 +85,12 @@ class FlatFileBackend(Backend):
             raise ItemAlreadyExistsError("An Item with the name %r already exists!" % (itemname))
         return Item(self, itemname)
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         filenames = os.listdir(self._path)
         for filename in filenames:
             yield Item(self, self._unquote(filename))
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         if revno > 0:
@@ -99,7 +101,8 @@ class FlatFileBackend(Backend):
             raise NoSuchRevisionError("No Revision #%d on Item %s" % (revno, item.name))
 
         rev = StoredRevision(item, 0)
-        data = open(revpath, 'rb').read()
+        with open(revpath, 'rb') as f:
+            data = f.read()
         rev._metadata, data = split_body(data)
         rev._metadata[ACTION] = 'SAVE'
         rev._metadata[SIZE] = len(data)
@@ -137,12 +140,11 @@ class FlatFileBackend(Backend):
 
     def _commit_item(self, rev):
         revpath = self._rev_path(rev.item.name)
-        f = open(revpath, 'wb')
         rev._data.seek(0)
         data = rev._data.read()
         data = add_metadata_to_body(rev, data)
-        f.write(data)
-        f.close()
+        with open(revpath, 'wb') as f:
+            f.write(data)
 
     def _destroy_item(self, item):
         revpath = self._rev_path(item.name)

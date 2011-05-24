@@ -186,11 +186,6 @@ function load() {
     // correct function name in the html.
     // e.g <body onlod='editor_onload()'>
 
-    // login focus
-    if (document.forms['loginform']) {
-        document.forms['loginform'].elements['name'].focus();
-    }
-
     // Page view stuff
     update_edit_links();
     add_gui_editor_links();

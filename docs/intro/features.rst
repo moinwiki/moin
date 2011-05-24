@@ -7,7 +7,7 @@ But in case you need it nevertheless, here it is:
 Operating System Support
 ========================
 Moin is implemented in Python and that is a platform independant language.
-So it'll work on Linux, Mac OS X, Windows.
+So it'll work on Linux, Mac OS X, Windows (and others).
 
 That said, Linux is the preferred and most tested deployment platform and
 likely having less issues than e.g. Windows.
@@ -38,7 +38,7 @@ Authentication
 
 Authorization
 =============
-* Access Control Lists (ACLs)
+* Content Access Control Lists (ACLs)
 
   - global (per storage backend)
   - local (per wiki item)
@@ -54,6 +54,8 @@ Authorization
     + specific groups of users
     + all logged-in users
     + all users
+
+* Function ACLs
 
 Anti-Spam
 =========

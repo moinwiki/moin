@@ -13,7 +13,7 @@ import py.test
 
 from flask import current_app as app
 
-from MoinMoin.config import TAGS
+from MoinMoin.config import CONTENTTYPE, TAGS
 from MoinMoin.storage import Item
 from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends.fs19 import FSPageBackend, regenerate_acl, process_categories
@@ -215,7 +215,7 @@ class TestAclRegeneration(object):
             (u'Joe Doe,Jane Doe:delete,read,write All:',
              u'Joe Doe,Jane Doe:read,write All:'), # multiple entries, blanks in names, remove 'delete'
         ]
-        acl_rights_valid = app.cfg.acl_rights_valid
+        acl_rights_valid = app.cfg.acl_rights_contents
         for acl, expected in tests:
             result = regenerate_acl(acl, acl_rights_valid)
             assert result == expected
@@ -271,7 +271,7 @@ what ever\r
         ]
         item_category_regex = re.compile(ur'(?P<all>Category(?P<key>(?!Template)\S+))', re.UNICODE)
         for data, expected_data, expected_tags in tests:
-            meta = dict(MIMETYPE='text/x.moin.wiki')
+            meta = {CONTENTTYPE: 'text/x.moin.wiki'}
             data = process_categories(meta, data, item_category_regex)
             assert meta.get(TAGS, []) == expected_tags
             assert data == expected_data

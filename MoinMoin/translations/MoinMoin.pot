@@ -873,7 +873,7 @@ msgid "Rev."
 msgstr ""
 
 #: MoinMoin/templates/global_history.html:18 MoinMoin/templates/history.html:16
-msgid "Mime Type"
+msgid "Content-Type"
 msgstr ""
 
 #: MoinMoin/templates/global_history.html:19 MoinMoin/templates/history.html:15

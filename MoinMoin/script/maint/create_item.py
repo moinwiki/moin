@@ -12,6 +12,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flaskext.script import Command, Option
 
+from MoinMoin.config import NAME, ACTION, CONTENTTYPE
 from MoinMoin.storage.error import ItemAlreadyExistsError, NoSuchItemError
 
 
@@ -22,13 +23,13 @@ class Create_Item(Command):
             help='Name of the item to create'),
         Option('--file', '-f', dest='data_file', type=unicode, required=True,
             help='Filename of file to read in and store as item.'),
-        Option('--mimetype', '-m', dest='mimetype', type=unicode, required=True,
-            help='mimetype of item'),
+        Option('--content-type', '-m', dest='contenttype', type=unicode, required=True,
+            help='content-type of item'),
         Option('--comment', '-c', dest='comment', type=unicode,
             help='comment for item')
     )
 
-    def run(self, name, data_file, mimetype, comment):
+    def run(self, name, data_file, contenttype, comment):
         storage = app.unprotected_storage
         rev_no = -1
         try:
@@ -38,10 +39,9 @@ class Create_Item(Command):
             currentrev = item.get_revision(-1)
             rev_no = currentrev.revno
         rev = item.create_revision(rev_no + 1)
-        rev['action'] = u'SAVE'
-        rev['name'] = name
-        rev['mimetype'] = mimetype
-        data = open(data_file, 'rb')
-        rev.write(data.read())
-        item.commit()
-        data.close()
+        rev[ACTION] = u'SAVE'
+        rev[NAME] = name
+        rev[CONTENTTYPE] = contenttype
+        with open(data_file, 'rb') as data:
+            rev.write(data.read())
+            item.commit()

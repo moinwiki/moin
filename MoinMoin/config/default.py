@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2005-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Configuration defaults class
+MoinMoin - Configuration defaults class
 """
 
 
@@ -23,6 +23,7 @@ from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
+from MoinMoin.security import FunctionACL
 
 
 class CacheClass(object):
@@ -69,11 +70,8 @@ class ConfigFunctionality(object):
         self.cache.item_dict_regexact = re.compile(u'^%s$' % self.item_dict_regex, re.UNICODE)
         self.cache.item_group_regexact = re.compile(u'^%s$' % self.item_group_regex, re.UNICODE)
 
-        if not isinstance(self.superusers, list):
-            msg = """The superusers setting in your wiki configuration is not
-                    a list (e.g. ['Sample User', 'AnotherUser']).  Please change
-                    it in your wiki configuration and try again."""
-            raise error.ConfigurationError(msg)
+        # compiled functions ACL
+        self.cache.acl_functions = FunctionACL(self, [self.acl_functions])
 
         plugins._loadPluginModule(self)
 
@@ -195,7 +193,7 @@ file. It should match the actual charset of the configuration file.
             'interwiki_preferred',
             'item_root', 'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
-            'superusers', 'textchas_disabled_group', 'supplementation_item_names', 'html_pagetitle',
+            'acl_functions', 'supplementation_item_names', 'html_pagetitle',
             'theme_default', 'timezone_default', 'locale_default',
         )
 
@@ -293,8 +291,6 @@ options_no_group_name = {
   )),
   # ==========================================================================
   'auth': ('Authentication / Authorization / Security settings', None, (
-    ('superusers', [],
-     "List of trusted user names [Unicode] with wiki system administration super powers (not to be confused with ACL admin rights!). Used for e.g. software installation, language installation via SystemPagesSetup and more. See also HelpOnSuperUser."),
     ('auth', DefaultExpression('[MoinAuth()]'),
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('auth_methods_trusted', ['http', 'given', ], # Note: 'http' auth method is currently just a redirect to 'given'
@@ -309,7 +305,6 @@ options_no_group_name = {
 
     ('password_checker', DefaultExpression('_default_password_checker'),
      'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
-
   )),
   # ==========================================================================
   'spam_leech_dos': ('Anti-Spam/Leech/DOS',
@@ -317,8 +312,6 @@ options_no_group_name = {
   (
     ('textchas', None,
      "Spam protection setup using site-specific questions/answers, see HelpOnSpam."),
-    ('textchas_disabled_group', None,
-     "Name of a group of trusted users who do not get asked !TextCha questions. [Unicode]"),
     ('textchas_expiry_time', 600,
      "Time [s] for a !TextCha to expire."),
   )),
@@ -366,6 +359,7 @@ options_no_group_name = {
         ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
         ('special.supplementation', None, None, False, ),
         ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
+        ('frontend.index2', L_('Index'), L_('List sub-items'), False, ),
         ('special.comments', L_('Comments'), L_('Switch showing comments on or off'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
@@ -380,7 +374,6 @@ options_no_group_name = {
         ('frontend.similar_names', L_('Similar'), L_('Items with similar names'), False, ),
      ],
      'list of edit bar entries (list of tuples (endpoint, label))'),
-    ('history_count', (100, 200), "number of revisions shown for info/history action (default_count_shown, max_count_shown)"),
 
     ('show_hosts', True,
      "if True, show host names and IPs. Set to False to hide them."),
@@ -485,29 +478,6 @@ options_no_group_name = {
      ],
      '"content-disposition: inline" is not used for downloads of such data'),
 
-    ('mimetypes_embed',
-     [
-       'application/x-dvi',
-       'application/postscript',
-       'application/pdf',
-       'application/ogg',
-       'application/vnd.visio',
-       'image/x-ms-bmp',
-       'image/svg+xml',
-       'image/tiff',
-       'image/x-photoshop',
-       'audio/mpeg',
-       'audio/midi',
-       'audio/x-wav',
-       'video/fli',
-       'video/mpeg',
-       'video/quicktime',
-       'video/x-msvideo',
-       'chemical/x-pdb',
-       'x-world/x-vrml',
-     ],
-     'mimetypes that can be embedded by the [[HelpOnMacros/EmbedObject|EmbedObject macro]]'),
-
     ('refresh', None,
      "refresh = (minimum_delay_s, targets_allowed) enables use of `#refresh 5 PageName` processing instruction, targets_allowed must be either `'internal'` or `'external'`"),
 
@@ -541,10 +511,14 @@ options_no_group_name = {
 #
 options = {
     'acl': ('Access control lists',
-    'ACLs control who may do what, see HelpOnAccessControlLists.',
+    'ACLs control who may do what.',
     (
-      ('rights_valid', config.ACL_RIGHTS_VALID,
-       "Valid tokens for right sides of ACL entries."),
+      ('functions', u'',
+       'Access Control List for functions.'),
+      ('rights_contents', config.ACL_RIGHTS_CONTENTS,
+       'Valid tokens for right sides of content ACL entries.'),
+      ('rights_functions', config.ACL_RIGHTS_FUNCTIONS,
+       'Valid tokens for right sides of function ACL entries.'),
     )),
 
     'ns': ('Storage Namespaces',

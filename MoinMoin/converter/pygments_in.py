@@ -87,14 +87,16 @@ if pygments:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())
 
-        def __init__(self, lexer=None, mimetype=None):
+        def __init__(self, lexer=None, contenttype=None):
             """
             Create a Pygments Converter.
 
             :param lexer: pygments lexer instance
-            :param mimetype: mimetype to get a lexer for
+            :param contenttype: contenttype to get a lexer for
             """
-            if lexer is None and mimetype is not None:
+            if lexer is None and contenttype is not None:
+                ct = Type(contenttype)
+                mimetype = '%s/%s' % (ct.type, ct.subtype) # pygments can't process parameters (like e.g. ...;charset=utf-8)
                 try:
                     lexer = pygments.lexers.get_lexer_for_mimetype(mimetype)
                 except pygments.util.ClassNotFound:

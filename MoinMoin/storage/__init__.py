@@ -98,7 +98,6 @@ class Backend(object):
         """
         # Very simple implementation because we have no indexing
         # or anything like that. If you want to optimize this, override it.
-        # Needs self.iteritems.
         for item in self.iteritems():
             searchterm.prepare()
             if searchterm.evaluate(item):
@@ -148,8 +147,19 @@ class Backend(object):
 
     def iteritems(self):
         """
-        Returns an iterator over all items available in this backend (like the
-        dict method).
+        Iterate over all items.
+
+        May use an index internally to optimize.
+
+        :rtype: iterator of item objects
+        """
+        raise NotImplementedError()
+
+    def iter_items_noindex(self):
+        """
+        Iterate over all items.
+
+        Must not use an index as this method is used to *build* the index.
 
         :rtype: iterator of item objects
         """

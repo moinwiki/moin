@@ -13,7 +13,7 @@
                 <th>{{ _("Size") }}</th>
                 <th><input type="submit" value="Diff" /></th>
                 <th>{{ _("Editor") }}</th>
-                <th>{{ _("Mime Type") }}</th>
+                <th>{{ _("Content-Type") }}</th>
                 <th>{{ _("Comment") }}</th>
                 <th colspan="6">{{ _("Actions") }}</th>
             </tr>
@@ -30,7 +30,7 @@
                     </div>
                 </td>
                 <td class="moin-wordbreak">{{ utils.editor_info(rev) }}</td>
-                <td class="moin-wordbreak">{{ rev.mimetype }}</td>
+                <td class="moin-wordbreak">{{ rev.contenttype }}</td>
                 <td class="moin-wordbreak">{{ rev.comment }}</td>
                 <td><a href="{{ url_for('frontend.show_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('show') }}</a></td>
                 <td><a href="{{ url_for('frontend.show_item_meta', item_name=rev.item.name, rev=rev.revno) }}">{{ _('meta') }}</a></td>

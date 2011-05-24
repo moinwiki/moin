@@ -164,3 +164,4 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(ConverterFormat19.factory, Type('text/x.moin.wiki;format=1.9'), type_moin_document)
 default_registry.register(ConverterFormat19.factory, Type('x-moin/format;name=wiki;format=1.9'), type_moin_document)
+

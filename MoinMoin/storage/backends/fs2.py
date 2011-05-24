@@ -73,12 +73,11 @@ class StoredRevision(StoredRevisionBase):
 
     @cached_property
     def _fs_metadata(self):
-        f = open(self._fs_path_meta, 'rb')
-        try:
-            metadata = pickle.load(f)
-        except EOFError:
-            metadata = {}
-        f.close()
+        with open(self._fs_path_meta, 'rb') as f:
+            try:
+                metadata = pickle.load(f)
+            except EOFError:
+                metadata = {}
         return metadata
 
     @cached_property
@@ -189,7 +188,7 @@ class FS2Backend(BackendBase):
 
         return Item(self, itemname, _fs_metadata={})
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         name2id = self._name2id
         results = name2id.select().execute()
         for row in results:
@@ -199,6 +198,8 @@ class FS2Backend(BackendBase):
             item = Item(self, item_name, _fs_item_id=item_id)
             yield item
         results.close()
+
+    iteritems = iter_items_noindex
 
     def _get_revision(self, item, revno):
         return StoredRevision(item, revno)
@@ -292,9 +293,8 @@ class FS2Backend(BackendBase):
         if itemmeta:
             # only write item level metadata file if we have any
             mp = self._make_path('meta', item_id, 'item')
-            f = open(mp, 'wb')
-            pickle.dump(itemmeta, f, protocol=PICKLEPROTOCOL)
-            f.close()
+            with open(mp, 'wb') as f:
+                pickle.dump(itemmeta, f, protocol=PICKLEPROTOCOL)
 
         item._fs_item_id = item_id
 
@@ -397,9 +397,8 @@ class FS2Backend(BackendBase):
                     # ignore, there might not have been metadata
             else:
                 tmp = self._make_path('meta', item._fs_item_id, 'item.tmp')
-                f = open(tmp, 'wb')
-                pickle.dump(md, f, protocol=PICKLEPROTOCOL)
-                f.close()
+                with open(tmp, 'wb') as f:
+                    pickle.dump(md, f, protocol=PICKLEPROTOCOL)
 
                 filesys.rename(tmp, self._make_path('meta', item._fs_item_id, 'item'))
             item._fs_metadata_lock.release()
@@ -409,9 +408,8 @@ class FS2Backend(BackendBase):
         if item._fs_item_id is not None:
             p = self._make_path('meta', item._fs_item_id, 'item')
             try:
-                f = open(p, 'rb')
-                metadata = pickle.load(f)
-                f.close()
+                with open(p, 'rb') as f:
+                    metadata = pickle.load(f)
             except IOError as err:
                 if err.errno != errno.ENOENT:
                     raise

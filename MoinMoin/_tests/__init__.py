@@ -14,6 +14,7 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin import config, security, user
+from MoinMoin.config import NAME, CONTENTTYPE
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import random_string
 from MoinMoin.storage.error import ItemAlreadyExistsError
@@ -41,18 +42,6 @@ def become_trusted(username=u"TrustedUser"):
     flaskg.user.auth_method = app.cfg.auth_methods_trusted[0]
 
 
-def become_superuser(username=u"SuperUser"):
-    """ modify flaskg.user so it is in the superusers list,
-        also make the user valid (see notes in become_valid()),
-        also make the user trusted (and thus in "Trusted" ACL pseudo group).
-
-        Note: being superuser is completely unrelated to ACL rights,
-              especially it is not related to ACL admin rights.
-    """
-    become_trusted(username)
-    if username not in app.cfg.superusers:
-        app.cfg.superusers.append(username)
-
 # Creating and destroying test items --------------------------------
 def update_item(name, revno, meta, data):
     """ creates or updates an item  """
@@ -66,10 +55,10 @@ def update_item(name, revno, meta, data):
     rev = item.create_revision(revno)
     for key, value in meta.items():
         rev[key] = value
-    if not 'name' in rev:
-        rev['name'] = name
-    if not 'mimetype' in rev:
-        rev['mimetype'] = u'application/octet-stream'
+    if not NAME in rev:
+        rev[NAME] = name
+    if not CONTENTTYPE in rev:
+        rev[CONTENTTYPE] = u'application/octet-stream'
     rev.write(data)
     item.commit()
     return item

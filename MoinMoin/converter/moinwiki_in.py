@@ -306,7 +306,7 @@ class Converter(ConverterMacro):
             (?P<nowiki_interpret>
                 \#!
                 \s*
-                (?P<nowiki_name> [\w/-]+ )?
+                (?P<nowiki_name> [\w/.-]+ )?  # stuff like creole or text/x.moin.creole or text/x-python
                 \s*
                 (:?
                     \(
@@ -1111,3 +1111,4 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_wiki, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=wiki'), type_moin_document)
+

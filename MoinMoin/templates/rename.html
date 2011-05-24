@@ -3,18 +3,14 @@
 {% block content %}
 <h1>{{ _("Rename '%(item_name)s'", item_name=item.name) }}</h1>
 <div class="moin-form">
-<form action="{{ url_for('frontend.rename_item', item_name=item.name) }}" method="POST" enctype="multipart/form-data">
-    <dl>
-        <dt><label for="target">{{ _("Target") }}</label></dt>
-        <dd><input type="text" id="target" name="target" size="80" maxlength="200" value="{{ item.name }}" /></dd>
-
-        <dt><label for="comment">{{ _("Comment") }}</label></dt>
-        <dd><input type="text" id="comment" name="comment" size="80" maxlength="200" value="{{ comment }}" /></dd>
-    </dl>
-    <input class="button" type="submit" name="button_ok" value="{{ _('Rename') }}" />
-    <input class="button" type="submit" name="button_cancel" value="{{ _('Cancel') }}" />
-    <br />
+{{ gen.form.open(form, method="post", action=url_for('frontend.rename_item', item_name=item.name)) }}
+  {{ forms.render_errors(form) }}
+  <dl>
+    {{ forms.render_field(gen, form['target'], 'text') }}
+    {{ forms.render_field(gen, form['comment'], 'text') }}
     {{ forms.render_textcha(gen, form) }}
-</form>
+  </dl>
+  {{ gen.input(form['submit'], type='submit') }}
+{{ gen.form.close() }}
 </div>
 {% endblock %}

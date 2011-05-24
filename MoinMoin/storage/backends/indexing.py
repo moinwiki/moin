@@ -30,7 +30,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
-from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
+from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
 
 
 class IndexingBackendMixin(object):
@@ -179,8 +179,8 @@ class IndexingRevisionMixin(object):
             self[NAME] = name
         if UUID not in self:
             self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
-        if MIMETYPE not in self:
-            self[MIMETYPE] = 'application/octet-stream'
+        if CONTENTTYPE not in self:
+            self[CONTENTTYPE] = 'application/octet-stream'
         metas = self
         logging.debug("item %r revno %d update index:" % (name, revno))
         for k, v in metas.items():
@@ -229,7 +229,7 @@ class ItemIndex(object):
             Column('uuid', String(UUID_LEN), index=True, unique=True), # item's official persistent uuid
             # from current revision's metadata:
             Column('name', Unicode(VALUE_LEN), index=True, unique=True),
-            Column('mimetype', Unicode(VALUE_LEN), index=True),
+            Column('contenttype', Unicode(VALUE_LEN), index=True),
             Column('acl', Unicode(VALUE_LEN)),
             Column('tags', Unicode(VALUE_LEN)),
         )
@@ -257,7 +257,7 @@ class ItemIndex(object):
     def index_rebuild(self, backend):
         self.metadata.drop_all()
         self.metadata.create_all()
-        for item in backend.iteritems():
+        for item in backend.iter_items_noindex():
             item.update_index()
             for revno in item.list_revisions():
                 rev = item.get_revision(revno)
@@ -300,7 +300,7 @@ class ItemIndex(object):
         item_table.update().where(item_table.c.id == item_id).values(
             current=rev_id,
             name=rev_metas[NAME],
-            mimetype=rev_metas[MIMETYPE],
+            contenttype=rev_metas[CONTENTTYPE],
             acl=rev_metas.get(ACL, ''),
             tags=u'|' + u'|'.join(rev_metas.get(TAGS, [])) + u'|',
         ).execute()

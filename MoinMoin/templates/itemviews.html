@@ -2,7 +2,7 @@
 <ul class="moin-itemviews">
     {% for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {% if (not check_exists or check_exists and exists) and endpoint in [
-               'frontend.show_item', 'frontend.index',
+               'frontend.show_item', 'frontend.index', 'frontend.index2',
                'frontend.highlight_item', 'frontend.show_item_meta', 'frontend.get_item',
                'frontend.get_item', 'frontend.history', 'frontend.backrefs', 'frontend.sitemap',
                'frontend.similar_names',

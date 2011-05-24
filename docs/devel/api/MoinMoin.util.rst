@@ -41,6 +41,14 @@ util Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`crypto` Module
+--------------------
+
+.. automodule:: MoinMoin.util.crypto
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`diff3` Module
 -------------------
 
@@ -133,6 +141,14 @@ util Package
 ------------------
 
 .. automodule:: MoinMoin.util.mime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`mimetype` Module
+----------------------
+
+.. automodule:: MoinMoin.util.mimetype
     :members:
     :undoc-members:
     :show-inheritance:

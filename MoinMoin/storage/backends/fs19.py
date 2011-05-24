@@ -32,7 +32,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import config
-from MoinMoin.config import ACL, MIMETYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
+from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, REVERTED_TO, \
                             ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
                             TAGS, SIZE, HASH_ALGORITHM
@@ -46,12 +46,12 @@ from MoinMoin.util.mimetype import MimeType
 DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
 
-mimetype_default = u'text/plain'
-mimetype_moinwiki = u'text/x.moin.wiki'
-format_to_mimetype = {
+CONTENTTYPE_DEFAULT = u'text/plain'
+CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki'
+FORMAT_TO_CONTENTTYPE = {
     'wiki': u'text/x.moin.wiki',
-    'text/wiki': mimetype_moinwiki,
-    'text/moin-wiki': mimetype_moinwiki,
+    'text/wiki': CONTENTTYPE_MOINWIKI,
+    'text/moin-wiki': CONTENTTYPE_MOINWIKI,
     'creole': u'text/x.moin.creole',
     'text/creole': u'text/x.moin.creole',
     'rst': u'text/rst',
@@ -222,7 +222,7 @@ class FSPageBackend(Backend):
     def has_item(self, itemname):
         return os.path.isfile(self._current_path(itemname))
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         pages_dir = os.path.join(self._path, 'pages')
         for f in os.listdir(pages_dir):
             itemname = unquoteWikiname(f)
@@ -234,6 +234,8 @@ class FSPageBackend(Backend):
                 yield item
                 for attachitem in item.iter_attachments():
                     yield attachitem
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         try:
@@ -284,7 +286,8 @@ class FsPageItem(Item):
         editlogpath = self._backend._get_item_path(itemname, 'edit-log')
         self._fs_meta = {} # 'current' is the only page metadata and handled elsewhere
         try:
-            current = int(open(currentpath, 'r').read().strip()) - 1 # new api is 0-based, old is 1-based
+            with open(currentpath, 'r') as f:
+                current = int(f.read().strip()) - 1 # new api is 0-based, old is 1-based
         except (OSError, IOError):
             # no current file means no item
             raise NoSuchItemError("No such item, %r" % itemname)
@@ -331,7 +334,8 @@ class FsPageRevision(StoredRevision):
         editlog = item._fs_editlog
         # we just read the page and parse it here, makes the rest of the code simpler:
         try:
-            content = codecs.open(revpath, 'r', config.charset).read()
+            with codecs.open(revpath, 'r', config.charset) as f:
+                content = f.read()
         except (IOError, OSError):
             if revno == item._fs_current and item._backend.deleted_mode == DELETED_MODE_KILL:
                 raise NoSuchRevisionError('deleted_mode wants killing/ignoring')
@@ -346,7 +350,7 @@ class FsPageRevision(StoredRevision):
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
                 # (non-deleted) revision revno-1:
-                for key in [ACL, NAME, MIMETYPE, MTIME, ]:
+                for key in [ACL, NAME, CONTENTTYPE, MTIME, ]:
                     if key in previous_meta:
                         meta[key] = previous_meta[key]
             except NoSuchRevisionError:
@@ -376,7 +380,7 @@ class FsPageRevision(StoredRevision):
             meta, data = split_body(content)
         meta.update(editlog_data)
         format = meta.pop('format', backend.format_default)
-        meta[MIMETYPE] = format_to_mimetype.get(format, mimetype_default)
+        meta[CONTENTTYPE] = FORMAT_TO_CONTENTTYPE.get(format, CONTENTTYPE_DEFAULT)
         if item._syspages:
             meta[IS_SYSITEM] = True
             meta[SYSITEM_VERSION] = item._syspages
@@ -395,15 +399,14 @@ class FsPageRevision(StoredRevision):
 
         acl_line = self._fs_meta.get(ACL)
         if acl_line is not None:
-            self._fs_meta[ACL] = regenerate_acl(acl_line, config.ACL_RIGHTS_VALID)
-
+            self._fs_meta[ACL] = regenerate_acl(acl_line, config.ACL_RIGHTS_CONTENTS)
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
             E.g. categories are stored in the footer of the page content. For
             moin2, we extract that stuff from content and put it into metadata.
         """
-        if meta[MIMETYPE] == mimetype_moinwiki:
+        if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self._backend.item_category_regex)
         return data
 
@@ -489,8 +492,9 @@ class FsAttachmentRevision(StoredRevision):
         # attachments in moin 1.9 were protected by their "parent" page's acl
         if item._fs_parent_acl is not None:
             meta[ACL] = item._fs_parent_acl # XXX not needed for acl_hierarchic
-        meta[MIMETYPE] = unicode(MimeType(filename=item._fs_attachname).mime_type())
-        size, hash_name, hash_digest = hash_hexdigest(open(attpath, 'rb'))
+        meta[CONTENTTYPE] = unicode(MimeType(filename=item._fs_attachname).content_type())
+        with open(attpath, 'rb') as f:
+            size, hash_name, hash_digest = hash_hexdigest(f)
         meta[hash_name] = hash_digest
         meta[SIZE] = size
         if item._syspages:
@@ -629,7 +633,7 @@ class FSUserBackend(Backend):
     def has_item(self, itemname):
         return os.path.isfile(self._get_item_path(itemname))
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         for old_id in os.listdir(self._path):
             try:
                 item = FsUserItem(self, old_id=old_id)
@@ -637,6 +641,8 @@ class FSUserBackend(Backend):
                 continue
             else:
                 yield item
+
+    iteritems = iter_items_noindex
 
     def get_item(self, itemname):
         return FsUserItem(self, itemname)
@@ -681,24 +687,23 @@ class FsUserItem(Item):
         self.uuid = meta[UUID] = uuid
 
     def _parse_userprofile(self, old_id):
-        meta_file = codecs.open(self._backend._get_item_path(old_id), "r", config.charset)
-        metadata = {}
-        for line in meta_file:
-            if line.startswith('#') or line.strip() == "":
-                continue
-            key, value = line.strip().split('=', 1)
-            # Decode list values
-            if key.endswith('[]'):
-                key = key[:-2]
-                value = _decode_list(value)
+        with codecs.open(self._backend._get_item_path(old_id), "r", config.charset) as meta_file:
+            metadata = {}
+            for line in meta_file:
+                if line.startswith('#') or line.strip() == "":
+                    continue
+                key, value = line.strip().split('=', 1)
+                # Decode list values
+                if key.endswith('[]'):
+                    key = key[:-2]
+                    value = _decode_list(value)
 
-            # Decode dict values
-            elif key.endswith('{}'):
-                key = key[:-2]
-                value = _decode_dict(value)
+                # Decode dict values
+                elif key.endswith('{}'):
+                    key = key[:-2]
+                    value = _decode_dict(value)
 
-            metadata[key] = value
-        meta_file.close()
+                metadata[key] = value
         return metadata
 
     def _process_usermeta(self, metadata):

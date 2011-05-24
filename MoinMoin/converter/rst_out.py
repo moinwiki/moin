@@ -790,3 +790,4 @@ default_registry.register(Converter.factory,
 default_registry.register(Converter.factory,
                           type_moin_document,
                           Type('x-moin/format;name=rst'))
+

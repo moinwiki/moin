@@ -1,4 +1,4 @@
-# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
@@ -7,38 +7,38 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - ACL Middleware
+MoinMoin - ACL Middleware
 
-    This backend is a middleware implementing access control using ACLs (access
-    control lists) and is referred to as AMW (ACL MiddleWare) hereafter.
-    It does not store any data, but uses a given backend for this.
-    This middleware is injected between the user of the storage API and the actual
-    backend used for storage. It is independent of the backend being used.
-    Instances of the AMW are bound to individual request objects. The user whose
-    permissions the AMW checks is hence obtained by a lookup on the request object.
-    The backend itself (and the objects it returns) need to be wrapped in order
-    to make sure that no object of the real backend is (directly or indirectly)
-    made accessible to the user of the API.
-    The real backend is still available as an attribute of the request and can
-    be used by conversion utilities or for similar tasks (flaskg.unprotected_storage).
-    Regular users of the storage API, such as the views that modify an item,
-    *MUST NOT*, in any way, use the real backend unless the author knows *exactly*
-    what he's doing (as this may introduce security bugs without the code actually
-    being broken).
+This backend is a middleware implementing access control using ACLs (access
+control lists) and is referred to as AMW (ACL MiddleWare) hereafter.
+It does not store any data, but uses a given backend for this.
+This middleware is injected between the user of the storage API and the actual
+backend used for storage. It is independent of the backend being used.
+Instances of the AMW are bound to individual request objects. The user whose
+permissions the AMW checks is hence obtained by a lookup on the request object.
+The backend itself (and the objects it returns) need to be wrapped in order
+to make sure that no object of the real backend is (directly or indirectly)
+made accessible to the user of the API.
+The real backend is still available as an attribute of the request and can
+be used by conversion utilities or for similar tasks (flaskg.unprotected_storage).
+Regular users of the storage API, such as the views that modify an item,
+*MUST NOT*, in any way, use the real backend unless the author knows *exactly*
+what he's doing (as this may introduce security bugs without the code actually
+being broken).
 
-    The classes wrapped are:
-        * AclWrapperBackend (wraps MoinMoin.storage.Backend)
-        * AclWrapperItem (wraps MoinMoin.storage.Item)
-        * AclWrapperRevision (wraps MoinMoin.storage.Revision)
+The classes wrapped are:
+    * AclWrapperBackend (wraps MoinMoin.storage.Backend)
+    * AclWrapperItem (wraps MoinMoin.storage.Item)
+    * AclWrapperRevision (wraps MoinMoin.storage.Revision)
 
-    When an attribute is 'wrapped' it means that, in this context, the user's
-    permissions are checked prior to attribute usage. If the user may not perform
-    the action he intended to perform, an AccessDeniedError is raised.
-    Otherwise the action is performed on the respective attribute of the real backend.
-    It is important to note here that the outcome of such an action may need to
-    be wrapped itself, as is the case when items or revisions are returned.
+When an attribute is 'wrapped' it means that, in this context, the user's
+permissions are checked prior to attribute usage. If the user may not perform
+the action he intended to perform, an AccessDeniedError is raised.
+Otherwise the action is performed on the respective attribute of the real backend.
+It is important to note here that the outcome of such an action may need to
+be wrapped itself, as is the case when items or revisions are returned.
 
-    All wrapped classes must, of course, adhere to the normal storage API.
+All wrapped classes must, of course, adhere to the normal storage API.
 """
 
 
@@ -47,7 +47,7 @@ from UserDict import DictMixin
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.security import AccessControlList
+from MoinMoin.security import ContentACL
 
 from MoinMoin.storage import Item, NewRevision, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -86,9 +86,9 @@ class AclWrapperBackend(object):
         self.backend = backend
         self.hierarchic = hierarchic
         self.valid = valid
-        self.before = AccessControlList(cfg, [before], default=default, valid=valid)
-        self.default = AccessControlList(cfg, [default], default=default, valid=valid)
-        self.after = AccessControlList(cfg, [after], default=default, valid=valid)
+        self.before = ContentACL(cfg, [before], default=default, valid=valid)
+        self.default = ContentACL(cfg, [default], default=default, valid=valid)
+        self.after = ContentACL(cfg, [after], default=default, valid=valid)
 
     def __getattr__(self, attr):
         # Attributes that this backend does not define itself are just looked
@@ -136,13 +136,15 @@ class AclWrapperBackend(object):
         wrapped_item = AclWrapperItem(real_item, self)
         return wrapped_item
 
-    def iteritems(self):
+    def iter_items_noindex(self):
         """
-        @see: Backend.iteritems.__doc__
+        @see: Backend.iter_items_noindex.__doc__
         """
         for item in self.backend.iteritems():
             if self._may(item.name, READ):
                 yield AclWrapperItem(item, self)
+
+    iteritems = iter_items_noindex
 
     def history(self, reverse=True):
         """
@@ -173,10 +175,10 @@ class AclWrapperBackend(object):
         if not isinstance(acls, (tuple, list)):
             acls = (acls, )
         default = self.default.default
-        return AccessControlList(self.cfg, acls, default=default, valid=self.valid)
+        return ContentACL(self.cfg, acls, default=default, valid=self.valid)
 
-    def _may(self, itemname, right):
-        """ Check if self.username may have <right> access on item <itemname>.
+    def _may(self, itemname, right, username=None):
+        """ Check if username may have <right> access on item <itemname>.
 
         For hierarchic=False we just check the item in question.
 
@@ -194,11 +196,13 @@ class AclWrapperBackend(object):
 
         :param itemname: item to get permissions from
         :param right: the right to check
-
+        :param username: username to use for permissions check (default is to
+                         use the username doing the current request)
         :rtype: bool
         :returns: True if you have permission or False
         """
-        username = flaskg.user.name
+        if username is None:
+            username = flaskg.user.name
 
         allowed = self.before.may(username, right)
         if allowed is not None:

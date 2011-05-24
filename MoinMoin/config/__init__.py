@@ -1,8 +1,8 @@
-# Copyright: 2005-2006 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2006,2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - site-wide configuration defaults (NOT per single wiki!)
+MoinMoin - site-wide configuration defaults (NOT per single wiki!)
 """
 
 import re
@@ -14,9 +14,6 @@ from MoinMoin.util.chartypes import *
 parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html', 'css',
                        'xml', 'python', 'perl', 'php', 'ruby', 'javascript',
                        'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole', )
-
-# When creating files, we use e.g. 0666 & config.umask for the mode:
-umask = 0770
 
 # Charset - we support only 'utf-8'. While older encodings might work,
 # we don't have the resources to test them, and there is no real
@@ -64,12 +61,18 @@ url_schemas = ['http', 'https', 'ftp', 'file',
 
 
 # ACL rights that are valid in moin2
+SUPERUSER = 'superuser'
+NOTEXTCHA = 'notextcha'
+# rights that control access to specific functionality
+ACL_RIGHTS_FUNCTIONS = [SUPERUSER, NOTEXTCHA, ]
+
 ADMIN = 'admin'
 READ = 'read'
 WRITE = 'write'
 CREATE = 'create'
 DESTROY = 'destroy'
-ACL_RIGHTS_VALID = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
+# rights that control access to operations on contents
+ACL_RIGHTS_CONTENTS = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
 
 # metadata keys
 UUID = "uuid"
@@ -93,7 +96,7 @@ USERGROUP = "usergroup"
 # needs more precise name / use case:
 SOMEDICT = "somedict"
 
-MIMETYPE = "mimetype"
+CONTENTTYPE = "contenttype"
 SIZE = "size"
 LANGUAGE = "language"
 ITEMLINKS = "itemlinks"

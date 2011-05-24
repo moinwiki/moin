@@ -62,15 +62,11 @@ class TextCha(object):
 
     def _get_textchas(self):
         """ get textchas from the wiki config for the user's language (or default_language or en) """
-        groups = flaskg.groups
         cfg = app.cfg
         user = flaskg.user
-        disabled_group = cfg.textchas_disabled_group
         textchas = cfg.textchas
 
-        use_textchas = not (disabled_group and user.name and user.name in groups.get(disabled_group, []))
-
-        if textchas and use_textchas:
+        if textchas and not user.may.notextcha():
             locales = [user.locale, cfg.locale_default, 'en', ]
             for locale in locales:
                 logging.debug(u"TextCha: trying locale == '%s'." % locale)

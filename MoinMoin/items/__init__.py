@@ -1,7 +1,7 @@
 # Copyright: 2009 MoinMoin:ThomasWaldmann
 # Copyright: 2009 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
-# Copyright: 2009 MoinMoin:BastianBlank
+# Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -20,10 +20,14 @@ import tarfile
 import zipfile
 import tempfile
 from StringIO import StringIO
+from array import array
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page, html, xlink, docbook
+from MoinMoin.util.iri import Iri
 from MoinMoin.util.crypto import cache_key
 
 try:
@@ -56,7 +60,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessD
                                    StorageError
 from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
-                            MIMETYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
+                            CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
                             HASH_ALGORITHM
 
@@ -65,10 +69,73 @@ ROWS_DATA = 20
 ROWS_META = 10
 
 
+from ..util.registry import RegistryBase
+
+
+class RegistryItem(RegistryBase):
+    class Entry(object):
+        def __init__(self, factory, content_type, priority):
+            self.factory = factory
+            self.content_type = content_type
+            self.priority = priority
+
+        def __call__(self, name, content_type, kw):
+            if self.content_type.issupertype(content_type):
+                return self.factory(name, content_type, **kw)
+
+        def __eq__(self, other):
+            if isinstance(other, self.__class__):
+                return (self.factory == other.factory and
+                        self.content_type == other.content_type and
+                        self.priority == other.priority)
+            return NotImplemented
+
+        def __lt__(self, other):
+            if isinstance(other, self.__class__):
+                if self.priority < other.priority:
+                    return True
+                if self.content_type != other.content_type:
+                    return other.content_type.issupertype(self.content_type)
+                return False
+            return NotImplemented
+
+        def __repr__(self):
+            return '<%s: %s, prio %d [%r]>' % (self.__class__.__name__,
+                    self.content_type,
+                    self.priority,
+                    self.factory)
+
+    def get(self, name, content_type, **kw):
+        for entry in self._entries:
+            item = entry(name, content_type, kw)
+            if item is not None:
+                return item
+
+    def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
+        """
+        Register a factory
+
+        :param factory: Factory to register. Callable, must return an object.
+        """
+        return self._register(self.Entry(factory, content_type, priority))
+
+
+item_registry = RegistryItem()
+
+
+def conv_serialize(doc, namespaces):
+    out = array('u')
+    flaskg.clock.start('conv_serialize')
+    doc.write(out.fromunicode, namespaces=namespaces, method='xml')
+    out = out.tounicode()
+    flaskg.clock.stop('conv_serialize')
+    return out
+
+
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, mimetype):
-        self[MIMETYPE] = mimetype
+    def __init__(self, item, contenttype):
+        self[CONTENTTYPE] = contenttype
         self.item = item
         self.timestamp = 0
         self.revno = None
@@ -91,11 +158,15 @@ class DummyItem(object):
 class Item(object):
     """ Highlevel (not storage) Item """
     @classmethod
-    def create(cls, name=u'', mimetype=None, rev_no=None, item=None):
+    def _factory(cls, name=u'', contenttype=None, **kw):
+        return cls(name, contenttype=unicode(contenttype), **kw)
+
+    @classmethod
+    def create(cls, name=u'', contenttype=None, rev_no=None, item=None):
         if rev_no is None:
             rev_no = -1
-        if mimetype is None:
-            mimetype = 'application/x-nonexistent'
+        if contenttype is None:
+            contenttype = 'application/x-nonexistent'
 
         try:
             if item is None:
@@ -105,49 +176,34 @@ class Item(object):
         except NoSuchItemError:
             logging.debug("No such item: %r" % name)
             item = DummyItem(name)
-            rev = DummyRev(item, mimetype)
-            logging.debug("Item %r, created dummy revision with mimetype %r" % (name, mimetype))
+            rev = DummyRev(item, contenttype)
+            logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
         else:
             logging.debug("Got item: %r" % name)
             try:
                 rev = item.get_revision(rev_no)
+                contenttype = 'application/octet-stream' # it exists
             except NoSuchRevisionError:
                 try:
                     rev = item.get_revision(-1) # fall back to current revision
                     # XXX add some message about invalid revision
                 except NoSuchRevisionError:
                     logging.debug("Item %r has no revisions." % name)
-                    rev = DummyRev(item, mimetype)
-                    logging.debug("Item %r, created dummy revision with mimetype %r" % (name, mimetype))
+                    rev = DummyRev(item, contenttype)
+                    logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
             logging.debug("Got item %r, revision: %r" % (name, rev_no))
-        mimetype = rev.get(MIMETYPE) or mimetype # XXX: Why do we need ... or ... ?
-        logging.debug("Item %r, got mimetype %r from revision meta" % (name, mimetype))
+        contenttype = rev.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
+        logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
         logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev)))
 
-        def _find_item_class(mimetype, BaseClass, best_match_len=-1):
-            #logging.debug("_find_item_class(%r,%r,%r)" % (mimetype, BaseClass, best_match_len))
-            Class = None
-            for ItemClass in BaseClass.__subclasses__():
-                for supported_mimetype in ItemClass.supported_mimetypes:
-                    if mimetype.startswith(supported_mimetype):
-                        match_len = len(supported_mimetype)
-                        if match_len > best_match_len:
-                            best_match_len = match_len
-                            Class = ItemClass
-                            #logging.debug("_find_item_class: new best match: %r by %r)" % (supported_mimetype, ItemClass))
-                best_match_len, better_Class = _find_item_class(mimetype, ItemClass, best_match_len)
-                if better_Class:
-                    Class = better_Class
-            return best_match_len, Class
+        item = item_registry.get(name, Type(contenttype), rev=rev)
+        logging.debug("ItemClass %r handles %r" % (item.__class__, contenttype))
+        return item
 
-        ItemClass = _find_item_class(mimetype, cls)[1]
-        logging.debug("ItemClass %r handles %r" % (ItemClass, mimetype))
-        return ItemClass(name=name, rev=rev, mimetype=mimetype)
-
-    def __init__(self, name, rev=None, mimetype=None):
+    def __init__(self, name, rev=None, contenttype=None):
         self.name = name
         self.rev = rev
-        self.mimetype = mimetype
+        self.contenttype = contenttype
 
     def get_meta(self):
         return self.rev or {}
@@ -160,7 +216,7 @@ class Item(object):
     def feed_input_conv(self):
         return self.name
 
-    def internal_representation(self, converters=['smiley', 'link']):
+    def internal_representation(self, converters=['smiley']):
         """
         Return the internal representation of a document using a DOM Tree
         """
@@ -180,12 +236,9 @@ class Item(object):
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
             from MoinMoin.converter import default_registry as reg
-            from MoinMoin.util.iri import Iri
-            from MoinMoin.util.mime import Type, type_moin_document
-            from MoinMoin.util.tree import moin_page, xlink
-            input_conv = reg.get(Type(self.mimetype), type_moin_document)
+            input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
-                raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.mimetype)
+                raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.contenttype)
             smiley_conv = reg.get(type_moin_document, type_moin_document,
                     icon='smiley')
 
@@ -208,8 +261,6 @@ class Item(object):
 
     def _expand_document(self, doc):
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.iri import Iri
-        from MoinMoin.util.mime import type_moin_document
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
@@ -227,8 +278,6 @@ class Item(object):
 
     def _render_data(self):
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import html
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         # TODO: Real output format
@@ -238,37 +287,28 @@ class Item(object):
         flaskg.clock.start('conv_dom_html')
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
+        return conv_serialize(doc, {html.namespace: ''})
 
-        from array import array
-        out = array('u')
-        flaskg.clock.start('conv_serialize')
-        doc.write(out.fromunicode, namespaces={html.namespace: ''}, method='xml')
-        out = out.tounicode()
-        flaskg.clock.stop('conv_serialize')
-        return out
+    def _render_data_xml(self):
+        doc = self.internal_representation()
+        return conv_serialize(doc,
+                              {moin_page.namespace: '',
+                               xlink.namespace: 'xlink',
+                               html.namespace: 'html',
+                              })
 
-    def _render_data_xml(self, converters):
-        from MoinMoin.util.tree import moin_page, xlink, html
-        doc = self.internal_representation(converters)
-
-        from array import array
-        out = array('u')
-        doc.write(out.fromunicode,
-                  namespaces={moin_page.namespace: '',
-                              xlink.namespace: 'xlink',
-                              html.namespace: 'html',
-                             },
-                  method='xml')
-        return out.tounicode()
+    def _render_data_highlight(self):
+        # override this in child classes
+        return ''
 
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_nos = []
-        item_templates = self.get_templates(self.mimetype)
+        item_templates = self.get_templates(self.contenttype)
         return render_template('modify_show_template_selection.html',
                                item_name=self.name,
                                rev=self.rev,
-                               mimetype=self.mimetype,
+                               contenttype=self.contenttype,
                                templates=item_templates,
                                first_rev_no=rev_nos and rev_nos[0],
                                last_rev_no=rev_nos and rev_nos[-1],
@@ -312,16 +352,20 @@ class Item(object):
     data = property(fget=get_data)
 
     def _write_stream(self, content, new_rev, bufsize=8192):
+        written = 0
         if hasattr(content, "read"):
             while True:
                 buf = content.read(bufsize)
                 if not buf:
                     break
                 new_rev.write(buf)
+                written += len(buf)
         elif isinstance(content, str):
             new_rev.write(content)
+            written += len(content)
         else:
             raise StorageError("unsupported content object: %r" % content)
+        return written
 
     def copy(self, name, comment=u''):
         """
@@ -370,27 +414,30 @@ class Item(object):
     def modify(self):
         # called from modify UI/POST
         data_file = request.files.get('data_file')
-        mimetype = request.values.get('mimetype', 'text/plain')
+        contenttype = request.values.get('contenttype', 'text/plain;charset=utf-8')
         if data_file and data_file.filename:
             # user selected a file to upload
             data = data_file.stream
-            mimetype = MimeType(filename=data_file.filename).mime_type()
+            contenttype = MimeType(filename=data_file.filename).content_type()
         else:
             # take text from textarea
-            data = request.form.get('data_text', '')
+            data = request.form.get('data_text', u'') # we get unicode from the form
             if data:
                 data = self.data_form_to_internal(data)
                 data = self.data_internal_to_storage(data)
-                mimetype = 'text/plain'
+                contenttype = 'text/plain;charset=utf-8' # XXX is there a way to get the charset of the form?
             else:
                 data = '' # could've been u'' also!
-                mimetype = None
+                contenttype = None
         meta_text = request.form.get('meta_text', '')
-        meta = self.meta_text_to_dict(meta_text)
+        try:
+            meta = self.meta_text_to_dict(meta_text)
+        except ValueError:
+            meta = {} # XXX maybe rather validate and reject invalid json
         comment = request.form.get('comment')
-        self._save(meta, data, mimetype=mimetype, comment=comment)
+        return self._save(meta, data, contenttype=contenttype, comment=comment)
 
-    def _save(self, meta, data, name=None, action=u'SAVE', mimetype=None, comment=u''):
+    def _save(self, meta, data, name=None, action=u'SAVE', contenttype=None, comment=u''):
         if name is None:
             name = self.name
         backend = flaskg.storage
@@ -401,12 +448,13 @@ class Item(object):
         try:
             currentrev = storage_item.get_revision(-1)
             rev_no = currentrev.revno
-            if mimetype is None:
-                # if we didn't get mimetype info, thus reusing the one from current rev:
-                mimetype = currentrev.get(MIMETYPE)
+            if contenttype is None:
+                # if we didn't get contenttype info, thus reusing the one from current rev:
+                contenttype = currentrev.get(CONTENTTYPE)
         except NoSuchRevisionError:
             rev_no = -1
-        newrev = storage_item.create_revision(rev_no + 1)
+        new_rev_no = rev_no + 1
+        newrev = storage_item.create_revision(new_rev_no)
         for k, v in meta.iteritems():
             # TODO Put metadata into newrev here for now. There should be a safer way
             #      of input for this.
@@ -419,22 +467,23 @@ class Item(object):
             newrev[NAME_OLD] = oldname
         newrev[NAME] = name
 
-        self._write_stream(data, newrev)
+        size = self._write_stream(data, newrev)
         timestamp = time.time()
         # XXX if meta is from old revision, and user did not give a non-empty
         # XXX comment, re-using the old rev's comment is wrong behaviour:
         comment = unicode(comment or meta.get(COMMENT, ''))
         if comment:
             newrev[COMMENT] = comment
-        # allow override by form- / qs-given mimetype:
-        mimetype = request.values.get('mimetype', mimetype)
+        # allow override by form- / qs-given contenttype:
+        contenttype = request.values.get('contenttype', contenttype)
         # allow override by give metadata:
-        assert mimetype is not None
-        newrev[MIMETYPE] = unicode(meta.get(MIMETYPE, mimetype))
+        assert contenttype is not None
+        newrev[CONTENTTYPE] = unicode(meta.get(CONTENTTYPE, contenttype))
         newrev[ACTION] = unicode(action)
         self.before_revision_commit(newrev, data)
         storage_item.commit()
         # XXX Event ?
+        return new_rev_no, size
 
     def before_revision_commit(self, newrev, data):
         """
@@ -497,14 +546,14 @@ class Item(object):
 
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        items = [(item.name, item.name[prefix_len:], item.meta.get(MIMETYPE))
+        items = [(item.name, item.name[prefix_len:], item.meta.get(CONTENTTYPE))
                  for item in item_iterator]
         return sorted(items)
 
     def flat_index(self):
         index = self.get_index()
-        index = [(fullname, relname, mimetype)
-                 for fullname, relname, mimetype in index
+        index = [(fullname, relname, contenttype)
+                 for fullname, relname, contenttype in index
                  if u'/' not in relname]
         return index
 
@@ -512,22 +561,21 @@ class Item(object):
 
 
 class NonExistent(Item):
-    supported_mimetypes = ['application/x-nonexistent']
-    mimetype_groups = [
+    contenttype_groups = [
         ('markup text items', [
-            ('text/x.moin.wiki', 'Wiki (MoinMoin)'),
-            ('text/x.moin.creole', 'Wiki (Creole)'),
-            ('text/x-mediawiki', 'Wiki (MediaWiki)'),
-            ('text/x-rst', 'ReST'),
-            ('application/docbook+xml', 'DocBook'),
-            ('text/html', 'HTML'),
+            ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
+            ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
+            ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
+            ('text/x-rst;charset=utf-8', 'ReST'),
+            ('application/docbook+xml;charset=utf-8', 'DocBook'),
+            ('text/html;charset=utf-8', 'HTML'),
         ]),
         ('other text items', [
-            ('text/plain', 'plain text'),
-            ('text/x-diff', 'diff/patch'),
-            ('text/x-python', 'python code'),
-            ('text/csv', 'csv'),
-            ('text/x-irclog', 'IRC log'),
+            ('text/plain;charset=utf-8', 'plain text'),
+            ('text/x-diff;charset=utf-8', 'diff/patch'),
+            ('text/x-python;charset=utf-8', 'python code'),
+            ('text/csv;charset=utf-8', 'csv'),
+            ('text/x-irclog;charset=utf-8', 'IRC log'),
         ]),
         ('image items', [
             ('image/jpeg', 'JPEG'),
@@ -570,14 +618,14 @@ class NonExistent(Item):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
-                               mimetype_groups=self.mimetype_groups,
+                               contenttype_groups=self.contenttype_groups,
                               )
+
+item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
 
 
 class Binary(Item):
     """ An arbitrary binary item, fallback class for every item mimetype. """
-    supported_mimetypes = [''] # fallback, because every mimetype starts with ''
-
     modify_help = """\
 There is no help, you're doomed!
 """
@@ -595,12 +643,12 @@ There is no help, you're doomed!
     def _render_meta(self):
         return "<pre>%s</pre>" % escape(self.meta_dict_to_text(self.meta, use_filter=False))
 
-    def get_templates(self, mimetype=None):
-        """ create a list of templates (for some specific mimetype) """
+    def get_templates(self, contenttype=None):
+        """ create a list of templates (for some specific contenttype) """
         from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
         term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
-        if mimetype:
-            term = AND(term, LastRevisionMetaDataMatch(MIMETYPE, mimetype))
+        if contenttype:
+            term = AND(term, LastRevisionMetaDataMatch(CONTENTTYPE, contenttype))
         item_iterator = self.search_items(term)
         items = [item.name for item in item_iterator]
         return sorted(items)
@@ -639,8 +687,8 @@ There is no help, you're doomed!
     _render_data_diff_raw = _render_data_diff
 
     def _convert(self):
-        return _("Impossible to convert the data to the mimetype: %(mimetype)s",
-                 mimetype=request.values.get('mimetype'))
+        return _("Impossible to convert the data to the contenttype: %(contenttype)s",
+                 contenttype=request.values.get('contenttype'))
 
     def do_get(self):
         hash = self.rev.get(HASH_ALGORITHM)
@@ -665,10 +713,11 @@ There is no help, you're doomed!
         else: # content = item revision
             rev = self.rev
             try:
-                mimestr = rev[MIMETYPE]
+                mimestr = rev[CONTENTTYPE]
             except KeyError:
-                mimestr = mimetypes.guess_type(rev.item.name)[0]
-            mt = MimeType(mimestr=mimestr)
+                mt = MimeType(filename=rev.item.name)
+            else:
+                mt = MimeType(mimestr=mimestr)
             content_disposition = mt.content_disposition(app.cfg)
             content_type = mt.content_type()
             content_length = rev[SIZE]
@@ -683,14 +732,15 @@ There is no help, you're doomed!
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
+item_registry.register(Binary._factory, Type('*/*'))
+
 
 class RenderableBinary(Binary):
-    """ This is a base class for some binary stuff that renders with a object tag. """
-    supported_mimetypes = []
+    """ Base class for some binary stuff that renders with a object tag. """
 
 
 class Application(Binary):
-    supported_mimetypes = []
+    """ Base class for application/* """
 
 
 class TarMixin(object):
@@ -754,18 +804,19 @@ class TarMixin(object):
             raise StorageError(msg)
         if tf_members == expected_members:
             # everything we expected has been added to the tar file, save the container as revision
-            meta = {"mimetype": self.mimetype}
+            meta = {CONTENTTYPE: self.contenttype}
             data = open(temp_fname, 'rb')
-            self._save(meta, data, name=self.name, action=u'SAVE', mimetype=self.mimetype, comment='')
+            self._save(meta, data, name=self.name, action=u'SAVE', contenttype=self.contenttype, comment='')
             data.close()
             os.remove(temp_fname)
 
 
 class ApplicationXTar(TarMixin, Application):
-    supported_mimetypes = ['application/x-tar', 'application/x-gtar']
-
     def feed_input_conv(self):
         return self.rev
+
+item_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
+item_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
 
 
 class ZipMixin(object):
@@ -796,49 +847,53 @@ class ZipMixin(object):
 
 
 class ApplicationZip(ZipMixin, Application):
-    supported_mimetypes = ['application/zip']
-
     def feed_input_conv(self):
         return self.rev
 
+item_registry.register(ApplicationZip._factory, Type('application/zip'))
+
 
 class PDF(Application):
-    supported_mimetypes = ['application/pdf', ]
+    """ PDF """
+
+item_registry.register(PDF._factory, Type('application/pdf'))
 
 
 class Video(Binary):
-    supported_mimetypes = ['video/', ]
+    """ Base class for video/* """
+
+item_registry.register(Video._factory, Type('video/*'))
 
 
 class Audio(Binary):
-    supported_mimetypes = ['audio/', ]
+    """ Base class for audio/* """
+
+item_registry.register(Audio._factory, Type('audio/*'))
 
 
 class Image(Binary):
-    """ Any Image mimetype """
-    supported_mimetypes = ['image/', ]
+    """ Base class for image/* """
+
+item_registry.register(Image._factory, Type('image/*'))
 
 
 class RenderableImage(RenderableBinary):
-    """ Any Image mimetype """
-    supported_mimetypes = []
+    """ Base class for renderable Image mimetypes """
 
 
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
-    supported_mimetypes = ['image/svg+xml']
+
+item_registry.register(SvgImage._factory, Type('image/svg+xml'))
 
 
 class RenderableBitmapImage(RenderableImage):
     """ PNG/JPEG/GIF images use <img> tag (better browser support than <object>) """
-    supported_mimetypes = [] # if mimetype is also transformable, please list
-                             # in TransformableImage ONLY!
+    # if mimetype is also transformable, please register in TransformableImage ONLY!
 
 
 class TransformableBitmapImage(RenderableBitmapImage):
     """ We can transform (resize, rotate, mirror) some image types """
-    supported_mimetypes = ['image/png', 'image/jpeg', 'image/gif', ]
-
     def _transform(self, content_type, size=None, transpose_op=None):
         """ resize to new size (optional), transpose according to exif infos,
             result data should be content_type.
@@ -915,7 +970,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                             width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
-                content_type = self.rev[MIMETYPE]
+                content_type = self.rev[CONTENTTYPE]
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
@@ -945,7 +1000,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             if PIL is None:
                 abort(404)
 
-            content_type = newrev[MIMETYPE]
+            content_type = newrev[CONTENTTYPE]
             if content_type == 'image/jpeg':
                 output_type = 'JPEG'
             elif content_type == 'image/png':
@@ -974,11 +1029,13 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff_text(self, oldrev, newrev):
         return super(TransformableBitmapImage, self)._render_data_diff_text(oldrev, newrev)
 
+item_registry.register(TransformableBitmapImage._factory, Type('image/png'))
+item_registry.register(TransformableBitmapImage._factory, Type('image/jpeg'))
+item_registry.register(TransformableBitmapImage._factory, Type('image/gif'))
+
 
 class Text(Binary):
-    """ Any kind of text """
-    supported_mimetypes = ['text/']
-
+    """ Base class for text/* """
     template = "modify_text.html"
 
     # text/plain mandates crlf - but in memory, we want lf only
@@ -1024,6 +1081,18 @@ class Text(Binary):
         difflines = diff_text.diff(oldlines, newlines)
         return '\n'.join(difflines)
 
+    def _render_data_highlight(self):
+        from MoinMoin.converter import default_registry as reg
+        data_text = self.data_storage_to_internal(self.data)
+        # TODO: use registry as soon as it is in there
+        from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
+        pygments_conv = PygmentsConverter(contenttype=self.contenttype)
+        doc = pygments_conv(data_text.split(u'\n'))
+        # TODO: Real output format
+        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
+        doc = html_conv(doc)
+        return conv_serialize(doc, {html.namespace: ''})
+
     def do_modify(self, template_name):
         form = TextChaizedForm.from_defaults()
         TextCha(form).amend_form()
@@ -1047,6 +1116,8 @@ class Text(Binary):
                                gen=make_generator(),
                               )
 
+item_registry.register(Text._factory, Type('text/*'))
+
 
 class MarkupItem(Text):
     """
@@ -1068,11 +1139,8 @@ class MarkupItem(Text):
             raise StorageError("unsupported content object: %r" % data)
 
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.iri import Iri
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import moin_page
 
-        input_conv = reg.get(Type(self.mimetype), type_moin_document)
+        input_conv = reg.get(Type(self.contenttype), type_moin_document)
         item_conv = reg.get(type_moin_document, type_moin_document,
                 items='refs', url_root=Iri(request.url_root))
 
@@ -1085,24 +1153,29 @@ class MarkupItem(Text):
         newrev[ITEMLINKS] = item_conv.get_links()
         newrev[ITEMTRANSCLUSIONS] = item_conv.get_transclusions()
 
+
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
-    supported_mimetypes = ['text/x.moin.wiki']
+
+item_registry.register(MoinWiki._factory, Type('text/x.moin.wiki'))
 
 
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
-    supported_mimetypes = ['text/x.moin.creole']
+
+item_registry.register(CreoleWiki._factory, Type('text/x.moin.creole'))
 
 
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
-    supported_mimetypes = ['text/x-mediawiki']
+
+item_registry.register(MediaWiki._factory, Type('text/x-mediawiki'))
 
 
 class ReST(MarkupItem):
     """ ReStructured Text markup """
-    supported_mimetypes = ['text/x-rst']
+
+item_registry.register(ReST._factory, Type('text/x-rst'))
 
 
 class HTML(Text):
@@ -1115,8 +1188,6 @@ class HTML(Text):
 
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
-    supported_mimetypes = ['text/html']
-
     template = "modify_text_html.html"
 
     def do_modify(self, template_name):
@@ -1142,16 +1213,14 @@ class HTML(Text):
                                gen=make_generator(),
                               )
 
+item_registry.register(HTML._factory, Type('text/html'))
+
 
 class DocBook(MarkupItem):
     """ DocBook Document """
-    supported_mimetypes = ['application/docbook+xml']
-
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
         from MoinMoin.converter import default_registry as reg
-        from MoinMoin.util.mime import Type, type_moin_document
-        from MoinMoin.util.tree import docbook, xlink
 
         doc = self._expand_document(doc)
 
@@ -1176,7 +1245,7 @@ class DocBook(MarkupItem):
         tree.write(file_to_send, namespaces=output_namespaces)
 
         # We determine the different parameters for the reply
-        mt = MimeType(mimestr='application/docbook+xml')
+        mt = MimeType(mimestr='application/docbook+xml;charset=utf-8')
         content_disposition = mt.content_disposition(app.cfg)
         content_type = mt.content_type()
         # After creation of the StringIO, we are at the end of the file
@@ -1192,12 +1261,13 @@ class DocBook(MarkupItem):
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
+item_registry.register(DocBook._factory, Type('application/docbook+xml'))
+
 
 class TWikiDraw(TarMixin, Image):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_mimetypes = ["application/x-twikidraw"]
     modify_help = ""
     template = "modify_twikidraw.html"
 
@@ -1269,11 +1339,13 @@ class TWikiDraw(TarMixin, Image):
         else:
             return Markup('<img src="%s" alt="%s" />' % (png_url, title))
 
+item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
+
+
 class AnyWikiDraw(TarMixin, Image):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
-    supported_mimetypes = ["application/x-anywikidraw"]
     modify_help = ""
     template = "modify_anywikidraw.html"
 
@@ -1346,10 +1418,11 @@ class AnyWikiDraw(TarMixin, Image):
         else:
             return Markup('<img src="%s" alt="%s" />' % (png_url, title))
 
+item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
+
+
 class SvgDraw(TarMixin, Image):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
-
-    supported_mimetypes = ['application/x-svgdraw']
     modify_help = ""
     template = "modify_svg-edit.html"
 
@@ -1390,3 +1463,6 @@ class SvgDraw(TarMixin, Image):
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
         return Markup('<img src="%s" alt="%s" />' % (png_url, drawing_url))
+
+item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
+

@@ -21,7 +21,7 @@
   <dl>
     {{ forms.render_field(gen, form['name'], 'text') }}
     {{ forms.render_field(gen, form['aliasname'], 'text') }}
-    {{ forms.render_field(gen, form['openid'], 'text') }}
+    {{ forms.render_field(gen, form['openid'], 'url') }}
     {{ forms.render_select(gen, form['timezone']) }}
     {{ forms.render_select(gen, form['locale']) }}
   </dl>
@@ -49,7 +49,7 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
   {{ forms.render_errors(form) }}
   <dl>
-    {{ forms.render_field(gen, form['email'], 'text') }}
+    {{ forms.render_field(gen, form['email'], 'email') }}
   </dl>
   {{ gen.input(form['submit'], type='submit') }}
 {{ gen.form.close() }}
@@ -62,7 +62,7 @@
   {{ forms.render_errors(form) }}
   <dl>
     {{ forms.render_select(gen, form['theme_name']) }}
-    {{ forms.render_field(gen, form['css_url'], 'text') }}
+    {{ forms.render_field(gen, form['css_url'], 'url') }}
     {{ forms.render_field(gen, form['edit_rows'], 'text') }}
   </dl>
   {{ gen.input(form['submit'], type='submit') }}
