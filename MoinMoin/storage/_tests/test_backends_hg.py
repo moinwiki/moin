@@ -23,7 +23,7 @@ from MoinMoin.storage.backends.hg import MercurialBackend
 from MoinMoin.storage.error import BackendError
 
 class TestMercurialBackend(BackendTest):
-
+    pytestmark = py.test.mark.xfail(reason='not maintained')
 
     def create_backend(self):
         self.test_dir = mkdtemp()

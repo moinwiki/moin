@@ -56,12 +56,16 @@ try:
         coverage.erase()
         coverage.start()
 
-    py.test.config.addoptions('MoinMoin options', py.test.config.Option('-C',
-        '--coverage', action='callback', callback=callback,
-        help='Output information about code coverage (slow!)'))
+    def pytest_addoption(parser):
+        group = parser.getgroup('MoinMoin options')
+        group.addoption(
+            '-C', '--coverage',
+            action='callback', callback=callback,
+            help='Output information about code coverage (slow!)')
 
 except ImportError:
     coverage = None
+
 
 
 def init_test_app(given_config):
@@ -133,6 +137,15 @@ class MoinClassCollector(py.test.collect.Class):
 
     def teardown(self):
         super(MoinClassCollector, self).teardown()
+
+
+def pytest_pycollect_makemodule(path, parent):
+    return Module(path, parent=parent)
+
+
+def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
+    if collector._istestclasscandidate(name, obj):
+        return MoinClassCollector(name, parent=collector)
 
 
 class Module(py.test.collect.Module):
