@@ -27,6 +27,7 @@ collect_ignore = ['static',  # same
 import atexit
 import os
 import sys
+import inspect
 
 import py
 
@@ -142,10 +143,9 @@ class MoinClassCollector(py.test.collect.Class):
 def pytest_pycollect_makemodule(path, parent):
     return Module(path, parent=parent)
 
-
 def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
-    if collector._istestclasscandidate(name, obj):
-        return MoinClassCollector(name, parent=collector)
+    if collector.classnamefilter(name) and inspect.isclass(obj):
+       return MoinClassCollector(name, parent = collector)
 
 
 class Module(py.test.collect.Module):
