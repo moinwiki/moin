@@ -7,8 +7,7 @@ MoinMoin - MoinMoin.util.crypto Tests
 """
 
 
-import py
-
+import pytest
 from MoinMoin.util import crypto
 
 

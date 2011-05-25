@@ -9,7 +9,7 @@
 
 from __future__ import absolute_import, division
 
-import py
+import pytest
 import tempfile
 import os.path
 import shutil
@@ -60,7 +60,7 @@ class TestInterWikiMapBackend(object):
         tmpdir = tempfile.mkdtemp()
 
         # test an invalid file
-        with py.test.raises(IOError):
+        with pytest.raises(IOError):
             InterWikiMap.from_file(os.path.join(tmpdir, 'void'))
 
         # test a consistent valid file
@@ -77,7 +77,7 @@ class TestInterWikiMapBackend(object):
         with open(testfile, 'w') as f:
             f.write('# This is a malformed interwiki file\n'
                     'fails # ever')
-        with py.test.raises(ValueError):
+        with pytest.raises(ValueError):
             InterWikiMap.from_file(testfile)
 
         # finally destroy everything
@@ -105,7 +105,7 @@ class TestInterWikiMapBackend(object):
                 dict(link1='http://link1.com/',
                      link2='http://link2.in/'))
         # test invalid strings
-        with py.test.raises(ValueError):
+        with pytest.raises(ValueError):
             InterWikiMap.from_string(u'foobarbaz')
 
 
