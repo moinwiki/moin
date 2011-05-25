@@ -145,7 +145,7 @@ def pytest_pycollect_makemodule(path, parent):
 
 def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
     if collector.classnamefilter(name) and inspect.isclass(obj):
-       return MoinClassCollector(name, parent = collector)
+        return MoinClassCollector(name, parent = collector)
 
 
 class Module(py.test.collect.Module):
