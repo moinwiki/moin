@@ -7,7 +7,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 

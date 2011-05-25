@@ -6,7 +6,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -32,7 +32,7 @@ class TestStorageEnvironWithoutConfig(object):
         assert not list(storage.iteritems())
         assert not list(storage.history())
         itemname = u"this item shouldn't exist yet"
-        assert py.test.raises(NoSuchItemError, storage.get_item, itemname)
+        assert pytest.raises(NoSuchItemError, storage.get_item, itemname)
         item = storage.create_item(itemname)
         new_rev = item.create_revision(0)
         new_rev[NAME] = itemname
