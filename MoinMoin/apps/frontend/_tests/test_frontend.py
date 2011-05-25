@@ -13,6 +13,8 @@ from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
 
+import pytest
+
 class TestFrontend(object):
     def test_root(self):
         with self.app.test_client() as c:
@@ -146,7 +148,7 @@ class TestUsersettings(object):
         # Validate that we are not modifying existing user data file!
         if self.user.exists():
             self.user = None
-            py.test.skip("Test user exists, will not override existing user data file!")
+            pytest.skip("Test user exists, will not override existing user data file!")
 
         # Save test user
         self.user.save()
@@ -154,7 +156,7 @@ class TestUsersettings(object):
         # Validate user creation
         if not self.user.exists():
             self.user = None
-            py.test.skip("Can't create test user")
+            pytest.skip("Can't create test user")
 
 
 class TestViews(object):
