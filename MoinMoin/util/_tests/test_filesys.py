@@ -53,7 +53,7 @@ class TestFuid:
         uid2 = filesys.fuid(self.fname)
 
         assert uid2 != uid1 # we changed size and maybe mtime
-    
+
     @win32_incompatible
     def testUpdateFileMovingFromTemp(self):
         # update file by moving another file over it
