@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki19_in
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.converter.moinwiki19_in import ConverterFormat19
 

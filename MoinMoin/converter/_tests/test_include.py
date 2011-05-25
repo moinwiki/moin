@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter.include
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.converter.include import *
 

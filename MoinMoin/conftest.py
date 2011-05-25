@@ -29,7 +29,7 @@ import os
 import sys
 import inspect
 
-import py
+import pytest
 
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
@@ -89,7 +89,7 @@ def deinit_test_app(app, ctx):
     destroy_app(app)
 
 
-class MoinClassCollector(py.test.collect.Class):
+class MoinClassCollector(pytest.collect.Class):
 
     def setup(self):
         cls = self.obj
@@ -150,7 +150,7 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
 
-class Module(py.test.collect.Module):
+class Module(pytest.collect.Module):
     Class = MoinClassCollector
 
     def run(self, *args, **kwargs):
