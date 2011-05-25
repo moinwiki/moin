@@ -147,6 +147,8 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
     if collector.classnamefilter(name) and inspect.isclass(obj):
         return MoinClassCollector(name, parent = collector)
 
+def pytest_report_header(config):
+    return "The tests here are implemented only for pytest-2"
 
 class Module(py.test.collect.Module):
     Class = MoinClassCollector
