@@ -8,7 +8,6 @@
 import sys, os, time
 import shutil, tempfile
 
-import py.test
 import pytest
 
 from MoinMoin.util import filesys
@@ -111,12 +110,12 @@ class TestRename:
         self.makefile(self.dst, "dst")
         # win32-like rename does not overwrite an existing destination
         # (on posix, we emulate this behaviour)
-        py.test.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst)
+        pytest.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst)
 
     def test_special_rename_exists(self):
         self.makefile(self.src, "src")
         self.makefile(self.dst, "dst")
-        py.test.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst, delete_old=True)
+        pytest.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst, delete_old=True)
         assert not os.path.exists(self.src)
 
     def test_posix_rename_notexists(self):
