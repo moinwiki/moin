@@ -141,7 +141,7 @@ class ConverterExternOutput(ConverterBase):
             # interwiki link
             wikitag, wikiurl, wikitail, err = resolve_interwiki(unicode(input.authority.host), unicode(input.path[1:]))
             if not err:
-                elem.set(html.class_, 'interwiki')
+                elem.set(html.class_, 'moin-interwiki')
                 if do is not None:
                     # this will only work for wikis with compatible URL design
                     # for other wikis, don't use do=... in your interwiki links
