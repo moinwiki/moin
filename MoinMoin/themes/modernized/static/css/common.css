@@ -459,7 +459,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header */
 #moin-header { margin: 0px; padding: 0px;
-            background: url(../img/white_clouds.png); /* background: #E6EAF0; */
+            background: url(../img/white-clouds.jpg); /* background: #E6EAF0; */
             line-height: 1.12em; }
 
 /* moin-header searchform */
