@@ -130,8 +130,7 @@ class ConverterFormat19(Converter):
                 )
             )
             (?P<url_target>
-                # TODO: config.url_schemas
-                (http|https|ftp|nntp|news|mailto|telnet|file|irc):
+                (%(url_schemas)s):
                 \S+?
             )
             (
@@ -145,7 +144,7 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """
+    """ % dict(url_schemas='|'.join(config.url_schemas))
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)
@@ -164,4 +163,5 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(ConverterFormat19.factory, Type('text/x.moin.wiki;format=1.9'), type_moin_document)
 default_registry.register(ConverterFormat19.factory, Type('x-moin/format;name=wiki;format=1.9'), type_moin_document)
+
 
