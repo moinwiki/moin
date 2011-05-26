@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki_in
 """
 
 
-import py.test
+import pytest
 
 import re
 
@@ -283,6 +283,6 @@ class TestConverter(object):
 
     def do(self, input, output, args={}, skip=None):
         if skip:
-            py.test.skip(skip)
+            pytest.skip(skip)
         out = self.conv(input.split(u'\n'), **args)
         assert self.serialize(out) == output
