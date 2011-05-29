@@ -442,11 +442,9 @@ class Item(object):
         meta_text = request.form.get('meta_text')
         if meta_text is not None:
             # there was a meta_text field with (possibly empty) content
-            try:
-                meta = self.meta_text_to_dict(meta_text)
-            except ValueError:
-                # XXX maybe rather validate and reject invalid json
-                pass
+            # Note: if you get crashes here, please see the ValidJSON validator
+            # to catch invalid json issues early.
+            meta = self.meta_text_to_dict(meta_text)
         if meta is None:
             # no form metadata - reuse some stuff from previous metadata?
             meta = {}
@@ -651,6 +649,18 @@ class NonExistent(Item):
 
 item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
 
+class ValidJSON(Validator):
+    """Validator for JSON
+    """
+    invalid_json_msg = L_('Invalid JSON.')
+
+    def validate(self, element, state):
+        try:
+            json.loads(element.value)
+        except:
+            return self.note_error(element, state, 'invalid_json_msg')
+        return True
+
 
 class Binary(Item):
     """ An arbitrary binary item, fallback class for every item mimetype. """
@@ -688,7 +698,7 @@ There is no help, you're doomed!
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
@@ -1146,7 +1156,7 @@ class Text(Binary):
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
@@ -1345,7 +1355,7 @@ class TWikiDraw(TarMixin, Image):
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
@@ -1438,7 +1448,7 @@ class AnyWikiDraw(TarMixin, Image):
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
@@ -1527,7 +1537,7 @@ class SvgDraw(TarMixin, Image):
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
