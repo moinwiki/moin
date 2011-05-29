@@ -8,14 +8,7 @@
 {{ gen.input(form['rev'], type='hidden') }}
 {% block extra_form %}{% endblock %}
 {% block data_editor %}{% endblock %}
-    <dl>
-        <dt>
-            <label for="data_file">{{ _("Upload file:") }}</label>
-         </dt>
-         <dd>
-            <input type="file" id="data_file" name="data_file" />
-        </dd>
-    </dl>
+{{ forms.render_field(gen, form['data_file'], 'file') }}
 <pre>{{ help }}</pre>
 {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
 <br />
