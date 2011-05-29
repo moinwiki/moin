@@ -709,8 +709,7 @@ There is no help, you're doomed!
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
-            valid = form.validate()
-            if valid:
+            if form.validate():
                 try:
                     self.modify() # XXX
                 except AccessDeniedError:
@@ -1175,8 +1174,7 @@ class Text(Binary):
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
-            valid = form.validate()
-            if valid:
+            if form.validate():
                 try:
                     self.modify() # XXX
                 except AccessDeniedError:
