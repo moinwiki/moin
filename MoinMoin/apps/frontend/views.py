@@ -243,6 +243,7 @@ def convert_item(item_name):
         abort(403)
     return converted_item._convert(item.internal_representation())
 
+
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
 def modify_item(item_name):
     """Modify the wiki item item_name.
@@ -257,40 +258,9 @@ def modify_item(item_name):
         item = Item.create(item_name, contenttype=contenttype)
     except AccessDeniedError:
         abort(403)
-    if request.method == 'GET':
-        if not flaskg.user.may.write(item_name):
-            abort(403)
-        content = item.do_modify(template_name)
-        return content
-    elif request.method == 'POST':
-        form = TextChaizedForm.from_flat(request.form)
-        TextCha(form).amend_form()
-        valid = form.validate()
-        if not valid:
-            data_text = request.values.get('data_text')
-            meta_text = item.meta_dict_to_text(item.meta)
-            comment = request.values.get('comment')
-            return render_template(item.template,
-                                   item_name=item_name,
-                                   gen=make_generator(),
-                                   form=form,
-                                   data_text=data_text,
-                                   meta_text=meta_text,
-                                   comment=comment,
-                                   cols=COLS,
-                                   rows_data=ROWS_DATA,
-                                   rows_meta=ROWS_META,
-                                  )
-        try:
-            item.modify()
-            item_modified.send(app._get_current_object(),
-                               item_name=item_name)
-            if contenttype in ('application/x-twikidraw', 'application/x-anywikidraw', 'application/x-svgdraw'):
-                # TWikiDraw/AnyWikiDraw/SvgDraw POST more than once, redirecting would break them
-                return "OK"
-        except AccessDeniedError:
-            abort(403)
-        return redirect(url_for('frontend.show_item', item_name=item_name))
+    if not flaskg.user.may.write(item_name):
+        abort(403)
+    return item.do_modify(contenttype, template_name)
 
 
 class CommentForm(TextChaizedForm):
