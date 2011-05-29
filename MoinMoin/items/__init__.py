@@ -693,7 +693,7 @@ There is no help, you're doomed!
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = 0 # XXX ???
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form)
             TextCha(form).amend_form()
@@ -1158,7 +1158,7 @@ class Text(Binary):
             else:
                 form['data_text'] = self.data_storage_to_internal(self.data)
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = 0 # XXX ???
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form)
             TextCha(form).amend_form()
@@ -1349,7 +1349,7 @@ class TWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = 0 # XXX ???
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
             # this POST comes directly from TWikiDraw (not from Browser), thus no validation
             try:
@@ -1441,7 +1441,7 @@ class AnyWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = 0 # XXX ???
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
             # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
             try:
@@ -1529,7 +1529,7 @@ class SvgDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = 0 # XXX ???
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
             # this POST comes directly from SvgDraw (not from Browser), thus no validation
             try:
