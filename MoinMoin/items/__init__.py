@@ -24,6 +24,7 @@ from array import array
 
 from flatland import Form, String, Integer, Boolean, Enum
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from MoinMoin.util.forms import FileStorage
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.signalling import item_modified
@@ -688,6 +689,7 @@ There is no help, you're doomed!
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             form = ModifyForm.from_defaults()
@@ -695,7 +697,7 @@ There is no help, you're doomed!
             form['meta_text'] = self.meta_dict_to_text(self.meta)
             form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
-            form = ModifyForm.from_flat(request.form)
+            form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
             valid = form.validate()
             if valid:
@@ -1145,7 +1147,8 @@ class Text(Binary):
         class ModifyForm(CommentForm):
             rev = Integer.using(optional=False)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
-            data_text = String.using(optional=False).with_properties(placeholder=L_("Type your text here"))
+            data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             if template_name is None and isinstance(self.rev, DummyRev):
@@ -1160,7 +1163,7 @@ class Text(Binary):
             form['meta_text'] = self.meta_dict_to_text(self.meta)
             form['rev'] = self.rev.revno if self.rev.revno is not None else -1
         elif request.method == 'POST':
-            form = ModifyForm.from_flat(request.form)
+            form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
             valid = form.validate()
             if valid:
@@ -1343,6 +1346,7 @@ class TWikiDraw(TarMixin, Image):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             form = ModifyForm.from_defaults()
@@ -1435,6 +1439,7 @@ class AnyWikiDraw(TarMixin, Image):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             form = ModifyForm.from_defaults()
@@ -1523,6 +1528,7 @@ class SvgDraw(TarMixin, Image):
             rev = Integer.using(optional=False)
             # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             form = ModifyForm.from_defaults()
