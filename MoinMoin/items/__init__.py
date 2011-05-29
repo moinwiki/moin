@@ -465,6 +465,7 @@ class Item(object):
             rev_no = currentrev.revno
             contenttype_current = currentrev.get(CONTENTTYPE)
         except NoSuchRevisionError:
+            currentrev = None
             rev_no = -1
             contenttype_current = None
         new_rev_no = rev_no + 1
@@ -482,9 +483,12 @@ class Item(object):
         newrev[NAME] = name
 
         if data is None:
-            # we don't have (new) data, just copy the old one.
-            # a valid usecase of this is to just edit metadata.
-            data = currentrev
+            if currentrev is not None:
+                # we don't have (new) data, just copy the old one.
+                # a valid usecase of this is to just edit metadata.
+                data = currentrev
+            else:
+                data = ''
         size = self._write_stream(data, newrev)
 
         # XXX if meta is from old revision, and user did not give a non-empty
