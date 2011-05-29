@@ -1,5 +1,5 @@
 {% extends "modify_binary.html" %}
 {% block data_editor %}
-<textarea name="data_text" lang="{{ lang }}" dir="{{ direction }}" rows="{{ rows_data }}" cols="{{ cols }}">{{ data_text }}</textarea>
+{{ gen.textarea(form['data_text'], lang=lang, dir=direction, rows=rows_data, cols=cols) }}
 <br />
 {% endblock %}
