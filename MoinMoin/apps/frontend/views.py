@@ -298,8 +298,7 @@ def revert_item(item_name, rev):
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             item.revert()
             return redirect(url_for('frontend.show_item', item_name=item_name))
     return render_template(item.revert_template,
@@ -323,8 +322,7 @@ def copy_item(item_name):
     elif request.method == 'POST':
         form = CopyItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             target = form['target'].value
             comment = form['comment'].value
             item.copy(target, comment)
@@ -349,8 +347,7 @@ def rename_item(item_name):
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             target = form['target'].value
             comment = form['comment'].value
             item.rename(target, comment)
@@ -374,8 +371,7 @@ def delete_item(item_name):
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             comment = form['comment'].value
             item.delete(comment)
             return redirect(url_for('frontend.show_item', item_name=item_name))
@@ -406,8 +402,7 @@ def destroy_item(item_name, rev):
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
             return redirect(url_for('frontend.show_item', item_name=item_name))
@@ -776,18 +771,17 @@ def register():
             form = OpenIDForm.from_flat(request.form)
             TextCha(form).amend_form()
 
-            valid = form.validate()
-            if valid:
-                    msg = user.create_user(username=form['username'].value,
-                                           password=form['password1'].value,
-                                           email=form['email'].value,
-                                           openid=form['openid'].value,
-                                          )
-                    if msg:
-                        flash(msg, "error")
-                    else:
-                        flash(_('Account created, please log in now.'), "info")
-                        return redirect(url_for('frontend.show_root'))
+            if form.validate():
+                msg = user.create_user(username=form['username'].value,
+                                       password=form['password1'].value,
+                                       email=form['email'].value,
+                                       openid=form['openid'].value,
+                                      )
+                if msg:
+                    flash(msg, "error")
+                else:
+                    flash(_('Account created, please log in now.'), "info")
+                    return redirect(url_for('frontend.show_root'))
 
     else:
         # not openid registration and no MoinAuth
@@ -803,8 +797,7 @@ def register():
             form = RegistrationForm.from_flat(request.form)
             TextCha(form).amend_form()
 
-            valid = form.validate()
-            if valid:
+            if form.validate():
                 msg = user.create_user(username=form['username'].value,
                                        password=form['password1'].value,
                                        email=form['email'].value,
@@ -860,8 +853,7 @@ def lostpass():
         form = PasswordLostForm.from_defaults()
     elif request.method == 'POST':
         form = PasswordLostForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             u = None
             username = form['username'].value
             if username:
@@ -924,8 +916,7 @@ def recoverpass():
         form.update(request.values)
     elif request.method == 'POST':
         form = PasswordRecoveryForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             u = user.User(user.getUserId(form['username'].value))
             if u and u.valid and u.apply_recovery_token(form['token'].value, form['password1'].value):
                 flash(_("Your password has been changed, you can log in now."), "info")
@@ -998,8 +989,7 @@ def login():
                 flash(hint, "info")
     elif request.method == 'POST':
         form = LoginForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             # we have a logged-in, valid user
             return redirect(url_for('frontend.show_root'))
         # flash the error messages (if any)
@@ -1134,8 +1124,7 @@ def usersettings(part):
         form['submit'].set_default() # XXX from_object() kills all values
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             # successfully modified everything
             success = True
             if part == 'password':
