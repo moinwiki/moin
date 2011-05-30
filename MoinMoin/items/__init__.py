@@ -22,7 +22,12 @@ import tempfile
 from StringIO import StringIO
 from array import array
 
+from flatland import Form, String, Integer, Boolean, Enum
+from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from MoinMoin.util.forms import FileStorage
+
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
+from MoinMoin.signalling import item_modified
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.mime import Type, type_moin_document
@@ -48,7 +53,8 @@ except ImportError:
 from flask import current_app as app
 from flask import g as flaskg
 
-from flask import request, url_for, Response, abort, escape
+from flask import request, url_for, flash, Response, redirect, abort, escape
+
 from werkzeug import is_resource_modified
 from jinja2 import Markup
 
@@ -436,11 +442,9 @@ class Item(object):
         meta_text = request.form.get('meta_text')
         if meta_text is not None:
             # there was a meta_text field with (possibly empty) content
-            try:
-                meta = self.meta_text_to_dict(meta_text)
-            except ValueError:
-                # XXX maybe rather validate and reject invalid json
-                pass
+            # Note: if you get crashes here, please see the ValidJSON validator
+            # to catch invalid json issues early.
+            meta = self.meta_text_to_dict(meta_text)
         if meta is None:
             # no form metadata - reuse some stuff from previous metadata?
             meta = {}
@@ -465,6 +469,7 @@ class Item(object):
             rev_no = currentrev.revno
             contenttype_current = currentrev.get(CONTENTTYPE)
         except NoSuchRevisionError:
+            currentrev = None
             rev_no = -1
             contenttype_current = None
         new_rev_no = rev_no + 1
@@ -482,9 +487,12 @@ class Item(object):
         newrev[NAME] = name
 
         if data is None:
-            # we don't have (new) data, just copy the old one.
-            # a valid usecase of this is to just edit metadata.
-            data = currentrev
+            if currentrev is not None:
+                # we don't have (new) data, just copy the old one.
+                # a valid usecase of this is to just edit metadata.
+                data = currentrev
+            else:
+                data = ''
         size = self._write_stream(data, newrev)
 
         # XXX if meta is from old revision, and user did not give a non-empty
@@ -500,7 +508,7 @@ class Item(object):
         newrev[ACTION] = unicode(action)
         self.before_revision_commit(newrev, data)
         storage_item.commit()
-        # XXX Event ?
+        item_modified.send(app._get_current_object(), item_name=name)
         return new_rev_no, size
 
     def before_revision_commit(self, newrev, data):
@@ -632,7 +640,7 @@ class NonExistent(Item):
     def _convert(self):
         abort(404)
 
-    def do_modify(self, template_name):
+    def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
@@ -640,6 +648,18 @@ class NonExistent(Item):
                               )
 
 item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
+
+class ValidJSON(Validator):
+    """Validator for JSON
+    """
+    invalid_json_msg = L_('Invalid JSON.')
+
+    def validate(self, element, state):
+        try:
+            json.loads(element.value)
+        except:
+            return self.note_error(element, state, 'invalid_json_msg')
+        return True
 
 
 class Binary(Item):
@@ -671,17 +691,34 @@ There is no help, you're doomed!
         items = [item.name for item in item_iterator]
         return sorted(items)
 
-    def do_modify(self, template_name):
+    def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support
         #if template_name is None and isinstance(self.rev, DummyRev):
         #    return self._do_modify_show_templates()
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
+        from MoinMoin.apps.frontend.views import CommentForm
+        class ModifyForm(CommentForm):
+            rev = Integer.using(optional=False)
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+
+        if request.method == 'GET':
+            form = ModifyForm.from_defaults()
+            TextCha(form).amend_form()
+            form['meta_text'] = self.meta_dict_to_text(self.meta)
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
+        elif request.method == 'POST':
+            form = ModifyForm.from_flat(request.form.items() + request.files.items())
+            TextCha(form).amend_form()
+            if form.validate():
+                try:
+                    self.modify() # XXX
+                except AccessDeniedError:
+                    abort(403)
+                else:
+                    return redirect(url_for('frontend.show_item', item_name=self.name))
         return render_template(self.template,
                                item_name=self.name,
-                               rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               meta_text=self.meta_dict_to_text(self.meta),
+                               rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
                                gen=make_generator(),
@@ -1111,24 +1148,42 @@ class Text(Binary):
         doc = html_conv(doc)
         return conv_serialize(doc, {html.namespace: ''})
 
-    def do_modify(self, template_name):
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
-        if template_name is None and isinstance(self.rev, DummyRev):
-            return self._do_modify_show_templates()
-        if template_name:
-            item = Item.create(template_name)
-            data_text = self.data_storage_to_internal(item.data)
-        else:
-            data_text = self.data_storage_to_internal(self.data)
-        meta_text = self.meta_dict_to_text(self.meta)
+    def do_modify(self, contenttype, template_name):
+        # XXX think about and add item template support
+        #if template_name is None and isinstance(self.rev, DummyRev):
+        #    return self._do_modify_show_templates()
+        from MoinMoin.apps.frontend.views import CommentForm
+        class ModifyForm(CommentForm):
+            rev = Integer.using(optional=False)
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+            data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+
+        if request.method == 'GET':
+            if template_name is None and isinstance(self.rev, DummyRev):
+                return self._do_modify_show_templates()
+            form = ModifyForm.from_defaults()
+            TextCha(form).amend_form()
+            if template_name:
+                item = Item.create(template_name)
+                form['data_text'] = self.data_storage_to_internal(item.data)
+            else:
+                form['data_text'] = self.data_storage_to_internal(self.data)
+            form['meta_text'] = self.meta_dict_to_text(self.meta)
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
+        elif request.method == 'POST':
+            form = ModifyForm.from_flat(request.form.items() + request.files.items())
+            TextCha(form).amend_form()
+            if form.validate():
+                try:
+                    self.modify() # XXX
+                except AccessDeniedError:
+                    abort(403)
+                else:
+                    return redirect(url_for('frontend.show_item', item_name=self.name))
         return render_template(self.template,
                                item_name=self.name,
-                               rows_data=ROWS_DATA, rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               data_text=data_text,
-                               meta_text=meta_text,
-                               lang='en', direction='ltr',
+                               rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
                                gen=make_generator(),
@@ -1207,29 +1262,6 @@ class HTML(Text):
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
     template = "modify_text_html.html"
-
-    def do_modify(self, template_name):
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
-        if template_name is None and isinstance(self.rev, DummyRev):
-            return self._do_modify_show_templates()
-        if template_name:
-            item = Item.create(template_name)
-            data_text = self.data_storage_to_internal(item.data)
-        else:
-            data_text = self.data_storage_to_internal(self.data)
-        meta_text = self.meta_dict_to_text(self.meta)
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_data=ROWS_DATA, rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               data_text=data_text,
-                               meta_text=meta_text,
-                               lang='en', direction='ltr',
-                               help=self.modify_help,
-                               form=form,
-                               gen=make_generator(),
-                              )
 
 item_registry.register(HTML._factory, Type('text/html'))
 
@@ -1313,18 +1345,35 @@ class TWikiDraw(TarMixin, Image):
         self.put_member('drawing' + ext, filecontent, content_length,
                         expected_members=set(['drawing.draw', 'drawing.map', 'drawing.png']))
 
-    def do_modify(self, template_name):
-        """
-        Fills params into the template for initialzing of the the java applet.
-        The applet is called for doing modifications.
-        """
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
+    def do_modify(self, contenttype, template_name):
+        # XXX think about and add item template support
+        #if template_name is None and isinstance(self.rev, DummyRev):
+        #    return self._do_modify_show_templates()
+        from MoinMoin.apps.frontend.views import CommentForm
+        class ModifyForm(CommentForm):
+            rev = Integer.using(optional=False)
+            # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+
+        if request.method == 'GET':
+            form = ModifyForm.from_defaults()
+            TextCha(form).amend_form()
+            # XXX currently this is rather pointless, as the form does not get POSTed:
+            form['meta_text'] = self.meta_dict_to_text(self.meta)
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
+        elif request.method == 'POST':
+            # this POST comes directly from TWikiDraw (not from Browser), thus no validation
+            try:
+                self.modify() # XXX
+            except AccessDeniedError:
+                abort(403)
+            else:
+                # TWikiDraw POSTs more than once, redirecting would break them
+                return "OK"
         return render_template(self.template,
                                item_name=self.name,
-                               rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               meta_text=self.meta_dict_to_text(self.meta),
+                               rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
                                gen=make_generator(),
@@ -1389,19 +1438,39 @@ class AnyWikiDraw(TarMixin, Image):
         self.put_member('drawing' + ext, filecontent, content_length,
                         expected_members=set(['drawing.svg', 'drawing.map', 'drawing.png']))
 
-    def do_modify(self, template_name):
-        """
-        Fills params into the template for initialzing of the the java applet.
-        The applet is called for doing modifications.
-        """
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
-        drawing_exists = 'drawing.svg' in self.list_members()
+    def do_modify(self, contenttype, template_name):
+        # XXX think about and add item template support
+        #if template_name is None and isinstance(self.rev, DummyRev):
+        #    return self._do_modify_show_templates()
+        from MoinMoin.apps.frontend.views import CommentForm
+        class ModifyForm(CommentForm):
+            rev = Integer.using(optional=False)
+            # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+
+        if request.method == 'GET':
+            form = ModifyForm.from_defaults()
+            TextCha(form).amend_form()
+            # XXX currently this is rather pointless, as the form does not get POSTed:
+            form['meta_text'] = self.meta_dict_to_text(self.meta)
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
+        elif request.method == 'POST':
+            # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
+            try:
+                self.modify() # XXX
+            except AccessDeniedError:
+                abort(403)
+            else:
+                # AnyWikiDraw POSTs more than once, redirecting would break them
+                return "OK"
+        try:
+            drawing_exists = 'drawing.svg' in self.list_members()
+        except:
+            drawing_exists = False
         return render_template(self.template,
                                item_name=self.name,
-                               rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               meta_text=self.meta_dict_to_text(self.meta),
+                               rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                drawing_exists=drawing_exists,
                                form=form,
@@ -1458,17 +1527,35 @@ class SvgDraw(TarMixin, Image):
         self.put_member(filename, filecontent, content_length,
                         expected_members=set(['drawing.svg', 'drawing.png']))
 
-    def do_modify(self, template_name):
-        """
-        Fills params into the template for initializing of the applet.
-        """
-        form = TextChaizedForm.from_defaults()
-        TextCha(form).amend_form()
+    def do_modify(self, contenttype, template_name):
+        # XXX think about and add item template support
+        #if template_name is None and isinstance(self.rev, DummyRev):
+        #    return self._do_modify_show_templates()
+        from MoinMoin.apps.frontend.views import CommentForm
+        class ModifyForm(CommentForm):
+            rev = Integer.using(optional=False)
+            # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
+            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+
+        if request.method == 'GET':
+            form = ModifyForm.from_defaults()
+            TextCha(form).amend_form()
+            # XXX currently this is rather pointless, as the form does not get POSTed:
+            form['meta_text'] = self.meta_dict_to_text(self.meta)
+            form['rev'] = self.rev.revno if self.rev.revno is not None else -1
+        elif request.method == 'POST':
+            # this POST comes directly from SvgDraw (not from Browser), thus no validation
+            try:
+                self.modify() # XXX
+            except AccessDeniedError:
+                abort(403)
+            else:
+                # SvgDraw POSTs more than once, redirecting would break them
+                return "OK"
         return render_template(self.template,
                                item_name=self.name,
-                               rows_meta=ROWS_META, cols=COLS,
-                               revno=0,
-                               meta_text=self.meta_dict_to_text(self.meta),
+                               rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
                                gen=make_generator(),

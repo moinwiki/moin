@@ -21,7 +21,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
-
+from MoinMoin.util.interwiki import resolve_interwiki
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
@@ -748,9 +748,14 @@ class Converter(ConverterMacro):
             \s*
             (
                 (?P<link_url>
-                    [a-zA-Z0-9+.-]+
-                    ://
+                    (%(url_schemas)s):
                     [^|]+?
+                )
+                |
+                (
+                    (?P<link_interwiki_site>[A-Z][a-zA-Z]+)
+                    :
+                    (?P<link_interwiki_item>[^|]+) # accept any item name; will verify link_interwiki_site below
                 )
                 |
                 (?P<link_item> [^|]+? )
@@ -770,11 +775,29 @@ class Converter(ConverterMacro):
             )?
             \]\]
         )
-    """
+    """ % dict(url_schemas='|'.join(config.url_schemas))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-            link_text=None, link_args=None):
+            link_text=None, link_args=None,
+            link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
+        if link_interwiki_site:
+            err = resolve_interwiki(link_interwiki_site, link_interwiki_item)[3]
+            if not err:
+                link = Iri(scheme='wiki',
+                        authority=link_interwiki_site,
+                        path='/' + link_interwiki_item)
+                element = moin_page.a(attrib={xlink.href: link})
+                stack.push(element)
+                if link_text:
+                    self.parse_inline(link_text, stack, self.inlinedesc_re)
+                else:
+                    stack.top_append(link_interwiki_item)
+                stack.pop()
+                return
+            else:
+                # assume local language uses ":" inside of words, set link_item and continue
+                link_item = '%s:%s' % (link_interwiki_site, link_interwiki_item)
         if link_args:
             link_args = parse_arguments(link_args) # XXX needs different parsing
             query = url_encode(link_args.keyword, charset=config.charset, encode_keys=True)
@@ -1052,6 +1075,7 @@ class Converter(ConverterMacro):
         inline_macro,
         inline_nowiki,
         inline_emphstrong,
+        inline_object,
     )
     inlinedesc_re = re.compile('|'.join(inlinedesc), re.X | re.U)
 
@@ -1111,4 +1135,5 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_wiki, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=wiki'), type_moin_document)
+
 
