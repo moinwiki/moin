@@ -15,7 +15,7 @@
 import re
 import difflib
 import time
-from babel.dates import format_date
+from flaskext.babel import format_date
 from datetime import datetime
 from itertools import chain
 
