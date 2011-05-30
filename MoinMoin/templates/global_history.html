@@ -9,13 +9,14 @@
 {% block content %}
 <h1>{{ _("Global History") }}</h1>
     <div id="moin-global-history">
-        {% for rev_list in history %}
+        {% for revs in history %}
             <div class="moin-history-container"> 
-                <h2 class="moin-history-container-header">{{ rev_list[0] }}</h2>
+                {% set rev_date = revs[0] %}
+                <h2 class="moin-history-container-header">{{ rev_date }}</h2>
                 <div class="moin-history-container-body">
-                    {% set rev_list = rev_list[1:] %}
+                    {% set revs = revs[1:] %}
                     <table>
-                    {% for rev in rev_list %}
+                    {% for rev in revs %}
                      <tr>
                          <td class="moin-action moin-history-{{ rev.action|lower }}" title="{{ rev.action }}">&nbsp;</td>
                          <td class="moin-history-item"><a href="{{ url_for('frontend.show_item', item_name=rev.item.name) }}">{{ rev.item.name }}</a>
