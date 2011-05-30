@@ -15,6 +15,8 @@
 import re
 import difflib
 import time
+from babel.dates import format_date
+from datetime import datetime
 from itertools import chain
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
@@ -581,10 +583,26 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    history_list = []
+    prev_date = '0000-00-00'
+    temp_list = []
+    for rev in history:
+        tm = datetime.utcfromtimestamp(rev.timestamp)
+        rev_date = format_date(tm)
+        if rev_date == prev_date:
+            temp_list.append(rev)
+        else:
+            history_list.append(temp_list)
+            temp_list = []
+            temp_list.append(rev_date)
+            temp_list.append(rev)
+            prev_date = rev_date
+    history_list.append(temp_list)
+    del history_list[0]  # First item will be a empty one
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=history,
+                           history=history_list,
                           )
 
 @frontend.route('/+wanteds')

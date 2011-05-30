@@ -8,31 +8,28 @@
 
 {% block content %}
 <h1>{{ _("Global History") }}</h1>
-    <table id="moin-global-history">
-        <thead>
-            <tr>
-                <th>{{ _("Timestamp") }}</th>
-                <th>{{ _("Action") }}</th>
-                <th>{{ _("Name") }}</th>
-                <th>{{ _("Rev.") }}</th>
-                <th>{{ _("Content-Type") }}</th>
-                <th>{{ _("Editor") }}</th>
-                <th>{{ _("Comment") }}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for rev in history %}
-        <tr>
-            <td>{{ rev.timestamp|datetimeformat }}</td>
-            <td class="moin-wordbreak">{{ rev.action }}</td>
-            <td class="moin-wordbreak"><a href="{{ url_for('frontend.show_item', item_name=rev.item.name) }}">{{ rev.item.name }}</a>
-                {% if rev.item.name != rev.name %} ({{ rev.name }}){% endif %}</td>
-            <td class="moin-integer">{{ rev.revno }}</td>
-            <td class="moin-wordbreak">{{ rev.contenttype }}</td>
-            <td class="moin-wordbreak">{{ utils.editor_info(rev) }}</td>
-            <td class="moin-wordbreak">{{ rev.comment }}</td>
-        </tr>
+    <div id="moin-global-history">
+        {% for rev_list in history %}
+            <div class="moin-history-container"> 
+                <h2 class="moin-history-container-header">{{ rev_list[0] }}</h2>
+                <div class="moin-history-container-body">
+                    {% set rev_list = rev_list[1:] %}
+                    <table>
+                    {% for rev in rev_list %}
+                     <tr>
+                         <td class="moin-action moin-history-{{ rev.action|lower }}" title="{{ rev.action }}">&nbsp;</td>
+                         <td class="moin-history-item"><a href="{{ url_for('frontend.show_item', item_name=rev.item.name) }}">{{ rev.item.name }}</a>
+                             {% if rev.item.name != rev.name %} ({{ rev.name }}){% endif %}</td>
+                         <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
+                         <td class="moin-integer">{{ rev.revno }}</td>
+                         <td class="moin-wordbreak moin-history-contenttype">{{ rev.contenttype }}</td>
+                         <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(rev) }}</td>
+                         <td class="moin-wordbreak moin-history-comment">{{ rev.comment }}</td>
+                     </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
+    </div>
 {% endblock %}
