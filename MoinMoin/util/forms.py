@@ -85,3 +85,18 @@ def make_generator():
                               error_filter,
                               required_filter, placeholder_filter, autofocus_filter])
 
+
+# other flatland stuff
+
+from flatland import AdaptationError, Scalar
+import werkzeug
+
+
+class FileStorage(Scalar):
+    """Schema element for Werkzeug FileStorage instances."""
+
+    def adapt(self, value):
+        if not isinstance(value, (type(None), werkzeug.FileStorage)):
+            raise AdaptationError
+        return value
+
