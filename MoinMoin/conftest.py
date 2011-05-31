@@ -119,10 +119,10 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
 
 """hook to intercept generators and run them as a single test items"""       
 def pytest_pyfunc_call(pyfuncitem):
-    if inspect.isgeneratorfunction(pyfuncitem.parent.obj):
-        for item in pyfuncitem.parent.obj():
-            item[0](item[1], item[2])
-         #need to stop calls of pyfuncitem in case of generators   
+    if inspect.isgeneratorfunction(pyfuncitem.obj):
+        for item in pyfuncitem.obj():
+            kwarg = item[1:]
+            item[0](*kwarg)           
 
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
