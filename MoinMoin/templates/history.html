@@ -1,0 +1,47 @@
+{% extends theme("show.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    {% if history %}
+    <h1>{{ _("History of '%(item_name)s'", item_name=item_name) }}</h1>
+    <form action="{{ url_for('frontend.diff', item_name=item_name) }}" method="GET">
+        <div id="moin-page-history">
+        <table>
+            <tr>
+                <th>{{ _("Name") }}</th>
+                <th>{{ _("Rev.") }}</th>
+                <th>{{ _("Timestamp") }}</th>
+                <th>{{ _("Size") }}</th>
+                <th><input type="submit" value="Diff" /></th>
+                <th>{{ _("Editor") }}</th>
+                <th>{{ _("Content-Type") }}</th>
+                <th>{{ _("Comment") }}</th>
+                <th colspan="6">{{ _("Actions") }}</th>
+            </tr>
+            {% for rev in history %}
+            <tr>
+                <td class="moin-wordbreak">{{ rev.name }}</td>
+                <td class="moin-integer">{{ rev.revno }}</td>
+                <td>{{ rev.timestamp|datetimeformat }}</td>
+                <td class="moin-integer">{{ rev.size }}</td>
+                <td>
+                    <div class="moin-hist-rev">
+                        <input type="radio" name="rev1" value="{{ rev.revno }}" />
+                        <input type="radio" name="rev2" value="{{ rev.revno }}" />
+                    </div>
+                </td>
+                <td class="moin-wordbreak">{{ utils.editor_info(rev) }}</td>
+                <td class="moin-wordbreak">{{ rev.contenttype }}</td>
+                <td class="moin-wordbreak">{{ rev.comment }}</td>
+                <td><a href="{{ url_for('frontend.show_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('show') }}</a></td>
+                <td><a href="{{ url_for('frontend.show_item_meta', item_name=rev.item.name, rev=rev.revno) }}">{{ _('meta') }}</a></td>
+                <td><a href="{{ url_for('frontend.get_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('download') }}</a></td>
+                <td><a href="{{ url_for('frontend.highlight_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('highlight') }}</a></td>
+                <td><a href="{{ url_for('frontend.revert_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('revert') }}</a></td>
+                <td><a href="{{ url_for('frontend.destroy_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('destroy') }}</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+        </form>
+    {% endif %}
+{% endblock %}
