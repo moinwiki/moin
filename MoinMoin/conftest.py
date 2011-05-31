@@ -23,7 +23,7 @@ collect_ignore = ['static',  # same
                   '../wiki', # no tests there
                   '../instance', # tw likes to use this for wiki data (non-revisioned)
                  ]
-
+i = 0
 import atexit
 import os
 import sys
@@ -89,70 +89,45 @@ def deinit_test_app(app, ctx):
     destroy_app(app)
 
 
-class MoinClassCollector(pytest.collect.Class):
-
+class MoinTestFunction(pytest.collect.Function):
     def setup(self):
         cls = self.obj
         if hasattr(cls, 'Config'):
             given_config = cls.Config
         else:
             given_config = wikiconfig.Config
+        
+        self.app, self.ctx = init_test_app(given_config)
 
-        def setup_method(f):
-            def wrapper(self, *args, **kwargs):
-                # Important: FIRST init the test app, then call the wrapped function.
-                self.app, self.ctx = init_test_app(given_config)
-                # Don't forget to call the class' setup_method if it has one.
-                return f(self, *args, **kwargs)
-            return wrapper
-
-        def teardown_method(f):
-            def wrapper(self, *args, **kwargs):
-                # Don't forget to call the class' teardown_method if it has one.
-                # Important: FIRST call the wrapped function, so it can still
-                # access the stuff removed by deinit_test_app:
-                ret = f(self, *args, **kwargs)
-                deinit_test_app(self.app, self.ctx)
-                return ret
-            return wrapper
-
-        try:
-            # Wrap the actual setup_method in our decorator.
-            cls.setup_method = setup_method(cls.setup_method)
-        except AttributeError:
-            # Perhaps the test class did not define a setup_method.
-            def no_setup(self, method):
-                self.app, self.ctx = init_test_app(given_config)
-            cls.setup_method = no_setup
-
-        try:
-            # Wrap the actual teardown_method in our decorator.
-            cls.teardown_method = teardown_method(cls.teardown_method)
-        except AttributeError:
-            # Perhaps the test class did not define a teardown_method.
-            def no_teardown(self, method):
-                deinit_test_app(self.app, self.ctx)
-            cls.teardown_method = no_teardown
-
-        super(MoinClassCollector, self).setup()
+        super(MoinTestFunction, self).setup()
 
     def teardown(self):
-        super(MoinClassCollector, self).teardown()
+        super(MoinTestFunction, self).teardown()
+        deinit_test_app(self.app, self.ctx)
+        
 
-
+    
+    # Need to modify and add more stuffs    
+    
+    
 def pytest_pycollect_makemodule(path, parent):
     return Module(path, parent=parent)
 
 def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
-    if collector.classnamefilter(name) and inspect.isclass(obj):
-        return MoinClassCollector(name, parent = collector)
+    if collector.funcnamefilter(name) and inspect.isfunction(obj):
+        return MoinTestFunction(name, parent = collector)
+
+"""hook to intercept generators and run them as a single test items"""       
+def pytest_pyfunc_call(pyfuncitem):
+    if inspect.isgeneratorfunction(pyfuncitem.parent.obj):
+        for item in pyfuncitem.parent.obj():
+            item[0](item[1], item[2])
+         #need to stop calls of pyfuncitem in case of generators   
 
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
 
 class Module(pytest.collect.Module):
-    Class = MoinClassCollector
-
     def run(self, *args, **kwargs):
         if coverage is not None:
             coverage_modules.update(getattr(self.obj, 'coverage_modules', []))
