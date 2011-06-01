@@ -7,8 +7,8 @@ MoinMoin - MoinMoin.analyzers Tokenizers and analyzers for indexing schema
 
 
 from flask import current_app as app
-from whoosh.analysis import MultiFilter, RegexTokenizer
-from whoosh.analysis import Tokenizer, Token
+from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
+from whoosh.analysis import Tokenizer, Token, RegexTokenizer
 
 from MoinMoin.util.mime import Type
 from MoinMoin.security import ContentACL
@@ -44,8 +44,5 @@ class AclTokenizer(Tokenizer):
 
 
 def item_name_analyzer():
-    iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True), 
-                      query=IntraWordFilter(mergewords=False, mergenums=False)
-                     )
-    analyzer = RegexTokenizer(r"\S+") | iwf()
+    analyzer = RegexTokenizer(r"\S+") | IntraWordFilter() | LowercaseFilter()
     return analyzer
