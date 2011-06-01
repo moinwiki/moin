@@ -91,7 +91,8 @@ def deinit_test_app(app, ctx):
 
 class MoinTestFunction(pytest.collect.Function):
     def setup(self):
-        cls = self.obj
+        if inspect.isclass(self.parent.obj.__class__):
+            cls = self.parent.obj.__class__
         if hasattr(cls, 'Config'):
             given_config = cls.Config
         else:
