@@ -344,13 +344,9 @@ class Converter(object):
         else:
             # Nothing else worked...try using <object>
             return "object"
+
     def visit_moinpage_object(self, elem):
         href = elem.get(xlink.href, None)
-        if href:
-            if isinstance(href, unicode): # XXX sometimes we get Iri, sometimes unicode - bug?
-                h = href
-            else: # Iri
-                h = href.path[-1] # XXX BUG Iri doesn't have a path if we access the root page (eg. http://google.de doesn't have a path)
         attrib = {}
         mimetype = Type(_type=elem.get(moin_page.type_, 'application/x-nonexistent'))
         # Get the object type
