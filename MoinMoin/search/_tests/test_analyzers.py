@@ -9,7 +9,7 @@
 import py
 
 from MoinMoin.security import ContentACL
-from MoinMoin.search.analyzers import AclTokenizer, MimeTokenizer
+from MoinMoin.search.analyzers import *
 
 
 class TokenizerTestBase(object):
@@ -121,3 +121,17 @@ class TestMimeTokenizer(TokenizerTestBase):
                  ]
 
     tokenizer = MimeTokenizer()
+
+
+class TestItemNameAnalyzer(TokenizerTestBase):
+
+    test_cases = [
+                  (u'wifi', [u'wifi']),
+                  (u'WiFi', [u'wi', u'fi']),
+                  (u'Wi-Fi', [u'wi', u'fi']),
+                  (u'some item name', [u'some', u'item', u'name']),
+                  (u'SomeItem/SubItem', [u'some', u'item', u'sub', u'item']),
+                  (u'GSOC2011', [u'gsoc', u'2011'])
+                 ]
+
+    tokenizer = item_name_analyzer()
