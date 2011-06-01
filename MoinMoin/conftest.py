@@ -101,6 +101,8 @@ class MoinTestFunction(pytest.collect.Function):
         self.app, self.ctx = init_test_app(given_config)
 
         super(MoinTestFunction, self).setup()
+        #XXX: hack till we get better funcarg tools
+        self._obj.im_self.app = self.app
 
     def teardown(self):
         super(MoinTestFunction, self).teardown()
