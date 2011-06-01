@@ -23,7 +23,6 @@ collect_ignore = ['static',  # same
                   '../wiki', # no tests there
                   '../instance', # tw likes to use this for wiki data (non-revisioned)
                  ]
-i = 0
 import atexit
 import os
 import sys
@@ -36,37 +35,6 @@ from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 
 coverage_modules = set()
-
-try:
-    """
-    This code adds support for coverage.py (see
-    http://nedbatchelder.com/code/modules/coverage.html).
-    It prints a coverage report for the modules specified in all
-    module globals (of the test modules) named "coverage_modules".
-    """
-
-    import coverage
-
-    def report_coverage():
-        coverage.stop()
-        module_list = sorted([sys.modules[mod] for mod in coverage_modules])
-        coverage.report(module_list)
-
-    def callback(option, opt_str, value, parser):
-        atexit.register(report_coverage)
-        coverage.erase()
-        coverage.start()
-
-    def pytest_addoption(parser):
-        group = parser.getgroup('MoinMoin options')
-        group.addoption(
-            '-C', '--coverage',
-            action='callback', callback=callback,
-            help='Output information about code coverage (slow!)')
-
-except ImportError:
-    coverage = None
-
 
 
 def init_test_app(given_config):
