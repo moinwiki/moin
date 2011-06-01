@@ -89,8 +89,8 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
     if collector.funcnamefilter(name) and inspect.isfunction(obj):
         return MoinTestFunction(name, parent = collector)
 
-"""hook to intercept generators and run them as a single test items"""       
 def pytest_pyfunc_call(pyfuncitem):
+    """hook to intercept generators and run them as a single test items"""       
     if inspect.isgeneratorfunction(pyfuncitem.obj):
         for item in pyfuncitem.obj():
             kwarg = item[1:]
