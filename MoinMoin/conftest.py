@@ -70,7 +70,8 @@ class MoinTestFunction(pytest.collect.Function):
 
         super(MoinTestFunction, self).setup()
         #XXX: hack till we get better funcarg tools
-        self._obj.im_self.app = self.app
+        if hasattr(self._obj, 'im_self'):
+            self._obj.im_self.app = self.app
 
     def teardown(self):
         super(MoinTestFunction, self).teardown()
