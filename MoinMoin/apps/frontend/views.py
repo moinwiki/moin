@@ -40,7 +40,6 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
 from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
-from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -305,7 +304,6 @@ def revert_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -330,7 +328,6 @@ def copy_item(item_name):
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -355,7 +352,6 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -378,7 +374,6 @@ def delete_item(item_name):
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -410,7 +405,6 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -811,7 +805,6 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -869,7 +862,6 @@ def lostpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -925,7 +917,6 @@ def recoverpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -998,7 +989,6 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1158,7 +1148,6 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
-                           gen=make_generator(),
                            form=form,
                           )
 
