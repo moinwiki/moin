@@ -107,6 +107,36 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
+class ValidSearch(Validator):
+    """Validator for a valid search form
+    """
+    too_short_query_msg = L_('Search query too short.')
+
+    def validate(self, element, state):
+        if len(element['q'].value) < 2:
+            return self.note_error(element, state, 'too_short_query_msg')
+        return True
+
+class SearchForm(Form):
+    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
+    submit = String.using(default=L_('Search'), optional=True)
+
+    validators = [ValidSearch()]
+
+@frontend.route('/+search', methods=['GET', 'POST'])
+def search():
+    form = SearchForm.from_flat(request.values)
+    if form.validate():
+        query = form['q'].value
+        return _search(query)
+    # XXX show this on the UI in some pretty way:
+    return "search form did not validate: %r" % form.errors
+
+
+def _search(query):
+    return "searching not implemented yet, query: %r" % query
+
+
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
 @frontend.route('/+show/<int:rev>/<itemname:item_name>')
 def show_item(item_name, rev):
@@ -139,6 +169,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
+                              search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
@@ -515,15 +546,6 @@ def _backrefs(items, item_name):
         if item_name in refs:
             refs_here.append(current_item)
     return refs_here
-
-
-@frontend.route('/+search')
-def search():
-    return _search()
-
-
-def _search(**args):
-    return "searching for %r not implemented yet" % args
 
 
 @frontend.route('/+history/<itemname:item_name>')
