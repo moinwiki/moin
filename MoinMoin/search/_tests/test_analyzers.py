@@ -134,4 +134,18 @@ class TestItemNameAnalyzer(TokenizerTestBase):
                   (u'GSOC2011', [u'gsoc', u'2011'])
                  ]
 
+    test_cases_index = [(u'some item name', [u'some', u'item', u'name']),
+                        (u'SomeItem/SubItem', [u'some', u'item', u'sub', u'item', u'someitemsubitem']),
+                        (u'GSOC2011', [u'gsoc', u'2011'])
+                       ]
+
     tokenizer = item_name_analyzer()
+
+    def testTokenizer(self):
+        for value, expected_tokens in self.test_cases:
+            tokens = [token.text for token in self.tokenizer(value, mode="query")]
+            assert set(expected_tokens) == set(tokens)
+        for value, expected_tokens in self.test_cases_index:
+            tokens = [token.text for token in self.tokenizer(value, mode="index")]
+            assert set(expected_tokens) == set(tokens)
+
