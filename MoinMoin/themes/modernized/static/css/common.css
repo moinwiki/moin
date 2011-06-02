@@ -463,12 +463,13 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
             line-height: 1.12em; }
 
 /* moin-header searchform */
-#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: right; }
+#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: left; }
 #moin-searchform input { font-size: 100%; vertical-align: middle;
             background-color: #F3F7FD; /* same as body bg col */
             border: 1px solid #A4B9DF; }
-#moin-searchform label { display:none; }
 #moin-searchform div { margin: 0; }
+#moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
+#moin-searchform li { list-style:none; }
 
 /* moin-header moin-logo -- logos may be text only */
 #moin-logo { float: left; margin: 5px 10px; padding: 0; font-size: 1.4em; line-height: 1em; font-weight: bold; }
