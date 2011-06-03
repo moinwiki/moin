@@ -18,14 +18,53 @@
                     <table>
                     {% for rev in revs %}
                      <tr>
-                         <td class="moin-action moin-history-{{ rev.action|lower }}" title="{{ rev.action }}">&nbsp;</td>
-                         <td class="moin-history-item"><a href="{{ url_for('frontend.show_item', item_name=rev.item.name) }}">{{ rev.item.name }}</a>
-                             {% if rev.item.name != rev.name %} ({{ rev.name }}){% endif %}</td>
-                         <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
-                         <td class="moin-integer">{{ rev.revno }}</td>
-                         <td class="moin-wordbreak moin-history-contenttype">{{ rev.contenttype }}</td>
-                         <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(rev) }}</td>
-                         <td class="moin-wordbreak moin-history-comment">{{ rev.comment }}</td>
+                        {% set item_name = rev[0] %}
+                        {% set timestamp = rev[1] %}
+                        {% set action = rev[2] %}
+                        {% set contenttype = rev[4] %}
+                         <td class="moin-action moin-history-{{ rev[2]|lower }}" title="{{ rev[2] }}">&nbsp;</td>
+                         <td class="moin-history-item"><a href="{{ url_for('frontend.show_item', item_name=rev[0]) }}">{{ rev[0] }}</a>
+                         <td class="moin-history-time">{{ rev[1]|timeformat }}</td>
+                         <td class="moin-wordbreak moin-history-contenttype">{{ rev[4] }}</td>
+                         <td class="moin-history-links">
+                             {% set revnos = rev[5] %}
+                             {% for revno in revnos %}
+                                 {% if revno - 1 > -1 %}
+                                     <a href="{{ url_for('frontend.diff', item_name=rev[0],rev1=revno,rev2=revno-1) }}">{{ _("[%(revno)s]", revno=(revno-1)) }}</a>
+                                 {% else %}
+                                     <span>{{ _("None") }}</span>
+                                 {% endif %}
+                             {% endfor %}
+                         </td>
+                         <td class="moin-wordbreak moin-history-editorinfo">
+                             {% set editors = rev[6] %}
+                             {% for editor in editors %}
+			         <span class="moin-history-editortext">
+                                 {% set info = editor[0] %}
+                                 {% set position = editor[1] %}
+			         {% if "uri" in info %}
+			             <a href="{{ info["uri"] }}" class="{{ info["css"] }}" title="{{ info["title"] }}">
+			         {% elif "email" in info %}
+			             <a href="mailto:{{ info["email"] }}" class="{{ info["css"] }}" title="{{ info["title"] }}">
+			         {% else %}
+			             <span class="{{ info["css"] }}" title="{{ info["title"] }}">
+			         {% endif %}
+			         {{ info["text"] }}
+			         {% if ("uri" in info)  or ("email" in info) %}
+			             </a>
+			         {% else %}
+			             </span>
+			         {% endif %}
+			         {{ _("%(position)s",position=position) }}
+			         </span>
+			     {% endfor %}
+                         </td>
+                         <td class="moin-wordbreak moin-history-comment">
+                             {% set comments = rev[7] %}
+                             {% for comment in comments %}
+                                 <span>{{ comment }}</span>
+			     {% endfor %}
+                        </td>
                      </tr>
                     {% endfor %}
                     </table>
