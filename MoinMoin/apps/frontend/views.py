@@ -18,6 +18,7 @@ import time
 from flaskext.babel import format_date
 from datetime import datetime
 from itertools import chain
+from  collections import OrderedDict
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
@@ -36,12 +37,12 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
+from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
-from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -546,22 +547,86 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    item_dict = OrderedDict()
+    for rev in history:
+        current_item_name = rev.item.name
+        if current_item_name in item_dict:
+            item_dict[current_item_name].append(rev)
+        else:
+           item_dict[current_item_name] = [rev]
+
+    # Got the item dict, now doing grouping inside them
+    for  key, value in item_dict.items():
+        editors_dict = OrderedDict()
+        editors = []
+        revnos = []
+        comments = []
+        current_rev = value[0]
+        item_timestamp = current_rev.timestamp
+        item_contenttype = current_rev.get(CONTENTTYPE)
+        action = current_rev.get(ACTION)
+        name = current_rev.get(NAME)
+
+        # Aggregating comments,authors and revno
+        item_num = 1
+        for rev in value:
+            revnos.append(rev.revno)
+            comment = rev.get(COMMENT)
+            if comment:
+                comment = "#"+str(item_num)+" "+comment
+                comments.append(comment)
+            editor = get_editor_info(rev, external=True)
+            editor_name = editor["name"]
+            if editor_name in editors_dict:
+               editors_dict[editor_name][1].append(item_num)
+            else:
+                editors_dict[editor_name] = (editor, [item_num])
+            item_num = item_num + 1
+
+        if item_num == 2: # there is only one revision for that item
+            editor_tuple = (editors_dict.values())[0]
+            info = editor_tuple[0]
+            info_tuple = (info, "")
+            editors.append(info_tuple)
+        else:
+            # Find the revision number for each editor
+            for editor_tuple in editors_dict.values():
+                positions = editor_tuple[1]
+                pos_str = str(positions[0])
+                i = 0
+                for position in positions[1:]:
+                    i = i + 1
+                    if position == (positions[i-1]+1):
+                        if i < (len(positions)-1) and  position == (positions[i+1]-1):
+                            continue
+                        else:
+                            pos_str += "-"+str(position)
+                    else:
+                        pos_str += ","+str(position)
+                pos_str = "["+pos_str+"]"
+                info = editor_tuple[0]
+                info_tuple = (info, pos_str)
+                editors.append(info_tuple)
+        item_dict[key]= (key, item_timestamp, action, name, item_contenttype, revnos, editors, comments)
+
+    # Grouping on the date basis
     history_list = []
     prev_date = '0000-00-00'
-    temp_list = []
-    for rev in history:
-        tm = datetime.utcfromtimestamp(rev.timestamp)
+    item_list = []
+    for item in item_dict.values():
+        tm = datetime.utcfromtimestamp(item[1])
         rev_date = format_date(tm)
         if rev_date == prev_date:
-            temp_list.append(rev)
+            item_list.append(item)
         else:
-            history_list.append(temp_list)
-            temp_list = []
-            temp_list.append(rev_date)
-            temp_list.append(rev)
+            history_list.append(item_list)
+            item_list = []
+            item_list.append(rev_date)
+            item_list.append(item)
             prev_date = rev_date
-    history_list.append(temp_list)
-    del history_list[0]  # First item will be a empty one
+    history_list.append(item_list)
+    del history_list[0]  # First item will be a empty one 
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
