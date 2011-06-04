@@ -29,7 +29,7 @@ import sys
 import inspect
 
 import pytest
-
+import py
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
@@ -58,27 +58,27 @@ def deinit_test_app(app, ctx):
 
 
 class MoinTestFunction(pytest.collect.Function):
-    def setup(self):
-        if inspect.isclass(self.parent.obj.__class__):
-            cls = self.parent.obj.__class__
-        if hasattr(cls, 'Config'):
-            given_config = cls.Config
-        else:
-            given_config = wikiconfig.Config
-        
-        self.app, self.ctx = init_test_app(given_config)
+    try:
+        def setup(self):
+            if inspect.isclass(self.parent.obj.__class__):
+                cls = self.parent.obj.__class__
+            if hasattr(cls, 'Config'):
+                given_config = cls.Config
+            else:
+                given_config = wikiconfig.Config
+            
+            #pytest.set_trace()
+            self.app, self.ctx = init_test_app(given_config)
+            super(MoinTestFunction, self).setup()
+            #XXX: hack till we get better funcarg tools
+            if hasattr(self._obj, 'im_self'):
+                self._obj.im_self.app = self.app
 
-        super(MoinTestFunction, self).setup()
-        #XXX: hack till we get better funcarg tools
-        if hasattr(self._obj, 'im_self'):
-            self._obj.im_self.app = self.app
+    finally:
+        def teardown(self):
+            super(MoinTestFunction, self).teardown()
+            deinit_test_app(self.app, self.ctx)        
 
-    def teardown(self):
-        super(MoinTestFunction, self).teardown()
-        deinit_test_app(self.app, self.ctx)
-        
-
-    
     # Need to modify and add more stuffs    
     
     
