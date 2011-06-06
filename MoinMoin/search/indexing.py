@@ -6,15 +6,11 @@
 """
 
 
-import os.path
-
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
 from whoosh.analysis import entoken
-from whoosh.index import open_dir, create_in
+from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.search.analyzers import *
-from MoinMoin import log
-logging = log.getLogger(__name__)
 
 '''
 for text items, it will be duplication. For "binary" items, it will only store
@@ -27,18 +23,18 @@ pdftotext outputs as text, if it is a mp3, it will only store title/author/genre
 class WhooshIndex(object):
 
     items_schema=Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer),
-                        uuid=ID(unique=True, stored=True),
-                        rev_no=NUMERIC(stored=True),
-                        datetime=DATETIME(stored=True),
-                        content=TEXT(stored=True),
-                        mimetype=TEXT(stored=True, analyzer=MimeTokenizer),
-                        tags=TEXT(analyzer=entoken, stored=True),
-                        itemlinks=TEXT(analyzer=entoken, stored=True),
-                        itemtransclusions=TEXT(analyzer=entoken, stored=True),
-                        acl=TEXT(analyzer=AclTokenizer, stored=True),
-                        language=ID(stored=True),
-                        metadata=TEXT(stored=True),
-                       )
+                       uuid=ID(unique=True, stored=True),
+                       rev_no=NUMERIC(stored=True),
+                       datetime=DATETIME(stored=True),
+                       content=TEXT(stored=True),
+                       mimetype=TEXT(stored=True, analyzer=MimeTokenizer),
+                       tags=TEXT(analyzer=entoken, stored=True),
+                       itemlinks=TEXT(analyzer=entoken, stored=True),
+                       itemtransclusions=TEXT(analyzer=entoken, stored=True),
+                       acl=TEXT(analyzer=AclTokenizer(), stored=True),
+                       language=ID(stored=True),
+                       metadata=TEXT(stored=True),
+                      )
 
     revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer),
                               uuid=ID(stored=True),
@@ -50,36 +46,52 @@ class WhooshIndex(object):
                               language=ID(stored=True),
                               metadata=TEXT(stored=True),
                              )
-    index_path = "MoinMoin/search/index/"
-    items = "items"
-    revisions = "revisions"
 
-    def __init__(self):
-        if not os.path.exists(self.index_path): # checking what MoinMoin/search/index exists
-            try:
-                from os import mkdir
-                schema = ""
-                mkdir(self.index_path) # create if it doesn't exist
-                # create index dirs for items and revisions schemas under MoinMoin/search/index
-                for schema in [self.items, self.revisions]:
-                    mkdir(self.index_path + schema)
-                    create_in(self.index_path + schema, getattr(self, schema + "_schema"))
-            except IOError:
-                logging.error(u"Can not create '%s' index directory" % self.index_path + schema)
-        try:
-        # Try to open it
-            schema = ""
-            for schema in [self.items, self.revisions]:
-                setattr(self, schema, open_dir(self.index_path + schema))
-        except IOError:
-            logging.error(u"Can not open '%s'. Manually remove '%s' and rebuild indexes" % (self.index_path + schema, self.index_path))
+    indexes = [('items', 'items_schema'),
+               ('revisions', 'revisions_schema'),
+              ]
 
-    def rebuild(self):
+    def __init__(self, index_dir=None):
+        index_dir = index_dir or app.cfg.index_dir
+        for index_name, index_schema in self.indexes:
+            index = self.open_index(index_dir, index_name, index_schema, create=True)
+            setattr(self, index_name, index)
+
+
+    def open_index(self, indexdir, indexname, schema, create=False):
+        """
+        open index <indexname> in <indexdir>. if opening fails and <create>
+        is True, try creating the index and retry opening it afterwards.
+        return index object.
+        """
+        try: # open indexes
+            index = open_dir(indexdir, indexname=indexname)
+            return index
+        except (IOError, OSError, EmptyIndexError) as err:
+            if create:
+                try:
+                    os.mkdir(indexdir)
+                except:
+                    # ignore exception, we'll get another exception below
+                    # in case there are problems with the indexdir
+                    pass
+                try:
+                    create_in(indexdir, getattr(self, schema), indexname=indexname)
+                    index = open_dir(indexdir, indexname=indexname)
+                    return index
+                except (IOError, OSError) as err:
+                    logging.error(u"%s [while trying to create/open index '%s' in '%s']" % (str(err), indexname, indexdir))
+            else:
+                logging.error(u"%s [while trying to open index '%s' in '%s']" % (str(err), indexname, indexdir))
+            # if we get here, it failed without recovery
+            from MoinMoin.error import FatalError
+            raise FatalError("can't open nor create whoosh index")
+
+    def rebuild():
         pass
 
-    def add(self):
+    def add():
         pass
 
-    def remove(self):
+    def remove():
         pass
-
