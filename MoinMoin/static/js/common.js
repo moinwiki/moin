@@ -4,43 +4,6 @@
 
 var QUICKLINKS_EXPAND = ">>>";
 var QUICKLINKS_COLLAPSE = "<<<";
-// We keep here the state of the search box
-searchIsDisabled = false;
-
-function searchChange(e) {
-    // Update search buttons status according to search box content.
-    // Ignore empty or whitespace search term.
-    var value = e.value.replace(/\s+/, '');
-    if (value == '' || searchIsDisabled) {
-        searchSetDisabled(true);
-    } else {
-        searchSetDisabled(false);
-    }
-}
-
-function searchSetDisabled(flag) {
-    // Enable or disable search
-    document.getElementById('moin-fullsearch').disabled = flag;
-    document.getElementById('moin-titlesearch').disabled = flag;
-}
-
-function searchFocus(e) {
-    // Update search input content on focus
-    if (e.value == search_hint) {
-        e.value = '';
-        e.className = '';
-        searchIsDisabled = false;
-    }
-}
-
-function searchBlur(e) {
-    // Update search input content on blur
-    if (e.value == '') {
-        e.value = search_hint;
-        e.className = 'disabled';
-        searchIsDisabled = true;
-    }
-}
 
 // use this instead of assigning to window.onload directly:
 function addLoadEvent(func) {
@@ -785,28 +748,6 @@ $(function() {
         }
         this.selectedIndex = 0;
     });
-
-    // Functions related to search form
-    var e = document.getElementById('moin-searchinput');
-    searchChange(e);
-    searchBlur(e);
-
-    $('#moin-searchinput').blur(function(){
-        searchBlur(this);
-    });
-
-    $('#moin-searchinput').focus(function(){
-        searchFocus(this);
-    });
-
-    $('#moin-searchinput').change(function(){
-        searchChange(this);
-    });
-
-    $('#moin-searchinput').keyup(function(){
-        searchChange(this);
-    });
-
 
 });
 

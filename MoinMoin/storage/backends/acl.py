@@ -168,14 +168,15 @@ class AclWrapperBackend(object):
             item = self.backend.get_item(itemname)
             # we always use the ACLs set on the latest revision:
             current_rev = item.get_revision(-1)
-            acls = current_rev[ACL]
+            acl = current_rev[ACL]
+            if not isinstance(acl, unicode):
+                raise TypeError("%s metadata has unsupported type: %r" % (ACL, acl))
+            acls = [acl, ]
         except (NoSuchItemError, NoSuchRevisionError, KeyError):
             # do not use default acl here
             acls = []
-        if not isinstance(acls, (tuple, list)):
-            acls = (acls, )
         default = self.default.default
-        return ContentACL(self.cfg, acls, default=default, valid=self.valid)
+        return ContentACL(self.cfg, tuple(acls), default=default, valid=self.valid)
 
     def _may(self, itemname, right, username=None):
         """ Check if username may have <right> access on item <itemname>.
@@ -482,7 +483,7 @@ class AclWrapperRevision(object, DictMixin):
                 last_rev = self._item.get_revision(-1)
                 last_acl = last_rev[ACL]
             except (NoSuchRevisionError, KeyError):
-                last_acl = ''
+                last_acl = u''
 
             acl_changed = value != last_acl
 
