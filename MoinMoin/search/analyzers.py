@@ -29,7 +29,8 @@ class MimeTokenizer(Tokenizer):
 
 
 class AclTokenizer(Tokenizer):
-    def __call__(self, value):
+
+    def __call__(self, value, **kwargs):
         assert isinstance(value, list) # so you'll notice if it blows up
         for acl_right in value:
             assert isinstance(acl_right, unicode), "%r is not unicode" % acl_right
@@ -43,7 +44,7 @@ class AclTokenizer(Tokenizer):
                 yield tk
 
 
-def item_name_analyzer():
+def item_name_analyzer(value, **kwargs):
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
                      )
