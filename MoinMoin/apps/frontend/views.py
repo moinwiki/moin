@@ -40,7 +40,6 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
 from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
-from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -108,9 +107,40 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
-@frontend.route('/+show/<int:rev>/<itemname:item_name>')
+class ValidSearch(Validator):
+    """Validator for a valid search form
+    """
+    too_short_query_msg = L_('Search query too short.')
+
+    def validate(self, element, state):
+        if element['q'].value is None:
+            # no query, nothing to search for
+            return False
+        if len(element['q'].value) < 2:
+            return self.note_error(element, state, 'too_short_query_msg')
+        return True
+
+class SearchForm(Form):
+    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
+    submit = String.using(default=L_('Search'), optional=True)
+
+    validators = [ValidSearch()]
+
+
+def _search(query):
+    return "searching not implemented yet, query: %r" % query
+
+
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
+@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def show_item(item_name, rev):
+    # first check whether we have a valid search query:
+    search_form = SearchForm.from_flat(request.values)
+    if search_form.validate():
+        query = search_form['q'].value
+        return _search(query)
+    search_form['submit'].set_default() # XXX from_flat() kills all values
+
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -140,6 +170,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
+                              search_form=search_form,
                              )
     return Response(content, status)
 
@@ -305,7 +336,6 @@ def revert_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -330,7 +360,6 @@ def copy_item(item_name):
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -355,7 +384,6 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -378,7 +406,6 @@ def delete_item(item_name):
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -410,7 +437,6 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -521,15 +547,6 @@ def _backrefs(items, item_name):
         if item_name in refs:
             refs_here.append(current_item)
     return refs_here
-
-
-@frontend.route('/+search')
-def search():
-    return _search()
-
-
-def _search(**args):
-    return "searching for %r not implemented yet" % args
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -811,7 +828,6 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -869,7 +885,6 @@ def lostpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -925,7 +940,6 @@ def recoverpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -998,7 +1012,6 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1158,7 +1171,6 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
-                           gen=make_generator(),
                            form=form,
                           )
 
