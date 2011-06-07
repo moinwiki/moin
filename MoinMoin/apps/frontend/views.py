@@ -1,4 +1,5 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -18,7 +19,7 @@ import time
 from flaskext.babel import format_date
 from datetime import datetime
 from itertools import chain
-from  collections import OrderedDict
+from collections import namedtuple, OrderedDict
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
@@ -547,90 +548,104 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
-    item_dict = OrderedDict()
+    item_groups = OrderedDict()
     for rev in history:
         current_item_name = rev.item.name
-        if current_item_name in item_dict:
-            item_dict[current_item_name].append(rev)
+        if current_item_name in item_groups:
+            item_groups[current_item_name].append(rev)
         else:
-           item_dict[current_item_name] = [rev]
+            item_groups[current_item_name] = [rev]
 
     # Got the item dict, now doing grouping inside them
-    for  key, value in item_dict.items():
-        editors_dict = OrderedDict()
+    editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
+    for item_name, revs in item_groups.items():
+        item_info = {}
+        editors_info = OrderedDict()
         editors = []
         revnos = []
         comments = []
-        current_rev = value[0]
-        item_timestamp = current_rev.timestamp
-        item_contenttype = current_rev.get(CONTENTTYPE)
-        action = current_rev.get(ACTION)
-        name = current_rev.get(NAME)
+        current_rev = revs[0]
+        item_info["item_name"] = item_name
+        item_info["timestamp"] = current_rev.timestamp
+        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
+        item_info["action"] = current_rev.get(ACTION)
+        item_info["name"] = current_rev.get(NAME)
 
-        # Aggregating comments,authors and revno
-        item_num = 1
-        for rev in value:
+        # Aggregating comments, authors and revno
+        for rev in revs:
             revnos.append(rev.revno)
             comment = rev.get(COMMENT)
             if comment:
-                comment = "#"+str(item_num)+" "+comment
+                comment = "#%(revno)d %(comment)s" % {
+                          'revno': rev.revno,
+                          'comment': comment
+                          }
                 comments.append(comment)
-            editor = get_editor_info(rev, external=True)
+            editor = get_editor_info(rev)
             editor_name = editor["name"]
-            if editor_name in editors_dict:
-               editors_dict[editor_name][1].append(item_num)
+            if editor_name in editors_info:
+                editors_info[editor_name].editor_revnos.append(rev.revno)
             else:
-                editors_dict[editor_name] = (editor, [item_num])
-            item_num = item_num + 1
+                editors_info[editor_name] = editor_info(editor, [rev.revno])
 
-        if item_num == 2: # there is only one revision for that item
-            editor_tuple = (editors_dict.values())[0]
-            info = editor_tuple[0]
+        if len(revnos) == 1:
+            # there is only one change for this item in the history considered
+            info, positions = editors_info[editor_name]
             info_tuple = (info, "")
             editors.append(info_tuple)
         else:
-            # Find the revision number for each editor
-            for editor_tuple in editors_dict.values():
-                positions = editor_tuple[1]
-                pos_str = str(positions[0])
-                i = 0
+            # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
+            for info, positions in editors_info.values():
+                positions.reverse()
+                position_range = str(positions[0])
+                pos_index = 1
                 for position in positions[1:]:
-                    i = i + 1
-                    if position == (positions[i-1]+1):
-                        if i < (len(positions)-1) and  position == (positions[i+1]-1):
+                    if position == positions[pos_index-1] + 1:
+                        if pos_index < len(positions) - 1 and  position == positions[pos_index+1] - 1:
+                            pos_index += 1
                             continue
                         else:
-                            pos_str += "-"+str(position)
+                            position_range = "%(position_range)s-%(position)d" % {
+                                             'position_range': position_range,
+                                             'position': position
+                                             }
                     else:
-                        pos_str += ","+str(position)
-                pos_str = "["+pos_str+"]"
-                info = editor_tuple[0]
-                info_tuple = (info, pos_str)
+                        position_range = "%(position_range)s,%(position)d" % {
+                                         'position_range': position_range,
+                                         'position': position
+                                         }
+                    pos_index += 1
+
+                position_range = "[%(position_range)s]" % {'position_range': position_range}
+                info_tuple = (info, position_range)
                 editors.append(info_tuple)
-        item_dict[key]= (key, item_timestamp, action, name, item_contenttype, revnos, editors, comments)
+
+        item_info["revnos"] = revnos
+        item_info["editors"] = editors
+        item_info["comments"] = comments
+        item_groups[item_name] = item_info
 
     # Grouping on the date basis
-    history_list = []
+    grouped_history = []
     prev_date = '0000-00-00'
-    item_list = []
-    for item in item_dict.values():
-        tm = datetime.utcfromtimestamp(item[1])
+    rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
+    rev_tuples = rev_tuple(prev_date, [])
+    for item_group in item_groups.values():
+        tm = datetime.utcfromtimestamp(item_group["timestamp"])
         rev_date = format_date(tm)
         if rev_date == prev_date:
-            item_list.append(item)
+            rev_tuples.item_revs.append(item_group)
         else:
-            history_list.append(item_list)
-            item_list = []
-            item_list.append(rev_date)
-            item_list.append(item)
+            grouped_history.append(rev_tuples)
+            rev_tuples = rev_tuple(rev_date, [item_group])
             prev_date = rev_date
-    history_list.append(item_list)
-    del history_list[0]  # First item will be a empty one 
+    grouped_history.append(rev_tuples)
+    del grouped_history[0]  # First tuple will be a null one
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=history_list,
+                           history=grouped_history,
                           )
 
 @frontend.route('/+wanteds')
