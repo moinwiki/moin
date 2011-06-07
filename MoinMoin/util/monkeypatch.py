@@ -1,4 +1,5 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:AkashSinha
 # License: the individual patches have same license as the code they are patching
 
 """
@@ -30,7 +31,7 @@ from werkzeug import posixemulation
 import sys
 posixemulation.sys = sys
 
-# collections patching for the class OrderedDict for the python versions < 2.7 
+# collections patching for the class OrderedDict for the python versions < 2.7
 import collections
 if "OrderedDict" not in dir(collections):
     from sqlalchemy.util import OrderedDict
