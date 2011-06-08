@@ -33,9 +33,11 @@ import py
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
+import MoinMoin.log
 
-coverage_modules = set()
-
+Moindir = py.path.local(__file__).dirname
+config_file = Moindir + '/test_logging.conf'
+MoinMoin.log.load_config(config_file)
 
 def init_test_app(given_config):
     namespace_mapping, router_index_uri = create_simple_mapping("memory:", given_config.content_acl)
