@@ -66,8 +66,7 @@ class MoinTestFunction(pytest.collect.Function):
                 given_config = cls.Config
             else:
                 given_config = wikiconfig.Config
-            
-            #pytest.set_trace()
+
             self.app, self.ctx = init_test_app(given_config)
             super(MoinTestFunction, self).setup()
             #XXX: hack till we get better funcarg tools
