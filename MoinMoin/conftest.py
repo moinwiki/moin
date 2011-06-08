@@ -35,6 +35,7 @@ from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 import MoinMoin.log
 
+""" Logging for tests to avoid error messages(stderr) on test failures"""
 Moindir = py.path.local(__file__).dirname
 config_file = Moindir + '/test_logging.conf'
 MoinMoin.log.load_config(config_file)
