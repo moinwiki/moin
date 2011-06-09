@@ -22,33 +22,33 @@ pdftotext outputs as text, if it is a mp3, it will only store title/author/genre
 
 class WhooshIndex(object):
 
-    items_schema=Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer),
-                       uuid=ID(unique=True, stored=True),
-                       rev_no=NUMERIC(stored=True),
-                       datetime=DATETIME(stored=True),
-                       content=TEXT(stored=True),
-                       mimetype=TEXT(stored=True, analyzer=MimeTokenizer),
-                       tags=TEXT(analyzer=entoken, stored=True),
-                       itemlinks=TEXT(analyzer=entoken, stored=True),
-                       itemtransclusions=TEXT(analyzer=entoken, stored=True),
-                       acl=TEXT(analyzer=AclTokenizer(), stored=True),
-                       language=ID(stored=True),
-                       metadata=TEXT(stored=True),
-                      )
+    latest_revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer()),
+                                     uuid=ID(unique=True, stored=True),
+                                     rev_no=NUMERIC(stored=True),
+                                     datetime=DATETIME(stored=True),
+                                     content=TEXT(stored=True),
+                                     mimetype=TEXT(stored=True, analyzer=MimeTokenizer()),
+                                     tags=ID(stored=True),
+                                     itemlinks=ID(stored=True),
+                                     itemtransclusions=ID(stored=True),
+                                     acl=TEXT(analyzer=AclTokenizer(), stored=True),
+                                     language=ID(stored=True),
+                                     metadata=TEXT(stored=True),
+                                    )
 
-    revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer),
-                              uuid=ID(stored=True),
-                              rev_no=NUMERIC(stored=True),
-                              datetime=DATETIME(stored=True),
-                              content=TEXT(stored=True),
-                              mimetype=TEXT(stored=True,analyzer=MimeTokenizer),
-                              tags=TEXT(analyzer=entoken, stored=True),
-                              language=ID(stored=True),
-                              metadata=TEXT(stored=True),
-                             )
+    all_revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer()),
+                                  uuid=ID(stored=True),
+                                  rev_no=NUMERIC(stored=True),
+                                  datetime=DATETIME(stored=True),
+                                  content=TEXT(stored=True),
+                                  mimetype=TEXT(stored=True,analyzer=MimeTokenizer()),
+                                  tags=TEXT(stored=True),
+                                  language=ID(stored=True),
+                                  metadata=TEXT(stored=True),
+                                 )
 
-    indexes = [('items', 'items_schema'),
-               ('revisions', 'revisions_schema'),
+    indexes = [('latest_revisions_index', 'latest_revisions_schema'),
+               ('all_revisions_index', 'all_revisions_schema'),
               ]
 
     def __init__(self, index_dir=None):
@@ -87,11 +87,6 @@ class WhooshIndex(object):
             from MoinMoin.error import FatalError
             raise FatalError("can't open nor create whoosh index")
 
-    def rebuild():
+    def rebuild(self):
         pass
 
-    def add():
-        pass
-
-    def remove():
-        pass
