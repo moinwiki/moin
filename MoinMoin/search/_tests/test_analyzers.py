@@ -23,9 +23,9 @@ class TokenizerTestBase(object):
 class TestAclTokenizer(TokenizerTestBase):
 
     test_cases = [
-        ([u'-MinusGuy:read'], [u'MinusGuy:-read']),
-        ([u'+PlusGuy:read'], [u'PlusGuy:+read']),
-        ([u'Admin3:read,write,admin'],
+        (u'-MinusGuy:read', [u'MinusGuy:-read']),
+        (u'+PlusGuy:read', [u'PlusGuy:+read']),
+        (u'Admin3:read,write,admin',
             [
              u'Admin3:+read',
              u'Admin3:+write',
@@ -34,7 +34,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'Admin3:-destroy',
             ]
         ),
-        ([u'Admin1,Admin2:read,write,admin'],
+        (u'Admin1,Admin2:read,write,admin',
             [
              u'Admin1:+read',
              u'Admin1:+write',
@@ -48,7 +48,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'Admin2:-destroy',
             ]
         ),
-        ([u'JoeDoe:read,write'],
+        (u'JoeDoe:read,write',
             [
              u'JoeDoe:+read',
              u'JoeDoe:+write',
@@ -57,7 +57,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'JoeDoe:-destroy',
             ]
         ),
-        ([u'name with spaces,another one:read,write'],
+        (u'name with spaces,another one:read,write',
             [
              u'name with spaces:+read',
              u'name with spaces:+write',
@@ -71,7 +71,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'another one:-destroy',
             ]
         ),
-        ([u'CamelCase,extended name:read,write'],
+        (u'CamelCase,extended name:read,write',
             [
              u'CamelCase:+read',
              u'CamelCase:+write',
@@ -85,7 +85,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'extended name:-destroy',
             ]
         ),
-        ([u'BadGuy:'],
+        (u'BadGuy:',
             [
              u'BadGuy:-read',
              u'BadGuy:-write',
@@ -94,7 +94,7 @@ class TestAclTokenizer(TokenizerTestBase):
              u'BadGuy:-destroy',
             ]
         ),
-        ([u'All:read'],
+        (u'All:read',
             [
              u'All:+read',
              u'All:-write',

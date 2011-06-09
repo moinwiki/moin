@@ -5,6 +5,7 @@
 MoinMoin - MoinMoin.analyzers Tokenizers and analyzers for indexing schema
 """
 
+from re import split
 
 from flask import current_app as app
 from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
@@ -15,36 +16,46 @@ from MoinMoin.security import ContentACL
 
 
 class MimeTokenizer(Tokenizer):
-    def __call__(self, value):
+    def __call__(self, value, start_pos=0, positions=False, **kwargs):
         assert isinstance(value, unicode), "%r is not unicode" % value
+        pos = start_pos
         tk = Token()
         tp = Type(value)
         tk.text = tp.type
+        if positions:
+            tk.pos = pos
+            pos += 1
         yield tk
         tk.text = tp.subtype
+        if positions:
+            tk.pos = pos
+            pos += 1
         yield tk
         for key, value in tp.parameters.items():
             tk.text = u"%s=%s" % (key, value)
+            if positions:
+                tk.pos = pos
+                pos += 1
             yield tk
 
 
 class AclTokenizer(Tokenizer):
 
-    def __call__(self, value, **kwargs):
-        assert isinstance(value, list) # so you'll notice if it blows up
-        for acl_right in value:
-            assert isinstance(acl_right, unicode), "%r is not unicode" % acl_right
-
+    def __call__(self, value, start_pos=0, positions=False, **kwargs):
+#        assert isinstance(value, unicode) # so you'll notice if it blows up
+        pos = start_pos
         tk = Token()
-        acl = ContentACL(app.cfg, value)
+        acl = ContentACL(app.cfg, [value])
         for name, permissions in acl.acl:
             for permission in permissions:
                 sign = "+" if permissions[permission] else "-"
                 tk.text = u"%s:%s%s" % (name, sign, permission)
+                if positions:
+                    tk.pos = pos
+                    pos += 1
                 yield tk
 
-
-def item_name_analyzer(value, **kwargs):
+def item_name_analyzer():
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
                      )
