@@ -15,14 +15,14 @@ from MoinMoin.search.analyzers import *
 class TokenizerTestBase(object):
 
     def testTokenizer(self):
-        for value, expected_tokens in self.test_cases:
+        for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in self.tokenizer(value)]
             assert set(expected_tokens) == set(tokens)
 
 
 class TestAclTokenizer(TokenizerTestBase):
 
-    test_cases = [
+    test_cases_query = [
         (u'-MinusGuy:read', [u'MinusGuy:-read']),
         (u'+PlusGuy:read', [u'PlusGuy:+read']),
         (u'Admin3:read,write,admin',
@@ -110,8 +110,7 @@ class TestAclTokenizer(TokenizerTestBase):
 
 class TestMimeTokenizer(TokenizerTestBase):
 
-    test_cases = [
-                  (u'', [None, None]),
+    test_cases_query = [
                   (u'text/plain', [u'text', u'plain']),
                   (u'text/plain;charset=utf-8', [u'text', u'plain', u'charset=utf-8']),
                   (u'text/html;value1=foo;value2=bar',
@@ -125,7 +124,7 @@ class TestMimeTokenizer(TokenizerTestBase):
 
 class TestItemNameAnalyzer(TokenizerTestBase):
 
-    test_cases = [
+    test_cases_query = [
                   (u'wifi', [u'wifi']),
                   (u'WiFi', [u'wi', u'fi']),
                   (u'Wi-Fi', [u'wi', u'fi']),
@@ -142,7 +141,7 @@ class TestItemNameAnalyzer(TokenizerTestBase):
     tokenizer = item_name_analyzer()
 
     def testTokenizer(self):
-        for value, expected_tokens in self.test_cases:
+        for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in self.tokenizer(value, mode="query")]
             assert set(expected_tokens) == set(tokens)
         for value, expected_tokens in self.test_cases_index:

@@ -42,6 +42,7 @@ class MimeTokenizer(Tokenizer):
 class AclTokenizer(Tokenizer):
 
     def __call__(self, value, start_pos=0, positions=False, **kwargs):
+        assert isinstance(value, unicode) # so you'll notice if it blows up
         pos = start_pos
         tk = Token()
         acl = ContentACL(app.cfg, [value])
