@@ -15,7 +15,7 @@ from whoosh.qparser import QueryParser
 
 from MoinMoin.search.indexing import WhooshIndex
 
-class WhooshIndexBase(object):
+class WhooshIndexTestBase(object):
 
     queries = []
 
@@ -28,11 +28,10 @@ class WhooshIndexBase(object):
     def testIndexSchema(self):
         index_object = WhooshIndex(index_dir=self.index_dir)
         index = getattr(index_object, self.index_name)
-        writer = index.writer()
 
-        for document in self.documents:
-            writer.add_document(**document)
-        writer.commit()
+        with index.writer() as writer:
+            for document in self.documents:
+                writer.add_document(**document)
 
         with index.searcher() as searcher:
             for field_name, query in self.queries:
@@ -41,7 +40,7 @@ class WhooshIndexBase(object):
                 assert len(result) == 1
 
 
-class TestLatestRevsSchema(WhooshIndexBase):
+class TestLatestRevsSchema(WhooshIndexTestBase):
 
         index_name = "latest_revisions_index"
         documents = [
@@ -75,7 +74,7 @@ class TestLatestRevsSchema(WhooshIndexBase):
                   ]
 
 
-class TestAllRevsSchema(WhooshIndexBase):
+class TestAllRevsSchema(WhooshIndexTestBase):
 
         index_name = "all_revisions_index"
         documents = [
