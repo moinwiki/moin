@@ -30,7 +30,6 @@ docs = {
                           "itemtransclusions": [u"Another", u"Stuff"],
                           "acl": u"JoeDoe:read,write",
                           "language": u"en",
-                          "metadata": u"Other related stuff",
                         },
                         {
                           "item_name": u"Document One",
@@ -44,7 +43,6 @@ docs = {
                           "itemtransclusions": [u"Another", u"Stuff"],
                           "acl": u"JoeDoe:read,write",
                           "language": u"en",
-                          "metadata": u"Other related stuff",
                         },
                        ],
         u"Document Two": [
@@ -60,7 +58,6 @@ docs = {
                           "itemtransclusions": [u"Another"],
                           "acl": u"User:-write",
                           "language": u"en",
-                          "metadata": u"Other related stuff",
                          },
                          {
                           "item_name": u"Document Two",
@@ -74,7 +71,6 @@ docs = {
                           "itemtransclusions": [u"Another"],
                           "acl": u"User:read,write,admin",
                           "language": u"en",
-                          "metadata": u"Other related stuff",
                          },
                         ]
        }
@@ -90,7 +86,6 @@ queries = [
            (u"itemtransclusions", u"Stuff", 1, None),
            (u"acl", u"JoeDoe:read", 1, None),
            (u"language", u"en", 2, 4),
-           (u"metadata", u"Other", 2, 4),
           ]
 
 

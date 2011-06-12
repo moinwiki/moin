@@ -33,7 +33,6 @@ class WhooshIndex(object):
                                      itemtransclusions=ID(stored=True),
                                      acl=TEXT(analyzer=AclTokenizer(), stored=True),
                                      language=ID(stored=True),
-                                     metadata=TEXT(stored=True),
                                     )
 
     all_revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer()),
@@ -44,7 +43,6 @@ class WhooshIndex(object):
                                   mimetype=TEXT(stored=True,analyzer=MimeTokenizer()),
                                   tags=TEXT(stored=True),
                                   language=ID(stored=True),
-                                  metadata=TEXT(stored=True),
                                  )
 
     indexes = [('latest_revisions_index', 'latest_revisions_schema'),
