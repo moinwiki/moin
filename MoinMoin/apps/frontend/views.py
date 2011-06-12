@@ -1,4 +1,5 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -15,7 +16,10 @@
 import re
 import difflib
 import time
+from flaskext.babel import format_date
+from datetime import datetime
 from itertools import chain
+from collections import namedtuple, OrderedDict
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
@@ -34,12 +38,13 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
+from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
-from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME
+from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -107,40 +112,9 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-class ValidSearch(Validator):
-    """Validator for a valid search form
-    """
-    too_short_query_msg = L_('Search query too short.')
-
-    def validate(self, element, state):
-        if element['q'].value is None:
-            # no query, nothing to search for
-            return False
-        if len(element['q'].value) < 2:
-            return self.note_error(element, state, 'too_short_query_msg')
-        return True
-
-class SearchForm(Form):
-    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
-    submit = String.using(default=L_('Search'), optional=True)
-
-    validators = [ValidSearch()]
-
-
-def _search(query):
-    return "searching not implemented yet, query: %r" % query
-
-
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
-@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
+@frontend.route('/+show/<int:rev>/<itemname:item_name>')
 def show_item(item_name, rev):
-    # first check whether we have a valid search query:
-    search_form = SearchForm.from_flat(request.values)
-    if search_form.validate():
-        query = search_form['q'].value
-        return _search(query)
-    search_form['submit'].set_default() # XXX from_flat() kills all values
-
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -170,7 +144,6 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=search_form,
                              )
     return Response(content, status)
 
@@ -336,6 +309,7 @@ def revert_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -360,6 +334,7 @@ def copy_item(item_name):
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -384,6 +359,7 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -406,6 +382,7 @@ def delete_item(item_name):
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -437,6 +414,7 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -549,6 +527,15 @@ def _backrefs(items, item_name):
     return refs_here
 
 
+@frontend.route('/+search')
+def search():
+    return _search()
+
+
+def _search(**args):
+    return "searching for %r not implemented yet" % args
+
+
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
@@ -561,10 +548,113 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    if flaskg.user.valid:
+        bookmark_time = flaskg.user.getBookmark()
+    else:
+        bookmark_time = None
+    item_groups = OrderedDict()
+    for rev in history:
+        current_item_name = rev.item.name
+        if bookmark_time and rev.timestamp <= bookmark_time:
+            break
+        elif current_item_name in item_groups:
+            item_groups[current_item_name].append(rev)
+        else:
+            item_groups[current_item_name] = [rev]
+
+    # Got the item dict, now doing grouping inside them
+    editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
+    for item_name, revs in item_groups.items():
+        item_info = {}
+        editors_info = OrderedDict()
+        editors = []
+        revnos = []
+        comments = []
+        current_rev = revs[0]
+        item_info["item_name"] = item_name
+        item_info["timestamp"] = current_rev.timestamp
+        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
+        item_info["action"] = current_rev.get(ACTION)
+        item_info["name"] = current_rev.get(NAME)
+
+        # Aggregating comments, authors and revno
+        for rev in revs:
+            revnos.append(rev.revno)
+            comment = rev.get(COMMENT)
+            if comment:
+                comment = "#%(revno)d %(comment)s" % {
+                          'revno': rev.revno,
+                          'comment': comment
+                          }
+                comments.append(comment)
+            editor = get_editor_info(rev)
+            editor_name = editor["name"]
+            if editor_name in editors_info:
+                editors_info[editor_name].editor_revnos.append(rev.revno)
+            else:
+                editors_info[editor_name] = editor_info(editor, [rev.revno])
+
+        if len(revnos) == 1:
+            # there is only one change for this item in the history considered
+            info, positions = editors_info[editor_name]
+            info_tuple = (info, "")
+            editors.append(info_tuple)
+        else:
+            # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
+            for info, positions in editors_info.values():
+                positions.reverse()
+                position_range = str(positions[0])
+                pos_index = 1
+                for position in positions[1:]:
+                    if position == positions[pos_index-1] + 1:
+                        if pos_index < len(positions) - 1 and  position == positions[pos_index+1] - 1:
+                            pos_index += 1
+                            continue
+                        else:
+                            position_range = "%(position_range)s-%(position)d" % {
+                                             'position_range': position_range,
+                                             'position': position
+                                             }
+                    else:
+                        position_range = "%(position_range)s,%(position)d" % {
+                                         'position_range': position_range,
+                                         'position': position
+                                         }
+                    pos_index += 1
+
+                position_range = "[%(position_range)s]" % {'position_range': position_range}
+                info_tuple = (info, position_range)
+                editors.append(info_tuple)
+
+        item_info["revnos"] = revnos
+        item_info["editors"] = editors
+        item_info["comments"] = comments
+        item_groups[item_name] = item_info
+
+    # Grouping on the date basis
+    grouped_history = []
+    prev_date = '0000-00-00'
+    rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
+    rev_tuples = rev_tuple(prev_date, [])
+    for item_group in item_groups.values():
+        tm = datetime.utcfromtimestamp(item_group["timestamp"])
+        rev_date = format_date(tm)
+        if rev_date == prev_date:
+            rev_tuples.item_revs.append(item_group)
+        else:
+            grouped_history.append(rev_tuples)
+            rev_tuples = rev_tuple(rev_date, [item_group])
+            prev_date = rev_date
+    grouped_history.append(rev_tuples)
+    del grouped_history[0]  # First tuple will be a null one
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    current_timestamp = int(time.time())
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=history,
+                           history=grouped_history,
+                           current_timestamp=current_timestamp,
+                           bookmark_time=bookmark_time,
                           )
 
 @frontend.route('/+wanteds')
@@ -828,6 +918,7 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -885,6 +976,7 @@ def lostpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -940,6 +1032,7 @@ def recoverpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1012,6 +1105,7 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1171,6 +1265,7 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
+                           gen=make_generator(),
                            form=form,
                           )
 
