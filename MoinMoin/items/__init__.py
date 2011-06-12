@@ -28,7 +28,6 @@ from MoinMoin.util.forms import FileStorage
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.signalling import item_modified
-from MoinMoin.util.forms import make_generator
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, html, xlink, docbook
@@ -721,7 +720,6 @@ There is no help, you're doomed!
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
-                               gen=make_generator(),
                               )
 
     copy_template = 'copy.html'
@@ -1186,7 +1184,6 @@ class Text(Binary):
                                rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
-                               gen=make_generator(),
                               )
 
 item_registry.register(Text._factory, Type('text/*'))
@@ -1376,7 +1373,6 @@ class TWikiDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
-                               gen=make_generator(),
                               )
 
     def _render_data(self):
@@ -1474,7 +1470,6 @@ class AnyWikiDraw(TarMixin, Image):
                                help=self.modify_help,
                                drawing_exists=drawing_exists,
                                form=form,
-                               gen=make_generator(),
                               )
 
     def _render_data(self):
@@ -1558,7 +1553,6 @@ class SvgDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
-                               gen=make_generator(),
                               )
 
     def _render_data(self):
