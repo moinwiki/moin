@@ -22,7 +22,8 @@ pdftotext outputs as text, if it is a mp3, it will only store title/author/genre
 
 class WhooshIndex(object):
 
-    latest_revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer()),
+    latest_revisions_schema = Schema(wikiname=ID(stored=True),
+                                     itemname=TEXT(stored=True, analyzer=item_name_analyzer()),
                                      uuid=ID(unique=True, stored=True),
                                      rev_no=NUMERIC(stored=True),
                                      datetime=DATETIME(stored=True),
@@ -33,16 +34,23 @@ class WhooshIndex(object):
                                      itemtransclusions=ID(stored=True),
                                      acl=TEXT(analyzer=AclTokenizer(), stored=True),
                                      language=ID(stored=True),
+                                     userid=ID(stored=True),
+                                     address=ID(stored=True),
+                                     hostname=ID(stored=True),
                                     )
 
-    all_revisions_schema = Schema(item_name=TEXT(stored=True, analyzer=item_name_analyzer()),
+    all_revisions_schema = Schema(wikiname=ID(stored=True),
+                                  itemname=TEXT(stored=True, analyzer=item_name_analyzer()),
                                   uuid=ID(stored=True),
                                   rev_no=NUMERIC(stored=True),
                                   datetime=DATETIME(stored=True),
                                   content=TEXT(stored=True),
-                                  mimetype=TEXT(stored=True,analyzer=MimeTokenizer()),
+                                  mimetype=TEXT(stored=True, analyzer=MimeTokenizer()),
                                   tags=TEXT(stored=True),
                                   language=ID(stored=True),
+                                  userid=ID(stored=True),
+                                  address=ID(stored=True),
+                                  hostname=ID(stored=True),
                                  )
 
     indexes = [('latest_revisions_index', 'latest_revisions_schema'),
