@@ -548,10 +548,16 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    if flaskg.user.valid:
+        bookmark_time = flaskg.user.getBookmark()
+    else:
+        bookmark_time = None
     item_groups = OrderedDict()
     for rev in history:
         current_item_name = rev.item.name
-        if current_item_name in item_groups:
+        if bookmark_time and rev.timestamp <= bookmark_time:
+            break
+        elif current_item_name in item_groups:
             item_groups[current_item_name].append(rev)
         else:
             item_groups[current_item_name] = [rev]
@@ -643,9 +649,12 @@ def global_history():
     del grouped_history[0]  # First tuple will be a null one
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    current_timestamp = int(time.time())
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
                            history=grouped_history,
+                           current_timestamp=current_timestamp,
+                           bookmark_time=bookmark_time,
                           )
 
 @frontend.route('/+wanteds')
