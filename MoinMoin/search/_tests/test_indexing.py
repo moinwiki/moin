@@ -19,7 +19,8 @@ from MoinMoin.search.indexing import WhooshIndex
 docs = {
         u"Document One": [
                          {
-                          "item_name": u"Document One",
+                          "wikiname": u"Test",
+                          "itemname": u"Document One",
                           "uuid": u"68054804bd7141609b7c441143adf83d",
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 2, 17, 5),
@@ -30,9 +31,13 @@ docs = {
                           "itemtransclusions": [u"Another", u"Stuff"],
                           "acl": u"JoeDoe:read,write",
                           "language": u"en",
+                          "userid": u"1307875904.23.55111",
+                          "address": u"127.0.0.1",
+                          "hostname": u"localhost",
                         },
                         {
-                          "item_name": u"Document One",
+                          "wikiname": u"Test",
+                          "itemname": u"Document One",
                           "uuid": u"68054804bd7141609b7c441143adf83d",
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 17, 5),
@@ -43,11 +48,14 @@ docs = {
                           "itemtransclusions": [u"Another", u"Stuff"],
                           "acl": u"JoeDoe:read,write",
                           "language": u"en",
+                          "address": u"195.54.14.254",
+                          "hostname": u"kb.csu.ru",
                         },
                        ],
         u"Document Two": [
                          {
-                          "item_name": u"Document Two",
+                          "wikiname": u"Test",
+                          "itemname": u"Document Two",
                           "uuid": u"12354804bd7141609b7c441143adf83d",
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 1, 17, 5),
@@ -58,9 +66,12 @@ docs = {
                           "itemtransclusions": [u"Another"],
                           "acl": u"User:-write",
                           "language": u"en",
+                          "userid": u"1307875904.23.55111",
+                          "address": u"123.213.132.231",
                          },
                          {
-                          "item_name": u"Document Two",
+                          "wikiname": u"Test",
+                          "itemname": u"Document Two",
                           "uuid": u"12354804bd7141609b7c441143adf83d",
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 20, 5),
@@ -71,12 +82,14 @@ docs = {
                           "itemtransclusions": [u"Another"],
                           "acl": u"User:read,write,admin",
                           "language": u"en",
+                          "address": u"123.213.132.231",
                          },
                         ]
        }
 
 queries = [
-           (u"item_name", u"Document", 2, 4),
+           (u"wikiname", u"Test", 2, 4),
+           (u"itemname", u"Document", 2, 4),
            (u"uuid", u"68054804bd7141609b7c441143adf83d", 1, 2),
            (u"rev_no", u"1", 2, 2),
            (u"content", u"moin", 1, 1),
@@ -86,6 +99,9 @@ queries = [
            (u"itemtransclusions", u"Stuff", 1, None),
            (u"acl", u"JoeDoe:read", 1, None),
            (u"language", u"en", 2, 4),
+           (u"userid", u"1307875904.23.55111", 0, 2),
+           (u"address", u"127.0.0.1", 0, 1),
+           (u"hostname", u"kb.csu.ru", 1, 1),
           ]
 
 
@@ -113,10 +129,6 @@ class TestWhooshIndex(object):
                     all_revs_doc = dict([(key, value)
                                          for key, value in document.items()
                                          if key in all_revs_names])
-
-                    for document_field, value in document.items(): # Extract fields for all revs schema
-                        for schema_field in all_revs_index.schema.names(): # is there way to rewrite this block shortly?
-                            all_revs_doc[schema_field] = document[schema_field]
 
                     all_revs_writer.add_document(**all_revs_doc)
 
