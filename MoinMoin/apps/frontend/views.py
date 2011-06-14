@@ -558,7 +558,11 @@ def global_history():
         if bookmark_time and rev.timestamp <= bookmark_time:
             break
         elif current_item_name in item_groups:
-            item_groups[current_item_name].append(rev)
+            latest_rev = item_groups[current_item_name][0]
+            tm_latest = datetime.utcfromtimestamp(latest_rev.timestamp)
+            tm_current = datetime.utcfromtimestamp(rev.timestamp)
+            if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
+                item_groups[current_item_name].append(rev)
         else:
             item_groups[current_item_name] = [rev]
 
