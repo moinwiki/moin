@@ -5,6 +5,9 @@
  MoinMoin - MoinMoin.indexing Indexing Mechanism
 """
 
+import os
+import logging
+from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
 from whoosh.analysis import entoken
@@ -28,7 +31,7 @@ class WhooshIndex(object):
                                      rev_no=NUMERIC(stored=True),
                                      datetime=DATETIME(stored=True),
                                      content=TEXT(stored=True),
-                                     mimetype=TEXT(stored=True, analyzer=MimeTokenizer()),
+                                     contenttype=TEXT(stored=True, analyzer=MimeTokenizer()),
                                      tags=ID(stored=True),
                                      itemlinks=ID(stored=True),
                                      itemtransclusions=ID(stored=True),
@@ -45,7 +48,7 @@ class WhooshIndex(object):
                                   rev_no=NUMERIC(stored=True),
                                   datetime=DATETIME(stored=True),
                                   content=TEXT(stored=True),
-                                  mimetype=TEXT(stored=True, analyzer=MimeTokenizer()),
+                                  contenttype=TEXT(stored=True, analyzer=MimeTokenizer()),
                                   tags=TEXT(stored=True),
                                   language=ID(stored=True),
                                   userid=ID(stored=True),

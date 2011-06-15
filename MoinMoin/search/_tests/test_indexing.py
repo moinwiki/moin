@@ -13,6 +13,7 @@ from datetime import datetime
 
 from whoosh.qparser import QueryParser
 
+from MoinMoin import log
 from MoinMoin.search.indexing import WhooshIndex
 
 
@@ -25,7 +26,7 @@ docs = {
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 2, 17, 5),
                           "content": u"Wi-Fi",
-                          "mimetype": u"text/plain;charset=utf-8",
+                          "contenttype": u"text/plain;charset=utf-8",
                           "tags": [u"Rest", u"in", u"peace"],
                           "itemlinks": [u"Home", u"Find"],
                           "itemtransclusions": [u"Another", u"Stuff"],
@@ -42,7 +43,7 @@ docs = {
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 17, 5),
                           "content": u"Mo in Moin",
-                          "mimetype": u"text/plain;charset=utf-8",
+                          "contenttype": u"text/plain;charset=utf-8",
                           "tags": [u"first_tag", u"second_tag"],
                           "itemlinks": [u"Home", u"Find"],
                           "itemtransclusions": [u"Another", u"Stuff"],
@@ -60,7 +61,7 @@ docs = {
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 1, 17, 5),
                           "content": u"Hello document one",
-                          "mimetype": u"text/plain;charset=utf-8",
+                          "contenttype": u"text/plain;charset=utf-8",
                           "tags": [u"first_tag", u"tag"],
                           "itemlinks": [u"Home", u"Find"],
                           "itemtransclusions": [u"Another"],
@@ -76,7 +77,7 @@ docs = {
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 20, 5),
                           "content": u"Hello document two",
-                          "mimetype": u"text/plain;charset=utf-8",
+                          "contenttype": u"text/plain;charset=utf-8",
                           "tags": [u"tag", u"second_tag"],
                           "itemlinks": [u"Home", u"Find"],
                           "itemtransclusions": [u"Another"],
@@ -93,7 +94,7 @@ queries = [
            (u"uuid", u"68054804bd7141609b7c441143adf83d", 1, 2),
            (u"rev_no", u"1", 2, 2),
            (u"content", u"moin", 1, 1),
-           (u"mimetype", u"text/plain", 2, 4),
+           (u"contenttype", u"text/plain", 2, 4),
            (u"tags", u"first_tag", 1, 2),
            (u"itemlinks", u"Home", 2, None),
            (u"itemtransclusions", u"Stuff", 1, None),
