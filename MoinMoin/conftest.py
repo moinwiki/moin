@@ -42,6 +42,16 @@ from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 
+#In the beginning following variables have no values
+prev_app = None
+prev_cls = None
+prev_ctx = None
+
+def get_previous(self_app, self_ctx, cls):
+    prev_app = self_app
+    prev_ctx = self_ctx
+    prev_cls = cls
+    return prev_app, prev_ctx, prev_cls
 
 def init_test_app(given_config):
     namespace_mapping, router_index_uri = create_simple_mapping("memory:", given_config.content_acl)
@@ -62,18 +72,43 @@ def deinit_test_app(app, ctx):
     ctx.pop()
     destroy_app(app)
 
-
 class MoinTestFunction(pytest.collect.Function):
     try:
         def setup(self):
             if inspect.isclass(self.parent.obj.__class__):
                 cls = self.parent.obj.__class__
-            if hasattr(cls, 'Config'):
-                given_config = cls.Config
-            else:
-                given_config = wikiconfig.Config
 
-            self.app, self.ctx = init_test_app(given_config)
+                # global variables so that previous values can be accessed            
+                global prev_app, prev_ctx, prev_cls
+
+                if hasattr(cls, 'Config'):
+                    if prev_app != None:
+                        # deinit previous app if previous app value is not None.
+                        deinit_test_app(prev_app, prev_ctx)
+                    given_config = cls.Config
+                    # init app
+                    self.app, self.ctx = init_test_app(given_config)
+                else:
+                    given_config = wikiconfig.Config
+                    # deinit the previous app if previous class had its own configuration 
+                    if hasattr(prev_cls, 'Config'):
+                        deinit_test_app(prev_app, prev_ctx)        
+                    # Initialize the app in following two conditions: 
+                    # 1. It is the first test item 
+                    # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
+                    if prev_app == None or hasattr(prev_cls, 'Config'):
+                        self.app, self.ctx = init_test_app(given_config)
+                    # continue assigning the values of the previous app and ctx to the current ones.
+                    else:
+                        self.app = prev_app
+                        self.ctx = prev_ctx    
+
+                #Get the values from the function
+                prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
+
+            else:
+                prev_app, prev_ctx, prev_cls = get_previous(None, None, None)            
+
             super(MoinTestFunction, self).setup()
             #XXX: hack till we get better funcarg tools
             if hasattr(self._obj, 'im_self'):
@@ -82,8 +117,7 @@ class MoinTestFunction(pytest.collect.Function):
     finally:
         def teardown(self):
             super(MoinTestFunction, self).teardown()
-            deinit_test_app(self.app, self.ctx)        
-
+        
     # Need to modify and add more stuffs    
     
     
