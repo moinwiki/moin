@@ -11,6 +11,7 @@ import pytest
 from flask import current_app as app
 from flask import g as flaskg
 
+from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
 
@@ -19,7 +20,8 @@ from MoinMoin._tests import wikiconfig
 class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
         self.class_level_value = 123
-
+        app, ctx = init_test_app(wikiconfig.Config)
+                
     def test_fresh_backends(self):
         assert self.class_level_value == 123
 
