@@ -21,7 +21,7 @@ docs = {
         u"Document One": [
                          {
                           "wikiname": u"Test",
-                          "itemname": u"Document One",
+                          "name": u"Document One",
                           "uuid": u"68054804bd7141609b7c441143adf83d",
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 2, 17, 5),
@@ -38,7 +38,7 @@ docs = {
                         },
                         {
                           "wikiname": u"Test",
-                          "itemname": u"Document One",
+                          "name": u"Document One",
                           "uuid": u"68054804bd7141609b7c441143adf83d",
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 17, 5),
@@ -56,7 +56,7 @@ docs = {
         u"Document Two": [
                          {
                           "wikiname": u"Test",
-                          "itemname": u"Document Two",
+                          "name": u"Document Two",
                           "uuid": u"12354804bd7141609b7c441143adf83d",
                           "rev_no": 0,
                           "datetime":  datetime(2011, 6, 10, 1, 17, 5),
@@ -72,7 +72,7 @@ docs = {
                          },
                          {
                           "wikiname": u"Test",
-                          "itemname": u"Document Two",
+                          "name": u"Document Two",
                           "uuid": u"12354804bd7141609b7c441143adf83d",
                           "rev_no": 1,
                           "datetime":  datetime(2011, 6, 12, 2, 20, 5),
@@ -90,7 +90,7 @@ docs = {
 
 queries = [
            (u"wikiname", u"Test", 2, 4),
-           (u"itemname", u"Document", 2, 4),
+           (u"name", u"Document", 2, 4),
            (u"uuid", u"68054804bd7141609b7c441143adf83d", 1, 2),
            (u"rev_no", u"1", 2, 2),
            (u"content", u"moin", 1, 1),
@@ -133,9 +133,10 @@ class TestWhooshIndex(object):
 
                     all_revs_writer.add_document(**all_revs_doc)
 
-        with latest_revs_index.searcher() as latest_revs_searcher, all_revs_index.searcher() as all_revs_searcher:
-            for field_name, query, latst_res_len, all_res_len in queries:
-                query = QueryParser(field_name, latest_revs_index.schema).parse(query)
-                assert len(latest_revs_searcher.search(query)) == latst_res_len
-                if field_name in all_revs_index.schema.names():
-                    assert len(all_revs_searcher.search(query)) == all_res_len
+        with latest_revs_index.searcher() as latest_revs_searcher:
+            with all_revs_index.searcher() as all_revs_searcher:
+                for field_name, query, latest_res_len, all_res_len in queries:
+                    query = QueryParser(field_name, latest_revs_index.schema).parse(query)
+                    assert len(latest_revs_searcher.search(query)) == latest_res_len
+                    if field_name in all_revs_index.schema.names():
+                        assert len(all_revs_searcher.search(query)) == all_res_len
