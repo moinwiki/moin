@@ -24,7 +24,7 @@ class RebuildIndexes(Command):
             help='Number of processors the writer. Default: 1'),
         Option('--limitmb', '-l', required=False, dest='limitmb', type=int, default=10,
             help='Maximum memory (in megabytes) each index-writer will use for the indexing pool. Default: 10'),
-        Option('--clean', action='store_true', dest='clean',# type=bool,
+        Option('--clean', action='store_true', dest='clean',
             help='Clear index files of given index-name. ATTENITON: use it only if your indexes broke, you had backup\
                   or just nothing to lose'),
         Option('--build', '-b', required=True, dest='build', type=str, choices=("all-revs", "latest-revs", "both"),
@@ -52,8 +52,7 @@ class RebuildIndexes(Command):
                             metadata = dict([(str(key), value)
                                              for key, value in revision.items()
                                              if key in all_rev_field_names])
-                            metadata_orig = dict([(str(key), value)
-                                             for key, value in revision.items()])
+                            print revision.items()
                             all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         metadata = dict([(str(key), value)
