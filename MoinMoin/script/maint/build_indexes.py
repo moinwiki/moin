@@ -52,11 +52,13 @@ class RebuildIndexes(Command):
                             metadata = dict([(str(key), value)
                                              for key, value in revision.items()
                                              if key in all_rev_field_names])
+                            metadata["rev_no"] = rev_no
                             all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         metadata = dict([(str(key), value)
                                           for key, value in revision.items()
                                           if key in latest_rev_field_names])
+                        metadata["rev_no"] = rev_no
                         latest_rev_writer.add_document(**metadata)
 
         def build_all_revs(clean):
@@ -73,6 +75,7 @@ class RebuildIndexes(Command):
                         metadata = dict([(str(key), value)
                                           for key, value in revision.items()
                                           if key in all_rev_field_names])
+                        metadata["rev_no"] = rev_no
                         all_rev_writer.add_document(**metadata)
 
         def build_latest_revs(clean):
@@ -89,6 +92,7 @@ class RebuildIndexes(Command):
                     metadata = dict([(str(key), value)
                                       for key, value in revision.items()
                                       if key in latest_rev_field_names])
+                    metadata["rev_no"] = rev_no
                     latest_rev_writer.add_document(**metadata)
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
