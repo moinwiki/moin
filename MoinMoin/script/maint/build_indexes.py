@@ -5,7 +5,7 @@
 MoinMoin - Build indexes
 """
 
-from datetime import date
+from datetime import datetime
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -52,14 +52,14 @@ class RebuildIndexes(Command):
                             metadata = dict([(str(key), value)
                                              for key, value in revision.items()
                                              if key in all_rev_field_names])
-                            metadata["mtime"] = date.fromtimestamp(metadata["mtime"])
+                            metadata["mtime"] = datetime.fromtimestamp(metadata["mtime"])
                             metadata["rev_no"] = rev_no
                             all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         metadata = dict([(str(key), value)
                                           for key, value in revision.items()
                                           if key in latest_rev_field_names])
-                        metadata["mtime"] = date.fromtimestamp(metadata["mtime"])
+                        metadata["mtime"] = datetime.fromtimestamp(metadata["mtime"])
                         metadata["rev_no"] = rev_no
                         latest_rev_writer.add_document(**metadata)
 
@@ -77,7 +77,7 @@ class RebuildIndexes(Command):
                         metadata = dict([(str(key), value)
                                           for key, value in revision.items()
                                           if key in all_rev_field_names])
-                        metadata["mtime"] = date.fromtimestamp(metadata["mtime"])
+                        metadata["mtime"] = datetime.fromtimestamp(metadata["mtime"])
                         metadata["rev_no"] = rev_no
                         all_rev_writer.add_document(**metadata)
 
@@ -95,7 +95,7 @@ class RebuildIndexes(Command):
                     metadata = dict([(str(key), value)
                                       for key, value in revision.items()
                                       if key in latest_rev_field_names])
-                    metadata["mtime"] = date.fromtimestamp(metadata["mtime"])
+                    metadata["mtime"] = datetime.fromtimestamp(metadata["mtime"])
                     metadata["rev_no"] = rev_no
                     latest_rev_writer.add_document(**metadata)
 
