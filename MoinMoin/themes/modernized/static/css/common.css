@@ -230,11 +230,14 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-history-copy:before { content: url('../img/moin-new.png'); }
 .moin-integer { width: 2%; }
 .moin-history-links { width: 5%; }
-.moin-history-links a { display:block; margin-bottom: 4px; }
+.moin-history-links a { display: block; margin-bottom: 4px; }
 .moin-history-editortext,
 .moin-history-links span,
-.moin-history-comment span { color:#544E4F;  display:block; margin-bottom: 5px; }
-
+.moin-history-comment span { color: #544E4F; display: block; margin-bottom: 5px; }
+.moin-offset-links { float: right; margin-right: 20px; }
+.moin-offset-links a { margin-right: 10px; padding: 3px 7px; font-size: 20px; background: #FFFFFF; border: 1px groove #DDD; border-radius: 5px; }
+.moin-offset-links a:hover { box-shadow: 0px 0px 12px #81BBF2; }
+.moin-clr { clear: both; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }
