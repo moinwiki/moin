@@ -25,7 +25,7 @@ class TestWikiDictsBackend(DictsBackendTest):
 
     def setup_method(self, method):
         # temporary hack till we apply test cleanup mechanism on tests.
-        init_test_app(wikiconfig.Config)
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         become_trusted()
 
         somedict = {u"First": u"first item",
@@ -38,6 +38,8 @@ class TestWikiDictsBackend(DictsBackendTest):
                     u"Two": u"2"}
         update_item(u'SomeOtherTestDict', 0, {SOMEDICT: somedict}, DATA)
 
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_dicts']
 
