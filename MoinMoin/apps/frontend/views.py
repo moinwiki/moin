@@ -636,6 +636,14 @@ def global_history():
         item_groups[item_name] = item_info
 
     # Grouping on the date basis
+    offset = request.values.get('offset', 0)
+    offset = int(offset)
+
+    count = 50 # something default
+    day_count = OrderedDict()
+    revcount = 0
+    maxrev = count + offset
+    toappend = True
     grouped_history = []
     prev_date = '0000-00-00'
     rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
@@ -643,14 +651,44 @@ def global_history():
     for item_group in item_groups.values():
         tm = datetime.utcfromtimestamp(item_group["timestamp"])
         rev_date = format_date(tm)
-        if rev_date == prev_date:
+        if revcount < offset:
+            revcount += len(item_group["revnos"])
+            if rev_date not in day_count:
+                day_count[rev_date] = 0
+            day_count[rev_date] += len(item_group["revnos"])
+        elif rev_date == prev_date:
             rev_tuples.item_revs.append(item_group)
+            revcount += len(item_group["revnos"])
         else:
             grouped_history.append(rev_tuples)
-            rev_tuples = rev_tuple(rev_date, [item_group])
-            prev_date = rev_date
-    grouped_history.append(rev_tuples)
+            if revcount < maxrev:
+                rev_tuples = rev_tuple(rev_date, [item_group])
+                prev_date = rev_date
+                revcount += len(item_group["revnos"])
+            else:
+                toappend = False
+                break
+    if toappend:
+        grouped_history.append(rev_tuples)
+        revcount = 0 # this is the last page, no next page present
     del grouped_history[0]  # First tuple will be a null one
+
+    # calculate offset for previous page link
+    previous_offset = 0
+    prev_rev_count = day_count.values()
+    prev_rev_count.reverse()
+    for numrev in prev_rev_count:
+        if previous_offset < count:
+            previous_offset += numrev
+        else:
+            break
+
+    if offset - previous_offset >= count:
+        previous_offset = offset - previous_offset
+    elif previous_offset:
+        previous_offset = 0
+    else:
+        previous_offset = -1 # no previous page
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     current_timestamp = int(time.time())
@@ -659,6 +697,8 @@ def global_history():
                            history=grouped_history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
+                           offset=revcount,
+                           previous_offset=previous_offset,
                           )
 
 @frontend.route('/+wanteds')

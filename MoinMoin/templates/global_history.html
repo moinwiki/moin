@@ -7,7 +7,16 @@
 {% endblock %}
 
 {% block content %}
+<div class='moin-offset-links'>
+    {% if previous_offset >= 0 %}
+        <a href="{{ url_for('frontend.global_history', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+    {% endif %}
+    {% if offset %}
+        <a href="{{ url_for('frontend.global_history', offset=offset) }}" title="{{ _("Next") }}">&raquo;</a>
+    {% endif %}
+</div>
 <h1>{{ _("Global History") }}</h1>
+<div class='moin-clr'></div>
     {% if user.valid  %}
     <div id="moin-set-bookmark">
         {% if bookmark_time %}
@@ -68,7 +77,7 @@
             </div>
         {% endfor %}
     </div>
-   {% if bookmark_time %}
+   {% if bookmark_time and not offset %}
        <div id="moin-bookmark-reached">{{ _("Bookmark reached") }}</div>
    {% endif %}
 {% endblock %}
