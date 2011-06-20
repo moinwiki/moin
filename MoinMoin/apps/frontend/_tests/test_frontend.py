@@ -12,7 +12,8 @@ from werkzeug import ImmutableMultiDict
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
-
+from MoinMoin.conftest import init_test_app, deinit_test_app
+from MoinMoin._tests import wikiconfig
 import pytest
 
 class TestFrontend(object):
@@ -60,6 +61,8 @@ class TestUsersettings(object):
         flaskg.user = user.User()
 
         self.user = None
+        # temporary hack till we apply some cleanup mechanism in tests
+        init_test_app(wikiconfig.Config)
 
     def teardown_method(self, method):
         """ Run after each test
