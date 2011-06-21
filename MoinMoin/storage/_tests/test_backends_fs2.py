@@ -17,10 +17,13 @@ from MoinMoin._tests import wikiconfig
 class TestFS2Backend(BackendTest):
 
     def create_backend(self):
+        # temporary hack till we use some cleanup mechnism on tests.
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         self.tempdir = tempfile.mkdtemp('', 'moin-')
         return RouterBackend([('/', FS2Backend(self.tempdir))], index_uri='sqlite://')
 
     def kill_backend(self):
+        deinit_test_app(self.app, self.ctx)
         try:
             for root, dirs, files in os.walk(self.tempdir):
                 for d in dirs:
@@ -32,8 +35,6 @@ class TestFS2Backend(BackendTest):
             shutil.rmtree(self.tempdir)
 
     def test_large(self):
-        # temporary hack till we use some cleanup mechnism on tests.
-        self.app, self.ctx = init_test_app(wikiconfig.Config)
         i = self.backend.create_item(u'large')
         r = i.create_revision(0)
         r['0'] = 'x' * 100
@@ -51,7 +52,6 @@ class TestFS2Backend(BackendTest):
         for x in xrange(1000):
             assert r.read(8 * 10) == 'lalala! ' * 10
         assert r.read() == ''
-        deinit_test_app(self.app, self.ctx)
 
     def test_all_unlocked(self):
         i1 = self.backend.create_item(u'existing now 1')
