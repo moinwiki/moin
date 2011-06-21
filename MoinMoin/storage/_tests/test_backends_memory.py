@@ -20,9 +20,12 @@ class TestMemoryBackend(BackendTest):
     """
 
     def create_backend(self):
+        # temporary hack till we apply some cleanup mechanism on tests         
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         return MemoryBackend()
 
     def kill_backend(self):
+        deinit_test_app(self.app, self.ctx)
         pass
 
 class TestTracingBackend(BackendTest):
