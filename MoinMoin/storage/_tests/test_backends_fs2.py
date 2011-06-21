@@ -12,6 +12,8 @@ from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.fs2 import FS2Backend
 from MoinMoin.storage.backends.router import RouterBackend
 
+from MoinMoin.conftest import init_test_app, deinit_test_app
+from MoinMoin._tests import wikiconfig
 class TestFS2Backend(BackendTest):
 
     def create_backend(self):
@@ -30,6 +32,8 @@ class TestFS2Backend(BackendTest):
             shutil.rmtree(self.tempdir)
 
     def test_large(self):
+        # temporary hack till we use some cleanup mechnism on tests.
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         i = self.backend.create_item(u'large')
         r = i.create_revision(0)
         r['0'] = 'x' * 100
@@ -47,6 +51,7 @@ class TestFS2Backend(BackendTest):
         for x in xrange(1000):
             assert r.read(8 * 10) == 'lalala! ' * 10
         assert r.read() == ''
+        deinit_test_app(self.app, self.ctx)
 
     def test_all_unlocked(self):
         i1 = self.backend.create_item(u'existing now 1')
