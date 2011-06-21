@@ -1,5 +1,5 @@
 # Copyright: 2009 MoinMoin:ThomasWaldmann
-# Copyright: 2009 MoinMoin:ReimarBauer
+# Copyright: 2009-2011 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
@@ -1510,16 +1510,16 @@ class SvgDraw(TarMixin, Image):
 
     def modify(self):
         # called from modify UI/POST
-        file_upload = request.values.get('data')
+        png_upload = request.values.get('png_data')
+        svg_upload = request.values.get('filepath')
         filename = request.form['filename']
-        filecontent = file_upload.decode('base_64')
-        basepath, basename = os.path.split(filename)
-        basename, ext = os.path.splitext(basename)
+        png_content = png_upload.decode('base_64')
+        png_content = base64.urlsafe_b64decode(png_content.split(',')[1])
+        svg_content = svg_upload.decode('base_64')
         content_length = None
-
-        if ext == '.png':
-            filecontent = base64.urlsafe_b64decode(filecontent.split(',')[1])
-        self.put_member(filename, filecontent, content_length,
+        self.put_member("drawing.svg", svg_content, content_length,
+                        expected_members=set(['drawing.svg', 'drawing.png']))
+        self.put_member("drawing.png", png_content, content_length,
                         expected_members=set(['drawing.svg', 'drawing.png']))
 
     def do_modify(self, contenttype, template_name):
