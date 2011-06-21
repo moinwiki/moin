@@ -90,13 +90,18 @@ class MoinTestFunction(pytest.collect.Function):
                     self.app, self.ctx = init_test_app(given_config)
                 else:
                     given_config = wikiconfig.Config
-                    # deinit the previous app if previous class had its own configuration 
-                    if hasattr(prev_cls, 'Config'):
-                        deinit_test_app(prev_app, prev_ctx)        
+                    # deinit the previous app if previous class had its own configuration
+                    # deinit the previous app if the class of previous function has an attribute 'create_backend' 
+                    # this is for the tests of storage module until we use some cleanup mechanism on tests.
+                    if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                        deinit_test_app(prev_app, prev_ctx)
+                        print "problem is here"        
                     # Initialize the app in following two conditions: 
                     # 1. It is the first test item 
                     # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
-                    if prev_app == None or hasattr(prev_cls, 'Config'):
+                    # Also if the Class of previous function is having an attribute as 'create_backend', 
+                    # this is for the tests of storage module until we use some cleanup mechanism on tests.
+                    if prev_app == None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
                         self.app, self.ctx = init_test_app(given_config)
                     # continue assigning the values of the previous app and ctx to the current ones.
                     else:
