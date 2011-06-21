@@ -16,6 +16,8 @@ from MoinMoin.error import ConfigurationError
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.memory import MemoryBackend
 from MoinMoin.storage.backends.router import RouterBackend
+from MoinMoin.conftest import init_test_app, deinit_test_app
+from MoinMoin._tests import wikiconfig
 
 class TestRouterBackend(BackendTest):
     """
@@ -23,6 +25,8 @@ class TestRouterBackend(BackendTest):
     """
 
     def create_backend(self):
+        # temporary hack till we get some cleanup mechanism for the tests 
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         self.root = MemoryBackend()
         self.ns_user_profile = app.cfg.ns_user_profile
         self.users = MemoryBackend()
@@ -32,6 +36,7 @@ class TestRouterBackend(BackendTest):
         return RouterBackend(self.mapping, index_uri='sqlite://')
 
     def kill_backend(self):
+        deinit_test_app(self.app, self.ctx)
         pass
 
 
