@@ -12,18 +12,13 @@ from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.fs2 import FS2Backend
 from MoinMoin.storage.backends.router import RouterBackend
 
-from MoinMoin.conftest import init_test_app, deinit_test_app
-from MoinMoin._tests import wikiconfig
 class TestFS2Backend(BackendTest):
 
     def create_backend(self):
-        # temporary hack till we use some cleanup mechnism on tests.
-        self.app, self.ctx = init_test_app(wikiconfig.Config)
         self.tempdir = tempfile.mkdtemp('', 'moin-')
         return RouterBackend([('/', FS2Backend(self.tempdir))], index_uri='sqlite://')
 
     def kill_backend(self):
-        deinit_test_app(self.app, self.ctx)
         try:
             for root, dirs, files in os.walk(self.tempdir):
                 for d in dirs:
