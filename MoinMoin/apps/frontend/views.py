@@ -27,7 +27,7 @@ from flask import g as flaskg
 from flaskext.themes import get_themes_list
 
 from flatland import Form, String, Integer, Boolean, Enum
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from jinja2 import Markup
 
@@ -548,8 +548,10 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    count = 0
     if flaskg.user.valid:
         bookmark_time = flaskg.user.getBookmark()
+        count = flaskg.user.getCount()
     else:
         bookmark_time = None
     item_groups = OrderedDict()
@@ -638,8 +640,9 @@ def global_history():
     # Grouping on the date basis
     offset = request.values.get('offset', 0)
     offset = int(offset)
+    if not count:
+        count = int(app.cfg.results_per_page)
 
-    count = 50 # something default
     day_count = OrderedDict()
     revcount = 0
     maxrev = count + offset
@@ -1253,6 +1256,7 @@ def usersettings(part):
         theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
         css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
         edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
+        results_per_page = Integer.using(label=L_('History results per page'), optional=True).with_properties(placeholder=L_("Number of results per page")).validated_by(ValueAtLeast(1))
         submit = String.using(default=L_('Save'), optional=True)
 
     dispatch = dict(
@@ -1337,7 +1341,6 @@ def bookmark():
     else:
         flash(_("You must log in to use bookmarks."), "error")
     return redirect(url_for('frontend.global_history'))
-
 
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):
