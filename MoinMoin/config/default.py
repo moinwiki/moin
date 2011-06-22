@@ -3,6 +3,7 @@
 # Copyright: 2005-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
+# Copyright: 2011      MoinMoin:AkashSinha
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -392,6 +393,10 @@ options_no_group_name = {
     ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
     ('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
     ('edit_ticketing', True, None),
+  )),
+  # ==========================================================================
+  'paging': ('Paging related', None, (
+    ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
   )),
   # ==========================================================================
   'data': ('Data storage', None, (

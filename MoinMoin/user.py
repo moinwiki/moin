@@ -4,6 +4,7 @@
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:ChristopherDenter
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2011 MoinMoin:AkashSinha
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -789,3 +790,18 @@ If you didn't forget your password, please ignore this email.
         mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
         return mailok, msg
 
+# -----------------------------------------------------------------
+    # Result Count
+    def getCount(self):
+        """ Get count for number of history results to display per page
+
+        :rtype: int
+        :returns: count value or None
+        """
+        count = None
+        if self.valid:
+            try:
+                count = self.results_per_page
+            except AttributeError:
+                pass
+        return count
