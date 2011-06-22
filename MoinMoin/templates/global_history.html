@@ -25,8 +25,8 @@
         {% else %}
             {{ _("Bookmark (not set). ") }}<a href="{{ url_for('frontend.bookmark', time=current_timestamp) }}">{{ _("Set bookmark") }}</a> 
         {% endif %}
-    {% endif %}
     </div>
+    {% endif %}
     <div id="moin-global-history">
         {% for rev_date, revs in history %}
            {% set  latest_rev = revs[0] %}
