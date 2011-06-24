@@ -539,11 +539,44 @@ def _search(**args):
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
+    selected_history = []
+
+    offset = request.values.get('offset', 0)
+    offset = int(offset)
+    if offset < 0:
+        offset = 0
+
+    results_per_page = int(app.cfg.results_per_page)
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.ResultsPerPage(results_per_page)
+
+    revcount = 0
+    maxcount = offset + results_per_page
+    nextPage = False
+    for rev in history:
+        if revcount < offset:
+            revcount += 1
+        elif revcount == maxcount:
+            nextPage = True
+            break
+        else:
+            selected_history.append(rev)
+            revcount += 1
+
+    if not nextPage:
+        revcount = 0
+
+    if offset:
+        previous_offset = max(offset - results_per_page, 0)
+    else:
+        previous_offset = -1
+
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
-                           history=history,
+                           history=selected_history,
+                           offset=revcount,
+                           previous_offset=previous_offset,
                           )
-
 
 @frontend.route('/+history')
 def global_history():
