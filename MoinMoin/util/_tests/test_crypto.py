@@ -21,6 +21,9 @@ class TestRandom(object):
         result2 = crypto.random_string(length)
         assert result1 != result2, ('Expected different random strings, but got "%(result1)s" and "%(result2)s"') % locals()
 
+        result_string = crypto.random_string(length)
+        assert isinstance(result_string, str), ('Expected an string value, but got ' + str(type(result_string)))
+
         result = len(crypto.random_string(length))
         expected = length
         assert result == expected, ('Expected length "%(expected)s" but got "%(result)s"') % locals()
@@ -47,5 +50,4 @@ class TestEncodePassword(object):
 
 
 coverage_modules = ['MoinMoin.util.crypto']
-pytest.main("-x test_crypto.py")
 

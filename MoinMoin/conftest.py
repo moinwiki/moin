@@ -95,7 +95,7 @@ class MoinTestFunction(pytest.collect.Function):
                     # this is for the tests of storage module until we use some cleanup mechanism on tests.
                     if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
                         deinit_test_app(prev_app, prev_ctx)
-                        print "problem is here"        
+
                     # Initialize the app in following two conditions: 
                     # 1. It is the first test item 
                     # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
