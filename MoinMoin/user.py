@@ -791,17 +791,16 @@ If you didn't forget your password, please ignore this email.
         return mailok, msg
 
 # -----------------------------------------------------------------
-    # Result Count
-    def getCount(self):
+    # Number of results per page
+    def ResultsPerPage(self, results_per_page=0):
         """ Get count for number of history results to display per page
 
         :rtype: int
         :returns: count value or None
         """
-        count = None
         if self.valid:
             try:
-                count = self.results_per_page
+                results_per_page = self.results_per_page
             except AttributeError:
                 pass
-        return count
+        return results_per_page

@@ -548,10 +548,10 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
-    count = 0
+    results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         bookmark_time = flaskg.user.getBookmark()
-        count = flaskg.user.getCount()
+        results_per_page = flaskg.user.ResultsPerPage(results_per_page)
     else:
         bookmark_time = None
     item_groups = OrderedDict()
@@ -640,12 +640,9 @@ def global_history():
     # Grouping on the date basis
     offset = request.values.get('offset', 0)
     offset = int(offset)
-    if not count:
-        count = int(app.cfg.results_per_page)
-
     day_count = OrderedDict()
     revcount = 0
-    maxrev = count + offset
+    maxrev = results_per_page + offset
     toappend = True
     grouped_history = []
     prev_date = '0000-00-00'
@@ -681,12 +678,12 @@ def global_history():
     prev_rev_count = day_count.values()
     prev_rev_count.reverse()
     for numrev in prev_rev_count:
-        if previous_offset < count:
+        if previous_offset < results_per_page:
             previous_offset += numrev
         else:
             break
 
-    if offset - previous_offset >= count:
+    if offset - previous_offset >= results_per_page:
         previous_offset = offset - previous_offset
     elif previous_offset:
         previous_offset = 0
