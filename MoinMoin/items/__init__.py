@@ -219,7 +219,7 @@ class Item(object):
         return ''
 
     def feed_input_conv(self):
-        return self.name
+        return self.rev
 
     def internal_representation(self, converters=['smiley']):
         """
@@ -859,8 +859,9 @@ class TarMixin(object):
 
 
 class ApplicationXTar(TarMixin, Application):
-    def feed_input_conv(self):
-        return self.rev
+    """
+    Tar items
+    """
 
 item_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
 item_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
@@ -894,8 +895,9 @@ class ZipMixin(object):
 
 
 class ApplicationZip(ZipMixin, Application):
-    def feed_input_conv(self):
-        return self.rev
+    """
+    Zip items
+    """
 
 item_registry.register(ApplicationZip._factory, Type('application/zip'))
 
