@@ -1,7 +1,7 @@
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms without context %}
 {% extends "base.html" %}
 
-{% import "snippets.html" as snippets with context %}
+{% import "snippets.html" as snippets without context %}
 {% set logo = snippets.logo() %}
 {% set before_header = snippets.before_header() %}
 {% set after_header = snippets.after_header() %}
