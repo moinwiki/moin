@@ -320,15 +320,12 @@ def get_hostname(addr):
             pass
 
 
-def file_headers(filename=None,
-                 content_type=None, content_length=None, content_disposition=None):
+def file_headers(filename=None, content_type=None, content_length=None):
         """
         Compute http headers for sending a file
 
-        :param filename: filename for content-disposition header and for autodetecting
-                         content_type (unicode, default: None)
+        :param filename: filename for autodetecting content_type (unicode, default: None)
         :param content_type: content-type header value (str, default: autodetect from filename)
-        :param content_disposition: type for content-disposition header (str, default: None)
         :param content_length: for content-length header (int, default:None)
         """
         if filename:
@@ -349,9 +346,5 @@ def file_headers(filename=None,
         headers = [('Content-Type', content_type)]
         if content_length is not None:
             headers.append(('Content-Length', str(content_length)))
-        if content_disposition is None and mt is not None:
-            content_disposition = mt.content_disposition(app.cfg)
-        if content_disposition:
-            headers.append(('Content-Disposition', content_disposition))
         return headers
 

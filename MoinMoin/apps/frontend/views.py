@@ -69,6 +69,7 @@ User-agent: *
 Crawl-delay: 20
 Disallow: /+convert/
 Disallow: /+dom/
+Disallow: /+download/
 Disallow: /+modify/
 Disallow: /+copy/
 Disallow: /+delete/
@@ -247,6 +248,15 @@ def get_item(item_name, rev):
     except AccessDeniedError:
         abort(403)
     return item.do_get()
+
+@frontend.route('/+download/<int:rev>/<itemname:item_name>')
+@frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=-1))
+def download_item(item_name, rev):
+    try:
+        item = Item.create(item_name, rev_no=rev)
+    except AccessDeniedError:
+        abort(403)
+    return item.do_get(force_attachment=True)
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
