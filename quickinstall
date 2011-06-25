@@ -35,6 +35,9 @@ tar xz -C $DIR/ -f $DIR/twd.tgz
 download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
 tar xz -C $DIR/ -f $DIR/svgedit.tgz
 
+download $DIR/mathjax.tgz http://static.moinmo.in/files/packages/mathjax.tar.gz
+tar xz -C $DIR/ -f $DIR/mathjax.tgz
+
 mkdir $DIR/jquery.fu
 download $DIR/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
 download $DIR/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
