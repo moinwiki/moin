@@ -34,7 +34,7 @@
                 <td class="moin-wordbreak">{{ rev.comment }}</td>
                 <td><a href="{{ url_for('frontend.show_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('show') }}</a></td>
                 <td><a href="{{ url_for('frontend.show_item_meta', item_name=rev.item.name, rev=rev.revno) }}">{{ _('meta') }}</a></td>
-                <td><a href="{{ url_for('frontend.get_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('download') }}</a></td>
+                <td><a href="{{ url_for('frontend.download_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('download') }}</a></td>
                 <td><a href="{{ url_for('frontend.highlight_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('highlight') }}</a></td>
                 <td><a href="{{ url_for('frontend.revert_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('revert') }}</a></td>
                 <td><a href="{{ url_for('frontend.destroy_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('destroy') }}</a></td>
