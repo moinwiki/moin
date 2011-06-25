@@ -1045,7 +1045,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:
-                abort(404)
+                abort(404) # TODO render user friendly error image
 
             content_type = newrev[CONTENTTYPE]
             if content_type == 'image/jpeg':
@@ -1057,17 +1057,21 @@ class TransformableBitmapImage(RenderableBitmapImage):
             else:
                 raise ValueError("content_type %r not supported" % content_type)
 
-            oldimage = PILImage.open(oldrev)
-            newimage = PILImage.open(newrev)
-            oldimage.load()
-            newimage.load()
-            diffimage = PILdiff(newimage, oldimage)
-            outfile = StringIO()
-            diffimage.save(outfile, output_type)
-            data = outfile.getvalue()
-            outfile.close()
-            headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
-            app.cache.set(cid, (headers, data))
+            try:
+                oldimage = PILImage.open(oldrev)
+                newimage = PILImage.open(newrev)
+                oldimage.load()
+                newimage.load()
+                diffimage = PILdiff(newimage, oldimage)
+                outfile = StringIO()
+                diffimage.save(outfile, output_type)
+                data = outfile.getvalue()
+                outfile.close()
+                headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
+                app.cache.set(cid, (headers, data))
+            except (IOError, ValueError) as err:
+                logging.exception("error during PILdiff: %s", err.message)
+                abort(404) # TODO render user friendly error image
         else:
             # XXX TODO check ACL behaviour
             headers, data = c
