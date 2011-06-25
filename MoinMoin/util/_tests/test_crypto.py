@@ -58,6 +58,15 @@ class TestEncodePassword(object):
         hash_val = crypto.crypt_password(u"MoinMoin", salt='12345')
         result = crypto.valid_password(u'MoinMoin', hash_val)
         assert result
-        
+
+class TestToken(object):
+    """ tests for the generated tokens """
+
+    def testvalidtoken(self):
+        """ validate the token """
+        test_key, test_token = crypto.generate_token(key='MoinMoin')
+        result = crypto.valid_token(test_key, test_token)
+        assert result
+       
 coverage_modules = ['MoinMoin.util.crypto']
 
