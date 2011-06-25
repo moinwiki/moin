@@ -10,7 +10,7 @@
     {%- endif %}
 {% endblock %}
 
-{% import "itemviews.html" as itemviews without context %}
+{% import "itemviews.html" as itemviews with context %}
 
 {% block header_itemviews %}
     {{ itemviews }}
