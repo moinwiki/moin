@@ -47,7 +47,17 @@ class TestEncodePassword(object):
         result = crypto.crypt_password(u'סיסמה סודית בהחלט', salt='12345') # Hebrew
         expected = "{SSHA256}pdYvYv+4Vph259sv/HAm7zpZTv4sBKX9ITOX/m00HMsxMjM0NQ=="
         assert result == expected
+    
+    def testupgradepassword(self):
+        """ return new password hash with better hash """
+        result = crypto.upgrade_password(u'MoinMoin', "junk_hash")
+        assert result.startswith('{SSHA256}')
 
-
+    def testvalidpassword(self):
+        """ validate user password """
+        hash_val = crypto.crypt_password(u"MoinMoin", salt='12345')
+        result = crypto.valid_password(u'MoinMoin', hash_val)
+        assert result
+        
 coverage_modules = ['MoinMoin.util.crypto']
 
