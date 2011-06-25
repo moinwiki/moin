@@ -163,21 +163,12 @@ class MimeType(object):
         """ return a string major/minor only, no params """
         return "%s/%s" % (self.major, self.minor)
 
-    def content_disposition(self, cfg):
+    def as_attachment(self, cfg):
         # for dangerous files (like .html), when we are in danger of cross-site-scripting attacks,
         # we just let the user store them to disk ('attachment').
         # For safe files, we directly show them inline (this also works better for IE).
         mime_type = self.mime_type()
-        dangerous = mime_type in cfg.mimetypes_xss_protect
-        content_disposition = dangerous and 'attachment' or 'inline'
-        filename = self.filename
-        if filename is not None:
-            # TODO: fix the encoding here, plain 8 bit is not allowed according to the RFCs
-            # There is no solution that is compatible to IE except stripping non-ascii chars
-            if isinstance(filename, unicode):
-                filename = filename.encode(config.charset)
-            content_disposition += '; filename="%s"' % filename
-        return content_disposition
+        return mime_type in cfg.mimetypes_xss_protect
 
     def module_name(self):
         """ convert this mimetype to a string useable as python module name,

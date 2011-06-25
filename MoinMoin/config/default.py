@@ -352,7 +352,7 @@ options_no_group_name = {
     ('item_views', [
         # (endpointname, label, check_item_exists
         ('frontend.show_item', L_('Show'), L_('Show'), False, ),
-        ('frontend.get_item', L_('Download'), L_('Download'), True, ),
+        ('frontend.download_item', L_('Download'), L_('Download'), True, ),
         ('frontend.history', L_('History'), L_('Revision History'), True, ),
         # note: when rendering a non-existing item, you'll be offered to
         # create it (in the content area), so we do not offer "Modify":
