@@ -74,7 +74,7 @@ class TestToken(object):
         result1 = crypto.cache_key(**test_kw1)
         test_kw2 = {'Moin2' : 'value2'}
         result2 = crypto.cache_key(**test_kw2)
-        assert result1 != result1, ("Expected different keys for different <kw> but got the same")
+        assert result1 != result2, ("Expected different keys for different <kw> but got the same")
            
 coverage_modules = ['MoinMoin.util.crypto']
 
