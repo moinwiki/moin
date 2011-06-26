@@ -1,5 +1,5 @@
 # Copyright: 2009 MoinMoin:ThomasWaldmann
-# Copyright: 2009 MoinMoin:ReimarBauer
+# Copyright: 2009-2011 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
@@ -219,7 +219,7 @@ class Item(object):
         return ''
 
     def feed_input_conv(self):
-        return self.name
+        return self.rev
 
     def internal_representation(self, converters=['smiley']):
         """
@@ -633,7 +633,7 @@ class NonExistent(Item):
         ]),
     ]
 
-    def do_get(self):
+    def do_get(self, force_attachment=False):
         abort(404)
 
     def _convert(self):
@@ -743,45 +743,39 @@ There is no help, you're doomed!
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
 
-    def do_get(self):
+    def do_get(self, force_attachment=False):
         hash = self.rev.get(HASH_ALGORITHM)
         if is_resource_modified(request.environ, hash): # use hash as etag
-            return self._do_get_modified(hash)
+            return self._do_get_modified(hash, force_attachment=force_attachment)
         else:
             return Response(status=304)
 
-    def _do_get_modified(self, hash):
+    def _do_get_modified(self, hash, force_attachment=False):
         member = request.values.get('member')
-        return self._do_get(hash, member)
+        return self._do_get(hash, member, force_attachment=force_attachment)
 
-    def _do_get(self, hash, member=None):
-        filename = None
+    def _do_get(self, hash, member=None, force_attachment=False):
         if member: # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
-            content_disposition = mt.content_disposition(app.cfg)
-            content_type = mt.content_type()
             content_length = None
             file_to_send = self.get_member(member)
         else: # content = item revision
             rev = self.rev
+            filename = rev.item.name
             try:
                 mimestr = rev[CONTENTTYPE]
             except KeyError:
-                mt = MimeType(filename=rev.item.name)
+                mt = MimeType(filename=filename)
             else:
                 mt = MimeType(mimestr=mimestr)
-            content_disposition = mt.content_disposition(app.cfg)
-            content_type = mt.content_type()
             content_length = rev[SIZE]
             file_to_send = rev
-
-        # TODO: handle content_disposition is not None
-        # Important: empty filename keeps flask from trying to autodetect filename,
-        # as this would not work for us, because our file's are not necessarily fs files.
+        content_type = mt.content_type()
+        as_attachment = force_attachment or mt.as_attachment(app.cfg)
         return send_file(file=file_to_send,
                          mimetype=content_type,
-                         as_attachment=False, attachment_filename=filename,
+                         as_attachment=as_attachment, attachment_filename=filename,
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
@@ -865,8 +859,9 @@ class TarMixin(object):
 
 
 class ApplicationXTar(TarMixin, Application):
-    def feed_input_conv(self):
-        return self.rev
+    """
+    Tar items
+    """
 
 item_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
 item_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
@@ -900,8 +895,9 @@ class ZipMixin(object):
 
 
 class ApplicationZip(ZipMixin, Application):
-    def feed_input_conv(self):
-        return self.rev
+    """
+    Zip items
+    """
 
 item_registry.register(ApplicationZip._factory, Type('application/zip'))
 
@@ -999,7 +995,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         outfile.close()
         return content_type, data
 
-    def _do_get_modified(self, hash):
+    def _do_get_modified(self, hash, force_attachment=False):
         try:
             width = int(request.values.get('w'))
         except (TypeError, ValueError):
@@ -1033,7 +1029,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 headers, data = c
             return Response(data, headers=headers)
         else:
-            return self._do_get(hash)
+            return self._do_get(hash, force_attachment=force_attachment)
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
@@ -1051,7 +1047,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:
-                abort(404)
+                abort(404) # TODO render user friendly error image
 
             content_type = newrev[CONTENTTYPE]
             if content_type == 'image/jpeg':
@@ -1063,17 +1059,21 @@ class TransformableBitmapImage(RenderableBitmapImage):
             else:
                 raise ValueError("content_type %r not supported" % content_type)
 
-            oldimage = PILImage.open(oldrev)
-            newimage = PILImage.open(newrev)
-            oldimage.load()
-            newimage.load()
-            diffimage = PILdiff(newimage, oldimage)
-            outfile = StringIO()
-            diffimage.save(outfile, output_type)
-            data = outfile.getvalue()
-            outfile.close()
-            headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
-            app.cache.set(cid, (headers, data))
+            try:
+                oldimage = PILImage.open(oldrev)
+                newimage = PILImage.open(newrev)
+                oldimage.load()
+                newimage.load()
+                diffimage = PILdiff(newimage, oldimage)
+                outfile = StringIO()
+                diffimage.save(outfile, output_type)
+                data = outfile.getvalue()
+                outfile.close()
+                headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
+                app.cache.set(cid, (headers, data))
+            except (IOError, ValueError) as err:
+                logging.exception("error during PILdiff: %s", err.message)
+                abort(404) # TODO render user friendly error image
         else:
             # XXX TODO check ACL behaviour
             headers, data = c
@@ -1293,8 +1293,8 @@ class DocBook(MarkupItem):
 
         # We determine the different parameters for the reply
         mt = MimeType(mimestr='application/docbook+xml;charset=utf-8')
-        content_disposition = mt.content_disposition(app.cfg)
         content_type = mt.content_type()
+        as_attachment = mt.as_attachment(app.cfg)
         # After creation of the StringIO, we are at the end of the file
         # so position is the size the file.
         # and then we should move it back at the beginning of the file
@@ -1304,7 +1304,7 @@ class DocBook(MarkupItem):
         # as this would not work for us, because our file's are not necessarily fs files.
         return send_file(file=file_to_send,
                          mimetype=content_type,
-                         as_attachment=False, attachment_filename=None,
+                         as_attachment=as_attachment, attachment_filename=None,
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
@@ -1510,16 +1510,16 @@ class SvgDraw(TarMixin, Image):
 
     def modify(self):
         # called from modify UI/POST
-        file_upload = request.values.get('data')
+        png_upload = request.values.get('png_data')
+        svg_upload = request.values.get('filepath')
         filename = request.form['filename']
-        filecontent = file_upload.decode('base_64')
-        basepath, basename = os.path.split(filename)
-        basename, ext = os.path.splitext(basename)
+        png_content = png_upload.decode('base_64')
+        png_content = base64.urlsafe_b64decode(png_content.split(',')[1])
+        svg_content = svg_upload.decode('base_64')
         content_length = None
-
-        if ext == '.png':
-            filecontent = base64.urlsafe_b64decode(filecontent.split(',')[1])
-        self.put_member(filename, filecontent, content_length,
+        self.put_member("drawing.svg", svg_content, content_length,
+                        expected_members=set(['drawing.svg', 'drawing.png']))
+        self.put_member("drawing.png", png_content, content_length,
                         expected_members=set(['drawing.svg', 'drawing.png']))
 
     def do_modify(self, contenttype, template_name):
