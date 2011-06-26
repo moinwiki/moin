@@ -29,18 +29,20 @@ class RebuildIndexes(Command):
                   or just nothing to lose'),
         Option('--build', '-b', required=True, dest='build', type=str, choices=("all-revs", "latest-revs", "both"),
             help='What type of indexes we want to build. "all-revs", "latest-revs" or "both". Default: "both"'),
+        Option('--path', required=False, dest='path', type=str, default=None,
+            help='Build indexes in given path'),
                   )
 
     # We use 3 separated functions because want to avoid checks and increase speed
-    def run(self, procs, limitmb, build, clean):
-        def build_both(clean):
+    def run(self, procs, limitmb, build, clean, path):
+        def build_both(clean, path):
             """Build indexes for all and latest revisions"""
             if clean:
-                index_object.create_index(indexdir=app.cfg.index_dir,
+                index_object.create_index(indexdir=path,
                                          indexname="latest_revisions_index",
                                          schema="latest_revisions_schema"
                                         )
-                index_object.create_index(indexdir=app.cfg.index_dir,
+                index_object.create_index(indexdir=path,
                                          indexname="all_revisions_index",
                                          schema="all_revisions_schema"
                                         )
@@ -63,10 +65,10 @@ class RebuildIndexes(Command):
                         metadata["rev_no"] = rev_no
                         latest_rev_writer.add_document(**metadata)
 
-        def build_all_revs(clean):
+        def build_all_revs(clean, path):
             """Build indexes for all revisions"""
             if clean:
-                index_object.create_index(indexdir=app.cfg.index_dir,
+                index_object.create_index(indexdir=path,
                                          indexname="all_revisions_index",
                                          schema="all_revisions_schema"
                                         )
@@ -81,10 +83,10 @@ class RebuildIndexes(Command):
                         metadata["rev_no"] = rev_no
                         all_rev_writer.add_document(**metadata)
 
-        def build_latest_revs(clean):
+        def build_latest_revs(clean, path):
             """Build indexes for latest revisions"""
             if clean:
-                index_object.create_index(indexdir=app.cfg.index_dir,
+                index_object.create_index(indexdir=path,
                                          indexname="latest_revisions_index",
                                          schema="latest_revisions_schema"
                                         )
@@ -100,15 +102,16 @@ class RebuildIndexes(Command):
                     latest_rev_writer.add_document(**metadata)
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
-        index_object = WhooshIndex()
+        path = path or app.cfg.index_dir
+        index_object = WhooshIndex(index_dir=path)
         latest_rev_index = index_object.latest_revisions_index
         latest_rev_field_names = latest_rev_index.schema.names()
         all_rev_index = index_object.all_revisions_index
         all_rev_field_names = all_rev_index.schema.names()
 
         if build == "both":
-            build_both(clean)
+            build_both(clean, path)
         elif build == "all-revs":
-            build_all_revs(clean)
+            build_all_revs(clean, path)
         elif build == "latest-revs":
-            build_latest_revs(clean)
+            build_latest_revs(clean, path)
