@@ -58,13 +58,20 @@ class TestEncodePassword(object):
         hash_val = crypto.crypt_password(u"MoinMoin", salt='12345')
         result = crypto.valid_password(u'MoinMoin', hash_val)
         assert result
+        with pytest.raises(ValueError):
+            invlid_result = crypto.valid_password("MoinMoin", '{junk_value}')
+            
 
 class TestToken(object):
     """ tests for the generated tokens """
 
     def testvalidtoken(self):
         """ validate the token """
-        test_key, test_token = crypto.generate_token(key='MoinMoin')
+        test_key, test_token = crypto.generate_token(key='MoinMoin') # having some key value
+        result = crypto.valid_token(test_key, test_token)
+        assert result
+        
+        test_key, test_token = crypto.generate_token() # key value is none
         result = crypto.valid_token(test_key, test_token)
         assert result
 
