@@ -1,0 +1,65 @@
+#!/bin/bash
+# create a virtual environment in directory $DIR/
+# needs: curl or wget, unzip, gzip, tar, pip
+
+DIR=envxs
+PYTHON=python
+
+virtualenv --no-site-packages --python $PYTHON $DIR
+
+source $DIR/bin/activate
+
+download()
+{
+    if test -x /usr/bin/curl
+    then
+        echo /usr/bin/curl -L -o $1 $2
+        /usr/bin/curl -L -o $1 $2
+    else
+        # github redirects to a url where its cert does not match :(
+        echo wget -nc --no-check-certificate -O $1 $2
+        wget -nc --no-check-certificate -O $1 $2
+    fi
+}
+
+# get some 3rd party stuff and unpack them into $DIR/, where the default
+# wikiconfig.py expects them. should be replaced by packaging.
+# we do this FIRST, so that breakage with pip install is better visible.
+
+download $DIR/ckeditor.tgz http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
+tar xz -C $DIR/ -f $DIR/ckeditor.tgz
+
+download $DIR/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
+tar xz -C $DIR/ -f $DIR/twd.tgz
+
+download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
+tar xz -C $DIR/ -f $DIR/svgedit.tgz
+
+mkdir $DIR/jquery.fu
+download $DIR/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
+download $DIR/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
+download $DIR/jquery.fu/jquery.fileupload-ui.css https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.css
+download $DIR/jquery.fu/pbar-ani.gif https://www.github.com/blueimp/jQuery-File-Upload/raw/master/pbar-ani.gif
+
+download $DIR/svgweb.zip http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
+unzip -q -o -d $DIR/ $DIR/svgweb.zip
+
+AWDDIR='AnyWikiDraw 0.14'
+download $DIR/awd.zip 'http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
+unzip -q -o -d $DIR/ $DIR/awd.zip
+cd $DIR/
+ln -s "$AWDDIR" AnyWikiDraw
+cd ..
+
+# first install babel, moin's setup.py will emit a warning if it is not there
+pip install babel
+# first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
+pip install XStatic
+
+# "install" moin2 from repo to the env, this will also install required python
+# packages from pypi. we do this LAST, so that breakage is better visible.
+pip install -e .
+
+# compile the translations
+python setup.py compile_catalog --statistics
+
