@@ -61,6 +61,7 @@ class Config(DefaultConfig):
         anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
+        mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
         fileupload = os.path.join(wikiconfig_dir, env_dir, 'jquery.fu'),
     )
 
