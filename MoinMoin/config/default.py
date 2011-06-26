@@ -453,6 +453,7 @@ options_no_group_name = {
         ],
         theme_name=None, # None -> use cfg.theme_default
         edit_rows=0,
+        results_per_page=0,
         locale=None, # None -> do browser language detection, otherwise just use this locale
         timezone=None, # None -> use cfg.timezone_default
       ),

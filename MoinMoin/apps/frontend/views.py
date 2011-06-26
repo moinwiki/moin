@@ -542,13 +542,11 @@ def history(item_name):
     selected_history = []
 
     offset = request.values.get('offset', 0)
-    offset = int(offset)
-    if offset < 0:
-        offset = 0
+    offset = max(int(offset), 0)
 
     results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
-        results_per_page = flaskg.user.ResultsPerPage(results_per_page)
+        results_per_page = flaskg.user.results_per_page
 
     revcount = 0
     maxcount = offset + results_per_page
@@ -556,7 +554,7 @@ def history(item_name):
     for rev in history:
         if revcount < offset:
             revcount += 1
-        elif revcount == maxcount:
+        elif results_per_page and revcount == maxcount:
             nextPage = True
             break
         else:
@@ -566,7 +564,7 @@ def history(item_name):
     if not nextPage:
         revcount = 0
 
-    if offset:
+    if results_per_page and offset:
         previous_offset = max(offset - results_per_page, 0)
     else:
         previous_offset = -1
@@ -584,7 +582,7 @@ def global_history():
     results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         bookmark_time = flaskg.user.getBookmark()
-        results_per_page = flaskg.user.ResultsPerPage(results_per_page)
+        results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
     else:
         bookmark_time = None
     item_groups = OrderedDict()
@@ -672,7 +670,7 @@ def global_history():
 
     # Grouping on the date basis
     offset = request.values.get('offset', 0)
-    offset = int(offset)
+    offset = max(int(offset), 0)
     day_count = OrderedDict()
     revcount = 0
     maxrev = results_per_page + offset
@@ -694,32 +692,36 @@ def global_history():
             revcount += len(item_group["revnos"])
         else:
             grouped_history.append(rev_tuples)
-            if revcount < maxrev:
+            if results_per_page and revcount >= maxrev:
+                toappend = False
+                break
+            else:
                 rev_tuples = rev_tuple(rev_date, [item_group])
                 prev_date = rev_date
                 revcount += len(item_group["revnos"])
-            else:
-                toappend = False
-                break
+
     if toappend:
         grouped_history.append(rev_tuples)
         revcount = 0 # this is the last page, no next page present
     del grouped_history[0]  # First tuple will be a null one
 
     # calculate offset for previous page link
-    previous_offset = 0
-    prev_rev_count = day_count.values()
-    prev_rev_count.reverse()
-    for numrev in prev_rev_count:
-        if previous_offset < results_per_page:
-            previous_offset += numrev
-        else:
-            break
-
-    if offset - previous_offset >= results_per_page:
-        previous_offset = offset - previous_offset
-    elif previous_offset:
+    if results_per_page:
         previous_offset = 0
+        prev_rev_count = day_count.values()
+        prev_rev_count.reverse()
+        for numrev in prev_rev_count:
+            if previous_offset < results_per_page:
+                previous_offset += numrev
+            else:
+                break
+
+        if offset - previous_offset >= results_per_page:
+            previous_offset = offset - previous_offset
+        elif previous_offset:
+            previous_offset = 0
+        else:
+            previous_offset = -1
     else:
         previous_offset = -1 # no previous page
 
@@ -1286,7 +1288,7 @@ def usersettings(part):
         theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
         css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
         edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
-        results_per_page = Integer.using(label=L_('History results per page'), optional=True).with_properties(placeholder=L_("Number of results per page")).validated_by(ValueAtLeast(1))
+        results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
         submit = String.using(default=L_('Save'), optional=True)
 
     dispatch = dict(
