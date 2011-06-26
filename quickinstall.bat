@@ -28,9 +28,6 @@ wget -nc http://static.moinmo.in/files/packages/svg-edit.tar.gz -Penv/
 7za x env/svg-edit.tar.gz -y -oenv\
 7za x env/svg-edit.tar -y -oenv\
 
-mkdir env\jquery
-wget -nc http://code.jquery.com/jquery-1.4.4.min.js -Oenv/jquery/jquery.min.js
-
 wget -nc http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip -Penv/
 7za x env/svgweb-2010-08-10-Owlephant-1.zip -y -oenv\
 
@@ -42,6 +39,9 @@ del /q env\*.tar
 
 echo Installing babel first ...
 pip install babel
+
+echo Installing XStatic first ...
+pip install XStatic
 
 echo Installing all required python packages from pypi ...
 pip install -e .
