@@ -75,6 +75,10 @@ class TestToken(object):
         result = crypto.valid_token(test_key, test_token)
         assert result
 
+        key, token = 'MoinMoin', 'incorrect_token'
+        result = crypto.valid_token(key, token)
+        assert result == False
+
     def testcache_key(self):
         """ The key must be different for different <kw> """
         test_kw1 = {'MoinMoin': 'value1'}
