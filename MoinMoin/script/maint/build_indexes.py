@@ -46,8 +46,8 @@ class RebuildIndexes(Command):
                                          indexname="all_revisions_index",
                                          schema="all_revisions_schema"
                                         )
-            with MultiSegmentWriter(all_rev_index, procs, limitmb) as all_rev_writer:
-                with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
+            with all_rev_index.writer() as all_rev_writer:
+                with latest_rev_index.writer() as latest_rev_writer:
                     for item in backend.iter_items_noindex():
                         for rev_no in item.list_revisions():
                             revision = item.get_revision(rev_no)
@@ -72,7 +72,7 @@ class RebuildIndexes(Command):
                                          indexname="all_revisions_index",
                                          schema="all_revisions_schema"
                                         )
-            with MultiSegmentWriter(all_rev_index, procs, limitmb) as all_rev_writer:
+            with all_rev_index.writer() as all_rev_writer:
                 for item in backend.iter_items_noindex():
                     for rev_no in item.list_revisions():
                         revision = item.get_revision(rev_no)
@@ -90,7 +90,7 @@ class RebuildIndexes(Command):
                                          indexname="latest_revisions_index",
                                          schema="latest_revisions_schema"
                                         )
-            with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
+            with latest_rev_index.writer() as latest_rev_writer:
                 for item in backend.iter_items_noindex():
                     rev_no = max(item.list_revisions())
                     revision = item.get_revision(rev_no)
