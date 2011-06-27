@@ -136,4 +136,29 @@ class TestRename:
         assert not os.path.exists(self.src)
 
 
+class TestCopy:
+    """test filesys.copytree"""
+
+    def setup_method(self, method):
+        self.test_dir = tempfile.mkdtemp('', 'copytree1')
+        self.src1 = os.path.join(self.test_dir, "copytree-src1")
+        self.src2 = os.path.join(self.test_dir, "copytree-src2")
+        
+    def teardown_method(self, method):
+        shutil.rmtree(self.test_dir)
+        shutil.rmtree(self.test_dest_dir)
+
+    def makefile(self, src, content):
+        f = open(src, "w")
+        f.write(content)
+        f.close()
+        
+    def test_copytree(self):
+        self.makefile(self.src1, 'src1')
+        self.makefile(self.src2, 'src2')
+        self.test_dest_dir = self.test_dir + '_copy'
+        filesys.copytree(self.test_dir, self.test_dest_dir)
+        # check for the dir contents
+        assert os.listdir(self.test_dir) == os.listdir(self.test_dest_dir)        
+        
 coverage_modules = ['MoinMoin.util.filesys']
