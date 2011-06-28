@@ -167,6 +167,5 @@ class TestCopy:
         self.test_dest_dir = tempfile.mkdtemp('', 'temp_dir')
         with pytest.raises(OSError):
             filesys.copytree(self.test_dir, self.test_dest_dir)
-        
-        
+
 coverage_modules = ['MoinMoin.util.filesys']
