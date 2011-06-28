@@ -48,9 +48,8 @@
                             <td class="moin-action" title="{{ _("DIFF") }}">                                
                                 <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=item_latest_revno, rev2=0) }}" class="moin-history-{{ rev.action|lower }}"></a>
                             </td>
-                            <td class="moin-history-item"><a href="{{ url_for('frontend.show_item', item_name=rev.item_name) }}">{{ rev.item_name }}</a></td>
+                            <td class="moin-history-item"><a class="{{ rev.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.item_name) }}" title="{{ rev.contenttype }}">{{ rev.item_name }}</a></td>
                             <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
-                            <td class="moin-wordbreak moin-history-contenttype">{{ rev.contenttype }}</td>
                             <td class="moin-history-links">
                                 {% for revno in rev.revnos %}
                                     {% if revno %}
