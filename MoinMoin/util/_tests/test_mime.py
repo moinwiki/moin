@@ -15,6 +15,9 @@ def test_Type_init_1():
     assert t.type == 'foo'
     assert t.subtype == 'bar'
     assert t.parameters == {'foo': 'bar'}
+    result_repr = t.__repr__()
+    assert result_repr== "<Type object: type: 'foo'; subtype: 'bar'; parameters: {'foo': 'bar'}>"   
+
 
 def test_Type_init_2():
     i = 'text/plain;encoding=utf-8'
@@ -22,6 +25,8 @@ def test_Type_init_2():
     assert t.type == 'foo'
     assert t.subtype == 'bar'
     assert t.parameters == {'encoding': 'utf-8', 'foo': 'bar'}
+    result_repr = t.__repr__()
+    assert result_repr == "<Type object: type: 'foo'; subtype: 'bar'; parameters: {'foo': 'bar', 'encoding': 'utf-8'}>"
 
 def test_Type_init_3():
     i = Type(type='foo', subtype='bar')
@@ -29,7 +34,11 @@ def test_Type_init_3():
     assert i is not t
     assert i == t
     assert i.parameters is not t.parameters
-
+    result_repr_t = t.__repr__()
+    result_repr_i = t.__repr__()
+    assert result_repr_t == "<Type object: type: 'foo'; subtype: 'bar'; parameters: {}>"
+    assert result_repr_t == result_repr_i, ("Expected same values but got different")
+    
 def test_Type_text():
     i = '*/*'
     t = Type(i)
