@@ -600,6 +600,7 @@ class SQLARevision(NewRevision, Base):
         self._revno = revno
         self.setup(item._backend)
         self._item = item
+        self._item_id = item.id
 
     def __del__(self):
         # XXX XXX XXX DO NOT RELY ON THIS
