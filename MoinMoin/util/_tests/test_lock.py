@@ -137,6 +137,14 @@ class TestWriteLock(object):
         lock = WriteLock(self.lock_dir)
         assert lock.acquire(0.1)
 
+    def test_haveReadLocks(self):
+        """check if there is a ReadLock """
+        write_lock = WriteLock(self.lock_dir)
+        read_lock = ReadLock(self.lock_dir)
+        read_lock.acquire()
+        result = write_lock._haveReadLocks()
+        assert result, ('should return True but got False')
+    
 class TestReadLock(object):
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp('', 'lock_')
