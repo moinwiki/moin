@@ -165,6 +165,8 @@ class TestReadLock(object):
         """ util.lock: ReadLock: acquire """
         lock = ReadLock(self.lock_dir)
         assert lock.acquire(0.1)
+        with pytest.raises(RuntimeError):
+            assert lock.acquire(0.1)
 
 coverage_modules = ['MoinMoin.util.lock']
 
