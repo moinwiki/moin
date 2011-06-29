@@ -145,11 +145,11 @@ class TestWriteLock(object):
         write_lock = WriteLock(self.lock_dir, timeout)
         read_lock = ReadLock(self.lock_dir)
         # acquired ReadLock
-        read_lock.acquire(0.1)
+        assert read_lock.acquire(0.1)
         result_before = write_lock._haveReadLocks()
         assert result_before
         # try to acquire WriteLock
-        write_lock.acquire()
+        assert write_lock.acquire()
         result_after = write_lock._haveReadLocks()
         assert result_after == False
 
