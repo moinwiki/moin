@@ -136,15 +136,23 @@ class TestWriteLock(object):
         """ util.lock: WriteLock: acquire """
         lock = WriteLock(self.lock_dir)
         assert lock.acquire(0.1)
+        with pytest.raises(RuntimeError):
+            assert lock.acquire(0.1)
 
     def test_haveReadLocks(self):
         """check if there is a ReadLock """
-        write_lock = WriteLock(self.lock_dir)
+        timeout = 2.0 
+        write_lock = WriteLock(self.lock_dir, timeout)
         read_lock = ReadLock(self.lock_dir)
-        read_lock.acquire()
-        result = write_lock._haveReadLocks()
-        assert result, ('should return True but got False')
-    
+        # acquired ReadLock
+        read_lock.acquire(0.1)
+        result_before = write_lock._haveReadLocks()
+        assert result_before
+        # try to acquire WriteLock
+        write_lock.acquire()
+        result_after = write_lock._haveReadLocks()
+        assert result_after == False
+
 class TestReadLock(object):
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp('', 'lock_')
