@@ -4,17 +4,12 @@ Working with indexes
 Requirements
 ============
 For correct script working you should set ``index_dir`` and ``index_dir_tmp`` values in
-your local config.
+your wiki config.
 
-For example ``wikiconfig_editme.py``::
+For example::
 
-   from wikiconfig import *
-
-   class LocalConfig(Config):
-      index_dir = "/home/marchael/Downloads/moin/moin2/moin-2.0/wiki/index/"
-      index_dir_tmp = "/home/marchael/Downloads/moin/moin2/moin-2.0/wiki/tmp_build/"
-
-   MOINCFG = LocalConfig
+      index_dir = "/home/user/moin-2.0/wiki/index/"
+      index_dir_tmp = "/home/user/moin-2.0/wiki/tmp_build/"
 
 **Note:** Paths MUST BE absolute
 
@@ -32,19 +27,19 @@ But you may use following sequence for building indexes while moin is working:
 
 You may use following commands in virtual env::
 
-   moin rebuild_indexes --for both --action build # build indexes in tmp dir
-   # stop wiki
-   moin rebuild_indexes --for both --action move  # move indexes tmp dir to 
-                                                  # current index directory
-   moin update_indexes                            # update indexes
-   # start wiki
+   moin index --for both --action build   # build indexes in index_dir_tmp
+   # TODO: insert a command here to stop your moin
+   moin index --for both --action move    # move indexes index_dir_tmp to 
+                                          # current index_dir
+   moin index --for both --action update  # update indexes
+   # TODO: insert a command here to start your moin
 
-**Note:** If you don't want to rebuild both indexes you could also try
+**Note:** If you don't want to rebuild both indexes you can use
 ``--for all-revs`` or ``--for latest-revs``.
 
 
-For cleaning both indexes in base directory you may try::
+For cleaning both indexes in ``index_dir`` you may try::
 
-   moin --for both --action clean
+   moin index --for both --action clean
 
 
