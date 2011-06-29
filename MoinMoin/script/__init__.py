@@ -21,7 +21,7 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
     from MoinMoin.script.maint.build_indexes import RebuildIndexes
-    manager.add_command("rebuild_indexes", RebuildIndexes())
+    manager.add_command("index", RebuildIndexes())
     from MoinMoin.script.maint.update_indexes import UpdateIndexes
     manager.add_command("update_indexes", UpdateIndexes())
     from MoinMoin.script.account.create import Create_User
