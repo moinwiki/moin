@@ -11,7 +11,7 @@ import tempfile, os, time, shutil
 
 import pytest
 
-from MoinMoin.util.lock import ExclusiveLock, WriteLock
+from MoinMoin.util.lock import ExclusiveLock, WriteLock, ReadLock
 
 
 class TestExclusiveLock(object):
@@ -135,7 +135,19 @@ class TestWriteLock(object):
     def test_writelock_acquire(self):
         """ util.lock: WriteLock: acquire """
         lock = WriteLock(self.lock_dir)
-        pytest.set_trace()
+        assert lock.acquire(0.1)
+
+class TestReadLock(object):
+    def setup_method(self, method):
+        self.test_dir = tempfile.mkdtemp('', 'lock_')
+        self.lock_dir = os.path.join(self.test_dir, "readlock")
+
+    def teardown_method(self, method):
+        shutil.rmtree(self.test_dir)
+    
+    def test_readlock_acquire(self):
+        """ util.lock: ReadLock: acquire """
+        lock = ReadLock(self.lock_dir)
         assert lock.acquire(0.1)
 
 coverage_modules = ['MoinMoin.util.lock']
