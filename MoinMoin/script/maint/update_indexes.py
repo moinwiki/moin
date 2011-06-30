@@ -20,7 +20,12 @@ from MoinMoin.storage.error import NoSuchItemError
 class UpdateIndexes(Command):
     description = 'Up to date indexes'
 
-    def run(self):
+    option_list = (
+        Option('--for', required=True, dest='indexname', type=str, choices=("all-revs", "latest-revs", "both"), 
+            help='Update given index'),
+                  )
+
+    def run(self, indexname):
         # return list with item rev_nos
         def item_index_revs(searcher, name):
             name = name.lower()
@@ -56,13 +61,15 @@ class UpdateIndexes(Command):
             backend_rev_list = item.list_revisions()
             add_rev_nos = set(backend_rev_list) - set(index_rev_list)
             if add_rev_nos:
-                create_documents.append((name, add_rev_nos))
-                latest_documents.append((name, max(add_rev_nos))) # Add latest revision 
+                if indexname in ["both", "all-revs"]:
+                    create_documents.append((name, add_rev_nos))
+                if indexname in ["both", "latest-revs"]:
+                    latest_documents.append((name, max(add_rev_nos))) # Add latest revision 
             remove_rev_nos = set(index_rev_list) - set(backend_rev_list)
-            if remove_rev_nos:
+            if remove_rev_nos and indexname in ["both", "all-revs"]:
                 delete_documents.append((name, remove_rev_nos))
 
-        if latest_documents:
+        if latest_documents and indexname in ["both", "latest-revs"]:
             with latest_rev_index.writer() as latest_rev_writer:
                 for name, rev_no in latest_documents:
                     try:
@@ -82,29 +89,31 @@ class UpdateIndexes(Command):
                         if doc_number:
                             latest_rev_writer.delete_document(doc_number)
 
-        with all_rev_index.writer() as all_rev_writer:
-            for name, rev_nos in delete_documents:
-                # If document with this name wasn't found in indexes
-                # then we just ignore it
-                if not rev_nos:
-                    break
-                for rev_no in rev_nos:
-                    doc_number = all_rev_searcher.document_number(rev_no=rev_no,
-                                                                  name=name.lower()
-                                                                 )
-                    all_rev_writer.delete_document(doc_number)
-            for name, rev_nos in create_documents:
-                try:
-                    for rev_no in rev_nos:
-                            storage_rev = backend.get_item(name).get_revision(rev_no)
-                            converted_rev = backend_to_index(storage_rev, rev_no, all_rev_field_names)
-                            all_rev_writer.add_document(**converted_rev)
-                except NoSuchItemError:
-                    # Item has been trashed, removing all stuff
-                    rev_nos = item_index_revs(all_rev_searcher, name.lower())
+        if indexname in ["both", "all-revs"]:
+            with all_rev_index.writer() as all_rev_writer:
+                for name, rev_nos in delete_documents:
+                    # If document with this name wasn't found in indexes
+                    # then we just ignore it
+                    if not rev_nos:
+                        break
                     for rev_no in rev_nos:
                         doc_number = all_rev_searcher.document_number(rev_no=rev_no,
                                                                       name=name.lower()
                                                                      )
                         if doc_number:
                             all_rev_writer.delete_document(doc_number)
+                for name, rev_nos in create_documents:
+                    try:
+                        for rev_no in rev_nos:
+                                storage_rev = backend.get_item(name).get_revision(rev_no)
+                                converted_rev = backend_to_index(storage_rev, rev_no, all_rev_field_names)
+                                all_rev_writer.add_document(**converted_rev)
+                    except NoSuchItemError:
+                        # Item has been trashed, removing all stuff
+                        rev_nos = item_index_revs(all_rev_searcher, name.lower())
+                        for rev_no in rev_nos:
+                            doc_number = all_rev_searcher.document_number(rev_no=rev_no,
+                                                                          name=name.lower()
+                                                                         )
+                            if doc_number:
+                                all_rev_writer.delete_document(doc_number)

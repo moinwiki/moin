@@ -16,6 +16,7 @@ from whoosh.index import create_in, exists_in
 from MoinMoin.search.indexing import WhooshIndex
 from MoinMoin.config import MTIME
 from MoinMoin.error import FatalError
+from MoinMoin.script.maint.update_indexes import UpdateIndexes
 
 # Information about index and schema for latest and all revisions
 latest_indexname_schema = ("latest_revisions_index", "latest_revisions_schema")
@@ -57,7 +58,7 @@ class RebuildIndexes(Command):
                                                  for key, value in revision.items()
                                                  if key in all_rev_field_names])
                                 metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
-                                metadata[MTIME] = rev_no
+                                metadata["rev_no"] = rev_no
                                 all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         if "latest_revisions_index" in indexnames:
