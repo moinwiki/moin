@@ -74,9 +74,16 @@ class TestToken(object):
         test_key, test_token = crypto.generate_token() # key value is none
         result = crypto.valid_token(test_key, test_token)
         assert result
+        
+        test_parts = test_token.split('-')
+        test_parts[0] = 'not_valid'
+        # changed value of the first part, should not be string
+        test_token_changed = '-'.join(test_parts)
+        result = crypto.valid_token(test_key, test_token_changed)
+        assert result == False
 
-        key, token = 'MoinMoin', 'incorrect_token'
-        result = crypto.valid_token(key, token)
+        test_key, test_token = 'MoinMoin', 'incorrect_token'
+        result = crypto.valid_token(test_key, test_token)
         assert result == False
 
     def testcache_key(self):
