@@ -34,7 +34,7 @@ You may use following commands in virtual env::
    moin index --for both --action update  # update indexes
    # TODO: insert a command here to start your moin
 
-**Note:** If you don't want to rebuild both indexes you can use
+**Note:** If you don't want to rebuild\update both indexes you can use
 ``--for all-revs`` or ``--for latest-revs``.
 
 
