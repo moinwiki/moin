@@ -35,8 +35,16 @@ class TestNaviBar(object):
             assert result == expected
 
     def test_location_breadcrumbs(self):
-        test_result = ThemeSupport.location_breadcrumbs(self.theme, 'test_item')
-        test_segment_name, test_item_name, test_item_exists = test_result[0]
-        assert test_segment_name == 'test_item'
-        assert test_item_name == 'test_item'
+        test_result = ThemeSupport.location_breadcrumbs(self.theme, 'some/place/test_item')
+        test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
+        test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
+        test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
+         
+        assert test_segment_name_1 == 'some'
+        assert test_item_name_1 == 'some'
+        assert test_segment_name_2 == 'place'
+        assert test_item_name_2 == 'some/place'
+        assert test_segment_name_3 == 'test_item'
+        assert test_item_name_3 == 'some/place/test_item'
+        
 
