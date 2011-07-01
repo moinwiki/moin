@@ -56,3 +56,7 @@ def test_shorten_item_name():
     test_result3 = themes.shorten_item_name(u'MoinMoin/some/value') 
     assert test_result3 == u'MoinMoin/some/value'    
 
+def test_contenttype_to_class():
+    test_result = themes.contenttype_to_class(u'MoinMoin/some/value')
+    expected = u'moin-mime-MoinMoin'    
+    assert test_result == expected
