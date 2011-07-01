@@ -69,9 +69,7 @@ a:active { color: red; }
 
 /* dead links */
 a.moin-nonexistent:visited,
-a.moin-nonexistent,
-a.moin-badinterwiki:visited,
-a.moin-badinterwiki { color: #444; }
+a.moin-nonexistent { color: #444; }
 
 /* lists */
 ol, ul { margin-left: 3em; }
@@ -345,7 +343,6 @@ a.moin-irc:before,
 a.moin-ircs:before { content: url(../img/moin-telnet.png); margin: 0 0.2em; }
 a.moin-mailto:before { content: url(../img/moin-email.png); margin: 0 0.2em; }
 a.moin-attachment:before { content: url(../img/moin-attach.png); margin: 0 0.2em; }
-a.moin-badinterwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
 a.moin-interwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
 a.moin-action:before { content: url(../img/moin-action.png); margin: 0 0.2em; }
 
@@ -462,16 +459,17 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header */
 #moin-header { margin: 0px; padding: 0px;
-            background: url(../img/white_clouds.png); /* background: #E6EAF0; */
+            background: url(../img/white-clouds.jpg); /* background: #E6EAF0; */
             line-height: 1.12em; }
 
 /* moin-header searchform */
-#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: right; }
+#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: left; }
 #moin-searchform input { font-size: 100%; vertical-align: middle;
             background-color: #F3F7FD; /* same as body bg col */
             border: 1px solid #A4B9DF; }
-#moin-searchform label { display:none; }
 #moin-searchform div { margin: 0; }
+#moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
+#moin-searchform li { list-style:none; }
 
 /* moin-header moin-logo -- logos may be text only */
 #moin-logo { float: left; margin: 5px 10px; padding: 0; font-size: 1.4em; line-height: 1em; font-weight: bold; }
@@ -561,11 +559,11 @@ h6:hover .permalink { display: inline; }
 html { font-family: Times, serif; font-size: 12pt; width: 100%; }
 body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
 
-a, a:visited, a.nonexistent,
-a.badinterwiki { color: black !important; text-decoration: none !important; }
+a, a:visited,
+a.nonexistent { color: black !important; text-decoration: none !important; }
 
-a.interwiki:before, a.badinterwiki:before { content: attr(title) ":"; }
-a.interwiki img, a.badinterwiki img { display: none; }
+a.interwiki:before { content: attr(title) ":"; }
+a.interwiki img { display: none; }
 
 pre { font-size: 10pt; }
 .footnotes div { width: 5em; border-top: 1pt solid gray; }

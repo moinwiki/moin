@@ -274,6 +274,35 @@ class TestConverter(object):
         ]
         for i in data:
             yield (self.do, ) + i
+    def test_interwiki(self):
+        data = [
+            (u'[[MoinMoin:RecentChanges]]',
+                '<page><body><p><a xlink:href="wiki://MoinMoin/RecentChanges">RecentChanges</a></p></body></page>'),
+            (u'[[MoinMoin:RecentChanges|changes]]',
+                '<page><body><p><a xlink:href="wiki://MoinMoin/RecentChanges">changes</a></p></body></page>'),
+            (u'[[MoinMoin:Foo/Bar.Baz]]',
+                '<page><body><p><a xlink:href="wiki://MoinMoin/Foo/Bar.Baz">Foo/Bar.Baz</a></p></body></page>'),
+            (u'[[MoinMoin:Blank In Page Name|blank in page name]]',
+                '<page><body><p><a xlink:href="wiki://MoinMoin/Blank%20In%20Page%20Name">blank in page name</a></p></body></page>'),
+            (u'[[InvalidWikiName:RecentChanges]]',
+                '<page><body><p><a xlink:href="wiki.local:InvalidWikiName:RecentChanges">InvalidWikiName:RecentChanges</a></p></body></page>'),
+        ]
+        for i in data:
+            yield (self.do, ) + i
+
+    def test_email(self):
+        data = [
+            (u'[[mailto:root]]',
+                '<page><body><p><a xlink:href="mailto:root">mailto:root</a></p></body></page>'),
+            (u'[[mailto:foo@bar.baz]]',
+                '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
+            (u'[[mailto:foo@bar.baz|write me]]',
+                '<page><body><p><a xlink:href="mailto:foo@bar.baz">write me</a></p></body></page>'),
+            (u'[[mailto:foo.bar_baz@bar.baz]]', # . and _ are special characters commonly allowed by email systems
+                '<page><body><p><a xlink:href="mailto:foo.bar_baz@bar.baz">mailto:foo.bar_baz@bar.baz</a></p></body></page>'),
+        ]
+        for i in data:
+            yield (self.do, ) + i
 
     def serialize(self, elem, **options):
         from StringIO import StringIO

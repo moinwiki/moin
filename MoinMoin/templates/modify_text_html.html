@@ -8,8 +8,6 @@
 
 {% block data_editor %}
 <p>
-    <textarea class="ckeditor" id="data_text" name="data_text" rows="{{ rows_data }}" cols="{{ cols }}">{{
-        data_text
-    }}</textarea>
+{{ gen.textarea(form['data_text'], class='ckeditor', lang=lang, dir=direction, rows=rows_data, cols=cols) }}
 </p>
 {% endblock %}

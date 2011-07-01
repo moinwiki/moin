@@ -1,10 +1,7 @@
 {% import "forms.html" as forms %}
 {% extends "modify_applet.html" %}
 {% block extra_form %}
-<input class="button" type="submit" name="button_save" value="{{ _("Save") }}" />
-<input class="button" type="submit" name="button_cancel" value="{{ _("Cancel") }}" />
+{{ gen.input(form['submit'], class='button', type='submit') }}
 {{ forms.render_textcha(gen, form) }}
-<br />
-<label for="comment">{{ _("Comment:") }}</label><input type="text" id="comment" name="comment" size="80" maxlength="200" value="{{ comment }}" />
-<br />
+{{ forms.render_field(gen, form['comment'], 'text') }}
 {% endblock %}

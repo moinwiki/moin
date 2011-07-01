@@ -57,13 +57,19 @@ class Config(DefaultConfig):
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
         ckeditor = os.path.join(wikiconfig_dir, env_dir, 'ckeditor'),
-        jquery = os.path.join(wikiconfig_dir, env_dir, 'jquery'),
         svgweb = os.path.join(wikiconfig_dir, env_dir, 'svgweb', 'src'),
         anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
+        mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
         fileupload = os.path.join(wikiconfig_dir, env_dir, 'jquery.fu'),
     )
+
+    # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
+    # see https://bitbucket.org/thomaswaldmann/xstatic for details:
+    from xstatic.pkg.jquery import JQuery
+    j = JQuery(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(j.name, j.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 

@@ -105,14 +105,15 @@ class ConverterExternOutput(ConverterBase):
         if links == 'extern':
             return cls(url_root=url_root)
 
-    def _get_do(self, query):
+    def _get_do_rev(self, query):
         """
-        get 'do' value from query string and remove do=value from querystring
+        get 'do' and 'rev' values from query string and remove them from querystring
 
         Note: we can't use url_decode/url_encode from e.g. werkzeug because
               url_encode quotes the qs values (and Iri code will quote them again)
         """
         do = None
+        revno = None
         separator = '&'
         result = []
         if query:
@@ -126,22 +127,27 @@ class ConverterExternOutput(ConverterBase):
                 if k == 'do':
                     do = v
                     continue # we remove do=xxx from qs
+                if k == 'rev':
+                    revno = v
+                    continue # we remove rev=n from qs
                 result.append(u'%s=%s' % (k, v))
         if result:
             query = separator.join(result)
         else:
             query = None
-        return do, query
+        if revno is not None:
+            revno = int(revno)
+        return do, revno, query
 
     def handle_wiki_links(self, elem, input):
-        do, query = self._get_do(input.query)
+        do, revno, query = self._get_do_rev(input.query)
         link = Iri(query=query, fragment=input.fragment)
 
         if input.authority and input.authority.host:
             # interwiki link
             wikitag, wikiurl, wikitail, err = resolve_interwiki(unicode(input.authority.host), unicode(input.path[1:]))
             if not err:
-                elem.set(html.class_, 'interwiki')
+                elem.set(html.class_, 'moin-interwiki')
                 if do is not None:
                     # this will only work for wikis with compatible URL design
                     # for other wikis, don't use do=... in your interwiki links
@@ -156,16 +162,18 @@ class ConverterExternOutput(ConverterBase):
 
         if not input.authority or err:
             # local wiki link
+            path = input.path[1:]
+            if revno is not None:
+                path = IriPath('%d/' % revno) + path
             if do is not None:
-                link.path = IriPath('+' + do + '/') + input.path[1:]
-            else:
-                link.path = input.path[1:]
+                path = IriPath('+%s/' % do) + path
+            link.path = path
             base = self.url_root
 
         elem.set(self._tag_xlink_href, base + link)
 
     def handle_wikilocal_links(self, elem, input, page):
-        do, query = self._get_do(input.query)
+        do, revno, query = self._get_do_rev(input.query)
         link = Iri(query=query, fragment=input.fragment)
 
         if input.path:
@@ -177,10 +185,11 @@ class ConverterExternOutput(ConverterBase):
         else:
             path = page.path[1:]
 
+        if revno is not None:
+            path = IriPath('%d/' % revno) + path
         if do is not None:
-            link.path = IriPath('+' + do + '/') + path
-        else:
-            link.path = path
+            path = IriPath('+%s/') + path
+        link.path = path
         output = self.url_root + link
 
         elem.set(self._tag_xlink_href, output)

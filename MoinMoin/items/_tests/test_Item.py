@@ -46,12 +46,12 @@ class TestItem(object):
         name = u'NewItem'
         contenttype = 'text/plain;charset=utf-8'
         data = 'foobar'
-        meta = dict(foo='bar')
+        meta = {'foo': 'bar', CONTENTTYPE: contenttype}
         comment = u'saved it'
         become_trusted()
         item = Item.create(name)
         # save rev 0
-        item._save(meta, data, contenttype=contenttype, comment=comment)
+        item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
@@ -63,7 +63,7 @@ class TestItem(object):
         data = rev1_data = data * 10000
         comment = comment + u' again'
         # save rev 1
-        item._save(meta, data, contenttype=contenttype, comment=comment)
+        item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
@@ -75,7 +75,7 @@ class TestItem(object):
         data = ''
         comment = 'saved empty data'
         # save rev 2 (auto delete)
-        item._save(meta, data, contenttype=contenttype, comment=comment)
+        item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
         saved_meta, saved_data = dict(item.meta), item.data
@@ -93,7 +93,7 @@ class TestItem(object):
         basename = u'Foo'
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij/kl', ]:
             item = Item.create(basename + name)
-            item._save({}, "foo", contenttype='text/plain;charset=utf-8')
+            item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
 
         # check index
         baseitem = Item.create(basename)

@@ -23,6 +23,7 @@ from MoinMoin import wikiutil, user
 from MoinMoin.config import USERID, ADDRESS, HOSTNAME
 from MoinMoin.util.interwiki import split_interwiki, resolve_interwiki, join_wiki, getInterwikiHome
 from MoinMoin.util.crypto import cache_key
+from MoinMoin.util.forms import make_generator
 
 
 def get_current_theme():
@@ -392,5 +393,6 @@ def setup_jinja_env():
                             'cfg': app.cfg,
                             'item_name': 'handlers need to give it',
                             'get_editor_info': lambda rev: get_editor_info(rev),
+                            'gen': make_generator(),
                             })
 

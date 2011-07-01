@@ -40,7 +40,6 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
 from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
-from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -70,6 +69,7 @@ User-agent: *
 Crawl-delay: 20
 Disallow: /+convert/
 Disallow: /+dom/
+Disallow: /+download/
 Disallow: /+modify/
 Disallow: /+copy/
 Disallow: /+delete/
@@ -108,9 +108,40 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
-@frontend.route('/+show/<int:rev>/<itemname:item_name>')
+class ValidSearch(Validator):
+    """Validator for a valid search form
+    """
+    too_short_query_msg = L_('Search query too short.')
+
+    def validate(self, element, state):
+        if element['q'].value is None:
+            # no query, nothing to search for
+            return False
+        if len(element['q'].value) < 2:
+            return self.note_error(element, state, 'too_short_query_msg')
+        return True
+
+class SearchForm(Form):
+    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
+    submit = String.using(default=L_('Search'), optional=True)
+
+    validators = [ValidSearch()]
+
+
+def _search(query):
+    return "searching not implemented yet, query: %r" % query
+
+
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
+@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def show_item(item_name, rev):
+    # first check whether we have a valid search query:
+    search_form = SearchForm.from_flat(request.values)
+    if search_form.validate():
+        query = search_form['q'].value
+        return _search(query)
+    search_form['submit'].set_default() # XXX from_flat() kills all values
+
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -140,6 +171,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
+                              search_form=search_form,
                              )
     return Response(content, status)
 
@@ -217,6 +249,15 @@ def get_item(item_name, rev):
         abort(403)
     return item.do_get()
 
+@frontend.route('/+download/<int:rev>/<itemname:item_name>')
+@frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=-1))
+def download_item(item_name, rev):
+    try:
+        item = Item.create(item_name, rev_no=rev)
+    except AccessDeniedError:
+        abort(403)
+    return item.do_get(force_attachment=True)
+
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
     """
@@ -243,12 +284,13 @@ def convert_item(item_name):
         abort(403)
     return converted_item._convert(item.internal_representation())
 
+
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
 def modify_item(item_name):
     """Modify the wiki item item_name.
 
     On GET, displays a form.
-    On POST, saves the new page (unless there's an error in input, or cancelled).
+    On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
     contenttype = request.values.get('contenttype')
@@ -257,42 +299,9 @@ def modify_item(item_name):
         item = Item.create(item_name, contenttype=contenttype)
     except AccessDeniedError:
         abort(403)
-    if request.method == 'GET':
-        if not flaskg.user.may.write(item_name):
-            abort(403)
-        content = item.do_modify(template_name)
-        return content
-    elif request.method == 'POST':
-        cancelled = 'button_cancel' in request.form
-        if not cancelled:
-            form = TextChaizedForm.from_flat(request.form)
-            TextCha(form).amend_form()
-            valid = form.validate()
-            if not valid:
-                data_text = request.values.get('data_text')
-                meta_text = item.meta_dict_to_text(item.meta)
-                comment = request.values.get('comment')
-                return render_template(item.template,
-                                       item_name=item_name,
-                                       gen=make_generator(),
-                                       form=form,
-                                       data_text=data_text,
-                                       meta_text=meta_text,
-                                       comment=comment,
-                                       cols=COLS,
-                                       rows_data=ROWS_DATA,
-                                       rows_meta=ROWS_META,
-                                      )
-            try:
-                item.modify()
-                item_modified.send(app._get_current_object(),
-                                   item_name=item_name)
-                if contenttype in ('application/x-twikidraw', 'application/x-anywikidraw', 'application/x-svgdraw'):
-                    # TWikiDraw/AnyWikiDraw/SvgDraw POST more than once, redirecting would break them
-                    return "OK"
-            except AccessDeniedError:
-                abort(403)
-        return redirect(url_for('frontend.show_item', item_name=item_name))
+    if not flaskg.user.may.write(item_name):
+        abort(403)
+    return item.do_modify(contenttype, template_name)
 
 
 class CommentForm(TextChaizedForm):
@@ -330,15 +339,13 @@ def revert_item(item_name, rev):
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             item.revert()
             return redirect(url_for('frontend.show_item', item_name=item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -355,8 +362,7 @@ def copy_item(item_name):
     elif request.method == 'POST':
         form = CopyItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             target = form['target'].value
             comment = form['comment'].value
             item.copy(target, comment)
@@ -364,7 +370,6 @@ def copy_item(item_name):
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -381,8 +386,7 @@ def rename_item(item_name):
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             target = form['target'].value
             comment = form['comment'].value
             item.rename(target, comment)
@@ -390,7 +394,6 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -406,15 +409,13 @@ def delete_item(item_name):
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             comment = form['comment'].value
             item.delete(comment)
             return redirect(url_for('frontend.show_item', item_name=item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -438,8 +439,7 @@ def destroy_item(item_name, rev):
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        valid = form.validate()
-        if valid:
+        if form.validate():
             comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
             return redirect(url_for('frontend.show_item', item_name=item_name))
@@ -447,7 +447,6 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -558,15 +557,6 @@ def _backrefs(items, item_name):
         if item_name in refs:
             refs_here.append(current_item)
     return refs_here
-
-
-@frontend.route('/+search')
-def search():
-    return _search()
-
-
-def _search(**args):
-    return "searching for %r not implemented yet" % args
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -808,18 +798,17 @@ def register():
             form = OpenIDForm.from_flat(request.form)
             TextCha(form).amend_form()
 
-            valid = form.validate()
-            if valid:
-                    msg = user.create_user(username=form['username'].value,
-                                           password=form['password1'].value,
-                                           email=form['email'].value,
-                                           openid=form['openid'].value,
-                                          )
-                    if msg:
-                        flash(msg, "error")
-                    else:
-                        flash(_('Account created, please log in now.'), "info")
-                        return redirect(url_for('frontend.show_root'))
+            if form.validate():
+                msg = user.create_user(username=form['username'].value,
+                                       password=form['password1'].value,
+                                       email=form['email'].value,
+                                       openid=form['openid'].value,
+                                      )
+                if msg:
+                    flash(msg, "error")
+                else:
+                    flash(_('Account created, please log in now.'), "info")
+                    return redirect(url_for('frontend.show_root'))
 
     else:
         # not openid registration and no MoinAuth
@@ -835,8 +824,7 @@ def register():
             form = RegistrationForm.from_flat(request.form)
             TextCha(form).amend_form()
 
-            valid = form.validate()
-            if valid:
+            if form.validate():
                 msg = user.create_user(username=form['username'].value,
                                        password=form['password1'].value,
                                        email=form['email'].value,
@@ -850,7 +838,6 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -892,8 +879,7 @@ def lostpass():
         form = PasswordLostForm.from_defaults()
     elif request.method == 'POST':
         form = PasswordLostForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             u = None
             username = form['username'].value
             if username:
@@ -909,7 +895,6 @@ def lostpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -956,8 +941,7 @@ def recoverpass():
         form.update(request.values)
     elif request.method == 'POST':
         form = PasswordRecoveryForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             u = user.User(user.getUserId(form['username'].value))
             if u and u.valid and u.apply_recovery_token(form['token'].value, form['password1'].value):
                 flash(_("Your password has been changed, you can log in now."), "info")
@@ -966,7 +950,6 @@ def recoverpass():
             return redirect(url_for('frontend.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1030,8 +1013,7 @@ def login():
                 flash(hint, "info")
     elif request.method == 'POST':
         form = LoginForm.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             # we have a logged-in, valid user
             return redirect(url_for('frontend.show_root'))
         # flash the error messages (if any)
@@ -1040,7 +1022,6 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1166,8 +1147,7 @@ def usersettings(part):
         form['submit'].set_default() # XXX from_object() kills all values
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             # successfully modified everything
             success = True
             if part == 'password':
@@ -1201,7 +1181,6 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
-                           gen=make_generator(),
                            form=form,
                           )
 
