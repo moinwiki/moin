@@ -12,7 +12,6 @@ from flask import current_app as app
 from MoinMoin._tests import wikiconfig
 from MoinMoin.themes import ThemeSupport
 
-
 class TestNaviBar(object):
     class Config(wikiconfig.Config):
         interwiki_map = dict(MoinMoin='http://moinmo.in/', )
@@ -34,4 +33,10 @@ class TestNaviBar(object):
         for navilink, expected in tests:
             result = self.theme.split_navilink(navilink)
             assert result == expected
+
+    def test_location_breadcrumbs(self):
+        test_result = ThemeSupport.location_breadcrumbs(self.theme, 'test_item')
+        test_segment_name, test_item_name, test_item_exists = test_result[0]
+        assert test_segment_name == 'test_item'
+        assert test_item_name == 'test_item'
 
