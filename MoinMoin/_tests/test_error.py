@@ -8,7 +8,7 @@
 """
 
 
-import py
+import pytest
 
 from MoinMoin import error
 

@@ -6,11 +6,12 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 from flask import g as flaskg
 
+from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
 
@@ -19,7 +20,8 @@ from MoinMoin._tests import wikiconfig
 class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
         self.class_level_value = 123
-
+        app, ctx = init_test_app(wikiconfig.Config)
+                
     def test_fresh_backends(self):
         assert self.class_level_value == 123
 
@@ -32,7 +34,7 @@ class TestStorageEnvironWithoutConfig(object):
         assert not list(storage.iteritems())
         assert not list(storage.history())
         itemname = u"this item shouldn't exist yet"
-        assert py.test.raises(NoSuchItemError, storage.get_item, itemname)
+        assert pytest.raises(NoSuchItemError, storage.get_item, itemname)
         item = storage.create_item(itemname)
         new_rev = item.create_revision(0)
         new_rev[NAME] = itemname

@@ -13,8 +13,17 @@ from flask import g as flaskg
 from MoinMoin._tests import become_trusted
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.conftest import init_test_app, deinit_test_app
+from MoinMoin._tests import wikiconfig
 
 class TestItem(object):
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+
     def testNonExistent(self):
         item = Item.create('DoesNotExist')
         assert isinstance(item, NonExistent)
@@ -104,6 +113,13 @@ class TestTarItems(object):
     """
     tests for the container items
     """
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+
     def testCreateContainerRevision(self):
         """
         creates a container and tests the content saved to the container
