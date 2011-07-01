@@ -11,6 +11,7 @@ from flask import current_app as app
 
 from MoinMoin._tests import wikiconfig
 from MoinMoin.themes import ThemeSupport
+from MoinMoin import themes
 
 class TestNaviBar(object):
     class Config(wikiconfig.Config):
@@ -46,5 +47,12 @@ class TestNaviBar(object):
         assert test_item_name_2 == 'some/place'
         assert test_segment_name_3 == 'test_item'
         assert test_item_name_3 == 'some/place/test_item'
-        
+
+def test_shorten_item_name():
+    test_result1 = themes.shorten_item_name(u'MoinMoin/some/value', 0) 
+    assert test_result1 == u'valu...lue'    
+    test_result2 = themes.shorten_item_name(u'MoinMoin/some/value', 5) 
+    assert test_result2 == 'value'    
+    test_result3 = themes.shorten_item_name(u'MoinMoin/some/value') 
+    assert test_result3 == u'MoinMoin/some/value'    
 
