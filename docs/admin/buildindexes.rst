@@ -8,8 +8,8 @@ your wiki config.
 
 For example::
 
-      index_dir = "/home/user/moin-2.0/wiki/index/"
-      index_dir_tmp = "/home/user/moin-2.0/wiki/tmp_build/"
+      index_dir = "/home/marchael/moin-2.0/wiki/index/"
+      index_dir_tmp = "/home/marchael/moin-2.0/wiki/tmp_build/"
 
 **Note:** Paths MUST BE absolute
 
@@ -29,9 +29,9 @@ You may use following commands in virtual env::
 
    moin index --for both --action build   # build indexes in index_dir_tmp
    # TODO: insert a command here to stop your moin
+   moin index --for both --action update  # update indexes
    moin index --for both --action move    # move indexes index_dir_tmp to 
                                           # current index_dir
-   moin index --for both --action update  # update indexes
    # TODO: insert a command here to start your moin
 
 **Note:** If you don't want to rebuild\update both indexes you can use
