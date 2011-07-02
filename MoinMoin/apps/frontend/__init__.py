@@ -9,7 +9,7 @@
 """
 
 
-from flask import Module
-frontend = Module(__name__)
+from flask import Blueprint
+frontend = Blueprint('frontend', __name__)
 import MoinMoin.apps.frontend.views
 

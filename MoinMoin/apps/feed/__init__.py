@@ -9,7 +9,7 @@
 """
 
 
-from flask import Module
-feed = Module(__name__)
+from flask import Blueprint
+feed = Blueprint('feed', __name__)
 import MoinMoin.apps.feed.views
 
