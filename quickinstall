@@ -2,7 +2,7 @@
 # create a virtual environment in directory $DIR/
 # needs: curl or wget, unzip, gzip, tar, pip
 
-DIR=envxs
+DIR=env
 PYTHON=python
 
 virtualenv --no-site-packages --python $PYTHON $DIR
