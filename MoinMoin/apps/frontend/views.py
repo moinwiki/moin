@@ -453,7 +453,7 @@ def destroy_item(item_name, rev):
 # XXX this has some functional redundancy with "index", solve that later
 @frontend.route('/+index2/<itemname:item_name>', methods=['GET'])
 def index2(item_name):
-    # flat index using jquery.file-upload (see also jfu_server)
+    # flat index using jquery-file-upload (see also jfu_server)
     return render_template('index2.html',
                            item_name=item_name,
                           )

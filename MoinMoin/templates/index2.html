@@ -2,7 +2,7 @@
 
 {% block theme_stylesheets %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('serve.files', name='fileupload', filename='jquery.fileupload-ui.css') }}">
+<link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -31,7 +31,7 @@
         </tr>
     </table>
 </div>
-<script src="{{ url_for('serve.files', name='fileupload', filename='jquery.fileupload.js') }}"></script>
-<script src="{{ url_for('serve.files', name='fileupload', filename='jquery.fileupload-ui.js') }}"></script>
+<script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
+<script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
 {% endblock %}
