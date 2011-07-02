@@ -469,8 +469,8 @@ def jfu_server(item_name):
             abort(403)
         files = []
         for full_name, rel_name, mimetype in item.flat_index():
-            url = url_for('show_item', item_name=full_name)
-            url_download = url_for('get_item', item_name=full_name)
+            url = url_for('.show_item', item_name=full_name)
+            url_download = url_for('.download_item', item_name=full_name)
             files.append(dict(name=rel_name, url=url, url_download=url_download, size=0))
         return jsonify(files=files)
     if request.method == 'POST':
@@ -484,8 +484,8 @@ def jfu_server(item_name):
                                item_name=item_name)
             return jsonify(name=subitem_name,
                            size=size,
-                           url=url_for('show_item', item_name=item_name, rev=revno),
-                           url_download=url_for('get_item', item_name=item_name, rev=revno),
+                           url=url_for('.show_item', item_name=item_name, rev=revno),
+                           url_download=url_for('.download_item', item_name=item_name, rev=revno),
                           )
         except AccessDeniedError:
             abort(403)
