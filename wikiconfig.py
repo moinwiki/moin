@@ -52,7 +52,7 @@ class Config(DefaultConfig):
 
     # for now we load some 3rd party stuff from the place within moin where it is currently located,
     # but soon we'll get rid of this stuff:
-    env_dir = 'env'
+    env_dir = 'envxs'
     serve_files = dict(
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
