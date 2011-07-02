@@ -38,12 +38,6 @@ tar xz -C $DIR/ -f $DIR/svgedit.tgz
 download $DIR/mathjax.tgz http://static.moinmo.in/files/packages/mathjax.tar.gz
 tar xz -C $DIR/ -f $DIR/mathjax.tgz
 
-mkdir $DIR/jquery.fu
-download $DIR/jquery.fu/jquery.fileupload.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload.js
-download $DIR/jquery.fu/jquery.fileupload-ui.js https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.js
-download $DIR/jquery.fu/jquery.fileupload-ui.css https://www.github.com/blueimp/jQuery-File-Upload/raw/master/jquery.fileupload-ui.css
-download $DIR/jquery.fu/pbar-ani.gif https://www.github.com/blueimp/jQuery-File-Upload/raw/master/pbar-ani.gif
-
 download $DIR/svgweb.zip http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip
 unzip -q -o -d $DIR/ $DIR/svgweb.zip
 

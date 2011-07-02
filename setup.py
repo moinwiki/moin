@@ -91,6 +91,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
         'XStatic-jQuery',
+        'XStatic-jQuery-File-Upload',
     ],
     # optional features and their list of requirements
     extras_require = {

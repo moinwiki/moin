@@ -62,7 +62,6 @@ class Config(DefaultConfig):
         twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
         mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
-        fileupload = os.path.join(wikiconfig_dir, env_dir, 'jquery.fu'),
     )
 
     # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
@@ -70,6 +69,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.jquery import JQuery
     j = JQuery(root_url='/static', provider='local', protocol='http')
     serve_files.update([(j.name, j.get_mapping()[1])])
+
+    from xstatic.pkg.jquery_file_upload import JQueryFileUpload
+    jfu = JQueryFileUpload(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(jfu.name, jfu.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 
