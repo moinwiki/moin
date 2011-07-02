@@ -83,7 +83,7 @@ def userprofile(user_name):
             flash('%s.%s: %s -> %s' % (user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
             flash('modifying %s.%s failed' % (user_name, key, ), "error")
-    return redirect(url_for('admin.userbrowser'))
+    return redirect(url_for('.userbrowser'))
 
 
 @admin.route('/mail_recovery_token', methods=['GET', 'POST', ])
@@ -92,7 +92,7 @@ def mail_recovery_token():
     Send user an email so he can reset his password.
     """
     flash("mail recovery token not implemented yet")
-    return redirect(url_for('admin.userbrowser'))
+    return redirect(url_for('.userbrowser'))
 
 
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
@@ -113,7 +113,7 @@ def sysitems_upgrade():
             flash(_('System items upgrade failed due to the following error: %(error)s.', error=e), 'error')
         else:
             flash(_('System items have been upgraded successfully!'))
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('.index'))
 
 
 from MoinMoin.config import default as defaultconfig

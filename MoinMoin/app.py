@@ -103,21 +103,21 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     from MoinMoin.apps.frontend import frontend
     frontend.before_request(before_wiki)
     frontend.after_request(after_wiki)
-    app.register_module(frontend)
+    app.register_blueprint(frontend)
     from MoinMoin.apps.admin import admin
     admin.before_request(before_wiki)
     admin.after_request(after_wiki)
-    app.register_module(admin, url_prefix='/+admin')
+    app.register_blueprint(admin, url_prefix='/+admin')
     from MoinMoin.apps.feed import feed
     feed.before_request(before_wiki)
     feed.after_request(after_wiki)
-    app.register_module(feed, url_prefix='/+feed')
+    app.register_blueprint(feed, url_prefix='/+feed')
     from MoinMoin.apps.misc import misc
     misc.before_request(before_wiki)
     misc.after_request(after_wiki)
-    app.register_module(misc, url_prefix='/+misc')
+    app.register_blueprint(misc, url_prefix='/+misc')
     from MoinMoin.apps.serve import serve
-    app.register_module(serve, url_prefix='/+serve')
+    app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')
     cache = Cache()
@@ -146,7 +146,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
             FileSystemLoader(app.cfg.template_dirs),
             app.jinja_env.loader,
         ])
-    app.error_handlers[403] = themed_error
+    app.register_error_handler(403, themed_error)
     clock.stop('create_app flask-themes')
     clock.stop('create_app total')
     del clock

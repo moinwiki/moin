@@ -59,7 +59,7 @@ def dispatch():
 @frontend.route('/')
 def show_root():
     item_name = app.cfg.item_root
-    location = url_for('frontend.show_item', item_name=item_name)
+    location = url_for('.show_item', item_name=item_name)
     return redirect(location)
 
 @frontend.route('/robots.txt')
@@ -178,7 +178,7 @@ def show_item(item_name, rev):
 
 @frontend.route('/+show/<itemname:item_name>')
 def redirect_show_item(item_name):
-    return redirect(url_for('frontend.show_item', item_name=item_name))
+    return redirect(url_for('.show_item', item_name=item_name))
 
 
 @frontend.route('/+dom/<int:rev>/<itemname:item_name>')
@@ -341,7 +341,7 @@ def revert_item(item_name, rev):
         TextCha(form).amend_form()
         if form.validate():
             item.revert()
-            return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('.show_item', item_name=item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
@@ -366,7 +366,7 @@ def copy_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.copy(target, comment)
-            return redirect(url_for('frontend.show_item', item_name=target))
+            return redirect(url_for('.show_item', item_name=target))
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -390,7 +390,7 @@ def rename_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.rename(target, comment)
-            return redirect(url_for('frontend.show_item', item_name=target))
+            return redirect(url_for('.show_item', item_name=target))
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -412,7 +412,7 @@ def delete_item(item_name):
         if form.validate():
             comment = form['comment'].value
             item.delete(comment)
-            return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('.show_item', item_name=item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -442,7 +442,7 @@ def destroy_item(item_name, rev):
         if form.validate():
             comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
-            return redirect(url_for('frontend.show_item', item_name=item_name))
+            return redirect(url_for('.show_item', item_name=item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
@@ -678,7 +678,7 @@ def quicklink_item(item_name):
             msg = _('Your quicklink to this page could not be removed.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('frontend.show_item', item_name=item_name))
+    return redirect(url_for('.show_item', item_name=item_name))
 
 
 @frontend.route('/+subscribe/<itemname:item_name>')
@@ -702,7 +702,7 @@ def subscribe_item(item_name):
             msg = _('You could not get subscribed to this item.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('frontend.show_item', item_name=item_name))
+    return redirect(url_for('.show_item', item_name=item_name))
 
 
 class ValidRegistration(Validator):
@@ -808,7 +808,7 @@ def register():
                     flash(msg, "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('frontend.show_root'))
+                    return redirect(url_for('.show_root'))
 
     else:
         # not openid registration and no MoinAuth
@@ -834,7 +834,7 @@ def register():
                     flash(msg, "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('frontend.show_root'))
+                    return redirect(url_for('.show_root'))
 
     return render_template(template,
                            item_name=item_name,
@@ -892,7 +892,7 @@ def lostpass():
                 if not is_ok:
                     flash(msg, "error")
             flash(_("If this account exists, you will be notified."), "info")
-            return redirect(url_for('frontend.show_root'))
+            return redirect(url_for('.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
                            form=form,
@@ -947,7 +947,7 @@ def recoverpass():
                 flash(_("Your password has been changed, you can log in now."), "info")
             else:
                 flash(_('Your token is invalid!'), "error")
-            return redirect(url_for('frontend.show_root'))
+            return redirect(url_for('.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
                            form=form,
@@ -1015,7 +1015,7 @@ def login():
         form = LoginForm.from_flat(request.form)
         if form.validate():
             # we have a logged-in, valid user
-            return redirect(url_for('frontend.show_root'))
+            return redirect(url_for('.show_root'))
         # flash the error messages (if any)
         for msg in flaskg._login_messages:
             flash(msg, "error")
@@ -1032,7 +1032,7 @@ def logout():
     for key in ['user.id', 'user.auth_method', 'user.auth_attribs', ]:
         if key in session:
             del session[key]
-    return redirect(url_for('frontend.show_root'))
+    return redirect(url_for('.show_root'))
 
 
 class ValidChangePass(Validator):
@@ -1173,7 +1173,7 @@ def usersettings(part):
                 if success:
                     form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
                     flaskg.user.save()
-                    return redirect(url_for('frontend.usersettings'))
+                    return redirect(url_for('.usersettings'))
                 else:
                     # reset to valid values
                     form = FormClass.from_object(flaskg.user)
@@ -1207,7 +1207,7 @@ def bookmark():
             flaskg.user.setBookmark(tm)
     else:
         flash(_("You must log in to use bookmarks."), "error")
-    return redirect(url_for('frontend.global_history'))
+    return redirect(url_for('.global_history'))
 
 
 @frontend.route('/+diffraw/<path:item_name>')
