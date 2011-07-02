@@ -269,11 +269,7 @@ def before_wiki():
     try:
         flaskg.unprotected_storage = app.unprotected_storage
 
-        try:
-            flaskg.user = setup_user()
-        except HTTPException as e:
-            # this makes stuff like abort(redirect(...)) work
-            return app.handle_http_exception(e)
+        flaskg.user = setup_user()
 
         flaskg.dicts = app.cfg.dicts()
         flaskg.groups = app.cfg.groups()
