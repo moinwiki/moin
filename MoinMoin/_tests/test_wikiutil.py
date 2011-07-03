@@ -224,6 +224,21 @@ def testcontainsConflictMarker():
     #text without conflict marker
     result = wikiutil.containsConflictMarker('No conflict marker')
     assert result == False
+
+def testsplit_anchor():
+    """ 
+    TODO: add the test for for split_anchor when we have better
+          approach to deal wih problems like "#MoinMoin#" returning ("#MoinMoin", "")
+    """  
+    result = wikiutil.split_anchor('MoinMoin')
+    expected = 'MoinMoin', ''
+    assert result == expected 
+    result = wikiutil.split_anchor('MoinMoin#test_anchor|label|attr=val')
+    expected = ['MoinMoin', 'test_anchor|label|attr=val']
+    assert result == expected
+    result = wikiutil.split_anchor('#MoinMoin#')
+    expected = ['#MoinMoin', '']
+    assert result == expected
     
         
 coverage_modules = ['MoinMoin.wikiutil']
