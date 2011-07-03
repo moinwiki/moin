@@ -189,11 +189,20 @@ def testdrawing2fname():
     # with extension not in config.drawing_extensions
     result = wikiutil.drawing2fname('Moin_drawing.txt')
     expected = 'Moin_drawing.txt.tdraw'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals())
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
     # with extension in config.drawing_extensions
     result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')
     expected = 'Moindir.Moin_drawing.jpg'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals())    
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+
+def testgetUnicodeIndexGroup():
+    result = wikiutil.getUnicodeIndexGroup(['moin-2', 'MoinMoin'])
+    expected = 'MOIN-2'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+    # empty char
+    with pytest.raises(IndexError):
+        result = wikiutil.getUnicodeIndexGroup('')
+        
     
 coverage_modules = ['MoinMoin.wikiutil']
 
