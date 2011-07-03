@@ -57,7 +57,6 @@ class Config(DefaultConfig):
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
         ckeditor = os.path.join(wikiconfig_dir, env_dir, 'ckeditor'),
-        svgweb = os.path.join(wikiconfig_dir, env_dir, 'svgweb', 'src'),
         anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
@@ -73,6 +72,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.jquery_file_upload import JQueryFileUpload
     jfu = JQueryFileUpload(root_url='/static', provider='local', protocol='http')
     serve_files.update([(jfu.name, jfu.get_mapping()[1])])
+
+    from xstatic.pkg.svgweb import SVGWeb
+    sw = SVGWeb(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(sw.name, sw.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 
