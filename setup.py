@@ -92,6 +92,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'sphinx', # needed to build the docs
         'XStatic-jQuery',
         'XStatic-jQuery-File-Upload',
+        'XStatic-svgweb',
     ],
     # optional features and their list of requirements
     extras_require = {

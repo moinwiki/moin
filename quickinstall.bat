@@ -28,9 +28,6 @@ wget -nc http://static.moinmo.in/files/packages/svg-edit.tar.gz -Penv/
 7za x env/svg-edit.tar.gz -y -oenv\
 7za x env/svg-edit.tar -y -oenv\
 
-wget -nc http://svgweb.googlecode.com/files/svgweb-2010-08-10-Owlephant-1.zip -Penv/
-7za x env/svgweb-2010-08-10-Owlephant-1.zip -y -oenv\
-
 wget -nc http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum -Penv/
 7za x env/anywikidraw-0.14.zip -y -oenv\
 xcopy "env\AnyWikiDraw 0.14" env\AnyWikiDraw\ /Y /E /H
