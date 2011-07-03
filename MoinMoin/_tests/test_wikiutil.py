@@ -203,6 +203,18 @@ def testgetUnicodeIndexGroup():
     with pytest.raises(IndexError):
         result = wikiutil.getUnicodeIndexGroup('')
         
+def testis_URL():
+    sample_schemas = ['http', 'https', 'ftp', 'ssh']
+    for schema in sample_schemas:
+        result = wikiutil.is_URL(schema + ':MoinMoin')
+        assert result
+
+    # arg without ':' which is a mandatory requirement   
+    result = wikiutil.is_URL('MoinMoin')
+    assert result == False
+    # invalid schema
+    result = wikiutil.is_URL('invalid_schema:MoinMoin')
+    assert result == False
     
 coverage_modules = ['MoinMoin.wikiutil']
 
