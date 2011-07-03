@@ -32,13 +32,6 @@ tar xz -C $DIR/ -f $DIR/svgedit.tgz
 download $DIR/mathjax.tgz http://static.moinmo.in/files/packages/mathjax.tar.gz
 tar xz -C $DIR/ -f $DIR/mathjax.tgz
 
-AWDDIR='AnyWikiDraw 0.14'
-download $DIR/awd.zip 'http://downloads.sourceforge.net/project/anywikidraw/anywikidraw/anywikidraw-0.14/anywikidraw-0.14.zip?use_mirror=ignum'
-unzip -q -o -d $DIR/ $DIR/awd.zip
-cd $DIR/
-ln -s "$AWDDIR" AnyWikiDraw
-cd ..
-
 # first install babel, moin's setup.py will emit a warning if it is not there
 pip install babel
 # first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
