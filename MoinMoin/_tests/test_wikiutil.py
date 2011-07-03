@@ -189,11 +189,11 @@ def testdrawing2fname():
     # with extension not in config.drawing_extensions
     result = wikiutil.drawing2fname('Moin_drawing.txt')
     expected = 'Moin_drawing.txt.tdraw'
-    assert result == expected
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals())
     # with extension in config.drawing_extensions
     result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')
     expected = 'Moindir.Moin_drawing.jpg'
-    assert result == expected    
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals())    
     
 coverage_modules = ['MoinMoin.wikiutil']
 
