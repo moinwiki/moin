@@ -56,7 +56,6 @@ class Config(DefaultConfig):
     serve_files = dict(
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
-        anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
         mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
     )
@@ -82,6 +81,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.twikidraw_moin import TWikiDraw
     twd = TWikiDraw(root_url='/static', provider='local', protocol='http')
     serve_files.update([(twd.name, twd.get_mapping()[1])])
+
+    from xstatic.pkg.anywikidraw import AnyWikiDraw
+    awd = AnyWikiDraw(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(awd.name, awd.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 
