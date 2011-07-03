@@ -57,7 +57,6 @@ class Config(DefaultConfig):
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
         anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
-        twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
         mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
     )
@@ -79,6 +78,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.ckeditor import CKEditor
     cke = CKEditor(root_url='/static', provider='local', protocol='http')
     serve_files.update([(cke.name, cke.get_mapping()[1])])
+
+    from xstatic.pkg.twikidraw_moin import TWikiDraw
+    twd = TWikiDraw(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(twd.name, twd.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 

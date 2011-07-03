@@ -26,9 +26,6 @@ download()
 # wikiconfig.py expects them. should be replaced by packaging.
 # we do this FIRST, so that breakage with pip install is better visible.
 
-download $DIR/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
-tar xz -C $DIR/ -f $DIR/twd.tgz
-
 download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
 tar xz -C $DIR/ -f $DIR/svgedit.tgz
 
