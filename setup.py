@@ -90,6 +90,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Werkzeug==0.6.2', # use this if 0.7dev fails
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
+        'XStatic-CKEditor',
         'XStatic-jQuery',
         'XStatic-jQuery-File-Upload',
         'XStatic-svgweb',

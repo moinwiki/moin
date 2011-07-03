@@ -56,7 +56,6 @@ class Config(DefaultConfig):
     serve_files = dict(
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
-        ckeditor = os.path.join(wikiconfig_dir, env_dir, 'ckeditor'),
         anywikidraw = os.path.join(wikiconfig_dir, env_dir, 'AnyWikiDraw', 'anywikidraw', 'moinmoin'),
         twikidraw = os.path.join(wikiconfig_dir, env_dir, 'TWikiDrawPlugin'),
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
@@ -76,6 +75,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.svgweb import SVGWeb
     sw = SVGWeb(root_url='/static', provider='local', protocol='http')
     serve_files.update([(sw.name, sw.get_mapping()[1])])
+
+    from xstatic.pkg.ckeditor import CKEditor
+    cke = CKEditor(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(cke.name, cke.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 

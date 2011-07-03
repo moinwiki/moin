@@ -16,10 +16,6 @@ call env\Scripts\activate.bat
 echo Getting some 3rd party stuff and unpack them into env/, where the default
 echo wikiconfig.py expects them (should be replaced by packaging) ...
 
-wget -nc "http://download.cksource.com/CKEditor/CKEditor/CKEditor 3.5/ckeditor_3.5.tar.gz" -Penv/
-7za x env/ckeditor_3.5.tar.gz -y -oenv\
-7za x env/ckeditor_3.5.tar -y -oenv\
-
 wget -nc http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz -Penv/
 7za x env/TWikiDrawPlugin-moin.tar.gz -y -oenv\
 7za x env/TWikiDrawPlugin-moin.tar -y -oenv\

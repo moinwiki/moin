@@ -26,9 +26,6 @@ download()
 # wikiconfig.py expects them. should be replaced by packaging.
 # we do this FIRST, so that breakage with pip install is better visible.
 
-download $DIR/ckeditor.tgz http://download.cksource.com/CKEditor/CKEditor/CKEditor%203.5/ckeditor_3.5.tar.gz
-tar xz -C $DIR/ -f $DIR/ckeditor.tgz
-
 download $DIR/twd.tgz http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz
 tar xz -C $DIR/ -f $DIR/twd.tgz
 
