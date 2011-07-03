@@ -215,6 +215,16 @@ def testis_URL():
     # invalid schema
     result = wikiutil.is_URL('invalid_schema:MoinMoin')
     assert result == False
+
+def testcontainsConflictMarker():
+    # text with conflict marker
+    result = wikiutil.containsConflictMarker("/!\\ '''Edit conflict - Conflict marker is present")
+    assert result
     
+    #text without conflict marker
+    result = wikiutil.containsConflictMarker('No conflict marker')
+    assert result == False
+    
+        
 coverage_modules = ['MoinMoin.wikiutil']
 
