@@ -175,5 +175,15 @@ class TestGroupItems(object):
                 assert result == expected
 
 
+def testParentItemName():
+    # with no parent
+    result = wikiutil.ParentItemName(u'itemname')
+    expected = u''
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    # with a parent
+    result = wikiutil.ParentItemName(u'some/parent/itemname')
+    expected = u'some/parent'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    
 coverage_modules = ['MoinMoin.wikiutil']
 
