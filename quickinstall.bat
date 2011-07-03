@@ -16,10 +16,6 @@ call env\Scripts\activate.bat
 echo Getting some 3rd party stuff and unpack them into env/, where the default
 echo wikiconfig.py expects them (should be replaced by packaging) ...
 
-wget -nc http://static.moinmo.in/files/packages/TWikiDrawPlugin-moin.tar.gz -Penv/
-7za x env/TWikiDrawPlugin-moin.tar.gz -y -oenv\
-7za x env/TWikiDrawPlugin-moin.tar -y -oenv\
-
 wget -nc http://static.moinmo.in/files/packages/svg-edit.tar.gz -Penv/
 7za x env/svg-edit.tar.gz -y -oenv\
 7za x env/svg-edit.tar -y -oenv\
