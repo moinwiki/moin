@@ -240,6 +240,25 @@ def testsplit_anchor():
     expected = ['#MoinMoin', '']
     assert result == expected
     
+def testfile_headers():
+    test_headers = [
+                #test_file               #content_type
+                ('imagefile.gif',       'image/gif'),     
+                ('testfile.txt',        'text/plain; charset="utf-8"'),
+                ('pdffile.pdf',         'application/pdf'), 
+                ('docfile.doc',         'application/msword'),
+                (None,                  'application/octet-stream')
+                ]
+ 
+    for test_file, content_type in test_headers:
+        result = wikiutil.file_headers(test_file, None, 10)
+        expected = [('Content-Type', content_type), ('Content-Length', '10')]
+        assert result == expected
+
+    # filename is none and content type has a value
+    result = wikiutil.file_headers(None, 'plane/text')
+    expected = [('Content-Type', 'plane/text')]
+    assert result == expected
         
 coverage_modules = ['MoinMoin.wikiutil']
 
