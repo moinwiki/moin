@@ -7,7 +7,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 
@@ -175,5 +175,90 @@ class TestGroupItems(object):
                 assert result == expected
 
 
+def testParentItemName():
+    # with no parent
+    result = wikiutil.ParentItemName(u'itemname')
+    expected = u''
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    # with a parent
+    result = wikiutil.ParentItemName(u'some/parent/itemname')
+    expected = u'some/parent'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+
+def testdrawing2fname():
+    # with extension not in config.drawing_extensions
+    result = wikiutil.drawing2fname('Moin_drawing.txt')
+    expected = 'Moin_drawing.txt.tdraw'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    # with extension in config.drawing_extensions
+    result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')
+    expected = 'Moindir.Moin_drawing.jpg'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+
+def testgetUnicodeIndexGroup():
+    result = wikiutil.getUnicodeIndexGroup(['moin-2', 'MoinMoin'])
+    expected = 'MOIN-2'
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+    # empty char
+    with pytest.raises(IndexError):
+        result = wikiutil.getUnicodeIndexGroup('')
+        
+def testis_URL():
+    sample_schemas = ['http', 'https', 'ftp', 'ssh']
+    for schema in sample_schemas:
+        result = wikiutil.is_URL(schema + ':MoinMoin')
+        assert result
+
+    # arg without ':' which is a mandatory requirement   
+    result = wikiutil.is_URL('MoinMoin')
+    assert result == False
+    # invalid schema
+    result = wikiutil.is_URL('invalid_schema:MoinMoin')
+    assert result == False
+
+def testcontainsConflictMarker():
+    # text with conflict marker
+    result = wikiutil.containsConflictMarker("/!\\ '''Edit conflict - Conflict marker is present")
+    assert result
+    
+    #text without conflict marker
+    result = wikiutil.containsConflictMarker('No conflict marker')
+    assert result == False
+
+def testsplit_anchor():
+    """ 
+    TODO: add the test for for split_anchor when we have better
+          approach to deal wih problems like "#MoinMoin#" returning ("#MoinMoin", "")
+    """  
+    result = wikiutil.split_anchor('MoinMoin')
+    expected = 'MoinMoin', ''
+    assert result == expected 
+    result = wikiutil.split_anchor('MoinMoin#test_anchor|label|attr=val')
+    expected = ['MoinMoin', 'test_anchor|label|attr=val']
+    assert result == expected
+    result = wikiutil.split_anchor('#MoinMoin#')
+    expected = ['#MoinMoin', '']
+    assert result == expected
+    
+def testfile_headers():
+    test_headers = [
+                #test_file               #content_type
+                ('imagefile.gif',       'image/gif'),     
+                ('testfile.txt',        'text/plain; charset="utf-8"'),
+                ('pdffile.pdf',         'application/pdf'), 
+                ('docfile.doc',         'application/msword'),
+                (None,                  'application/octet-stream')
+                ]
+ 
+    for test_file, content_type in test_headers:
+        result = wikiutil.file_headers(test_file, None, 10)
+        expected = [('Content-Type', content_type), ('Content-Length', '10')]
+        assert result == expected
+
+    # filename is none and content type has a value
+    result = wikiutil.file_headers(None, 'plane/text')
+    expected = [('Content-Type', 'plane/text')]
+    assert result == expected
+        
 coverage_modules = ['MoinMoin.wikiutil']
 

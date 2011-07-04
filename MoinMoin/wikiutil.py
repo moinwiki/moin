@@ -252,6 +252,8 @@ def is_URL(arg, schemas=config.url_schemas):
     """
     if ':' not in arg:
         return False
+    #import pytest
+    #pytest.set_trace()
     for schema in schemas:
         if arg.startswith(schema + ':'):
             return True
