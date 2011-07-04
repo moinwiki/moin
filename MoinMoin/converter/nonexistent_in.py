@@ -22,8 +22,8 @@ class Converter(object):
     def _factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content):
-        item_name = content # we just give the name of the item in the content
+    def __call__(self, rev):
+        item_name = rev.item.name
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=modify'),
         }

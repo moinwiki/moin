@@ -2,7 +2,7 @@
 
 {# Logo in the header #}
 {% macro logo() -%}
-<img src="{{ url_for('.static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
+<img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
 {%- endmacro %}
 
 {# Additional HTML tags inside <head> #}
@@ -37,10 +37,10 @@
 {# Image links in the footer #}
 {% macro creditlogos(start='<ul id="moin-creditlogos"><li>'|safe, end='</li></ul>'|safe, sep='</li><li>'|safe) %}
 {{ start }}
-{{ creditlogo('http://moinmo.in/', url_for('.static', filename='logos/moinmoin_powered.png'),
+{{ creditlogo('http://moinmo.in/', url_for('static', filename='logos/moinmoin_powered.png'),
    'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}
 {{ sep }}
-{{ creditlogo('http://moinmo.in/Python', url_for('.static', filename='logos/python_powered.png'),
+{{ creditlogo('http://moinmo.in/Python', url_for('static', filename='logos/python_powered.png'),
    'Python powered', 'MoinMoin is written in Python.') }}
 {{ end }}
 {% endmacro %}
