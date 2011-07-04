@@ -232,13 +232,15 @@ def testsplit_anchor():
     """  
     result = wikiutil.split_anchor('MoinMoin')
     expected = 'MoinMoin', ''
-    assert result == expected 
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+
     result = wikiutil.split_anchor('MoinMoin#test_anchor|label|attr=val')
     expected = ['MoinMoin', 'test_anchor|label|attr=val']
-    assert result == expected
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+
     result = wikiutil.split_anchor('#MoinMoin#')
     expected = ['#MoinMoin', '']
-    assert result == expected
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
     
 def testfile_headers():
     test_headers = [
@@ -253,12 +255,12 @@ def testfile_headers():
     for test_file, content_type in test_headers:
         result = wikiutil.file_headers(test_file, None, 10)
         expected = [('Content-Type', content_type), ('Content-Length', '10')]
-        assert result == expected
+        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
 
     # filename is none and content type has a value
     result = wikiutil.file_headers(None, 'plane/text')
     expected = [('Content-Type', 'plane/text')]
-    assert result == expected
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
         
 coverage_modules = ['MoinMoin.wikiutil']
 
