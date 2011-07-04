@@ -26,11 +26,11 @@ class Converter(object):
     def __init__(self, input_type):
         self.input_type = input_type
 
-    def __call__(self, content):
-        item_name = content # we just give the name of the item in the content
+    def __call__(self, rev):
+        item_name = rev.item.name
         attrib = {
             moin_page.type_: unicode(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get'),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev=%d' % rev.revno),
         }
         return moin_page.object_(attrib=attrib, children=[u'Your Browser does not support HTML5 audio/video element.', ])
 

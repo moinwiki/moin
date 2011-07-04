@@ -6,7 +6,7 @@
         <ul>
         {% for fullname, relname, contenttype in index %}
             <li>
-                <a href="{{ url_for('show_item', item_name=fullname) }}"
+                <a href="{{ url_for('.show_item', item_name=fullname) }}"
                    class="{{ contenttype|contenttype_to_class }}">
                     {{ relname }}
                 </a>
