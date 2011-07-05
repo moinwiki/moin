@@ -57,7 +57,6 @@ class Config(DefaultConfig):
         docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
         # see "quickinstall" script about how to get those files there
         svgedit = os.path.join(wikiconfig_dir, env_dir, 'svg-edit'),
-        mathjax = os.path.join(wikiconfig_dir, env_dir, 'MathJax'),
     )
 
     # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
@@ -85,6 +84,10 @@ class Config(DefaultConfig):
     from xstatic.pkg.anywikidraw import AnyWikiDraw
     awd = AnyWikiDraw(root_url='/static', provider='local', protocol='http')
     serve_files.update([(awd.name, awd.get_mapping()[1])])
+
+    from xstatic.pkg.mathjax import MathJax
+    mj = MathJax(root_url='/static', provider='local', protocol='http')
+    serve_files.update([(mj.name, mj.get_mapping()[1])])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 
