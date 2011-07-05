@@ -29,9 +29,6 @@ download()
 download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
 tar xz -C $DIR/ -f $DIR/svgedit.tgz
 
-download $DIR/mathjax.tgz http://static.moinmo.in/files/packages/mathjax.tar.gz
-tar xz -C $DIR/ -f $DIR/mathjax.tgz
-
 # first install babel, moin's setup.py will emit a warning if it is not there
 pip install babel
 # first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
