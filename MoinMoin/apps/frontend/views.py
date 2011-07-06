@@ -486,11 +486,33 @@ def index(item_name):
 @frontend.route('/+index')
 def global_index():
     item = Item.create('') # XXX hack: item_name='' gives toplevel index
-    index = item.flat_index()
+    startswith = request.values.get('startswith', None)
+    index = item.flat_index(startswith)
+    if startswith:
+        initials = item.name_initial(item.flat_index())
+        # if startswith was set, we would get the filtered index above
+        # so inorder to get initial of all elements we need all index, not filtered one
+    else:
+        initials = item.name_initial(index)
+    initials = [initial.upper() for initial in initials]
+    initials = list(set(initials))
+    initials.sort()
+    index_more_links = []
+    for fullname, relname, contenttype in index:
+        test_item = item.create(fullname)
+        item_index = test_item.flat_index()
+        hassubitem = False
+        if item_index:
+            hassubitem = True
+        index_more_links.append((fullname, relname, contenttype, hassubitem))
+    index_more_links.sort()
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
                            item_name=item_name, # XXX no item
-                           index=index,
+                           index=index_more_links,
+                           initials=initials,
+                           startswith=startswith,
                           )
 
 

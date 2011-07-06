@@ -3,15 +3,38 @@
 {% block item %}
     <h1>{{ _("Global Index") }}</h1>
     {% if index %}
-        <ul>
-        {% for fullname, relname, contenttype in index %}
-            <li>
-                <a href="{{ url_for('show_item', item_name=fullname) }}"
-                   class="{{ contenttype|contenttype_to_class }}">
-                    {{ relname }}
-                </a>
-            </li>
+    <div id="moin-letters">
+        {% if not startswith %}
+            <a class="selected" href="{{ url_for('frontend.global_index') }}">{{ _("All") }}</a>
+        {% else %}
+            <a href="{{ url_for('frontend.global_index') }}">{{ _("All") }}</a>
+        {% endif %}
+        {% for initial in initials %}
+            {% if startswith == initial %}
+                <a class="selected" href="{{ url_for('frontend.global_index', startswith=initial) }}">{{ initial }}</a>
+            {% else %}
+                <a  href="{{ url_for('frontend.global_index', startswith=initial) }}">{{ initial }}</a>
+            {% endif %}
         {% endfor %}
-        </ul>
+    </div>
+    <div id="moin-global-index">
+        {% set maxchars = 20 %}
+        {% for fullname, relname, contenttype, hassubitem in index %}
+            <div>
+                <a href="{{ url_for('show_item', item_name=fullname) }}" 
+                   class="{{ contenttype|contenttype_to_class }}"
+                   title="{{ relname }}">
+                   {{ relname|truncate(maxchars, true, '..') }}
+                </a>
+                {% if hassubitem %}
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" 
+                       title="{{ _("More") }}"
+                       class="moin-more-index">
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="moin-clr"></div>
     {% endif %}
 {% endblock %}
