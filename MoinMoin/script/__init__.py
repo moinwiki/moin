@@ -22,8 +22,6 @@ def main(default_command='moin', wiki_config=None):
 
     from MoinMoin.script.maint.index import IndexOperations
     manager.add_command("index", IndexOperations())
-    from MoinMoin.script.maint.update_indexes import UpdateIndexes
-    manager.add_command("update_indexes", UpdateIndexes())
     from MoinMoin.script.account.create import Create_User
     manager.add_command("account_create", Create_User())
     from MoinMoin.script.account.disable import Disable_User

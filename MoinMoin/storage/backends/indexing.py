@@ -39,8 +39,9 @@ class IndexingBackendMixin(object):
     """
     def __init__(self, *args, **kw):
         index_uri = kw.pop('index_uri', None)
+        index_dir = kw.pop('index_dir', None)
         super(IndexingBackendMixin, self).__init__(*args, **kw)
-        self._index = ItemIndex(index_uri)
+        self._index = ItemIndex(index_uri, index_dir)
 
     def close(self):
         self._index.close()
@@ -207,11 +208,15 @@ from sqlalchemy import Table, Column, Integer, String, Unicode, DateTime, Pickle
 from sqlalchemy import create_engine, select
 from sqlalchemy.sql import and_, exists, asc, desc
 
+# Importing Whoosh stuff
+from whoosh.writing import AsyncWriter
+from MoinMoin.search.indexing import WhooshIndex
+
 class ItemIndex(object):
     """
     Index for Items/Revisions
     """
-    def __init__(self, index_uri):
+    def __init__(self, index_uri, index_dir):
         metadata = MetaData()
         metadata.bind = create_engine(index_uri, echo=False)
 
@@ -250,9 +255,16 @@ class ItemIndex(object):
         self.item_kvstore = KVStore(item_kvmeta)
         self.rev_kvstore = KVStore(rev_kvmeta)
 
+        # Whoosh stuff
+        self.index_object = WhooshIndex(indexdir=index_dir)
+
     def close(self):
         engine = self.metadata.bind
         engine.dispose()
+
+    def close_whoosh(self):
+        self.index_object.all_revisions_index.close()
+        self.index_object.latest_revisions_index.close()
 
     def index_rebuild(self, backend):
         self.metadata.drop_all()
@@ -276,6 +288,12 @@ class ItemIndex(object):
         if result:
             return result[0]
 
+    def get_item_id_whoosh(self, uuid):
+        with self.index_object.latest_revisions_index.searcher() as searcher:
+            result = searcher.document(uuid=uuid)
+        if result:
+            return result
+
     def update_item(self, metas):
         """
         update an item with item-level metadata <metas>
@@ -291,6 +309,16 @@ class ItemIndex(object):
             item_id = res.inserted_primary_key[0]
         self.item_kvstore.store_kv(item_id, metas)
         return item_id
+
+    def update_item_whoosh(self, metas):
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            found_doc_number = latest_revs_searcher.document_number(uuid=metas[UUID])
+        with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+            if found_doc_number:
+                async_writer.delete_document(found_doc_number)
+                async_writer.add_document(**metas)
+            else:
+                async_writer.add_document(**metas)
 
     def cache_in_item(self, item_id, rev_id, rev_metas):
         """
@@ -319,6 +347,15 @@ class ItemIndex(object):
             self.item_kvstore.store_kv(item_id, {})
             item_table.delete().where(item_table.c.id == item_id).execute()
 
+    def remove_item_whoosh(self, metas):
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            found_doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
+                                                                    name=metas[NAME].lower()
+                                                                   )
+        if found_doc_number >= 0:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                async_writer.delete_document(found_doc_number)
+
     def add_rev(self, uuid, revno, metas):
         """
         add a new revision <revno> for item <uuid> with metadata <metas>
@@ -346,6 +383,23 @@ class ItemIndex(object):
         self.cache_in_item(item_id, rev_id, metas)
         return rev_id
 
+    def add_rev_whoosh(self, uuid, revno, metas):
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+                all_found_document = all_revs_searcher.document(uuid=uuid, rev_no=revno)
+                latest_found_document = latest_revs_searcher.document(uuid=uuid, rev_no=revno)
+
+        metas["uuid"] = uuid
+        metas["rev_no"] = revno
+
+        if all_found_document:
+            with AsyncWriter(self.index_object.all_revisions_index) as all_async_writer:
+                all_async_writer.add_document(**metas)
+
+        if latest_found_document:
+            with AsyncWriter(self.index_object.latest_revisions_index) as latest_async_writer:
+                latest_async_writer.add_document(**metas)
+
     def remove_rev(self, uuid, revno):
         """
         remove a revision <revno> of item <uuid>
@@ -369,6 +423,15 @@ class ItemIndex(object):
             rev_id = result[0]
             self.rev_kvstore.store_kv(rev_id, {})
             rev_table.delete().where(rev_table.c.id == rev_id).execute()
+
+    def remove_rev_whoosh(self, uuid, revno):
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            found_doc_number = latest_revs_searcher.document_number(uuid=uuid,
+                                                                    rev_no=revno
+                                                                   )
+        if found_doc_number >= 0:
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                async_writer.delete_document(found_doc_number)
 
     def get_uuid_revno_name(self, rev_id):
         """

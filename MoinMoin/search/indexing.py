@@ -6,7 +6,6 @@
 """
 
 import os
-import logging
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
@@ -15,6 +14,9 @@ from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 '''
 for text items, it will be duplication. For "binary" items, it will only store
 what the filter code outputs (e.g. if it is a PDF, it will only store what
@@ -60,10 +62,10 @@ class WhooshIndex(object):
                'all_revisions_index': 'all_revisions_schema',
               }
 
-    def __init__(self, index_dir=None):
-        index_dir = index_dir or app.cfg.index_dir
+    def __init__(self, indexdir=None):
+        indexdir = indexdir or app.cfg.index_dir
         for index_name, index_schema in self.indexes.items():
-            self.open_index(index_dir, index_name, index_schema, create=True)
+            self.open_index(indexdir, index_name, index_schema, create=True)
 
     def open_index(self, indexdir, indexname, schema, create=False):
         """
