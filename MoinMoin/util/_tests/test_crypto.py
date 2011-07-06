@@ -59,13 +59,13 @@ class TestEncodePassword(object):
         result = crypto.valid_password(u'MoinMoin', hash_val)
         assert result
         with pytest.raises(ValueError):
-            invlid_result = crypto.valid_password("MoinMoin", '{junk_value}')
+            invalid_result = crypto.valid_password("MoinMoin", '{junk_value}')
             
 
 class TestToken(object):
     """ tests for the generated tokens """
 
-    def testvalidtoken(self):
+    def test_validtoken(self):
         """ validate the token """
         test_key, test_token = crypto.generate_token(key='MoinMoin') # having some key value
         result = crypto.valid_token(test_key, test_token)
@@ -80,13 +80,13 @@ class TestToken(object):
         # changed value of the first part, should not be string
         test_token_changed = '-'.join(test_parts)
         result = crypto.valid_token(test_key, test_token_changed)
-        assert result == False
+        assert not result
 
         test_key, test_token = 'MoinMoin', 'incorrect_token'
         result = crypto.valid_token(test_key, test_token)
-        assert result == False
+        assert not result
 
-    def testcache_key(self):
+    def test_cache_key(self):
         """ The key must be different for different <kw> """
         test_kw1 = {'MoinMoin': 'value1'}
         result1 = crypto.cache_key(**test_kw1)
