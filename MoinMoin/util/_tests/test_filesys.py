@@ -163,7 +163,6 @@ class TestCopy:
 
     def test_dir_exist(self):
         """ raise Error if dir already exist """
-        self.makefile(self.src1, 'src1')
         self.test_dest_dir = tempfile.mkdtemp('', 'temp_dir')
         with pytest.raises(OSError):
             filesys.copytree(self.test_dir, self.test_dest_dir)
