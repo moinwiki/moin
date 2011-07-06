@@ -47,7 +47,12 @@ class TestNaviBar(object):
         assert test_item_name_2 == 'some/place'
         assert test_segment_name_3 == 'test_item'
         assert test_item_name_3 == 'some/place/test_item'
-        
+
+    def test_parent_item(self):
+        test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')
+        expected = 'moin/moin-2.0'
+        assert test_result == expected, ('Expected "%(expected)s" but got "%(test_result)s"') % locals()        
+
 def test_shorten_item_name():
     test_result1 = themes.shorten_item_name(u'MoinMoin/some/value', 0) 
     assert test_result1 == u'valu...lue'    
