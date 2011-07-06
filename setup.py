@@ -96,6 +96,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-svgweb',
         'XStatic-TWikiDraw-moin',
         'XStatic-AnyWikiDraw',
+        'XStatic-MathJax',
     ],
     # optional features and their list of requirements
     extras_require = {
