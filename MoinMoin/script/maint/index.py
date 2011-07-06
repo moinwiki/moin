@@ -1,4 +1,4 @@
-1# Copyright: 2011 MoinMoin:MichaelMayorov
+# Copyright: 2011 MoinMoin:MichaelMayorov
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -168,7 +168,7 @@ class IndexOperations(Command):
 
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
-        index_object = WhooshIndex(index_dir=app.cfg.index_dir_tmp)
+        index_object = WhooshIndex(indexdir=app.cfg.index_dir_tmp)
         if os.path.samefile(app.cfg.index_dir_tmp, app.cfg.index_dir):
             raise FatalError(u"app.cfg.index_dir and app.cfg.tmp_index_dir are equal")
 
