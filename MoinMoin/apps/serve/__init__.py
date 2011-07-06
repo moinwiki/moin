@@ -10,7 +10,7 @@
 """
 
 
-from flask import Module
-serve = Module(__name__)
+from flask import Blueprint
+serve = Blueprint('serve', __name__)
 import MoinMoin.apps.serve.views
 
