@@ -30,7 +30,7 @@
     {% endblock %}
 
     {% block head_links %}
-    <link rel="shortcut icon" href="{{ url_for('.static', filename='logos/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
     <link rel="archives" href="{{ url_for('frontend.history', item_name=item_name) }}" />
     {% set parent_item = theme_supp.parent_item(item_name) %}
     {%- if parent_item -%}
@@ -49,7 +49,7 @@
     {% block head_scripts %}
     <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
     <script src="{{ url_for('serve.files', name='svgweb', filename='svg.js') }}"></script>
-    <script src="{{ url_for('.static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
     extensions: ["tex2jax.js"],

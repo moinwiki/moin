@@ -8,7 +8,7 @@
 """
 
 
-from flask import Module
-misc = Module(__name__)
+from flask import Blueprint
+misc = Blueprint('misc', __name__, template_folder='templates')
 import MoinMoin.apps.misc.views
 

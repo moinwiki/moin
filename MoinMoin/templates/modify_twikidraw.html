@@ -2,7 +2,7 @@
 {% block data_editor %}
 <p>
 <applet code="CH.ifa.draw.twiki.TWikiDraw.class"
-        archive="{{ url_for('serve.files', name='twikidraw', filename='twikidraw.jar') }}"
+        archive="{{ url_for('serve.files', name='twikidraw_moin', filename='twikidraw_moin.jar') }}"
         width="800" height="620">
         <param name="drawpath" value="{{ url_for('frontend.get_item', item_name=item_name, member='drawing.draw') }}" />
         <param name="pngpath"  value="{{ url_for('frontend.get_item', item_name=item_name, member='drawing.png') }}" />
