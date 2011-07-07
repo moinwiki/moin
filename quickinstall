@@ -32,7 +32,7 @@ tar xz -C $DIR/ -f $DIR/svgedit.tgz
 # first install babel, moin's setup.py will emit a warning if it is not there
 pip install babel
 # first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
-pip install XStatic
+pip install XStatic==0.0.1
 
 # "install" moin2 from repo to the env, this will also install required python
 # packages from pypi. we do this LAST, so that breakage is better visible.
