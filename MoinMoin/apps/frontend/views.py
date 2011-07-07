@@ -1,4 +1,5 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -15,7 +16,10 @@
 import re
 import difflib
 import time
+from flaskext.babel import format_date
+from datetime import datetime
 from itertools import chain
+from collections import namedtuple, OrderedDict
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
@@ -23,7 +27,7 @@ from flask import g as flaskg
 from flaskext.themes import get_themes_list
 
 from flatland import Form, String, Integer, Boolean, Enum
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from jinja2 import Markup
 
@@ -34,12 +38,13 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
+from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
-from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME
+from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -108,40 +113,9 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-class ValidSearch(Validator):
-    """Validator for a valid search form
-    """
-    too_short_query_msg = L_('Search query too short.')
-
-    def validate(self, element, state):
-        if element['q'].value is None:
-            # no query, nothing to search for
-            return False
-        if len(element['q'].value) < 2:
-            return self.note_error(element, state, 'too_short_query_msg')
-        return True
-
-class SearchForm(Form):
-    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
-    submit = String.using(default=L_('Search'), optional=True)
-
-    validators = [ValidSearch()]
-
-
-def _search(query):
-    return "searching not implemented yet, query: %r" % query
-
-
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
-@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
+@frontend.route('/+show/<int:rev>/<itemname:item_name>')
 def show_item(item_name, rev):
-    # first check whether we have a valid search query:
-    search_form = SearchForm.from_flat(request.values)
-    if search_form.validate():
-        query = search_form['q'].value
-        return _search(query)
-    search_form['submit'].set_default() # XXX from_flat() kills all values
-
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -171,7 +145,6 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=search_form,
                              )
     return Response(content, status)
 
@@ -346,6 +319,7 @@ def revert_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -370,6 +344,7 @@ def copy_item(item_name):
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -394,6 +369,7 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -416,6 +392,7 @@ def delete_item(item_name):
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -447,6 +424,7 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
+                           gen=make_generator(),
                           )
 
 
@@ -508,11 +486,33 @@ def index(item_name):
 @frontend.route('/+index')
 def global_index():
     item = Item.create('') # XXX hack: item_name='' gives toplevel index
-    index = item.flat_index()
+    startswith = request.values.get('startswith', None)
+    index = item.flat_index(startswith)
+    if startswith:
+        initials = item.name_initial(item.flat_index())
+        # if startswith was set, we would get the filtered index above
+        # so inorder to get initial of all elements we need all index, not filtered one
+    else:
+        initials = item.name_initial(index)
+    initials = [initial.upper() for initial in initials]
+    initials = list(set(initials))
+    initials.sort()
+    index_more_links = []
+    for fullname, relname, contenttype in index:
+        test_item = item.create(fullname)
+        item_index = test_item.flat_index()
+        hassubitem = False
+        if item_index:
+            hassubitem = True
+        index_more_links.append((fullname, relname, contenttype, hassubitem))
+    index_more_links.sort()
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
                            item_name=item_name, # XXX no item
-                           index=index,
+                           index=index_more_links,
+                           initials=initials,
+                           startswith=startswith,
                           )
 
 
@@ -559,22 +559,213 @@ def _backrefs(items, item_name):
     return refs_here
 
 
+@frontend.route('/+search')
+def search():
+    return _search()
+
+
+def _search(**args):
+    return "searching for %r not implemented yet" % args
+
+
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
+    selected_history = []
+
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+
+    results_per_page = int(app.cfg.results_per_page)
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+
+    revcount = 0
+    maxcount = offset + results_per_page
+    nextPage = False
+    for rev in history:
+        if revcount < offset:
+            revcount += 1
+        elif results_per_page and revcount == maxcount:
+            nextPage = True
+            break
+        else:
+            selected_history.append(rev)
+            revcount += 1
+
+    if not nextPage:
+        revcount = 0
+
+    if results_per_page and offset:
+        previous_offset = max(offset - results_per_page, 0)
+    else:
+        previous_offset = -1
+
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
-                           history=history,
+                           history=selected_history,
+                           offset=revcount,
+                           previous_offset=previous_offset,
                           )
-
 
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    results_per_page = int(app.cfg.results_per_page)
+    if flaskg.user.valid:
+        bookmark_time = flaskg.user.getBookmark()
+        results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
+    else:
+        bookmark_time = None
+    item_groups = OrderedDict()
+    for rev in history:
+        current_item_name = rev.item.name
+        if bookmark_time and rev.timestamp <= bookmark_time:
+            break
+        elif current_item_name in item_groups:
+            latest_rev = item_groups[current_item_name][0]
+            tm_latest = datetime.utcfromtimestamp(latest_rev.timestamp)
+            tm_current = datetime.utcfromtimestamp(rev.timestamp)
+            if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
+                item_groups[current_item_name].append(rev)
+        else:
+            item_groups[current_item_name] = [rev]
+
+    # Got the item dict, now doing grouping inside them
+    editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
+    for item_name, revs in item_groups.items():
+        item_info = {}
+        editors_info = OrderedDict()
+        editors = []
+        revnos = []
+        comments = []
+        current_rev = revs[0]
+        item_info["item_name"] = item_name
+        item_info["timestamp"] = current_rev.timestamp
+        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
+        item_info["action"] = current_rev.get(ACTION)
+        item_info["name"] = current_rev.get(NAME)
+
+        # Aggregating comments, authors and revno
+        for rev in revs:
+            revnos.append(rev.revno)
+            comment = rev.get(COMMENT)
+            if comment:
+                comment = "#%(revno)d %(comment)s" % {
+                          'revno': rev.revno,
+                          'comment': comment
+                          }
+                comments.append(comment)
+            editor = get_editor_info(rev)
+            editor_name = editor["name"]
+            if editor_name in editors_info:
+                editors_info[editor_name].editor_revnos.append(rev.revno)
+            else:
+                editors_info[editor_name] = editor_info(editor, [rev.revno])
+
+        if len(revnos) == 1:
+            # there is only one change for this item in the history considered
+            info, positions = editors_info[editor_name]
+            info_tuple = (info, "")
+            editors.append(info_tuple)
+        else:
+            # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
+            for info, positions in editors_info.values():
+                positions.reverse()
+                position_range = str(positions[0])
+                pos_index = 1
+                for position in positions[1:]:
+                    if position == positions[pos_index-1] + 1:
+                        if pos_index < len(positions) - 1 and  position == positions[pos_index+1] - 1:
+                            pos_index += 1
+                            continue
+                        else:
+                            position_range = "%(position_range)s-%(position)d" % {
+                                             'position_range': position_range,
+                                             'position': position
+                                             }
+                    else:
+                        position_range = "%(position_range)s,%(position)d" % {
+                                         'position_range': position_range,
+                                         'position': position
+                                         }
+                    pos_index += 1
+
+                position_range = "[%(position_range)s]" % {'position_range': position_range}
+                info_tuple = (info, position_range)
+                editors.append(info_tuple)
+
+        item_info["revnos"] = revnos
+        item_info["editors"] = editors
+        item_info["comments"] = comments
+        item_groups[item_name] = item_info
+
+    # Grouping on the date basis
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+    day_count = OrderedDict()
+    revcount = 0
+    maxrev = results_per_page + offset
+    toappend = True
+    grouped_history = []
+    prev_date = '0000-00-00'
+    rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
+    rev_tuples = rev_tuple(prev_date, [])
+    for item_group in item_groups.values():
+        tm = datetime.utcfromtimestamp(item_group["timestamp"])
+        rev_date = format_date(tm)
+        if revcount < offset:
+            revcount += len(item_group["revnos"])
+            if rev_date not in day_count:
+                day_count[rev_date] = 0
+            day_count[rev_date] += len(item_group["revnos"])
+        elif rev_date == prev_date:
+            rev_tuples.item_revs.append(item_group)
+            revcount += len(item_group["revnos"])
+        else:
+            grouped_history.append(rev_tuples)
+            if results_per_page and revcount >= maxrev:
+                toappend = False
+                break
+            else:
+                rev_tuples = rev_tuple(rev_date, [item_group])
+                prev_date = rev_date
+                revcount += len(item_group["revnos"])
+
+    if toappend:
+        grouped_history.append(rev_tuples)
+        revcount = 0 # this is the last page, no next page present
+    del grouped_history[0]  # First tuple will be a null one
+
+    # calculate offset for previous page link
+    if results_per_page:
+        previous_offset = 0
+        prev_rev_count = day_count.values()
+        prev_rev_count.reverse()
+        for numrev in prev_rev_count:
+            if previous_offset < results_per_page:
+                previous_offset += numrev
+            else:
+                break
+
+        if offset - previous_offset >= results_per_page:
+            previous_offset = offset - previous_offset
+        elif previous_offset:
+            previous_offset = 0
+        else:
+            previous_offset = -1
+    else:
+        previous_offset = -1 # no previous page
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    current_timestamp = int(time.time())
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=history,
+                           history=grouped_history,
+                           current_timestamp=current_timestamp,
+                           bookmark_time=bookmark_time,
+                           offset=revcount,
+                           previous_offset=previous_offset,
                           )
 
 @frontend.route('/+wanteds')
@@ -838,6 +1029,7 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -895,6 +1087,7 @@ def lostpass():
             return redirect(url_for('.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -950,6 +1143,7 @@ def recoverpass():
             return redirect(url_for('.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1022,6 +1216,7 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1125,6 +1320,7 @@ def usersettings(part):
         theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
         css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
         edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
+        results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
         submit = String.using(default=L_('Save'), optional=True)
 
     dispatch = dict(
@@ -1181,6 +1377,7 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
+                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1208,7 +1405,6 @@ def bookmark():
     else:
         flash(_("You must log in to use bookmarks."), "error")
     return redirect(url_for('.global_history'))
-
 
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):

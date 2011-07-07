@@ -575,15 +575,26 @@ class Item(object):
                  for item in item_iterator]
         return sorted(items)
 
-    def flat_index(self):
+    def flat_index(self, startswith=None):
         index = self.get_index()
-        index = [(fullname, relname, contenttype)
-                 for fullname, relname, contenttype in index
-                 if u'/' not in relname]
+        if startswith:
+            startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
+            index = [(fullname, relname, contenttype)
+                     for fullname, relname, contenttype in index
+                     if u'/' not in relname and relname.startswith(startswith)]
+        else:
+            index = [(fullname, relname, contenttype)
+                     for fullname, relname, contenttype in index
+                     if u'/' not in relname]
+
         return index
 
     index_template = 'index.html'
 
+    def name_initial(self, names=None):
+        initials = [(name[1][0])
+                   for name in names]
+        return initials
 
 class NonExistent(Item):
     contenttype_groups = [
