@@ -21,7 +21,7 @@
         {% set maxchars = 20 %}
         {% for fullname, relname, contenttype, hassubitem in index %}
             <div>
-                <a href="{{ url_for('show_item', item_name=fullname) }}" 
+                <a href="{{ url_for('.show_item', item_name=fullname) }}" 
                    class="{{ contenttype|contenttype_to_class }}"
                    title="{{ relname }}">
                    {{ relname|truncate(maxchars, true, '..') }}
