@@ -47,4 +47,10 @@ def test_XPointer():
     e = x[1]
     assert e.name == 'c'
     assert e.data == 'd'
+    
+    x = XPointer('a(a(b))')
+    assert len(x) == 1
+    e = x[0]
+    assert e.name == 'a'
+    assert e.data == 'a(b)'
 
