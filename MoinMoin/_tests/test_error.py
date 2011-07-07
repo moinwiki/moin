@@ -46,5 +46,31 @@ class TestEncoding(object):
         err = error.Error(test)
         assert '%(message)s' % err == test
 
+class TestCompositeError(object):
+
+    def setup_method(self, method):
+        self.CompositeError_obj = error.CompositeError(error.InternalError)
+        
+    def teardown_method(self, method):
+        self.CompositeError_obj.innerException = None
+        
+    def test_exceptions(self):
+        self.CompositeError_obj.innerException = 'test_error1', 'test_error2', 'test_error3'
+        result = error.CompositeError.exceptions(self.CompositeError_obj)
+        expected = [('test_error1', 'test_error2', 'test_error3')]
+        assert expected == result
+        self.CompositeError_obj.innerException = str(error.InternalError(''))
+
+    def test_subclasses(self):
+        self.CompositeError_obj.innerException = str(error.FatalError('This is an internal Error'))
+        result = error.CompositeError.exceptions(self.CompositeError_obj)
+        expected = ['This is an internal Error']
+        assert result == expected
+
+        self.CompositeError_obj.innerException = str(error.FatalError('This is a fatal Error'))
+        result = error.CompositeError.exceptions(self.CompositeError_obj)
+        expected = ['This is a fatal Error']
+        assert result == expected         
+    
 coverage_modules = ['MoinMoin.error']
 
