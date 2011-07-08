@@ -684,6 +684,7 @@ class Item(object, DictMixin):
         """
         @see: Backend._change_item_metadata.__doc__
         """
+        self._read_accessed = False
         if self._uncommitted_revision is not None:
             raise RuntimeError(("You tried to change the metadata of the item %r but there "
                                 "are uncommitted revisions on that item. Commit first.") % (self.name))
