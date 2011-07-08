@@ -591,6 +591,20 @@ class Item(object):
 
     index_template = 'index.html'
 
+    def get_detailed_index(self, index):
+        """ appends a flag in the index of items indicating that the parent has sub items """
+        detailed_index = []
+        all_item_index = self.get_index()
+        all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
+        for fullname, relname, contenttype in index:
+            hassubitem = False
+            subitem_name_re = u"%s/" % re.escape(relname)
+            regex = re.compile(subitem_name_re, re.UNICODE)
+            if regex.search(all_item_text):
+                hassubitem = True
+            detailed_index.append((fullname, relname, contenttype, hassubitem))
+        return detailed_index
+
     def name_initial(self, names=None):
         initials = [(name[1][0])
                    for name in names]

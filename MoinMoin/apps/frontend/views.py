@@ -478,23 +478,14 @@ def index(item_name):
         abort(403)
     index = item.flat_index()
 
-    index_more_links = []
-    all_item_index = item.get_index()
-    all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
-    for fullname, relname, contenttype in index:
-        hassubitem = False
-        subitem_name_re = u"%s/" % re.escape(relname)
-        regex = re.compile(subitem_name_re, re.UNICODE)
-        if regex.search(all_item_text):
-            hassubitem = True
-        index_more_links.append((fullname, relname, contenttype, hassubitem))
-    index_more_links.sort()
+    detailed_index = item.get_detailed_index(index)
+    detailed_index.sort()
     split_char = u'/'
     item_names = item_name.split(split_char)
 
     return render_template(item.index_template,
                            item=item, item_name=item_name,
-                           index=index_more_links,
+                           index=detailed_index,
                            item_names=item_names
                           )
 
