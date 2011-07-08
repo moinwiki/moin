@@ -82,7 +82,7 @@ class TestItem(object):
     def testIndex(self):
         # create a toplevel and some sub-items
         basename = u'Foo'
-        for name in ['', '/ab', '/cd/ef', '/gh', '/ij/kl', ]:
+        for name in ['', '/ab', '/cd/ef', '/gh', '/ij', '/ij/kl', ]:
             item = Item.create(basename + name)
             item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
 
@@ -92,12 +92,19 @@ class TestItem(object):
         assert index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
                          (u'Foo/cd/ef', u'cd/ef', 'text/plain;charset=utf-8'),
                          (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
+                         (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
                          (u'Foo/ij/kl', u'ij/kl', 'text/plain;charset=utf-8'),
                         ]
         flat_index = baseitem.flat_index()
         assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
                               (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
+                              (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
                              ]
+        detailed_index = baseitem.get_detailed_index(baseitem.flat_index())
+        assert detailed_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8', False),
+                                  (u'Foo/gh', u'gh', 'text/plain;charset=utf-8', False),
+                                  (u'Foo/ij', u'ij', 'text/plain;charset=utf-8', True),
+                                 ]
 
 
 class TestTarItems(object):
