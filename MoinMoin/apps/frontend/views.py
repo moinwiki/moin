@@ -504,20 +504,13 @@ def global_index():
     initials = [initial.upper() for initial in initials]
     initials = list(set(initials))
     initials.sort()
-    index_more_links = []
-    for fullname, relname, contenttype in index:
-        test_item = item.create(fullname)
-        item_index = test_item.flat_index()
-        hassubitem = False
-        if item_index:
-            hassubitem = True
-        index_more_links.append((fullname, relname, contenttype, hassubitem))
-    index_more_links.sort()
+    detailed_index = item.get_detailed_index(index)
+    detailed_index.sort()
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
                            item_name=item_name, # XXX no item
-                           index=index_more_links,
+                           index=detailed_index,
                            initials=initials,
                            startswith=startswith,
                           )
