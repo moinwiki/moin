@@ -323,13 +323,13 @@ class TestLoginWithPassword(object):
         theUser.quicklinks = [pagename]
         result_after = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink']
-        assert result_after == expected
+        assert result_after == expected, ('Expected "%(expected)s" but got "%(result_after)s"') % locals()
 
         # test for addQuicklink()
         theUser.addQuicklink(u'Test_page_added')
         result_on_addition = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink', u'Test_page_added']
-        assert result_on_addition == expected 
+        assert result_on_addition == expected, ('Expected "%(expected)s" but got "%(result_on_addition)s"') % locals() 
 
         # user should be quicklinked to [pagename]
         result = theUser.isQuickLinkedTo([pagename])
@@ -339,7 +339,7 @@ class TestLoginWithPassword(object):
         theUser.removeQuicklink(u'Test_page_added')
         result_on_removal = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink']
-        assert result_on_removal == expected
+        assert result_on_removal == expected, ('Expected "%(expected)s" but got "%(result_on_removal)s"') % locals()
 
     # Trail -----------------------------------------------------------
     
@@ -359,7 +359,7 @@ class TestLoginWithPassword(object):
         theUser.addTrail(u'item_added')
         result = theUser.getTrail()
         expected = [u'item_added']
-        assert result == expected
+        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
 
     # Helpers ---------------------------------------------------------
 
