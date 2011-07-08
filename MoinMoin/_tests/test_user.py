@@ -341,6 +341,26 @@ class TestLoginWithPassword(object):
         expected = [u'Test_page_quicklink']
         assert result_on_removal == expected
 
+    # Trail -----------------------------------------------------------
+    
+    def test_trail(self):
+        pagename = u'Test_page_trail'
+        name = u'Test_User_trail'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+        
+        # no item name added to trail
+        result = theUser.getTrail()
+        expected = []
+        assert result == expected
+        
+        # item name added to trail
+        theUser.addTrail(u'item_added')
+        result = theUser.getTrail()
+        expected = [u'item_added']
+        assert result == expected
+
     # Helpers ---------------------------------------------------------
 
     def createUser(self, name, password, pwencoded=False, email=None):
