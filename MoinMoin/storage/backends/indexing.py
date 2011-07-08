@@ -81,6 +81,7 @@ class IndexingBackendMixin(object):
             # or continuing to use the name, but tracking name changes within the item's history.
             rev_datetime, name, rev_no = result
             try:
+                logging.debug("HISTORY: name %s revno %s" % (name, rev_no))
                 item = self.get_item(name)
                 yield item.get_revision(rev_no)
             except AccessDeniedError as e:
@@ -200,7 +201,7 @@ class IndexingRevisionMixin(object):
         metas = self
         logging.debug("item %r revno %d remove index!" % (name, revno))
         self._index.remove_rev(uuid, revno)
-        self._index.remove_rev_whoosh(uuid, revno)
+        self._index.remove_rev_whoosh(metas[UUID], revno)
 
     # TODO maybe use this class later for data indexing also,
     # TODO by intercepting write() to index data written to a revision
@@ -257,7 +258,7 @@ class ItemIndex(object):
         self.item_kvstore = KVStore(item_kvmeta)
         self.rev_kvstore = KVStore(rev_kvmeta)
 
-        self.index_object = WhooshIndex(indexdir=index_dir)
+        self.index_object = WhooshIndex(index_dir=index_dir)
 
     def close(self):
         engine = self.metadata.bind
@@ -349,7 +350,7 @@ class ItemIndex(object):
     def remove_item_whoosh(self, metas):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
             doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
-                                                              name=metas[NAME].lower()
+                                                              name_exact=metas[NAME]
                                                              )
         if doc_number is not None:
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
@@ -384,21 +385,21 @@ class ItemIndex(object):
 
     def add_rev_whoosh(self, uuid, revno, metas):
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-                all_found_document = all_revs_searcher.document(uuid=metas[UUID], rev_no=revno)
-                latest_found_document = latest_revs_searcher.document(uuid=metas[UUID])
-        logging.warning("For add: uuid %s revno %s" % (metas[UUID], revno))
+            all_found_document = all_revs_searcher.document(uuid=metas[UUID], rev_no=revno)
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            latest_found_document = latest_revs_searcher.document(uuid=metas[UUID])
+        logging.debug("To add: uuid %s revno %s" % (metas[UUID], revno))
         if not all_found_document:
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
                 field_names = self.index_object.all_revisions_index.schema.names()
                 converted_rev = self.backend_to_index(metas, revno, field_names)
-                logging.warning("ALL: add %s %s", converted_rev[UUID], converted_rev["rev_no"])
+                logging.debug("ALL: add %s %s", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.add_document(**converted_rev)
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 field_names = self.index_object.latest_revisions_index.schema.names()
                 converted_rev = self.backend_to_index(metas, revno, field_names)
-                logging.warning("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
+                logging.debug("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
 
     def remove_rev(self, uuid, revno):
@@ -426,13 +427,18 @@ class ItemIndex(object):
             rev_table.delete().where(rev_table.c.id == rev_id).execute()
 
     def remove_rev_whoosh(self, uuid, revno):
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            latest_doc_number = latest_revs_searcher.document_number(uuid=uuid, rev_no=revno)
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            doc_number = latest_revs_searcher.document_number(uuid=uuid,
-                                                              rev_no=revno
-                                                             )
-            if doc_number is not None:
-                with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                    async_writer.delete_document(doc_number)
+            doc_number = all_revs_searcher.document_number(uuid=uuid, rev_no=revno)
+        if doc_number is not None:
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                logging.debug("REMOVE FROM ALL: %d", doc_number)
+                async_writer.delete_document(doc_number)
+        if latest_doc_number is not None:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                logging.debug("REMOVE FROM LATEST: %d", latest_doc_number)
+                async_writer.delete_document(latest_doc_number)
 
     def get_uuid_revno_name(self, rev_id):
         """
@@ -485,7 +491,7 @@ class ItemIndex(object):
             mountpoint += '/'
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
             if item_name:
-                docs = all_revs_searcher.documents(name=item_name.lower())
+                docs = all_revs_searcher.documents(name_exact=item_name)
             else:
                 docs = all_revs_searcher.all_stored_fields()
             for doc in sorted(docs, reverse=reverse)[start:end]:
@@ -503,11 +509,13 @@ class ItemIndex(object):
         return counts_tags_names
 
     def all_tags_whoosh(self):
-        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            docs = all_revs_searcher.all_stored_fields()
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            docs = latest_revs_searcher.all_stored_fields()
             tags_names = {}
             for doc in docs:
-                for tag in doc[TAGS]:
+                tags = doc.get(TAGS, [])
+                logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
+                for tag in tags:
                     tags_names.setdefault(tag, []).append(doc[NAME])
             counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
             return counts_tags_names
@@ -519,16 +527,16 @@ class ItemIndex(object):
         return [row[0] for row in result]
 
     def tagged_items_whoosh(self, tag):
-        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            docs = all_revs_searcher.documents(tags=tag)
-            if docs:
-                return [doc[NAME] for doc in docs]
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            docs = latest_revs_searcher.documents(tags=tag)
+            return [doc[NAME] for doc in docs]
 
     def backend_to_index(self, backend_rev, rev_no, schema_fields):
         metadata = dict([(str(key), value)
                           for key, value in backend_rev.items()
                           if key in schema_fields])
         metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
+        metadata["name_exact"] = backend_rev[NAME]
         metadata["rev_no"] = rev_no
         return metadata
 
