@@ -240,14 +240,19 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-offset-links a:hover { box-shadow: 0px 0px 12px #81BBF2; }
 .moin-clr { clear: both; }
 
-/* global index page */
+/* global(item) index page */
 #moin-letters { width: 90%; margin: 5px auto; text-align: center; }
 #moin-letters a { display: inline-block; margin: 0; padding: 4px 5px; }
 #moin-letters a:hover,
 #moin-letters a.selected { background: #4477FF; border-radius: 5px; color: #FFFFFF; text-decoration: none; }
-#moin-global-index { width: 100%; margin-left: 0.5em; }
-#moin-global-index div { float: left; width: 15em; }
+#moin-global-index,
+#moin-item-index { width: 100%; margin-left: 0.5em; }
+#moin-global-index div,
+#moin-item-index div { float: left; width: 15em; }
 .moin-more-index:before { content: url("../img/moin-expand.png"); }
+.moin-index-path { margin-left: 0.5em; }
+.moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
+.moin-path-separator { font-size: 120%; color: #4477FF; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }
