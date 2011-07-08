@@ -349,17 +349,45 @@ class TestLoginWithPassword(object):
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
-        
+
         # no item name added to trail
         result = theUser.getTrail()
         expected = []
         assert result == expected
-        
+
         # item name added to trail
         theUser.addTrail(u'item_added')
         result = theUser.getTrail()
         expected = [u'item_added']
         assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        
+    # Other ----------------------------------------------------------
+    
+    def test_signature(self):
+        name = u'Test_User_other'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # test the user signature
+        result = theUser.signature()
+        expected =  u'[[Test_User_other]]'
+        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+
+    def test_recovery_token(self):            
+        name = u'Test_User_other'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # use recovery token to generate new password
+        test_token = theUser.generate_recovery_token()
+        result_success = theUser.apply_recovery_token(test_token, u'test_newpass')
+        assert result_success
+
+        # wrong token
+        result_failure = theUser.apply_recovery_token('test_wrong_token', u'test_newpass')
+        assert not result_failure
 
     # Helpers ---------------------------------------------------------
 
