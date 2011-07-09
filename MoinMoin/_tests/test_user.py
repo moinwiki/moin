@@ -316,6 +316,10 @@ class TestLoginWithPassword(object):
         assert result_success == 0
         result_deleted = theUser.getBookmark()       
         assert not result_deleted
+
+        # delBookmark should return 1 on failure
+        result_failure = theUser.delBookmark()
+        assert result_failure == 1
     
     # Quicklinks ------------------------------------------------------
     
