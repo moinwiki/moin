@@ -1,6 +1,6 @@
 #!/bin/bash
 # create a virtual environment in directory $DIR/
-# needs: curl or wget, unzip, gzip, tar, pip
+# needs: virtualenv, pip
 
 DIR=env
 PYTHON=python
@@ -9,21 +9,9 @@ virtualenv --no-site-packages --python $PYTHON $DIR
 
 source $DIR/bin/activate
 
-download()
-{
-    if test -x /usr/bin/curl
-    then
-        echo /usr/bin/curl -L -o $1 $2
-        /usr/bin/curl -L -o $1 $2
-    else
-        # github redirects to a url where its cert does not match :(
-        echo wget -nc --no-check-certificate -O $1 $2
-        wget -nc --no-check-certificate -O $1 $2
-    fi
-}
-
 # first install babel, moin's setup.py will emit a warning if it is not there
 pip install babel
+
 # first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
 pip install XStatic==0.0.1
 
