@@ -312,7 +312,8 @@ class TestLoginWithPassword(object):
         expected = 7
         assert result_added == expected, ('Expected "%(expected)s" but got "%(result_added)s"') % locals()
         # delete the bookmark
-        theUser.delBookmark()
+        result_success = theUser.delBookmark()
+        assert result_success == 0
         result_deleted = theUser.getBookmark()       
         assert not result_deleted
     
