@@ -299,6 +299,23 @@ class TestLoginWithPassword(object):
         theuser = user.User(uid)
         assert theuser.email == email
 
+    # Bookmarks -------------------------------------------------------
+    
+    def test_bookmark(self):
+        name = u'Test_User_quicklink'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        theUser.setBookmark(7)
+        result_added = theUser.getBookmark()
+        expected = 7
+        assert result_added == expected
+        # delete the bookmark
+        theUser.delBookmark()
+        result_deleted = theUser.getBookmark()       
+        assert not result_deleted
+    
     # Quicklinks ------------------------------------------------------
     
     def test_quicklinks(self):
