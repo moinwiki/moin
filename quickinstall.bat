@@ -12,9 +12,6 @@ call env\Scripts\activate.bat
 echo Installing babel first ...
 pip install babel
 
-echo Installing XStatic first ...
-pip install XStatic==0.0.1
-
 echo Installing all required python packages from pypi ...
 pip install -e .
 

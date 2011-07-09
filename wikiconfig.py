@@ -59,37 +59,13 @@ class Config(DefaultConfig):
 
     # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
     # see https://bitbucket.org/thomaswaldmann/xstatic for details:
-    from xstatic.pkg.jquery import JQuery
-    j = JQuery(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(j.name, j.get_mapping()[1])])
-
-    from xstatic.pkg.jquery_file_upload import JQueryFileUpload
-    jfu = JQueryFileUpload(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(jfu.name, jfu.get_mapping()[1])])
-
-    from xstatic.pkg.svgweb import SVGWeb
-    sw = SVGWeb(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(sw.name, sw.get_mapping()[1])])
-
-    from xstatic.pkg.ckeditor import CKEditor
-    cke = CKEditor(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(cke.name, cke.get_mapping()[1])])
-
-    from xstatic.pkg.twikidraw_moin import TWikiDraw
-    twd = TWikiDraw(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(twd.name, twd.get_mapping()[1])])
-
-    from xstatic.pkg.anywikidraw import AnyWikiDraw
-    awd = AnyWikiDraw(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(awd.name, awd.get_mapping()[1])])
-
-    from xstatic.pkg.mathjax import MathJax
-    mj = MathJax(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(mj.name, mj.get_mapping()[1])])
-
-    from xstatic.pkg.svgedit_moin import SvgEdit
-    se = SvgEdit(root_url='/static', provider='local', protocol='http')
-    serve_files.update([(se.name, se.get_mapping()[1])])
+    from xstatic.main import XStatic
+    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor', 'svgweb', 'svgedit_moin', 'twikidraw_moin', 'anywikidraw', 'mathjax', ]
+    pkg = __import__('xstatic.pkg', fromlist=mod_names)
+    for mod_name in mod_names:
+        mod = getattr(pkg, mod_name)
+        xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
+        serve_files.update([(xs.name, xs.base_dir)])
 
     # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
 
