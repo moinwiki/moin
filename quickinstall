@@ -22,13 +22,6 @@ download()
     fi
 }
 
-# get some 3rd party stuff and unpack them into $DIR/, where the default
-# wikiconfig.py expects them. should be replaced by packaging.
-# we do this FIRST, so that breakage with pip install is better visible.
-
-download $DIR/svgedit.tgz http://static.moinmo.in/files/packages/svg-edit.tar.gz
-tar xz -C $DIR/ -f $DIR/svgedit.tgz
-
 # first install babel, moin's setup.py will emit a warning if it is not there
 pip install babel
 # first install XStatic, XStatic-jQuery's setup.py will fail if it is not there
