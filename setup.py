@@ -90,12 +90,16 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Werkzeug==0.6.2', # use this if 0.7dev fails
         'pytest', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
-        'XStatic-CKEditor',
-        'XStatic-jQuery',
-        'XStatic-jQuery-File-Upload',
-        'XStatic-svgweb',
-        'XStatic-TWikiDraw-moin',
-        'XStatic-AnyWikiDraw',
+        # pin specific versions that conform to XStatic 0.0.2:
+        'XStatic==0.0.2',
+        'XStatic-CKEditor==3.6.1.2',
+        'XStatic-jQuery==1.6.1.4',
+        'XStatic-jQuery-File-Upload==4.4.2',
+        'XStatic-svgweb==2011.2.3.2',
+        'XStatic-TWikiDraw-moin==2004.10.23.2',
+        'XStatic-AnyWikiDraw==0.14.2',
+        'XStatic-MathJax==1.1.2',
+        'XStatic-svg-edit-moin==2011.07.07.2',
     ],
     # optional features and their list of requirements
     extras_require = {

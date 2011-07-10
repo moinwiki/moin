@@ -76,8 +76,8 @@ Troubleshooting
 If you have a bad or limited network connection, you may run into trouble
 with the commands issued by the quickinstall script.
 
-You may see tracebacks from pip, timeout errors, error messages from wget
-(see the output of the quickinstall script).
+You may see tracebacks from pip, timeout errors, etc. (see the output of the
+quickinstall script).
 
 If this is the case, try it manually::
 
