@@ -37,8 +37,13 @@ from MoinMoin.i18n import _, L_, N_
 
 from MoinMoin.themes import setup_jinja_env, themed_error
 
+from MoinMoin.util.clock import Clock
+
+
 def create_app(config=None):
-    """simple wrapper around create_app_ext() for flask-script"""
+    """
+    simple wrapper around create_app_ext() for flask-script
+    """
     return create_app_ext(flask_config_file=config)
 
 
@@ -156,7 +161,6 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-from MoinMoin.util.clock import Clock
 from MoinMoin.storage.error import StorageError
 from MoinMoin.storage.serialization import serialize, unserialize
 from MoinMoin.storage.backends import router, acl, memory
@@ -164,7 +168,9 @@ from MoinMoin import auth, config, user
 
 
 def init_backends(app):
-    """ initialize the backend """
+    """
+    initialize the backends
+    """
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend, protection to apply as a dict
     ns_mapping = app.cfg.namespace_mapping
@@ -226,8 +232,10 @@ def import_export_xml(app):
 
 
 def setup_user():
-    """ Try to retrieve a valid user object from the request, be it
-    either through the session or through a login. """
+    """
+    Try to retrieve a valid user object from the request, be it
+    either through the session or through a login.
+    """
     # init some stuff for auth processing:
     flaskg._login_multistage = None
     flaskg._login_multistage_name = None
