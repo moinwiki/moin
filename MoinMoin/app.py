@@ -37,8 +37,13 @@ from MoinMoin.i18n import _, L_, N_
 
 from MoinMoin.themes import setup_jinja_env, themed_error
 
+from MoinMoin.util.clock import Clock
+
+
 def create_app(config=None):
-    """simple wrapper around create_app_ext() for flask-script"""
+    """
+    simple wrapper around create_app_ext() for flask-script
+    """
     return create_app_ext(flask_config_file=config)
 
 
@@ -102,19 +107,19 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     # register modules, before/after request functions
     from MoinMoin.apps.frontend import frontend
     frontend.before_request(before_wiki)
-    frontend.after_request(after_wiki)
+    frontend.teardown_request(teardown_wiki)
     app.register_blueprint(frontend)
     from MoinMoin.apps.admin import admin
     admin.before_request(before_wiki)
-    admin.after_request(after_wiki)
+    admin.teardown_request(teardown_wiki)
     app.register_blueprint(admin, url_prefix='/+admin')
     from MoinMoin.apps.feed import feed
     feed.before_request(before_wiki)
-    feed.after_request(after_wiki)
+    feed.teardown_request(teardown_wiki)
     app.register_blueprint(feed, url_prefix='/+feed')
     from MoinMoin.apps.misc import misc
     misc.before_request(before_wiki)
-    misc.after_request(after_wiki)
+    misc.teardown_request(teardown_wiki)
     app.register_blueprint(misc, url_prefix='/+misc')
     from MoinMoin.apps.serve import serve
     app.register_blueprint(serve, url_prefix='/+serve')
@@ -156,7 +161,6 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-from MoinMoin.util.clock import Clock
 from MoinMoin.storage.error import StorageError
 from MoinMoin.storage.serialization import serialize, unserialize
 from MoinMoin.storage.backends import router, acl, memory
@@ -164,7 +168,9 @@ from MoinMoin import auth, config, user
 
 
 def init_backends(app):
-    """ initialize the backend """
+    """
+    initialize the backends
+    """
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend, protection to apply as a dict
     ns_mapping = app.cfg.namespace_mapping
@@ -226,8 +232,10 @@ def import_export_xml(app):
 
 
 def setup_user():
-    """ Try to retrieve a valid user object from the request, be it
-    either through the session or through a login. """
+    """
+    Try to retrieve a valid user object from the request, be it
+    either through the session or through a login.
+    """
     # init some stuff for auth processing:
     flaskg._login_multistage = None
     flaskg._login_multistage_name = None
@@ -286,16 +294,16 @@ def before_wiki():
     # if return value is not None, it is the final response
 
 
-def after_wiki(response):
+def teardown_wiki(response):
     """
-    Stop timers.
+    Teardown environment of wiki requests, stop timers.
     """
-    logging.debug("running after_wiki")
+    logging.debug("running teardown_wiki")
     try:
         flaskg.clock.stop('total')
         del flaskg.clock
     except AttributeError:
-        # can happen if after_wiki() is called twice, e.g. by unit tests.
+        # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
     return response
 
