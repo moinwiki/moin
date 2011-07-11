@@ -11,11 +11,13 @@ from flask import current_app as app
 from flask import g as flaskg
 from flaskext.script import Command, Option
 from whoosh.filedb.multiproc import MultiSegmentWriter
-from whoosh.index import create_in, exists_in
+from whoosh.index import open_dir, create_in, exists_in
 
 from MoinMoin.search.indexing import WhooshIndex
 from MoinMoin.config import MTIME, NAME
 from MoinMoin.script.maint.update_indexes import UpdateIndexes
+from MoinMoin.items import Item
+from MoinMoin.converter.moinwiki_out import Converter
 from MoinMoin.error import FatalError
 from MoinMoin.storage.error import NoSuchItemError
 from MoinMoin import log
@@ -25,6 +27,7 @@ logging = log.getLogger(__name__)
 latest_indexname_schema = ("latest_revisions_index", "latest_revisions_schema")
 all_indexname_schema = ("all_revisions_index", "all_revisions_schema")
 both_indexnames_schemas = [latest_indexname_schema, all_indexname_schema]
+
 
 class IndexOperations(Command):
     description = 'Build indexes'
@@ -61,12 +64,12 @@ class IndexOperations(Command):
                         for rev_no in item.list_revisions():
                             if "all_revisions_index" in indexnames:
                                 revision = item.get_revision(rev_no)
-                                metadata = backend_to_index(revision, rev_no, all_rev_field_names)
+                                metadata = backend_to_index(item, rev_no, all_rev_field_names)
                                 all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         if "latest_revisions_index" in indexnames:
                             revision = item.get_revision(rev_no)
-                            metadata = backend_to_index(revision, rev_no, latest_rev_field_names)
+                            metadata = backend_to_index(item, rev_no, latest_rev_field_names)
                             latest_rev_writer.add_document(**metadata)
 
         def update_index(indexnames_schemas):
@@ -84,44 +87,42 @@ class IndexOperations(Command):
                 add_rev_nos = set(backend_rev_list) - set(index_rev_list)
                 if add_rev_nos:
                     if "all_revisions_index" in indexnames:
-                        create_documents.append((name, add_rev_nos))
+                        create_documents.append((item, add_rev_nos))
                     if "latest_revisions_index" in indexnames:
-                        latest_documents.append((name, max(add_rev_nos))) # Add latest revision
+                        latest_documents.append((item, max(add_rev_nos))) # Add latest revision
                 remove_rev_nos = set(index_rev_list) - set(backend_rev_list)
                 if remove_rev_nos:
                     if "all_revisions_index" in indexnames:
-                        delete_documents.append((name, remove_rev_nos))
+                        delete_documents.append((item, remove_rev_nos))
 
             if "latest_revisions_index" in indexnames and latest_documents:
                 with latest_rev_index.writer() as latest_rev_writer:
-                    for name, rev_no in latest_documents:
-                        storage_rev = backend.get_item(name).get_revision(rev_no)
-                        converted_rev = backend_to_index(storage_rev, rev_no, latest_rev_field_names)
-                        found = latest_rev_searcher.document(name_exact=name)
+                    for item, rev_no in latest_documents:
+                        converted_rev = backend_to_index(item, rev_no, latest_rev_field_names)
+                        found = latest_rev_searcher.document(name_exact=item.name)
                         if not found:
                             latest_rev_writer.add_document(**converted_rev)
                         # Checking what last revision is the latest
                         elif found["rev_no"] < converted_rev["rev_no"]:
-                            doc_number = latest_rev_searcher.document_number(name_exact=name)
+                            doc_number = latest_rev_searcher.document_number(name_exact=item.name)
                             latest_rev_writer.delete_document(doc_number)
                             latest_rev_writer.add_document(**converted_rev)
 
             if "all_revisions_index" in indexnames and delete_documents:
                 with all_rev_index.writer() as all_rev_writer:
-                    for name, rev_nos in delete_documents:
+                    for item, rev_nos in delete_documents:
                         for rev_no in rev_nos:
                             doc_number = all_rev_searcher.document_number(rev_no=rev_no,
-                                                                          exact_name=name
+                                                                          exact_name=item.name
                                                                          )
                             if doc_number:
                                 all_rev_writer.delete_document(doc_number)
 
             if "all_revisions_index" in indexnames and create_documents:
                 with all_rev_index.writer() as all_rev_writer:
-                    for name, rev_nos in create_documents:
+                    for item, rev_nos in create_documents:
                         for rev_no in rev_nos:
-                            storage_rev = backend.get_item(name).get_revision(rev_no)
-                            converted_rev = backend_to_index(storage_rev, rev_no, all_rev_field_names)
+                            converted_rev = backend_to_index(item, rev_no, all_rev_field_names)
                             all_rev_writer.add_document(**converted_rev)
 
         def clean_index(indexnames_schemas):
@@ -129,7 +130,7 @@ class IndexOperations(Command):
             Clean given index in app.cfg.index_dir
             """
             for indexname, schema in indexnames_schemas:
-                index_object.create_index(indexdir=app.cfg.index_dir,
+                index_object.create_index(index_dir=app.cfg.index_dir,
                                           indexname=indexname,
                                           schema=schema
                                          )
@@ -138,10 +139,10 @@ class IndexOperations(Command):
             """
             Move given indexes from index_dir_tmp to index_dir
             """
+            clean_index(indexnames_schemas)
             for indexname, schema in indexnames_schemas:
                 if not exists_in(app.cfg.index_dir_tmp, indexname=indexname):
                     raise FatalError(u"Can't find %s in %s" % (indexname, app.cfg.index_dir_tmp))
-                clean_index(indexnames_schemas)
                 for filename in latest_rev_index.storage.list():
                     src_file = os.path.join(app.cfg.index_dir_tmp, filename)
                     dst_file = os.path.join(app.cfg.index_dir, filename)
@@ -153,16 +154,23 @@ class IndexOperations(Command):
             Print documents in given index to stdout
             """
             for indexname, schema in indexnames_schemas:
-                if "all" in indexname:
-                    print "Revisions in all_revision_index:"
-                    for rev in all_rev_searcher.all_stored_fields():
-                        #print "NAME: %s REVNO: %d" % (rev[NAME], rev["rev_no"])
-                        print repr(rev)
-                if "latest" in indexname:
-                    print "Revisions in latest_revision_index:"
-                    for rev in latest_rev_searcher.all_stored_fields():
-                        #print "NAME: %s REVNO: %d" % (rev[NAME], rev["rev_no"])
-                        print repr(rev)
+                try:
+                    if "all" in indexname:
+                        all_index = open_dir(app.cfg.index_dir, indexname="all_revisions_index")
+                        print "Revisions in all_revisions_index:"
+                        with all_index.searcher() as searcher:
+                            for rev in searcher.all_stored_fields():
+                                print repr(rev)
+                        all_index.close()
+                    if "latest" in indexname:
+                        latest_index = open_dir(app.cfg.index_dir, indexname="latest_revisions_index")
+                        print "Revisions in latest_revision_index:"
+                        with latest_index.searcher() as searcher:
+                            for rev in searcher.all_stored_fields():
+                                print repr(rev)
+                        latest_index.close()
+                except (IOError, OSError, EmptyIndexError) as err:
+                    raise FatalError("%s [Can not open %s index" % str(err), indexname)
 
         def item_index_revs(searcher, name):
             """
@@ -171,17 +179,25 @@ class IndexOperations(Command):
             revs_found = searcher.documents(name_exact=name)
             return [rev["rev_no"] for rev in revs_found]
 
-        def backend_to_index(backend_rev, rev_no, schema_fields):
+        def backend_to_index(item, rev_no, schema_fields):
             """
             Convert fields from backend format to whoosh schema
             """
+            backend_rev = item.get_revision(rev_no)
             metadata = dict([(str(key), value)
                               for key, value in backend_rev.items()
                               if key in schema_fields])
             metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
             metadata["name_exact"] = backend_rev[NAME]
             metadata["rev_no"] = rev_no
+            metadata["content"] = convert_data(item, rev_no)
             return metadata
+
+        def convert_data(item, rev_no):
+            converter = Converter()
+            item = Item.create(item=item, rev_no=rev_no)
+            dom = item.internal_representation()
+            return converter(dom)
 
         def do_action(action, indexnames_schemas):
             if action == "build":
@@ -196,7 +212,7 @@ class IndexOperations(Command):
                 show_index(indexnames_schemas)
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
-        index_object = WhooshIndex(indexdir=app.cfg.index_dir_tmp)
+        index_object = WhooshIndex(index_dir=app.cfg.index_dir_tmp)
         if os.path.samefile(app.cfg.index_dir_tmp, app.cfg.index_dir):
             raise FatalError(u"app.cfg.index_dir and app.cfg.tmp_index_dir are equal")
 
