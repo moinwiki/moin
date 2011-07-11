@@ -40,3 +40,18 @@ class TestMimeType(object):
             assert result == test_mimetype
         result = MimeType_obj.parse_format(test_format)
         
+    def test_mime_type(self):
+        test = [
+        # test_extension     # test_major/minor
+        ('.mpeg',            'video/mpeg'),
+        ('.pdf',             'application/pdf'),
+        ('.txt',             'text/plain'),
+        ('.jpeg',            'image/jpeg')
+        ]
+        
+        for test_extension, test_major_minor in test:
+            MimeType_obj = mimetype.MimeType(filename = 'test_file' + test_extension)
+            result = MimeType_obj.mime_type()
+            expected = test_major_minor
+            assert result == expected
+    
