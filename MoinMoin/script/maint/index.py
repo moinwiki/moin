@@ -15,7 +15,6 @@ from whoosh.index import open_dir, create_in, exists_in
 
 from MoinMoin.search.indexing import WhooshIndex
 from MoinMoin.config import MTIME, NAME
-from MoinMoin.script.maint.update_indexes import UpdateIndexes
 from MoinMoin.items import Item
 from MoinMoin.converter.moinwiki_out import Converter
 from MoinMoin.error import FatalError
