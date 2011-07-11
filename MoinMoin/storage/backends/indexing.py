@@ -25,11 +25,11 @@ import time, datetime
 from uuid import uuid4
 make_uuid = lambda: unicode(uuid4().hex)
 
-from MoinMoin.items import Item
-from MoinMoin.converter.moinwiki_out import Converter
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
+from MoinMoin.util.mime import Type
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -541,12 +541,31 @@ class ItemIndex(object):
         metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
         metadata["name_exact"] = backend_rev[NAME]
         metadata["rev_no"] = rev_no
-        metadata["content"] = self.convert_data(backend_rev[NAME], rev_no)
+        metadata["content"] = self.convert_data(backend_rev, rev_no)
         return metadata
 
-    def convert_data(self, name, rev_no):
-        converter = Converter()
-        item = Item.create(name=name, rev_no=rev_no)
-        dom = item.internal_representation()
-        return converter(dom)
+    def convert_data(self, rev, rev_no):
+        # this is a q&d hack because MoinMoin.items.Item is not made to be
+        # called outside of a request (e.g. due to usage of flaskg.*). Later,
+        # we need a more general way to transform revision content to
+        # indexable content (e.g. using a contenttype-dependant Converter
+        # that removes markup for markup data or that extracts text from
+        # "binary" items).
+        ct = Type(rev[CONTENTTYPE])
+        if ct.type == 'text':
+            coding = ct.parameters.get('charset', 'ascii')
+            # XXX does not work yet as NewRevision does not have .seek and .read
+            #rev.seek(0)
+            #data = rev.read()
+            data = 'TODO'
+            try:
+                data = data.decode(coding)
+            except UnicodeDecodeError as err:
+                logging.warning("Item %r revision %d failed to decode (%s)" % (
+                                rev[NAME], rev_no, str(err)))
+                data = unicode(str(err))
+        else:
+            # TODO: support non-text items
+            data = u''
+        return data
 
