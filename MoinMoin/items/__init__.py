@@ -225,6 +225,10 @@ class Item(object):
         """
         Return the internal representation of a document using a DOM Tree
         """
+        from MoinMoin.util.clock import Clock
+        with app.test_request_context():
+            flaskg.clock = Clock()
+            flaskg.clock.start('conv_in_dom')
         flaskg.clock.start('conv_in_dom')
         hash_name = HASH_ALGORITHM
         hash_hexdigest = self.rev.get(hash_name)
@@ -261,6 +265,9 @@ class Item(object):
                     doc = smiley_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
+        with app.test_request_context():
+            flaskg.clock = Clock()
+            flaskg.clock.stop('conv_in_dom')
         flaskg.clock.stop('conv_in_dom')
         return doc
 

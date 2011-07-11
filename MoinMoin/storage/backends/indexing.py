@@ -25,13 +25,13 @@ import time, datetime
 from uuid import uuid4
 make_uuid = lambda: unicode(uuid4().hex)
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
+from MoinMoin.items import Item
+from MoinMoin.converter.moinwiki_out import Converter
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
-
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 class IndexingBackendMixin(object):
     """
@@ -390,14 +390,14 @@ class ItemIndex(object):
             latest_found_document = latest_revs_searcher.document(uuid=metas[UUID])
         logging.debug("To add: uuid %s revno %s" % (metas[UUID], revno))
         if not all_found_document:
+            field_names = self.index_object.all_revisions_index.schema.names()
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                field_names = self.index_object.all_revisions_index.schema.names()
                 converted_rev = self.backend_to_index(metas, revno, field_names)
                 logging.debug("ALL: add %s %s", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.add_document(**converted_rev)
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
+            field_names = self.index_object.latest_revisions_index.schema.names()
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                field_names = self.index_object.latest_revisions_index.schema.names()
                 converted_rev = self.backend_to_index(metas, revno, field_names)
                 logging.debug("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
@@ -532,11 +532,21 @@ class ItemIndex(object):
             return [doc[NAME] for doc in docs]
 
     def backend_to_index(self, backend_rev, rev_no, schema_fields):
+        """
+        Convert fields from backend format to whoosh schema
+        """
         metadata = dict([(str(key), value)
                           for key, value in backend_rev.items()
                           if key in schema_fields])
         metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
         metadata["name_exact"] = backend_rev[NAME]
         metadata["rev_no"] = rev_no
+        metadata["content"] = self.convert_data(backend_rev[NAME], rev_no)
         return metadata
+
+    def convert_data(self, name, rev_no):
+        converter = Converter()
+        item = Item.create(name=name, rev_no=rev_no)
+        dom = item.internal_representation()
+        return converter(dom)
 
