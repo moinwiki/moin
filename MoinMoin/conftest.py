@@ -30,7 +30,7 @@ import sys
 
 import py
 
-from MoinMoin.app import create_app_ext, destroy_app, before_wiki, after_wiki
+from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 
@@ -79,7 +79,7 @@ def init_test_app(given_config):
     return app, ctx
 
 def deinit_test_app(app, ctx):
-    after_wiki('')
+    teardown_wiki('')
     ctx.pop()
     destroy_app(app)
 
