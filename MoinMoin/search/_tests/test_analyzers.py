@@ -15,14 +15,17 @@ from MoinMoin.search.analyzers import *
 class TokenizerTestBase(object):
 
     def testTokenizer(self):
+        """ analyzers: check what obtained tokens matched given """
         for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in self.tokenizer(value)]
             assert set(expected_tokens) == set(tokens)
 
 
 class TestAclTokenizer(TokenizerTestBase):
+    """ analyzers: test ACL tokenizer """
 
     test_cases_query = [
+        # (query, tokens)
         (u'-MinusGuy:read', [u'MinusGuy:-read']),
         (u'+PlusGuy:read', [u'PlusGuy:+read']),
         (u'Admin3:read,write,admin',
@@ -109,8 +112,11 @@ class TestAclTokenizer(TokenizerTestBase):
 
 
 class TestMimeTokenizer(TokenizerTestBase):
+    """ analyzers: test content type analyzer """
+
 
     test_cases_query = [
+                  # (query, tokens)
                   (u'text/plain', [u'text', u'plain']),
                   (u'text/plain;charset=utf-8', [u'text', u'plain', u'charset=utf-8']),
                   (u'text/html;value1=foo;value2=bar',
@@ -123,8 +129,10 @@ class TestMimeTokenizer(TokenizerTestBase):
 
 
 class TestItemNameAnalyzer(TokenizerTestBase):
+    """ analyzers: test item_name analyzer """
 
     test_cases_query = [
+                  # (query, tokens)
                   (u'wifi', [u'wifi']),
                   (u'WiFi', [u'wi', u'fi']),
                   (u'Wi-Fi', [u'wi', u'fi']),
@@ -141,10 +149,11 @@ class TestItemNameAnalyzer(TokenizerTestBase):
     tokenizer = item_name_analyzer()
 
     def testTokenizer(self):
+        """ analyzers: test item name analyzer with "query" and "index" mode """
+
         for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in self.tokenizer(value, mode="query")]
             assert set(expected_tokens) == set(tokens)
         for value, expected_tokens in self.test_cases_index:
             tokens = [token.text for token in self.tokenizer(value, mode="index")]
             assert set(expected_tokens) == set(tokens)
-
