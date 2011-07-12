@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:ThomasWaldmann
+# Copyright: 2011 by MoinMoin:PrashantKumar
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -49,9 +49,32 @@ class TestMimeType(object):
         ('.jpeg',            'image/jpeg')
         ]
         
+        # when mimestr is None
         for test_extension, test_major_minor in test:
             MimeType_obj = mimetype.MimeType(filename = 'test_file' + test_extension)
             result = MimeType_obj.mime_type()
             expected = test_major_minor
             assert result == expected
+
+        # when mimestr is not None
+        MimeType_obj = mimetype.MimeType(filename = 'test_file', mimestr = 'image/jpeg;charset="utf-8";misc=moin_misc')
+        result = MimeType_obj.mime_type()
+        assert result == 'image/jpeg'
     
+    def test_content_type(self):
+        MimeType_obj = mimetype.MimeType('test_file.mpeg')
+
+        result1 = MimeType_obj.content_type(major = 'application', minor = 'pdf', charset="utf-16", params=None)
+        expected = 'application/pdf'
+        assert result1 == expected
+
+        # major == 'text'
+        result2 = MimeType_obj.content_type(major = 'text', minor = 'plain', charset="utf-16", params=None)
+        expected = 'text/plain; charset="utf-16"'        
+        assert result2 == expected
+
+        # when all the parameters passed are None 
+        result3 = MimeType_obj.content_type()
+        expected = 'text/x-test_file.mpeg; charset="utf-8"'        
+        assert result3 == expected
+      
