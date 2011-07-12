@@ -19,6 +19,7 @@ import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile
+import itertools
 from StringIO import StringIO
 from array import array
 
@@ -575,17 +576,36 @@ class Item(object):
                  for item in item_iterator]
         return sorted(items)
 
-    def flat_index(self, startswith=None):
+    def flat_index(self, startswith=None, selected_groups=None):
+        """
+        creates an top level index of sub items of this item
+        if startswith is set, filtering is done on the basis of starting letter of item name
+        if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
+        """
         index = self.get_index()
+        nonexistent_item = NonExistent(self)
+        if not selected_groups:
+            selected_groups = [gname for (gname, contenttypes) in nonexistent_item.contenttype_groups]
+
+        ctypes = [[ctype for ctype, clabel in contenttypes]
+                  for gname, contenttypes in nonexistent_item.contenttype_groups
+                  if gname in selected_groups]
+
+        ctypes_chain = itertools.chain(*ctypes)
+        selected_contenttypes = list(ctypes_chain)
+
         if startswith:
             startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
             index = [(fullname, relname, contenttype)
                      for fullname, relname, contenttype in index
-                     if u'/' not in relname and relname.startswith(startswith)]
+                     if u'/' not in relname
+                     and relname.startswith(startswith)
+                     and contenttype in selected_contenttypes]
         else:
             index = [(fullname, relname, contenttype)
                      for fullname, relname, contenttype in index
-                     if u'/' not in relname]
+                     if u'/' not in relname
+                     and contenttype in selected_contenttypes]
 
         return index
 

@@ -249,6 +249,17 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 #moin-item-index { width: 100%; margin-left: 0.5em; }
 #moin-global-index div,
 #moin-item-index div { float: left; width: 15em; }
+.moin-select-contenttypes { float: right; position: relative; width: 14em; }
+.moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #342D7E; width: 14em; }
+.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.2em 1.3em 0.2em 0.2em; background: transparent url("../img/moin-moveup.png") no-repeat center right; } 
+.moin-contenttypes-wrapper ul { display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; } 
+.moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em 0.2em; width: 13.6em; }
+.moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
+.moin-contenttypes-wrapper ul li .contenttype-labels { font-size: 0.7em; color: #6E6A6B; display: none; }
+.moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
+.moin-contenttypes-wrapper ul li:hover .contenttype-labels{ display: block; }
+.moin-contenttypes-wrapper:hover ul { display: block; }
+.moin-contenttypes-wrapper:hover div { background-image: url("../img/moin-movedown.png"); } 
 .moin-more-index:before { content: url("../img/moin-expand.png"); }
 .moin-index-path { margin-left: 0.5em; }
 .moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }

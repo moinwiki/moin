@@ -85,7 +85,8 @@ class TestItem(object):
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij', '/ij/kl', ]:
             item = Item.create(basename + name)
             item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
-
+        item = Item.create(basename + '/mn')
+        item._save({CONTENTTYPE: 'image/jpeg'}, "JPG")
         # check index
         baseitem = Item.create(basename)
         index = baseitem.get_index()
@@ -94,16 +95,26 @@ class TestItem(object):
                          (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
                          (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
                          (u'Foo/ij/kl', u'ij/kl', 'text/plain;charset=utf-8'),
+                         (u'Foo/mn', u'mn', 'image/jpeg'),
                         ]
         flat_index = baseitem.flat_index()
         assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
                               (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
                               (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
+                              (u'Foo/mn', u'mn', 'image/jpeg'),
                              ]
+        # check index when startswith param is passed
+        flat_index = baseitem.flat_index(startswith=u'a')
+        assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8')]
+        # check index when contenttype_groups is passed
+        ctgroups = ["image items"]
+        flat_index = baseitem.flat_index(selected_groups=ctgroups)
+        assert flat_index == [(u'Foo/mn', u'mn', 'image/jpeg')]
         detailed_index = baseitem.get_detailed_index(baseitem.flat_index())
         assert detailed_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8', False),
                                   (u'Foo/gh', u'gh', 'text/plain;charset=utf-8', False),
                                   (u'Foo/ij', u'ij', 'text/plain;charset=utf-8', True),
+                                  (u'Foo/mn', u'mn', 'image/jpeg', False),
                                  ]
 
 
