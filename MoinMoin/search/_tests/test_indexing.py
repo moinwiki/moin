@@ -16,7 +16,7 @@ from whoosh.qparser import QueryParser
 from MoinMoin import log
 from MoinMoin.search.indexing import WhooshIndex
 
-
+# Documents what will be added to index
 docs = {
         u"Document One": [
                          {
@@ -88,6 +88,7 @@ docs = {
                         ]
        }
 
+# (field_name, search_string, expected_result_count_for_latest, excpected_result_count_for_all)
 queries = [
            (u"wikiname", u"Test", 2, 4),
            (u"name", u"Document", 2, 4),
@@ -111,16 +112,26 @@ class TestWhooshIndex(object):
     queries = []
 
     def setup_method(self, method):
+        """ indexing: create temporary directory with indexes """
+
         self.index_dir = tempfile.mkdtemp('', 'moin-')
 
     def teardown_method(self, method):
+        """ indexing: delete temporary directory """
+
         shutil.rmtree(self.index_dir)
 
     def testIndexSchema(self):
+        """
+        indexing: create temporary directory with indexes, add documents from
+        "docs" to indexes, and check results using "queries"
+        """
+
         index_object = WhooshIndex(index_dir=self.index_dir)
         latest_revs_index = index_object.latest_revisions_index
         all_revs_index = index_object.all_revisions_index
 
+        # Add docs to indexes
         with all_revs_index.writer() as all_revs_writer:
             for item_name, documents in docs.items():
                 for document in documents:
@@ -133,6 +144,7 @@ class TestWhooshIndex(object):
 
                     all_revs_writer.add_document(**all_revs_doc)
 
+       # Check that all docs were added successfully
         with latest_revs_index.searcher() as latest_revs_searcher:
             with all_revs_index.searcher() as all_revs_searcher:
                 for field_name, query, latest_res_len, all_res_len in queries:
