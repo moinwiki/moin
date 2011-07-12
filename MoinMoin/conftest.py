@@ -78,11 +78,11 @@ class MoinTestFunction(pytest.collect.Function):
             if inspect.isclass(self.parent.obj.__class__):
                 cls = self.parent.obj.__class__
 
-                # global variables so that previous values can be accessed            
+                # global variables so that previous values can be accessed
                 global prev_app, prev_ctx, prev_cls
 
                 if hasattr(cls, 'Config'):
-                    if prev_app != None:
+                    if prev_app is not None:
                         # deinit previous app if previous app value is not None.
                         deinit_test_app(prev_app, prev_ctx)
                     given_config = cls.Config
@@ -91,28 +91,28 @@ class MoinTestFunction(pytest.collect.Function):
                 else:
                     given_config = wikiconfig.Config
                     # deinit the previous app if previous class had its own configuration
-                    # deinit the previous app if the class of previous function has an attribute 'create_backend' 
+                    # deinit the previous app if the class of previous function has an attribute 'create_backend'
                     # this is for the tests of storage module until we use some cleanup mechanism on tests.
                     if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
                         deinit_test_app(prev_app, prev_ctx)
 
-                    # Initialize the app in following two conditions: 
-                    # 1. It is the first test item 
+                    # Initialize the app in following two conditions:
+                    # 1. It is the first test item
                     # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
-                    # Also if the Class of previous function is having an attribute as 'create_backend', 
+                    # Also if the Class of previous function is having an attribute as 'create_backend',
                     # this is for the tests of storage module until we use some cleanup mechanism on tests.
-                    if prev_app == None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                    if prev_app is None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
                         self.app, self.ctx = init_test_app(given_config)
                     # continue assigning the values of the previous app and ctx to the current ones.
                     else:
                         self.app = prev_app
-                        self.ctx = prev_ctx    
+                        self.ctx = prev_ctx
 
                 #Get the values from the function
                 prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
 
             else:
-                prev_app, prev_ctx, prev_cls = get_previous(None, None, None)            
+                prev_app, prev_ctx, prev_cls = get_previous(None, None, None)
 
             super(MoinTestFunction, self).setup()
             #XXX: hack till we get better funcarg tools
@@ -122,10 +122,10 @@ class MoinTestFunction(pytest.collect.Function):
     finally:
         def teardown(self):
             super(MoinTestFunction, self).teardown()
-        
-    # Need to modify and add more stuffs    
-    
-    
+
+    # Need to modify and add more stuffs
+
+
 def pytest_pycollect_makemodule(path, parent):
     return Module(path, parent=parent)
 
@@ -134,11 +134,11 @@ def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
         return MoinTestFunction(name, parent = collector)
 
 def pytest_pyfunc_call(pyfuncitem):
-    """hook to intercept generators and run them as a single test items"""       
+    """hook to intercept generators and run them as a single test items"""
     if inspect.isgeneratorfunction(pyfuncitem.obj):
         for item in pyfuncitem.obj():
             kwarg = item[1:]
-            item[0](*kwarg)           
+            item[0](*kwarg)
 
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"

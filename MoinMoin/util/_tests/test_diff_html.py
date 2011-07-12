@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:ThomasWaldmann
+# Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -51,8 +51,8 @@ BBB 009
 BBB 100
 """
     result = diff_html.diff(test_input1, test_input2)
-    expected = [(4, '<span><br>AAA 001<br>AAA 002<br>AAA 003<br>AAA 004<br>AAA 005</span>', 
-                 4, '<span>BBB 006<br>BBB 007<br>BBB 008<br>BBB 009<br>BBB 100</span>')]   
+    expected = [(4, '<span><br>AAA 001<br>AAA 002<br>AAA 003<br>AAA 004<br>AAA 005</span>',
+                 4, '<span>BBB 006<br>BBB 007<br>BBB 008<br>BBB 009<br>BBB 100</span>')]
     assert result == expected
 
     #Case 2 : charobj.ratio() > 0.5 i.e. Some similarities

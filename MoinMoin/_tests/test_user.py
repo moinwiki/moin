@@ -300,7 +300,7 @@ class TestLoginWithPassword(object):
         assert theuser.email == email
 
     # Bookmarks -------------------------------------------------------
-    
+
     def test_bookmark(self):
         name = u'Test_User_quicklink'
         password = name
@@ -314,15 +314,15 @@ class TestLoginWithPassword(object):
         # delete the bookmark
         result_success = theUser.delBookmark()
         assert result_success == 0
-        result_deleted = theUser.getBookmark()       
+        result_deleted = theUser.getBookmark()
         assert not result_deleted
 
         # delBookmark should return 1 on failure
         result_failure = theUser.delBookmark()
         assert result_failure == 1
-    
+
     # Quicklinks ------------------------------------------------------
-    
+
     def test_quicklinks(self):
         """
         Test for the quicklinks
@@ -334,7 +334,7 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
 
-        # no quick links exist yet 
+        # no quick links exist yet
         result_before = theUser.getQuickLinks()
         assert result_before == []
 
@@ -351,12 +351,12 @@ class TestLoginWithPassword(object):
         theUser.addQuicklink(u'Test_page_added')
         result_on_addition = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink', u'Test_page_added']
-        assert result_on_addition == expected, ('Expected "%(expected)s" but got "%(result_on_addition)s"') % locals() 
+        assert result_on_addition == expected, ('Expected "%(expected)s" but got "%(result_on_addition)s"') % locals()
 
         # user should be quicklinked to [pagename]
         result = theUser.isQuickLinkedTo([pagename])
         assert result
-        
+
         # previously added page u'Test_page_added' is removed
         theUser.removeQuicklink(u'Test_page_added')
         result_on_removal = theUser.getQuickLinks()
@@ -364,7 +364,7 @@ class TestLoginWithPassword(object):
         assert result_on_removal == expected, ('Expected "%(expected)s" but got "%(result_on_removal)s"') % locals()
 
     # Trail -----------------------------------------------------------
-    
+
     def test_trail(self):
         pagename = u'Test_page_trail'
         name = u'Test_User_trail'
@@ -382,9 +382,9 @@ class TestLoginWithPassword(object):
         result = theUser.getTrail()
         expected = [u'item_added']
         assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
-        
+
     # Other ----------------------------------------------------------
-    
+
     def test_signature(self):
         name = u'Test_User_other'
         password = name
@@ -396,7 +396,7 @@ class TestLoginWithPassword(object):
         expected =  u'[[Test_User_other]]'
         assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
 
-    def test_recovery_token(self):            
+    def test_recovery_token(self):
         name = u'Test_User_other'
         password = name
         self.createUser(name, password)
