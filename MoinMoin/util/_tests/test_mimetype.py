@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:PrashantKumar
+# Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -11,7 +11,7 @@ from MoinMoin.util import mimetype
 
 class TestMimeType(object):
     """ Test: util.mimetype """
-    
+
     def test_parse_format(self):
         MimeType_obj = mimetype.MimeType(filename = 'test_file.jpg')
         # format in config.parser_text_mimetype
@@ -23,7 +23,7 @@ class TestMimeType(object):
         ('latex',       ('text', 'latex'))
         ]
 
-        for test_format, test_mimetype in test: 
+        for test_format, test_mimetype in test:
             result = MimeType_obj.parse_format(test_format)
             assert result == test_mimetype
 
@@ -34,12 +34,12 @@ class TestMimeType(object):
         ('irc',         ('text', 'irssi')),
         ('test_random', ('text', 'x-test_random'))
         ]
-        
+
         for test_format, test_mimetype in test:
             result = MimeType_obj.parse_format(test_format)
             assert result == test_mimetype
         result = MimeType_obj.parse_format(test_format)
-        
+
     def test_mime_type(self):
         test = [
         # test_extension     # test_major/minor
@@ -48,7 +48,7 @@ class TestMimeType(object):
         ('.txt',             'text/plain'),
         ('.jpeg',            'image/jpeg')
         ]
-        
+
         # when mimestr is None
         for test_extension, test_major_minor in test:
             MimeType_obj = mimetype.MimeType(filename = 'test_file' + test_extension)
@@ -60,7 +60,7 @@ class TestMimeType(object):
         MimeType_obj = mimetype.MimeType(filename = 'test_file', mimestr = 'image/jpeg;charset="utf-8";misc=moin_misc')
         result = MimeType_obj.mime_type()
         assert result == 'image/jpeg'
-    
+
     def test_content_type(self):
         MimeType_obj = mimetype.MimeType('test_file.mpeg')
 
@@ -70,11 +70,11 @@ class TestMimeType(object):
 
         # major == 'text'
         result2 = MimeType_obj.content_type(major = 'text', minor = 'plain', charset="utf-16", params=None)
-        expected = 'text/plain; charset="utf-16"'        
+        expected = 'text/plain; charset="utf-16"'
         assert result2 == expected
 
-        # when all the parameters passed are None 
+        # when all the parameters passed are None
         result3 = MimeType_obj.content_type()
-        expected = 'text/x-test_file.mpeg; charset="utf-8"'        
+        expected = 'text/x-test_file.mpeg; charset="utf-8"'
         assert result3 == expected
-      
+

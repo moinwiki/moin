@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:ThomasWaldmann
+# Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
 MoinMoin - MoinMoin.util.thread_monitor Tests
 """
 
-import shutil, tempfile 
+import shutil, tempfile
 import os
 
 import pytest
@@ -30,9 +30,9 @@ class TestMonitor(object):
         # activate the hook
         Monitor_test_obj.activate_hook()
         result_activated = Monitor_test_obj.hook_enabled()
-        assert result_activated     
+        assert result_activated
 
-    def test_trigger_dump(self):        
+    def test_trigger_dump(self):
         """ test for trigger_dump """
         Monitor_test_obj = Monitor()
         # activate the hook first
@@ -43,4 +43,4 @@ class TestMonitor(object):
         f = open(self.src, "r")
         f.seek(1)
         assert 'Dumping thread' in f.readline()
-        
+
