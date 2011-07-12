@@ -14,11 +14,11 @@ from whoosh.filedb.multiproc import MultiSegmentWriter
 from whoosh.index import open_dir, create_in, exists_in
 
 from MoinMoin.search.indexing import WhooshIndex
-from MoinMoin.config import MTIME, NAME
-from MoinMoin.items import Item
-from MoinMoin.converter.moinwiki_out import Converter
+from MoinMoin.config import MTIME, NAME, CONTENTTYPE
 from MoinMoin.error import FatalError
 from MoinMoin.storage.error import NoSuchItemError
+from MoinMoin.util.mime import Type
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -63,12 +63,12 @@ class IndexOperations(Command):
                         for rev_no in item.list_revisions():
                             if "all_revisions_index" in indexnames:
                                 revision = item.get_revision(rev_no)
-                                metadata = backend_to_index(item, rev_no, all_rev_field_names)
+                                metadata = backend_to_index(revision, rev_no, all_rev_field_names)
                                 all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
                         if "latest_revisions_index" in indexnames:
                             revision = item.get_revision(rev_no)
-                            metadata = backend_to_index(item, rev_no, latest_rev_field_names)
+                            metadata = backend_to_index(revision, rev_no, latest_rev_field_names)
                             latest_rev_writer.add_document(**metadata)
 
         def update_index(indexnames_schemas):
@@ -97,7 +97,8 @@ class IndexOperations(Command):
             if "latest_revisions_index" in indexnames and latest_documents:
                 with latest_rev_index.writer() as latest_rev_writer:
                     for item, rev_no in latest_documents:
-                        converted_rev = backend_to_index(item, rev_no, latest_rev_field_names)
+                        revision = item.get_revision(rev_no)
+                        converted_rev = backend_to_index(revision, rev_no, latest_rev_field_names)
                         found = latest_rev_searcher.document(name_exact=item.name)
                         if not found:
                             latest_rev_writer.add_document(**converted_rev)
@@ -121,7 +122,8 @@ class IndexOperations(Command):
                 with all_rev_index.writer() as all_rev_writer:
                     for item, rev_nos in create_documents:
                         for rev_no in rev_nos:
-                            converted_rev = backend_to_index(item, rev_no, all_rev_field_names)
+                            revision = item.get_revision(rev_no)
+                            converted_rev = backend_to_index(revision, rev_no, all_rev_field_names)
                             all_rev_writer.add_document(**converted_rev)
 
         def clean_index(indexnames_schemas):
@@ -178,25 +180,43 @@ class IndexOperations(Command):
             revs_found = searcher.documents(name_exact=name)
             return [rev["rev_no"] for rev in revs_found]
 
-        def backend_to_index(item, rev_no, schema_fields):
+        def backend_to_index(backend_rev, rev_no, schema_fields):
             """
             Convert fields from backend format to whoosh schema
             """
-            backend_rev = item.get_revision(rev_no)
             metadata = dict([(str(key), value)
                               for key, value in backend_rev.items()
                               if key in schema_fields])
             metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
             metadata["name_exact"] = backend_rev[NAME]
             metadata["rev_no"] = rev_no
-            metadata["content"] = convert_data(item, rev_no)
+            metadata["content"] = convert_data(backend_rev, rev_no)
             return metadata
 
-        def convert_data(item, rev_no):
-            converter = Converter()
-            item = Item.create(item=item, rev_no=rev_no)
-            dom = item.internal_representation()
-            return converter(dom)
+        def convert_data(rev, rev_no):
+            # this is a q&d hack because MoinMoin.items.Item is not made to be
+            # called outside of a request (e.g. due to usage of flaskg.*). Later,
+            # we need a more general way to transform revision content to
+            # indexable content (e.g. using a contenttype-dependant Converter
+            # that removes markup for markup data or that extracts text from
+            # "binary" items).
+            ct = Type(rev[CONTENTTYPE])
+            if ct.type == 'text':
+                coding = ct.parameters.get('charset', 'ascii')
+                # XXX does not work yet as NewRevision does not have .seek and .read
+                #rev.seek(0)
+                #data = rev.read()
+                data = 'TODO'
+                try:
+                    data = data.decode(coding)
+                except UnicodeDecodeError as err:
+                    logging.warning("Item %r revision %d failed to decode (%s)" % (
+                                    rev[NAME], rev_no, str(err)))
+                    data = unicode(str(err))
+            else:
+                # TODO: support non-text items
+                data = u''
+            return data
 
         def do_action(action, indexnames_schemas):
             if action == "build":

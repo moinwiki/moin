@@ -1,0 +1,28 @@
+diff -r fb3ac9f4b717 env/lib/python2.6/site-packages/whoosh/filedb/multiproc.py
+--- a/whoosh/filedb/multiproc.py Thu Jun 16 16:17:59 2011 -0400
++++ b/whoosh/filedb/multiproc.py Mon Jun 20 18:06:37 2011 +0200
+@@ -157,6 +157,9 @@
+     
+     def commit(self, **kwargs):
+         try:
++            # index the remaining stuff in self.docbuffer
++            self._enqueue()
++
+             for task in self.tasks:
+                 self.jobqueue.put(None)
+             
+diff -r 273279b7f463 env/lib/python2.6/site-packages/whoosh/fields.py
+--- a/whoosh/fields.py Mon Jun 06 18:06:59 2011 -0400
++++ b/whoosh/fields.py Tue Jun 07 12:10:51 2011 +0200
+@@ -152,8 +152,8 @@
+
+         if not self.format:
+             raise Exception("%s field cannot index without a format" % self.__class__)
+-        if not isinstance(value, unicode):
+-            raise ValueError("%r is not unicode" % value)
++        if not isinstance(value, (text_type, list, tuple)):
++            raise ValueError("%r is not unicode or sequence" % value)
+         return self.format.word_values(value, mode="index", **kwargs)
+
+     def process_text(self, qstring, mode='', **kwargs):
+
