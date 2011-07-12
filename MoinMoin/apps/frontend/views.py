@@ -490,22 +490,27 @@ def index(item_name):
                           )
 
 
-@frontend.route('/+index')
+@frontend.route('/+index', methods=['GET', 'POST'])
 def global_index():
     item = Item.create('') # XXX hack: item_name='' gives toplevel index
-    startswith = request.values.get('startswith', None)
-    index = item.flat_index(startswith)
-    if startswith:
-        initials = item.name_initial(item.flat_index())
-        # if startswith was set, we would get the filtered index above
-        # so inorder to get initial of all elements we need all index, not filtered one
-    else:
-        initials = item.name_initial(index)
+
+    passed_fields = request.values.to_dict()
+    startswith = passed_fields.pop("startswith", None)
+    selected_groups = passed_fields.keys()
+    index = item.flat_index(startswith, selected_groups)
+
+    nonexistent_item = NonExistent(item)
+    contenttype_groups = nonexistent_item.contenttype_groups
+    contenttype_groups = [(gname, ["%s" % ctlabel for ctname, ctlabel in contenttypes]) for gname, contenttypes in contenttype_groups]
+    if not selected_groups:
+        selected_groups = [gname for gname, ctlabels in contenttype_groups]
+
+    initials = item.name_initial(item.flat_index())
     initials = [initial.upper() for initial in initials]
     initials = list(set(initials))
-    initials.sort()
+    initials = sorted(initials)
     detailed_index = item.get_detailed_index(index)
-    detailed_index.sort()
+    detailed_index = sorted(detailed_index)
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
@@ -513,6 +518,8 @@ def global_index():
                            index=detailed_index,
                            initials=initials,
                            startswith=startswith,
+                           selected_groups=selected_groups,
+                           contenttype_groups=contenttype_groups,
                           )
 
 

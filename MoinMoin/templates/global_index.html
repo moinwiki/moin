@@ -1,7 +1,31 @@
 {% extends theme("layout.html") %}
 
 {% block item %}
+    <div class="moin-select-contenttypes">
+        <div class="moin-contenttypes-wrapper">
+            <div>Filter by content type </div>
+            <form action="" method="post">
+                <ul>
+                    {% for gname, ctlabels in contenttype_groups %}
+                    <li>
+                        {% if gname in selected_groups %}
+                            <input type="checkbox" name="{{ gname }}" checked="true">
+                        {% else %}
+                            <input type="checkbox" name="{{ gname }}">
+                        {% endif %}
+                        <label for="{{ gname }}">{{ gname|replace("items", "") }}</label>
+                        <span class="contenttype-labels">{{ ctlabels|join(", ") }}</span>
+                    </li>
+                    {% endfor %}
+                    <li>
+                        <input type="submit" value="{{ _("Filter") }}">
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
     <h1>{{ _("Global Index") }}</h1>
+    <div class='moin-clr'></div>
     {% if index %}
     <div id="moin-letters">
         {% if not startswith %}
