@@ -1,0 +1,38 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block head %}
+{{ super() }}
+<link rel="alternate" title="Global changes" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
+{% endblock %}
+
+{% block content %}
+<h1>{{ _("Global History") }}</h1>
+    <table id="moin-global-history">
+        <thead>
+            <tr>
+                <th>{{ _("Timestamp") }}</th>
+                <th>{{ _("Action") }}</th>
+                <th>{{ _("Name") }}</th>
+                <th>{{ _("Rev.") }}</th>
+                <th>{{ _("Content-Type") }}</th>
+                <th>{{ _("Editor") }}</th>
+                <th>{{ _("Comment") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rev in history %}
+        <tr>
+            <td>{{ rev.timestamp|datetimeformat }}</td>
+            <td class="moin-wordbreak">{{ rev.action }}</td>
+            <td class="moin-wordbreak"><a href="{{ url_for('frontend.show_item', item_name=rev.item.name) }}">{{ rev.item.name }}</a>
+                {% if rev.item.name != rev.name %} ({{ rev.name }}){% endif %}</td>
+            <td class="moin-integer">{{ rev.revno }}</td>
+            <td class="moin-wordbreak">{{ rev.contenttype }}</td>
+            <td class="moin-wordbreak">{{ utils.editor_info(rev) }}</td>
+            <td class="moin-wordbreak">{{ rev.comment }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

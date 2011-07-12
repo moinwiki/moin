@@ -1,0 +1,37 @@
+{% extends theme("show.html") %}
+
+{% block theme_stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
+<div id="file_upload">
+    <form action="{{ url_for('.jfu_server', item_name=item_name) }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="data_file" multiple>
+        <button type="submit">Upload</button>
+        <div class="file_upload_label">Upload files</div>
+    </form>
+    <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
+    <div class="file_upload_buttons">
+        <button class="file_upload_start" style="display:none;">Start All</button> 
+        <button class="file_upload_cancel" style="display:none;">Cancel All</button> 
+    </div>
+    <table class="files">
+        <tr class="file_upload_template" style="display:none;">
+            <td class="file_upload_start"><button>Start</button></td>
+            <td class="file_upload_cancel"><button>Cancel</button></td>
+            <td class="file_name"></td>
+            <td class="file_upload_progress"><div></div></td>
+        </tr>
+        <tr class="file_download_template" style="display:none;">
+            <td class="file_download" colspan="2"><a></a></td>
+            <td class="file_name" colspan="2"><a></a></td>
+        </tr>
+    </table>
+</div>
+<script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
+<script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
+{% endblock %}
