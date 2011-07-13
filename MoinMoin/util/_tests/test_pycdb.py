@@ -23,9 +23,16 @@ class TestCDBMaker:
         shutil.rmtree(self.test_dir)
         
     def test_add(self):
-        TestCDBMaker_obj = pycdb.CDBMaker('Moin_test', self.src)
+        CDBMaker_obj = pycdb.CDBMaker('Moin_test', self.src)
         result = os.listdir(self.test_dir)
-        result1 = TestCDBMaker_obj.__len__()
+        result1 = CDBMaker_obj.__len__()
         expected = ['cbd_file']
+        assert result == expected
+
+        CDBMaker_obj = CDBMaker_obj.add(' k_value &', ' v_value')
+        CDBMaker_obj._fp = open(self.src, 'r');
+        CDBMaker_obj._fp.seek(2048)
+        result = CDBMaker_obj._fp.read()
+        expected = '\n\x00\x00\x00\x08\x00\x00\x00 k_value & v_value'
         assert result == expected
 
