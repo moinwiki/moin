@@ -68,7 +68,7 @@ from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                            HASH_ALGORITHM
+                            HASH_ALGORITHM, CONTENTTYPE_GROUPS
 
 COLS = 80
 ROWS_DATA = 20
@@ -583,12 +583,11 @@ class Item(object):
         if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
         """
         index = self.get_index()
-        nonexistent_item = NonExistent(self)
         if not selected_groups:
-            selected_groups = [gname for (gname, contenttypes) in nonexistent_item.contenttype_groups]
+            selected_groups = [gname for (gname, contenttypes) in CONTENTTYPE_GROUPS]
 
         ctypes = [[ctype for ctype, clabel in contenttypes]
-                  for gname, contenttypes in nonexistent_item.contenttype_groups
+                  for gname, contenttypes in CONTENTTYPE_GROUPS
                   if gname in selected_groups]
 
         ctypes_chain = itertools.chain(*ctypes)
@@ -631,53 +630,6 @@ class Item(object):
         return initials
 
 class NonExistent(Item):
-    contenttype_groups = [
-        ('markup text items', [
-            ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
-            ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
-            ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
-            ('text/x-rst;charset=utf-8', 'ReST'),
-            ('application/docbook+xml;charset=utf-8', 'DocBook'),
-            ('text/html;charset=utf-8', 'HTML'),
-        ]),
-        ('other text items', [
-            ('text/plain;charset=utf-8', 'plain text'),
-            ('text/x-diff;charset=utf-8', 'diff/patch'),
-            ('text/x-python;charset=utf-8', 'python code'),
-            ('text/csv;charset=utf-8', 'csv'),
-            ('text/x-irclog;charset=utf-8', 'IRC log'),
-        ]),
-        ('image items', [
-            ('image/jpeg', 'JPEG'),
-            ('image/png', 'PNG'),
-            ('image/svg+xml', 'SVG'),
-        ]),
-        ('audio items', [
-            ('audio/wave', 'WAV'),
-            ('audio/ogg', 'OGG'),
-            ('audio/mpeg', 'MP3'),
-            ('audio/webm', 'WebM'),
-        ]),
-        ('video items', [
-            ('video/ogg', 'OGG'),
-            ('video/webm', 'WebM'),
-            ('video/mp4', 'MP4'),
-        ]),
-        ('drawing items', [
-            ('application/x-twikidraw', 'TDRAW'),
-            ('application/x-anywikidraw', 'ADRAW'),
-            ('application/x-svgdraw', 'SVGDRAW'),
-        ]),
-
-        ('other items', [
-            ('application/pdf', 'PDF'),
-            ('application/zip', 'ZIP'),
-            ('application/x-tar', 'TAR'),
-            ('application/x-gtar', 'TGZ'),
-            ('application/octet-stream', 'binary file'),
-        ]),
-    ]
-
     def do_get(self, force_attachment=False):
         abort(404)
 
@@ -688,7 +640,7 @@ class NonExistent(Item):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
-                               contenttype_groups=self.contenttype_groups,
+                               contenttype_groups=CONTENTTYPE_GROUPS,
                               )
 
 item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
