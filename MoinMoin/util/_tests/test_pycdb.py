@@ -17,7 +17,7 @@ class TestCDBMaker:
     
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp('', 'test_cdb')
-        self.src = os.path.join(self.test_dir, "cbd_file")
+        self.src = os.path.join(self.test_dir, "cdb_file")
         self.CDBMaker_obj = pycdb.CDBMaker('Moin_test', self.src)
 
     def teardown_method(self, method):
@@ -26,7 +26,7 @@ class TestCDBMaker:
     def test_add(self):
         result = os.listdir(self.test_dir)
         result1 = self.CDBMaker_obj.__len__()
-        expected = ['cbd_file']
+        expected = ['cdb_file']
         assert result == expected
 
         self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value &', ' v_value')
@@ -39,8 +39,9 @@ class TestCDBMaker:
         assert result == expected
     
     def test_finish(self):
-        # remove the file
+        # add contents to cdb_file
         self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value &', ' v_value')
+        # remove the file
         self.CDBMaker_obj.finish()
         result = os.listdir(self.test_dir)
         expected = []
