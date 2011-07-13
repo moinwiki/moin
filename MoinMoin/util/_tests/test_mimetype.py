@@ -46,7 +46,8 @@ class TestMimeType(object):
         ('.mpeg',            'video/mpeg'),
         ('.pdf',             'application/pdf'),
         ('.txt',             'text/plain'),
-        ('.jpeg',            'image/jpeg')
+        ('.jpeg',            'image/jpeg'),
+        ('',                 'application/octet-stream')
         ]
 
         # when mimestr is None
