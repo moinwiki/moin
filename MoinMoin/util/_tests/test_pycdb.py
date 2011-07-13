@@ -40,6 +40,7 @@ class TestCDBMaker:
     
     def test_finish(self):
         # remove the file
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value &', ' v_value')
         self.CDBMaker_obj.finish()
         result = os.listdir(self.test_dir)
         expected = []
