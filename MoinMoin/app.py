@@ -175,18 +175,15 @@ def init_backends(app):
     # mountpoint, unprotected backend, protection to apply as a dict
     ns_mapping = app.cfg.namespace_mapping
     index_uri = app.cfg.router_index_uri
-    index_dir = app.cfg.index_dir
     # Just initialize with unprotected backends.
     unprotected_mapping = [(ns, backend) for ns, backend, acls in ns_mapping]
     unprotected_storage = router.RouterBackend(unprotected_mapping, index_uri=index_uri,
-                                               index_dir=index_dir
+                                               cfg=app.cfg
                                               )
     # Protect each backend with the acls provided for it in the mapping at position 2
     amw = acl.AclWrapperBackend
     protected_mapping = [(ns, amw(app.cfg, backend, **acls)) for ns, backend, acls in ns_mapping]
-    storage = router.RouterBackend(protected_mapping, index_uri=index_uri,
-                                   index_dir=index_dir
-                                  )
+    storage = router.RouterBackend(protected_mapping, index_uri=index_uri, cfg=app.cfg)
     return unprotected_storage, storage
 
 def deinit_backends(app):
@@ -200,9 +197,9 @@ def import_export_xml(app):
     xmlfile = app.cfg.load_xml
     if xmlfile:
         app.cfg.load_xml = None
-        tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())],
-                                           index_uri='sqlite://',
-                                           index_dir=app.cfg.index_dir
+        index_uri = 'sqlite://'
+        tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())], index_uri=index_uri,
+                                           cfg=app.cfg
                                           )
         unserialize(tmp_backend, xmlfile)
         # TODO optimize this, maybe unserialize could count items it processed

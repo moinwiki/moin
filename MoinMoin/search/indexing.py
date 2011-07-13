@@ -19,10 +19,10 @@ logging = log.getLogger(__name__)
 
 
 class WhooshIndex(object):
-    """ 
-    Creating\opeining whoosh indexes using "latest_revisions_schema" and
+    """
+    Creating\opening whoosh indexes using "latest_revisions_schema" and
     "all_revisions_schema"
-    """"
+    """
 
     latest_revisions_schema = Schema(wikiname=ID(stored=True),
                                      name=TEXT(stored=True, analyzer=item_name_analyzer()),
