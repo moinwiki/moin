@@ -43,7 +43,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
-from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -499,11 +499,10 @@ def global_index():
     selected_groups = passed_fields.keys()
     index = item.flat_index(startswith, selected_groups)
 
-    nonexistent_item = NonExistent(item)
-    contenttype_groups = nonexistent_item.contenttype_groups
-    contenttype_groups = [(gname, ["%s" % ctlabel for ctname, ctlabel in contenttypes]) for gname, contenttypes in contenttype_groups]
+    ct_groups = CONTENTTYPE_GROUPS
+    ct_groups = [(gname, ["%s" % ctlabel for ctname, ctlabel in contenttypes]) for gname, contenttypes in ct_groups]
     if not selected_groups:
-        selected_groups = [gname for gname, ctlabels in contenttype_groups]
+        selected_groups = [gname for gname, ctlabels in ct_groups]
 
     initials = item.name_initial(item.flat_index())
     initials = [initial.upper() for initial in initials]
@@ -519,7 +518,7 @@ def global_index():
                            initials=initials,
                            startswith=startswith,
                            selected_groups=selected_groups,
-                           contenttype_groups=contenttype_groups,
+                           contenttype_groups=ct_groups,
                           )
 
 
