@@ -310,7 +310,7 @@ class TestLoginWithPassword(object):
         theUser.setBookmark(7)
         result_added = theUser.getBookmark()
         expected = 7
-        assert result_added == expected, ('Expected "%(expected)s" but got "%(result_added)s"') % locals()
+        assert result_added == expected
         # delete the bookmark
         result_success = theUser.delBookmark()
         assert result_success == 0
@@ -345,13 +345,13 @@ class TestLoginWithPassword(object):
         theUser.quicklinks = [pagename]
         result_after = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink']
-        assert result_after == expected, ('Expected "%(expected)s" but got "%(result_after)s"') % locals()
+        assert result_after == expected
 
         # test for addQuicklink()
         theUser.addQuicklink(u'Test_page_added')
         result_on_addition = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink', u'Test_page_added']
-        assert result_on_addition == expected, ('Expected "%(expected)s" but got "%(result_on_addition)s"') % locals()
+        assert result_on_addition == expected
 
         # user should be quicklinked to [pagename]
         result = theUser.isQuickLinkedTo([pagename])
@@ -361,7 +361,7 @@ class TestLoginWithPassword(object):
         theUser.removeQuicklink(u'Test_page_added')
         result_on_removal = theUser.getQuickLinks()
         expected = [u'Test_page_quicklink']
-        assert result_on_removal == expected, ('Expected "%(expected)s" but got "%(result_on_removal)s"') % locals()
+        assert result_on_removal == expected
 
     # Trail -----------------------------------------------------------
 
@@ -381,7 +381,7 @@ class TestLoginWithPassword(object):
         theUser.addTrail(u'item_added')
         result = theUser.getTrail()
         expected = [u'item_added']
-        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected
 
     # Other ----------------------------------------------------------
 
@@ -394,7 +394,7 @@ class TestLoginWithPassword(object):
         # test the user signature
         result = theUser.signature()
         expected =  u'[[Test_User_other]]'
-        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected
 
     def test_recovery_token(self):
         name = u'Test_User_other'
