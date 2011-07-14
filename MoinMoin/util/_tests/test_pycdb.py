@@ -56,23 +56,50 @@ class TestCDBReader:
         self.test_tmpname = os.path.join(self.test_dir, "test_tmpfile")
         self.test_cdbname = os.path.join(self.test_dir, "test_cdbfile")
         self.CDBMaker_obj = pycdb.CDBMaker(self.test_cdbname, self.test_tmpname)
+        # add k and v
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
                 
     def test_get(self):
-        # add k and v
-        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
         # remove tmpfile
         self.CDBMaker_obj.finish()
+
         CDBReader_obj = pycdb.CDBReader(self.test_cdbname)
         result = CDBReader_obj.get(' k_value - ', failed=None)
         expected = 'v_value'
         assert result == expected
 
-        # check for the has_key
+    def test_keys(self):
+        """ test all key realated functions """
+        # add next value
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value_next - ', 'v_value_next')
+        # remove tmpfile
+        self.CDBMaker_obj.finish()
+
+        CDBReader_obj = pycdb.CDBReader(self.test_cdbname)
+        # test: has_key
         result = CDBReader_obj.has_key(' k_value - ')
         assert result
-        # invalid key
+        # test: invalidkey
         result = CDBReader_obj.has_key('not_present')
         assert not result
+        
+        # test: firstkey
+        result = CDBReader_obj.firstkey()                
+        expected = ' k_value - '
+        assert result == expected
+
+        # test: nextkey
+        result = CDBReader_obj.nextkey()                
+        expected = ' k_value_next - '
+        assert result == expected
+
+        # test: iterkeys
+        test_keys = CDBReader_obj.iterkeys()
+        result = []
+        [result.append(key) for key in test_keys]
+        expected = [' k_value - ', ' k_value_next - ']
+        assert expected == result
+
