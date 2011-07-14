@@ -100,7 +100,7 @@ class IndexOperations(Command):
                         revision = item.get_revision(rev_no)
                         converted_rev = backend_to_index(revision, rev_no, latest_rev_field_names)
                         found = latest_rev_searcher.document(name_exact=item.name,
-                                                             wikiname=app.cfg.wiki_name
+                                                             wikiname=app.cfg.interwikiname
                                                             )
                         if not found:
                             latest_rev_writer.add_document(**converted_rev)
@@ -116,7 +116,7 @@ class IndexOperations(Command):
                         for rev_no in rev_nos:
                             doc_number = all_rev_searcher.document_number(rev_no=rev_no,
                                                                           exact_name=item.name,
-                                                                          wikiname=app.cfg.wiki_name
+                                                                          wikiname=app.cfg.interwikiname
                                                                          )
                             if doc_number:
                                 all_rev_writer.delete_document(doc_number)
@@ -180,7 +180,7 @@ class IndexOperations(Command):
             """
             Return list of found documents for given name using index searcher
             """
-            revs_found = searcher.documents(name_exact=name, wikiname=app.cfg.wiki_name)
+            revs_found = searcher.documents(name_exact=name, wikiname=app.cfg.interwikiname)
             return [rev["rev_no"] for rev in revs_found]
 
         def backend_to_index(backend_rev, rev_no, schema_fields):
@@ -193,7 +193,7 @@ class IndexOperations(Command):
             metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
             metadata["name_exact"] = backend_rev[NAME]
             metadata["rev_no"] = rev_no
-            metadata["wikiname"] = app.cfg.wiki_name 
+            metadata["wikiname"] = app.cfg.interwikiname 
             metadata["content"] = convert_data(backend_rev, rev_no)
             return metadata
 
