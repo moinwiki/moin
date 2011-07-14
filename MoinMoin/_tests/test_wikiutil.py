@@ -179,26 +179,26 @@ def testParentItemName():
     # with no parent
     result = wikiutil.ParentItemName(u'itemname')
     expected = u''
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"')
     # with a parent
     result = wikiutil.ParentItemName(u'some/parent/itemname')
     expected = u'some/parent'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
 
 def testdrawing2fname():
     # with extension not in config.drawing_extensions
     result = wikiutil.drawing2fname('Moin_drawing.txt')
     expected = 'Moin_drawing.txt.tdraw'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
     # with extension in config.drawing_extensions
     result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')
     expected = 'Moindir.Moin_drawing.jpg'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+    assert result == expected    
 
 def testgetUnicodeIndexGroup():
     result = wikiutil.getUnicodeIndexGroup(['moin-2', 'MoinMoin'])
     expected = 'MOIN-2'
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()    
+    assert result == expected    
     # empty char
     with pytest.raises(IndexError):
         result = wikiutil.getUnicodeIndexGroup('')
@@ -232,15 +232,15 @@ def testsplit_anchor():
     """  
     result = wikiutil.split_anchor('MoinMoin')
     expected = 'MoinMoin', ''
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
 
     result = wikiutil.split_anchor('MoinMoin#test_anchor|label|attr=val')
     expected = ['MoinMoin', 'test_anchor|label|attr=val']
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
 
     result = wikiutil.split_anchor('#MoinMoin#')
     expected = ['#MoinMoin', '']
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
     
 def testfile_headers():
     test_headers = [
@@ -255,12 +255,12 @@ def testfile_headers():
     for test_file, content_type in test_headers:
         result = wikiutil.file_headers(test_file, None, 10)
         expected = [('Content-Type', content_type), ('Content-Length', '10')]
-        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected
 
     # filename is none and content type has a value
     result = wikiutil.file_headers(None, 'plane/text')
     expected = [('Content-Type', 'plane/text')]
-    assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+    assert result == expected
         
 coverage_modules = ['MoinMoin.wikiutil']
 
