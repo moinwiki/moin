@@ -116,3 +116,16 @@ class TestCDBReader:
         expected = ['v_value', 'v_value_next']
         assert expected == result
 
+    def test_iteritems(self):
+        # add next value
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value_next - ', 'v_value_next')
+        # remove tmpfile
+        self.CDBMaker_obj.finish()
+
+        CDBReader_obj = pycdb.CDBReader(self.test_cdbname)
+        test_items = CDBReader_obj.iteritems()
+        result = []
+        [result.append(item) for item in test_items]
+        expected = [(' k_value - ', 'v_value'), (' k_value_next - ', 'v_value_next')]
+        assert expected == result
+
