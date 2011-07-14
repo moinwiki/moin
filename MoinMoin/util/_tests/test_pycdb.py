@@ -13,12 +13,13 @@ import pytest
 from MoinMoin.util import pycdb
 
 class TestCDBMaker:
-    """ Test: util.CDBMaker """
+    """ Test: util.pycdb.CDBMaker """
     
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp('', 'test_cdb')
-        self.src = os.path.join(self.test_dir, "cdb_file")
-        self.CDBMaker_obj = pycdb.CDBMaker('Moin_test', self.src)
+        self.test_tmpname = os.path.join(self.test_dir, "test_tmpfile")
+        self.test_cdbname = os.path.join(self.test_dir, "test_cdbfile")
+        self.CDBMaker_obj = pycdb.CDBMaker(self.test_cdbname, self.test_tmpname)
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
@@ -26,24 +27,45 @@ class TestCDBMaker:
     def test_add(self):
         result = os.listdir(self.test_dir)
         result1 = self.CDBMaker_obj.__len__()
-        expected = ['cdb_file']
+        expected = ['test_tmpfile']
         assert result == expected
 
-        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value &', ' v_value')
-        self.CDBMaker_obj._fp = open(self.src, 'r');
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
+        self.CDBMaker_obj._fp = open(self.test_tmpname, 'r');
         # seek to 2048 since self._pos was assigned to 2048 initially.
         self.CDBMaker_obj._fp.seek(2048)
         # read the contents i.e. newly added contents
         result = self.CDBMaker_obj._fp.read()
-        expected = '\n\x00\x00\x00\x08\x00\x00\x00 k_value & v_value'
+        expected = '\x0b\x00\x00\x00\x07\x00\x00\x00 k_value - v_value'
         assert result == expected
     
     def test_finish(self):
         # add contents to cdb_file
-        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value &', ' v_value')
-        # remove the file
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
+        # remove tmpfile
         self.CDBMaker_obj.finish()
         result = os.listdir(self.test_dir)
-        expected = []
+        expected = ['test_cdbfile']
         assert result == expected
 
+class TestCDBReader:
+    """ Test: util.pycdb.CDBReader """
+
+    def setup_method(self, method):
+        self.test_dir = tempfile.mkdtemp('', 'test_cdb')
+        self.test_tmpname = os.path.join(self.test_dir, "test_tmpfile")
+        self.test_cdbname = os.path.join(self.test_dir, "test_cdbfile")
+        self.CDBMaker_obj = pycdb.CDBMaker(self.test_cdbname, self.test_tmpname)
+
+    def teardown_method(self, method):
+        shutil.rmtree(self.test_dir)
+                
+    def test_temp(self):
+        # add k and v
+        self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
+        # remove tmpfile
+        self.CDBMaker_obj.finish()
+        CDBReader_obj = pycdb.CDBReader(self.test_cdbname)
+        result = CDBReader_obj.get(' k_value - ', failed=None)
+        expected = 'v_value'
+        assert result == expected
