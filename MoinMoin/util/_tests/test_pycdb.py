@@ -14,7 +14,7 @@ from MoinMoin.util import pycdb
 
 class TestCDBMaker:
     """ Test: util.pycdb.CDBMaker """
-    
+
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp('', 'test_cdb')
         self.test_tmpname = os.path.join(self.test_dir, "test_tmpfile")
@@ -23,7 +23,7 @@ class TestCDBMaker:
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
-        
+
     def test_add(self):
         result = os.listdir(self.test_dir)
         result1 = self.CDBMaker_obj.__len__()
@@ -31,14 +31,14 @@ class TestCDBMaker:
         assert result == expected
 
         self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
-        self.CDBMaker_obj._fp = open(self.test_tmpname, 'r');
+        self.CDBMaker_obj._fp = open(self.test_tmpname, 'r')
         # seek to 2048 since self._pos was assigned to 2048 initially.
         self.CDBMaker_obj._fp.seek(2048)
         # read the contents i.e. newly added contents
         result = self.CDBMaker_obj._fp.read()
         expected = '\x0b\x00\x00\x00\x07\x00\x00\x00 k_value - v_value'
         assert result == expected
-    
+
     def test_finish(self):
         # add contents to cdb_file
         self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
@@ -61,7 +61,7 @@ class TestCDBReader:
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
-                
+
     def test_get(self):
         # remove tmpfile
         self.CDBMaker_obj.finish()
@@ -90,14 +90,14 @@ class TestCDBReader:
         # test: invalidkey
         result = CDBReader_obj.has_key('not_present')
         assert not result
-        
+
         # test: firstkey
-        result = CDBReader_obj.firstkey()                
+        result = CDBReader_obj.firstkey()
         expected = ' k_value - '
         assert result == expected
 
         # test: nextkey
-        result = CDBReader_obj.nextkey()                
+        result = CDBReader_obj.nextkey()
         expected = ' k_value_next - '
         assert result == expected
 
