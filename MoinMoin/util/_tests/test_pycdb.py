@@ -71,6 +71,11 @@ class TestCDBReader:
         expected = 'v_value'
         assert result == expected
 
+        # invalid key
+        result = CDBReader_obj.get('invalid_key', failed='no_such_value')
+        expected = 'no_such_value'
+        assert result == expected
+
     def test_keys(self):
         """ test all key realated functions """
         # add next value
