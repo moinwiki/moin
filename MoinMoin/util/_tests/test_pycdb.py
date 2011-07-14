@@ -69,3 +69,10 @@ class TestCDBReader:
         result = CDBReader_obj.get(' k_value - ', failed=None)
         expected = 'v_value'
         assert result == expected
+
+        # check for the has_key
+        result = CDBReader_obj.has_key(' k_value - ')
+        assert result
+        # invalid key
+        result = CDBReader_obj.has_key('not_present')
+        assert not result
