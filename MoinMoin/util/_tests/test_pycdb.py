@@ -60,7 +60,7 @@ class TestCDBReader:
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
                 
-    def test_temp(self):
+    def test_get(self):
         # add k and v
         self.CDBMaker_obj = self.CDBMaker_obj.add(' k_value - ', 'v_value')
         # remove tmpfile
