@@ -15,11 +15,11 @@ class Bind:
         self.label = 'test_content'
         self.default_value = 'test_bind_default'
         self.optional = True
-        self.properties = {'autofocus':False, 'placeholder':None}
+        self.properties = {'autofocus': False, 'placeholder': None}
         self.errors = None
 test_bind = Bind()
 
-test_attributes = {'type':'submit', u'required':'test_required', 'autofocus':None, 'placeholder':None}
+test_attributes = {'type': 'submit', u'required': 'test_required', 'autofocus': None, 'placeholder': None}
 
 def test_label_filter():
     # when content is None
@@ -40,7 +40,7 @@ def test_button_filter():
     # attributes.get('type') in ['submit', 'reset', ])
     content_result = forms.button_filter('input', test_attributes, 'new_content', 'test_context', test_bind)
     expected = 'new_content'
-    assert content_result == expected 
+    assert content_result == expected
     attributes_result = test_attributes['value']
     expected = 'test_bind_default'
     assert attributes_result == expected
@@ -69,7 +69,7 @@ def test_required_filter():
     assert attribute_result == expected
 
 def test_autofocus_filter():
-    test_bind.properties = {'autofocus':True}
+    test_bind.properties = {'autofocus': True}
     content_result = forms.autofocus_filter('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     assert content_result == 'new_content'
     attribute_result = test_attributes[u'autofocus']
@@ -81,7 +81,7 @@ def test_placeholder_filter():
     assert content_result == 'new_content'
     attribute_result = test_attributes['placeholder']
     assert attribute_result == 'test_placeholder'
-    
+
 def test_error_filter_factory():
     # when 'class' not in test_attributes
     test_bind.errors = 'test_errors'
@@ -90,13 +90,13 @@ def test_error_filter_factory():
     content_result = test_fun_returned('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     assert content_result == 'new_content'
     attribute_result = test_attributes['class']
-    assert attribute_result == 'test_moin_error'    
-    
+    assert attribute_result == 'test_moin_error'
+
     # class in test_attributes
     test_attributes['class'] = 'test_attribute_class'
     content_result = test_fun_returned('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     assert content_result == 'new_content'
     attribute_result = test_attributes['class']
     expected = 'test_attribute_class test_moin_error'
-    assert attribute_result == expected 
+    assert attribute_result == expected
 
