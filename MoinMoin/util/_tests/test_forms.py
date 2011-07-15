@@ -15,10 +15,10 @@ class Bind:
         self.label = 'test_content'
         self.default_value = 'test_bind_default'
         self.optional = True
-        self.properties = 'test_bind_properties'
+        self.properties = {'autofocus':False}
 test_bind = Bind()
 
-test_attributes = {'type':'submit', u'class':'test_class', u'required':'test_required'}
+test_attributes = {'type':'submit', u'class':'test_class', u'required':'test_required', 'autofocus':None}
 
 def test_label_filter():
     # when content is None
@@ -65,4 +65,11 @@ def test_required_filter():
     attribute_result = test_attributes[u'required']
     expected = u'required'
     assert attribute_result == expected
+
+def test_autofocus_filter():
+    test_bind.properties = {'autofocus':True}
+    content_result = forms.autofocus_filter('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
+    assert content_result == 'new_content'
+    attribute_result = test_attributes[u'autofocus']
+    assert attribute_result == u'autofocus'
 
