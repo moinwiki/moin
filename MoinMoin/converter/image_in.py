@@ -24,7 +24,7 @@ class Converter(object):
     def __init__(self, input_type):
         self.input_type = input_type
 
-    def __call__(self, rev):
+    def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
         attrib = {
             moin_page.type_: unicode(self.input_type),

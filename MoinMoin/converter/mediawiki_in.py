@@ -27,6 +27,7 @@ from MoinMoin.converter.moinwiki_in import _Iter, _Stack
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
+from ._util import decode_data, normalize_split_text
 
 class _TableArguments(object):
     rules = r'''
@@ -87,7 +88,9 @@ class Converter(ConverterMacro):
     def factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content, arguments=None):
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        content = normalize_split_text(text)
         iter_content = _Iter(content)
         self.preprocessor = self.Mediawiki_preprocessor()
         body = self.parse_block(iter_content, arguments)
