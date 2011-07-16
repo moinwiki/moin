@@ -57,8 +57,8 @@ class IndexOperations(Command):
             Building in app.cfg.index_dir_tmp
             """
             indexnames = [indexname for indexname, schema in indexnames_schemas]
-            with all_rev_index.writer() as all_rev_writer:
-                with latest_rev_index.writer() as latest_rev_writer:
+            with MultiSegmentWriter(all_rev_index, procs, limitmb) as all_rev_writer:
+                with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
                     for item in backend.iter_items_noindex():
                         for rev_no in item.list_revisions():
                             if "all_revisions_index" in indexnames:
@@ -75,6 +75,7 @@ class IndexOperations(Command):
             """
             Updating index in app.cfg.index_dir_tmp
             """
+
             indexnames = [indexname for indexname, schema in indexnames_schemas]
             create_documents = []
             delete_documents = []
