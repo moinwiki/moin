@@ -29,6 +29,7 @@ from MoinMoin.util.tree import moin_page, xlink, docbook, xml, html
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text
 
+
 class NameSpaceError(Exception):
     pass
 

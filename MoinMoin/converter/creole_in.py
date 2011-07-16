@@ -35,6 +35,7 @@ from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text
 
+
 class _Iter(object):
     """
     Iterator with push back support

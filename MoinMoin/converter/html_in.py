@@ -26,6 +26,7 @@ from MoinMoin.util.tree import html, moin_page, xlink, xml
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text
 
+
 class Converter(object):
     """
     Converter html -> .x.moin.document

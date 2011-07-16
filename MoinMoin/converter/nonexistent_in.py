@@ -14,6 +14,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 
+
 class Converter(object):
     """
     Convert a non-existing item to DOM Tree.
