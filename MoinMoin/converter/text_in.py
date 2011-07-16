@@ -18,6 +18,7 @@ from __future__ import absolute_import, division
 from MoinMoin.util.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
+
 class Converter(object):
     """
     Parse the raw text and create a document object

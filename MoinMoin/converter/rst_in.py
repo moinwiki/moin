@@ -38,6 +38,7 @@ from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 #####
 
+
 class NodeVisitor(object):
     """
     Part of docutils which converts docutils DOM tree to Moin DOM tree
@@ -743,7 +744,6 @@ class MoinDirectives(object):
 
 
 class Converter(object):
-
     @classmethod
     def factory(cls, input, output, **kw):
         return cls()
@@ -771,6 +771,7 @@ class Converter(object):
         visitor = NodeVisitor()
         walkabout(docutils_tree, visitor)
         return visitor.tree()
+
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document

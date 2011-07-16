@@ -13,6 +13,7 @@ import csv
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
 
+
 class Converter(TableMixin):
     """
     Parse the raw text and create a document object

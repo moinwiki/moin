@@ -13,6 +13,7 @@ from emeraldtree import ElementTree as ET
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 
+
 class Converter(object):
     """
     Convert an image to the corresponding <object> in the DOM Tree
