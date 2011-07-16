@@ -16,6 +16,7 @@ for the input mimetype.
 from __future__ import absolute_import, division
 
 from MoinMoin.util.tree import moin_page
+from ._util import decode_data, normalize_split_text
 
 class Converter(object):
     """
@@ -26,8 +27,9 @@ class Converter(object):
     def _factory(cls, type_input, type_output, **kw):
         return cls()
 
-    def __call__(self, content, arguments=None):
-        """Parse the text and return DOM tree."""
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        content = normalize_split_text(text)
         blockcode = moin_page.blockcode()
         for line in content:
             if len(blockcode):

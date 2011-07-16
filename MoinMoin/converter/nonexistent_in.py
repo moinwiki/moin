@@ -22,7 +22,7 @@ class Converter(object):
     def _factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, rev):
+    def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=modify'),

@@ -28,6 +28,8 @@ from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
+from ._util import decode_data, normalize_split_text
+
 #### TODO: try block (do not crash if we don't have docutils)
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
@@ -746,7 +748,9 @@ class Converter(object):
     def factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, input, arguments=None):
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        input = normalize_split_text(text)
         parser = MoinDirectives()
         while True:
             input = u'\n'.join(input)

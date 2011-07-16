@@ -24,6 +24,7 @@ from MoinMoin import wikiutil
 from MoinMoin.util.tree import html, moin_page, xlink, xml
 
 from ._wiki_macro import ConverterMacro
+from ._util import decode_data, normalize_split_text
 
 class Converter(object):
     """
@@ -80,13 +81,15 @@ class Converter(object):
     def _factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content, arguments=None):
+    def __call__(self, data, contenttype=None, arguments=None):
         """
         Function called by the converter to process the
         conversion.
 
         TODO: Add support for different arguments
         """
+        text = decode_data(data, contenttype)
+        content = normalize_split_text(text)
         # Be sure we have empty string in the base url
         self.base_url = ''
 
