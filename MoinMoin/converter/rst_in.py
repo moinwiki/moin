@@ -28,6 +28,8 @@ from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
+from ._util import decode_data, normalize_split_text
+
 #### TODO: try block (do not crash if we don't have docutils)
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
@@ -35,6 +37,7 @@ from docutils.nodes import reference, literal_block
 from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 #####
+
 
 class NodeVisitor(object):
     """
@@ -741,12 +744,13 @@ class MoinDirectives(object):
 
 
 class Converter(object):
-
     @classmethod
     def factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, input, arguments=None):
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        input = normalize_split_text(text)
         parser = MoinDirectives()
         while True:
             input = u'\n'.join(input)
@@ -767,6 +771,7 @@ class Converter(object):
         visitor = NodeVisitor()
         walkabout(docutils_tree, visitor)
         return visitor.tree()
+
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document

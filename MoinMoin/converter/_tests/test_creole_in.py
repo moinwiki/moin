@@ -257,6 +257,6 @@ class TestConverter(object):
         return self.output_re.sub(u'', buffer.getvalue())
 
     def do(self, input, output, args={}):
-        out = self.conv(input.split(u'\n'), **args)
+        out = self.conv(input, 'text/x.moin.creole;charset=utf-8', **args)
         assert self.serialize(out) == output
 

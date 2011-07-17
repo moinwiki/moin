@@ -520,7 +520,7 @@ Its visibility gets toggled the same way.
     def do(self, input, output, args={}, skip=None):
         if skip:
             py.test.skip(skip)
-        out = self.conv_in(input.split(u'\n'), **args)
+        out = self.conv_in(input, 'text/x.moin.wiki;charset=utf-8', **args)
         out = self.conv_out(self.handle_input(self.serialize(out)), **args)
         assert self.handle_output(out) == output
 
