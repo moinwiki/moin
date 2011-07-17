@@ -489,7 +489,7 @@ def index(item_name):
     index = item.flat_index()
 
     detailed_index = item.get_detailed_index(index)
-    detailed_index.sort()
+    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
     split_char = u'/'
     item_names = item_name.split(split_char)
 
@@ -526,7 +526,7 @@ def global_index():
     initials = list(set(initials))
     initials = sorted(initials)
     detailed_index = item.get_detailed_index(index)
-    detailed_index = sorted(detailed_index)
+    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('global_index.html',
