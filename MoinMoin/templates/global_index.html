@@ -1,27 +1,20 @@
 {% extends theme("layout.html") %}
-
+{% import "forms.html" as forms %}
 {% block item %}
     <div class="moin-select-contenttypes">
         <div class="moin-contenttypes-wrapper">
             <div>Filter by content type </div>
-            <form action="" method="post">
+                {{ gen.form.open(form, method="post", action=url_for('frontend.global_index')) }}
                 <ul>
-                    {% for gname, ctlabels in contenttype_groups %}
-                    <li>
-                        {% if gname in selected_groups %}
-                            <input type="checkbox" name="{{ gname }}" checked="true">
-                        {% else %}
-                            <input type="checkbox" name="{{ gname }}">
-                        {% endif %}
-                        <label for="{{ gname }}">{{ gname|replace("items", "") }}</label>
-                        <span class="contenttype-labels">{{ ctlabels|join(", ") }}</span>
-                    </li>
-                    {% endfor %}
-                    <li>
-                        <input type="submit" value="{{ _("Filter") }}">
-                    </li>
+                    {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
+                    {{ forms.render_filter_field(gen, form['other_text_items'], 'checkbox', contenttype_groups['other text items']) }}
+                    {{ forms.render_filter_field(gen, form['image_items'], 'checkbox', contenttype_groups['image items']) }}
+                    {{ forms.render_filter_field(gen, form['audio_items'], 'checkbox', contenttype_groups['audio items']) }}
+                    {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
+                    {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
+                    {{ gen.input(form['submit'], type='submit') }}
                 </ul>
-            </form>
+                {{ gen.form.close() }}
         </div>
     </div>
     <h1>{{ _("Global Index") }}</h1>
