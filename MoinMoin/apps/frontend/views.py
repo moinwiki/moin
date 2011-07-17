@@ -299,6 +299,16 @@ class CopyItemForm(TargetCommentForm):
 class RenameItemForm(TargetCommentForm):
     name = 'rename_item'
 
+class ContenttypeFilterForm(Form):
+    name = 'contenttype_filter'
+    markup_text_items = Boolean.using(label=L_('markup text'), optional=True, default=1)
+    other_text_items = Boolean.using(label=L_('other text'), optional=True, default=1)
+    image_items = Boolean.using(label=L_('image'), optional=True, default=1)
+    audio_items = Boolean.using(label=L_('audio'), optional=True, default=1)
+    video_items = Boolean.using(label=L_('video'), optional=True, default=1)
+    other_items = Boolean.using(label=L_('other'), optional=True, default=1)
+    submit = String.using(default=L_('Filter'), optional=True)
+
 
 @frontend.route('/+revert/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
@@ -494,15 +504,22 @@ def index(item_name):
 def global_index():
     item = Item.create('') # XXX hack: item_name='' gives toplevel index
 
-    passed_fields = request.values.to_dict()
-    startswith = passed_fields.pop("startswith", None)
-    selected_groups = passed_fields.keys()
+    if request.method == 'GET':
+        form = ContenttypeFilterForm.from_defaults()
+        selected_groups = None
+    if request.method == "POST":
+        form = ContenttypeFilterForm.from_flat(request.form)
+        selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
+                           if form[gname].value is True]
+        if not selected_groups:
+            form = ContenttypeFilterForm.from_defaults()
+
+    startswith = request.values.get("startswith", None)
     index = item.flat_index(startswith, selected_groups)
 
-    ct_groups = CONTENTTYPE_GROUPS
-    ct_groups = [(gname, ["%s" % ctlabel for ctname, ctlabel in contenttypes]) for gname, contenttypes in ct_groups]
-    if not selected_groups:
-        selected_groups = [gname for gname, ctlabels in ct_groups]
+    ct_groups = [(gname, ", ".join(["%s" % ctlabel for ctname, ctlabel in contenttypes]))
+                 for gname, contenttypes in CONTENTTYPE_GROUPS]
+    ct_groups = dict(ct_groups)
 
     initials = item.name_initial(item.flat_index())
     initials = [initial.upper() for initial in initials]
@@ -517,8 +534,9 @@ def global_index():
                            index=detailed_index,
                            initials=initials,
                            startswith=startswith,
-                           selected_groups=selected_groups,
                            contenttype_groups=ct_groups,
+                           form=form,
+                           gen=make_generator()
                           )
 
 

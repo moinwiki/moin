@@ -255,9 +255,9 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-contenttypes-wrapper ul { display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; } 
 .moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em 0.2em; width: 13.6em; }
 .moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
-.moin-contenttypes-wrapper ul li .contenttype-labels { font-size: 0.7em; color: #6E6A6B; display: none; }
+.moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
 .moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
-.moin-contenttypes-wrapper ul li:hover .contenttype-labels{ display: block; }
+.moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
 .moin-contenttypes-wrapper:hover ul { display: block; }
 .moin-contenttypes-wrapper:hover div { background-image: url("../img/moin-movedown.png"); } 
 .moin-more-index:before { content: url("../img/moin-expand.png"); }
