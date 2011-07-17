@@ -19,6 +19,7 @@ import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile
+import itertools
 from StringIO import StringIO
 from array import array
 
@@ -67,7 +68,7 @@ from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                            HASH_ALGORITHM
+                            HASH_ALGORITHM, CONTENTTYPE_GROUPS
 
 COLS = 80
 ROWS_DATA = 20
@@ -571,64 +572,60 @@ class Item(object):
                  for item in item_iterator]
         return sorted(items)
 
-    def flat_index(self):
+    def flat_index(self, startswith=None, selected_groups=None):
+        """
+        creates an top level index of sub items of this item
+        if startswith is set, filtering is done on the basis of starting letter of item name
+        if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
+        """
         index = self.get_index()
-        index = [(fullname, relname, contenttype)
-                 for fullname, relname, contenttype in index
-                 if u'/' not in relname]
+        if not selected_groups:
+            selected_groups = [gname for (gname, contenttypes) in CONTENTTYPE_GROUPS]
+
+        ctypes = [[ctype for ctype, clabel in contenttypes]
+                  for gname, contenttypes in CONTENTTYPE_GROUPS
+                  if gname in selected_groups]
+
+        ctypes_chain = itertools.chain(*ctypes)
+        selected_contenttypes = list(ctypes_chain)
+
+        if startswith:
+            startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
+            index = [(fullname, relname, contenttype)
+                     for fullname, relname, contenttype in index
+                     if u'/' not in relname
+                     and relname.startswith(startswith)
+                     and contenttype in selected_contenttypes]
+        else:
+            index = [(fullname, relname, contenttype)
+                     for fullname, relname, contenttype in index
+                     if u'/' not in relname
+                     and contenttype in selected_contenttypes]
+
         return index
 
     index_template = 'index.html'
 
+    def get_detailed_index(self, index):
+        """ appends a flag in the index of items indicating that the parent has sub items """
+        detailed_index = []
+        all_item_index = self.get_index()
+        all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
+        for fullname, relname, contenttype in index:
+            hassubitem = False
+            subitem_name_re = u"%s/" % re.escape(relname)
+            regex = re.compile(subitem_name_re, re.UNICODE)
+            if regex.search(all_item_text):
+                hassubitem = True
+            detailed_index.append((fullname, relname, contenttype, hassubitem))
+        return detailed_index
+
+    def name_initial(self, names=None):
+        initials = [(name[1][0])
+                   for name in names]
+        return initials
 
 class NonExistent(Item):
-    contenttype_groups = [
-        ('markup text items', [
-            ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
-            ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
-            ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
-            ('text/x-rst;charset=utf-8', 'ReST'),
-            ('application/docbook+xml;charset=utf-8', 'DocBook'),
-            ('text/html;charset=utf-8', 'HTML'),
-        ]),
-        ('other text items', [
-            ('text/plain;charset=utf-8', 'plain text'),
-            ('text/x-diff;charset=utf-8', 'diff/patch'),
-            ('text/x-python;charset=utf-8', 'python code'),
-            ('text/csv;charset=utf-8', 'csv'),
-            ('text/x-irclog;charset=utf-8', 'IRC log'),
-        ]),
-        ('image items', [
-            ('image/jpeg', 'JPEG'),
-            ('image/png', 'PNG'),
-            ('image/svg+xml', 'SVG'),
-        ]),
-        ('audio items', [
-            ('audio/wave', 'WAV'),
-            ('audio/ogg', 'OGG'),
-            ('audio/mpeg', 'MP3'),
-            ('audio/webm', 'WebM'),
-        ]),
-        ('video items', [
-            ('video/ogg', 'OGG'),
-            ('video/webm', 'WebM'),
-            ('video/mp4', 'MP4'),
-        ]),
-        ('drawing items', [
-            ('application/x-twikidraw', 'TDRAW'),
-            ('application/x-anywikidraw', 'ADRAW'),
-            ('application/x-svgdraw', 'SVGDRAW'),
-        ]),
-
-        ('other items', [
-            ('application/pdf', 'PDF'),
-            ('application/zip', 'ZIP'),
-            ('application/x-tar', 'TAR'),
-            ('application/x-gtar', 'TGZ'),
-            ('application/octet-stream', 'binary file'),
-        ]),
-    ]
-
     def do_get(self, force_attachment=False):
         abort(404)
 
@@ -639,7 +636,7 @@ class NonExistent(Item):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
-                               contenttype_groups=self.contenttype_groups,
+                               contenttype_groups=CONTENTTYPE_GROUPS,
                               )
 
 item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))

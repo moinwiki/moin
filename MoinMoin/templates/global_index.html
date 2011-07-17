@@ -1,17 +1,57 @@
 {% extends theme("layout.html") %}
-
+{% import "forms.html" as forms %}
 {% block item %}
+    <div class="moin-select-contenttypes">
+        <div class="moin-contenttypes-wrapper">
+            <div>Filter by content type </div>
+                {{ gen.form.open(form, method="post", action=url_for('frontend.global_index')) }}
+                <ul>
+                    {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
+                    {{ forms.render_filter_field(gen, form['other_text_items'], 'checkbox', contenttype_groups['other text items']) }}
+                    {{ forms.render_filter_field(gen, form['image_items'], 'checkbox', contenttype_groups['image items']) }}
+                    {{ forms.render_filter_field(gen, form['audio_items'], 'checkbox', contenttype_groups['audio items']) }}
+                    {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
+                    {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
+                    {{ gen.input(form['submit'], type='submit') }}
+                </ul>
+                {{ gen.form.close() }}
+        </div>
+    </div>
     <h1>{{ _("Global Index") }}</h1>
+    <div class='moin-clr'></div>
     {% if index %}
-        <ul>
-        {% for fullname, relname, contenttype in index %}
-            <li>
-                <a href="{{ url_for('.show_item', item_name=fullname) }}"
-                   class="{{ contenttype|contenttype_to_class }}">
-                    {{ relname }}
-                </a>
-            </li>
+    <div id="moin-letters">
+        {% if not startswith %}
+            <a class="selected" href="{{ url_for('frontend.global_index') }}">{{ _("All") }}</a>
+        {% else %}
+            <a href="{{ url_for('frontend.global_index') }}">{{ _("All") }}</a>
+        {% endif %}
+        {% for initial in initials %}
+            {% if startswith == initial %}
+                <a class="selected" href="{{ url_for('frontend.global_index', startswith=initial) }}">{{ initial }}</a>
+            {% else %}
+                <a  href="{{ url_for('frontend.global_index', startswith=initial) }}">{{ initial }}</a>
+            {% endif %}
         {% endfor %}
-        </ul>
+    </div>
+    <div id="moin-global-index">
+        {% set maxchars = 20 %}
+        {% for fullname, relname, contenttype, hassubitem in index %}
+            <div>
+                <a href="{{ url_for('.show_item', item_name=fullname) }}" 
+                   class="{{ contenttype|contenttype_to_class }}"
+                   title="{{ relname }}">
+                   {{ relname|truncate(maxchars, true, '..') }}
+                </a>
+                {% if hassubitem %}
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" 
+                       title="{{ _("More") }}"
+                       class="moin-more-index">
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="moin-clr"></div>
     {% endif %}
 {% endblock %}

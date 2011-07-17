@@ -3,6 +3,7 @@
 # Copyright: 2005-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
+# Copyright: 2011      MoinMoin:AkashSinha
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -394,6 +395,10 @@ options_no_group_name = {
     ('edit_ticketing', True, None),
   )),
   # ==========================================================================
+  'paging': ('Paging related', None, (
+    ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
+  )),
+  # ==========================================================================
   'data': ('Data storage', None, (
     ('data_dir', './data/', "Path to the data directory."),
     ('plugin_dirs', [], "Plugin directories."),
@@ -448,6 +453,7 @@ options_no_group_name = {
         ],
         theme_name=None, # None -> use cfg.theme_default
         edit_rows=0,
+        results_per_page=0,
         locale=None, # None -> do browser language detection, otherwise just use this locale
         timezone=None, # None -> use cfg.timezone_default
       ),

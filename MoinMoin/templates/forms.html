@@ -25,6 +25,17 @@ Helpers for using flatland with jinja2 to create html forms.
   </dd>
 {% endmacro %}
 
+{% macro render_filter_field(gen, field, field_type, helper_text) %}
+  <li>
+    {{ gen.input(field, type=field_type) }}
+    {{ render_errors(field) }}
+    {{ gen.label(field) }}
+    <span class="helper-text">
+        {{ helper_text }}
+    </span>
+  </li>
+{% endmacro %}
+
 {% macro render_select(gen, field) %}
   <dt>
     {{ gen.label(field) }}
