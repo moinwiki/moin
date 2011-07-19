@@ -25,7 +25,6 @@ class Config(DefaultConfig):
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
     index_dir = os.path.join(instance_dir, "index")
     index_dir_tmp = os.path.join(instance_dir, "index_tmp")
-    interwikiname = u'TestWiki'
     # This puts the contents from the specified xml file (a serialized backend) into your
     # backend(s). You can remove this after the first request to your wiki or
     # from the beginning if you don't want to use this feature at all.
