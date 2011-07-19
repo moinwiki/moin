@@ -259,7 +259,7 @@ class ItemIndex(object):
         self.item_kvstore = KVStore(item_kvmeta)
         self.rev_kvstore = KVStore(rev_kvmeta)
 
-        self.wikiname = cfg.interwikiname
+        self.wikiname = cfg.interwikiname or u''
         self.index_object = WhooshIndex(index_dir=cfg.index_dir)
 
     def close(self):
@@ -559,7 +559,7 @@ class ItemIndex(object):
         metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
         metadata["name_exact"] = backend_rev[NAME]
         metadata["rev_no"] = rev_no
-        metadata["wikiname"] = self.wikiname
+        metadata["wikiname"] = self.wikiname or u''
         metadata["content"] = self.convert_data(backend_rev, rev_no)
         return metadata
 
