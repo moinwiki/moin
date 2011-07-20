@@ -21,7 +21,7 @@ class TestFuid:
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
-        
+
     def makefile(self, fname, content):
         f = open(fname, "w")
         f.write(content)
@@ -29,7 +29,7 @@ class TestFuid:
 
     def test_temptest(self):
         self.makefile(self.fname, 'test_content')
-        result = send_file.send_file(self.fname, as_attachment = True)
+        result = send_file.send_file(self.fname, as_attachment = True, conditional = True)
         expected = '<Response streamed [200 OK]>'
         assert str(result) == expected
 
