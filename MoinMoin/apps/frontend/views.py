@@ -198,6 +198,17 @@ def show_dom(item_name, rev):
     return Response(content, status, mimetype='text/xml')
 
 
+# XXX this is just a temporary view to test the indexing converter
+@frontend.route('/+indexable/<int:rev>/<itemname:item_name>')
+@frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=-1))
+def indexable(item_name, rev):
+    from MoinMoin.converter import convert_to_indexable
+    item = flaskg.storage.get_item(item_name)
+    rev = item.get_revision(rev)
+    content = convert_to_indexable(rev)
+    return Response(content, 200, mimetype='text/plain')
+
+
 @frontend.route('/+highlight/<int:rev>/<itemname:item_name>')
 @frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=-1))
 def highlight_item(item_name, rev):
