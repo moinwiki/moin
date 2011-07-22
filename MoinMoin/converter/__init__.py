@@ -97,7 +97,7 @@ def convert_to_indexable(rev):
         # converters so they emit different output than for normal rendering),
         # esp. for the non-markup content types (images, etc.).
         input_contenttype = rev[CONTENTTYPE]
-        output_contenttype = 'text/x-rst'
+        output_contenttype = 'text/plain'
         reg = default_registry
         input_conv = reg.get(Type(input_contenttype), type_moin_document)
         if not input_conv:
