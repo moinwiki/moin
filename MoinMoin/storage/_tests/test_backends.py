@@ -477,6 +477,7 @@ class BackendTest(object):
         rev[u"revno"] = u"0"
         item.commit()
         # hack to avoid the results of read_accessed due to item.commit()
+        pytest.set_trace()
         if hasattr(item, '_item'):
             item._item._read_accessed = False
         item.change_metadata()
