@@ -20,6 +20,8 @@ def main(default_command='moin', wiki_config=None):
     manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
+    from MoinMoin.script.maint.index import IndexOperations
+    manager.add_command("index", IndexOperations())
     from MoinMoin.script.account.create import Create_User
     manager.add_command("account_create", Create_User())
     from MoinMoin.script.account.disable import Disable_User
