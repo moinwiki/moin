@@ -38,7 +38,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, get_editor_info
+from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
@@ -438,46 +438,25 @@ def destroy_item(item_name, rev):
                           )
 
 
-# XXX this has some functional redundancy with "index", solve that later
-@frontend.route('/+index2/<itemname:item_name>', methods=['GET'])
-def index2(item_name):
-    # flat index using jquery-file-upload (see also jfu_server)
-    return render_template('index2.html',
-                           item_name=item_name,
-                          )
-
-@frontend.route('/+jfu-server/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
 def jfu_server(item_name):
     """jquery-file-upload server component
     """
-    if request.method == 'GET':
-        try:
-            item = Item.create(item_name)
-        except AccessDeniedError:
-            abort(403)
-        files = []
-        for full_name, rel_name, mimetype in item.flat_index():
-            url = url_for('.show_item', item_name=full_name)
-            url_download = url_for('.download_item', item_name=full_name)
-            files.append(dict(name=rel_name, url=url, url_download=url_download, size=0))
-        return jsonify(files=files)
-    if request.method == 'POST':
-        data_file = request.files.get('data_file')
-        subitem_name = data_file.filename
-        item_name = item_name + u'/' + subitem_name
-        try:
-            item = Item.create(item_name)
-            revno, size = item.modify()
-            item_modified.send(app._get_current_object(),
-                               item_name=item_name)
-            return jsonify(name=subitem_name,
-                           size=size,
-                           url=url_for('.show_item', item_name=item_name, rev=revno),
-                           url_download=url_for('.download_item', item_name=item_name, rev=revno),
-                          )
-        except AccessDeniedError:
-            abort(403)
-
+    data_file = request.files.get('data_file')
+    subitem_name = data_file.filename
+    item_name = item_name + u'/' + subitem_name
+    try:
+        item = Item.create(item_name)
+        revno, size = item.modify()
+        item_modified.send(app._get_current_object(),
+                           item_name=item_name)
+        return jsonify(name=subitem_name,
+                       size=size,
+                       url=url_for('.show_item', item_name=item_name, rev=revno),
+                       contenttype=contenttype_to_class(item.contenttype),
+                      )
+    except AccessDeniedError:
+        abort(403)
 
 
 @frontend.route('/+index/<itemname:item_name>')
