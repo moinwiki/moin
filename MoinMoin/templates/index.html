@@ -1,17 +1,47 @@
 {% extends theme("show.html") %}
+{% import "forms.html" as forms %}
 
 {% block content %}
     <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
+    <div class="moin-index-path">
+    <a href="{{ url_for('frontend.global_index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
+    <span class="moin-path-separator">{{ ("/") }}</span>
+    {% for i in range(0, item_names|count) %}
+        {% set fullname = item_names[:i+1]|join('/') %}
+        {% set relname = item_names[i] %}
+        <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+        <span class="moin-path-separator">{{ ("/") }}</span>
+    {% endfor %}
+    </div>
+    <div id="moin-new-index" class="moin-item-index">
+        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
+        <div class="file_download_template" style="display: none;">
+            <a></a>
+        </div>
+    </div>
+    <div class="moin-index-separator"></div>
     {% if index %}
-        <ul>
-        {% for fullname, relname, contenttype in index %}
-            <li>
-                <a href="{{ url_for('.show_item', item_name=fullname) }}"
-                   class="{{ contenttype|contenttype_to_class }}">
-                    {{ relname }}
+    <div class="moin-item-index">
+        {% set maxchars = 20 %}
+        {% for fullname, relname, contenttype, hassubitem in index %}
+            <div>
+                <a href="{{ url_for('.show_item', item_name=fullname) }}" 
+                   class="{{ contenttype|contenttype_to_class }}"
+                   title="{{ relname }}">
+                   {{ relname|truncate(maxchars, true, '..') }}
                 </a>
-            </li>
+                {% if hassubitem %}
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" 
+                       title="{{ _("More") }}"
+                       class="moin-more-index">
+                </a>
+                {% endif %}
+            </div>
         {% endfor %}
-        </ul>
+    </div>
+    <div class="moin-clr"></div>
     {% endif %}
+    {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+    {{ forms.render_file_uploader(submit_url) }}
+    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
 {% endblock %}

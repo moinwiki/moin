@@ -50,10 +50,10 @@
         this.url = container.find('form:first').attr('action');
         this.dropZone = container.find('form:first');
         this.uploadTable = container.find('.files:first');
-        this.downloadTable = this.uploadTable;
+        this.downloadTable = $("#moin-new-index");
         this.progressAllNode = container.find('.file_upload_overall_progress div:first');
         this.uploadTemplate = this.uploadTable.find('.file_upload_template:first');
-        this.downloadTemplate = this.uploadTable.find('.file_download_template:first');
+        this.downloadTemplate = this.downloadTable.find('.file_download_template:first');
         this.multiButtons = container.find('.file_upload_buttons:first');
         
         this.formatFileName = function (name) {
@@ -108,7 +108,6 @@
         };
 
         this.buildMultiDownloadRow = function (files, handler) {
-            var rows = $('<tbody style="display:none;"/>');
             $.each(files, function (index, file) {
                 rows.append(handler.buildDownloadRow(file, handler).show());
             });
@@ -121,19 +120,16 @@
             }
             var fileName = handler.formatFileName(file.name),
                 fileUrl = file.url,
-                fileUrlDownload = file.url_download,
+                fileContenttype = file.contenttype,
                 downloadRow = handler.downloadTemplate
                     .clone().removeAttr('id');
             downloadRow.attr('data-id', file.id || file.name);
-            downloadRow.find('.file_name a')
+            downloadRow.find('a')
                 .text(fileName);
-            downloadRow.find('.file_name a')
+            downloadRow.find('a')
                 .attr('href', fileUrl || null);
-            downloadRow.find('.file_download a')
-                .text('DL');
-            downloadRow.find('.file_download a')
-                .attr('href', fileUrlDownload || null)
-                .each(handler.enableDragToDesktop);
+            downloadRow.find('a')
+                .attr('class', fileContenttype || null);
             return downloadRow;
         };
         
@@ -170,6 +166,10 @@
         this.onCompleteAll = function (list) {
             if (!uploadHandler.uploadTable.find('.file_upload_progress div:visible:first').length) {
                 uploadHandler.multiButtons.find('.file_upload_start:first, .file_upload_cancel:first').fadeOut();
+            }
+            if (!uploadHandler.downloadTable.find("h3:visible").length) {
+                uploadHandler.downloadTable.find("h3:first").fadeIn();
+                $(".moin-index-separator").fadeIn();
             }
         };
 
@@ -277,13 +277,4 @@
 $(function () {
     // Initialize jQuery File Upload (Extended User Interface Version):
     $('#file_upload').fileUploadUIX();
-
-    // Load existing files:
-    $.getJSON($('#file_upload').fileUploadUIX('option', 'url'), function (files) {
-        var fileUploadOptions = $('#file_upload').fileUploadUIX('option');
-        $.each(files, function (index, file) {
-            fileUploadOptions.buildDownloadRow(file, fileUploadOptions)
-                .appendTo(fileUploadOptions.downloadTable).fadeIn();
-        });
-    });
 });

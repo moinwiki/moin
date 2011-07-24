@@ -64,6 +64,7 @@
     {{ forms.render_select(gen, form['theme_name']) }}
     {{ forms.render_field(gen, form['css_url'], 'url') }}
     {{ forms.render_field(gen, form['edit_rows'], 'text') }}
+    {{ forms.render_field(gen, form['results_per_page'], 'number') }}
   </dl>
   {{ gen.input(form['submit'], type='submit') }}
 {{ gen.form.close() }}
