@@ -1,0 +1,33 @@
+{% extends theme("show.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    {% if results %}
+    <p class="searchhint">
+        TODO: make a fullsearch here
+    </p>
+    <p class="searchstats">
+        {{ _("Result: Page %(start_page)d of %(end_page)d. Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs)", start_page=results.pagenum, end_page=results.pagecount,
+                                                                                                                                                              start_result=results.offset + 1, end_result=results.offset + results.pagelen + 1,
+                                                                                                                                                              result_len=results|length, runtime=results.results.runtime) }} 
+    </p>
+    <h1>{{ _("Results for search '%(query)s'", query=query) }}</h1>
+        <div class="searchresults">
+        <table>
+            {% for result in results %}
+            <tr>
+                <td class="moin-wordbreak">{{ _("%(docnum)d.", docnum=result.pos + 1) }}
+                <a href="{{ url_for('frontend.show_item', item_name=result['name'], rev=result['rev_no']) }}">{{ result.highlights("name", mode="query", fragmenter=formatter)|safe }}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <p class="info searchhitinfobar">{{ _("Revision: %(rev_no)d Last Change: %(mtime)s", rev_no=result['rev_no'], mtime=result['mtime']|datetimeformat) }}</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+    {% else %}
+        <h1>{{ _("No results for '%(query)s'", query=query) }}</h1>
+    {% endif %}
+{% endblock %}
