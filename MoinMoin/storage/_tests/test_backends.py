@@ -244,10 +244,8 @@ class BackendTest(object):
     def test_new_item_create_revision(self):
         item = self.backend.create_item(u'internal')
         rev = item.create_revision(0)
-        rev1 = item.create_revision(1)
         item.rollback()
-        # temporarily commented since item exists even without revision here.
-        #assert not self.backend.has_item(item.name)
+        assert not self.backend.has_item(item.name)
 
     def test_item_commit_revision(self):
         item = self.backend.create_item(u"item#11")
@@ -406,38 +404,25 @@ class BackendTest(object):
 
     def test_item_metadata_without_publish(self):
         item = self.backend.create_item(u"test item metadata invalid change")
-        self.backend._change_item_metadata(item)
         item.change_metadata()
         item[u"change but"] = u"don't publish"
         pytest.raises(NoSuchItemError, self.backend.get_item, "test item metadata invalid change")
         
     def test_item_create_existing_mixed_1(self):
-        try:
-            item1 = self.backend.create_item(u'existing now 0')
-            item1.change_metadata()
-            item2 = self.backend.create_item(u'existing now 0')
-            item1.publish_metadata()
-            item2.create_revision(0)
-            pytest.raises(ItemAlreadyExistsError, item2.commit)
-        finally:
-            # lock cleanup
-            if hasattr(item1, '_item'):
-                if 'fs2.Item' in str(item1._item): 
-                    item1.publish_metadata()
+        item1 = self.backend.create_item(u'existing now 0')
+        item1.change_metadata()
+        item2 = self.backend.create_item(u'existing now 0')
+        item1.publish_metadata()
+        item2.create_revision(0)
+        pytest.raises(ItemAlreadyExistsError, item2.commit)
     
     def test_item_create_existing_mixed_2(self):
-        try:
-            item1 = self.backend.create_item(u'existing now 0')
-            item1.change_metadata()
-            item2 = self.backend.create_item(u'existing now 0')
-            item2.create_revision(0)
-            item2.commit()
-            pytest.raises(ItemAlreadyExistsError, item1.publish_metadata)
-        finally:
-            # lock cleanup
-            if hasattr(item1, '_item'):
-                if 'fs2.Item' in str(item1._item): 
-                    item1.publish_metadata()
+        item1 = self.backend.create_item(u'existing now 0')
+        item1.change_metadata()
+        item2 = self.backend.create_item(u'existing now 0')
+        item2.create_revision(0)
+        item2.commit()
+        pytest.raises(ItemAlreadyExistsError, item1.publish_metadata)
 
     def test_item_multiple_change_metadata_after_create(self):
         name = u"foo"
@@ -476,10 +461,6 @@ class BackendTest(object):
         rev = item.create_revision(0)
         rev[u"revno"] = u"0"
         item.commit()
-        # hack to avoid the results of read_accessed due to item.commit()
-        pytest.set_trace()
-        if hasattr(item, '_item'):
-            item._item._read_accessed = False
         item.change_metadata()
         item[u"meta"] = u"data"
         item.publish_metadata()
@@ -493,9 +474,6 @@ class BackendTest(object):
         rev = item.create_revision(0)
         rev[u"revno"] = u"0"
         item.commit()
-        # hack to avoid the results of read_accessed due to item.commit()
-        if hasattr (item, '_item'):
-            item._item._read_accessed = False
         item.change_metadata()
         item.publish_metadata()
         item = self.backend.get_item(u"double")
