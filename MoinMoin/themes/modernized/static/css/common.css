@@ -246,9 +246,9 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 #moin-letters a:hover,
 #moin-letters a.selected { background: #4477FF; border-radius: 5px; color: #FFFFFF; text-decoration: none; }
 #moin-global-index,
-#moin-item-index { width: 100%; margin-left: 0.5em; }
+.moin-item-index { width: 100%; margin-left: 0.5em; }
 #moin-global-index div,
-#moin-item-index div { float: left; width: 15em; }
+.moin-item-index div { float: left; width: 15em; }
 .moin-select-contenttypes { float: right; position: relative; width: 14em; }
 .moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #342D7E; width: 14em; }
 .moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.2em 1.3em 0.2em 0.2em; background: transparent url("../img/moin-moveup.png") no-repeat center right; } 
@@ -264,6 +264,7 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-index-path { margin-left: 0.5em; }
 .moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
 .moin-path-separator { font-size: 120%; color: #4477FF; }
+.moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }

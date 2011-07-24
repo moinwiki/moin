@@ -1,4 +1,5 @@
 {% extends theme("show.html") %}
+{% import "forms.html" as forms %}
 
 {% block content %}
     <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
@@ -12,8 +13,15 @@
         <span class="moin-path-separator">{{ ("/") }}</span>
     {% endfor %}
     </div>
+    <div id="moin-new-index" class="moin-item-index">
+        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
+        <div class="file_download_template" style="display: none;">
+            <a></a>
+        </div>
+    </div>
+    <div class="moin-index-separator"></div>
     {% if index %}
-    <div id="moin-item-index">
+    <div class="moin-item-index">
         {% set maxchars = 20 %}
         {% for fullname, relname, contenttype, hassubitem in index %}
             <div>
@@ -33,4 +41,7 @@
     </div>
     <div class="moin-clr"></div>
     {% endif %}
+    {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+    {{ forms.render_file_uploader(submit_url) }}
+    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
 {% endblock %}
