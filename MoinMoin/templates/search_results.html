@@ -1,14 +1,26 @@
-{% extends theme("show.html") %}
+{% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 {% block content %}
-    {% if results %}
     <p class="searchhint">
-        TODO: make a fullsearch here
+        {# TODO: make a search tip here #}
     </p>
+    {{ gen.form.open(search_form, id='moin-long-searchform', method='get', action=url_for('frontend.show_item', item_name=item_name)) }}
+        <div>
+            {{ gen.input(search_form['q'], type='search', id='moin-search-query') }}
+            {{ gen.input(search_form['submit'], type='submit') }}
+            {{ gen.input(search_form['pagelen'], type='hidden', value='25') }}
+            {{ forms.render_errors(search_form) }}
+        </div>
+    {{ gen.form.close() }}
+    {% if results %}
     <p class="searchstats">
-        {{ _("Result: Page %(start_page)d of %(end_page)d. Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs)", start_page=results.pagenum, end_page=results.pagecount,
-                                                                                                                                                              start_result=results.offset + 1, end_result=results.offset + results.pagelen + 1,
-                                                                                                                                                              result_len=results|length, runtime=results.results.runtime) }} 
+        {{ _("Result: Page %(start_page)d of %(end_page)d.
+              Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs)",
+              start_page=results.pagenum, end_page=results.pagecount,
+              start_result=results.offset + 1, end_result=results.offset + results.pagelen,
+              result_len=results|length, runtime=results.results.runtime
+            )
+        }}
     </p>
     <h1>{{ _("Results for search '%(query)s'", query=query) }}</h1>
         <div class="searchresults">
@@ -16,7 +28,7 @@
             {% for result in results %}
             <tr>
                 <td class="moin-wordbreak">{{ _("%(docnum)d.", docnum=result.pos + 1) }}
-                <a href="{{ url_for('frontend.show_item', item_name=result['name'], rev=result['rev_no']) }}">{{ result.highlights("name", mode="query", fragmenter=formatter)|safe }}</a>
+                <a href="{{ url_for('frontend.show_item', item_name=result['name'], rev=result['rev_no']) }}"><b>{{ result['name'] }}</b></a>
                 </td>
             </tr>
             <tr>
