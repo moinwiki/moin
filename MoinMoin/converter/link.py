@@ -19,6 +19,7 @@ from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
 from MoinMoin.wikiutil import AbsItemName
 
+
 class ConverterBase(object):
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
@@ -193,6 +194,7 @@ class ConverterExternOutput(ConverterBase):
         output = self.url_root + link
 
         elem.set(self._tag_xlink_href, output)
+
 
 class ConverterItemRefs(ConverterBase):
     """

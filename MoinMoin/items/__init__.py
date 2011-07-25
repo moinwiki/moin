@@ -218,9 +218,6 @@ class Item(object):
         # override this in child classes
         return ''
 
-    def feed_input_conv(self):
-        return self.rev
-
     def internal_representation(self, converters=['smiley']):
         """
         Return the internal representation of a document using a DOM Tree
@@ -249,8 +246,7 @@ class Item(object):
 
             # We can process the conversion
             links = Iri(scheme='wiki', authority='', path='/' + self.name)
-            input = self.feed_input_conv()
-            doc = input_conv(input)
+            doc = input_conv(self.rev, self.contenttype)
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
             # as not every doc will have that element (e.g. for images, we just get
@@ -1108,9 +1104,6 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(config.charset).replace(u'\r\n', u'\n')
 
-    def feed_input_conv(self):
-        return self.data_storage_to_internal(self.data).split(u'\n')
-
     def _render_data_diff(self, oldrev, newrev):
         from MoinMoin.util.diff_html import diff
         old_text = self.data_storage_to_internal(oldrev.read())
@@ -1216,7 +1209,7 @@ class MarkupItem(Text):
 
         i = Iri(scheme='wiki', authority='', path='/' + self.name)
 
-        doc = input_conv(self.data_storage_to_internal(data).split(u'\n'))
+        doc = input_conv(self.rev, self.contenttype)
         doc.set(moin_page.page_href, unicode(i))
         doc = item_conv(doc)
 

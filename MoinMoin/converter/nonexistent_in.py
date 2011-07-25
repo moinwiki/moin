@@ -14,6 +14,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 
+
 class Converter(object):
     """
     Convert a non-existing item to DOM Tree.
@@ -22,7 +23,7 @@ class Converter(object):
     def _factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, rev):
+    def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=modify'),
