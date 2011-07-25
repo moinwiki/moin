@@ -76,7 +76,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
         'docutils>=0.6', # reST markup processing
-        'Flask>=0.7.1', # micro framework
+        'Flask>=0.7.2', # micro framework
         'Flask-Babel>=0.6', # i18n support
         'Flask-Cache>=0.3.2', # caching support
         'Flask-Script>=0.3', # scripting support
@@ -85,10 +85,10 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
         'pygments>=1.1.1', # src code / text file highlighting
-        'sqlalchemy>=0.6.0', # metadata index and other stuff
+        'sqlalchemy>=0.7.1', # metadata index and other stuff
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
         'Werkzeug==0.6.2', # use this if 0.7dev fails
-        'py==1.3.4', # py.test 1.3.4 is needed by unit tests
+        'pytest', # pytest is needed by unit tests
         'sphinx', # needed to build the docs
         # pin specific versions that conform to XStatic 0.0.2:
         'XStatic==0.0.2',

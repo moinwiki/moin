@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter._args
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.converter._args import *
 
@@ -44,8 +44,8 @@ def test_Arguments___getitem__():
     assert a['keyword'] is None
     assert a['both'] is None
 
-    py.test.raises(IndexError, a.__getitem__, 2)
-    py.test.raises(KeyError, a.__getitem__, 'none')
+    pytest.raises(IndexError, a.__getitem__, 2)
+    pytest.raises(KeyError, a.__getitem__, 'none')
 
 def test_Arguments___len__():
     positional = ['positional', 'both']

@@ -9,7 +9,7 @@ It is merege of test_moinwiki_in and test_moinwiki_out, looks bad but works.
 """
 
 
-import py.test
+import pytest
 import re
 
 from emeraldtree import ElementTree as ET
@@ -519,8 +519,8 @@ Its visibility gets toggled the same way.
 
     def do(self, input, output, args={}, skip=None):
         if skip:
-            py.test.skip(skip)
-        out = self.conv_in(input, 'text/x.moin.wiki;charset=utf-8', **args)
+            pytest.skip(skip)
+        out = self.conv_in(input.split(u'\n'), **args)
         out = self.conv_out(self.handle_input(self.serialize(out)), **args)
         assert self.handle_output(out) == output
 

@@ -20,7 +20,8 @@ from MoinMoin.datastruct import GroupDoesNotExistError
 from MoinMoin.config import USERGROUP
 from MoinMoin.security import ContentACL
 from MoinMoin.user import User
-from MoinMoin._tests import become_trusted, create_random_string_list, update_item
+from MoinMoin._tests import become_trusted, create_random_string_list, update_item, wikiconfig
+from MoinMoin.conftest import init_test_app, deinit_test_app
 
 DATA = "This is a group item"
 
@@ -31,10 +32,15 @@ class TestWikiGroupBackend(GroupsBackendTest):
     # is WikiGroups backend.
 
     def setup_method(self, method):
+        # temporary hack till we apply test cleanup mechanism on tests.
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
         become_trusted()
         for group, members in self.test_groups.iteritems():
             update_item(group, 0, {USERGROUP: members}, DATA)
 
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)
+    
     def test_rename_group_item(self):
         """
         Tests renaming of a group item.

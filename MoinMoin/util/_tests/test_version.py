@@ -7,7 +7,7 @@
 
 
 from MoinMoin.util.version import Version
-
+import pytest
 
 class TestVersion(object):
     def test_Version(self):
@@ -53,6 +53,9 @@ class TestVersion(object):
         assert Version(1, 2, 3, 'c99') < (1, 2, 4)
         assert Version(1, 2, 4) > (1, 2, 3)
         assert Version(1, 2, 4) > (1, 2, 3, 'c99')
+        # test wrong version string format
+        with pytest.raises(ValueError):
+            assert str(Version(version='wrong_value'))
 
 
 coverage_modules = ['MoinMoin.util.version']
