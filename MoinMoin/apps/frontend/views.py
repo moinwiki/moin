@@ -42,7 +42,7 @@ from MoinMoin.themes import render_template, get_editor_info, contenttype_to_cla
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
-from MoinMoin import config, user, wikiutil
+from MoinMoin import config, user, util, wikiutil
 from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
@@ -585,7 +585,6 @@ def _search(**args):
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
-    selected_history = []
 
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
@@ -593,33 +592,11 @@ def history(item_name):
     results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
-
-    revcount = 0
-    maxcount = offset + results_per_page
-    nextPage = False
-    for rev in history:
-        if revcount < offset:
-            revcount += 1
-        elif results_per_page and revcount == maxcount:
-            nextPage = True
-            break
-        else:
-            selected_history.append(rev)
-            revcount += 1
-
-    if not nextPage:
-        revcount = 0
-
-    if results_per_page and offset:
-        previous_offset = max(offset - results_per_page, 0)
-    else:
-        previous_offset = -1
+    history_page = util.getPageContent(history, offset, results_per_page)
 
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
-                           history=selected_history,
-                           offset=revcount,
-                           previous_offset=previous_offset,
+                           history_page=history_page,
                           )
 
 @frontend.route('/+history')

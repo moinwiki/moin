@@ -1,13 +1,14 @@
 {% extends theme("show.html") %}
 {% import "utils.html" as utils %}
 {% block content %}
+    {% set (history, next_offset, previous_offset) = history_page %}
     {% if history %}
     <div class='moin-offset-links'>
         {% if previous_offset >= 0 %}
             <a href="{{ url_for('frontend.history', item_name=item_name, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
         {% endif %}
-        {% if offset %}
-            <a href="{{ url_for('frontend.history', item_name=item_name, offset=offset) }}" title="{{ _("Next") }}">&raquo;</a>
+        {% if next_offset %}
+            <a href="{{ url_for('frontend.history', item_name=item_name, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
         {% endif %}
     </div>
     <h1>{{ _("History of '%(item_name)s'", item_name=item_name) }}</h1>
