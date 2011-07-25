@@ -129,11 +129,14 @@ class SearchForm(Form):
     validators = [ValidSearch()]
 
 
-def _search(query, pagenum, pagelen):
+def _search(search_form):
     from MoinMoin.search.indexing import WhooshIndex
     from whoosh.qparser import QueryParser
     from MoinMoin.search.analyzers import item_name_analyzer
     from whoosh import highlight
+    query = search_form['q'].value
+    pagenum = 1 # We start from first page
+    pagelen = search_form['pagelen'].value
     index_object = WhooshIndex()
     latest_index = index_object.latest_revisions_index
     with latest_index.searcher() as searcher:
@@ -143,7 +146,8 @@ def _search(query, pagenum, pagelen):
         results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
         return render_template('search_results.html',
                                results=results,
-                               query=query
+                               query=query,
+                               search_form=search_form
                               )
 
 
@@ -153,10 +157,7 @@ def show_item(item_name, rev):
     # first check whether we have a valid search query:
     search_form = SearchForm.from_flat(request.values)
     if search_form.validate():
-        query = search_form['q'].value
-        pagenum = 1 # We start from first page
-        pagelen = search_form['pagelen'].value
-        return _search(query, pagenum, pagelen)
+        return _search(search_form)
     search_form['submit'].set_default() # XXX from_flat() kills all values
 
     flaskg.user.addTrail(item_name)
