@@ -41,5 +41,11 @@ class TestWikiDictsBackend(DictsBackendTest):
     def teardown_method(self, method):
         deinit_test_app(self.app, self.ctx)
 
+    def test__retrieve_items(self):
+        wikidict_obj = wiki_dicts.WikiDicts()
+        result = wiki_dicts.WikiDicts._retrieve_items(wikidict_obj, u'SomeOtherTestDict')
+        expected = {u'Two': u'2', u'One': u'1'}
+        assert result == expected
+
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_dicts']
 
