@@ -114,9 +114,27 @@ class TestItem(object):
         meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name', 'uuid': 'test_uuid'}
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
+        # keys like NAME and UUID are filtered
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
+    def test_meta_dict_to_text(self):
+        name = u'Test_item'
+        contenttype = 'text/plain;charset=utf-8'
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name', 'uuid': 'test_uuid'}
+        item = Item.create(name)
+        result = Item.meta_dict_to_text(item, meta)
+        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
+        assert result == expected
+    
+    def test_meta_text_to_dict(self):
+        name = u'Test_item'
+        contenttype = 'text/plain;charset=utf-8'
+        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": "test_name", \n "uuid": "test_uuid"\n}'
+        item = Item.create(name)
+        result = Item.meta_text_to_dict(item, text)
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        assert result == expected
 
 class TestTarItems(object):
     """
