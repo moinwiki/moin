@@ -108,6 +108,15 @@ class TestItem(object):
                               (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
                              ]
 
+    def test_meta_filter(self):
+        name = u'Test_item'
+        contenttype = 'text/plain;charset=utf-8'
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name', 'uuid': 'test_uuid'}
+        item = Item.create(name)
+        result = Item.meta_filter(item, meta)
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        assert result == expected
+
 
 class TestTarItems(object):
     """
