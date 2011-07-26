@@ -579,15 +579,28 @@ class Item(object):
         if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
         """
         index = self.get_index()
-        if not selected_groups:
-            selected_groups = [gname for (gname, contenttypes) in CONTENTTYPE_GROUPS]
 
-        ctypes = [[ctype for ctype, clabel in contenttypes]
-                  for gname, contenttypes in CONTENTTYPE_GROUPS
-                  if gname in selected_groups]
+        all_ctypes = [[ctype for ctype, clabel in contenttypes]
+                      for gname, contenttypes in CONTENTTYPE_GROUPS]
+        all_ctypes_chain = itertools.chain(*all_ctypes)
+        all_contenttypes = list(all_ctypes_chain)
+        contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
+                                         for contenttype in all_contenttypes
+                                         if u';' in contenttype]
+        all_contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
 
-        ctypes_chain = itertools.chain(*ctypes)
-        selected_contenttypes = list(ctypes_chain)
+        if selected_groups:
+            ctypes = [[ctype for ctype, clabel in contenttypes]
+                      for gname, contenttypes in CONTENTTYPE_GROUPS
+                      if gname in selected_groups]
+            ctypes_chain = itertools.chain(*ctypes)
+            selected_contenttypes = list(ctypes_chain)
+            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
+                                             for contenttype in selected_contenttypes
+                                             if u';' in contenttype]
+            selected_contenttypes.extend(contenttypes_without_encoding)
+        else:
+            selected_contenttypes = all_contenttypes
 
         if startswith:
             startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
@@ -595,12 +608,14 @@ class Item(object):
                      for fullname, relname, contenttype in index
                      if u'/' not in relname
                      and relname.startswith(startswith)
-                     and contenttype in selected_contenttypes]
+                     and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+                     # If an item's contenttype not present in the default contenttype list, 
+                     # then it will be shown without going through any filter.
         else:
             index = [(fullname, relname, contenttype)
                      for fullname, relname, contenttype in index
                      if u'/' not in relname
-                     and contenttype in selected_contenttypes]
+                     and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
 
         return index
 
