@@ -147,19 +147,17 @@ class TestItem(object):
         item = Item.create(name)
         item._save(meta, data, comment=comment)
         item = Item.create(name)
-        test_items = item.search_items()
         # item and its contents before renaming
-        for item in test_items:
-            assert item.name == u'Test_Item'
-            assert item.meta['comment'] == u'saved it'
+        assert item.name == u'Test_Item'
+        assert item.meta['comment'] == u'saved it'
         Item.rename(item, u'Test_new_Item', comment=u'renamed')
-        test_items = item.search_items()
+        new_name = u'Test_new_Item'
+        item = Item.create(new_name)
         # item and its contents after renaming
-        for item in test_items:
-            assert item.name == u'Test_new_Item'
-            assert item.meta['comment'] == u'renamed'
-            assert item.meta['name_old'] == u'Test_Item' 
-            assert item.data == u'test_data'
+        assert item.name == u'Test_new_Item'
+        assert item.meta['comment'] == u'renamed'
+        assert item.meta['name_old'] == u'Test_Item' 
+        assert item.data == u'test_data'
 
     def test_delete(self):
         name = u'Test_Item'
@@ -172,11 +170,9 @@ class TestItem(object):
         item = Item.create(name)
         item.delete(u'item deleted')
         # item and its contents after deletion
-        test_items = item.search_items()
-        for item in test_items:
-            assert 'Trash/Test_Item' in item.name
-            assert item.meta['comment'] == u'item deleted' 
-            assert item.meta['name_old'] == u'Test_Item' 
+        item = Item.create(name)
+        assert item.name == u'Test_Item'
+        assert item.meta == {'contenttype': 'application/x-nonexistent'}
 
     def test_revert(self):
         name = u'Test_Item'
@@ -188,9 +184,8 @@ class TestItem(object):
         item._save(meta, data, comment=comment)
         item = Item.create(name)
         item.revert()
-        test_items = item.search_items()
-        for item in test_items:
-            assert item.meta['action'] == u'REVERT'
+        item = Item.create(name)
+        assert item.meta['action'] == u'REVERT'
 
     def test_modify(self):
         name = u'Test_Item'
@@ -205,11 +200,10 @@ class TestItem(object):
         assert item.meta['test_key'] == 'test_value'
         # call item.modify
         item.modify()
-        test_items = item.search_items()
-        for item in test_items:
-            assert item.name == u'Test_Item'
-            with pytest.raises(KeyError):
-                item.meta['test_key']
+        item = Item.create(name)
+        assert item.name == u'Test_Item'
+        with pytest.raises(KeyError):
+            item.meta['test_key']
         
 class TestTarItems(object):
     """
