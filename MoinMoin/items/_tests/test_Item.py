@@ -5,6 +5,7 @@
     MoinMoin - MoinMoin.items Tests
 """
 
+# TODO: spilt the tests into multiple ones after the item.__init__ is split.
 
 import py
 
@@ -135,6 +136,30 @@ class TestItem(object):
         result = Item.meta_text_to_dict(item, text)
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
+
+    def test_copy(self):
+        name = u'Test_Item'
+        contenttype = 'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = u'saved it'
+        become_trusted()
+        item = Item.create(name)
+        item._save(meta, data, comment=comment)
+        # check save result
+        item = Item.create(name)
+        test_items = item.search_items()
+        # item and its contents before renaming
+        for item in test_items:
+            assert item.name == u'Test_Item'
+            assert item.meta['comment'] == u'saved it'
+        Item.rename(item, u'Test_new_Item', comment=u'renamed')
+        test_items = item.search_items()
+        # item and its contents after renaming
+        for item in test_items:
+            assert item.name == u'Test_new_Item'
+            assert item.meta['comment'] == u'renamed'
+            assert item.data == u'test_data'
 
 class TestTarItems(object):
     """
