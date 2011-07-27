@@ -201,10 +201,13 @@ class TestItem(object):
         item = Item.create(name)
         item._save(meta, data, comment=comment)
         item = Item.create(name)
+        assert item.name == u'Test_Item'
+        assert item.meta['test_key'] == 'test_value'
         # call item.modify
         item.modify()
         test_items = item.search_items()
         for item in test_items:
+            assert item.name == u'Test_Item'
             with pytest.raises(KeyError):
                 item.meta['test_key']
         
