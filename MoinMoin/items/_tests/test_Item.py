@@ -159,7 +159,25 @@ class TestItem(object):
         for item in test_items:
             assert item.name == u'Test_new_Item'
             assert item.meta['comment'] == u'renamed'
+            assert item.meta['name_old'] == u'Test_Item' 
             assert item.data == u'test_data'
+
+    def test_delete(self):
+        name = u'Test_Item'
+        contenttype = 'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = u'saved it'
+        item = Item.create(name)
+        item._save(meta, data, comment=comment)
+        item = Item.create(name)
+        item.delete(u'item deleted')
+        # item and its contents after deletion
+        test_items = item.search_items()
+        for item in test_items:
+            assert 'Trash/Test_Item' in item.name
+            assert item.meta['comment'] == u'item deleted' 
+            assert item.meta['name_old'] == u'Test_Item' 
 
 class TestTarItems(object):
     """
