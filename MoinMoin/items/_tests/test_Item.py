@@ -137,7 +137,7 @@ class TestItem(object):
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
-    def test_copy(self):
+    def test_rename(self):
         name = u'Test_Item'
         contenttype = 'text/plain;charset=utf-8'
         data = 'test_data'
