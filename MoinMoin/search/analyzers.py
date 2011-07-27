@@ -38,6 +38,8 @@ class MimeTokenizer(Tokenizer):
         """
 
         assert isinstance(value, unicode), "%r is not unicode" % value
+        if u'/' not in value: # Add '/' if user forgot do this
+            value += u'/'
         pos = start_pos
         tk = Token()
         tp = Type(value)
@@ -46,11 +48,12 @@ class MimeTokenizer(Tokenizer):
             tk.pos = pos
             pos += 1
         yield tk
-        tk.text = tp.subtype
-        if positions:
-            tk.pos = pos
-            pos += 1
-        yield tk
+        if tp.subtype is not None:
+            tk.text = tp.subtype
+            if positions:
+                tk.pos = pos
+                pos += 1
+            yield tk
         for key, value in tp.parameters.items():
             tk.text = u"%s=%s" % (key, value)
             if positions:
