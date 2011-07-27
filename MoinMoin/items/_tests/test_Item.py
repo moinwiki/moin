@@ -7,7 +7,7 @@
 
 # TODO: spilt the tests into multiple ones after the item.__init__ is split.
 
-import py
+import pytest
 
 from flask import g as flaskg
 
@@ -192,6 +192,22 @@ class TestItem(object):
         for item in test_items:
             assert item.meta['action'] == u'REVERT'
 
+    def test_modify(self):
+        name = u'Test_Item'
+        contenttype = u'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = u'saved it'
+        item = Item.create(name)
+        item._save(meta, data, comment=comment)
+        item = Item.create(name)
+        # call item.modify
+        item.modify()
+        test_items = item.search_items()
+        for item in test_items:
+            with pytest.raises(KeyError):
+                item.meta['test_key']
+        
 class TestTarItems(object):
     """
     tests for the container items
