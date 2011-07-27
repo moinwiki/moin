@@ -146,7 +146,6 @@ class TestItem(object):
         become_trusted()
         item = Item.create(name)
         item._save(meta, data, comment=comment)
-        # check save result
         item = Item.create(name)
         test_items = item.search_items()
         # item and its contents before renaming
@@ -178,6 +177,20 @@ class TestItem(object):
             assert 'Trash/Test_Item' in item.name
             assert item.meta['comment'] == u'item deleted' 
             assert item.meta['name_old'] == u'Test_Item' 
+
+    def test_revert(self):
+        name = u'Test_Item'
+        contenttype = 'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = u'saved it'
+        item = Item.create(name)
+        item._save(meta, data, comment=comment)
+        item = Item.create(name)
+        item.revert()
+        test_items = item.search_items()
+        for item in test_items:
+            assert item.meta['action'] == u'REVERT'
 
 class TestTarItems(object):
     """
