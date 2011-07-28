@@ -342,10 +342,10 @@ class TestTransformableBitmapImage:
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item = Binary.create(item_name)
-        result = TransformableBitmapImage._transform(item, contenttype)
         try:
             from PIL import Image as PILImage
         except ImportError:
+            result = TransformableBitmapImage._transform(item, contenttype)
             assert result == (u'image/jpeg', '')
 
 class TestText(object):
@@ -356,12 +356,27 @@ class TestText(object):
     def teardown_method(self, method):
         deinit_test_app(self.app, self.ctx)     
 
-    def test_data_internal_to_form(self):
+    def test_data_conversion(self):
         item_name = u'Text_Item'
         item = Text.create(item_name, u'text/plane')
-        text = 'This \n is \n a \n Test'
-        result = Text.data_internal_to_form(item, text)
+        test_text = u'This \n is \n a \n Test'
+        # test for data_internal_to_form
+        result = Text.data_internal_to_form(item, test_text)
         expected = u'This \r\n is \r\n a \r\n Test'
+        assert result == expected
+        # test for data_form_to_internal
+        test_form = u'This \r\n is \r\n a \r\n Test'
+        result = Text.data_form_to_internal(item, test_text)
+        expected = test_text
+        assert result == expected
+        # test for data_internal_to_storage
+        result = Text.data_internal_to_storage(item, test_text)
+        expected = 'This \r\n is \r\n a \r\n Test'
+        assert result == expected
+        # test for data_storage_to_internal
+        data_storage = 'This \r\n is \r\n a \r\n Test'
+        result = Text.data_storage_to_internal(item, data_storage)
+        expected = test_text
         assert result == expected
 
 coverage_modules = ['MoinMoin.items']
