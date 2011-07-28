@@ -224,6 +224,7 @@ class TestItem(object):
         assert result2 == 2
         
 class TestBinary():
+    """ Test for arbitrary binary items """
     def setup_method(self, method):
         # temporary hack till we get some cleanup mechanism for tests.  
         self.app, self.ctx = init_test_app(wikiconfig.Config)
@@ -233,25 +234,24 @@ class TestBinary():
 
     def test_get_templates(self):
         item_name1 = u'Template_Item1'
-        item1 = Item.create(item_name1)
+        item1 = Binary.create(item_name1)
         contenttype1 = u'text/plain'
         meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
         item1._save(meta)
-        item1 = Item.create(item_name1)
-
+        item1 = Binary.create(item_name1)
         item_name2 = u'Template_Item2'
-        item2 = Item.create(item_name2)
+        item2 = Binary.create(item_name2)
         contenttype1 = u'text/plain'
         meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
         item2._save(meta)
-        item2 = Item.create(item_name2)
+        item2 = Binary.create(item_name2)
         
         item_name3 = u'Template_Item3'
-        item3 = Item.create(item_name3)
+        item3 = Binary.create(item_name3)
         contenttype2 = u'image/png'
         meta = {CONTENTTYPE: contenttype2, 'tags': ['template']}
         item3._save(meta)
-        item3 = Item.create(item_name3)
+        item3 = Binary.create(item_name3)
         # two items of same content type
         result1 = item1.get_templates(contenttype1)
         assert result1 == [item_name1, item_name2]
