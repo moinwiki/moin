@@ -223,7 +223,7 @@ class TestItem(object):
         result2 = item.count_items()
         assert result2 == 2
         
-class TestBinary():
+class TestBinary:
     """ Test for arbitrary binary items """
     def setup_method(self, method):
         # temporary hack till we get some cleanup mechanism for tests.  
@@ -239,6 +239,7 @@ class TestBinary():
         meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
         item1._save(meta)
         item1 = Binary.create(item_name1)
+
         item_name2 = u'Template_Item2'
         item2 = Binary.create(item_name2)
         contenttype1 = u'text/plain'
@@ -306,6 +307,62 @@ class TestTarItems(object):
 
         item = Item.create(item_name, contenttype='application/x-tar')
         assert item.get_member('example1.txt').read() == filecontent
+
+class TestZipMixin(object):
+    """ Test for zip-like items """
+    
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+
+    def test_put_member(self):
+        item_name = u'Zip_file'
+        item = Item.create(item_name, contenttype='application/zip')
+        filecontent = 'test_contents'
+        content_length = len(filecontent)
+        members = set(['example1.txt', 'example2.txt'])
+        with pytest.raises(NotImplementedError):
+            item.put_member('example1.txt', filecontent, content_length, expected_members=members)
+
+class TestTransformableBitmapImage:
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+
+    def test__transform(self):
+        item_name = u'image_Item'
+        item = Binary.create(item_name)
+        contenttype = u'image/jpeg'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item = Binary.create(item_name)
+        result = TransformableBitmapImage._transform(item, contenttype)
+        try:
+            from PIL import Image as PILImage
+        except ImportError:
+            assert result == (u'image/jpeg', '')
+
+class TestText(object):
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+
+    def test_data_internal_to_form(self):
+        item_name = u'Text_Item'
+        item = Text.create(item_name, u'text/plane')
+        text = 'This \n is \n a \n Test'
+        result = Text.data_internal_to_form(item, text)
+        expected = u'This \r\n is \r\n a \r\n Test'
+        assert result == expected
 
 coverage_modules = ['MoinMoin.items']
 
