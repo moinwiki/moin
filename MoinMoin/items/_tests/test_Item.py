@@ -344,6 +344,8 @@ class TestTransformableBitmapImage:
         item = Binary.create(item_name)
         try:
             from PIL import Image as PILImage
+            with pytest.raises(ValueError):
+                result = TransformableBitmapImage._transform(item, 'plane/text')
         except ImportError:
             result = TransformableBitmapImage._transform(item, contenttype)
             assert result == (u'image/jpeg', '')
