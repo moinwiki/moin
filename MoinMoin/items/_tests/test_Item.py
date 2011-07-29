@@ -366,6 +366,25 @@ class TestTransformableBitmapImage:
             # no PIL
             pass
 
+    def test__render_data_diff_text(self):
+        item_name = u'image_Item'
+        item = Binary.create(item_name)
+        contenttype = u'image/jpeg'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item1 = Binary.create(item_name)
+        data = 'test_data'
+        comment = u'next revision'
+        item1._save(meta, data, comment=comment)
+        item2 = Binary.create(item_name)
+        try:
+            from PIL import Image as PILImage
+            result = TransformableBitmapImage._render_data_diff_text(item1, item1.rev, item2.rev)
+            expected = u'The items have different data.'
+            assert result == expected
+        except ImportError:
+            pass    
+
 class TestText(object):
     def setup_method(self, method):
         # temporary hack till we get some cleanup mechanism for tests.  
