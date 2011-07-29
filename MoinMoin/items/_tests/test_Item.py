@@ -416,5 +416,36 @@ class TestText(object):
         expected = test_text
         assert result == expected
 
+    def test__render_data_diff_text(self):
+        item_name = u'Text_Item'
+        item = Text.create(item_name)
+        contenttype = u'text/plane'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item1 = Text.create(item_name)
+        data = 'test_data'
+        comment = u'next revision'
+        item1._save(meta, data, comment=comment)
+        item2 = Text.create(item_name)
+        result = Text._render_data_diff_text(item1, item1.rev, item2.rev)
+        expected = u'- \n+ test_data'
+        assert result == expected
+        assert item2.data == ''
+
+    def test__render_data_highlight(self):
+        item_name = u'Text_Item'
+        item = Text.create(item_name)
+        contenttype = u'text/plane'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item1 = Text.create(item_name)
+        data = 'test_data'
+        comment = u'next revision'
+        item1._save(meta, data, comment=comment)
+        item2 = Text.create(item_name)
+        result = Text._render_data_highlight(item2)
+        assert u'<pre class="highlight">test_data\n' in result
+        assert item2.data == ''
+
 coverage_modules = ['MoinMoin.items']
 
