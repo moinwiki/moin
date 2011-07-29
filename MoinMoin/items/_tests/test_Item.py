@@ -350,6 +350,22 @@ class TestTransformableBitmapImage:
             result = TransformableBitmapImage._transform(item, contenttype)
             assert result == (u'image/jpeg', '')
 
+    def test__render_data_diff(self):
+        item_name = u'image_Item'
+        item = Binary.create(item_name)
+        contenttype = u'image/jpeg'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item1 = Binary.create(item_name)
+        try:
+            from PIL import Image as PILImage
+            result = TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev)
+            expected = '<img src="/+diffraw/image_Item?rev2=0" />'
+            assert str(result) == expected
+        except ImportError:
+            # no PIL
+            pass
+
 class TestText(object):
     def setup_method(self, method):
         # temporary hack till we get some cleanup mechanism for tests.  
