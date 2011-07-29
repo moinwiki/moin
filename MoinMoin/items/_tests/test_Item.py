@@ -12,7 +12,7 @@ import pytest
 from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted
-from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage
+from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin._tests import wikiconfig
@@ -446,6 +446,27 @@ class TestText(object):
         result = Text._render_data_highlight(item2)
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.data == ''
+
+class TestMarkupItem(object):
+    """ Test for the items with markup """
+
+    def setup_method(self, method):
+        # temporary hack till we get some cleanup mechanism for tests.  
+        self.app, self.ctx = init_test_app(wikiconfig.Config)
+        
+    def teardown_method(self, method):
+        deinit_test_app(self.app, self.ctx)     
+    
+    def test_before_revision_commit(self):
+        item_name = u'Markup_Item'
+        item = MarkupItem.create(item_name)
+        contenttype = u'text/x.moin.wiki;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item1 = MarkupItem.create(item_name)
+        MarkupItem.before_revision_commit(item1, item.rev, 'test_data')
+        assert item.rev['itemlinks'] == []
+        assert item.rev['itemtransclusions'] == []
 
 coverage_modules = ['MoinMoin.items']
 
