@@ -26,10 +26,10 @@ XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>\n'
 from xml.dom.minidom import parse, parseString
 
 
-def compareRevisionXML(a, b): 
+def compareRevisionXML(a, b):
     metaA = None
     metaB = None
-    
+
     dateA = None
     dataB = None
 
@@ -44,7 +44,7 @@ def compareRevisionXML(a, b):
         if (n.nodeName == 'meta'):
             metaB = n
         if (n.nodeName == 'data'):
-            dataB = n        
+            dataB = n
 
     entriesA = metaA.getElementsByTagName("entry")
     entriesB = metaB.getElementsByTagName("entry")
@@ -53,16 +53,16 @@ def compareRevisionXML(a, b):
     metaDictB = {}
 
     for e in entriesA:
-        k = e.getAttribute("key") 
+        k = e.getAttribute("key")
         val = e.childNodes[0].toxml()
-        
+
         if k == "uuid":
             continue
-            
+
         metaDictA[k] = val
 
     for e in entriesB:
-        k = e.getAttribute("key") 
+        k = e.getAttribute("key")
         val = e.childNodes[0].toxml()
 
         if k == "uuid":
@@ -70,18 +70,18 @@ def compareRevisionXML(a, b):
 
         metaDictB[k] = val
 
-    
+
     #pprint.pprint(metaDictA)
     #pprint.pprint(metaDictB)
-    #print "======="    
-    
+    #print "======="
+
     # Compare Meta
     assert metaDictA == metaDictB
-    
+
     #Compare Data
     assert dataA.childNodes[0].toxml() == dataB.childNodes[0].toxml()
-    
-    
+
+
 
 def compareItemXML(a, b):
     revisionsA = a.getElementsByTagName("revision")
@@ -101,11 +101,11 @@ class TestSerializeRev(object):
         params = (u'foo1', 0, dict(m1=u"m1", mtime=1234), 'bar1')
         item = update_item(*params)
         rev = item.get_revision(0)
-        
+
         xmlfile = StringIO()
         serialize(rev, xmlfile)
         xml = xmlfile.getvalue()
-        
+
         expected = (XML_DECL +
                     '<revision revno="0">'
                     '<meta>'
@@ -119,19 +119,19 @@ class TestSerializeRev(object):
                     '</meta>\n'
                     '<data coding="base64"><chunk>YmFyMQ==</chunk>\n</data>\n'
                     '</revision>\n')
-        
+
         #print expected
         #print xml
         #assert expected == xml
-        
+
         a = parseString(expected)
 
         b = parseString(xml)
-        
+
         compareRevisionXML(a.childNodes[0], b.childNodes[0])
-        
-        
-        
+
+
+
 class TestSerializeItem(object):
 
     def test_serialize_item(self):
@@ -175,16 +175,16 @@ class TestSerializeItem(object):
                     '</item>\n')
         print expected
         print xml
-        
+
         # assert expected == xml
-        
+
         a = parseString(expected)
 
         b = parseString(xml)
 
         compareItemXML(a.childNodes[0], b.childNodes[0])
 
-            
+
 
 class TestSerializeBackend(object):
 
@@ -200,16 +200,16 @@ class TestSerializeBackend(object):
         xmlfile = StringIO()
         serialize(flaskg.storage, xmlfile)
         xml = xmlfile.getvalue()
-        
-        print xml 
+
+        print xml
         assert xml.startswith(XML_DECL + '<backend>')
         assert xml.endswith('</backend>\n')
-        
+
         # this is not very precise testing:
-        
-        # The below test is pretty useless to do this way. Normalizing the generated XML and 
+
+        # The below test is pretty useless to do this way. Normalizing the generated XML and
         # checking for every key via DOM/lxml will be better, Commenting it for now.
-        
+
         '''assert '<item name="foo3"><meta><entry key="name"><str>foo3</str>\n</entry>' in xml
         assert '<revision revno="0"><meta>' in xml
         assert '<entry key="mimetype"><str>application/octet-stream</str>\n</entry>' in xml

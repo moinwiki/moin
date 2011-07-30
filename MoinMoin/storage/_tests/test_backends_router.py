@@ -52,7 +52,7 @@ class TestRouterBackend(BackendTest):
         itemname = u'child/foo'
         item = self.backend.create_item(itemname)
         assert item.name == itemname
-        
+
         assert item._backend is self.child
         item.change_metadata()
         item[u'just'] = u'testing'
@@ -121,7 +121,7 @@ class TestRouterBackend(BackendTest):
         assert self.child.has_item(u'child/' + itemname)
         newname = u'i_was_moved'
         item.rename(u'other/' + newname)
-        
+
         print [item.name for item in self.child.iteritems()]
         assert not self.child.has_item(u'child/' + itemname)
         assert not self.child.has_item(u'other/' + newname)
