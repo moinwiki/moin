@@ -19,11 +19,11 @@ from MoinMoin._tests import wikiconfig
 
 class TestItem(object):
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def testNonExistent(self):
         item = Item.create('DoesNotExist')
@@ -127,7 +127,7 @@ class TestItem(object):
         result = Item.meta_dict_to_text(item, meta)
         expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
         assert result == expected
-    
+
     def test_meta_text_to_dict(self):
         name = u'Test_item'
         contenttype = 'text/plain;charset=utf-8'
@@ -156,7 +156,7 @@ class TestItem(object):
         # item and its contents after renaming
         assert item.name == u'Test_new_Item'
         assert item.meta['comment'] == u'renamed'
-        assert item.meta['name_old'] == u'Test_Item' 
+        assert item.meta['name_old'] == u'Test_Item'
         assert item.data == u'test_data'
 
     def test_delete(self):
@@ -222,15 +222,15 @@ class TestItem(object):
         item = Item.create(new_name)
         result2 = item.count_items()
         assert result2 == 2
-        
+
 class TestBinary:
     """ Test for arbitrary binary items """
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def test_get_templates(self):
         item_name1 = u'Template_Item1'
@@ -246,7 +246,7 @@ class TestBinary:
         meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
         item2._save(meta)
         item2 = Binary.create(item_name2)
-        
+
         item_name3 = u'Template_Item3'
         item3 = Binary.create(item_name3)
         contenttype2 = u'image/png'
@@ -265,11 +265,11 @@ class TestTarItems(object):
     tests for the container items
     """
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def testCreateContainerRevision(self):
         """
@@ -310,13 +310,13 @@ class TestTarItems(object):
 
 class TestZipMixin(object):
     """ Test for zip-like items """
-    
+
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def test_put_member(self):
         item_name = u'Zip_file'
@@ -329,11 +329,11 @@ class TestZipMixin(object):
 
 class TestTransformableBitmapImage:
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def test__transform(self):
         item_name = u'image_Item'
@@ -383,15 +383,15 @@ class TestTransformableBitmapImage:
             expected = u'The items have different data.'
             assert result == expected
         except ImportError:
-            pass    
+            pass
 
 class TestText(object):
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
+        deinit_test_app(self.app, self.ctx)
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
@@ -439,7 +439,7 @@ class TestText(object):
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Text.create(item_name)
-        data = 'test_data'
+        data = 'test_data\nnext line'
         comment = u'next revision'
         item1._save(meta, data, comment=comment)
         item2 = Text.create(item_name)
@@ -451,12 +451,12 @@ class TestMarkupItem(object):
     """ Test for the items with markup """
 
     def setup_method(self, method):
-        # temporary hack till we get some cleanup mechanism for tests.  
+        # temporary hack till we get some cleanup mechanism for tests.
         self.app, self.ctx = init_test_app(wikiconfig.Config)
-        
+
     def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)     
-    
+        deinit_test_app(self.app, self.ctx)
+
     def test_before_revision_commit(self):
         item_name = u'Markup_Item'
         item = MarkupItem.create(item_name)

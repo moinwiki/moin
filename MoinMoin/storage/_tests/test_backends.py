@@ -407,7 +407,7 @@ class BackendTest(object):
         item.change_metadata()
         item[u"change but"] = u"don't publish"
         pytest.raises(NoSuchItemError, self.backend.get_item, "test item metadata invalid change")
-        
+
     def test_item_create_existing_mixed_1(self):
         item1 = self.backend.create_item(u'existing now 0')
         item1.change_metadata()
@@ -415,7 +415,7 @@ class BackendTest(object):
         item1.publish_metadata()
         item2.create_revision(0)
         pytest.raises(ItemAlreadyExistsError, item2.commit)
-    
+
     def test_item_create_existing_mixed_2(self):
         item1 = self.backend.create_item(u'existing now 0')
         item1.change_metadata()
