@@ -276,7 +276,6 @@ what ever\r
             assert meta.get(TAGS, []) == expected_tags
             assert data == expected_data
 
-
 def test__decode_list():
     from MoinMoin.storage.backends.fs19 import _decode_list
     test_line = "test_item1 \t test_item2\n \t test_item3 \t"
@@ -294,7 +293,6 @@ def test__decode_dict():
 def test_hash_hexdigest():
     from MoinMoin.storage.backends.fs19 import hash_hexdigest
     result = hash_hexdigest('test_content')
-    pytest.set_trace()
     assert result[0] == 12
     with pytest.raises(ValueError):
         hash_hexdigest(u'test_content')
