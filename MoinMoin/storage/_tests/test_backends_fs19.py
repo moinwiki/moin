@@ -277,4 +277,17 @@ what ever\r
             assert data == expected_data
 
 
+def test__decode_list():
+    from MoinMoin.storage.backends.fs19 import _decode_list
+    test_line = "test_item1 \t test_item2\n \t test_item3 \t"
+    result = _decode_list(test_line)
+    expected = ('test_item1', 'test_item2', 'test_item3')
+    assert result == expected
 
+def test__decode_dict():
+    from MoinMoin.storage.backends.fs19 import _decode_dict
+    test_line = "test_item1: first item\n \t test_item: second item2 \t \ntest_item3: third item \t"
+    result = _decode_dict(test_line)
+    expected = {'test_item1': ' first item', 'test_item3': ' third item', 'test_item': ' second item2'}
+    assert result == expected
+    
