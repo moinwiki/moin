@@ -327,7 +327,7 @@ options_no_group_name = {
     ('navi_bar', [
         ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
         ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
-        ('wikilink', 'frontend.global_index', dict(), L_('Index'), L_('Global Index')),
+        ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),
         ('wikilink', 'frontend.global_tags', dict(), L_('Tags'), L_('Global Tags Index')),
         ('wikilink', 'admin.index', dict(), L_('More'), L_('Administration & Docs')),
      ],
