@@ -450,12 +450,18 @@ def destroy_item(item_name, rev):
 
 
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+jfu-server', defaults=dict(item_name=''), methods=['POST'])
 def jfu_server(item_name):
     """jquery-file-upload server component
     """
     data_file = request.files.get('data_file')
     subitem_name = data_file.filename
-    item_name = item_name + u'/' + subitem_name
+    contenttype = data_file.content_type # guess by browser, based on file name
+    if item_name:
+        subitem_prefix = item_name + u'/'
+    else:
+        subitem_prefix = u''
+    item_name = subitem_prefix + subitem_name
     try:
         item = Item.create(item_name)
         revno, size = item.modify()
@@ -464,50 +470,34 @@ def jfu_server(item_name):
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revno),
-                       contenttype=contenttype_to_class(item.contenttype),
+                       contenttype=contenttype_to_class(contenttype),
                       )
     except AccessDeniedError:
         abort(403)
 
 
-@frontend.route('/+index/<itemname:item_name>')
+@frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
+@frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
     try:
-        item = Item.create(item_name)
+        item = Item.create(item_name) # when item_name='', it gives toplevel index
     except AccessDeniedError:
         abort(403)
-    index = item.flat_index()
-
-    detailed_index = item.get_detailed_index(index)
-    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
-    split_char = u'/'
-    item_names = item_name.split(split_char)
-
-    return render_template(item.index_template,
-                           item=item, item_name=item_name,
-                           index=detailed_index,
-                           item_names=item_names
-                          )
-
-
-@frontend.route('/+index', methods=['GET', 'POST'])
-def global_index():
-    item = Item.create('') # XXX hack: item_name='' gives toplevel index
 
     if request.method == 'GET':
         form = ContenttypeFilterForm.from_defaults()
         selected_groups = None
-    if request.method == "POST":
+    elif request.method == "POST":
         form = ContenttypeFilterForm.from_flat(request.form)
         selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
-                           if form[gname].value is True]
+                           if form[gname].value]
         if not selected_groups:
             form = ContenttypeFilterForm.from_defaults()
 
-    startswith = request.values.get("startswith", None)
+    startswith = request.values.get("startswith")
     index = item.flat_index(startswith, selected_groups)
 
-    ct_groups = [(gname, ", ".join(["%s" % ctlabel for ctname, ctlabel in contenttypes]))
+    ct_groups = [(gname, ", ".join([ctlabel for ctname, ctlabel in contenttypes]))
                  for gname, contenttypes in CONTENTTYPE_GROUPS]
     ct_groups = dict(ct_groups)
 
@@ -518,9 +508,10 @@ def global_index():
     detailed_index = item.get_detailed_index(index)
     detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
 
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    return render_template('global_index.html',
-                           item_name=item_name, # XXX no item
+    item_names = item_name.split(u'/')
+    return render_template(item.index_template,
+                           item_name=item_name,
+                           item_names=item_names,
                            index=detailed_index,
                            initials=initials,
                            startswith=startswith,

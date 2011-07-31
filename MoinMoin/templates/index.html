@@ -2,17 +2,40 @@
 {% import "forms.html" as forms %}
 
 {% block content %}
-    <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
-    <div class="moin-index-path">
-    <a href="{{ url_for('frontend.global_index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
-    <span class="moin-path-separator">{{ ("/") }}</span>
-    {% for i in range(0, item_names|count) %}
-        {% set fullname = item_names[:i+1]|join('/') %}
-        {% set relname = item_names[i] %}
-        <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
-        <span class="moin-path-separator">{{ ("/") }}</span>
-    {% endfor %}
+    {% if index %}
+    <div class="moin-select-contenttypes">
+        <div class="moin-contenttypes-wrapper">
+            <div>{{ _("Filter by content type") }}</div>
+            {{ gen.form.open(form, method="post", action=url_for('frontend.index', item_name=item_name)) }}
+            <ul>
+                {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
+                {{ forms.render_filter_field(gen, form['other_text_items'], 'checkbox', contenttype_groups['other text items']) }}
+                {{ forms.render_filter_field(gen, form['image_items'], 'checkbox', contenttype_groups['image items']) }}
+                {{ forms.render_filter_field(gen, form['audio_items'], 'checkbox', contenttype_groups['audio items']) }}
+                {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
+                {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
+                {{ gen.input(form['submit'], type='submit') }}
+            </ul>
+            {{ gen.form.close() }}
+        </div>
     </div>
+    {% endif %}
+    {% if item_name: %}
+        <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
+        <div class="moin-index-path">
+            <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
+            <span class="moin-path-separator">{{ ("/") }}</span>
+            {% for i in range(0, item_names|count) %}
+                {% set fullname = item_names[:i+1]|join('/') %}
+                {% set relname = item_names[i] %}
+                <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                <span class="moin-path-separator">{{ ("/") }}</span>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h1>{{ _("Global Index") }}</h1>
+    {% endif %}
+    <div class='moin-clr'></div>
     <div id="moin-new-index" class="moin-item-index">
         <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
         <div class="file_download_template" style="display: none;">
@@ -21,6 +44,20 @@
     </div>
     <div class="moin-index-separator"></div>
     {% if index %}
+    <div id="moin-initials">
+        {% if not startswith %}
+            <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
+        {% else %}
+            <a href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
+        {% endif %}
+        {% for initial in initials %}
+            {% if startswith == initial %}
+                <a class="selected" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+            {% else %}
+                <a href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
     <div class="moin-item-index">
         {% set maxchars = 20 %}
         {% for fullname, relname, contenttype, hassubitem in index %}
