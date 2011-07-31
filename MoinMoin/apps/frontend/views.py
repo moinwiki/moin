@@ -82,7 +82,6 @@ Disallow: /+destroy/
 Disallow: /+rename/
 Disallow: /+revert/
 Disallow: /+index/
-Disallow: /+index2/
 Disallow: /+jfu-server/
 Disallow: /+sitemap/
 Disallow: /+similar_names/
