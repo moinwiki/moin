@@ -86,8 +86,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Jinja2>=2.5', # template engine
         'pygments>=1.1.1', # src code / text file highlighting
         'sqlalchemy>=0.6.0', # metadata index and other stuff
-        #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
-        'Werkzeug==0.6.2', # use this if 0.7dev fails
+        'Werkzeug>=0.6.2', # wsgi toolkit
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
         'sphinx', # needed to build the docs
         # pin specific versions that conform to XStatic 0.0.2:
