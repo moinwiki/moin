@@ -1133,7 +1133,7 @@ class Text(Binary):
         # TODO: use registry as soon as it is in there
         from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
         pygments_conv = PygmentsConverter(contenttype=self.contenttype)
-        doc = pygments_conv(data_text.split(u'\n'))
+        doc = pygments_conv(data_text)
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = html_conv(doc)
