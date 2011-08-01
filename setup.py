@@ -88,6 +88,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'sqlalchemy>=0.6.0', # metadata index and other stuff
         'Werkzeug>=0.6.2', # wsgi toolkit
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
+        'whoosh==2.0.0', # needed for indexed search
         'sphinx', # needed to build the docs
         'XStatic>=0.0.2',
         'XStatic-CKEditor>=3.6.1.2',
