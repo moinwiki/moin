@@ -8,7 +8,8 @@ MoinMoin - Tests for MoinMoin.macro._base
 import pytest
 from MoinMoin.macro._base import *
 
-class TestMacro(object):
+class TestMacroBase(object):
+    """ Test for Macro base and related classes """
 
     def test_MacroBase(self):
         """ test for MacroBase class """
@@ -57,3 +58,4 @@ class TestMacro(object):
         result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
         assert result == 'test_macro'
 
+class 
