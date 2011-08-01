@@ -1,0 +1,21 @@
+#!/bin/bash
+# create a virtual environment in directory $DIR/
+# needs: virtualenv, pip
+
+DIR=env
+PYTHON=python
+
+virtualenv --no-site-packages --python $PYTHON $DIR
+
+source $DIR/bin/activate
+
+# first install babel, moin's setup.py will emit a warning if it is not there
+pip install babel
+
+# "install" moin2 from repo to the env, this will also install required python
+# packages from pypi. we do this LAST, so that breakage is better visible.
+pip install -e .
+
+# compile the translations
+python setup.py compile_catalog --statistics
+
