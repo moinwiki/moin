@@ -4,6 +4,7 @@
  *
  * Copyright 2010, Sebastian Tschan, https://blueimp.net
  * Copyright 2011, Thomas Waldmann (adapted for MoinMoin)
+ * Copyright 2011, Akash Sinha (modified further for MoinMoin)
  *
  * Licensed under the MIT license:
  * http://creativecommons.org/licenses/MIT/
@@ -47,6 +48,7 @@
     UploadHandler = function (container, options) {
         var uploadHandler = this;
 
+        this.fileArray = new Array();
         this.url = container.find('form:first').attr('action');
         this.dropZone = container.find('form:first');
         this.uploadTable = container.find('.files:first');
@@ -71,6 +73,14 @@
                         .setData('DownloadURL', [type, name, url].join(':'));
                 } catch (e) {}
             });
+        };
+
+        this.fileExist = function (fileName, fileArray) {
+            for(var i=0; i<fileArray.length; i++) {
+                  if (fileArray[i] == fileName) return true;
+            }
+            fileArray.push(fileName);
+            return false;
         };
 
         this.buildMultiUploadRow = function (files, handler) {
@@ -98,6 +108,7 @@
                 fileName = handler.formatFileName(file.name),
                 uploadRow = handler.uploadTemplate
                     .clone().removeAttr('id');
+            if(!handler.fileExist(fileName, handler.fileArray)) {
             uploadRow.find('.file_name')
                 .text(fileName);
             uploadRow.find('.file_upload_start button')
@@ -105,6 +116,9 @@
             uploadRow.find('.file_upload_cancel button')
                 .button({icons: {primary: 'ui-icon-cancel'}, text: false});
             return uploadRow;
+            }
+            return null;
+            
         };
 
         this.buildMultiDownloadRow = function (files, handler) {
@@ -171,6 +185,7 @@
                 uploadHandler.downloadTable.find("h3:first").fadeIn();
                 $(".moin-index-separator").fadeIn();
             }
+            uploadHandler.fileArray.length = 0;
         };
 
         this.initEventHandlers = function () {
