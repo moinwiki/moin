@@ -260,7 +260,7 @@ class ItemIndex(object):
         self.rev_kvstore = KVStore(rev_kvmeta)
 
         self.wikiname = cfg.interwikiname or u''
-        self.index_object = WhooshIndex(index_dir=cfg.index_dir)
+        self.index_object = WhooshIndex(cfg=cfg)
 
     def close(self):
         engine = self.metadata.bind
