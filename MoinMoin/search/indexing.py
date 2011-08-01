@@ -24,55 +24,61 @@ class WhooshIndex(object):
     "all_revisions_schema"
     """
 
-    latest_revisions_schema = Schema(wikiname=ID(stored=True),
-                                     name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
-                                     name_exact=ID,
-                                     uuid=ID(unique=True, stored=True),
-                                     rev_no=NUMERIC(stored=True),
-                                     mtime=DATETIME(stored=True),
-                                     content=TEXT(stored=True, multitoken_query="and"),
-                                     contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-                                     tags=ID(stored=True),
-                                     itemlinks=ID(stored=True),
-                                     itemtransclusions=ID(stored=True),
-                                     acl=TEXT(analyzer=AclTokenizer(), multitoken_query="and", stored=True),
-                                     language=ID(stored=True),
-                                     userid=ID(stored=True),
-                                     address=ID(stored=True),
-                                     hostname=ID(stored=True),
-                                    )
-
-    all_revisions_schema = Schema(wikiname=ID(stored=True),
-                                  name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
-                                  name_exact=ID,
-                                  uuid=ID(stored=True),
-                                  rev_no=NUMERIC(stored=True),
-                                  mtime=DATETIME(stored=True),
-                                  content=TEXT(stored=True, multitoken_query="and"),
-                                  contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-                                  tags=ID(stored=True),
-                                  language=ID(stored=True),
-                                  userid=ID(stored=True),
-                                  address=ID(stored=True),
-                                  hostname=ID(stored=True),
-                                 )
     # Index names, schemas
-    indexes = {'latest_revisions_index': 'latest_revisions_schema',
-               'all_revisions_index': 'all_revisions_schema',
-              }
+    _indexes = {'latest_revisions_index': 'latest_revisions_schema',
+                'all_revisions_index': 'all_revisions_schema',
+               }
 
-    def __init__(self, index_dir=None):
+    def __init__(self, index_dir=None, cfg=None):
         """
         Create and open indexes in index_dir
 
         :param index_dir: Directory where whoosh indexes will be created, default None
+        :param cfg: Application config(app.cfg), default None
         """
 
-        index_dir = index_dir or app.cfg.index_dir
-        for index_name, index_schema in self.indexes.items():
-            self.open_index(index_dir, index_name, index_schema, create=True)
+        self._cfg = cfg or app.cfg
+        self._index_dir = index_dir or self._cfg.index_dir # Indexes can be created somewhere else
+                                                              # apart app.cfg.index_dir
 
-    def open_index(self, index_dir, indexname, schema, create=False):
+        self.latest_revisions_schema = Schema(wikiname=ID(stored=True),
+                                               name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
+                                               name_exact=ID,
+                                               uuid=ID(unique=True, stored=True),
+                                               rev_no=NUMERIC(stored=True),
+                                               mtime=DATETIME(stored=True),
+                                               content=TEXT(stored=True, multitoken_query="and"),
+                                               contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
+                                               tags=ID(stored=True),
+                                               itemlinks=ID(stored=True),
+                                               itemtransclusions=ID(stored=True),
+                                               # acl is unavailable due acl analyzer issue
+#                                               acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
+                                               language=ID(stored=True),
+                                               userid=ID(stored=True),
+                                               address=ID(stored=True),
+                                               hostname=ID(stored=True),
+                                              )
+
+        self.all_revisions_schema = Schema(wikiname=ID(stored=True),
+                                            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
+                                            name_exact=ID,
+                                            uuid=ID(stored=True),
+                                            rev_no=NUMERIC(stored=True),
+                                            mtime=DATETIME(stored=True),
+                                            content=TEXT(stored=True, multitoken_query="and"),
+                                            contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
+                                            tags=ID(stored=True),
+                                            language=ID(stored=True),
+                                            userid=ID(stored=True),
+                                            address=ID(stored=True),
+                                            hostname=ID(stored=True),
+                                           )
+
+        for index_name, index_schema in self._indexes.items():
+            self.open_index(index_name, index_schema, create=True, index_dir=self._index_dir)
+
+    def open_index(self, indexname, schema, create=False, index_dir=None):
         """
         open index <indexname> in <index_dir>. if opening fails and <create>
             is True, try creating the index and retry opening it afterwards.
@@ -83,6 +89,7 @@ class WhooshIndex(object):
         :param schema: which schema applies
         """
 
+        index_dir = index_dir or self._cfg.index_dir
         try: # open indexes
             index = open_dir(index_dir, indexname=indexname)
             setattr(self, indexname, index)

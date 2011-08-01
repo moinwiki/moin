@@ -65,6 +65,10 @@ class MimeTokenizer(Tokenizer):
 class AclTokenizer(Tokenizer):
     """ Access control list tokenizer """
 
+    def __init__(self, cfg):
+        assert cfg is not None
+        self._cfg = cfg
+
     def __call__(self, value, start_pos=0, positions=False, **kwargs):
         """
         Calls tokenizer
@@ -86,7 +90,7 @@ class AclTokenizer(Tokenizer):
         assert isinstance(value, unicode) # so you'll notice if it blows up
         pos = start_pos
         tk = Token()
-        acl = ContentACL(app.cfg, [value])
+        acl = ContentACL(self._cfg, [value])
         for name, permissions in acl.acl:
             for permission in permissions:
                 sign = "+" if permissions[permission] else "-"
