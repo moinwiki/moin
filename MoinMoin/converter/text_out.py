@@ -28,6 +28,6 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
-default_registry.register(Converter.factory, type_moin_document, Type('text/plain'))
+from MoinMoin.util.mime import Type, type_moin_document, type_text_plain
+default_registry.register(Converter.factory, type_moin_document, type_text_plain)
 

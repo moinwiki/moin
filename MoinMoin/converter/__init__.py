@@ -90,29 +90,37 @@ def convert_to_indexable(rev):
     convert a revision to an indexable document
     """
     try:
-        # TODO use different converters / different converter mode?
-        # For now, just use some existing and working converter, later we
-        # should have a simple output converter just for indexing (that does not
-        # output any markup). Maybe we also want some special mode for the input
-        # converters so they emit different output than for normal rendering),
-        # esp. for the non-markup content types (images, etc.).
+        # TODO use different converter mode?
+        # Maybe we want some special mode for the input converters so they emit
+        # different output than for normal rendering), esp. for the non-markup
+        # content types (images, etc.).
         input_contenttype = rev[CONTENTTYPE]
         output_contenttype = 'text/plain'
+        type_input_contenttype = Type(input_contenttype)
+        type_output_contenttype = Type(output_contenttype)
         reg = default_registry
-        input_conv = reg.get(Type(input_contenttype), type_moin_document)
-        if not input_conv:
-            raise TypeError("We cannot handle the conversion from %s to the DOM tree" % input_contenttype)
-        output_conv = reg.get(type_moin_document, Type(output_contenttype))
-        if not output_conv:
-            raise TypeError("We cannot handle the conversion from the DOM tree to %s" % output_contenttype)
-        doc = input_conv(rev, input_contenttype)
-        # We do not convert smileys, includes, macros, links, because
-        # it does not improve search results or even makes results worse.
-        doc = output_conv(doc)
+        # first try a direct conversion (this could be useful for extraction
+        # of (meta)data from binary types, like from images or audio):
+        conv = reg.get(type_input_contenttype, type_output_contenttype)
+        if conv:
+            doc = conv(rev, input_contenttype)
+            return doc
+        # otherwise try via DOM as intermediate format (this is useful if
+        # input type is markup, to get rid of the markup):
+        input_conv = reg.get(type_input_contenttype, type_moin_document)
+        output_conv = reg.get(type_moin_document, type_output_contenttype)
+        if input_conv and output_conv:
+            doc = input_conv(rev, input_contenttype)
+            # We do not convert smileys, includes, macros, links, because
+            # it does not improve search results or even makes results worse.
+            doc = output_conv(doc)
+            return doc
+        # no way
+        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
         logging.exception("Exception happened in conversion:")
         doc = u'ERROR [%s]' % str(e)
-    return doc
+        return doc
 
 
 default_registry = RegistryConverter()
