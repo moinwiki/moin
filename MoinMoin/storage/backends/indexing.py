@@ -408,7 +408,6 @@ class ItemIndex(object):
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
             field_names = self.index_object.latest_revisions_index.schema.names()
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                converted_rev = backend_to_index(metas, revno, field_names, self.wikiname)
                 logging.debug("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
 
