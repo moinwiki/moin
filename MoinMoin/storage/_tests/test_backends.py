@@ -265,6 +265,42 @@ class BackendTest(object):
         rev = item.get_revision(0)
         assert rev.read() == "Alle meine Entchen"
 
+    def test_item_write_seek_read(self):
+        item = self.backend.create_item(u"write_seek_read")
+        rev = item.create_revision(0)
+        write_data = "some data"
+        rev.write(write_data)
+        rev.seek(0)
+        read_data = rev.read()
+        assert read_data == write_data
+        item.commit()
+        rev = item.get_revision(0)
+        assert rev.read() == write_data
+
+    def test_item_seek_tell_read(self):
+        item = self.backend.create_item(u"write_seek_read")
+        rev = item.create_revision(0)
+        write_data = "0123456789"
+        rev.write(write_data)
+        rev.seek(0)
+        assert rev.tell() == 0
+        read_data = rev.read()
+        assert read_data == write_data
+        rev.seek(4)
+        assert rev.tell() == 4
+        read_data = rev.read()
+        assert read_data == write_data[4:]
+        item.commit()
+        rev = item.get_revision(0)
+        rev.seek(0)
+        assert rev.tell() == 0
+        read_data = rev.read()
+        assert read_data == write_data
+        rev.seek(4)
+        assert rev.tell() == 4
+        read_data = rev.read()
+        assert read_data == write_data[4:]
+
     def test_item_reading_chunks(self):
         item = self.backend.create_item(u"slices")
         rev = item.create_revision(0)

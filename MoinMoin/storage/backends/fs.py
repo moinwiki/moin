@@ -178,8 +178,9 @@ class FSBackend(BackendBase):
         rev._revno = revno
         fd, rev._fs_revpath = tempfile.mkstemp('-rev', 'tmp-', self._path)
         rev._fs_file = f = os.fdopen(fd, 'wb+') # XXX keeps file open as long a rev exists
-        f.write(struct.pack('!I', self._revmeta_reserved_space + 4))
-        f.seek(self._revmeta_reserved_space + 4)
+        rev._datastart = self._revmeta_reserved_space + 4
+        f.write(struct.pack('!I', rev._datastart))
+        f.seek(rev._datastart)
 
         return rev
 
