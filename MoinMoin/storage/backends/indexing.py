@@ -29,7 +29,7 @@ make_uuid = lambda: unicode(uuid4().hex)
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
-from MoinMoin.util.mime import Type
+from MoinMoin.search.revision_converter import backend_to_index
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -402,13 +402,13 @@ class ItemIndex(object):
         if not all_found_document:
             field_names = self.index_object.all_revisions_index.schema.names()
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                converted_rev = self.backend_to_index(metas, revno, field_names)
+                converted_rev = backend_to_index(metas, revno, field_names, self.wikiname)
                 logging.debug("ALL: add %s %s", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.add_document(**converted_rev)
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
             field_names = self.index_object.latest_revisions_index.schema.names()
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                converted_rev = self.backend_to_index(metas, revno, field_names)
+                converted_rev = backend_to_index(metas, revno, field_names, self.wikiname)
                 logging.debug("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
 
@@ -548,43 +548,3 @@ class ItemIndex(object):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
             docs = latest_revs_searcher.documents(tags=tag, wikiname=self.wikiname)
             return [doc[NAME] for doc in docs]
-
-    def backend_to_index(self, backend_rev, rev_no, schema_fields):
-        """
-        Convert fields from backend format to whoosh schema
-        """
-        metadata = dict([(str(key), value)
-                          for key, value in backend_rev.items()
-                          if key in schema_fields])
-        metadata[MTIME] = datetime.datetime.fromtimestamp(metadata[MTIME])
-        metadata["name_exact"] = backend_rev[NAME]
-        metadata["rev_no"] = rev_no
-        metadata["wikiname"] = self.wikiname or u''
-        metadata["content"] = self.convert_data(backend_rev, rev_no)
-        return metadata
-
-    def convert_data(self, rev, rev_no):
-        # this is a q&d hack because MoinMoin.items.Item is not made to be
-        # called outside of a request (e.g. due to usage of flaskg.*). Later,
-        # we need a more general way to transform revision content to
-        # indexable content (e.g. using a contenttype-dependant Converter
-        # that removes markup for markup data or that extracts text from
-        # "binary" items).
-        ct = Type(rev[CONTENTTYPE])
-        if ct.type == 'text':
-            coding = ct.parameters.get('charset', 'ascii')
-            # XXX does not work yet as NewRevision does not have .seek and .read
-            #rev.seek(0)
-            #data = rev.read()
-            data = 'TODO'
-            try:
-                data = data.decode(coding)
-            except UnicodeDecodeError as err:
-                logging.warning("Item %r revision %d failed to decode (%s)" % (
-                                rev[NAME], rev_no, str(err)))
-                data = unicode(str(err))
-        else:
-            # TODO: support non-text items
-            data = u''
-        return data
-
