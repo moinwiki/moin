@@ -116,7 +116,7 @@ def convert_to_indexable(rev):
             doc = output_conv(doc)
             return doc
         # no way
-        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype)
+        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
         logging.exception("Exception happened in conversion:")
         doc = u'ERROR [%s]' % str(e)
