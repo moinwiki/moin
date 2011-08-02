@@ -56,3 +56,18 @@ application/vnd.oasis.opendocument.text-web""".split()
 for t in opendocument_types:
     default_registry.register(OpenDocumentIndexingConverter._factory, Type(t), type_text_plain)
 
+
+# use same converter for the old *.sx? (pre-opendocument) openoffice documents:
+OpenOfficeIndexingConverter = OpenDocumentIndexingConverter
+
+openoffice_types = """\
+application/vnd.sun.xml.calc
+application/vnd.sun.xml.draw
+application/vnd.sun.xml.impress
+application/vnd.sun.xml.math
+application/vnd.sun.xml.writer
+application/vnd.sun.xml.writer.global""".split()
+
+for t in openoffice_types:
+    default_registry.register(OpenOfficeIndexingConverter._factory, Type(t), type_text_plain)
+
