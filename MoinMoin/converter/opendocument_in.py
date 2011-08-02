@@ -32,7 +32,7 @@ class OpenDocumentIndexingConverter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type
+from MoinMoin.util.mime import Type, type_text_plain
 
 opendocument_types = """\
 application/vnd.oasis.opendocument.chart
@@ -49,8 +49,6 @@ application/vnd.oasis.opendocument.text
 application/vnd.oasis.opendocument.text-master
 application/vnd.oasis.opendocument.text-template
 application/vnd.oasis.opendocument.text-web""".split()
-
-type_text_plain = Type(type='text', subtype='plain')
 
 for t in opendocument_types:
     default_registry.register(OpenDocumentIndexingConverter._factory, Type(t), type_text_plain)
