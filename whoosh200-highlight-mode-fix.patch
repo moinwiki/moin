@@ -1,0 +1,82 @@
+diff -r 94702e28fec9 env/lib/python2.6/site-packages/whoosh/highlight.py
+--- a/src/whoosh/highlight.py	Fri Jul 22 19:01:57 2011 -0400
++++ b/src/whoosh/highlight.py	Sat Jul 23 22:59:38 2011 +0000
+@@ -606,20 +606,25 @@
+ # Highlighting
+ 
+ def top_fragments(text, terms, analyzer, fragmenter, top=3,
+-                  scorer=None, minscore=1):
++                  scorer=None, minscore=1, mode=None):
+     if scorer is None:
+         scorer = BasicFragmentScorer()
+     
+     termset = frozenset(terms)
+-    tokens = copyandmatchfilter(termset, analyzer(text, chars=True,
+-                                                  keeporiginal=True))
++    # Checking what user specifed "mode" parameter for MultiFilter()
++    if mode is not None:
++        tokens = copyandmatchfilter(termset, analyzer(text, chars=True,
++                                                      keeporiginal=True, mode=mode))
++    else:
++        tokens = copyandmatchfilter(termset, analyzer(text, chars=True,
++                                                      keeporiginal=True))
+     scored_frags = nlargest(top, ((scorer(f), f)
+                                   for f in fragmenter(text, tokens)))
+     return [sf for score, sf in scored_frags if score > minscore]
+ 
+ 
+ def highlight(text, terms, analyzer, fragmenter, formatter, top=3,
+-              scorer=None, minscore=1, order=FIRST):
++              scorer=None, minscore=1, order=FIRST, mode=None):
+     
+     if scorer is None:
+         scorer = BasicFragmentScorer()
+@@ -632,7 +637,7 @@
+         scorer = scorer()
+     
+     fragments = top_fragments(text, terms, analyzer, fragmenter,
+-                              top=top, scorer=scorer, minscore=minscore)
++                              top=top, scorer=scorer, minscore=minscore, mode=mode)
+     fragments.sort(key=order)
+     return formatter(text, fragments)
+     
+diff -r 94702e28fec9 env/lib/python2.6/site-packages/whoosh/searching.py
+--- a/src/whoosh/searching.py	Fri Jul 22 19:01:57 2011 -0400
++++ b/src/whoosh/searching.py	Sat Jul 23 22:59:38 2011 +0000
+@@ -1416,7 +1416,7 @@
+         return set(self._termlists.keys())
+ 
+     def highlights(self, n, fieldname, text=None, top=3, fragmenter=None,
+-                   formatter=None, order=highlight.FIRST, force=True):
++                   formatter=None, order=highlight.FIRST, force=True, mode=None):
+         """Returns highlighted snippets for the document in the Nth position
+         in the results. It is usually more convenient to call this method on a
+         Hit object instead of the Results.
+@@ -1445,7 +1445,8 @@
+         
+         return highlight.highlight(text, terms, analyzer, fragmenter,
+                                    formatter, top=top, order=order,
+-                                   scorer=self.fragment_scorer)
++                                   scorer=self.fragment_scorer,
++                                   mode=mode)
+ 
+     def key_terms(self, fieldname, docs=10, numterms=5,
+                   model=classify.Bo1Model, normalize=True):
+@@ -1624,7 +1625,7 @@
+         return s
+     
+     def highlights(self, fieldname, text=None, top=3, fragmenter=None,
+-                   formatter=None, order=highlight.FIRST, force=True):
++                   formatter=None, order=highlight.FIRST, force=True, mode=None):
+         """Returns highlighted snippets from the given field::
+         
+             r = searcher.search(myquery)
+@@ -1688,7 +1689,7 @@
+         return self.results.highlights(self.rank, fieldname, text=text,
+                                        top=top, fragmenter=fragmenter,
+                                        formatter=formatter, order=order,
+-                                       force=force)
++                                       force=force, mode=mode)
+     
+     def more_like_this(self, fieldname, text=None, top=10, numterms=5,
+                        model=classify.Bo1Model, normalize=True, filter=None):
