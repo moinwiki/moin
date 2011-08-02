@@ -124,12 +124,31 @@ class ValidSearch(Validator):
 class SearchForm(Form):
     q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
     submit = String.using(default=L_('Search'), optional=True)
+    pagelen = String.using(optional=False)
 
     validators = [ValidSearch()]
 
 
-def _search(query):
-    return "searching not implemented yet, query: %r" % query
+def _search(search_form):
+    from MoinMoin.search.indexing import WhooshIndex
+    from whoosh.qparser import QueryParser
+    from MoinMoin.search.analyzers import item_name_analyzer
+    from whoosh import highlight
+    query = search_form['q'].value
+    pagenum = 1 # We start from first page
+    pagelen = search_form['pagelen'].value
+    index_object = WhooshIndex()
+    latest_index = index_object.latest_revisions_index
+    with latest_index.searcher() as searcher:
+        qp = QueryParser("name", schema=latest_index.schema) # XXX: we don't have content indexing for now
+                                                             # so searcher will use headings for that
+        q = qp.parse(query)
+        results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
+        return render_template('search_results.html',
+                               results=results,
+                               query=query,
+                               search_form=search_form
+                              )
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
@@ -138,8 +157,7 @@ def show_item(item_name, rev):
     # first check whether we have a valid search query:
     search_form = SearchForm.from_flat(request.values)
     if search_form.validate():
-        query = search_form['q'].value
-        return _search(query)
+        return _search(search_form)
     search_form['submit'].set_default() # XXX from_flat() kills all values
 
     flaskg.user.addTrail(item_name)
