@@ -12,7 +12,7 @@ import py
 
 from flask import current_app as app
 
-from MoinMoin.security import ContentACL, ACLStringIterator
+from MoinMoin.security import AccessControlList, ACLStringIterator
 
 from MoinMoin.user import User
 from MoinMoin.config import ACL
@@ -218,7 +218,7 @@ class TestAcl(object):
             "BadGuy:  "
             "All:read  "
             ]
-        acl = ContentACL(app.cfg, acl_rights)
+        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
         # Should apply these rights:
         users = (
