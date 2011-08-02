@@ -270,6 +270,8 @@ form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); borde
 form.upload_file input { height: auto; }
 form.upload_file button { display: none;}
 form.upload_file { display: block; }
+.file_upload_template .file_upload_start { visibility: hidden; border-width: 0px; padding: 0px; }
+.file_upload_template .file_upload_start button { width: 0px; }
 .moin-drag { font-size: 0.7em; color: #6C7680; }
 
 /* diffs */
