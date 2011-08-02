@@ -263,6 +263,14 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
 .moin-path-separator { font-size: 120%; color: #4477FF; }
 .moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
+#file_upload { margin-top: 2em; }
+form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer; direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative; text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF; -moz-box-shadow: 0px 0px 5px #4477FF; khtml-box-shadow: 0px 0px 5px #4477FF; }
+form.upload_file:hover { color: #FFFFFF; }
+form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); border: 300px solid transparent; cursor: pointer; height: 100%;  margin: 0; opacity: 0; position: absolute; right: 0; top: 0;}
+form.upload_file input { height: auto; }
+form.upload_file button {  display: none;}
+form.upload_file { display: block; }
+.moin-drag { font-size: 0.7em; color: #6C7680; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }

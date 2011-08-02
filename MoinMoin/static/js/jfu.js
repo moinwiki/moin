@@ -50,7 +50,7 @@
 
         this.fileArray = new Array();
         this.url = container.find('form:first').attr('action');
-        this.dropZone = container.find('form:first');
+        this.dropZone = $("#moin-content");
         this.uploadTable = container.find('.files:first');
         this.downloadTable = $("#moin-new-index");
         this.progressAllNode = container.find('.file_upload_overall_progress div:first');
