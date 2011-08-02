@@ -268,7 +268,7 @@ form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: 
 form.upload_file:hover { color: #FFFFFF; }
 form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); border: 300px solid transparent; cursor: pointer; height: 100%;  margin: 0; opacity: 0; position: absolute; right: 0; top: 0;}
 form.upload_file input { height: auto; }
-form.upload_file button {  display: none;}
+form.upload_file button { display: none;}
 form.upload_file { display: block; }
 .moin-drag { font-size: 0.7em; color: #6C7680; }
 

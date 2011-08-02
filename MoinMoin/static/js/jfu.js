@@ -193,6 +193,7 @@
                 setTimeout(function () {
                     if (!uploadHandler.uploadTable.find('.file_upload_progress div:visible:first').length) {
                         uploadHandler.multiButtons.find('.file_upload_start:first, .file_upload_cancel:first').fadeOut();
+                        uploadHandler.fileArray.length = 0;
                     }
                 }, 500);
             });
