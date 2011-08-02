@@ -8,7 +8,6 @@
 
 import py
 
-from MoinMoin.security import ContentACL
 from MoinMoin.search.analyzers import *
 
 
@@ -108,7 +107,7 @@ class TestAclTokenizer(TokenizerTestBase):
         )
     ]
 
-    tokenizer = AclTokenizer()
+    tokenizer = AclTokenizer(app.cfg)
 
 
 class TestMimeTokenizer(TokenizerTestBase):

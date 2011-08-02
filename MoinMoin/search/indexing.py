@@ -9,7 +9,6 @@ import os
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
-from whoosh.analysis import entoken
 from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.search.analyzers import *
@@ -52,8 +51,7 @@ class WhooshIndex(object):
                                                tags=ID(stored=True),
                                                itemlinks=ID(stored=True),
                                                itemtransclusions=ID(stored=True),
-                                               # acl is unavailable due acl analyzer issue
-#                                               acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
+                                               acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
                                                language=ID(stored=True),
                                                userid=ID(stored=True),
                                                address=ID(stored=True),

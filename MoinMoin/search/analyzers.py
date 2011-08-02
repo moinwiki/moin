@@ -12,7 +12,7 @@ from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
 from whoosh.analysis import Tokenizer, Token, RegexTokenizer
 
 from MoinMoin.util.mime import Type
-from MoinMoin.security import ContentACL
+from MoinMoin.security import AccessControlList
 
 
 class MimeTokenizer(Tokenizer):
@@ -66,8 +66,7 @@ class AclTokenizer(Tokenizer):
     """ Access control list tokenizer """
 
     def __init__(self, cfg):
-        assert cfg is not None
-        self._cfg = cfg
+        self._acl_rights_contents = cfg.acl_rights_contents
 
     def __call__(self, value, start_pos=0, positions=False, **kwargs):
         """
@@ -90,7 +89,7 @@ class AclTokenizer(Tokenizer):
         assert isinstance(value, unicode) # so you'll notice if it blows up
         pos = start_pos
         tk = Token()
-        acl = ContentACL(self._cfg, [value])
+        acl = AccessControlList([value], valid=self._acl_rights_contents)
         for name, permissions in acl.acl:
             for permission in permissions:
                 sign = "+" if permissions[permission] else "-"
