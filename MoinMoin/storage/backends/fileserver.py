@@ -112,6 +112,11 @@ class FileServerBackend(Backend):
             rev._fs_data_file = open(rev._fs_data_fname, 'rb') # XXX keeps file open as long as rev exists
         return rev._fs_data_file.seek(position, mode)
 
+    def _tell_revision_data(self, rev):
+        if rev._fs_data_file is None:
+            rev._fs_data_file = open(rev._fs_data_fname, 'rb') # XXX keeps file open as long as rev exists
+        return rev._fs_data_file.tell()
+
 
 # Specialized Items/Revisions
 

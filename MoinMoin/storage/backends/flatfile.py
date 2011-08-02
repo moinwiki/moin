@@ -178,3 +178,7 @@ class FlatFileBackend(Backend):
     def _seek_revision_data(self, rev, position, mode):
         rev._data.seek(position, mode)
 
+    def _tell_revision_data(self, rev):
+        return rev._data.tell()
+
+

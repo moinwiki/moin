@@ -92,7 +92,7 @@ class NewRevision(NewRevisionBase):
         def maketemp(kind):
             tmp_dir = self._backend._make_path(kind)
             fd, tmp_path = tempfile.mkstemp('.tmp', '', tmp_dir)
-            tmp_file = os.fdopen(fd, 'wb') # XXX keeps file open as long a rev exists
+            tmp_file = os.fdopen(fd, 'wb+') # XXX keeps file open as long a rev exists
             return tmp_file, tmp_path
 
         self._fs_file_meta, self._fs_path_meta = maketemp('meta')

@@ -850,6 +850,24 @@ class Revision(object, DictMixin):
 
         return [key for key in self._metadata if not key.startswith("__")]
 
+    def read(self, chunksize=-1):
+        """
+        @see: Backend._read_revision_data.__doc__
+        """
+        return self._backend._read_revision_data(self, chunksize)
+
+    def seek(self, position, mode=0):
+        """
+        @see: StringIO.StringIO().seek.__doc__
+        """
+        self._backend._seek_revision_data(self, position, mode)
+
+    def tell(self):
+        """
+        @see: StringIO.StringIO().tell.__doc__
+        """
+        return self._backend._tell_revision_data(self)
+
 
 class StoredRevision(Revision):
     """
@@ -877,24 +895,6 @@ class StoredRevision(Revision):
         Revision metadata cannot be altered, thus, we raise an Exception.
         """
         raise AttributeError("Metadata of already existing revisions may not be altered.")
-
-    def read(self, chunksize=-1):
-        """
-        @see: Backend._read_revision_data.__doc__
-        """
-        return self._backend._read_revision_data(self, chunksize)
-
-    def seek(self, position, mode=0):
-        """
-        @see: StringIO.StringIO().seek.__doc__
-        """
-        self._backend._seek_revision_data(self, position, mode)
-
-    def tell(self):
-        """
-        @see: StringIO.StringIO().tell.__doc__
-        """
-        return self._backend._tell_revision_data(self)
 
     def destroy(self):
         """
