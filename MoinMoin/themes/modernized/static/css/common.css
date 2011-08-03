@@ -176,8 +176,9 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .searchresults dd,
 .searchresults p { font-size: 0.85em; }
 .searchresults td { border-width: 0; }
-.searchresults p.info { margin-left: 10%; }
+.searchresults p.info { margin-left: 2%; }
 .searchresults .searchhitinfobar { color: #008000; margin-left: 15px; margin-top: 0; }
+.searchresults .foundedtext { margin-left: 15px; margin-top: 0; }
 p.searchstats { font-size: 0.8em; text-align: right; width: 100%; background-color: #E6EAF0;
             border-top: 1px solid #9088DC; padding: 2px; }
 p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2px; }

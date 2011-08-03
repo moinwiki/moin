@@ -140,7 +140,7 @@ def _search(search_form):
     index_object = WhooshIndex()
     latest_index = index_object.latest_revisions_index
     with latest_index.searcher() as searcher:
-        qp = QueryParser("name", schema=latest_index.schema) # XXX: we don't have content indexing for now
+        qp = QueryParser("content", schema=latest_index.schema) # XXX: we don't have content indexing for now
                                                              # so searcher will use headings for that
         q = qp.parse(query)
         results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))

@@ -36,6 +36,11 @@
                 <p class="info searchhitinfobar">{{ _("Revision: %(rev_no)d Last Change: %(mtime)s", rev_no=result['rev_no'], mtime=result['mtime']|datetimeformat) }}</p>
                 </td>
             </tr>
+            <tr>
+                <td>
+                <p class="info foundedtext">{{ result.highlights('content')|safe }}</p>  
+                </td>
+            </tr>
             {% endfor %}
         </table>
         </div>
