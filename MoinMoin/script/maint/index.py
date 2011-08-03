@@ -67,7 +67,7 @@ class IndexOperations(Command):
                                 metadata = backend_to_index(revision, rev_no, all_rev_field_names, interwikiname)
                                 all_rev_writer.add_document(**metadata)
                         # revision is now the latest revision of this item
-                        if "latest_revisions_index" in indexnames:
+                        if "latest_revisions_index" in indexnames and "rev_no" in locals():
                             revision = item.get_revision(rev_no)
                             metadata = backend_to_index(revision, rev_no, latest_rev_field_names, interwikiname)
                             latest_rev_writer.add_document(**metadata)
@@ -82,6 +82,8 @@ class IndexOperations(Command):
             delete_documents = []
             latest_documents = []
             for item in backend.iter_items_noindex():
+                if not item.list_revisions(): # If item hasn't revisions, skipping it
+                    continue
                 name = item.get_revision(-1)[NAME]
                 index_rev_list = item_index_revs(all_rev_searcher, name)
                 backend_rev_list = item.list_revisions()
@@ -182,6 +184,7 @@ class IndexOperations(Command):
             """
             Return list of found documents for given name using index searcher
             """
+
             revs_found = searcher.documents(name_exact=name, wikiname=interwikiname)
             return [rev["rev_no"] for rev in revs_found]
 
@@ -199,7 +202,7 @@ class IndexOperations(Command):
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
         index_object = WhooshIndex(index_dir=app.cfg.index_dir_tmp)
-        interwikiname = app.cfg.interwikiname
+        interwikiname = app.cfg.interwikiname or u''
         if os.path.samefile(app.cfg.index_dir_tmp, app.cfg.index_dir):
             raise FatalError(u"app.cfg.index_dir and app.cfg.tmp_index_dir are equal")
 
