@@ -1,5 +1,9 @@
 {% extends theme("show.html") %}
 {% import "forms.html" as forms %}
+{% block head_scripts %}
+{{ super() }}
+    <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
+{% endblock %}
 
 {% block content %}
     {% if index %}
@@ -35,6 +39,15 @@
     {% else %}
         <h1>{{ _("Global Index") }}</h1>
     {% endif %}
+    <div class="moin-select-actions">
+        <div>
+            <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">&nbsp;</span>
+            <span class="show-action">&nbsp;</span> 
+        </div>
+        <ul>
+            <li>{{ _("Download") }}</li>
+        </ul>
+    </div>
     <div class='moin-clr'></div>
     <div id="moin-new-index" class="moin-item-index">
         <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
@@ -62,6 +75,7 @@
         {% set maxchars = 20 %}
         {% for fullname, relname, contenttype, hassubitem in index %}
             <div>
+                <span class="moin-select-item">&nbsp;</span>
                 <a href="{{ url_for('.show_item', item_name=fullname) }}" 
                    class="{{ contenttype|contenttype_to_class }}"
                    title="{{ relname }}">

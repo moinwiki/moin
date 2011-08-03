@@ -241,14 +241,30 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-clr { clear: both; }
 
 /* item index page */
+#moin-content h1 { display: inline; }
+.moin-select-actions { position: relative; margin: 1em 0; padding: 0; background: #FFFFFF; width: 4em; z-index: 2; }
+.moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
+.action-visible div { background: #4477FF; }
+.moin-select-actions .show-action { cursor: pointer; }
+.moin-select-actions .show-action:before { content: url("../img/moin-movedown.png"); }
+.allitem-selected:before { content: url("../img/moin-checkbox-on.png"); }
+.allitem-toselect:before { content: url("../img/moin-checkbox-off.png"); }
+.moin-select-actions ul { position: absolute; margin: 0; left: 0; top: 2em; padding: 0; display: none; background: #fff; border: 1px solid #E5E5E5; z-index: 1; }
+.moin-select-actions ul li { list-style-type: none; padding: 0.5em; width: 10em; cursor: pointer; }
+.moin-select-actions ul li:hover { background-color: #4477FF; color: #FFFFFF; }
 #moin-initials { width: 90%; margin: 5px auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 0; padding: 4px 5px; }
 #moin-initials a:hover,
 #moin-initials a.selected { background: #4477FF; border-radius: 5px; color: #FFFFFF; text-decoration: none; }
 .moin-item-index { width: 100%; margin-left: 0.5em; }
 .moin-item-index div { float: left; width: 15em; }
+.moin-item-index div .moin-select-item { visibility: hidden; }
+.moin-item-index div .moin-select-item:before { content: url("../img/moin-checkbox-off.png"); }
+.moin-item-index div.selected-item .moin-select-item,
+.moin-item-index div:hover .moin-select-item { visibility: visible; }
+.moin-item-index div.selected-item .moin-select-item:before { content: url("../img/moin-checkbox-on.png"); }
 .moin-select-contenttypes { float: right; position: relative; width: 14em; }
-.moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #342D7E; width: 14em; }
+.moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; margin: 0; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #342D7E; width: 14em; }
 .moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.2em 1.3em 0.2em 0.2em; background: transparent url("../img/moin-moveup.png") no-repeat center right; } 
 .moin-contenttypes-wrapper ul { display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; } 
 .moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em 0.2em; width: 13.6em; }
