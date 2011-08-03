@@ -131,7 +131,7 @@ class SearchForm(Form):
 
 def _search(search_form):
     from MoinMoin.search.indexing import WhooshIndex
-    from whoosh.qparser import QueryParser
+    from whoosh.qparser import QueryParser, MultifieldParser
     from MoinMoin.search.analyzers import item_name_analyzer
     from whoosh import highlight
     query = search_form['q'].value
@@ -140,9 +140,8 @@ def _search(search_form):
     index_object = WhooshIndex()
     latest_index = index_object.latest_revisions_index
     with latest_index.searcher() as searcher:
-        qp = QueryParser("content", schema=latest_index.schema) # XXX: we don't have content indexing for now
-                                                             # so searcher will use headings for that
-        q = qp.parse(query)
+        mparser = MultifieldParser(["name", "content"], schema=latest_index.schema)
+        q = mparser.parse(query)
         results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
         return render_template('search_results.html',
                                results=results,
