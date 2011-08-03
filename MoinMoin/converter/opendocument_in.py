@@ -8,12 +8,14 @@ ODF documents can be created with OpenOffice.org, Libre Office and other softwar
 """
 
 
-import re, zipfile
+from __future__ import absolute_import, division
+
+import zipfile
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-rx_stripxml = re.compile("<[^>]*?>", re.DOTALL|re.MULTILINE)
+from .xml_in import strip_xml
 
 
 class OpenDocumentIndexingConverter(object):
@@ -25,8 +27,9 @@ class OpenDocumentIndexingConverter(object):
         zf = zipfile.ZipFile(rev, "r")  # rev is file-like
         try:
             data = zf.read("content.xml")
-            data = ' '.join(rx_stripxml.sub(" ", data).split())
-            return data.decode('utf-8')
+            text = data.decode('utf-8')
+            text = strip_xml(text)
+            return text
         finally:
             zf.close()
 
@@ -52,4 +55,19 @@ application/vnd.oasis.opendocument.text-web""".split()
 
 for t in opendocument_types:
     default_registry.register(OpenDocumentIndexingConverter._factory, Type(t), type_text_plain)
+
+
+# use same converter for the old *.sx? (pre-opendocument) openoffice documents:
+OpenOfficeIndexingConverter = OpenDocumentIndexingConverter
+
+openoffice_types = """\
+application/vnd.sun.xml.calc
+application/vnd.sun.xml.draw
+application/vnd.sun.xml.impress
+application/vnd.sun.xml.math
+application/vnd.sun.xml.writer
+application/vnd.sun.xml.writer.global""".split()
+
+for t in openoffice_types:
+    default_registry.register(OpenOfficeIndexingConverter._factory, Type(t), type_text_plain)
 
