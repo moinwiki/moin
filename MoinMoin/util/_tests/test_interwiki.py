@@ -20,7 +20,7 @@ from MoinMoin._tests import wikiconfig
 
 class TestInterWiki(object):
     class Config(wikiconfig.Config):
-        interwiki_map = dict(MoinMoin='http://moinmo.in/', )
+        interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
 
     def testSplitWiki(self):
         tests = [('SomePage', ('Self', 'SomePage')),
@@ -45,7 +45,7 @@ class TestInterWiki(object):
         result = resolve_interwiki('MoinMoin', 'SomePage')
         assert result == ('MoinMoin', u'http://moinmo.in/', 'SomePage', False)
         result = resolve_interwiki('Self', 'SomePage')
-        assert result == ('Self', u'/', 'SomePage', False)
+        assert result == ('Self', u'http://localhost:8080/', 'SomePage', False)
 
 
 class TestInterWikiMapBackend(object):

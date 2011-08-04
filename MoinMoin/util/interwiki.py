@@ -11,8 +11,6 @@ from __future__ import absolute_import, division
 from werkzeug import url_quote
 
 from flask import current_app as app
-from flask import request
-from flask import g as flaskg
 
 import os.path
 
@@ -41,19 +39,24 @@ def split_interwiki(wikiurl):
 def resolve_interwiki(wikiname, pagename):
     """ Resolve an interwiki reference (wikiname:pagename).
 
+    Note: it is required that the interwiki_map contains entries for our
+    own wikiname and also for 'Self' (same url):
+
+    interwiki_map = {
+        'Self': 'http://ourserver/ourpath/',
+        'OurInterWikiName': 'http://ourserver/ourpath/',
+        # other entries ...
+    }
+
     :param wikiname: interwiki wiki name
     :param pagename: interwiki page name
     :rtype: tuple
     :returns: (wikitag, wikiurl, wikitail, err)
     """
-    this_wiki_url = request.script_root + '/'
-    if wikiname in ('Self', app.cfg.interwikiname):
-        return (wikiname, this_wiki_url, pagename, False)
-    else:
-        try:
-            return (wikiname, app.cfg.interwiki_map[wikiname], pagename, False)
-        except KeyError:
-            return (wikiname, this_wiki_url, "InterWiki", True)
+    try:
+        return (wikiname, app.cfg.interwiki_map[wikiname], pagename, False)
+    except KeyError:
+        return (wikiname, app.cfg.interwiki_map['Self'], "InterWiki", True)
 
 
 def join_wiki(wikiurl, wikitail):

@@ -15,7 +15,7 @@ from MoinMoin.themes import ThemeSupport
 
 class TestNaviBar(object):
     class Config(wikiconfig.Config):
-        interwiki_map = dict(MoinMoin='http://moinmo.in/', )
+        interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
 
     def setup_method(self, method):
         self.theme = ThemeSupport(app.cfg)
