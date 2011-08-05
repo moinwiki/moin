@@ -139,7 +139,10 @@ class ConverterExternOutput(ConverterBase):
             revno = int(revno)
         do_to_endpoint = dict(
             show='frontend.show_item',
+            get='frontend.get_item',
+            download='frontend.download_item',
             modify='frontend.modify_item',
+            # TODO: if we just always used same function name as do=name, we did not need this dict
             # ...
         )
         endpoint = do_to_endpoint[do or 'show']
