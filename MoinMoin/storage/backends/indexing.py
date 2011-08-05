@@ -30,6 +30,7 @@ from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
 from MoinMoin.search.revision_converter import backend_to_index
+from MoinMoin.converter import convert_to_indexable
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -388,28 +389,29 @@ class ItemIndex(object):
         self.cache_in_item(item_id, rev_id, metas)
         return rev_id
 
-    def add_rev_whoosh(self, uuid, revno, metas):
+    def add_rev_whoosh(self, uuid, revno, rev):
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            all_found_document = all_revs_searcher.document(uuid=metas[UUID],
+            all_found_document = all_revs_searcher.document(uuid=rev[UUID],
                                                             rev_no=revno,
                                                             wikiname=self.wikiname
                                                            )
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            latest_found_document = latest_revs_searcher.document(uuid=metas[UUID],
+            latest_found_document = latest_revs_searcher.document(uuid=rev[UUID],
                                                                   wikiname=self.wikiname
                                                                  )
-        logging.debug("To add: uuid %s revno %s" % (metas[UUID], revno))
+        logging.debug("Processing: name %s revno %s" % (rev[NAME], revno))
+        rev_content = convert_to_indexable(rev)
         if not all_found_document:
             field_names = self.index_object.all_revisions_index.schema.names()
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                converted_rev = backend_to_index(metas, revno, field_names, self.wikiname)
-                logging.debug("ALL: add %s %s", converted_rev[UUID], converted_rev["rev_no"])
+                converted_rev = backend_to_index(rev, revno, field_names, rev_content, self.wikiname)
+                logging.debug("All revisions: adding %s %s", converted_rev[NAME], converted_rev["rev_no"])
                 async_writer.add_document(**converted_rev)
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
             field_names = self.index_object.latest_revisions_index.schema.names()
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                converted_rev = backend_to_index(metas, revno, field_names, self.wikiname)
-                logging.debug("LATEST: Updating %s %s from last", converted_rev[UUID], converted_rev["rev_no"])
+                converted_rev = backend_to_index(rev, revno, field_names, rev_content, self.wikiname)
+                logging.debug("Latest revisions: updating %s %s", converted_rev[NAME], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
 
     def remove_rev(self, uuid, revno):

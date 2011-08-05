@@ -12,9 +12,8 @@
 import datetime
 
 from MoinMoin.config import MTIME, NAME
-from MoinMoin.converter import convert_to_indexable
 
-def backend_to_index(backend_rev, rev_no, schema_fields, wikiname=u''):
+def backend_to_index(backend_rev, rev_no, schema_fields, content, wikiname=u''):
     """
     Convert fields from backend format to whoosh schema
 
@@ -31,5 +30,5 @@ def backend_to_index(backend_rev, rev_no, schema_fields, wikiname=u''):
     doc["name_exact"] = backend_rev[NAME]
     doc["rev_no"] = rev_no
     doc["wikiname"] = wikiname
-    doc["content"] = convert_to_indexable(backend_rev)
+    doc["content"] = content
     return doc
