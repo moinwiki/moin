@@ -146,7 +146,7 @@ def _search(search_form):
         return render_template('search_results.html',
                                results=results,
                                query=query,
-                               search_form=search_form
+                               medium_search_form=search_form
                               )
 
 
