@@ -17,7 +17,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import config, wikiutil
-from MoinMoin.util.interwiki import resolve_interwiki
+from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
@@ -103,8 +103,7 @@ class ConverterFormat19(Converter):
             text = freelink_email
 
         else:
-            wikitag_bad = resolve_interwiki(freelink_interwiki_ref, freelink_interwiki_page)[3]
-            if wikitag_bad:
+            if not is_known_wiki(freelink_interwiki_ref):
                 stack.top_append(freelink)
                 return
 

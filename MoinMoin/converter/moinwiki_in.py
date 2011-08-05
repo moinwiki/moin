@@ -21,7 +21,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
-from MoinMoin.util.interwiki import resolve_interwiki
+from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.i18n import _
 
 from ._args import Arguments
@@ -786,8 +786,7 @@ class Converter(ConverterMacro):
             link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
         if link_interwiki_site:
-            err = resolve_interwiki(link_interwiki_site, link_interwiki_item)[3]
-            if not err:
+            if is_known_wiki(link_interwiki_site):
                 link = Iri(scheme='wiki',
                         authority=link_interwiki_site,
                         path='/' + link_interwiki_item)
