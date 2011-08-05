@@ -180,21 +180,13 @@ class ThemeSupport(object):
         if target.startswith("wiki:"):
             target = target[5:]
 
-        # try handling interwiki links
         wiki_name, item_name = split_interwiki(target)
+        if wiki_name == 'Self':
+            wiki_name = ''
         href = url_for_item(item_name, wiki_name=wiki_name)
-        if not is_local_wiki(wiki_name):
-            if not title:
-                title = item_name
-            return href, title, wiki_name
-
-        # Handle regular pagename like "FrontPage"
-        item_name = wikiutil.normalize_pagename(item_name, self.cfg)
-
         if not title:
             title = item_name
-        href = url_for('frontend.show_item', item_name=item_name)
-        return href, title, wiki_local
+        return href, title, wiki_name
 
     def navibar(self, item_name):
         """
@@ -387,6 +379,7 @@ def setup_jinja_env():
                             'clock': flaskg.clock,
                             'cfg': app.cfg,
                             'item_name': 'handlers need to give it',
+                            'url_for_item': url_for_item,
                             'get_editor_info': lambda rev: get_editor_info(rev),
                             'gen': make_generator(),
                             })
