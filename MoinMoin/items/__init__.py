@@ -61,6 +61,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
+from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
 from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
@@ -709,7 +710,7 @@ There is no help, you're doomed!
                 except AccessDeniedError:
                     abort(403)
                 else:
-                    return redirect(url_for('frontend.show_item', item_name=self.name))
+                    return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_meta=str(ROWS_META), cols=str(COLS),
@@ -1170,7 +1171,7 @@ class Text(Binary):
                 except AccessDeniedError:
                     abort(403)
                 else:
-                    return redirect(url_for('frontend.show_item', item_name=self.name))
+                    return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),

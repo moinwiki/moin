@@ -41,6 +41,7 @@ from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, wikiutil
 from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
 from MoinMoin.util import crypto
+from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
 from MoinMoin.signalling import item_displayed, item_modified
@@ -59,8 +60,7 @@ def dispatch():
 @frontend.route('/')
 def show_root():
     item_name = app.cfg.item_root
-    location = url_for('.show_item', item_name=item_name)
-    return redirect(location)
+    return redirect(url_for_item(item_name))
 
 @frontend.route('/robots.txt')
 def robots():
@@ -178,7 +178,7 @@ def show_item(item_name, rev):
 
 @frontend.route('/+show/<itemname:item_name>')
 def redirect_show_item(item_name):
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 @frontend.route('/+dom/<int:rev>/<itemname:item_name>')
@@ -352,7 +352,7 @@ def revert_item(item_name, rev):
         TextCha(form).amend_form()
         if form.validate():
             item.revert()
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
@@ -377,7 +377,7 @@ def copy_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.copy(target, comment)
-            return redirect(url_for('.show_item', item_name=target))
+            return redirect(url_for_item(target))
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -401,7 +401,7 @@ def rename_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.rename(target, comment)
-            return redirect(url_for('.show_item', item_name=target))
+            return redirect(url_for_item(target))
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -423,7 +423,7 @@ def delete_item(item_name):
         if form.validate():
             comment = form['comment'].value
             item.delete(comment)
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
@@ -453,7 +453,7 @@ def destroy_item(item_name, rev):
         if form.validate():
             comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
@@ -480,8 +480,8 @@ def jfu_server(item_name):
             abort(403)
         files = []
         for full_name, rel_name, mimetype in item.flat_index():
-            url = url_for('.show_item', item_name=full_name)
-            url_download = url_for('.download_item', item_name=full_name)
+            url = url_for_item(full_name)
+            url_download = url_for_item(full_name, endpoint='frontend.download_item')
             files.append(dict(name=rel_name, url=url, url_download=url_download, size=0))
         return jsonify(files=files)
     if request.method == 'POST':
@@ -495,8 +495,8 @@ def jfu_server(item_name):
                                item_name=item_name)
             return jsonify(name=subitem_name,
                            size=size,
-                           url=url_for('.show_item', item_name=item_name, rev=revno),
-                           url_download=url_for('.download_item', item_name=item_name, rev=revno),
+                           url=url_for_item(item_name, rev=revno),
+                           url_download=url_for_item(item_name, rev=revno, endpoint='frontend.download_item'),
                           )
         except AccessDeniedError:
             abort(403)
@@ -689,7 +689,7 @@ def quicklink_item(item_name):
             msg = _('Your quicklink to this page could not be removed.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 @frontend.route('/+subscribe/<itemname:item_name>')
@@ -713,7 +713,7 @@ def subscribe_item(item_name):
             msg = _('You could not get subscribed to this item.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 class ValidRegistration(Validator):
