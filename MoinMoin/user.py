@@ -30,7 +30,7 @@ from flask import session, request, url_for
 
 from MoinMoin import config, wikiutil
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.interwiki import getInterwikiHome
+from MoinMoin.util.interwiki import getInterwikiHome, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
                                  generate_token, valid_token
 
@@ -731,7 +731,7 @@ class User(object):
             it doesn't matter whether it already exists or not.
         """
         wikiname, pagename = getInterwikiHome(self.name)
-        if wikiname == 'Self':
+        if is_local_wiki(wikiname):
             markup = '[[%s]]' % pagename
         else:
             markup = '[[%s:%s]]' % (wikiname, pagename)
