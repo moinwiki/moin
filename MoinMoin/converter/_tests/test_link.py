@@ -17,8 +17,7 @@ from MoinMoin.util.iri import Iri
 
 class TestConverterExternOutput(object):
     def setup_class(self):
-        url_root = Iri('./')
-        self.conv = ConverterExternOutput(url_root=url_root)
+        self.conv = ConverterExternOutput()
 
     def test_wiki(self):
         assert 'MoinMoin' in app.cfg.interwiki_map
@@ -83,8 +82,7 @@ class TestConverterExternOutput(object):
 
 class TestConverterRefs(object):
     def setup_class(self):
-        root = url_root=Iri('./')
-        self.converter = ConverterItemRefs(url_root=root)
+        self.converter = ConverterItemRefs()
 
     def testItems(self):
         tree_xml = u"""

@@ -264,8 +264,7 @@ class Item(object):
         from MoinMoin.converter import default_registry as reg
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
-        link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
-                url_root=Iri(request.url_root))
+        link_conv = reg.get(type_moin_document, type_moin_document, links='extern')
         flaskg.clock.start('conv_include')
         doc = include_conv(doc)
         flaskg.clock.stop('conv_include')
@@ -1204,8 +1203,7 @@ class MarkupItem(Text):
         from MoinMoin.converter import default_registry as reg
 
         input_conv = reg.get(Type(self.contenttype), type_moin_document)
-        item_conv = reg.get(type_moin_document, type_moin_document,
-                items='refs', url_root=Iri(request.url_root))
+        item_conv = reg.get(type_moin_document, type_moin_document, items='refs')
 
         i = Iri(scheme='wiki', authority='', path='/' + self.name)
 

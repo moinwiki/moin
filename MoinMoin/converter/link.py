@@ -36,9 +36,6 @@ class ConverterBase(object):
     def handle_wikilocal_transclusions(self, elem, link, page_name):
         pass
 
-    def __init__(self, url_root=None):
-        self.url_root = url_root
-
     def __call__(self, *args, **kw):
         """
         Calls the self.traverse_tree method
@@ -102,9 +99,9 @@ class ConverterBase(object):
 
 class ConverterExternOutput(ConverterBase):
     @classmethod
-    def _factory(cls, input, output, links=None, url_root=None, **kw):
+    def _factory(cls, input, output, links=None, **kw):
         if links == 'extern':
-            return cls(url_root=url_root)
+            return cls()
 
     def _get_do_rev(self, query):
         """
@@ -183,9 +180,9 @@ class ConverterItemRefs(ConverterBase):
     determine all links and transclusions to other wiki items in this document
     """
     @classmethod
-    def _factory(cls, input, output, items=None, url_root=None, **kw):
+    def _factory(cls, input, output, items=None, **kw):
         if items == 'refs':
-            return cls(url_root=url_root)
+            return cls()
 
     def __init__(self, **kw):
         super(ConverterItemRefs, self).__init__(**kw)
