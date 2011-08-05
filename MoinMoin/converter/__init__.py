@@ -88,6 +88,11 @@ logging = log.getLogger(__name__)
 def convert_to_indexable(rev):
     """
     convert a revision to an indexable document
+
+    :param rev: item revision - please make sure that the content file is
+                ready to read all indexable content from it. if you have just
+                written that content or already read from it, you need to call
+                rev.seek(0) before calling convert_to_indexable(rev).
     """
     try:
         # TODO use different converter mode?
