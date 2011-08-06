@@ -252,6 +252,9 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-select-actions ul { position: absolute; margin: 0; left: 0; top: 2em; padding: 0; display: none; background: #fff; border: 1px solid #E5E5E5; z-index: 1; }
 .moin-select-actions ul li { list-style-type: none; padding: 0.5em; width: 10em; cursor: pointer; }
 .moin-select-actions ul li:hover { background-color: #4477FF; color: #FFFFFF; }
+.moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
+.moin-index-message span { padding: 4px; background-color: #FFFF00; color: #111111; }
+.moin-download-link { display: none; }
 #moin-initials { width: 90%; margin: 5px auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 0; padding: 4px 5px; }
 #moin-initials a:hover,
