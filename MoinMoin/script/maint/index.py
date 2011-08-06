@@ -161,21 +161,31 @@ class IndexOperations(Command):
             """
             Print documents in given index to stdout
             """
+            from whoosh.index import EmptyIndexError
+
             for indexname, schema in indexnames_schemas:
                 try:
                     if "all" in indexname:
                         all_index = open_dir(app.cfg.index_dir, indexname="all_revisions_index")
-                        print "Revisions in all_revisions_index:"
+                        print "*** Revisions in all_revisions_index:"
                         with all_index.searcher() as searcher:
                             for rev in searcher.all_stored_fields():
-                                print repr(rev)
+                                name = rev.pop("name", u"")
+                                content = rev.pop("content", u"")
+                                for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
+                                    print "%s: %s" % (field, repr(value)[:70])
+                                print "\n"
                         all_index.close()
                     if "latest" in indexname:
                         latest_index = open_dir(app.cfg.index_dir, indexname="latest_revisions_index")
-                        print "Revisions in latest_revision_index:"
+                        print "*** Revisions in latest_revision_index:"
                         with latest_index.searcher() as searcher:
                             for rev in searcher.all_stored_fields():
-                                print repr(rev)
+                                name = rev.pop("name", u"")
+                                content = rev.pop("content", u"")
+                                for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
+                                    print "%s: %s" % (field, repr(value)[:70])
+                                print "\n"
                         latest_index.close()
                 except (IOError, OSError, EmptyIndexError) as err:
                     raise FatalError("%s [Can not open %s index" % str(err), indexname)
