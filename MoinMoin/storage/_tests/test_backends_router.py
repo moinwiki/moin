@@ -29,7 +29,7 @@ class TestRouterBackend(BackendTest):
         self.child = MemoryBackend()
         self.other = MemoryBackend()
         self.mapping = [('child', self.child), ('other/', self.other), (self.ns_user_profile, self.users), ('/', self.root)]
-        return RouterBackend(self.mapping, index_uri='sqlite://')
+        return RouterBackend(self.mapping)
 
     def kill_backend(self):
         pass

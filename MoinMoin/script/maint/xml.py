@@ -64,11 +64,9 @@ class XML(Command):
         if moin19data:
             # this is for backend migration scenario from moin 1.9
             from MoinMoin.storage.backends import create_simple_mapping, router
-            namespace_mapping, router_index_uri = \
-                create_simple_mapping(backend_uri='fs19:%s' % moin19data)
+            namespace_mapping = create_simple_mapping(backend_uri='fs19:%s' % moin19data)
             storage = router.RouterBackend(
-                    [(ns, be) for ns, be, acls in namespace_mapping],
-                    index_uri=router_index_uri)
+                    [(ns, be) for ns, be, acls in namespace_mapping], )
         else:
             # this deals with the normal storage
             storage = app.unprotected_storage

@@ -35,7 +35,7 @@ class Config(DefaultConfig):
     # 'fs:' indicates that you want to use the filesystem backend. You can also use
     # 'hg:' instead to indicate that you want to use the mercurial backend.
     # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
-    namespace_mapping, router_index_uri = create_simple_mapping(
+    namespace_mapping = create_simple_mapping(
                             backend_uri='fs2:%s/%%(nsname)s' % data_dir,
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',

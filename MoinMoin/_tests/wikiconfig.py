@@ -19,7 +19,8 @@ class Config(DefaultConfig):
     _here = abspath(dirname(__file__))
     _root = abspath(join(_here, '..', '..'))
     data_dir = join(_here, 'wiki', 'data') # needed for plugins package TODO
-    index_dir = os.path.join(data_dir, "index")
+    index_dir = join(_here, 'wiki', 'index')
+    index_dir_tmp = join(_here, 'wiki', 'index_tmp')
     _test_items_xml = join(_here, 'testitems.xml')
     content_acl = None
     item_root = 'FrontPage'
