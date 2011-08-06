@@ -179,8 +179,8 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .searchresults p.info { margin-left: 2%; }
 .searchresults .searchhitinfobar { color: #008000; margin-left: 15px; margin-top: 0; }
 .searchresults .foundtext { margin-left: 15px; margin-top: 0; }
-p.searchstats { font-size: 0.8em; text-align: right; width: 100%; background-color: #E6EAF0;
-            border-top: 1px solid #9088DC; padding: 2px; }
+p.searchstats { font-size: 0.8em; text-align: right; width: 100%;
+             padding: 2px; margin-top: -15px; }
 p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2px; }
 .searchpages { margin-left: auto; margin-right: auto; }
 .searchpages tr,
@@ -476,8 +476,6 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-extended searchform */
 #moin-long-searchform { padding: 0; font-size: 0.82em; text-align: left; }
-#moin-long-searchform input { font-size: 100%; vertical-align: middle;
-            border: 1px solid #A4B9DF; }
 #moin-long-searchform div { margin: 0; }
 #moin-search-query { width: 50%; }
 

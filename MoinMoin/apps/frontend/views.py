@@ -129,7 +129,7 @@ class SearchForm(Form):
     validators = [ValidSearch()]
 
 
-def _search(search_form):
+def _search(search_form, item_name):
     from MoinMoin.search.indexing import WhooshIndex
     from whoosh.qparser import QueryParser, MultifieldParser
     from MoinMoin.search.analyzers import item_name_analyzer
@@ -146,7 +146,8 @@ def _search(search_form):
         return render_template('search_results.html',
                                results=results,
                                query=query,
-                               medium_search_form=search_form
+                               medium_search_form=search_form,
+                               item_name=item_name
                               )
 
 
@@ -156,7 +157,7 @@ def show_item(item_name, rev):
     # first check whether we have a valid search query:
     search_form = SearchForm.from_flat(request.values)
     if search_form.validate():
-        return _search(search_form)
+        return _search(search_form, item_name)
     search_form['submit'].set_default() # XXX from_flat() kills all values
 
     flaskg.user.addTrail(item_name)
