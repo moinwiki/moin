@@ -287,11 +287,12 @@ class ItemIndex(object):
         if result:
             return result[0]
 
-    def get_item_id_whoosh(self, uuid):
-        with self.index_object.latest_revisions_index.searcher() as searcher:
-            result = searcher.document(uuid=uuid, wikiname=self.wikiname)
-        if result:
-            return result
+    #not used yet
+    #def get_item_id_whoosh(self, uuid):
+    #    with self.index_object.latest_revisions_index.searcher() as searcher:
+    #        result = searcher.document(uuid=uuid, wikiname=self.wikiname)
+    #    if result:
+    #        return result
 
     def update_item(self, metas):
         """
@@ -448,18 +449,6 @@ class ItemIndex(object):
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 logging.debug("REMOVE FROM LATEST: %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
-
-    def get_uuid_revno_name(self, rev_id):
-        """
-        get item uuid and revision number by rev_id
-        """
-        item_table = self.item_table
-        rev_table = self.rev_table
-        result = select([item_table.c.uuid, rev_table.c.revno, item_table.c.name],
-                        and_(rev_table.c.id == rev_id,
-                             item_table.c.id == rev_table.c.item_id)
-                       ).execute().fetchone()
-        return result
 
     def history_whoosh(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
         if mountpoint:
