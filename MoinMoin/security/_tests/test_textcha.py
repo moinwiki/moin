@@ -1,18 +1,19 @@
-from MoinMoin.security.textcha import TextCha
+# Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+Test for security.textcha
+"""
+
 from flask import current_app as app
 from flask import g as flaskg
 
+from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
 import pytest
 
 class TestTextCha(object):
-
-    class Question():
-        def __init__(self):
-            self.value = None
-
-    def test_textcha(self):
-        question = self.Question()
-        test_form = {'textcha_question':question}
+    """ Test: class TextCha """ 
+    def setup_method(self, method):
         cfg = app.cfg
         cfg.textchas = {'test_user_locale': 
                             {'Good Question': 'Good Answer',
@@ -20,6 +21,17 @@ class TestTextCha(object):
                        }
         cfg.secrets['security/textcha'] = "test_secret"
         flaskg.user.locale = 'test_user_locale'
+
+    def teardown_method(self, method):
+        cfg = app.cfg
+        cfg.textchas = None
+        cfg.secrets.pop('security/textcha')    
+        flaskg.user.locale = None
+
+    def test_textcha(self):
+        """ test for textchas and its attributes """
+        test_form = TextChaizedForm()
+        test_form['textcha_question'].value = None
 
         textcha_obj = TextCha(test_form)
 
@@ -46,7 +58,7 @@ class TestTextCha(object):
 
         # when question is specified earlier
         test_signature = 'fb5a8cc203b07b66637aafa7b0647da17e249e9c'
-        question.value = 'What is the question? 9876543210' + test_signature
+        test_form['textcha_question'].value = 'What is the question? 9876543210' + test_signature
         textcha_obj = TextCha(test_form)
         # test for the question
         test_question = textcha_obj.question
@@ -57,4 +69,47 @@ class TestTextCha(object):
         assert test_answer == 'Test_Answer'
         assert test_signature == textcha_obj.signature
         assert textcha_obj.timestamp == 9876543210
+
+    def test_amend_form(self):
+        # textchas are disabled for 'some_locale'
+        flaskg.user.locale = 'some_locale'
+        test_form = TextChaizedForm()
+        test_form['textcha_question'].value = None
+        textcha_obj = TextCha(test_form)
+        # before calling amend_form
+        assert not textcha_obj.form['textcha_question'].optional
+        assert not textcha_obj.form['textcha'].optional
+        # on calling amend_form
+        textcha_obj.amend_form()
+        assert textcha_obj.form['textcha_question'].optional
+        assert textcha_obj.form['textcha'].optional
+
+class TestTextChaValid(object):
+    """ Test: class TextChaValid """
+    def setup_method(self, method):
+        cfg = app.cfg
+        cfg.textchas = {'test_user_locale': 
+                            {'Good Question': 'Good Answer'}
+                       }
+        cfg.secrets['security/textcha'] = "test_secret"
+        flaskg.user.locale = 'test_user_locale'
+
+    def teardown_method(self, method):
+        cfg = app.cfg
+        cfg.textchas = None
+        cfg.secrets.pop('security/textcha')    
+        flaskg.user.locale = None
+
+    class Element:
+        def __init__(self):
+            self.parent = None
+            self.value = 'Good Answer'
+
+    def test_validate(self):
+        test_form = TextChaizedForm()
+        textchavalid_obj = TextChaValid()
+        test_element = self.Element()
+        test_element.parent = test_form
+        result = textchavalid_obj.validate(test_element, 'test_state')
+        assert result
 
