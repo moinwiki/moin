@@ -57,9 +57,6 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
-    def index_rebuild(self):
-        return self._index.index_rebuild(self)
-
     def history(self, reverse=True, item_name=u'', start=None, end=None):
         """
         History implementation using the index.
@@ -215,10 +212,6 @@ class ItemIndex(object):
     def close(self):
         self.index_object.all_revisions_index.close()
         self.index_object.latest_revisions_index.close()
-
-    def index_rebuild(self, backend):
-        # do we need a whoosh implementation of this?
-        pass
 
     def update_item(self, metas):
         """
