@@ -208,8 +208,6 @@ class IndexingRevisionMixin(object):
     # TODO maybe use this class later for data indexing also,
     # TODO by intercepting write() to index data written to a revision
 
-from MoinMoin.util.kvstore import KVStoreMeta, KVStore
-
 from sqlalchemy import Table, Column, Integer, String, Unicode, DateTime, PickleType, MetaData, ForeignKey
 from sqlalchemy import create_engine, select
 from sqlalchemy.sql import and_, exists, asc, desc
@@ -227,7 +225,7 @@ class ItemIndex(object):
 
         # for sqlite, lengths are not needed, but for other SQL DBs:
         UUID_LEN = 32
-        VALUE_LEN = KVStoreMeta.VALUE_LEN # we duplicate values from there to our table
+        VALUE_LEN = 4000
 
         # items have a persistent uuid
         self.item_table = Table('item_table', metadata,
@@ -253,12 +251,8 @@ class ItemIndex(object):
             Column('datetime', DateTime, index=True),
         )
 
-        item_kvmeta = KVStoreMeta('item', metadata, Integer)
-        rev_kvmeta = KVStoreMeta('rev', metadata, Integer)
         metadata.create_all()
         self.metadata = metadata
-        self.item_kvstore = KVStore(item_kvmeta)
-        self.rev_kvstore = KVStore(rev_kvmeta)
 
         self.wikiname = cfg.interwikiname or u''
         self.index_object = WhooshIndex(cfg=cfg)
@@ -312,7 +306,6 @@ class ItemIndex(object):
         if item_id is None:
             res = item_table.insert().values(uuid=uuid, name=name).execute()
             item_id = res.inserted_primary_key[0]
-        self.item_kvstore.store_kv(item_id, metas)
         return item_id
 
     def update_item_whoosh(self, metas):
@@ -349,7 +342,6 @@ class ItemIndex(object):
         uuid = metas.get(UUID, '') # item uuid (never changes)
         item_id = self.get_item_id(uuid)
         if item_id is not None:
-            self.item_kvstore.store_kv(item_id, {})
             item_table.delete().where(item_table.c.id == item_id).execute()
 
     def remove_item_whoosh(self, metas):
@@ -383,8 +375,6 @@ class ItemIndex(object):
             dt = datetime.datetime.utcfromtimestamp(metas[MTIME])
             res = rev_table.insert().values(revno=revno, item_id=item_id, datetime=dt).execute()
             rev_id = res.inserted_primary_key[0]
-
-        self.rev_kvstore.store_kv(rev_id, metas)
 
         self.cache_in_item(item_id, rev_id, metas)
         return rev_id
@@ -437,7 +427,6 @@ class ItemIndex(object):
                        ).execute().fetchone()
         if result:
             rev_id = result[0]
-            self.rev_kvstore.store_kv(rev_id, {})
             rev_table.delete().where(rev_table.c.id == rev_id).execute()
 
     def remove_rev_whoosh(self, uuid, revno):
@@ -471,40 +460,6 @@ class ItemIndex(object):
                              item_table.c.id == rev_table.c.item_id)
                        ).execute().fetchone()
         return result
-
-    def history(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
-        """
-        Yield ready-to-use history raw data for this backend.
-        """
-        if mountpoint:
-            mountpoint += '/'
-
-        item_table = self.item_table
-        rev_table = self.rev_table
-
-        selection = [rev_table.c.datetime, item_table.c.name, rev_table.c.revno, rev_table.c.id, ]
-
-        if reverse:
-            order_attr = desc(rev_table.c.datetime)
-        else:
-            order_attr = asc(rev_table.c.datetime)
-
-        if not item_name:
-            # empty item_name = all items
-            condition = item_table.c.id == rev_table.c.item_id
-        else:
-            condition = and_(item_table.c.id == rev_table.c.item_id,
-                             item_table.c.name == item_name)
-
-        query = select(selection, condition).order_by(order_attr)
-        if start is not None:
-            query = query.offset(start)
-            if end is not None:
-                query = query.limit(end-start)
-
-        for rev_datetime, name, revno, rev_id in query.execute().fetchall():
-            rev_metas = self.rev_kvstore.retrieve_kv(rev_id)
-            yield (rev_datetime, mountpoint + name, revno, rev_metas)
 
     def history_whoosh(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
         if mountpoint:
