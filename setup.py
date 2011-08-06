@@ -100,7 +100,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-AnyWikiDraw==0.14.2',
         'XStatic-MathJax==1.1.2',
         'XStatic-svg-edit-moin==2011.07.07.2',
-        'XStatic-multiDownload=20110717.1',
+        'XStatic-multiDownload==20110717.1',
     ],
     # optional features and their list of requirements
     extras_require = {
