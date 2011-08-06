@@ -474,17 +474,6 @@ class ItemIndex(object):
             for doc in sorted(docs, reverse=reverse)[start:end]:
                 yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
 
-    def all_tags(self):
-        item_table = self.item_table
-        result = select([item_table.c.name, item_table.c.tags],
-                        item_table.c.tags != u'||').execute().fetchall()
-        tags_names = {}
-        for name, tags in result:
-            for tag in tags.split(u'|')[1:-1]:
-                tags_names.setdefault(tag, []).append(name)
-        counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
-        return counts_tags_names
-
     def all_tags_whoosh(self):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
             docs = latest_revs_searcher.documents(wikiname=self.wikiname)
@@ -497,13 +486,8 @@ class ItemIndex(object):
             counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
             return counts_tags_names
 
-    def tagged_items(self, tag):
-        item_table = self.item_table
-        result = select([item_table.c.name],
-                        item_table.c.tags.like('%%|%s|%%' % tag)).execute().fetchall()
-        return [row[0] for row in result]
-
     def tagged_items_whoosh(self, tag):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
             docs = latest_revs_searcher.documents(tags=tag, wikiname=self.wikiname)
             return [doc[NAME] for doc in docs]
+
