@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Build indexes
+MoinMoin - Manage whoosh indexes
 """
 
 import os, datetime
@@ -42,12 +42,12 @@ class IndexOperations(Command):
                   build -- Build in index_dir_tmp
                   update -- Update in index_dir
                   clean -- Clean index_dir
-                  move  -- Move index files from index_dir to index_dir_tmp
-                  show -- Show all revision names and numbers for given index
+                  move  -- Move index files from index_dir_tmp to index_dir
+                  show -- Show index contents for the given index.
                  """
                ),
         Option('--procs', '-p', required=False, dest='procs', type=int, default=None,
-            help='Number of processors the writer.'),
+            help='Number of processors the writer will use.'),
         Option('--limitmb', '-l', required=False, dest='limitmb', type=int, default=10,
             help='Maximum memory (in megabytes) each index-writer will use for the indexing pool.'),
                   )
@@ -224,7 +224,7 @@ class IndexOperations(Command):
         index_object = WhooshIndex(index_dir=app.cfg.index_dir_tmp)
         interwikiname = app.cfg.interwikiname or u''
         if os.path.samefile(app.cfg.index_dir_tmp, app.cfg.index_dir):
-            raise FatalError(u"app.cfg.index_dir and app.cfg.tmp_index_dir are equal")
+            raise FatalError(u"cfg.index_dir and cfg.index_dir_tmp must point to different directories.")
 
         latest_rev_index = index_object.latest_revisions_index
         all_rev_index = index_object.all_revisions_index
