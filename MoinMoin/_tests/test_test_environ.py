@@ -21,7 +21,7 @@ class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
         self.class_level_value = 123
         app, ctx = init_test_app(wikiconfig.Config)
-                
+
     def test_fresh_backends(self):
         assert self.class_level_value == 123
 
