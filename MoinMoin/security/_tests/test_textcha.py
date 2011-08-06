@@ -12,10 +12,10 @@ from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
 import pytest
 
 class TestTextCha(object):
-    """ Test: class TextCha """ 
+    """ Test: class TextCha """
     def setup_method(self, method):
         cfg = app.cfg
-        cfg.textchas = {'test_user_locale': 
+        cfg.textchas = {'test_user_locale':
                             {'Good Question': 'Good Answer',
                             'What is the question?': 'Test_Answer'}
                        }
@@ -25,7 +25,7 @@ class TestTextCha(object):
     def teardown_method(self, method):
         cfg = app.cfg
         cfg.textchas = None
-        cfg.secrets.pop('security/textcha')    
+        cfg.secrets.pop('security/textcha')
         flaskg.user.locale = None
 
     def test_textcha(self):
@@ -37,7 +37,7 @@ class TestTextCha(object):
 
         # test for textcha
         test_textchas = textcha_obj.textchas
-        expected_textchas  = {'Good Question': 'Good Answer', 
+        expected_textchas  = {'Good Question': 'Good Answer',
                                 'What is the question?': 'Test_Answer'}
         assert test_textchas == expected_textchas
         # test for the question
@@ -88,7 +88,7 @@ class TestTextChaValid(object):
     """ Test: class TextChaValid """
     def setup_method(self, method):
         cfg = app.cfg
-        cfg.textchas = {'test_user_locale': 
+        cfg.textchas = {'test_user_locale':
                             {'Good Question': 'Good Answer'}
                        }
         cfg.secrets['security/textcha'] = "test_secret"
@@ -97,7 +97,7 @@ class TestTextChaValid(object):
     def teardown_method(self, method):
         cfg = app.cfg
         cfg.textchas = None
-        cfg.secrets.pop('security/textcha')    
+        cfg.secrets.pop('security/textcha')
         flaskg.user.locale = None
 
     class Element:
