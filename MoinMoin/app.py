@@ -133,10 +133,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.start('create_app init backends')
     app.unprotected_storage, app.storage = init_backends(app)
     clock.stop('create_app init backends')
-    clock.start('create_app index rebuild')
-    if app.cfg.index_rebuild:
-        app.unprotected_storage.index_rebuild() # XXX run this from a script
-    clock.stop('create_app index rebuild')
     clock.start('create_app load/save xml')
     import_export_xml(app)
     clock.stop('create_app load/save xml')
