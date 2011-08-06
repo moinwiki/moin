@@ -400,7 +400,9 @@ class ItemIndex(object):
                                                                   wikiname=self.wikiname
                                                                  )
         logging.debug("Processing: name %s revno %s" % (rev[NAME], revno))
+        rev.seek(0) # for a new revision, file pointer points to EOF, rewind first
         rev_content = convert_to_indexable(rev)
+        logging.debug("Indexable content: %r" % (rev_content[:250], ))
         if not all_found_document:
             field_names = self.index_object.all_revisions_index.schema.names()
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:

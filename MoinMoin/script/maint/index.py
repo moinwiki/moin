@@ -16,9 +16,10 @@ from whoosh.index import open_dir, create_in, exists_in
 from MoinMoin.search.indexing import WhooshIndex
 from MoinMoin.config import MTIME, NAME, CONTENTTYPE
 from MoinMoin.error import FatalError
-from MoinMoin.storage.error import NoSuchItemError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mime import Type
 from MoinMoin.search.revision_converter import backend_to_index
+from MoinMoin.converter import convert_to_indexable
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -61,15 +62,22 @@ class IndexOperations(Command):
             with MultiSegmentWriter(all_rev_index, procs, limitmb) as all_rev_writer:
                 with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
                     for item in backend.iter_items_noindex():
-                        for rev_no in item.list_revisions():
+                        try:
                             if "all_revisions_index" in indexnames:
-                                revision = item.get_revision(rev_no)
-                                metadata = backend_to_index(revision, rev_no, all_rev_field_names, interwikiname)
-                                all_rev_writer.add_document(**metadata)
+                                for rev_no in item.list_revisions():
+                                    revision = item.get_revision(rev_no)
+                                    rev_content = convert_to_indexable(revision)
+                                    metadata = backend_to_index(revision, rev_no, all_rev_field_names, rev_content, interwikiname)
+                                    all_rev_writer.add_document(**metadata)
+                            else:
+                                revision = item.get_revision(-1)
+                                rev_no = revision.revno
+                                rev_content = convert_to_indexable(revision)
+                        except NoSuchRevisionError: # item has no such revision
+                            continue
                         # revision is now the latest revision of this item
                         if "latest_revisions_index" in indexnames and "rev_no" in locals():
-                            revision = item.get_revision(rev_no)
-                            metadata = backend_to_index(revision, rev_no, latest_rev_field_names, interwikiname)
+                            metadata = backend_to_index(revision, rev_no, latest_rev_field_names, rev_content, interwikiname)
                             latest_rev_writer.add_document(**metadata)
 
         def update_index(indexnames_schemas):
@@ -102,7 +110,8 @@ class IndexOperations(Command):
                 with latest_rev_index.writer() as latest_rev_writer:
                     for item, rev_no in latest_documents:
                         revision = item.get_revision(rev_no)
-                        converted_rev = backend_to_index(revision, rev_no, latest_rev_field_names, interwikiname)
+                        rev_content = convert_to_indexable(revision)
+                        converted_rev = backend_to_index(revision, rev_no, latest_rev_field_names, rev_content, interwikiname)
                         found = latest_rev_searcher.document(name_exact=item.name,
                                                              wikiname=interwikiname
                                                             )
@@ -130,7 +139,8 @@ class IndexOperations(Command):
                     for item, rev_nos in create_documents:
                         for rev_no in rev_nos:
                             revision = item.get_revision(rev_no)
-                            converted_rev = backend_to_index(revision, rev_no, all_rev_field_names, interwikiname)
+                            rev_content = convert_to_indexable(revision)
+                            converted_rev = backend_to_index(revision, rev_no, all_rev_field_names, rev_content, interwikiname)
                             all_rev_writer.add_document(**converted_rev)
 
         def clean_index(indexnames_schemas):
