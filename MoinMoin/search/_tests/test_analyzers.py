@@ -15,8 +15,9 @@ class TokenizerTestBase(object):
 
     def testTokenizer(self):
         """ analyzers: check what obtained tokens matched given """
+        tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:
-            tokens = [token.text for token in self.tokenizer(value)]
+            tokens = [token.text for token in tokenizer(value)]
             assert set(expected_tokens) == set(tokens)
 
 
@@ -107,7 +108,8 @@ class TestAclTokenizer(TokenizerTestBase):
         )
     ]
 
-    tokenizer = AclTokenizer(app.cfg)
+    def make_tokenizer(self):
+        return AclTokenizer(app.cfg)
 
 
 class TestMimeTokenizer(TokenizerTestBase):
@@ -124,7 +126,8 @@ class TestMimeTokenizer(TokenizerTestBase):
                   (u'text/html;value1=foo;value1=bar', [u'text', u'html', u'value1=bar'])
                  ]
 
-    tokenizer = MimeTokenizer()
+    def make_tokenizer(self):
+        return MimeTokenizer()
 
 
 class TestItemNameAnalyzer(TokenizerTestBase):
@@ -145,14 +148,15 @@ class TestItemNameAnalyzer(TokenizerTestBase):
                         (u'GSOC2011', [u'gsoc', u'2011'])
                        ]
 
-    tokenizer = item_name_analyzer()
+    def make_tokenizer(self):
+        return item_name_analyzer()
 
     def testTokenizer(self):
         """ analyzers: test item name analyzer with "query" and "index" mode """
-
+        tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:
-            tokens = [token.text for token in self.tokenizer(value, mode="query")]
+            tokens = [token.text for token in tokenizer(value, mode="query")]
             assert set(expected_tokens) == set(tokens)
         for value, expected_tokens in self.test_cases_index:
-            tokens = [token.text for token in self.tokenizer(value, mode="index")]
+            tokens = [token.text for token in tokenizer(value, mode="index")]
             assert set(expected_tokens) == set(tokens)

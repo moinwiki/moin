@@ -36,7 +36,7 @@ class IndexingBackendMixin(object):
     Backend indexing support
     """
     def __init__(self, *args, **kw):
-        cfg = kw.pop('cfg', None)
+        cfg = kw.pop('cfg')
         super(IndexingBackendMixin, self).__init__(*args, **kw)
         self._index = ItemIndex(cfg)
 
@@ -176,7 +176,7 @@ class IndexingRevisionMixin(object):
         if UUID not in self:
             self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
         if CONTENTTYPE not in self:
-            self[CONTENTTYPE] = 'application/octet-stream'
+            self[CONTENTTYPE] = u'application/octet-stream'
         metas = self
         logging.debug("item %r revno %d update index:" % (name, revno))
         for k, v in metas.items():
@@ -216,23 +216,12 @@ class ItemIndex(object):
         """
         update item (not revision!) metadata
         """
-        return
-        # XXX wrong, this is for item level metadata, not revision metadata!
-        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
-                                                              wikiname=self.wikiname
-                                                             )
-        with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-            if doc_number:
-                async_writer.delete_document(doc_number)
-            async_writer.add_document(**metas)
+        # XXX we do not have an index for item metadata yet!
 
     def remove_item(self, metas):
         """
-        remove item (not revision!) metadata
+        remove all data related to this item and all its revisions from the index
         """
-        return
-        # XXX wrong, this is for item level metadata, not revision metadata!
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
             doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
                                                               name_exact=metas[NAME],
@@ -241,6 +230,8 @@ class ItemIndex(object):
         if doc_number is not None:
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 async_writer.delete_document(doc_number)
+
+        # XXX must be deleted from all_revisions_index also
 
     def add_rev(self, uuid, revno, rev):
         """

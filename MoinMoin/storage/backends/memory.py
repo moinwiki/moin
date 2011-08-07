@@ -66,16 +66,6 @@ class MemoryBackend(BackendBase):
         self._item_metadata = {}            # {id : {metadata}}
         self._item_revisions = {}           # {id : {revision_id : (revision_data, {revision_metadata})}}
         self._item_metadata_lock = {}       # {id : Lockobject}
-        self._revision_history = []
-
-    def history(self, reverse=True):
-        """
-        @see: Backend.history.__doc__
-        """
-        if reverse:
-            return iter(self._revision_history[::-1])
-        else:
-            return iter(self._revision_history)
 
     def get_item(self, itemname):
         """
@@ -138,11 +128,6 @@ class MemoryBackend(BackendBase):
                 del struct[item_id]
             except KeyError:
                 pass
-
-        # Create a new revision_history list first and then swap that atomically with
-        # the old one (that still contains the item's revs).
-        rev_hist = [rev for rev in self._revision_history if rev.item.name != item.name]
-        self._revision_history = rev_hist
 
     def iter_items_noindex(self):
         """
@@ -216,10 +201,6 @@ class MemoryBackend(BackendBase):
             # The revision has already been destroyed by someone else. No need to make our hands dirty.
             return
 
-        # Remove the rev from history
-        rev_history = [rev for rev in self._revision_history if (rev.item.name != revision.item.name or rev.revno != revision.revno)]
-        self._revision_history = rev_history
-
     def _rename_item(self, item, newname):
         """
         @see: Backend._rename_item.__doc__
@@ -273,8 +254,6 @@ class MemoryBackend(BackendBase):
         if revision._metadata is None:
             revision._metadata = {}
         self._item_revisions[item._item_id][revision.revno] = (revision._data.getvalue(), revision._metadata.copy())
-        revision = item.get_revision(revision.revno)
-        self._revision_history.append(revision)
 
     def _rollback_item(self, rev):
         """
