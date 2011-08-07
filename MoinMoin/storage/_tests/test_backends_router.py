@@ -29,19 +29,19 @@ class TestRouterBackend(BackendTest):
         self.child = MemoryBackend()
         self.other = MemoryBackend()
         self.mapping = [('child', self.child), ('other/', self.other), (self.ns_user_profile, self.users), ('/', self.root)]
-        return RouterBackend(self.mapping)
+        return RouterBackend(self.mapping, cfg=app.cfg)
 
     def kill_backend(self):
         pass
 
 
     def test_correct_backend(self):
-        mymap = {'rootitem': self.root,         # == /rootitem
-                 'child/joe': self.child,       # Direct child of namespace.
-                 'other/jane': self.other,      # Direct child of namespace.
-                 'child/': self.child,          # Root of namespace itself (!= root)
-                 'other/': self.other,          # Root of namespace
-                 '': self.root,                 # Due to lack of any namespace info
+        mymap = {u'rootitem': self.root,         # == /rootitem
+                 u'child/joe': self.child,       # Direct child of namespace.
+                 u'other/jane': self.other,      # Direct child of namespace.
+                 u'child/': self.child,          # Root of namespace itself (!= root)
+                 u'other/': self.other,          # Root of namespace
+                 u'': self.root,                 # Due to lack of any namespace info
                 }
 
         assert not (self.root is self.child is self.other)
@@ -63,12 +63,12 @@ class TestRouterBackend(BackendTest):
         assert item.name == itemname
 
     def test_traversal(self):
-        mymap = {'rootitem': self.root,         # == /rootitem
-                 'child/joe': self.child,       # Direct child of namespace.
-                 'other/jane': self.other,      # Direct child of namespace.
-                 'child/': self.child,          # Root of namespace itself (!= root)
-                 'other/': self.other,          # Root of namespace
-                 '': self.root,                 # Due to lack of any namespace info
+        mymap = {u'rootitem': self.root,         # == /rootitem
+                 u'child/joe': self.child,       # Direct child of namespace.
+                 u'other/jane': self.other,      # Direct child of namespace.
+                 u'child/': self.child,          # Root of namespace itself (!= root)
+                 u'other/': self.other,          # Root of namespace
+                 u'': self.root,                 # Due to lack of any namespace info
                 }
 
         items_in = []

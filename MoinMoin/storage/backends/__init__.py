@@ -11,6 +11,7 @@
 """
 
 
+from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin.storage.serialization import unserialize
@@ -122,7 +123,7 @@ def upgrade_sysitems(xmlfile):
     """
     Upgrade the wiki's system pages from an XML file.
     """
-    tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())])
+    tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())], cfg=app.cfg)
     unserialize(tmp_backend, xmlfile)
 
     # clone to real backend from config WITHOUT checking ACLs!

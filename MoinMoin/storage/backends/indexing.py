@@ -36,7 +36,7 @@ class IndexingBackendMixin(object):
     Backend indexing support
     """
     def __init__(self, *args, **kw):
-        cfg = kw.pop('cfg', None)
+        cfg = kw.pop('cfg')
         super(IndexingBackendMixin, self).__init__(*args, **kw)
         self._index = ItemIndex(cfg)
 
@@ -176,7 +176,7 @@ class IndexingRevisionMixin(object):
         if UUID not in self:
             self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
         if CONTENTTYPE not in self:
-            self[CONTENTTYPE] = 'application/octet-stream'
+            self[CONTENTTYPE] = u'application/octet-stream'
         metas = self
         logging.debug("item %r revno %d update index:" % (name, revno))
         for k, v in metas.items():

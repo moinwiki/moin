@@ -66,7 +66,7 @@ class XML(Command):
             from MoinMoin.storage.backends import create_simple_mapping, router
             namespace_mapping = create_simple_mapping(backend_uri='fs19:%s' % moin19data)
             storage = router.RouterBackend(
-                    [(ns, be) for ns, be, acls in namespace_mapping], )
+                    [(ns, be) for ns, be, acls in namespace_mapping], cfg=app.cfg)
         else:
             # this deals with the normal storage
             storage = app.unprotected_storage
