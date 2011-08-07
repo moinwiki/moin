@@ -34,9 +34,9 @@ class IndexOperations(Command):
     description = 'Build indexes'
 
     option_list = (
-        Option('--for', required=True, dest='indexname', type=str, choices=("all-revs", "latest-revs", "both"), 
+        Option('--for', required=True, dest='indexname', type=str, choices=("all-revs", "latest-revs", "both"),
             help='For what type of indexes we will use action'),
-        Option('--action', required=True, dest='action', type=str, choices=("build", "update", "clean", "move", "show"), 
+        Option('--action', required=True, dest='action', type=str, choices=("build", "update", "clean", "move", "show"),
             help="""
                   Action for given indexes:
                   build -- Build in index_dir_tmp
@@ -238,6 +238,6 @@ class IndexOperations(Command):
         if indexname == "both":
             do_action(action, both_indexnames_schemas)
         elif indexname == "all-revs":
-            do_action(action, (all_indexname_schema,))
+            do_action(action, (all_indexname_schema, ))
         elif indexname == "latest-revs":
-            do_action(action, (latest_indexname_schema,))
+            do_action(action, (latest_indexname_schema, ))

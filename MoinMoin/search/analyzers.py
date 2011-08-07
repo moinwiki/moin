@@ -100,7 +100,7 @@ class AclTokenizer(Tokenizer):
                 yield tk
 
 def item_name_analyzer():
-    """ 
+    """
     Calls tokenizer
 
     Input: "some item name", "SomeItem/SubItem", "GSOC2011"
