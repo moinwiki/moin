@@ -306,7 +306,8 @@ class ItemIndex(object):
                                                   )
             else:
                 docs = all_revs_searcher.documents(wikiname=self.wikiname)
-            for doc in sorted(docs, reverse=reverse)[start:end]:
+            from operator import itemgetter
+            for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
                 yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
 
     def all_tags(self):
