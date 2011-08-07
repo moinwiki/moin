@@ -197,7 +197,6 @@ class IndexingRevisionMixin(object):
     # TODO maybe use this class later for data indexing also,
     # TODO by intercepting write() to index data written to a revision
 
-
 from whoosh.writing import AsyncWriter
 from MoinMoin.search.indexing import WhooshIndex
 
