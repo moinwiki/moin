@@ -20,15 +20,13 @@ class MimeTokenizer(Tokenizer):
 
     def __call__(self, value, start_pos=0, positions=False, **kwargs):
         """
-        Calls tokenizer
-
         Tokenizer behaviour:
 
-        Input: text/x.moin.wiki;charset=utf-8
-        Output: "text", "x.moin.wiki", "charset=utf-8"
+        Input: u"text/x.moin.wiki;charset=utf-8"
+        Output: u"text", u"x.moin.wiki", u"charset=utf-8"
 
-        Input: application/pdf
-        Output: "application", "pdf"
+        Input: u"application/pdf"
+        Output: u"application", u"pdf"
 
         :param value: String for tokenization
         :param start_pos: The position number of the first token. For example,
@@ -36,7 +34,6 @@ class MimeTokenizer(Tokenizer):
             instead of 0,1,2,...
         :param positions: Whether to record token positions in the token.
         """
-
         assert isinstance(value, unicode), "%r is not unicode" % value
         if u'/' not in value: # Add '/' if user forgot do this
             value += u'/'
@@ -66,46 +63,65 @@ class AclTokenizer(Tokenizer):
     """ Access control list tokenizer """
 
     def __init__(self, cfg):
+        """
+        :param cfg: wiki config
+        """
+
         self._acl_rights_contents = cfg.acl_rights_contents
 
-    def __call__(self, value, start_pos=0, positions=False, **kwargs):
+    def __call__(self, value, start_pos=0, positions=False, mode=u'', **kwargs):
         """
-        Calls tokenizer
+        Calls AccessControlList for tokenization
 
-        Input: u"JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
+        Analyzer behaviour:
 
-        Output: "u'JoeDoe:+read', u'JoeDoe:+write', u'JoeDoe:-create', u'JoeDoe:+admin',
-                 u'JoeDoe:+destroy', u'JaneDoe:+read', u'JaneDoe:+write', u'JaneDoe:-create',
-                 u'JaneDoe:+admin', u'JaneDoe:+destroy', u'EditorGroup:+write', u'All:+read',
-                 u'All:-write', u'All:-create', u'All:-admin', u'All:-destroy'
+        In index mode:
+            Input: u"JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
 
-        :param value: String for tokenization
+            Output: "u'JoeDoe:+read', u'JoeDoe:+write', u'JoeDoe:-create', u'JoeDoe:+admin',
+                     u'JoeDoe:+destroy', u'JaneDoe:+read', u'JaneDoe:+write', u'JaneDoe:-create',
+                     u'JaneDoe:+admin', u'JaneDoe:+destroy', u'EditorGroup:+write', u'All:+read',
+                     u'All:-write', u'All:-create', u'All:-admin', u'All:-destroy'
+
+        In query mode:
+            Input: u"JoeDoe:+write"
+
+            Output: u"JoeDoe:+write"
+
+        :param value: unicode string
+        :param positions: Whether to record token positions in the token.
         :param start_pos: The position number of the first token. For example,
             if you set start_pos=2, the tokens will be numbered 2,3,4,...
             instead of 0,1,2,...
-        :param positions: Whether to record token positions in the token.
         """
-
         assert isinstance(value, unicode) # so you'll notice if it blows up
         pos = start_pos
         tk = Token()
-        acl = AccessControlList([value], valid=self._acl_rights_contents)
-        for name, permissions in acl.acl:
-            for permission in permissions:
-                sign = "+" if permissions[permission] else "-"
-                tk.text = u"%s:%s%s" % (name, sign, permission)
-                if positions:
-                    tk.pos = pos
-                    pos += 1
-                yield tk
+        tk.mode = mode
+        if mode == "query":
+            tk.text = value
+            if positions:
+                tk.pos = pos
+            yield tk
+        else:
+            acl = AccessControlList([value], valid=self._acl_rights_contents)
+            for name, permissions in acl.acl:
+                for permission in permissions:
+                    sign = "+" if permissions[permission] else "-"
+                    tk.text = u"%s:%s%s" % (name, sign, permission)
+                    if positions:
+                        tk.pos = pos
+                        pos += 1
+                    yield tk
+
 
 def item_name_analyzer():
     """
-    Calls tokenizer
+    Analyzer behaviour:
 
-    Input: "some item name", "SomeItem/SubItem", "GSOC2011"
+    Input: u"some item name", u"SomeItem/SubItem", u"GSOC2011"
 
-    Output: "some", "item", "name"; "Some", "Item", "Sub", "Item"; "GSOC", "2011";
+    Output: u"some", u"item", u"name"; u"Some", u"Item", u"Sub", u"Item"; u"GSOC", u"2011";
     """
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
