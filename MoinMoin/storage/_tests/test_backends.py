@@ -590,9 +590,6 @@ class BackendTest(object):
         rev = item.get_revision(0)
         assert rev[SIZE] == 8
 
-        for nrev in self.backend.history():
-            assert nrev[SIZE] == 8
-
     def test_size_2(self):
         item = self.backend.create_item(u'size2')
         rev0 = item.create_revision(0)
@@ -620,57 +617,6 @@ class BackendTest(object):
                                        ('1', 1, 1L, 1+0j, (1, ), ), u'ąłć', (u'ó', u'żźć'), )):
             yield test_value, value, no
 
-    def test_history(self):
-        order = [(u'first', 0, ), (u'second', 0, ), (u'first', 1, ), (u'a', 0), (u'child/my_subitem', 0) ]
-        for name, revno in order:
-            if revno == 0:
-                item = self.backend.create_item(name)
-            else:
-                item = self.backend.get_item(name)
-            item.create_revision(revno)
-            item.commit()
-
-            from MoinMoin.storage.backends import router, acl
-            if isinstance(self.backend, (router.RouterBackend, acl.AclWrapperBackend)):
-                # Revisions are created too fast for the rev's timestamp's granularity.
-                # This only affects the RouterBackend because there several different
-                # backends are used and no means for storing simultaneously created revs
-                # in the correct order exists between backends. It affects AclWrapperBackend
-                # tests as well because those use a RouterBackend internally for real-world-likeness.
-
-                # XXX XXX
-                # You may have realized that all the items above belong to the same backend so this shouldn't actually matter.
-                # It does matter, however, once you consider that the RouterBackend uses the generic, slow history implementation.
-                # This one uses iteritems and then sorts all the revisions itself, hence discarding any information of ordering
-                # for simultaneously created revisions. If we just call history of that single backend directly, it works without
-                # time.sleep. For n backends, however, you'd have to somehow merge the revisions into one generator again, thus
-                # discarding that information again. Besides, that would be a costly operation. The ordering for simultaneosly
-                # created revisions remains the same since it's based on tuple ordering. Better proposals welcome.
-                import time
-                time.sleep(1)
-
-        for num, rev in enumerate(self.backend.history(reverse=False)):
-            name, revno = order[num]
-            assert rev.item.name == name
-            assert rev.revno == revno
-
-        order.reverse()
-        for num, rev in enumerate(self.backend.history()):
-            name, revno = order[num]
-            assert rev.item.name == name
-            assert rev.revno == revno
-
-    # See history function in indexing.py for comments on why this test fails.
-    @py.test.mark.xfail
-    def test_history_size_after_rename(self):
-        item = self.backend.create_item(u'first')
-        item.create_revision(0)
-        item.commit()
-        item.rename(u'second')
-        item.create_revision(1)
-        item.commit()
-        assert len([rev for rev in self.backend.history()]) == 2
-
     def test_destroy_item(self):
         itemname = u"I will be completely destroyed"
         rev_data = "I will be completely destroyed, too, hopefully"
@@ -683,14 +629,6 @@ class BackendTest(object):
         assert not self.backend.has_item(itemname)
         item_names = [item.name for item in self.backend.iteritems()]
         assert not itemname in item_names
-        all_rev_data = [rev.read() for rev in self.backend.history()]
-        assert not rev_data in all_rev_data
-
-        for rev in self.backend.history():
-            assert not rev.item.name == itemname
-        for rev in self.backend.history(reverse=False):
-            assert not rev.item.name == itemname
-
 
     def test_destroy_revision(self):
         itemname = u"I will see my children die :-("
@@ -726,9 +664,6 @@ class BackendTest(object):
         assert last_data != third
         assert last_data == persistent_rev
 
-        for rev in self.backend.history():
-            assert not (rev.item.name == itemname and rev.revno == 2)
-
     def test_clone_backend(self):
         src = flaskg.storage
         dst = memory.MemoryBackend()
@@ -749,7 +684,6 @@ class BackendTest(object):
         dst.clone(src, verbose=False)
 
         assert len(list(dst.iteritems())) == 2
-        assert len(list(dst.history())) == 1
         assert dst.has_item(dollys_name)
         rev = dst.get_item(dollys_name).get_revision(0)
         data = rev.read()
@@ -792,18 +726,4 @@ class BackendTest(object):
         assert len([item for item in self.backend.iteritems()]) == 1
         item.destroy()
         assert len([item for item in self.backend.iteritems()]) == 0
-
-    def test_history_item_names(self):
-        item = self.backend.create_item(u'first')
-        item.create_revision(0)
-        item.commit()
-        item.rename(u'second')
-        item.create_revision(1)
-        item.commit()
-        revs_in_create_order = [rev for rev in self.backend.history(reverse=False)]
-        assert revs_in_create_order[0].revno == 0
-        assert revs_in_create_order[0].item.name == u'second'
-        assert revs_in_create_order[1].revno == 1
-        assert revs_in_create_order[1].item.name == u'second'
-
 

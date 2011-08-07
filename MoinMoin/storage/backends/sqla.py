@@ -177,20 +177,6 @@ class SQLAlchemyBackend(Backend):
         item = SQLAItem(self, itemname)
         return item
 
-    def history(self, reverse=True):
-        """
-        @see: Backend.history.__doc__
-        """
-        session = self.Session()
-        col = SQLARevision.id
-        if reverse:
-            col = col.desc()
-        for rev in session.query(SQLARevision).order_by(col).yield_per(1):
-            # yield_per(1) says: Don't load them into memory all at once.
-            rev.setup(self)
-            yield rev
-        session.close()
-
     def iter_items_noindex(self):
         """
         Returns an iterator over all items available in this backend.

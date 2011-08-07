@@ -165,34 +165,6 @@ class Backend(object):
         """
         raise NotImplementedError()
 
-    def history(self, reverse=True):
-        """
-        Returns an iterator over ALL revisions of ALL items stored in the backend.
-
-        If reverse is True (default), give history in reverse revision timestamp
-        order, otherwise in revision timestamp order.
-
-        Note: some functionality (e.g. completely cloning one storage into
-              another) requires that the iterator goes over really every
-              revision we have.
-
-        :type reverse: bool
-        :param reverse: Indicate whether the iterator should go in reverse order.
-        :rtype: iterator of revision objects
-        """
-        # generic and slow history implementation
-        revs = []
-        for item in self.iteritems():
-            for revno in item.list_revisions():
-                rev = item.get_revision(revno)
-                revs.append((rev.timestamp, rev.revno, item.name, ))
-        revs.sort() # from oldest to newest
-        if reverse:
-            revs.reverse()
-        for ts, revno, name in revs:
-            item = self.get_item(name)
-            yield item.get_revision(revno)
-
     def _get_revision(self, item, revno):
         """
         For a given item and revision number, return the corresponding revision
