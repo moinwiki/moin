@@ -74,10 +74,10 @@ class AclTokenizer(Tokenizer):
 
         Input: u"JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
 
-        Output: "JoeDoe", "JoeDoe:admin", "JoeDoe:read", "JoeDoe:write", "JoeDoe:destroy",
-            (... equivalent tokens for JaneDoe ...),
-            "EditorGroup", "EditorGroup:write",
-            "All", "All:read"
+        Output: "u'JoeDoe:+read', u'JoeDoe:+write', u'JoeDoe:-create', u'JoeDoe:+admin',
+                 u'JoeDoe:+destroy', u'JaneDoe:+read', u'JaneDoe:+write', u'JaneDoe:-create',
+                 u'JaneDoe:+admin', u'JaneDoe:+destroy', u'EditorGroup:+write', u'All:+read',
+                 u'All:-write', u'All:-create', u'All:-admin', u'All:-destroy'
 
         :param value: String for tokenization
         :param start_pos: The position number of the first token. For example,
