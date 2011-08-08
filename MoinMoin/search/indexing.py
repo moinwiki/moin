@@ -2,10 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.indexing Indexing Mechanism
+MoinMoin - Whoosh index schemas / index managment
 """
 
 import os
+
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
@@ -13,14 +14,14 @@ from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
 
 class WhooshIndex(object):
     """
-    Creating\opening whoosh indexes using "latest_revisions_schema" and
-    "all_revisions_schema"
+    Managing whoosh indexes
     """
 
     # Index names, schemas
@@ -33,9 +34,8 @@ class WhooshIndex(object):
         Create and open indexes in index_dir
 
         :param index_dir: Directory where whoosh indexes will be created, default None
-        :param cfg: Application config(app.cfg), default None
+        :param cfg: Application config (app.cfg), default None
         """
-
         self._cfg = cfg or app.cfg
         self._index_dir = index_dir or self._cfg.index_dir
 
@@ -68,17 +68,16 @@ class WhooshIndex(object):
 
     def open_index(self, indexname, schema, create=False, index_dir=None):
         """
-        open index <indexname> in <index_dir>. if opening fails and <create>
-            is True, try creating the index and retry opening it afterwards.
-            return index object.
+        Open index <indexname> in <index_dir>. if opening fails and <create>
+        is True, try creating the index and retry opening it afterwards.
+        return index object.
 
         :param index_dir: Directory where whoosh indexes will be created
         :param indexname: Name of created index
         :param schema: which schema applies
         """
-
         index_dir = index_dir or self._cfg.index_dir
-        try: # open indexes
+        try:
             index = open_dir(index_dir, indexname=indexname)
             setattr(self, indexname, index)
         except (IOError, OSError, EmptyIndexError) as err:
@@ -111,3 +110,4 @@ class WhooshIndex(object):
             create_in(index_dir, getattr(self, schema), indexname=indexname)
         except (IOError, OSError) as err:
             logging.error(u"%s [while trying to create index '%s' in '%s']" % (str(err), indexname, index_dir))
+
