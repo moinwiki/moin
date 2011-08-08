@@ -62,6 +62,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
+from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
 from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
@@ -265,8 +266,7 @@ class Item(object):
         from MoinMoin.converter import default_registry as reg
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
-        link_conv = reg.get(type_moin_document, type_moin_document, links='extern',
-                url_root=Iri(request.url_root))
+        link_conv = reg.get(type_moin_document, type_moin_document, links='extern')
         flaskg.clock.start('conv_include')
         doc = include_conv(doc)
         flaskg.clock.stop('conv_include')
@@ -722,7 +722,7 @@ There is no help, you're doomed!
                 except AccessDeniedError:
                     abort(403)
                 else:
-                    return redirect(url_for('frontend.show_item', item_name=self.name))
+                    return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_meta=str(ROWS_META), cols=str(COLS),
@@ -1151,7 +1151,7 @@ class Text(Binary):
         # TODO: use registry as soon as it is in there
         from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
         pygments_conv = PygmentsConverter(contenttype=self.contenttype)
-        doc = pygments_conv(data_text.split(u'\n'))
+        doc = pygments_conv(data_text)
         # TODO: Real output format
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = html_conv(doc)
@@ -1189,7 +1189,7 @@ class Text(Binary):
                 except AccessDeniedError:
                     abort(403)
                 else:
-                    return redirect(url_for('frontend.show_item', item_name=self.name))
+                    return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
@@ -1222,8 +1222,7 @@ class MarkupItem(Text):
         from MoinMoin.converter import default_registry as reg
 
         input_conv = reg.get(Type(self.contenttype), type_moin_document)
-        item_conv = reg.get(type_moin_document, type_moin_document,
-                items='refs', url_root=Iri(request.url_root))
+        item_conv = reg.get(type_moin_document, type_moin_document, items='refs')
 
         i = Iri(scheme='wiki', authority='', path='/' + self.name)
 

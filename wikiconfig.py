@@ -47,6 +47,10 @@ class Config(DefaultConfig):
 
     # Load the interwiki map from intermap.txt:
     interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
+    # we must add entries for 'Self' and our interwikiname:
+    #interwikiname = 'MyInterWikiName'
+    #interwiki_map[interwikiname] = 'http://localhost:8080/'
+    interwiki_map['Self'] = 'http://localhost:8080/'
 
     sitename = u'My MoinMoin'
 

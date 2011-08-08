@@ -33,7 +33,7 @@ def decode_data(data, contenttype=None):
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
     if not isinstance(data, unicode):
-        raise TypeError("data must be file-like or str (requires contenttype with charset) or unicode")
+        raise TypeError("data must be file-like or str (requires contenttype with charset) or unicode, but we got %r" % data)
     return data
 
 

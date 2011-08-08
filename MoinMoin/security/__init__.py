@@ -169,12 +169,12 @@ class AccessControlList(object):
 
     special_users = ["All", "Known", "Trusted"] # order is important
 
-    def __init__(self, cfg, lines=[], default='', valid=None):
-        """ Initialize an ACL, starting from <nothing>. """
+    def __init__(self, lines=[], default='', valid=None):
+        """ Initialize an ACL, starting from <nothing>.
+        """
         assert valid is not None
         self.acl_rights_valid = valid
         self.default = default
-        self.auth_methods_trusted = cfg.auth_methods_trusted
         assert isinstance(lines, (list, tuple))
         if lines:
             self.acl = [] # [ ('User', {"read": 0, ...}), ... ]
@@ -270,8 +270,7 @@ class AccessControlList(object):
             Does not work for subsription emails that should be sent to <user>,
             as he is not logged in in that case.
         """
-        if (flaskg.user.name == name and
-            flaskg.user.auth_method in self.auth_methods_trusted):
+        if flaskg.user.name == name and flaskg.user.auth_trusted:
             return rightsdict.get(dowhat)
         return None
 
@@ -280,30 +279,6 @@ class AccessControlList(object):
 
     def __ne__(self, other):
         return self.acl_lines != other.acl_lines
-
-
-class ContentACL(AccessControlList):
-    """
-    Content AccessControlList
-
-    Uses cfg.acl_rights_contents if no list of valid rights is explicitly given.
-    """
-    def __init__(self, cfg, lines=[], default='', valid=None):
-        if valid is None:
-            valid = cfg.acl_rights_contents
-        super(ContentACL, self).__init__(cfg, lines, default, valid)
-
-
-class FunctionACL(AccessControlList):
-    """
-    Function AccessControlList
-
-    Uses cfg.acl_rights_functions if no list of valid rights is explicitly given.
-    """
-    def __init__(self, cfg, lines=[], default='', valid=None):
-        if valid is None:
-            valid = cfg.acl_rights_functions
-        super(FunctionACL, self).__init__(cfg, lines, default, valid)
 
 
 class ACLStringIterator(object):

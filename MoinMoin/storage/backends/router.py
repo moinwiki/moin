@@ -379,6 +379,15 @@ class BareNewRouterRevision(NewRevisionBase):
     def keys(self):
         return self._revision.keys()
 
+    def read(self, chunksize=-1):
+        return self._revision.read(chunksize)
+
+    def seek(self, position, mode=0):
+        return self._revision.seek(position, mode)
+
+    def tell(self):
+        return self._revision.tell()
+
     def write(self, data):
         self._revision.write(data)
 
