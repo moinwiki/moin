@@ -7,6 +7,7 @@
 
 
 import py
+from flask import current_app as app
 
 from MoinMoin.search.analyzers import *
 
