@@ -37,41 +37,31 @@ class WhooshIndex(object):
         """
 
         self._cfg = cfg or app.cfg
-        self._index_dir = index_dir or self._cfg.index_dir # Indexes can be created somewhere else
-                                                              # apart app.cfg.index_dir
+        self._index_dir = index_dir or self._cfg.index_dir
 
-        self.latest_revisions_schema = Schema(wikiname=ID(stored=True),
-                                               name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
-                                               name_exact=ID,
-                                               uuid=ID(unique=True, stored=True),
-                                               rev_no=NUMERIC(stored=True),
-                                               mtime=DATETIME(stored=True),
-                                               content=TEXT(stored=True, multitoken_query="and"),
-                                               contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-                                               tags=ID(stored=True),
-                                               itemlinks=ID(stored=True),
-                                               itemtransclusions=ID(stored=True),
-                                               acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
-                                               language=ID(stored=True),
-                                               userid=ID(stored=True),
-                                               address=ID(stored=True),
-                                               hostname=ID(stored=True),
-                                              )
+        common_fields = dict(
+            wikiname=ID(stored=True),
+            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
+            name_exact=ID,
+            rev_no=NUMERIC(stored=True),
+            mtime=DATETIME(stored=True),
+            contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
+            tags=ID(stored=True),
+            language=ID(stored=True),
+            userid=ID(stored=True),
+            address=ID(stored=True),
+            hostname=ID(stored=True),
+            content=TEXT(stored=True, multitoken_query="and"),
+        )
 
-        self.all_revisions_schema = Schema(wikiname=ID(stored=True),
-                                            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
-                                            name_exact=ID,
-                                            uuid=ID(stored=True),
-                                            rev_no=NUMERIC(stored=True),
-                                            mtime=DATETIME(stored=True),
-                                            content=TEXT(stored=True, multitoken_query="and"),
-                                            contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-                                            tags=ID(stored=True),
-                                            language=ID(stored=True),
-                                            userid=ID(stored=True),
-                                            address=ID(stored=True),
-                                            hostname=ID(stored=True),
-                                           )
+        self.latest_revisions_schema = Schema(uuid=ID(unique=True, stored=True),
+                                              itemlinks=ID(stored=True),
+                                              itemtransclusions=ID(stored=True),
+                                              acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
+                                              **common_fields)
+
+        self.all_revisions_schema = Schema(uuid=ID(stored=True),
+                                           **common_fields)
 
         for index_name, index_schema in self._indexes.items():
             self.open_index(index_name, index_schema, create=True, index_dir=self._index_dir)
