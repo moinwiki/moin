@@ -237,9 +237,10 @@ def get_item(item_name, rev):
 def download_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_no=rev)
+        mimetype = request.values.get("mimetype")
     except AccessDeniedError:
         abort(403)
-    return item.do_get(force_attachment=True)
+    return item.do_get(force_attachment=True, mimetype=mimetype)
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):

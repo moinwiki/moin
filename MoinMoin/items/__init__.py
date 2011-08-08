@@ -609,7 +609,7 @@ class Item(object):
                      if u'/' not in relname
                      and relname.startswith(startswith)
                      and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
-                     # If an item's contenttype not present in the default contenttype list, 
+                     # If an item's contenttype not present in the default contenttype list,
                      # then it will be shown without going through any filter.
         else:
             index = [(fullname, relname, contenttype)
@@ -641,7 +641,7 @@ class Item(object):
         return initials
 
 class NonExistent(Item):
-    def do_get(self, force_attachment=False):
+    def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
 
     def _convert(self):
@@ -751,18 +751,18 @@ There is no help, you're doomed!
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
 
-    def do_get(self, force_attachment=False):
+    def do_get(self, force_attachment=False, mimetype=None):
         hash = self.rev.get(HASH_ALGORITHM)
         if is_resource_modified(request.environ, hash): # use hash as etag
-            return self._do_get_modified(hash, force_attachment=force_attachment)
+            return self._do_get_modified(hash, force_attachment=force_attachment, mimetype=mimetype)
         else:
             return Response(status=304)
 
-    def _do_get_modified(self, hash, force_attachment=False):
+    def _do_get_modified(self, hash, force_attachment=False, mimetype=None):
         member = request.values.get('member')
-        return self._do_get(hash, member, force_attachment=force_attachment)
+        return self._do_get(hash, member, force_attachment=force_attachment, mimetype=mimetype)
 
-    def _do_get(self, hash, member=None, force_attachment=False):
+    def _do_get(self, hash, member=None, force_attachment=False, mimetype=None):
         if member: # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
@@ -779,7 +779,10 @@ There is no help, you're doomed!
                 mt = MimeType(mimestr=mimestr)
             content_length = rev[SIZE]
             file_to_send = rev
-        content_type = mt.content_type()
+        if mimetype:
+            content_type = mimetype
+        else:
+            content_type = mt.content_type()
         as_attachment = force_attachment or mt.as_attachment(app.cfg)
         return send_file(file=file_to_send,
                          mimetype=content_type,
@@ -1003,7 +1006,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         outfile.close()
         return content_type, data
 
-    def _do_get_modified(self, hash, force_attachment=False):
+    def _do_get_modified(self, hash, force_attachment=False, mimetype=None):
         try:
             width = int(request.values.get('w'))
         except (TypeError, ValueError):
@@ -1027,7 +1030,10 @@ class TransformableBitmapImage(RenderableBitmapImage):
                             width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
-                content_type = self.rev[CONTENTTYPE]
+                if mimetype:
+                    content_type = mimetype
+                else:
+                    content_type = self.rev[CONTENTTYPE]
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
@@ -1037,7 +1043,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 headers, data = c
             return Response(data, headers=headers)
         else:
-            return self._do_get(hash, force_attachment=force_attachment)
+            return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
