@@ -25,7 +25,7 @@
         <table>
             {% for result in results %}
             <tr>
-                <td class="moin-wordbreak">{{ _("%(docnum)d.", docnum=result.pos + 1) }}
+                <td class="moin-wordbreak">{{ result.pos + 1 }}.
                 <a href="{{ url_for('frontend.show_item', item_name=result['name'], rev=result['rev_no']) }}"><b>{{ result['name'] }}</b></a>
                 </td>
             </tr>
