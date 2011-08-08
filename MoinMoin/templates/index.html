@@ -81,7 +81,8 @@
         {% for fullname, relname, contenttype, hassubitem in index %}
             <div>
                 <span class="moin-select-item">&nbsp;</span>
-                <a href="about:blank" title="{{ url_for('.download_item', item_name=fullname) }}"
+                {% set mimetype = "application/x.moin.download" %}
+                <a href="about:blank" title="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}"
                    class="moin-download-link">
                 </a>
                 <a href="{{ url_for('.show_item', item_name=fullname) }}" 
