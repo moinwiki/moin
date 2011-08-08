@@ -13,6 +13,7 @@ from flask import current_app as app
 
 from MoinMoin import config, wikiutil
 from MoinMoin._tests import wikiconfig
+from MoinMoin.storage.serialization import serialize, unserialize
 
 from werkzeug import MultiDict
 
@@ -42,6 +43,10 @@ class TestSystemItem(object):
 
     def testSystemItem(self):
         """wikiutil: good system item names accepted, bad rejected"""
+        # get the items from xml file
+        backend = app.unprotected_storage
+        unserialize(backend, self.Config.load_xml)
+
         for name in self.systemItems:
             assert wikiutil.isSystemItem(name)
         for name in self.notSystemItems:

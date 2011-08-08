@@ -12,7 +12,7 @@ from MoinMoin.user import create_user
 from MoinMoin.auth.http import HTTPAuthMoin
 import pytest
 
-class TestHTTPAuthMoin(object): 
+class TestHTTPAuthMoin(object):
     """ Test: HTTPAuthMoin """
     class Auth:
         def __init__(self):

@@ -14,6 +14,7 @@ from flask import g as flaskg
 from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
+from MoinMoin.storage.serialization import serialize, unserialize
 
 from MoinMoin._tests import wikiconfig
 
@@ -46,6 +47,7 @@ class TestStorageEnvironWithoutConfig(object):
     # Run this test twice to see if something's changed
     test_twice = test_fresh_backends
 
+
 class TestStorageEnvironWithConfig(object):
     class Config(wikiconfig.Config):
         load_xml = wikiconfig.Config._test_items_xml
@@ -57,6 +59,10 @@ class TestStorageEnvironWithConfig(object):
         )
 
     def test_fresh_backends_with_content(self):
+        # get the items from xml file
+        backend = app.unprotected_storage
+        unserialize(backend, self.Config.load_xml)
+
         assert isinstance(app.cfg, wikiconfig.Config)
 
         storage = flaskg.storage
@@ -72,7 +78,7 @@ class TestStorageEnvironWithConfig(object):
             new_rev = item.create_revision(1)
             new_rev[NAME] = pagename
             new_rev[CONTENTTYPE] = u'text/plain'
-            item.commit()
+            #item.commit()
 
         itemname = u"OnlyForThisTest"
         assert not storage.has_item(itemname)
