@@ -2,12 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.analyzers Tokenizers and analyzers for indexing schema
+MoinMoin - Misc. tokenizers and analyzers for whoosh indexing
 """
 
-from re import split
-
-from flask import current_app as app
 from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
 from whoosh.analysis import Tokenizer, Token, RegexTokenizer
 
@@ -66,7 +63,6 @@ class AclTokenizer(Tokenizer):
         """
         :param cfg: wiki config
         """
-
         self._acl_rights_contents = cfg.acl_rights_contents
 
     def __call__(self, value, start_pos=0, positions=False, mode=u'', **kwargs):
@@ -94,7 +90,7 @@ class AclTokenizer(Tokenizer):
             if you set start_pos=2, the tokens will be numbered 2,3,4,...
             instead of 0,1,2,...
         """
-        assert isinstance(value, unicode) # so you'll notice if it blows up
+        assert isinstance(value, unicode)
         pos = start_pos
         tk = Token()
         tk.mode = mode
@@ -121,10 +117,11 @@ def item_name_analyzer():
 
     Input: u"some item name", u"SomeItem/SubItem", u"GSOC2011"
 
-    Output: u"some", u"item", u"name"; u"Some", u"Item", u"Sub", u"Item"; u"GSOC", u"2011";
+    Output: u"some", u"item", u"name"; u"Some", u"Item", u"Sub", u"Item"; u"GSOC", u"2011"
     """
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
                      )
     analyzer = RegexTokenizer(r"\S+") | iwf | LowercaseFilter()
     return analyzer
+
