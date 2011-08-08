@@ -33,7 +33,7 @@ logging = log.getLogger(__name__)
 
 class IndexingBackendMixin(object):
     """
-    Backend indexing support
+    Backend indexing support / functionality using the index.
     """
     def __init__(self, *args, **kw):
         cfg = kw.pop('cfg')
@@ -85,8 +85,7 @@ class IndexingBackendMixin(object):
 
     def all_tags(self):
         """
-        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all
-        tags.
+        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all tags.
         """
         return self._index.all_tags()
 
@@ -100,8 +99,6 @@ class IndexingBackendMixin(object):
 class IndexingItemMixin(object):
     """
     Item indexing support
-
-    When a commit happens, index stuff.
     """
     def __init__(self, backend, *args, **kw):
         super(IndexingItemMixin, self).__init__(backend, *args, **kw)
@@ -279,11 +276,11 @@ class ItemIndex(object):
                                                           )
         if doc_number is not None:
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                logging.debug("REMOVE FROM ALL: %d", doc_number)
+                logging.debug("All revisions: removing %d", doc_number)
                 async_writer.delete_document(doc_number)
         if latest_doc_number is not None:
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                logging.debug("REMOVE FROM LATEST: %d", latest_doc_number)
+                logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
 
     def history(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
@@ -297,6 +294,7 @@ class ItemIndex(object):
             else:
                 docs = all_revs_searcher.documents(wikiname=self.wikiname)
             from operator import itemgetter
+            # sort by mtime and rev_no do deal better with mtime granularity for fast item rev updates
             for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
                 yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
 
