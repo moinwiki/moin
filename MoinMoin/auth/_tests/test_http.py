@@ -23,7 +23,7 @@ class TestHTTPAuthMoin(object):
         flaskg.user.auth_method = 'http'
         request.authorization = self.Auth()
 
-    def setup_teardown(self, method):
+    def teardown_method(self, method):
         flaskg.user.auth_method = 'invalid'
         request.authorization = None
 
