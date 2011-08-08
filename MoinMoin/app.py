@@ -138,7 +138,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
         app.unprotected_storage.index_rebuild() # XXX run this from a script
     clock.stop('create_app index rebuild')
     clock.start('create_app load/save xml')
-    import_export_xml(app)
     clock.stop('create_app load/save xml')
     clock.start('create_app flask-babel')
     i18n_init(app)
