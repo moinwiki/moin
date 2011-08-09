@@ -73,55 +73,53 @@ def deinit_test_app(app, ctx):
     destroy_app(app)
 
 class MoinTestFunction(pytest.collect.Function):
-    try:
-        def setup(self):
-            if inspect.isclass(self.parent.obj.__class__):
-                cls = self.parent.obj.__class__
+    def setup(self):
+        if inspect.isclass(self.parent.obj.__class__):
+            cls = self.parent.obj.__class__
 
-                # global variables so that previous values can be accessed
-                global prev_app, prev_ctx, prev_cls
+            # global variables so that previous values can be accessed
+            global prev_app, prev_ctx, prev_cls
 
-                if hasattr(cls, 'Config'):
-                    if prev_app is not None:
-                        # deinit previous app if previous app value is not None.
-                        deinit_test_app(prev_app, prev_ctx)
-                    given_config = cls.Config
-                    # init app
-                    self.app, self.ctx = init_test_app(given_config)
-                else:
-                    given_config = wikiconfig.Config
-                    # deinit the previous app if previous class had its own configuration
-                    # deinit the previous app if the class of previous function has an attribute 'create_backend'
-                    # this is for the tests of storage module until we use some cleanup mechanism on tests.
-                    if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
-                        deinit_test_app(prev_app, prev_ctx)
-
-                    # Initialize the app in following two conditions:
-                    # 1. It is the first test item
-                    # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
-                    # Also if the Class of previous function is having an attribute as 'create_backend',
-                    # this is for the tests of storage module until we use some cleanup mechanism on tests.
-                    if prev_app is None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
-                        self.app, self.ctx = init_test_app(given_config)
-                    # continue assigning the values of the previous app and ctx to the current ones.
-                    else:
-                        self.app = prev_app
-                        self.ctx = prev_ctx
-
-                #Get the values from the function
-                prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
-
+            if hasattr(cls, 'Config'):
+                if prev_app is not None:
+                    # deinit previous app if previous app value is not None.
+                    deinit_test_app(prev_app, prev_ctx)
+                given_config = cls.Config
+                # init app
+                self.app, self.ctx = init_test_app(given_config)
             else:
-                prev_app, prev_ctx, prev_cls = get_previous(None, None, None)
+                given_config = wikiconfig.Config
+                # deinit the previous app if previous class had its own configuration
+                # deinit the previous app if the class of previous function has an attribute 'create_backend'
+                # this is for the tests of storage module until we use some cleanup mechanism on tests.
+                if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                    deinit_test_app(prev_app, prev_ctx)
 
-            super(MoinTestFunction, self).setup()
-            #XXX: hack till we get better funcarg tools
-            if hasattr(self._obj, 'im_self'):
-                self._obj.im_self.app = self.app
+                # Initialize the app in following two conditions:
+                # 1. It is the first test item
+                # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
+                # Also if the Class of previous function is having an attribute as 'create_backend',
+                # this is for the tests of storage module until we use some cleanup mechanism on tests.
+                if prev_app is None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                    self.app, self.ctx = init_test_app(given_config)
+                # continue assigning the values of the previous app and ctx to the current ones.
+                else:
+                    self.app = prev_app
+                    self.ctx = prev_ctx
 
-    finally:
-        def teardown(self):
-            super(MoinTestFunction, self).teardown()
+            #Get the values from the function
+            prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
+
+        else:
+            prev_app, prev_ctx, prev_cls = get_previous(None, None, None)
+
+        super(MoinTestFunction, self).setup()
+        #XXX: hack till we get better funcarg tools
+        if hasattr(self._obj, 'im_self'):
+            self._obj.im_self.app = self.app
+
+    def teardown(self):
+        super(MoinTestFunction, self).teardown()
 
     # Need to modify and add more stuffs
 
