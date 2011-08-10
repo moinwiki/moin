@@ -7,7 +7,7 @@ Test for auth.__init__
 
 from flask import g as flaskg
 
-from MoinMoin.auth import GivenAuth, handle_login
+from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
 from MoinMoin.user import create_user
 import pytest
 
@@ -43,7 +43,30 @@ class TestGivenAuth(object):
         assert test_user.name == u'Test_User'
 
 def test_handle_login():
-    result = handle_login(flaskg.user, login_username = 'test_user', login_password = 'test_password', stage = 'moin')
+    # no messages in the biginning
+    assert not flaskg._login_messages
+    test_user1 = handle_login(flaskg.user, login_username = 'test_user', login_password = 'test_password', stage = 'moin')
     test_login_message = [u'Invalid username or password.']
     assert flaskg._login_messages == test_login_message
+    assert test_user1.name == u'anonymous'
+    assert not test_user1.valid
+    # pop the message
+    flaskg._login_messages.pop()
+    # try with a valid user
+    givenauth_obj = GivenAuth()
+    flaskg.user.auth_method = 'given'
+    givenauth_obj.user_name = u'Test_User'
+    create_user('Test_User', 'test_pass', 'test@moinmoin.org')
+    test_user, bool_value = givenauth_obj.request(flaskg.user)
+    test_user2 = handle_login(test_user, login_username = 'Test_User', login_password = 'test_pass', stage = 'moin')
+    assert not flaskg._login_messages
+    assert test_user2.name == u'Test_User'
+    assert test_user2.valid
+
+def test_get_multistage_continuation_url():
+    test_url = get_multistage_continuation_url('test_auth_name', extra_fields={'password': 'test_pass', 'test_key': 'test_value'})
+    assert 'test_key=test_value' in test_url
+    assert 'password=test_pass' in test_url
+    assert 'stage=test_auth_name' in test_url
+    assert 'login_submit=1' in test_url
 
