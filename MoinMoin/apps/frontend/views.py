@@ -147,7 +147,7 @@ def _search(search_form, item_name):
                                results=results,
                                query=query,
                                medium_search_form=search_form,
-                               item_name=item_name
+                               item_name=item_name,
                               )
 
 

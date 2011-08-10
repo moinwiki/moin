@@ -25,8 +25,12 @@
         <table>
             {% for result in results %}
             <tr>
-                <td class="moin-wordbreak">{{ result.pos + 1 }}.
-                <a href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['rev_no']) }}"><b>{{ result['name'] }}</b></a>
+                <td class="moin-wordbreak">{{ result.pos + 1 }}
+                {% if result['wikiname'] == cfg.interwikiname %}
+                    <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['rev_no']) }}"><b>{{ result['name'] }}</b></a>
+                {% else %}
+                    <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['rev_no']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                {% endif %}
                 </td>
             </tr>
             <tr>

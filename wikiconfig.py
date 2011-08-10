@@ -12,7 +12,7 @@ class Config(DefaultConfig):
     # vvv DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO vvv
     # Directory containing THIS wikiconfig:
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
-
+    interwikiname = u'MoinMoin2'
     # We assume this structure for a simple "unpack and run" scenario:
     # wikiconfig.py
     # wiki/
