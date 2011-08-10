@@ -15,6 +15,9 @@ from flask import url_for
 
 import os.path
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 from MoinMoin import config
 
 
