@@ -131,7 +131,7 @@ class TestWriteLock(object):
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
-    
+
     def test_writelock_acquire(self):
         """ util.lock: WriteLock: acquire """
         lock = WriteLock(self.lock_dir)
@@ -141,7 +141,7 @@ class TestWriteLock(object):
 
     def test_haveReadLocks(self):
         """check if there is a ReadLock """
-        timeout = 2.0 
+        timeout = 2.0
         write_lock = WriteLock(self.lock_dir, timeout)
         read_lock = ReadLock(self.lock_dir)
         # acquired ReadLock
@@ -151,7 +151,7 @@ class TestWriteLock(object):
         # try to acquire WriteLock
         assert write_lock.acquire()
         result_after = write_lock._haveReadLocks()
-        assert result_after == False
+        assert not result_after
 
 class TestReadLock(object):
     def setup_method(self, method):
@@ -160,7 +160,7 @@ class TestReadLock(object):
 
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
-    
+
     def test_readlock_acquire(self):
         """ util.lock: ReadLock: acquire """
         lock = ReadLock(self.lock_dir)

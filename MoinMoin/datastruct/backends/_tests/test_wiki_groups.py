@@ -40,7 +40,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
 
     def teardown_method(self, method):
         deinit_test_app(self.app, self.ctx)
-    
+
     def test_rename_group_item(self):
         """
         Tests renaming of a group item.
