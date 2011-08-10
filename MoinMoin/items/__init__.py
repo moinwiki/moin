@@ -172,7 +172,7 @@ class Item(object):
         if rev_no is None:
             rev_no = -1
         if contenttype is None:
-            contenttype = 'application/x-nonexistent'
+            contenttype = u'application/x-nonexistent'
 
         try:
             if item is None:
@@ -188,7 +188,7 @@ class Item(object):
             logging.debug("Got item: %r" % name)
             try:
                 rev = item.get_revision(rev_no)
-                contenttype = 'application/octet-stream' # it exists
+                contenttype = u'application/octet-stream' # it exists
             except NoSuchRevisionError:
                 try:
                     rev = item.get_revision(-1) # fall back to current revision
@@ -430,7 +430,7 @@ class Item(object):
                 data = self.data_form_to_internal(data)
                 data = self.data_internal_to_storage(data)
                 # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
-                contenttype_guessed = 'text/plain;charset=utf-8'
+                contenttype_guessed = u'text/plain;charset=utf-8'
         # data might be None here, if we have a form with just the data_file field, no file was uploaded
         # and no data_text field. this can happen if just metadata of a non-text item is edited.
 

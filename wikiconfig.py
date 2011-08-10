@@ -23,7 +23,8 @@ class Config(DefaultConfig):
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
-
+    index_dir = os.path.join(instance_dir, "index")
+    index_dir_tmp = os.path.join(instance_dir, "index_tmp")
     # This puts the contents from the specified xml file (a serialized backend) into your
     # backend(s). You can remove this after the first request to your wiki or
     # from the beginning if you don't want to use this feature at all.
@@ -34,7 +35,7 @@ class Config(DefaultConfig):
     # 'fs:' indicates that you want to use the filesystem backend. You can also use
     # 'hg:' instead to indicate that you want to use the mercurial backend.
     # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
-    namespace_mapping, router_index_uri = create_simple_mapping(
+    namespace_mapping = create_simple_mapping(
                             backend_uri='fs2:%s/%%(nsname)s' % data_dir,
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',

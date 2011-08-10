@@ -35,6 +35,7 @@ Administrating MoinMoin
    admin/changes
    admin/upgrade
    admin/backup
+   admin/buildindexes
    man/moin
 
 Getting Support for and Contributing to MoinMoin

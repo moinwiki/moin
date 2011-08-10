@@ -173,6 +173,10 @@ class Converter(object):
         params['accesskey'] = elem.get(xlink.accesskey, None)
         params = u','.join([u'%s=%s' % (p, params[p]) for p in params if params[p]])
 
+        # XXX: We don't have Iri support for now
+        from MoinMoin.util.iri import Iri
+        if isinstance(href, Iri):
+            href = unicode(href)
         # TODO: this can be done using one regex, can it?
         href = href.split(u'?')
         args = u''
@@ -289,6 +293,10 @@ class Converter(object):
     def open_moinpage_object(self, elem):
         # TODO: this can be done with one regex:
         href = elem.get(xlink.href, u'')
+        # XXX: We don't have Iri support for now
+        from MoinMoin.util.iri import Iri
+        if isinstance(href, Iri):
+            href = unicode(href)
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
@@ -494,7 +502,7 @@ class Converter(object):
         if table_cellstyle:
             attrib.append(u'style="%s"' % table_cellstyle)
         if number_rows_spanned:
-            attrib.append(u'|'+number_rows_spanned)
+            attrib.append(u'|'+unicode(number_rows_spanned))
 
         attrib = u' '.join(attrib)
 
