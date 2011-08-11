@@ -25,7 +25,6 @@ class TestMemoryBackend(BackendTest):
         pass
 
 class TestTracingBackend(BackendTest):
-
     def create_backend(self):
         import random
         return TracingBackend()#"/tmp/codebuf%i.py" % random.randint(1, 2**30))
