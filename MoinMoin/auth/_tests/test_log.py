@@ -20,7 +20,7 @@ class TestAuthLog:
         assert result.continue_flag
         test_user_obj = result.user_obj
         assert test_user_obj.name == u'anonymous'
-    
+
     def test_request(self):
         authlog_obj = AuthLog()
         result = authlog_obj.request(flaskg.user)
