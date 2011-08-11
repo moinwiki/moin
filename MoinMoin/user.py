@@ -30,7 +30,7 @@ from flask import session, request, url_for
 
 from MoinMoin import config, wikiutil
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.interwiki import getInterwikiHome
+from MoinMoin.util.interwiki import getInterwikiHome, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
                                  generate_token, valid_token
 
@@ -399,7 +399,8 @@ class User(object):
     def persistent_items(self):
         """ items we want to store into the user profile """
         nonpersistent_keys = ['id', 'valid', 'may', 'auth_username',
-                              'password', 'password2', 'auth_method', 'auth_attribs',
+                              'password', 'password2',
+                              'auth_method', 'auth_attribs', 'auth_trusted',
                              ]
         return [(key, value) for key, value in vars(self).items()
                     if key not in nonpersistent_keys and key[0] != '_' and value is not None]
@@ -730,7 +731,7 @@ class User(object):
             it doesn't matter whether it already exists or not.
         """
         wikiname, pagename = getInterwikiHome(self.name)
-        if wikiname == 'Self':
+        if is_local_wiki(wikiname):
             markup = '[[%s]]' % pagename
         else:
             markup = '[[%s:%s]]' % (wikiname, pagename)

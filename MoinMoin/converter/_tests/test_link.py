@@ -17,20 +17,20 @@ from MoinMoin.util.iri import Iri
 
 class TestConverterExternOutput(object):
     def setup_class(self):
-        url_root = Iri('./')
-        self.conv = ConverterExternOutput(url_root=url_root)
+        self.conv = ConverterExternOutput()
 
     def test_wiki(self):
         assert 'MoinMoin' in app.cfg.interwiki_map
         pairs = [
+            # note: result URLs assume test wiki running at /
             ('wiki:///Test',
-                './Test'),
+                '/Test'),
             ('wiki:///Test?mode=raw',
-                './Test?mode=raw'),
+                '/Test?mode=raw'),
             ('wiki:///Test#anchor',
-                './Test#anchor'),
+                '/Test#anchor'),
             ('wiki:///Test?mode=raw#anchor',
-                './Test?mode=raw#anchor'),
+                '/Test?mode=raw#anchor'),
             ('wiki://MoinMoin/Test',
                 'http://moinmo.in/Test'),
         ]
@@ -39,27 +39,28 @@ class TestConverterExternOutput(object):
 
     def test_wikilocal(self):
         pairs = [
+            # note: result URLs assume test wiki running at /
             ('wiki.local:',
                 'wiki:///Root',
-                './Root'),
+                '/Root'),
             ('wiki.local:Test',
                 'wiki:///Root',
-                './Test'),
+                '/Test'),
             ('wiki.local:Test',
                 'wiki:///Root/Sub',
-                './Test'),
+                '/Test'),
             ('wiki.local:/Test',
                 'wiki:///Root',
-                './Root/Test'),
+                '/Root/Test'),
             ('wiki.local:/Test',
                 'wiki:///Root/Sub',
-                './Root/Sub/Test'),
+                '/Root/Sub/Test'),
             ('wiki.local:../Test',
                 'wiki:///Root',
-                './Test'),
+                '/Test'),
             ('wiki.local:../Test',
                 'wiki:///Root/Sub',
-                './Root/Test'),
+                '/Root/Test'),
         ]
         for i in pairs:
             yield (self._do_wikilocal, ) + i
@@ -81,8 +82,7 @@ class TestConverterExternOutput(object):
 
 class TestConverterRefs(object):
     def setup_class(self):
-        root = url_root=Iri('./')
-        self.converter = ConverterItemRefs(url_root=root)
+        self.converter = ConverterItemRefs()
 
     def testItems(self):
         tree_xml = u"""
