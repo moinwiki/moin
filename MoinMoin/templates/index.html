@@ -50,7 +50,8 @@
             <span class="show-action">&nbsp;</span> 
         </div>
         <ul>
-            <li class="moin-download-trigger">{{ _("Download") }}</li>
+            <li class="moin-action-tab" id="moin-download-trigger">{{ _("Download") }}</li>
+            <li class="moin-action-tab" id="moin-delete-trigger" actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">{{ _("Delete") }}</li>
         </ul>
     </div>
     <div class='moin-clr'></div>
@@ -86,7 +87,7 @@
                    class="moin-download-link">
                 </a>
                 <a href="{{ url_for('.show_item', item_name=fullname) }}" 
-                   class="{{ contenttype|contenttype_to_class }}"
+                   class="{{ contenttype|contenttype_to_class }} moin-item"
                    title="{{ relname }}">
                    {{ relname|truncate(maxchars, true, '..') }}
                 </a>
@@ -100,6 +101,16 @@
         {% endfor %}
     </div>
     <div class="moin-clr"></div>
+    <div id="popup">
+        <div class="popup-header">{{ _("Please provide comment for this action") }}</div>
+        <div class="popup-body">
+            <input type="text" class="popup-comment" placeholder="Enter your comment"/>
+            <br/>
+            <input type="button" class="popup-submit" value="Submit"/>
+            <input type="button" class="popup-cancel" value="Cancel"/>
+        </div>
+    </div>
+
     {% endif %}
     {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
     {{ forms.render_file_uploader(submit_url) }}

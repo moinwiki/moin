@@ -34,6 +34,11 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -415,6 +420,31 @@ def delete_item(item_name):
                            form=form,
                            gen=make_generator(),
                           )
+
+@frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxdelete', defaults=dict(item_name=''), methods=['POST'])
+def ajaxdelete(item_name):
+    if request.method == 'POST':
+        args = request.values.to_dict()
+        comment = args.get("comment")
+        itemnames = args.get("itemnames")
+        itemnames = json.loads(itemnames)
+        if item_name:
+            subitem_prefix = item_name + u'/'
+        else:
+            subitem_prefix = u''
+        response = {"itemnames": [], "status": []}
+        for itemname in itemnames:
+            response["itemnames"].append(itemname)
+            itemname = subitem_prefix + itemname
+            try:
+               item = Item.create(itemname)
+               item.delete(comment)
+               response["status"].append(True)
+            except AccessDeniedError:
+               response["status"].append(False)
+
+    return jsonify(response)
 
 
 @frontend.route('/+destroy/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])

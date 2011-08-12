@@ -293,6 +293,15 @@ form.upload_file { display: block; }
 .file_upload_template .file_upload_start { visibility: hidden; border-width: 0px; padding: 0px; }
 .file_upload_template .file_upload_start button { width: 0px; }
 .moin-drag { font-size: 0.7em; color: #6C7680; }
+a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
+
+/* popup */
+#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 400px; position: absolute; top: 10%; left: 40%; display: none; }
+.popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
+.popup-body { background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
+.popup-body input { margin: 8px; padding: 3px; border: 1px solid #E5E5E5; }
+.popup-body input[type="text"] { width: 300px; }
+.popup-body input.blank { border-color: #FF0000; border-width: 2px; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }
