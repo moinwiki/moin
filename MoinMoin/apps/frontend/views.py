@@ -446,6 +446,31 @@ def ajaxdelete(item_name):
 
     return jsonify(response)
 
+@frontend.route('/+ajaxdestroy/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxdestroy', defaults=dict(item_name=''), methods=['POST'])
+def ajaxdestroy(item_name):
+    if request.method == 'POST':
+        args = request.values.to_dict()
+        comment = args.get("comment")
+        itemnames = args.get("itemnames")
+        itemnames = json.loads(itemnames)
+        if item_name:
+            subitem_prefix = item_name + u'/'
+        else:
+            subitem_prefix = u''
+        response = {"itemnames": [], "status": []}
+        for itemname in itemnames:
+            response["itemnames"].append(itemname)
+            itemname = subitem_prefix + itemname
+            try:
+               item = Item.create(itemname)
+               item.destroy(comment=comment, destroy_item=True)
+               response["status"].append(True)
+            except AccessDeniedError:
+               response["status"].append(False)
+
+    return jsonify(response)
+
 
 @frontend.route('/+destroy/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
