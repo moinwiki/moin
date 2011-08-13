@@ -125,6 +125,7 @@ class SearchForm(Form):
     q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
     submit = String.using(default=L_('Search'), optional=True)
     pagelen = String.using(optional=False)
+    search_in_all = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
 
     validators = [ValidSearch()]
 
@@ -138,9 +139,9 @@ def _search(search_form, item_name):
     pagenum = 1 # We start from first page
     pagelen = search_form['pagelen'].value
     index_object = WhooshIndex()
-    latest_index = index_object.latest_revisions_index
-    with latest_index.searcher() as searcher:
-        mparser = MultifieldParser(["name", "content"], schema=latest_index.schema)
+    ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
+    with ix.searcher() as searcher:
+        mparser = MultifieldParser(["name", "content"], schema=ix.schema)
         q = mparser.parse(query)
         results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
         return render_template('search_results.html',
