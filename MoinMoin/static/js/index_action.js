@@ -3,6 +3,14 @@
  * Copyright 2011, AkashSinha<akash2607@gmail.com> 
  */
 
+var actionLoading = [];
+actionLoading["delete"] = "Deleting..";
+actionLoading["destroy"] = "Destroying..";
+
+var actionDone = [];
+actionDone["delete"] = "deleted";
+actionDone["destroy"] = "destroyed";
+
 function enablelink(downloadlink) {
     url=downloadlink.attr("title");
     downloadlink.attr("href",url);
@@ -14,11 +22,12 @@ function disablelink(downloadlink) {
     downloadlink.removeClass("active-link");
 }
 
-function showpop()
+function showpop(action)
 {
     $("#popup").fadeIn();
     $(".popup-comment").removeClass("blank");
     $(".popup-comment").val("");
+    $(".popup-action").val(action);
 }
 
 function hide(item_link)
@@ -29,40 +38,42 @@ function hide(item_link)
 function show_conflict(item_link)
 {
    item_link.removeClass().addClass("moin-conflict");
+   item_link.parent().removeClass();
 }
 
-function delete_item(comment) {
+function do_action(comment, action) {
     var links = [];
     $(".selected-item").children("a.moin-item").each(function () {
         itemname = $(this).attr("title");
         links.push(itemname);
     });
     var itemnames = JSON.stringify(links);
-    url = $("#moin-delete-trigger").attr("actionurl");
+    var actionTrigger = "moin-" + action + "-trigger";
+    url = $("#" + actionTrigger).attr("actionurl");
     $("#popup").css("display", "none");
-    $(".moin-index-message span").text("Deleting...");
+    $(".moin-index-message span").text(actionLoading[action]);
     $(".moin-index-message").css("display", "block");
     $.post(url, {
             itemnames: itemnames,
             comment: comment,
             }, function (data) {
                 var itemnames = data.itemnames;
-                var delete_status = data.status;
-                var deleted_item = 0;
+                var action_status = data.status;
+                var success_item = 0;
                 var left_item = 0;
                 $.each(itemnames, function (itemindex, itemname) {
-                    if(delete_status[itemindex]) {
+                    if(action_status[itemindex]) {
                         hide($('.selected-item').children('a.moin-item[title="' + itemname + '"]'));
-                        deleted_item++;
+                        success_item++;
                     }
                     else {
                         show_conflict($('.selected-item').children('a.moin-item[title="' + itemname + '"]'));
                         left_item++;
                    }  
                    });
-                   var message = "Items deleted: " + deleted_item ;
+                   var message = "Items " + actionDone[action] + ": " + success_item ;
                    if(left_item)
-                       message += ", Items not deleted: " + left_item + ".";
+                       message += ", Items not " + actionDone[action] + ": " + left_item + ".";
                    $(".moin-index-message span").text(message);
                    setTimeout(function () {
                        $(".moin-index-message").fadeOut();
@@ -108,7 +119,6 @@ $("document").ready(function () {
                 enablelink(downloadlink);
             });
             $(this).removeClass("allitem-toselect").addClass("allitem-selected");
-
         }
         else {
             $(this).removeClass("allitem-selected").addClass("allitem-toselect");
@@ -120,7 +130,7 @@ $("document").ready(function () {
         }
     });
 
-    $("#moin-delete-trigger").click(function () {
+    $(".moin-action-tab").click(function () {
         if(!($("div.selected-item").length)) {
             $(".moin-index-message span").text("Nothing was selected.");
             $(".moin-index-message").fadeIn();
@@ -129,7 +139,10 @@ $("document").ready(function () {
             }, 4000);
         }
         else {
-            showpop();
+            if(this.id == "moin-delete-trigger") 
+                showpop("delete");
+            else
+                showpop("destroy");
         }
         $(".show-action").trigger("click");
     });
@@ -140,12 +153,13 @@ $("document").ready(function () {
 
     $(".popup-submit").click(function () {
         var comment = $(".popup-comment").val();
+        var action = $(".popup-action").val();
         if($.trim(comment) == "") {
             $(".popup-comment").addClass("blank");
             $(".popup-comment").focus();
         }
         else { 
-            delete_item(comment);
+            do_action(comment, action);
         }
     });
 

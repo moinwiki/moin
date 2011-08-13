@@ -50,8 +50,9 @@
             <span class="show-action">&nbsp;</span> 
         </div>
         <ul>
-            <li class="moin-action-tab" id="moin-download-trigger">{{ _("Download") }}</li>
+            <li id="moin-download-trigger">{{ _("Download") }}</li>
             <li class="moin-action-tab" id="moin-delete-trigger" actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">{{ _("Delete") }}</li>
+            <li class="moin-action-tab" id="moin-destroy-trigger" actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">{{ _("Destroy") }}</li>
         </ul>
     </div>
     <div class='moin-clr'></div>
@@ -105,6 +106,7 @@
         <div class="popup-header">{{ _("Please provide comment for this action") }}</div>
         <div class="popup-body">
             <input type="text" class="popup-comment" placeholder="Enter your comment"/>
+            <input type="hidden" class="popup-action" value=""/>
             <br/>
             <input type="button" class="popup-submit" value="Submit"/>
             <input type="button" class="popup-cancel" value="Cancel"/>
