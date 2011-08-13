@@ -141,7 +141,7 @@ def _search(search_form, item_name):
     index_object = WhooshIndex()
     ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
     with ix.searcher() as searcher:
-        mparser = MultifieldParser(["name", "content"], schema=ix.schema)
+        mparser = MultifieldParser(["name_exact", "name", "content"], schema=ix.schema)
         q = mparser.parse(query)
         results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
         return render_template('search_results.html',
