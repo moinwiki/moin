@@ -54,3 +54,9 @@ Helpers for using flatland with jinja2 to create html forms.
     </dd>
     {% endif %}
 {% endmacro %}
+
+{% macro render_field_without_markup(gen, field, field_type) %}
+    {{ gen.input(field, type=field_type) }}
+    {{ gen.label(field) }}
+    {{ render_errors(field) }}
+{% endmacro %}
