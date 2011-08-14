@@ -24,10 +24,19 @@ function disablelink(downloadlink) {
 
 function showpop(action)
 {
+    $(".popup-container").css("display", "none");
+    if(action == "newitem") {
+        $("#popup-for-newitem").css("display", "block");
+        $("#file_upload").appendTo("#popup-for-newitem .popup-body");
+        $(".upload-form").css("display", "block");
+    }
+    else {
+        $("#popup-for-action").css("display", "block");
+        $(".popup-comment").removeClass("blank");
+        $(".popup-comment").val("");
+        $(".popup-action").val(action);
+    }
     $("#popup").fadeIn();
-    $(".popup-comment").removeClass("blank");
-    $(".popup-comment").val("");
-    $(".popup-action").val(action);
 }
 
 function hide(item_link)
@@ -146,8 +155,18 @@ $("document").ready(function () {
         }
         $(".show-action").trigger("click");
     });
-    
+
+    $("#moin-create-newitem").click(function () {
+        showpop("newitem");
+        $(".show-action").trigger("click");
+
+    });
+
     $(".popup-cancel").click(function () {
+        if($("#popup-for-newitem:visible").length) {
+            $("#file_upload").appendTo("#moin-upload-cont");
+            $(".upload-form").css("display", "none");
+        }
         $("#popup").fadeOut();
     });
 

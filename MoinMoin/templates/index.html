@@ -53,6 +53,7 @@
             <li id="moin-download-trigger">{{ _("Download") }}</li>
             <li class="moin-action-tab" id="moin-delete-trigger" actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">{{ _("Delete") }}</li>
             <li class="moin-action-tab" id="moin-destroy-trigger" actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">{{ _("Destroy") }}</li>
+            <li id="moin-create-newitem">{{ _("New item") }}</li>
         </ul>
     </div>
     <div class='moin-clr'></div>
@@ -103,18 +104,34 @@
     </div>
     <div class="moin-clr"></div>
     <div id="popup">
-        <div class="popup-header">{{ _("Please provide comment for this action") }}</div>
-        <div class="popup-body">
-            <input type="text" class="popup-comment" placeholder="Enter your comment"/>
-            <input type="hidden" class="popup-action" value=""/>
-            <br/>
-            <input type="button" class="popup-submit" value="Submit"/>
-            <input type="button" class="popup-cancel" value="Cancel"/>
+        <div id="popup-for-action" class="popup-container">
+            <div class="popup-header">{{ _("Please provide comment for this action") }}</div>
+            <div class="popup-body">
+                <input type="text" class="popup-comment" placeholder="{{ _("Enter your comment") }}"/>
+                <input type="hidden" class="popup-action" value=""/>
+                <br/>
+                <input type="button" class="popup-submit" value="{{ _("Submit") }}"/>
+                <input type="button" class="popup-cancel" value="{{ _("Cancel") }}"/>
+            </div>
+        </div>
+        <div id="popup-for-newitem" class="popup-container">
+            <div class="popup-header">{{ _("Create new item") }}</div>
+            <div class="popup-body">
+                <form action={{ url_for('.ajaxmodify', item_name=item_name) }} method="get">
+                    <input type="text" name="newitem" placeholder="{{ _("Enter item name here") }}" required="true"/>
+                    <br/>
+                    <input type="submit" value="{{ _("Create") }}"/>
+                    <input type="button" class="popup-cancel" value="{{ _("Later") }}"/>
+                </form>
+            </div>
         </div>
     </div>
 
     {% endif %}
+    <div id="moin-upload-cont">
     {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
     {{ forms.render_file_uploader(submit_url) }}
+    </div>
+    <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
 {% endblock %}
