@@ -283,6 +283,7 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
 .moin-path-separator { font-size: 120%; color: #4477FF; }
 .moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
+#moin-upload-cont { min-height: 10px; }
 #file_upload { margin-top: 2em; }
 form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer; direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative; text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF; -moz-box-shadow: 0px 0px 5px #4477FF; khtml-box-shadow: 0px 0px 5px #4477FF; }
 form.upload_file:hover { color: #FFFFFF; }
@@ -292,16 +293,18 @@ form.upload_file button { display: none;}
 form.upload_file { display: block; }
 .file_upload_template .file_upload_start { visibility: hidden; border-width: 0px; padding: 0px; }
 .file_upload_template .file_upload_start button { width: 0px; }
+.upload-form { display: none; }
 .moin-drag { font-size: 0.7em; color: #6C7680; }
 a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
 
 /* popup */
-#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 400px; position: absolute; top: 10%; left: 40%; display: none; }
+#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 500px; position: absolute; top: 10%; left: 35%; display: none; }
 .popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
 .popup-body { background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
 .popup-body input { margin: 8px; padding: 3px; border: 1px solid #E5E5E5; }
 .popup-body input[type="text"] { width: 300px; }
 .popup-body input.blank { border-color: #FF0000; border-width: 2px; }
+.popup-container { margin: 0; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }

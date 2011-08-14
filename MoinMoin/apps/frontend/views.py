@@ -472,6 +472,18 @@ def ajaxdestroy(item_name):
     return jsonify(response)
 
 
+@frontend.route('/+ajaxmodify/<itemname:item_name>')
+@frontend.route('/+ajaxmodify', defaults=dict(item_name=''))
+def ajaxmodify(item_name):
+    newitem = request.values.get("newitem")
+    if not newitem:
+        abort(403)
+    if item_name:
+        newitem = item_name + u'/' + newitem
+
+    return redirect(url_for('.modify_item', item_name=newitem))
+
+
 @frontend.route('/+destroy/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
 def destroy_item(item_name, rev):
