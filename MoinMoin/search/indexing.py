@@ -63,6 +63,13 @@ class WhooshIndex(object):
         self.all_revisions_schema = Schema(uuid=ID(stored=True),
                                            **common_fields)
 
+        # Add dynamic fields there
+        self.latest_revisions_schema.add("*_id", ID, glob=True)
+        self.latest_revisions_schema.add("*_text", TEXT, glob=True)
+
+        self.all_revisions_schema.add("*_id", ID, glob=True)
+        self.all_revisions_schema.add("*_text", TEXT, glob=True)
+
         for index_name, index_schema in self._indexes.items():
             self.open_index(index_name, index_schema, create=True, index_dir=self._index_dir)
 

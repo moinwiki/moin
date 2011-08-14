@@ -248,15 +248,15 @@ class ItemIndex(object):
         rev_content = convert_to_indexable(rev)
         logging.debug("Indexable content: %r" % (rev_content[:250], ))
         if not all_found_document:
-            field_names = self.index_object.all_revisions_index.schema.names()
+            schema = self.index_object.all_revisions_index.schema
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
-                converted_rev = backend_to_index(rev, revno, field_names, rev_content, self.wikiname)
+                converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
                 logging.debug("All revisions: adding %s %s", converted_rev[NAME], converted_rev["rev_no"])
                 async_writer.add_document(**converted_rev)
         if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
-            field_names = self.index_object.latest_revisions_index.schema.names()
+            schema = self.index_object.latest_revisions_index.schema
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                converted_rev = backend_to_index(rev, revno, field_names, rev_content, self.wikiname)
+                converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
                 logging.debug("Latest revisions: updating %s %s", converted_rev[NAME], converted_rev["rev_no"])
                 async_writer.update_document(**converted_rev)
 
