@@ -10,7 +10,7 @@ import datetime
 
 from MoinMoin.config import MTIME, NAME
 
-def backend_to_index(backend_rev, rev_no, schema_fields, content, wikiname=u''):
+def backend_to_index(backend_rev, rev_no, schema, content, wikiname=u''):
     """
     Convert fields from backend format to whoosh schema
 
@@ -22,7 +22,7 @@ def backend_to_index(backend_rev, rev_no, schema_fields, content, wikiname=u''):
 
     doc = dict([(str(key), value)
                 for key, value in backend_rev.items()
-                if key in schema_fields])
+                if key in schema])
     doc[MTIME] = datetime.datetime.fromtimestamp(backend_rev[MTIME])
     doc["name_exact"] = backend_rev[NAME]
     doc["rev_no"] = rev_no

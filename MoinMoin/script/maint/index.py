@@ -67,7 +67,7 @@ class IndexOperations(Command):
                                 for rev_no in item.list_revisions():
                                     revision = item.get_revision(rev_no)
                                     rev_content = convert_to_indexable(revision)
-                                    metadata = backend_to_index(revision, rev_no, all_rev_field_names, rev_content, interwikiname)
+                                    metadata = backend_to_index(revision, rev_no, all_rev_schema, rev_content, interwikiname)
                                     all_rev_writer.add_document(**metadata)
                             else:
                                 revision = item.get_revision(-1)
@@ -77,7 +77,7 @@ class IndexOperations(Command):
                             continue
                         # revision is now the latest revision of this item
                         if "latest_revisions_index" in indexnames and "rev_no" in locals():
-                            metadata = backend_to_index(revision, rev_no, latest_rev_field_names, rev_content, interwikiname)
+                            metadata = backend_to_index(revision, rev_no, latest_rev_schema, rev_content, interwikiname)
                             latest_rev_writer.add_document(**metadata)
 
         def update_index(indexnames_schemas):
@@ -111,7 +111,7 @@ class IndexOperations(Command):
                     for item, rev_no in latest_documents:
                         revision = item.get_revision(rev_no)
                         rev_content = convert_to_indexable(revision)
-                        converted_rev = backend_to_index(revision, rev_no, latest_rev_field_names, rev_content, interwikiname)
+                        converted_rev = backend_to_index(revision, rev_no, latest_rev_schema, rev_content, interwikiname)
                         found = latest_rev_searcher.document(name_exact=item.name,
                                                              wikiname=interwikiname
                                                             )
@@ -140,7 +140,7 @@ class IndexOperations(Command):
                         for rev_no in rev_nos:
                             revision = item.get_revision(rev_no)
                             rev_content = convert_to_indexable(revision)
-                            converted_rev = backend_to_index(revision, rev_no, all_rev_field_names, rev_content, interwikiname)
+                            converted_rev = backend_to_index(revision, rev_no, all_rev_schema, rev_content, interwikiname)
                             all_rev_writer.add_document(**converted_rev)
 
         def clean_index(indexnames_schemas):
@@ -161,7 +161,7 @@ class IndexOperations(Command):
             for indexname, schema in indexnames_schemas:
                 if not exists_in(app.cfg.index_dir_tmp, indexname=indexname):
                     raise FatalError(u"Can't find %s in %s" % (indexname, app.cfg.index_dir_tmp))
-                for filename in latest_rev_index.storage.list():
+                for filename in all_rev_index.storage.list():
                     src_file = os.path.join(app.cfg.index_dir_tmp, filename)
                     dst_file = os.path.join(app.cfg.index_dir, filename)
                     if indexname in filename and os.path.exists(src_file):
@@ -229,8 +229,8 @@ class IndexOperations(Command):
         latest_rev_index = index_object.latest_revisions_index
         all_rev_index = index_object.all_revisions_index
 
-        latest_rev_field_names = latest_rev_index.schema.names()
-        all_rev_field_names = all_rev_index.schema.names()
+        latest_rev_schema = latest_rev_index.schema
+        all_rev_schema = all_rev_index.schema
 
         latest_rev_searcher = latest_rev_index.searcher()
         all_rev_searcher = all_rev_index.searcher()
