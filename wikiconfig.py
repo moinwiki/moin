@@ -64,7 +64,7 @@ class Config(DefaultConfig):
     # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
     # see https://bitbucket.org/thomaswaldmann/xstatic for details:
     from xstatic.main import XStatic
-    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor', 'svgweb', 'svgedit_moin', 'twikidraw_moin', 'anywikidraw', 'mathjax', ]
+    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor', 'svgweb', 'svgedit_moin', 'twikidraw_moin', 'anywikidraw', ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)

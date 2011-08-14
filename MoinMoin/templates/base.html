@@ -50,15 +50,6 @@
     <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
     <script src="{{ url_for('serve.files', name='svgweb', filename='svg.js') }}"></script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
-    <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/HTML-CSS"],
-    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-  });
-</script>
-<script src="{{ url_for('serve.files', name='mathjax', filename='MathJax.js') }}"> </script>
- 
     {{ scripts }}
     <!--[if lt IE 9]>
         {# TODO: use a local copy later #}
