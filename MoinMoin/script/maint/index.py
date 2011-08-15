@@ -12,6 +12,7 @@ from flask import g as flaskg
 from flaskext.script import Command, Option
 from whoosh.filedb.multiproc import MultiSegmentWriter
 from whoosh.index import open_dir, create_in, exists_in
+from whoosh.index import EmptyIndexError
 
 from MoinMoin.search.indexing import WhooshIndex
 from MoinMoin.config import MTIME, NAME, CONTENTTYPE
@@ -63,6 +64,7 @@ class IndexOperations(Command):
                 with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
                     for item in backend.iter_items_noindex():
                         try:
+                            rev_no = None
                             if "all_revisions_index" in indexnames:
                                 for rev_no in item.list_revisions():
                                     revision = item.get_revision(rev_no)
@@ -76,7 +78,7 @@ class IndexOperations(Command):
                         except NoSuchRevisionError: # item has no such revision
                             continue
                         # revision is now the latest revision of this item
-                        if "latest_revisions_index" in indexnames and "rev_no" in locals():
+                        if "latest_revisions_index" in indexnames and rev_no:
                             metadata = backend_to_index(revision, rev_no, latest_rev_schema, rev_content, interwikiname)
                             latest_rev_writer.add_document(**metadata)
 
@@ -90,11 +92,11 @@ class IndexOperations(Command):
             delete_documents = []
             latest_documents = []
             for item in backend.iter_items_noindex():
-                if not item.list_revisions(): # If item hasn't revisions, skipping it
+                backend_rev_list = item.list_revisions()
+                if not backend_rev_list: # If item hasn't revisions, skipping it
                     continue
                 name = item.get_revision(-1)[NAME]
                 index_rev_list = item_index_revs(all_rev_searcher, name)
-                backend_rev_list = item.list_revisions()
                 add_rev_nos = set(backend_rev_list) - set(index_rev_list)
                 if add_rev_nos:
                     if "all_revisions_index" in indexnames:
@@ -117,9 +119,9 @@ class IndexOperations(Command):
                                                             )
                         if not found:
                             latest_rev_writer.add_document(**converted_rev)
-                        # Checking what last revision is the latest
+                        # Checking that last revision is the latest
                         elif found["rev_no"] < converted_rev["rev_no"]:
-                            doc_number = latest_rev_searcher.document_number(name_exact=item.name)
+                            doc_number = latest_rev_searcher.document_number(name_exact=item.name, wikiname=interwikiname)
                             latest_rev_writer.delete_document(doc_number)
                             latest_rev_writer.add_document(**converted_rev)
 
@@ -171,32 +173,22 @@ class IndexOperations(Command):
             """
             Print documents in given index to stdout
             """
-            from whoosh.index import EmptyIndexError
 
             for indexname, schema in indexnames_schemas:
                 try:
-                    if "all" in indexname:
-                        all_index = open_dir(app.cfg.index_dir, indexname="all_revisions_index")
-                        print "*** Revisions in all_revisions_index:"
-                        with all_index.searcher() as searcher:
-                            for rev in searcher.all_stored_fields():
-                                name = rev.pop("name", u"")
-                                content = rev.pop("content", u"")
-                                for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
-                                    print "%s: %s" % (field, repr(value)[:70])
-                                print "\n"
-                        all_index.close()
-                    if "latest" in indexname:
-                        latest_index = open_dir(app.cfg.index_dir, indexname="latest_revisions_index")
-                        print "*** Revisions in latest_revision_index:"
-                        with latest_index.searcher() as searcher:
-                            for rev in searcher.all_stored_fields():
-                                name = rev.pop("name", u"")
-                                content = rev.pop("content", u"")
-                                for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
-                                    print "%s: %s" % (field, repr(value)[:70])
-                                print "\n"
-                        latest_index.close()
+                    if indexname == "all_revisions_index":
+                        ix = open_dir(app.cfg.index_dir, indexname="all_revisions_index")
+                    elif indexname == "latest_revisions_index":
+                        ix = open_dir(app.cfg.index_dir, indexname="latest_revisions_index")
+                    print "*** Revisions in", indexname
+                    with ix.searcher() as searcher:
+                        for rev in searcher.all_stored_fields():
+                            name = rev.pop("name", u"")
+                            content = rev.pop("content", u"")
+                            for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
+                                print "%s: %s" % (field, repr(value)[:70])
+                            print "\n"
+                    ix.close()
                 except (IOError, OSError, EmptyIndexError) as err:
                     raise FatalError("%s [Can not open %s index" % str(err), indexname)
 
