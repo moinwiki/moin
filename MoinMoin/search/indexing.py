@@ -6,17 +6,40 @@ MoinMoin - Whoosh index schemas / index managment
 """
 
 import os
+import datetime
 
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 
+from MoinMoin.config import MTIME, NAME
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+def backend_to_index(backend_rev, rev_no, schema, content, wikiname=u''):
+    """
+    Convert fields from backend format to whoosh schema
+
+    :param backend_rev: MoinMoin backend revision
+    :param rev_no: Revision number
+    :param schema_fields: list with whoosh schema fields
+    :returns: document to put into whoosh index
+    """
+
+    doc = dict([(str(key), value)
+                for key, value in backend_rev.items()
+                if key in schema])
+    doc[MTIME] = datetime.datetime.fromtimestamp(backend_rev[MTIME])
+    doc["name_exact"] = backend_rev[NAME]
+    doc["rev_no"] = rev_no
+    doc["wikiname"] = wikiname
+    doc["content"] = content
+    return doc
 
 
 class WhooshIndex(object):
