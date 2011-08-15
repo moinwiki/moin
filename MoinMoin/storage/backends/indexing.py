@@ -25,7 +25,7 @@ make_uuid = lambda: unicode(uuid4().hex)
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
-from MoinMoin.search.revision_converter import backend_to_index
+from MoinMoin.search.indexing import backend_to_index
 from MoinMoin.converter import convert_to_indexable
 
 from MoinMoin import log
