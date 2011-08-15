@@ -9,7 +9,7 @@ import os
 
 from flask import current_app as app
 
-from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME
+from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.search.analyzers import *
@@ -63,12 +63,19 @@ class WhooshIndex(object):
         self.all_revisions_schema = Schema(uuid=ID(stored=True),
                                            **common_fields)
 
-        # Add dynamic fields there
-        self.latest_revisions_schema.add("*_id", ID, glob=True)
-        self.latest_revisions_schema.add("*_text", TEXT, glob=True)
+        # Define dynamic fields
+        dynamic_fields = [("*_id", ID),
+                          ("*_text", TEXT),
+                          ("*_keyword", KEYWORD),
+                          ("*_numeric", NUMERIC),
+                          ("*_datetime", DATETIME),
+                          ("*_boolean", BOOLEAN)
+                         ]
 
-        self.all_revisions_schema.add("*_id", ID, glob=True)
-        self.all_revisions_schema.add("*_text", TEXT, glob=True)
+        # Adding dynamic fields to schemas
+        for glob, field_type in dynamic_fields:
+            self.latest_revisions_schema.add(glob, field_type, glob=True)
+            self.all_revisions_schema.add(glob, field_type, glob=True)
 
         for index_name, index_schema in self._indexes.items():
             self.open_index(index_name, index_schema, create=True, index_dir=self._index_dir)
