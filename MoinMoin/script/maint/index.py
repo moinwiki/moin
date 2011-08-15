@@ -19,7 +19,7 @@ from MoinMoin.config import MTIME, NAME, CONTENTTYPE
 from MoinMoin.error import FatalError
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mime import Type
-from MoinMoin.search.revision_converter import backend_to_index
+from MoinMoin.search.indexing import backend_to_index
 from MoinMoin.converter import convert_to_indexable
 
 from MoinMoin import log
