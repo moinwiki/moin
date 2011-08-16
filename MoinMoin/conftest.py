@@ -41,6 +41,7 @@ MoinMoin.log.load_config(config_file)
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
+from flask import g as flaskg
 
 #In the beginning following variables have no values
 prev_app = None
@@ -90,17 +91,13 @@ class MoinTestFunction(pytest.collect.Function):
             else:
                 given_config = wikiconfig.Config
                 # deinit the previous app if previous class had its own configuration
-                # deinit the previous app if the class of previous function has an attribute 'create_backend'
-                # this is for the tests of storage module until we use some cleanup mechanism on tests.
-                if hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                if hasattr(prev_cls, 'Config'):
                     deinit_test_app(prev_app, prev_ctx)
 
                 # Initialize the app in following two conditions:
                 # 1. It is the first test item
                 # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
-                # Also if the Class of previous function is having an attribute as 'create_backend',
-                # this is for the tests of storage module until we use some cleanup mechanism on tests.
-                if prev_app is None or hasattr(prev_cls, 'Config') or hasattr(prev_cls, 'create_backend'):
+                if prev_app is None or hasattr(prev_cls, 'Config'):
                     self.app, self.ctx = init_test_app(given_config)
                 # continue assigning the values of the previous app and ctx to the current ones.
                 else:
@@ -118,7 +115,9 @@ class MoinTestFunction(pytest.collect.Function):
         if hasattr(self._obj, 'im_self'):
             self._obj.im_self.app = self.app
 
+
     def teardown(self):
+        clean_backend()
         super(MoinTestFunction, self).teardown()
 
     # Need to modify and add more stuffs
@@ -140,6 +139,33 @@ def pytest_pyfunc_call(pyfuncitem):
 
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
+
+def clean_backend():
+    """ method to cleanup the items created in testing process """
+    for test_item in flaskg.storage.iteritems():
+        test_backend = flaskg.storage.get_backend(test_item.name)
+        temp_acl = test_backend._get_acl(test_item.name)
+        if temp_acl.has_acl():
+            test_before_acl = test_backend.before.acl
+            test_backend.before._addLine('+All:destroy')
+            # reverse the list to get the priority for our newly added rights
+            test_before_acl.reverse()
+            test_item.destroy()
+            # get to the previous state
+            test_before_acl.reverse()
+            test_before_acl.pop()
+        else:
+            test_acl = test_backend.default.acl
+            test_backend.default._addLine('+All:destroy')
+            # reverse the list to get the priority for our newly added rights
+            test_acl.reverse()
+            test_item.destroy()
+            # get to the previous state
+            test_acl.reverse()
+            test_acl.pop()
+
+    for test_item in flaskg.unprotected_storage.iteritems():
+        test_item.destroy()
 
 class Module(pytest.collect.Module):
     def run(self, *args, **kwargs):
