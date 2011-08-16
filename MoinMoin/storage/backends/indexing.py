@@ -228,7 +228,15 @@ class ItemIndex(object):
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 async_writer.delete_document(doc_number)
 
-        # XXX must be deleted from all_revisions_index also
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            doc_numbers = list(all_revs_searcher.document_numbers(uuid=metas[UUID],
+                                                                  name_exact=metas[NAME],
+                                                                  wikiname=self.wikiname
+                                                                 ))
+        if doc_numbers:
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                for doc_number in doc_numbers:
+                    async_writer.delete_document(doc_number)
 
     def add_rev(self, uuid, revno, rev):
         """
