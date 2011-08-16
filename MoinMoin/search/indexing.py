@@ -64,8 +64,8 @@ class WhooshIndex(object):
 
         common_fields = dict(
             wikiname=ID(stored=True),
-            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer()),
-            name_exact=ID,
+            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            name_exact=ID(field_boost=3.0),
             rev_no=NUMERIC(stored=True),
             mtime=DATETIME(stored=True),
             contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
