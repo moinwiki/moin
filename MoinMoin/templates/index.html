@@ -113,6 +113,7 @@
         {% endfor %}
     </div>
     <div class="moin-clr"></div>
+    {% endif %}
     <div id="popup">
         <div id="popup-for-action" class="popup-container">
             <div class="popup-header">
@@ -148,7 +149,6 @@
         </div>
     </div>
 
-    {% endif %}
     <div id="moin-upload-cont">
     {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
     {{ forms.render_file_uploader(submit_url) }}
