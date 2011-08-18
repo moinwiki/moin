@@ -23,7 +23,7 @@ from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
-from MoinMoin.security import FunctionACL
+from MoinMoin.security import AccessControlList
 
 
 class CacheClass(object):
@@ -71,7 +71,7 @@ class ConfigFunctionality(object):
         self.cache.item_group_regexact = re.compile(u'^%s$' % self.item_group_regex, re.UNICODE)
 
         # compiled functions ACL
-        self.cache.acl_functions = FunctionACL(self, [self.acl_functions])
+        self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
 
         plugins._loadPluginModule(self)
 

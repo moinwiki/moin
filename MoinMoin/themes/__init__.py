@@ -21,7 +21,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.config import USERID, ADDRESS, HOSTNAME
-from MoinMoin.util.interwiki import split_interwiki, resolve_interwiki, join_wiki, getInterwikiHome
+from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 
@@ -103,9 +103,9 @@ class ThemeSupport(object):
         trail = user.getTrail()
         for interwiki_item_name in trail:
             wiki_name, item_name = split_interwiki(interwiki_item_name)
-            wiki_name, wiki_base_url, item_name, err = resolve_interwiki(wiki_name, item_name)
-            href = join_wiki(wiki_base_url, item_name)
-            if wiki_name in [self.cfg.interwikiname, 'Self', ]:
+            err = not is_known_wiki(wiki_name)
+            href = url_for_item(item_name, wiki_name=wiki_name)
+            if is_local_wiki(wiki_name):
                 exists = self.storage.has_item(item_name)
                 wiki_name = ''  # means "this wiki" for the theme code
             else:
@@ -129,13 +129,12 @@ class ThemeSupport(object):
         wikiname, itemname = getInterwikiHome(name)
         title = "%s @ %s" % (aliasname, wikiname)
         # link to (interwiki) user homepage
-        if wikiname == "Self":
+        if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
         else:
             # We cannot check if wiki pages exists in remote wikis
             exists = True
-        wiki_name, wiki_base_url, item_name, err = resolve_interwiki(wikiname, itemname)
-        wiki_href = join_wiki(wiki_base_url, item_name)
+        wiki_href = url_for_item(itemname, wiki_name=wikiname)
         return wiki_href, aliasname, title, exists
 
     def split_navilink(self, text):
@@ -181,22 +180,13 @@ class ThemeSupport(object):
         if target.startswith("wiki:"):
             target = target[5:]
 
-        # try handling interwiki links
         wiki_name, item_name = split_interwiki(target)
-        wiki_name, wiki_base_url, item_name, err = resolve_interwiki(wiki_name, item_name)
-        href = join_wiki(wiki_base_url, item_name)
-        if wiki_name not in [self.cfg.interwikiname, 'Self', ]:
-            if not title:
-                title = item_name
-            return href, title, wiki_name
-
-        # Handle regular pagename like "FrontPage"
-        item_name = wikiutil.normalize_pagename(item_name, self.cfg)
-
+        if wiki_name == 'Self':
+            wiki_name = ''
+        href = url_for_item(item_name, wiki_name=wiki_name)
         if not title:
             title = item_name
-        href = url_for('frontend.show_item', item_name=item_name)
-        return href, title, wiki_local
+        return href, title, wiki_name
 
     def navibar(self, item_name):
         """
@@ -219,7 +209,7 @@ class ThemeSupport(object):
 
         # Add sister pages (see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide )
         for sistername, sisterurl in self.cfg.sistersites:
-            if sistername == self.cfg.interwikiname:  # it is THIS wiki
+            if is_local_wiki(sistername):
                 items.append(('sisterwiki current', sisterurl, sistername))
             else:
                 cid = cache_key(usage="SisterSites", sistername=sistername)
@@ -318,14 +308,11 @@ def get_editor_info(rev, external=False):
             css = 'editor mail'
         else:
             homewiki = app.cfg.user_homewiki
-            if homewiki in ('Self', app.cfg.interwikiname):
-                homewiki = u'Self'
+            if is_local_wiki(homewiki):
                 css = 'editor homepage local'
-                uri = url_for('frontend.show_item', item_name=name, _external=external)
             else:
                 css = 'editor homepage interwiki'
-                wt, wu, tail, err = resolve_interwiki(homewiki, name)
-                uri = join_wiki(wu, tail)
+            uri = url_for_item(name, wiki_name=homewiki, _external=external)
 
     result = dict(name=name, text=text, css=css, title=title)
     if uri:
@@ -392,6 +379,7 @@ def setup_jinja_env():
                             'clock': flaskg.clock,
                             'cfg': app.cfg,
                             'item_name': 'handlers need to give it',
+                            'url_for_item': url_for_item,
                             'get_editor_info': lambda rev: get_editor_info(rev),
                             'gen': make_generator(),
                             })

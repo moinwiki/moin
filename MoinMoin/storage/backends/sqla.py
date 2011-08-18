@@ -472,6 +472,8 @@ class Data(Base):
         @see: SQLAItem.setup.__doc__
         """
         self.chunkno = 0
+        # XXX if we keep the last chunk outside of _chunks, read() will not be
+        # able to read data from the last chunk
         self._last_chunk = Chunk(self.chunkno)
         self.cursor_pos = 0
 

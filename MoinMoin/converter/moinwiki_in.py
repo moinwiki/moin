@@ -21,11 +21,13 @@ logging = log.getLogger(__name__)
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
-from MoinMoin.util.interwiki import resolve_interwiki
+from MoinMoin.util.interwiki import is_known_wiki
+from MoinMoin.i18n import _
+
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
-from MoinMoin.i18n import _
+from ._util import decode_data, normalize_split_text
 
 
 class _Iter(object):
@@ -219,8 +221,10 @@ class Converter(ConverterMacro):
     def factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content, arguments=None):
-        iter_content = _Iter(content)
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        lines = normalize_split_text(text)
+        iter_content = _Iter(lines)
 
         body = self.parse_block(iter_content, arguments)
         root = moin_page.page(children=(body, ))
@@ -782,8 +786,7 @@ class Converter(ConverterMacro):
             link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
         if link_interwiki_site:
-            err = resolve_interwiki(link_interwiki_site, link_interwiki_item)[3]
-            if not err:
+            if is_known_wiki(link_interwiki_site):
                 link = Iri(scheme='wiki',
                         authority=link_interwiki_site,
                         path='/' + link_interwiki_item)

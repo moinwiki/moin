@@ -13,11 +13,12 @@ from __future__ import absolute_import, division
 
 from flask import g as flaskg
 
-from MoinMoin.util.interwiki import resolve_interwiki, join_wiki
+from MoinMoin.util.interwiki import is_known_wiki, url_for_item
 from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
 from MoinMoin.wikiutil import AbsItemName
+
 
 class ConverterBase(object):
     _tag_xlink_href = xlink.href
@@ -34,9 +35,6 @@ class ConverterBase(object):
 
     def handle_wikilocal_transclusions(self, elem, link, page_name):
         pass
-
-    def __init__(self, url_root=None):
-        self.url_root = url_root
 
     def __call__(self, *args, **kw):
         """
@@ -101,13 +99,15 @@ class ConverterBase(object):
 
 class ConverterExternOutput(ConverterBase):
     @classmethod
-    def _factory(cls, input, output, links=None, url_root=None, **kw):
+    def _factory(cls, input, output, links=None, **kw):
         if links == 'extern':
-            return cls(url_root=url_root)
+            return cls()
 
     def _get_do_rev(self, query):
         """
         get 'do' and 'rev' values from query string and remove them from querystring
+
+        at the end, we translate the 'do' value to a werkzeug endpoint.
 
         Note: we can't use url_decode/url_encode from e.g. werkzeug because
               url_encode quotes the qs values (and Iri code will quote them again)
@@ -137,71 +137,55 @@ class ConverterExternOutput(ConverterBase):
             query = None
         if revno is not None:
             revno = int(revno)
-        return do, revno, query
+        do_to_endpoint = dict(
+            show='frontend.show_item',
+            get='frontend.get_item',
+            download='frontend.download_item',
+            modify='frontend.modify_item',
+            # TODO: if we just always used same function name as do=name, we did not need this dict
+            # ...
+        )
+        endpoint = do_to_endpoint[do or 'show']
+        return endpoint, revno, query
 
     def handle_wiki_links(self, elem, input):
-        do, revno, query = self._get_do_rev(input.query)
-        link = Iri(query=query, fragment=input.fragment)
-
+        wiki_name = 'Self'
         if input.authority and input.authority.host:
-            # interwiki link
-            wikitag, wikiurl, wikitail, err = resolve_interwiki(unicode(input.authority.host), unicode(input.path[1:]))
-            if not err:
+            wn = unicode(input.authority.host)
+            if is_known_wiki(wn):
+                # interwiki link
                 elem.set(html.class_, 'moin-interwiki')
-                if do is not None:
-                    # this will only work for wikis with compatible URL design
-                    # for other wikis, don't use do=... in your interwiki links
-                    wikitail = '/+' + do + wikitail
-                base = Iri(join_wiki(wikiurl, wikitail))
-            else:
-                # TODO (for now, we just link to Self:item_name in case of
-                # errors, see code below)
-                pass
-        else:
-            err = False
-
-        if not input.authority or err:
-            # local wiki link
-            path = input.path[1:]
-            if revno is not None:
-                path = IriPath('%d/' % revno) + path
-            if do is not None:
-                path = IriPath('+%s/' % do) + path
-            link.path = path
-            base = self.url_root
-
-        elem.set(self._tag_xlink_href, base + link)
+                wiki_name = wn
+        item_name = unicode(input.path[1:])
+        endpoint, revno, query = self._get_do_rev(input.query)
+        url = url_for_item(item_name, wiki_name=wiki_name, rev=revno, endpoint=endpoint)
+        link = Iri(url, query=query, fragment=input.fragment)
+        elem.set(self._tag_xlink_href, link)
 
     def handle_wikilocal_links(self, elem, input, page):
-        do, revno, query = self._get_do_rev(input.query)
-        link = Iri(query=query, fragment=input.fragment)
-
         if input.path:
+            # this can be a relative path, make it absolute:
             path = input.path
             path = self.absolute_path(path, page.path)
-
-            if not flaskg.storage.has_item(unicode(path)):
+            item_name = unicode(path)
+            if not flaskg.storage.has_item(item_name):
                 elem.set(html.class_, 'moin-nonexistent')
         else:
-            path = page.path[1:]
+            item_name = unicode(page.path[1:])
+        endpoint, revno, query = self._get_do_rev(input.query)
+        url = url_for_item(item_name, rev=revno, endpoint=endpoint)
+        link = Iri(url, query=query, fragment=input.fragment)
+        elem.set(self._tag_xlink_href, link)
 
-        if revno is not None:
-            path = IriPath('%d/' % revno) + path
-        if do is not None:
-            path = IriPath('+%s/') + path
-        link.path = path
-        output = self.url_root + link
-
-        elem.set(self._tag_xlink_href, output)
 
 class ConverterItemRefs(ConverterBase):
     """
     determine all links and transclusions to other wiki items in this document
     """
     @classmethod
-    def _factory(cls, input, output, items=None, url_root=None, **kw):
+    def _factory(cls, input, output, items=None, **kw):
         if items == 'refs':
-            return cls(url_root=url_root)
+            return cls()
 
     def __init__(self, **kw):
         super(ConverterItemRefs, self).__init__(**kw)

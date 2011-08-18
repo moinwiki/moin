@@ -24,8 +24,19 @@ import mimetypes
 from time import time
 from zlib import adler32
 
-from werkzeug import Headers, wrap_file
+from werkzeug import Headers, wrap_file, url_quote
 from flask import current_app, request
+
+
+def encode_rfc2231(value, coding='UTF-8', lang=''):
+    """
+    Encode a value according to RFC2231/5987.
+
+    :param value: the value to encode. must be either unicode or encoded in <coding>.
+    :param coding: the coding (charset) to use. it is a good idea to use 'UTF-8'.
+    :param lang: the language to use. defaults to empty string (no language given).
+    """
+    return "%s'%s'%s" % (coding, lang, url_quote(value, charset=coding))
 
 
 def send_file(filename=None, file=None,
@@ -107,7 +118,10 @@ def send_file(filename=None, file=None,
             if not filename:
                 raise TypeError('filename unavailable, required for sending as attachment')
             attachment_filename = os.path.basename(filename)
-        headers.add('Content-Disposition', 'attachment', filename=attachment_filename)
+        # Note: we only give filename* param, not filename param, hoping that a user agent that
+        # does not support filename* then falls back into using the last URL fragment (and decodes
+        # that correctly). See there for details: http://greenbytes.de/tech/tc2231/
+        headers.add('Content-Disposition', 'attachment; filename*=%s'% encode_rfc2231(attachment_filename))
 
     if current_app.use_x_sendfile and filename:
         if file:

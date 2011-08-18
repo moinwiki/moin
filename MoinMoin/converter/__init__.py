@@ -77,6 +77,57 @@ class RegistryConverter(RegistryBase):
         return self._register(self.Entry(factory, type_input, type_output, priority))
 
 
+from ..util.mime import Type, type_moin_document
+
+from MoinMoin.config import CONTENTTYPE
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
+
+def convert_to_indexable(rev):
+    """
+    convert a revision to an indexable document
+
+    :param rev: item revision - please make sure that the content file is
+                ready to read all indexable content from it. if you have just
+                written that content or already read from it, you need to call
+                rev.seek(0) before calling convert_to_indexable(rev).
+    """
+    try:
+        # TODO use different converter mode?
+        # Maybe we want some special mode for the input converters so they emit
+        # different output than for normal rendering), esp. for the non-markup
+        # content types (images, etc.).
+        input_contenttype = rev[CONTENTTYPE]
+        output_contenttype = 'text/plain'
+        type_input_contenttype = Type(input_contenttype)
+        type_output_contenttype = Type(output_contenttype)
+        reg = default_registry
+        # first try a direct conversion (this could be useful for extraction
+        # of (meta)data from binary types, like from images or audio):
+        conv = reg.get(type_input_contenttype, type_output_contenttype)
+        if conv:
+            doc = conv(rev, input_contenttype)
+            return doc
+        # otherwise try via DOM as intermediate format (this is useful if
+        # input type is markup, to get rid of the markup):
+        input_conv = reg.get(type_input_contenttype, type_moin_document)
+        output_conv = reg.get(type_moin_document, type_output_contenttype)
+        if input_conv and output_conv:
+            doc = input_conv(rev, input_contenttype)
+            # We do not convert smileys, includes, macros, links, because
+            # it does not improve search results or even makes results worse.
+            doc = output_conv(doc)
+            return doc
+        # no way
+        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
+    except Exception as e: # catch all exceptions, we don't want to break an indexing run
+        logging.exception("Exception happened in conversion:")
+        doc = u'ERROR [%s]' % str(e)
+        return doc
+
+
 default_registry = RegistryConverter()
 load_package_modules(__name__, __path__)
 
