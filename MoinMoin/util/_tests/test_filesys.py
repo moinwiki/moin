@@ -143,7 +143,7 @@ class TestCopy:
         self.test_dir = tempfile.mkdtemp('', 'copytree1')
         self.src1 = os.path.join(self.test_dir, "copytree-src1")
         self.src2 = os.path.join(self.test_dir, "copytree-src2")
-        
+
     def teardown_method(self, method):
         shutil.rmtree(self.test_dir)
         shutil.rmtree(self.test_dest_dir)
@@ -152,14 +152,14 @@ class TestCopy:
         f = open(src, "w")
         f.write(content)
         f.close()
-        
+
     def test_copytree(self):
         self.makefile(self.src1, 'src1')
         self.makefile(self.src2, 'src2')
         self.test_dest_dir = self.test_dir + '_copy'
         filesys.copytree(self.test_dir, self.test_dest_dir)
         # check for the dir contents
-        assert os.listdir(self.test_dir) == os.listdir(self.test_dest_dir)        
+        assert os.listdir(self.test_dir) == os.listdir(self.test_dest_dir)
 
     def test_dir_exist(self):
         """ raise Error if dir already exist """

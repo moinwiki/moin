@@ -29,7 +29,7 @@ def test_Type_init_3():
     assert i is not t
     assert i == t
     assert i.parameters is not t.parameters
-    
+
 def test_Type_text():
     i = '*/*'
     t = Type(i)
