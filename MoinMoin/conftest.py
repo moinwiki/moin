@@ -55,10 +55,9 @@ def get_previous(self_app, self_ctx, cls):
     return prev_app, prev_ctx, prev_cls
 
 def init_test_app(given_config):
-    namespace_mapping, router_index_uri = create_simple_mapping("memory:", given_config.content_acl)
+    namespace_mapping = create_simple_mapping("memory:", given_config.content_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
-        router_index_uri=router_index_uri,
     )
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,

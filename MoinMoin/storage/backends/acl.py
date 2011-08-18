@@ -146,20 +146,6 @@ class AclWrapperBackend(object):
 
     iteritems = iter_items_noindex
 
-    def history(self, reverse=True):
-        """
-        @see: Backend.history.__doc__
-        """
-        for revision in self.backend.history(reverse):
-            if self._may(revision.item.name, READ):
-                # The revisions returned here should only be StoredRevisions.
-                # We wrap them nevertheless to be sure. Esp. revision.item
-                # would otherwise give access to an unwrapped item.
-                item = revision.item
-                item = AclWrapperItem(item, self)
-                revision = AclWrapperRevision(revision, item)
-                yield revision
-
     def _get_acl(self, itemname):
         """
         Get ACL strings from the last revision's metadata and return ACL object.

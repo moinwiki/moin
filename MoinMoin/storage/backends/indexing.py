@@ -1,4 +1,5 @@
-# Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2010-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:MichaelMayorov
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -8,11 +9,7 @@
     Item, Revision classes to support flexible metadata indexing and querying
     for wiki items / revisions
 
-    Wiki items are identified by a UUID (in the index, it is internally mapped
-    to an integer for more efficient processing).
-    Revisions of an item are identified by a integer revision number (and the
-    parent item).
-
+    Wiki items and revisions of same item are identified by same UUID.
     The wiki item name is contained in the item revision's metadata.
     If you rename an item, this is done by creating a new revision with a different
     (new) name in its revision metadata.
@@ -25,22 +22,23 @@ import time, datetime
 from uuid import uuid4
 make_uuid = lambda: unicode(uuid4().hex)
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
+from MoinMoin.search.indexing import backend_to_index
+from MoinMoin.converter import convert_to_indexable
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 class IndexingBackendMixin(object):
     """
-    Backend indexing support
+    Backend indexing support / functionality using the index.
     """
     def __init__(self, *args, **kw):
-        index_uri = kw.pop('index_uri', None)
+        cfg = kw.pop('cfg')
         super(IndexingBackendMixin, self).__init__(*args, **kw)
-        self._index = ItemIndex(index_uri)
+        self._index = ItemIndex(cfg)
 
     def close(self):
         self._index.close()
@@ -59,9 +57,6 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
-    def index_rebuild(self):
-        return self._index.index_rebuild(self)
-
     def history(self, reverse=True, item_name=u'', start=None, end=None):
         """
         History implementation using the index.
@@ -77,8 +72,9 @@ class IndexingBackendMixin(object):
             # it can't find it because it was already renamed to "second."
             # Some suggested solutions are: using some neverchanging uuid to identify some specific item
             # or continuing to use the name, but tracking name changes within the item's history.
-            rev_datetime, name, rev_no, rev_metas = result
+            rev_datetime, name, rev_no = result
             try:
+                logging.debug("HISTORY: name %s revno %s" % (name, rev_no))
                 item = self.get_item(name)
                 yield item.get_revision(rev_no)
             except AccessDeniedError as e:
@@ -89,8 +85,7 @@ class IndexingBackendMixin(object):
 
     def all_tags(self):
         """
-        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all
-        tags.
+        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all tags.
         """
         return self._index.all_tags()
 
@@ -104,8 +99,6 @@ class IndexingBackendMixin(object):
 class IndexingItemMixin(object):
     """
     Item indexing support
-
-    When a commit happens, index stuff.
     """
     def __init__(self, backend, *args, **kw):
         super(IndexingItemMixin, self).__init__(backend, *args, **kw)
@@ -180,7 +173,7 @@ class IndexingRevisionMixin(object):
         if UUID not in self:
             self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
         if CONTENTTYPE not in self:
-            self[CONTENTTYPE] = 'application/octet-stream'
+            self[CONTENTTYPE] = u'application/octet-stream'
         metas = self
         logging.debug("item %r revno %d update index:" % (name, revno))
         for k, v in metas.items():
@@ -196,239 +189,137 @@ class IndexingRevisionMixin(object):
         revno = self.revno
         metas = self
         logging.debug("item %r revno %d remove index!" % (name, revno))
-        self._index.remove_rev(uuid, revno)
+        self._index.remove_rev(metas[UUID], revno)
 
     # TODO maybe use this class later for data indexing also,
     # TODO by intercepting write() to index data written to a revision
 
-from MoinMoin.util.kvstore import KVStoreMeta, KVStore
-
-from sqlalchemy import Table, Column, Integer, String, Unicode, DateTime, PickleType, MetaData, ForeignKey
-from sqlalchemy import create_engine, select
-from sqlalchemy.sql import and_, exists, asc, desc
+from whoosh.writing import AsyncWriter
+from MoinMoin.search.indexing import WhooshIndex
 
 class ItemIndex(object):
     """
     Index for Items/Revisions
     """
-    def __init__(self, index_uri):
-        metadata = MetaData()
-        metadata.bind = create_engine(index_uri, echo=False)
-
-        # for sqlite, lengths are not needed, but for other SQL DBs:
-        UUID_LEN = 32
-        VALUE_LEN = KVStoreMeta.VALUE_LEN # we duplicate values from there to our table
-
-        # items have a persistent uuid
-        self.item_table = Table('item_table', metadata,
-            Column('id', Integer, primary_key=True), # item's internal uuid
-            # reference to current revision:
-            Column('current', ForeignKey('rev_table.id', name="current", use_alter=True), type_=Integer),
-            # some important stuff duplicated here for easy availability:
-            # from item metadata:
-            Column('uuid', String(UUID_LEN), index=True, unique=True), # item's official persistent uuid
-            # from current revision's metadata:
-            Column('name', Unicode(VALUE_LEN), index=True, unique=True),
-            Column('contenttype', Unicode(VALUE_LEN), index=True),
-            Column('acl', Unicode(VALUE_LEN)),
-            Column('tags', Unicode(VALUE_LEN)),
-        )
-
-        # revisions have a revno and a parent item
-        self.rev_table = Table('rev_table', metadata,
-            Column('id', Integer, primary_key=True),
-            Column('item_id', ForeignKey('item_table.id')),
-            Column('revno', Integer),
-            # some important stuff duplicated here for easy availability:
-            Column('datetime', DateTime, index=True),
-        )
-
-        item_kvmeta = KVStoreMeta('item', metadata, Integer)
-        rev_kvmeta = KVStoreMeta('rev', metadata, Integer)
-        metadata.create_all()
-        self.metadata = metadata
-        self.item_kvstore = KVStore(item_kvmeta)
-        self.rev_kvstore = KVStore(rev_kvmeta)
+    def __init__(self, cfg):
+        self.wikiname = cfg.interwikiname or u''
+        self.index_object = WhooshIndex(cfg=cfg)
 
     def close(self):
-        engine = self.metadata.bind
-        engine.dispose()
-
-    def index_rebuild(self, backend):
-        self.metadata.drop_all()
-        self.metadata.create_all()
-        for item in backend.iter_items_noindex():
-            item.update_index()
-            for revno in item.list_revisions():
-                rev = item.get_revision(revno)
-                logging.debug("rebuild %s %d" % (rev[NAME], revno))
-                rev.update_index()
-
-    def get_item_id(self, uuid):
-        """
-        return the internal item id for some item with uuid or
-        None, if not found.
-        """
-        item_table = self.item_table
-        result = select([item_table.c.id],
-                        item_table.c.uuid == uuid
-                       ).execute().fetchone()
-        if result:
-            return result[0]
+        self.index_object.all_revisions_index.close()
+        self.index_object.latest_revisions_index.close()
 
     def update_item(self, metas):
         """
-        update an item with item-level metadata <metas>
-
-        note: if item does not exist already, it is added
+        update item (not revision!) metadata
         """
-        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name)
-        uuid = metas.get(UUID, '') # item uuid (never changes)
-        item_table = self.item_table
-        item_id = self.get_item_id(uuid)
-        if item_id is None:
-            res = item_table.insert().values(uuid=uuid, name=name).execute()
-            item_id = res.inserted_primary_key[0]
-        self.item_kvstore.store_kv(item_id, metas)
-        return item_id
-
-    def cache_in_item(self, item_id, rev_id, rev_metas):
-        """
-        cache some important values from current revision into item for easy availability
-        """
-        item_table = self.item_table
-        item_table.update().where(item_table.c.id == item_id).values(
-            current=rev_id,
-            name=rev_metas[NAME],
-            contenttype=rev_metas[CONTENTTYPE],
-            acl=rev_metas.get(ACL, ''),
-            tags=u'|' + u'|'.join(rev_metas.get(TAGS, [])) + u'|',
-        ).execute()
+        # XXX we do not have an index for item metadata yet!
 
     def remove_item(self, metas):
         """
-        remove an item
-
-        note: does not remove revisions, these should be removed first
+        remove all data related to this item and all its revisions from the index
         """
-        item_table = self.item_table
-        name = metas.get(NAME, '') # item name (if revisioned: same as current revision's name)
-        uuid = metas.get(UUID, '') # item uuid (never changes)
-        item_id = self.get_item_id(uuid)
-        if item_id is not None:
-            self.item_kvstore.store_kv(item_id, {})
-            item_table.delete().where(item_table.c.id == item_id).execute()
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
+                                                              name_exact=metas[NAME],
+                                                              wikiname=self.wikiname
+                                                             )
+        if doc_number is not None:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                async_writer.delete_document(doc_number)
 
-    def add_rev(self, uuid, revno, metas):
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            doc_numbers = list(all_revs_searcher.document_numbers(uuid=metas[UUID],
+                                                                  name_exact=metas[NAME],
+                                                                  wikiname=self.wikiname
+                                                                 ))
+        if doc_numbers:
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                for doc_number in doc_numbers:
+                    async_writer.delete_document(doc_number)
+
+    def add_rev(self, uuid, revno, rev):
         """
         add a new revision <revno> for item <uuid> with metadata <metas>
-
-        currently assumes that added revision will be latest/current revision (not older/non-current)
         """
-        rev_table = self.rev_table
-        item_metas = dict(uuid=uuid, name=metas[NAME])
-        item_id = self.update_item(item_metas)
-
-        # get (or create) the revision entry
-        result = select([rev_table.c.id],
-                        and_(rev_table.c.revno == revno,
-                             rev_table.c.item_id == item_id)
-                       ).execute().fetchone()
-        if result:
-            rev_id = result[0]
-        else:
-            dt = datetime.datetime.utcfromtimestamp(metas[MTIME])
-            res = rev_table.insert().values(revno=revno, item_id=item_id, datetime=dt).execute()
-            rev_id = res.inserted_primary_key[0]
-
-        self.rev_kvstore.store_kv(rev_id, metas)
-
-        self.cache_in_item(item_id, rev_id, metas)
-        return rev_id
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            all_found_document = all_revs_searcher.document(uuid=rev[UUID],
+                                                            rev_no=revno,
+                                                            wikiname=self.wikiname
+                                                           )
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            latest_found_document = latest_revs_searcher.document(uuid=rev[UUID],
+                                                                  wikiname=self.wikiname
+                                                                 )
+        logging.debug("Processing: name %s revno %s" % (rev[NAME], revno))
+        rev.seek(0) # for a new revision, file pointer points to EOF, rewind first
+        rev_content = convert_to_indexable(rev)
+        logging.debug("Indexable content: %r" % (rev_content[:250], ))
+        if not all_found_document:
+            schema = self.index_object.all_revisions_index.schema
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
+                logging.debug("All revisions: adding %s %s", converted_rev[NAME], converted_rev["rev_no"])
+                async_writer.add_document(**converted_rev)
+        if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
+            schema = self.index_object.latest_revisions_index.schema
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
+                logging.debug("Latest revisions: updating %s %s", converted_rev[NAME], converted_rev["rev_no"])
+                async_writer.update_document(**converted_rev)
 
     def remove_rev(self, uuid, revno):
         """
         remove a revision <revno> of item <uuid>
-
-        Note:
-
-        * does not update metadata values cached in item (this is only a
-          problem if you delete latest revision AND you don't delete the
-          whole item anyway)
         """
-        item_id = self.get_item_id(uuid)
-        assert item_id is not None
-
-        # get the revision entry
-        rev_table = self.rev_table
-        result = select([rev_table.c.id],
-                        and_(rev_table.c.revno == revno,
-                             rev_table.c.item_id == item_id)
-                       ).execute().fetchone()
-        if result:
-            rev_id = result[0]
-            self.rev_kvstore.store_kv(rev_id, {})
-            rev_table.delete().where(rev_table.c.id == rev_id).execute()
-
-    def get_uuid_revno_name(self, rev_id):
-        """
-        get item uuid and revision number by rev_id
-        """
-        item_table = self.item_table
-        rev_table = self.rev_table
-        result = select([item_table.c.uuid, rev_table.c.revno, item_table.c.name],
-                        and_(rev_table.c.id == rev_id,
-                             item_table.c.id == rev_table.c.item_id)
-                       ).execute().fetchone()
-        return result
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            latest_doc_number = latest_revs_searcher.document_number(uuid=uuid,
+                                                                     rev_no=revno,
+                                                                     wikiname=self.wikiname
+                                                                    )
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            doc_number = all_revs_searcher.document_number(uuid=uuid,
+                                                           rev_no=revno,
+                                                           wikiname=self.wikiname
+                                                          )
+        if doc_number is not None:
+            with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
+                logging.debug("All revisions: removing %d", doc_number)
+                async_writer.delete_document(doc_number)
+        if latest_doc_number is not None:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                logging.debug("Latest revisions: removing %d", latest_doc_number)
+                async_writer.delete_document(latest_doc_number)
 
     def history(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
-        """
-        Yield ready-to-use history raw data for this backend.
-        """
         if mountpoint:
             mountpoint += '/'
-
-        item_table = self.item_table
-        rev_table = self.rev_table
-
-        selection = [rev_table.c.datetime, item_table.c.name, rev_table.c.revno, rev_table.c.id, ]
-
-        if reverse:
-            order_attr = desc(rev_table.c.datetime)
-        else:
-            order_attr = asc(rev_table.c.datetime)
-
-        if not item_name:
-            # empty item_name = all items
-            condition = item_table.c.id == rev_table.c.item_id
-        else:
-            condition = and_(item_table.c.id == rev_table.c.item_id,
-                             item_table.c.name == item_name)
-
-        query = select(selection, condition).order_by(order_attr)
-        if start is not None:
-            query = query.offset(start)
-            if end is not None:
-                query = query.limit(end-start)
-
-        for rev_datetime, name, revno, rev_id in query.execute().fetchall():
-            rev_metas = self.rev_kvstore.retrieve_kv(rev_id)
-            yield (rev_datetime, mountpoint + name, revno, rev_metas)
+        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
+            if item_name:
+                docs = all_revs_searcher.documents(name_exact=item_name,
+                                                   wikiname=self.wikiname
+                                                  )
+            else:
+                docs = all_revs_searcher.documents(wikiname=self.wikiname)
+            from operator import itemgetter
+            # sort by mtime and rev_no do deal better with mtime granularity for fast item rev updates
+            for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
+                yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
 
     def all_tags(self):
-        item_table = self.item_table
-        result = select([item_table.c.name, item_table.c.tags],
-                        item_table.c.tags != u'||').execute().fetchall()
-        tags_names = {}
-        for name, tags in result:
-            for tag in tags.split(u'|')[1:-1]:
-                tags_names.setdefault(tag, []).append(name)
-        counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
-        return counts_tags_names
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            docs = latest_revs_searcher.documents(wikiname=self.wikiname)
+            tags_names = {}
+            for doc in docs:
+                tags = doc.get(TAGS, [])
+                logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
+                for tag in tags:
+                    tags_names.setdefault(tag, []).append(doc[NAME])
+            counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
+            return counts_tags_names
 
     def tagged_items(self, tag):
-        item_table = self.item_table
-        result = select([item_table.c.name],
-                        item_table.c.tags.like('%%|%s|%%' % tag)).execute().fetchall()
-        return [row[0] for row in result]
+        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
+            docs = latest_revs_searcher.documents(tags=tag, wikiname=self.wikiname)
+            return [doc[NAME] for doc in docs]
+

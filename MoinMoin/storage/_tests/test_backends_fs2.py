@@ -5,8 +5,9 @@
     MoinMoin - Test - FS2Backend
 """
 
-
 import py, os, tempfile, shutil
+
+from flask import current_app as app
 
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.fs2 import FS2Backend

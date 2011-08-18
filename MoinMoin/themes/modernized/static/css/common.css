@@ -175,9 +175,12 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .searchresults dt { margin-top: 1em; font-weight: normal; }
 .searchresults dd,
 .searchresults p { font-size: 0.85em; }
+.searchresults td { border-width: 0; }
+.searchresults p.info { margin-left: 2%; }
 .searchresults .searchhitinfobar { color: #008000; margin-left: 15px; margin-top: 0; }
-p.searchstats { font-size: 0.8em; text-align: right; width: 100%; background-color: #E6EAF0;
-            border-top: 1px solid #9088DC; padding: 2px; }
+.searchresults .foundtext { margin-left: 15px; margin-top: 0; }
+p.searchstats { font-size: 0.8em; text-align: right; width: 100%;
+             padding: 2px; margin-top: -15px; }
 p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2px; }
 .searchpages { margin-left: auto; margin-right: auto; }
 .searchpages tr,
@@ -470,6 +473,11 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-searchform div { margin: 0; }
 #moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
 #moin-searchform li { list-style:none; }
+
+/* moin-extended searchform */
+#moin-long-searchform { padding: 0; font-size: 0.82em; text-align: left; }
+#moin-long-searchform div { margin: 0; }
+#moin-search-query { width: 50%; }
 
 /* moin-header moin-logo -- logos may be text only */
 #moin-logo { float: left; margin: 5px 10px; padding: 0; font-size: 1.4em; line-height: 1em; font-weight: bold; }
