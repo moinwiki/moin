@@ -11,12 +11,77 @@ from __future__ import absolute_import, division
 from werkzeug import url_quote
 
 from flask import current_app as app
-from flask import request
-from flask import g as flaskg
+from flask import url_for
 
 import os.path
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 from MoinMoin import config
+
+
+def is_local_wiki(wiki_name):
+    """
+    check if <wiki_name> is THIS wiki
+    """
+    return wiki_name in ['', 'Self', app.cfg.interwikiname, ]
+
+
+def is_known_wiki(wiki_name):
+    """
+    check if <wiki_name> is a known wiki name
+
+    Note: interwiki_map should have entries for the special wikinames
+    denoting THIS wiki, so we do not need to check these names separately.
+    """
+    return wiki_name in app.cfg.interwiki_map
+
+
+def url_for_item(item_name, wiki_name='', rev=-1, endpoint='frontend.show_item', _external=False):
+    """
+    Compute URL for some local or remote/interwiki item.
+
+    For local items:
+    give <rev> to get the url of some specific revision.
+    give the <endpoint> to get the url of some specific view,
+    give _external=True to compute fully specified URLs.
+
+    For remote/interwiki items:
+    If you just give <item_name> and <wiki_name>, a generic interwiki URL
+    will be built.
+    If you also give <rev> and/or <endpoint>, it is assumed that remote wiki
+    URLs are built in the same way as local URLs.
+    Computed URLs are always fully specified.
+    """
+    if is_local_wiki(wiki_name):
+        if rev is None or rev == -1:
+            url = url_for(endpoint, item_name=item_name, _external=_external)
+        else:
+            url = url_for(endpoint, item_name=item_name, rev=rev, _external=_external)
+    else:
+        try:
+            wiki_base_url = app.cfg.interwiki_map[wiki_name]
+        except KeyError, err:
+            logging.warning("no interwiki_map entry for %r" % wiki_name)
+            url = '' # can we find something useful?
+        else:
+            if (rev is None or rev == -1) and endpoint == 'frontend.show_item':
+                # we just want to show latest revision (no special revision given) -
+                # this is the generic interwiki url support, should work for any remote wiki
+                url = join_wiki(wiki_base_url, item_name)
+            else:
+                # rev and/or endpoint was given, assume same URL building as for local wiki.
+                # we need this for moin wiki farms, e.g. to link from search results to
+                # some specific item/revision in another farm wiki.
+                local_url = url_for(endpoint, item_name=item_name, rev=rev, _external=False)
+                # we know that everything left of the + belongs to script url, but we
+                # just want e.g. +show/42/FooBar to append it to the other wiki's
+                # base URL.
+                i = local_url.index('/+')
+                path = local_url[i+1:]
+                url = wiki_base_url + path
+    return url
 
 
 def split_interwiki(wikiurl):
@@ -36,24 +101,6 @@ def split_interwiki(wikiurl):
     except ValueError:
         wikiname, pagename = 'Self', wikiurl
     return wikiname, pagename
-
-
-def resolve_interwiki(wikiname, pagename):
-    """ Resolve an interwiki reference (wikiname:pagename).
-
-    :param wikiname: interwiki wiki name
-    :param pagename: interwiki page name
-    :rtype: tuple
-    :returns: (wikitag, wikiurl, wikitail, err)
-    """
-    this_wiki_url = request.script_root + '/'
-    if wikiname in ('Self', app.cfg.interwikiname):
-        return (wikiname, this_wiki_url, pagename, False)
-    else:
-        try:
-            return (wikiname, app.cfg.interwiki_map[wikiname], pagename, False)
-        except KeyError:
-            return (wikiname, this_wiki_url, "InterWiki", True)
 
 
 def join_wiki(wikiurl, wikitail):
@@ -90,7 +137,7 @@ def getInterwikiHome(username):
     :returns: (wikiname, itemname)
     """
     homewiki = app.cfg.user_homewiki
-    if homewiki == app.cfg.interwikiname:
+    if is_local_wiki(homewiki):
         homewiki = u'Self'
     return homewiki, username
 

@@ -26,6 +26,8 @@ from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xinclude, xlink
 
 from MoinMoin.converter.html_out import wrap_object_with_overlay
+
+
 class XPointer(list):
     """
     Simple XPointer parser
@@ -264,6 +266,7 @@ class Converter(object):
         self.recurse(tree, None)
 
         return tree
+
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document

@@ -14,13 +14,13 @@ import tempfile
 import os.path
 import shutil
 
-from MoinMoin.util.interwiki import resolve_interwiki, split_interwiki, join_wiki, InterWikiMap
+from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap
 from MoinMoin._tests import wikiconfig
 
 
 class TestInterWiki(object):
     class Config(wikiconfig.Config):
-        interwiki_map = dict(MoinMoin='http://moinmo.in/', )
+        interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
 
     def testSplitWiki(self):
         tests = [('SomePage', ('Self', 'SomePage')),
@@ -40,12 +40,6 @@ class TestInterWiki(object):
                 ]
         for (baseurl, pagename), url in tests:
             assert join_wiki(baseurl, pagename) == url
-
-    def testResolveInterWiki(self):
-        result = resolve_interwiki('MoinMoin', 'SomePage')
-        assert result == ('MoinMoin', u'http://moinmo.in/', 'SomePage', False)
-        result = resolve_interwiki('Self', 'SomePage')
-        assert result == ('Self', u'/', 'SomePage', False)
 
 
 class TestInterWikiMapBackend(object):

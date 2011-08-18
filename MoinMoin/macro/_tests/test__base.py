@@ -1,61 +1,60 @@
-# Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
 MoinMoin - Tests for MoinMoin.macro._base
 """
 
-
-import py.test
-py.test.skip("test is out of sync with tested code")
-
+import pytest
 from MoinMoin.macro._base import *
 
-def test_MacroBase___init__():
-    request = object()
+class TestMacroBase(object):
+    """ Test for Macro base and related classes """
 
-    m = MacroBase(request, None, 'alt', 'context')
+    def test_MacroBase(self):
+        """ test for MacroBase class """
+        macrobase_obj  = MacroBase()
+        assert not macrobase_obj.immutable
+        with pytest.raises(NotImplementedError):
+            macrobase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
 
-    assert m.immutable is False
-    assert m.alt == 'alt'
-    assert m.context == 'context'
 
-def test_MacroBlockBase___call__():
-    item = u'text'
+    def test_MacroBlockBase(self):
+        """ test for MacroBlockBase class """
+        class Test_MacroBlockBase(MacroBlockBase):
+            """ inherited class from MacroBlockBase """
+            def __init__(self):
+                self.alt = 'alt returned'
 
-    class Test(MacroBlockBase):
-        def call_macro(self, content):
-            return item
+        macroblockbase_obj = Test_MacroBlockBase()
+        result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        assert result == 'alt returned'
+        with pytest.raises(NotImplementedError):
+            result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
 
-    r = Test(None, None, 'alt', 'block')()
-    assert r is item
+    def test_MacroInlineBase(self):
+        """ test for MacroInlineBase class """
+        class Test_MacroInlineBase(MacroInlineBase):
+            """ inherited class from MacroInlineBase """
+            def macro(self, content, arguments, page_url, alternative):
+                return 'test_macro'
 
-    r = Test(None, None, 'alt', 'inline')()
-    assert r == 'alt'
+        macroinlinebase_obj = Test_MacroInlineBase()
+        result = macroinlinebase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        assert result == 'test_macro'
+        result = macroinlinebase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
+        assert result.text == 'test_macro'
+        result.remove('test_macro')
+        assert not result.text
 
-def test_MacroInlineBase___call__():
-    item = u'text'
+    def test_MacroInlineOnlyBase(self):
+        """ test for MacroInlineOnlyBase class """
+        class Test_MacroInlineOnlyBase(MacroInlineOnlyBase):
+            """ inherited class from MacroInlineOnlyBase """
+            def macro(self, content, arguments, page_url, alternative):
+                return 'test_macro'
 
-    class Test(MacroInlineBase):
-        def call_macro(self, content):
-            return item
-
-    r = Test(None, None, 'alt', 'block')()
-    assert r[0] is item
-
-    r = Test(None, None, 'alt', 'inline')()
-    assert r is item
-
-def test_MacroInlineOnlyBase___call__():
-    item = u'text'
-
-    class Test(MacroInlineOnlyBase):
-        def call_macro(self, content):
-            return item
-
-    r = Test(None, None, 'alt', 'block')()
-    assert r is None
-
-    r = Test(None, None, 'alt', 'inline')()
-    assert r is item
+        macroinlineonlybase_obj = Test_MacroInlineOnlyBase()
+        result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        assert result == 'test_macro'
 

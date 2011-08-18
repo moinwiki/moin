@@ -33,6 +33,8 @@ from MoinMoin.util.tree import moin_page, xlink, xinclude
 
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
+from ._util import decode_data, normalize_split_text
+
 
 class _Iter(object):
     """
@@ -104,8 +106,10 @@ class Converter(ConverterMacro):
     def factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content, arguments=None):
-        iter_content = _Iter(content)
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        lines = normalize_split_text(text)
+        iter_content = _Iter(lines)
 
         body = self.parse_block(iter_content, arguments)
         root = moin_page.page(children=[body])
