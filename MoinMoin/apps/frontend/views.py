@@ -323,6 +323,7 @@ class ContenttypeFilterForm(Form):
     audio_items = Boolean.using(label=L_('audio'), optional=True, default=1)
     video_items = Boolean.using(label=L_('video'), optional=True, default=1)
     other_items = Boolean.using(label=L_('other'), optional=True, default=1)
+    unknown_items = Boolean.using(label=L_('unknown'), optional=True, default=1)
     submit = String.using(default=L_('Filter'), optional=True)
 
 

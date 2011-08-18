@@ -12,6 +12,7 @@
     <div class="moin-select-contenttypes">
         <div class="moin-contenttypes-wrapper">
             <div class="ct-hide">{{ _("Filter by content type") }}</div>
+            {% set unknown_items_label = _("items having unknown mime types") %}
             {{ gen.form.open(form, method="post", action=url_for('frontend.index', item_name=item_name)) }}
             <ul>
                 {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
@@ -20,6 +21,7 @@
                 {{ forms.render_filter_field(gen, form['audio_items'], 'checkbox', contenttype_groups['audio items']) }}
                 {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
                 {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
+                {{ forms.render_filter_field(gen, form['unknown_items'], 'checkbox', unknown_items_label) }}
                 {{ gen.input(form['submit'], type='submit') }}
             </ul>
             {{ gen.form.close() }}
