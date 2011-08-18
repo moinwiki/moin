@@ -244,7 +244,7 @@ class BackendTest(object):
     def test_new_item_create_revision(self):
         item = self.backend.create_item(u'internal')
         rev = item.create_revision(0)
-        item.commit()
+        item.rollback()
         assert self.backend.has_item(item.name)
 
     def test_item_commit_revision(self):
