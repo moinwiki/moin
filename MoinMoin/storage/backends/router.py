@@ -119,7 +119,7 @@ class BareRouterBackend(BackendBase):
         # it is generally advised to override this method.
         # Thus, we pass the call down.
         logging.debug("has_item: %r" % itemname)
-        backend, item_name, mountpoint = self._get_backend(itemname)
+        backend, itemname, mountpoint = self._get_backend(itemname)
         return backend.has_item(itemname)
 
     def get_item(self, itemname):
@@ -127,7 +127,7 @@ class BareRouterBackend(BackendBase):
         @see: Backend.get_item.__doc__
         """
         logging.debug("get_item: %r" % itemname)
-        backend, item_name, mountpoint = self._get_backend(itemname)
+        backend, itemname, mountpoint = self._get_backend(itemname)
         return RouterItem(self, itemname, backend.get_item(itemname), mountpoint)
 
     def create_item(self, itemname):
@@ -135,7 +135,7 @@ class BareRouterBackend(BackendBase):
         @see: Backend.create_item.__doc__
         """
         logging.debug("create_item: %r" % itemname)
-        backend, item_name, mountpoint = self._get_backend(itemname)
+        backend, itemname, mountpoint = self._get_backend(itemname)
         return RouterItem(self, itemname, backend.create_item(itemname), mountpoint)
 
 
@@ -183,9 +183,6 @@ class BareRouterItem(ItemBase):
         :param mountpoint: The mountpoint where this item is located.
         """
         self._get_backend = backend._get_backend
-                        
-        backend, item_name, mountpoint = self._get_backend(item_name)
-                
         self._itemname = item_name
         self._item = item
         self._mountpoint = mountpoint
@@ -256,16 +253,17 @@ class BareRouterItem(ItemBase):
         @see: Item.rename.__doc__
         """
         old_name = self._item.name
-        old_item = self._item
-        
         backend, itemname, mountpoint = self._get_backend(newname)
         if mountpoint != self._mountpoint:
             # Mountpoint changed! That means we have to copy the item over.
-            converts, skips, fails = backend.copy_item(self._item, verbose=False, name=newname)
+            converts, skips, fails = backend.copy_item(self._item, verbose=False, name=itemname)
             assert len(converts) == 1
 
-            new_item = backend.get_item(newname)
-            
+            new_item = backend.get_item(itemname)
+            old_item = self._item
+            self._item = new_item
+            self._mountpoint = mountpoint
+            self._itemname = itemname
             # We destroy the old item in order not to duplicate data.
             # It may be the case that the item we want to destroy is ACL protected. In that case,
             # the destroy() below doesn't irreversibly kill the item because at this point it is already
@@ -276,11 +274,7 @@ class BareRouterItem(ItemBase):
             except AccessDeniedError:
                 # OK, we're indeed routing to an ACL protected backend. Use unprotected item.
                 old_item._item.destroy()
-            
-            self._backend = backend
-            self._item = new_item
-            self._mountpoint = mountpoint
-            self._itemname = itemname
+
         else:
             # Mountpoint didn't change
             self._item.rename(itemname)
