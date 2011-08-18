@@ -720,26 +720,7 @@ def global_history():
         else:
             # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
             for info, positions in editors_info.values():
-                positions.reverse()
-                position_range = str(positions[0])
-                pos_index = 1
-                for position in positions[1:]:
-                    if position == positions[pos_index-1] + 1:
-                        if pos_index < len(positions) - 1 and  position == positions[pos_index+1] - 1:
-                            pos_index += 1
-                            continue
-                        else:
-                            position_range = "%(position_range)s-%(position)d" % {
-                                             'position_range': position_range,
-                                             'position': position
-                                             }
-                    else:
-                        position_range = "%(position_range)s,%(position)d" % {
-                                         'position_range': position_range,
-                                         'position': position
-                                         }
-                    pos_index += 1
-
+                position_range = util.rangelist(positions)
                 position_range = "[%(position_range)s]" % {'position_range': position_range}
                 info_tuple = (info, position_range)
                 editors.append(info_tuple)
