@@ -242,16 +242,18 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 
 /* item index page */
 #moin-content h1 { display: inline; }
-.moin-select-actions { position: relative; margin: 1em 0; padding: 0; background: #FFFFFF; width: 4em; z-index: 2; }
+.moin-select-actions { position: relative; margin: 1em 0; padding: 0; background: #FFFFFF; width: 7em; z-index: 2; white-space: nowrap; color: #342D7E; }
 .moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
-.action-visible div { background: #4477FF; }
+.moin-select-actions div:hover,
+.action-visible div { background: #4477FF; color: #FFFFFF; }
 .moin-select-actions .show-action { cursor: pointer; }
-.moin-select-actions .show-action:before { content: url("../img/moin-movedown.png"); }
+.show-action:after { content: url("../img/moin-moveup.png"); margin: 0 0.2em; }
+.action-visible .show-action:after { content: url("../img/moin-movedown.png"); margin: 0 0.2em; }
 .moin-select-allitem { display: inline-block; width: 17px; cursor: default; }
 .allitem-selected { background: transparent url("../img/moin-checkbox-on.png") no-repeat; }
 .allitem-toselect { background: transparent url("../img/moin-checkbox-off.png") no-repeat; }
 .moin-select-actions ul { position: absolute; margin: 0; left: 0; top: 2em; padding: 0; display: none; background: #fff; border: 1px solid #E5E5E5; z-index: 1; }
-.moin-select-actions ul li { list-style-type: none; padding: 0.5em; width: 10em; cursor: pointer; }
+.moin-select-actions ul li { list-style-type: none; padding: 0.5em; width: 6em; cursor: pointer; }
 .moin-select-actions ul li:hover { background-color: #4477FF; color: #FFFFFF; }
 .moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
 .moin-index-message span { padding: 4px; background-color: #FFFF00; color: #111111; }
@@ -266,17 +268,19 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-item-index div.selected-item .moin-select-item,
 .moin-item-index div:hover .moin-select-item { visibility: visible; }
 .moin-item-index div.selected-item .moin-select-item { background-image: url("../img/moin-checkbox-on.png"); }
-.moin-select-contenttypes { float: right; position: relative; width: 14em; }
-.moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; margin: 0; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #342D7E; width: 14em; }
-.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.2em 1.3em 0.2em 0.2em; background: transparent url("../img/moin-moveup.png") no-repeat center right; } 
+.moin-align-right { float: right; min-width: 22em; }
+.moin-select-contenttypes { position: relative; width: 14em; float: right; }
+.moin-select-contenttypes .moin-contenttypes-wrapper { position: absolute; margin: 0; top: 0; left: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; width: 14em; }
+.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em; } 
+div.ct-shown { background: #4477FF url("../img/moin-movedown.png") no-repeat center right; color: #FFFFFF; }
+div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
 .moin-contenttypes-wrapper ul { display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; } 
 .moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em 0.2em; width: 13.6em; }
 .moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
 .moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
 .moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
 .moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
-.moin-contenttypes-wrapper:hover ul { display: block; }
-.moin-contenttypes-wrapper:hover div { background-image: url("../img/moin-movedown.png"); } 
+.moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; } 
 .moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
 .moin-more-index:hover { text-decoration: none; }
 .moin-index-path { margin-left: 0.5em; }
@@ -298,13 +302,17 @@ form.upload_file { display: block; }
 a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
 
 /* popup */
-#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 500px; position: absolute; top: 10%; left: 35%; display: none; }
+#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 40%; position: absolute; top: 10%; left: 30%; display: none; z-index: 10; }
 .popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
-.popup-body { background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
-.popup-body input { margin: 8px; padding: 3px; border: 1px solid #E5E5E5; }
+.popup-closer { color: #FFFFFF; font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: 1px solid #E5E5E5; }
+.popup-closer:hover { background-color: #F6F6F6; color: #4477FF; }
+.popup-body { clear: both; background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
+.popup-body label { margin: 5px; display: block; font-weight: bold; }
+.popup-body input { margin: 8px 5px; padding: 3px; border: 1px solid #E5E5E5; }
 .popup-body input[type="text"] { width: 300px; }
 .popup-body input.blank { border-color: #FF0000; border-width: 2px; }
 .popup-container { margin: 0; }
+#lightbox { background: #FFFFFF; opacity: 0.7; filter:alpha(opacity=70); position: fixed !important; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }

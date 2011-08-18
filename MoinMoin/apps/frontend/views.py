@@ -472,12 +472,12 @@ def ajaxdestroy(item_name):
     return jsonify(response)
 
 
-@frontend.route('/+ajaxmodify/<itemname:item_name>')
-@frontend.route('/+ajaxmodify', defaults=dict(item_name=''))
+@frontend.route('/+ajaxmodify/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxmodify', methods=['POST'], defaults=dict(item_name=''))
 def ajaxmodify(item_name):
     newitem = request.values.get("newitem")
     if not newitem:
-        abort(403)
+        abort(404)
     if item_name:
         newitem = item_name + u'/' + newitem
 

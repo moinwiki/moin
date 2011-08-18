@@ -22,8 +22,7 @@ function disablelink(downloadlink) {
     downloadlink.removeClass("active-link");
 }
 
-function showpop(action)
-{
+function showpop(action) {
     $(".popup-container").css("display", "none");
     if(action == "newitem") {
         $("#popup-for-newitem").css("display", "block");
@@ -37,15 +36,19 @@ function showpop(action)
         $(".popup-action").val(action);
     }
     $("#popup").fadeIn();
+    $("#lightbox").css("display", "block");
 }
 
-function hide(item_link)
-{
+function hidepop() {
+    $("#popup").css("display", "none");
+    $("#lightbox").css("display", "none");
+}
+
+function hide(item_link) {
    item_link.parent().remove();
 }
 
-function show_conflict(item_link)
-{
+function show_conflict(item_link) {
    item_link.removeClass().addClass("moin-conflict");
    item_link.parent().removeClass();
 }
@@ -92,20 +95,32 @@ function do_action(comment, action) {
 
 $("document").ready(function () {
 
-    $(".moin-select-item").click(function () {
-    if($(this).parent().hasClass("selected-item")) {
-        $(this).parent().removeClass("selected-item");
-        downloadlink=$(this).parent().children(".moin-download-link");
-        disablelink(downloadlink);
-        if($(".moin-select-allitem").hasClass("allitem-selected")) {
-            $(".moin-select-allitem").removeClass("allitem-selected").addClass("allitem-toselect");
+    $(".moin-contenttypes-wrapper").children("div").click(function () {
+        var wrapper = $(this).parent();
+        if(wrapper.find("ul:visible").length) {
+            $(".moin-contenttypes-wrapper").find("ul").fadeOut(200);
+            $(this).removeClass().addClass("ct-hide");
         }
-    }
-    else {
-        $(this).parent().addClass("selected-item");
-        downloadlink=$(this).parent().children(".moin-download-link");
-        enablelink(downloadlink);
-    }
+        else {
+            $(".moin-contenttypes-wrapper").find("ul").fadeIn(200);
+            $(this).removeClass().addClass("ct-shown");
+        }
+    });
+
+    $(".moin-select-item").click(function () {
+        if($(this).parent().hasClass("selected-item")) {
+            $(this).parent().removeClass("selected-item");
+            downloadlink=$(this).parent().children(".moin-download-link");
+            disablelink(downloadlink);
+            if($(".moin-select-allitem").hasClass("allitem-selected")) {
+                $(".moin-select-allitem").removeClass("allitem-selected").addClass("allitem-toselect");
+            }
+        }
+        else {
+            $(this).parent().addClass("selected-item");
+            downloadlink=$(this).parent().children(".moin-download-link");
+            enablelink(downloadlink);
+        }
     });
 
     $(".show-action").click(function () {
@@ -167,19 +182,25 @@ $("document").ready(function () {
             $("#file_upload").appendTo("#moin-upload-cont");
             $(".upload-form").css("display", "none");
         }
-        $("#popup").fadeOut();
+        hidepop();
     });
 
     $(".popup-submit").click(function () {
         var comment = $(".popup-comment").val();
         var action = $(".popup-action").val();
-        if($.trim(comment) == "") {
-            $(".popup-comment").addClass("blank");
-            $(".popup-comment").focus();
-        }
-        else { 
-            do_action(comment, action);
-        }
+        comment = $.trim(comment);
+        do_action(comment, action);
+        hidepop();
+    });
+
+    $("#popup-for-newitem").find("form:first").submit(function () {
+        var itembox = $(this).children("input[name='newitem']");
+        itemname = itembox.val();
+        if($.trim(itemname) == "") {
+            itembox.addClass("blank");
+            itembox.focus();
+            return false;
+       }
     });
 
     $("#moin-download-trigger").click(function () {
