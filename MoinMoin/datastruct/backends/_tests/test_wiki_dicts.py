@@ -13,8 +13,6 @@ from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct.backends import wiki_dicts
 from MoinMoin.config import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.conftest import init_test_app, deinit_test_app
-from MoinMoin._tests import wikiconfig
 DATA = "This is a dict item."
 
 
@@ -24,8 +22,6 @@ class TestWikiDictsBackend(DictsBackendTest):
     # is WikiDicts backend.
 
     def setup_method(self, method):
-        # temporary hack till we apply test cleanup mechanism on tests.
-        self.app, self.ctx = init_test_app(wikiconfig.Config)
         become_trusted()
 
         somedict = {u"First": u"first item",
@@ -38,8 +34,11 @@ class TestWikiDictsBackend(DictsBackendTest):
                     u"Two": u"2"}
         update_item(u'SomeOtherTestDict', 0, {SOMEDICT: somedict}, DATA)
 
-    def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)
+    def test__retrieve_items(self):
+        wikidict_obj = wiki_dicts.WikiDicts()
+        result = wiki_dicts.WikiDicts._retrieve_items(wikidict_obj, u'SomeOtherTestDict')
+        expected = {u'Two': u'2', u'One': u'1'}
+        assert result == expected
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_dicts']
 

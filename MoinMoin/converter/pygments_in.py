@@ -23,6 +23,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page
+from ._util import decode_data, normalize_split_text
 
 
 if pygments:
@@ -103,7 +104,9 @@ if pygments:
                     lexer = pygments.lexers.get_lexer_for_mimetype('text/plain')
             self.lexer = lexer
 
-        def __call__(self, content, arguments=None):
+        def __call__(self, data, contenttype=None, arguments=None):
+            text = decode_data(data, contenttype)
+            content = normalize_split_text(text)
             content = u'\n'.join(content)
             blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)

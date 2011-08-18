@@ -299,6 +299,118 @@ class TestLoginWithPassword(object):
         theuser = user.User(uid)
         assert theuser.email == email
 
+    # Bookmarks -------------------------------------------------------
+
+    def test_bookmark(self):
+        name = u'Test_User_quicklink'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        theUser.setBookmark(7)
+        result_added = theUser.getBookmark()
+        expected = 7
+        assert result_added == expected
+        # delete the bookmark
+        result_success = theUser.delBookmark()
+        assert result_success == 0
+        result_deleted = theUser.getBookmark()
+        assert not result_deleted
+
+        # delBookmark should return 1 on failure
+        result_failure = theUser.delBookmark()
+        assert result_failure == 1
+
+    # Quicklinks ------------------------------------------------------
+
+    def test_quicklinks(self):
+        """
+        Test for the quicklinks
+        """
+        pagename = u'Test_page_quicklink'
+        name = u'Test_User_quicklink'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+        theUser.subscribe(pagename)
+
+        # no quick links exist yet
+        result_before = theUser.getQuickLinks()
+        assert result_before == []
+
+        result = theUser.isQuickLinkedTo([pagename])
+        assert not result
+
+        # quicklinks for the user - theUser exist now
+        theUser.quicklinks = [pagename]
+        result_after = theUser.getQuickLinks()
+        expected = [u'Test_page_quicklink']
+        assert result_after == expected
+
+        # test for addQuicklink()
+        theUser.addQuicklink(u'Test_page_added')
+        result_on_addition = theUser.getQuickLinks()
+        expected = [u'Test_page_quicklink', u'Test_page_added']
+        assert result_on_addition == expected
+
+        # user should be quicklinked to [pagename]
+        result = theUser.isQuickLinkedTo([pagename])
+        assert result
+
+        # previously added page u'Test_page_added' is removed
+        theUser.removeQuicklink(u'Test_page_added')
+        result_on_removal = theUser.getQuickLinks()
+        expected = [u'Test_page_quicklink']
+        assert result_on_removal == expected
+
+    # Trail -----------------------------------------------------------
+
+    def test_trail(self):
+        pagename = u'Test_page_trail'
+        name = u'Test_User_trail'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # no item name added to trail
+        result = theUser.getTrail()
+        expected = []
+        assert result == expected
+
+        # item name added to trail
+        theUser.addTrail(u'item_added')
+        result = theUser.getTrail()
+        expected = [u'item_added']
+        assert result == expected
+
+    # Other ----------------------------------------------------------
+
+    def test_signature(self):
+        name = u'Test_User_other'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # test the user signature
+        result = theUser.signature()
+        expected =  u'[[Test_User_other]]'
+        assert result == expected
+
+    def test_recovery_token(self):
+        name = u'Test_User_other'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # use recovery token to generate new password
+        test_token = theUser.generate_recovery_token()
+        result_success = theUser.apply_recovery_token(test_token, u'test_newpass')
+        assert result_success
+
+        # wrong token
+        result_failure = theUser.apply_recovery_token('test_wrong_token', u'test_newpass')
+        assert not result_failure
+
     # Helpers ---------------------------------------------------------
 
     def createUser(self, name, password, pwencoded=False, email=None):

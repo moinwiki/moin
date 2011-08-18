@@ -11,7 +11,7 @@
 
 from datetime import datetime
 
-from flask import request, url_for, Response
+from flask import request, Response
 from flask import current_app as app
 from flask import g as flaskg
 
@@ -27,6 +27,8 @@ from MoinMoin.config import NAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMEN
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
+from MoinMoin.util.interwiki import url_for_item
+
 
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
@@ -66,7 +68,7 @@ def atom(item_name):
                      summary=rev.get(COMMENT, ''), summary_type='text',
                      content=content, content_type=content_type,
                      author=get_editor_info(rev, external=True),
-                     url=url_for('frontend.show_item', item_name=name, rev=this_revno, _external=True),
+                     url=url_for_item(name, rev=this_revno, _external=True),
                      updated=datetime.utcfromtimestamp(rev.timestamp),
                     )
         content = feed.to_string()

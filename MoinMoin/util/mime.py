@@ -130,3 +130,7 @@ type_moin_document = Type(type='application', subtype='x.moin.document')
 # Own types, text type
 type_moin_creole = Type(type='text', subtype='x.moin.creole')
 type_moin_wiki = Type(type='text', subtype='x.moin.wiki')
+
+# Generic types, text type
+type_text_plain = Type(type='text', subtype='plain')
+
