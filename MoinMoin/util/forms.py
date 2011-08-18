@@ -20,7 +20,6 @@ def label_filter(tagname, attributes, contents, context, bind):
     return contents
 label_filter.tags = set(['label'])
 
-
 def button_filter(tagname, attributes, contents, context, bind):
     """Show translated text in clickable buttons and submits."""
     if bind is None:

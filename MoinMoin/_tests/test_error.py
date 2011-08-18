@@ -50,10 +50,10 @@ class TestCompositeError(object):
 
     def setup_method(self, method):
         self.CompositeError_obj = error.CompositeError(error.InternalError)
-        
+
     def teardown_method(self, method):
         self.CompositeError_obj.innerException = None
-        
+
     def test_exceptions(self):
         self.CompositeError_obj.innerException = 'test_error1', 'test_error2', 'test_error3'
         result = error.CompositeError.exceptions(self.CompositeError_obj)
@@ -70,7 +70,7 @@ class TestCompositeError(object):
         self.CompositeError_obj.innerException = str(error.FatalError('This is a fatal Error'))
         result = error.CompositeError.exceptions(self.CompositeError_obj)
         expected = ['This is a fatal Error']
-        assert result == expected         
-    
+        assert result == expected
+
 coverage_modules = ['MoinMoin.error']
 
