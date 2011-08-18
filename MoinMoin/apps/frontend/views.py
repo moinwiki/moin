@@ -439,11 +439,11 @@ def ajaxdelete(item_name):
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
             try:
-               item = Item.create(itemname)
-               item.delete(comment)
-               response["status"].append(True)
+                item = Item.create(itemname)
+                item.delete(comment)
+                response["status"].append(True)
             except AccessDeniedError:
-               response["status"].append(False)
+                response["status"].append(False)
 
     return jsonify(response)
 
@@ -464,11 +464,11 @@ def ajaxdestroy(item_name):
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
             try:
-               item = Item.create(itemname)
-               item.destroy(comment=comment, destroy_item=True)
-               response["status"].append(True)
+                item = Item.create(itemname)
+                item.destroy(comment=comment, destroy_item=True)
+                response["status"].append(True)
             except AccessDeniedError:
-               response["status"].append(False)
+                response["status"].append(False)
 
     return jsonify(response)
 
