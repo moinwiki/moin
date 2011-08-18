@@ -245,7 +245,7 @@ class BackendTest(object):
         item = self.backend.create_item(u'internal')
         rev = item.create_revision(0)
         item.rollback()
-        assert not self.backend.has_item(item.name)
+        assert self.backend.has_item(item.name)
 
     def test_item_commit_revision(self):
         item = self.backend.create_item(u"item#11")
@@ -418,9 +418,7 @@ class BackendTest(object):
     def test_mixed_commit_metadata2(self):
         item = self.backend.create_item(u'mixed2')
         item.change_metadata()
-        pytest.raises(RuntimeError, item.create_revision, 31)
-        # lock cleanup
-        item.publish_metadata()
+        py.test.raises(RuntimeError, item.create_revision, 0)
 
     def test_item_metadata_change_and_publish(self):
         item = self.backend.create_item(u"test item metadata change")
