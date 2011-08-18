@@ -729,7 +729,7 @@ class FsUserItem(Item):
         metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
 
         # rename subscribed_pages to subscribed_items
-        metadata['subscribed_items'] = metadata['subscribed_pages']
+        metadata['subscribed_items'] = metadata.get('subscribed_pages', [])
 
         # convert bookmarks from usecs (and str) to secs (int)
         metadata['bookmarks'] = [(interwiki, int(long(bookmark)/1000000))
