@@ -605,7 +605,7 @@ class Item(object):
         unknown_item_group = "unknown items"
         if startswith:
             startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
-            if not selected_groups or  unknown_item_group in selected_groups:
+            if not selected_groups or unknown_item_group in selected_groups:
                 index = [(fullname, relname, contenttype)
                          for fullname, relname, contenttype in index
                          if u'/' not in relname
