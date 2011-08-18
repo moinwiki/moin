@@ -1,0 +1,17 @@
+{% extends theme("show.html") %}
+
+{% block content %}
+    <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
+    {% if index %}
+        <ul>
+        {% for fullname, relname, contenttype in index %}
+            <li>
+                <a href="{{ url_for('.show_item', item_name=fullname) }}"
+                   class="{{ contenttype|contenttype_to_class }}">
+                    {{ relname }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
