@@ -105,7 +105,7 @@ def create_simple_mapping(backend_uri='fs:instance', content_acl=None, user_prof
                         (ns_user_profile, userprofile, user_profile_acl),
                         (ns_content, content, content_acl),
         ]
-        return namespace_mapping, 'sqlite://'
+        return namespace_mapping
 
     else:
         raise ConfigurationError("No proper backend uri provided. Given: %r" % backend_uri)
