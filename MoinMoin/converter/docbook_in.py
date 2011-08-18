@@ -27,6 +27,8 @@ from MoinMoin import wikiutil
 from MoinMoin.util.tree import moin_page, xlink, docbook, xml, html
 
 from ._wiki_macro import ConverterMacro
+from ._util import decode_data, normalize_split_text
+
 
 class NameSpaceError(Exception):
     pass
@@ -199,11 +201,12 @@ class Converter(object):
     def _factory(cls, input, output, **kw):
         return cls()
 
-    def __call__(self, content, aruments=None):
-        """
-        Function called by the converter to process
-        the conversion.
-        """
+    def __call__(self, data, contenttype=None, arguments=None):
+        text = decode_data(data, contenttype)
+        content = normalize_split_text(text)
+        docbook_str = u'\n'.join(content)
+        logging.debug(docbook_str)
+
         # Initalize our attributes
         self.section_depth = 0
         self.heading_level = 0
@@ -215,11 +218,6 @@ class Converter(object):
         self.standard_attribute = {}
 
         # We will create an element tree from the DocBook content
-        # The content is given to the converter as a list of string,
-        # line per line.
-        # So we will concatenate all in one string.
-        docbook_str = u'\n'.join(content)
-        logging.debug(docbook_str)
         try:
             # XXX: The XML parser need bytestring.
             tree = ET.XML(docbook_str.encode('utf-8'))

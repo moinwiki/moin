@@ -313,5 +313,5 @@ class TestConverter(object):
     def do(self, input, output, args={}, skip=None):
         if skip:
             pytest.skip(skip)
-        out = self.conv(input.split(u'\n'), **args)
+        out = self.conv(input, 'text/x.moin.wiki;charset=utf-8', **args)
         assert self.serialize(out) == output

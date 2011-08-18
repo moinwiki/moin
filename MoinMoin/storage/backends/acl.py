@@ -47,7 +47,7 @@ from UserDict import DictMixin
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.security import ContentACL
+from MoinMoin.security import AccessControlList
 
 from MoinMoin.storage import Item, NewRevision, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
@@ -85,10 +85,10 @@ class AclWrapperBackend(object):
         self.cfg = cfg
         self.backend = backend
         self.hierarchic = hierarchic
-        self.valid = valid
-        self.before = ContentACL(cfg, [before], default=default, valid=valid)
-        self.default = ContentACL(cfg, [default], default=default, valid=valid)
-        self.after = ContentACL(cfg, [after], default=default, valid=valid)
+        self.valid = valid if valid is not None else cfg.acl_rights_contents
+        self.before = AccessControlList([before], default=default, valid=self.valid)
+        self.default = AccessControlList([default], default=default, valid=self.valid)
+        self.after = AccessControlList([after], default=default, valid=self.valid)
 
     def __getattr__(self, attr):
         # Attributes that this backend does not define itself are just looked
@@ -176,7 +176,7 @@ class AclWrapperBackend(object):
             # do not use default acl here
             acls = []
         default = self.default.default
-        return ContentACL(self.cfg, tuple(acls), default=default, valid=self.valid)
+        return AccessControlList(tuple(acls), default=default, valid=self.valid)
 
     def _may(self, itemname, right, username=None):
         """ Check if username may have <right> access on item <itemname>.

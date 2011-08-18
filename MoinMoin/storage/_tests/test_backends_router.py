@@ -28,7 +28,7 @@ class TestRouterBackend(BackendTest):
         self.users = MemoryBackend()
         self.child = MemoryBackend()
         self.other = MemoryBackend()
-        self.mapping = [('child', self.child), ('other/', self.other), (self.ns_user_profile, self.users), ('/', self.root)]
+        self.mapping = [('child/', self.child), ('other/', self.other), (self.ns_user_profile, self.users), ('/', self.root)]
         return RouterBackend(self.mapping, index_uri='sqlite://')
 
     def kill_backend(self):
@@ -52,10 +52,14 @@ class TestRouterBackend(BackendTest):
         itemname = u'child/foo'
         item = self.backend.create_item(itemname)
         assert item.name == itemname
+
         assert item._backend is self.child
         item.change_metadata()
         item[u'just'] = u'testing'
         item.publish_metadata()
+        rev = item.create_revision(0)
+        rev.write("This is %s" % itemname)
+        item.commit()
 
         item = self.backend.get_item(itemname)
         assert item._backend is self.child
@@ -114,14 +118,14 @@ class TestRouterBackend(BackendTest):
         item = self.backend.create_item(u'child/' + itemname)
         item.create_revision(0)
         item.commit()
-        assert self.child.has_item(itemname)
+        assert self.child.has_item(u'child/' + itemname)
         newname = u'i_was_moved'
         item.rename(u'other/' + newname)
+
         print [item.name for item in self.child.iteritems()]
-        assert not self.child.has_item(itemname)
-        assert not self.child.has_item(newname)
+        assert not self.child.has_item(u'child/' + itemname)
         assert not self.child.has_item(u'other/' + newname)
-        assert self.other.has_item(newname)
+        assert self.other.has_item(u'other/' + newname)
 
     def test_itemname_equals_namespace(self):
         itemname = u'child'
