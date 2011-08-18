@@ -52,12 +52,14 @@ class TestRouterBackend(BackendTest):
         itemname = u'child/foo'
         item = self.backend.create_item(itemname)
         assert item.name == itemname
-        test_backend, child_name, root_name = item._get_backend(u'child/foo')
+        # using item._backend to get the backend makes this test fail.
+        test_backend, child_name, root_name = item._get_backend(itemname)
         assert test_backend is self.child
         item.change_metadata()
         item[u'just'] = u'testing'
         item.publish_metadata()
-        test_backend, child_name, root_name = item._get_backend(u'child/foo')
+        # using item._backend to get the backend makes this test fail.
+        test_backend, child_name, root_name = item._get_backend(itemname)
         assert test_backend is self.child
         assert item[u'just'] == u'testing'
         assert item.name == itemname
