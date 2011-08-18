@@ -7,9 +7,13 @@ Downloading
 For moin2, there is currently no packaged download available, you have to get
 it from the repository:
 
-Alternative 1 (using Mercurial DVCS)::
+Alternative 1a (using Mercurial DVCS)::
 
  $ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+
+Alternative 1b (using Mercurial DVCS)::
+
+ $ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
 
 Alternative 2:
 Visit http://hg.moinmo.in/moin/2.0 with your web browser, download the tgz
@@ -23,9 +27,9 @@ Developer install
 -----------------
 Please make sure you have `virtualenv` installed (it includes `pip`).
 
-If you just want to run moin in-place in your mercurial workdir, run this
-from your mercurial moin2 work dir (you should do this using your normal
-user login, no root or Administrator privileges needed)::
+If you just want to run moin in-place in your mercurial workdir, with your
+normal system Python, run this from your mercurial moin2 work dir (you should
+do this using your normal user login, no root or Administrator privileges needed)::
 
  ./quickinstall  # for linux (or other posix OSes)
  # or
@@ -50,6 +54,24 @@ PATH, so you can just type "moin" on the shell / cmd.
 Note: in this special mode, it won't copy the MoinMoin code to the env/
 directory, it will run everything from your work dir, so you can modify code
 and directly try it out (you only need to do this installation procedure once).
+
+Using a different Python or a different virtualenv directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the `quickinstall` script and just modify these lines as needed before
+running it::
+
+    DIR=env
+    PYTHON=python
+
+E.g. if you want to use `pypy` and name the virtualenv directory `env-pypy`,
+use::
+
+    DIR=env-pypy
+    PYTHON=/opt/pypy/bin/pypy
+
+That way, you can have all sorts of Pythons in different virtualenv directories
+within your moin2 workdir.
 
 Installing PIL
 ~~~~~~~~~~~~~~

@@ -256,14 +256,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         tf_names = set(item.list_members())
         assert tf_names == members
         assert item.get_member('example1.txt').read() == filecontent
@@ -273,7 +273,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -285,7 +285,7 @@ class TestTarItems(object):
         item = flaskg.storage.get_item(item_name)
         assert item.next_revno == 2
 
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         assert item.get_member('example1.txt').read() == filecontent
 
 class TestZipMixin(object):

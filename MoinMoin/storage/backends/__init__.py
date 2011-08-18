@@ -11,6 +11,7 @@
 """
 
 
+from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin.storage.serialization import unserialize
@@ -61,43 +62,37 @@ def create_simple_mapping(backend_uri='fs:instance', content_acl=None, user_prof
             hierarchic=False,
         )
 
-    def _create_backends(BackendClass, backend_uri, index_uri):
+    def _create_backends(BackendClass, backend_uri):
         backends = []
         for name in [CONTENT, USERPROFILES, TRASH, ]:
             parms = dict(nsname=name)
             backend = BackendClass(backend_uri % parms)
             backends.append(backend)
-        router_index_uri = index_uri % dict(nsname='ROUTER')
-        return backends + [router_index_uri]
+        return backends
 
     if backend_uri.startswith(FS_PREFIX):
         instance_uri = backend_uri[len(FS_PREFIX):]
-        index_uri = 'sqlite:///%s_index.sqlite' % instance_uri
-        content, userprofile, trash, router_index_uri = _create_backends(fs.FSBackend, instance_uri, index_uri)
+        content, userprofile, trash = _create_backends(fs.FSBackend, instance_uri)
 
     elif backend_uri.startswith(FS2_PREFIX):
         instance_uri = backend_uri[len(FS2_PREFIX):]
-        index_uri = 'sqlite:///%s_index.sqlite' % instance_uri
-        content, userprofile, trash, router_index_uri = _create_backends(fs2.FS2Backend, instance_uri, index_uri)
+        content, userprofile, trash = _create_backends(fs2.FS2Backend, instance_uri)
 
     elif backend_uri.startswith(HG_PREFIX):
         # Due to external dependency that may not always be present, import hg backend here:
         from MoinMoin.storage.backends import hg
         instance_uri = backend_uri[len(HG_PREFIX):]
-        index_uri = 'sqlite:///%s_index.sqlite' % instance_uri
-        content, userprofile, trash, router_index_uri = _create_backends(hg.MercurialBackend, instance_uri, index_uri)
+        content, userprofile, trash = _create_backends(hg.MercurialBackend, instance_uri)
 
     elif backend_uri.startswith(SQLA_PREFIX):
         # XXX Move this import to the module level if we depend on sqlalchemy and it is in sys.path
         from MoinMoin.storage.backends import sqla
         instance_uri = backend_uri[len(SQLA_PREFIX):]
-        index_uri = '%s_index' % instance_uri
-        content, userprofile, trash, router_index_uri = _create_backends(sqla.SQLAlchemyBackend, instance_uri, index_uri)
+        content, userprofile, trash = _create_backends(sqla.SQLAlchemyBackend, instance_uri)
 
     elif backend_uri == MEMORY_PREFIX:
         instance_uri = ''
-        index_uri = 'sqlite://' # default is memory
-        content, userprofile, trash, router_index_uri = _create_backends(memory.MemoryBackend, instance_uri, index_uri)
+        content, userprofile, trash = _create_backends(memory.MemoryBackend, instance_uri)
 
     elif backend_uri.startswith(FS19_PREFIX):
         # special case: old moin19 stuff
@@ -121,15 +116,14 @@ def create_simple_mapping(backend_uri='fs:instance', content_acl=None, user_prof
                     (ns_content, content, content_acl),
     ]
 
-    return namespace_mapping, router_index_uri
+    return namespace_mapping
 
 
 def upgrade_sysitems(xmlfile):
     """
     Upgrade the wiki's system pages from an XML file.
     """
-    tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())],
-                                       index_uri='sqlite://')
+    tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())], cfg=app.cfg)
     unserialize(tmp_backend, xmlfile)
 
     # clone to real backend from config WITHOUT checking ACLs!

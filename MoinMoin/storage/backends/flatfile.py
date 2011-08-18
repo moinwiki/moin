@@ -63,13 +63,6 @@ class FlatFileBackend(Backend):
         revpath = self._rev_path(name)
         return os.path.exists(revpath)
 
-    def history(self, reverse=True):
-        rev_list = [i.get_revision(-1) for i in self.iteritems()]
-        rev_list.sort(lambda x, y: cmp(x.timestamp, y.timestamp))
-        if reverse:
-            rev_list.reverse()
-        return iter(rev_list)
-
     def get_item(self, itemname):
         if not self._exists(itemname):
             raise NoSuchItemError("No such item, %r" % (itemname))

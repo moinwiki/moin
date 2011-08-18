@@ -133,10 +133,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.start('create_app init backends')
     app.unprotected_storage, app.storage = init_backends(app)
     clock.stop('create_app init backends')
-    clock.start('create_app index rebuild')
-    if app.cfg.index_rebuild:
-        app.unprotected_storage.index_rebuild() # XXX run this from a script
-    clock.stop('create_app index rebuild')
     clock.start('create_app load/save xml')
     clock.stop('create_app load/save xml')
     clock.start('create_app flask-babel')
@@ -173,14 +169,13 @@ def init_backends(app):
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend, protection to apply as a dict
     ns_mapping = app.cfg.namespace_mapping
-    index_uri = app.cfg.router_index_uri
     # Just initialize with unprotected backends.
     unprotected_mapping = [(ns, backend) for ns, backend, acls in ns_mapping]
-    unprotected_storage = router.RouterBackend(unprotected_mapping, index_uri=index_uri)
+    unprotected_storage = router.RouterBackend(unprotected_mapping, cfg=app.cfg)
     # Protect each backend with the acls provided for it in the mapping at position 2
     amw = acl.AclWrapperBackend
     protected_mapping = [(ns, amw(app.cfg, backend, **acls)) for ns, backend, acls in ns_mapping]
-    storage = router.RouterBackend(protected_mapping, index_uri=index_uri)
+    storage = router.RouterBackend(protected_mapping, cfg=app.cfg)
     return unprotected_storage, storage
 
 def deinit_backends(app):
@@ -194,8 +189,7 @@ def import_export_xml(app):
     xmlfile = app.cfg.load_xml
     if xmlfile:
         app.cfg.load_xml = None
-        tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())],
-                                           index_uri='sqlite://')
+        tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())], cfg=app.cfg)
         unserialize(tmp_backend, xmlfile)
         # TODO optimize this, maybe unserialize could count items it processed
         item_count = 0

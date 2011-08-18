@@ -124,12 +124,32 @@ class ValidSearch(Validator):
 class SearchForm(Form):
     q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
     submit = String.using(default=L_('Search'), optional=True)
+    pagelen = String.using(optional=False)
+    search_in_all = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
 
     validators = [ValidSearch()]
 
 
-def _search(query):
-    return "searching not implemented yet, query: %r" % query
+def _search(search_form, item_name):
+    from MoinMoin.search.indexing import WhooshIndex
+    from whoosh.qparser import QueryParser, MultifieldParser
+    from MoinMoin.search.analyzers import item_name_analyzer
+    from whoosh import highlight
+    query = search_form['q'].value
+    pagenum = 1 # We start from first page
+    pagelen = search_form['pagelen'].value
+    index_object = WhooshIndex()
+    ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
+    with ix.searcher() as searcher:
+        mparser = MultifieldParser(["name_exact", "name", "content"], schema=ix.schema)
+        q = mparser.parse(query)
+        results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
+        return render_template('search_results.html',
+                               results=results,
+                               query=query,
+                               medium_search_form=search_form,
+                               item_name=item_name,
+                              )
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
@@ -138,8 +158,7 @@ def show_item(item_name, rev):
     # first check whether we have a valid search query:
     search_form = SearchForm.from_flat(request.values)
     if search_form.validate():
-        query = search_form['q'].value
-        return _search(query)
+        return _search(search_form, item_name)
     search_form['submit'].set_default() # XXX from_flat() kills all values
 
     flaskg.user.addTrail(item_name)

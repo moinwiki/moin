@@ -88,6 +88,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'sqlalchemy>=0.7.1', # metadata index and other stuff
         'Werkzeug>=0.6.2', # wsgi toolkit
         'pytest', # pytest is needed by unit tests
+        'whoosh>=2.1.0', # needed for indexed search
         'sphinx', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2',
