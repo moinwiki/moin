@@ -602,20 +602,35 @@ class Item(object):
         else:
             selected_contenttypes = all_contenttypes
 
+        unknown_item_group = "unknown items"
         if startswith:
             startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
-            index = [(fullname, relname, contenttype)
-                     for fullname, relname, contenttype in index
-                     if u'/' not in relname
-                     and relname.startswith(startswith)
-                     and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
-                     # If an item's contenttype not present in the default contenttype list,
-                     # then it will be shown without going through any filter.
+            if not selected_groups or  unknown_item_group in selected_groups:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and relname.startswith(startswith)
+                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+                         # If an item's contenttype not present in the default contenttype list,
+                         # then it will be shown without going through any filter.
+            else:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and relname.startswith(startswith)
+                         and (contenttype in selected_contenttypes)]
+
         else:
-            index = [(fullname, relname, contenttype)
-                     for fullname, relname, contenttype in index
-                     if u'/' not in relname
-                     and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+            if not selected_groups or unknown_item_group in selected_groups:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+            else:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and contenttype in selected_contenttypes]
 
         return index
 
