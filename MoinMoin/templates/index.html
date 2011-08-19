@@ -15,6 +15,10 @@
             {% set unknown_items_label = _("items having unknown mime types") %}
             {{ gen.form.open(form, method="post", action=url_for('frontend.index', item_name=item_name)) }}
             <ul>
+                <li>
+                    <a href="#" class="filter-toggle">&raquo; {{ _("Toggle") }}</a>
+                    <a href="#" class="filter-more">&raquo; {{ _("More") }}</a>
+                </li>
                 {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
                 {{ forms.render_filter_field(gen, form['other_text_items'], 'checkbox', contenttype_groups['other text items']) }}
                 {{ forms.render_filter_field(gen, form['image_items'], 'checkbox', contenttype_groups['image items']) }}

@@ -280,7 +280,10 @@ div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat ce
 .moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
 .moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
 .moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
+.moin-contenttypes-wrapper ul li a { font-size: 80%; }
+.moin-contenttypes-wrapper form input[type="submit"] { margin: 0.4em 0.5em; }
 .moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; } 
+.filter-toggle { margin: 0 0.2em; font-size: 90%; }
 .moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
 .moin-more-index:hover { text-decoration: none; }
 .moin-index-path { margin-left: 0.5em; }
