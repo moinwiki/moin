@@ -559,6 +559,8 @@ def index(item_name):
         form = ContenttypeFilterForm.from_flat(request.form)
         selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
                            if form[gname].value]
+        if u'submit' in selected_groups:
+            selected_groups.remove(u'submit')
         if not selected_groups:
             form = ContenttypeFilterForm.from_defaults()
 
