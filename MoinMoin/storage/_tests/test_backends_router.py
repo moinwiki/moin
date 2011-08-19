@@ -7,6 +7,7 @@
     This defines tests for the RouterBackend
 """
 
+import os
 
 import py
 
@@ -16,6 +17,7 @@ from MoinMoin.error import ConfigurationError
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.memory import MemoryBackend
 from MoinMoin.storage.backends.router import RouterBackend
+from MoinMoin.search.indexing import WhooshIndex
 
 class TestRouterBackend(BackendTest):
     """
@@ -34,6 +36,16 @@ class TestRouterBackend(BackendTest):
     def kill_backend(self):
         pass
 
+    def teardown_method(self, method):
+        # clean the index directory after each test as messes with the backend history
+        # XXX tests with backend.history should not be failing due to contents in index directory
+        # the contents of the directory and the way backend.history is handled should be implemented 
+        # in a better way
+        index_dir = WhooshIndex()._index_dir
+        for values in os.walk(index_dir):
+            for index_file_name in values[2]:
+                index_file = index_dir + '/' + index_file_name
+                os.remove(index_file)
 
     def test_correct_backend(self):
         mymap = {u'rootitem': self.root,         # == /rootitem
