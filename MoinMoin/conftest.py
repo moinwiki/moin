@@ -141,29 +141,15 @@ def pytest_report_header(config):
 
 def clean_backend():
     """ method to cleanup the items created in testing process """
-    for test_item in flaskg.storage.iteritems():
-        test_backend = flaskg.storage.get_backend(test_item.name)
-        temp_acl = test_backend._get_acl(test_item.name)
-        if temp_acl.has_acl():
-            test_before_acl = test_backend.before.acl
-            test_backend.before._addLine('+All:destroy')
-            # reverse the list to get the priority for our newly added rights
-            test_before_acl.reverse()
-            test_item.destroy()
-            # get to the previous state
-            test_before_acl.reverse()
-            test_before_acl.pop()
-        else:
-            test_acl = test_backend.default.acl
-            test_backend.default._addLine('+All:destroy')
-            # reverse the list to get the priority for our newly added rights
-            test_acl.reverse()
-            test_item.destroy()
-            # get to the previous state
-            test_acl.reverse()
-            test_acl.pop()
-
     for test_item in flaskg.unprotected_storage.iteritems():
+        # some items don't have 'uuid' as key in them
+        # such items raise keyerror on test_item.destroy()
+        # add the key 'uuid' to such items
+        key_list = test_item.keys()
+        if not 'uuid' in key_list:
+            test_item.change_metadata()
+            test_item['uuid'] = 'temp_uuid'
+            test_item.publish_metadata()
         test_item.destroy()
 
 class Module(pytest.collect.Module):
