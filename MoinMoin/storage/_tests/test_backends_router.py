@@ -39,7 +39,7 @@ class TestRouterBackend(BackendTest):
     def teardown_method(self, method):
         # clean the index directory after each test as messes with the backend history
         # XXX tests with backend.history should not be failing due to contents in index directory
-        # the contents of the directory and the way backend.history is handled should be implemented 
+        # the contents of the directory and the way backend.history is handled should be implemented
         # in a better way
         index_dir = WhooshIndex()._index_dir
         for values in os.walk(index_dir):

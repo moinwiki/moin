@@ -21,7 +21,7 @@ class TestSQLABackend(BackendTest):
     def create_backend(self):
         # when running py.test, all the index files are removed in index dir(please see teardown_method in test_backends_router)
         # initializing WhooshIndex creates all_revisions_index and latest_revisions_index in there.
-        # without index files item.commit() raises EmptyIndexError 
+        # without index files item.commit() raises EmptyIndexError
         # SQLAlchemyBackend do not initializes revision files there
         WhooshIndex()
         return SQLAlchemyBackend(verbose=True)
