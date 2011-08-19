@@ -14,11 +14,16 @@ import py
 
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.sqla import SQLAlchemyBackend, SQLARevision, Data
-
+from MoinMoin.search.indexing import WhooshIndex
 
 class TestSQLABackend(BackendTest):
 
     def create_backend(self):
+        # when running py.test, all the index files are removed in index dir(please see teardown_method in test_backends_router)
+        # initializing WhooshIndex creates all_revisions_index and latest_revisions_index in there.
+        # without index files item.commit() raises EmptyIndexError 
+        # SQLAlchemyBackend do not initializes revision files there
+        WhooshIndex()
         return SQLAlchemyBackend(verbose=True)
 
     def kill_backend(self):
