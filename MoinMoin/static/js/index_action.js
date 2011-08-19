@@ -107,6 +107,28 @@ $("document").ready(function () {
         }
     });
 
+    $(".filter-toggle").click(function () {
+        $(".moin-contenttypes-wrapper form").find("input[type='checkbox']").each(function () {
+            if($(this).attr("checked"))
+                $(this).removeAttr("checked");
+            else
+                $(this).attr("checked", "checked");
+        });
+        return false;
+    });
+
+    $(".filter-more").click(function () {
+        var helper_texts = $(".moin-contenttypes-wrapper form").find(".helper-text:visible");
+        if(helper_texts.length) {
+            helper_texts.fadeOut();
+        }
+        else {
+            $(".moin-contenttypes-wrapper form").find(".helper-text").css("display", "block");
+        }
+            
+        return false;
+    });
+
     $(".moin-select-item").click(function () {
         if($(this).parent().hasClass("selected-item")) {
             $(this).parent().removeClass("selected-item");
