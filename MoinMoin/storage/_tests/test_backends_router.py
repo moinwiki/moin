@@ -9,7 +9,7 @@
 
 import os
 
-import py
+import pytest
 
 from flask import current_app as app
 
@@ -184,7 +184,7 @@ class TestRouterBackend(BackendTest):
             assert rev.revno == revno
 
     # See history function in indexing.py for comments on why this test fails.
-    @py.test.mark.xfail
+    @pytest.mark.xfail
     def test_history_size_after_rename(self):
         item = self.backend.create_item(u'first')
         item.create_revision(0)

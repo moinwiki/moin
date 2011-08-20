@@ -9,7 +9,7 @@
 """
 
 
-from py.test import raises
+from pytest import raises
 
 from flask import current_app as app
 from flask import g as flaskg

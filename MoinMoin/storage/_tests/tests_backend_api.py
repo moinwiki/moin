@@ -5,7 +5,7 @@
     MoinMoin - Test - storage API
 """
 
-import py
+import pytest
 
 from MoinMoin.storage import Backend, Item, StoredRevision, NewRevision
 from MoinMoin.storage.error import NoSuchItemError
@@ -65,7 +65,7 @@ class TestBackendAPI(object):
         assert not oldrev.keys()
 
         newrev = item.create_revision(1)
-        py.test.raises(TypeError, newrev.__setitem__, '__reserved')
+        pytest.raises(TypeError, newrev.__setitem__, '__reserved')
 
         assert not newrev.keys()
 
