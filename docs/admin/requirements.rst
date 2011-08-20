@@ -3,13 +3,10 @@ Requirements
 ============
 
 MoinMoin requires Python >= 2.6 and < 3.0.
+We usually test using CPython and this is what we recommend.
 
-Python build options (in case you have to build your own Python):
-
-* zlib support (required)
-* ucs4 (32bit unicode, recommended)
-* ucs2 also works for most users (not recommended)
-
+You can also try PyPy - PyPy >= 1.6 seems to work OK with moin.
+Hint: modify the quickinstall script so it uses PYTHON=pypy.
 
 Servers
 =======
