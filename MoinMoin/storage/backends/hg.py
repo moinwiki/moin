@@ -156,39 +156,6 @@ class MercurialBackend(Backend):
 
     iteritems = iter_items_noindex
 
-    def history(self, reverse=True):
-        """
-        Return generator for iterating in given direction over Item Revisions
-        with timestamp order preserved.
-        Yields MercurialStoredRevision objects.
-        """
-        def restore_revision(name, id):
-            item = Item(self, name)
-            item._id = id
-            rev = MercurialStoredRevision(item, revno)
-            rev._item_id = item._id
-            return rev
-
-        # this is costly operation, but no better idea now how to do it and not
-        # break pull/merge stuff
-        renamed_items = {}
-        for ctx in self._iter_changelog(filter_meta='renamed_to'):
-            meta = self._decode_metadata(ctx.extra(), BACKEND_METADATA_PREFIX)
-            oldid, renamed_to = meta['renamed_id'], meta['renamed_to']
-            renamed_items.setdefault(oldid, []).append(renamed_to)
-
-        for ctx in self._iter_changelog(reverse=reverse):
-            meta = self._decode_metadata(ctx.extra(), BACKEND_METADATA_PREFIX)
-            revno, oldid, oldname = meta['rev'], meta['id'], meta['name']
-            try:
-                for (id, name) in renamed_items[oldid]:
-                    # consider you have backend merged from two instances,
-                    # where there was item A renamed to B in first, and the same A
-                    # renamed to C in second
-                    yield restore_revision(name, id)
-            except KeyError:
-                yield restore_revision(oldname, oldid)
-
     def _get_revision(self, item, revno):
         """
         Return given Revision of an Item. Raise NoSuchRevisionError

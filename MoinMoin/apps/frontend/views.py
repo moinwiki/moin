@@ -51,6 +51,7 @@ from MoinMoin import config, user, util, wikiutil
 from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util import crypto
+from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
 from MoinMoin.signalling import item_displayed, item_modified
@@ -69,8 +70,7 @@ def dispatch():
 @frontend.route('/')
 def show_root():
     item_name = app.cfg.item_root
-    location = url_for('.show_item', item_name=item_name)
-    return redirect(location)
+    return redirect(url_for_item(item_name))
 
 @frontend.route('/robots.txt')
 def robots():
@@ -117,9 +117,60 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1))
-@frontend.route('/+show/<int:rev>/<itemname:item_name>')
+class ValidSearch(Validator):
+    """Validator for a valid search form
+    """
+    too_short_query_msg = L_('Search query too short.')
+
+    def validate(self, element, state):
+        if element['q'].value is None:
+            # no query, nothing to search for
+            return False
+        if len(element['q'].value) < 2:
+            return self.note_error(element, state, 'too_short_query_msg')
+        return True
+
+class SearchForm(Form):
+    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
+    submit = String.using(default=L_('Search'), optional=True)
+    pagelen = String.using(optional=False)
+    search_in_all = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
+
+    validators = [ValidSearch()]
+
+
+def _search(search_form, item_name):
+    from MoinMoin.search.indexing import WhooshIndex
+    from whoosh.qparser import QueryParser, MultifieldParser
+    from MoinMoin.search.analyzers import item_name_analyzer
+    from whoosh import highlight
+    query = search_form['q'].value
+    pagenum = 1 # We start from first page
+    pagelen = search_form['pagelen'].value
+    index_object = WhooshIndex()
+    ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
+    with ix.searcher() as searcher:
+        mparser = MultifieldParser(["name_exact", "name", "content"], schema=ix.schema)
+        q = mparser.parse(query)
+        results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
+        return render_template('search_results.html',
+                               results=results,
+                               query=query,
+                               medium_search_form=search_form,
+                               item_name=item_name,
+                              )
+
+
+
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
+@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def show_item(item_name, rev):
+    # first check whether we have a valid search query:
+    search_form = SearchForm.from_flat(request.values)
+    if search_form.validate():
+        return _search(search_form, item_name)
+    search_form['submit'].set_default() # XXX from_flat() kills all values
+
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -149,13 +200,14 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
+                              search_form=search_form,
                              )
     return Response(content, status)
 
 
 @frontend.route('/+show/<itemname:item_name>')
 def redirect_show_item(item_name):
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 @frontend.route('/+dom/<int:rev>/<itemname:item_name>')
@@ -341,12 +393,11 @@ def revert_item(item_name, rev):
         TextCha(form).amend_form()
         if form.validate():
             item.revert()
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -367,11 +418,10 @@ def copy_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.copy(target, comment)
-            return redirect(url_for('.show_item', item_name=target))
+            return redirect(url_for_item(target))
     return render_template(item.copy_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -392,11 +442,10 @@ def rename_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             item.rename(target, comment)
-            return redirect(url_for('.show_item', item_name=target))
+            return redirect(url_for_item(target))
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -415,11 +464,10 @@ def delete_item(item_name):
         if form.validate():
             comment = form['comment'].value
             item.delete(comment)
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
-                           gen=make_generator(),
                           )
 
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
@@ -508,12 +556,11 @@ def destroy_item(item_name, rev):
         if form.validate():
             comment = form['comment'].value
             item.destroy(comment=comment, destroy_item=destroy_item)
-            return redirect(url_for('.show_item', item_name=item_name))
+            return redirect(url_for_item(item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
                            rev_no=rev,
                            form=form,
-                           gen=make_generator(),
                           )
 
 
@@ -632,15 +679,6 @@ def _backrefs(items, item_name):
         if item_name in refs:
             refs_here.append(current_item)
     return refs_here
-
-
-@frontend.route('/+search')
-def search():
-    return _search()
-
-
-def _search(**args):
-    return "searching for %r not implemented yet" % args
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -902,7 +940,7 @@ def quicklink_item(item_name):
             msg = _('Your quicklink to this page could not be removed.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 @frontend.route('/+subscribe/<itemname:item_name>')
@@ -926,7 +964,7 @@ def subscribe_item(item_name):
             msg = _('You could not get subscribed to this item.'), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for('.show_item', item_name=item_name))
+    return redirect(url_for_item(item_name))
 
 
 class ValidRegistration(Validator):
@@ -1062,7 +1100,6 @@ def register():
 
     return render_template(template,
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1120,7 +1157,6 @@ def lostpass():
             return redirect(url_for('.show_root'))
     return render_template('lostpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1176,7 +1212,6 @@ def recoverpass():
             return redirect(url_for('.show_root'))
     return render_template('recoverpass.html',
                            item_name=item_name,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1249,7 +1284,6 @@ def login():
     return render_template('login.html',
                            item_name=item_name,
                            login_inputs=app.cfg.auth_login_inputs,
-                           gen=make_generator(),
                            form=form,
                           )
 
@@ -1410,7 +1444,6 @@ def usersettings(part):
     return render_template('usersettings.html',
                            item_name=item_name,
                            part=part,
-                           gen=make_generator(),
                            form=form,
                           )
 

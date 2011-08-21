@@ -941,7 +941,7 @@ Call it like::
 
     from MoinMoin.storage.backends import create_simple_mapping
 
-    namespace_mapping, router_index_uri = create_simple_mapping(
+    namespace_mapping = create_simple_mapping(
         backend_uri=...,
         content_acl=dict(before=...,
                          default=...,
@@ -1020,7 +1020,7 @@ Configuration::
     from MoinMoin.storage.backends import create_simple_mapping
 
     data_dir = '/srv/mywiki/data'
-    namespace_mapping, router_index_uri = create_simple_mapping(
+    namespace_mapping = create_simple_mapping(
         backend_uri='fs2:%s/%%(nsname)s' % data_dir,
         content_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                          default=u'All:read,write,create',

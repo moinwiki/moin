@@ -24,18 +24,18 @@ class TestItem(object):
 
     def testClassFinder(self):
         for contenttype, ExpectedClass in [
-                ('application/x-foobar', Binary),
-                ('text/plain', Text),
-                ('text/plain;charset=utf-8', Text),
-                ('image/tiff', Image),
-                ('image/png', TransformableBitmapImage),
+                (u'application/x-foobar', Binary),
+                (u'text/plain', Text),
+                (u'text/plain;charset=utf-8', Text),
+                (u'image/tiff', Image),
+                (u'image/png', TransformableBitmapImage),
             ]:
             item = Item.create('foo', contenttype=contenttype)
             assert isinstance(item, ExpectedClass)
 
     def testCRUD(self):
         name = u'NewItem'
-        contenttype = 'text/plain;charset=utf-8'
+        contenttype = u'text/plain;charset=utf-8'
         data = 'foobar'
         meta = {'foo': 'bar', CONTENTTYPE: contenttype}
         comment = u'saved it'
@@ -84,9 +84,9 @@ class TestItem(object):
         basename = u'Foo'
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij', '/ij/kl', ]:
             item = Item.create(basename + name)
-            item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
+            item._save({CONTENTTYPE: u'text/plain;charset=utf-8'}, "foo")
         item = Item.create(basename + '/mn')
-        item._save({CONTENTTYPE: 'image/jpeg'}, "JPG")
+        item._save({CONTENTTYPE: u'image/jpeg'}, "JPG")
         # check index
         baseitem = Item.create(basename)
         index = baseitem.get_index()
@@ -98,10 +98,10 @@ class TestItem(object):
                          (u'Foo/mn', u'mn', 'image/jpeg'),
                         ]
         flat_index = baseitem.flat_index()
-        assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
-                              (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
-                              (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
-                              (u'Foo/mn', u'mn', 'image/jpeg'),
+        assert flat_index == [(u'Foo/ab', u'ab', u'text/plain;charset=utf-8'),
+                              (u'Foo/gh', u'gh', u'text/plain;charset=utf-8'),
+                              (u'Foo/ij', u'ij', u'text/plain;charset=utf-8'),
+                              (u'Foo/mn', u'mn', u'image/jpeg'),
                              ]
         # check index when startswith param is passed
         flat_index = baseitem.flat_index(startswith=u'a')
@@ -115,8 +115,7 @@ class TestItem(object):
                                   (u'Foo/gh', u'gh', 'text/plain;charset=utf-8', False),
                                   (u'Foo/ij', u'ij', 'text/plain;charset=utf-8', True),
                                   (u'Foo/mn', u'mn', 'image/jpeg', False),
-                                 ]
-
+                                  ]
 
 class TestTarItems(object):
     """
@@ -127,14 +126,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         tf_names = set(item.list_members())
         assert tf_names == members
         assert item.get_member('example1.txt').read() == filecontent
@@ -144,7 +143,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -156,7 +155,7 @@ class TestTarItems(object):
         item = flaskg.storage.get_item(item_name)
         assert item.next_revno == 2
 
-        item = Item.create(item_name, contenttype='application/x-tar')
+        item = Item.create(item_name, contenttype=u'application/x-tar')
         assert item.get_member('example1.txt').read() == filecontent
 
 coverage_modules = ['MoinMoin.items']

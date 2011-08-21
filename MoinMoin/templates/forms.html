@@ -66,6 +66,12 @@ Helpers for using flatland with jinja2 to create html forms.
     {% endif %}
 {% endmacro %}
 
+{% macro render_field_without_markup(gen, field, field_type) %}
+    {{ gen.input(field, type=field_type) }}
+    {{ gen.label(field) }}
+    {{ render_errors(field) }}
+{% endmacro %}
+
 {% macro render_file_uploader(submit_url) %}
     <div id="file_upload">
         <div class="upload-form">

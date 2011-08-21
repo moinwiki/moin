@@ -89,6 +89,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         #'Werkzeug>=0.7dev', # wsgi toolkit, dev version (do not use ==0.7dev!)
         'Werkzeug==0.6.2', # use this if 0.7dev fails
         'py==1.3.4', # py.test 1.3.4 is needed by unit tests
+        'whoosh>=2.1.0', # needed for indexed search
         'sphinx', # needed to build the docs
         # pin specific versions that conform to XStatic 0.0.2:
         'XStatic==0.0.2',
