@@ -88,10 +88,10 @@ def getPageContent(results, offset, results_per_page):
         :param offset: after skipping how many results, the selection of results for that page will be done (int),
         :param results_per_page: number of results to be shown on a single page (int)
 
-        :rtype: tuple 
-        :returns: selected_result (list), 
+        :rtype: tuple
+        :returns: selected_result (list),
                   offset for next page (If 0 then no next page),
-                  offset for previous page (If less than 0, then no previous page) 
+                  offset for previous page (If less than 0, then no previous page)
     """
     count = 0
     maxcount = offset + results_per_page

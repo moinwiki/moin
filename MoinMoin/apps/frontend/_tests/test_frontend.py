@@ -30,7 +30,7 @@ class TestFrontend(object):
         with self.app.test_client() as c:
             rv = c.get('/favicon.ico')
             assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] == 'image/x-icon'
+            assert rv.headers['Content-Type'] in ['image/x-icon', 'image/vnd.microsoft.icon']
             assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
 
     def test_404(self):
@@ -43,7 +43,7 @@ class TestFrontend(object):
 
     def test_global_index(self):
         with self.app.test_client() as c:
-            rv = c.get('/+index')
+            rv = c.get('/+index/')
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
             assert '<html>' in rv.data
