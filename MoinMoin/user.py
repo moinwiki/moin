@@ -778,4 +778,3 @@ If you didn't forget your password, please ignore this email.
                     sitename=self._cfg.sitename or "Wiki")
         mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
         return mailok, msg
-

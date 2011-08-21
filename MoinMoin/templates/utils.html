@@ -1,5 +1,4 @@
-{% macro editor_info(rev) %}
-  {%- set info = get_editor_info(rev) -%}
+{% macro show_editor_info(info) %}
   {%- if info.uri -%}
       <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
   {%- elif info.email -%}
@@ -13,6 +12,12 @@
   {%- else -%}
     </span>
   {%- endif -%}
+{% endmacro %}
+
+
+{% macro editor_info(rev) %}
+  {%- set info = get_editor_info(rev) -%}
+  {{ show_editor_info(info) }}
 {% endmacro %}
 
 

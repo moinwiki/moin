@@ -211,13 +211,116 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-hist-rev { margin: 0; }
 #moin-global-history,
 #moin-page-history { font-size: 75%; }
-#moin-global-history tr,
-#moin-page-history tr { border: 1px solid #4D7DA9; }
+#moin-page-history tr { border: 1px solid #4D7DA9; } 
 #moin-global-history th,
 #moin-page-history th { background-color: #81BBF2; border: 0px; font-size: 1.12em; padding: 6px .5em; text-align: left; }
-#moin-global-history td,
+#moin-global-history td {  border: 0px; vertical-align: top;text-align: left; padding: 0.4em 0.3em; }
 #moin-page-history td { background-color: #E6EAF0; border: 0px; vertical-align: top; }
 .moin-wordbreak { word-break: break-all;  word-wrap: break-word; } /* Firefox needs javascript assistance within tables */
+.moin-history-time { width: 10%; }
+.moin-history-contenttype { width: 18%; }
+.moin-history-editorinfo { width: 17%; }
+.moin-history-comment { width: 30%; }
+.moin-action { width: 2%; }
+.moin-action a:hover { text-decoration: none; }
+.moin-history-container { border: 1px solid #4D7DA9; }
+.moin-history-container-header { background: #81BBF2; margin: 0px; padding: 4px; color: #3b3131; border-bottom: 1px solid #4D7DA9; }
+.moin-history-container-header h2 { display: inline; }
+.moin-history-container-header a.bookmark-link { margin-left: 10px; color: #3b3131; }
+.moin-history-container-body { padding: 4px; font-size: 14px; }
+.moin-history-save:before { content: url('../img/moin-edit.png'); }
+.moin-history-trash:before { content: url('../img/moin-deleted.png'); }
+.moin-history-rename:before { content: url('../img/moin-renamed.png'); }
+.moin-history-copy:before { content: url('../img/moin-new.png'); }
+.moin-integer { width: 2%; }
+.moin-history-links { width: 5%; }
+.moin-history-links a { display: block; margin-bottom: 4px; }
+.moin-history-editortext,
+.moin-history-links span,
+.moin-history-comment span { color: #544E4F; display: block; margin-bottom: 5px; }
+.moin-offset-links { float: right; margin-right: 20px; }
+.moin-offset-links a { margin-right: 10px; padding: 3px 7px; font-size: 20px; background: #FFFFFF; border: 1px groove #DDD; border-radius: 5px; }
+.moin-offset-links a:hover { box-shadow: 0px 0px 12px #81BBF2; }
+.moin-clr { clear: both; }
+
+/* item index page */
+#moin-content h1 { display: inline; }
+.moin-select-all { padding: 0.5em; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; text-align: left; }
+.moin-select-actions { position: relative; margin: 0 1em; padding: 0; background: #FFFFFF; z-index: 2; white-space: nowrap; color: #342D7E; text-align: left; }
+.moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
+.moin-select-actions div:hover,
+.action-visible div { background: #4477FF; color: #FFFFFF; }
+.moin-select-actions .show-action { cursor: pointer; }
+.show-action:after { content: url("../img/moin-moveup.png"); margin: 0 0.2em; }
+.action-visible .show-action:after { content: url("../img/moin-movedown.png"); margin: 0 0.2em; }
+.moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
+.allitem-selected:after { content: url("../img/moin-checkbox-on.png"); margin: 0 0.2em; }
+.allitem-toselect:after { content: url("../img/moin-checkbox-off.png"); margin: 0 0.2em; }
+.moin-select-actions ul { position: absolute; margin: 0; left: 0; top: 2em; padding: 0; display: none; background: #fff; border: 1px solid #E5E5E5; z-index: 1; }
+.moin-select-actions ul li { display: list-item; list-style-type: none; padding: 0.5em; min-width: 7em; cursor: pointer; }
+.moin-select-actions ul li:hover { background-color: #4477FF; color: #FFFFFF; }
+.moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
+.moin-index-message span { padding: 4px; background-color: #FFFF00; color: #111111; }
+.moin-download-link { display: none; }
+#moin-initials { width: 90%; margin: 5px auto; text-align: center; }
+#moin-initials a { display: inline-block; margin: 0; padding: 4px 5px; }
+#moin-initials a:hover,
+#moin-initials a.selected { background: #4477FF; border-radius: 5px; color: #FFFFFF; text-decoration: none; }
+.moin-item-index { width: 100%; margin-left: 0.5em; }
+.moin-item-index div { float: left; width: 15em; }
+.moin-item-index div .moin-select-item { visibility: hidden; display: inline-block; width: 17px; cursor: default; background: transparent url("../img/moin-checkbox-off.png") no-repeat; }
+.moin-item-index div.selected-item .moin-select-item,
+.moin-item-index div:hover .moin-select-item { visibility: visible; }
+.moin-item-index div.selected-item .moin-select-item { background-image: url("../img/moin-checkbox-on.png"); }
+.moin-align-right { text-align: right; float: right; }
+.moin-align-right ul { margin: 0; padding: 0;  }
+.moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
+.moin-contenttypes-wrapper { position: relative; margin: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; min-width: 12em; text-align: left; }
+.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em 1.2em 0.5em 0.5em ; height: 1em; } 
+div.ct-shown { background: #4477FF url("../img/moin-movedown.png") no-repeat center right; color: #FFFFFF; }
+div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
+.moin-contenttypes-wrapper ul { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; } 
+.moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em; min-width: 11.5em; }
+.moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
+.moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
+.moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
+.moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
+.moin-contenttypes-wrapper ul li a { font-size: 80%; }
+.moin-contenttypes-wrapper form input[type="submit"] { margin: 0.4em 0.5em; }
+.moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; } 
+.filter-toggle { margin: 0 0.2em; font-size: 90%; }
+.moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
+.moin-more-index:hover { text-decoration: none; }
+.moin-index-path { margin-left: 0.5em; }
+.moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
+.moin-path-separator { font-size: 120%; color: #4477FF; }
+.moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
+#moin-upload-cont { min-height: 10px; }
+#file_upload { margin-top: 2em; }
+form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer; direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative; text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF; -moz-box-shadow: 0px 0px 5px #4477FF; khtml-box-shadow: 0px 0px 5px #4477FF; }
+form.upload_file:hover { color: #FFFFFF; }
+form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); border: 300px solid transparent; cursor: pointer; height: 100%;  margin: 0; opacity: 0; position: absolute; right: 0; top: 0;}
+form.upload_file input { height: auto; }
+form.upload_file button { display: none;}
+form.upload_file { display: block; }
+.file_upload_template .file_upload_start { visibility: hidden; border-width: 0px; padding: 0px; }
+.file_upload_template .file_upload_start button { width: 0px; }
+.upload-form { display: none; }
+.moin-drag { font-size: 0.7em; color: #6C7680; }
+a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
+
+/* popup */
+#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 40%; position: absolute; top: 10%; left: 30%; display: none; z-index: 10; }
+.popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
+.popup-closer { color: #FFFFFF; font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: 1px solid #E5E5E5; }
+.popup-closer:hover { background-color: #F6F6F6; color: #4477FF; }
+.popup-body { clear: both; background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
+.popup-body label { margin: 5px; display: block; font-weight: bold; }
+.popup-body input { margin: 8px 5px; padding: 3px; border: 1px solid #E5E5E5; }
+.popup-body input[type="text"] { width: 300px; }
+.popup-body input.blank { border-color: #FF0000; border-width: 2px; }
+.popup-container { margin: 0; }
+#lightbox { background: #FFFFFF; opacity: 0.7; filter:alpha(opacity=70); position: fixed !important; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
 
 /* diffs */
 .moin-diff { width:99%; table-layout: fixed; }
@@ -351,13 +454,15 @@ a.moin-action:before { content: url(../img/moin-action.png); margin: 0 0.2em; }
 
 /* icons for links to different mimetypes */
 /* major types */
-a.moin-mime-text:before {}
-a.moin-mime-image:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
-a.moin-mime-audio:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
-a.moin-mime-video:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
-a.moin-mime-application:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-mime-text:before { content: url(../img/moin-text.png); margin: 0 0.2em; }
+a.moin-mime-image:before { content: url(../img/moin-image.png); margin: 0 0.2em; }
+a.moin-mime-audio:before { content: url(../img/moin-audio.png); margin: 0 0.2em; }
+a.moin-mime-video:before { content: url(../img/moin-video.png); margin: 0 0.2em; }
+a.moin-mime-application:before { content: url(../img/moin-application.png); margin: 0 0.2em; }
 /* some common specific types */
-a.moin-mime-pdf:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-mime-pdf:before { content: url(../img/moin-pdf.png); margin: 0 0.2em; }
+a.moin-mime-package:before { content: url(../img/moin-package.png); margin: 0 0.2em; }
+a.moin-mime-drawing:before { content: url(../img/moin-drawing.png); margin: 0 0.2em; }
 
 /* Flash messages used by Flask */
 .moin-flash { margin: 0; padding: 6px 6px 6px 38px; background-color: #f0f2f5;
