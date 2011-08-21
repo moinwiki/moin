@@ -633,7 +633,6 @@ def index(item_name):
                            startswith=startswith,
                            contenttype_groups=ct_groups,
                            form=form,
-                           gen=make_generator()
                           )
 
 
