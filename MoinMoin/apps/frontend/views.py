@@ -573,21 +573,14 @@ def _backrefs(items, item_name):
     :type item_name: unicode
     :returns: the list of all items which ref item_name
     """
-    refs_here = []
-    for item in items:
-        current_item = item.name
-        try:
-            current_revision = item.get_revision(-1)
-        except NoSuchRevisionError:
-            continue
-        links = current_revision.get(ITEMLINKS, [])
-        transclusions = current_revision.get(ITEMTRANSCLUSIONS, [])
-
-        refs = set(links + transclusions)
-        if item_name in refs:
-            refs_here.append(current_item)
-    return refs_here
-
+    from MoinMoin.search.indexing import WhooshIndex
+    from whoosh.query import Term, Or
+    index_object = WhooshIndex()
+    ix = index_object.latest_revisions_index
+    with ix.searcher() as searcher:
+        q = Or([Term("itemtransclusions", item_name), Term("itemlinks", item_name)])
+        results = searcher.search(q)
+        return [result["name"] for result in results]
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
