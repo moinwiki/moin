@@ -10,7 +10,7 @@
 """
 
 
-import py
+import pytest
 
 from StringIO import StringIO
 

@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter.creole_in
 """
 
 
-import py.test
+import pytest
 
 import re
 
