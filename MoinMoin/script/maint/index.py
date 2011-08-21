@@ -214,7 +214,7 @@ class IndexOperations(Command):
 
         backend = flaskg.unprotected_storage = app.unprotected_storage
         index_object = WhooshIndex(index_dir=app.cfg.index_dir_tmp)
-        interwikiname = app.cfg.interwikiname or u''
+        interwikiname = app.cfg.interwikiname
         if os.path.samefile(app.cfg.index_dir_tmp, app.cfg.index_dir):
             raise FatalError(u"cfg.index_dir and cfg.index_dir_tmp must point to different directories.")
 

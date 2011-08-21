@@ -122,6 +122,17 @@ def join_wiki(wikiurl, wikitail):
         return wikiurl + wikitail
 
 
+def getInterwikiName(item_name):
+    """
+    Get the (fully qualified) interwiki name of a local item name.
+
+    :param item_ame: item name (unicode)
+    :rtype: unicode
+    :returns: wiki_name:item_name
+    """
+    return "%s:%s" % (app.cfg.interwikiname, item_name)
+
+
 def getInterwikiHome(username):
     """
     Get a user's homepage.
