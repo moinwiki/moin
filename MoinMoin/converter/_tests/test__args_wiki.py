@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter._args_wiki
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.converter._args_wiki import *
 

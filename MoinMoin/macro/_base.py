@@ -58,7 +58,7 @@ class MacroInlineOnlyBase(MacroBase):
     to nothing.
     """
     def __call__(self, content, arguments, page_url, alternative, context_block):
-        if not content_block:
+        if not context_block:
             return self.macro(content, arguments, page_url, alternative)
 
 class MacroPageLinkListBase(MacroBlockBase):

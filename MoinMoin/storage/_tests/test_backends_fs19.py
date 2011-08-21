@@ -9,7 +9,7 @@
 
 import os, re, tempfile, shutil
 
-import py.test
+import pytest
 
 from flask import current_app as app
 
@@ -97,8 +97,8 @@ class TestFS19Backend(object):
         self.backend = None
 
     def test_get_item_that_doesnt_exist(self):
-        py.test.raises(NoSuchItemError, self.backend.get_item, "i_do_not_exist")
-        py.test.raises(NoSuchItemError, self.backend.get_item, item_name + "/not_exist.txt")
+        pytest.raises(NoSuchItemError, self.backend.get_item, "i_do_not_exist")
+        pytest.raises(NoSuchItemError, self.backend.get_item, item_name + "/not_exist.txt")
 
     def test_has_item_that_doesnt_exist(self):
         assert not self.backend.has_item("i_do_not_exist")
@@ -160,7 +160,7 @@ class TestFS19Backend(object):
 
     def test_metadata_that_doesnt_exist(self):
         item = self.backend.get_item(item_name)
-        py.test.raises(KeyError, item.__getitem__, 'asdf')
+        pytest.raises(KeyError, item.__getitem__, 'asdf')
 
     def test_metadata_mtime(self):
         item = self.backend.get_item(item_name)
@@ -181,12 +181,12 @@ class TestFS19Backend(object):
 
     def test_revision_that_doesnt_exist(self):
         item = self.backend.get_item(item_name)
-        py.test.raises(NoSuchRevisionError, item.get_revision, 42)
+        pytest.raises(NoSuchRevisionError, item.get_revision, 42)
 
     def test_revision_attachment_that_doesnt_exist(self):
         name = item_name + '/' + attachment_name
         item = self.backend.get_item(name)
-        py.test.raises(NoSuchRevisionError, item.get_revision, 1) # attachment only has rev 0
+        pytest.raises(NoSuchRevisionError, item.get_revision, 1) # attachment only has rev 0
 
     def test_revision_attachment_acl(self):
         name = deleted_item_name + '/' + attachment_name
@@ -276,5 +276,24 @@ what ever\r
             assert meta.get(TAGS, []) == expected_tags
             assert data == expected_data
 
+def test__decode_list():
+    from MoinMoin.storage.backends.fs19 import _decode_list
+    test_line = "test_item1 \t test_item2\n \t test_item3 \t"
+    result = _decode_list(test_line)
+    expected = ('test_item1', 'test_item2', 'test_item3')
+    assert result == expected
 
+def test__decode_dict():
+    from MoinMoin.storage.backends.fs19 import _decode_dict
+    test_line = "test_item1: first item\n \t test_item: second item2 \t \ntest_item3: third item \t"
+    result = _decode_dict(test_line)
+    expected = {'test_item1': ' first item', 'test_item3': ' third item', 'test_item': ' second item2'}
+    assert result == expected
+
+def test_hash_hexdigest():
+    from MoinMoin.storage.backends.fs19 import hash_hexdigest
+    result = hash_hexdigest('test_content')
+    assert result[0] == 12
+    with pytest.raises(ValueError):
+        hash_hexdigest(u'test_content')
 
