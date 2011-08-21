@@ -67,7 +67,7 @@ Configuration::
     # XXX default_markup must be 'wiki' right now
     page_category_regex = ... # XXX check
     data_dir = ... # same as in 1.9, user profiles must be in data_dir/user
-    namespace_mapping, router_index_uri = \
+    namespace_mapping = \
         create_simple_mapping(
             backend_uri='fs19:%s' % data_dir,
             content_acl=dict(before=u'', # acl_rights_before in 1.9
