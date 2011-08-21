@@ -19,6 +19,7 @@ import os, re, time, datetime, base64
 import tarfile
 import zipfile
 import tempfile
+import itertools
 from StringIO import StringIO
 from array import array
 
@@ -68,7 +69,7 @@ from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                            HASH_ALGORITHM
+                            HASH_ALGORITHM, CONTENTTYPE_GROUPS
 
 COLS = 80
 ROWS_DATA = 20
@@ -571,65 +572,91 @@ class Item(object):
                  for item in item_iterator]
         return sorted(items)
 
-    def flat_index(self):
+    def flat_index(self, startswith=None, selected_groups=None):
+        """
+        creates an top level index of sub items of this item
+        if startswith is set, filtering is done on the basis of starting letter of item name
+        if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
+        """
         index = self.get_index()
-        index = [(fullname, relname, contenttype)
-                 for fullname, relname, contenttype in index
-                 if u'/' not in relname]
+
+        all_ctypes = [[ctype for ctype, clabel in contenttypes]
+                      for gname, contenttypes in CONTENTTYPE_GROUPS]
+        all_ctypes_chain = itertools.chain(*all_ctypes)
+        all_contenttypes = list(all_ctypes_chain)
+        contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
+                                         for contenttype in all_contenttypes
+                                         if u';' in contenttype]
+        all_contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
+
+        if selected_groups:
+            ctypes = [[ctype for ctype, clabel in contenttypes]
+                      for gname, contenttypes in CONTENTTYPE_GROUPS
+                      if gname in selected_groups]
+            ctypes_chain = itertools.chain(*ctypes)
+            selected_contenttypes = list(ctypes_chain)
+            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
+                                             for contenttype in selected_contenttypes
+                                             if u';' in contenttype]
+            selected_contenttypes.extend(contenttypes_without_encoding)
+        else:
+            selected_contenttypes = all_contenttypes
+
+        unknown_item_group = "unknown items"
+        if startswith:
+            startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
+            if not selected_groups or unknown_item_group in selected_groups:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and relname.startswith(startswith)
+                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+                         # If an item's contenttype not present in the default contenttype list,
+                         # then it will be shown without going through any filter.
+            else:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and relname.startswith(startswith)
+                         and (contenttype in selected_contenttypes)]
+
+        else:
+            if not selected_groups or unknown_item_group in selected_groups:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
+            else:
+                index = [(fullname, relname, contenttype)
+                         for fullname, relname, contenttype in index
+                         if u'/' not in relname
+                         and contenttype in selected_contenttypes]
+
         return index
 
     index_template = 'index.html'
 
+    def get_detailed_index(self, index):
+        """ appends a flag in the index of items indicating that the parent has sub items """
+        detailed_index = []
+        all_item_index = self.get_index()
+        all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
+        for fullname, relname, contenttype in index:
+            hassubitem = False
+            subitem_name_re = u"^%s/[^/]+$" % re.escape(relname)
+            regex = re.compile(subitem_name_re, re.UNICODE|re.M)
+            if regex.search(all_item_text):
+                hassubitem = True
+            detailed_index.append((fullname, relname, contenttype, hassubitem))
+        return detailed_index
+
+    def name_initial(self, names=None):
+        initials = [(name[1][0])
+                   for name in names]
+        return initials
 
 class NonExistent(Item):
-    contenttype_groups = [
-        ('markup text items', [
-            ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
-            ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
-            ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
-            ('text/x-rst;charset=utf-8', 'ReST'),
-            ('application/docbook+xml;charset=utf-8', 'DocBook'),
-            ('text/html;charset=utf-8', 'HTML'),
-        ]),
-        ('other text items', [
-            ('text/plain;charset=utf-8', 'plain text'),
-            ('text/x-diff;charset=utf-8', 'diff/patch'),
-            ('text/x-python;charset=utf-8', 'python code'),
-            ('text/csv;charset=utf-8', 'csv'),
-            ('text/x-irclog;charset=utf-8', 'IRC log'),
-        ]),
-        ('image items', [
-            ('image/jpeg', 'JPEG'),
-            ('image/png', 'PNG'),
-            ('image/svg+xml', 'SVG'),
-        ]),
-        ('audio items', [
-            ('audio/wave', 'WAV'),
-            ('audio/ogg', 'OGG'),
-            ('audio/mpeg', 'MP3'),
-            ('audio/webm', 'WebM'),
-        ]),
-        ('video items', [
-            ('video/ogg', 'OGG'),
-            ('video/webm', 'WebM'),
-            ('video/mp4', 'MP4'),
-        ]),
-        ('drawing items', [
-            ('application/x-twikidraw', 'TDRAW'),
-            ('application/x-anywikidraw', 'ADRAW'),
-            ('application/x-svgdraw', 'SVGDRAW'),
-        ]),
-
-        ('other items', [
-            ('application/pdf', 'PDF'),
-            ('application/zip', 'ZIP'),
-            ('application/x-tar', 'TAR'),
-            ('application/x-gtar', 'TGZ'),
-            ('application/octet-stream', 'binary file'),
-        ]),
-    ]
-
-    def do_get(self, force_attachment=False):
+    def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
 
     def _convert(self):
@@ -639,7 +666,7 @@ class NonExistent(Item):
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
-                               contenttype_groups=self.contenttype_groups,
+                               contenttype_groups=CONTENTTYPE_GROUPS,
                               )
 
 item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
@@ -739,18 +766,18 @@ There is no help, you're doomed!
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
 
-    def do_get(self, force_attachment=False):
+    def do_get(self, force_attachment=False, mimetype=None):
         hash = self.rev.get(HASH_ALGORITHM)
         if is_resource_modified(request.environ, hash): # use hash as etag
-            return self._do_get_modified(hash, force_attachment=force_attachment)
+            return self._do_get_modified(hash, force_attachment=force_attachment, mimetype=mimetype)
         else:
             return Response(status=304)
 
-    def _do_get_modified(self, hash, force_attachment=False):
+    def _do_get_modified(self, hash, force_attachment=False, mimetype=None):
         member = request.values.get('member')
-        return self._do_get(hash, member, force_attachment=force_attachment)
+        return self._do_get(hash, member, force_attachment=force_attachment, mimetype=mimetype)
 
-    def _do_get(self, hash, member=None, force_attachment=False):
+    def _do_get(self, hash, member=None, force_attachment=False, mimetype=None):
         if member: # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
@@ -767,7 +794,10 @@ There is no help, you're doomed!
                 mt = MimeType(mimestr=mimestr)
             content_length = rev[SIZE]
             file_to_send = rev
-        content_type = mt.content_type()
+        if mimetype:
+            content_type = mimetype
+        else:
+            content_type = mt.content_type()
         as_attachment = force_attachment or mt.as_attachment(app.cfg)
         return send_file(file=file_to_send,
                          mimetype=content_type,
@@ -991,7 +1021,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         outfile.close()
         return content_type, data
 
-    def _do_get_modified(self, hash, force_attachment=False):
+    def _do_get_modified(self, hash, force_attachment=False, mimetype=None):
         try:
             width = int(request.values.get('w'))
         except (TypeError, ValueError):
@@ -1015,7 +1045,10 @@ class TransformableBitmapImage(RenderableBitmapImage):
                             width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
-                content_type = self.rev[CONTENTTYPE]
+                if mimetype:
+                    content_type = mimetype
+                else:
+                    content_type = self.rev[CONTENTTYPE]
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
@@ -1025,7 +1058,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 headers, data = c
             return Response(data, headers=headers)
         else:
-            return self._do_get(hash, force_attachment=force_attachment)
+            return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
