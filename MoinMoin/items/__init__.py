@@ -643,8 +643,8 @@ class Item(object):
         all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
         for fullname, relname, contenttype in index:
             hassubitem = False
-            subitem_name_re = u"%s/" % re.escape(relname)
-            regex = re.compile(subitem_name_re, re.UNICODE)
+            subitem_name_re = u"^%s/[^/]+$" % re.escape(relname)
+            regex = re.compile(subitem_name_re, re.UNICODE|re.M)
             if regex.search(all_item_text):
                 hassubitem = True
             detailed_index.append((fullname, relname, contenttype, hassubitem))
