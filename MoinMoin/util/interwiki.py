@@ -122,7 +122,7 @@ def join_wiki(wikiurl, wikitail):
         return wikiurl + wikitail
 
 
-def getInterwikiName(self, item_name):
+def getInterwikiName(item_name):
     """
     Get the (fully qualified) interwiki name of a local item name.
 
