@@ -118,6 +118,9 @@ class ConfigFunctionality(object):
         if self.secrets is None:  # admin did not setup a real secret
             raise error.ConfigurationError("No secret configured! You need to set secrets = 'somelongsecretstring' in your wiki config.")
 
+        if self.interwikiname is None:  # admin did not setup a real interwikiname
+            raise error.ConfigurationError("No interwikiname configured! You need to set interwikiname = u'YourUniqueStableInterwikiName' in your wiki config.")
+
         secret_key_names = ['security/ticket', ]
         if self.textchas:
             secret_key_names.append('security/textcha')
@@ -321,7 +324,7 @@ options_no_group_name = {
   (
     ('sitename', u'Untitled Wiki',
      "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]"),
-    ('interwikiname', None, "unique and stable InterWiki name (prefix, moniker) of the site [Unicode], or None"),
+    ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
     ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of `sitename`) [Unicode]"),
     ('navi_bar', [
         ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
