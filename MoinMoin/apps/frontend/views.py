@@ -16,14 +16,18 @@
 import re
 import difflib
 import time
-from flaskext.babel import format_date
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple, OrderedDict
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
+from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
 from flatland import Form, String, Integer, Boolean, Enum
@@ -33,11 +37,6 @@ from jinja2 import Markup
 
 import pytz
 from babel import Locale
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
