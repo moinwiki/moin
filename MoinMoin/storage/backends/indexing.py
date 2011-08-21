@@ -202,7 +202,7 @@ class ItemIndex(object):
     Index for Items/Revisions
     """
     def __init__(self, cfg):
-        self.wikiname = cfg.interwikiname or u''
+        self.wikiname = cfg.interwikiname
         self.index_object = WhooshIndex(cfg=cfg)
 
     def close(self):
