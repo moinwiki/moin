@@ -454,8 +454,7 @@ class User(object):
         :param tm: timestamp
         """
         if self.valid:
-            interwikiname = self._cfg.interwikiname or u''
-            self.bookmarks[interwikiname] = int(tm)
+            self.bookmarks[self._cfg.interwikiname] = int(tm)
             self.save()
 
     def getBookmark(self):
@@ -465,10 +464,9 @@ class User(object):
         :returns: bookmark timestamp or None
         """
         bm = None
-        interwikiname = self._cfg.interwikiname or u''
         if self.valid:
             try:
-                bm = self.bookmarks[interwikiname]
+                bm = self.bookmarks[self._cfg.interwikiname]
             except (ValueError, KeyError):
                 pass
         return bm
@@ -479,10 +477,9 @@ class User(object):
         :rtype: int
         :returns: 0 on success, 1 on failure
         """
-        interwikiname = self._cfg.interwikiname or u''
         if self.valid:
             try:
-                del self.bookmarks[interwikiname]
+                del self.bookmarks[self._cfg.interwikiname]
             except KeyError:
                 return 1
             self.save()
@@ -518,9 +515,8 @@ class User(object):
 
         import re
         # Create a new list with both names and interwiki names.
-        pages = pagelist[:]
-        if self._cfg.interwikiname:
-            pages += [getInterwikiName(pagename) for pagename in pagelist]
+        pages = pagelist[:] # TODO: get rid of non-interwiki subscriptions?
+        pages += [getInterwikiName(pagename) for pagename in pagelist]
         # Create text for regular expression search
         text = '\n'.join(pages)
 
@@ -549,16 +545,12 @@ class User(object):
         :rtype: bool
         :returns: if page was subscribed
         """
-        if self._cfg.interwikiname:
-            pagename = getInterwikiName(pagename)
-
+        pagename = getInterwikiName(pagename)
         if pagename not in self.subscribed_items:
             self.subscribed_items.append(pagename)
             self.save()
-
             # XXX SubscribedToPageEvent
             return True
-
         return False
 
     def unsubscribe(self, pagename):
@@ -684,9 +676,7 @@ class User(object):
 
         :param item_name: the item name (unicode) to add to the trail
         """
-        # Save interwiki links internally
-        if self._cfg.interwikiname:
-            item_name = getInterwikiName(item_name)
+        item_name = getInterwikiName(item_name)
         trail_in_session = session.get('trail', [])
         trail = trail_in_session[:]
         trail = [i for i in trail if i != item_name] # avoid dupes

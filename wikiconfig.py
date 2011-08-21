@@ -12,7 +12,6 @@ class Config(DefaultConfig):
     # vvv DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO vvv
     # Directory containing THIS wikiconfig:
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
-    interwikiname = u'MoinMoin2'
     # We assume this structure for a simple "unpack and run" scenario:
     # wikiconfig.py
     # wiki/
@@ -46,14 +45,15 @@ class Config(DefaultConfig):
                                              after=u'', ),
                             )
 
+    sitename = u'My MoinMoin'
+
+    # it is required that you set this to a unique, stable and non-empty name:
+    interwikiname = u'MyMoinMoin'
     # Load the interwiki map from intermap.txt:
     interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
     # we must add entries for 'Self' and our interwikiname:
-    #interwikiname = 'MyInterWikiName'
-    #interwiki_map[interwikiname] = 'http://localhost:8080/'
+    interwiki_map[interwikiname] = 'http://localhost:8080/'
     interwiki_map['Self'] = 'http://localhost:8080/'
-
-    sitename = u'My MoinMoin'
 
     # for now we load some 3rd party stuff from the place within moin where it is currently located,
     # but soon we'll get rid of this stuff:
