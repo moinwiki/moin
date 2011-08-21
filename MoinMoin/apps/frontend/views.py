@@ -81,6 +81,9 @@ Disallow: /+download/
 Disallow: /+modify/
 Disallow: /+copy/
 Disallow: /+delete/
+Disallow: /+ajaxdelete/
+Disallow: /+ajaxdestroy/
+Disallow: /+ajaxmodify/
 Disallow: /+destroy/
 Disallow: /+rename/
 Disallow: /+revert/
