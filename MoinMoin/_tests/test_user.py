@@ -350,7 +350,7 @@ class TestLoginWithPassword(object):
         # test for addQuicklink()
         theUser.addQuicklink(u'Test_page_added')
         result_on_addition = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink', u'Test_page_added']
+        expected = [u'Test_page_quicklink', u'MoinTest:Test_page_added']
         assert result_on_addition == expected
 
         # user should be quicklinked to [pagename]
@@ -380,7 +380,7 @@ class TestLoginWithPassword(object):
         # item name added to trail
         theUser.addTrail(u'item_added')
         result = theUser.getTrail()
-        expected = [u'item_added']
+        expected = [u'MoinTest:item_added']
         assert result == expected
 
     # Other ----------------------------------------------------------
