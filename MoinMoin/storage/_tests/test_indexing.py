@@ -5,7 +5,7 @@
     MoinMoin - Test - indexing
 """
 
-import py, shutil
+import py
 
 from MoinMoin._tests import update_item, nuke_item
 from MoinMoin._tests.wikiconfig import Config
@@ -48,13 +48,12 @@ class TestIndexing(object):
 
     def setup_method(self, method):
         self.wikiconfig = Config()
-        shutil.rmtree(self.wikiconfig.index_dir)
-        self.item_index = ItemIndex(self.wikiconfig)
+        self.item_index = ItemIndex(self.wikiconfig, force_create=True)
         self.all_revs_ix = self.item_index.index_object.all_revisions_index
         self.latest_revs_ix = self.item_index.index_object.latest_revisions_index
 
     def teardown_method(self, method):
-         shutil.rmtree(self.wikiconfig.index_dir)
+         self.item_index.remove_index()
 
     def test_create_item(self):
         """ Try to search for non-existent revision, add it to backend and then search again """
