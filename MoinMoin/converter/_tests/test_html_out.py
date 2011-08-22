@@ -10,11 +10,11 @@ MoinMoin - Tests for MoinMoin.converter.html_out
 import re
 import StringIO
 
-import py.test
+import pytest
 try:
     from lxml import etree
 except:
-    py.test.skip("lxml module required to run test for html_out converter.")
+    pytest.skip("lxml module required to run test for html_out converter.")
 
 from emeraldtree.tree import *
 
@@ -247,7 +247,7 @@ class TestConverterPage(Base):
         for i in data:
             yield (self.do, ) + i
 
-    @py.test.mark.xfail
+    @pytest.mark.xfail
     def test_unknown(self):
         page = ET.XML("<page:unknown %s/>" % self.input_namespaces)
-        py.test.raises(ElementException, self.conv.__call__, page)
+        pytest.raises(ElementException, self.conv.__call__, page)

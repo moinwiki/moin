@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.util.mime
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.util.mime import *
 

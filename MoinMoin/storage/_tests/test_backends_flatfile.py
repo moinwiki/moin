@@ -6,9 +6,9 @@
 """
 
 
-import py
+import pytest
 
-py.test.skip("BackendTest base class tests quite some stuff that this very simple backend does not provide")
+pytest.skip("BackendTest base class tests quite some stuff that this very simple backend does not provide")
 # e.g.: revisioning, extremely long item names, metadata support
 # TODO: either fix base class so that it is more useful even to test simple backends,
 #       or implement some specific, more simple tests here.
