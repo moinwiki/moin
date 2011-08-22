@@ -24,5 +24,7 @@ class Config(DefaultConfig):
     _test_items_xml = join(_here, 'testitems.xml')
     content_acl = None
     item_root = 'FrontPage'
+    interwikiname = u'MoinTest'
     interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/')
+    interwiki_map[interwikiname] = 'http://localhost:8080/'
 
