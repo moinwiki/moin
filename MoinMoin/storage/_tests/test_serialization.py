@@ -10,8 +10,6 @@
 """
 
 
-import pytest
-
 from StringIO import StringIO
 
 from flask import g as flaskg
