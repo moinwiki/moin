@@ -7,8 +7,6 @@ MoinMoin.datastruct.backends.composite_dicts test
 """
 
 
-from pytest import raises
-
 from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct import ConfigDicts, CompositeDicts, DictDoesNotExistError
 from MoinMoin._tests import wikiconfig
