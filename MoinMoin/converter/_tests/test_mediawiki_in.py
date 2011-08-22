@@ -7,7 +7,7 @@ MoinMoin - Tests for MoinMoin.converter.mediawiki_in
 """
 
 
-import py.test
+import pytest
 import re
 
 from MoinMoin.converter.mediawiki_in import *

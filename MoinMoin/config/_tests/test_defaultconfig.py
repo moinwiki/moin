@@ -6,7 +6,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 
@@ -29,7 +29,7 @@ class TestPasswordChecker(object):
     def testBuiltinPasswordChecker(self):
         pw_checker = app.cfg.password_checker
         if not pw_checker:
-            py.test.skip("password_checker is disabled in the configuration, not testing it")
+            pytest.skip("password_checker is disabled in the configuration, not testing it")
         else:
             for pw, result in self.tests_builtin:
                 pw_error = pw_checker(self.username, pw)

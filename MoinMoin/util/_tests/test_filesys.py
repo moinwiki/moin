@@ -8,9 +8,12 @@
 import sys, os, time
 import shutil, tempfile
 
-import py.test
+import pytest
 
 from MoinMoin.util import filesys
+
+win32_only = pytest.mark.skipif("sys.platform != 'win32'")
+win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
 class TestFuid:
     """ test filesys.fuid (a better mtime() alternative for up-to-date checking) """
@@ -51,11 +54,10 @@ class TestFuid:
 
         assert uid2 != uid1 # we changed size and maybe mtime
 
+    @win32_incompatible
     def testUpdateFileMovingFromTemp(self):
         # update file by moving another file over it
         # changing inode, maybe mtime, but not size
-        if sys.platform == 'win32':
-            py.test.skip("Inode change detection not supported on win32")
 
         self.makefile(self.fname, "foo")
         uid1 = filesys.fuid(self.fname)
@@ -66,10 +68,9 @@ class TestFuid:
 
         assert uid2 != uid1 # we didn't change size, but inode and maybe mtime
 
+    @win32_only
     def testStale(self):
         # is a file with mtime older than max_staleness considered stale?
-        if sys.platform != 'win32':
-            py.test.skip("max_staleness check only done on win32 because it doesn't support inode change detection")
 
         self.makefile(self.fname, "foo")
         uid1 = filesys.fuid(self.fname)
@@ -109,12 +110,12 @@ class TestRename:
         self.makefile(self.dst, "dst")
         # win32-like rename does not overwrite an existing destination
         # (on posix, we emulate this behaviour)
-        py.test.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst)
+        pytest.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst)
 
     def test_special_rename_exists(self):
         self.makefile(self.src, "src")
         self.makefile(self.dst, "dst")
-        py.test.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst, delete_old=True)
+        pytest.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst, delete_old=True)
         assert not os.path.exists(self.src)
 
     def test_posix_rename_notexists(self):
@@ -134,5 +135,36 @@ class TestRename:
         filesys.rename_no_overwrite(self.src, self.dst, delete_old=True)
         assert not os.path.exists(self.src)
 
+
+class TestCopy:
+    """test filesys.copytree"""
+
+    def setup_method(self, method):
+        self.test_dir = tempfile.mkdtemp('', 'copytree1')
+        self.src1 = os.path.join(self.test_dir, "copytree-src1")
+        self.src2 = os.path.join(self.test_dir, "copytree-src2")
+
+    def teardown_method(self, method):
+        shutil.rmtree(self.test_dir)
+        shutil.rmtree(self.test_dest_dir)
+
+    def makefile(self, src, content):
+        f = open(src, "w")
+        f.write(content)
+        f.close()
+
+    def test_copytree(self):
+        self.makefile(self.src1, 'src1')
+        self.makefile(self.src2, 'src2')
+        self.test_dest_dir = self.test_dir + '_copy'
+        filesys.copytree(self.test_dir, self.test_dest_dir)
+        # check for the dir contents
+        assert os.listdir(self.test_dir) == os.listdir(self.test_dest_dir)
+
+    def test_dir_exist(self):
+        """ raise Error if dir already exist """
+        self.test_dest_dir = tempfile.mkdtemp('', 'temp_dir')
+        with pytest.raises(OSError):
+            filesys.copytree(self.test_dir, self.test_dest_dir)
 
 coverage_modules = ['MoinMoin.util.filesys']

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    LDAPTestBase: LDAP testing support for py.test based unit tests
+    LDAPTestBase: LDAP testing support for pytest based unit tests
 
     Features
     --------
@@ -226,10 +226,10 @@ class LdapEnvironment(object):
         shutil.rmtree(self.ldap_dir)
 
 try:
-    import py.test
+    import pytest
 
     class LDAPTstBase:
-        """ Test base class for py.test based tests which need a LDAP server to talk to.
+        """ Test base class for pytest based tests which need a LDAP server to talk to.
 
             Inherit your test class from this base class to test LDAP stuff.
         """
@@ -247,7 +247,7 @@ try:
             self.ldap_env.create_env(slapd_config=self.slapd_config)
             started = self.ldap_env.start_slapd()
             if not started:
-                py.test.skip("Failed to start %s process, please see your syslog / log files"
+                pytest.skip("Failed to start %s process, please see your syslog / log files"
                              " (and check if stopping apparmor helps, in case you use it)." % SLAPD_EXECUTABLE)
             self.ldap_env.load_directory(ldif_content=self.ldif_content)
 
@@ -257,5 +257,5 @@ try:
             self.ldap_env.destroy_env()
 
 except ImportError:
-    pass  # obviously py.test not in use
+    pass  # obviously pytest not in use
 

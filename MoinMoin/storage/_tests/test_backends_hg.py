@@ -11,19 +11,19 @@
 from tempfile import mkdtemp, mkstemp, gettempdir
 import shutil
 import os
-import py
+import pytest
 
 try:
     import mercurial
 except ImportError:
-    py.test.skip('Cannot test without Mercurial installed.')
+    pytest.skip('Cannot test without Mercurial installed.')
 
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.hg import MercurialBackend
 from MoinMoin.storage.error import BackendError
 
 class TestMercurialBackend(BackendTest):
-
+    pytestmark = pytest.mark.xfail(reason='not maintained')
 
     def create_backend(self):
         self.test_dir = mkdtemp()
@@ -44,7 +44,7 @@ class TestMercurialBackend(BackendTest):
             assert isinstance(MercurialBackend(nonexisting_nested), MercurialBackend)
             assert isinstance(MercurialBackend(emptydir), MercurialBackend)
             assert isinstance(MercurialBackend(emptydir), MercurialBackend) # init on existing
-            py.test.raises(BackendError, MercurialBackend, file)
+            pytest.raises(BackendError, MercurialBackend, file)
             assert isinstance(MercurialBackend(dirstruct), MercurialBackend)
         finally:
             shutil.rmtree(emptydir)
@@ -55,9 +55,9 @@ class TestMercurialBackend(BackendTest):
     def test_permission(self):
         import sys
         if sys.platform == 'win32':
-            py.test.skip("Not much usable test on win32.")
+            pytest.skip("Not much usable test on win32.")
         no_perms = os.path.join("/", "permission-error-dir")
-        py.test.raises(BackendError, MercurialBackend, no_perms)
+        pytest.raises(BackendError, MercurialBackend, no_perms)
 
     def test_backend_init_non_empty_datadir(self):
         datadir = mkdtemp()

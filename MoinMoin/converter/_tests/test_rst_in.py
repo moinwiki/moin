@@ -7,7 +7,7 @@ MoinMoin - Tests for MoinMoin.converter.rst_in
 """
 
 
-import py.test
+import pytest
 import re
 
 from MoinMoin.converter.rst_in import *

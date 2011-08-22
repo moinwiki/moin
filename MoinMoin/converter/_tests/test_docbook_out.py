@@ -9,11 +9,11 @@ MoinMoin - Tests for MoinMoin.converter.docbook_out
 import re
 import StringIO
 
-import py.test
+import pytest
 try:
     from lxml import etree
 except:
-    py.test.skip("lxml module required to run test for docbook_out converter.")
+    pytest.skip("lxml module required to run test for docbook_out converter.")
 
 from emeraldtree.tree import *
 
