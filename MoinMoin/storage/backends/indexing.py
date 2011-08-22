@@ -201,13 +201,16 @@ class ItemIndex(object):
     """
     Index for Items/Revisions
     """
-    def __init__(self, cfg):
+    def __init__(self, cfg, force_create=False):
         self.wikiname = cfg.interwikiname
-        self.index_object = WhooshIndex(cfg=cfg)
+        self.index_object = WhooshIndex(force_create=force_create, cfg=cfg)
 
     def close(self):
         self.index_object.all_revisions_index.close()
         self.index_object.latest_revisions_index.close()
+
+    def remove_index(self):
+        self.index_object.remove_index()
 
     def update_item(self, metas):
         """

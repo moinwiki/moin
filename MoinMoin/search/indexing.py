@@ -52,10 +52,11 @@ class WhooshIndex(object):
                 'all_revisions_index': 'all_revisions_schema',
                }
 
-    def __init__(self, index_dir=None, cfg=None):
+    def __init__(self, index_dir=None, cfg=None, force_create=False):
         """
         Create and open indexes in index_dir
 
+        :param force_create: Create empty index in index_dir even if index exists
         :param index_dir: Directory where whoosh indexes will be created, default None
         :param cfg: Application config (app.cfg), default None
         """
@@ -101,19 +102,26 @@ class WhooshIndex(object):
             self.all_revisions_schema.add(glob, field_type, glob=True)
 
         for index_name, index_schema in self._indexes.items():
-            self.open_index(index_name, index_schema, create=True, index_dir=self._index_dir)
+            self.open_index(index_name, index_schema, create=True, force_create=force_create,
+                            index_dir=self._index_dir
+                           )
 
-    def open_index(self, indexname, schema, create=False, index_dir=None):
+    def open_index(self, indexname, schema, create=False, force_create=False, index_dir=None):
         """
         Open index <indexname> in <index_dir>. if opening fails and <create>
         is True, try creating the index and retry opening it afterwards.
         return index object.
 
-        :param index_dir: Directory where whoosh indexes will be created
+
         :param indexname: Name of created index
         :param schema: which schema applies
+        :param create: create index if index doesn't exist
+        :param force_create: force create new empty index in index_dir
+        :param index_dir: Directory where whoosh indexes will be created
         """
         index_dir = index_dir or self._cfg.index_dir
+        if force_create:
+            self.create_index(index_dir, indexname, schema)
         try:
             index = open_dir(index_dir, indexname=indexname)
             setattr(self, indexname, index)
@@ -148,3 +156,9 @@ class WhooshIndex(object):
         except (IOError, OSError) as err:
             logging.error(u"%s [while trying to create index '%s' in '%s']" % (str(err), indexname, index_dir))
 
+    def remove_index(self):
+        """
+        Create empty index in index_dir and removing old
+        """
+        for index_name, index_schema in self._indexes.items():
+            self.create_index(indexname=index_name, schema=index_schema, index_dir=self._index_dir)
