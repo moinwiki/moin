@@ -13,7 +13,7 @@ from flaskext.babel import format_date, format_datetime
 from MoinMoin.macro.Date import MacroDateTimeBase, Macro
 import pytest
 
-class TestMacroDateTimeBase:
+class TestMacroDateTimeBase(object):
     def test_parse_time(self):
         MacroDateTimeBase_obj = MacroDateTimeBase()
         test_time_args = '2011-08-07T11:11:11+0533'
@@ -27,7 +27,7 @@ class TestMacroDateTimeBase:
             # things after next 10,000 years can't be predicted
             MacroDateTimeBase_obj.parse_time('12011-08-07T11:11:11')
 
-class TestMacro:
+class TestMacro(object):
     def test_macro(self):
         macro_obj = Macro()
         # when arguments is None
