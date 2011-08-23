@@ -297,11 +297,10 @@ def content_item(item_name, rev):
         item = Item.create(item_name, rev_no=rev)
     except AccessDeniedError:
         abort(403)
-    content = render_template('content.html',
-                              item_name=item.name,
-                              data_rendered=Markup(item._render_data()),
-                             )
-    return Response(content, 200)
+    return render_template('content.html',
+                           item_name=item.name,
+                           data_rendered=Markup(item._render_data()),
+                           )
 
 @frontend.route('/+get/<int:rev>/<itemname:item_name>')
 @frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=-1))
