@@ -133,8 +133,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.start('create_app init backends')
     app.unprotected_storage, app.storage = init_backends(app)
     clock.stop('create_app init backends')
-    clock.start('create_app load/save xml')
-    clock.stop('create_app load/save xml')
     clock.start('create_app flask-babel')
     i18n_init(app)
     clock.stop('create_app flask-babel')
