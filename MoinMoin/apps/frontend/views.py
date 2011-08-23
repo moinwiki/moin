@@ -1,5 +1,6 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:AkashSinha
+# Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -80,6 +81,7 @@ Disallow: /+dom/
 Disallow: /+download/
 Disallow: /+modify/
 Disallow: /+copy/
+Disallow: /+content/
 Disallow: /+delete/
 Disallow: /+ajaxdelete/
 Disallow: /+ajaxdestroy/
@@ -280,6 +282,26 @@ def show_item_meta(item_name, rev):
                            show_navigation=show_navigation,
                           )
 
+@frontend.route('/+content/<int:rev>/<itemname:item_name>')
+@frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=-1))
+def show_content(item_name, rev):
+    """ same as show_item, but we only show the content """
+    # first check whether we have a valid search query:
+    search_form = SearchForm.from_flat(request.values)
+    if search_form.validate():
+        return _search(search_form, item_name)
+    search_form['submit'].set_default() # XXX from_flat() kills all values
+    item_displayed.send(app._get_current_object(),
+                        item_name=item_name)
+    try:
+        item = Item.create(item_name, rev_no=rev)
+    except AccessDeniedError:
+        abort(403)
+    content = render_template('content.html',
+                              item_name=item.name,
+                              data_rendered=Markup(item._render_data()),
+                             )
+    return Response(content, 200)
 
 @frontend.route('/+get/<int:rev>/<itemname:item_name>')
 @frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=-1))
