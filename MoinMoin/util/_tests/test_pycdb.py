@@ -12,7 +12,7 @@ import shutil, tempfile
 import pytest
 from MoinMoin.util import pycdb
 
-class TestCDBMaker:
+class TestCDBMaker(object):
     """ Test: util.pycdb.CDBMaker """
 
     def setup_method(self, method):
@@ -48,7 +48,7 @@ class TestCDBMaker:
         expected = ['test_cdbfile']
         assert result == expected
 
-class TestCDBReader:
+class TestCDBReader(object):
     """ Test: util.pycdb.CDBReader """
 
     def setup_method(self, method):

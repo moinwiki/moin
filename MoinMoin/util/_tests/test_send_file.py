@@ -12,7 +12,7 @@ import tempfile, shutil
 from MoinMoin.util import send_file
 import pytest
 
-class TestFuid:
+class TestFuid(object):
     """ test for send_file """
 
     def setup_method(self, method):

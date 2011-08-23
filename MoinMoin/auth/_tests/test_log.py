@@ -12,7 +12,7 @@ from MoinMoin.auth.log import AuthLog
 from flask import g as flaskg
 import pytest
 
-class TestAuthLog:
+class TestAuthLog(object):
     """ Test: TestAuthLog """
     def test_login(self):
         authlog_obj = AuthLog()
