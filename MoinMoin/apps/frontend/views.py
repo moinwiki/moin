@@ -284,7 +284,7 @@ def show_item_meta(item_name, rev):
 
 @frontend.route('/+content/<int:rev>/<itemname:item_name>')
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=-1))
-def show_content(item_name, rev):
+def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
     # first check whether we have a valid search query:
     search_form = SearchForm.from_flat(request.values)
