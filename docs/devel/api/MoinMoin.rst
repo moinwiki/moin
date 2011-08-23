@@ -72,6 +72,7 @@ Subpackages
     MoinMoin.macro
     MoinMoin.mail
     MoinMoin.script
+    MoinMoin.search
     MoinMoin.security
     MoinMoin.signalling
     MoinMoin.storage
