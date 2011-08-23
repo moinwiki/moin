@@ -38,14 +38,11 @@ class TestSystemItem(object):
         'NoSuchPageYetAndWillNeverBe',
         )
 
-    class Config(wikiconfig.Config):
-        load_xml = wikiconfig.Config._test_items_xml
-
     def testSystemItem(self):
         """wikiutil: good system item names accepted, bad rejected"""
         # get the items from xml file
         backend = app.unprotected_storage
-        unserialize(backend, self.Config.load_xml)
+        unserialize(backend, wikiconfig.Config._test_items_xml)
 
         for name in self.systemItems:
             assert wikiutil.isSystemItem(name)

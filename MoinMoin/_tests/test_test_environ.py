@@ -50,7 +50,6 @@ class TestStorageEnvironWithoutConfig(object):
 
 class TestStorageEnvironWithConfig(object):
     class Config(wikiconfig.Config):
-        load_xml = wikiconfig.Config._test_items_xml
         content_acl = dict(
             before="+All:write", # need to write to sys pages
             default="All:read,write,admin,create,destroy",
@@ -61,7 +60,7 @@ class TestStorageEnvironWithConfig(object):
     def test_fresh_backends_with_content(self):
         # get the items from xml file
         backend = app.unprotected_storage
-        unserialize(backend, self.Config.load_xml)
+        unserialize(backend, self.Config._test_items_xml)
 
         assert isinstance(app.cfg, wikiconfig.Config)
 
