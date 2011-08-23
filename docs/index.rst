@@ -20,6 +20,7 @@ Using MoinMoin
 .. toctree::
    :maxdepth: 2
 
+   user/searching
    user/markups
 
 Administrating MoinMoin

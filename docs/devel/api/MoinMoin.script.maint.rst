@@ -25,6 +25,13 @@ maint Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`index` Module
+-------------------
+.. automodule:: MoinMoin.script.maint.index
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`reduce_revisions` Module
 ------------------------------
 

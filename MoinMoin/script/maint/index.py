@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Manage whoosh indexes
+MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 """
 
 import os, datetime
