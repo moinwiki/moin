@@ -10,9 +10,10 @@ Additionally, we check that the files have no crlf (Windows style) line endings.
 
 
 import re, time
-import py
+import pytest
 from . import pep8
 
+import py
 
 moindir = py.path.local(__file__).pypkgpath()
 
@@ -100,9 +101,9 @@ def pytest_generate_tests(metafunc):
 def test_sourcecode(path):
     mtime = path.stat().mtime
     if mtime < RECENTLY:
-        py.test.skip("source change not recent")
+        pytest.skip("source change not recent")
     if not should_check_file(str(path), mtime):
-        py.test.skip("source marked as should not be checked")
+        pytest.skip("source marked as should not be checked")
 
     check_py_file(str(moindir.bestrelpath(path)), str(path), mtime)
 

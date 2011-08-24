@@ -6,19 +6,22 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 from flask import g as flaskg
 
+from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
+from MoinMoin.storage.serialization import serialize, unserialize
 
 from MoinMoin._tests import wikiconfig
 
 class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
         self.class_level_value = 123
+        app, ctx = init_test_app(wikiconfig.Config)
 
     def test_fresh_backends(self):
         assert self.class_level_value == 123
@@ -32,7 +35,7 @@ class TestStorageEnvironWithoutConfig(object):
         assert not list(storage.iteritems())
         assert not list(storage.history())
         itemname = u"this item shouldn't exist yet"
-        assert py.test.raises(NoSuchItemError, storage.get_item, itemname)
+        assert pytest.raises(NoSuchItemError, storage.get_item, itemname)
         item = storage.create_item(itemname)
         new_rev = item.create_revision(0)
         new_rev[NAME] = itemname
@@ -44,9 +47,9 @@ class TestStorageEnvironWithoutConfig(object):
     # Run this test twice to see if something's changed
     test_twice = test_fresh_backends
 
+
 class TestStorageEnvironWithConfig(object):
     class Config(wikiconfig.Config):
-        load_xml = wikiconfig.Config._test_items_xml
         content_acl = dict(
             before="+All:write", # need to write to sys pages
             default="All:read,write,admin,create,destroy",
@@ -55,6 +58,10 @@ class TestStorageEnvironWithConfig(object):
         )
 
     def test_fresh_backends_with_content(self):
+        # get the items from xml file
+        backend = app.unprotected_storage
+        unserialize(backend, self.Config._test_items_xml)
+
         assert isinstance(app.cfg, wikiconfig.Config)
 
         storage = flaskg.storage

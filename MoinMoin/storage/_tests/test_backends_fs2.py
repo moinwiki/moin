@@ -17,7 +17,7 @@ class TestFS2Backend(BackendTest):
 
     def create_backend(self):
         self.tempdir = tempfile.mkdtemp('', 'moin-')
-        return RouterBackend([('/', FS2Backend(self.tempdir))], cfg=app.cfg)
+        return FS2Backend(self.tempdir)
 
     def kill_backend(self):
         try:

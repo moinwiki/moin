@@ -133,9 +133,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.start('create_app init backends')
     app.unprotected_storage, app.storage = init_backends(app)
     clock.stop('create_app init backends')
-    clock.start('create_app load/save xml')
-    import_export_xml(app)
-    clock.stop('create_app load/save xml')
     clock.start('create_app flask-babel')
     i18n_init(app)
     clock.stop('create_app flask-babel')
@@ -182,47 +179,6 @@ def init_backends(app):
 def deinit_backends(app):
     app.storage.close()
     app.unprotected_storage.close()
-
-
-def import_export_xml(app):
-    # If the content was already pumped into the backend, we don't want
-    # to do that again. (Works only until the server is restarted.)
-    xmlfile = app.cfg.load_xml
-    if xmlfile:
-        app.cfg.load_xml = None
-        tmp_backend = router.RouterBackend([('/', memory.MemoryBackend())], cfg=app.cfg)
-        unserialize(tmp_backend, xmlfile)
-        # TODO optimize this, maybe unserialize could count items it processed
-        item_count = 0
-        for item in tmp_backend.iteritems():
-            item_count += 1
-        logging.debug("loaded xml into tmp_backend: %s, %d items" % (xmlfile, item_count))
-        try:
-            # In case the server was restarted we cannot know whether
-            # the xml data already exists in the target backend.
-            # Hence we check the existence of the items before we unserialize
-            # them to the backend.
-            backend = app.unprotected_storage
-            for item in tmp_backend.iteritems():
-                item = backend.get_item(item.name)
-        except StorageError:
-            # if there is some exception, we assume that backend needs to be filled
-            # we need to use it as unserialization target so that update mode of
-            # unserialization creates the correct item revisions
-            logging.debug("unserialize xml file %s into %r" % (xmlfile, backend))
-            unserialize(backend, xmlfile)
-    else:
-        item_count = 0
-
-    # XXX wrong place / name - this is a generic preload functionality, not just for tests
-    # To make some tests happy
-    app.cfg.test_num_pages = item_count
-
-    xmlfile = app.cfg.save_xml
-    if xmlfile:
-        app.cfg.save_xml = None
-        backend = app.unprotected_storage
-        serialize(backend, xmlfile)
 
 
 def setup_user():

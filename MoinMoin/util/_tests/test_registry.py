@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.util.registry
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.util.registry import *
 
@@ -69,6 +69,6 @@ def test_Registry_lifecycle():
     r.unregister(factory_all)
     assert len(r._entries) == 0
 
-    py.test.raises(ValueError, r.unregister, factory_none)
+    pytest.raises(ValueError, r.unregister, factory_none)
     assert len(r._entries) == 0
 
