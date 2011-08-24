@@ -43,12 +43,10 @@ Install and roughly configure moin2, make it work, start configuring it from
 the moin2 sample config (do not just use your 1.9 wikiconfig).
 
 
-Configure moin2 to read moin 1.9 data
--------------------------------------
-moin2 can use the `fs19` storage backend to access your moin 1.9 content
-(pages, attachments and users).
-
-Use a **copy** of the 1.9 content, do not point it at your original data.
+Adjusting the moin2 configuration
+---------------------------------
+It is essential that you adjust the wiki config before you export your 1.9
+data to xml:
 
 Configuration::
 
@@ -66,10 +64,12 @@ Configuration::
     mail_login = ...
     # XXX default_markup must be 'wiki' right now
     page_category_regex = ... # XXX check
-    data_dir = ... # same as in 1.9, user profiles must be in data_dir/user
+
+    # think about which backend you will use in the end and configure
+    # it here (this is NOT the fs19 backend!):
     namespace_mapping = \
         create_simple_mapping(
-            backend_uri='fs19:%s' % data_dir,
+            backend_uri='fs2:/some/path/%%(nsname)s',
             content_acl=dict(before=u'', # acl_rights_before in 1.9
                              default=u'', # acl_rights_default
                              after=u'', # acl_rights_after
@@ -80,33 +80,52 @@ Configuration::
                                   hierarchic=False),
         )
 
-    save_xml = '.../backup.xml'
-    load_xml = None
+Exporting your moin 1.9 data to an XML file
+-------------------------------------------
+moin2 can use the `fs19` storage backend to access your moin 1.9 content
+(pages, attachments and users). The fs19 backend is a bit more than just
+a backend - it also makes the moin 1.9 data look like moin2 data when
+moin accesses them. To support this, it is essential that you adjust your
+wiki config first, see previous section.
 
-If you start moin now, it will serialize everything it finds in its backend
-to an xml file.
+Then, use a **copy** of your 1.9 content, do not point moin2 it at your
+original data::
 
-Keep the xml file (you can use it to try different backend configurations).
+    moin maint_xml --moin19data=/your/moin19/data --save --file=moin19.xml
 
+This will serialize all your moin 1.9 data into moin19.xml.
 
-Writing the data to a moin2 backend
------------------------------------
-Reconfigure moin2 to use the backend you like to use (e.g. fs2 backend)::
+Note: depending on the size of your wiki, this can take rather long and consume
+about the same amount of additional disk space.
 
-    # use same as you already have, but:
-    backend_uri='fs2:/some/path/%%(nsname)s',
+Importing the XML file into moin2
+---------------------------------
+Just load moin19.xml into the storage backend you have already configured::
 
-    save_xml = None
-    load_xml = '.../backup.xml'
+    moin maint_xml --load --file=moin19.xml
 
-If you start moin2 now, it will unserialize your xml file to fill the
-backend with your data.
+Note: depending on the size of your wiki, this can take rather long and consume
+about the same amount of additional disk space.
 
+Testing
+-------
+Just start moin now, it should have your data now.
 
-Cleaning up the configuration
------------------------------
-You need to import the xml only once, so after doing that, clean up your config::
+Try "Index" and "History" views to see what's in there.
 
-    save_xml = None
-    load_xml = None
+Check whether your data is complete and working OK.
+
+If you find issues with data migration from moin 1.9 to 2, please check the
+moin2 issue tracker.
+
+Cleanup
+-------
+If you made a **copy** of your 1.9 content, you can remove that copy now.
+
+Maybe keep the moin19.xml for a while in case you want to try other backends,
+but later you can delete that file.
+
+Make sure you keep all backups of your moin 1.9 installation (code, config,
+data), just for the case you are not happy with moin2 and need to go back for
+some reason.
 

@@ -24,11 +24,6 @@ class Config(DefaultConfig):
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
     index_dir = os.path.join(instance_dir, "index")
     index_dir_tmp = os.path.join(instance_dir, "index_tmp")
-    # This puts the contents from the specified xml file (a serialized backend) into your
-    # backend(s). You can remove this after the first request to your wiki or
-    # from the beginning if you don't want to use this feature at all.
-    load_xml = os.path.join(wikiconfig_dir, 'contrib', 'xml', 'preloaded_items.xml')
-    #save_xml = os.path.join(wikiconfig_dir, 'contrib', 'xml', 'saved_items.xml')
 
     # This provides a simple default setup for your backend configuration.
     # 'fs:' indicates that you want to use the filesystem backend. You can also use

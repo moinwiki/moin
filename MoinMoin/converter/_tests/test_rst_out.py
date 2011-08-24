@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter.rst_out
 """
 
 
-import py.test
+import pytest
 import re
 
 from MoinMoin.converter.rst_out import *

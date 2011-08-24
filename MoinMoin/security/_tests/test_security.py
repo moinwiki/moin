@@ -8,7 +8,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 
@@ -33,12 +33,12 @@ class TestACLStringIterator(object):
     def testEmpty(self):
         """ security: empty acl string raise StopIteration """
         acl_iter = acliter('')
-        py.test.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.next)
 
     def testWhiteSpace(self):
         """ security: white space acl string raise StopIteration """
         acl_iter = acliter('       ')
-        py.test.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.next)
 
     def testDefault(self):
         """ security: default meta acl """
@@ -137,7 +137,7 @@ class TestACLStringIterator(object):
         mod, entries, rights = acl_iter.next()
         assert entries == ['UserOne']
         assert rights == ['read']
-        py.test.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.next)
 
     def testEmptyNamesWithRight(self):
         """ security: empty names with rights

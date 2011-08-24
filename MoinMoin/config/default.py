@@ -410,10 +410,6 @@ options_no_group_name = {
     ('namespace_mapping', None,
     "This needs to point to a (correctly ordered!) list of tuples, each tuple containing: Namespace identifier, backend, acl protection to be applied to that backend. " + \
     "E.g.: [('/', FSBackend('wiki/data'), dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
-    ('load_xml', None,
-     'If this points to an xml file, the file is loaded into the storage backend(s) upon first request.'),
-    ('save_xml', None,
-     'If this points to an xml file, the current storage backend(s) content is saved into that file upon the first request.'),
   )),
   # ==========================================================================
   'items': ('Special item names', None, (
