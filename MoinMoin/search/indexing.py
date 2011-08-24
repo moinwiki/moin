@@ -34,7 +34,7 @@ def backend_to_index(backend_rev, rev_no, schema, content, wikiname=u''):
     doc = dict([(str(key), value)
                 for key, value in backend_rev.items()
                 if key in schema])
-    doc[MTIME] = datetime.datetime.fromtimestamp(backend_rev[MTIME])
+    doc[MTIME] = datetime.datetime.utcfromtimestamp(backend_rev[MTIME])
     doc["name_exact"] = backend_rev[NAME]
     doc["rev_no"] = rev_no
     doc["wikiname"] = wikiname
