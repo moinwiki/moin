@@ -3,6 +3,7 @@
 # Copyright: 2005-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
+# Copyright: 2011      MoinMoin:AkashSinha
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -329,7 +330,7 @@ options_no_group_name = {
     ('navi_bar', [
         ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
         ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
-        ('wikilink', 'frontend.global_index', dict(), L_('Index'), L_('Global Index')),
+        ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),
         ('wikilink', 'frontend.global_tags', dict(), L_('Tags'), L_('Global Tags Index')),
         ('wikilink', 'admin.index', dict(), L_('More'), L_('Administration & Docs')),
      ],
@@ -362,7 +363,6 @@ options_no_group_name = {
         ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
         ('special.supplementation', None, None, False, ),
         ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
-        ('frontend.index2', L_('Index'), L_('List sub-items'), False, ),
         ('special.comments', L_('Comments'), L_('Switch showing comments on or off'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
@@ -395,6 +395,10 @@ options_no_group_name = {
     ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
     ('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
     ('edit_ticketing', True, None),
+  )),
+  # ==========================================================================
+  'paging': ('Paging related', None, (
+    ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
   )),
   # ==========================================================================
   'data': ('Data storage', None, (
@@ -449,6 +453,7 @@ options_no_group_name = {
         ],
         theme_name=None, # None -> use cfg.theme_default
         edit_rows=0,
+        results_per_page=0,
         locale=None, # None -> do browser language detection, otherwise just use this locale
         timezone=None, # None -> use cfg.timezone_default
       ),

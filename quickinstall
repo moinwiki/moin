@@ -4,17 +4,18 @@
 
 DIR=env
 PYTHON=python
+DLC=dlc
 
 virtualenv --no-site-packages --python $PYTHON $DIR
 
 source $DIR/bin/activate
 
 # first install babel, moin's setup.py will emit a warning if it is not there
-pip install babel
+pip install --download-cache=$DLC babel
 
 # "install" moin2 from repo to the env, this will also install required python
 # packages from pypi. we do this LAST, so that breakage is better visible.
-pip install -e .
+pip install --download-cache=$DLC -e .
 
 # compile the translations
 python setup.py compile_catalog --statistics
