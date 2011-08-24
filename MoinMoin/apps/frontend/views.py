@@ -1,4 +1,6 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:AkashSinha
+# Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
@@ -15,15 +17,22 @@
 import re
 import difflib
 import time
+from datetime import datetime
 from itertools import chain
+from collections import namedtuple, OrderedDict
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
+from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
 from flatland import Form, String, Integer, Boolean, Enum
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from jinja2 import Markup
 
@@ -34,12 +43,12 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
+from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
-from MoinMoin import config, user, wikiutil
-from MoinMoin.config import CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS
+from MoinMoin import config, user, util, wikiutil
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -72,12 +81,15 @@ Disallow: /+dom/
 Disallow: /+download/
 Disallow: /+modify/
 Disallow: /+copy/
+Disallow: /+content/
 Disallow: /+delete/
+Disallow: /+ajaxdelete/
+Disallow: /+ajaxdestroy/
+Disallow: /+ajaxmodify/
 Disallow: /+destroy/
 Disallow: /+rename/
 Disallow: /+revert/
 Disallow: /+index/
-Disallow: /+index2/
 Disallow: /+jfu-server/
 Disallow: /+sitemap/
 Disallow: /+similar_names/
@@ -150,6 +162,7 @@ def _search(search_form, item_name):
                                medium_search_form=search_form,
                                item_name=item_name,
                               )
+
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
@@ -269,6 +282,25 @@ def show_item_meta(item_name, rev):
                            show_navigation=show_navigation,
                           )
 
+@frontend.route('/+content/<int:rev>/<itemname:item_name>')
+@frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=-1))
+def content_item(item_name, rev):
+    """ same as show_item, but we only show the content """
+    # first check whether we have a valid search query:
+    search_form = SearchForm.from_flat(request.values)
+    if search_form.validate():
+        return _search(search_form, item_name)
+    search_form['submit'].set_default() # XXX from_flat() kills all values
+    item_displayed.send(app._get_current_object(),
+                        item_name=item_name)
+    try:
+        item = Item.create(item_name, rev_no=rev)
+    except AccessDeniedError:
+        abort(403)
+    return render_template('content.html',
+                           item_name=item.name,
+                           data_rendered=Markup(item._render_data()),
+                           )
 
 @frontend.route('/+get/<int:rev>/<itemname:item_name>')
 @frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=-1))
@@ -284,9 +316,10 @@ def get_item(item_name, rev):
 def download_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_no=rev)
+        mimetype = request.values.get("mimetype")
     except AccessDeniedError:
         abort(403)
-    return item.do_get(force_attachment=True)
+    return item.do_get(force_attachment=True, mimetype=mimetype)
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
@@ -355,6 +388,17 @@ class CopyItemForm(TargetCommentForm):
 
 class RenameItemForm(TargetCommentForm):
     name = 'rename_item'
+
+class ContenttypeFilterForm(Form):
+    name = 'contenttype_filter'
+    markup_text_items = Boolean.using(label=L_('markup text'), optional=True, default=1)
+    other_text_items = Boolean.using(label=L_('other text'), optional=True, default=1)
+    image_items = Boolean.using(label=L_('image'), optional=True, default=1)
+    audio_items = Boolean.using(label=L_('audio'), optional=True, default=1)
+    video_items = Boolean.using(label=L_('video'), optional=True, default=1)
+    other_items = Boolean.using(label=L_('other'), optional=True, default=1)
+    unknown_items = Boolean.using(label=L_('unknown'), optional=True, default=1)
+    submit = String.using(default=L_('Filter'), optional=True)
 
 
 @frontend.route('/+revert/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -448,6 +492,68 @@ def delete_item(item_name):
                            form=form,
                           )
 
+@frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxdelete', defaults=dict(item_name=''), methods=['POST'])
+def ajaxdelete(item_name):
+    if request.method == 'POST':
+        args = request.values.to_dict()
+        comment = args.get("comment")
+        itemnames = args.get("itemnames")
+        itemnames = json.loads(itemnames)
+        if item_name:
+            subitem_prefix = item_name + u'/'
+        else:
+            subitem_prefix = u''
+        response = {"itemnames": [], "status": []}
+        for itemname in itemnames:
+            response["itemnames"].append(itemname)
+            itemname = subitem_prefix + itemname
+            try:
+                item = Item.create(itemname)
+                item.delete(comment)
+                response["status"].append(True)
+            except AccessDeniedError:
+                response["status"].append(False)
+
+    return jsonify(response)
+
+@frontend.route('/+ajaxdestroy/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxdestroy', defaults=dict(item_name=''), methods=['POST'])
+def ajaxdestroy(item_name):
+    if request.method == 'POST':
+        args = request.values.to_dict()
+        comment = args.get("comment")
+        itemnames = args.get("itemnames")
+        itemnames = json.loads(itemnames)
+        if item_name:
+            subitem_prefix = item_name + u'/'
+        else:
+            subitem_prefix = u''
+        response = {"itemnames": [], "status": []}
+        for itemname in itemnames:
+            response["itemnames"].append(itemname)
+            itemname = subitem_prefix + itemname
+            try:
+                item = Item.create(itemname)
+                item.destroy(comment=comment, destroy_item=True)
+                response["status"].append(True)
+            except AccessDeniedError:
+                response["status"].append(False)
+
+    return jsonify(response)
+
+
+@frontend.route('/+ajaxmodify/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+ajaxmodify', methods=['POST'], defaults=dict(item_name=''))
+def ajaxmodify(item_name):
+    newitem = request.values.get("newitem")
+    if not newitem:
+        abort(404)
+    if item_name:
+        newitem = item_name + u'/' + newitem
+
+    return redirect(url_for('.modify_item', item_name=newitem))
+
 
 @frontend.route('/+destroy/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
@@ -480,69 +586,76 @@ def destroy_item(item_name, rev):
                           )
 
 
-# XXX this has some functional redundancy with "index", solve that later
-@frontend.route('/+index2/<itemname:item_name>', methods=['GET'])
-def index2(item_name):
-    # flat index using jquery-file-upload (see also jfu_server)
-    return render_template('index2.html',
-                           item_name=item_name,
-                          )
-
-@frontend.route('/+jfu-server/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
+@frontend.route('/+jfu-server', defaults=dict(item_name=''), methods=['POST'])
 def jfu_server(item_name):
     """jquery-file-upload server component
     """
-    if request.method == 'GET':
-        try:
-            item = Item.create(item_name)
-        except AccessDeniedError:
-            abort(403)
-        files = []
-        for full_name, rel_name, mimetype in item.flat_index():
-            url = url_for_item(full_name)
-            url_download = url_for_item(full_name, endpoint='frontend.download_item')
-            files.append(dict(name=rel_name, url=url, url_download=url_download, size=0))
-        return jsonify(files=files)
-    if request.method == 'POST':
-        data_file = request.files.get('data_file')
-        subitem_name = data_file.filename
-        item_name = item_name + u'/' + subitem_name
-        try:
-            item = Item.create(item_name)
-            revno, size = item.modify()
-            item_modified.send(app._get_current_object(),
-                               item_name=item_name)
-            return jsonify(name=subitem_name,
-                           size=size,
-                           url=url_for_item(item_name, rev=revno),
-                           url_download=url_for_item(item_name, rev=revno, endpoint='frontend.download_item'),
-                          )
-        except AccessDeniedError:
-            abort(403)
-
-
-
-@frontend.route('/+index/<itemname:item_name>')
-def index(item_name):
+    data_file = request.files.get('data_file')
+    subitem_name = data_file.filename
+    contenttype = data_file.content_type # guess by browser, based on file name
+    if item_name:
+        subitem_prefix = item_name + u'/'
+    else:
+        subitem_prefix = u''
+    item_name = subitem_prefix + subitem_name
     try:
         item = Item.create(item_name)
+        revno, size = item.modify()
+        item_modified.send(app._get_current_object(),
+                           item_name=item_name)
+        return jsonify(name=subitem_name,
+                       size=size,
+                       url=url_for('.show_item', item_name=item_name, rev=revno),
+                       contenttype=contenttype_to_class(contenttype),
+                      )
     except AccessDeniedError:
         abort(403)
-    index = item.flat_index()
+
+
+@frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
+@frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
+def index(item_name):
+    try:
+        item = Item.create(item_name) # when item_name='', it gives toplevel index
+    except AccessDeniedError:
+        abort(403)
+
+    if request.method == 'GET':
+        form = ContenttypeFilterForm.from_defaults()
+        selected_groups = None
+    elif request.method == "POST":
+        form = ContenttypeFilterForm.from_flat(request.form)
+        selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
+                           if form[gname].value]
+        if u'submit' in selected_groups:
+            selected_groups.remove(u'submit')
+        if not selected_groups:
+            form = ContenttypeFilterForm.from_defaults()
+
+    startswith = request.values.get("startswith")
+    index = item.flat_index(startswith, selected_groups)
+
+    ct_groups = [(gname, ", ".join([ctlabel for ctname, ctlabel in contenttypes]))
+                 for gname, contenttypes in CONTENTTYPE_GROUPS]
+    ct_groups = dict(ct_groups)
+
+    initials = item.name_initial(item.flat_index())
+    initials = [initial.upper() for initial in initials]
+    initials = list(set(initials))
+    initials = sorted(initials)
+    detailed_index = item.get_detailed_index(index)
+    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
+
+    item_names = item_name.split(u'/')
     return render_template(item.index_template,
-                           item=item, item_name=item_name,
-                           index=index,
-                          )
-
-
-@frontend.route('/+index')
-def global_index():
-    item = Item.create('') # XXX hack: item_name='' gives toplevel index
-    index = item.flat_index()
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    return render_template('global_index.html',
-                           item_name=item_name, # XXX no item
-                           index=index,
+                           item_name=item_name,
+                           item_names=item_names,
+                           index=detailed_index,
+                           initials=initials,
+                           startswith=startswith,
+                           contenttype_groups=ct_groups,
+                           form=form,
                           )
 
 
@@ -585,19 +698,159 @@ def _backrefs(items, item_name):
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
+
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+
+    results_per_page = int(app.cfg.results_per_page)
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    history_page = util.getPageContent(history, offset, results_per_page)
+
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
-                           history=history,
+                           history_page=history_page,
                           )
-
 
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    results_per_page = int(app.cfg.results_per_page)
+    if flaskg.user.valid:
+        bookmark_time = flaskg.user.getBookmark()
+        results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
+    else:
+        bookmark_time = None
+    item_groups = OrderedDict()
+    for rev in history:
+        current_item_name = rev.item.name
+        if bookmark_time and rev.timestamp <= bookmark_time:
+            break
+        elif current_item_name in item_groups:
+            latest_rev = item_groups[current_item_name][0]
+            tm_latest = datetime.utcfromtimestamp(latest_rev.timestamp)
+            tm_current = datetime.utcfromtimestamp(rev.timestamp)
+            if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
+                item_groups[current_item_name].append(rev)
+        else:
+            item_groups[current_item_name] = [rev]
+
+    # Got the item dict, now doing grouping inside them
+    editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
+    for item_name, revs in item_groups.items():
+        item_info = {}
+        editors_info = OrderedDict()
+        editors = []
+        revnos = []
+        comments = []
+        current_rev = revs[0]
+        item_info["item_name"] = item_name
+        item_info["timestamp"] = current_rev.timestamp
+        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
+        item_info["action"] = current_rev.get(ACTION)
+        item_info["name"] = current_rev.get(NAME)
+
+        # Aggregating comments, authors and revno
+        for rev in revs:
+            revnos.append(rev.revno)
+            comment = rev.get(COMMENT)
+            if comment:
+                comment = "#%(revno)d %(comment)s" % {
+                          'revno': rev.revno,
+                          'comment': comment
+                          }
+                comments.append(comment)
+            editor = get_editor_info(rev)
+            editor_name = editor["name"]
+            if editor_name in editors_info:
+                editors_info[editor_name].editor_revnos.append(rev.revno)
+            else:
+                editors_info[editor_name] = editor_info(editor, [rev.revno])
+
+        if len(revnos) == 1:
+            # there is only one change for this item in the history considered
+            info, positions = editors_info[editor_name]
+            info_tuple = (info, "")
+            editors.append(info_tuple)
+        else:
+            # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
+            for info, positions in editors_info.values():
+                position_range = util.rangelist(positions)
+                position_range = "[%(position_range)s]" % {'position_range': position_range}
+                info_tuple = (info, position_range)
+                editors.append(info_tuple)
+
+        item_info["revnos"] = revnos
+        item_info["editors"] = editors
+        item_info["comments"] = comments
+        item_groups[item_name] = item_info
+
+    # Grouping on the date basis
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+    day_count = OrderedDict()
+    revcount = 0
+    maxrev = results_per_page + offset
+    toappend = True
+    grouped_history = []
+    prev_date = '0000-00-00'
+    rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
+    rev_tuples = rev_tuple(prev_date, [])
+    for item_group in item_groups.values():
+        tm = datetime.utcfromtimestamp(item_group["timestamp"])
+        rev_date = format_date(tm)
+        if revcount < offset:
+            revcount += len(item_group["revnos"])
+            if rev_date not in day_count:
+                day_count[rev_date] = 0
+            day_count[rev_date] += len(item_group["revnos"])
+        elif rev_date == prev_date:
+            rev_tuples.item_revs.append(item_group)
+            revcount += len(item_group["revnos"])
+        else:
+            grouped_history.append(rev_tuples)
+            if results_per_page and revcount >= maxrev:
+                toappend = False
+                break
+            else:
+                rev_tuples = rev_tuple(rev_date, [item_group])
+                prev_date = rev_date
+                revcount += len(item_group["revnos"])
+
+    if toappend:
+        grouped_history.append(rev_tuples)
+        revcount = 0 # this is the last page, no next page present
+    del grouped_history[0]  # First tuple will be a null one
+
+    # calculate offset for previous page link
+    if results_per_page:
+        previous_offset = 0
+        prev_rev_count = day_count.values()
+        prev_rev_count.reverse()
+        for numrev in prev_rev_count:
+            if previous_offset < results_per_page:
+                previous_offset += numrev
+            else:
+                break
+
+        if offset - previous_offset >= results_per_page:
+            previous_offset = offset - previous_offset
+        elif previous_offset:
+            previous_offset = 0
+        else:
+            previous_offset = -1
+    else:
+        previous_offset = -1 # no previous page
+
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    current_timestamp = int(time.time())
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=history,
+                           history=grouped_history,
+                           current_timestamp=current_timestamp,
+                           bookmark_time=bookmark_time,
+                           offset=revcount,
+                           previous_offset=previous_offset,
                           )
 
 @frontend.route('/+wanteds')
@@ -1148,6 +1401,7 @@ def usersettings(part):
         theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
         css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
         edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
+        results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
         submit = String.using(default=L_('Save'), optional=True)
 
     dispatch = dict(
@@ -1231,7 +1485,6 @@ def bookmark():
     else:
         flash(_("You must log in to use bookmarks."), "error")
     return redirect(url_for('.global_history'))
-
 
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):

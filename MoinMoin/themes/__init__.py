@@ -347,6 +347,12 @@ def shorten_item_name(name, length=25):
 
 MIMETYPE_TO_CLASS = {
     'application/pdf': 'pdf',
+    'application/zip': 'package',
+    'application/x-tar': 'package',
+    'application/x-gtar': 'package',
+    'application/x-twikidraw': 'drawing',
+    'application/x-anywikidraw': 'drawing',
+    'application/x-svgdraw': 'drawing',
 }
 
 def contenttype_to_class(contenttype):
