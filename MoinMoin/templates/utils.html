@@ -1,0 +1,44 @@
+{% macro show_editor_info(info) %}
+  {%- if info.uri -%}
+      <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
+  {%- elif info.email -%}
+      <a href="mailto:{{ info.email }}" class="{{ info.css }}" title="{{ info.title }}">
+  {%- else -%}
+      <span class="{{ info.css }}" title="{{ info.title }}">
+  {%- endif -%}
+  {{ info.text }}
+  {%- if info.uri or info.email -%}
+    </a>
+  {%- else -%}
+    </span>
+  {%- endif -%}
+{% endmacro %}
+
+
+{% macro editor_info(rev) %}
+  {%- set info = get_editor_info(rev) -%}
+  {{ show_editor_info(info) }}
+{% endmacro %}
+
+
+{% macro table(headings, rows) %}
+<table>
+<thead>
+    <tr>
+        {% for heading in headings %}
+        <td><strong>{{ heading }}</strong></td>
+        {% endfor %}
+    </tr>
+</thead>
+<tbody>
+{% for row in rows %}
+    <tr>
+        {% for col in row %}
+        <td>{{ col }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endmacro %}
+
