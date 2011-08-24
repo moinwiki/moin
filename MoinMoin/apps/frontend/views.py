@@ -701,12 +701,13 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
+    bookmark_time = None
     results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
-        bookmark_time = flaskg.user.getBookmark()
+        bm = flaskg.user.getBookmark()
+        if bm is not None:
+            bookmark_time = datetime.utcfromtimestamp(bm)
         results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
-    else:
-        bookmark_time = None
     item_groups = OrderedDict()
     for rev in history:
         current_item_name = rev.item.name
