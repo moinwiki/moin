@@ -9,7 +9,7 @@ MoinMoin - MoinMoin.util.forms Tests
 from MoinMoin.util import forms
 import pytest
 
-class Bind:
+class Bind(object):
     """ class for self defined test_bind attributes """
     def __init__(self):
         self.label = 'test_content'
