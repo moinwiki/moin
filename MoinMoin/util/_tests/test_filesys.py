@@ -15,7 +15,7 @@ from MoinMoin.util import filesys
 win32_only = pytest.mark.skipif("sys.platform != 'win32'")
 win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
-class TestFuid:
+class TestFuid(object):
     """ test filesys.fuid (a better mtime() alternative for up-to-date checking) """
 
     def setup_method(self, method):
@@ -80,7 +80,7 @@ class TestFuid:
         assert uid2 != uid1  # should be considered stale if platform has no inode support
 
 
-class TestRename:
+class TestRename(object):
     """ test filesys.rename* """
 
     def setup_method(self, method):
@@ -136,7 +136,7 @@ class TestRename:
         assert not os.path.exists(self.src)
 
 
-class TestCopy:
+class TestCopy(object):
     """test filesys.copytree"""
 
     def setup_method(self, method):

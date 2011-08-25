@@ -43,7 +43,7 @@ from MoinMoin._tests import maketestwiki, wikiconfig
 from MoinMoin.storage.backends import create_simple_mapping
 from flask import g as flaskg
 
-#In the beginning following variables have no values
+# In the beginning following variables have no values
 prev_app = None
 prev_cls = None
 prev_ctx = None
@@ -103,7 +103,7 @@ class MoinTestFunction(pytest.collect.Function):
                     self.app = prev_app
                     self.ctx = prev_ctx
 
-            #Get the values from the function
+            # Get the values from the function
             prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
 
         else:

@@ -77,7 +77,7 @@ class TestStorageEnvironWithConfig(object):
             new_rev = item.create_revision(1)
             new_rev[NAME] = pagename
             new_rev[CONTENTTYPE] = u'text/plain'
-            #item.commit()
+            item.commit()
 
         itemname = u"OnlyForThisTest"
         assert not storage.has_item(itemname)
