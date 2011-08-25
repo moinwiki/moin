@@ -74,6 +74,9 @@ class WhooshIndex(object):
             userid=ID(stored=True),
             address=ID(stored=True),
             hostname=ID(stored=True),
+            size=NUMERIC(stored=True),
+            action=ID(stored=True),
+            comment=TEXT(stored=True, multitoken_query="and"),
             content=TEXT(stored=True, multitoken_query="and"),
         )
 
