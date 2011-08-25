@@ -17,16 +17,6 @@
 </div>
 <h1>{{ _("Global History") }}</h1>
 <div class='moin-clr'></div>
-    {% if user.valid  %}
-    <div id="moin-set-bookmark">
-        {% if bookmark_time %}
-            {{ _("Bookmark (currently set to %(bookmark)s). ", bookmark=bookmark_time|datetimeformat) }} 
-            <a href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
-        {% else %}
-            {{ _("Bookmark (not set). ") }}<a href="{{ url_for('frontend.bookmark', time=current_timestamp) }}">{{ _("Set bookmark") }}</a> 
-        {% endif %}
-    </div>
-    {% endif %}
     <div id="moin-global-history">
         {% for rev_date, revs in history %}
            {% set  latest_rev = revs[0] %}
@@ -78,8 +68,15 @@
                 </div>
             </div>
         {% endfor %}
+        {% if user.valid and bookmark_time %}
+        <div class="moin-history-container"> 
+            <div class="moin-history-container-header">
+                <span>
+                    <h2>{{ bookmark_time|datetimeformat }}</h2>
+                    <a href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+               </span>
+            </div>
+        </div>
+        {% endif %}
     </div>
-   {% if bookmark_time and not offset %}
-       <div id="moin-bookmark-reached">{{ _("Bookmark reached") }}</div>
-   {% endif %}
 {% endblock %}
