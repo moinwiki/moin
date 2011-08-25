@@ -47,7 +47,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
-from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS, MTIME
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -684,7 +684,6 @@ def _backrefs(items, item_name):
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     history = flaskg.storage.history(item_name=item_name)
-
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
 
@@ -698,6 +697,7 @@ def history(item_name):
                            history_page=history_page,
                           )
 
+
 @frontend.route('/+history')
 def global_history():
     history = flaskg.storage.history(item_name='')
@@ -709,50 +709,51 @@ def global_history():
             bookmark_time = datetime.utcfromtimestamp(bm)
         results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
     item_groups = OrderedDict()
-    for rev in history:
-        current_item_name = rev.item.name
-        if bookmark_time and rev.timestamp <= bookmark_time:
+    for doc in history:
+        current_item_name = doc[NAME]
+        if bookmark_time and doc[MTIME] <= bookmark_time:
             break
         elif current_item_name in item_groups:
-            latest_rev = item_groups[current_item_name][0]
-            tm_latest = datetime.utcfromtimestamp(latest_rev.timestamp)
-            tm_current = datetime.utcfromtimestamp(rev.timestamp)
+            latest_doc = item_groups[current_item_name][0]
+            tm_latest = latest_doc[MTIME]
+            tm_current = doc[MTIME]
             if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
-                item_groups[current_item_name].append(rev)
+                item_groups[current_item_name].append(doc)
         else:
-            item_groups[current_item_name] = [rev]
+            item_groups[current_item_name] = [doc]
 
     # Got the item dict, now doing grouping inside them
     editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
-    for item_name, revs in item_groups.items():
+    for item_name, docs in item_groups.items():
         item_info = {}
         editors_info = OrderedDict()
         editors = []
         revnos = []
         comments = []
-        current_rev = revs[0]
+        current_doc = docs[0]
         item_info["item_name"] = item_name
-        item_info["timestamp"] = current_rev.timestamp
-        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
-        item_info["action"] = current_rev.get(ACTION)
-        item_info["name"] = current_rev.get(NAME)
+        item_info["name"] = current_doc[NAME]
+        item_info["timestamp"] = current_doc[MTIME]
+        item_info["contenttype"] = current_doc[CONTENTTYPE]
+        item_info["action"] = current_doc[ACTION]
 
         # Aggregating comments, authors and revno
-        for rev in revs:
-            revnos.append(rev.revno)
-            comment = rev.get(COMMENT)
+        for doc in docs:
+            rev_no = doc["rev_no"]
+            revnos.append(rev_no)
+            comment = doc.get(COMMENT)
             if comment:
                 comment = "#%(revno)d %(comment)s" % {
-                          'revno': rev.revno,
+                          'revno': rev_no,
                           'comment': comment
                           }
                 comments.append(comment)
-            editor = get_editor_info(rev)
+            editor = get_editor_info(doc)
             editor_name = editor["name"]
             if editor_name in editors_info:
-                editors_info[editor_name].editor_revnos.append(rev.revno)
+                editors_info[editor_name].editor_revnos.append(rev_no)
             else:
-                editors_info[editor_name] = editor_info(editor, [rev.revno])
+                editors_info[editor_name] = editor_info(editor, [rev_no])
 
         if len(revnos) == 1:
             # there is only one change for this item in the history considered
@@ -784,7 +785,7 @@ def global_history():
     rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
     rev_tuples = rev_tuple(prev_date, [])
     for item_group in item_groups.values():
-        tm = datetime.utcfromtimestamp(item_group["timestamp"])
+        tm = item_group["timestamp"]
         rev_date = format_date(tm)
         if revcount < offset:
             revcount += len(item_group["revnos"])

@@ -61,27 +61,10 @@ class IndexingBackendMixin(object):
         """
         History implementation using the index.
         """
-        for result in self._index.history(reverse=reverse, item_name=item_name, start=start, end=end):
-            # we currently create the item, the revision and yield it to stay
-            # compatible with storage api definition, but this could be changed to
-            # just return the data we get from the index (without accessing backend)
-            # TODO: A problem exists at item = self.get_item(name).
-            # In the history_size_after_rename test in test_backends.py,
-            # an item was created with the name "first" and then renamed to "second."
-            # When it runs through this history function and runs item = self.get_item("first"),
-            # it can't find it because it was already renamed to "second."
-            # Some suggested solutions are: using some neverchanging uuid to identify some specific item
-            # or continuing to use the name, but tracking name changes within the item's history.
-            rev_datetime, name, rev_no = result
-            try:
-                logging.debug("HISTORY: name %s revno %s" % (name, rev_no))
-                item = self.get_item(name)
-                yield item.get_revision(rev_no)
-            except AccessDeniedError as e:
-                # just skip items we may not access
-                pass
-            except (NoSuchItemError, NoSuchRevisionError) as e:
-                logging.exception("history processing catched exception")
+        for doc in self._index.history(reverse=reverse, item_name=item_name, start=start, end=end):
+            logging.debug("HISTORY: name %s revno %s" % (doc[NAME], doc["rev_no"]))
+            # XXX ACL checks?
+            yield doc
 
     def all_tags(self):
         """
@@ -291,9 +274,7 @@ class ItemIndex(object):
                 logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
 
-    def history(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
-        if mountpoint:
-            mountpoint += '/'
+    def history(self, item_name=u'', reverse=True, start=None, end=None):
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
             if item_name:
                 docs = all_revs_searcher.documents(name_exact=item_name,
@@ -304,7 +285,7 @@ class ItemIndex(object):
             from operator import itemgetter
             # sort by mtime and rev_no do deal better with mtime granularity for fast item rev updates
             for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
-                yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
+                yield doc
 
     def all_tags(self):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:

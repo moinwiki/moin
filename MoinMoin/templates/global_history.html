@@ -36,7 +36,7 @@
                     <span>
                         <h2>{{ rev_date }}</h2>
                         {% if user.valid %}
-                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp) }}">{{ _("Set bookmark") }}</a>
+                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=utctimestamp(latest_timestamp)) }}">{{ _("Set bookmark") }}</a>
                         {% endif %}
                    </span>
                 </div>

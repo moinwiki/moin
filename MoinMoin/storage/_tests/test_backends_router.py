@@ -13,6 +13,7 @@ import pytest
 
 from flask import current_app as app
 
+from MoinMoin.config import NAME
 from MoinMoin.error import ConfigurationError
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.memory import MemoryBackend
@@ -172,19 +173,17 @@ class TestRouterBackend(BackendTest):
             import time
             time.sleep(1)
 
-        for num, rev in enumerate(self.backend.history(reverse=False)):
+        for num, doc in enumerate(self.backend.history(reverse=False)):
             name, revno = order[num]
-            assert rev.item.name == name
-            assert rev.revno == revno
+            assert doc[NAME] == name
+            assert doc["rev_no"] == revno
 
         order.reverse()
-        for num, rev in enumerate(self.backend.history(reverse=True)):
+        for num, doc in enumerate(self.backend.history(reverse=True)):
             name, revno = order[num]
-            assert rev.item.name == name
-            assert rev.revno == revno
+            assert doc[NAME] == name
+            assert doc["rev_no"] == revno
 
-    # See history function in indexing.py for comments on why this test fails.
-    @pytest.mark.xfail
     def test_history_size_after_rename(self):
         item = self.backend.create_item(u'first')
         item.create_revision(0)
@@ -192,7 +191,7 @@ class TestRouterBackend(BackendTest):
         item.rename(u'second')
         item.create_revision(1)
         item.commit()
-        assert len([rev for rev in self.backend.history()]) == 2
+        assert len(list(self.backend.history())) == 2
 
     def test_history_after_destroy_item(self):
         itemname = u"I will be completely destroyed"
@@ -204,16 +203,11 @@ class TestRouterBackend(BackendTest):
 
         item.destroy()
 
-        all_rev_data = [rev.read() for rev in self.backend.history()]
-        assert not rev_data in all_rev_data
-
-        for rev in self.backend.history():
-            assert not rev.item.name == itemname
-        for rev in self.backend.history(reverse=False):
-            assert not rev.item.name == itemname
+        itemnames_history = [doc[NAME] for doc in self.backend.history()]
+        assert itemname not in itemnames_history
 
     def test_history_after_destroy_revision(self):
-        itemname = u"I will see my children die"    # removed the smiley ':-(' temporarily as it slows the test in addition with a failure
+        itemname = u"I will see my children die"
         rev_data = "I will die!"
         persistent_rev = "I will see my sibling die :-("
         item = self.backend.create_item(itemname)
@@ -227,8 +221,8 @@ class TestRouterBackend(BackendTest):
         rev = item.get_revision(0)
         rev.destroy()
 
-        for rev in self.backend.history():
-            assert not (rev.item.name == itemname and rev.revno == 0)
+        itemnames_revs_history = [(doc[NAME], doc["rev_no"]) for doc in self.backend.history()]
+        assert (itemname, 0) not in itemnames_revs_history
 
     def test_history_item_names(self):
         item = self.backend.create_item(u'first')
@@ -237,9 +231,9 @@ class TestRouterBackend(BackendTest):
         item.rename(u'second')
         item.create_revision(1)
         item.commit()
-        revs_in_create_order = [rev for rev in self.backend.history(reverse=False)]
-        assert revs_in_create_order[0].revno == 0
-        assert revs_in_create_order[0].item.name == u'second'
-        assert revs_in_create_order[1].revno == 1
-        assert revs_in_create_order[1].item.name == u'second'
+        docs_history = list(self.backend.history(reverse=False))
+        assert docs_history[0]["rev_no"] == 0
+        assert docs_history[0][NAME] == u'first'
+        assert docs_history[1]["rev_no"] == 1
+        assert docs_history[1][NAME] == u'second'
 
