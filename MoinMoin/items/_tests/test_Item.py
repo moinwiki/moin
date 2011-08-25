@@ -234,7 +234,7 @@ class TestItem(object):
         result2 = item.count_items()
         assert result2 == 2
 
-class TestBinary:
+class TestBinary(object):
     """ Test for arbitrary binary items """
 
     def test_get_templates(self):
@@ -319,7 +319,7 @@ class TestZipMixin(object):
         with pytest.raises(NotImplementedError):
             item.put_member('example1.txt', filecontent, content_length, expected_members=members)
 
-class TestTransformableBitmapImage:
+class TestTransformableBitmapImage(object):
 
     def test__transform(self):
         item_name = u'image_Item'

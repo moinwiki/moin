@@ -15,7 +15,7 @@ from MoinMoin._tests import wikiconfig
 import pytest
 DATA = "This is a dict item."
 
-class TestMacro:
+class TestMacro(object):
     """ Test: GetVal.Macro """
 
     def setup_method(self, method):
