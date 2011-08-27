@@ -57,6 +57,9 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
+    def query_parser(self, default_field, all_revs=False):
+        return self._index.query_parser(default_field, all_revs=all_revs)
+
     def search(self, q, all_revs=False, **kw):
         return self._index.search(q, all_revs=all_revs, **kw)
 
@@ -175,6 +178,8 @@ class IndexingRevisionMixin(object):
     # TODO by intercepting write() to index data written to a revision
 
 from whoosh.writing import AsyncWriter
+from whoosh.qparser import QueryParser
+
 from MoinMoin.search.indexing import WhooshIndex
 
 class ItemIndex(object):
@@ -270,6 +275,13 @@ class ItemIndex(object):
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
+
+    def query_parser(self, default_field, all_revs=False):
+        if all_revs:
+            schema = self.index_object.all_revisions_schema
+        else:
+            schema = self.index_object.latest_revisions_schema
+        return QueryParser(default_field, schema=schema)
 
     def search(self, q, all_revs=False, **kw):
         if all_revs:

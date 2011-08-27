@@ -4,6 +4,8 @@
 """
     MoinMoin - search expression object representation
 
+    DEPRECATED - please use storage.search with whoosh queries.
+
     This module defines the possible search terms for a query to the
     storage backend. This is used, for example, to implement searching,
     page lists etc.

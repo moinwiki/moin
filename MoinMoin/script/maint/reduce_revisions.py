@@ -1,37 +1,44 @@
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2011 MoinMoin:ReimarBauer
+# Copyright: 2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Reduce Revisions of a backend
+MoinMoin - Reduce Revisions of a backend
 
-    This script removes all revisions but the last one from all selected items.
+This script removes all revisions but the last one from all selected items.
 """
 
 
-import re
 from flask import current_app as app
 from flaskext.script import Command, Option
 
-from MoinMoin.storage.terms import NameRE
+from MoinMoin.config import NAME
 
 
 class Reduce_Revisions(Command):
     description = "This command can be used to remove all revisions but the last one from all selected items."
     option_list = (
-        Option('--pattern', '-p', required=False, dest='pattern', type=unicode, default=".*",
-               help="You can limit the operation on certain items whose names match the given pattern."),
+        Option('--query', '-q', dest="query", type=unicode, default='',
+               help='Only perform the operation on items found by the given query.'),
     )
 
-    def run(self, pattern):
+    def run(self, query):
         storage = app.unprotected_storage
-        query = NameRE(re.compile(pattern))
-        # If no pattern is given, the default regex will match every item.
-        for item in storage.search_items(query):
+        if query:
+            qp = storage.query_parser("name_exact", all_revs=False)
+            q = qp.parse(query)
+        else:
+            q = Every()
+        results = storage.search(q, all_revs=False, limit=None)
+        for result in results:
+            item_name = result[NAME]
+            item = storage.get_item(item_name)
             current_revno = item.next_revno - 1
             for revno in item.list_revisions():
                 if revno < current_revno:
                     rev = item.get_revision(revno)
+                    print "Destroying %r revision %d." % (item_name, revno)
                     rev.destroy()
 
         print "Finished reducing backend."
