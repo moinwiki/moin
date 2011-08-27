@@ -26,7 +26,7 @@ from array import array
 from flatland import Form, String, Integer, Boolean, Enum
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
 
-from whoosh.query import Term, And
+from whoosh.query import Term, And, Prefix
 
 from MoinMoin.util.forms import FileStorage
 
@@ -555,25 +555,20 @@ class Item(object):
 
     def get_index(self):
         """ create an index of sub items of this item """
-        import re
-        from MoinMoin.storage.terms import NameRE
-
         if self.name:
             prefix = self.name + u'/'
+            query = And([Term("wikiname", app.cfg.interwikiname), Prefix("name_exact", prefix)])
         else:
             # trick: an item of empty name can be considered as "virtual root item",
             # that has all wiki items as sub items
             prefix = u''
-        sub_item_re = u"^%s.*" % re.escape(prefix)
-        regex = re.compile(sub_item_re, re.UNICODE)
-
-        item_iterator = self.search_items(NameRE(regex))
-
+            query = Term("wikiname", app.cfg.interwikiname)
+        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        items = [(item.name, item.name[prefix_len:], item.meta.get(CONTENTTYPE))
-                 for item in item_iterator]
-        return sorted(items)
+        items = [(result[NAME], result[NAME][prefix_len:], result[CONTENTTYPE])
+                 for result in results]
+        return items
 
     def flat_index(self, startswith=None, selected_groups=None):
         """
