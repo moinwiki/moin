@@ -155,26 +155,13 @@ class ItemNameList(XMLSelectiveGenerator):
         return item is not None and item.name in self.item_names
 
 
-class TermMatch(XMLSelectiveGenerator):
-    def __init__(self, out, term):
-        self.term = term  # see MoinMoin.storage.terms
-        XMLSelectiveGenerator.__init__(self, out)
-
-    def shall_serialize(self, item=None, rev=None,
-                        revno=None, current_revno=None):
-        if item is not None:
-            self.term.prepare()
-            return self.term.evaluate(item)
-        return False
-
-
 def serialize(obj, xmlfile, xmlgen_cls=XMLSelectiveGenerator, *args, **kwargs):
     """
     Serialize <obj> to <xmlfile>.
 
     The default value of <xmlgen_cls> will just serialize everything. Alternatively,
     use some of XMLSelectiveGenerator child classes to do selective serialization,
-    e.g. of just a list of items or just of items that match some search term.
+    e.g. of just a list of items or just a subset of the revisions.
 
     :arg obj: object to serialize (must mix in Serializable)
     :arg xmlfile: output file (file-like or filename)
