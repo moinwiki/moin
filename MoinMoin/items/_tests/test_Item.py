@@ -216,23 +216,6 @@ class TestItem(object):
         with pytest.raises(KeyError):
             item.meta['test_key']
 
-    def test_count_items(self):
-        name = u'Test_Item'
-        contenttype = u'text/plain;charset=utf-8'
-        meta = {CONTENTTYPE: contenttype}
-        item = Item.create(name)
-        item._save(meta)
-        item = Item.create(name)
-        result1 = item.count_items()
-        assert result1 == 1
-        # add another item
-        new_name = u'New_Item'
-        meta = {CONTENTTYPE: contenttype}
-        item = Item.create(new_name)
-        item._save(meta)
-        item = Item.create(new_name)
-        result2 = item.count_items()
-        assert result2 == 2
 
 class TestBinary(object):
     """ Test for arbitrary binary items """
