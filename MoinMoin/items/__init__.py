@@ -543,16 +543,6 @@ class Item(object):
 
     list_items = search_items  # just for cosmetics
 
-    def count_items(self, term=None):
-        """
-        Return item count for matching items. See search_items() for details.
-        """
-        count = 0
-        # we intentionally use a loop to avoid creating a list with all item objects:
-        for item in self.list_items(term):
-            count += 1
-        return count
-
     def get_index(self):
         """ create an index of sub items of this item """
         if self.name:
