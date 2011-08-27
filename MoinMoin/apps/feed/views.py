@@ -17,6 +17,8 @@ from flask import g as flaskg
 
 from werkzeug.contrib.atom import AtomFeed
 
+from whoosh.query import Term, And
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -43,7 +45,11 @@ def atom(item_name):
     if content is None:
         title = app.cfg.sitename
         feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
-        for doc in flaskg.storage.history(item_name=item_name):
+        query = Term("wikiname", app.cfg.interwikiname)
+        if item_name:
+            query = And([query, Term("name_exact", item_name), ])
+        history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=100)
+        for doc in history:
             name = doc[NAME]
             this_revno = doc["rev_no"]
             item = flaskg.storage.get_item(name)

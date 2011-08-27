@@ -38,6 +38,8 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
+from whoosh.query import Term, And, DateRange
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -683,15 +685,17 @@ def _backrefs(items, item_name):
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
-    history = flaskg.storage.history(item_name=item_name)
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
-
-    results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+    query = And([Term("wikiname", app.cfg.interwikiname), Term("name_exact", item_name), ])
+    # TODO: due to how getPageContent and the template works, we need to use limit=None -
+    # it would be better to use search_page (and an appropriate limit, if needed)
+    history = flaskg.storage.search(query, all_revs=True, sortedby="rev_no", reverse=True, limit=None)
     history_page = util.getPageContent(history, offset, results_per_page)
-
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
                            history_page=history_page,
@@ -700,14 +704,21 @@ def history(item_name):
 
 @frontend.route('/+history')
 def global_history():
-    history = flaskg.storage.history(item_name='')
     bookmark_time = None
-    results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         bm = flaskg.user.getBookmark()
         if bm is not None:
             bookmark_time = datetime.utcfromtimestamp(bm)
-        results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+    query = Term("wikiname", app.cfg.interwikiname)
+    if bookmark_time is not None:
+        query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
+    # TODO: we need use limit=None to simulate previous implementation's behaviour -
+    # it would be better to use search_page (and an appropriate limit, if needed)
+    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=None)
     item_groups = OrderedDict()
     for doc in history:
         current_item_name = doc[NAME]
