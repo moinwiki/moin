@@ -25,6 +25,9 @@ from array import array
 
 from flatland import Form, String, Integer, Boolean, Enum
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+
+from whoosh.query import Term, And
+
 from MoinMoin.util.forms import FileStorage
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -705,13 +708,12 @@ There is no help, you're doomed!
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
-        term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
-        if contenttype:
-            term = AND(term, LastRevisionMetaDataMatch(CONTENTTYPE, contenttype))
-        item_iterator = self.search_items(term)
-        items = [item.name for item in item_iterator]
-        return sorted(items)
+        terms = [Term("wikiname", app.cfg.interwikiname), Term(TAGS, u'template')]
+        if contenttype is not None:
+            terms.append(Term(CONTENTTYPE, contenttype))
+        query = And(terms)
+        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+        return [result[NAME] for result in results]
 
     def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support

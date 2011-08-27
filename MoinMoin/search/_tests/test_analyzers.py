@@ -119,12 +119,20 @@ class TestMimeTokenizer(TokenizerTestBase):
 
     test_cases_query = [
                   # (query, tokens)
-                  (u'text/plain', [u'text', u'plain']),
-                  (u'text/plain;charset=utf-8', [u'text', u'plain', u'charset=utf-8']),
+                  (u'text/plain',
+                   [u'text/plain', u'text', u'plain']),
+                  (u'text/plain;charset=utf-8',
+                   [u'text/plain;charset=utf-8', u'text', u'plain', u'charset=utf-8']),
                   (u'text/html;value1=foo;value2=bar',
-                   [u'text', u'html', u'value1=foo', u'value2=bar'],
+                   [u'text/html;value1=foo;value2=bar', u'text', u'html', u'value1=foo', u'value2=bar'],
                   ),
-                  (u'text/html;value1=foo;value1=bar', [u'text', u'html', u'value1=bar'])
+                  # we normalize, sort the params:
+                  (u'text/html;value2=bar;value1=foo',
+                   [u'text/html;value1=foo;value2=bar', u'text', u'html', u'value1=foo', u'value2=bar'],
+                  ),
+                  # later values for same key overwrite earlier ones:
+                  (u'text/html;value1=foo;value1=bar',
+                   [u'text/html;value1=bar', u'text', u'html', u'value1=bar'])
                  ]
 
     def make_tokenizer(self):
