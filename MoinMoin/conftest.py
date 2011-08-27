@@ -119,8 +119,6 @@ class MoinTestFunction(pytest.collect.Function):
         clean_backend()
         super(MoinTestFunction, self).teardown()
 
-    # Need to modify and add more stuffs
-
 
 def pytest_pycollect_makemodule(path, parent):
     return Module(path, parent=parent)
@@ -146,7 +144,7 @@ def clean_backend():
         # such items raise keyerror on test_item.destroy()
         # add the key 'uuid' to such items
         key_list = test_item.keys()
-        if not 'uuid' in key_list:
+        if 'uuid' not in key_list:
             test_item.change_metadata()
             test_item['uuid'] = 'temp_uuid'
             test_item.publish_metadata()
