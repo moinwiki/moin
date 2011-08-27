@@ -57,14 +57,11 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
-    def history(self, reverse=True, item_name=u'', start=None, end=None):
-        """
-        History implementation using the index.
-        """
-        for doc in self._index.history(reverse=reverse, item_name=item_name, start=start, end=end):
-            logging.debug("HISTORY: name %s revno %s" % (doc[NAME], doc["rev_no"]))
-            # XXX ACL checks?
-            yield doc
+    def search(self, q, all_revs=False, **kw):
+        return self._index.search(q, all_revs=all_revs, **kw)
+
+    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
+        return self._index.search_page(q, all_revs=all_revs, pagenum=pagenum, pagelen=pagelen, **kw)
 
     def all_tags(self):
         """
@@ -274,18 +271,27 @@ class ItemIndex(object):
                 logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
 
-    def history(self, item_name=u'', reverse=True, start=None, end=None):
-        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            if item_name:
-                docs = all_revs_searcher.documents(name_exact=item_name,
-                                                   wikiname=self.wikiname
-                                                  )
-            else:
-                docs = all_revs_searcher.documents(wikiname=self.wikiname)
-            from operator import itemgetter
-            # sort by mtime and rev_no do deal better with mtime granularity for fast item rev updates
-            for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
-                yield doc
+    def search(self, q, all_revs=False, **kw):
+        if all_revs:
+            ix = self.index_object.all_revisions_index
+        else:
+            ix = self.index_object.latest_revisions_index
+        with ix.searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search(q, **kw):
+                yield hit.fields()
+
+    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
+        if all_revs:
+            ix = self.index_object.all_revisions_index
+        else:
+            ix = self.index_object.latest_revisions_index
+        with ix.searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
+                yield hit.fields()
 
     def all_tags(self):
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
