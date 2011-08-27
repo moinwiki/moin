@@ -49,7 +49,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
-from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS, MTIME
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS, MTIME, TAGS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -1815,13 +1815,18 @@ def global_tags():
     """
     show a list or tag cloud of all tags in this wiki
     """
-    counts_tags_names = flaskg.storage.all_tags()
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    if counts_tags_names:
-        # sort by tag name
-        counts_tags_names = sorted(counts_tags_names, key=lambda e: e[1])
+    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    tags_counts = {}
+    for doc in docs:
+        tags = doc.get(TAGS, [])
+        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
+        for tag in tags:
+            tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
+    tags_counts = sorted(tags_counts.items())
+    if tags_counts:
         # this is a simple linear scaling
-        counts = [e[0] for e in counts_tags_names]
+        counts = [count for tags, count in tags_counts]
         count_min = min(counts)
         count_max = max(counts)
         weight_max = 9.99
@@ -1829,11 +1834,11 @@ def global_tags():
             scale = weight_max / 2
         else:
             scale = weight_max / (count_max - count_min)
-        def cls(count, tag):
+        def cls(count):
             # return the css class for this tag
             weight = scale * (count - count_min)
             return "weight%d" % int(weight)  # weight0, ..., weight9
-        tags = [(cls(count, tag), tag) for count, tag, names in counts_tags_names]
+        tags = [(cls(count), tag) for tag, count in tags_counts]
     else:
         tags = []
     return render_template("global_tags.html",
@@ -1847,10 +1852,11 @@ def tagged_items(tag):
     """
     show all items' names that have tag <tag>
     """
-    item_names = flaskg.storage.tagged_items(tag)
+    query = And([Term("wikiname", app.cfg.interwikiname), Term(TAGS, tag), ])
+    docs = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+    item_names = [doc[NAME] for doc in docs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)
-
 

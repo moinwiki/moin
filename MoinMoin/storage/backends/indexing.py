@@ -66,17 +66,8 @@ class IndexingBackendMixin(object):
     def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
         return self._index.search_page(q, all_revs=all_revs, pagenum=pagenum, pagelen=pagelen, **kw)
 
-    def all_tags(self):
-        """
-        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all tags.
-        """
-        return self._index.all_tags()
-
-    def tagged_items(self, tag):
-        """
-        Return a list of item names of items that are tagged with <tag>.
-        """
-        return self._index.tagged_items(tag)
+    def documents(self, all_revs=False, **kw):
+        return self._index.documents(all_revs=all_revs, **kw)
 
 
 class IndexingItemMixin(object):
@@ -305,20 +296,14 @@ class ItemIndex(object):
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
                 yield hit.fields()
 
-    def all_tags(self):
-        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            docs = latest_revs_searcher.documents(wikiname=self.wikiname)
-            tags_names = {}
-            for doc in docs:
-                tags = doc.get(TAGS, [])
-                logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
-                for tag in tags:
-                    tags_names.setdefault(tag, []).append(doc[NAME])
-            counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
-            return counts_tags_names
-
-    def tagged_items(self, tag):
-        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            docs = latest_revs_searcher.documents(tags=tag, wikiname=self.wikiname)
-            return [doc[NAME] for doc in docs]
+    def documents(self, all_revs=False, **kw):
+        if all_revs:
+            ix = self.index_object.all_revisions_index
+        else:
+            ix = self.index_object.latest_revisions_index
+        with ix.searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for doc in searcher.documents(**kw):
+                yield doc
 
