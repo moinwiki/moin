@@ -79,7 +79,7 @@ class RegistryConverter(RegistryBase):
 
 from ..util.mime import Type, type_moin_document
 
-from MoinMoin.config import CONTENTTYPE
+from MoinMoin.config import NAME, CONTENTTYPE
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -123,7 +123,7 @@ def convert_to_indexable(rev):
         # no way
         raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion:")
+        logging.exception("Exception happened in conversion of item %r rev %d contenttype %s:" % (rev[NAME], rev.revno, rev[CONTENTTYPE]))
         doc = u'ERROR [%s]' % str(e)
         return doc
 
