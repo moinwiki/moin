@@ -171,33 +171,6 @@ class BackendTest(object):
     def test_has_item_that_doesnt_exist(self):
         assert not self.backend.has_item(u"i_do_not_exist")
 
-    def test_search_simple(self):
-        for name in [u"songlist", u"song lyric", u"odd_SONG_item"]:
-            self.create_rev_item_helper(name)
-        self.create_meta_item_helper(u"new_song_player")
-        query_string = u"song"
-        query = terms.Name(query_string, True)
-        for num, item in enumerate(self.backend.search_items(query)):
-            assert item.name.find(query_string) != -1
-        assert num == 2
-
-    def test_search_better(self):
-        self.create_rev_item_helper(u'abcde')
-        self.create_rev_item_helper(u'abcdef')
-        self.create_rev_item_helper(u'abcdefg')
-        self.create_rev_item_helper(u'abcdefgh')
-
-        def _test_search(term, expected):
-            found = list(self.backend.search_items(term))
-            assert len(found) == expected
-
-        # must be /part/ of the name
-        yield _test_search, terms.Name(u'AbCdEf', False), 3
-        yield _test_search, terms.Name(u'AbCdEf', True), 0
-        yield _test_search, terms.Name(u'abcdef', True), 3
-        yield _test_search, terms.NameRE(re.compile(u'abcde.*')), 4
-        yield _test_search, terms.NameFn(lambda n: n == u'abcdef'), 1
-
     def test_iteritems_1(self):
         for num in range(10, 20):
             self.create_rev_item_helper(u"item_" + str(num).zfill(2))

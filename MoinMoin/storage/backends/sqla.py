@@ -49,9 +49,7 @@
 
         * Data.read must be changed to operate on dynamically loaded chunks. I.e., the data._chunks must
           be set to lazy='dynamic', which will then be a query instead of a collection.
-        * Find a proper solution for methods that issue many SQL queries. Especially search_items is
-          difficult, as we cannot know what data will be needed in the subsequent processing of the items
-          returned, which will result in more queries being issued. Eager loading is only a partial solution.
+        * Find a proper solution for methods that issue many SQL queries.
         * MetaData should definitely NOT simply be stored as a dict in a PickleType Column. Store that properly,
           perhaps in (a) seperate table(s).
         * Find out why RC lists an item that was just written below Trash/ as well. (Likely a UI bug.)
