@@ -529,20 +529,6 @@ class Item(object):
         if flaskg.user.valid:
             newrev[USERID] = unicode(flaskg.user.id)
 
-    def search_items(self, term=None):
-        """ search items matching the term or,
-            if term is None, return all items
-        """
-        if term:
-            backend_items = flaskg.storage.search_items(term)
-        else:
-            # special case: we just want all items
-            backend_items = flaskg.storage.iteritems()
-        for item in backend_items:
-            yield Item.create(item=item)
-
-    list_items = search_items  # just for cosmetics
-
     def get_index(self):
         """ create an index of sub items of this item """
         if self.name:
