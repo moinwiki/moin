@@ -57,8 +57,11 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
-    def query_parser(self, default_field, all_revs=False):
-        return self._index.query_parser(default_field, all_revs=all_revs)
+    def query_parser(self, default_fields, all_revs=False):
+        return self._index.query_parser(default_fields, all_revs=all_revs)
+
+    def searcher(self, all_revs=False):
+        return self._index.searcher(all_revs=all_revs)
 
     def search(self, q, all_revs=False, **kw):
         return self._index.search(q, all_revs=all_revs, **kw)
@@ -169,7 +172,7 @@ class IndexingRevisionMixin(object):
     # TODO by intercepting write() to index data written to a revision
 
 from whoosh.writing import AsyncWriter
-from whoosh.qparser import QueryParser
+from whoosh.qparser import QueryParser, MultifieldParser
 
 from MoinMoin.search.indexing import WhooshIndex
 
@@ -267,30 +270,44 @@ class ItemIndex(object):
                 logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
 
-    def query_parser(self, default_field, all_revs=False):
+    def query_parser(self, default_fields, all_revs=False):
         if all_revs:
             schema = self.index_object.all_revisions_schema
         else:
             schema = self.index_object.latest_revisions_schema
-        return QueryParser(default_field, schema=schema)
+        if len(default_fields) > 1:
+            qp = MultifieldParser(default_fields, schema=schema)
+        elif len(default_fields) == 1:
+            qp = QueryParser(default_fields[0], schema=schema)
+        else:
+            raise ValueError("default_fields list must at least contain one field name")
+        return qp
 
-    def search(self, q, all_revs=False, **kw):
+    def searcher(self, all_revs=False):
+        """
+        Get a searcher for the right index. Always use this with "with":
+
+        with storage.searcher(all_revs) as searcher:
+            # your code
+
+        If you do not need the searcher itself or the Result object, but rather
+        the found documents, better use search() or search_page(), see below.
+        """
         if all_revs:
             ix = self.index_object.all_revisions_index
         else:
             ix = self.index_object.latest_revisions_index
-        with ix.searcher() as searcher:
+        return ix.searcher()
+
+    def search(self, q, all_revs=False, **kw):
+        with self.searcher(all_revs) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search(q, **kw):
                 yield hit.fields()
 
     def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
-        if all_revs:
-            ix = self.index_object.all_revisions_index
-        else:
-            ix = self.index_object.latest_revisions_index
-        with ix.searcher() as searcher:
+        with self.searcher(all_revs) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):

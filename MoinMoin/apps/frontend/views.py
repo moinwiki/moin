@@ -143,26 +143,20 @@ class SearchForm(Form):
 
 
 def _search(search_form, item_name):
-    from MoinMoin.search.indexing import WhooshIndex
-    from whoosh.qparser import QueryParser, MultifieldParser
-    from MoinMoin.search.analyzers import item_name_analyzer
-    from whoosh import highlight
     query = search_form['q'].value
-    pagenum = 1 # We start from first page
-    pagelen = search_form['pagelen'].value
-    index_object = WhooshIndex()
-    ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
-    with ix.searcher() as searcher:
-        mparser = MultifieldParser(["name_exact", "name", "content"], schema=ix.schema)
-        q = mparser.parse(query)
-        results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
+    pagenum = 1  # We start from first page
+    pagelen = int(search_form['pagelen'].value)
+    all_revs = bool(request.values.get('search_in_all'))
+    qp = flaskg.storage.query_parser(["name_exact", "name", "content"], all_revs=all_revs)
+    q = qp.parse(query)
+    with flaskg.storage.searcher(all_revs) as searcher:
+        results = searcher.search_page(q, pagenum, pagelen)
         return render_template('search_results.html',
                                results=results,
                                query=query,
                                medium_search_form=search_form,
                                item_name=item_name,
                               )
-
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
