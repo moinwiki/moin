@@ -62,7 +62,7 @@ class Backend(object):
     This class abstracts access to backends. If you want to write a specific
     backend, say a mercurial backend, you have to implement the methods below.
     A backend knows of its items and can perform several item related operations
-    such as search_items, get_item, create_item, etc.
+    such as get_item, create_item, etc.
     """
     #
     # If you need to write a backend it is sufficient
@@ -86,22 +86,6 @@ class Backend(object):
         Close all resources the backend is using.
         """
         pass
-
-    def search_items(self, searchterm):
-        """
-        Takes a MoinMoin search term and returns an iterator (maybe empty) over
-        matching item objects (NOT item names!).
-
-        :type searchterm: MoinMoin search term
-        :param searchterm: The term for which to search.
-        :rtype: iterator of item objects
-        """
-        # Very simple implementation because we have no indexing
-        # or anything like that. If you want to optimize this, override it.
-        for item in self.iteritems():
-            searchterm.prepare()
-            if searchterm.evaluate(item):
-                yield item
 
     def get_item(self, itemname):
         """

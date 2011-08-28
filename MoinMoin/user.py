@@ -108,8 +108,14 @@ def getUserList():
 def get_items_by_filter(key, value):
     """ Searches for an user with a given filter """
     from MoinMoin.storage.terms import ItemMetaDataMatch
-    items = get_user_backend().search_items(ItemMetaDataMatch(key, value))
-    return list(items)
+    backend = get_user_backend()
+    searchterm = ItemMetaDataMatch(key, value)
+    items = []
+    for item in backend.iteritems():
+        searchterm.prepare()
+        if searchterm.evaluate(item):
+            items.append(item)
+    return items
 
 
 def get_by_email_address(email_address):
