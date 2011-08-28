@@ -848,90 +848,60 @@ def global_history():
                            previous_offset=previous_offset,
                           )
 
-@frontend.route('/+wanteds')
-def wanted_items():
-    """ Returns a page with the list of non-existing items, which are wanted items and the
-        items they are linked or transcluded to helps show what items still need
-        to be written and shows whether there are any broken links. """
-    wanteds = _wanteds(flaskg.storage.iteritems())
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    return render_template('wanteds.html',
-                           headline=_(u'Wanted Items'),
-                           item_name=item_name,
-                           wanteds=wanteds)
-
-
-def _wanteds(items):
+def _compute_item_sets(items):
     """
-    Returns a dict with all the names of non-existing items which are refed by
-    other items and the items which are refed by
-
-    :param items: all the items
-    :type items: iteratable sequence
-    :returns: a dict with all the wanted items and the items which are beign refed by
+    compute sets of existing, linked, transcluded and no-revision item names
     """
-    all_items = set()
-    wanteds = {}
+    linked = set()
+    transcluded = set()
+    existing = set()
+    norev = set()
     for item in items:
-        current_item = item.name
-        all_items.add(current_item)
+        name = item.name
+        existing.add(name)
         try:
             current_rev = item.get_revision(-1)
         except NoSuchRevisionError:
-            continue
-        # converting to sets so we can get the union
-        outgoing_links = current_rev.get(ITEMLINKS, [])
-        outgoing_transclusions = current_rev.get(ITEMTRANSCLUSIONS, [])
-        outgoing_refs = set(outgoing_transclusions + outgoing_links)
-        for refed_item in outgoing_refs:
-            if refed_item not in all_items:
-                if refed_item not in wanteds:
-                    wanteds[refed_item] = []
-                wanteds[refed_item].append(current_item)
-        if current_item in wanteds:
-            # if a previously wanted item has been found in the items storage, remove it
-            del wanteds[current_item]
+            norev.add(name)
+        else:
+            linked.update(current_rev.get(ITEMLINKS, []))
+            transcluded.update(current_rev.get(ITEMTRANSCLUSIONS, []))
+    return existing, linked, transcluded, norev
 
-    return wanteds
+
+@frontend.route('/+wanteds')
+def wanted_items():
+    """
+    Returns a list view of non-existing items that are linked to or
+    transcluded by other items. If you want to know by which items they are
+    referred to, use the backrefs functionality of the item in question.
+    """
+    existing, linked, transcluded, norevs = _compute_item_sets(flaskg.storage.iteritems())
+    valid = existing - norevs
+    referred = linked | transcluded
+    wanteds = referred - valid
+    item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    return render_template('item_link_list.html',
+                           headline=_(u'Wanted Items'),
+                           item_name=item_name,
+                           item_names=wanteds)
 
 
 @frontend.route('/+orphans')
 def orphaned_items():
-    """ Return a page with the list of items not being linked or transcluded
-        by any other items, that makes
-        them sometimes not discoverable. """
-    orphan = _orphans(flaskg.storage.iteritems())
+    """
+    Return a list view of existing items not being linked or transcluded
+    by any other item (which makes them sometimes not discoverable).
+    """
+    existing, linked, transcluded, norevs = _compute_item_sets(flaskg.storage.iteritems())
+    valid = existing - norevs
+    referred = linked | transcluded
+    orphans = valid - referred
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('item_link_list.html',
                            item_name=item_name,
                            headline=_(u'Orphaned Items'),
-                           item_names=orphan)
-
-
-def _orphans(items):
-    """
-    Returns a list with the names of all existing items not being refed by any other item
-
-    :param items: the list of all items
-    :type items: iteratable sequence
-    :returns: the list of all orphaned items
-    """
-    linked_items = set()
-    transcluded_items = set()
-    all_items = set()
-    norev_items = set()
-    for item in items:
-        all_items.add(item.name)
-        try:
-            current_rev = item.get_revision(-1)
-        except NoSuchRevisionError:
-            norev_items.add(item.name)
-        else:
-            linked_items.update(current_rev.get(ITEMLINKS, []))
-            transcluded_items.update(current_rev.get(ITEMTRANSCLUSIONS, []))
-    orphans = all_items - linked_items - transcluded_items - norev_items
-    logging.info("_orphans: Ignored %d item(s) that have no revisions" % len(norev_items))
-    return list(orphans)
+                           item_names=orphans)
 
 
 @frontend.route('/+quicklink/<itemname:item_name>')
