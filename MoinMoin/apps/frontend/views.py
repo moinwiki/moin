@@ -848,25 +848,19 @@ def global_history():
                            previous_offset=previous_offset,
                           )
 
-def _compute_item_sets(items):
+def _compute_item_sets():
     """
     compute sets of existing, linked, transcluded and no-revision item names
     """
     linked = set()
     transcluded = set()
     existing = set()
-    norev = set()
-    for item in items:
-        name = item.name
-        existing.add(name)
-        try:
-            current_rev = item.get_revision(-1)
-        except NoSuchRevisionError:
-            norev.add(name)
-        else:
-            linked.update(current_rev.get(ITEMLINKS, []))
-            transcluded.update(current_rev.get(ITEMTRANSCLUSIONS, []))
-    return existing, linked, transcluded, norev
+    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    for doc in docs:
+        existing.add(doc[NAME])
+        linked.update(doc.get(ITEMLINKS, []))
+        transcluded.update(doc.get(ITEMTRANSCLUSIONS, []))
+    return existing, linked, transcluded
 
 
 @frontend.route('/+wanteds')
@@ -876,10 +870,9 @@ def wanted_items():
     transcluded by other items. If you want to know by which items they are
     referred to, use the backrefs functionality of the item in question.
     """
-    existing, linked, transcluded, norevs = _compute_item_sets(flaskg.storage.iteritems())
-    valid = existing - norevs
+    existing, linked, transcluded = _compute_item_sets()
     referred = linked | transcluded
-    wanteds = referred - valid
+    wanteds = referred - existing
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('item_link_list.html',
                            headline=_(u'Wanted Items'),
@@ -893,10 +886,9 @@ def orphaned_items():
     Return a list view of existing items not being linked or transcluded
     by any other item (which makes them sometimes not discoverable).
     """
-    existing, linked, transcluded, norevs = _compute_item_sets(flaskg.storage.iteritems())
-    valid = existing - norevs
+    existing, linked, transcluded = _compute_item_sets()
     referred = linked | transcluded
-    orphans = valid - referred
+    orphans = existing - referred
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('item_link_list.html',
                            item_name=item_name,
