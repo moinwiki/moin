@@ -44,7 +44,7 @@ class Set_Meta(Command):
                   "only a key you want to delete (with -r set).")
 
         if query:
-            qp = storage.query_parser("name_exact", all_revs=False)
+            qp = storage.query_parser(["name_exact", ], all_revs=False)
             q = qp.parse(query)
         else:
             q = Every()
