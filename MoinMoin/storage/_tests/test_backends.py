@@ -23,7 +23,6 @@ from flask import g as flaskg
 from MoinMoin.storage import Item, NewRevision
 from MoinMoin.storage.backends import memory
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError, RevisionAlreadyExistsError
-from MoinMoin.storage import terms
 from MoinMoin.config import SIZE
 
 item_names = (u"quite_normal",
