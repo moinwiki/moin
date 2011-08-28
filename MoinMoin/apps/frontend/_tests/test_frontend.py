@@ -203,17 +203,12 @@ class TestViews(object):
             page = self.DummyItem(item[0], revision)
             self.items.append(page)
 
-    def test_orphans(self):
-        expected_orphans = sorted(['page4'])
-        result_orphans = sorted(views._orphans(self.items))
-
-        assert result_orphans == expected_orphans
-
-    def test_wanteds(self):
-        expected_wanteds = {'page5': ['page3', 'page4']}
-        result_wanteds = views._wanteds(self.items)
-
-        assert result_wanteds == expected_wanteds
+    def test_item_sets(self):
+        existing, linked, transcluded, norevs = views._compute_item_sets(self.items)
+        assert sorted(existing) == sorted(['page1', 'page2', 'page3', 'page4'])
+        assert sorted(linked) == sorted(['page1', 'page2', 'page3', 'page5'])
+        assert sorted(transcluded) == sorted(['page1', 'page2', 'page5'])
+        assert sorted(norevs) == []
 
     def test_backrefs(self):
         expected_backrefs = sorted(['page1', 'page2'])
