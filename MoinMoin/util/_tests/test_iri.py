@@ -7,7 +7,7 @@ MoinMoin - Tests for MoinMoin.util.iri
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.util.iri import *
 

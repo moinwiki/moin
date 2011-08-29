@@ -6,7 +6,7 @@ MoinMoin.datastruct.backends.composite_groups test
 """
 
 
-from py.test import raises
+from pytest import raises
 
 from flask import g as flaskg
 
