@@ -410,19 +410,5 @@ class TestText(object):
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.data == ''
 
-class TestMarkupItem(object):
-    """ Test for the items with markup """
-
-    def test_before_revision_commit(self):
-        item_name = u'Markup_Item'
-        item = MarkupItem.create(item_name)
-        contenttype = u'text/x.moin.wiki;charset=utf-8'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item1 = MarkupItem.create(item_name)
-        MarkupItem.before_revision_commit(item1, item.rev, 'test_data')
-        assert item.rev['itemlinks'] == []
-        assert item.rev['itemtransclusions'] == []
-
 coverage_modules = ['MoinMoin.items']
 
