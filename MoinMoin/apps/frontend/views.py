@@ -156,6 +156,8 @@ def search():
             results = searcher.search(q, limit=100)
             return render_template('search.html',
                                    results=results,
+                                   name_suggestions=u', '.join([word for word, score in results.key_terms('name', docs=20, numterms=10)]),
+                                   content_suggestions=u', '.join([word for word, score in results.key_terms('content', docs=20, numterms=10)]),
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name='+search', # XXX
