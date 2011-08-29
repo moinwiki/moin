@@ -7,7 +7,7 @@ MoinMoin - Tests for MoinMoin.converter.smiley
 
 
 import re
-import py
+import pytest
 
 from MoinMoin.converter.smiley import Converter, moin_page, ET
 
@@ -66,7 +66,7 @@ def ET_to_string(elem, **options):
 
 
 def test_smiley_convert(input, query):
-    etree = py.test.importorskip('lxml.etree')
+    etree = pytest.importorskip('lxml.etree')
     conv = Converter()
     print 'input:', input
     out_elem = conv(ET.XML(input))

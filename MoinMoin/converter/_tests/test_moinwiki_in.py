@@ -6,13 +6,13 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki_in
 """
 
 
-import py.test
+import pytest
 
 import re
 
 from MoinMoin.util.tree import moin_page, xlink
 
-from ..moinwiki_in import Converter
+from MoinMoin.converter.moinwiki_in import Converter
 
 
 class TestConverter(object):
@@ -312,6 +312,6 @@ class TestConverter(object):
 
     def do(self, input, output, args={}, skip=None):
         if skip:
-            py.test.skip(skip)
+            pytest.skip(skip)
         out = self.conv(input, 'text/x.moin.wiki;charset=utf-8', **args)
         assert self.serialize(out) == output
