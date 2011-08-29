@@ -182,8 +182,9 @@ class IndexingItemMixin(object):
         """
         update the index, removing everything related to this item
         """
-        logging.debug("item %r remove index!" % (self.name, ))
-        self._index.remove_item(metas=self)
+        uuid = self[UUID]
+        logging.debug("item %r %r remove index!" % (self.name, uuid))
+        self._index.remove_item(uuid)
 
 
 class IndexingRevisionMixin(object):
@@ -277,13 +278,12 @@ class ItemIndex(object):
         """
         # XXX we do not have an index for item metadata yet!
 
-    def remove_item(self, metas):
+    def remove_item(self, uuid):
         """
         remove all data related to this item and all its revisions from the index
         """
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
-                                                              name_exact=metas[NAME],
+            doc_number = latest_revs_searcher.document_number(uuid=uuid,
                                                               wikiname=self.wikiname
                                                              )
         if doc_number is not None:
@@ -291,8 +291,7 @@ class ItemIndex(object):
                 async_writer.delete_document(doc_number)
 
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            doc_numbers = list(all_revs_searcher.document_numbers(uuid=metas[UUID],
-                                                                  name_exact=metas[NAME],
+            doc_numbers = list(all_revs_searcher.document_numbers(uuid=uuid,
                                                                   wikiname=self.wikiname
                                                                  ))
         if doc_numbers:
@@ -335,6 +334,11 @@ class ItemIndex(object):
                                                                      rev_no=revno,
                                                                      wikiname=self.wikiname
                                                                     )
+        if latest_doc_number is not None:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                logging.debug("Latest revisions: removing %d", latest_doc_number)
+                async_writer.delete_document(latest_doc_number)
+
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
             doc_number = all_revs_searcher.document_number(uuid=uuid,
                                                            rev_no=revno,
@@ -344,10 +348,6 @@ class ItemIndex(object):
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
                 logging.debug("All revisions: removing %d", doc_number)
                 async_writer.delete_document(doc_number)
-        if latest_doc_number is not None:
-            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                logging.debug("Latest revisions: removing %d", latest_doc_number)
-                async_writer.delete_document(latest_doc_number)
 
     def query_parser(self, default_fields, all_revs=False):
         if all_revs:
