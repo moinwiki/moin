@@ -22,6 +22,10 @@
         </div>
     {{ gen.form.close() }}
     {% if results is defined %}
+    <div>
+        <p>{{ _("name term suggestions: %(termlist)s", termlist=name_suggestions) }}</p>
+        <p>{{ _("content term suggestions: %(termlist)s", termlist=content_suggestions) }}</p>
+    </div>
     <div class="searchresults">
         <table>
             {% for result in results %}
