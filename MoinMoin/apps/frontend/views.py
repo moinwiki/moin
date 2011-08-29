@@ -643,7 +643,7 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
-    refs_here = _backrefs(flaskg.storage.iteritems(), item_name)
+    refs_here = _backrefs(item_name)
     return render_template('item_link_list.html',
                            item_name=item_name,
                            headline=_(u'Refers Here'),
@@ -651,12 +651,10 @@ def backrefs(item_name):
                           )
 
 
-def _backrefs(items, item_name):
+def _backrefs(item_name):
     """
     Returns a list with all names of items which ref item_name
 
-    :param items: all the items
-    :type items: iteratable sequence
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
     :returns: the list of all items which ref item_name
