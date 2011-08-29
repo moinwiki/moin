@@ -1,29 +1,27 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 {% block content %}
+    {% if results is defined %}
     <p class="searchstats">
         {% if results %}
-        {{ _("Result: Page %(start_page)d of %(end_page)d.
-              Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs).",
-              start_page=results.pagenum, end_page=results.pagecount,
-              start_result=results.offset + 1, end_result=results.offset + results.pagelen,
-              result_len=results|length, runtime=results.results.runtime
+        {{ _("%(result_len)d results found (%(runtime).3f secs).",
+              result_len=results|length, runtime=results.runtime
             )
         }}
         {% else %}
-        {{ _("No results found (%(runtime).3f secs).", runtime=results.results.runtime) }}
+        {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
         {% endif %}
     </p>
-    {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.show_item', item_name=item_name)) }}
+    {% endif %}
+    {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search')) }}
         <div>
             {{ gen.input(medium_search_form['q'], type='search', id='moin-search-query') }}
             {{ gen.input(medium_search_form['submit'], type='submit') }}
-            {{ gen.input(medium_search_form['pagelen'], type='hidden', value='25') }}
-            {{ forms.render_field_without_markup(gen, medium_search_form['search_in_all'], 'checkbox') }}
+            {{ forms.render_field_without_markup(gen, medium_search_form['history'], 'checkbox') }}
             {{ forms.render_errors(medium_search_form) }}
         </div>
     {{ gen.form.close() }}
-    {% if results %}
+    {% if results is defined %}
     <div class="searchresults">
         <table>
             {% for result in results %}
