@@ -39,6 +39,8 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
+from whoosh.query import Term, And, DateRange
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -48,7 +50,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
-from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS
+from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS, MTIME, TAGS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -143,26 +145,20 @@ class SearchForm(Form):
 
 
 def _search(search_form, item_name):
-    from MoinMoin.search.indexing import WhooshIndex
-    from whoosh.qparser import QueryParser, MultifieldParser
-    from MoinMoin.search.analyzers import item_name_analyzer
-    from whoosh import highlight
     query = search_form['q'].value
-    pagenum = 1 # We start from first page
-    pagelen = search_form['pagelen'].value
-    index_object = WhooshIndex()
-    ix = index_object.all_revisions_index if request.values.get('search_in_all') else index_object.latest_revisions_index
-    with ix.searcher() as searcher:
-        mparser = MultifieldParser(["name_exact", "name", "content"], schema=ix.schema)
-        q = mparser.parse(query)
-        results = searcher.search_page(q, int(pagenum), pagelen=int(pagelen))
+    pagenum = 1  # We start from first page
+    pagelen = int(search_form['pagelen'].value)
+    all_revs = bool(request.values.get('search_in_all'))
+    qp = flaskg.storage.query_parser(["name_exact", "name", "content"], all_revs=all_revs)
+    q = qp.parse(query)
+    with flaskg.storage.searcher(all_revs) as searcher:
+        results = searcher.search_page(q, pagenum, pagelen)
         return render_template('search_results.html',
                                results=results,
                                query=query,
                                medium_search_form=search_form,
                                item_name=item_name,
                               )
-
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
@@ -697,75 +693,88 @@ def _backrefs(items, item_name):
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
-    history = flaskg.storage.history(item_name=item_name)
-
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
-
-    results_per_page = int(app.cfg.results_per_page)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+    query = And([Term("wikiname", app.cfg.interwikiname), Term("name_exact", item_name), ])
+    # TODO: due to how getPageContent and the template works, we need to use limit=None -
+    # it would be better to use search_page (and an appropriate limit, if needed)
+    docs = flaskg.storage.search(query, all_revs=True, sortedby="rev_no", reverse=True, limit=None)
+    # get rid of the content value to save potentially big amounts of memory:
+    history = [dict((k, v) for k, v in doc.iteritems() if k != 'content') for doc in docs]
     history_page = util.getPageContent(history, offset, results_per_page)
-
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
                            history_page=history_page,
                           )
 
+
 @frontend.route('/+history')
 def global_history():
-    history = flaskg.storage.history(item_name='')
-    results_per_page = int(app.cfg.results_per_page)
+    bookmark_time = None
     if flaskg.user.valid:
-        bookmark_time = flaskg.user.getBookmark()
-        results_per_page = flaskg.user.results_per_page # if it is 0, means no paging
+        bm = flaskg.user.getBookmark()
+        if bm is not None:
+            bookmark_time = datetime.utcfromtimestamp(bm)
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
     else:
-        bookmark_time = None
+        results_per_page = app.cfg.results_per_page
+    query = Term("wikiname", app.cfg.interwikiname)
+    if bookmark_time is not None:
+        query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
+    # TODO: we need use limit=None to simulate previous implementation's behaviour -
+    # it would be better to use search_page (and an appropriate limit, if needed)
+    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=None)
     item_groups = OrderedDict()
-    for rev in history:
-        current_item_name = rev.item.name
-        if bookmark_time and rev.timestamp <= bookmark_time:
+    for doc in history:
+        current_item_name = doc[NAME]
+        if bookmark_time and doc[MTIME] <= bookmark_time:
             break
         elif current_item_name in item_groups:
-            latest_rev = item_groups[current_item_name][0]
-            tm_latest = datetime.utcfromtimestamp(latest_rev.timestamp)
-            tm_current = datetime.utcfromtimestamp(rev.timestamp)
+            latest_doc = item_groups[current_item_name][0]
+            tm_latest = latest_doc[MTIME]
+            tm_current = doc[MTIME]
             if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
-                item_groups[current_item_name].append(rev)
+                item_groups[current_item_name].append(doc)
         else:
-            item_groups[current_item_name] = [rev]
+            item_groups[current_item_name] = [doc]
 
     # Got the item dict, now doing grouping inside them
     editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
-    for item_name, revs in item_groups.items():
+    for item_name, docs in item_groups.items():
         item_info = {}
         editors_info = OrderedDict()
         editors = []
         revnos = []
         comments = []
-        current_rev = revs[0]
+        current_doc = docs[0]
         item_info["item_name"] = item_name
-        item_info["timestamp"] = current_rev.timestamp
-        item_info["contenttype"] = current_rev.get(CONTENTTYPE)
-        item_info["action"] = current_rev.get(ACTION)
-        item_info["name"] = current_rev.get(NAME)
+        item_info["name"] = current_doc[NAME]
+        item_info["timestamp"] = current_doc[MTIME]
+        item_info["contenttype"] = current_doc[CONTENTTYPE]
+        item_info["action"] = current_doc[ACTION]
 
         # Aggregating comments, authors and revno
-        for rev in revs:
-            revnos.append(rev.revno)
-            comment = rev.get(COMMENT)
+        for doc in docs:
+            rev_no = doc["rev_no"]
+            revnos.append(rev_no)
+            comment = doc.get(COMMENT)
             if comment:
                 comment = "#%(revno)d %(comment)s" % {
-                          'revno': rev.revno,
+                          'revno': rev_no,
                           'comment': comment
                           }
                 comments.append(comment)
-            editor = get_editor_info(rev)
+            editor = get_editor_info(doc)
             editor_name = editor["name"]
             if editor_name in editors_info:
-                editors_info[editor_name].editor_revnos.append(rev.revno)
+                editors_info[editor_name].editor_revnos.append(rev_no)
             else:
-                editors_info[editor_name] = editor_info(editor, [rev.revno])
+                editors_info[editor_name] = editor_info(editor, [rev_no])
 
         if len(revnos) == 1:
             # there is only one change for this item in the history considered
@@ -797,7 +806,7 @@ def global_history():
     rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
     rev_tuples = rev_tuple(prev_date, [])
     for item_group in item_groups.values():
-        tm = datetime.utcfromtimestamp(item_group["timestamp"])
+        tm = item_group["timestamp"]
         rev_date = format_date(tm)
         if revcount < offset:
             revcount += len(item_group["revnos"])
@@ -853,90 +862,52 @@ def global_history():
                            previous_offset=previous_offset,
                           )
 
+def _compute_item_sets():
+    """
+    compute sets of existing, linked, transcluded and no-revision item names
+    """
+    linked = set()
+    transcluded = set()
+    existing = set()
+    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    for doc in docs:
+        existing.add(doc[NAME])
+        linked.update(doc.get(ITEMLINKS, []))
+        transcluded.update(doc.get(ITEMTRANSCLUSIONS, []))
+    return existing, linked, transcluded
+
+
 @frontend.route('/+wanteds')
 def wanted_items():
-    """ Returns a page with the list of non-existing items, which are wanted items and the
-        items they are linked or transcluded to helps show what items still need
-        to be written and shows whether there are any broken links. """
-    wanteds = _wanteds(flaskg.storage.iteritems())
+    """
+    Returns a list view of non-existing items that are linked to or
+    transcluded by other items. If you want to know by which items they are
+    referred to, use the backrefs functionality of the item in question.
+    """
+    existing, linked, transcluded = _compute_item_sets()
+    referred = linked | transcluded
+    wanteds = referred - existing
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    return render_template('wanteds.html',
+    return render_template('item_link_list.html',
                            headline=_(u'Wanted Items'),
                            item_name=item_name,
-                           wanteds=wanteds)
-
-
-def _wanteds(items):
-    """
-    Returns a dict with all the names of non-existing items which are refed by
-    other items and the items which are refed by
-
-    :param items: all the items
-    :type items: iteratable sequence
-    :returns: a dict with all the wanted items and the items which are beign refed by
-    """
-    all_items = set()
-    wanteds = {}
-    for item in items:
-        current_item = item.name
-        all_items.add(current_item)
-        try:
-            current_rev = item.get_revision(-1)
-        except NoSuchRevisionError:
-            continue
-        # converting to sets so we can get the union
-        outgoing_links = current_rev.get(ITEMLINKS, [])
-        outgoing_transclusions = current_rev.get(ITEMTRANSCLUSIONS, [])
-        outgoing_refs = set(outgoing_transclusions + outgoing_links)
-        for refed_item in outgoing_refs:
-            if refed_item not in all_items:
-                if refed_item not in wanteds:
-                    wanteds[refed_item] = []
-                wanteds[refed_item].append(current_item)
-        if current_item in wanteds:
-            # if a previously wanted item has been found in the items storage, remove it
-            del wanteds[current_item]
-
-    return wanteds
+                           item_names=wanteds)
 
 
 @frontend.route('/+orphans')
 def orphaned_items():
-    """ Return a page with the list of items not being linked or transcluded
-        by any other items, that makes
-        them sometimes not discoverable. """
-    orphan = _orphans(flaskg.storage.iteritems())
+    """
+    Return a list view of existing items not being linked or transcluded
+    by any other item (which makes them sometimes not discoverable).
+    """
+    existing, linked, transcluded = _compute_item_sets()
+    referred = linked | transcluded
+    orphans = existing - referred
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     return render_template('item_link_list.html',
                            item_name=item_name,
                            headline=_(u'Orphaned Items'),
-                           item_names=orphan)
-
-
-def _orphans(items):
-    """
-    Returns a list with the names of all existing items not being refed by any other item
-
-    :param items: the list of all items
-    :type items: iteratable sequence
-    :returns: the list of all orphaned items
-    """
-    linked_items = set()
-    transcluded_items = set()
-    all_items = set()
-    norev_items = set()
-    for item in items:
-        all_items.add(item.name)
-        try:
-            current_rev = item.get_revision(-1)
-        except NoSuchRevisionError:
-            norev_items.add(item.name)
-        else:
-            linked_items.update(current_rev.get(ITEMLINKS, []))
-            transcluded_items.update(current_rev.get(ITEMTRANSCLUSIONS, []))
-    orphans = all_items - linked_items - transcluded_items - norev_items
-    logging.info("_orphans: Ignored %d item(s) that have no revisions" % len(norev_items))
-    return list(orphans)
+                           item_names=orphans)
 
 
 @frontend.route('/+quicklink/<itemname:item_name>')
@@ -1814,13 +1785,18 @@ def global_tags():
     """
     show a list or tag cloud of all tags in this wiki
     """
-    counts_tags_names = flaskg.storage.all_tags()
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    if counts_tags_names:
-        # sort by tag name
-        counts_tags_names = sorted(counts_tags_names, key=lambda e: e[1])
+    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    tags_counts = {}
+    for doc in docs:
+        tags = doc.get(TAGS, [])
+        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
+        for tag in tags:
+            tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
+    tags_counts = sorted(tags_counts.items())
+    if tags_counts:
         # this is a simple linear scaling
-        counts = [e[0] for e in counts_tags_names]
+        counts = [count for tags, count in tags_counts]
         count_min = min(counts)
         count_max = max(counts)
         weight_max = 9.99
@@ -1828,11 +1804,11 @@ def global_tags():
             scale = weight_max / 2
         else:
             scale = weight_max / (count_max - count_min)
-        def cls(count, tag):
+        def cls(count):
             # return the css class for this tag
             weight = scale * (count - count_min)
             return "weight%d" % int(weight)  # weight0, ..., weight9
-        tags = [(cls(count, tag), tag) for count, tag, names in counts_tags_names]
+        tags = [(cls(count), tag) for tag, count in tags_counts]
     else:
         tags = []
     return render_template("global_tags.html",
@@ -1846,10 +1822,11 @@ def tagged_items(tag):
     """
     show all items' names that have tag <tag>
     """
-    item_names = flaskg.storage.tagged_items(tag)
+    query = And([Term("wikiname", app.cfg.interwikiname), Term(TAGS, tag), ])
+    docs = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+    item_names = [doc[NAME] for doc in docs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)
-
 

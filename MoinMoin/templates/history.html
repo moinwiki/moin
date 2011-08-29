@@ -27,27 +27,27 @@
                 <th>{{ _("Comment") }}</th>
                 <th colspan="6">{{ _("Actions") }}</th>
             </tr>
-            {% for rev in history %}
+            {% for doc in history %}
             <tr>
-                <td class="moin-wordbreak">{{ rev.name }}</td>
-                <td class="moin-integer">{{ rev.revno }}</td>
-                <td>{{ rev.timestamp|datetimeformat }}</td>
-                <td class="moin-integer">{{ rev.size }}</td>
+                <td class="moin-wordbreak">{{ doc.name }}</td>
+                <td class="moin-integer">{{ doc.rev_no }}</td>
+                <td>{{ doc.mtime|datetimeformat }}</td>
+                <td class="moin-integer">{{ doc.size }}</td>
                 <td>
                     <div class="moin-hist-rev">
-                        <input type="radio" name="rev1" value="{{ rev.revno }}" />
-                        <input type="radio" name="rev2" value="{{ rev.revno }}" />
+                        <input type="radio" name="rev1" value="{{ doc.rev_no }}" />
+                        <input type="radio" name="rev2" value="{{ doc.rev_no }}" />
                     </div>
                 </td>
-                <td class="moin-wordbreak">{{ utils.editor_info(rev) }}</td>
-                <td class="moin-wordbreak">{{ rev.contenttype }}</td>
-                <td class="moin-wordbreak">{{ rev.comment }}</td>
-                <td><a href="{{ url_for('frontend.show_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('show') }}</a></td>
-                <td><a href="{{ url_for('frontend.show_item_meta', item_name=rev.item.name, rev=rev.revno) }}">{{ _('meta') }}</a></td>
-                <td><a href="{{ url_for('frontend.download_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('download') }}</a></td>
-                <td><a href="{{ url_for('frontend.highlight_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('highlight') }}</a></td>
-                <td><a href="{{ url_for('frontend.revert_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('revert') }}</a></td>
-                <td><a href="{{ url_for('frontend.destroy_item', item_name=rev.item.name, rev=rev.revno) }}">{{ _('destroy') }}</a></td>
+                <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
+                <td class="moin-wordbreak">{{ doc.contenttype }}</td>
+                <td class="moin-wordbreak">{{ doc.comment }}</td>
+                <td><a href="{{ url_for('frontend.show_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('show') }}</a></td>
+                <td><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name, rev=doc.rev_no) }}">{{ _('meta') }}</a></td>
+                <td><a href="{{ url_for('frontend.download_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('download') }}</a></td>
+                <td><a href="{{ url_for('frontend.highlight_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('highlight') }}</a></td>
+                <td><a href="{{ url_for('frontend.revert_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('revert') }}</a></td>
+                <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('destroy') }}</a></td>
             </tr>
             {% endfor %}
         </table>

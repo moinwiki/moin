@@ -25,6 +25,9 @@ from array import array
 
 from flatland import Form, String, Integer, Boolean, Enum
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+
+from whoosh.query import Term, And, Prefix
+
 from MoinMoin.util.forms import FileStorage
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -526,51 +529,22 @@ class Item(object):
         if flaskg.user.valid:
             newrev[USERID] = unicode(flaskg.user.id)
 
-    def search_items(self, term=None):
-        """ search items matching the term or,
-            if term is None, return all items
-        """
-        if term:
-            backend_items = flaskg.storage.search_items(term)
-        else:
-            # special case: we just want all items
-            backend_items = flaskg.storage.iteritems()
-        for item in backend_items:
-            yield Item.create(item=item)
-
-    list_items = search_items  # just for cosmetics
-
-    def count_items(self, term=None):
-        """
-        Return item count for matching items. See search_items() for details.
-        """
-        count = 0
-        # we intentionally use a loop to avoid creating a list with all item objects:
-        for item in self.list_items(term):
-            count += 1
-        return count
-
     def get_index(self):
         """ create an index of sub items of this item """
-        import re
-        from MoinMoin.storage.terms import NameRE
-
         if self.name:
             prefix = self.name + u'/'
+            query = And([Term("wikiname", app.cfg.interwikiname), Prefix("name_exact", prefix)])
         else:
             # trick: an item of empty name can be considered as "virtual root item",
             # that has all wiki items as sub items
             prefix = u''
-        sub_item_re = u"^%s.*" % re.escape(prefix)
-        regex = re.compile(sub_item_re, re.UNICODE)
-
-        item_iterator = self.search_items(NameRE(regex))
-
+            query = Term("wikiname", app.cfg.interwikiname)
+        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        items = [(item.name, item.name[prefix_len:], item.meta.get(CONTENTTYPE))
-                 for item in item_iterator]
-        return sorted(items)
+        items = [(result[NAME], result[NAME][prefix_len:], result[CONTENTTYPE])
+                 for result in results]
+        return items
 
     def flat_index(self, startswith=None, selected_groups=None):
         """
@@ -705,13 +679,12 @@ There is no help, you're doomed!
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        from MoinMoin.storage.terms import AND, LastRevisionMetaDataMatch
-        term = LastRevisionMetaDataMatch(TAGS, ['template']) # XXX there might be other tags
-        if contenttype:
-            term = AND(term, LastRevisionMetaDataMatch(CONTENTTYPE, contenttype))
-        item_iterator = self.search_items(term)
-        items = [item.name for item in item_iterator]
-        return sorted(items)
+        terms = [Term("wikiname", app.cfg.interwikiname), Term(TAGS, u'template')]
+        if contenttype is not None:
+            terms.append(Term(CONTENTTYPE, contenttype))
+        query = And(terms)
+        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+        return [result[NAME] for result in results]
 
     def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support

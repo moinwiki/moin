@@ -31,9 +31,7 @@ class TestStorageEnvironWithoutConfig(object):
         storage = flaskg.storage
         assert storage
         assert hasattr(storage, 'get_item')
-        assert hasattr(storage, 'history')
         assert not list(storage.iteritems())
-        assert not list(storage.history())
         itemname = u"this item shouldn't exist yet"
         assert pytest.raises(NoSuchItemError, storage.get_item, itemname)
         item = storage.create_item(itemname)

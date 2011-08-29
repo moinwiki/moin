@@ -105,19 +105,21 @@ def getUserList():
     return [item.name for item in all_users]
 
 
-def get_by_filter(key, value):
-    """ Searches for an user with a given filter """
-    from MoinMoin.storage.terms import ItemMetaDataMatch
-    items = get_user_backend().search_items(ItemMetaDataMatch(key, value))
-    users = [User(item.name) for item in items]
-    return users
+def get_items_by_filter(key, value):
+    """ Searches for a user with a given filter """
+    backend = get_user_backend()
+    items_found = []
+    for item in backend.iteritems():
+        if item.get(key) == value:
+            items_found.append(item)
+    return items_found
 
 
 def get_by_email_address(email_address):
     """ Searches for an user with a particular e-mail address and returns it. """
-    users = get_by_filter('email', email_address)
-    if len(users) > 0:
-        return users[0]
+    items = get_items_by_filter('email', email_address)
+    if items:
+        return User(items[0].name)
 
 def get_by_openid(openid):
     """
@@ -128,9 +130,9 @@ def get_by_openid(openid):
     :returns: the user whose openid is this one
     :rtype: user object or None
     """
-    users = get_by_filter('openid', openid)
-    if len(users) > 0:
-        return users[0]
+    items = get_items_by_filter('openid', openid)
+    if items:
+        return User(items[0].name)
 
 def getUserId(searchName):
     """ Get the user ID for a specific user NAME.
@@ -139,15 +141,9 @@ def getUserId(searchName):
     :rtype: string
     :returns: the corresponding user ID or None
     """
-    from MoinMoin.storage.terms import ItemMetaDataMatch
-    try:
-        backend = get_user_backend()
-        for user in backend.search_items(ItemMetaDataMatch('name', searchName)):
-            return user.name
-        return None
-    except IndexError:
-        return None
-
+    items = get_items_by_filter('name', searchName)
+    if items:
+        return items[0].name
 
 def get_editor(userid, addr, hostname):
     """ Return a tuple of type id and string or Page object

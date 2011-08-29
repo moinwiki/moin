@@ -366,6 +366,17 @@ def contenttype_to_class(contenttype):
     return 'moin-mime-%s' % cls
 
 
+def utctimestamp(dt):
+    """
+    convert a datetime object (UTC) to a UNIX timestamp (UTC)
+
+    Note: time library writers seem to have a distorted relationship to inverse
+          functions and also to UTC (see time.gmtime, see datetime.utcfromtimestamp).
+    """
+    from calendar import timegm
+    return timegm(dt.timetuple())
+
+
 def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
@@ -387,6 +398,7 @@ def setup_jinja_env():
                             'item_name': 'handlers need to give it',
                             'url_for_item': url_for_item,
                             'get_editor_info': lambda rev: get_editor_info(rev),
+                            'utctimestamp': lambda dt: utctimestamp(dt),
                             'gen': make_generator(),
                             })
 
