@@ -14,7 +14,7 @@ from MoinMoin.config import NAME
 
 # Revisions for tests
 document_revs = [
-                 { "wikiname": u"Test",
+                 {"wikiname": u"Test",
                    "name": u"DocumentOne",
                    "uuid": u"68054804bd7141609b7c441143adf83d",
                    "rev_no": 0,
@@ -28,7 +28,7 @@ document_revs = [
                    "address": u"127.0.0.1",
                    "hostname": u"localhost",
                  },
-                 { "wikiname": u"Test",
+                 {"wikiname": u"Test",
                    "name": u"DocumentOne",
                    "uuid": u"68054804bd7141609b7c441143adf83d",
                    "rev_no": 1,
@@ -53,7 +53,7 @@ class TestIndexing(object):
         self.latest_revs_ix = self.item_index.index_object.latest_revisions_index
 
     def teardown_method(self, method):
-         self.item_index.remove_index()
+        self.item_index.remove_index()
 
     def test_create_item(self):
         """ Try to search for non-existent revision, add it to backend and then search again """
