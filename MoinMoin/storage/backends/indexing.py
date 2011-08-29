@@ -57,43 +57,20 @@ class IndexingBackendMixin(object):
         item.publish_metadata()
         return item
 
-    def history(self, reverse=True, item_name=u'', start=None, end=None):
-        """
-        History implementation using the index.
-        """
-        for result in self._index.history(reverse=reverse, item_name=item_name, start=start, end=end):
-            # we currently create the item, the revision and yield it to stay
-            # compatible with storage api definition, but this could be changed to
-            # just return the data we get from the index (without accessing backend)
-            # TODO: A problem exists at item = self.get_item(name).
-            # In the history_size_after_rename test in test_backends.py,
-            # an item was created with the name "first" and then renamed to "second."
-            # When it runs through this history function and runs item = self.get_item("first"),
-            # it can't find it because it was already renamed to "second."
-            # Some suggested solutions are: using some neverchanging uuid to identify some specific item
-            # or continuing to use the name, but tracking name changes within the item's history.
-            rev_datetime, name, rev_no = result
-            try:
-                logging.debug("HISTORY: name %s revno %s" % (name, rev_no))
-                item = self.get_item(name)
-                yield item.get_revision(rev_no)
-            except AccessDeniedError as e:
-                # just skip items we may not access
-                pass
-            except (NoSuchItemError, NoSuchRevisionError) as e:
-                logging.exception("history processing catched exception")
+    def query_parser(self, default_fields, all_revs=False):
+        return self._index.query_parser(default_fields, all_revs=all_revs)
 
-    def all_tags(self):
-        """
-        Return a unsorted list of tuples (count, tag, tagged_itemnames) for all tags.
-        """
-        return self._index.all_tags()
+    def searcher(self, all_revs=False):
+        return self._index.searcher(all_revs=all_revs)
 
-    def tagged_items(self, tag):
-        """
-        Return a list of item names of items that are tagged with <tag>.
-        """
-        return self._index.tagged_items(tag)
+    def search(self, q, all_revs=False, **kw):
+        return self._index.search(q, all_revs=all_revs, **kw)
+
+    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
+        return self._index.search_page(q, all_revs=all_revs, pagenum=pagenum, pagelen=pagelen, **kw)
+
+    def documents(self, all_revs=False, **kw):
+        return self._index.documents(all_revs=all_revs, **kw)
 
 
 class IndexingItemMixin(object):
@@ -195,6 +172,8 @@ class IndexingRevisionMixin(object):
     # TODO by intercepting write() to index data written to a revision
 
 from whoosh.writing import AsyncWriter
+from whoosh.qparser import QueryParser, MultifieldParser
+
 from MoinMoin.search.indexing import WhooshIndex
 
 class ItemIndex(object):
@@ -294,35 +273,57 @@ class ItemIndex(object):
                 logging.debug("Latest revisions: removing %d", latest_doc_number)
                 async_writer.delete_document(latest_doc_number)
 
-    def history(self, mountpoint=u'', item_name=u'', reverse=True, start=None, end=None):
-        if mountpoint:
-            mountpoint += '/'
-        with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            if item_name:
-                docs = all_revs_searcher.documents(name_exact=item_name,
-                                                   wikiname=self.wikiname
-                                                  )
-            else:
-                docs = all_revs_searcher.documents(wikiname=self.wikiname)
-            from operator import itemgetter
-            # sort by mtime and rev_no do deal better with mtime granularity for fast item rev updates
-            for doc in sorted(docs, key=itemgetter("mtime", "rev_no"), reverse=reverse)[start:end]:
-                yield (doc[MTIME], mountpoint + doc[NAME], doc["rev_no"])
+    def query_parser(self, default_fields, all_revs=False):
+        if all_revs:
+            schema = self.index_object.all_revisions_schema
+        else:
+            schema = self.index_object.latest_revisions_schema
+        if len(default_fields) > 1:
+            qp = MultifieldParser(default_fields, schema=schema)
+        elif len(default_fields) == 1:
+            qp = QueryParser(default_fields[0], schema=schema)
+        else:
+            raise ValueError("default_fields list must at least contain one field name")
+        return qp
 
-    def all_tags(self):
-        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            docs = latest_revs_searcher.documents(wikiname=self.wikiname)
-            tags_names = {}
-            for doc in docs:
-                tags = doc.get(TAGS, [])
-                logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
-                for tag in tags:
-                    tags_names.setdefault(tag, []).append(doc[NAME])
-            counts_tags_names = [(len(names), tag, names) for tag, names in tags_names.items()]
-            return counts_tags_names
+    def searcher(self, all_revs=False):
+        """
+        Get a searcher for the right index. Always use this with "with":
 
-    def tagged_items(self, tag):
-        with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            docs = latest_revs_searcher.documents(tags=tag, wikiname=self.wikiname)
-            return [doc[NAME] for doc in docs]
+        with storage.searcher(all_revs) as searcher:
+            # your code
+
+        If you do not need the searcher itself or the Result object, but rather
+        the found documents, better use search() or search_page(), see below.
+        """
+        if all_revs:
+            ix = self.index_object.all_revisions_index
+        else:
+            ix = self.index_object.latest_revisions_index
+        return ix.searcher()
+
+    def search(self, q, all_revs=False, **kw):
+        with self.searcher(all_revs) as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search(q, **kw):
+                yield hit.fields()
+
+    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
+        with self.searcher(all_revs) as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
+                yield hit.fields()
+
+    def documents(self, all_revs=False, **kw):
+        if all_revs:
+            ix = self.index_object.all_revisions_index
+        else:
+            ix = self.index_object.latest_revisions_index
+        with ix.searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for doc in searcher.documents(**kw):
+                yield doc
 

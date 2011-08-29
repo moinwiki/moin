@@ -17,13 +17,15 @@ from flask import g as flaskg
 
 from werkzeug.contrib.atom import AtomFeed
 
+from whoosh.query import Term, And
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
-from MoinMoin.config import NAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT
+from MoinMoin.config import NAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
@@ -43,11 +45,15 @@ def atom(item_name):
     if content is None:
         title = app.cfg.sitename
         feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
-        for rev in flaskg.storage.history(item_name=item_name):
-            this_rev = rev
-            this_revno = rev.revno
-            item = rev.item
-            name = rev[NAME]
+        query = Term("wikiname", app.cfg.interwikiname)
+        if item_name:
+            query = And([query, Term("name_exact", item_name), ])
+        history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=100)
+        for doc in history:
+            name = doc[NAME]
+            this_revno = doc["rev_no"]
+            item = flaskg.storage.get_item(name)
+            this_rev = item.get_revision(this_revno)
             try:
                 hl_item = Item.create(name, rev_no=this_revno)
                 previous_revno = this_revno - 1
@@ -65,11 +71,11 @@ def atom(item_name):
                 content = _(u'MoinMoin feels unhappy.')
                 content_type = 'text'
             feed.add(title=name, title_type='text',
-                     summary=rev.get(COMMENT, ''), summary_type='text',
+                     summary=doc.get(COMMENT, ''), summary_type='text',
                      content=content, content_type=content_type,
-                     author=get_editor_info(rev, external=True),
+                     author=get_editor_info(doc, external=True),
                      url=url_for_item(name, rev=this_revno, _external=True),
-                     updated=datetime.utcfromtimestamp(rev.timestamp),
+                     updated=doc[MTIME],
                     )
         content = feed.to_string()
         app.cache.set(cid, content)

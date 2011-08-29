@@ -62,7 +62,7 @@ class Backend(object):
     This class abstracts access to backends. If you want to write a specific
     backend, say a mercurial backend, you have to implement the methods below.
     A backend knows of its items and can perform several item related operations
-    such as search_items, get_item, create_item, etc.
+    such as get_item, create_item, etc.
     """
     #
     # If you need to write a backend it is sufficient
@@ -86,22 +86,6 @@ class Backend(object):
         Close all resources the backend is using.
         """
         pass
-
-    def search_items(self, searchterm):
-        """
-        Takes a MoinMoin search term and returns an iterator (maybe empty) over
-        matching item objects (NOT item names!).
-
-        :type searchterm: MoinMoin search term
-        :param searchterm: The term for which to search.
-        :rtype: iterator of item objects
-        """
-        # Very simple implementation because we have no indexing
-        # or anything like that. If you want to optimize this, override it.
-        for item in self.iteritems():
-            searchterm.prepare()
-            if searchterm.evaluate(item):
-                yield item
 
     def get_item(self, itemname):
         """
@@ -287,8 +271,6 @@ class Backend(object):
         a wiki item, as such a deletion does not really delete anything from disk but
         just hides the former existence of the item. Such a deletion is undoable, while
         having destroyed an item is not.
-        This also destroys all history related to the item. In particular, this also
-        deletes all the item's revisions and they won't turn up in history any longer.
 
         In case the item has already been destroyed by someone else (e.g. another process)
         this method should just pass silently as the job is already done.
@@ -759,7 +741,6 @@ class Revision(object, DictMixin):
     that defaults to None for newly created revisions in which case it will be
     assigned at commit() time. It is writable for use by converter backends, but
     care must be taken in that case to create monotone timestamps!
-    This timestamp is also retrieved via the backend's history() method.
     """
     def __init__(self, item, revno):
         """

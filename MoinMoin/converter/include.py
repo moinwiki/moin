@@ -1,5 +1,5 @@
 # Copyright: 2008 MoinMoin:BastianBlank
-# Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2010-2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -17,8 +17,12 @@ import re
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from flask import current_app as app
 from flask import g as flaskg
 
+from whoosh.query import Term, And, Wildcard
+
+from MoinMoin.config import NAME
 from MoinMoin import wikiutil
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
@@ -154,7 +158,7 @@ class Converter(object):
 
                     if xp_include:
                         for entry in xp_include:
-                            name, data = entry.name, entry.data
+                            name, data = entry.name, entry.data_unescape
                             if name == 'pages':
                                 xp_include_pages = data
                             elif name == 'sort':
@@ -197,13 +201,16 @@ class Converter(object):
                     pages = ((page, link), )
 
                 elif xp_include_pages:
-                    # We have a regex of pages to include
-                    from MoinMoin.storage.terms import NameFn
-                    inc_match = re.compile(xp_include_pages)
-                    root_item = Item(name=u'')
-                    pagelist = sorted([item.name for item in root_item.list_items(NameFn(inc_match))])
-                    if xp_include_sort == 'descending':
-                        pagelist.reverse()
+                    # XXX we currently interpret xp_include_pages as wildcard, but it should be regex
+                    # for compatibility with moin 1.9. whoosh has upcoming regex support, but it is not
+                    # released yet.
+                    if xp_include_pages.startswith('^'):
+                        # get rid of the leading ^ the Include macro needed to get into "regex mode"
+                        xp_include_pages = xp_include_pages[1:]
+                    query = And([Term("wikiname", app.cfg.interwikiname), Wildcard("name_exact", xp_include_pages)])
+                    reverse = xp_include_sort == 'descending'
+                    results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", reverse=reverse, limit=None)
+                    pagelist = [result[NAME] for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]
                     if xp_include_items is not None:
