@@ -19,11 +19,10 @@
 <div id="moin-header">
 {% block header %}
     {% if search_form %} 
-    {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.show_item', item_name=item_name)) }}
+    {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
         <div>
             {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='30') }}
             {{ gen.input(search_form['submit'], type='submit') }}
-            {{ gen.input(search_form['pagelen'], type='hidden', value='25') }}
             {{ forms.render_errors(search_form) }}
         </div>
     {{ gen.form.close() }}
