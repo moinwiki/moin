@@ -154,14 +154,14 @@ def search():
         q = qp.parse(query)
         with flaskg.storage.searcher(all_revs=history) as searcher:
             results = searcher.search(q, limit=100)
-            return render_template('search_results.html',
+            return render_template('search.html',
                                    results=results,
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name='+search', # XXX
                                   )
     else:
-        return render_template('search_results.html',
+        return render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
                                item_name='+search', # XXX
