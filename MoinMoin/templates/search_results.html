@@ -1,16 +1,19 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 {% block content %}
-    {% if results %}
     <p class="searchstats">
+        {% if results %}
         {{ _("Result: Page %(start_page)d of %(end_page)d.
-              Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs)",
+              Showing results %(start_result)d - %(end_result)d of %(result_len)d (%(runtime).3f secs).",
               start_page=results.pagenum, end_page=results.pagecount,
               start_result=results.offset + 1, end_result=results.offset + results.pagelen,
               result_len=results|length, runtime=results.results.runtime
             )
         }}
-    {% endif %}
+        {% else %}
+        {{ _("No results found (%(runtime).3f secs).", runtime=results.results.runtime) }}
+        {% endif %}
+    </p>
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.show_item', item_name=item_name)) }}
         <div>
             {{ gen.input(medium_search_form['q'], type='search', id='moin-search-query') }}
@@ -20,9 +23,8 @@
             {{ forms.render_errors(medium_search_form) }}
         </div>
     {{ gen.form.close() }}
-    </p>
-        {% if results %}
-        <div class="searchresults">
+    {% if results %}
+    <div class="searchresults">
         <table>
             {% for result in results %}
                 {% if result['wikiname'] == cfg.interwikiname %}
@@ -54,8 +56,6 @@
                 {% endif %}
             {% endfor %}
         </table>
-        </div>
-    {% else %}
-        <h1>{{ _("No results for '%(query)s'", query=query) }}</h1>
+    </div>
     {% endif %}
 {% endblock %}
