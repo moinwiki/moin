@@ -662,18 +662,12 @@ def _backrefs(items, item_name):
     :returns: the list of all items which ref item_name
     """
     refs_here = []
-    for item in items:
-        current_item = item.name
-        try:
-            current_revision = item.get_revision(-1)
-        except NoSuchRevisionError:
-            continue
-        links = current_revision.get(ITEMLINKS, [])
-        transclusions = current_revision.get(ITEMTRANSCLUSIONS, [])
-
-        refs = set(links + transclusions)
-        if item_name in refs:
-            refs_here.append(current_item)
+    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    for doc in docs:
+        if (item_name in doc.get(ITEMLINKS, [])
+            or
+            item_name in doc.get(ITEMTRANSCLUSIONS, [])):
+            refs_here.append(doc[NAME])
     return refs_here
 
 
