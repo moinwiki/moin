@@ -60,8 +60,16 @@ class IndexOperations(Command):
             Building in app.cfg.index_dir_tmp
             """
             indexnames = [indexname for indexname, schema in indexnames_schemas]
-            with MultiSegmentWriter(all_rev_index, procs, limitmb) as all_rev_writer:
-                with MultiSegmentWriter(latest_rev_index, procs, limitmb) as latest_rev_writer:
+            if procs == 1:
+                # MultiSegmentWriter sometimes has issues and is pointless for procs == 1,
+                # so use the simple writer when --procs 1 is given:
+                _all_rev_writer = all_rev_index.writer()
+                _latest_rev_writer = latest_rev_index.writer()
+            else:
+                _all_rev_writer = MultiSegmentWriter(all_rev_index, procs, limitmb)
+                _latest_rev_writer = MultiSegmentWriter(latest_rev_index, procs, limitmb)
+            with _all_rev_writer as all_rev_writer:
+                with _latest_rev_writer as latest_rev_writer:
                     for item in backend.iter_items_noindex():
                         try:
                             rev_no = None
