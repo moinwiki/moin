@@ -90,12 +90,12 @@ class WhooshIndex(object):
                                            **common_fields)
 
         # Define dynamic fields
-        dynamic_fields = [("*_id", ID),
-                          ("*_text", TEXT),
-                          ("*_keyword", KEYWORD),
-                          ("*_numeric", NUMERIC),
-                          ("*_datetime", DATETIME),
-                          ("*_boolean", BOOLEAN)
+        dynamic_fields = [("*_id", ID(stored=True)),
+                          ("*_text", TEXT(stored=True)),
+                          ("*_keyword", KEYWORD(stored=True)),
+                          ("*_numeric", NUMERIC(stored=True)),
+                          ("*_datetime", DATETIME(stored=True)),
+                          ("*_boolean", BOOLEAN(stored=True)),
                          ]
 
         # Adding dynamic fields to schemas
