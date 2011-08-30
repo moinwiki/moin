@@ -20,10 +20,10 @@ class MimeTokenizer(Tokenizer):
         Tokenizer behaviour:
 
         Input: u"text/x.moin.wiki;charset=utf-8"
-        Output: u"text", u"x.moin.wiki", u"charset=utf-8"
+        Output: u"text/x.moin.wiki;charset=utf-8", u"text", u"x.moin.wiki", u"charset=utf-8"
 
         Input: u"application/pdf"
-        Output: u"application", u"pdf"
+        Output: u"application/pdf", u"application", u"pdf"
 
         :param value: String for tokenization
         :param start_pos: The position number of the first token. For example,
