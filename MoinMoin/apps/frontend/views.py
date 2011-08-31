@@ -39,7 +39,7 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
-from whoosh.query import Term, And, DateRange
+from whoosh.query import Term, And, Or, DateRange
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
