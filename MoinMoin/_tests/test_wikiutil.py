@@ -260,8 +260,8 @@ def testfile_headers():
         assert result == expected
 
     # filename is none and content type has a value
-    result = wikiutil.file_headers(None, 'plane/text')
-    expected = [('Content-Type', 'plane/text')]
+    result = wikiutil.file_headers(None, 'text/plain')
+    expected = [('Content-Type', 'text/plain')]
     assert result == expected
 
 coverage_modules = ['MoinMoin.wikiutil']

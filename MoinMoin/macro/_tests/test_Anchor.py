@@ -13,7 +13,7 @@ def test_Macro():
     with pytest.raises(ValueError):
         macro_obj.macro('content', None, 'page_url', 'alternative')
 
-    arguments = [('test_argument1', 'test_argument2'), 'test_argumnt3']
+    arguments = [('test_argument1', 'test_argument2'), 'test_argument3']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
     test_anchor = result.attrib.values()
     # test_anchor[0] since it returns a list

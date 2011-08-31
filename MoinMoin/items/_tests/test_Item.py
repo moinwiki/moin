@@ -5,7 +5,7 @@
     MoinMoin - MoinMoin.items Tests
 """
 
-# TODO: spilt the tests into multiple ones after the item.__init__ is split.
+# TODO: split the tests into multiple files after the items/__init__.py is split.
 
 import pytest
 
@@ -314,7 +314,7 @@ class TestTransformableBitmapImage(object):
         try:
             from PIL import Image as PILImage
             with pytest.raises(ValueError):
-                result = TransformableBitmapImage._transform(item, 'plane/text')
+                result = TransformableBitmapImage._transform(item, 'text/plain')
         except ImportError:
             result = TransformableBitmapImage._transform(item, contenttype)
             assert result == (u'image/jpeg', '')
@@ -358,7 +358,7 @@ class TestText(object):
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
-        item = Text.create(item_name, u'text/plane')
+        item = Text.create(item_name, u'text/plain')
         test_text = u'This \n is \n a \n Test'
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item, test_text)
@@ -382,7 +382,7 @@ class TestText(object):
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
         item = Text.create(item_name)
-        contenttype = u'text/plane'
+        contenttype = u'text/plain'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Text.create(item_name)
@@ -398,7 +398,7 @@ class TestText(object):
     def test__render_data_highlight(self):
         item_name = u'Text_Item'
         item = Text.create(item_name)
-        contenttype = u'text/plane'
+        contenttype = u'text/plain'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Text.create(item_name)
