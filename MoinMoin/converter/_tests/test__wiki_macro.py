@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.converter._wiki_macro
 """
 
 
-import py.test
+import pytest
 import re
 
 from MoinMoin.converter._args import Arguments

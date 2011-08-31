@@ -95,17 +95,6 @@ class AclWrapperBackend(object):
         # up on the real backend.
         return getattr(self.backend, attr)
 
-    def search_items(self, searchterm):
-        """
-        @see: Backend.search_items.__doc__
-        """
-        for item in self.backend.search_items(searchterm):
-            if self._may(item.name, READ):
-                # The item returned needs to be wrapped because otherwise the
-                # item's methods (like create_revision) wouldn't be wrapped.
-                wrapped_item = AclWrapperItem(item, self)
-                yield wrapped_item
-
     def get_item(self, itemname):
         """
         @see: Backend.get_item.__doc__

@@ -22,6 +22,7 @@ Using MoinMoin
 
    user/searching
    user/markups
+   user/search
 
 Administrating MoinMoin
 =======================

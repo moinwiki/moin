@@ -12,6 +12,8 @@ from werkzeug import ImmutableMultiDict
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
+from MoinMoin._tests import wikiconfig
+import pytest
 
 class TestFrontend(object):
     def test_root(self):
@@ -44,6 +46,22 @@ class TestFrontend(object):
     def test_global_index(self):
         with self.app.test_client() as c:
             rv = c.get('/+index/')
+            assert rv.status == '200 OK'
+            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
+            assert '<html>' in rv.data
+            assert '</html>' in rv.data
+
+    def test_wanteds(self):
+        with self.app.test_client() as c:
+            rv = c.get('/+wanteds')
+            assert rv.status == '200 OK'
+            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
+            assert '<html>' in rv.data
+            assert '</html>' in rv.data
+
+    def test_orphans(self):
+        with self.app.test_client() as c:
+            rv = c.get('/+orphans')
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
             assert '<html>' in rv.data
@@ -146,7 +164,7 @@ class TestUsersettings(object):
         # Validate that we are not modifying existing user data file!
         if self.user.exists():
             self.user = None
-            py.test.skip("Test user exists, will not override existing user data file!")
+            pytest.skip("Test user exists, will not override existing user data file!")
 
         # Save test user
         self.user.save()
@@ -154,68 +172,4 @@ class TestUsersettings(object):
         # Validate user creation
         if not self.user.exists():
             self.user = None
-            py.test.skip("Can't create test user")
-
-
-class TestViews(object):
-    """
-    Tester class for +backrefs, +orphans and +wanted views
-    """
-    class DummyItem(object):
-        """
-        Fake storage object, simulating the page item object from the storage
-        """
-        def __init__(self, name, revision):
-            self.latest_revision = revision
-            self.name = name
-
-        def get_revision(self, *args, **kw):
-            return self.latest_revision
-
-    class DummyRevision(object):
-        """
-        Fake revision object, used for retrieving ITEMTRANSCLUSIONS and ITEMLINKS meta
-        """
-        def __init__(self, links, transclusions):
-            self.links = links
-            self.transclusions = transclusions
-
-        def get(self, meta_name, *args, **kw):
-            if meta_name == 'itemlinks':
-                return self.links
-            if meta_name == 'itemtransclusions':
-                return self.transclusions
-
-    def setup_class(self):
-        # list of tuples
-        # (page_name, links, transclusions)
-        items = [('page1', ['page2', 'page3'], ['page2']),
-                 ('page2',  ['page1', 'page3'], []),
-                 ('page3', ['page5'], ['page1']),
-                 ('page4', [], ['page5'])
-                ]
-        # we create the list of items
-        self.items = []
-        for item in items:
-            revision = self.DummyRevision(item[1], item[2])
-            page = self.DummyItem(item[0], revision)
-            self.items.append(page)
-
-    def test_orphans(self):
-        expected_orphans = sorted(['page4'])
-        result_orphans = sorted(views._orphans(self.items))
-
-        assert result_orphans == expected_orphans
-
-    def test_wanteds(self):
-        expected_wanteds = {'page5': ['page3', 'page4']}
-        result_wanteds = views._wanteds(self.items)
-
-        assert result_wanteds == expected_wanteds
-
-    def test_backrefs(self):
-        expected_backrefs = sorted(['page1', 'page2'])
-        result_backrefs = sorted(views._backrefs(self.items, 'page3'))
-
-        assert result_backrefs == expected_backrefs
-
+            pytest.skip("Can't create test user")

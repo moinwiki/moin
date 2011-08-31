@@ -12,11 +12,11 @@ MoinMoin - Tests for MoinMoin.converter.html_in and
 import StringIO
 import re
 
-import py.test
+import pytest
 try:
     from lxml import etree
 except:
-    py.test.skip("lxml module required to run test for html_in_out converter.")
+    pytest.skip("lxml module required to run test for html_in_out converter.")
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

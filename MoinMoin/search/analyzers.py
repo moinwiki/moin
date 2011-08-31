@@ -20,10 +20,10 @@ class MimeTokenizer(Tokenizer):
         Tokenizer behaviour:
 
         Input: u"text/x.moin.wiki;charset=utf-8"
-        Output: u"text", u"x.moin.wiki", u"charset=utf-8"
+        Output: u"text/x.moin.wiki;charset=utf-8", u"text", u"x.moin.wiki", u"charset=utf-8"
 
         Input: u"application/pdf"
-        Output: u"application", u"pdf"
+        Output: u"application/pdf", u"application", u"pdf"
 
         :param value: String for tokenization
         :param start_pos: The position number of the first token. For example,
@@ -37,6 +37,16 @@ class MimeTokenizer(Tokenizer):
         pos = start_pos
         tk = Token()
         tp = Type(value)
+        # we need to yield the complete contenttype in one piece,
+        # so we can find it with Term(CONTENTTYPE, contenttype):
+        if tp.type is not None and tp.subtype is not None:
+            # note: we do not use "value" directly, so Type.__unicode__ can normalize it:
+            tk.text = unicode(tp)
+            if positions:
+                tk.pos = pos
+                pos += 1
+            yield tk
+        # now yield the pieces:
         tk.text = tp.type
         if positions:
             tk.pos = pos

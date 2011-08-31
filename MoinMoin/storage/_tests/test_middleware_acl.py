@@ -8,7 +8,7 @@
 """
 
 
-import py
+import pytest
 
 from flask import g as flaskg
 
@@ -46,7 +46,7 @@ class TestACLMiddleware(BackendTest):
     def test_noaccess(self):
         name = u"noaccess"
         self.create_item_acl(name, u"All:")
-        assert py.test.raises(AccessDeniedError, self.get_item, name)
+        assert pytest.raises(AccessDeniedError, self.get_item, name)
 
     def test_create_item(self):
         class Config(wikiconfig.Config):
@@ -54,7 +54,7 @@ class TestACLMiddleware(BackendTest):
             content_acl = dict(default=u"All:admin,read,write,destroy")
 
         backend = flaskg.storage
-        assert py.test.raises(AccessDeniedError, backend.create_item, u"I will never exist")
+        assert pytest.raises(AccessDeniedError, backend.create_item, u"I will never exist")
 
         item = self.create_item_acl(u"i will exist!", u"All:read,write")
         rev = item.create_revision(1)
@@ -70,13 +70,13 @@ class TestACLMiddleware(BackendTest):
         item = self.get_item(name)
 
         # Should not...
-        assert py.test.raises(AccessDeniedError, item.create_revision, 1)
-        assert py.test.raises(AccessDeniedError, item.change_metadata)
+        assert pytest.raises(AccessDeniedError, item.create_revision, 1)
+        assert pytest.raises(AccessDeniedError, item.change_metadata)
 
     def test_write_after_create(self):
         name = u"writeaftercreate"
         item = self.create_item_acl(name, u"All:")
-        assert py.test.raises(AccessDeniedError, item.create_revision, 1)
+        assert pytest.raises(AccessDeniedError, item.create_revision, 1)
 
     def test_modify_without_acl_change(self):
         name = u"copy_without_acl_change"
@@ -95,7 +95,7 @@ class TestACLMiddleware(BackendTest):
         item = self.get_item(name)
         rev = item.create_revision(1)
         # without admin rights it is disallowed to change ACL
-        py.test.raises(AccessDeniedError, rev.__setitem__, ACL, acl + u",destroy")
+        pytest.raises(AccessDeniedError, rev.__setitem__, ACL, acl + u",destroy")
 
     def test_write_without_read(self):
         name = u"write_but_not_read"
@@ -106,6 +106,6 @@ class TestACLMiddleware(BackendTest):
         rev.write("My name is " + name)
         item.commit()
 
-        py.test.raises(AccessDeniedError, item.get_revision, -1)
-        py.test.raises(AccessDeniedError, item.get_revision, 0)
+        pytest.raises(AccessDeniedError, item.get_revision, -1)
+        pytest.raises(AccessDeniedError, item.get_revision, 0)
 

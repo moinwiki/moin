@@ -10,7 +10,7 @@ MoinMoin - MoinMoin.backends.wiki_group tests
 """
 
 
-import py
+import pytest
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -46,13 +46,13 @@ class TestWikiGroupBackend(GroupsBackendTest):
         result = u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         assert result
 
-        py.test.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
+        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
 
     def test_copy_group_item(self):
         """
         Tests copying a group item.
         """
-        py.test.skip("item.copy() is not finished")
+        pytest.skip("item.copy() is not finished")
 
         become_trusted()
         item = update_item(u'SomeGroup', 0,  {USERGROUP: ["ExampleUser"]}, DATA)

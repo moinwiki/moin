@@ -6,7 +6,7 @@ MoinMoin - Tests for MoinMoin.util.tree
 """
 
 
-import py.test
+import pytest
 
 from MoinMoin.util.tree import *
 

@@ -73,6 +73,18 @@ use::
 That way, you can have all sorts of Pythons in different virtualenv directories
 within your moin2 workdir.
 
+Loading some items
+------------------
+In case you do not want to have a completely empty wiki, you may want to load
+some items into it. We provide some in `contrib/xml` directory and you can load
+them like this::
+
+ # enter your virtual environment:
+ source env/bin/activate
+
+ # load some example items:
+ moin maint_xml --load --file=contrib/xml/preloaded_items.xml
+
 Installing PIL
 ~~~~~~~~~~~~~~
 For some image processing functions (like resizing, rotating) of moin, you
