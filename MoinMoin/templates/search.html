@@ -1,0 +1,63 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    {% if results is defined %}
+    <p class="searchstats">
+        {% if results %}
+        {{ _("%(result_len)d results found (%(runtime).3f secs).",
+              result_len=results|length, runtime=results.runtime
+            )
+        }}
+        {% else %}
+        {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
+        {% endif %}
+    </p>
+    {% endif %}
+    {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search')) }}
+        <div>
+            {{ gen.input(medium_search_form['q'], type='search', id='moin-search-query') }}
+            {{ gen.input(medium_search_form['submit'], type='submit') }}
+            {{ forms.render_field_without_markup(gen, medium_search_form['history'], 'checkbox') }}
+            {{ forms.render_errors(medium_search_form) }}
+        </div>
+    {{ gen.form.close() }}
+    {% if results is defined %}
+    <div>
+        <p>{{ _("name term suggestions: %(termlist)s", termlist=name_suggestions) }}</p>
+        <p>{{ _("content term suggestions: %(termlist)s", termlist=content_suggestions) }}</p>
+    </div>
+    <div class="searchresults">
+        <table>
+            {% for result in results %}
+                {% if result['wikiname'] == cfg.interwikiname %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['rev_no']) }}"><b>{{ result['name'] }}</b></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="info searchhitinfobar">{{ _("Revision: %(rev_no)d Last Change: %(mtime)s", rev_no=result['rev_no'], mtime=result['mtime']|datetimeformat) }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if user.may.read(result['name']) %}
+                                <p class="info foundtext">{{ result.highlights('content')|safe }}</p>
+                            {% else %}
+                                <p class="info foundtext">{{ _("You don't have read permission for this item.") }}</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['rev_no']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+{% endblock %}

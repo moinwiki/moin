@@ -1,0 +1,82 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block head %}
+{{ super() }}
+<link rel="alternate" title="Global changes" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
+{% endblock %}
+
+{% block content %}
+<div class='moin-offset-links'>
+    {% if previous_offset >= 0 %}
+        <a href="{{ url_for('frontend.global_history', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+    {% endif %}
+    {% if offset %}
+        <a href="{{ url_for('frontend.global_history', offset=offset) }}" title="{{ _("Next") }}">&raquo;</a>
+    {% endif %}
+</div>
+<h1>{{ _("Global History") }}</h1>
+<div class='moin-clr'></div>
+    <div id="moin-global-history">
+        {% for rev_date, revs in history %}
+           {% set  latest_rev = revs[0] %}
+           {% set  latest_timestamp = latest_rev.timestamp %}
+            <div class="moin-history-container"> 
+                <div class="moin-history-container-header">
+                    <span>
+                        <h2>{{ rev_date }}</h2>
+                        {% if user.valid %}
+                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=utctimestamp(latest_timestamp)) }}">{{ _("Set bookmark") }}</a>
+                        {% endif %}
+                   </span>
+                </div>
+                <div class="moin-history-container-body">
+                    <table>
+                    {% for rev in revs %}
+                        <tr>
+                            {% set item_latest_revno = rev.revnos[0] %}
+                            <td class="moin-action" title="{{ _("DIFF") }}">                                
+                                <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=item_latest_revno, rev2=0) }}" class="moin-history-{{ rev.action|lower }}"></a>
+                            </td>
+                            <td class="moin-history-item"><a class="{{ rev.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.item_name) }}" title="{{ rev.contenttype }}">{{ rev.item_name }}</a></td>
+                            <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
+                            <td class="moin-history-links">
+                                {% for revno in rev.revnos %}
+                                    {% if revno %}
+                                        <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=revno, rev2=revno-1) }}">[{{ revno }}]</a>
+                                    {% else %}
+                                        <span>[0]</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="moin-wordbreak moin-history-editorinfo">
+                                {% for info, position in rev.editors %}
+                                    <span class="moin-history-editortext">
+                                    {{ utils.show_editor_info(info) }}
+                                    {{ position }}
+                                    </span>
+                                {% endfor %}
+                            </td>
+                            <td class="moin-wordbreak moin-history-comment">
+                               {% for comment in rev.comments %}
+                                   <span>{{ comment }}</span>
+                               {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+        {% if user.valid and bookmark_time %}
+        <div class="moin-history-container"> 
+            <div class="moin-history-container-header">
+                <span>
+                    <h2>{{ bookmark_time|datetimeformat }}</h2>
+                    <a href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+               </span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
