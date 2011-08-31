@@ -21,7 +21,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.config import SIZE
+from MoinMoin.config import NAME, SIZE
 from MoinMoin.config import SUPERUSER
 from MoinMoin.security import require_permission
 
@@ -229,15 +229,8 @@ def itemsize():
     headings = [_('Size'),
                 _('Item name'),
                ]
-    rows = []
-    for item in flaskg.storage.iteritems():
-        try:
-            rev = item.get_revision(-1)
-        except NoSuchRevisionError:
-            # XXX we currently also get user items, they have no revisions -
-            # but in the end, they should not be readable by the user anyways
-            continue
-        rows.append((rev[SIZE], item.name))
+    rows = [(doc[SIZE], doc[NAME])
+            for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('admin/itemsize.html',
                            item_name="+admin/itemsize",

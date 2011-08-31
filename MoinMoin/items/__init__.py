@@ -505,29 +505,9 @@ class Item(object):
             newrev[CONTENTTYPE] = unicode(contenttype_current or contenttype_guessed or 'application/octet-stream')
 
         newrev[ACTION] = unicode(action)
-        self.before_revision_commit(newrev, data)
         storage_item.commit()
         item_modified.send(app._get_current_object(), item_name=name)
         return new_rev_no, size
-
-    def before_revision_commit(self, newrev, data):
-        """
-        hook that can be used to add more meta data to a revision before
-        it is committed.
-
-        :param newrev: new (still uncommitted) revision - modify as wanted
-        :param data: either str or open file (we can avoid having to read/seek
-                     rev's data with this)
-        """
-        remote_addr = request.remote_addr
-        if remote_addr:
-            if app.cfg.log_remote_addr:
-                newrev[ADDRESS] = unicode(remote_addr)
-                hostname = wikiutil.get_hostname(remote_addr)
-                if hostname:
-                    newrev[HOSTNAME] = hostname
-        if flaskg.user.valid:
-            newrev[USERID] = unicode(flaskg.user.id)
 
     def get_index(self):
         """ create an index of sub items of this item """
@@ -1193,33 +1173,6 @@ class MarkupItem(Text):
     some kind of item with markup
     (internal links and transcluded items)
     """
-    def before_revision_commit(self, newrev, data):
-        """
-        add ITEMLINKS and ITEMTRANSCLUSIONS metadata
-        """
-        super(MarkupItem, self).before_revision_commit(newrev, data)
-
-        if hasattr(data, "read"):
-            data.seek(0)
-            data = data.read()
-        elif isinstance(data, str):
-            pass
-        else:
-            raise StorageError("unsupported content object: %r" % data)
-
-        from MoinMoin.converter import default_registry as reg
-
-        input_conv = reg.get(Type(self.contenttype), type_moin_document)
-        item_conv = reg.get(type_moin_document, type_moin_document, items='refs')
-
-        i = Iri(scheme='wiki', authority='', path='/' + self.name)
-
-        doc = input_conv(self.rev, self.contenttype)
-        doc.set(moin_page.page_href, unicode(i))
-        doc = item_conv(doc)
-
-        newrev[ITEMLINKS] = item_conv.get_links()
-        newrev[ITEMTRANSCLUSIONS] = item_conv.get_transclusions()
 
 
 class MoinWiki(MarkupItem):

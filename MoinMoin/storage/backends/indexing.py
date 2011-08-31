@@ -22,14 +22,78 @@ import time, datetime
 from uuid import uuid4
 make_uuid = lambda: unicode(uuid4().hex)
 
+from flask import current_app as app
+from flask import g as flaskg
+from flask import request
+
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
-from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS
+from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS, \
+                            ADDRESS, HOSTNAME, USERID, ITEMLINKS, ITEMTRANSCLUSIONS
 from MoinMoin.search.indexing import backend_to_index
-from MoinMoin.converter import convert_to_indexable
+from MoinMoin.converter import default_registry
+from MoinMoin.util.iri import Iri
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page
+from MoinMoin import wikiutil
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+def convert_to_indexable(rev, new_rev=False):
+    """
+    convert a revision to an indexable document
+
+    :param rev: item revision - please make sure that the content file is
+                ready to read all indexable content from it. if you have just
+                written that content or already read from it, you need to call
+                rev.seek(0) before calling convert_to_indexable(rev).
+    """
+    try:
+        # TODO use different converter mode?
+        # Maybe we want some special mode for the input converters so they emit
+        # different output than for normal rendering), esp. for the non-markup
+        # content types (images, etc.).
+        input_contenttype = rev[CONTENTTYPE]
+        output_contenttype = 'text/plain'
+        type_input_contenttype = Type(input_contenttype)
+        type_output_contenttype = Type(output_contenttype)
+        reg = default_registry
+        # first try a direct conversion (this could be useful for extraction
+        # of (meta)data from binary types, like from images or audio):
+        conv = reg.get(type_input_contenttype, type_output_contenttype)
+        if conv:
+            doc = conv(rev, input_contenttype)
+            return doc
+        # otherwise try via DOM as intermediate format (this is useful if
+        # input type is markup, to get rid of the markup):
+        input_conv = reg.get(type_input_contenttype, type_moin_document)
+        refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
+        output_conv = reg.get(type_moin_document, type_output_contenttype)
+        if input_conv and output_conv:
+            doc = input_conv(rev, input_contenttype)
+            # We do not convert smileys, includes, macros, links, because
+            # it does not improve search results or even makes results worse.
+            # We do run the referenced converter, though, to extract links and
+            # transclusions.
+            if new_rev:
+                # we only can modify new, uncommitted revisions, not stored revs
+                i = Iri(scheme='wiki', authority='', path='/' + rev[NAME])
+                doc.set(moin_page.page_href, unicode(i))
+                refs_conv(doc)
+                # side effect: we update some metadata:
+                rev[ITEMLINKS] = refs_conv.get_links()
+                rev[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+            doc = output_conv(doc)
+            return doc
+        # no way
+        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
+    except Exception as e: # catch all exceptions, we don't want to break an indexing run
+        logging.exception("Exception happened in conversion of item %r rev %d contenttype %s:" % (rev[NAME], rev.revno, rev[CONTENTTYPE]))
+        doc = u'ERROR [%s]' % str(e)
+        return doc
+
 
 class IndexingBackendMixin(object):
     """
@@ -118,8 +182,9 @@ class IndexingItemMixin(object):
         """
         update the index, removing everything related to this item
         """
-        logging.debug("item %r remove index!" % (self.name, ))
-        self._index.remove_item(metas=self)
+        uuid = self[UUID]
+        logging.debug("item %r %r remove index!" % (self.name, uuid))
+        self._index.remove_item(uuid)
 
 
 class IndexingRevisionMixin(object):
@@ -143,6 +208,7 @@ class IndexingRevisionMixin(object):
         name = self.item.name
         uuid = self.item[UUID]
         revno = self.revno
+        logging.debug("Processing: name %s revno %s" % (name, revno))
         if MTIME not in self:
             self[MTIME] = int(time.time())
         if NAME not in self:
@@ -151,11 +217,29 @@ class IndexingRevisionMixin(object):
             self[UUID] = uuid # do we want the item's uuid in the rev's metadata?
         if CONTENTTYPE not in self:
             self[CONTENTTYPE] = u'application/octet-stream'
-        metas = self
+
+        if app.cfg.log_remote_addr:
+            remote_addr = request.remote_addr
+            if remote_addr:
+                self[ADDRESS] = unicode(remote_addr)
+                hostname = wikiutil.get_hostname(remote_addr)
+                if hostname:
+                    self[HOSTNAME] = hostname
+        try:
+            if flaskg.user.valid:
+                self[USERID] = unicode(flaskg.user.id)
+        except:
+            # when loading xml via script, we have no flaskg.user
+            pass
+
+        self.seek(0) # for a new revision, file pointer points to EOF, rewind first
+        rev_content = convert_to_indexable(self, new_rev=True)
+
         logging.debug("item %r revno %d update index:" % (name, revno))
-        for k, v in metas.items():
+        for k, v in self.items():
             logging.debug(" * rev meta %r: %r" % (k, v))
-        self._index.add_rev(uuid, revno, metas)
+        logging.debug("Indexable content: %r" % (rev_content[:250], ))
+        self._index.add_rev(uuid, revno, self, rev_content)
 
     def remove_index(self):
         """
@@ -197,13 +281,12 @@ class ItemIndex(object):
         """
         # XXX we do not have an index for item metadata yet!
 
-    def remove_item(self, metas):
+    def remove_item(self, uuid):
         """
         remove all data related to this item and all its revisions from the index
         """
         with self.index_object.latest_revisions_index.searcher() as latest_revs_searcher:
-            doc_number = latest_revs_searcher.document_number(uuid=metas[UUID],
-                                                              name_exact=metas[NAME],
+            doc_number = latest_revs_searcher.document_number(uuid=uuid,
                                                               wikiname=self.wikiname
                                                              )
         if doc_number is not None:
@@ -211,8 +294,7 @@ class ItemIndex(object):
                 async_writer.delete_document(doc_number)
 
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
-            doc_numbers = list(all_revs_searcher.document_numbers(uuid=metas[UUID],
-                                                                  name_exact=metas[NAME],
+            doc_numbers = list(all_revs_searcher.document_numbers(uuid=uuid,
                                                                   wikiname=self.wikiname
                                                                  ))
         if doc_numbers:
@@ -220,7 +302,7 @@ class ItemIndex(object):
                 for doc_number in doc_numbers:
                     async_writer.delete_document(doc_number)
 
-    def add_rev(self, uuid, revno, rev):
+    def add_rev(self, uuid, revno, rev, rev_content):
         """
         add a new revision <revno> for item <uuid> with metadata <metas>
         """
@@ -233,10 +315,6 @@ class ItemIndex(object):
             latest_found_document = latest_revs_searcher.document(uuid=rev[UUID],
                                                                   wikiname=self.wikiname
                                                                  )
-        logging.debug("Processing: name %s revno %s" % (rev[NAME], revno))
-        rev.seek(0) # for a new revision, file pointer points to EOF, rewind first
-        rev_content = convert_to_indexable(rev)
-        logging.debug("Indexable content: %r" % (rev_content[:250], ))
         if not all_found_document:
             schema = self.index_object.all_revisions_index.schema
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
@@ -259,6 +337,11 @@ class ItemIndex(object):
                                                                      rev_no=revno,
                                                                      wikiname=self.wikiname
                                                                     )
+        if latest_doc_number is not None:
+            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
+                logging.debug("Latest revisions: removing %d", latest_doc_number)
+                async_writer.delete_document(latest_doc_number)
+
         with self.index_object.all_revisions_index.searcher() as all_revs_searcher:
             doc_number = all_revs_searcher.document_number(uuid=uuid,
                                                            rev_no=revno,
@@ -268,10 +351,6 @@ class ItemIndex(object):
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
                 logging.debug("All revisions: removing %d", doc_number)
                 async_writer.delete_document(doc_number)
-        if latest_doc_number is not None:
-            with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
-                logging.debug("Latest revisions: removing %d", latest_doc_number)
-                async_writer.delete_document(latest_doc_number)
 
     def query_parser(self, default_fields, all_revs=False):
         if all_revs:

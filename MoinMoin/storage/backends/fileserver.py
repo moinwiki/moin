@@ -1,14 +1,14 @@
-# Copyright: 2008-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - file server backend
+MoinMoin - file server backend
 
-    You can use this backend to directly get read-only access to your
-    wiki server's filesystem.
+You can use this backend to directly get read-only access to your
+wiki server's filesystem.
 
-    TODO: nearly working, but needs more work at other places,
-          e.g. in the router backend, to be useful.
+TODO: nearly working, but needs more work at other places,
+      e.g. in the router backend, to be useful.
 """
 
 
@@ -24,7 +24,7 @@ from MoinMoin.storage import Backend, Item, StoredRevision
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 
-from MoinMoin.config import ACL, CONTENTTYPE, ACTION, COMMENT, MTIME, SIZE
+from MoinMoin.config import NAME, ACL, CONTENTTYPE, ACTION, COMMENT, MTIME, SIZE, HASH_ALGORITHM
 
 class FSError(Exception):
     """ file serving backend error """
@@ -65,7 +65,12 @@ class FileServerBackend(Backend):
 
     def iter_items_noindex(self):
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
-            yield DirItem(self, self._path2item(dirpath))
+            name = self._path2item(dirpath)
+            if name:
+                # XXX currently there is an issue with whoosh indexing if fileserver
+                # backend is mounted at / and the item name is empty, resulting in a
+                # completely empty item name - avoid this for now.
+                yield DirItem(self, name)
             for filename in filenames:
                 try:
                     item = FileItem(self, self._path2item(os.path.join(dirpath, filename)))
@@ -160,9 +165,11 @@ class FileDirRevision(StoredRevision):
         filepath = item._fs_filepath
         st = item._fs_stat
         meta = { # make something up
+            NAME: item.name,
             MTIME: int(st.st_mtime),
-            ACTION: 'SAVE',
+            ACTION: u'SAVE',
             SIZE: st.st_size,
+            HASH_ALGORITHM: u'' # XXX fake it, send_file needs it for etag and crashes ithout the hash
         }
         self._fs_meta = meta
         self._fs_data_fname = filepath
@@ -173,7 +180,7 @@ class DirRevision(FileDirRevision):
     def __init__(self, item, revno):
         FileDirRevision.__init__(self, item, revno)
         self._fs_meta.update({
-            CONTENTTYPE: 'text/x.moin.wiki',
+            CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8',
         })
         # create a directory "page" in wiki markup:
         try:
@@ -203,6 +210,6 @@ class FileRevision(FileDirRevision):
         FileDirRevision.__init__(self, item, revno)
         contenttype = MimeType(filename=self._fs_data_fname).content_type()
         self._fs_meta.update({
-            CONTENTTYPE: contenttype,
+            CONTENTTYPE: unicode(contenttype),
         })
 

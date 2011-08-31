@@ -109,6 +109,7 @@ Disallow: /+bookmark
 Disallow: /+diffsince/
 Disallow: /+diff/
 Disallow: /+diffraw/
+Disallow: /+search
 Disallow: /+dispatch/
 Disallow: /+admin/
 Allow: /
@@ -136,40 +137,45 @@ class ValidSearch(Validator):
         return True
 
 class SearchForm(Form):
-    q = String.using(optional=False).with_properties(autofocus=True, placeholder=L_("Search Query"))
+    q = String.using(optional=False, default=u'').with_properties(autofocus=True, placeholder=L_("Search Query"))
+    history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
     submit = String.using(default=L_('Search'), optional=True)
-    pagelen = String.using(optional=False)
-    search_in_all = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
 
     validators = [ValidSearch()]
 
 
-def _search(search_form, item_name):
+@frontend.route('/+search', methods=['GET', 'POST'])
+def search():
+    search_form = SearchForm.from_flat(request.values)
+    valid = search_form.validate()
+    search_form['submit'].set_default() # XXX from_flat() kills all values
     query = search_form['q'].value
-    pagenum = 1  # We start from first page
-    pagelen = int(search_form['pagelen'].value)
-    all_revs = bool(request.values.get('search_in_all'))
-    qp = flaskg.storage.query_parser(["name_exact", "name", "content"], all_revs=all_revs)
-    q = qp.parse(query)
-    with flaskg.storage.searcher(all_revs) as searcher:
-        results = searcher.search_page(q, pagenum, pagelen)
-        return render_template('search_results.html',
-                               results=results,
+    if valid:
+        history = bool(request.values.get('history'))
+        qp = flaskg.storage.query_parser(["name_exact", "name", "content"], all_revs=history)
+        q = qp.parse(query)
+        with flaskg.storage.searcher(all_revs=history) as searcher:
+            results = searcher.search(q, limit=100)
+            return render_template('search.html',
+                                   results=results,
+                                   name_suggestions=u', '.join([word for word, score in results.key_terms('name', docs=20, numterms=10)]),
+                                   content_suggestions=u', '.join([word for word, score in results.key_terms('content', docs=20, numterms=10)]),
+                                   query=query,
+                                   medium_search_form=search_form,
+                                   item_name='+search', # XXX
+                                  )
+    else:
+        return render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
-                               item_name=item_name,
+                               item_name='+search', # XXX
                               )
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET', 'POST'])
-@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET', 'POST'])
-def show_item(item_name, rev):
-    # first check whether we have a valid search query:
-    search_form = SearchForm.from_flat(request.values)
-    if search_form.validate():
-        return _search(search_form, item_name)
-    search_form['submit'].set_default() # XXX from_flat() kills all values
 
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET'])
+@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET'])
+def show_item(item_name, rev):
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
@@ -199,7 +205,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=search_form,
+                              search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
@@ -664,7 +670,7 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
-    refs_here = _backrefs(flaskg.storage.iteritems(), item_name)
+    refs_here = _backrefs(item_name)
     return render_template('item_link_list.html',
                            item_name=item_name,
                            headline=_(u'Refers Here'),
@@ -672,24 +678,19 @@ def backrefs(item_name):
                           )
 
 
-def _backrefs(items, item_name):
+def _backrefs(item_name):
     """
     Returns a list with all names of items which ref item_name
 
-    :param items: all the items
-    :type items: iteratable sequence
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
     :returns: the list of all items which ref item_name
     """
-    from MoinMoin.search.indexing import WhooshIndex
-    from whoosh.query import Term, Or
-    index_object = WhooshIndex()
-    ix = index_object.latest_revisions_index
-    with ix.searcher() as searcher:
-        q = Or([Term("itemtransclusions", item_name), Term("itemlinks", item_name)])
-        results = searcher.search(q)
-        return [result["name"] for result in results]
+    q = And([Term("wikiname", app.cfg.interwikiname),
+             Or([Term("itemtransclusions", item_name), Term("itemlinks", item_name)])])
+    docs = flaskg.storage.search(q, all_revs=False)
+    return [doc["name"] for doc in docs]
+
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
@@ -1620,7 +1621,7 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [item.name for item in flaskg.storage.iteritems()]
+    item_names = [doc[NAME] for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word

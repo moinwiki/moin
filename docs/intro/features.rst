@@ -83,6 +83,15 @@ Serialization
 * dump backend contents to xml
 * load backend contents from xml
 
+Search / Indexing
+=================
+* important metadata is put into index
+* content data is converted and put into index
+* fast indexed search, fast internal operations
+* flexible and powerful search queries
+* search current and historical contents
+* using a shared index, find stuff in any farm wiki
+
 User Interface
 ==============
 OO user interface
@@ -144,7 +153,7 @@ Technologies
 * html5, css, javascript with jquery, svg
 * python
 * flask, flask-cache, flask-babel, flask-themes, flask-script
-* werkzeug, pygments, flatland, blinker, babel, emeraldtree, sqlalchemy, sqlite
+* whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree, sqlalchemy, sqlite
 * optional: mercurial, postgresql, mysql
 
 
