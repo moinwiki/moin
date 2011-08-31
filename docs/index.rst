@@ -21,6 +21,7 @@ Using MoinMoin
    :maxdepth: 2
 
    user/markups
+   user/search
 
 Administrating MoinMoin
 =======================
