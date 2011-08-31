@@ -86,7 +86,7 @@ class IndexOperations(Command):
                         except NoSuchRevisionError: # item has no such revision
                             continue
                         # revision is now the latest revision of this item
-                        if "latest_revisions_index" in indexnames and rev_no:
+                        if "latest_revisions_index" in indexnames and rev_no is not None:
                             metadata = backend_to_index(revision, rev_no, latest_rev_schema, rev_content, interwikiname)
                             latest_rev_writer.add_document(**metadata)
 
