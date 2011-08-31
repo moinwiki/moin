@@ -19,7 +19,7 @@ class TestHTTPAuthMoin(object):
             self.username = 'ValidUser'
             self.password = 'test_pass'
 
-    def setup_method(self, metod):
+    def setup_method(self, method):
         flaskg.user.auth_method = 'http'
         request.authorization = self.Auth()
 
