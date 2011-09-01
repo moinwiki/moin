@@ -68,7 +68,7 @@ from MoinMoin.util.send_file import send_file
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
                                    StorageError
-from MoinMoin.config import UUID, NAME, NAME_OLD, MTIME, REVERTED_TO, ACL, \
+from MoinMoin.config import UUID, NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
@@ -513,13 +513,13 @@ class Item(object):
         """ create an index of sub items of this item """
         if self.name:
             prefix = self.name + u'/'
-            query = And([Term("wikiname", app.cfg.interwikiname), Prefix("name_exact", prefix)])
+            query = And([Term(WIKINAME, app.cfg.interwikiname), Prefix(NAME_EXACT, prefix)])
         else:
             # trick: an item of empty name can be considered as "virtual root item",
             # that has all wiki items as sub items
             prefix = u''
-            query = Term("wikiname", app.cfg.interwikiname)
-        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+            query = Term(WIKINAME, app.cfg.interwikiname)
+        results = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
         items = [(result[NAME], result[NAME][prefix_len:], result[CONTENTTYPE])
@@ -659,11 +659,11 @@ There is no help, you're doomed!
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        terms = [Term("wikiname", app.cfg.interwikiname), Term(TAGS, u'template')]
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, u'template')]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
-        results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+        results = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
         return [result[NAME] for result in results]
 
     def do_modify(self, contenttype, template_name):

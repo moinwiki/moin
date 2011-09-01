@@ -18,7 +18,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flaskext.script import Command, Option
 
-from MoinMoin.config import NAME
+from MoinMoin.config import NAME, NAME_EXACT
 from MoinMoin.script import fatal
 from MoinMoin.storage.error import NoSuchRevisionError
 
@@ -44,7 +44,7 @@ class Set_Meta(Command):
                   "only a key you want to delete (with -r set).")
 
         if query:
-            qp = storage.query_parser(["name_exact", ], all_revs=False)
+            qp = storage.query_parser([NAME_EXACT, ], all_revs=False)
             q = qp.parse(query)
         else:
             q = Every()

@@ -13,7 +13,7 @@ from flask import current_app as app
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 
-from MoinMoin.config import MTIME, NAME
+from MoinMoin.config import MTIME, NAME, NAME_EXACT, REV_NO, WIKINAME, CONTENT
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
 
@@ -35,10 +35,10 @@ def backend_to_index(backend_rev, rev_no, schema, content, wikiname=u''):
                 for key, value in backend_rev.items()
                 if key in schema])
     doc[MTIME] = datetime.datetime.utcfromtimestamp(backend_rev[MTIME])
-    doc["name_exact"] = backend_rev[NAME]
-    doc["rev_no"] = rev_no
-    doc["wikiname"] = wikiname
-    doc["content"] = content
+    doc[NAME_EXACT] = backend_rev[NAME]
+    doc[REV_NO] = rev_no
+    doc[WIKINAME] = wikiname
+    doc[CONTENT] = content
     return doc
 
 

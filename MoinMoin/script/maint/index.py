@@ -15,7 +15,7 @@ from whoosh.index import open_dir, create_in, exists_in
 from whoosh.index import EmptyIndexError
 
 from MoinMoin.search.indexing import WhooshIndex
-from MoinMoin.config import MTIME, NAME, CONTENTTYPE
+from MoinMoin.config import MTIME, NAME, CONTENTTYPE, REV_NO, CONTENT
 from MoinMoin.error import FatalError
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mime import Type
@@ -128,7 +128,7 @@ class IndexOperations(Command):
                         if not found:
                             latest_rev_writer.add_document(**converted_rev)
                         # Checking that last revision is the latest
-                        elif found["rev_no"] < converted_rev["rev_no"]:
+                        elif found[REV_NO] < converted_rev[REV_NO]:
                             doc_number = latest_rev_searcher.document_number(name_exact=item.name, wikiname=interwikiname)
                             latest_rev_writer.delete_document(doc_number)
                             latest_rev_writer.add_document(**converted_rev)
@@ -191,9 +191,9 @@ class IndexOperations(Command):
                     print "*** Revisions in", indexname
                     with ix.searcher() as searcher:
                         for rev in searcher.all_stored_fields():
-                            name = rev.pop("name", u"")
-                            content = rev.pop("content", u"")
-                            for field, value in [("name", name), ] + sorted(rev.items()) + [("content", content), ]:
+                            name = rev.pop(NAME, u"")
+                            content = rev.pop(CONTENT, u"")
+                            for field, value in [(NAME, name), ] + sorted(rev.items()) + [(CONTENT, content), ]:
                                 print "%s: %s" % (field, repr(value)[:70])
                             print "\n"
                     ix.close()
@@ -206,7 +206,7 @@ class IndexOperations(Command):
             """
 
             revs_found = searcher.documents(name_exact=name, wikiname=interwikiname)
-            return [rev["rev_no"] for rev in revs_found]
+            return [rev[REV_NO] for rev in revs_found]
 
         def do_action(action, indexnames_schemas):
             if action == "build":

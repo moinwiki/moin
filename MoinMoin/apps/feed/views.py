@@ -25,7 +25,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
-from MoinMoin.config import NAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME
+from MoinMoin.config import NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME, REV_NO
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
@@ -45,13 +45,13 @@ def atom(item_name):
     if content is None:
         title = app.cfg.sitename
         feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
-        query = Term("wikiname", app.cfg.interwikiname)
+        query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
-            query = And([query, Term("name_exact", item_name), ])
-        history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=100)
+            query = And([query, Term(NAME_EXACT, item_name), ])
+        history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, REV_NO], reverse=True, limit=100)
         for doc in history:
             name = doc[NAME]
-            this_revno = doc["rev_no"]
+            this_revno = doc[REV_NO]
             item = flaskg.storage.get_item(name)
             this_rev = item.get_revision(this_revno)
             try:

@@ -50,7 +50,8 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
-from MoinMoin.config import ACTION, COMMENT, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, CONTENTTYPE_GROUPS, MTIME, TAGS
+from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, NAME_EXACT, \
+                            CONTENTTYPE_GROUPS, MTIME, TAGS, REV_NO, CONTENT
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -152,14 +153,14 @@ def search():
     query = search_form['q'].value
     if valid:
         history = bool(request.values.get('history'))
-        qp = flaskg.storage.query_parser(["name_exact", "name", "content"], all_revs=history)
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], all_revs=history)
         q = qp.parse(query)
         with flaskg.storage.searcher(all_revs=history) as searcher:
             results = searcher.search(q, limit=100)
             return render_template('search.html',
                                    results=results,
-                                   name_suggestions=u', '.join([word for word, score in results.key_terms('name', docs=20, numterms=10)]),
-                                   content_suggestions=u', '.join([word for word, score in results.key_terms('content', docs=20, numterms=10)]),
+                                   name_suggestions=u', '.join([word for word, score in results.key_terms(NAME, docs=20, numterms=10)]),
+                                   content_suggestions=u', '.join([word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]),
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name='+search', # XXX
@@ -686,10 +687,10 @@ def _backrefs(item_name):
     :type item_name: unicode
     :returns: the list of all items which ref item_name
     """
-    q = And([Term("wikiname", app.cfg.interwikiname),
-             Or([Term("itemtransclusions", item_name), Term("itemlinks", item_name)])])
+    q = And([Term(WIKINAME, app.cfg.interwikiname),
+             Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     docs = flaskg.storage.search(q, all_revs=False)
-    return [doc["name"] for doc in docs]
+    return [doc[NAME] for doc in docs]
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -700,12 +701,12 @@ def history(item_name):
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    query = And([Term("wikiname", app.cfg.interwikiname), Term("name_exact", item_name), ])
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ])
     # TODO: due to how getPageContent and the template works, we need to use limit=None -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    docs = flaskg.storage.search(query, all_revs=True, sortedby="rev_no", reverse=True, limit=None)
+    docs = flaskg.storage.search(query, all_revs=True, sortedby=REV_NO, reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
-    history = [dict((k, v) for k, v in doc.iteritems() if k != 'content') for doc in docs]
+    history = [dict((k, v) for k, v in doc.iteritems() if k != CONTENT) for doc in docs]
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
@@ -724,12 +725,12 @@ def global_history():
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    query = Term("wikiname", app.cfg.interwikiname)
+    query = Term(WIKINAME, app.cfg.interwikiname)
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
     # TODO: we need use limit=None to simulate previous implementation's behaviour -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, "rev_no"], reverse=True, limit=None)
+    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, REV_NO], reverse=True, limit=None)
     item_groups = OrderedDict()
     for doc in history:
         current_item_name = doc[NAME]
@@ -761,7 +762,7 @@ def global_history():
 
         # Aggregating comments, authors and revno
         for doc in docs:
-            rev_no = doc["rev_no"]
+            rev_no = doc[REV_NO]
             revnos.append(rev_no)
             comment = doc.get(COMMENT)
             if comment:
@@ -1791,7 +1792,7 @@ def global_tags():
     tags_counts = {}
     for doc in docs:
         tags = doc.get(TAGS, [])
-        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc["rev_no"], tags))
+        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc[REV_NO], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -1823,8 +1824,8 @@ def tagged_items(tag):
     """
     show all items' names that have tag <tag>
     """
-    query = And([Term("wikiname", app.cfg.interwikiname), Term(TAGS, tag), ])
-    docs = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", limit=None)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
+    docs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
     item_names = [doc[NAME] for doc in docs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
