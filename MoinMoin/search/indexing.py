@@ -13,7 +13,9 @@ from flask import current_app as app
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 
-from MoinMoin.config import MTIME, NAME, NAME_EXACT, REV_NO, WIKINAME, CONTENT
+from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, REV_NO, MTIME, CONTENTTYPE, TAGS, \
+                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
+                            CONTENT, UUID, ITEMLINKS, ITEMTRANSCLUSIONS, ACL
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
 
@@ -63,58 +65,59 @@ class WhooshIndex(object):
         self._cfg = cfg or app.cfg
         self._index_dir = index_dir or self._cfg.index_dir
 
-        common_fields = dict(
+        common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             # taken from app.cfg.interwikiname
-            wikiname=ID(stored=True),
+            WIKINAME: ID(stored=True),
             # tokenized NAME from metadata - use this for manual searching from UI
-            name=TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
-            name_exact=ID(field_boost=3.0),
+            NAME_EXACT: ID(field_boost=3.0),
             # revision number, integer 0..n
-            rev_no=NUMERIC(stored=True),
+            REV_NO: NUMERIC(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
-            mtime=DATETIME(stored=True),
+            MTIME: DATETIME(stored=True),
             # tokenized CONTENTTYPE from metadata
-            contenttype=TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
+            CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            tags=ID(stored=True),
+            TAGS: ID(stored=True),
             # LANGUAGE from metadata
-            language=ID(stored=True),
+            LANGUAGE: ID(stored=True),
             # USERID from metadata
-            userid=ID(stored=True),
+            USERID: ID(stored=True),
             # ADDRESS from metadata
-            address=ID(stored=True),
+            ADDRESS: ID(stored=True),
             # HOSTNAME from metadata
-            hostname=ID(stored=True),
+            HOSTNAME: ID(stored=True),
             # SIZE from metadata
-            size=NUMERIC(stored=True),
+            SIZE: NUMERIC(stored=True),
             # ACTION from metadata
-            action=ID(stored=True),
+            ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
-            comment=TEXT(stored=True, multitoken_query="and"),
+            COMMENT: TEXT(stored=True, multitoken_query="and"),
             # data (content), converted to text/plain and tokenized
-            content=TEXT(stored=True, multitoken_query="and"),
-        )
-        latest_revs_fields = dict(
-            # UUID from metadata - as there is only latest rev of same item here, it is unique
-            uuid=ID(unique=True, stored=True),
-            # unmodified list of ITEMLINKS from metadata
-            itemlinks=ID(stored=True),
-            # unmodified list of ITEMTRANSCLUSIONS from metadata
-            itemtransclusions=ID(stored=True),
-            # tokenized ACL from metadata
-            acl=TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
-            **common_fields
-        )
+            CONTENT: TEXT(stored=True, multitoken_query="and"),
+        }
 
-        all_revs_fields = dict(
+        latest_revs_fields = {
+            # UUID from metadata - as there is only latest rev of same item here, it is unique
+            UUID: ID(unique=True, stored=True),
+            # unmodified list of ITEMLINKS from metadata
+            ITEMLINKS: ID(stored=True),
+            # unmodified list of ITEMTRANSCLUSIONS from metadata
+            ITEMTRANSCLUSIONS: ID(stored=True),
+            # tokenized ACL from metadata
+            ACL: TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
+        }
+        latest_revs_fields.update(**common_fields)
+
+        all_revs_fields = {
             # UUID from metadata
-            uuid=ID(stored=True),
-            **common_fields
-        )
+            UUID: ID(stored=True),
+        }
+        all_revs_fields.update(**common_fields)
 
         self.latest_revisions_schema = Schema(**latest_revs_fields)
         self.all_revisions_schema = Schema(**all_revs_fields)
