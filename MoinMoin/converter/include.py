@@ -22,7 +22,7 @@ from flask import g as flaskg
 
 from whoosh.query import Term, And, Wildcard
 
-from MoinMoin.config import NAME
+from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
 from MoinMoin import wikiutil
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
@@ -207,9 +207,9 @@ class Converter(object):
                     if xp_include_pages.startswith('^'):
                         # get rid of the leading ^ the Include macro needed to get into "regex mode"
                         xp_include_pages = xp_include_pages[1:]
-                    query = And([Term("wikiname", app.cfg.interwikiname), Wildcard("name_exact", xp_include_pages)])
+                    query = And([Term(WIKINAME, app.cfg.interwikiname), Wildcard(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
-                    results = flaskg.storage.search(query, all_revs=False, sortedby="name_exact", reverse=reverse, limit=None)
+                    results = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, reverse=reverse, limit=None)
                     pagelist = [result[NAME] for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]

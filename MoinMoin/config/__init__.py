@@ -116,6 +116,12 @@ COMMENT = "comment"
 # some backends may use this also for other purposes.
 HASH_ALGORITHM = 'sha1'
 
+# some field names for whoosh index schema / documents in index:
+NAME_EXACT = "name_exact"
+REV_NO = "rev_no"
+WIKINAME = "wikiname"
+CONTENT = "content"
+
 # structure for contenttype groups
 CONTENTTYPE_GROUPS = [
     ('markup text items', [

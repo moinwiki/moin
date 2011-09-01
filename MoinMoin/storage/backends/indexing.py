@@ -29,7 +29,8 @@ from flask import request
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, \
                                    AccessDeniedError
 from MoinMoin.config import ACL, CONTENTTYPE, UUID, NAME, NAME_OLD, MTIME, TAGS, \
-                            ADDRESS, HOSTNAME, USERID, ITEMLINKS, ITEMTRANSCLUSIONS
+                            ADDRESS, HOSTNAME, USERID, ITEMLINKS, ITEMTRANSCLUSIONS, \
+                            REV_NO
 from MoinMoin.search.indexing import backend_to_index
 from MoinMoin.converter import default_registry
 from MoinMoin.util.iri import Iri
@@ -319,13 +320,13 @@ class ItemIndex(object):
             schema = self.index_object.all_revisions_index.schema
             with AsyncWriter(self.index_object.all_revisions_index) as async_writer:
                 converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
-                logging.debug("All revisions: adding %s %s", converted_rev[NAME], converted_rev["rev_no"])
+                logging.debug("All revisions: adding %s %s", converted_rev[NAME], converted_rev[REV_NO])
                 async_writer.add_document(**converted_rev)
-        if not latest_found_document or int(revno) > latest_found_document["rev_no"]:
+        if not latest_found_document or int(revno) > latest_found_document[REV_NO]:
             schema = self.index_object.latest_revisions_index.schema
             with AsyncWriter(self.index_object.latest_revisions_index) as async_writer:
                 converted_rev = backend_to_index(rev, revno, schema, rev_content, self.wikiname)
-                logging.debug("Latest revisions: updating %s %s", converted_rev[NAME], converted_rev["rev_no"])
+                logging.debug("Latest revisions: updating %s %s", converted_rev[NAME], converted_rev[REV_NO])
                 async_writer.update_document(**converted_rev)
 
     def remove_rev(self, uuid, revno):

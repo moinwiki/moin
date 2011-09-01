@@ -13,7 +13,7 @@ This script removes all revisions but the last one from all selected items.
 from flask import current_app as app
 from flaskext.script import Command, Option
 
-from MoinMoin.config import NAME
+from MoinMoin.config import NAME, NAME_EXACT
 
 
 class Reduce_Revisions(Command):
@@ -26,7 +26,7 @@ class Reduce_Revisions(Command):
     def run(self, query):
         storage = app.unprotected_storage
         if query:
-            qp = storage.query_parser(["name_exact", ], all_revs=False)
+            qp = storage.query_parser([NAME_EXACT, ], all_revs=False)
             q = qp.parse(query)
         else:
             q = Every()
