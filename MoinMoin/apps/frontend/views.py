@@ -156,8 +156,11 @@ def search():
         qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], all_revs=history)
         q = qp.parse(query)
         with flaskg.storage.searcher(all_revs=history) as searcher:
+            flaskg.clock.start('search')
             results = searcher.search(q, limit=100)
-            return render_template('search.html',
+            flaskg.clock.stop('search')
+            flaskg.clock.start('search render')
+            html = render_template('search.html',
                                    results=results,
                                    name_suggestions=u', '.join([word for word, score in results.key_terms(NAME, docs=20, numterms=10)]),
                                    content_suggestions=u', '.join([word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]),
@@ -165,13 +168,14 @@ def search():
                                    medium_search_form=search_form,
                                    item_name='+search', # XXX
                                   )
+            flaskg.clock.stop('search render')
     else:
-        return render_template('search.html',
+        html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
                                item_name='+search', # XXX
                               )
-
+    return html
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET'])
