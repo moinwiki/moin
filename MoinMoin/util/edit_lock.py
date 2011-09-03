@@ -31,7 +31,7 @@ def set_edit_lock(item):
     timestamp = time.time()
     addr = request.remote_addr
     hostname = wikiutil.get_hostname(addr) or u''
-    userid = flaskg.user.valid and flaskg.user.id or ''
+    userid = flaskg.user.valid and flaskg.user.uuid or ''
 
     item.change_metadata()
     item[EDIT_LOCK_TIMESTAMP] = str(timestamp)
