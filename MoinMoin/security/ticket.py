@@ -30,7 +30,7 @@ def createTicket(tm=None, **kw):
         # for age-check of ticket
         tm = "%010x" % time.time()
 
-    kw['uid'] = flaskg.user.valid and flaskg.user.id or ''
+    kw['uid'] = flaskg.user.valid and flaskg.user.uuid or ''
 
     hmac_data = []
     for value in sorted(kw.items()):

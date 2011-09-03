@@ -214,7 +214,7 @@ def setup_user():
         # could have a param where the admin could tell whether he wants to
         # trust it)
         userobj.auth_trusted = userobj.auth_method in app.cfg.auth_methods_trusted
-        session['user.id'] = userobj.id
+        session['user.id'] = userobj.uuid
         session['user.auth_method'] = userobj.auth_method
         session['user.auth_attribs'] = userobj.auth_attribs
     return userobj

@@ -228,7 +228,7 @@ class IndexingRevisionMixin(object):
                     self[HOSTNAME] = hostname
         try:
             if flaskg.user.valid:
-                self[USERID] = unicode(flaskg.user.id)
+                self[USERID] = unicode(flaskg.user.uuid)
         except:
             # when loading xml via script, we have no flaskg.user
             pass

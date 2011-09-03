@@ -29,11 +29,12 @@ from flask import g as flaskg
 from flask import session, request, url_for
 
 from MoinMoin import config, wikiutil
+from MoinMoin.config import NAME, UUID, ACTION, CONTENTTYPE
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
                                  generate_token, valid_token
-
+from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
 def create_user(username, password, email, openid=None):
@@ -101,25 +102,29 @@ def getUserList():
     :rtype: list
     :returns: all user IDs
     """
-    all_users = get_user_backend().iteritems()
-    return [item.name for item in all_users]
+    userlist = []
+    for item in get_user_backend().iteritems():
+        rev = item.get_revision(-1)
+        userlist.append(rev[UUID])
+    return userlist
 
 
-def get_items_by_filter(key, value):
+def get_revs_by_filter(key, value):
     """ Searches for a user with a given filter """
     backend = get_user_backend()
-    items_found = []
+    revs_found = []
     for item in backend.iteritems():
-        if item.get(key) == value:
-            items_found.append(item)
-    return items_found
+        rev = item.get_revision(-1)
+        if rev.get(key) == value:
+            revs_found.append(rev)
+    return revs_found
 
 
 def get_by_email_address(email_address):
     """ Searches for an user with a particular e-mail address and returns it. """
-    items = get_items_by_filter('email', email_address)
-    if items:
-        return User(items[0].name)
+    revs = get_revs_by_filter('email', email_address)
+    if revs:
+        return User(revs[0][UUID])
 
 def get_by_openid(openid):
     """
@@ -130,9 +135,20 @@ def get_by_openid(openid):
     :returns: the user whose openid is this one
     :rtype: user object or None
     """
-    items = get_items_by_filter('openid', openid)
-    if items:
-        return User(items[0].name)
+    revs = get_revs_by_filter('openid', openid)
+    if revs:
+        return User(revs[0][UUID])
+
+def getName(uuid):
+    """ Get the name for a specific uuid.
+
+    :param uuid: the user uuid to look up
+    :rtype: string
+    :returns: the corresponding user name or None
+    """
+    revs = get_revs_by_filter(UUID, uuid)
+    if revs:
+        return revs[0][NAME]
 
 def getUserId(searchName):
     """ Get the user ID for a specific user NAME.
@@ -141,9 +157,9 @@ def getUserId(searchName):
     :rtype: string
     :returns: the corresponding user ID or None
     """
-    items = get_items_by_filter('name', searchName)
-    if items:
-        return items[0].name
+    revs = get_revs_by_filter(NAME, searchName)
+    if revs:
+        return revs[0][UUID]
 
 def get_editor(userid, addr, hostname):
     """ Return a tuple of type id and string or Page object
@@ -227,7 +243,7 @@ class User(object):
 
         self._cfg = app.cfg
         self.valid = 0
-        self.id = uid
+        self.uuid = uid
         self.auth_username = auth_username
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
@@ -246,26 +262,25 @@ class User(object):
             self.enc_password = crypt_password(password)
 
         self._stored = False
-        self.last_saved = 0
 
         # attrs not saved to profile
 
         # we got an already authenticated username:
         check_password = None
-        if not self.id and self.auth_username:
-            self.id = getUserId(self.auth_username)
+        if not self.uuid and self.auth_username:
+            self.uuid = getUserId(self.auth_username)
             if not password is None:
                 check_password = password
-        if self.id:
+        if self.uuid:
             self.load_from_id(check_password)
-        elif self.name:
-            self.id = getUserId(self.name)
-            if self.id:
+        elif self.name and self.name != 'anonymous':
+            self.uuid = getUserId(self.name)
+            if self.uuid:
                 # no password given should fail
                 self.load_from_id(password or u'')
         # Still no ID - make new user
-        if not self.id:
-            self.id = self.make_id()
+        if not self.uuid:
+            self.uuid = self.make_id()
             if password is not None:
                 self.enc_password = crypt_password(password)
 
@@ -277,9 +292,9 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
-        return "<%s.%s at 0x%x name:%r valid:%r>" % (
+        return "<%s.%s at 0x%x name:%r uuid:%r valid:%r>" % (
             self.__class__.__module__, self.__class__.__name__,
-            id(self), self.name, self.valid)
+            id(self), self.name, self.uuid, self.valid)
 
     @property
     def language(self):
@@ -298,7 +313,7 @@ class User(object):
         # and some other things identifying remote users, then we could also
         # use it reliably in edit locking
         from random import randint
-        return "%s.%d" % (str(time.time()), randint(0, 65535))
+        return u"%s.%d" % (str(time.time()), randint(0, 65535))
 
     def create_or_update(self, changed=False):
         """ Create or update a user profile
@@ -314,7 +329,7 @@ class User(object):
         :rtype: bool
         :returns: true, if we have a user account
         """
-        return self._user_backend.has_item(self.id)
+        return self._user_backend.has_item(self.name)
 
     def load_from_id(self, password=None):
         """ Load user account data from disk.
@@ -327,10 +342,12 @@ class User(object):
         :param password: If not None, then the given password must match the
                          password in the user account file.
         """
-        if not self.exists():
+        name = getName(self.uuid) # XXX we need the name because backend API is still based on names
+        try:
+            item = self._user_backend.get_item(name)
+            self._user = item.get_revision(-1)
+        except (NoSuchItemError, NoSuchRevisionError):
             return
-
-        self._user = self._user_backend.get_item(self.id)
 
         user_data = dict()
         for metadata_key in self._user:
@@ -394,7 +411,7 @@ class User(object):
 
     def persistent_items(self):
         """ items we want to store into the user profile """
-        nonpersistent_keys = ['id', 'valid', 'may', 'auth_username',
+        nonpersistent_keys = ['valid', 'may', 'auth_username',
                               'password', 'password2',
                               'auth_method', 'auth_attribs', 'auth_trusted',
                              ]
@@ -404,28 +421,26 @@ class User(object):
     def save(self):
         """
         Save user account data to user account file on disk.
-
-        This saves all member variables, except "id" and "valid" and
-        those starting with an underscore.
         """
-        if not self.exists():
-            self._user = self._user_backend.create_item(self.id)
-        else:
-            self._user = self._user_backend.get_item(self.id)
-
-        self._user.change_metadata()
-        for key in self._user.keys():
-            del self._user[key]
-
-        self.last_saved = int(time.time())
-
-        attrs = sorted(self.persistent_items())
-        for key, value in attrs:
+        try:
+            item = self._user_backend.get_item(self.name)
+        except NoSuchItemError:
+            item = self._user_backend.create_item(self.name)
+        try:
+            currentrev = item.get_revision(-1)
+            rev_no = currentrev.revno
+        except NoSuchRevisionError:
+            currentrev = None
+            rev_no = -1
+        new_rev_no = rev_no + 1
+        newrev = item.create_revision(new_rev_no)
+        for key, value in self.persistent_items():
             if isinstance(value, list):
                 value = tuple(value)
-            self._user[key] = value
-
-        self._user.publish_metadata()
+            newrev[key] = value
+        newrev[CONTENTTYPE] = u'application/x.moin.userprofile'
+        newrev[ACTION] = u'SAVE'
+        item.commit()
 
         if not self.disabled:
             self.valid = 1

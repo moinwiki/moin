@@ -187,23 +187,6 @@ class TestLoginWithPassword(object):
         theUser.subscribe(pagename)
         assert not theUser.isSubscribedTo([testPagename]) # list(!) of pages to check
 
-    def testRenameUser(self):
-        """ create user and then rename user and check if it still
-        exists under old name
-        """
-        # Create test user
-        name = u'__Some Name__'
-        password = name
-        self.createUser(name, password)
-        # Login - this should replace the old password in the user file
-        theUser = user.User(name=name)
-        # Rename user
-        theUser.name = u'__SomeName__'
-        theUser.save()
-        theUser = user.User(name=name, password=password)
-
-        assert not theUser.exists()
-
     def test_upgrade_password_from_ssha_to_ssha256(self):
         """
         Create user with {SSHA} password and check that logging in
