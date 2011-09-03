@@ -95,8 +95,8 @@ def get_user_backend():
     return flaskg.unprotected_storage
 
 
-def get_revs_by_filter(**q):
-    """ Searches for a user with a given filter """
+def search_users(**q):
+    """ Searches for a users with given query keys/values """
     q.update(wikiname=app.cfg.interwikiname) # XXX for now, search only users of THIS wiki
                                              # maybe add option to not index wiki users separately,
                                              # but share them in the index also
@@ -111,14 +111,14 @@ def getUserList():
     :rtype: list
     :returns: all user IDs
     """
-    revs = get_revs_by_filter()
-    return [rev[UUID] for rev in revs]
+    docs = search_users()
+    return [doc[UUID] for doc in docs]
 
 def get_by_email(email):
     """ Searches for an user with a particular e-mail address and returns it. """
-    revs = get_revs_by_filter(email=email)
-    if revs:
-        return User(revs[0][UUID])
+    docs = search_users(email=email)
+    if docs:
+        return User(docs[0][UUID])
 
 def get_by_openid(openid):
     """
@@ -129,9 +129,9 @@ def get_by_openid(openid):
     :returns: the user whose openid is this one
     :rtype: user object or None
     """
-    revs = get_revs_by_filter(openid=openid)
-    if revs:
-        return User(revs[0][UUID])
+    docs = search_users(openid=openid)
+    if docs:
+        return User(docs[0][UUID])
 
 def getName(uuid):
     """ Get the name for a specific uuid.
@@ -140,9 +140,9 @@ def getName(uuid):
     :rtype: string
     :returns: the corresponding user name or None
     """
-    revs = get_revs_by_filter(uuid=uuid)
-    if revs:
-        return revs[0][NAME]
+    docs = search_users(uuid=uuid)
+    if docs:
+        return docs[0][NAME]
 
 def getUserId(name):
     """ Get the user ID for a specific user NAME.
@@ -151,9 +151,9 @@ def getUserId(name):
     :rtype: unicode
     :returns: the corresponding user ID or None
     """
-    revs = get_revs_by_filter(name_exact=name)
-    if revs:
-        return revs[0][UUID]
+    docs = search_users(name_exact=name)
+    if docs:
+        return docs[0][UUID]
 
 def get_editor(userid, addr, hostname):
     """ Return a tuple of type id and string or Page object
