@@ -270,18 +270,6 @@ class TestLoginWithPassword(object):
         theuser = user.User(name=name)
         assert theuser.email is None
 
-    def test_for_email_attribut_by_uid(self):
-        """
-        checks access to the email attribute by getting the user object from the uid
-        """
-        name = u"__TestUser2__"
-        password = u"ekERErwerwerh"
-        email = u"__TestUser2__@moinhost"
-        self.createUser(name, password, email=email)
-        uid = user.getUserId(name)
-        theuser = user.User(uid)
-        assert theuser.email == email
-
     # Bookmarks -------------------------------------------------------
 
     def test_bookmark(self):

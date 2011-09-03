@@ -1147,10 +1147,11 @@ def lostpass():
             u = None
             username = form['username'].value
             if username:
-                u = user.User(user.getUserId(username))
+                u = user.User(auth_username=username)
             email = form['email'].value
             if form['email'].valid and email:
-                u = user.get_by_email_address(email)
+                users = user.search_users(email=email)
+                u = users and user.User(users[0][UUID])
             if u and u.valid:
                 is_ok, msg = u.mailAccountData()
                 if not is_ok:
@@ -1206,7 +1207,7 @@ def recoverpass():
     elif request.method == 'POST':
         form = PasswordRecoveryForm.from_flat(request.form)
         if form.validate():
-            u = user.User(user.getUserId(form['username'].value))
+            u = user.User(auth_username=form['username'].value)
             if u and u.valid and u.apply_recovery_token(form['token'].value, form['password1'].value):
                 flash(_("Your password has been changed, you can log in now."), "info")
             else:
@@ -1421,17 +1422,17 @@ def usersettings(part):
                 flash(_("Your password has been changed."), "info")
             else:
                 if part == 'personal':
-                    if form['openid'].value != flaskg.user.openid and user.get_by_openid(form['openid'].value):
+                    if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
                         # duplicate openid
                         flash(_("This openid is already in use."), "error")
                         success = False
-                    if form['name'].value != flaskg.user.name and user.getUserId(form['name'].value):
+                    if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
                         # duplicate name
                         flash(_("This username is already in use."), "error")
                         success = False
                 if part == 'notification':
                     if (form['email'].value != flaskg.user.email and
-                        user.get_by_email_address(form['email'].value) and app.cfg.user_email_unique):
+                        user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
                         # duplicate email
                         flash(_('This email is already in use'), 'error')
                         success = False

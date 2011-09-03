@@ -39,7 +39,6 @@ class Create_User(Command):
         if msg:
             print msg
         else:
-            uid = user.getUserId(name)
-            u = user.User(uid)
+            u = user.User(auth_username=name)
             print " %-20s %-25s %-35s - created." % (u.id, u.name, u.email),
 
