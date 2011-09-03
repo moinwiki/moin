@@ -245,6 +245,83 @@ user has selected, so maybe either only do changes applying to all available
 themes or force all users to use same theme, so that your CSS applies
 correctly.
 
+XStatic Packages
+----------------
+`XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard 
+to package external (often 3rd party) static files as a python package. 
+So they are easily usable on all operating systems, 
+with any package management system or even without one.
+
+In many cases, those external static files are maintained by someone else (like jQuery
+javascript library or even much bigger js libraries or applications) and we
+definitely do not want to merge them into our project.
+
+For MoinMoin we require the following XStatic Packages in setup.py:
+
+* `jquery <http://pypi.python.org/pypi/XStatic-jQuery>`_
+  for jquery lib functions loaded in the template file base.html
+
+* `jquery_file_upload <http://pypi.python.org/pypi/XStatic-jQuery-File-Upload>`_
+  loaded in the template file of index view. It allows to upload many files at once.
+
+* `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
+  used in template file modify_text_html. A WYSIWYG editor similar to word processing 
+  desktop editing applications.
+
+* `svgweb <http://pypi.python.org/pypi/XStatic-svgweb>`_
+  used at base.html for enabling SVG support on many browsers.
+
+* `svgedit_moin <http://pypi.python.org/pypi/XStatic-svg-edit-moin>`_
+  is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
+  SVG editor.
+
+* `twikidraw_moin <http://pypi.python.org/pypi/XStatic-TWikiDraw-moin>`_
+  a Java applet loaded from template file of modify_twikidraw. It is a simple drawing editor.
+  
+* `anywikidraw <http://pypi.python.org/pypi/XStatic-AnyWikiDraw>`_
+  a Java applet loaded from template file of modify_anywikidraw. It can be used for 
+  editing of drawings and diagrams on items.
+
+* `jquery_multi_download <http://pypi.python.org/pypi/XStatic-multiDownload>`_
+  used in the template of index view for multiple parallel downloads.
+
+
+These packages are imported in wikiconfig by ::
+
+    from xstatic.main import XStatic
+    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor',
+                 'svgweb', 'svgedit_moin', 'twikidraw_moin',
+                 'anywikidraw', 'jquery_multi_download', ]
+    pkg = __import__('xstatic.pkg', fromlist=mod_names)
+    for mod_name in mod_names:
+        mod = getattr(pkg, mod_name)
+        xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
+        serve_files.update([(xs.name, xs.base_dir)])
+
+In a template file you access the files of such a package by its module name ::
+
+    url_for('serve.files', name='the mod name', filename='the file to load')
+
+Adding XStatic Packages
+-----------------------
+
+The following example shows how you can enable the additional package 
+`XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is 
+used for mathml or latex formulas in items content.
+
+Just *pip install xstatic-mathjax* add the name 'mathjax' to mod_names in wikiconfig
+and add the required fragment in base.html::
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+    </script>
+    <script src="{{ url_for('serve.files', name='mathjax', filename='MathJax.js') }}"></script>
+
+
 
 Custom Themes
 -------------
