@@ -122,6 +122,10 @@ REV_NO = "rev_no"
 WIKINAME = "wikiname"
 CONTENT = "content"
 
+# stuff from user profiles / for whoosh index
+EMAIL = "email"
+OPENID = "openid"
+
 # structure for contenttype groups
 CONTENTTYPE_GROUPS = [
     ('markup text items', [

@@ -31,8 +31,10 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import session, request, url_for
 
+from whoosh.query import Term, And, Or
+
 from MoinMoin import config, wikiutil
-from MoinMoin.config import NAME, UUID, ACTION, CONTENTTYPE
+from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, UUID, ACTION, CONTENTTYPE, EMAIL, OPENID
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
@@ -77,7 +79,7 @@ space between words. Group page name is not allowed.""", name=theuser.name)
 
     # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
     if theuser.email and app.cfg.user_email_unique:
-        if get_by_email_address(theuser.email):
+        if get_by_email(theuser.email):
             return _("This email already belongs to somebody else.")
 
     # Openid should be unique
@@ -93,33 +95,28 @@ def get_user_backend():
     return flaskg.unprotected_storage
 
 
+def get_revs_by_filter(**q):
+    """ Searches for a user with a given filter """
+    q.update(wikiname=app.cfg.interwikiname) # XXX for now, search only users of THIS wiki
+                                             # maybe add option to not index wiki users separately,
+                                             # but share them in the index also
+    backend = get_user_backend()
+    docs = backend.documents(all_revs=False, **q)
+    return list(docs)
+
+
 def getUserList():
     """ Get a list of all (numerical) user IDs.
 
     :rtype: list
     :returns: all user IDs
     """
-    userlist = []
-    for item in get_user_backend().iteritems():
-        rev = item.get_revision(-1)
-        userlist.append(rev[UUID])
-    return userlist
+    revs = get_revs_by_filter()
+    return [rev[UUID] for rev in revs]
 
-
-def get_revs_by_filter(key, value):
-    """ Searches for a user with a given filter """
-    backend = get_user_backend()
-    revs_found = []
-    for item in backend.iteritems():
-        rev = item.get_revision(-1)
-        if rev.get(key) == value:
-            revs_found.append(rev)
-    return revs_found
-
-
-def get_by_email_address(email_address):
+def get_by_email(email):
     """ Searches for an user with a particular e-mail address and returns it. """
-    revs = get_revs_by_filter('email', email_address)
+    revs = get_revs_by_filter(email=email)
     if revs:
         return User(revs[0][UUID])
 
@@ -132,7 +129,7 @@ def get_by_openid(openid):
     :returns: the user whose openid is this one
     :rtype: user object or None
     """
-    revs = get_revs_by_filter('openid', openid)
+    revs = get_revs_by_filter(openid=openid)
     if revs:
         return User(revs[0][UUID])
 
@@ -143,18 +140,18 @@ def getName(uuid):
     :rtype: string
     :returns: the corresponding user name or None
     """
-    revs = get_revs_by_filter(UUID, uuid)
+    revs = get_revs_by_filter(uuid=uuid)
     if revs:
         return revs[0][NAME]
 
-def getUserId(searchName):
+def getUserId(name):
     """ Get the user ID for a specific user NAME.
 
-    :param searchName: the user name to look up
-    :rtype: string
+    :param name: the user name to look up
+    :rtype: unicode
     :returns: the corresponding user ID or None
     """
-    revs = get_revs_by_filter(NAME, searchName)
+    revs = get_revs_by_filter(name_exact=name)
     if revs:
         return revs[0][UUID]
 
