@@ -78,16 +78,6 @@ class TestConverter(object):
         for i in data:
             yield (self.do, ) + i
 
-    def test_variables(self):
-        data = [
-            (u"VAR:: text", u"VAR:: text"),
-            (u"@TIME@", u""),
-            (u"@DATE@", u""),
-            (u"@PAGE@", u""),
-        ]
-        for i in data:
-            yield (self.do, ) + i
-
     def test_link(self):
         data = [
             (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
