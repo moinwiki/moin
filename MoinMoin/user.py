@@ -104,16 +104,6 @@ def search_users(**q):
     docs = backend.documents(all_revs=False, **q)
     return list(docs)
 
-
-def getUserList():
-    """ Get a list of all (numerical) user IDs.
-
-    :rtype: list
-    :returns: all user IDs
-    """
-    docs = search_users()
-    return [doc[UUID] for doc in docs]
-
 def get_by_email(email):
     """ Searches for an user with a particular e-mail address and returns it. """
     docs = search_users(email=email)
