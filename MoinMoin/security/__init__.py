@@ -260,7 +260,7 @@ class AccessControlList(object):
             that means that there is a valid user account present.
             works for subscription emails.
         """
-        if user.getUserId(name): # is a user with this name known?
+        if user.search_users(name_exact=name): # is a user with this name known?
             return rightsdict.get(dowhat)
         return None
 

@@ -34,8 +34,7 @@ class Disable_User(Command):
         if uid:
             u = user.User(uid)
         elif name:
-            uid = user.getUserId(name)
-            u = user.User(uid)
+            u = user.User(auth_username=name)
 
         if not u.exists():
             print 'This user "%s" does not exists!' % u.name

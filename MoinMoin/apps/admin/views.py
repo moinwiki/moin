@@ -54,8 +54,7 @@ def userprofile(user_name):
     """
     Set values in user profile
     """
-    uid = user.getUserId(user_name)
-    u = user.User(uid)
+    u = user.User(auth_username=user_name)
     if request.method == 'GET':
         return _(u"User profile of %(username)s: %(email)r", username=user_name,
                  email=(u.email, u.disabled))
@@ -77,7 +76,7 @@ def userprofile(user_name):
                 ok = False
         if ok:
             setattr(u, key, val)
-            theuser.save()
+            u.save()
             flash('%s.%s: %s -> %s' % (user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
             flash('modifying %s.%s failed' % (user_name, key, ), "error")

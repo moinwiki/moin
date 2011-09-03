@@ -55,7 +55,7 @@ Name may contain any Unicode alpha numeric character, with optional one
 space between words. Group page name is not allowed.""", name=theuser.name)
 
     # Name required to be unique. Check if name belong to another user.
-    if getUserId(theuser.name):
+    if search_users(name_exact=theuser.name):
         return _("This user name already belongs to somebody else.")
 
     pw_checker = app.cfg.password_checker
@@ -79,13 +79,13 @@ space between words. Group page name is not allowed.""", name=theuser.name)
 
     # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
     if theuser.email and app.cfg.user_email_unique:
-        if get_by_email(theuser.email):
+        if search_users(email=theuser.email):
             return _("This email already belongs to somebody else.")
 
     # Openid should be unique
     theuser.openid = openid
-    if theuser.openid and get_by_openid(theuser.openid):
-            return _('This OpenID already belongs to somebody else.')
+    if theuser.openid and search_users(openid=theuser.openid):
+        return _('This OpenID already belongs to somebody else.')
 
     # save data
     theuser.save()
@@ -104,46 +104,6 @@ def search_users(**q):
     docs = backend.documents(all_revs=False, **q)
     return list(docs)
 
-def get_by_email(email):
-    """ Searches for an user with a particular e-mail address and returns it. """
-    docs = search_users(email=email)
-    if docs:
-        return User(docs[0][UUID])
-
-def get_by_openid(openid):
-    """
-    Searches for a user using an openid identifier.
-
-    :param openid: the openid to filter with
-    :type openid: unicode
-    :returns: the user whose openid is this one
-    :rtype: user object or None
-    """
-    docs = search_users(openid=openid)
-    if docs:
-        return User(docs[0][UUID])
-
-def getName(uuid):
-    """ Get the name for a specific uuid.
-
-    :param uuid: the user uuid to look up
-    :rtype: string
-    :returns: the corresponding user name or None
-    """
-    docs = search_users(uuid=uuid)
-    if docs:
-        return docs[0][NAME]
-
-def getUserId(name):
-    """ Get the user ID for a specific user NAME.
-
-    :param name: the user name to look up
-    :rtype: unicode
-    :returns: the corresponding user ID or None
-    """
-    docs = search_users(name_exact=name)
-    if docs:
-        return docs[0][UUID]
 
 def get_editor(userid, addr, hostname):
     """ Return a tuple of type id and string or Page object
@@ -252,13 +212,17 @@ class User(object):
         # we got an already authenticated username:
         check_password = None
         if not self.uuid and self.auth_username:
-            self.uuid = getUserId(self.auth_username)
+            users = search_users(name_exact=self.auth_username)
+            if users:
+                self.uuid = users[0][UUID]
             if not password is None:
                 check_password = password
         if self.uuid:
             self.load_from_id(check_password)
         elif self.name and self.name != 'anonymous':
-            self.uuid = getUserId(self.name)
+            users = search_users(name_exact=self.name)
+            if users:
+                self.uuid = users[0][UUID]
             if self.uuid:
                 # no password given should fail
                 self.load_from_id(password or u'')
@@ -319,9 +283,10 @@ class User(object):
                          password in the user account file.
         """
         try:
-            name = getName(self.uuid) # XXX we need the name because backend API is still based on names
-            if name is None:
+            users = search_users(uuid=self.uuid) # XXX we need the name because backend API is still based on names
+            if not users:
                 raise NoSuchItemError("No user name for that uuid.")
+            name = users[0][NAME]
             item = self._user_backend.get_item(name)
             self._user = item.get_revision(-1)
         except (NoSuchItemError, NoSuchRevisionError):

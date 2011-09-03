@@ -81,7 +81,8 @@ class OpenIDAuth(BaseAuth):
                 # we have successfully authenticated our openid
                 # we get the user with this openid associated to him
                 identity = oid_info.identity_url
-                user_obj = user.get_by_openid(identity)
+                users = user.search_users(openid=identity)
+                user_obj = users and user.User(users[0][UUID])
 
                 # if the user actually exists
                 if user_obj:
