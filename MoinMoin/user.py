@@ -655,37 +655,6 @@ class User(object):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
 
-    def host(self):
-        """ Return user host """
-        host = self.isCurrentUser() and self._cfg.show_hosts and request.remote_addr
-        return host or _("<unknown>")
-
-    def wikiHomeLink(self):
-        """ Return wiki markup usable as a link to the user homepage,
-            it doesn't matter whether it already exists or not.
-        """
-        wikiname, pagename = getInterwikiHome(self.name)
-        if is_local_wiki(wikiname):
-            markup = '[[%s]]' % pagename
-        else:
-            markup = '[[%s:%s]]' % (wikiname, pagename)
-        return markup
-
-    def signature(self):
-        """ Return user signature using wiki markup
-
-        Users sign with a link to their homepage.
-        Visitors return their host address.
-
-        TODO: The signature use wiki format only, for example, it will
-        not create a link when using rst format. It will also break if
-        we change wiki syntax.
-        """
-        if self.name:
-            return self.wikiHomeLink()
-        else:
-            return self.host()
-
     def generate_recovery_token(self):
         key, token = generate_token()
         self.recoverpass_key = key

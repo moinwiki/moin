@@ -356,17 +356,6 @@ class TestLoginWithPassword(object):
 
     # Other ----------------------------------------------------------
 
-    def test_signature(self):
-        name = u'Test_User_other'
-        password = name
-        self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
-
-        # test the user signature
-        result = theUser.signature()
-        expected =  u'[[Test_User_other]]'
-        assert result == expected
-
     def test_recovery_token(self):
         name = u'Test_User_other'
         password = name
