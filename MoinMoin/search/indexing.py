@@ -15,7 +15,7 @@ from whoosh.index import open_dir, create_in, EmptyIndexError
 
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, REV_NO, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
-                            CONTENT, UUID, ITEMLINKS, ITEMTRANSCLUSIONS, ACL
+                            CONTENT, UUID, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID
 from MoinMoin.search.analyzers import *
 from MoinMoin.error import FatalError
 
@@ -112,6 +112,14 @@ class WhooshIndex(object):
             ACL: TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
         }
         latest_revs_fields.update(**common_fields)
+
+        userprofile_fields = {
+            # EMAIL from user profile metadata
+            EMAIL: ID(unique=True, stored=True),
+            # OPENID from user profile metadata
+            OPENID: ID(unique=True, stored=True),
+        }
+        latest_revs_fields.update(**userprofile_fields)
 
         all_revs_fields = {
             # UUID from metadata

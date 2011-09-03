@@ -29,7 +29,7 @@ class TestHTTPAuthMoin(object):
 
     def test_request(self):
         # create a new user
-        create_user(u'ValidUser', 'test_pass', 'test_email@moinmoin')
+        create_user(u'ValidUser', u'test_pass', u'test_email@moinmoin')
         httpauthmoin_obj = HTTPAuthMoin()
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert test_user.valid
