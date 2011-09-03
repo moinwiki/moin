@@ -22,6 +22,9 @@ from __future__ import absolute_import, division
 import time
 import copy
 
+from uuid import uuid4
+make_uuid = lambda: unicode(uuid4().hex)
+
 from babel import parse_locale
 
 from flask import current_app as app
@@ -41,8 +44,7 @@ def create_user(username, password, email, openid=None):
     """ create a user """
     # Create user profile
     theuser = User(auth_method="new-user")
-
-    theuser.name = username
+    theuser.name = unicode(username)
 
     # Don't allow creating users with invalid names
     if not isValidName(theuser.name):
@@ -88,12 +90,7 @@ space between words. Group page name is not allowed.""", name=theuser.name)
 
 
 def get_user_backend():
-    """
-    Just a shorthand that makes the rest of the code easier
-    by returning the proper user backend.
-    """
-    ns_user_profile = app.cfg.ns_user_profile
-    return flaskg.unprotected_storage.get_backend(ns_user_profile)
+    return flaskg.unprotected_storage
 
 
 def getUserList():
@@ -280,7 +277,7 @@ class User(object):
                 self.load_from_id(password or u'')
         # Still no ID - make new user
         if not self.uuid:
-            self.uuid = self.make_id()
+            self.uuid = make_uuid()
             if password is not None:
                 self.enc_password = crypt_password(password)
 
@@ -306,14 +303,6 @@ class User(object):
             except ValueError:
                 pass
         return l
-
-    def make_id(self):
-        """ make a new unique user id """
-        #!!! this should probably be a hash of REMOTE_ADDR, HTTP_USER_AGENT
-        # and some other things identifying remote users, then we could also
-        # use it reliably in edit locking
-        from random import randint
-        return u"%s.%d" % (str(time.time()), randint(0, 65535))
 
     def create_or_update(self, changed=False):
         """ Create or update a user profile
@@ -342,8 +331,10 @@ class User(object):
         :param password: If not None, then the given password must match the
                          password in the user account file.
         """
-        name = getName(self.uuid) # XXX we need the name because backend API is still based on names
         try:
+            name = getName(self.uuid) # XXX we need the name because backend API is still based on names
+            if name is None:
+                raise NoSuchItemError("No user name for that uuid.")
             item = self._user_backend.get_item(name)
             self._user = item.get_revision(-1)
         except (NoSuchItemError, NoSuchRevisionError):
@@ -422,10 +413,11 @@ class User(object):
         """
         Save user account data to user account file on disk.
         """
+        backend_name = self.name # XXX maybe UserProfile/<name> later
         try:
-            item = self._user_backend.get_item(self.name)
+            item = self._user_backend.get_item(backend_name)
         except NoSuchItemError:
-            item = self._user_backend.create_item(self.name)
+            item = self._user_backend.create_item(backend_name)
         try:
             currentrev = item.get_revision(-1)
             rev_no = currentrev.revno
