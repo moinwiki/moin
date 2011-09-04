@@ -27,7 +27,7 @@ def remove_overlay_prefixes(url):
     This could remove +get or +modify for external links,
         when they shouldn't really be removed.
     """
-    return unicode(url).replace("+get/", "").replace("+modify/", "")
+    return unicode(url).replace("/+get/", "/+show/").replace("/+modify/", "/+show/")
 
 
 def wrap_object_with_overlay(elem, href):
