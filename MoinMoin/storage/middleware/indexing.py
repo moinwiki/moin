@@ -19,9 +19,6 @@
 import os
 import time, datetime
 
-from uuid import uuid4
-make_uuid = lambda: unicode(uuid4().hex)
-
 from flask import current_app as app
 from flask import g as flaskg
 from flask import request
@@ -36,6 +33,7 @@ from MoinMoin.converter import default_registry
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page
+from MoinMoin.util.crypto import make_uuid
 from MoinMoin import wikiutil
 
 from MoinMoin import log

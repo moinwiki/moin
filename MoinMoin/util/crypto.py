@@ -47,6 +47,10 @@ try:
 except ImportError:
     pass
 
+from uuid import uuid4
+
+make_uuid = lambda: unicode(uuid4().hex)
+UUID_LEN = len(make_uuid())
 
 # random stuff
 
