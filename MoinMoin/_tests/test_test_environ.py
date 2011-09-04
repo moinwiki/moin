@@ -14,7 +14,7 @@ from flask import g as flaskg
 from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin.config import NAME, CONTENTTYPE, IS_SYSITEM, SYSITEM_VERSION
 from MoinMoin.storage.error import NoSuchItemError
-from MoinMoin.storage.serialization import serialize, unserialize
+from MoinMoin.storage.middleware.serialization import serialize, unserialize
 
 from MoinMoin._tests import wikiconfig
 

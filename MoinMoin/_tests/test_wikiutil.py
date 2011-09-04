@@ -13,7 +13,7 @@ from flask import current_app as app
 
 from MoinMoin import config, wikiutil
 from MoinMoin._tests import wikiconfig
-from MoinMoin.storage.serialization import serialize, unserialize
+from MoinMoin.storage.middleware.serialization import serialize, unserialize
 
 from werkzeug import MultiDict
 

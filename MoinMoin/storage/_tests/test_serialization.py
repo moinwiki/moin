@@ -15,7 +15,7 @@ from StringIO import StringIO
 from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.storage.serialization import Entry, create_value_object, serialize, unserialize
+from MoinMoin.storage.middleware.serialization import Entry, create_value_object, serialize, unserialize
 
 XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>\n'
 

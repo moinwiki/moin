@@ -11,7 +11,6 @@ from flask import current_app as app
 
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.fs2 import FS2Backend
-from MoinMoin.storage.backends.router import RouterBackend
 
 class TestFS2Backend(BackendTest):
 

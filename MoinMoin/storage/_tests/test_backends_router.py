@@ -20,7 +20,7 @@ from MoinMoin.config import NAME, MTIME
 from MoinMoin.error import ConfigurationError
 from MoinMoin.storage._tests.test_backends import BackendTest
 from MoinMoin.storage.backends.memory import MemoryBackend
-from MoinMoin.storage.backends.router import RouterBackend
+from MoinMoin.storage.middleware.router import RouterBackend
 from MoinMoin.search.indexing import WhooshIndex
 
 class TestRouterBackend(BackendTest):
