@@ -22,9 +22,6 @@ from __future__ import absolute_import, division
 import time
 import copy
 
-from uuid import uuid4
-make_uuid = lambda: unicode(uuid4().hex)
-
 from babel import parse_locale
 
 from flask import current_app as app
@@ -38,7 +35,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, UUID, ACTION, CONTENTTYP
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
-                                 generate_token, valid_token
+                                 generate_token, valid_token, make_uuid
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 

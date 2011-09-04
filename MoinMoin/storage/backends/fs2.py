@@ -14,7 +14,6 @@
 
 
 import os, tempfile, errno, shutil
-from uuid import uuid4 as make_uuid
 
 import cPickle as pickle
 
@@ -36,6 +35,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.util.lock import ExclusiveLock
 from MoinMoin.util import filesys
+from MoinMoin.util.crypto import make_uuid, UUID_LEN
 
 from MoinMoin.storage import Backend as BackendBase
 from MoinMoin.storage import Item as ItemBase
@@ -51,8 +51,6 @@ PICKLEPROTOCOL = 1
 
 MAX_NAME_LEN = 500
 from MoinMoin.config import HASH_ALGORITHM
-
-UUID_LEN = len(make_uuid().hex)
 
 
 class Item(ItemBase):
@@ -276,7 +274,7 @@ class FS2Backend(BackendBase):
         See _add_item_internally, this is just internal for locked operation.
         """
         item, revmeta, revdata, revdata_target, itemmeta = arg
-        item_id = make_uuid().hex
+        item_id = make_uuid()
         item_name = item.name
 
         name2id = self._name2id

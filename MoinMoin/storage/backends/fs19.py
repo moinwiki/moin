@@ -19,11 +19,7 @@ import os
 from StringIO import StringIO
 import hashlib
 
-from uuid import uuid4
-make_uuid = lambda: unicode(uuid4().hex)
-
 MAX_NAME_LEN = 1000 # max length of a page name, page+attach name, user name
-UUID_LEN = len(make_uuid())
 
 from sqlalchemy import create_engine, MetaData, Table, Column, String, Unicode, Integer
 
@@ -45,6 +41,7 @@ from MoinMoin.storage.backends._fsutils import quoteWikinameFS, unquoteWikiname
 from MoinMoin.storage.backends._flatutils import split_body
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.crypto import make_uuid, UUID_LEN
 
 
 DELETED_MODE_KEEP = 'keep'
