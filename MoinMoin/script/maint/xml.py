@@ -23,8 +23,7 @@ from flaskext.script import Command, Option
 
 from MoinMoin.script import fatal
 
-from MoinMoin.storage.serialization import unserialize, serialize, \
-                                           NLastRevs, SinceTime
+from MoinMoin.storage.middleware.serialization import unserialize, serialize, NLastRevs, SinceTime
 
 class XML(Command):
     description = "This command can be used to save items to a file or to create items by loading from a file"
@@ -63,7 +62,8 @@ class XML(Command):
 
         if moin19data:
             # this is for backend migration scenario from moin 1.9
-            from MoinMoin.storage.backends import create_simple_mapping, router
+            from MoinMoin.storage.backends import create_simple_mapping
+            from MoinMoin.storage.middleware import router
             namespace_mapping = create_simple_mapping(backend_uri='fs19:%s' % moin19data)
             storage = router.RouterBackend(
                     [(ns, be) for ns, be, acls in namespace_mapping], cfg=app.cfg)

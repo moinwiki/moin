@@ -28,9 +28,8 @@ from MoinMoin.storage import Item as ItemBase
 from MoinMoin.storage import NewRevision as NewRevisionBase
 from MoinMoin.storage import StoredRevision as StoredRevisionBase
 
-from MoinMoin.storage.backends.indexing import IndexingBackendMixin, IndexingItemMixin, IndexingRevisionMixin
-
-from MoinMoin.storage.serialization import SerializableRevisionMixin, SerializableItemMixin, SerializableBackendMixin
+from MoinMoin.storage.middleware.indexing import IndexingBackendMixin, IndexingItemMixin, IndexingRevisionMixin
+from MoinMoin.storage.middleware.serialization import SerializableRevisionMixin, SerializableItemMixin, SerializableBackendMixin
 
 
 class BareRouterBackend(BackendBase):

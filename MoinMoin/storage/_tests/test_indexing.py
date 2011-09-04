@@ -9,7 +9,7 @@ import py
 
 from MoinMoin._tests import update_item, nuke_item
 from MoinMoin._tests.wikiconfig import Config
-from MoinMoin.storage.backends.indexing import ItemIndex
+from MoinMoin.storage.middleware.indexing import ItemIndex
 from MoinMoin.config import NAME
 
 # Revisions for tests

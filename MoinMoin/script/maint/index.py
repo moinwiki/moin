@@ -20,7 +20,7 @@ from MoinMoin.error import FatalError
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.util.mime import Type
 from MoinMoin.search.indexing import backend_to_index
-from MoinMoin.storage.backends.indexing import convert_to_indexable
+from MoinMoin.storage.middleware.indexing import convert_to_indexable
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

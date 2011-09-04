@@ -1,23 +1,22 @@
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:PawelPacana
 # Copyright: 2009 MoinMoin:ChristopherDenter
-# Copyright: 2009-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2009-2011 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Backends
-
-    This package contains code for the backends of the new storage layer.
+MoinMoin - Storage Backends
 """
 
 
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.storage.serialization import unserialize
 from MoinMoin.storage.error import NoSuchItemError, RevisionAlreadyExistsError
 from MoinMoin.error import ConfigurationError
-from MoinMoin.storage.backends import router, fs, fs2, fs19, memory
+from MoinMoin.storage.backends import fs, fs2, fs19, memory
+from MoinMoin.storage.middleware import router
+from MoinMoin.storage.middleware.serialization import unserialize
 
 CONTENT = 'content'
 USERPROFILES = 'userprofiles'
