@@ -154,9 +154,6 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-from MoinMoin.storage.error import StorageError
-from MoinMoin.storage.backends import memory
-from MoinMoin.storage.middleware.serialization import serialize, unserialize
 from MoinMoin.storage.middleware import router, acl
 from MoinMoin import auth, config, user
 
