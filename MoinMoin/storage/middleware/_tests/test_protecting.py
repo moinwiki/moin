@@ -12,7 +12,7 @@ from StringIO import StringIO
 
 import pytest
 
-from config import ACL
+from MoinMoin.config import ACL
 
 from ..protecting import ProtectingMiddleware, AccessDenied
 

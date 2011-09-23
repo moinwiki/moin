@@ -12,7 +12,7 @@ from StringIO import StringIO
 
 import pytest
 
-from config import SIZE, HASH_ALGORITHM
+from MoinMoin.config import SIZE, HASH_ALGORITHM
 
 class BackendTestBase(object):
     def setup_method(self, method):

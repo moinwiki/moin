@@ -17,7 +17,7 @@ specific part of the namespace. Routing middleware has same API as a backend.
 
 from __future__ import absolute_import, division
 
-from config import NAME
+from MoinMoin.config import NAME
 
 from MoinMoin.storage.backends import BackendBase, MutableBackendBase
 
@@ -76,7 +76,6 @@ class Backend(MutableBackendBase):
                 yield u'%s/%s' % (mountpoint, revid)
 
     def retrieve(self, revid):
-        print revid
         mountpoint, revid = revid.rsplit(u'/', 1)
         backend = self._get_backend(mountpoint)[0]
         meta, data = backend.retrieve(revid)

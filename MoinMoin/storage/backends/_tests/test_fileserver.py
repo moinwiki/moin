@@ -13,7 +13,7 @@ import tempfile
 
 import pytest
 
-from config import MTIME
+from MoinMoin.config import MTIME
 from ..fileserver import Backend
 from . import BackendTestBase
 
