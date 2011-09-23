@@ -21,7 +21,7 @@ import errno
 import stat
 from StringIO import StringIO
 
-from config import MTIME, SIZE, CONTENTTYPE
+from MoinMoin.config import MTIME, SIZE, CONTENTTYPE
 from . import BackendBase
 
 

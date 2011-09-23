@@ -58,9 +58,6 @@ import time
 import datetime
 from StringIO import StringIO
 
-from uuid import uuid4
-make_uuid = lambda: unicode(uuid4().hex)
-
 import logging
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
@@ -71,10 +68,12 @@ from whoosh.qparser import QueryParser, MultifieldParser
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
-                   LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
-                   CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
-                   ITEMID, REVID
+from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
+                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
+                            CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
+                            ITEMID, REVID, CURRENT
+
+from MoinMoin.util.crypto import make_uuid
 
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
@@ -120,16 +119,14 @@ def convert_to_indexable(meta, data):
 
 
 class IndexingMiddleware(object):
-    def __init__(self, index_dir, backend, user_name=None, acl_support=False, **kw):
+    def __init__(self, index_dir, backend, wiki_name=None, **kw):
         """
         Store params, create schemas.
         """
         self.index_dir = index_dir
         self.index_dir_tmp = index_dir + '.temp'
         self.backend = backend
-        self.user_name = user_name # TODO use currently logged-in username
-        self.acl_support = acl_support
-        self.wikiname = u'' # TODO take from app.cfg.interwikiname
+        self.wikiname = wiki_name
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
@@ -514,7 +511,7 @@ class IndexingMiddleware(object):
             for hit in searcher.search(q, **kw):
                 doc = hit.fields()
                 latest_doc = not all_revs and doc or None
-                item = Item(self, user_name=self.user_name, latest_doc=latest_doc, itemid=doc[ITEMID])
+                item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item[doc[REVID]]
 
     def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
@@ -527,7 +524,7 @@ class IndexingMiddleware(object):
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
                 doc = hit.fields()
                 latest_doc = not all_revs and doc or None
-                item = Item(self, user_name=self.user_name, latest_doc=latest_doc, itemid=doc[ITEMID])
+                item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item[doc[REVID]]
 
     def documents(self, all_revs=False, **kw):
@@ -536,7 +533,7 @@ class IndexingMiddleware(object):
         """
         for doc in self._documents(all_revs, **kw):
             latest_doc = not all_revs and doc or None
-            item = Item(self, user_name=self.user_name, latest_doc=latest_doc, itemid=doc[ITEMID])
+            item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             yield item[doc[REVID]]
 
     def _documents(self, all_revs=False, **kw):
@@ -561,7 +558,7 @@ class IndexingMiddleware(object):
         doc = self._document(all_revs, **kw)
         if doc:
             latest_doc = not all_revs and doc or None
-            item = Item(self, user_name=self.user_name, latest_doc=latest_doc, itemid=doc[ITEMID])
+            item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             return item[doc[REVID]]
 
     def _document(self, all_revs=False, **kw):
@@ -571,11 +568,15 @@ class IndexingMiddleware(object):
         with self.get_index(all_revs).searcher() as searcher:
             return searcher.document(**kw)
 
+    def has_item(self, name):
+        item = self[name]
+        return bool(item)
+
     def __getitem__(self, name):
         """
         Return item with <name> (may be a new or existing item).
         """
-        return Item(self, user_name=self.user_name, name=name)
+        return Item(self, name=name)
 
     def get_item(self, **query):
         """
@@ -584,7 +585,7 @@ class IndexingMiddleware(object):
         :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
-        return Item(self, user_name=self.user_name, **query)
+        return Item(self, **query)
 
     def create_item(self, **query):
         """
@@ -593,7 +594,7 @@ class IndexingMiddleware(object):
         :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
-        return Item.create(self, user_name=self.user_name, **query)
+        return Item.create(self, **query)
 
     def existing_item(self, **query):
         """
@@ -602,14 +603,13 @@ class IndexingMiddleware(object):
         :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
-        return Item.existing(self, user_name=self.user_name, **query)
+        return Item.existing(self, **query)
 
 
 class Item(object):
-    def __init__(self, indexer, user_name=None, latest_doc=None, **query):
+    def __init__(self, indexer, latest_doc=None, **query):
         """
         :param indexer: indexer middleware instance
-        :param user_name: user name (for acl checking)
         :param latest_doc: if caller already has a latest-revs index whoosh document
                            it can be given there, to avoid us fetching same doc again
                            from the index
@@ -618,7 +618,6 @@ class Item(object):
                          doc from the index (if not given via latest_doc).
         """
         self.indexer = indexer
-        self.user_name = user_name
         self.backend = self.indexer.backend
         if latest_doc is None:
             # we need to call the method without acl check to avoid endless recursion:
@@ -635,22 +634,26 @@ class Item(object):
     def acl(self):
         return self._current.get(ACL)
 
+    @property
+    def name(self):
+        return self._current.get(NAME, 'DoesNotExist')
+
     @classmethod
-    def create(cls, indexer, user_name=None, **query):
+    def create(cls, indexer, **query):
         """
         Create a new item and return it, raise exception if it already exists.
         """
-        item = cls(indexer, user_name=user_name, **query)
+        item = cls(indexer, **query)
         if not item:
             return item
         raise ItemAlreadyExists(repr(query))
 
     @classmethod
-    def existing(cls, indexer, user_name=None, **query):
+    def existing(cls, indexer, **query):
         """
         Get an existing item and return it, raise exception if it does not exist.
         """
-        item = cls(indexer, user_name=user_name, **query)
+        item = cls(indexer, **query)
         if item:
             return item
         raise ItemDoesNotExist(repr(query))
@@ -673,6 +676,10 @@ class Item(object):
         """
         Get Revision with revision id <revid>.
         """
+        if revid == CURRENT:
+            revid = self._current.get(REVID)
+            if revid is None:
+                raise KeyError
         rev = Revision(self, revid)
         rev.data # XXX trigger KeyError if rev does not exist
         return rev
@@ -749,6 +756,10 @@ class Revision(object):
         # If you access data or meta, it will, though.
 
     @property
+    def name(self):
+        return self.meta.get(NAME, 'DoesNotExist')
+
+    @property
     def data(self):
         if self._data is None:
             meta, data = self.backend.retrieve(self.revid) # raises KeyError if rev does not exist
@@ -770,7 +781,9 @@ class Revision(object):
         return cmp(self.meta, other.meta)
 
 
-class Meta(object):
+from collections import Mapping
+
+class Meta(Mapping):
     def __init__(self, revision, doc, meta=None):
         self.revision = revision
         self._doc = doc or {}
@@ -783,6 +796,10 @@ class Meta(object):
             return False
         else:
             return True
+
+    def __iter__(self):
+        self._meta, self.revision._data = self.revision.backend.retrieve(self.revision.revid) # raises KeyError if rev does not exist
+        return iter(self._meta)
 
     def __getitem__(self, key):
         try:
@@ -800,4 +817,10 @@ class Meta(object):
         if self[REVID] == other[REVID]:
             return 0
         return cmp(self[MTIME], other[MTIME])
+
+    def __len__(self):
+        return 0 # XXX
+
+    def __repr__(self):
+        return "Meta _doc: %r _meta: %r" % (self._doc, self._meta)
 

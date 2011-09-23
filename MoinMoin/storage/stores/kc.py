@@ -8,7 +8,7 @@ Stores k/v pairs into a single kyoto cabinet file in the filesystem.
 
 Note: only ONE process can open a kyoto cabinet in OWRITER (writable) mode.
       Multithreading is allowed, but not multi-process.
-      
+
       For multi-process, you either need to use some different store (not
       kyoto cabinet) or use a store for kyoto tycoon (which is a network
       server that uses kyoto cabinet).

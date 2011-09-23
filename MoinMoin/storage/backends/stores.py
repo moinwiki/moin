@@ -21,10 +21,8 @@ See the stores package for already implemented key/value stores.
 
 from __future__ import absolute_import, division
 
-from uuid import uuid4
-make_uuid = lambda: unicode(uuid4().hex)
-
-from config import REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.config import REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.util.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
@@ -34,7 +32,7 @@ try:
 except ImportError:
     import simplejson as json
 
-STORES_PACKAGE = 'storage.stores'
+STORES_PACKAGE = 'MoinMoin.storage.stores'
 
 
 class Backend(BackendBase):
@@ -50,7 +48,7 @@ class Backend(BackendBase):
         module = __import__(STORES_PACKAGE + '.' + store_name, globals(), locals(), ['BytesStore', 'FileStore', ])
         meta_store_uri = store_uri % dict(kind='meta')
         data_store_uri = store_uri % dict(kind='data')
-        return cls(module.BytesStore(meta_store_uri), module.FileStore(data_store_uri))
+        return cls(module.BytesStore.from_uri(meta_store_uri), module.FileStore.from_uri(data_store_uri))
 
     def __init__(self, meta_store, data_store):
         """

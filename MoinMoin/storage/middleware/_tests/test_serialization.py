@@ -13,8 +13,8 @@ from StringIO import StringIO
 from ..indexing import IndexingMiddleware
 from ..serialization import serialize, deserialize
 
-from storage.backends.stores import MutableBackend
-from storage.stores.memory import BytesStore, FileStore
+from MoinMoin.storage.backends.stores import MutableBackend
+from MoinMoin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [

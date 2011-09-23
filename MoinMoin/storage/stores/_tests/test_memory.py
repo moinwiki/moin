@@ -17,6 +17,7 @@ def test_create(Store):
     assert store._st is None
 
     store.create()
+    store.open()
     assert store._st == {}
 
     return store
@@ -24,6 +25,7 @@ def test_create(Store):
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_destroy(Store):
     store = test_create(Store)
+    store.close()
     store.destroy()
     assert store._st is None
 

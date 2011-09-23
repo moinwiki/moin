@@ -24,10 +24,21 @@ PROTECTED = u'protected'
 UNPROTECTED_CONTENT = 'unprotected content'
 PROTECTED_CONTENT = 'protected content'
 
+acl_mapping = [
+    ('', dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)),
+]
+
+class User(object):
+    """
+    fake user object, just to give user.name
+    """
+    def __init__(self, name):
+        self.name = name
+
 class TestProtectingMiddleware(TestIndexingMiddleware):
     def setup_method(self, method):
         super(TestProtectingMiddleware, self).setup_method(method)
-        self.imw = ProtectingMiddleware(self.imw, user_name=u'joe')
+        self.imw = ProtectingMiddleware(self.imw, User(u'joe'), acl_mapping=acl_mapping)
 
     def teardown_method(self, method):
         self.imw = self.imw.indexer
@@ -56,7 +67,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         revid_unprotected, revid_protected = self.make_items(u'joe:read', u'boss:read')
         revids = [rev.revid for rev in self.imw.documents(all_revs=False)]
         assert revids == [revid_unprotected]  # without revid_protected!
-    
+
     def test_getitem(self):
         revid_unprotected, revid_protected = self.make_items(u'joe:read', u'boss:read')
         # now testing:
@@ -82,18 +93,28 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         item = self.imw[item_name]
         item.store_revision(dict(name=item_name), StringIO('new content'))
 
-    def test_overwrite(self):
-        revid_unprotected, revid_protected = self.make_items(u'joe:write joe:overwrite', u'boss:write boss:overwrite')
+    def test_overwrite_revision(self):
+        revid_unprotected, revid_protected = self.make_items(u'joe:write,overwrite', u'boss:write,overwrite')
         # now testing:
         item = self.imw[UNPROTECTED]
-        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write joe:overwrite', revid=revid_unprotected),
+        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write,overwrite', revid=revid_unprotected),
                             StringIO(UNPROTECTED_CONTENT), overwrite=True)
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
-            item.store_revision(dict(name=PROTECTED, acl=u'boss:write boss:overwrite', revid=revid_protected),
+            item.store_revision(dict(name=PROTECTED, acl=u'boss:write,overwrite', revid=revid_protected),
                                 StringIO(UNPROTECTED_CONTENT), overwrite=True)
 
-    def test_destroy(self):
+    def test_destroy_revision(self):
+        revid_unprotected, revid_protected = self.make_items(u'joe:destroy', u'boss:destroy')
+        # now testing:
+        item = self.imw[UNPROTECTED]
+        item.destroy_revision(revid_unprotected)
+        item = self.imw[PROTECTED]
+        with pytest.raises(AccessDenied):
+            item.destroy_revision(revid_protected)
+
+
+    def test_destroy_item(self):
         revid_unprotected, revid_protected = self.make_items(u'joe:destroy', u'boss:destroy')
         # now testing:
         item = self.imw[UNPROTECTED]
@@ -101,5 +122,6 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
             item.destroy_all_revisions()
+
 
 
