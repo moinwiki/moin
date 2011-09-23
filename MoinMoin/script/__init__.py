@@ -20,8 +20,16 @@ def main(default_command='moin', wiki_config=None):
     manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
-    from MoinMoin.script.maint.index import IndexOperations
-    manager.add_command("index", IndexOperations())
+    from MoinMoin.script.maint import index
+    manager.add_command("index-create", index.IndexCreate())
+    manager.add_command("index-build", index.IndexBuild())
+    manager.add_command("index-update", index.IndexUpdate())
+    manager.add_command("index-destroy", index.IndexDestroy())
+    manager.add_command("index-move", index.IndexMove())
+    manager.add_command("index-optimize", index.IndexOptimize())
+    from MoinMoin.script.maint import serialization
+    manager.add_command("save", serialization.Serialize())
+    manager.add_command("load", serialization.Deserialize())
     from MoinMoin.script.account.create import Create_User
     manager.add_command("account_create", Create_User())
     from MoinMoin.script.account.disable import Disable_User
@@ -36,8 +44,6 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("maint_create_item", Create_Item())
     from MoinMoin.script.maint.modified_systemitems import Modified_SystemItems
     manager.add_command("maint_modified_systemitems", Modified_SystemItems())
-    from MoinMoin.script.maint.xml import XML
-    manager.add_command("maint_xml", XML())
 
     return manager.run(default_command=default_command)
 

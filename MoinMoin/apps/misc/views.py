@@ -29,9 +29,9 @@ def sitemap():
         return dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
     sitemap = []
-    for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname):
-        name = doc[NAME]
-        mtime = doc[MTIME]
+    for rev in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname):
+        name = rev.meta[NAME]
+        mtime = rev.meta[MTIME]
         if False: # was: wikiutil.isSystemItem(name)   XXX add back later, when we have that in the index
             if not SITEMAP_HAS_SYSTEM_ITEMS:
                 continue
@@ -45,9 +45,9 @@ def sitemap():
         sitemap.append((name, format_timestamp(mtime), changefreq, priority))
     # add an entry for root url
     root_item = app.cfg.item_root
-    docs = list(flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname, name=root_item))
-    if docs:
-        mtime = docs[0][MTIME]
+    revs = list(flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname, name=root_item))
+    if revs:
+        mtime = revs[0].meta[MTIME]
         sitemap.append((u'', format_timestamp(mtime), "hourly", "1.0"))
     sitemap.sort()
     content = render_template('misc/sitemap.xml', sitemap=sitemap)
@@ -64,7 +64,7 @@ def urls_names():
     See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
     """
     # XXX we currently also get trash items, fix this
-    item_names = sorted([doc[NAME] for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)])
+    item_names = sorted([rev.meta[NAME] for rev in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')
 

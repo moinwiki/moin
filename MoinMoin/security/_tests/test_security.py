@@ -282,12 +282,7 @@ class TestItemAcls(object):
 
     from MoinMoin._tests import wikiconfig
     class Config(wikiconfig.Config):
-        content_acl = dict(
-                hierarchic=False,
-                before=u"WikiAdmin:admin,read,write,create,destroy",
-                default=u"All:read,write",
-                after=u"All:read",
-        )
+        content_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')
@@ -363,12 +358,7 @@ class TestItemHierachicalAcls(object):
 
     from MoinMoin._tests import wikiconfig
     class Config(wikiconfig.Config):
-        content_acl = dict(
-                       hierarchic=True,
-                       before=u"WikiAdmin:admin,read,write,create,destroy",
-                       default=u"All:read,write",
-                       after=u"All:read",
-        )
+        content_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')
@@ -387,7 +377,7 @@ class TestItemHierachicalAcls(object):
             (self.mainitem_name, u'JaneDoe', ['read', 'write']), # by item acl
             (self.mainitem_name, u'JoeDoe', []), # by item acl
             (self.subitem1_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem1_name, u'AnyUser', ['read']), # by after acl
+            (self.subitem1_name, u'AnyUser', ['read', 'write']), # by default acl
             (self.subitem1_name, u'JoeDoe', []), # by inherited acl from main item
             (self.subitem1_name, u'JaneDoe', ['read', 'write']), # by inherited acl from main item
             (self.subitem2_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),

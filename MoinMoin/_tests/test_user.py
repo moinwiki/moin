@@ -17,6 +17,21 @@ from MoinMoin import user
 from MoinMoin.util import crypto
 
 
+class TestSimple(object):
+    def test_create_retrieve(self):
+        name = u"foo"
+        password = u"barbaz4711"
+        email = u"foo@example.org"
+        # first create a user
+        ret = user.create_user(name, password, email, validate=False)
+        assert ret is None, "create_user returned: %s" % ret
+        # now try to use it
+        u = user.User(name=name, password=password)
+        assert u.name == name
+        assert u.email == email
+        assert u.valid
+
+
 class TestLoginWithPassword(object):
     """user: login tests"""
 
@@ -27,17 +42,11 @@ class TestLoginWithPassword(object):
         # Create anon user for the tests
         flaskg.user = user.User()
 
-        self.user = None
-
     def teardown_method(self, method):
         """ Run after each test
 
         Remove user and reset user listing cache.
         """
-        # Remove user file and user
-        if self.user is not None:
-            del self.user
-
         # Restore original user
         flaskg.user = self.saved_user
 
@@ -373,29 +382,9 @@ class TestLoginWithPassword(object):
 
     # Helpers ---------------------------------------------------------
 
-    def createUser(self, name, password, pwencoded=False, email=None):
-        """ helper to create test user
-        """
-        # Create user
-        self.user = user.User()
-        self.user.name = name
-        self.user.email = email
-        if not pwencoded:
-            password = crypto.crypt_password(password)
-        self.user.enc_password = password
-
-        # Validate that we are not modifying existing user data file!
-        if self.user.exists():
-            self.user = None
-            pytest.skip("Test user exists, will not override existing user data file!")
-
-        # Save test user
-        self.user.save()
-
-        # Validate user creation
-        if not self.user.exists():
-            self.user = None
-            pytest.skip("Can't create test user")
+    def createUser(self, name, password, pwencoded=False, email=None, validate=False):
+        ret = user.create_user(name, password, email, validate=validate, is_encrypted=pwencoded)
+        assert ret is None, "create_user returned: %s" % ret
 
 
 class TestGroupName(object):

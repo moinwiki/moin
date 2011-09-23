@@ -47,11 +47,10 @@ class TestItem(object):
         item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
-        saved_meta, saved_data = dict(item.meta), item.data
+        saved_meta, saved_data = item.meta, item.data
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
-        assert item.rev.revno == 0
 
         data = rev1_data = data * 10000
         comment = comment + u' again'
@@ -63,7 +62,6 @@ class TestItem(object):
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
-        assert item.rev.revno == 1
 
         data = ''
         comment = 'saved empty data'
@@ -75,11 +73,6 @@ class TestItem(object):
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
-        assert item.rev.revno == 2
-
-        # access old revision
-        item = Item.create(name, rev_no=1)
-        assert item.data == rev1_data
 
     def testIndex(self):
         # create a toplevel and some sub-items
@@ -123,17 +116,17 @@ class TestItem(object):
     def test_meta_filter(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name', 'uuid': 'test_uuid'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
-        # keys like NAME and UUID are filtered
+        # keys like NAME, ITEMID, REVID, DATAID are filtered
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
     def test_meta_dict_to_text(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name', 'uuid': 'test_uuid'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
         item = Item.create(name)
         result = Item.meta_dict_to_text(item, meta)
         expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
@@ -142,7 +135,7 @@ class TestItem(object):
     def test_meta_text_to_dict(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": "test_name", \n "uuid": "test_uuid"\n}'
+        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": "test_name" \n}'
         item = Item.create(name)
         result = Item.meta_text_to_dict(item, text)
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
@@ -183,7 +176,7 @@ class TestItem(object):
         # item and its contents after deletion
         item = Item.create(name)
         assert item.name == u'Test_Item'
-        assert item.meta == {'contenttype': 'application/x-nonexistent'}
+        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
 
     def test_revert(self):
         name = u'Test_Item'
@@ -283,9 +276,6 @@ class TestTarItems(object):
         filecontent = 'AAAABBBB'
         content_length = len(filecontent)
         item.put_member('example1.txt', filecontent, content_length, expected_members=members)
-
-        item = flaskg.storage.get_item(item_name)
-        assert item.next_revno == 2
 
         item = Item.create(item_name, contenttype=u'application/x-tar')
         assert item.get_member('example1.txt').read() == filecontent

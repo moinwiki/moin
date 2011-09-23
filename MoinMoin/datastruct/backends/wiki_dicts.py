@@ -11,7 +11,7 @@
 
 from flask import g as flaskg
 
-from MoinMoin.config import SOMEDICT
+from MoinMoin.config import CURRENT, SOMEDICT
 from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 
@@ -23,12 +23,12 @@ class WikiDict(BaseDict):
 
     def _load_dict(self):
         dict_name = self.name
-        if flaskg.unprotected_storage.has_item(dict_name):
-            item = flaskg.unprotected_storage.get_item(dict_name)
-            rev = item.get_revision(-1)
-            somedict = rev.get(SOMEDICT, {})
+        item = flaskg.unprotected_storage[dict_name]
+        try:
+            rev = item[CURRENT]
+            somedict = rev.meta.get(SOMEDICT, {})
             return somedict
-        else:
+        except KeyError:
             raise DictDoesNotExistError(dict_name)
 
 
@@ -41,8 +41,8 @@ class WikiDicts(BaseDictsBackend):
         return WikiDict(name=dict_name, backend=self)
 
     def _retrieve_items(self, dict_name):
-        item = flaskg.unprotected_storage.get_item(dict_name)
-        rev = item.get_revision(-1)
-        somedict = rev.get(SOMEDICT, {})
+        item = flaskg.unprotected_storage[dict_name]
+        rev = item.get_revision(CURRENT)
+        somedict = rev.meta.get(SOMEDICT, {})
         return somedict
 

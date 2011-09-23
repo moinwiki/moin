@@ -21,7 +21,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.config import NAME, UUID, SIZE, EMAIL
+from MoinMoin.config import NAME, ITEMID, SIZE, EMAIL
 from MoinMoin.config import SUPERUSER
 from MoinMoin.security import require_permission
 
@@ -38,7 +38,7 @@ def userbrowser():
     """
     groups = flaskg.groups
     docs = user.search_users() # all users
-    user_accounts = [dict(uid=doc[UUID],
+    user_accounts = [dict(uid=doc[ITEMID],
                           name=doc[NAME],
                           email=doc[EMAIL],
                           disabled=False,  # TODO: add to index
