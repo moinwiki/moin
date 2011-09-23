@@ -16,7 +16,8 @@ from __future__ import absolute_import, division
 
 import logging
 
-from config import ACL, CREATE, READ, WRITE, OVERWRITE, DESTROY, ADMIN
+from MoinMoin.config import ACL, CREATE, READ, WRITE, OVERWRITE, DESTROY, ADMIN
+from MoinMoin.security import AccessControlList
 
 
 class AccessDenied(Exception):
@@ -26,13 +27,24 @@ class AccessDenied(Exception):
 
 
 class ProtectingMiddleware(object):
-    def __init__(self, indexer, user_name):
+    def __init__(self, indexer, user, acl_mapping):
         """
         :param indexer: indexing middleware instance
         :param user_name: the user's name (used for checking permissions)
+        :param acl_mapping: list of (name_prefix, acls) tuples, longest prefix first, '' last
+                            acls = dict with before, default, after, hierarchic entries
         """
         self.indexer = indexer
-        self.user_name = user_name
+        self.user = user
+        self.acl_mapping = acl_mapping
+        self.valid_rights = ['read', 'write', 'create', 'admin', 'overwrite', 'destroy', ]
+
+    def get_acls(self, itemname):
+        for prefix, acls in self.acl_mapping:
+            if itemname.startswith(prefix):
+                return acls
+        else:
+            raise ValueError('No acl_mapping entry found for item %r' % itemname)
 
     def search(self, q, all_revs=False, **kw):
         for rev in self.indexer.search(q, all_revs, **kw):
@@ -59,6 +71,9 @@ class ProtectingMiddleware(object):
             if rev.allows(READ):
                 return rev
 
+    def has_item(self, name):
+        return self.indexer.has_item(name)
+
     def __getitem__(self, name):
         item = self.indexer[name]
         return ProtectedItem(self, item)
@@ -75,6 +90,11 @@ class ProtectingMiddleware(object):
         item = self.indexer.existing_item(**query)
         return ProtectedItem(self, item)
 
+    def may(self, itemname, capability, username=None):
+        item = self[itemname]
+        allowed = item.allows(capability, user_name=username)
+        return allowed
+
 
 class ProtectedItem(object):
     def __init__(self, protector, item):
@@ -89,28 +109,91 @@ class ProtectedItem(object):
     def itemid(self):
         return self.item.itemid
 
+    @property
+    def name(self):
+        return self.item.name
+
     def __nonzero__(self):
         return bool(self.item)
 
-    def allows(self, capability):
+    def _allows(self, right, user_name):
         """
-        check latest ACL whether capability is allowed
+        check permissions in this item without considering before/after acls
         """
-        # TODO: this is just a temporary hack to be able to test this without real ACL code,
-        # replace it by a sane one later.
-        # e.g. acl = "joe:read"  --> user joe may read
+        acls = self.protector.get_acls(self.item.name)
         acl = self.item.acl
-        user_name = self.protector.user_name
-        if acl is None or user_name is None:
-            allow = True
+        if acl is not None:
+            # If the item has an acl (even one that doesn't match) we *do not*
+            # check the parents. We only check the parents if there's no acl on
+            # the item at all.
+            acl = AccessControlList([acl, ], acls['default'], valid=self.protector.valid_rights)
+            allowed = acl.may(user_name, right)
+            if allowed is not None:
+                return allowed
         else:
-            allow = "%s:%s" % (user_name, capability) in acl
-        #print "item allows user '%s' to '%s' (acl: %s): %s" % (user_name, capability, acl, ["no", "yes"][allow])
-        return allow
+            if acls['hierarchic']:
+                # check parent(s), recursively
+                parent_tail = self.item.name.rsplit('/', 1)
+                if len(parent_tail) == 2:
+                    parent, _ = parent_tail
+                    parent_item = self.protector[parent]
+                    allowed = parent_item._allows(right, user_name)
+                    if allowed is not None:
+                        return allowed
+
+            acl = AccessControlList([acls['default'], ], valid=self.protector.valid_rights)
+            allowed = acl.may(user_name, right)
+            if allowed is not None:
+                return allowed
+
+    def allows(self, right, user_name=None):
+        """ Check if username may have <right> access on item <itemname>.
+
+        For hierarchic=False we just check the item in question.
+
+        For hierarchic=True, we check each item in the hierarchy. We
+        start with the deepest item and recurse to the top of the tree.
+        If one of those permits, True is returned.
+        This is done *only* if there is *no ACL at all* (not even an empty one)
+        on the items we 'recurse over'.
+
+        For both configurations, we check `before` before the item/default
+        acl and `after` after the item/default acl, of course.
+
+        `default` is only used if there is no ACL on the item (and none on
+        any of the item's parents when using hierarchic.)
+
+        :param itemname: item to get permissions from
+        :param right: the right to check
+        :param username: username to use for permissions check (default is to
+                         use the username doing the current request)
+        :rtype: bool
+        :returns: True if you have permission or False
+        """
+        if user_name is None:
+            user_name = self.protector.user.name
+
+        acls = self.protector.get_acls(self.item.name)
+
+        before = AccessControlList([acls['before'], ], valid=self.protector.valid_rights)
+        allowed = before.may(user_name, right)
+        if allowed is not None:
+            return allowed
+
+        allowed = self._allows(right, user_name)
+        if allowed is not None:
+            return allowed
+
+        after = AccessControlList([acls['after'], ], valid=self.protector.valid_rights)
+        allowed = after.may(user_name, right)
+        if allowed is not None:
+            return allowed
+
+        return False
 
     def require(self, capability):
         if not self.allows(capability):
-            raise AccessDenied("item does not allow user '%r' to '%r'" % (self.protector.user_name, capability))
+            raise AccessDenied("item does not allow user '%r' to '%r'" % (self.protector.user.name, capability))
 
     def iter_revs(self):
         self.require(READ)

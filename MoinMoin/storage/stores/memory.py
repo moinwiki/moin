@@ -27,11 +27,18 @@ class _Store(MutableStoreBase):
 
     def __init__(self):
         self._st = None
+        self.__st = None
 
     def create(self):
-        self._st = {}
+        self.__st = {}
 
     def destroy(self):
+        self.__st = None
+
+    def open(self):
+        self._st = self.__st
+
+    def close(self):
         self._st = None
 
     def __iter__(self):

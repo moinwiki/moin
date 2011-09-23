@@ -11,7 +11,7 @@ from __future__ import absolute_import, division
 import pytest
 from ..wrappers import ByteToStreamWrappingStore
 
-STORES_PACKAGE = 'storage.stores'
+STORES_PACKAGE = 'MoinMoin.storage.stores'
 
 STORES = 'fs kc kt memory sqlite sqlite:compressed sqla'.split()
 
@@ -32,7 +32,7 @@ constructors = {
 
 def pytest_generate_tests(metafunc):
     argnames = metafunc.funcargnames
-    
+
     if 'store' in argnames:
         klasses = 'BytesStore', 'FileStore'
     elif 'bst' in argnames:

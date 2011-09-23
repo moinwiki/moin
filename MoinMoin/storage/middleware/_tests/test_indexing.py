@@ -17,9 +17,9 @@ from config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, C
 
 from ..indexing import IndexingMiddleware
 
-from storage.backends.stores import MutableBackend
-from storage.stores.memory import BytesStore as MemoryBytesStore
-from storage.stores.memory import FileStore as MemoryFileStore
+from MoinMoin.storage.backends.stores import MutableBackend
+from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
+from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
 
 
 class TestIndexingMiddleware(object):

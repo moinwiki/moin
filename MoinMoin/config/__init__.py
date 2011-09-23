@@ -69,13 +69,13 @@ ACL_RIGHTS_FUNCTIONS = [SUPERUSER, NOTEXTCHA, ]
 ADMIN = 'admin'
 READ = 'read'
 WRITE = 'write'
+OVERWRITE = 'overwrite'
 CREATE = 'create'
 DESTROY = 'destroy'
 # rights that control access to operations on contents
 ACL_RIGHTS_CONTENTS = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
 
 # metadata keys
-UUID = "uuid"
 NAME = "name"
 NAME_OLD = "name_old"
 
@@ -118,9 +118,14 @@ HASH_ALGORITHM = 'sha1'
 
 # some field names for whoosh index schema / documents in index:
 NAME_EXACT = "name_exact"
-REV_NO = "rev_no"
+ITEMID = "itemid"
+REVID = "revid"
+DATAID = "dataid"
 WIKINAME = "wikiname"
 CONTENT = "content"
+
+# magic REVID for current revision:
+CURRENT = "current"
 
 # stuff from user profiles / for whoosh index
 EMAIL = "email"

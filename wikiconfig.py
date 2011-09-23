@@ -4,7 +4,7 @@
 import sys, os
 
 from MoinMoin.config.default import DefaultConfig
-from MoinMoin.storage.backends import create_simple_mapping
+from MoinMoin.storage import create_simple_mapping
 from MoinMoin.util.interwiki import InterWikiMap
 
 
@@ -23,14 +23,13 @@ class Config(DefaultConfig):
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
     index_dir = os.path.join(instance_dir, "index")
-    index_dir_tmp = os.path.join(instance_dir, "index_tmp")
 
     # This provides a simple default setup for your backend configuration.
     # 'fs:' indicates that you want to use the filesystem backend. You can also use
     # 'hg:' instead to indicate that you want to use the mercurial backend.
     # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
-    namespace_mapping = create_simple_mapping(
-                            backend_uri='fs2:%s/%%(nsname)s' % data_dir,
+    namespace_mapping, acl_mapping = create_simple_mapping(
+                            uri='stores:fs:%s/%%(nsname)s/%%%%(kind)s' % data_dir,
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',
                                              default=u'All:read,write,create,destroy,admin',

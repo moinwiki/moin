@@ -16,14 +16,15 @@ from config import NAME, REVID
 
 from ..routing import Backend as RouterBackend
 
-from storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
-from storage.stores.memory import BytesStore as MemoryBytesStore
-from storage.stores.memory import FileStore as MemoryFileStore
+from MoinMoin.storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
+from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
+from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
 
 
 def make_ro_backend():
     store = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     store.create()
+    store.open()
     store.store({NAME: 'test'}, StringIO(''))
     store.store({NAME: 'test2'}, StringIO(''))
     return ROBackend(store.meta_store, store.data_store)
@@ -35,8 +36,8 @@ def pytest_funcarg__router(request):
     sub_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     ro_be = make_ro_backend()
     router = RouterBackend([('sub', sub_be), ('ro', ro_be), ('', root_be)])
-    router.open()
     router.create()
+    router.open()
 
     @request.addfinalizer
     def finalize():
@@ -90,8 +91,10 @@ def test_destroy_create_dont_touch_ro(router):
     root_revid = router.store(dict(name=u'foo'), StringIO(''))
     sub_revid = router.store(dict(name=u'sub/bar'), StringIO(''))
 
+    router.close()
     router.destroy()
     router.create()
+    router.open()
 
     assert set(router) == existing
 
