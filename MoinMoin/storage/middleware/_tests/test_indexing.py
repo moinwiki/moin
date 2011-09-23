@@ -13,7 +13,7 @@ import hashlib
 
 import pytest
 
-from config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT
+from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT
 
 from ..indexing import IndexingMiddleware
 

@@ -12,7 +12,7 @@ from StringIO import StringIO
 
 import pytest
 
-from config import NAME, REVID
+from MoinMoin.config import NAME, REVID
 
 from ..routing import Backend as RouterBackend
 
