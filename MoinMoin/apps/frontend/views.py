@@ -51,7 +51,7 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
 from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, NAME_EXACT, \
-                            CONTENTTYPE_GROUPS, MTIME, TAGS, REV_NO, CONTENT
+                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, CURRENT, CONTENT
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -189,8 +189,8 @@ def search():
     return html
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=-1), methods=['GET'])
-@frontend.route('/+show/<int:rev>/<itemname:item_name>', methods=['GET'])
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
+@frontend.route('/+show/<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
@@ -199,7 +199,7 @@ def show_item(item_name, rev):
         item = Item.create(item_name, rev_no=rev)
     except AccessDeniedError:
         abort(403)
-    show_revision = show_navigation = rev >= 0
+    show_revision = show_navigation = rev != CURRENT
     # Note: rev.revno of DummyRev is None
     first_rev = None
     last_rev = None
@@ -221,7 +221,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=SearchForm.from_defaults(),
+                              #search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
@@ -719,7 +719,7 @@ def history(item_name):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ])
     # TODO: due to how getPageContent and the template works, we need to use limit=None -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    docs = flaskg.storage.search(query, all_revs=True, sortedby=REV_NO, reverse=True, limit=None)
+    docs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
     history = [dict((k, v) for k, v in doc.iteritems() if k != CONTENT) for doc in docs]
     history_page = util.getPageContent(history, offset, results_per_page)
@@ -745,7 +745,7 @@ def global_history():
         query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
     # TODO: we need use limit=None to simulate previous implementation's behaviour -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME, REV_NO], reverse=True, limit=None)
+    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None) # XXX
     item_groups = OrderedDict()
     for doc in history:
         current_item_name = doc[NAME]
@@ -777,7 +777,7 @@ def global_history():
 
         # Aggregating comments, authors and revno
         for doc in docs:
-            rev_no = doc[REV_NO]
+            rev_no = doc[REVID]
             revnos.append(rev_no)
             comment = doc.get(COMMENT)
             if comment:
@@ -886,11 +886,11 @@ def _compute_item_sets():
     linked = set()
     transcluded = set()
     existing = set()
-    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
-    for doc in docs:
-        existing.add(doc[NAME])
-        linked.update(doc.get(ITEMLINKS, []))
-        transcluded.update(doc.get(ITEMTRANSCLUSIONS, []))
+    revs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    for rev in revs:
+        existing.add(rev.meta[NAME])
+        linked.update(rev.meta.get(ITEMLINKS, []))
+        transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
     return existing, linked, transcluded
 
 
@@ -1151,7 +1151,7 @@ def lostpass():
             email = form['email'].value
             if form['email'].valid and email:
                 users = user.search_users(email=email)
-                u = users and user.User(users[0][UUID])
+                u = users and user.User(users[0][ITEMID])
             if u and u.valid:
                 is_ok, msg = u.mailAccountData()
                 if not is_ok:
@@ -1808,7 +1808,7 @@ def global_tags():
     tags_counts = {}
     for doc in docs:
         tags = doc.get(TAGS, [])
-        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc[REV_NO], tags))
+        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())

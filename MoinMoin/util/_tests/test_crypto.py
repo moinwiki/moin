@@ -61,6 +61,16 @@ class TestEncodePassword(object):
         with pytest.raises(ValueError):
             invalid_result = crypto.valid_password("MoinMoin", '{junk_value}')
 
+    def testvalidpassword2(self):
+        """ validate user password """
+        hash_val = crypto.crypt_password(u"MoinMoin")
+        result = crypto.valid_password('MoinMoin', hash_val)
+        assert result
+        result = crypto.valid_password('WrongPassword', hash_val)
+        assert not result
+        with pytest.raises(ValueError):
+            invalid_result = crypto.valid_password("MoinMoin", '{junk_value}')
+
 
 class TestToken(object):
     """ tests for the generated tokens """

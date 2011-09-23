@@ -116,6 +116,10 @@ class ConfigFunctionality(object):
             raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. " + \
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
+        if self.acl_mapping is None:
+            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. " + \
+                                           "For further reference, please see HelpOnStorageConfiguration.")
+
         if self.secrets is None:  # admin did not setup a real secret
             raise error.ConfigurationError("No secret configured! You need to set secrets = 'somelongsecretstring' in your wiki config.")
 
@@ -408,8 +412,13 @@ options_no_group_name = {
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),
     ('namespace_mapping', None,
-    "This needs to point to a (correctly ordered!) list of tuples, each tuple containing: Namespace identifier, backend, acl protection to be applied to that backend. " + \
-    "E.g.: [('/', FSBackend('wiki/data'), dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
+    "This needs to point to a list of tuples, each tuple containing: Namespace identifier, backend. " + \
+    "E.g.: [('/', FSBackend('wiki/data')), ]. Please see HelpOnStorageConfiguration for further reference."),
+    ('acl_mapping', None,
+    "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " + \
+    "E.g.: [('', dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
+    ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
+    ('destroy_storage', False, "Destroy (empty) the storage backends after using them."),
   )),
   # ==========================================================================
   'items': ('Special item names', None, (

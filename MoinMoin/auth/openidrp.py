@@ -20,6 +20,7 @@ from flask import session, request, url_for
 from flask import current_app as app
 from MoinMoin.auth import BaseAuth, get_multistage_continuation_url
 from MoinMoin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, MultistageRedirectLogin
+from MoinMoin.config import ITEMID
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 
@@ -82,7 +83,7 @@ class OpenIDAuth(BaseAuth):
                 # we get the user with this openid associated to him
                 identity = oid_info.identity_url
                 users = user.search_users(openid=identity)
-                user_obj = users and user.User(users[0][UUID])
+                user_obj = users and user.User(users[0][ITEMID])
 
                 # if the user actually exists
                 if user_obj:

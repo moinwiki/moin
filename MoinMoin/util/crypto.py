@@ -150,7 +150,6 @@ def valid_password(password, pw_hash):
                 enc = crypt.crypt(pw_utf8, salt.encode('ascii'))
             else:
                 raise ValueError("missing password hash method %s handler" % method)
-
             return pw_hash == method + enc
     else:
         idx = pw_hash.index('}') + 1

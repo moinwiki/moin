@@ -13,7 +13,6 @@ from flask import current_app as app
 
 from MoinMoin import config, wikiutil
 from MoinMoin._tests import wikiconfig
-from MoinMoin.storage.middleware.serialization import serialize, unserialize
 
 from werkzeug import MultiDict
 
@@ -27,27 +26,6 @@ class TestCleanInput(object):
                 ]
         for instr, outstr in tests:
             assert wikiutil.clean_input(instr) == outstr
-
-
-class TestSystemItem(object):
-    systemItems = (
-        'HelpOnMoinWikiSyntax',
-        'HelpOnLinking',
-        )
-    notSystemItems = (
-        'NoSuchPageYetAndWillNeverBe',
-        )
-
-    def testSystemItem(self):
-        """wikiutil: good system item names accepted, bad rejected"""
-        # get the items from xml file
-        backend = app.unprotected_storage
-        unserialize(backend, wikiconfig.Config._test_items_xml)
-
-        for name in self.systemItems:
-            assert wikiutil.isSystemItem(name)
-        for name in self.notSystemItems:
-            assert not wikiutil.isSystemItem(name)
 
 
 class TestAnchorNames(object):

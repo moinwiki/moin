@@ -131,7 +131,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.stop('create_app flask-cache')
     # init storage
     clock.start('create_app init backends')
-    app.unprotected_storage, app.storage = init_backends(app)
+    init_backends(app)
     clock.stop('create_app init backends')
     clock.start('create_app flask-babel')
     i18n_init(app)
@@ -154,7 +154,7 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-from MoinMoin.storage.middleware import router, acl
+from MoinMoin.storage.middleware import protecting, indexing, routing
 from MoinMoin import auth, config, user
 
 
@@ -163,20 +163,23 @@ def init_backends(app):
     initialize the backends
     """
     # A ns_mapping consists of several lines, where each line is made up like this:
-    # mountpoint, unprotected backend, protection to apply as a dict
-    ns_mapping = app.cfg.namespace_mapping
+    # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
-    unprotected_mapping = [(ns, backend) for ns, backend, acls in ns_mapping]
-    unprotected_storage = router.RouterBackend(unprotected_mapping, cfg=app.cfg)
-    # Protect each backend with the acls provided for it in the mapping at position 2
-    amw = acl.AclWrapperBackend
-    protected_mapping = [(ns, amw(app.cfg, backend, **acls)) for ns, backend, acls in ns_mapping]
-    storage = router.RouterBackend(protected_mapping, cfg=app.cfg)
-    return unprotected_storage, storage
+    app.router = routing.Backend(app.cfg.namespace_mapping)
+    if app.cfg.create_storage:
+        app.router.create()
+    app.router.open()
+    app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router, wiki_name=app.cfg.interwikiname) # XXX give user name etc.
+    if app.cfg.create_storage:
+        app.storage.create()
+    app.storage.open()
 
 def deinit_backends(app):
     app.storage.close()
-    app.unprotected_storage.close()
+    app.router.close()
+    if app.cfg.destroy_storage:
+        app.storage.destroy()
+        app.router.destroy()
 
 
 def setup_user():
@@ -227,17 +230,16 @@ def before_wiki():
     flaskg.clock.start('total')
     flaskg.clock.start('init')
     try:
-        flaskg.unprotected_storage = app.unprotected_storage
+        flaskg.unprotected_storage = app.storage
 
         flaskg.user = setup_user()
+        flaskg.storage = protecting.ProtectingMiddleware(app.storage, flaskg.user, app.cfg.acl_mapping)
 
         flaskg.dicts = app.cfg.dicts()
         flaskg.groups = app.cfg.groups()
 
         flaskg.content_lang = app.cfg.language_default
         flaskg.current_lang = app.cfg.language_default
-
-        flaskg.storage = app.storage
 
         setup_jinja_env()
     finally:

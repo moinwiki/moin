@@ -9,6 +9,7 @@
 
 
 import os, shutil
+from StringIO import StringIO
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -44,25 +45,19 @@ def become_trusted(username=u"TrustedUser"):
 
 
 # Creating and destroying test items --------------------------------
+
 def update_item(name, revno, meta, data):
     """ creates or updates an item  """
     if isinstance(data, unicode):
         data = data.encode(config.charset)
-    try:
-        item = flaskg.storage.create_item(name)
-    except ItemAlreadyExistsError:
-        item = flaskg.storage.get_item(name)
+    item = flaskg.storage[name]
 
-    rev = item.create_revision(revno)
-    for key, value in meta.items():
-        rev[key] = value
-    if not NAME in rev:
-        rev[NAME] = name
-    if not CONTENTTYPE in rev:
-        rev[CONTENTTYPE] = u'application/octet-stream'
-    rev.write(data)
-    item.commit()
-    return item
+    if NAME not in meta:
+        meta[NAME] = name
+    if CONTENTTYPE not in meta:
+        meta[CONTENTTYPE] = u'application/octet-stream'
+    rev = item.store_revision(meta, StringIO(data))
+    return rev
 
 def create_random_string_list(length=14, count=10):
     """ creates a list of random strings """

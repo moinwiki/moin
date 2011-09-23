@@ -16,7 +16,7 @@ HelpOnConfiguration.
 
 from flask import g as flaskg
 
-from MoinMoin.config import USERGROUP
+from MoinMoin.config import CURRENT, USERGROUP
 from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 
 
@@ -40,16 +40,17 @@ class WikiGroups(BaseGroupsBackend):
         """
         To find group pages, app.cfg.cache.item_group_regexact pattern is used.
         """
-        all_items = flaskg.unprotected_storage.iteritems()
-        item_list = [item.name for item in all_items
-                     if self.item_group_regex.search(item.name)]
+        # TODO: use whoosh to search for group_regex matching items
+        item_list = [rev.name for rev in flaskg.unprotected_storage.documents(all_revs=False)
+                     if self.item_group_regex.search(rev.name)]
         return iter(item_list)
 
     def __getitem__(self, group_name):
         return WikiGroup(name=group_name, backend=self)
 
     def _retrieve_members(self, group_name):
-        item = flaskg.unprotected_storage.get_item(group_name)
-        rev = item.get_revision(-1)
-        usergroup = rev.get(USERGROUP, [])
+        item = flaskg.unprotected_storage[group_name]
+        rev = item[CURRENT]
+        usergroup = rev.meta.get(USERGROUP, [])
         return usergroup
+

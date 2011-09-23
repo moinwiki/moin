@@ -40,7 +40,7 @@ MoinMoin.log.load_config(config_file)
 
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
 from MoinMoin._tests import maketestwiki, wikiconfig
-from MoinMoin.storage.backends import create_simple_mapping
+from MoinMoin.storage import create_simple_mapping
 from flask import g as flaskg
 
 # In the beginning following variables have no values
@@ -55,9 +55,12 @@ def get_previous(self_app, self_ctx, cls):
     return prev_app, prev_ctx, prev_cls
 
 def init_test_app(given_config):
-    namespace_mapping = create_simple_mapping("memory:", given_config.content_acl)
+    namespace_mapping, acl_mapping = create_simple_mapping("stores:memory:", given_config.content_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
+        acl_mapping=acl_mapping,
+        create_storage = True, # create a fresh storage at each app start
+        destroy_storage = True, # kill all storage contents at app shutdown
     )
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,
@@ -116,7 +119,6 @@ class MoinTestFunction(pytest.collect.Function):
 
 
     def teardown(self):
-        clean_backend()
         super(MoinTestFunction, self).teardown()
 
 
@@ -136,19 +138,6 @@ def pytest_pyfunc_call(pyfuncitem):
 
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
-
-def clean_backend():
-    """ method to cleanup the items created in testing process """
-    for test_item in flaskg.unprotected_storage.iteritems():
-        # some items don't have 'uuid' as key in them
-        # such items raise keyerror on test_item.destroy()
-        # add the key 'uuid' to such items
-        key_list = test_item.keys()
-        if 'uuid' not in key_list:
-            test_item.change_metadata()
-            test_item['uuid'] = 'temp_uuid'
-            test_item.publish_metadata()
-        test_item.destroy()
 
 class Module(pytest.collect.Module):
     def run(self, *args, **kwargs):

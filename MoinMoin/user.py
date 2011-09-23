@@ -21,6 +21,7 @@ from __future__ import absolute_import, division
 
 import time
 import copy
+from StringIO import StringIO
 
 from babel import parse_locale
 
@@ -31,7 +32,7 @@ from flask import session, request, url_for
 from whoosh.query import Term, And, Or
 
 from MoinMoin import config, wikiutil
-from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, UUID, ACTION, CONTENTTYPE, EMAIL, OPENID
+from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, ITEMID, ACTION, CONTENTTYPE, EMAIL, OPENID, CURRENT
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
@@ -39,49 +40,52 @@ from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_passwor
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
-def create_user(username, password, email, openid=None):
+def create_user(username, password, email, openid=None, validate=True, is_encrypted=False):
     """ create a user """
     # Create user profile
     theuser = User(auth_method="new-user")
     theuser.name = unicode(username)
 
     # Don't allow creating users with invalid names
-    if not isValidName(theuser.name):
+    if validate and not isValidName(theuser.name):
         return _("""Invalid user name '%(name)s'.
 Name may contain any Unicode alpha numeric character, with optional one
 space between words. Group page name is not allowed.""", name=theuser.name)
 
     # Name required to be unique. Check if name belong to another user.
-    if search_users(name_exact=theuser.name):
+    if validate and search_users(name_exact=theuser.name):
         return _("This user name already belongs to somebody else.")
 
     pw_checker = app.cfg.password_checker
-    if pw_checker:
+    if validate and pw_checker:
         pw_error = pw_checker(theuser.name, password)
         if pw_error:
             return _("Password not acceptable: %(msg)s", msg=pw_error)
 
     # Encode password
     try:
-        theuser.enc_password = crypt_password(password)
+        if is_encrypted:
+            theuser.enc_password = password
+        else:
+            theuser.enc_password = crypt_password(password)
     except UnicodeError as err:
         # Should never happen
         return "Can't encode password: %(msg)s" % dict(msg=str(err))
 
     # try to get the email, for new users it is required
     theuser.email = email
-    if not theuser.email:
+    if validate and not theuser.email:
         return _("Please provide your email address. If you lose your"
                  " login information, you can get it by email.")
 
     # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
-    if theuser.email and app.cfg.user_email_unique:
+    if validate and theuser.email and app.cfg.user_email_unique:
         if search_users(email=theuser.email):
             return _("This email already belongs to somebody else.")
 
     # Openid should be unique
     theuser.openid = openid
-    if theuser.openid and search_users(openid=theuser.openid):
+    if validate and theuser.openid and search_users(openid=theuser.openid):
         return _('This OpenID already belongs to somebody else.')
 
     # save data
@@ -180,7 +184,6 @@ class User(object):
                                First tuple element was used for authentication.
         """
         self._user_backend = get_user_backend()
-        self._user = None
 
         self._cfg = app.cfg
         self.valid = 0
@@ -211,7 +214,7 @@ class User(object):
         if not self.uuid and self.auth_username:
             users = search_users(name_exact=self.auth_username)
             if users:
-                self.uuid = users[0][UUID]
+                self.uuid = users[0].meta[ITEMID]
             if not password is None:
                 check_password = password
         if self.uuid:
@@ -219,7 +222,7 @@ class User(object):
         elif self.name and self.name != 'anonymous':
             users = search_users(name_exact=self.name)
             if users:
-                self.uuid = users[0][UUID]
+                self.uuid = users[0].meta[ITEMID]
             if self.uuid:
                 # no password given should fail
                 self.load_from_id(password or u'')
@@ -280,18 +283,12 @@ class User(object):
                          password in the user account file.
         """
         try:
-            users = search_users(uuid=self.uuid) # XXX we need the name because backend API is still based on names
-            if not users:
-                raise NoSuchItemError("No user name for that uuid.")
-            name = users[0][NAME]
-            item = self._user_backend.get_item(name)
-            self._user = item.get_revision(-1)
-        except (NoSuchItemError, NoSuchRevisionError):
+            item = self._user_backend.get_item(itemid=self.uuid)
+            rev = item[CURRENT]
+        except KeyError: # was: (NoSuchItemError, NoSuchRevisionError):
             return
 
-        user_data = dict()
-        for metadata_key in self._user:
-            user_data[metadata_key] = self._user[metadata_key]
+        user_data = dict(rev.meta)
 
         # Validate data from user file. In case we need to change some
         # values, we set 'changed' flag, and later save the user data.
@@ -363,25 +360,15 @@ class User(object):
         Save user account data to user account file on disk.
         """
         backend_name = self.name # XXX maybe UserProfile/<name> later
-        try:
-            item = self._user_backend.get_item(backend_name)
-        except NoSuchItemError:
-            item = self._user_backend.create_item(backend_name)
-        try:
-            currentrev = item.get_revision(-1)
-            rev_no = currentrev.revno
-        except NoSuchRevisionError:
-            currentrev = None
-            rev_no = -1
-        new_rev_no = rev_no + 1
-        newrev = item.create_revision(new_rev_no)
+        item = self._user_backend[backend_name]
+        meta = {}
         for key, value in self.persistent_items():
             if isinstance(value, list):
                 value = tuple(value)
-            newrev[key] = value
-        newrev[CONTENTTYPE] = u'application/x.moin.userprofile'
-        newrev[ACTION] = u'SAVE'
-        item.commit()
+            meta[key] = value
+        meta[CONTENTTYPE] = u'application/x.moin.userprofile'
+        meta[ACTION] = u'SAVE'
+        item.store_revision(meta, StringIO(''), overwrite=True)
 
         if not self.disabled:
             self.valid = 1
