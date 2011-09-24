@@ -418,7 +418,9 @@ options_no_group_name = {
     "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " + \
     "E.g.: [('', dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
     ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
+    ('create_index', False, "Create (initialize) the index before trying to use them."),
     ('destroy_storage', False, "Destroy (empty) the storage backends after using them."),
+    ('destroy_index', False, "Destroy (empty) the index after using it."),
   )),
   # ==========================================================================
   'items': ('Special item names', None, (

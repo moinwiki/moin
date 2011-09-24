@@ -34,7 +34,11 @@ class _Store(MutableStoreBase):
         self.path = path
 
     def create(self):
-        os.mkdir(self.path)
+        try:
+            os.makedirs(self.path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
     def destroy(self):
         shutil.rmtree(self.path)

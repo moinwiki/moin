@@ -40,11 +40,13 @@ from MoinMoin.themes import setup_jinja_env, themed_error
 from MoinMoin.util.clock import Clock
 
 
-def create_app(config=None):
+def create_app(config=None, create_index=False, create_storage=False):
     """
     simple wrapper around create_app_ext() for flask-script
     """
-    return create_app_ext(flask_config_file=config)
+    return create_app_ext(flask_config_file=config,
+                          create_index=create_index,
+                          create_storage=create_storage)
 
 
 def create_app_ext(flask_config_file=None, flask_config_dict=None,
@@ -170,15 +172,16 @@ def init_backends(app):
         app.router.create()
     app.router.open()
     app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router, wiki_name=app.cfg.interwikiname) # XXX give user name etc.
-    if app.cfg.create_storage:
+    if app.cfg.create_index:
         app.storage.create()
     app.storage.open()
 
 def deinit_backends(app):
     app.storage.close()
     app.router.close()
-    if app.cfg.destroy_storage:
+    if app.cfg.destroy_index:
         app.storage.destroy()
+    if app.cfg.destroy_storage:
         app.router.destroy()
 
 

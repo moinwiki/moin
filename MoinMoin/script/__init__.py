@@ -18,6 +18,8 @@ def main(default_command='moin', wiki_config=None):
 
     manager = Manager(create_app)
     manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
+    manager.add_option('-i', '--index-create', action='store_true', dest='create_index', required=False, default=False)
+    manager.add_option('-s', '--storage-create', action='store_true', dest='create_storage', required=False, default=False)
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
     from MoinMoin.script.maint import index
