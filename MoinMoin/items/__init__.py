@@ -702,7 +702,7 @@ There is no help, you're doomed!
 
     def _render_data_diff(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
-        if oldrev[hash_name] == newrev[hash_name]:
+        if oldrev.meta[hash_name] == newrev.meta[hash_name]:
             return _("The items have the same data hash code (that means they very likely have the same data).")
         else:
             return _("The items have different data.")
@@ -735,13 +735,13 @@ There is no help, you're doomed!
             rev = self.rev
             filename = rev.item.name
             try:
-                mimestr = rev[CONTENTTYPE]
+                mimestr = rev.meta[CONTENTTYPE]
             except KeyError:
                 mt = MimeType(filename=filename)
             else:
                 mt = MimeType(mimestr=mimestr)
-            content_length = rev[SIZE]
-            file_to_send = rev
+            content_length = rev.meta[SIZE]
+            file_to_send = rev.data
         if mimetype:
             content_type = mimetype
         else:
@@ -1019,14 +1019,14 @@ class TransformableBitmapImage(RenderableBitmapImage):
         hash_name = HASH_ALGORITHM
         cid = cache_key(usage="ImageDiff",
                         hash_name=hash_name,
-                        hash_old=oldrev[hash_name],
-                        hash_new=newrev[hash_name])
+                        hash_old=oldrev.meta[hash_name],
+                        hash_new=newrev.meta[hash_name])
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:
                 abort(404) # TODO render user friendly error image
 
-            content_type = newrev[CONTENTTYPE]
+            content_type = newrev.meta[CONTENTTYPE]
             if content_type == 'image/jpeg':
                 output_type = 'JPEG'
             elif content_type == 'image/png':
