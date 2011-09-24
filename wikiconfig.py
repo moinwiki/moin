@@ -33,10 +33,12 @@ class Config(DefaultConfig):
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',
                                              default=u'All:read,write,create,destroy,admin',
-                                             after=u'', ),
+                                             after=u'',
+                                             hierarchic=False, ),
                             user_profile_acl=dict(before=u'',
-                                             default=u'All:read,write,create,destroy,admin',
-                                             after=u'', ),
+                                                  default=u'All:read,write,create,destroy,admin',
+                                                  after=u'',
+                                                  hierarchic=False, ),
                             )
 
     sitename = u'My MoinMoin'
