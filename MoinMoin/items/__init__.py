@@ -149,6 +149,7 @@ class DummyRev(dict):
         self.item = item
         self.meta = {CONTENTTYPE: contenttype}
         self.data = StringIO('')
+        self.revid = ''
 
 
 class DummyItem(object):
@@ -476,6 +477,9 @@ class Item(object):
             # make sure we have CONTENTTYPE
             meta[CONTENTTYPE] = unicode(contenttype_current or contenttype_guessed or 'application/octet-stream')
 
+        if MTIME not in meta:
+            meta[MTIME] = int(time.time())
+
         meta[ACTION] = unicode(action)
 
         if not overwrite and REVID in meta:
@@ -671,7 +675,7 @@ There is no help, you're doomed!
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revno if self.rev.revno is not None else CURRENT
+            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1008,7 +1012,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
-        url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revno, rev2=newrev.revno)
+        url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return Markup('<img src="%s" />' % escape(url))
 
     def _render_data_diff_raw(self, oldrev, newrev):
@@ -1122,7 +1126,7 @@ class Text(Binary):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = Integer.using(optional=False)
+            rev = String.using(optional=True)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1138,7 +1142,8 @@ class Text(Binary):
             else:
                 form['data_text'] = self.data_storage_to_internal(self.data)
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revno if self.rev.revno is not None else CURRENT
+            if self.rev.revid:
+                form['rev'] = self.rev.revid
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1300,7 +1305,7 @@ class TWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revno if self.rev.revno is not None else CURRENT
+            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
         elif request.method == 'POST':
             # this POST comes directly from TWikiDraw (not from Browser), thus no validation
             try:
@@ -1392,7 +1397,7 @@ class AnyWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revno if self.rev.revno is not None else CURRENT
+            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
         elif request.method == 'POST':
             # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
             try:
@@ -1480,7 +1485,7 @@ class SvgDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revno if self.rev.revno is not None else CURRENT
+            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
         elif request.method == 'POST':
             # this POST comes directly from SvgDraw (not from Browser), thus no validation
             try:
