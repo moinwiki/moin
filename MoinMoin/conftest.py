@@ -61,6 +61,8 @@ def init_test_app(given_config):
         acl_mapping=acl_mapping,
         create_storage = True, # create a fresh storage at each app start
         destroy_storage = True, # kill all storage contents at app shutdown
+        create_index = True, # create a fresh index at each app start
+        destroy_index = True, # kill index contents at app shutdown
     )
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,
