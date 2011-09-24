@@ -46,6 +46,12 @@ class ProtectingMiddleware(object):
         else:
             raise ValueError('No acl_mapping entry found for item %r' % itemname)
 
+    def get_index(self, all_revs=False):
+        return self.indexer.get_index(all_revs=all_revs)
+
+    def query_parser(self, default_fields, all_revs=False):
+        return self.indexer.query_parser(default_fields, all_revs=False)
+
     def search(self, q, all_revs=False, **kw):
         for rev in self.indexer.search(q, all_revs, **kw):
             rev = ProtectedRevision(self, rev)

@@ -155,7 +155,7 @@ def search():
         history = bool(request.values.get('history'))
         qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], all_revs=history)
         q = qp.parse(query)
-        with flaskg.storage.searcher(all_revs=history) as searcher:
+        with flaskg.storage.get_index(all_revs=history).searcher() as searcher:
             flaskg.clock.start('search')
             results = searcher.search(q, limit=100)
             flaskg.clock.stop('search')
@@ -221,7 +221,7 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              #search_form=SearchForm.from_defaults(),
+                              search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
@@ -704,7 +704,7 @@ def _backrefs(item_name):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
-    docs = flaskg.storage.search(q, all_revs=False)
+    docs = flaskg.storage.get_index(all_revs=False).search(q)
     return [doc[NAME] for doc in docs]
 
 
