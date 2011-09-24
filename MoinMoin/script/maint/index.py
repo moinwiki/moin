@@ -23,8 +23,7 @@ class IndexCreate(Command):
     ]
 
     def run(self, tmp):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.create(tmp=tmp)
+        app.storage.create(tmp=tmp)
 
 
 class IndexDestroy(Command):
@@ -36,8 +35,7 @@ class IndexDestroy(Command):
     ]
 
     def run(self, tmp):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.destroy(tmp=tmp)
+        app.storage.destroy(tmp=tmp)
 
 
 class IndexBuild(Command):
@@ -53,8 +51,7 @@ class IndexBuild(Command):
     ]
 
     def run(self, tmp, procs, limitmb):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.rebuild(tmp=tmp, procs=procs, limitmb=limitmb)
+        app.storage.rebuild(tmp=tmp, procs=procs, limitmb=limitmb)
 
 
 class IndexUpdate(Command):
@@ -66,8 +63,7 @@ class IndexUpdate(Command):
     ]
 
     def run(self, tmp):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.update(tmp=tmp)
+        app.storage.update(tmp=tmp)
 
 
 class IndexMove(Command):
@@ -77,8 +73,7 @@ class IndexMove(Command):
     ]
 
     def run(self):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.move_index()
+        app.storage.move_index()
 
 
 class IndexOptimize(Command):
@@ -90,6 +85,5 @@ class IndexOptimize(Command):
     ]
 
     def run(self, tmp):
-        unprotected_storage = flaskg.unprotected_storage = app.unprotected_storage
-        unprotected_storage.optimize_index(tmp=tmp)
+        app.storage.optimize_index(tmp=tmp)
 
