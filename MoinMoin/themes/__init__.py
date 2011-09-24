@@ -271,8 +271,8 @@ class ThemeSupport(object):
 
 
 def get_editor_info(rev, external=False):
-    addr = rev.get(ADDRESS)
-    hostname = rev.get(HOSTNAME)
+    addr = rev.meta.get(ADDRESS)
+    hostname = rev.meta.get(HOSTNAME)
     text = _('anonymous')  # link text
     title = ''  # link title
     css = 'editor'  # link/span css class
@@ -290,7 +290,7 @@ def get_editor_info(rev, external=False):
             title = '[%s]' % (addr, )
             css = 'editor ip'
 
-    userid = rev.get(USERID)
+    userid = rev.meta.get(USERID)
     if userid:
         u = user.User(userid)
         name = u.name

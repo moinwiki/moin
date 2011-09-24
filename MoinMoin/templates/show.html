@@ -43,9 +43,6 @@
         {% endblock %}
     {% endif %}
     
-    {% if not rev %}
-    {{ _("This item exists, but it has no revisions.") }}
-    {% else %}
     {% block headline %}
     {# <h1>{{ rev.item.name }} {% if show_revision %}(Revision {{ rev.revno }}){% endif %}</h1> #}
     {% endblock %}
@@ -56,7 +53,6 @@
     </div>
     {% endif %}
     {% endblock %}
-    {% endif %}
 {% endblock %}
 
 {% block footer_hr %}{% endblock %}
@@ -69,7 +65,7 @@
     {% if rev %}
     <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
         {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revno}}),
-        {{ _("modified") }} {{ rev.timestamp|datetimeformat }}
+        {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
         {{ _("by") }} {{ utils.editor_info(rev) }}{% if rev.tags %},
         {{ _("tagged") }}
         {% for tag in rev.tags -%}

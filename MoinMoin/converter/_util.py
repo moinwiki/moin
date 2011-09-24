@@ -16,16 +16,15 @@ def decode_data(data, contenttype=None):
     read and decode data, return unicode text
 
     supported types for data:
-    - rev object or other file-like object
+    - rev object
     - str
     - unicode
 
     file-like objects and str need to be either utf-8 (or ascii, which is a subset of utf-8)
     encoded or contenttype (including a charset parameter) needs to be given.
     """
-    if hasattr(data, 'read'):
-        # file-like object
-        data = data.read()
+    if not isinstance(data, (str, unicode)):
+        data = data.data.read()
     if isinstance(data, str):
         coding = 'utf-8'
         if contenttype is not None:
@@ -33,7 +32,7 @@ def decode_data(data, contenttype=None):
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
     if not isinstance(data, unicode):
-        raise TypeError("data must be file-like or str (requires contenttype with charset) or unicode, but we got %r" % data)
+        raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, but we got %r" % data)
     return data
 
 
