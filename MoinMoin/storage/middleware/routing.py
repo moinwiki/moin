@@ -106,7 +106,7 @@ class Backend(MutableBackendBase):
         return u'%s:%s' % (mountpoint, backend.store(meta, data))
 
     def remove(self, revid):
-        mountpoint, revid = revid.rsplit(u'/', 1)
+        mountpoint, revid = revid.rsplit(u':', 1)
         backend = self._get_backend(mountpoint)[0]
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend %r mounted at %r is readonly' % (
