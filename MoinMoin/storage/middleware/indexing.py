@@ -757,12 +757,16 @@ class Revision(object):
     def name(self):
         return self.meta.get(NAME, 'DoesNotExist')
 
+    def _load(self):
+        meta, data = self.backend.retrieve(self.revid) # raises KeyError if rev does not exist
+        self.meta = Meta(self, self._doc, meta)
+        self._data = data
+        return meta, data
+
     @property
     def data(self):
         if self._data is None:
-            meta, data = self.backend.retrieve(self.revid) # raises KeyError if rev does not exist
-            self.meta = Meta(self, self._doc, meta)
-            self._data = data
+            self._load()
         return self._data
 
     def close(self):
@@ -796,7 +800,7 @@ class Meta(Mapping):
             return True
 
     def __iter__(self):
-        self._meta, self.revision._data = self.revision.backend.retrieve(self.revision.revid) # raises KeyError if rev does not exist
+        self._meta, _ = self.revision._load()
         return iter(self._meta)
 
     def __getitem__(self, key):
@@ -808,7 +812,7 @@ class Meta(Mapping):
             return self._doc[key]
         except KeyError:
             pass
-        self._meta, self.revision._data = self.revision.backend.retrieve(self.revision.revid) # raises KeyError if rev does not exist
+        self._meta, _ = self.revision._load()
         return self._meta[key]
 
     def __cmp__(self, other):
