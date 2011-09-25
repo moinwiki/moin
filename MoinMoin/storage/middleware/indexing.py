@@ -473,18 +473,17 @@ class IndexingMiddleware(object):
         name = ALL_REVS if all_revs else LATEST_REVS
         return self.ix[name]
 
-    def dump(self, all_revs=False):
+    def dump(self, tmp=False, indexname=LATEST_REVS):
         """
-        Output all documents in index to stdout (most useful for debugging).
+        Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
-        ix = self.get_index(all_revs)
+        index_dir = self.index_dir_tmp if tmp else self.index_dir
+        ix = open_dir(index_dir, indexname=indexname)
         with ix.searcher() as searcher:
             for doc in searcher.all_stored_fields():
                 name = doc.pop(NAME, u"")
                 content = doc.pop(CONTENT, u"")
-                for field, value in [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]:
-                    print "%s: %s" % (field, repr(value)[:70])
-                print
+                yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
 
     def query_parser(self, default_fields, all_revs=False):
         """

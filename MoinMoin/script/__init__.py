@@ -29,6 +29,7 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("index-destroy", index.IndexDestroy())
     manager.add_command("index-move", index.IndexMove())
     manager.add_command("index-optimize", index.IndexOptimize())
+    manager.add_command("index-dump", index.IndexDump())
     from MoinMoin.script.maint import serialization
     manager.add_command("save", serialization.Serialize())
     manager.add_command("load", serialization.Deserialize())
