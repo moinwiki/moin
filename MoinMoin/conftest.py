@@ -39,7 +39,7 @@ config_file = Moindir + '/test_logging.conf'
 MoinMoin.log.load_config(config_file)
 
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
-from MoinMoin._tests import maketestwiki, wikiconfig
+from MoinMoin._tests import wikiconfig
 from MoinMoin.storage import create_simple_mapping
 from flask import g as flaskg
 
