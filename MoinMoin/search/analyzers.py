@@ -69,11 +69,11 @@ class MimeTokenizer(Tokenizer):
 class AclTokenizer(Tokenizer):
     """ Access control list tokenizer """
 
-    def __init__(self, cfg):
+    def __init__(self, acl_rights_contents):
         """
         :param cfg: wiki config
         """
-        self._acl_rights_contents = cfg.acl_rights_contents
+        self._acl_rights_contents = acl_rights_contents
 
     def __call__(self, value, start_pos=0, positions=False, mode=u'', **kwargs):
         """

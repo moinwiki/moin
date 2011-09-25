@@ -171,7 +171,9 @@ def init_backends(app):
     if app.cfg.create_storage:
         app.router.create()
     app.router.open()
-    app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router, wiki_name=app.cfg.interwikiname) # XXX give user name etc.
+    app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router,
+                                              wiki_name=app.cfg.interwikiname,
+                                              acl_rights_contents=app.cfg.acl_rights_contents)
     if app.cfg.create_index:
         app.storage.create()
     app.storage.open()
