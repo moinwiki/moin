@@ -73,10 +73,10 @@ class Backend(MutableBackendBase):
         #       can be given to get_revision and be routed to the right backend.
         for mountpoint, backend in self.mapping:
             for revid in backend:
-                yield u'%s/%s' % (mountpoint, revid)
+                yield u'%s:%s' % (mountpoint, revid)
 
     def retrieve(self, revid):
-        mountpoint, revid = revid.rsplit(u'/', 1)
+        mountpoint, revid = revid.rsplit(u':', 1)
         backend = self._get_backend(mountpoint)[0]
         meta, data = backend.retrieve(revid)
         if mountpoint:
@@ -103,7 +103,7 @@ class Backend(MutableBackendBase):
             raise TypeError('backend %r mounted at %r is readonly' % (
                 backend, mountpoint))
         meta[NAME] = itemname
-        return u'%s/%s' % (mountpoint, backend.store(meta, data))
+        return u'%s:%s' % (mountpoint, backend.store(meta, data))
 
     def remove(self, revid):
         mountpoint, revid = revid.rsplit(u'/', 1)
