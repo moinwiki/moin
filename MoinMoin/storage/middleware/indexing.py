@@ -473,11 +473,12 @@ class IndexingMiddleware(object):
         name = ALL_REVS if all_revs else LATEST_REVS
         return self.ix[name]
 
-    def dump(self, tmp=False, indexname=LATEST_REVS):
+    def dump(self, tmp=False, all_revs=False):
         """
         Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
+        indexname = ALL_REVS if all_revs else LATEST_REVS
         ix = open_dir(index_dir, indexname=indexname)
         with ix.searcher() as searcher:
             for doc in searcher.all_stored_fields():
