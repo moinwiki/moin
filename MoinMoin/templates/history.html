@@ -30,24 +30,24 @@
             {% for doc in history %}
             <tr>
                 <td class="moin-wordbreak">{{ doc.name }}</td>
-                <td class="moin-integer">{{ doc.rev_no }}</td>
+                <td class="moin-integer">{{ doc.revid }}</td>
                 <td>{{ doc.mtime|datetimeformat }}</td>
                 <td class="moin-integer">{{ doc.size }}</td>
                 <td>
                     <div class="moin-hist-rev">
-                        <input type="radio" name="rev1" value="{{ doc.rev_no }}" />
-                        <input type="radio" name="rev2" value="{{ doc.rev_no }}" />
+                        <input type="radio" name="rev1" value="{{ doc.revid }}" />
+                        <input type="radio" name="rev2" value="{{ doc.revid }}" />
                     </div>
                 </td>
                 <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
                 <td class="moin-wordbreak">{{ doc.contenttype }}</td>
                 <td class="moin-wordbreak">{{ doc.comment }}</td>
-                <td><a href="{{ url_for('frontend.show_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('show') }}</a></td>
-                <td><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name, rev=doc.rev_no) }}">{{ _('meta') }}</a></td>
-                <td><a href="{{ url_for('frontend.download_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('download') }}</a></td>
-                <td><a href="{{ url_for('frontend.highlight_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('highlight') }}</a></td>
-                <td><a href="{{ url_for('frontend.revert_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('revert') }}</a></td>
-                <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name, rev=doc.rev_no) }}">{{ _('destroy') }}</a></td>
+                <td><a href="{{ url_for('frontend.show_item', item_name=doc.name, rev=doc.revid) }}">{{ _('show') }}</a></td>
+                <td><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name, rev=doc.revid) }}">{{ _('meta') }}</a></td>
+                <td><a href="{{ url_for('frontend.download_item', item_name=doc.name, rev=doc.revid) }}">{{ _('download') }}</a></td>
+                <td><a href="{{ url_for('frontend.highlight_item', item_name=doc.name, rev=doc.revid) }}">{{ _('highlight') }}</a></td>
+                <td><a href="{{ url_for('frontend.revert_item', item_name=doc.name, rev=doc.revid) }}">{{ _('revert') }}</a></td>
+                <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name, rev=doc.revid) }}">{{ _('destroy') }}</a></td>
             </tr>
             {% endfor %}
         </table>
