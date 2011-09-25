@@ -199,15 +199,9 @@ def show_item(item_name, rev):
         item = Item.create(item_name, rev_no=rev)
     except AccessDeniedError:
         abort(403)
-    show_revision = show_navigation = rev != CURRENT
-    # Note: rev.revno of DummyRev is None
-    first_rev = None
-    last_rev = None
-    if show_navigation:
-        rev_nos = item.rev.item.list_revisions()
-        if rev_nos:
-            first_rev = rev_nos[0]
-            last_rev = rev_nos[-1]
+    show_revision = rev != CURRENT
+    show_navigation = False # TODO
+    first_rev = last_rev = None # TODO
     if isinstance(item, NonExistent):
         status = 404
     else:
