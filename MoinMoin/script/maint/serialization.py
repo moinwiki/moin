@@ -5,6 +5,7 @@
 MoinMoin - backend serialization / deserialization
 """
 
+import sys
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -20,18 +21,32 @@ class Serialize(Command):
     description = 'Serialize the backend into a file.'
 
     option_list = [
+        Option('--file', '-f', dest='filename', type=unicode, required=False,
+               help='Filename of the output file.'),
     ]
 
-    def run(self, filename="dump"):
-        serialize(app.storage.backend, open(filename, "wb"))
+    def run(self, filename=None):
+        if filename is None:
+            f = sys.stdout
+        else:
+            f = open(filename, "wb")
+        with f as f:
+            serialize(app.storage.backend, f)
 
 
 class Deserialize(Command):
     description = 'Deserialize a file into the backend.'
 
     option_list = [
+        Option('--file', '-f', dest='filename', type=unicode, required=False,
+               help='Filename of the input file.'),
     ]
 
-    def run(self, filename="dump"):
-        deserialize(open(filename, "rb"), app.storage.backend)
+    def run(self, filename=None):
+        if filename is None:
+            f = sys.stdin
+        else:
+            f = open(filename, "rb")
+        with f as f:
+            deserialize(f, app.storage.backend)
 
