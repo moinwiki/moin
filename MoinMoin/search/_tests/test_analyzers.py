@@ -110,7 +110,7 @@ class TestAclTokenizer(TokenizerTestBase):
     ]
 
     def make_tokenizer(self):
-        return AclTokenizer(app.cfg)
+        return AclTokenizer(app.cfg.acl_rights_contents)
 
 
 class TestMimeTokenizer(TokenizerTestBase):
