@@ -73,6 +73,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT
 
+from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.util.crypto import make_uuid
 
 LATEST_REVS = 'latest_revs'
@@ -119,7 +120,7 @@ def convert_to_indexable(meta, data):
 
 
 class IndexingMiddleware(object):
-    def __init__(self, index_dir, backend, wiki_name=None, **kw):
+    def __init__(self, index_dir, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
         """
@@ -134,8 +135,7 @@ class IndexingMiddleware(object):
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
             # tokenized NAME from metadata - use this for manual searching from UI
-            # TODO was: NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
-            NAME: ID(stored=True, field_boost=2.0),
+            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
@@ -145,8 +145,7 @@ class IndexingMiddleware(object):
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
             # tokenized CONTENTTYPE from metadata
-            # TODO was: CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-            CONTENTTYPE: ID(stored=True),
+            CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
             TAGS: ID(stored=True),
             LANGUAGE: ID(stored=True),
@@ -174,8 +173,7 @@ class IndexingMiddleware(object):
             # unmodified list of ITEMTRANSCLUSIONS from metadata
             ITEMTRANSCLUSIONS: ID(stored=True),
             # tokenized ACL from metadata
-            # TODO was: ACL: TEXT(analyzer=AclTokenizer(self._cfg), multitoken_query="and", stored=True),
-            ACL: ID(stored=True),
+            ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
         }
         latest_revs_fields.update(**common_fields)
 
@@ -576,13 +574,13 @@ class IndexingMiddleware(object):
         """
         Return item with <name> (may be a new or existing item).
         """
-        return Item(self, name=name)
+        return Item(self, name_exact=name)
 
     def get_item(self, **query):
         """
         Return item identified by the query (may be a new or existing item).
 
-        :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
+        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
         return Item(self, **query)
@@ -591,7 +589,7 @@ class IndexingMiddleware(object):
         """
         Return item identified by the query (must be a new item).
 
-        :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
+        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.create(self, **query)
@@ -600,7 +598,7 @@ class IndexingMiddleware(object):
         """
         Return item identified by query (must be an existing item).
 
-        :kwargs **query: e.g. name=u"Foo" or itemid="..." or ...
+        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
                          (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.existing(self, **query)
@@ -614,7 +612,7 @@ class Item(object):
                            it can be given there, to avoid us fetching same doc again
                            from the index
         :kwargs **query: any unique fieldname=value for the latest-revs index, e.g.:
-                         name="foo" or itemid="....." to fetch the item's current
+                         name_exact="foo" or itemid="....." to fetch the item's current
                          doc from the index (if not given via latest_doc).
         """
         self.indexer = indexer
