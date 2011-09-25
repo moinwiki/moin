@@ -66,7 +66,7 @@
     <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
         {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revno}}),
         {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
-        {{ _("by") }} {{ utils.editor_info(rev) }}{% if rev.tags %},
+        {{ _("by") }} {{ utils.editor_info(rev.meta) }}{% if rev.tags %},
         {{ _("tagged") }}
         {% for tag in rev.tags -%}
         <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}

@@ -719,9 +719,9 @@ def history(item_name):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ])
     # TODO: due to how getPageContent and the template works, we need to use limit=None -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    docs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
+    revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
-    history = [dict((k, v) for k, v in doc.iteritems() if k != CONTENT) for doc in docs]
+    history = [dict((k, v) for k, v in rev.meta.iteritems() if k != CONTENT) for rev in revs]
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
                            item_name=item_name, # XXX no item here

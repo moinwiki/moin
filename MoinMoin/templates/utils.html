@@ -15,8 +15,8 @@
 {% endmacro %}
 
 
-{% macro editor_info(rev) %}
-  {%- set info = get_editor_info(rev) -%}
+{% macro editor_info(meta) %}
+  {%- set info = get_editor_info(meta) -%}
   {{ show_editor_info(info) }}
 {% endmacro %}
 
