@@ -13,6 +13,8 @@ from flaskext.script import Command, Option
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from MoinMoin.storage.middleware.indexing import ALL_REVS, LATEST_REVS
+
 
 class IndexCreate(Command):
     description = 'Create empty indexes.'
@@ -86,4 +88,21 @@ class IndexOptimize(Command):
 
     def run(self, tmp):
         app.storage.optimize_index(tmp=tmp)
+
+
+class IndexDump(Command):
+    description = 'Dump the indexes in readable form to stdout.'
+
+    option_list = [
+        Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
+            help='use the temporary location.'),
+    ]
+
+    def run(self, tmp):
+        for indexname in [LATEST_REVS, ALL_REVS, ]:
+            print " %s %s %s" % ("-" * 10, indexname, "-" * 60)
+            for kvs in app.storage.dump(tmp=tmp, indexname=indexname):
+                for k, v in kvs:
+                    print k, repr(v)[:70]
+                print
 
