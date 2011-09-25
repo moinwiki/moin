@@ -47,8 +47,8 @@ def pytest_funcarg__router(request):
     return router
 
 def revid_split(revid):
-    # router revids are <backend_mountpoint>/<backend_revid>, split that:
-    return revid.rsplit(u'/', 1)
+    # router revids are <backend_mountpoint>:<backend_revid>, split that:
+    return revid.rsplit(u':', 1)
 
 def test_store_get_del(router):
     root_name = u'foo'
