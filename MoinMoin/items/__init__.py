@@ -480,6 +480,9 @@ class Item(object):
         if MTIME not in meta:
             meta[MTIME] = int(time.time())
 
+        if ADDRESS not in meta:
+            meta[ADDRESS] = u'0.0.0.0' # TODO
+
         meta[ACTION] = unicode(action)
 
         if not overwrite and REVID in meta:

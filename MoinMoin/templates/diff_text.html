@@ -47,16 +47,16 @@
     <div class="moin-diff-info moin-diff-info-rev-author">
         <span class="moin-diff-info-caption">Editor:</span>
         <span class="moin-diff-info-value">
-            {{ utils.editor_info(rev) }}
+            {{ utils.editor_info(rev.meta) }}
         </span>
     </div>
     <div class="moin-diff-info moin-diff-info-rev-size">
         <span class="moin-diff-info-caption">Size:</span>
-        <span class="moin-diff-info-value">{{ rev.size }}</span>
+        <span class="moin-diff-info-value">{{ rev.meta['size'] }}</span>
     </div>
     <div class="moin-diff-info moin-diff-info-rev-comment">
         <span class="moin-diff-info-caption">Comment:</span>
-        <span class="moin-diff-info-value">{{ rev.comment }}</span>
+        <span class="moin-diff-info-value">{{ rev.meta['comment'] }}</span>
     </div>
 {% endmacro %}
 

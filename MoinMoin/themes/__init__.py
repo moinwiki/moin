@@ -270,9 +270,9 @@ class ThemeSupport(object):
         return url
 
 
-def get_editor_info(rev, external=False):
-    addr = rev.meta.get(ADDRESS)
-    hostname = rev.meta.get(HOSTNAME)
+def get_editor_info(meta, external=False):
+    addr = meta.get(ADDRESS)
+    hostname = meta.get(HOSTNAME)
     text = _('anonymous')  # link text
     title = ''  # link title
     css = 'editor'  # link/span css class
@@ -290,7 +290,7 @@ def get_editor_info(rev, external=False):
             title = '[%s]' % (addr, )
             css = 'editor ip'
 
-    userid = rev.meta.get(USERID)
+    userid = meta.get(USERID)
     if userid:
         u = user.User(userid)
         name = u.name
@@ -397,7 +397,7 @@ def setup_jinja_env():
                             'cfg': app.cfg,
                             'item_name': 'handlers need to give it',
                             'url_for_item': url_for_item,
-                            'get_editor_info': lambda rev: get_editor_info(rev),
+                            'get_editor_info': lambda meta: get_editor_info(meta),
                             'utctimestamp': lambda dt: utctimestamp(dt),
                             'gen': make_generator(),
                             })
