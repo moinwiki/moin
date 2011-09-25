@@ -43,8 +43,6 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("maint_reduce_revisions", Reduce_Revisions())
     from MoinMoin.script.maint.set_meta import Set_Meta
     manager.add_command("maint_set_meta", Set_Meta())
-    from MoinMoin.script.maint.create_item import Create_Item
-    manager.add_command("maint_create_item", Create_Item())
     from MoinMoin.script.maint import modify_item
     manager.add_command("item-get", modify_item.GetItem())
     manager.add_command("item-put", modify_item.PutItem())
