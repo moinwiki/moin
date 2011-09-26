@@ -103,7 +103,12 @@ def backend_to_index(meta, content, schema, wikiname):
     return doc
 
 
-def convert_to_indexable(meta, data):
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page
+from MoinMoin.converter import default_registry
+from MoinMoin.util.iri import Iri
+
+def convert_to_indexable(meta, data, is_new=False):
     """
     Convert revision data to a indexable content.
 
@@ -113,9 +118,64 @@ def convert_to_indexable(meta, data):
                  ready to read all indexable content from it. if you have just
                  written that content or already read from it, you need to call
                  rev.seek(0) before calling convert_to_indexable(rev).
+    :param is_new: if this is for a new revision and we shall modify
+                   metadata as a side effect
     :returns: indexable content, text/plain, unicode object
     """
-    return unicode(data.read()) # TODO integrate real thing after merge into moin2 code base.
+    class PseudoRev(object):
+        def __init__(self, meta, data):
+            self.meta = meta
+            self.data = data
+            self.revno = -1 # TODO: remove access to this in converters
+            class PseudoItem(object):
+                def __init__(self, name):
+                    self.name = name
+            self.item = PseudoItem(meta.get(NAME))
+
+    rev = PseudoRev(meta, data)
+    try:
+        # TODO use different converter mode?
+        # Maybe we want some special mode for the input converters so they emit
+        # different output than for normal rendering), esp. for the non-markup
+        # content types (images, etc.).
+        input_contenttype = meta[CONTENTTYPE]
+        output_contenttype = 'text/plain'
+        type_input_contenttype = Type(input_contenttype)
+        type_output_contenttype = Type(output_contenttype)
+        reg = default_registry
+        # first try a direct conversion (this could be useful for extraction
+        # of (meta)data from binary types, like from images or audio):
+        conv = reg.get(type_input_contenttype, type_output_contenttype)
+        if conv:
+            doc = conv(rev, input_contenttype)
+            return doc
+        # otherwise try via DOM as intermediate format (this is useful if
+        # input type is markup, to get rid of the markup):
+        input_conv = reg.get(type_input_contenttype, type_moin_document)
+        refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
+        output_conv = reg.get(type_moin_document, type_output_contenttype)
+        if input_conv and output_conv:
+            doc = input_conv(rev, input_contenttype)
+            # We do not convert smileys, includes, macros, links, because
+            # it does not improve search results or even makes results worse.
+            # We do run the referenced converter, though, to extract links and
+            # transclusions.
+            if is_new:
+                # we only can modify new, uncommitted revisions, not stored revs
+                i = Iri(scheme='wiki', authority='', path='/' + meta[NAME])
+                doc.set(moin_page.page_href, unicode(i))
+                refs_conv(doc)
+                # side effect: we update some metadata:
+                meta[ITEMLINKS] = refs_conv.get_links()
+                meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+            doc = output_conv(doc)
+            return doc
+        # no way
+        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
+    except Exception as e: # catch all exceptions, we don't want to break an indexing run
+        logging.exception("Exception happened in conversion of item %r rev %s contenttype %s:" % (meta[NAME], meta[REVID], meta.get(CONTENTTYPE, '')))
+        doc = u'ERROR [%s]' % str(e)
+        return doc
 
 
 class IndexingMiddleware(object):
