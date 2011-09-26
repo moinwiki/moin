@@ -1288,7 +1288,7 @@ def login():
 @frontend.route('/+logout')
 def logout():
     flash(_("You are now logged out."), "info")
-    for key in ['user.id', 'user.auth_method', 'user.auth_attribs', ]:
+    for key in ['user.itemid', 'user.auth_method', 'user.auth_attribs', ]:
         if key in session:
             del session[key]
     return redirect(url_for('.show_root'))

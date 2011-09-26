@@ -426,8 +426,8 @@ def handle_request(userobj):
 
 def setup_from_session():
     userobj = None
-    if 'user.id' in session:
-        auth_userid = session['user.id']
+    if 'user.itemid' in session:
+        auth_userid = session['user.itemid']
         auth_method = session['user.auth_method']
         auth_attrs = session['user.auth_attribs']
         logging.debug("got from session: %r %r" % (auth_userid, auth_method))

@@ -187,7 +187,7 @@ class User(object):
 
         self._cfg = app.cfg
         self.valid = 0
-        self.uuid = uid
+        self.itemid = uid
         self.auth_username = auth_username
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
@@ -211,24 +211,24 @@ class User(object):
 
         # we got an already authenticated username:
         check_password = None
-        if not self.uuid and self.auth_username:
+        if not self.itemid and self.auth_username:
             users = search_users(name_exact=self.auth_username)
             if users:
-                self.uuid = users[0].meta[ITEMID]
+                self.itemid = users[0].meta[ITEMID]
             if not password is None:
                 check_password = password
-        if self.uuid:
+        if self.itemid:
             self.load_from_id(check_password)
         elif self.name and self.name != 'anonymous':
             users = search_users(name_exact=self.name)
             if users:
-                self.uuid = users[0].meta[ITEMID]
-            if self.uuid:
+                self.itemid = users[0].meta[ITEMID]
+            if self.itemid:
                 # no password given should fail
                 self.load_from_id(password or u'')
         # Still no ID - make new user
-        if not self.uuid:
-            self.uuid = make_uuid()
+        if not self.itemid:
+            self.itemid = make_uuid()
             if password is not None:
                 self.enc_password = crypt_password(password)
 
@@ -240,9 +240,9 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
-        return "<%s.%s at 0x%x name:%r uuid:%r valid:%r>" % (
+        return "<%s.%s at 0x%x name:%r itemid:%r valid:%r>" % (
             self.__class__.__module__, self.__class__.__name__,
-            id(self), self.name, self.uuid, self.valid)
+            id(self), self.name, self.itemid, self.valid)
 
     @property
     def language(self):
@@ -283,7 +283,7 @@ class User(object):
                          password in the user account file.
         """
         try:
-            item = self._user_backend.get_item(itemid=self.uuid)
+            item = self._user_backend.get_item(itemid=self.itemid)
             rev = item[CURRENT]
         except KeyError: # was: (NoSuchItemError, NoSuchRevisionError):
             return
