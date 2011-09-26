@@ -324,13 +324,14 @@ class TestIndexingMiddleware(object):
         # TODO: this is a very simple check that assumes that data is put 1:1
         # into index' CONTENT field.
         item_name = u'foo'
-        meta = dict(name=item_name)
-        data = 'some test content'
+        meta = dict(name=item_name, contenttype=u'text/plain')
+        data = 'some test content\n'
         item = self.imw[item_name]
         data_file = StringIO(data)
         with item.store_revision(meta, data_file) as rev:
             expected_revid = rev.revid
         doc = self.imw._document(content=u'test')
+        assert doc is not None
         assert expected_revid == doc[REVID]
         assert unicode(data) == doc[CONTENT]
 
