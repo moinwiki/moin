@@ -73,7 +73,7 @@ from MoinMoin.config import NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, REVERTE
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
                             HASH_ALGORITHM, CONTENTTYPE_GROUPS, ITEMID, REVID, DATAID, \
-                            CURRENT
+                            CURRENT, PARENTID
 
 COLS = 80
 ROWS_DATA = 20
@@ -344,6 +344,17 @@ class Item(object):
         if use_filter:
             meta = self.meta_filter(meta)
         return json.dumps(meta, sort_keys=True, indent=2, ensure_ascii=False)
+
+    def prepare_meta_for_modify(self, meta):
+        """
+        transform the meta dict of the current revision into a meta dict
+        that can be used for savind next revision (after "modify").
+        """
+        meta = dict(meta)
+        revid = meta.pop(REVID, None)
+        if revid is not None:
+            meta[PARENTID] = revid
+        return meta
 
     def get_data(self):
         return '' # TODO create a better method for binary stuff
@@ -673,16 +684,13 @@ There is no help, you're doomed!
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            parent = String.using(optional=True)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
-            form['meta_text'] = self.meta_dict_to_text(self.meta)
-            if self.rev.revid:
-                form['parent'] = self.rev.revid
+            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1133,7 +1141,6 @@ class Text(Binary):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            parent = String.using(optional=True)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1148,9 +1155,7 @@ class Text(Binary):
                 form['data_text'] = self.data_storage_to_internal(item.data)
             else:
                 form['data_text'] = self.data_storage_to_internal(self.data)
-            form['meta_text'] = self.meta_dict_to_text(self.meta)
-            if self.rev.revid:
-                form['parent'] = self.rev.revid
+            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1302,7 +1307,6 @@ class TWikiDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1311,9 +1315,7 @@ class TWikiDraw(TarMixin, Image):
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.meta)
-            if self.rev.revid:
-                form['parent'] = self.rev.revid
+            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
         elif request.method == 'POST':
             # this POST comes directly from TWikiDraw (not from Browser), thus no validation
             try:
@@ -1395,7 +1397,6 @@ class AnyWikiDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1404,9 +1405,7 @@ class AnyWikiDraw(TarMixin, Image):
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.meta)
-            if self.rev.revid:
-                form['parent'] = self.rev.revid
+            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
         elif request.method == 'POST':
             # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
             try:
@@ -1484,7 +1483,6 @@ class SvgDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1493,9 +1491,7 @@ class SvgDraw(TarMixin, Image):
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.meta)
-            if self.rev.revid:
-                form['parent'] = self.rev.revid
+            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
         elif request.method == 'POST':
             # this POST comes directly from SvgDraw (not from Browser), thus no validation
             try:

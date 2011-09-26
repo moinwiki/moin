@@ -53,7 +53,7 @@ def atom(item_name):
             name = rev.meta[NAME]
             item = rev.item
             this_revno = rev.meta[REVID]
-            previous_revno = None # XXX TODO we need PARENT for this
+            previous_revno = rev.meta.get(PARENTID)
             this_rev = rev
             try:
                 hl_item = Item.create(name, rev_no=this_revno)
