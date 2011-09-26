@@ -5,7 +5,7 @@
 <div class="moin-form">
 {{ gen.form.open(form, method='post', action='', enctype='multipart/form-data') }}
 {{ forms.render_errors(form) }}
-{{ gen.input(form['rev'], type='hidden') }}
+{{ gen.input(form['parent'], type='hidden') }}
 {% block extra_form %}{% endblock %}
 {% block data_editor %}{% endblock %}
 {{ forms.render_field(gen, form['data_file'], 'file') }}

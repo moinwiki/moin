@@ -149,7 +149,7 @@ class DummyRev(dict):
         self.item = item
         self.meta = {CONTENTTYPE: contenttype}
         self.data = StringIO('')
-        self.revid = ''
+        self.revid = None
 
 
 class DummyItem(object):
@@ -673,7 +673,7 @@ There is no help, you're doomed!
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = Integer.using(optional=False)
+            parent = String.using(optional=True)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
@@ -681,7 +681,8 @@ There is no help, you're doomed!
             form = ModifyForm.from_defaults()
             TextCha(form).amend_form()
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
+            if self.rev.revid:
+                form['parent'] = self.rev.revid
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1132,7 +1133,7 @@ class Text(Binary):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = String.using(optional=True)
+            parent = String.using(optional=True)
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1149,7 +1150,7 @@ class Text(Binary):
                 form['data_text'] = self.data_storage_to_internal(self.data)
             form['meta_text'] = self.meta_dict_to_text(self.meta)
             if self.rev.revid:
-                form['rev'] = self.rev.revid
+                form['parent'] = self.rev.revid
         elif request.method == 'POST':
             form = ModifyForm.from_flat(request.form.items() + request.files.items())
             TextCha(form).amend_form()
@@ -1301,7 +1302,7 @@ class TWikiDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = Integer.using(optional=False)
+            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1311,7 +1312,8 @@ class TWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
+            if self.rev.revid:
+                form['parent'] = self.rev.revid
         elif request.method == 'POST':
             # this POST comes directly from TWikiDraw (not from Browser), thus no validation
             try:
@@ -1393,7 +1395,7 @@ class AnyWikiDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = Integer.using(optional=False)
+            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1403,7 +1405,8 @@ class AnyWikiDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
+            if self.rev.revid:
+                form['parent'] = self.rev.revid
         elif request.method == 'POST':
             # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
             try:
@@ -1481,7 +1484,7 @@ class SvgDraw(TarMixin, Image):
         #    return self._do_modify_show_templates()
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
-            rev = Integer.using(optional=False)
+            parent = String.using(optional=True)
             # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
@@ -1491,7 +1494,8 @@ class SvgDraw(TarMixin, Image):
             TextCha(form).amend_form()
             # XXX currently this is rather pointless, as the form does not get POSTed:
             form['meta_text'] = self.meta_dict_to_text(self.meta)
-            form['rev'] = self.rev.revid if self.rev.revid is not None else CURRENT
+            if self.rev.revid:
+                form['parent'] = self.rev.revid
         elif request.method == 'POST':
             # this POST comes directly from SvgDraw (not from Browser), thus no validation
             try:
