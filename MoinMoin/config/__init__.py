@@ -120,6 +120,7 @@ HASH_ALGORITHM = 'sha1'
 NAME_EXACT = "name_exact"
 ITEMID = "itemid"
 REVID = "revid"
+PARENTID = "parentid"
 DATAID = "dataid"
 WIKINAME = "wikiname"
 CONTENT = "content"

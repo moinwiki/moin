@@ -71,7 +71,7 @@ from whoosh.sorting import FieldFacet
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
-                            ITEMID, REVID, CURRENT
+                            ITEMID, REVID, CURRENT, PARENTID
 
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.util.crypto import make_uuid
@@ -141,6 +141,8 @@ class IndexingMiddleware(object):
             NAME_EXACT: ID(field_boost=3.0),
             # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
+            # parent revision id
+            PARENTID: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
             # tokenized CONTENTTYPE from metadata
