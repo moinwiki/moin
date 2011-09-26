@@ -91,7 +91,6 @@ def backend_to_index(meta, content, schema, wikiname):
     :param wikiname: interwikiname of this wiki
     :returns: document to put into whoosh index
     """
-
     doc = dict([(str(key), value)
                 for key, value in meta.items()
                 if key in schema])
@@ -149,7 +148,7 @@ class IndexingMiddleware(object):
             # unmodified list of TAGS from metadata
             TAGS: ID(stored=True),
             LANGUAGE: ID(stored=True),
-            # USERID from metadata TODO: -> user ITEMID
+            # USERID from metadata
             USERID: ID(stored=True),
             # ADDRESS from metadata
             ADDRESS: ID(stored=True),
@@ -390,7 +389,7 @@ class IndexingMiddleware(object):
         index = open_dir(index_dir, indexname=ALL_REVS)
         try:
             # build an index of all we have (so we know what we have)
-            all_revids = self.backend # the backend is a iterator over all revids
+            all_revids = self.backend # the backend is an iterator over all revids
             self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, 'add', procs, limitmb)
             latest_revids = self._find_latest_revids(index)
         finally:
@@ -459,7 +458,6 @@ class IndexingMiddleware(object):
         """
         Optimize whoosh index.
         """
-        # XXX unclear: do we need to close the index before optimizing it? or lock it so it is not used otherwise?
         for name in self.ix:
             self.ix[name].optimize()
 

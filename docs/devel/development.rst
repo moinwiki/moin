@@ -47,9 +47,7 @@ moin2 is a WSGI application and uses:
 * EmeraldTree for xml / tree processing
 * blinker for signalling
 * pygments for syntax highlighting
-* sqlalchemy as sql database abstraction (for indexing)
-
-  - by default using sqlite as database
+* sqlalchemy as sql database abstraction (sqla backend)
 * jquery javascript lib
 * CKeditor - GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools
@@ -78,7 +76,7 @@ this will:
   - MoinMoin.apps.serve - serving some configurable static 3rd party stuff
 * register before/after request handlers
 * initialize the cache (app.cache)
-* initialize the storage (app.storage)
+* initialize index and storage (app.storage)
 * initialize the translation system
 * initialize theme support
 
@@ -114,22 +112,20 @@ Let's look at how it shows a wiki item:
 
 Storage
 -------
-Moin supports different storage backends (like storing directly into files /
-directories, using Mercurial DVCS, using a SQL database, etc. - see
-`MoinMoin.storage.backends`).
+Moin supports different stores (like storing directly into files /
+directories, using key/value stores, using a SQL database, etc. - see
+`MoinMoin.storage.stores`). A store is extremly simple: just store a value
+for a key and retrieve the value using the key + iteration over keys.
 
-All these backends conform to same storage API definition (see
-`MoinMoin.storage`), which is used by the higher levels (no matter what
-backend is used).
+A backend is one layer above, dealing with objects that have metadata and
+data, see `MoinMoin.storage.backends`), still very simple stuff.
 
-There is also some related code in the storage package for:
+Above that, there is misc. stuff in `MoinMoin.storage.middleware` for:
 
-* processing ACLs (access control lists, protecting that items get accessed
-  by users that are not allowed to)
-* router (a fstab like mechanism, so one can mount multiple backends at
-  different places in the namespace)
-* indexing (putting important metadata into a index database, so finding,
-  selecting items is speedier)
+* routing by name to some specific backend (like fstab / mount)
+* indexing metadata and data + comfortable and fast index-based access,
+  selection and search
+* protecting stuff by ACLs (access control lists)
 
 DOM based transformations
 -------------------------
