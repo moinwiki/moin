@@ -483,6 +483,9 @@ class Item(object):
         if ADDRESS not in meta:
             meta[ADDRESS] = u'0.0.0.0' # TODO
 
+        if USERID not in meta and flaskg.user.valid:
+            meta[USERID] = flaskg.user.itemid
+
         meta[ACTION] = unicode(action)
 
         if not overwrite and REVID in meta:
