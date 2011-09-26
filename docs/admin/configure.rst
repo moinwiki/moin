@@ -1008,7 +1008,6 @@ This is a helper function to make storage setup easier - it helps you to:
   parts of the namespace:
 
   - content
-  - trash
   - userprofiles
 * to configure ACLs protecting these parts of the namespace
 * to setup a router middleware that dispatches to these parts of the namespace
@@ -1016,10 +1015,10 @@ This is a helper function to make storage setup easier - it helps you to:
 
 Call it like::
 
-    from MoinMoin.storage.backends import create_simple_mapping
+    from MoinMoin.storage import create_simple_mapping
 
-    namespace_mapping = create_simple_mapping(
-        backend_uri=...,
+    namespace_mapping, acl_mapping = create_simple_mapping(
+        uri=...,
         content_acl=dict(before=...,
                          default=...,
                          after=...,
@@ -1029,14 +1028,18 @@ Call it like::
                               after=..., ),
     )
 
-The `backend_uri` depends on the kind of storage backend you want to use (see
-below). Usually it is a URL-like string that looks like::
+The `uri` depends on the kind of storage backend and stores you want to use
+(see below). Usually it is a URL-like string that looks like::
 
-    fs2:/srv/mywiki/%(nsname)s
+    stores:fs:/srv/mywiki/%(nsname)s/%%(kind)s
     
-`fs2` is the name of the backend, followed by a colon, followed by a backend
-specific part that may include a `%(nsname)s` placeholder which gets replaced
-by 'content', 'trash' or 'userprofiles' for the respective backend.
+`stores` is the name of the backend, followed by a colon, followed by a store
+specification. `fs` is the name of the store, followed by a specification
+that makes sense for the fs (filesystem) store (== a path with placeholders).
+
+`%(nsname)s` placeholder will be replaced 'content' or 'userprofiles' for
+the respective backend. `%%(kind)s` will be replaced by 'meta' or 'data'
+later.
 
 In this case, the mapping created will look like this:
 
@@ -1045,25 +1048,24 @@ In this case, the mapping created will look like this:
 +----------------+-----------------------------+
 | /              | /srv/mywiki/content/        |
 +----------------+-----------------------------+
-| /Trash/        | /srv/mywiki/trash/          |
-+----------------+-----------------------------+
 | /UserProfiles/ | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
 
-`content_acl` is a dictionary specifying the ACLs for this part of the
-namespace (the normal content). See the docs about ACLs.
+`content_acl` and `user_profile_acl` are dictionaries specifying the ACLs for
+this part of the namespace (normal content, user profiles).
+See the docs about ACLs.
 
-acl middleware
---------------
+protecting middleware
+---------------------
 Features:
 
-* protects access to lower storage layers by Access Control Lists
+* protects access to lower storage layers by ACLs (Access Control Lists)
 * makes sure there won't be ACL security issues, even if upper layers have bugs
 * if you use create_simple_mapping, you just give the ACL parameters, the
   middleware will be set up automatically by moin.
 
-router middleware
------------------
+routing middleware
+------------------
 Features:
 
 * dispatches storage access to different backends depending on the item name
@@ -1071,34 +1073,34 @@ Features:
 * if you use create_simple_mapping, the router middleware will be set up
   automatically by moin.
 
-indexing mixin
---------------
+indexing middleware
+-------------------
 Features:
 
 * maintains an index for important metadata values
 * speeds up looking up / selecting items
 * makes it possible that lower storage layers can be simpler
-* if you use create_simple_mapping, the indexing will be set up automatically
-  by moin.
+* the indexing middleware will be set up automatically by moin.
 
-fs2 backend
------------
+stores backend
+--------------
+This is a backend that ties together 2 stores (one for meta, one for data) to
+form a backend.
+
+fs store
+--------
 Features:
 
 * stores into the filesystem
 * store metadata and data into separate files/directories
-* uses content-hash addressing for revision data files
-
-  - this automatically de-duplicates revision data with same content within the
-    whole backend!
 
 Configuration::
 
-    from MoinMoin.storage.backends import create_simple_mapping
+    from MoinMoin.storage import create_simple_mapping
 
     data_dir = '/srv/mywiki/data'
-    namespace_mapping = create_simple_mapping(
-        backend_uri='fs2:%s/%%(nsname)s' % data_dir,
+    namespace_mapping, acl_mapping = create_simple_mapping(
+        uri='stores:fs:%s/%%(nsname)s/%%%%(kind)s' % data_dir,
         content_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                          default=u'All:read,write,create',
                          after=u'', ),
@@ -1108,33 +1110,12 @@ Configuration::
     )
 
 
-fs backend
+sqla store
 ----------
 Features:
 
-* stores into the filesystem
-* stores meta and data of a revision into single file
-
-`backend_uri` for `create_simple_mapping` looks like::
-
-    fs:/srv/mywiki/data/%(nsname)s
-
-hg backend
-----------
-Features:
-
-* stores data into Mercurial DVCS (hg) - you need to have Mercurial installed
-
-`backend_uri` for `create_simple_mapping` looks like::
-
-    hg:/srv/mywiki/data/%(nsname)s
-
-sqla backend
-------------
-Features:
-
-* stores data into a (SQL) database
-* uses slqalchemy ORM as database abstraction
+* stores data into a (SQL) database / table
+* uses slqalchemy (without ORM) as database abstraction
 * supports multiple types of databases, like:
  
   - sqlite (default, comes built-into Python)
@@ -1142,24 +1123,57 @@ Features:
   - mysql
   - and others (see sqlalchemy docs).
 
-`backend_uri` for `create_simple_mapping` looks like e.g.::
+`uri` for `create_simple_mapping` looks like e.g.::
 
-    sqla:sqlite:////srv/mywiki/data/mywiki_%(nsname)s.db
-    sqla:mysql://myuser:mypassword@localhost/mywiki_%(nsname)s
-    sqla:postgres://myuser:mypassword@localhost/mywiki_%(nsname)s
+    stores:sqla:sqlite:////srv/mywiki/data/mywiki_%(nsname)s.db
+    stores:sqla:mysql://myuser:mypassword@localhost/mywiki_%(nsname)s
+    stores:sqla:postgres://myuser:mypassword@localhost/mywiki_%(nsname)s
 
 Please see the sqlalchemy docs about the part after `sqla:`.
 
-In case you use some DBMS (like postgresql or mysql) that does not allow
-creation of new databases on an as-needed basis, you need to create the
-databases 'mywiki_content', 'mywiki_trash', 'mywiki_userprofiles' yourself
-manually.
-
 Grant 'myuser' (his password: 'mypassword') full access to these databases.
 
-.. todo::
 
-   The sqla backend needs more love, more tuning.
+kc store
+--------
+Features:
+
+* uses a Kyoto Cabinet file to store
+* very fast
+* single-process only, local only
+
+.. todo:
+
+   add kc store configuration example
+
+
+kt store
+--------
+Features:
+
+* uses a Kyoto Tycoon server to store
+* fast
+* multi-process, local or remote.
+
+.. todo:
+
+   add kt store configuration example
+
+
+memory store
+--------------
+Features:
+
+* keeps everything in RAM
+* definitely not for production use
+* mostly intended for testing
+* if your system or the moin process crashes, you'll lose everything
+* single process only
+
+.. todo:
+
+   add memory store configuration example
+
 
 fileserver backend
 ------------------
@@ -1173,41 +1187,6 @@ Features:
     - with as much metadata as can be made up from the filesystem metadata
   + directories will show up as index items, listing links to their contents
 * might be useful together with SMBMount pseudo-authenticator
-
-flatfile backend
-----------------
-Features:
-
-* uses flat files for item storage
-* no revisioning
-* no separate metadata, just some stuff at top of the (text) data
-* thus, only suitable for text items
-
-memory backend
---------------
-Features:
-
-* keeps everything in RAM
-* definitely not for production use
-* mostly intended for testing
-* if your system or the moin process crashes, you'll lose everything
-* single process only
-* maybe not threadsafe
-
-fs19 backend
-------------
-Features:
-
-* reads moin 1.9 content and users from the filesystem
-* read-only, only provided for data migration from moin 1.9.x
-* not optimized for speed or resource usage
-
-For more details please see the chapter about upgrading from moin 1.9.
-
-
-.. todo:
-
-   add more backends / more configuration examples
 
 
 Mail configuration

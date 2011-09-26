@@ -73,17 +73,32 @@ use::
 That way, you can have all sorts of Pythons in different virtualenv directories
 within your moin2 workdir.
 
-Loading some items
-------------------
-In case you do not want to have a completely empty wiki, you may want to load
-some items into it. We provide some in `contrib/xml` directory and you can load
-them like this::
+
+Entering the virtual env
+------------------------
 
  # enter your virtual environment:
  source env/bin/activate
 
+
+Initializing the storage and the index
+--------------------------------------
+
+ moin create-index -s -i
+
+The -s and -i switches make sure moin creates an (empty) storage and an (empty)
+index.
+
+
+Loading some items
+------------------
+In case you do not want to have a completely empty wiki, you may want to load
+some items into it. We provide some in `contrib/serialized` directory and you
+can load them like this::
+
  # load some example items:
- moin maint_xml --load --file=contrib/xml/preloaded_items.xml
+ moin load --file contrib/serialized/preloaded_items.moin
+
 
 Installing PIL
 ~~~~~~~~~~~~~~

@@ -51,7 +51,7 @@ data to xml:
 Configuration::
 
     from os.path import join
-    from MoinMoin.storage.backends import create_simple_mapping
+    from MoinMoin.storage import create_simple_mapping
 
     interwikiname = ... # critical, make sure it is same as in 1.9!
     sitename = ... # same as in 1.9
@@ -67,45 +67,20 @@ Configuration::
 
     # think about which backend you will use in the end and configure
     # it here (this is NOT the fs19 backend!):
-    namespace_mapping = \
-        create_simple_mapping(
-            backend_uri='fs2:/some/path/%%(nsname)s',
-            content_acl=dict(before=u'', # acl_rights_before in 1.9
-                             default=u'', # acl_rights_default
-                             after=u'', # acl_rights_after
-                             hierarchic=False), # acl_hierarchic
-            user_profile_acl=dict(before=u'',
-                                  default=u'',
-                                  after=u'',
-                                  hierarchic=False),
-        )
+    # TODO
 
-Exporting your moin 1.9 data to an XML file
--------------------------------------------
-moin2 can use the `fs19` storage backend to access your moin 1.9 content
-(pages, attachments and users). The fs19 backend is a bit more than just
-a backend - it also makes the moin 1.9 data look like moin2 data when
-moin accesses them. To support this, it is essential that you adjust your
-wiki config first, see previous section.
 
-Then, use a **copy** of your 1.9 content, do not point moin2 it at your
-original data::
+Exporting your moin 1.9 data to a file
+--------------------------------------
 
-    moin maint_xml --moin19data=/your/moin19/data --save --file=moin19.xml
+TBD
 
-This will serialize all your moin 1.9 data into moin19.xml.
 
-Note: depending on the size of your wiki, this can take rather long and consume
-about the same amount of additional disk space.
+Importing the file into moin2
+------------------------------
 
-Importing the XML file into moin2
----------------------------------
-Just load moin19.xml into the storage backend you have already configured::
+TBD
 
-    moin maint_xml --load --file=moin19.xml
-
-Note: depending on the size of your wiki, this can take rather long and consume
-about the same amount of additional disk space.
 
 Testing
 -------
@@ -117,6 +92,7 @@ Check whether your data is complete and working OK.
 
 If you find issues with data migration from moin 1.9 to 2, please check the
 moin2 issue tracker.
+
 
 Cleanup
 -------

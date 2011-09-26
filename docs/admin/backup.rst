@@ -38,21 +38,22 @@ If you just want a backup of moin and your data, backup these files:
 To create a dump of all data stored in moin (wiki items, user profiles), do
 this::
 
- moin maint_xml --save --file backup.xml
+ moin save --file backup.moin
 
-Please note that backup.xml contains sensitive data (like user profiles, wiki
-contents). Wiki item revision data is stored encoded, but it is **not**
-encrypted, so store your backups at a safe place and make sure no unauthorized
+Please note that this file contains sensitive data (like user profiles, wiki
+contents), so store your backups at a safe place and make sure no unauthorized
 persons can access them.
 
 Selective Restore
 =================
 
 Restore all software and configuration files (see above) to their original
-place. Make sure your (empty) wiki works as expected and the moin version is
-the same as when you made the backup.
+place. Make sure your (empty) wiki works as expected::
 
-To load the xml dump into your empty wiki, do this::
+ moin moin -s -i  # -s = create new storage
+                  # -i = create new index
 
- moin maint_xml --load --file backup.xml
+To load the backup file into your empty wiki, do this::
+
+ moin load --file backup.moin
 
