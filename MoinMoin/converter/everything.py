@@ -25,7 +25,7 @@ class Converter(object):
     def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev=%d' % rev.revno),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev=%s' % rev.revid),
         }
         return moin_page.a(attrib=attrib, children=["Download %s." % item_name])
 

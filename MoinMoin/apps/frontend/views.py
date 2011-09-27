@@ -246,10 +246,10 @@ def show_dom(item_name, rev):
 @frontend.route('/+indexable/<rev>/<itemname:item_name>')
 @frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def indexable(item_name, rev):
-    from MoinMoin.converter import convert_to_indexable
-    item = flaskg.storage.get_item(item_name)
-    rev = item.get_revision(rev)
-    content = convert_to_indexable(rev)
+    from MoinMoin.storage.middleware.indexing import convert_to_indexable
+    item = flaskg.storage[item_name]
+    rev = item[rev]
+    content = convert_to_indexable(rev.meta, rev.data)
     return Response(content, 200, mimetype='text/plain')
 
 
@@ -275,7 +275,6 @@ def show_item_meta(item_name, rev):
     except AccessDeniedError:
         abort(403)
     show_revision = show_navigation = rev != CURRENT
-    # Note: rev.revno of DummyRev is None
     first_rev = None
     last_rev = None
     if show_navigation:
@@ -1488,20 +1487,15 @@ def diffsince(item_name, timestamp):
     date = timestamp
     # this is how we get called from "recent changes"
     # try to find the latest rev1 before bookmark <date>
-    try:
-        item = flaskg.storage.get_item(item_name)
-    except AccessDeniedError:
-        abort(403)
-    revnos = item.list_revisions()
-    revnos.reverse()  # begin with latest rev
-    for revno in revnos:
-        revision = item.get_revision(revno)
-        if revision.timestamp <= date:
-            rev1 = revision.revno
+    item = flaskg.storage[item_name]
+    revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
+    for rev in revs:
+        if rev.meta[MTIME] <= date:
+            rev1 = rev.revid
             break
     else:
-        rev1 = revno  # if we didn't find a rev, we just take oldest rev we have
-    rev2 = -1  # and compare it with latest we have
+        rev1 = rev.revid  # if we didn't find a rev, we just take oldest rev we have
+    rev2 = CURRENT  # and compare it with latest we have
     return _diff(item, rev1, rev2)
 
 
@@ -1510,43 +1504,13 @@ def diff(item_name):
     # TODO get_item and get_revision calls may raise an AccessDeniedError.
     #      If this happens for get_item, don't show the diff at all
     #      If it happens for get_revision, we may just want to skip that rev in the list
-    try:
-        item = flaskg.storage.get_item(item_name)
-    except AccessDeniedError:
-        abort(403)
+    item = flaskg.storage[item_name]
     rev1 = request.values.get('rev1')
     rev2 = request.values.get('rev2')
     return _diff(item, rev1, rev2)
 
 
-def _normalize_revnos(item, revno1, revno2):
-    try:
-        revno1 = int(revno1)
-    except (ValueError, TypeError):
-        revno1 = -2
-    try:
-        revno2 = int(revno2)
-    except (ValueError, TypeError):
-        revno2 = -1
-
-    # get (absolute) current revision number
-    current_revno = item.get_revision(-1).revno
-    # now we can calculate the absolute revnos if we don't have them yet
-    if revno1 < 0:
-        revno1 += current_revno + 1
-    if revno2 < 0:
-        revno2 += current_revno + 1
-
-    if revno1 > revno2:
-        oldrevno, newrevno = revno2, revno1
-    else:
-        oldrevno, newrevno = revno1, revno2
-    return oldrevno, newrevno
-
-
-def _common_type(rev1, rev2):
-    ct1 = rev1.get(CONTENTTYPE)
-    ct2 = rev2.get(CONTENTTYPE)
+def _common_type(ct1, ct2):
     if ct1 == ct2:
         # easy, exactly the same content type, call do_diff for it
         commonmt = ct1
@@ -1563,17 +1527,15 @@ def _common_type(rev1, rev2):
 
 
 def _diff(item, revno1, revno2):
-    oldrevno, newrevno = _normalize_revnos(item, revno1, revno2)
-    oldrev = item.get_revision(oldrevno)
-    newrev = item.get_revision(newrevno)
-
-    commonmt = _common_type(oldrev, newrev)
+    oldrev = item[revno1]
+    newrev = item[revno2]
+    commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
-        item = Item.create(item.name, contenttype=commonmt, rev_no=newrevno)
+        item = Item.create(item.name, contenttype=commonmt, rev_no=newrev.revid)
     except AccessDeniedError:
         abort(403)
-    rev_nos = item.rev.item.list_revisions()
+    rev_nos = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
                            rev=item.rev,
@@ -1585,14 +1547,12 @@ def _diff(item, revno1, revno2):
 
 
 def _diff_raw(item, revno1, revno2):
-    oldrevno, newrevno = _normalize_revnos(item, revno1, revno2)
-    oldrev = item.get_revision(oldrevno)
-    newrev = item.get_revision(newrevno)
-
+    oldrev = item[revno1]
+    newrev = item[revno2]
     commonmt = _common_type(oldrev, newrev)
 
     try:
-        item = Item.create(item.name, contenttype=commonmt, rev_no=newrevno)
+        item = Item.create(item.name, contenttype=commonmt, rev_no=newrev.revid)
     except AccessDeniedError:
         abort(403)
     return item._render_data_diff_raw(oldrev, newrev)

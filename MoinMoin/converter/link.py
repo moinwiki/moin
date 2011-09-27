@@ -135,8 +135,6 @@ class ConverterExternOutput(ConverterBase):
             query = separator.join(result)
         else:
             query = None
-        if revno is not None:
-            revno = int(revno)
         do_to_endpoint = dict(
             show='frontend.show_item',
             get='frontend.get_item',
