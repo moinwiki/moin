@@ -771,7 +771,7 @@ def global_history():
 
         # Aggregating comments, authors and revno
         for doc in docs:
-            rev_no = ':' + doc[REVID]
+            rev_no = doc[REVID]
             revnos.append(rev_no)
             comment = doc.get(COMMENT)
             if comment:
@@ -1506,8 +1506,8 @@ def diff(item_name):
     #      If this happens for get_item, don't show the diff at all
     #      If it happens for get_revision, we may just want to skip that rev in the list
     item = flaskg.storage[item_name]
-    rev1 = request.values.get('rev1')
-    rev2 = request.values.get('rev2')
+    rev1 = ':' + request.values.get('rev1')
+    rev2 = ':' + request.values.get('rev2')
     return _diff(item, rev1, rev2)
 
 
