@@ -1,48 +1,5 @@
 {% import "utils.html" as utils %}
 
-{% macro diff_nav(side, item_name, rev1, rev2, min_revno, max_revno) %}
-    {% set revno1 = rev1.revno %}
-    {% set revno2 = rev2.revno %}
-    {% if side == 1 %}
-        {% set revno = revno1 %}
-        {% set date_time = rev1.timestamp %}
-        {% set revno1older = revno1 - 1 %}
-        {% set revno1newer = revno1 + 1 %}
-        {% set revno2older = revno2 %}
-        {% set revno2newer = revno2 %}
-        {% set min_reached = revno1older < min_revno %}
-        {% set max_reached = revno1newer > max_revno %}
-    {% elif side == 2 %}
-        {% set revno = revno2 %}
-        {% set date_time = rev2.timestamp %}
-        {% set revno1older = revno1 %}
-        {% set revno1newer = revno1 %}
-        {% set revno2older = revno2 - 1 %}
-        {% set revno2newer = revno2 + 1 %}
-        {% set min_reached = revno2 - 1 < min_revno %}
-        {% set max_reached = revno2 + 1 > max_revno %}
-    {% endif %}
-    <div class="moin-diff-info moin-diff-info-heading">
-        {% if min_reached %}
-        <span class="moin-diff-no-nav-link moin-diff-prev-link moin-diff-old-rev"
-              title="{{ _('No older revision') }}">←</span>
-        {% else %}
-        <a class="moin-diff-nav-link moin-diff-prev-link moin-diff-old-rev"
-           href="{{ url_for('frontend.diff', item_name=item_name, rev1=revno1older, rev2=revno2older) }}"
-           title="{{ _('Use older revision') }}">←</a>
-        {% endif %}
-        {{ _('Revision %(revno)d as of %(date_time)s', revno=revno, date_time=date_time|datetimeformat) }}
-        {% if max_reached %}
-        <span class="moin-diff-no-nav-link moin-diff-next-link moin-diff-old-rev"
-              title="{{ _('No newer revision') }}">→</span>
-        {% else %}
-        <a class="moin-diff-nav-link moin-diff-next-link moin-diff-old-rev"
-           href="{{ url_for('frontend.diff', item_name=item_name, rev1=revno1newer, rev2=revno2newer) }}"
-           title="{{ _('Use newer revision') }}">→</a>
-        {% endif %}
-    </div>
-{% endmacro %}
-
 {% macro show_meta(rev) %}
     <div class="moin-diff-info moin-diff-info-rev-author">
         <span class="moin-diff-info-caption">Editor:</span>
@@ -63,11 +20,9 @@
 <table class="moin-diff">
     <tr>
         <td class="moin-diff-header">
-            {{ diff_nav(1, item_name, oldrev, newrev, min_revno, max_revno) }}
             {{ show_meta(oldrev) }}
         </td>
         <td class="moin-diff-header">
-            {{ diff_nav(2, item_name, oldrev, newrev, min_revno, max_revno) }}
             {{ show_meta(newrev) }}
         </td>
     </tr>
