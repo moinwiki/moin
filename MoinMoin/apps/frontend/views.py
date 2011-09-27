@@ -1759,11 +1759,11 @@ def global_tags():
     show a list or tag cloud of all tags in this wiki
     """
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    docs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    revs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
     tags_counts = {}
-    for doc in docs:
-        tags = doc.get(TAGS, [])
-        logging.debug("name %s rev %s tags %s" % (doc[NAME], doc[REVID], tags))
+    for rev in revs:
+        tags = rev.meta.get(TAGS, [])
+        logging.debug("name %s rev %s tags %s" % (rev.meta[NAME], rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -1796,8 +1796,8 @@ def tagged_items(tag):
     show all items' names that have tag <tag>
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    docs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
-    item_names = [doc[NAME] for doc in docs]
+    revs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
+    item_names = [rev.meta[NAME] for rev in revs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
