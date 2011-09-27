@@ -15,6 +15,8 @@ from flask import url_for
 
 import os.path
 
+from MoinMoin.config import CURRENT
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -38,7 +40,7 @@ def is_known_wiki(wiki_name):
     return wiki_name in app.cfg.interwiki_map
 
 
-def url_for_item(item_name, wiki_name='', rev=-1, endpoint='frontend.show_item', _external=False):
+def url_for_item(item_name, wiki_name='', rev=CURRENT, endpoint='frontend.show_item', _external=False):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -55,7 +57,7 @@ def url_for_item(item_name, wiki_name='', rev=-1, endpoint='frontend.show_item',
     Computed URLs are always fully specified.
     """
     if is_local_wiki(wiki_name):
-        if rev is None or rev == -1:
+        if rev is None or rev == CURRENT:
             url = url_for(endpoint, item_name=item_name, _external=_external)
         else:
             url = url_for(endpoint, item_name=item_name, rev=rev, _external=_external)
@@ -66,7 +68,7 @@ def url_for_item(item_name, wiki_name='', rev=-1, endpoint='frontend.show_item',
             logging.warning("no interwiki_map entry for %r" % wiki_name)
             url = '' # can we find something useful?
         else:
-            if (rev is None or rev == -1) and endpoint == 'frontend.show_item':
+            if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
                 # we just want to show latest revision (no special revision given) -
                 # this is the generic interwiki url support, should work for any remote wiki
                 url = join_wiki(wiki_base_url, item_name)

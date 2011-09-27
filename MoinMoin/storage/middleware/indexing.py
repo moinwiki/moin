@@ -126,11 +126,17 @@ def convert_to_indexable(meta, data, is_new=False):
         def __init__(self, meta, data):
             self.meta = meta
             self.data = data
-            self.revno = -1 # TODO: remove access to this in converters
+            self.revid = meta.get(REVID)
             class PseudoItem(object):
                 def __init__(self, name):
                     self.name = name
             self.item = PseudoItem(meta.get(NAME))
+        def read(self, *args, **kw):
+            return self.data.read(*args, **kw)
+        def seek(self, *args, **kw):
+            return self.data.seek(*args, **kw)
+        def tell(self, *args, **kw):
+            return self.data.tell(*args, **kw)
 
     rev = PseudoRev(meta, data)
     try:
