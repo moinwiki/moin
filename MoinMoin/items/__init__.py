@@ -1105,14 +1105,11 @@ class Text(Binary):
         old_text = self.data_storage_to_internal(oldrev.data.read())
         new_text = self.data_storage_to_internal(newrev.data.read())
         storage_item = flaskg.storage[self.name]
-        revs = storage_item.list_revisions()
         diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in diff(old_text, new_text)]
         return Markup(render_template('diff_text.html',
                                       item_name=self.name,
                                       oldrev=oldrev,
                                       newrev=newrev,
-                                      min_revno=revs[0],
-                                      max_revno=revs[-1],
                                       diffs=diffs,
                                      ))
 
