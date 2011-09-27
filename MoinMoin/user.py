@@ -32,7 +32,7 @@ from flask import session, request, url_for
 from whoosh.query import Term, And, Or
 
 from MoinMoin import config, wikiutil
-from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, ITEMID, ACTION, CONTENTTYPE, EMAIL, OPENID, CURRENT
+from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, ITEMID, ACTION, CONTENTTYPE, EMAIL, OPENID, CURRENT, MTIME
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
@@ -368,6 +368,7 @@ class User(object):
             meta[key] = value
         meta[CONTENTTYPE] = u'application/x.moin.userprofile'
         meta[ACTION] = u'SAVE'
+        meta[MTIME] = int(time.time())
         item.store_revision(meta, StringIO(''), overwrite=True)
 
         if not self.disabled:
