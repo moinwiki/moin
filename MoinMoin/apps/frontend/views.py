@@ -776,7 +776,7 @@ def global_history():
             comment = doc.get(COMMENT)
             if comment:
                 comment = "#%(revno)d %(comment)s" % {
-                          'revno': rev_no,
+                          'revno': revnos.index(rev_no),
                           'comment': comment
                           }
                 comments.append(comment)
