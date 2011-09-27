@@ -738,17 +738,18 @@ def global_history():
         query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
     # TODO: we need use limit=None to simulate previous implementation's behaviour -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None) # XXX
+    revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
+    history = [dict(rev.meta.iteritems()) for rev in revs]
     item_groups = OrderedDict()
     for doc in history:
         current_item_name = doc[NAME]
-        if bookmark_time and doc[MTIME] <= bookmark_time:
+        if bookmark_time and datetime.utcfromtimestamp(doc[MTIME]) <= bookmark_time:
             break
         elif current_item_name in item_groups:
             latest_doc = item_groups[current_item_name][0]
             tm_latest = latest_doc[MTIME]
             tm_current = doc[MTIME]
-            if format_date(tm_latest) == format_date(tm_current): # this change took place on the same day
+            if format_date(datetime.utcfromtimestamp(tm_latest)) == format_date(datetime.utcfromtimestamp(tm_current)): # this change took place on the same day
                 item_groups[current_item_name].append(doc)
         else:
             item_groups[current_item_name] = [doc]
@@ -764,13 +765,13 @@ def global_history():
         current_doc = docs[0]
         item_info["item_name"] = item_name
         item_info["name"] = current_doc[NAME]
-        item_info["timestamp"] = current_doc[MTIME]
+        item_info["timestamp"] = datetime.utcfromtimestamp(current_doc[MTIME])
         item_info["contenttype"] = current_doc[CONTENTTYPE]
         item_info["action"] = current_doc[ACTION]
 
         # Aggregating comments, authors and revno
         for doc in docs:
-            rev_no = doc[REVID]
+            rev_no = ':' + doc[REVID]
             revnos.append(rev_no)
             comment = doc.get(COMMENT)
             if comment:
@@ -794,8 +795,8 @@ def global_history():
         else:
             # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
             for info, positions in editors_info.values():
-                position_range = util.rangelist(positions)
-                position_range = "[%(position_range)s]" % {'position_range': position_range}
+                idx = [revnos.index(pos) for pos in positions]
+                position_range = util.rangelist(idx)
                 info_tuple = (info, position_range)
                 editors.append(info_tuple)
 
