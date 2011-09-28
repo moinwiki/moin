@@ -17,7 +17,7 @@ from flask import g as flaskg
 
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
-from MoinMoin.config import USERGROUP
+from MoinMoin.config import NAME, USERGROUP
 from MoinMoin.security import AccessControlList
 from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item
@@ -41,28 +41,12 @@ class TestWikiGroupBackend(GroupsBackendTest):
         """
         become_trusted()
         item = update_item(u'SomeGroup', 0, {USERGROUP: ["ExampleUser"]}, DATA)
-        item.rename(u'AnotherGroup')
+        assert u'ExampleUser' in flaskg.groups[u'SomeGroup']
+        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'AnotherGroup'])
 
-        result = u'ExampleUser' in flaskg.groups[u'AnotherGroup']
-        assert result
-
+        item = update_item(u'SomeGroup', 0, {NAME: u'AnotherGroup', USERGROUP: ["ExampleUser"]}, DATA)
+        assert u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
-
-    def test_copy_group_item(self):
-        """
-        Tests copying a group item.
-        """
-        pytest.skip("item.copy() is not finished")
-
-        become_trusted()
-        item = update_item(u'SomeGroup', 0,  {USERGROUP: ["ExampleUser"]}, DATA)
-        item.copy(u'SomeOtherGroup')
-
-        result = u'ExampleUser' in flaskg.groups[u'SomeOtherGroup']
-        assert result
-
-        result = u'ExampleUser' in flaskg.groups[u'SomeGroup']
-        assert result
 
     def test_appending_group_item(self):
         """
