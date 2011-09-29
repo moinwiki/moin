@@ -399,7 +399,7 @@ class Item(object):
         """
         delete this item by moving it to the trashbin
         """
-        trash_prefix = u'XXTrash/' # XXX move to config
+        trash_prefix = u'Trash/' # XXX move to config
         now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
         # make trash name unique by including timestamp:
         trashname = u'%s%s (%s UTC)' % (trash_prefix, self.name, now)
@@ -459,10 +459,8 @@ class Item(object):
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
     def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
-        if name is None:
-            name = self.name
         backend = flaskg.storage
-        storage_item = backend[name]
+        storage_item = backend[self.name]
         try:
             currentrev = storage_item.get_revision(CURRENT)
             rev_no = currentrev.revid
@@ -476,6 +474,8 @@ class Item(object):
 
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
+        if name is None:
+            name = self.name
         oldname = meta.get(NAME)
         if oldname and oldname != name:
             meta[NAME_OLD] = oldname
