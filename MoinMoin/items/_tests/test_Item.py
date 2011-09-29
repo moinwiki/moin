@@ -147,35 +147,43 @@ class TestItem(object):
         data = 'test_data'
         meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
         comment = u'saved it'
-        become_trusted()
         item = Item.create(name)
         item._save(meta, data, comment=comment)
-        item = Item.create(name)
         # item and its contents before renaming
+        item = Item.create(name)
         assert item.name == u'Test_Item'
         assert item.meta['comment'] == u'saved it'
-        Item.rename(item, u'Test_new_Item', comment=u'renamed')
         new_name = u'Test_new_Item'
+        item.rename(new_name, comment=u'renamed')
+        # item at original name and its contents after renaming
+        item = Item.create(name)
+        assert item.name == u'Test_Item'
+        # this should be a fresh, new item, NOT the stuff we renamed:
+        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        # item at new name and its contents after renaming
         item = Item.create(new_name)
-        # item and its contents after renaming
         assert item.name == u'Test_new_Item'
-        assert item.meta['comment'] == u'renamed'
         assert item.meta['name_old'] == u'Test_Item'
+        assert item.meta['comment'] == u'renamed'
         assert item.data == u'test_data'
 
     def test_delete(self):
-        name = u'Test_Item'
+        name = u'Test_Item2'
         contenttype = u'text/plain;charset=utf-8'
         data = 'test_data'
         meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
         comment = u'saved it'
         item = Item.create(name)
         item._save(meta, data, comment=comment)
+        # item and its contents before deleting
         item = Item.create(name)
-        item.delete(u'item deleted')
+        assert item.name == u'Test_Item2'
+        assert item.meta['comment'] == u'saved it'
+        item.delete(u'deleted')
         # item and its contents after deletion
         item = Item.create(name)
-        assert item.name == u'Test_Item'
+        assert item.name == u'Test_Item2'
+        # this should be a fresh, new item, NOT the stuff we deleted:
         assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
 
     def test_revert(self):
