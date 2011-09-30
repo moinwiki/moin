@@ -1736,11 +1736,11 @@ class NestedItemListBuilder(object):
     def childs(self, name):
         # does not recurse
         try:
-            item = flaskg.storage.get_item(name)
+            item = flaskg.storage[name]
         except AccessDeniedError:
             return []
-        rev = item.get_revision(-1)
-        itemlinks = rev.get(ITEMLINKS, [])
+        rev = item[CURRENT]
+        itemlinks = rev.meta.get(ITEMLINKS, [])
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):
