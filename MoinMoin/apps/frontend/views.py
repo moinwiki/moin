@@ -571,7 +571,7 @@ def ajaxmodify(item_name):
 def destroy_item(item_name, rev):
     if rev is None:
         # no revision given
-        _rev = -1 # for item creation
+        _rev = CURRENT # for item creation
         destroy_item = True
     else:
         _rev = rev
