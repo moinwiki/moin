@@ -697,8 +697,8 @@ def _backrefs(item_name):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
-    docs = flaskg.storage.get_index(all_revs=False).search(q)
-    return [doc[NAME] for doc in docs]
+    revs = flaskg.storage.search(q, all_revs=False)
+    return [rev.meta[NAME] for rev in revs]
 
 
 @frontend.route('/+history/<itemname:item_name>')
