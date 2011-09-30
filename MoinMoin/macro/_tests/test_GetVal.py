@@ -24,7 +24,7 @@ class TestMacro(object):
         become_trusted()
         somedict = {u"One": u"1",
                     u"Two": u"2"}
-        update_item(u'TestDict', 0, {SOMEDICT: somedict}, DATA)
+        update_item(u'TestDict', {SOMEDICT: somedict}, DATA)
 
     def teardown_method(self, method):
         deinit_test_app(self.app, self.ctx)

@@ -288,9 +288,9 @@ class TestItemAcls(object):
         become_trusted(username=u'WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
-                update_item(item_name, 0, {ACL: item_acl}, item_content)
+                update_item(item_name, {ACL: item_acl}, item_content)
             else:
-                update_item(item_name, 0, {}, item_content)
+                update_item(item_name, {}, item_content)
 
     def testItemACLs(self):
         """ security: test item acls """
@@ -364,9 +364,9 @@ class TestItemHierachicalAcls(object):
         become_trusted(username=u'WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
-                update_item(item_name, 0, {ACL: item_acl}, item_content)
+                update_item(item_name, {ACL: item_acl}, item_content)
             else:
-                update_item(item_name, 0, {}, item_content)
+                update_item(item_name, {}, item_content)
 
     def testItemACLs(self):
         """ security: test item acls """

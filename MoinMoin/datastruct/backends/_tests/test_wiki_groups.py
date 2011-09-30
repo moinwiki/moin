@@ -33,18 +33,18 @@ class TestWikiGroupBackend(GroupsBackendTest):
     def setup_method(self, method):
         become_trusted()
         for group, members in self.test_groups.iteritems():
-            update_item(group, 0, {USERGROUP: members}, DATA)
+            update_item(group, {USERGROUP: members}, DATA)
 
     def test_rename_group_item(self):
         """
         Tests renaming of a group item.
         """
         become_trusted()
-        item = update_item(u'SomeGroup', 0, {USERGROUP: ["ExampleUser"]}, DATA)
+        item = update_item(u'SomeGroup', {USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'SomeGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'AnotherGroup'])
 
-        item = update_item(u'SomeGroup', 0, {NAME: u'AnotherGroup', USERGROUP: ["ExampleUser"]}, DATA)
+        item = update_item(u'SomeGroup', {NAME: u'AnotherGroup', USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
 
@@ -56,8 +56,8 @@ class TestWikiGroupBackend(GroupsBackendTest):
         # long list of users
         members = create_random_string_list(length=15, count=1234)
         test_user = create_random_string_list(length=15, count=1)[0]
-        update_item(u'UserGroup', 0, {USERGROUP: members}, DATA)
-        update_item(u'UserGroup', 1, {USERGROUP: members + [test_user]}, '')
+        update_item(u'UserGroup', {USERGROUP: members}, DATA)
+        update_item(u'UserGroup', {USERGROUP: members + [test_user]}, '')
         result = test_user in flaskg.groups['UserGroup']
 
         assert result
@@ -71,16 +71,16 @@ class TestWikiGroupBackend(GroupsBackendTest):
 
         # long list of users
         members = create_random_string_list()
-        update_item(u'UserGroup', 0,  {USERGROUP: members}, DATA)
+        update_item(u'UserGroup', {USERGROUP: members}, DATA)
 
         # updates the text with the text_user
         test_user = create_random_string_list(length=15, count=1)[0]
-        update_item(u'UserGroup', 1,  {USERGROUP: [test_user]}, DATA)
+        update_item(u'UserGroup', {USERGROUP: [test_user]}, DATA)
         result = test_user in flaskg.groups[u'UserGroup']
         assert result
 
         # updates the text without test_user
-        update_item(u'UserGroup', 2, {}, DATA)
+        update_item(u'UserGroup', {}, DATA)
         result = test_user in flaskg.groups[u'UserGroup']
         assert not result
 
@@ -91,7 +91,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         then add user member to an item group and check acl rights
         """
         become_trusted()
-        update_item(u'NewGroup', 0, {USERGROUP: ["ExampleUser"]}, DATA)
+        update_item(u'NewGroup', {USERGROUP: ["ExampleUser"]}, DATA)
 
         acl_rights = ["NewGroup:read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
@@ -99,7 +99,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         has_rights_before = acl.may(u"AnotherUser", "read")
 
         # update item - add AnotherUser to a item group NewGroup
-        update_item(u'NewGroup', 1, {USERGROUP: ["AnotherUser"]}, '')
+        update_item(u'NewGroup', {USERGROUP: ["AnotherUser"]}, '')
 
         has_rights_after = acl.may(u"AnotherUser", "read")
 

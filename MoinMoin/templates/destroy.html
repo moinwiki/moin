@@ -1,7 +1,7 @@
 {% import "forms.html" as forms %}
 {% extends theme("layout.html") %}
 {% block content %}
-{% if rev_no == None %}
+{% if rev_id == None %}
     <h1>{{ _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) }}</h1>
     <div class="moin-form">
     {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name)) }}
@@ -14,9 +14,9 @@
     {{ gen.form.close() }}
     </div>
 {% else %}
-    <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_no)d)", item_name=item.name, rev_no=rev_no) }}</h1>
+    <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_id)d)", item_name=item.name, rev_id=rev_id) }}</h1>
     <div class="moin-form">
-    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name, rev=rev_no)) }}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name, rev=rev_id)) }}
       {{ forms.render_errors(form) }}
       <dl>
         {{ forms.render_field(gen, form['comment'], 'text') }}

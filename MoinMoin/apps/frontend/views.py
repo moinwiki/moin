@@ -196,7 +196,7 @@ def show_item(item_name, rev):
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     show_revision = rev != CURRENT
@@ -210,8 +210,8 @@ def show_item(item_name, rev):
                               item=item, item_name=item.name,
                               rev=item.rev,
                               contenttype=item.contenttype,
-                              first_rev_no=first_rev,
-                              last_rev_no=last_rev,
+                              first_rev_id=first_rev,
+                              last_rev_id=last_rev,
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
@@ -229,7 +229,7 @@ def redirect_show_item(item_name):
 @frontend.route('/+dom/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def show_dom(item_name, rev):
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     if isinstance(item, NonExistent):
@@ -257,7 +257,7 @@ def indexable(item_name, rev):
 @frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def highlight_item(item_name, rev):
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     return render_template('highlight.html',
@@ -271,23 +271,23 @@ def highlight_item(item_name, rev):
 def show_item_meta(item_name, rev):
     flaskg.user.addTrail(item_name)
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     show_revision = show_navigation = rev != CURRENT
     first_rev = None
     last_rev = None
     if show_navigation:
-        rev_nos = list(item.rev.item.iter_revs())
-        if rev_nos:
-            first_rev = rev_nos[0]
-            last_rev = rev_nos[-1]
+        rev_ids = list(item.rev.item.iter_revs())
+        if rev_ids:
+            first_rev = rev_ids[0]
+            last_rev = rev_ids[-1]
     return render_template('meta.html',
                            item=item, item_name=item.name,
                            rev=item.rev,
                            contenttype=item.contenttype,
-                           first_rev_no=first_rev,
-                           last_rev_no=last_rev,
+                           first_rev_id=first_rev,
+                           last_rev_id=last_rev,
                            meta_rendered=Markup(item._render_meta()),
                            show_revision=show_revision,
                            show_navigation=show_navigation,
@@ -305,7 +305,7 @@ def content_item(item_name, rev):
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     return render_template('content.html',
@@ -317,7 +317,7 @@ def content_item(item_name, rev):
 @frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def get_item(item_name, rev):
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     return item.do_get()
@@ -326,7 +326,7 @@ def get_item(item_name, rev):
 @frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def download_item(item_name, rev):
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
         mimetype = request.values.get("mimetype")
     except AccessDeniedError:
         abort(403)
@@ -345,7 +345,7 @@ def convert_item(item_name):
     """
     contenttype = request.values.get('contenttype')
     try:
-        item = Item.create(item_name, rev_no=-1)
+        item = Item.create(item_name, rev_id=CURRENT)
     except AccessDeniedError:
         abort(403)
     # We don't care about the name of the converted object
@@ -415,7 +415,7 @@ class ContenttypeFilterForm(Form):
 @frontend.route('/+revert/<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
     try:
-        item = Item.create(item_name, rev_no=rev)
+        item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
     if request.method == 'GET':
@@ -429,7 +429,7 @@ def revert_item(item_name, rev):
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
-                           rev_no=rev,
+                           rev_id=rev,
                            form=form,
                           )
 
@@ -577,7 +577,7 @@ def destroy_item(item_name, rev):
         _rev = rev
         destroy_item = False
     try:
-        item = Item.create(item_name, rev_no=_rev)
+        item = Item.create(item_name, rev_id=_rev)
     except AccessDeniedError:
         abort(403)
     if request.method == 'GET':
@@ -592,7 +592,7 @@ def destroy_item(item_name, rev):
             return redirect(url_for_item(item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
-                           rev_no=rev,
+                           rev_id=rev,
                            form=form,
                           )
 
@@ -612,12 +612,12 @@ def jfu_server(item_name):
     item_name = subitem_prefix + subitem_name
     try:
         item = Item.create(item_name)
-        revno, size = item.modify()
+        revid, size = item.modify()
         item_modified.send(app._get_current_object(),
                            item_name=item_name)
         return jsonify(name=subitem_name,
                        size=size,
-                       url=url_for('.show_item', item_name=item_name, rev=revno),
+                       url=url_for('.show_item', item_name=item_name, rev=revid),
                        contenttype=contenttype_to_class(contenttype),
                       )
     except AccessDeniedError:
@@ -755,12 +755,12 @@ def global_history():
             item_groups[current_item_name] = [doc]
 
     # Got the item dict, now doing grouping inside them
-    editor_info = namedtuple('editor_info', ['editor', 'editor_revnos'])
+    editor_info = namedtuple('editor_info', ['editor', 'editor_revids'])
     for item_name, docs in item_groups.items():
         item_info = {}
         editors_info = OrderedDict()
         editors = []
-        revnos = []
+        revids = []
         comments = []
         current_doc = docs[0]
         item_info["item_name"] = item_name
@@ -769,25 +769,25 @@ def global_history():
         item_info["contenttype"] = current_doc[CONTENTTYPE]
         item_info["action"] = current_doc[ACTION]
 
-        # Aggregating comments, authors and revno
+        # Aggregating comments, authors and revid
         for doc in docs:
-            rev_no = doc[REVID]
-            revnos.append(rev_no)
+            rev_id = doc[REVID]
+            revids.append(rev_id)
             comment = doc.get(COMMENT)
             if comment:
-                comment = "#%(revno)d %(comment)s" % {
-                          'revno': revnos.index(rev_no),
+                comment = "#%(revid)s %(comment)s" % {
+                          'revid': revids.index(rev_id),
                           'comment': comment
                           }
                 comments.append(comment)
             editor = get_editor_info(doc)
             editor_name = editor["name"]
             if editor_name in editors_info:
-                editors_info[editor_name].editor_revnos.append(rev_no)
+                editors_info[editor_name].editor_revids.append(rev_id)
             else:
-                editors_info[editor_name] = editor_info(editor, [rev_no])
+                editors_info[editor_name] = editor_info(editor, [rev_id])
 
-        if len(revnos) == 1:
+        if len(revids) == 1:
             # there is only one change for this item in the history considered
             info, positions = editors_info[editor_name]
             info_tuple = (info, "")
@@ -795,12 +795,12 @@ def global_history():
         else:
             # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
             for info, positions in editors_info.values():
-                idx = [revnos.index(pos) for pos in positions]
+                idx = [revids.index(pos) for pos in positions]
                 position_range = util.rangelist(idx)
                 info_tuple = (info, position_range)
                 editors.append(info_tuple)
 
-        item_info["revnos"] = revnos
+        item_info["revids"] = revids
         item_info["editors"] = editors
         item_info["comments"] = comments
         item_groups[item_name] = item_info
@@ -820,13 +820,13 @@ def global_history():
         tm = item_group["timestamp"]
         rev_date = format_date(tm)
         if revcount < offset:
-            revcount += len(item_group["revnos"])
+            revcount += len(item_group["revids"])
             if rev_date not in day_count:
                 day_count[rev_date] = 0
-            day_count[rev_date] += len(item_group["revnos"])
+            day_count[rev_date] += len(item_group["revids"])
         elif rev_date == prev_date:
             rev_tuples.item_revs.append(item_group)
-            revcount += len(item_group["revnos"])
+            revcount += len(item_group["revids"])
         else:
             grouped_history.append(rev_tuples)
             if results_per_page and revcount >= maxrev:
@@ -835,7 +835,7 @@ def global_history():
             else:
                 rev_tuples = rev_tuple(rev_date, [item_group])
                 prev_date = rev_date
-                revcount += len(item_group["revnos"])
+                revcount += len(item_group["revids"])
 
     if toappend:
         grouped_history.append(rev_tuples)
@@ -1527,33 +1527,33 @@ def _common_type(ct1, ct2):
     return commonmt
 
 
-def _diff(item, revno1, revno2):
-    oldrev = item[revno1]
-    newrev = item[revno2]
+def _diff(item, revid1, revid2):
+    oldrev = item[revid1]
+    newrev = item[revid2]
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
-        item = Item.create(item.name, contenttype=commonmt, rev_no=newrev.revid)
+        item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDeniedError:
         abort(403)
-    rev_nos = [CURRENT]  # XXX TODO we need a reverse sorted list
+    rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
                            rev=item.rev,
-                           first_rev_no=rev_nos[0],
-                           last_rev_no=rev_nos[-1],
+                           first_rev_id=rev_ids[0],
+                           last_rev_id=rev_ids[-1],
                            oldrev=oldrev,
                            newrev=newrev,
                           )
 
 
-def _diff_raw(item, revno1, revno2):
-    oldrev = item[revno1]
-    newrev = item[revno2]
+def _diff_raw(item, revid1, revid2):
+    oldrev = item[revid1]
+    newrev = item[revid2]
     commonmt = _common_type(oldrev, newrev)
 
     try:
-        item = Item.create(item.name, contenttype=commonmt, rev_no=newrev.revid)
+        item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDeniedError:
         abort(403)
     return item._render_data_diff_raw(oldrev, newrev)

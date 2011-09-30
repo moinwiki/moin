@@ -46,7 +46,7 @@ def become_trusted(username=u"TrustedUser"):
 
 # Creating and destroying test items --------------------------------
 
-def update_item(name, revno, meta, data):
+def update_item(name, meta, data):
     """ creates or updates an item  """
     if isinstance(data, unicode):
         data = data.encode(config.charset)
