@@ -167,7 +167,7 @@ class Item(object):
         return cls(name, contenttype=unicode(contenttype), **kw)
 
     @classmethod
-    def create(cls, name=u'', contenttype=None, rev_no=CURRENT, item=None):
+    def create(cls, name=u'', contenttype=None, rev_id=CURRENT, item=None):
         if contenttype is None:
             contenttype = u'application/x-nonexistent'
 
@@ -184,7 +184,7 @@ class Item(object):
         else:
             logging.debug("Got item: %r" % name)
             try:
-                rev = item.get_revision(rev_no)
+                rev = item.get_revision(rev_id)
                 contenttype = u'application/octet-stream' # it exists
             except KeyError: # NoSuchRevisionError:
                 try:
@@ -194,7 +194,7 @@ class Item(object):
                     logging.debug("Item %r has no revisions." % name)
                     rev = DummyRev(item, contenttype)
                     logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
-            logging.debug("Got item %r, revision: %r" % (name, rev_no))
+            logging.debug("Got item %r, revision: %r" % (name, rev_id))
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
         logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
@@ -301,15 +301,15 @@ class Item(object):
 
     def _do_modify_show_templates(self):
         # call this if the item is still empty
-        rev_nos = []
+        rev_ids = []
         item_templates = self.get_templates(self.contenttype)
         return render_template('modify_show_template_selection.html',
                                item_name=self.name,
                                rev=self.rev,
                                contenttype=self.contenttype,
                                templates=item_templates,
-                               first_rev_no=rev_nos and rev_nos[0],
-                               last_rev_no=rev_nos and rev_nos[-1],
+                               first_rev_id=rev_ids and rev_ids[0],
+                               last_rev_id=rev_ids and rev_ids[-1],
                                meta_rendered='',
                                data_rendered='',
                               )
@@ -463,11 +463,11 @@ class Item(object):
         storage_item = backend[self.name]
         try:
             currentrev = storage_item.get_revision(CURRENT)
-            rev_no = currentrev.revid
+            rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
         except KeyError: # XXX was: NoSuchRevisionError:
             currentrev = None
-            rev_no = None
+            rev_id = None
             contenttype_current = None
 
         meta = dict(meta) # we may get a read-only dict-like, copy it
@@ -519,7 +519,7 @@ class Item(object):
 
         newrev = storage_item.store_revision(meta, data, overwrite=overwrite)
         item_modified.send(app._get_current_object(), item_name=name)
-        return None, None # XXX was: new_revno, size
+        return newrev.revid, newrev.meta[SIZE]
 
     def get_index(self):
         """ create an index of sub items of this item """

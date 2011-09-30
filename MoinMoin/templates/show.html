@@ -25,7 +25,7 @@
             <span class="moin-disabled">{{ _('no older revision') }}</span>
         {%- endif %}
         </li>
-        <li class="moin-rev-navigation-current">rev {{ rev.revno }}</li>
+        <li class="moin-rev-navigation-current">rev {{ rev.revid }}</li>
         <li class="moin-rev-navigation-newer">
             {% if rev.revno < last_rev_no -%}
                 <a href="{{ url_for(view, rev=rev.revno+1, item_name=item_name) }}">{{ _('newer') }} --&gt;</a>
@@ -44,7 +44,7 @@
     {% endif %}
     
     {% block headline %}
-    {# <h1>{{ rev.item.name }} {% if show_revision %}(Revision {{ rev.revno }}){% endif %}</h1> #}
+    {# <h1>{{ rev.item.name }} {% if show_revision %}(Revision {{ rev.revid }}){% endif %}</h1> #}
     {% endblock %}
     {% block content_data %}
     {% if data_rendered %}
@@ -64,7 +64,7 @@
 {% block footer_meta %}
     {% if rev %}
     <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
-        {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revno}}),
+        {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revid}}),
         {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
         {{ _("by") }} {{ utils.editor_info(rev.meta) }}{% if rev.tags %},
         {{ _("tagged") }}

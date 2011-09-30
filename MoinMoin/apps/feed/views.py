@@ -52,14 +52,14 @@ def atom(item_name):
         for rev in history:
             name = rev.meta[NAME]
             item = rev.item
-            this_revno = rev.meta[REVID]
-            previous_revno = rev.meta.get(PARENTID)
+            this_revid = rev.meta[REVID]
+            previous_revid = rev.meta.get(PARENTID)
             this_rev = rev
             try:
-                hl_item = Item.create(name, rev_no=this_revno)
-                if previous_revno is not None:
+                hl_item = Item.create(name, rev_id=this_revid)
+                if previous_revid is not None:
                     # simple text diff for changes
-                    previous_rev = item[previous_revno]
+                    previous_rev = item[previous_revid]
                     content = hl_item._render_data_diff_text(previous_rev.data, this_rev.data)
                     content = '<div><pre>%s</pre></div>' % content
                 else:
@@ -74,7 +74,7 @@ def atom(item_name):
                      summary=rev.meta.get(COMMENT, ''), summary_type='text',
                      content=content, content_type=content_type,
                      author=get_editor_info(rev.meta, external=True),
-                     url=url_for_item(name, rev=this_revno, _external=True),
+                     url=url_for_item(name, rev=this_revid, _external=True),
                      updated=rev.meta[MTIME],
                     )
         content = feed.to_string()

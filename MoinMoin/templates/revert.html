@@ -1,9 +1,9 @@
 {% import "forms.html" as forms %}
 {% extends theme("layout.html") %}
 {% block content %}
-<h1>{{ _("Revert '%(item_name)s' (rev %(rev_no)d)", item_name=item.name, rev_no=rev_no) }}</h1>
+<h1>{{ _("Revert '%(item_name)s' (rev %(rev_id)d)", item_name=item.name, rev_id=rev_id) }}</h1>
 <div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.name, rev=rev_no)) }}
+{{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.name, rev=rev_id)) }}
   {{ forms.render_errors(form) }}
   <dl>
     {{ forms.render_field(gen, form['comment'], 'text') }}

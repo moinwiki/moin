@@ -34,17 +34,17 @@
                     <table>
                     {% for rev in revs %}
                         <tr>
-                            {% set item_latest_revno = rev.revnos[0] %}
+                            {% set item_latest_revid = rev.revids[0] %}
                             <td class="moin-action" title="{{ _("DIFF") }}">                                
-                                <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=item_latest_revno, rev2=rev.revnos[-1]) }}" class="moin-history-{{ rev.action|lower }}">  </a>
+                                <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=item_latest_revid, rev2=rev.revids[-1]) }}" class="moin-history-{{ rev.action|lower }}">  </a>
                             </td>
                             <td class="moin-history-item"><a class="{{ rev.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.item_name) }}" title="{{ rev.contenttype }}">{{ rev.item_name }}</a></td>
                             <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
                             <td class="moin-history-links">
-                                {% for revno in rev.revnos %}
-                                    {% set position = rev.revnos.index(revno) %}
+                                {% for revid in rev.revids %}
+                                    {% set position = rev.revids.index(revid) %}
                                     {% if position > 0 %}
-                                        <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=revno, rev2=item_latest_revno) }}">[{{ position }}]</a>
+                                        <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=revid, rev2=item_latest_revid) }}">[{{ position }}]</a>
                                     {% else %}
                                         <span>[0]</span>
                                     {% endif %}

@@ -28,11 +28,11 @@ class TestWikiDictsBackend(DictsBackendTest):
                     u"text with spaces": u"second item",
                     u'Empty string': u'',
                     u"Last": u"last item"}
-        update_item(u'SomeTestDict', 0, {SOMEDICT: somedict}, DATA)
+        update_item(u'SomeTestDict', {SOMEDICT: somedict}, DATA)
 
         somedict = {u"One": u"1",
                     u"Two": u"2"}
-        update_item(u'SomeOtherTestDict', 0, {SOMEDICT: somedict}, DATA)
+        update_item(u'SomeOtherTestDict', {SOMEDICT: somedict}, DATA)
 
     def test__retrieve_items(self):
         wikidict_obj = wiki_dicts.WikiDicts()
