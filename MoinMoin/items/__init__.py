@@ -488,9 +488,6 @@ class Item(object):
             # make sure we have CONTENTTYPE
             meta[CONTENTTYPE] = unicode(contenttype_current or contenttype_guessed or 'application/octet-stream')
 
-        if MTIME not in meta:
-            meta[MTIME] = int(time.time())
-
         if ADDRESS not in meta:
             meta[ADDRESS] = u'0.0.0.0' # TODO
 

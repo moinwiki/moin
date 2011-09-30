@@ -179,7 +179,7 @@ def convert_to_indexable(meta, data, is_new=False):
         # no way
         raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item %r rev %s contenttype %s:" % (meta[NAME], meta[REVID], meta.get(CONTENTTYPE, '')))
+        logging.exception("Exception happened in conversion of item %r rev %s contenttype %s:" % (meta[NAME], meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
         doc = u'ERROR [%s]' % str(e)
         return doc
 
@@ -329,12 +329,14 @@ class IndexingMiddleware(object):
         self.destroy()
         os.rename(self.index_dir_tmp, self.index_dir)
 
-    def index_revision(self, revid, meta, data, async=True):
+    def index_revision(self, meta, content, async=True):
         """
         Index a single revision, add it to all-revs and latest-revs index.
+
+        :param meta: metadata dict
+        :param content: preprocessed (filtered) indexable content
+        :param async: if True, use the AsyncWriter, otherwise use normal writer
         """
-        meta[REVID] = revid
-        content = convert_to_indexable(meta, data)
         doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname)
         if async:
             writer = AsyncWriter(self.ix[ALL_REVS])
@@ -412,7 +414,7 @@ class IndexingMiddleware(object):
             for revid in revids:
                 if mode in ['add', 'update', ]:
                     meta, data = self.backend.retrieve(revid)
-                    content = convert_to_indexable(meta, data)
+                    content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname)
                 if mode == 'update':
                     writer.update_document(**doc)
@@ -754,6 +756,16 @@ class Item(object):
         """
         return self[revid]
 
+    def preprocess(self, meta, data):
+        """
+        preprocess a revision before it gets stored and put into index.
+        """
+        meta[ITEMID] = self.itemid
+        if MTIME not in meta:
+            meta[MTIME] = int(time.time())
+        content = convert_to_indexable(meta, data, is_new=True)
+        return meta, data, content
+
     def store_revision(self, meta, data, overwrite=False):
         """
         Store a revision into the backend, write metadata and data to it.
@@ -774,10 +786,11 @@ class Item(object):
             revid = meta.get(REVID)
             if revid is not None and revid in backend:
                 raise ValueError('need overwrite=True to overwrite existing revisions')
-        meta[ITEMID] = self.itemid
-        revid = backend.store(meta, data)
+        meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
-        self.indexer.index_revision(revid, meta, data)
+        revid = backend.store(meta, data)
+        meta[REVID] = revid
+        self.indexer.index_revision(meta, content)
         if not overwrite:
             self._current = self.indexer._document(all_revs=False, revid=revid)
         return Revision(self, revid)
