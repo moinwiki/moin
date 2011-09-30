@@ -414,10 +414,10 @@ class Item(object):
         # called from destroy UI/POST
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
-            self.rev.item.destroy()
+            self.rev.item.destroy_all_revisions()
         else:
             # just destroy this revision
-            self.rev.destroy()
+            self.rev.item.destroy_revision(self.rev.revid)
 
     def modify(self):
         # called from modify UI/POST
