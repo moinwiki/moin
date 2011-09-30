@@ -368,7 +368,6 @@ class User(object):
             meta[key] = value
         meta[CONTENTTYPE] = u'application/x.moin.userprofile'
         meta[ACTION] = u'SAVE'
-        meta[MTIME] = int(time.time())
         item.store_revision(meta, StringIO(''), overwrite=True)
 
         if not self.disabled:
