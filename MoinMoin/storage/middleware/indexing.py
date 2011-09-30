@@ -514,7 +514,7 @@ class IndexingMiddleware(object):
         """
         Optimize backend / collect garbage to safe space:
 
-        * trash bin: empty it? use trash_max_age?
+        * deleted items: destroy them? use a deleted_max_age?
         * user profiles: only keep latest revision?
         * normal wiki items: keep by max_revisions_count / max_age
         * deduplicate data (determine dataids with same hash, fix references to point to one of them)

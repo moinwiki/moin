@@ -63,7 +63,7 @@ def urls_names():
     can implement SisterWiki functionality easily.
     See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
     """
-    # XXX we currently also get trash items, fix this
+    # XXX we currently also get deleted items, fix this
     item_names = sorted([rev.meta[NAME] for rev in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')
