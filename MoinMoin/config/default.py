@@ -374,7 +374,7 @@ options_no_group_name = {
         ('frontend.subscribe_item', None, L_('Switch notifications about item changes on or off'), True, ),
         ('frontend.copy_item', L_('Copy'), L_('Create a copy of this item'), True, ),
         ('frontend.rename_item', L_('Rename'), L_('Rename this item'), True, ),
-        ('frontend.delete_item', L_('Delete'), L_('Move this item to the trash'), True, ),
+        ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
         ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
         ('frontend.backrefs', L_('Referrers'), L_('What refers here?'), False, ),
         ('frontend.sitemap', L_('Site Map'), L_('Local Site Map of this item'), True, ),
@@ -541,7 +541,6 @@ options = {
       ('content', '/', "All content is by default stored below /, hence the prefix is ''."),  # Not really necessary. Just for completeness.
       ('user_profile', 'UserProfile/', 'User profiles (i.e. user data, not their homepage) are stored in this namespace.'),
       ('user_homepage', 'User/', 'All user homepages are stored below this namespace.'),
-      ('trash', 'Trash/', 'This is the namespace in which an item ends up when it is deleted.')
     )),
 
     'user': ('Users / User settings', None, (

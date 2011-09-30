@@ -397,7 +397,7 @@ class Item(object):
 
     def delete(self, comment=u''):
         """
-        delete this item by moving it to the trashbin
+        delete this item
         """
         trash_prefix = u'Trash/' # XXX move to config
         now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
