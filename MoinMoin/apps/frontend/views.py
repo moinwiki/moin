@@ -1593,7 +1593,7 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [doc[NAME] for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
+    item_names = [rev.meta[NAME] for rev in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word
