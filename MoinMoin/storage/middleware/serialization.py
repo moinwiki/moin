@@ -29,10 +29,11 @@ def serialize(backend, dst):
     dst.writelines(serialize_iter(backend))
 
 
-def serialize_iter(backend):
-    for revid in backend:
-        meta, data = backend.retrieve(revid)
-
+def serialize_rev(meta, data):
+    if meta is None:
+        # this is the end!
+        yield struct.pack('!i', 0)
+    else:
         text = json.dumps(meta, ensure_ascii=False)
         meta_str = text.encode('utf-8')
         yield struct.pack('!i', len(meta_str))
@@ -42,8 +43,14 @@ def serialize_iter(backend):
             if not block:
                 break
             yield block
-    yield struct.pack('!i', 0)
 
+def serialize_iter(backend):
+    for revid in backend:
+        meta, data = backend.retrieve(revid)
+        for data in serialize_rev(meta, data):
+            yield data
+    for data in serialize_rev(None, None):
+        yield data
 
 def deserialize(src, backend):
     while True:
