@@ -3,75 +3,47 @@
 
 {% block head %}
 {{ super() }}
-<link rel="alternate" title="Global changes" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
+<link rel="alternate" title="Global History" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
 {% endblock %}
 
 {% block content %}
-<div class='moin-offset-links'>
-    {% if previous_offset >= 0 %}
-        <a href="{{ url_for('frontend.global_history', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
-    {% endif %}
-    {% if offset %}
-        <a href="{{ url_for('frontend.global_history', offset=offset) }}" title="{{ _("Next") }}">&raquo;</a>
-    {% endif %}
-</div>
 <h1>{{ _("Global History") }}</h1>
 <div class='moin-clr'></div>
     <div id="moin-global-history">
-        {% for rev_date, revs in history %}
-           {% set  latest_rev = revs[0] %}
-           {% set  latest_timestamp = latest_rev.timestamp %}
+        {% for day, revs in history %}
+           {% set latest_timestamp = revs[0].meta['mtime'] %}
             <div class="moin-history-container"> 
                 <div class="moin-history-container-header">
                     <span>
-                        <h2>{{ rev_date }}</h2>
+                        <h2>{{ day }}</h2>
                         {% if user.valid %}
-                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=utctimestamp(latest_timestamp)) }}">{{ _("Set bookmark") }}</a>
+                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
                         {% endif %}
                    </span>
                 </div>
                 <div class="moin-history-container-body">
                     <table>
                     {% for rev in revs %}
+                        {% set meta = rev.meta %}
                         <tr>
-                            {% set item_latest_revid = rev.revids[0] %}
-                            <td class="moin-action" title="{{ _("DIFF") }}">                                
-                                <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=item_latest_revid, rev2=rev.revids[-1]) }}" class="moin-history-{{ rev.action|lower }}">  </a>
+                            <td class="moin-action">
+                                <span class="moin-history-{{ meta.action|lower }}"></span>
                             </td>
-                            <td class="moin-history-item"><a class="{{ rev.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.item_name) }}" title="{{ rev.contenttype }}">{{ rev.item_name }}</a></td>
-                            <td class="moin-history-time">{{ rev.timestamp|timeformat }}</td>
                             <td class="moin-history-links">
-                                {% for revid in rev.revids %}
-                                    {% set position = rev.revids.index(revid) %}
-                                    {% if position > 0 %}
-                                        <a href="{{ url_for('frontend.diff', item_name=rev.item_name, rev1=revid, rev2=item_latest_revid) }}">[{{ position }}]</a>
-                                    {% else %}
-                                        <span>[0]</span>
-                                    {% endif %}
-                                {% endfor %}
+                                <a href="{{ url_for('frontend.history', item_name=meta.name, bookmark=bookmark_time) }}">HIST</a>
+                                {% if bookmark_time -%}
+                                    <a href="{{ url_for('frontend.diff', item_name=meta.name, bookmark=bookmark_time) }}">DIFF</a>
+                                {%- endif %}
                             </td>
-                            <td class="moin-wordbreak moin-history-editorinfo">
-                                {% for info, position in rev.editors %}
-                                    <span class="moin-history-editortext">
-                                    {{ utils.show_editor_info(info) }}
-                                    {% if position %}
-                                        [{{ position }}]
-                                    {% endif %}
-                                    </span>
-                                {% endfor %}
-                            </td>
-                            <td class="moin-wordbreak moin-history-comment">
-                               {% for comment in rev.comments %}
-                                   <span>{{ comment }}</span>
-                               {% endfor %}
-                            </td>
+                            <td class="moin-history-time">{{ meta.mtime|timeformat }}</td>
+                            <td class="moin-history-item"><a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=meta.name) }}" title="{{ meta.contenttype }}">{{ meta.name }}</a></td>
                         </tr>
                     {% endfor %}
                     </table>
                 </div>
             </div>
         {% endfor %}
-        {% if user.valid and bookmark_time %}
+        {% if bookmark_time %}
         <div class="moin-history-container"> 
             <div class="moin-history-container-header">
                 <span>

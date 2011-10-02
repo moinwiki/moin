@@ -50,6 +50,13 @@
                 <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name, rev=doc.revid) }}">{{ _('destroy') }}</a></td>
             </tr>
             {% endfor %}
+            {% if bookmark_time %}
+            <tr> 
+                <td colspan="2">Bookmark is set to</td>
+                <td>{{ bookmark_time|datetimeformat }}</td>
+                <td colspan="11"></td>
+            </tr>
+            {% endif %}
         </table>
         </div>
         </form>
