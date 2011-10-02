@@ -529,12 +529,14 @@ class IndexingMiddleware(object):
         """
         # TODO
 
-    def optimize_index(self):
+    def optimize_index(self, tmp=False):
         """
         Optimize whoosh index.
         """
-        for name in self.ix:
-            self.ix[name].optimize()
+        index_dir = self.index_dir_tmp if tmp else self.index_dir
+        for name in INDEXES:
+            ix = open_dir(index_dir, indexname=name)
+            ix.optimize()
 
     def get_schema(self, all_revs=False):
         # XXX keep this as is for now, but later just give the index name as param
