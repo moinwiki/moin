@@ -107,7 +107,6 @@ Disallow: /+usersettings
 Disallow: /+login
 Disallow: /+logout
 Disallow: /+bookmark
-Disallow: /+diffsince/
 Disallow: /+diff/
 Disallow: /+diffraw/
 Disallow: /+search
@@ -705,11 +704,15 @@ def _backrefs(item_name):
 def history(item_name):
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
+    bookmark_time = int(request.values.get('bookmark', 0))
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ])
+    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ]
+    if bookmark_time:
+        terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
+    query = And(terms)
     # TODO: due to how getPageContent and the template works, we need to use limit=None -
     # it would be better to use search_page (and an appropriate limit, if needed)
     revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
@@ -719,156 +722,44 @@ def history(item_name):
     return render_template('history.html',
                            item_name=item_name, # XXX no item here
                            history_page=history_page,
+                           bookmark_time=bookmark_time,
                           )
 
 
 @frontend.route('/+history')
 def global_history():
-    bookmark_time = None
     if flaskg.user.valid:
-        bm = flaskg.user.getBookmark()
-        if bm is not None:
-            bookmark_time = datetime.utcfromtimestamp(bm)
-    if flaskg.user.valid:
-        results_per_page = flaskg.user.results_per_page
+        bookmark_time = flaskg.user.getBookmark()
     else:
-        results_per_page = app.cfg.results_per_page
+        bookmark_time = None
     query = Term(WIKINAME, app.cfg.interwikiname)
     if bookmark_time is not None:
-        query = And([query, DateRange(MTIME, start=bookmark_time, end=None)])
-    # TODO: we need use limit=None to simulate previous implementation's behaviour -
-    # it would be better to use search_page (and an appropriate limit, if needed)
-    revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
-    item_groups = OrderedDict()
-    for rev in revs:
-        doc = dict([(key, rev.meta.get(key)) for key in [MTIME, REVID, NAME, CONTENTTYPE, ACTION, COMMENT, ]])
-        current_item_name = doc[NAME]
-        if current_item_name in item_groups:
-            latest_doc = item_groups[current_item_name][0]
-            tm_latest = latest_doc[MTIME]
-            tm_current = doc[MTIME]
-            if format_date(datetime.utcfromtimestamp(tm_latest)) == format_date(datetime.utcfromtimestamp(tm_current)): # this change took place on the same day
-                item_groups[current_item_name].append(doc)
-        else:
-            item_groups[current_item_name] = [doc]
-
-    # Got the item dict, now doing grouping inside them
-    editor_info = namedtuple('editor_info', ['editor', 'editor_revids'])
-    for item_name, docs in item_groups.items():
-        item_info = {}
-        editors_info = OrderedDict()
-        editors = []
-        revids = []
-        comments = []
-        current_doc = docs[0]
-        item_info["item_name"] = item_name
-        item_info["name"] = current_doc[NAME]
-        item_info["timestamp"] = datetime.utcfromtimestamp(current_doc[MTIME])
-        item_info["contenttype"] = current_doc[CONTENTTYPE]
-        item_info["action"] = current_doc[ACTION]
-
-        # Aggregating comments, authors and revid
-        for doc in docs:
-            rev_id = doc[REVID]
-            revids.append(rev_id)
-            comment = doc.get(COMMENT)
-            if comment:
-                comment = "#%(revid)s %(comment)s" % {
-                          'revid': revids.index(rev_id),
-                          'comment': comment
-                          }
-                comments.append(comment)
-            editor = get_editor_info(doc)
-            editor_name = editor["name"]
-            if editor_name in editors_info:
-                editors_info[editor_name].editor_revids.append(rev_id)
-            else:
-                editors_info[editor_name] = editor_info(editor, [rev_id])
-
-        if len(revids) == 1:
-            # there is only one change for this item in the history considered
-            info, positions = editors_info[editor_name]
-            info_tuple = (info, "")
-            editors.append(info_tuple)
-        else:
-            # grouping the revision numbers into a range, which belong to a particular editor(user) for the current item
-            for info, positions in editors_info.values():
-                idx = [revids.index(pos) for pos in positions]
-                position_range = util.rangelist(idx)
-                info_tuple = (info, position_range)
-                editors.append(info_tuple)
-
-        item_info["revids"] = revids
-        item_info["editors"] = editors
-        item_info["comments"] = comments
-        item_groups[item_name] = item_info
-
-    # Grouping on the date basis
-    offset = request.values.get('offset', 0)
-    offset = max(int(offset), 0)
-    day_count = OrderedDict()
-    revcount = 0
-    maxrev = results_per_page + offset
-    toappend = True
-    grouped_history = []
+        query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
+    revs = flaskg.storage.search(query, all_revs=False, sortedby=[MTIME], reverse=True, limit=1000)
+    # Group by date
+    history = []
+    day_history = namedtuple('day_history', ['day', 'entries'])
     prev_date = '0000-00-00'
-    rev_tuple = namedtuple('rev_tuple', ['rev_date', 'item_revs'])
-    rev_tuples = rev_tuple(prev_date, [])
-    for item_group in item_groups.values():
-        tm = item_group["timestamp"]
-        rev_date = format_date(tm)
-        if revcount < offset:
-            revcount += len(item_group["revids"])
-            if rev_date not in day_count:
-                day_count[rev_date] = 0
-            day_count[rev_date] += len(item_group["revids"])
-        elif rev_date == prev_date:
-            rev_tuples.item_revs.append(item_group)
-            revcount += len(item_group["revids"])
+    dh = day_history(prev_date, [])  # dummy
+    for rev in revs:
+        rev_date = format_date(datetime.utcfromtimestamp(rev.meta[MTIME]))
+        if rev_date == prev_date:
+            dh.entries.append(rev)
         else:
-            grouped_history.append(rev_tuples)
-            if results_per_page and revcount >= maxrev:
-                toappend = False
-                break
-            else:
-                rev_tuples = rev_tuple(rev_date, [item_group])
-                prev_date = rev_date
-                revcount += len(item_group["revids"])
-
-    if toappend:
-        grouped_history.append(rev_tuples)
-        revcount = 0 # this is the last page, no next page present
-    del grouped_history[0]  # First tuple will be a null one
-
-    # calculate offset for previous page link
-    if results_per_page:
-        previous_offset = 0
-        prev_rev_count = day_count.values()
-        prev_rev_count.reverse()
-        for numrev in prev_rev_count:
-            if previous_offset < results_per_page:
-                previous_offset += numrev
-            else:
-                break
-
-        if offset - previous_offset >= results_per_page:
-            previous_offset = offset - previous_offset
-        elif previous_offset:
-            previous_offset = 0
-        else:
-            previous_offset = -1
+            history.append(dh)
+            dh = day_history(rev_date, [rev])
+            prev_date = rev_date
     else:
-        previous_offset = -1 # no previous page
+        history.append(dh)
+    del history[0]  # kill the dummy
 
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
     current_timestamp = int(time.time())
     return render_template('global_history.html',
                            item_name=item_name, # XXX no item
-                           history=grouped_history,
+                           history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
-                           offset=revcount,
-                           previous_offset=previous_offset,
                           )
 
 def _compute_item_sets():
@@ -1467,6 +1358,7 @@ def bookmark():
         flash(_("You must log in to use bookmarks."), "error")
     return redirect(url_for('.global_history'))
 
+
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDeniedError.
@@ -1481,31 +1373,25 @@ def diffraw(item_name):
     return _diff_raw(item, rev1, rev2)
 
 
-@frontend.route('/+diffsince/<int:timestamp>/<path:item_name>')
-def diffsince(item_name, timestamp):
-    date = timestamp
-    # this is how we get called from "recent changes"
-    # try to find the latest rev1 before bookmark <date>
-    item = flaskg.storage[item_name]
-    revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
-    for rev in revs:
-        if rev.meta[MTIME] <= date:
-            rev1 = rev.revid
-            break
-    else:
-        rev1 = rev.revid  # if we didn't find a rev, we just take oldest rev we have
-    rev2 = CURRENT  # and compare it with latest we have
-    return _diff(item, rev1, rev2)
-
-
 @frontend.route('/+diff/<path:item_name>')
 def diff(item_name):
-    # TODO get_item and get_revision calls may raise an AccessDeniedError.
-    #      If this happens for get_item, don't show the diff at all
-    #      If it happens for get_revision, we may just want to skip that rev in the list
     item = flaskg.storage[item_name]
-    rev1 = request.values.get('rev1')
-    rev2 = request.values.get('rev2')
+    bookmark_time = request.values.get('bookmark')
+    if bookmark_time is not None:
+        # this is how we get called from "recent changes"
+        # try to find the latest rev1 before bookmark <date>
+        revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
+        for mtime, revid in revs:
+            if mtime <= bookmark_time:
+                rev1 = revid
+                break
+        else:
+            rev1 = revid  # if we didn't find a rev, we just take oldest rev we have
+        rev2 = CURRENT  # and compare it with latest we have
+    else:
+        # otherwise we should get the 2 revids directly
+        rev1 = request.values.get('rev1')
+        rev2 = request.values.get('rev2')
     return _diff(item, rev1, rev2)
 
 
