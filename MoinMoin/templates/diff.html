@@ -1,7 +1,8 @@
 {% extends theme("show.html") %}
 {% block content %}
 {% block headline %}
-<h1>{{ _("Item: %(item_name)s (Diff between revision %(oldrevid)s and %(newrevid)s)", item_name=newrev.item.name, oldrevid=oldrev.revid, newrevid=newrev.revid) }}</h1>
+<h1>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h1>
+<br>
 {% endblock %}
 {{ item._render_data_diff(oldrev, newrev) }}
 {% endblock %}
