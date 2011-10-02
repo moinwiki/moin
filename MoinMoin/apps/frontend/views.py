@@ -739,13 +739,11 @@ def global_history():
     # TODO: we need use limit=None to simulate previous implementation's behaviour -
     # it would be better to use search_page (and an appropriate limit, if needed)
     revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
-    history = [dict(rev.meta.iteritems()) for rev in revs]
     item_groups = OrderedDict()
-    for doc in history:
+    for rev in revs:
+        doc = dict([(key, rev.meta.get(key)) for key in [MTIME, REVID, NAME, CONTENTTYPE, ACTION, COMMENT, ]])
         current_item_name = doc[NAME]
-        if bookmark_time and datetime.utcfromtimestamp(doc[MTIME]) <= bookmark_time:
-            break
-        elif current_item_name in item_groups:
+        if current_item_name in item_groups:
             latest_doc = item_groups[current_item_name][0]
             tm_latest = latest_doc[MTIME]
             tm_current = doc[MTIME]
