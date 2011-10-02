@@ -74,6 +74,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS
                             ITEMID, REVID, CURRENT, PARENTID
 
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
+from MoinMoin.themes import utctimestamp
 from MoinMoin.util.crypto import make_uuid
 
 LATEST_REVS = 'latest_revs'
@@ -275,6 +276,10 @@ class IndexingMiddleware(object):
         # schemas are needed by query parser and for index creation
         self.schemas[ALL_REVS] = all_revisions_schema
         self.schemas[LATEST_REVS] = latest_revisions_schema
+
+        # what fields could whoosh result documents have (no matter whether all revs index
+        # or latest revs index):
+        self.common_fields = set(latest_revs_fields.keys()) & set(all_revs_fields.keys())
 
     def open(self):
         """
@@ -578,7 +583,7 @@ class IndexingMiddleware(object):
                 doc = hit.fields()
                 latest_doc = not all_revs and doc or None
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
-                yield item[doc[REVID]]
+                yield item.get_revision(doc[REVID], doc=doc)
 
     def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
         """
@@ -591,7 +596,7 @@ class IndexingMiddleware(object):
                 doc = hit.fields()
                 latest_doc = not all_revs and doc or None
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
-                yield item[doc[REVID]]
+                yield item.get_revision(doc[REVID], doc=doc)
 
     def documents(self, all_revs=False, **kw):
         """
@@ -600,7 +605,7 @@ class IndexingMiddleware(object):
         for doc in self._documents(all_revs, **kw):
             latest_doc = not all_revs and doc or None
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
-            yield item[doc[REVID]]
+            yield item.get_revision(doc[REVID], doc=doc)
 
     def _documents(self, all_revs=False, **kw):
         """
@@ -625,7 +630,7 @@ class IndexingMiddleware(object):
         if doc:
             latest_doc = not all_revs and doc or None
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
-            return item[doc[REVID]]
+            return item.get_revision(doc[REVID], doc=doc)
 
     def _document(self, all_revs=False, **kw):
         """
@@ -742,19 +747,14 @@ class Item(object):
         """
         Get Revision with revision id <revid>.
         """
-        if revid == CURRENT:
-            revid = self._current.get(REVID)
-            if revid is None:
-                raise KeyError
-        rev = Revision(self, revid)
-        rev.data # XXX trigger KeyError if rev does not exist
-        return rev
+        return Revision(self, revid)
 
-    def get_revision(self, revid):
+    def get_revision(self, revid, doc=None):
         """
-        Same as item[revid].
+        Similar to item[revid], but you can optionally give an already existing
+        whoosh result document for the given revid to avoid backend accesses for some use cases.
         """
-        return self[revid]
+        return Revision(self, revid, doc)
 
     def preprocess(self, meta, data):
         """
@@ -823,6 +823,18 @@ class Revision(object):
     An existing revision (exists in the backend).
     """
     def __init__(self, item, revid, doc=None):
+        is_current = revid == CURRENT
+        if doc is None:
+            if is_current:
+                doc = item._current
+            else:
+                doc = item.indexer._document(all_revs=not is_current, revid=revid)
+                if doc is None:
+                    raise KeyError
+        if is_current:
+            revid = doc.get(REVID)
+            if revid is None:
+                raise KeyError
         self.item = item
         self.revid = revid
         self.backend = item.backend
@@ -869,6 +881,7 @@ class Meta(Mapping):
         self.revision = revision
         self._doc = doc or {}
         self._meta = meta or {}
+        self._common_fields = revision.item.indexer.common_fields
 
     def __contains__(self, key):
         try:
@@ -883,16 +896,20 @@ class Meta(Mapping):
         return iter(self._meta)
 
     def __getitem__(self, key):
-        try:
+        if self._meta:
+            # we have real metadata (e.g. from storage)
             return self._meta[key]
-        except KeyError:
-            pass
-        try:
-            return self._doc[key]
-        except KeyError:
-            pass
-        self._meta, _ = self.revision._load()
-        return self._meta[key]
+        elif self._doc and key in self._common_fields:
+            # we have a result document from whoosh, which has quite a lot
+            # of the usually wanted metadata, avoid storage access, use this.
+            value = self._doc[key]
+            if key == MTIME:
+                # whoosh has a datetime object, but we want a UNIX timestamp
+                value = utctimestamp(value)
+            return value
+        else:
+            self._meta, _ = self.revision._load()
+            return self._meta[key]
 
     def __cmp__(self, other):
         if self[REVID] == other[REVID]:
