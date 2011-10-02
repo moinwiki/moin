@@ -728,6 +728,7 @@ def history(item_name):
 
 @frontend.route('/+history')
 def global_history():
+    all_revs = bool(request.values.get('all'))
     if flaskg.user.valid:
         bookmark_time = flaskg.user.getBookmark()
     else:
@@ -735,7 +736,7 @@ def global_history():
     query = Term(WIKINAME, app.cfg.interwikiname)
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
-    revs = flaskg.storage.search(query, all_revs=False, sortedby=[MTIME], reverse=True, limit=1000)
+    revs = flaskg.storage.search(query, all_revs=all_revs, sortedby=[MTIME], reverse=True, limit=1000) # was: all_revs=False
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
