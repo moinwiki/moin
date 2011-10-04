@@ -127,9 +127,10 @@ class PageItem(object):
         editlogpath = os.path.join(self.path, 'edit-log')
         self.editlog = EditLog(editlogpath)
         self.acl = None # TODO
-        if backend.deleted_mode == DELETED_MODE_KILL:
-            PageRevision(self, self.current) # will raise exception if killing is requested
         self.itemid = make_uuid()
+        if backend.deleted_mode == DELETED_MODE_KILL:
+            revpath = os.path.join(self.path, 'revisions', '%08d' % self.current)
+            PageRevision(self, self.current, revpath) # will raise exception if killing is requested
 
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
@@ -567,7 +568,7 @@ def all_revs(data_dir):
     for rev in UserBackend(os.path.join(data_dir, 'user')): # assumes user/ below data_dir
         yield rev
 
-    for rev in PageBackend(data_dir, deleted_mode='keep', default_markup=u'wiki'):
+    for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
         yield rev
 
 
