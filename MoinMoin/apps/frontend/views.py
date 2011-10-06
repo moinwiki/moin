@@ -273,7 +273,8 @@ def show_item_meta(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
-    show_revision = show_navigation = rev != CURRENT
+    show_revision = rev != CURRENT
+    show_navigation = False # TODO
     first_rev = None
     last_rev = None
     if show_navigation:
