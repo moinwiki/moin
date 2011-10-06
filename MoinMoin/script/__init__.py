@@ -48,6 +48,8 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("item-put", modify_item.PutItem())
     from MoinMoin.script.maint.modified_systemitems import Modified_SystemItems
     manager.add_command("maint_modified_systemitems", Modified_SystemItems())
+    from MoinMoin.script.migration.import19 import ImportMoin19
+    manager.add_command("import19", ImportMoin19())
 
     return manager.run(default_command=default_command)
 

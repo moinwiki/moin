@@ -3,23 +3,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - save a moin 1.9 compatible storage to a file you can load into moin 2.0.
-
-Usage
------
-
- python save19.py DATA_DIR >saved19.moin 2>error.log
- # after this, review error.log. if there are too many errors, you may want
- # to clean up the 1.9 data first and then retry.
-
- moin load --file saved19.moin
+MoinMoin - import content and user data from a moin 1.9 compatible storage
+           into the moin2 storage.
 
 TODO
 ----
 
 * translate revno numbering into revid parents
-* userid old -> user itemid
-* rename enc_password -> password?
+* ACLs for attachments
 """
 
 
@@ -29,16 +20,24 @@ import re
 import codecs
 import hashlib
 from StringIO import StringIO
-import logging
 
-from _utils19 import quoteWikinameFS, unquoteWikiname, split_body
-from _logfile19 import LogFile
+from flask import current_app as app
+from flaskext.script import Command, Option
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
+from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
+from ._logfile19 import LogFile
 
 from MoinMoin.config import ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, \
                             ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
                             TAGS, SIZE, HASH_ALGORITHM, \
                             ITEMID, REVID, DATAID
+
+UID_OLD = 'old_user_id' # dynamic field *_id, so we don't have to change schema
+
 from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.crypto import make_uuid
@@ -47,6 +46,7 @@ from MoinMoin import security
 
 
 CHARSET = 'utf-8'
+
 ACL_RIGHTS_CONTENTS = ['read', 'write', 'create', 'destroy', 'admin', ]
 
 DELETED_MODE_KEEP = 'keep'
@@ -66,6 +66,52 @@ FORMAT_TO_CONTENTTYPE = {
     'plain': u'text/plain;charset=utf-8',
     'text/plain': u'text/plain;charset=utf-8',
 }
+
+
+class ImportMoin19(Command):
+    description = 'Import data from a moin 1.9 wiki.'
+
+    option_list = [
+        Option('--data_dir', '-d', dest='data_dir', type=unicode, required=True,
+               help='moin 1.9 data_dir (contains pages and users subdirectories).'),
+    ]
+
+    def run(self, data_dir=None):
+        indexer = app.storage
+        backend = indexer.backend # backend without indexing
+        print "Users..."
+        for rev in UserBackend(os.path.join(data_dir, 'user')): # assumes user/ below data_dir
+            backend.store(rev.meta, rev.data)
+
+        print "Pages/Attachments..."
+        for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
+            backend.store(rev.meta, rev.data)
+
+        print "Building the index..."
+        indexer.rebuild()
+
+        print "Fix userids..."
+        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID]) for rev in indexer.documents(all_revs=False, contenttype=CONTENTTYPE_USER)])
+        for revid in backend:
+            meta, data = backend.retrieve(revid)
+            if USERID in meta:
+                try:
+                    meta[USERID] = userid_map[meta[USERID]]
+                except KeyError:
+                    # user profile lost, but userid referred by revision
+                    print "lost %r" % meta[USERID]
+                    del meta[USERID]
+                backend.store(meta, data)
+            elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
+                meta.pop(UID_OLD, None) # not needed any more
+                backend.store(meta, data)
+
+        print "Rebuilding the index..."
+        indexer.close()
+        indexer.destroy()
+        indexer.create()
+        indexer.rebuild()
+        indexer.open()
 
 
 class KillRequested(Exception):
@@ -426,6 +472,7 @@ class UserRevision(object):
         self.uid = uid
         meta = self._process_usermeta(self._parse_userprofile())
         meta[CONTENTTYPE] = CONTENTTYPE_USER
+        meta[UID_OLD] = uid
         meta[ITEMID] = make_uuid()
         meta[REVID] = make_uuid()
         meta[SIZE] = 0
@@ -562,26 +609,4 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: %r" % content)
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
-
-
-def all_revs(data_dir):
-    for rev in UserBackend(os.path.join(data_dir, 'user')): # assumes user/ below data_dir
-        yield rev
-
-    for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
-        yield rev
-
-
-def serialize_all(revs):
-    for rev in revs:
-        for data in serialize_rev(rev.meta, rev.data):
-            yield data
-    for data in serialize_rev(None, None):
-        yield data
-
-
-if __name__ == '__main__':
-    data_dir = sys.argv[1]
-    for data in serialize_all(all_revs(data_dir)):
-        sys.stdout.write(data)
 
