@@ -26,9 +26,10 @@ class TrackingFileWrapper(object):
         self._hash = hashlib.new(hash_method)
         self._size = 0
         self._finished = False
-        fpos = realfile.tell()
-        if fpos:
-            raise ValueError("file needs to be at pos 0")
+        if hasattr(realfile, 'tell'):
+            fpos = realfile.tell()
+            if fpos:
+                raise ValueError("file needs to be at pos 0")
 
     def read(self, size=None):
         # XXX: workaround for werkzeug.wsgi.LimitedStream
