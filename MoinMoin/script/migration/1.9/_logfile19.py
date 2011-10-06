@@ -8,11 +8,15 @@
 """
 
 
+import os
+import codecs
+import errno
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-import os, codecs, errno
-from MoinMoin import config, wikiutil
+CHARSET = 'utf-8'
+
 
 class LogError(Exception):
     """ Base class for log errors """
@@ -78,7 +82,7 @@ class LineBuffer:
         self.offsets = offsets
         self.len = linecount
         # Decode lines after offset in file is calculated
-        self.lines = [unicode(line, config.charset) for line in lines]
+        self.lines = [unicode(line, CHARSET) for line in lines]
 
 
 class LogFile:
@@ -161,7 +165,7 @@ class LogFile:
                     raise
             return self._input
         elif name == "_output":
-            self._output = codecs.open(self.__filename, 'a', config.charset)
+            self._output = codecs.open(self.__filename, 'a', CHARSET)
             return self._output
         else:
             raise AttributeError(name)
