@@ -75,7 +75,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     ],
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
-        'docutils>=0.6', # reST markup processing
+        'docutils>=0.8.1', # reST markup processing
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
         'Flask-Cache>=0.3.4', # caching support
@@ -83,11 +83,11 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Flask-Themes>=0.1.3', # theme support
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
-        'Jinja2>=2.5', # template engine
-        'pygments>=1.1.1', # src code / text file highlighting
+        'Jinja2>=2.6', # template engine
+        'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
-        'pytest', # pytest is needed by unit tests
-        'whoosh>=2.1.0', # needed for indexed search
+        'pytest>=2.1', # pytest is needed by unit tests
+        'whoosh>=2.3.0', # needed for indexed search (TODO: 2.3.1 as soon as available on pypi)
         'sphinx==1.0.7', # needed to build the docs (1.0.8 is broken)
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2',
