@@ -29,6 +29,7 @@ Repositories:
   convenience, simplifying forking and contributing)
 
 If you are not using Mercurial, you can of course also just send us patches.
+In that case, open an issue in the issue tracker and attach the patch there.
 
 
 MoinMoin architecture
@@ -47,7 +48,7 @@ moin2 is a WSGI application and uses:
 * EmeraldTree for xml / tree processing
 * blinker for signalling
 * pygments for syntax highlighting
-* sqlalchemy as sql database abstraction (sqla backend)
+* for stores: filesystem, sqlite3, sqlalchemy, kyoto cabinet/tycoon, ...
 * jquery javascript lib
 * CKeditor - GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools

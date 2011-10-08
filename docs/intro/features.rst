@@ -18,7 +18,8 @@ Servers
 * Any server that talks WSGI to moin:
 
   - Apache2 with mod_wsgi
-  - IIS with isapi-wsgi
+  - IIS with isapi-wsgi (not recommended - if you must use Windows, but have
+    a choice concerning the web server, please rather use Apache2).
   - Other WSGI servers, see http://wsgi.org/
 
 * With the help of flup middleware about any other server speaking:
@@ -40,7 +41,7 @@ Authorization
 =============
 * Content Access Control Lists (ACLs)
 
-  - global (per storage backend)
+  - global (using a mapping, so you can apply ACLs on parts of the namespace)
   - local (per wiki item)
   - give rights like:
 
@@ -74,14 +75,14 @@ Item Types
 Storage Backend Types
 ---------------------
 * file system
-* sql database
-* Mercurial DVCS
-* you can add your own backend
+* sql database (sqlite3 or everything supported by SQLalchemy)
+* Kyoto Tycoon / Kyoto Cabinet
+* you can easily add your own backend with little code
 
 Serialization
 -------------
-* dump backend contents to xml
-* load backend contents from xml
+* dump backend contents to a single file
+* load backend contents from such a file
 
 Search / Indexing
 =================
@@ -105,7 +106,8 @@ Templating
 
 Wiki features
 -------------
-* Global History for all items ("Recent Changes")
+* Global History for all items (full list)
+* Latest Changes ("Recent Changes"), only lists latest changes of an item
 * Local History for one item ("History")
 * Diffs between any revision
 
@@ -116,6 +118,7 @@ Wiki features
 * Missing Items
 * Orphaned Items
 * "What refers here?" functionality
+* "What did I contribute to?" functionality
 * Sitemap
 * Macro support
 
@@ -140,8 +143,8 @@ Notification
 
 Translation / Localization
 --------------------------
-* currently English and German translations only (this is intended until the
-  code and the texts are more stable)
+* currently English and German translations only (this is intended to stay like
+  that until the code and the texts are more stable)
 * any localization (provided by babel / pytz)
 
 Logging
@@ -153,7 +156,6 @@ Technologies
 * html5, css, javascript with jquery, svg
 * python
 * flask, flask-cache, flask-babel, flask-themes, flask-script
-* whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree, sqlalchemy, sqlite
-* optional: mercurial, postgresql, mysql
-
+* whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree
+* sqlalchemy (supports all popular SQL DBMS), sqlite, kyoto tycoon/cabinet
 
