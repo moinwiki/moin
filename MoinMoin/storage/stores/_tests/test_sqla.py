@@ -9,6 +9,7 @@ MoinMoin - sqla store tests
 
 import pytest
 
+pytest.importorskip('storage.stores.sqla')
 from ..sqla import BytesStore, FileStore
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])

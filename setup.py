@@ -85,7 +85,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
         'pygments>=1.1.1', # src code / text file highlighting
-        'sqlalchemy>=0.7.1', # sqla store, OrderedDict
         'Werkzeug>=0.6.2', # wsgi toolkit
         'pytest', # pytest is needed by unit tests
         'whoosh>=2.1.0', # needed for indexed search
@@ -110,6 +109,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                         # it can be compiled successfully
         'ldap': ["python-ldap>=2.0.0"], # used by ldap auth
         'openid': ["python-openid>=2.2.4"], # used by openid rp auth
+        'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
     },
     entry_points = dict(
         console_scripts = ['moin = MoinMoin.script:main'],

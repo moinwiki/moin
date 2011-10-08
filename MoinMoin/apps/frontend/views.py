@@ -19,7 +19,7 @@ import difflib
 import time
 from datetime import datetime
 from itertools import chain
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 try:
     import json
 except ImportError:
