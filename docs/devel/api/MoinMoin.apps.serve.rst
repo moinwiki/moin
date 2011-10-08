@@ -7,6 +7,7 @@ serve Package
 .. automodule:: MoinMoin.apps.serve
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
 :mod:`views` Module
@@ -15,5 +16,6 @@ serve Package
 .. automodule:: MoinMoin.apps.serve.views
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
