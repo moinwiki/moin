@@ -1208,14 +1208,11 @@ You need to configure some stuff before sending E-Mail can be supported::
     mail_smarthost = "smtp.example.org"
 
     # if you need to use SMTP AUTH at your mail_smarthost:
-    #mail_login = "smtp_username smtp_password"
+    #mail_username = "smtp_username"
+    #mail_password = "smtp_password"
 
     # b) alternatively to using SMTP, you can use the sendmail commandline tool:
     #mail_sendmail = "/usr/sbin/sendmail -t -i"
-
-.. todo::
-
-   mail_login is a bit ugly mixing username and password into one string
 
 
 .. todo::
