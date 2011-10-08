@@ -19,8 +19,6 @@ recursive-include docs *
 recursive-include contrib *
 recursive-include wiki *
 
-global-exclude *.pyc
-global-exclude *.pyo
 global-exclude *.orig
 global-exclude *.rej
 
@@ -28,8 +26,7 @@ prune docs/_build
 prune env
 
 prune wiki/data/content
-prune wiki/data/trash
 prune wiki/data/userprofiles
 prune wiki/data/flask-cache
-exclude wiki/data/ROUTER_index.sqlite
+prune wiki/index
 
