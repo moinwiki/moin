@@ -7,6 +7,7 @@ script Package
 .. automodule:: MoinMoin.script
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
 Subpackages
@@ -16,4 +17,5 @@ Subpackages
 
     MoinMoin.script.account
     MoinMoin.script.maint
+    MoinMoin.script.migration
 

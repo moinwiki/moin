@@ -7,30 +7,16 @@ backends Package
 .. automodule:: MoinMoin.storage.backends
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
-:mod:`_flatutils` Module
-------------------------
+:mod:`_util` Module
+-------------------
 
-.. automodule:: MoinMoin.storage.backends._flatutils
+.. automodule:: MoinMoin.storage.backends._util
     :members:
     :undoc-members:
-    :show-inheritance:
-
-:mod:`_fsutils` Module
-----------------------
-
-.. automodule:: MoinMoin.storage.backends._fsutils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`acl` Module
------------------
-
-.. automodule:: MoinMoin.storage.backends.acl
-    :members:
-    :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
 :mod:`fileserver` Module
@@ -39,85 +25,24 @@ backends Package
 .. automodule:: MoinMoin.storage.backends.fileserver
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
-:mod:`flatfile` Module
-----------------------
-
-.. automodule:: MoinMoin.storage.backends.flatfile
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fs` Module
-----------------
-
-.. automodule:: MoinMoin.storage.backends.fs
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fs19` Module
-------------------
-
-.. automodule:: MoinMoin.storage.backends.fs19
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fs19_logfile` Module
---------------------------
-
-.. automodule:: MoinMoin.storage.backends.fs19_logfile
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fs2` Module
------------------
-
-.. automodule:: MoinMoin.storage.backends.fs2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`hg` Module
-----------------
-
-.. automodule:: MoinMoin.storage.backends.hg
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`indexing` Module
-----------------------
-
-.. automodule:: MoinMoin.storage.backends.indexing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`memory` Module
+:mod:`stores` Module
 --------------------
 
-.. automodule:: MoinMoin.storage.backends.memory
+.. automodule:: MoinMoin.storage.backends.stores
     :members:
     :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
-:mod:`router` Module
---------------------
+:mod:`validation` Module
+------------------------
 
-.. automodule:: MoinMoin.storage.backends.router
+.. automodule:: MoinMoin.storage.backends.validation
     :members:
     :undoc-members:
-    :show-inheritance:
-
-:mod:`sqla` Module
-------------------
-
-.. automodule:: MoinMoin.storage.backends.sqla
-    :members:
-    :undoc-members:
+    :inherited-members:
     :show-inheritance:
 
