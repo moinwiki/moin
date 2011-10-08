@@ -12,14 +12,14 @@ Glossary
       Access Control List - you can use it to specify who may do what in
       your wiki.
 
-   mimetype
+   contenttype
       A formal, standardized way of specifying of which type some data is.
-      E.g. 'text/plain' is mimetype for some simple piece of text, 'image/png'
-      is mimetype for a PNG image.
+      E.g. 'text/plain;charset=utf-8' is contenttype for some simple piece
+      of text (encoded using utf-8 encoding), 'image/png' is contenttype
+      for a PNG image.
 
    item
-      A generic, revisioned object stored in your wiki storage. Items have
-      (unrevisioned) item metadata and revisions.
+      A generic, revisioned object stored in your wiki storage.
 
    revision
       Part of an item's history, has metadata and data created for this item
@@ -34,7 +34,7 @@ Glossary
       Additional information related to or about some data. For example, if
       you create a new PDF item revision, the revision data will be the PDF
       file's content, but moin will also additionally store revision meta data
-      that tells that this revision is in fact a PDF (its mimetype - we do not
+      that tells that this revision is in fact a PDF (its contenttype - we do not
       rely on or require .pdf extension on the item name), when it was saved,
       maybe some comment you gave when saving, etc.
 

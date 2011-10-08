@@ -104,13 +104,8 @@ If you find issues with data migration from moin 1.9 to 2, please check the
 moin2 issue tracker.
 
 
-Cleanup
--------
-If you made a **copy** of your 1.9 content, you can remove that copy now.
-
-Maybe keep the moin19.xml for a while in case you want to try other backends,
-but later you can delete that file.
-
+Keep your backups
+-----------------
 Make sure you keep all backups of your moin 1.9 installation (code, config,
 data), just for the case you are not happy with moin2 and need to go back for
 some reason.
