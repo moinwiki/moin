@@ -35,7 +35,7 @@ clean: clean-devwiki clean-pyc clean-orig clean-rej
 clean-devwiki:
 	-rm -rf wiki/data/content
 	-rm -rf wiki/data/userprofiles
-	-rm -rf wiki/data/trash
+	-rm -rf wiki/index
 
 clean-pyc:
 	find . -name "*.pyc" -exec rm -rf "{}" \; 
