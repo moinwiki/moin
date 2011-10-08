@@ -76,11 +76,11 @@ Topic :: Text Processing :: Markup""".splitlines(),
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
         'docutils>=0.6', # reST markup processing
-        'Flask>=0.7.2', # micro framework
-        'Flask-Babel>=0.6', # i18n support
-        'Flask-Cache>=0.3.2', # caching support
-        'Flask-Script>=0.3', # scripting support
-        'Flask-Themes>=0.1', # theme support
+        'Flask>=0.8', # micro framework
+        'Flask-Babel>=0.7', # i18n support
+        'Flask-Cache>=0.3.4', # caching support
+        'Flask-Script>=0.3.1', # scripting support
+        'Flask-Themes>=0.1.3', # theme support
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
