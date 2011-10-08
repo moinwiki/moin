@@ -555,7 +555,8 @@ options = {
         'These settings control outgoing and incoming email from and to the wiki.',
     (
       ('from', None, "Used as From: address for generated mail. [Unicode]"),
-      ('login', None, "'username userpass' for SMTP server authentication (None = don't use auth)."),
+      ('username', None, "Username for SMTP server authentication (None = don't use auth)."),
+      ('password', None, "Password for SMTP server authentication (None = don't use auth)."),
       ('smarthost', None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
       ('sendmail', None, "sendmail command to use for sending mail (None = don't use sendmail)"),
     )),

@@ -133,8 +133,7 @@ def sendmail(to, subject, text, mail_from=None):
             server = smtplib.SMTP(host, int(port))
             try:
                 #server.set_debuglevel(1)
-                if cfg.mail_login:
-                    user, pwd = cfg.mail_login.split()
+                if cfg.mail_username is not None and cfg.mail_password is not None:
                     try: # try to do tls
                         server.ehlo()
                         if server.has_extn('starttls'):
@@ -143,8 +142,8 @@ def sendmail(to, subject, text, mail_from=None):
                             logging.debug("tls connection to smtp server established")
                     except:
                         logging.debug("could not establish a tls connection to smtp server, continuing without tls")
-                    logging.debug("trying to log in to smtp server using account '%s'" % user)
-                    server.login(user, pwd)
+                    logging.debug("trying to log in to smtp server using account '%s'" % cfg.mail_username)
+                    server.login(cfg.mail_username, cfg.mail_password)
                 server.sendmail(mail_from, to, msg.as_string())
             finally:
                 try:
