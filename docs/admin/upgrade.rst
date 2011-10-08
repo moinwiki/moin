@@ -45,41 +45,51 @@ the moin2 sample config (do not just use your 1.9 wikiconfig).
 
 Adjusting the moin2 configuration
 ---------------------------------
-It is essential that you adjust the wiki config before you export your 1.9
-data to xml:
+It is essential that you adjust the wiki config before you import your 1.9
+data:
 
 Configuration::
 
     from os.path import join
     from MoinMoin.storage import create_simple_mapping
 
-    interwikiname = ... # critical, make sure it is same as in 1.9!
-    sitename = ... # same as in 1.9
-    item_root = ... # see page_front_page in 1.9
-    theme_default = ... # (only supported value is "modernized")
-    language_default = ...
-    mail_smarthost = ...
-    mail_sendmail = ...
-    mail_from = ...
-    mail_login = ...
-    # XXX default_markup must be 'wiki' right now
-    page_category_regex = ... # XXX check
+    interwikiname = u'...' # critical, make sure it is same as in 1.9!
+    sitename = u'...' # same as in 1.9
+    item_root = u'...' # see page_front_page in 1.9
 
-    # think about which backend you will use in the end and configure
-    # it here (this is NOT the fs19 backend!):
+    # configure backend and ACLs to use in future
     # TODO
 
 
-Exporting your moin 1.9 data to a file
---------------------------------------
+Clean up your moin 1.9 data
+---------------------------
+It is a good idea to clean up your 1.9 data first, before trying to import
+it into moin2. By getting the data into good shape you can avoid quite some
+warnings the importer would emit otherwise.
 
-TBD
+You do this with moin 1.9 (!), using these commands::
+
+  moin ... maint cleanpage
+  moin ... maint cleancache
+
+.. todo::
+   add more infos about handling of deleted pages
 
 
-Importing the file into moin2
-------------------------------
+Importing your moin 1.9 data
+----------------------------
+It is assumed that you have no moin2 storage and no index created yet,
+thus we include -s and -i options to create the storage and an empty index.
 
-TBD
+The import19 will then read your 1.9 data_dir (pages, attachments and users),
+convert the data as needed and write it to your moin2 storage (and also
+build the index)::
+
+  moin import19 -s -i --data_dir /your/moin/1.9/data 1>import1.log 2>import2.log
+
+If you use the command as given, it will write all output into 2 log files,
+please review them to find whether the importer had critical issues with your
+data.
 
 
 Testing
