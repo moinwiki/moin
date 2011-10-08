@@ -1,5 +1,4 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
-# Copyright: 2011 MoinMoin:AkashSinha
 # License: the individual patches have same license as the code they are patching
 
 """
@@ -25,9 +24,4 @@ class BaseRequestHandler(werkzeug.serving.BaseRequestHandler):
 
 werkzeug.serving.BaseRequestHandler = BaseRequestHandler
 werkzeug.serving.WSGIRequestHandler = BaseRequestHandler
-
-# werkzeug 0.6.2 has a missing import sys in posixemulation
-from werkzeug import posixemulation
-import sys
-posixemulation.sys = sys
 
