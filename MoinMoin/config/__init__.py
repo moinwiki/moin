@@ -96,6 +96,8 @@ USERGROUP = "usergroup"
 # needs more precise name / use case:
 SOMEDICT = "somedict"
 
+CONTENTTYPE_USER = u'application/x.moin.userprofile'
+
 CONTENTTYPE = "contenttype"
 SIZE = "size"
 LANGUAGE = "language"

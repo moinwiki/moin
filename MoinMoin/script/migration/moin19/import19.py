@@ -34,7 +34,7 @@ from MoinMoin.config import ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, \
                             ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
                             IS_SYSITEM, SYSITEM_VERSION, \
                             TAGS, SIZE, HASH_ALGORITHM, \
-                            ITEMID, REVID, DATAID
+                            ITEMID, REVID, DATAID, CONTENTTYPE_USER
 
 UID_OLD = 'old_user_id' # dynamic field *_id, so we don't have to change schema
 
@@ -53,7 +53,6 @@ DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
 
 CONTENTTYPE_DEFAULT = u'text/plain;charset=utf-8'
-CONTENTTYPE_USER = u'text/x.moin.userprofile'
 CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki;charset=utf-8'
 FORMAT_TO_CONTENTTYPE = {
     'wiki': CONTENTTYPE_MOINWIKI,
