@@ -51,7 +51,7 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
 from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, NAME_EXACT, \
-                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, CURRENT, CONTENT
+                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, USERID, CURRENT, CONTENT
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -668,6 +668,35 @@ def index(item_name):
                            contenttype_groups=ct_groups,
                            form=form,
                           )
+
+
+@frontend.route('/+mychanges')
+def mychanges():
+    """
+    Returns the list of all items the current user has contributed to.
+
+    :returns: a page with all the items which link or transclude item_name
+    """
+    my_changes = _mychanges(flaskg.user.itemid)
+    return render_template('item_link_list.html',
+                           item_name='+mychanges', # XXX
+                           headline=_(u'My Changes'),
+                           item_names=my_changes
+                          )
+
+
+def _mychanges(userid):
+    """
+    Returns a list with all names of items which user userid has contributed to.
+
+    :param userid: user itemid
+    :type userid: unicode
+    :returns: the list of all items with user userid's contributions
+    """
+    q = And([Term(WIKINAME, app.cfg.interwikiname),
+             Term(USERID, userid)])
+    revs = flaskg.storage.search(q, all_revs=True)
+    return [rev.meta[NAME] for rev in revs]
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
