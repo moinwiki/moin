@@ -31,16 +31,10 @@ class TrackingFileWrapper(object):
             if fpos:
                 raise ValueError("file needs to be at pos 0")
 
-    def read(self, size=None):
-        # XXX: workaround for werkzeug.wsgi.LimitedStream
-        #      which expects None instead of -1 for "read everything"
-        if size is None:
-            data = self._read()
+    def read(self, size=-1):
+        data = self._read(size)
+        if not data or size == -1:
             self._finished = True
-        else:
-            data = self._read(size)
-            if not data:
-                self._finished = True
         self._hash.update(data)
         self._size += len(data)
         return data

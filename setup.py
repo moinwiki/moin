@@ -85,7 +85,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.5', # template engine
         'pygments>=1.1.1', # src code / text file highlighting
-        'Werkzeug>=0.6.2', # wsgi toolkit
+        'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest', # pytest is needed by unit tests
         'whoosh>=2.1.0', # needed for indexed search
         'sphinx==1.0.7', # needed to build the docs (1.0.8 is broken)
