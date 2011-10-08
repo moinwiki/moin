@@ -31,9 +31,3 @@ from werkzeug import posixemulation
 import sys
 posixemulation.sys = sys
 
-# collections patching for the class OrderedDict for the python versions < 2.7
-import collections
-if "OrderedDict" not in dir(collections):
-    from sqlalchemy.util import OrderedDict
-    collections.OrderedDict = OrderedDict
-
