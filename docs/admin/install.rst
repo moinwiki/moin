@@ -76,19 +76,15 @@ within your moin2 workdir.
 
 Entering the virtual env
 ------------------------
+Enter your virtual environment::
 
- # enter your virtual environment:
  source env/bin/activate
-
 
 Initializing the storage and the index
 --------------------------------------
+Creates an (empty) storage and an (empty) index::
 
- moin create-index -s -i
-
-The -s and -i switches make sure moin creates an (empty) storage and an (empty)
-index.
-
+ moin index-create -s -i
 
 Loading some items
 ------------------
@@ -99,6 +95,8 @@ can load them like this::
  # load some example items:
  moin load --file contrib/serialized/preloaded_items.moin
 
+.. todo::
+   example items file is missing, build one.
 
 Installing PIL
 ~~~~~~~~~~~~~~
@@ -109,8 +107,9 @@ in case you don't have that, there will be no jpeg support in PIL.
 
 So, if you want jpeg support, make sure you have the jpeg libs/headers::
 
- # install jpeg library and dev. headers (ubuntu / debian)
- sudo apt-get install libjpeg62-dev
+ # install jpeg library and development headers:
+ sudo apt-get install libjpeg62-dev  # ubuntu / debian
+ yum install libjpeg-turbo-devel  # fedora / red hat
 
 Now install PIL into your virtual environment::
 
