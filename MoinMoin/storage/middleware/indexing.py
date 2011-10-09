@@ -443,12 +443,8 @@ class IndexingMiddleware(object):
         with index.searcher() as searcher:
             result = searcher.search(query, groupedby=ITEMID, sortedby=FieldFacet(MTIME, reverse=True))
             by_item = result.groups(ITEMID)
-            latest_revids = []
-            for _, vals in by_item.items():
-                # XXX figure how whoosh can order, or get the best
-                vals.sort(key=lambda docid: searcher.stored_fields(docid)[MTIME], reverse=True)
-                latest_revid = searcher.stored_fields(vals[0])[REVID]
-                latest_revids.append(latest_revid)
+            # values in v list are in same relative order as in results, so latest MTIME is first:
+            latest_revids = [searcher.stored_fields(v[0])[REVID] for v in by_item.values()]
         return latest_revids
 
     def rebuild(self, tmp=False, procs=1, limitmb=256):
