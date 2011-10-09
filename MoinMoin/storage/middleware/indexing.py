@@ -695,7 +695,7 @@ class Item(object):
         self.backend = self.indexer.backend
         if latest_doc is None:
             # we need to call the method without acl check to avoid endless recursion:
-            latest_doc = self.indexer._document(all_revs=False, **query) or {}
+            latest_doc = self.indexer._document(**query) or {}
         self._current = latest_doc
 
     def _get_itemid(self):
@@ -795,7 +795,7 @@ class Item(object):
         meta[REVID] = revid
         self.indexer.index_revision(meta, content)
         if not overwrite:
-            self._current = self.indexer._document(all_revs=False, revid=revid)
+            self._current = self.indexer._document(revid=revid)
         return Revision(self, revid)
 
     def store_all_revisions(self, meta, data):

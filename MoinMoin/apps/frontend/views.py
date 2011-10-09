@@ -726,7 +726,7 @@ def _backrefs(item_name):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
-    revs = flaskg.storage.search(q, all_revs=False)
+    revs = flaskg.storage.search(q)
     return [rev.meta[NAME] for rev in revs]
 
 
@@ -766,7 +766,7 @@ def global_history():
     query = Term(WIKINAME, app.cfg.interwikiname)
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
-    revs = flaskg.storage.search(query, all_revs=all_revs, sortedby=[MTIME], reverse=True, limit=1000) # was: all_revs=False
+    revs = flaskg.storage.search(query, all_revs=all_revs, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
@@ -800,7 +800,7 @@ def _compute_item_sets():
     linked = set()
     transcluded = set()
     existing = set()
-    revs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     for rev in revs:
         existing.add(rev.meta[NAME])
         linked.update(rev.meta.get(ITEMLINKS, []))
@@ -1508,7 +1508,7 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.meta[NAME] for rev in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
+    item_names = [rev.meta[NAME] for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word
@@ -1674,7 +1674,7 @@ def global_tags():
     show a list or tag cloud of all tags in this wiki
     """
     item_name = request.values.get('item_name', '') # actions menu puts it into qs
-    revs = flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)
+    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
@@ -1711,7 +1711,7 @@ def tagged_items(tag):
     show all items' names that have tag <tag>
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    revs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
+    revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
     item_names = [rev.meta[NAME] for rev in revs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),

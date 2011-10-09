@@ -227,7 +227,7 @@ def itemsize():
                 _('Item name'),
                ]
     rows = [(doc[SIZE], doc[NAME])
-            for doc in flaskg.storage.documents(all_revs=False, wikiname=app.cfg.interwikiname)]
+            for doc in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('admin/itemsize.html',
                            item_name="+admin/itemsize",

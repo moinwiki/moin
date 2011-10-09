@@ -90,7 +90,7 @@ class ImportMoin19(Command):
         indexer.rebuild()
 
         print "Fix userids..."
-        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID]) for rev in indexer.documents(all_revs=False, contenttype=CONTENTTYPE_USER)])
+        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID]) for rev in indexer.documents(contenttype=CONTENTTYPE_USER)])
         for revid in backend:
             meta, data = backend.retrieve(revid)
             if USERID in meta:

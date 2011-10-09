@@ -65,7 +65,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
 
     def test_documents(self):
         revid_unprotected, revid_protected = self.make_items(u'joe:read', u'boss:read')
-        revids = [rev.revid for rev in self.imw.documents(all_revs=False)]
+        revids = [rev.revid for rev in self.imw.documents()]
         assert revids == [revid_unprotected]  # without revid_protected!
 
     def test_getitem(self):

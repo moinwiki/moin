@@ -530,7 +530,7 @@ class Item(object):
             query = Term(WIKINAME, app.cfg.interwikiname)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        revs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
+        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         items = [(rev.meta[NAME], rev.meta[NAME][prefix_len:], rev.meta[CONTENTTYPE])
                  for rev in revs]
         return items
@@ -672,7 +672,7 @@ There is no help, you're doomed!
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
-        revs = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, limit=None)
+        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return [rev.meta[NAME] for rev in revs]
 
     def do_modify(self, contenttype, template_name):

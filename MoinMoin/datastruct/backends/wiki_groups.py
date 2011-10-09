@@ -41,7 +41,7 @@ class WikiGroups(BaseGroupsBackend):
         To find group pages, app.cfg.cache.item_group_regexact pattern is used.
         """
         # TODO: use whoosh to search for group_regex matching items
-        item_list = [rev.name for rev in flaskg.unprotected_storage.documents(all_revs=False)
+        item_list = [rev.name for rev in flaskg.unprotected_storage.documents()
                      if self.item_group_regex.search(rev.name)]
         return iter(item_list)
 

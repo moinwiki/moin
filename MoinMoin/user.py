@@ -106,7 +106,7 @@ def search_users(**q):
         CONTENTTYPE: CONTENTTYPE_USER,
     })
     backend = get_user_backend()
-    docs = backend.documents(all_revs=False, **q)
+    docs = backend.documents(**q)
     return list(docs)
 
 

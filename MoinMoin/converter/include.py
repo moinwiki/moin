@@ -209,7 +209,7 @@ class Converter(object):
                         xp_include_pages = xp_include_pages[1:]
                     query = And([Term(WIKINAME, app.cfg.interwikiname), Wildcard(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
-                    results = flaskg.storage.search(query, all_revs=False, sortedby=NAME_EXACT, reverse=reverse, limit=None)
+                    results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
                     pagelist = [result[NAME] for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]

@@ -26,11 +26,11 @@ class Reduce_Revisions(Command):
     def run(self, query):
         storage = app.unprotected_storage
         if query:
-            qp = storage.query_parser([NAME_EXACT, ], all_revs=False)
+            qp = storage.query_parser([NAME_EXACT, ])
             q = qp.parse(query)
         else:
             q = Every()
-        results = storage.search(q, all_revs=False, limit=None)
+        results = storage.search(q, limit=None)
         for result in results:
             item_name = result[NAME]
             item = storage.get_item(item_name)
