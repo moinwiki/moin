@@ -536,7 +536,10 @@ class IndexingMiddleware(object):
         index_dir = self.index_dir_tmp if tmp else self.index_dir
         for name in INDEXES:
             ix = open_dir(index_dir, indexname=name)
-            ix.optimize()
+            try:
+                ix.optimize()
+            finally:
+                ix.close()
 
     def get_schema(self, all_revs=False):
         # XXX keep this as is for now, but later just give the index name as param
@@ -555,11 +558,14 @@ class IndexingMiddleware(object):
         index_dir = self.index_dir_tmp if tmp else self.index_dir
         indexname = ALL_REVS if all_revs else LATEST_REVS
         ix = open_dir(index_dir, indexname=indexname)
-        with ix.searcher() as searcher:
-            for doc in searcher.all_stored_fields():
-                name = doc.pop(NAME, u"")
-                content = doc.pop(CONTENT, u"")
-                yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
+        try:
+            with ix.searcher() as searcher:
+                for doc in searcher.all_stored_fields():
+                    name = doc.pop(NAME, u"")
+                    content = doc.pop(CONTENT, u"")
+                    yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
+        finally:
+            ix.close()
 
     def query_parser(self, default_fields, all_revs=False):
         """
