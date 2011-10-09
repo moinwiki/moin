@@ -190,7 +190,7 @@ def search():
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
-@frontend.route('/+show/<rev>/<itemname:item_name>', methods=['GET'])
+@frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.addTrail(item_name)
     item_displayed.send(app._get_current_object(),
@@ -225,7 +225,7 @@ def redirect_show_item(item_name):
     return redirect(url_for_item(item_name))
 
 
-@frontend.route('/+dom/<rev>/<itemname:item_name>')
+@frontend.route('/+dom/+<rev>/<itemname:item_name>')
 @frontend.route('/+dom/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def show_dom(item_name, rev):
     try:
@@ -243,7 +243,7 @@ def show_dom(item_name, rev):
 
 
 # XXX this is just a temporary view to test the indexing converter
-@frontend.route('/+indexable/<rev>/<itemname:item_name>')
+@frontend.route('/+indexable/+<rev>/<itemname:item_name>')
 @frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def indexable(item_name, rev):
     from MoinMoin.storage.middleware.indexing import convert_to_indexable
@@ -253,7 +253,7 @@ def indexable(item_name, rev):
     return Response(content, 200, mimetype='text/plain')
 
 
-@frontend.route('/+highlight/<rev>/<itemname:item_name>')
+@frontend.route('/+highlight/+<rev>/<itemname:item_name>')
 @frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def highlight_item(item_name, rev):
     try:
@@ -267,7 +267,7 @@ def highlight_item(item_name, rev):
 
 
 @frontend.route('/+meta/<itemname:item_name>', defaults=dict(rev=CURRENT))
-@frontend.route('/+meta/<rev>/<itemname:item_name>')
+@frontend.route('/+meta/+<rev>/<itemname:item_name>')
 def show_item_meta(item_name, rev):
     flaskg.user.addTrail(item_name)
     try:
@@ -294,7 +294,7 @@ def show_item_meta(item_name, rev):
                            show_navigation=show_navigation,
                           )
 
-@frontend.route('/+content/<rev>/<itemname:item_name>')
+@frontend.route('/+content/+<rev>/<itemname:item_name>')
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
@@ -314,7 +314,7 @@ def content_item(item_name, rev):
                            data_rendered=Markup(item._render_data()),
                            )
 
-@frontend.route('/+get/<rev>/<itemname:item_name>')
+@frontend.route('/+get/+<rev>/<itemname:item_name>')
 @frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def get_item(item_name, rev):
     try:
@@ -323,7 +323,7 @@ def get_item(item_name, rev):
         abort(403)
     return item.do_get()
 
-@frontend.route('/+download/<rev>/<itemname:item_name>')
+@frontend.route('/+download/+<rev>/<itemname:item_name>')
 @frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def download_item(item_name, rev):
     try:
@@ -410,7 +410,7 @@ class ContenttypeFilterForm(Form):
     submit = String.using(default=L_('Filter'), optional=True)
 
 
-@frontend.route('/+revert/<rev>/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+revert/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
@@ -540,7 +540,7 @@ def ajaxmodify(item_name):
     return redirect(url_for('.modify_item', item_name=newitem))
 
 
-@frontend.route('/+destroy/<rev>/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
 def destroy_item(item_name, rev):
     if rev is None:
