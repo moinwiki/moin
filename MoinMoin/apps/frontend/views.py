@@ -84,7 +84,6 @@ Disallow: /+convert/
 Disallow: /+dom/
 Disallow: /+download/
 Disallow: /+modify/
-Disallow: /+copy/
 Disallow: /+content/
 Disallow: /+delete/
 Disallow: /+ajaxdelete/
@@ -396,9 +395,6 @@ class DeleteItemForm(CommentForm):
 class DestroyItemForm(CommentForm):
     name = 'destroy_item'
 
-class CopyItemForm(TargetCommentForm):
-    name = 'copy_item'
-
 class RenameItemForm(TargetCommentForm):
     name = 'rename_item'
 
@@ -432,30 +428,6 @@ def revert_item(item_name, rev):
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
                            rev_id=rev,
-                           form=form,
-                          )
-
-
-@frontend.route('/+copy/<itemname:item_name>', methods=['GET', 'POST'])
-def copy_item(item_name):
-    try:
-        item = Item.create(item_name)
-    except AccessDeniedError:
-        abort(403)
-    if request.method == 'GET':
-        form = CopyItemForm.from_defaults()
-        TextCha(form).amend_form()
-        form['target'] = item.name
-    elif request.method == 'POST':
-        form = CopyItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
-        if form.validate():
-            target = form['target'].value
-            comment = form['comment'].value
-            item.copy(target, comment)
-            return redirect(url_for_item(target))
-    return render_template(item.copy_template,
-                           item=item, item_name=item_name,
                            form=form,
                           )
 
