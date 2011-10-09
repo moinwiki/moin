@@ -13,6 +13,7 @@ from flaskext.script import Command, Option
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from MoinMoin.config import LATEST_REVS, ALL_REVS
 from MoinMoin.storage.middleware.indexing import ALL_REVS, LATEST_REVS
 
 
@@ -99,10 +100,9 @@ class IndexDump(Command):
     ]
 
     def run(self, tmp):
-        for all_revs in [False, True]:
-            indexname = all_revs and "all revs index" or "latest revs index"
-            print " %s %s %s" % ("-" * 10, indexname, "-" * 60)
-            for kvs in app.storage.dump(tmp=tmp, all_revs=all_revs):
+        for idx_name in [LATEST_REVS, ALL_REVS]:
+            print " %s %s %s" % ("-" * 10, idx_name, "-" * 60)
+            for kvs in app.storage.dump(tmp=tmp, idx_name=idx_name):
                 for k, v in kvs:
                     print k, repr(v)[:70]
                 print

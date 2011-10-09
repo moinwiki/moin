@@ -51,7 +51,8 @@ from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
 from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, NAME_EXACT, \
-                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, USERID, CURRENT, CONTENT
+                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, USERID, CURRENT, CONTENT, \
+                            ALL_REVS, LATEST_REVS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
@@ -152,9 +153,10 @@ def search():
     query = search_form['q'].value
     if valid:
         history = bool(request.values.get('history'))
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], all_revs=history)
+        idx_name = ALL_REVS if history else LATEST_REVS
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], idx_name=idx_name)
         q = qp.parse(query)
-        with flaskg.storage.get_index(all_revs=history).searcher() as searcher:
+        with flaskg.storage.ix[idx_name].searcher() as searcher:
             flaskg.clock.start('search')
             results = searcher.search(q, limit=100)
             flaskg.clock.stop('search')
@@ -695,7 +697,7 @@ def _mychanges(userid):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
-    revs = flaskg.storage.search(q, all_revs=True)
+    revs = flaskg.storage.search(q, idx_name=ALL_REVS)
     return [rev.meta[NAME] for rev in revs]
 
 
@@ -745,7 +747,7 @@ def history(item_name):
     query = And(terms)
     # TODO: due to how getPageContent and the template works, we need to use limit=None -
     # it would be better to use search_page (and an appropriate limit, if needed)
-    revs = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=None)
+    revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
     history = [dict((k, v) for k, v in rev.meta.iteritems() if k != CONTENT) for rev in revs]
     history_page = util.getPageContent(history, offset, results_per_page)
@@ -759,6 +761,7 @@ def history(item_name):
 @frontend.route('/+history')
 def global_history():
     all_revs = bool(request.values.get('all'))
+    idx_name = ALL_REVS if all_revs else LATEST_REVS
     if flaskg.user.valid:
         bookmark_time = flaskg.user.getBookmark()
     else:
@@ -766,7 +769,7 @@ def global_history():
     query = Term(WIKINAME, app.cfg.interwikiname)
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
-    revs = flaskg.storage.search(query, all_revs=all_revs, sortedby=[MTIME], reverse=True, limit=1000)
+    revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
