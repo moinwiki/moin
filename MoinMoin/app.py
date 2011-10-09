@@ -12,8 +12,6 @@ Use create_app(config) to create the WSGI application (using Flask).
 
 from __future__ import absolute_import, division
 
-import os
-
 # do this early, but not in MoinMoin/__init__.py because we need to be able to
 # "import MoinMoin" from setup.py even before flask, werkzeug, ... is installed.
 from MoinMoin.util import monkeypatch
@@ -24,8 +22,6 @@ from flask import g as flaskg
 
 from flaskext.cache import Cache
 from flaskext.themes import setup_themes
-
-from werkzeug.exceptions import HTTPException
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
@@ -152,6 +148,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     del clock
     return app
 
+
 def destroy_app(app):
     deinit_backends(app)
 
@@ -178,6 +175,7 @@ def init_backends(app):
     if app.cfg.create_index:
         app.storage.create()
     app.storage.open()
+
 
 def deinit_backends(app):
     app.storage.close()
