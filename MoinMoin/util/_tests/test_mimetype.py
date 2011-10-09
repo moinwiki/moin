@@ -76,6 +76,6 @@ class TestMimeType(object):
 
         # when all the parameters passed are None
         result3 = MimeType_obj.content_type()
-        expected = 'text/x-test_file.mpeg; charset="utf-8"'
+        expected = 'text/x-test_file.mpeg'
         assert result3 == expected
 
