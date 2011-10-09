@@ -24,6 +24,8 @@ from StringIO import StringIO
 from MoinMoin.config import MTIME, SIZE, CONTENTTYPE
 from . import BackendBase
 
+from MoinMoin.util.mimetype import MimeType
+
 
 class Backend(BackendBase):
     """
@@ -83,13 +85,7 @@ class Backend(BackendBase):
             size = 0
         elif stat.S_ISREG(st.st_mode):
             # normal file
-            # TODO: real mimetype guessing
-            if fn.endswith('.png'):
-                ct = 'image/png'
-            elif fn.endswith('.txt'):
-                ct = 'text/plain'
-            else:
-                ct = 'application/octet-stream'
+            ct = MimeType(filename=fn).content_type()
             size = int(st.st_size) # use int instead of long
         else:
             # symlink, device file, etc.
