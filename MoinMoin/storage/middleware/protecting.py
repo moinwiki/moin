@@ -50,7 +50,7 @@ class ProtectingMiddleware(object):
         return self.indexer.get_index(all_revs=all_revs)
 
     def query_parser(self, default_fields, all_revs=False):
-        return self.indexer.query_parser(default_fields, all_revs=False)
+        return self.indexer.query_parser(default_fields, all_revs=all_revs)
 
     def search(self, q, all_revs=False, **kw):
         for rev in self.indexer.search(q, all_revs, **kw):
