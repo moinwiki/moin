@@ -71,14 +71,13 @@ from whoosh.sorting import FieldFacet
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
-                            ITEMID, REVID, CURRENT, PARENTID
+                            ITEMID, REVID, CURRENT, PARENTID, \
+                            LATEST_REVS, ALL_REVS
 
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
 from MoinMoin.util.crypto import make_uuid
 
-LATEST_REVS = 'latest_revs'
-ALL_REVS = 'all_revs'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 
@@ -537,23 +536,12 @@ class IndexingMiddleware(object):
             finally:
                 ix.close()
 
-    def get_schema(self, all_revs=False):
-        # XXX keep this as is for now, but later just give the index name as param
-        name = ALL_REVS if all_revs else LATEST_REVS
-        return self.schemas[name]
-
-    def get_index(self, all_revs=False):
-        # XXX keep this as is for now, but later just give the index name as param
-        name = ALL_REVS if all_revs else LATEST_REVS
-        return self.ix[name]
-
-    def dump(self, tmp=False, all_revs=False):
+    def dump(self, tmp=False, idx_name=LATEST_REVS):
         """
         Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
-        indexname = ALL_REVS if all_revs else LATEST_REVS
-        ix = open_dir(index_dir, indexname=indexname)
+        ix = open_dir(index_dir, indexname=idx_name)
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
@@ -563,11 +551,11 @@ class IndexingMiddleware(object):
         finally:
             ix.close()
 
-    def query_parser(self, default_fields, all_revs=False):
+    def query_parser(self, default_fields, idx_name=LATEST_REVS):
         """
         Build a query parser for a list of default fields.
         """
-        schema = self.get_schema(all_revs)
+        schema = self.schemas[idx_name]
         if len(default_fields) > 1:
             qp = MultifieldParser(default_fields, schema=schema)
         elif len(default_fields) == 1:
@@ -578,68 +566,68 @@ class IndexingMiddleware(object):
         #qp.add_plugin(RegexPlugin())
         return qp
 
-    def search(self, q, all_revs=False, **kw):
+    def search(self, q, idx_name=LATEST_REVS, **kw):
         """
         Search with query q, yield Revisions.
         """
-        with self.get_index(all_revs).searcher() as searcher:
+        with self.ix[idx_name].searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search(q, **kw):
                 doc = hit.fields()
-                latest_doc = not all_revs and doc or None
+                latest_doc = doc if idx_name == LATEST_REVS else None
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
+    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         """
         Same as search, but with paging support.
         """
-        with self.get_index(all_revs).searcher() as searcher:
+        with self.ix[idx_name].searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
                 doc = hit.fields()
-                latest_doc = not all_revs and doc or None
+                latest_doc = doc if idx_name == LATEST_REVS else None
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def documents(self, all_revs=False, **kw):
+    def documents(self, idx_name=LATEST_REVS, **kw):
         """
         Yield Revisions matching the kw args.
         """
-        for doc in self._documents(all_revs, **kw):
-            latest_doc = not all_revs and doc or None
+        for doc in self._documents(idx_name, **kw):
+            latest_doc = doc if idx_name == LATEST_REVS else None
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             yield item.get_revision(doc[REVID], doc=doc)
 
-    def _documents(self, all_revs=False, **kw):
+    def _documents(self, idx_name=LATEST_REVS, **kw):
         """
         Yield documents matching the kw args (internal use only).
 
         If no kw args are given, this yields all documents.
         """
-        with self.get_index(all_revs).searcher() as searcher:
+        with self.ix[idx_name].searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for doc in searcher.documents(**kw):
                 yield doc
 
-    def document(self, all_revs=False, **kw):
+    def document(self, idx_name=LATEST_REVS, **kw):
         """
         Return a Revision matching the kw args.
         """
-        doc = self._document(all_revs, **kw)
+        doc = self._document(idx_name, **kw)
         if doc:
-            latest_doc = not all_revs and doc or None
+            latest_doc = doc if idx_name == LATEST_REVS else None
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             return item.get_revision(doc[REVID], doc=doc)
 
-    def _document(self, all_revs=False, **kw):
+    def _document(self, idx_name=LATEST_REVS, **kw):
         """
         Return a document matching the kw args (internal use only).
         """
-        with self.get_index(all_revs).searcher() as searcher:
+        with self.ix[idx_name].searcher() as searcher:
             return searcher.document(**kw)
 
     def has_item(self, name):
@@ -743,7 +731,7 @@ class Item(object):
         Iterate over Revisions belonging to this item.
         """
         if self:
-            for rev in self.indexer.documents(all_revs=True, itemid=self.itemid):
+            for rev in self.indexer.documents(idx_name=ALL_REVS, itemid=self.itemid):
                 yield rev
 
     def __getitem__(self, revid):
@@ -831,7 +819,7 @@ class Revision(object):
             if is_current:
                 doc = item._current
             else:
-                doc = item.indexer._document(all_revs=not is_current, revid=revid)
+                doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
                 if doc is None:
                     raise KeyError
         if is_current:

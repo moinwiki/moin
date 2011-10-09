@@ -16,7 +16,8 @@ from __future__ import absolute_import, division
 
 import logging
 
-from MoinMoin.config import ACL, CREATE, READ, WRITE, OVERWRITE, DESTROY, ADMIN
+from MoinMoin.config import ACL, CREATE, READ, WRITE, OVERWRITE, DESTROY, ADMIN, \
+                            ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
 
@@ -46,32 +47,29 @@ class ProtectingMiddleware(object):
         else:
             raise ValueError('No acl_mapping entry found for item %r' % itemname)
 
-    def get_index(self, all_revs=False):
-        return self.indexer.get_index(all_revs=all_revs)
+    def query_parser(self, default_fields, idx_name=LATEST_REVS):
+        return self.indexer.query_parser(default_fields, idx_name=idx_name)
 
-    def query_parser(self, default_fields, all_revs=False):
-        return self.indexer.query_parser(default_fields, all_revs=all_revs)
-
-    def search(self, q, all_revs=False, **kw):
-        for rev in self.indexer.search(q, all_revs, **kw):
+    def search(self, q, idx_name=LATEST_REVS, **kw):
+        for rev in self.indexer.search(q, idx_name, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ):
                 yield rev
 
-    def search_page(self, q, all_revs=False, pagenum=1, pagelen=10, **kw):
-        for rev in self.indexer.search_page(q, all_revs, pagenum, pagelen, **kw):
+    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+        for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ):
                 yield rev
 
-    def documents(self, all_revs=False, **kw):
-        for rev in self.indexer.documents(all_revs, **kw):
+    def documents(self, idx_name=LATEST_REVS, **kw):
+        for rev in self.indexer.documents(idx_name, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ):
                 yield rev
 
-    def document(self, all_revs=False, **kw):
-        rev = self.indexer.document(all_revs, **kw)
+    def document(self, idx_name=LATEST_REVS, **kw):
+        rev = self.indexer.document(idx_name, **kw)
         if rev:
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ):

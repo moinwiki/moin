@@ -134,6 +134,10 @@ CURRENT = "current"
 EMAIL = "email"
 OPENID = "openid"
 
+# index names
+LATEST_REVS = 'latest_revs'
+ALL_REVS = 'all_revs'
+
 # structure for contenttype groups
 CONTENTTYPE_GROUPS = [
     ('markup text items', [

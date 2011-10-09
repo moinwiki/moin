@@ -25,7 +25,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
-from MoinMoin.config import NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME, REVID
+from MoinMoin.config import NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME, REVID, ALL_REVS
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
@@ -48,7 +48,7 @@ def atom(item_name):
         query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
             query = And([query, Term(NAME_EXACT, item_name), ])
-        history = flaskg.storage.search(query, all_revs=True, sortedby=[MTIME], reverse=True, limit=100)
+        history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
         for rev in history:
             name = rev.meta[NAME]
             item = rev.item

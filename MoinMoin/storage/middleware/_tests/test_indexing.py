@@ -13,7 +13,8 @@ import hashlib
 
 import pytest
 
-from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT
+from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
+                            LATEST_REVS, ALL_REVS
 
 from ..indexing import IndexingMiddleware
 
@@ -174,10 +175,10 @@ class TestIndexingMiddleware(object):
         rev1 = item.store_revision(dict(name=item_name), StringIO('x'))
         rev2 = item.store_revision(dict(name=item_name), StringIO('xx'))
         rev3 = item.store_revision(dict(name=item_name), StringIO('xxx'))
-        rev = self.imw.document(all_revs=True, size=2)
+        rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
         assert rev.revid == rev2.revid
-        revs = list(self.imw.documents(all_revs=True, size=2))
+        revs = list(self.imw.documents(idx_name=ALL_REVS, size=2))
         assert len(revs) == 1
         assert revs[0].revid == rev2.revid
 
@@ -196,12 +197,12 @@ class TestIndexingMiddleware(object):
 
         # now we remember the index contents built that way:
         expected_latest_revs = list(self.imw.documents())
-        expected_all_revs = list(self.imw.documents(all_revs=True))
+        expected_all_revs = list(self.imw.documents(idx_name=ALL_REVS))
 
         print "*** all on-the-fly:"
-        self.imw.dump(all_revs=True)
+        self.imw.dump(idx_name=ALL_REVS)
         print "*** latest on-the-fly:"
-        self.imw.dump()
+        self.imw.dump(idx_name=LATEST_REVS)
 
         # now kill the index and do a full rebuild
         self.imw.close()
@@ -211,14 +212,14 @@ class TestIndexingMiddleware(object):
         self.imw.open()
 
         # read the index contents built that way:
-        all_revs = list(self.imw.documents(all_revs=True))
+        all_revs = list(self.imw.documents(idx_name=ALL_REVS))
         latest_revs = list(self.imw.documents())
         latest_revids = [rev.revid for rev in latest_revs]
 
         print "*** all rebuilt:"
-        self.imw.dump(all_revs=True)
+        self.imw.dump(idx_name=ALL_REVS)
         print "*** latest rebuilt:"
-        self.imw.dump()
+        self.imw.dump(idx_name=LATEST_REVS)
 
         # should be all the same, order does not matter:
         assert sorted(expected_all_revs) == sorted(all_revs)
@@ -278,7 +279,7 @@ class TestIndexingMiddleware(object):
         self.imw.open()
 
         # read the index contents we have now:
-        all_revids = [doc[REVID] for doc in self.imw._documents(all_revs=True)]
+        all_revids = [doc[REVID] for doc in self.imw._documents(idx_name=ALL_REVS)]
         latest_revids = [doc[REVID] for doc in self.imw._documents()]
 
         # this index is outdated:
@@ -292,7 +293,7 @@ class TestIndexingMiddleware(object):
         self.imw.open()
 
         # read the index contents we have now:
-        all_revids = [rev.revid for rev in self.imw.documents(all_revs=True)]
+        all_revids = [rev.revid for rev in self.imw.documents(idx_name=ALL_REVS)]
         latest_revids = [rev.revid for rev in self.imw.documents()]
 
         # now it should have the previously missing rev and all should be as expected:
