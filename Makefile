@@ -16,8 +16,8 @@ docs:
 	make -C docs html
 
 # this needs the sphinx-autopackage script in the toplevel dir:
-apidocs:
-	python generate_modules.py -d docs/devel/api -s rst -f MoinMoin
+apidoc:
+	sphinx-apidoc -f -o docs/devel/api MoinMoin
 
 interwiki:
 	wget -U MoinMoin/Makefile -O contrib/interwiki/intermap.txt "http://master19.moinmo.in/InterWikiMap?action=raw"
