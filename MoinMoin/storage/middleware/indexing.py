@@ -618,17 +618,14 @@ class IndexingMiddleware(object):
     def _documents(self, all_revs=False, **kw):
         """
         Yield documents matching the kw args (internal use only).
+
+        If no kw args are given, this yields all documents.
         """
         with self.get_index(all_revs).searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
-            if kw:
-                for doc in searcher.documents(**kw):
-                    yield doc
-            else: # XXX maybe this would make sense to be whoosh default behaviour for documents()?
-                  #     should be implemented for whoosh >= 2.2.3
-                for doc in searcher.all_stored_fields():
-                    yield doc
+            for doc in searcher.documents(**kw):
+                yield doc
 
     def document(self, all_revs=False, **kw):
         """
