@@ -397,7 +397,7 @@ options_no_group_name = {
   # ==========================================================================
   'editor': ('Editor related', None, (
     ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
-    ('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
+    #('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
     ('edit_ticketing', True, None),
   )),
   # ==========================================================================
