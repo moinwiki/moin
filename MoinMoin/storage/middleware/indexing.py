@@ -64,7 +64,7 @@ from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, 
 from whoosh.index import open_dir, create_in, EmptyIndexError
 from whoosh.writing import AsyncWriter
 from whoosh.filedb.multiproc import MultiSegmentWriter
-from whoosh.qparser import QueryParser, MultifieldParser
+from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
@@ -578,6 +578,8 @@ class IndexingMiddleware(object):
             qp = QueryParser(default_fields[0], schema=schema)
         else:
             raise ValueError("default_fields list must at least contain one field name")
+        # TODO before using the RegexPlugin, require a whoosh release that fixes whoosh issues #205 and #206
+        #qp.add_plugin(RegexPlugin())
         return qp
 
     def search(self, q, all_revs=False, **kw):
