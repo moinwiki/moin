@@ -376,16 +376,6 @@ class Item(object):
             raise StorageError("unsupported content object: %r" % content)
         return written
 
-    def copy(self, name, comment=u''):
-        """
-        copy this item to item <name>
-        """
-        old_item = self.rev.item
-        flaskg.storage.copy_item(old_item, name=name)
-        current_rev = old_item.get_revision(CURRENT)
-        # we just create a new revision with almost same meta/data to show up on RC
-        self._save(current_rev, current_rev, name=name, action=u'COPY', comment=comment)
-
     def _rename(self, name, comment, action):
         self._save(self.meta, self.data, name=name, action=action, comment=comment)
 
