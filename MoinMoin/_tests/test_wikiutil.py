@@ -226,7 +226,7 @@ def testfile_headers():
     test_headers = [
                 #test_file               #content_type
                 ('imagefile.gif',       'image/gif'),
-                ('testfile.txt',        'text/plain; charset="utf-8"'),
+                ('testfile.txt',        'text/plain'),
                 ('pdffile.pdf',         'application/pdf'),
                 ('docfile.doc',         'application/msword'),
                 (None,                  'application/octet-stream')
