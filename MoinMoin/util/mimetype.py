@@ -152,8 +152,9 @@ class MimeType(object):
         minor = minor or self.minor
         params = params or self.params or {}
         if major == 'text':
-            charset = charset or self.charset or params.get('charset', config.charset)
-            params['charset'] = charset
+            charset = charset or self.charset
+            if charset:
+                params['charset'] = charset
         mimestr = "%s/%s" % (major, minor)
         params = ['%s="%s"' % (key.lower(), value) for key, value in params.items()]
         params.insert(0, mimestr)
