@@ -695,7 +695,6 @@ There is no help, you're doomed!
                                form=form,
                               )
 
-    copy_template = 'copy.html'
     delete_template = 'delete.html'
     destroy_template = 'destroy.html'
     diff_template = 'diff.html'
