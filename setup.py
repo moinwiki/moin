@@ -88,7 +88,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
         'whoosh>=2.3.0', # needed for indexed search (TODO: 2.3.1 as soon as available on pypi)
-        'sphinx==1.0.7', # needed to build the docs (1.0.8 is broken)
+        'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2',
         'XStatic-CKEditor>=3.6.1.2',
