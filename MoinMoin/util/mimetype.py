@@ -37,11 +37,17 @@ MIMETYPES_MORE = {
  '.irc': 'text/plain',
  '.md5': 'text/plain',
  '.csv': 'text/csv',
+ '.rst': 'text/x-rst',
  '.flv': 'video/x-flv',
  '.wmv': 'video/x-ms-wmv',
  '.swf': 'application/x-shockwave-flash',
+ '.awd': 'application/x-anywikidraw',
+ '.twd': 'application/x-twikidraw',
+ '.swd': 'application/x-svgdraw',
+ '.dbx': 'application/docbook+xml',
  '.moin': 'text/x.moin.wiki',
  '.creole': 'text/x.moin.creole',
+ '.mediawiki': 'text/x-mediawiki',
 }
 
 # add all mimetype patterns of pygments
