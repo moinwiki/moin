@@ -71,7 +71,9 @@ Topic :: Text Processing :: Markup""".splitlines(),
     dependency_links = [
         # hack needed as install from pypi fails for Werkzeug==dev due to
         # wrong dev URL in the long description.
-        'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
+        #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
+        # no whoosh 2.3.1 on pypi yet:
+        'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
     ],
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
@@ -87,7 +89,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
-        'whoosh>=2.3.0', # needed for indexed search (TODO: 2.3.1 as soon as available on pypi)
+        'whoosh>=2.3.1', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2',
