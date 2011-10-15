@@ -66,12 +66,25 @@ class TestConverter(object):
 # 4
 no point
 """, u'''<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>one</p></list-item-body></list-item><list-item><list-item-body><p>two<line-break />spanning more lines<line-break />doesn't break numbering</p></list-item-body></list-item><list-item><list-item-body><p>three</p><list item-label-generate="ordered"><list-item><list-item-body><p>three point one</p></list-item-body></list-item><list-item><list-item-body><p>three point two</p></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>4</p></list-item-body></list-item></list><p>no point</p></body></page>'''),
-            (""";item 1
-: definition 1
-;item 2
-: definition 2-1
-: definition 2-2
-""", u'please add the correct expected value here'),
+            (""";item 1:definition 1
+;item 2:definition 2
+""", u'''\
+<page><body>\
+<list>\
+<list-item>\
+<list-item-label>item 1</list-item-label>\
+<list-item-body><p>definition 1</p></list-item-body>\
+</list-item>\
+<list-item>\
+<list-item-label>item 2</list-item-label>\
+<list-item-body><p>definition 2</p></list-item-body>\
+</list-item>\
+</list>\
+</body></page>\
+'''),
+            # TODO add a test for a definition list with term and definition on separate lines like:
+            # ; term
+            # : definition
             (u";aaa : bbb", u"<page><body><list><list-item><list-item-label>aaa </list-item-label><list-item-body><p> bbb</p></list-item-body></list-item></list></body></page>"),
             (u""": Single indent
 :: Double indent
@@ -82,9 +95,8 @@ no point
 #* two point one
 #* two point two
 # three
-#; three item one
-#: three def one
-""", u'please add the correct expected value here'),
+#; three item one:three def one
+""", u'<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>one</p></list-item-body></list-item><list-item><list-item-body><p>two</p><list item-label-generate="unordered"><list-item><list-item-body><p>two point one</p></list-item-body></list-item><list-item><list-item-body><p>two point two</p></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>three</p><list><list-item><list-item-label>three item one</list-item-label><list-item-body><p>three def one</p></list-item-body></list-item></list></list-item-body></list-item></list></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
