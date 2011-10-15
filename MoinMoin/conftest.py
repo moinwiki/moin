@@ -43,16 +43,6 @@ from MoinMoin._tests import wikiconfig
 from MoinMoin.storage import create_simple_mapping
 from flask import g as flaskg
 
-# In the beginning following variables have no values
-prev_app = None
-prev_cls = None
-prev_ctx = None
-
-def get_previous(self_app, self_ctx, cls):
-    prev_app = self_app
-    prev_ctx = self_ctx
-    prev_cls = cls
-    return prev_app, prev_ctx, prev_cls
 
 def init_test_app(given_config):
     namespace_mapping, acl_mapping = create_simple_mapping("stores:memory:", given_config.content_acl)
@@ -77,42 +67,33 @@ def deinit_test_app(app, ctx):
     ctx.pop()
     destroy_app(app)
 
+
+# we keep state in these globals:
+prev_app = None
+prev_ctx = None
+prev_cfg = None
+
 class MoinTestFunction(pytest.collect.Function):
     def setup(self):
+        global prev_app, prev_ctx, prev_cfg
+
         if inspect.isclass(self.parent.obj.__class__):
             cls = self.parent.obj.__class__
-
-            # global variables so that previous values can be accessed
-            global prev_app, prev_ctx, prev_cls
-
-            if hasattr(cls, 'Config'):
-                if prev_app is not None:
-                    # deinit previous app if previous app value is not None.
-                    deinit_test_app(prev_app, prev_ctx)
-                given_config = cls.Config
-                # init app
-                self.app, self.ctx = init_test_app(given_config)
+            cfg = getattr(cls, 'Config', wikiconfig.Config)
+            if prev_cfg is not cfg and prev_app is not None:
+                # other config, previous app exists, so deinit it:
+                deinit_test_app(prev_app, prev_ctx)
+            if prev_cfg is not cfg or prev_app is None:
+                # other config or no app yet, init app:
+                self.app, self.ctx = init_test_app(cfg)
             else:
-                given_config = wikiconfig.Config
-                # deinit the previous app if previous class had its own configuration
-                if hasattr(prev_cls, 'Config'):
-                    deinit_test_app(prev_app, prev_ctx)
-
-                # Initialize the app in following two conditions:
-                # 1. It is the first test item
-                # 2. Class of previous function item had its own configuration i.e. hasattr(cls, Config)
-                if prev_app is None or hasattr(prev_cls, 'Config'):
-                    self.app, self.ctx = init_test_app(given_config)
-                # continue assigning the values of the previous app and ctx to the current ones.
-                else:
-                    self.app = prev_app
-                    self.ctx = prev_ctx
-
-            # Get the values from the function
-            prev_app, prev_ctx, prev_cls = get_previous(self.app, self.ctx, cls)
-
+                # otherwise continue using the app/ctx we have:
+                self.app = prev_app
+                self.ctx = prev_ctx
+            # remember what we have, for next setup()
+            prev_app, prev_ctx, prev_cfg = self.app, self.ctx, cfg
         else:
-            prev_app, prev_ctx, prev_cls = get_previous(None, None, None)
+            prev_app, prev_ctx, prev_cfg = None, None, None
 
         super(MoinTestFunction, self).setup()
         #XXX: hack till we get better funcarg tools
