@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    Build MoinMoin/util/chartypes.py with
+    Build MoinMoin.constants.chartypes with
     UCS-2 character types (upper/lower/digits/spaces).
 """
 
