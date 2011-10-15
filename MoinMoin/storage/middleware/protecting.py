@@ -16,7 +16,7 @@ from __future__ import absolute_import, division
 
 import logging
 
-from MoinMoin.config import ACL, CREATE, READ, WRITE, OVERWRITE, DESTROY, ADMIN, \
+from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
@@ -38,7 +38,7 @@ class ProtectingMiddleware(object):
         self.indexer = indexer
         self.user = user
         self.acl_mapping = acl_mapping
-        self.valid_rights = ['read', 'write', 'create', 'admin', 'overwrite', 'destroy', ]
+        self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
 
     def get_acls(self, itemname):
         for prefix, acls in self.acl_mapping:
@@ -218,12 +218,12 @@ class ProtectedItem(object):
         if not self:
             self.require(CREATE)
         if overwrite:
-            self.require(OVERWRITE)
+            self.require(DESTROY)
         rev = self.item.store_revision(meta, data, overwrite=overwrite)
         return ProtectedRevision(self.protector, rev, p_item=self)
 
     def store_all_revisions(self, meta, data):
-        self.require(OVERWRITE)
+        self.require(DESTROY)
         self.item.store_all_revisions(meta, data)
 
     def destroy_revision(self, revid):

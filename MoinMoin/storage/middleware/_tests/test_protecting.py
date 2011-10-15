@@ -94,14 +94,14 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         item.store_revision(dict(name=item_name), StringIO('new content'))
 
     def test_overwrite_revision(self):
-        revid_unprotected, revid_protected = self.make_items(u'joe:write,overwrite', u'boss:write,overwrite')
+        revid_unprotected, revid_protected = self.make_items(u'joe:write,destroy', u'boss:write,destroy')
         # now testing:
         item = self.imw[UNPROTECTED]
-        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write,overwrite', revid=revid_unprotected),
+        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write,destroy', revid=revid_unprotected),
                             StringIO(UNPROTECTED_CONTENT), overwrite=True)
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
-            item.store_revision(dict(name=PROTECTED, acl=u'boss:write,overwrite', revid=revid_protected),
+            item.store_revision(dict(name=PROTECTED, acl=u'boss:write,destroy', revid=revid_protected),
                                 StringIO(UNPROTECTED_CONTENT), overwrite=True)
 
     def test_destroy_revision(self):
