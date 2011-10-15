@@ -10,7 +10,7 @@ MoinMoin - kyoto tycoon store tests
 from __future__ import absolute_import, division
 
 import pytest
-pytest.importorskip('storage.stores.kt')
+pytest.importorskip('MoinMoin.storage.stores.kt')
 
 from ..kt import BytesStore, FileStore
 
