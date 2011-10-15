@@ -12,6 +12,14 @@ from __future__ import absolute_import, division
 import pytest
 pytest.importorskip('MoinMoin.storage.stores.kt')
 
+
+from MoinMoin._tests import test_connection
+try:
+    test_connection(1978)
+except Exception as err:
+    pytest.skip(str(err))
+
+
 from ..kt import BytesStore, FileStore
 
 

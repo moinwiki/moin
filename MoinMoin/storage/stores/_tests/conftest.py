@@ -11,10 +11,17 @@ from __future__ import absolute_import, division
 import pytest
 from ..wrappers import ByteToStreamWrappingStore
 
+from MoinMoin._tests import test_connection
+
 STORES_PACKAGE = 'MoinMoin.storage.stores'
 
-STORES = 'fs kc kt memory sqlite sqlite:compressed sqla'.split()
-
+STORES = 'fs kc memory sqlite sqlite:compressed sqla'.split()
+try:
+    # check if we can connect to the kt server
+    test_connection(1978)
+    STORES.append('kt')
+except Exception:
+    pass
 
 constructors = {
     'memory': lambda store, _: store(),
