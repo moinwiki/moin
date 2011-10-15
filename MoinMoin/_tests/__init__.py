@@ -9,6 +9,7 @@
 
 
 import os, shutil
+import socket, errno
 from StringIO import StringIO
 
 from flask import current_app as app
@@ -68,3 +69,19 @@ def nuke_item(name):
     """ complete destroys an item """
     item = Item.create(name)
     item.destroy()
+
+
+def test_connection(port, host='127.0.0.1'):
+    """
+    Check if we can make a connection to host:port.
+
+    If not, raise Exception with a meaningful msg.
+    """
+    try:
+        s = socket.create_connection((host, port))
+        s.shutdown(socket.SHUT_RDWR)
+        s.close()
+    except socket.error as err:
+        raise Exception("connecting to %s:%d, error: %s" % (host, port, str(err)))
+
+
