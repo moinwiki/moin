@@ -36,7 +36,7 @@ def get_current_theme():
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning("theme %s was not found; using default of %s instead." % (theme_name, app.cfg.theme_default))
+        logging.warning("Theme {0} was not found; using default of {1} instead.".format(theme_name, app.cfg.theme_default))
         theme_name = app.cfg.theme_default
         return get_theme(theme_name)
 
@@ -127,7 +127,7 @@ class ThemeSupport(object):
             aliasname = name
 
         wikiname, itemname = getInterwikiHome(name)
-        title = "%s @ %s" % (aliasname, wikiname)
+        title = "{0} @ {1}".format(aliasname, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -229,10 +229,10 @@ class ThemeSupport(object):
                                 pass # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)
-                        logging.info("Site: %s Status: Updated. Pages: %d" % (sistername, len(sisteritems)))
+                        logging.info("Site: {0} Status: Updated. Pages: {1}".format(sistername, len(sisteritems)))
                     except IOError as err:
                         (title, code, msg, headers) = err.args # code e.g. 304
-                        logging.warning("Site: %s Status: Not updated." % sistername)
+                        logging.warning("Site: {0} Status: Not updated.".format(sistername))
                         logging.exception("exception was:")
                 if current in sisteritems:
                     url = sisteritems[current]
@@ -283,11 +283,11 @@ def get_editor_info(meta, external=False):
         # only tell ip / hostname if show_hosts is True
         if hostname:
             text = hostname[:15]  # 15 = len(ipaddr)
-            name = title = '%s[%s]' % (hostname, addr)
+            name = title = '{0}[{1}]'.format(hostname, addr)
             css = 'editor host'
         else:
             name = text = addr
-            title = '[%s]' % (addr, )
+            title = '[{0}]'.format(addr)
             css = 'editor ip'
 
     userid = meta.get(USERID)
@@ -300,7 +300,7 @@ def get_editor_info(meta, external=False):
             aliasname = name
         if title:
             # we already have some address info
-            title = "%s @ %s" % (aliasname, title)
+            title = "{0} @ {1}".format(aliasname, title)
         else:
             title = aliasname
         if u.mailto_author and u.email:
@@ -341,7 +341,7 @@ def shorten_item_name(name, length=25):
         # If it's not enough, replace the middle with '...'
         if len(name) > length:
             half, left = divmod(length - 3, 2)
-            name = u'%s...%s' % (name[:half + left], name[-half:])
+            name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
 
@@ -363,7 +363,7 @@ def contenttype_to_class(contenttype):
     if not cls:
         # just use the major part of mimetype
         cls = contenttype.split('/', 1)[0]
-    return 'moin-mime-%s' % cls
+    return 'moin-mime-{0}'.format(cls)
 
 
 def utctimestamp(dt):

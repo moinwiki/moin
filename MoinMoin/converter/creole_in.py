@@ -668,7 +668,7 @@ class Converter(ConverterMacro):
         Call the _repl method for the last matched group with the given prefix.
         """
         data = dict(((k, v) for k, v in match.groupdict().iteritems() if v is not None))
-        getattr(self, '%s_%s_repl' % (prefix, match.lastgroup))(*args, **data)
+        getattr(self, '{0}_{1}_repl'.format(prefix, match.lastgroup))(*args, **data)
 
     def parse_block(self, iter_content, arguments):
         attrib = {}

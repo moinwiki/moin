@@ -50,7 +50,7 @@ class Namespace(unicode):
         return Name(key, self)
 
     def __repr__(self):
-        return '<%s(%r)>' % (self.__class__.__name__, self)
+        return '<{0}({1!r})>'.format(self.__class__.__name__, self)
 
     @property
     def namespace(self):

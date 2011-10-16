@@ -43,7 +43,7 @@ class Version(tuple):
     def parse_version(cls, version):
         match = cls.VERSION_RE.match(version)
         if match is None:
-            raise ValueError("Unexpected version string format: %r" % version)
+            raise ValueError("Unexpected version string format: {0!r}".format(version))
         v = match.groupdict()
         return int(v['major']), int(v['minor']), int(v['release']), str(v['additional'] or 'd0')
 
@@ -60,7 +60,7 @@ class Version(tuple):
     additional = property(lambda self: self[3] if self[3] != 'd0' else '')
 
     def __str__(self):
-        version_str = "%d.%d.%d" % (self.major, self.minor, self.release)
+        version_str = "{0}.{1}.{2}".format(self.major, self.minor, self.release)
         if self.additional != 'd0':
             version_str += self.additional
         return version_str

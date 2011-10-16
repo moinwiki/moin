@@ -64,7 +64,7 @@ class Type(object):
         return not ret
 
     def __repr__(self):
-        return '<%s object: type: %r; subtype: %r; parameters: %r>' % (
+        return '<{0} object: type: {1!r}; subtype: {2!r}; parameters: {3!r}>'.format(
                 self.__class__.__name__,
                 self.type,
                 self.subtype,
@@ -72,14 +72,14 @@ class Type(object):
                 )
 
     def __unicode__(self):
-        ret = [u'%s/%s' % (self.type or '*', self.subtype or '*')]
+        ret = [u'{0}/{1}'.format(self.type or '*', self.subtype or '*')]
 
         parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
-                ret.append(u'%s=%s' % (key, value))
+                ret.append(u'{0}={1}'.format(key, value))
             else:
-                ret.append(u'%s="%s"' % (key, value))
+                ret.append(u'{0}="{1}"'.format(key, value))
 
         return u';'.join(ret)
 

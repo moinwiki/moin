@@ -65,7 +65,7 @@ def url_for_item(item_name, wiki_name='', rev=CURRENT, endpoint='frontend.show_i
         try:
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
         except KeyError, err:
-            logging.warning("no interwiki_map entry for %r" % wiki_name)
+            logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
             url = '' # can we find something useful?
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
@@ -132,7 +132,7 @@ def getInterwikiName(item_name):
     :rtype: unicode
     :returns: wiki_name:item_name
     """
-    return "%s:%s" % (app.cfg.interwikiname, item_name)
+    return "{0}:{1}".format(app.cfg.interwikiname, item_name)
 
 
 def getInterwikiHome(username):

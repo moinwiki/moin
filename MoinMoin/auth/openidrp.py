@@ -59,7 +59,7 @@ class OpenIDAuth(BaseAuth):
         if oid_info.status == consumer.FAILURE:
             # verification has failed
             # return an error message with description of error
-            logging.debug("OpenIDError: %s" % oid_info.message)
+            logging.debug("OpenIDError: {0}".format(oid_info.message))
 
             error_message = _('OpenID Error')
             return CancelLogin(error_message)
@@ -70,7 +70,7 @@ class OpenIDAuth(BaseAuth):
             # return error
             return CancelLogin(_('OpenID verification cancelled.'))
         elif oid_info.status == consumer.SUCCESS:
-            logging.debug('OpenID success. id: %s' % oid_info.identity_url)
+            logging.debug('OpenID success. id: {0}'.format(oid_info.identity_url))
 
             # we get the provider's url
             # and the list of trusted providers

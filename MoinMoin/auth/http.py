@@ -50,27 +50,26 @@ class HTTPAuthMoin(BaseAuth):
 
         auth = request.authorization
         if auth and auth.username and auth.password is not None:
-            logging.debug("http basic auth, received username: %r password: %r" % (
-                          auth.username, auth.password))
+            logging.debug("http basic auth, received username: {0!r} password: {1!r}".format(auth.username, auth.password))
             u = user.User(name=auth.username.decode(self.coding),
                           password=auth.password.decode(self.coding),
                           auth_method=self.name, auth_attribs=[])
-            logging.debug("user: %r" % u)
+            logging.debug("user: {0!r}".format(u))
 
         if not u or not u.valid:
             from werkzeug import Response, abort
             response = Response(_('Please log in first.'), 401,
-                                {'WWW-Authenticate': 'Basic realm="%s"' % self.realm})
+                                {'WWW-Authenticate': 'Basic realm="{0}"'.format(self.realm)})
             abort(response)
 
-        logging.debug("u: %r" % u)
+        logging.debug("u: {0!r}".format(u))
         if u and self.autocreate:
             logging.debug("autocreating user")
             u.create_or_update()
         if u and u.valid:
-            logging.debug("returning valid user %r" % u)
+            logging.debug("returning valid user {0!r}".format(u))
             return u, True # True to get other methods called, too
         else:
-            logging.debug("returning %r" % user_obj)
+            logging.debug("returning {0!r}".format(user_obj))
             return user_obj, True
 

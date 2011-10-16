@@ -50,7 +50,7 @@ def encodeAddress(address, charset):
         blanks = match.group('blanks')
         addr = match.group('addr')
         if phrase:
-            return "%s%s<%s>" % (str(phrase), str(blanks), str(addr))
+            return "{0!s}{1!s}<{2!s}>".format(phrase, blanks, addr)
         else:
             return str(addr)
     else:
@@ -79,8 +79,8 @@ def sendmail(to, subject, text, mail_from=None):
     cfg = app.cfg
     mail_from = mail_from or cfg.mail_from
 
-    logging.debug("send mail, from: %r, subj: %r" % (mail_from, subject))
-    logging.debug("send mail, to: %r" % (to, ))
+    logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
+    logging.debug("send mail, to: {0!r}".format(to))
 
     if not to:
         return (1, _("No recipients, nothing to do"))
@@ -128,7 +128,7 @@ def sendmail(to, subject, text, mail_from=None):
     # Send the message
     if not cfg.mail_sendmail:
         try:
-            logging.debug("trying to send mail (smtp) via smtp server '%s'" % cfg.mail_smarthost)
+            logging.debug("trying to send mail (smtp) via smtp server '{0}'".format(cfg.mail_smarthost))
             host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
             server = smtplib.SMTP(host, int(port))
             try:
@@ -142,7 +142,7 @@ def sendmail(to, subject, text, mail_from=None):
                             logging.debug("tls connection to smtp server established")
                     except:
                         logging.debug("could not establish a tls connection to smtp server, continuing without tls")
-                    logging.debug("trying to log in to smtp server using account '%s'" % cfg.mail_username)
+                    logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
                     server.login(cfg.mail_username, cfg.mail_password)
                 server.sendmail(mail_from, to, msg.as_string())
             finally:
@@ -168,7 +168,7 @@ def sendmail(to, subject, text, mail_from=None):
             sendmailp.write(msg.as_string())
             sendmail_status = sendmailp.close()
             if sendmail_status:
-                logging.error("sendmail failed with status: %s" % str(sendmail_status))
+                logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
                 return (0, str(sendmail_status))
         except:
             logging.exception("sendmail failed with an exception.")
@@ -195,10 +195,10 @@ def encodeSpamSafeEmail(email_address, obfuscation_text=''):
     address = email_address.lower()
     # uppercase letters will be stripped by decodeSpamSafeEmail
     for word, sign in _transdict.items():
-        address = address.replace(sign, ' %s ' % word)
+        address = address.replace(sign, ' {0} '.format(word))
     if obfuscation_text.isalpha():
         # is the obfuscation_text alphabetic
-        address = address.replace(' AT ', ' AT %s ' % obfuscation_text.upper())
+        address = address.replace(' AT ', ' AT {0} '.format(obfuscation_text.upper()))
 
     return address
 

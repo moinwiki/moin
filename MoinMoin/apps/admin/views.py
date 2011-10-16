@@ -77,9 +77,9 @@ def userprofile(user_name):
         if ok:
             setattr(u, key, val)
             u.save()
-            flash('%s.%s: %s -> %s' % (user_name, key, unicode(oldval), unicode(val), ), "info")
+            flash('{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
-            flash('modifying %s.%s failed' % (user_name, key, ), "error")
+            flash('modifying {0}.{1} failed'.format(user_name, key, ), "error")
     return redirect(url_for('.userbrowser'))
 
 
@@ -167,7 +167,7 @@ def wikiconfighelp():
         if isinstance(default, defaultconfig.DefaultExpression):
             default_txt = default.text
         else:
-            default_txt = '%r' % (default, )
+            default_txt = repr(default)
             if len(default_txt) > 30:
                 default_txt = '...'
         return default_txt

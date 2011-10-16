@@ -48,12 +48,12 @@ class _Store(MutableStoreBase):
     def create(self):
         conn = connect(self.db_name)
         with conn:
-            conn.execute('create table %s (key text primary key, value blob)' % self.table_name)
+            conn.execute('create table {0} (key text primary key, value blob)'.format(self.table_name))
 
     def destroy(self):
         conn = connect(self.db_name)
         with conn:
-            conn.execute('drop table %s' % self.table_name)
+            conn.execute('drop table {0}'.format(self.table_name))
 
     def open(self):
         self.conn = connect(self.db_name)
@@ -63,12 +63,12 @@ class _Store(MutableStoreBase):
         pass
 
     def __iter__(self):
-        for row in self.conn.execute("select key from %s" % self.table_name):
+        for row in self.conn.execute("select key from {0}".format(self.table_name)):
             yield row['key']
 
     def __delitem__(self, key):
         with self.conn:
-            self.conn.execute('delete from %s where key=?' % self.table_name, (key, ))
+            self.conn.execute('delete from {0} where key=?'.format(self.table_name), (key, ))
 
     def _compress(self, value):
         if self.compression_level:
@@ -89,7 +89,7 @@ class _Store(MutableStoreBase):
 
 class BytesStore(_Store, BytesMutableStoreBase):
     def __getitem__(self, key):
-        rows = list(self.conn.execute("select value from %s where key=?" % self.table_name, (key, )))
+        rows = list(self.conn.execute("select value from {0} where key=?".format(self.table_name), (key, )))
         if not rows:
             raise KeyError(key)
         value = str(rows[0]['value'])
@@ -98,12 +98,12 @@ class BytesStore(_Store, BytesMutableStoreBase):
     def __setitem__(self, key, value):
         value = self._compress(value)
         with self.conn:
-            self.conn.execute('insert into %s values (?, ?)' % self.table_name, (key, buffer(value)))
+            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
 
 
 class FileStore(_Store, FileMutableStoreBase):
     def __getitem__(self, key):
-        rows = list(self.conn.execute("select value from %s where key=?" % self.table_name, (key, )))
+        rows = list(self.conn.execute("select value from {0} where key=?".format(self.table_name), (key, )))
         if not rows:
             raise KeyError(key)
         value = str(rows[0]['value'])
@@ -113,5 +113,5 @@ class FileStore(_Store, FileMutableStoreBase):
         value = stream.read()
         value = self._compress(value)
         with self.conn:
-            self.conn.execute('insert into %s values (?, ?)' % self.table_name, (key, buffer(value)))
+            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
 

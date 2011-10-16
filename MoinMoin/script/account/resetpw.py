@@ -41,7 +41,7 @@ class Set_Password(Command):
             u = user.User(auth_username=name)
 
         if not u.exists():
-            print 'This user "%s" does not exists!' % u.name
+            print 'This user "{0}" does not exists!'.format(u.name)
             return
 
         u.enc_password = crypto.crypt_password(password)

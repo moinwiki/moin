@@ -23,7 +23,7 @@ class TestPasswordChecker(object):
         (u'BBBaaaddd', False), # not enough different chars
         (username, False), # username == password
         (username[1:-1], False), # password in username
-        (u"XXX%sXXX" % username, False), # username in password
+        (u"XXX{0}XXX".format(username), False), # username in password
         (u'Moin-2007', True), # this should be OK
     ]
     def testBuiltinPasswordChecker(self):
@@ -33,7 +33,7 @@ class TestPasswordChecker(object):
         else:
             for pw, result in self.tests_builtin:
                 pw_error = pw_checker(self.username, pw)
-                print "%r: %s" % (pw, pw_error)
+                print "{0!r}: {1}".format(pw, pw_error)
                 assert result == (pw_error is None)
 
 coverage_modules = ['MoinMoin.config.default']

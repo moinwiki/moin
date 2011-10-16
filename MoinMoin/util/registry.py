@@ -34,7 +34,7 @@ class RegistryBase(object):
             return NotImplemented
 
         def __repr__(self):
-            return '<%s: prio %d [%r]>' % (self.__class__.__name__,
+            return '<{0}: prio {1} [{2!r}]>'.format(self.__class__.__name__,
                     self.priority,
                     self.factory)
 
@@ -42,7 +42,7 @@ class RegistryBase(object):
         self._entries = []
 
     def __repr__(self):
-        return '<%s: %r>' % (self.__class__.__name__, self._entries)
+        return '<{0}: {1!r}>'.format(self.__class__.__name__, self._entries)
 
     def get(self, *args, **kw):
         """

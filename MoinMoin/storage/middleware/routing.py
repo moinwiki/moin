@@ -66,21 +66,21 @@ class Backend(MutableBackendBase):
             if itemname == mountpoint or itemname.startswith(mountpoint and mountpoint + '/' or ''):
                 lstrip = mountpoint and len(mountpoint)+1 or 0
                 return backend, itemname[lstrip:], mountpoint
-        raise AssertionError("No backend found for %r. Available backends: %r" % (itemname, self.mapping))
+        raise AssertionError("No backend found for {0!r}. Available backends: {1!r}".format(itemname, self.mapping))
 
     def __iter__(self):
         # Note: yields <backend_mountpoint>/<backend_revid> as router revid, so that this
         #       can be given to get_revision and be routed to the right backend.
         for mountpoint, backend in self.mapping:
             for revid in backend:
-                yield u'%s:%s' % (mountpoint, revid)
+                yield u'{0}:{1}'.format(mountpoint, revid)
 
     def retrieve(self, revid):
         mountpoint, revid = revid.rsplit(u':', 1)
         backend = self._get_backend(mountpoint)[0]
         meta, data = backend.retrieve(revid)
         if mountpoint:
-            meta[NAME] = u'%s/%s' % (mountpoint, meta[NAME])
+            meta[NAME] = u'{0}/{1}'.format(mountpoint, meta[NAME])
         return meta, data
 
     # writing part
@@ -100,16 +100,14 @@ class Backend(MutableBackendBase):
         itemname = meta[NAME]
         backend, itemname, mountpoint = self._get_backend(itemname)
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend %r mounted at %r is readonly' % (
-                backend, mountpoint))
+            raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
         meta[NAME] = itemname
-        return u'%s:%s' % (mountpoint, backend.store(meta, data))
+        return u'{0}:{1}'.format(mountpoint, backend.store(meta, data))
 
     def remove(self, revid):
         mountpoint, revid = revid.rsplit(u':', 1)
         backend = self._get_backend(mountpoint)[0]
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend %r mounted at %r is readonly' % (
-                backend, mountpoint))
+            raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
         backend.remove(revid)
 

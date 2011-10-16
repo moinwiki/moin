@@ -316,7 +316,7 @@ class TestItemAcls(object):
 
             def _have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert can_access, "%r may %s %r (normal)" % (u.name, right, itemname)
+                assert can_access, "{0!r} may {1} {2!r} (normal)".format(u.name, right, itemname)
 
             # User should have these rights...
             for right in may:
@@ -324,7 +324,7 @@ class TestItemAcls(object):
 
             def _not_have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "%r may not %s %r (normal)" % (u.name, right, itemname)
+                assert not can_access, "{0!r} may not {1} {2!r} (normal)".format(u.name, right, itemname)
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents
@@ -394,7 +394,7 @@ class TestItemHierachicalAcls(object):
 
             def _have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert can_access, "%r may %s %r (hierarchic)" % (u.name, right, itemname)
+                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
             # User should have these rights...
             for right in may:
@@ -402,7 +402,7 @@ class TestItemHierachicalAcls(object):
 
             def _not_have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "%r may not %s %r (hierarchic)" % (u.name, right, itemname)
+                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents

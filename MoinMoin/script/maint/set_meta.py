@@ -71,9 +71,9 @@ class Set_Meta(Command):
             if not remove:
                 # Set or overwrite given metadata key with text
                 next_rev[key] = literal_eval(value)
-                print "Processing %r, setting %s=%r." % (item_name, key, value)
+                print "Processing {0!r}, setting {1}={2!r}.".format(item_name, key, value)
             else:
-                print "Processing %r, removing %s." % (item_name, key)
+                print "Processing {0!r}, removing {1}.".format(item_name, key)
 
             item.commit()
 

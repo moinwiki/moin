@@ -19,7 +19,7 @@ class AuthLog(BaseAuth):
     name = "log"
 
     def log(self, action, user_obj, kw):
-        logging.info('%s: user_obj=%r kw=%r' % (action, user_obj, kw))
+        logging.info('{0}: user_obj={1!r} kw={2!r}'.format(action, user_obj, kw))
 
     def login(self, user_obj, **kw):
         self.log('login', user_obj, kw)

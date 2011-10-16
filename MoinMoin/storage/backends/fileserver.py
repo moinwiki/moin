@@ -110,8 +110,8 @@ class Backend(BackendBase):
                 u"= Directory contents =",
                 u" * [[../]]",
             ]
-            content.extend(u" * [[/%s|%s/]]" % (name, name) for name in sorted(dirs))
-            content.extend(u" * [[/%s|%s]]" % (name, name) for name in sorted(files))
+            content.extend(u" * [[/{0}|{1}/]]".format(name, name) for name in sorted(dirs))
+            content.extend(u" * [[/{0}|{1}]]".format(name, name) for name in sorted(files))
             content.append(u"")
             content = u'\r\n'.join(content)
         except OSError as err:

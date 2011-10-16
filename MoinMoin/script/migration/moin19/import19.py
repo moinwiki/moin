@@ -98,7 +98,7 @@ class ImportMoin19(Command):
                     meta[USERID] = userid_map[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print "lost %r" % meta[USERID]
+                    print "lost {0!r}".format(meta[USERID])
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
@@ -150,7 +150,7 @@ class PageBackend(object):
             try:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname)
             except Exception as err:
-                logging.exception("PageItem %r raised exception:" % itemname)
+                logging.exception("PageItem {0!r} raised exception:".format(itemname))
             else:
                 for rev in item.iter_revisions():
                     yield rev
@@ -174,7 +174,7 @@ class PageItem(object):
         self.acl = None # TODO
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
-            revpath = os.path.join(self.path, 'revisions', '%08d' % self.current)
+            revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             PageRevision(self, self.current, revpath) # will raise exception if killing is requested
 
     def iter_revisions(self):
@@ -189,7 +189,7 @@ class PageItem(object):
                 revno = int(fname)
                 yield PageRevision(self, revno, os.path.join(revisionspath, fname))
             except Exception as err:
-                logging.exception("PageRevision %r %r raised exception:" % (self.name, fname))
+                logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
 
     def iter_attachments(self):
         attachmentspath = os.path.join(self.path, 'attachments')
@@ -202,7 +202,7 @@ class PageItem(object):
             try:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname), self.editlog, self.acl)
             except Exception as err:
-                logging.exception("AttachmentRevision %r/%r raised exception:" % (self.name, attachname))
+                logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
 
 class PageRevision(object):
@@ -247,8 +247,7 @@ class PageRevision(object):
                         ACTION: u'SAVE/DELETE',
                     }
                 else:
-                    raise NoSuchRevisionError('Item %r has no revision %d (not even a deleted one)!' %
-                            (item.name, revno))
+                    raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(item.name, revno))
         else:
             try:
                 editlog_data = editlog.find_rev(revno)
@@ -333,7 +332,7 @@ class AttachmentRevision(object):
                 MTIME: int(os.path.getmtime(attpath)),
                 ACTION: u'SAVE',
             }
-        meta[NAME] = u'%s/%s' % (item_name, attach_name)
+        meta[NAME] = u'{0}/{1}'.format(item_name, attach_name)
         if acl is not None:
             meta[ACL] = acl
         meta[CONTENTTYPE] = unicode(MimeType(filename=attach_name).content_type())
@@ -426,13 +425,13 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
         if (entries, rights) == (['Default'], []):
             result.append("Default")
         else:
-            result.append("%s%s:%s" % (
+            result.append("{0}{1}:{2}".format(
                           modifier,
                           u','.join(entries),
                           u','.join(rights) # iterator has removed invalid rights
                          ))
     result = u' '.join(result)
-    logging.debug("regenerate_acl %r -> %r" % (acl_string, result))
+    logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
 
 
@@ -587,7 +586,7 @@ class UserBackend(object):
                 try:
                     rev = UserRevision(self.path, uid)
                 except Exception as err:
-                    logging.exception("Exception in user item processing %s" % uid)
+                    logging.exception("Exception in user item processing {0}".format(uid))
                 else:
                     yield rev
 
@@ -606,6 +605,6 @@ def hash_hexdigest(content, bufsize=4096):
         hash.update(content)
         size = len(content)
     else:
-        raise ValueError("unsupported content object: %r" % content)
+        raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
 

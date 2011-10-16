@@ -272,7 +272,7 @@ def anchor_name_from_text(text):
     quoted = werkzeug.url_quote_plus(text, charset='utf-7', safe=':')
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
-        return 'A%s' % res
+        return 'A{0}'.format(res)
     return res
 
 def split_anchor(pagename):

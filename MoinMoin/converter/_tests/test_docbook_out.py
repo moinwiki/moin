@@ -23,13 +23,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.converter.docbook_out import *
 
 class Base(object):
-    input_namespaces = ns_all = 'xmlns="%s" xmlns:page="%s" xmlns:html="%s" xmlns:xlink="%s" xmlns:xml="%s"' % (
-        moin_page.namespace,
-        moin_page.namespace,
-        html.namespace,
-        xlink.namespace,
-        xml.namespace,
-    )
+    input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:html="{2}" xmlns:xlink="{3}" xmlns:xml="{4}"'.format(moin_page.namespace, moin_page.namespace, html.namespace, xlink.namespace, xml.namespace)
     output_namespaces = {
         docbook.namespace: '',
         moin_page.namespace: 'page',
@@ -57,7 +51,7 @@ class Base(object):
     def do(self, input, xpath, args={}):
         out = self.conv(self.handle_input(input), **args)
         string_to_parse = self.handle_output(out)
-        logging.debug("After the docbook_OUT conversion : %s" % string_to_parse)
+        logging.debug("After the docbook_OUT conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
         assert (tree.xpath(xpath, namespaces=self.namespaces_xpath))
 

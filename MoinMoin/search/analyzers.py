@@ -31,7 +31,7 @@ class MimeTokenizer(Tokenizer):
             instead of 0,1,2,...
         :param positions: Whether to record token positions in the token.
         """
-        assert isinstance(value, unicode), "%r is not unicode" % value
+        assert isinstance(value, unicode), "{0!r} is not unicode".format(value)
         if u'/' not in value: # Add '/' if user forgot do this
             value += u'/'
         pos = start_pos
@@ -59,7 +59,7 @@ class MimeTokenizer(Tokenizer):
                 pos += 1
             yield tk
         for key, value in tp.parameters.items():
-            tk.text = u"%s=%s" % (key, value)
+            tk.text = u"{0}={1}".format(key, value)
             if positions:
                 tk.pos = pos
                 pos += 1
@@ -114,7 +114,7 @@ class AclTokenizer(Tokenizer):
             for name, permissions in acl.acl:
                 for permission in permissions:
                     sign = "+" if permissions[permission] else "-"
-                    tk.text = u"%s:%s%s" % (name, sign, permission)
+                    tk.text = u"{0}:{1}{2}".format(name, sign, permission)
                     if positions:
                         tk.pos = pos
                         pos += 1

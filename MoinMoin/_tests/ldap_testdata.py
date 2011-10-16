@@ -7,7 +7,7 @@ MoinMoin - LDAP test data
 
 
 BASEDN = "ou=testing,dc=example,dc=org"
-ROOTDN = "cn=root,%s" % BASEDN
+ROOTDN = "cn=root,{0}".format(BASEDN)
 ROOTPW = "secret"
 
 SLAPD_CONFIG = """\

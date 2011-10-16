@@ -63,7 +63,7 @@ def update_item(name, meta, data):
 def create_random_string_list(length=14, count=10):
     """ creates a list of random strings """
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    return [u"%s" % random_string(length, chars) for counter in range(count)]
+    return [u"{0}".format(random_string(length, chars)) for counter in range(count)]
 
 def nuke_item(name):
     """ complete destroys an item """
@@ -82,6 +82,6 @@ def test_connection(port, host='127.0.0.1'):
         s.shutdown(socket.SHUT_RDWR)
         s.close()
     except socket.error as err:
-        raise Exception("connecting to %s:%d, error: %s" % (host, port, str(err)))
+        raise Exception("connecting to {0}:{1:d}, error: {2!s}".format(host, port, err))
 
 

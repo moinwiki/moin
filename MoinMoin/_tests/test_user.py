@@ -24,7 +24,7 @@ class TestSimple(object):
         email = u"foo@example.org"
         # first create a user
         ret = user.create_user(name, password, email, validate=False)
-        assert ret is None, "create_user returned: %s" % ret
+        assert ret is None, "create_user returned: {0}".format(ret)
         # now try to use it
         u = user.User(name=name, password=password)
         assert u.name == name
@@ -384,7 +384,7 @@ class TestLoginWithPassword(object):
 
     def createUser(self, name, password, pwencoded=False, email=None, validate=False):
         ret = user.create_user(name, password, email, validate=validate, is_encrypted=pwencoded)
-        assert ret is None, "create_user returned: %s" % ret
+        assert ret is None, "create_user returned: {0}".format(ret)
 
 
 class TestGroupName(object):
@@ -403,9 +403,9 @@ class TestIsValidName(object):
         : and , used in acl rules, we might add more characters to the syntax.
         """
         invalid = u'! # $ % ^ & * ( ) = + , : ; " | ~ / \\ \u0000 \u202a'.split()
-        base = u'User%sName'
+        base = u'User{0}Name'
         for c in invalid:
-            name = base % c
+            name = base.format(c)
             assert not user.isValidName(name)
 
     def testWhitespace(self):

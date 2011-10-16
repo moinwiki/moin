@@ -57,7 +57,7 @@ class Profiler:
         :param requestsPerSample: how many request to run between samples
         :param collect: should call gc.collect() in each sample
         """
-        logname = '%s--%s.log' % (name, time.strftime('%Y-%m-%d--%H-%M'))
+        logname = '{0}--{1}.log'.format(name, time.strftime('%Y-%m-%d--%H-%M'))
         self.logfile = file(logname, 'a')
         self.requestsPerSample = requestsPerSample
         self.collect = collect
@@ -119,7 +119,7 @@ class Profiler:
         Uses ps call, maybe we should use procfs on Linux or maybe
         getrusage system call (using the ctypes module).
         """
-        lines = os.popen('/bin/ps -p %s -o rss' % self.pid).readlines()
+        lines = os.popen('/bin/ps -p {0} -o rss'.format(self.pid)).readlines()
         self.data['memory'] = lines[1].strip()
 
     def _log(self):

@@ -43,7 +43,7 @@ class Backend(BackendBase):
     def from_uri(cls, uri):
         store_name_uri = uri.split(':', 1)
         if len(store_name_uri) != 2:
-            raise ValueError("malformed store uri: %s" % uri)
+            raise ValueError("malformed store uri: {0}".format(uri))
         store_name, store_uri = store_name_uri
         module = __import__(STORES_PACKAGE + '.' + store_name, globals(), locals(), ['BytesStore', 'FileStore', ])
         meta_store_uri = store_uri % dict(kind='meta')
@@ -139,14 +139,12 @@ class MutableBackend(Backend, MutableBackendBase):
             size_expected = meta.get(SIZE)
             size_real = tfw.size
             if size_expected is not None and size_expected != size_real:
-                raise ValueError("computed data size (%d) does not match data size declared in metadata (%d)" % (
-                                 size_real, size_expected))
+                raise ValueError("computed data size ({0}) does not match data size declared in metadata ({1})".format(size_real, size_expected))
             meta[SIZE] = size_real
             hash_expected = meta.get(HASH_ALGORITHM)
             hash_real = tfw.hash.hexdigest()
             if hash_expected is not None and hash_expected != hash_real:
-                raise ValueError("computed data hash (%s) does not match data hash declared in metadata (%s)" % (
-                                 hash_real, hash_expected))
+                raise ValueError("computed data hash ({0}) does not match data hash declared in metadata ({1})".format(hash_real, hash_expected))
             meta[HASH_ALGORITHM] = hash_real
         else:
             dataid = meta[DATAID]

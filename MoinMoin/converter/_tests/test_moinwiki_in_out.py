@@ -22,10 +22,7 @@ from MoinMoin.converter.moinwiki_out import Converter as conv_out
 
 class TestConverter(object):
 
-    input_namespaces =  'xmlns="%s" xmlns:page="%s" xmlns:xlink="%s"' % (
-        moin_page.namespace,
-        moin_page.namespace,
-        xlink.namespace)
+    input_namespaces =  'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}"'.format(moin_page.namespace, moin_page.namespace, xlink.namespace)
 
     namespaces = {
         moin_page.namespace: 'page',

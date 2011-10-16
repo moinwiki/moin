@@ -229,11 +229,11 @@ class Converter(object):
 
         # We should ignore this tag
         if element.tag.name in self.ignored_tags:
-            logging.debug("WARNING : Ignored tag : %s" % element.tag.name)
+            logging.debug("WARNING : Ignored tag : {0}".format(element.tag.name))
             return
 
         # Otherwise we process children of the unknown element
-        logging.debug("WARNING : Unknown tag : %s" % element.tag.name)
+        logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
         return self.do_children(element)
 
     def visit_xhtml_base(self, element):

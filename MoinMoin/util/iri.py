@@ -162,7 +162,7 @@ class Iri(object):
         return not ret
 
     def __repr__(self):
-        return '%s(scheme=%r, authority=%r, path=%r, query=%r, fragment=%r)' % (
+        return '{0}(scheme={1!r}, authority={2!r}, path={3!r}, query={4!r}, fragment={5!r})'.format(
                 self.__class__.__name__,
                 self.scheme,
                 self._authority,
@@ -459,7 +459,7 @@ class IriAuthority(object):
         return False
 
     def __repr__(self):
-        return '%s(userinfo=%r, host=%r, port=%r)' % (
+        return '{0}(userinfo={1!r}, host={2!r}, port={3!r})'.format(
                 self.__class__.__name__,
                 self._userinfo,
                 self._host,
@@ -622,7 +622,7 @@ class IriPath(object):
         return u'/'.join(self._list)
 
     def __repr__(self):
-        return '%s(%r)' % (
+        return '{0}({1!r})'.format(
                 self.__class__.__name__,
                 unicode(self),
                 )

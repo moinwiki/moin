@@ -56,7 +56,7 @@ class RegistryConverter(RegistryBase):
             return NotImplemented
 
         def __repr__(self):
-            return '<%s: input %s, output %s, prio %d [%r]>' % (self.__class__.__name__,
+            return '<{0}: input {1}, output {2}, prio {3} [{4!r}]>' % (self.__class__.__name__,
                     self.type_input,
                     self.type_output,
                     self.priority,

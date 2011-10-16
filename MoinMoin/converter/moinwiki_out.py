@@ -139,7 +139,7 @@ class Converter(object):
                 elif self.status[-1] == "text":
                     if self.last_closed == "p":
                         ret = u'\n'
-                childrens_output.append(u'%s%s' % (ret, child))
+                childrens_output.append(u'{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
         return u''.join(childrens_output)
 
@@ -171,7 +171,7 @@ class Converter(object):
         params['class'] = elem.get(xlink.class_, None)
         params['title'] = elem.get(xlink.title, None)
         params['accesskey'] = elem.get(xlink.accesskey, None)
-        params = u','.join([u'%s=%s' % (p, params[p]) for p in params if params[p]])
+        params = u','.join([u'{0}={1}'.format(p, params[p]) for p in params if params[p]])
 
         # XXX: We don't have Iri support for now
         from MoinMoin.util.iri import Iri
@@ -204,7 +204,7 @@ class Converter(object):
         for s in findall(r'}+', text):
             if max_subpage_lvl <= len(s):
                 max_subpage_lvl = len(s) + 1
-        ret = u'%s\n%s\n%s\n' % (Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
+        ret = u'{0}\n{1}\n{2}\n'.format(Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
         return ret
 
     def open_moinpage_code(self, elem):
@@ -218,7 +218,7 @@ class Converter(object):
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return u"%s%s%s" % (Moinwiki.emphasis, childrens_output, Moinwiki.emphasis)
+        return u"{0}{1}{2}".format(Moinwiki.emphasis, childrens_output, Moinwiki.emphasis)
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -232,7 +232,7 @@ class Converter(object):
             level = 6
         ret = Moinwiki.h * level + u' '
         ret += u''.join(elem.itertext())
-        ret += u' %s\n' % (Moinwiki.h * level)
+        ret += u' {0}\n'.format(Moinwiki.h * level)
         return ret
 
     def open_moinpage_line_break(self, elem):
@@ -257,7 +257,7 @@ class Converter(object):
             ret_end = u''
         else:
             ret_end = u'\n'
-        return "%s%s%s" % (ret, childrens_output, ret_end)
+        return "{0}{1}{2}".format(ret, childrens_output, ret_end)
 
     def open_moinpage_list_item(self, elem):
         self.list_item_label = self.list_item_labels[-1] + u' '
@@ -270,9 +270,9 @@ class Converter(object):
             self.list_item_label = self.list_item_labels[-1] + u' '
             ret = u' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))# self.list_level
             if self.last_closed:
-                ret = u'\n%s' % ret
+                ret = u'\n{0}'.format(ret)
         childrens_output = self.open_children(elem)
-        return "%s%s%s" % (ret, childrens_output, Moinwiki.definition_list_marker)
+        return "{0}{1}{2}".format(ret, childrens_output, Moinwiki.definition_list_marker)
 
     def open_moinpage_list_item_body(self, elem):
         ret = u''
@@ -286,7 +286,7 @@ class Converter(object):
         if class_:
             self.status.append('table')
             if class_ == "footnote":
-                return u'<<FootNote(%s)>>' % self.open_children(elem)
+                return u'<<FootNote({0})>>'.format(self.open_children(elem))
             self.status.pop()
         return u''
 
@@ -354,7 +354,7 @@ class Converter(object):
             for s in findall(r'}+', childrens_output):
                 if max_subpage_lvl <= len(s):
                     max_subpage_lvl = len(s) + 1
-            return u'%s%s%s%s\n' % (Moinwiki.verbatim_open * max_subpage_lvl, ret, childrens_output, Moinwiki.verbatim_close * max_subpage_lvl)
+            return u'{0}{1}{2}{3}\n'.format(Moinwiki.verbatim_open * max_subpage_lvl, ret, childrens_output, Moinwiki.verbatim_close * max_subpage_lvl)
 
         self.status.append('text')
         childrens_output = self.open_children(elem)
@@ -364,33 +364,33 @@ class Converter(object):
     def open_moinpage_body(self, elem):
         class_ = elem.get(moin_page.class_, u'').replace(u' ', u'/')
         if class_:
-            ret = u' %s\n' % class_
+            ret = u' {0}\n'.format(class_)
         elif len(self.status) > 2:
             ret = u'\n'
         else:
             ret = u''
         childrens_output = self.open_children(elem)
-        return u"%s%s" % (ret, childrens_output)
+        return u"{0}{1}".format(ret, childrens_output)
 
     def open_moinpage_part(self, elem):
         type = elem.get(moin_page.content_type, u"").split(u';')
         if len(type) == 2:
             if type[0] == "x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    return u"<<%s(%s)>>\n" % (type[1].split(u'=')[1], u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
+                    return u"<<{0}({1})>>\n".format(type[1].split(u'=')[1], u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
                 else:
-                    return u"<<%s()>>\n" % type[1].split(u'=')[1]
+                    return u"<<{0}()>>\n".format(type[1].split(u'=')[1])
             elif type[0] == "x-moin/format":
                 elem_it = iter(elem)
-                ret = u"{{{#!%s" % type[1].split(u'=')[1]
+                ret = u"{{{{{{#!{0}".format(type[1].split(u'=')[1])
                 if len(elem) and elem_it.next().tag.name == "arguments":
                     args = []
                     for arg in iter(elem).next():
                         if arg.tag.name == "argument":
-                            args.append(u"%s=\"%s\"" % (arg.get(moin_page.name, u""), u' '.join(arg.itertext())))
-                    ret = u'%s(%s)' % (ret, u' '.join(args))
+                            args.append(u"{0}=\"{1}\"".format(arg.get(moin_page.name, u""), u' '.join(arg.itertext())))
+                    ret = u'{0}({1})'.format(ret, u' '.join(args))
                     elem = elem_it.next()
-                ret = u"%s\n%s\n}}}\n" % (ret, u' '.join(elem.itertext()))
+                ret = u"{0}\n{1}\n}}}}}}\n".format(ret, u' '.join(elem.itertext()))
                 return ret
         return unescape(elem.get(moin_page.alt, u'')) + u"\n"
 
@@ -409,7 +409,7 @@ class Converter(object):
                 if (0 <= height <= 5):
                     hr_ending = (u'-' * height) + hr_ending
             except:
-                raise ElementException('page:separator has invalid class %s' % hr_class)
+                raise ElementException('page:separator has invalid class {0}'.format(hr_class))
         return Moinwiki.separator + hr_ending
 
     def open_moinpage_span(self, elem):
@@ -422,20 +422,20 @@ class Converter(object):
         if text_decoration == u'underline':
             return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
         if font_size:
-            return u"%s%s%s" % (Moinwiki.larger_open if font_size == u"120%"\
-                                        else Moinwiki.smaller_open,
-                                self.open_children(elem),
-                                Moinwiki.larger_close if font_size == u"120%"\
-                                                      else Moinwiki.smaller_close)
+            return u"{0}{1}{2}".format(Moinwiki.larger_open if font_size == u"120%"\
+                                           else Moinwiki.smaller_open,
+                                       self.open_children(elem),
+                                       Moinwiki.larger_close if font_size == u"120%"\
+                                           else Moinwiki.smaller_close)
         if baseline_shift == u'super':
-            return u'^%s^' % u''.join(elem.itertext())
+            return u'^{0}^'.format(u''.join(elem.itertext()))
         if baseline_shift == u'sub':
-            return u',,%s,,' % u''.join(elem.itertext())
+            return u',,{0},,'.format(u''.join(elem.itertext()))
         return u''
 
     def open_moinpage_strong(self, elem):
         ret = Moinwiki.strong
-        return u"%s%s%s" % (Moinwiki.strong, self.open_children(elem), Moinwiki.strong)
+        return u"{0}{1}{2}".format(Moinwiki.strong, self.open_children(elem), Moinwiki.strong)
 
     def open_moinpage_table(self, elem):
         self.table_tableclass = elem.attrib.get('class', u'')
@@ -486,33 +486,33 @@ class Converter(object):
 
         # TODO: maybe this can be written shorter
         if self.table_tableclass:
-            attrib.append(u'tableclass="%s"' % self.table_tableclass)
+            attrib.append(u'tableclass="{0}"'.format(self.table_tableclass))
             self.table_tableclass = u''
         if self.table_tablestyle:
-            attrib.append(u'tablestyle="%s"' % self.table_tablestyle)
+            attrib.append(u'tablestyle="{0}"'.format(self.table_tablestyle))
             self.table_tableclass = u''
         if self.table_rowclass:
-            attrib.append(u'rowclass="%s"' % self.table_rowclass)
+            attrib.append(u'rowclass="{0}"'.format(self.table_rowclass))
             self.table_rowclass = u''
         if self.table_rowstyle:
-            attrib.append(u'rowclass="%s"' % self.table_rowstyle)
+            attrib.append(u'rowclass="{0}"'.format(self.table_rowstyle))
             self.table_rowstyle = u''
         if table_cellclass:
-            attrib.append(u'class="%s"' % table_cellclass)
+            attrib.append(u'class="{0}"'.format(table_cellclass))
         if table_cellstyle:
-            attrib.append(u'style="%s"' % table_cellstyle)
+            attrib.append(u'style="{0}"'.format(table_cellstyle))
         if number_rows_spanned:
             attrib.append(u'|'+unicode(number_rows_spanned))
 
         attrib = u' '.join(attrib)
 
         if attrib:
-            ret += u'<%s>' % attrib
+            ret += u'<{0}>'.format(attrib)
         childrens_output = self.open_children(elem)
         return ret + childrens_output
 
     def open_moinpage_table_of_content(self, elem):
-        return u"<<TableOfContents(%s)>>\n" % elem.get(moin_page.outline_level, u"")
+        return u"<<TableOfContents({0})>>\n".format(elem.get(moin_page.outline_level, u""))
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki

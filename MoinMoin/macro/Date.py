@@ -41,7 +41,7 @@ class MacroDateTimeBase(MacroInlineBase):
                             tzoffset = -tzoffset
                 tm = year, month, day, hour, minute, second, 0, 0, 0
             except ValueError as err:
-                raise ValueError("Bad timestamp %r: %s" % (args, err))
+                raise ValueError("Bad timestamp {0!r}: {1}".format(args, err))
             # as mktime wants a localtime argument (but we only have UTC),
             # we adjust by our local timezone's offset
             try:
@@ -53,7 +53,7 @@ class MacroDateTimeBase(MacroInlineBase):
             try:
                 tm = float(args)
             except ValueError as err:
-                raise ValueError("Bad timestamp %r: %s" % (args, err))
+                raise ValueError("Bad timestamp {0!r}: {1}".format(args, err))
         return tm
 
 class Macro(MacroDateTimeBase):

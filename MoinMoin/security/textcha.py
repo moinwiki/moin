@@ -69,13 +69,13 @@ class TextCha(object):
         if textchas and not user.may.notextcha():
             locales = [user.locale, cfg.locale_default, 'en', ]
             for locale in locales:
-                logging.debug(u"TextCha: trying locale == '%s'." % locale)
+                logging.debug(u"TextCha: trying locale == '{0}'.".format(locale))
                 if locale in textchas:
-                    logging.debug(u"TextCha: using locale = '%s'" % locale)
+                    logging.debug(u"TextCha: using locale = '{0}'".format(locale))
                     return textchas[locale]
 
     def _compute_signature(self, question, timestamp):
-        return hmac.new(self.secret, "%s%d" % (question, timestamp), digestmod=hashlib.sha1).hexdigest()
+        return hmac.new(self.secret, "{0}{1}".format(question, int(timestamp)), digestmod=hashlib.sha1).hexdigest()
 
     def init_qa(self, question=None):
         """ Initialize the question / answer.
@@ -117,10 +117,9 @@ class TextCha(object):
                 # this question does not exist, thus there is no answer
                 self.answer_regex = ur"[Invalid question]"
                 self.answer_re = None
-                logging.warning(u"TextCha: Non-existing question '%s' for %s. May be invalid or user may be trying to cheat." % (
-                                self.question, self.user_info))
+                logging.warning(u"TextCha: Non-existing question '{0}' for {1}. May be invalid or user may be trying to cheat.".format(self.question, self.user_info))
             except re.error:
-                logging.error(u"TextCha: Invalid regex in answer for question '%s'" % self.question)
+                logging.error(u"TextCha: Invalid regex in answer for question '{0}'".format(self.question))
                 self.init_qa()
 
     def is_enabled(self):
@@ -148,7 +147,7 @@ class TextCha(object):
         """
         if self.is_enabled():
             if self.question:
-                self.form['textcha_question'].set("%s %d%s" % (self.question, self.timestamp, self.signature))
+                self.form['textcha_question'].set("{0} {1}{2}".format(self.question, int(self.timestamp), self.signature))
         else:
             self.form['textcha_question'].optional = True
             self.form['textcha'].optional = True

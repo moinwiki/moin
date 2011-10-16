@@ -149,11 +149,11 @@ def valid_password(password, pw_hash):
                 salt = d[:2]
                 enc = crypt.crypt(pw_utf8, salt.encode('ascii'))
             else:
-                raise ValueError("missing password hash method %s handler" % method)
+                raise ValueError("missing password hash method {0} handler".format(method))
             return pw_hash == method + enc
     else:
         idx = pw_hash.index('}') + 1
-        raise ValueError("unsupported password hash method %r" % pw_hash[:idx])
+        raise ValueError("unsupported password hash method {0!r}".format(pw_hash[:idx]))
 
 
 # password recovery token

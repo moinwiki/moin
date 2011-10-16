@@ -79,7 +79,7 @@ if pygments:
                     ('pascal', 'Delphi'),
                 ]
                 for moin_format, pygments_name in moin_pygments:
-                    if Type('x-moin/format;name=%s' % moin_format).issupertype(type_input):
+                    if Type('x-moin/format;name={0}'.format(moin_format)).issupertype(type_input):
                         break
                 else:
                     pygments_name = None
@@ -97,7 +97,7 @@ if pygments:
             """
             if lexer is None and contenttype is not None:
                 ct = Type(contenttype)
-                mimetype = '%s/%s' % (ct.type, ct.subtype) # pygments can't process parameters (like e.g. ...;charset=utf-8)
+                mimetype = '{0}/{1}'.format(ct.type, ct.subtype) # pygments can't process parameters (like e.g. ...;charset=utf-8)
                 try:
                     lexer = pygments.lexers.get_lexer_for_mimetype(mimetype)
                 except pygments.util.ClassNotFound:

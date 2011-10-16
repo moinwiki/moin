@@ -177,10 +177,10 @@ def convert_to_indexable(meta, data, is_new=False):
             doc = output_conv(doc)
             return doc
         # no way
-        raise TypeError("No converter for %s --> %s" % (input_contenttype, output_contenttype))
+        raise TypeError("No converter for {0} --> {1}".format(input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item %r rev %s contenttype %s:" % (meta[NAME], meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
-        doc = u'ERROR [%s]' % str(e)
+        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(meta[NAME], meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
+        doc = u'ERROR [{0!s}]'.format(e)
         return doc
 
 
@@ -289,7 +289,7 @@ class IndexingMiddleware(object):
             for name in INDEXES:
                 self.ix[name] = open_dir(index_dir, indexname=name)
         except (IOError, OSError, EmptyIndexError) as err:
-            logging.error(u"%s [while trying to open index '%s' in '%s']" % (str(err), name, index_dir))
+            logging.error(u"{0!s} [while trying to open index '{1}' in '{2}']".format(err, name, index_dir))
             raise
 
     def close(self):
@@ -315,7 +315,7 @@ class IndexingMiddleware(object):
             for name in INDEXES:
                 create_in(index_dir, self.schemas[name], indexname=name)
         except (IOError, OSError) as err:
-            logging.error(u"%s [while trying to create index '%s' in '%s']" % (str(err), name, index_dir))
+            logging.error(u"{0!s} [while trying to create index '{1}' in '{2}']".format(err, name, index_dir))
             raise
 
     def destroy(self, tmp=False):
@@ -427,7 +427,7 @@ class IndexingMiddleware(object):
                 elif mode == 'delete':
                     writer.delete_by_term(REVID, revid)
                 else:
-                    raise ValueError("mode must be 'update', 'add' or 'delete', not '%s'" % mode)
+                    raise ValueError("mode must be 'update', 'add' or 'delete', not '{0}'".format(mode))
 
     def _find_latest_revids(self, index, query=None):
         """
@@ -911,5 +911,5 @@ class Meta(Mapping):
         return 0 # XXX
 
     def __repr__(self):
-        return "Meta _doc: %r _meta: %r" % (self._doc, self._meta)
+        return "Meta _doc: {0!r} _meta: {1!r}".format(self._doc, self._meta)
 

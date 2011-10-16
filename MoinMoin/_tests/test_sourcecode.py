@@ -33,7 +33,7 @@ try:
     def mark_file_ok(path, mtime):
         x = xattr.xattr(path)
         try:
-            x.set('user.moin-pep8-tested-mtime', '%d' % mtime)
+            x.set('user.moin-pep8-tested-mtime', str(int(mtime)))
         except IOError:
             # probably not supported
             global mark_file_ok
