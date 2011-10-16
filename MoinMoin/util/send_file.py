@@ -36,7 +36,7 @@ def encode_rfc2231(value, coding='UTF-8', lang=''):
     :param coding: the coding (charset) to use. it is a good idea to use 'UTF-8'.
     :param lang: the language to use. defaults to empty string (no language given).
     """
-    return "%s'%s'%s" % (coding, lang, url_quote(value, charset=coding))
+    return "{0}'{1}'{2}".format(coding, lang, url_quote(value, charset=coding))
 
 
 def send_file(filename=None, file=None,
@@ -121,7 +121,7 @@ def send_file(filename=None, file=None,
         # Note: we only give filename* param, not filename param, hoping that a user agent that
         # does not support filename* then falls back into using the last URL fragment (and decodes
         # that correctly). See there for details: http://greenbytes.de/tech/tc2231/
-        headers.add('Content-Disposition', 'attachment; filename*=%s'% encode_rfc2231(attachment_filename))
+        headers.add('Content-Disposition', 'attachment; filename*={0}'.format(encode_rfc2231(attachment_filename)))
 
     if current_app.use_x_sendfile and filename:
         if file:
@@ -154,7 +154,7 @@ def send_file(filename=None, file=None,
 
     if add_etags:
         if etag is None and filename:
-            etag = 'flask-%s-%s-%s' % (
+            etag = 'flask-{0}-{1}-{2}'.format(
                 mtime or os.path.getmtime(filename),
                 os.path.getsize(filename),
                 adler32(filename) & 0xffffffff

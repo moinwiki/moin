@@ -43,5 +43,5 @@ class CompositeDicts(BaseDictsBackend):
         return False
 
     def __repr__(self):
-        return "<%s backends=%s>" % (self.__class__, self._backends)
+        return "<{0} backends={1}>".format(self.__class__, self._backends)
 

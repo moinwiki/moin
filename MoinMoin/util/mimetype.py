@@ -133,7 +133,7 @@ class MimeType(object):
             try:
                 mimetype = mapping[format]
             except KeyError:
-                mimetype = 'text', 'x-%s' % format
+                mimetype = 'text', 'x-{0}'.format(format)
         return mimetype
 
     def sanitize(self):
@@ -161,14 +161,14 @@ class MimeType(object):
             charset = charset or self.charset
             if charset:
                 params['charset'] = charset
-        mimestr = "%s/%s" % (major, minor)
-        params = ['%s="%s"' % (key.lower(), value) for key, value in params.items()]
+        mimestr = "{0}/{1}".format(major, minor)
+        params = ['{0}="{1}"'.format(key.lower(), value) for key, value in params.items()]
         params.insert(0, mimestr)
         return "; ".join(params)
 
     def mime_type(self):
         """ return a string major/minor only, no params """
-        return "%s/%s" % (self.major, self.minor)
+        return "{0}/{1}".format(self.major, self.minor)
 
     def as_attachment(self, cfg):
         # for dangerous files (like .html), when we are in danger of cross-site-scripting attacks,

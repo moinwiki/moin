@@ -37,15 +37,15 @@ class Disable_User(Command):
             u = user.User(auth_username=name)
 
         if not u.exists():
-            print 'This user "%s" does not exists!' % u.name
+            print 'This user "{0}" does not exists!'.format(u.name)
             return
 
-        print " %-20s %-25s %-35s" % (u.id, u.name, u.email),
+        print " {0:<20} {1:<25} {2:<35}".format(u.id, u.name, u.email),
         if not u.disabled: # only disable once
             u.disabled = 1
-            u.name = "%s-%s" % (u.name, u.id)
+            u.name = "{0}-{1}".format(u.name, u.id)
             if u.email:
-                u.email = "%s-%s" % (u.email, u.id)
+                u.email = "{0}-{1}".format(u.email, u.id)
             u.subscribed_items = [] # avoid using email
             u.save()
             print "- disabled."

@@ -72,12 +72,12 @@ def diff(old, new):
         if charobj.ratio() < 0.5:
             # Insufficient similarity.
             if leftpane:
-                leftresult = """<span>%s</span>""" % indent(escape(leftpane))
+                leftresult = """<span>{0}</span>""".format(indent(escape(leftpane)))
             else:
                 leftresult = ''
 
             if rightpane:
-                rightresult = """<span>%s</span>""" % indent(escape(rightpane))
+                rightresult = """<span>{0}</span>""".format(indent(escape(rightpane)))
             else:
                 rightresult = ''
         else:
@@ -88,11 +88,11 @@ def diff(old, new):
             rightresult = ''
             for thismatch in charmatch:
                 if thismatch[0] - charlast[0] != 0:
-                    leftresult += """<span>%s</span>""" % indent(
-                        escape(leftpane[charlast[0]:thismatch[0]]))
+                    leftresult += """<span>{0}</span>""".format(indent(
+                        escape(leftpane[charlast[0]:thismatch[0]])))
                 if thismatch[1] - charlast[1] != 0:
-                    rightresult += """<span>%s</span>""" % indent(
-                        escape(rightpane[charlast[1]:thismatch[1]]))
+                    rightresult += """<span>{0}</span>""".format(indent(
+                        escape(rightpane[charlast[1]:thismatch[1]])))
                 leftresult += escape(leftpane[thismatch[0]:thismatch[0] + thismatch[2]])
                 rightresult += escape(rightpane[thismatch[1]:thismatch[1] + thismatch[2]])
                 charlast = (thismatch[0] + thismatch[2], thismatch[1] + thismatch[2])

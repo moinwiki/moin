@@ -68,8 +68,8 @@ class ConfigFunctionality(object):
         self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
 
         # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile(u'^%s$' % self.item_dict_regex, re.UNICODE)
-        self.cache.item_group_regexact = re.compile(u'^%s$' % self.item_group_regex, re.UNICODE)
+        self.cache.item_dict_regexact = re.compile(u'^{0}$'.format(self.item_dict_regex, re.UNICODE))
+        self.cache.item_group_regexact = re.compile(u'^{0}$'.format(self.item_group_regex, re.UNICODE))
 
         # compiled functions ACL
         self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
@@ -133,7 +133,7 @@ class ConfigFunctionality(object):
         secret_min_length = 10
         if isinstance(self.secrets, str):
             if len(self.secrets) < secret_min_length:
-                raise error.ConfigurationError("The secrets = '...' wiki config setting is a way too short string (minimum length is %d chars)!" % (
+                raise error.ConfigurationError("The secrets = '...' wiki config setting is a way too short string (minimum length is {0} chars)!".format(
                     secret_min_length))
             # for lazy people: set all required secrets to same value
             secrets = {}
@@ -148,7 +148,7 @@ class ConfigFunctionality(object):
                 if len(secret) < secret_min_length:
                     raise ValueError
             except (KeyError, ValueError):
-                raise error.ConfigurationError("You must set a (at least %d chars long) secret string for secrets['%s']!" % (
+                raise error.ConfigurationError("You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
                     secret_min_length, secret_key_name))
 
     def _config_check(self):
@@ -160,17 +160,17 @@ class ConfigFunctionality(object):
         This check is disabled by default, when enabled, it will show an
         error message with unknown names.
         """
-        unknown = ['"%s"' % name for name in dir(self)
+        unknown = ['"{0}"'.format(name) for name in dir(self)
                   if not name.startswith('_') and
                   name not in DefaultConfig.__dict__ and
                   not isinstance(getattr(self, name), (type(sys), type(DefaultConfig)))]
         if unknown:
             msg = """
-Unknown configuration options: %s.
+Unknown configuration options: {0}.
 
 For more information, visit HelpOnConfiguration. Please check your
 configuration for typos before requesting support or reporting a bug.
-""" % ', '.join(unknown)
+""".format(', '.join(unknown))
             raise error.ConfigurationError(msg)
 
     def _decode(self):

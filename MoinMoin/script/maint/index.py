@@ -101,7 +101,7 @@ class IndexDump(Command):
 
     def run(self, tmp):
         for idx_name in [LATEST_REVS, ALL_REVS]:
-            print " %s %s %s" % ("-" * 10, idx_name, "-" * 60)
+            print " {0} {1} {2}".format("-" * 10, idx_name, "-" * 60)
             for kvs in app.storage.dump(tmp=tmp, idx_name=idx_name):
                 for k, v in kvs:
                     print k, repr(v)[:70]

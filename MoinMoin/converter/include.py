@@ -221,8 +221,7 @@ class Converter(object):
                 included_elements = []
                 for page, page_href in pages:
                     if page_href in self.stack:
-                        w = ('<p xmlns="%s"><strong class="error">Recursive include of "%s" forbidden</strong></p>'
-                                % (html.namespace, page.name))
+                        w = ('<p xmlns="{0}"><strong class="error">Recursive include of "{1}" forbidden</strong></p>'.format(html.namespace, page.name))
                         div.append(ET.XML(w))
                         continue
                     # TODO: Is this correct?

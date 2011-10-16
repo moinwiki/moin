@@ -80,7 +80,7 @@ class BaseGroupsBackend(object):
         raise NotImplementedError()
 
     def __repr__(self):
-        return "<%s groups=%s>" % (self.__class__, list(self))
+        return "<{0} groups={1}>".format(self.__class__, list(self))
 
     def _retrieve_members(self, group_name):
         raise NotImplementedError()
@@ -250,10 +250,7 @@ class GreedyGroup(BaseGroup):
                     yield group_name
 
     def __repr__(self):
-        return "<%s name=%s members=%s member_groups=%s>" % (self.__class__,
-                                                             self.name,
-                                                             self.members,
-                                                             self.member_groups)
+        return "<{0} name={1} members={2} member_groups={3}>".format(self.__class__, self.name, self.members, self.member_groups)
 
 
 class BaseDict(object, DictMixin):
@@ -297,7 +294,7 @@ class BaseDict(object, DictMixin):
         return self._backend._retrieve_items(self.name)
 
     def __repr__(self):
-        return "<%r name=%r items=%r>" % (self.__class__, self.name, self._dict.items())
+        return "<{0!r} name={1!r} items={2!r}>".format(self.__class__, self.name, self._dict.items())
 
 
 class BaseDictsBackend(object):

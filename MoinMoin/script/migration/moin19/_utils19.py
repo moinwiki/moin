@@ -44,7 +44,7 @@ def split_body(body):
             if not comment.startswith(' '):
                 # we don't require a blank after the ##, so we put one there
                 comment = ' ' + comment
-                line = '##%s' % comment
+                line = '##{0}'.format(comment)
 
         verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
         pi.setdefault(verb.lower(), []).append(args.strip())
@@ -76,9 +76,9 @@ def add_metadata_to_body(metadata, data):
         # special handling for list metadata
         if isinstance(value, (list, tuple)):
             for line in value:
-                metadata_data += "#%s %s\n" % (key, line)
+                metadata_data += "#{0} {1}\n".format(key, line)
         else:
-            metadata_data += "#%s %s\n" % (key, value)
+            metadata_data += "#{0} {1}\n".format(key, value)
     return metadata_data + data
 
 
@@ -105,7 +105,7 @@ def quoteWikinameFS(wikiname, charset=CHARSET):
         # Quote and append unsafe stuff
         quoted.append('(')
         for character in needle.group():
-            quoted.append('%02x' % ord(character))
+            quoted.append("{0:02x}".format(ord(character)))
         quoted.append(')')
 
     # append rest of string

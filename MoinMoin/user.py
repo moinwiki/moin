@@ -244,9 +244,9 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
-        return "<%s.%s at 0x%x name:%r itemid:%r valid:%r>" % (
-            self.__class__.__module__, self.__class__.__name__,
-            id(self), self.name, self.itemid, self.valid)
+        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r}>".format(
+            self.__class__.__module__, self.__class__.__name__, id(self),
+            self.name, self.itemid, self.valid)
 
     @property
     def language(self):
@@ -469,7 +469,7 @@ class User(object):
                 return True
             # Try regular expression search, skipping bad patterns
             try:
-                pattern = re.compile(r'^%s$' % pattern, re.M)
+                pattern = re.compile(r'^{0}$'.format(pattern), re.M)
             except re.error:
                 continue
             if pattern.search(text):

@@ -43,7 +43,7 @@ def load_package_modules(package_name, package_pathes):
                     except Exception as e:
                         import MoinMoin.log as logging
                         logger = logging.getLogger(package_name)
-                        logger.exception("Failed to import %s package module %s: %s" % (package_name, module, e))
+                        logger.exception("Failed to import {0} package module {1}: {2}".format(package_name, module, e))
                 finally:
                     info[0].close()
 

@@ -37,11 +37,11 @@ class Clock(object):
     def stop(self, timer):
         if timer in self.timers:
             value = time.time() - self.timers[timer].pop()
-            logging.info('timer %s(%d): %.2fms' % (timer, len(self.timers[timer]), value*1000))
+            logging.info('timer {0}({1}): {2:.2f}ms'.format(timer, len(self.timers[timer]), value*1000))
             if not self.timers[timer]:
                 del self.timers[timer]
             return value
 
     def __del__(self):
         if self.timers:
-            logging.warning('These timers have not been stopped: %s' % ', '.join(self.timers.keys()))
+            logging.warning('These timers have not been stopped: {0}'.format(', '.join(self.timers.keys())))

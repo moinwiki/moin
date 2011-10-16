@@ -303,9 +303,9 @@ class Converter(object):
         self.used_references = []
         self.delete_newlines = False
         ret = self.open(root)
-        notes = u"\n\n".join(u".. [#] %s" % note.replace(u"\n", u"\n  ") for note in self.footnotes)
+        notes = u"\n\n".join(u".. [#] {0}".format(note.replace(u"\n", u"\n  ")) for note in self.footnotes)
         if notes:
-            return ret + self.define_references() + u"\n\n%s\n\n" % notes
+            return ret + self.define_references() + u"\n\n{0}\n\n".format(notes)
 
         return ret + self.define_references()
 
@@ -334,7 +334,7 @@ class Converter(object):
                         childrens_output.append(u'\n\n')
                 elif self.status[-1] == "list":
                     child =\
-                        re.sub(r"\n(.)", lambda m: u"\n%s%s" % (u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                     if self.last_closed == "p":
                         childrens_output.append(u'\n'\
                                 + u' '\
@@ -346,7 +346,7 @@ class Converter(object):
                         childrens_output.append(u'\n')
                 elif self.status[-2] == "list":
                     child =\
-                        re.sub(r"\n(.)", lambda m: u"\n%s%s" % (u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                 childrens_output.append(child)
                 self.last_closed = 'text'
         self.delete_newlines = delete_newlines
@@ -377,18 +377,18 @@ class Converter(object):
         # TODO: check that links have different alt texts
         if text in [t for (t, h) in self.all_used_references]:
             if (text, href) in self.all_used_references:
-                return u"`%s`_" % text
+                return u"`{0}`_".format(text)
             if not self.anonymous_reference:
                 self.anonymous_reference = href
                 self.used_references.insert(0, (u"_", href))
-                return u"`%s`__" % text
+                return u"`{0}`__".format(text)
             else:
                 while text in [t for (t, h) in self.all_used_references]:
                     text = text + u"~"
         self.used_references.append((text, href))
         self.all_used_references.append((text, href))
         #self.objects.append("\n\n.. _%s: %s\n\n" % (text, href))
-        return u"`%s`_" % text
+        return u"`{0}`_".format(text)
 
     def open_moinpage_blockcode(self, elem):
         text = u''.join(elem.itertext())
@@ -408,19 +408,15 @@ class Converter(object):
                 if i:
                     self.output[-1] = self.output[-1][:i]
             """
-        return  u"::\n\n  %s%s\n\n" % (u' '\
-                                    * (len(u''.join(self.list_item_labels))\
-                                       + len(self.list_item_labels)), text)
+        return u"::\n\n  {0}{1}\n\n".format(u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
 
     def open_moinpage_code(self, elem):
-        ret = u"%s%s%s" % (ReST.monospace,\
-                          u''.join(elem.itertext()),\
-                          ReST.monospace)
+        ret = u"{0}{1}{2}".format(ReST.monospace, u''.join(elem.itertext()), ReST.monospace)
         return ret
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return u"%s%s%s" % (ReST.emphasis, childrens_output, ReST.emphasis)
+        return u"{0}{1}{2}".format(ReST.emphasis, childrens_output, ReST.emphasis)
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -433,9 +429,7 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        ret = u"\n\n%s\n%s\n%s\n\n" % (ReST.h[level]*len(text),\
-                                      text,\
-                                      ReST.h[level]*len(text))
+        ret = u"\n\n{0}\n{1}\n{2}\n\n".format(ReST.h[level] * len(text), text, ReST.h[level] * len(text))
         return ret
 
     def open_moinpage_line_break(self, elem):
@@ -482,7 +476,7 @@ class Converter(object):
                   * (len(u''.join(self.list_item_labels[:-1]))\
                      + len(self.list_item_labels[:-1]))
             if self.last_closed and self.last_closed != 'list':
-                ret = u'\n%s' % ret
+                ret = u'\n{0}'.format(ret)
             return ret + self.open_children(elem)
         return self.open_children(elem)
 
@@ -523,11 +517,11 @@ class Converter(object):
         if not alt:
             ret = u''
         else:
-            ret = u'|%s|' % alt
+            ret = u'|{0}|'.format(alt)
         args_text = u''
         if args:
-            args_text = u"\n  %s" % u'\n  '.join(u':%s: %s' % (arg.split(u'=')[0], arg.split(u'=')[1]) for arg in args)
-        self.objects.append(u".. %s image:: %s%s" % (ret, href, args_text))
+            args_text = u"\n  {0}".format(u'\n  '.join(u':{0}: {1}'.format(arg.split(u'=')[0], arg.split(u'=')[1]) for arg in args))
+        self.objects.append(u".. {0} image:: {1}{2}".format(ret, href, args_text))
         return ret
 
     def open_moinpage_p(self, elem):
@@ -592,29 +586,24 @@ class Converter(object):
         if len(type) == 2:
             if type[0] == u"x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    alt = u"<<%s(%s)>>"  % (type[1].split(u'=')[1],
-                                    u','.join([u''.join(c.itertext())\
-                                        for c in iter(elem).next()\
-                                        if c.tag.name == "argument"]))
+                    alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
                 else:
-                    alt = u"<<%s()>>" % type[1].split(u'=')[1]
+                    alt = u"<<{0}()>>".format(type[1].split(u'=')[1])
 
-                obj = u".. |%s| macro:: %s" % (alt, alt)
+                obj = u".. |{0}| macro:: {1}".format(alt, alt)
                 self.objects.append(obj)
-                return u" |%s| " % alt
+                return u" |{0}| ".format(alt)
             elif type[0] == u"x-moin/format":
                 elem_it = iter(elem)
-                ret = u"\n\n.. parser:%s" % type[1].split(u'=')[1]
+                ret = u"\n\n.. parser:{0}".format(type[1].split(u'=')[1])
                 if len(elem) and elem_it.next().tag.name == "arguments":
                     args = []
                     for arg in iter(elem).next():
                         if arg.tag.name == "argument":
-                            args.append(u"%s=\"%s\""\
-                                        % (arg.get(moin_page.name, u""),
-                                           u' '.join(arg.itertext())))
-                    ret = u'%s %s' % (ret, u' '.join(args))
+                            args.append(u"{0}=\"{1}\"".format(arg.get(moin_page.name, u""), u' '.join(arg.itertext())))
+                    ret = u'{0} {1}'.format(ret, u' '.join(args))
                     elem = elem_it.next()
-                ret = u"%s\n  %s" % (ret, u' '.join(elem.itertext()))
+                ret = u"{0}\n  {1}".format(ret, u' '.join(elem.itertext()))
                 return ret
         return elem.get(moin_page.alt, u'') + u"\n"
 
@@ -645,9 +634,9 @@ class Converter(object):
             return ''
         """
         if baseline_shift == 'super':
-            return u"\\ :sup:`%s`\\ " % u''.join(elem.itertext())
+            return u"\\ :sup:`{0}`\\ ".format(u''.join(elem.itertext()))
         if baseline_shift == 'sub':
-            return u"\\ :sub:`%s`\\ " % u''.join(elem.itertext())
+            return u"\\ :sub:`{0}`\\ ".format(u''.join(elem.itertext()))
         return self.open_children(elem)
 
     def open_moinpage_strong(self, elem):
@@ -667,7 +656,7 @@ class Converter(object):
         table = repr(self.tablec)
         if self.status[-1] == "list":
             table =\
-                re.sub(r"\n(.)", lambda m: u"\n%s%s" % (u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
+                re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
             return table + ReST.p
         return table + ReST.linebreak
 
@@ -721,21 +710,21 @@ class Converter(object):
         # TODO: styles and classes
         """
         if self.table_tableclass:
-            attrib.append('tableclass="%s"' % self.table_tableclass)
+            attrib.append('tableclass="{0}"'.format(self.table_tableclass))
             self.table_tableclass = ''
         if self.table_tablestyle:
-            attrib.append('tablestyle="%s"' % self.table_tablestyle)
+            attrib.append('tablestyle="{0}"'.format(self.table_tablestyle))
             self.table_tableclass = ''
         if self.table_rowclass:
-            attrib.append('rowclass="%s"' % self.table_rowclass)
+            attrib.append('rowclass="{0}"'.format(self.table_rowclass))
             self.table_rowclass = ''
         if self.table_rowstyle:
-            attrib.append('rowclass="%s"' % self.table_rowstyle)
+            attrib.append('rowclass="{0}"'.format(self.table_rowstyle))
             self.table_rowstyle = ''
         if table_cellclass:
-            attrib.append('class="%s"' % table_cellclass)
+            attrib.append('class="{0}"'.format(table_cellclass))
         if table_cellstyle:
-            attrib.append('style="%s"' % table_cellstyle)
+            attrib.append('style="{0}"'.format(table_cellstyle))
         if number_rows_spanned:
             attrib.append('|'+str(number_rows_spanned))
 
@@ -752,7 +741,7 @@ class Converter(object):
         depth = elem.get(moin_page.outline_level, u"")
         ret = u"\n\n.. contents::"
         if depth:
-            ret += u"\n   :depth: %s" % depth
+            ret += u"\n   :depth: {0}".format(depth)
         return ret + u"\n\n"
 
     def define_references(self):
@@ -763,8 +752,7 @@ class Converter(object):
         self.all_used_references.extend(self.used_references)
         definitions = [u" " * (len(u''.join(self.list_item_labels))\
                                     + len(self.list_item_labels))\
-                                  + u".. _%s: %s"\
-                                    % link for link in self.used_references]
+                                  + u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
         definitions.extend(u" " * (len(u''.join(self.list_item_labels))\
                                      + len(self.list_item_labels))\
                                   + link for link in self.objects)
@@ -772,9 +760,9 @@ class Converter(object):
 
         if definitions:
             if self.last_closed == 'list_item_label':
-                ret += u"\n%s\n\n" % definition_block
+                ret += u"\n{0}\n\n".format(definition_block)
             else:
-                ret += u"\n\n%s\n\n" % definition_block
+                ret += u"\n\n{0}\n\n".format(definition_block)
 
         self.used_references = []
         self.objects = []

@@ -37,7 +37,7 @@ class Arguments(object):
         return len(self.positional) + len(self.keyword)
 
     def __repr__(self):
-        return '<%s(%r, %r)>' % (self.__class__.__name__,
+        return '<{0}({1!r}, {2!r})>'.format(self.__class__.__name__,
                 self.positional, self.keyword)
 
     def items(self):

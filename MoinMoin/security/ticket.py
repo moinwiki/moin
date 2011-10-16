@@ -28,7 +28,7 @@ def createTicket(tm=None, **kw):
     """
     if tm is None:
         # for age-check of ticket
-        tm = "%010x" % time.time()
+        tm = "{0:010x}".format(int(time.time()))
 
     kw['uid'] = flaskg.user.valid and flaskg.user.itemid or ''
 
@@ -42,7 +42,7 @@ def createTicket(tm=None, **kw):
 
     h = hmac.new(app.cfg.secrets['security/ticket'],
                  ''.join(hmac_data), digestmod=hashlib.sha1)
-    return "%s.%s" % (tm, h.hexdigest())
+    return "{0}.{1}".format(tm, h.hexdigest())
 
 
 def checkTicket(ticket, **kw):
@@ -55,13 +55,13 @@ def checkTicket(ticket, **kw):
         timestamp_str = ticket.split('.')[0]
         timestamp = int(timestamp_str, 16)
     except ValueError:
-        logging.debug("checkTicket: invalid or empty ticket %r" % ticket)
+        logging.debug("checkTicket: invalid or empty ticket {0!r}".format(ticket))
         return False
     now = time.time()
     if timestamp < now - 10 * 3600:
-        logging.debug("checkTicket: too old ticket, timestamp %r" % timestamp)
+        logging.debug("checkTicket: too old ticket, timestamp {0!r}".format(timestamp))
         return False
     ourticket = createTicket(timestamp_str, **kw)
-    logging.debug("checkTicket: returning %r, got %r, expected %r" % (ticket == ourticket, ticket, ourticket))
+    logging.debug("checkTicket: returning {0!r}, got {1!r}, expected {2!r}".format(ticket == ourticket, ticket, ourticket))
     return ticket == ourticket
 

@@ -60,7 +60,7 @@ class _Store(MutableStoreBase):
         # note: we use rpc for some stuff that is not possible with restful interface
         # like iteration over keys, or for stuff that is simpler with rpc.
         kw = dict([(k, v) for k, v in kw.items() if v is not None])
-        path_qs = '/rpc/%s?%s' % (method, urllib.urlencode(kw))
+        path_qs = '/rpc/{0}?{1}'.format(method, urllib.urlencode(kw))
         # we use GET with url args, it is simpler and enough for our purposes:
         self.client.request("GET", path_qs)
         response = self.client.getresponse()

@@ -112,7 +112,7 @@ class ExclusiveLock:
             try:
                 filesys.mkdir(self.lockDir)
                 self._locked = True
-                logging.debug('acquired exclusive lock: %s' % (self.lockDir, ))
+                logging.debug('acquired exclusive lock: {0}'.format(self.lockDir, ))
                 return True
             except OSError as err:
                 if err.errno != errno.EEXIST:
@@ -120,16 +120,16 @@ class ExclusiveLock:
                 if self.expire():
                     continue # Try immediately to acquire
                 timer.sleep()
-        logging.debug('failed to acquire exclusive lock: %s' % (self.lockDir, ))
+        logging.debug('failed to acquire exclusive lock: {0}'.format(self.lockDir, ))
         return False
 
     def release(self):
         """ Release the lock """
         if not self._locked:
-            raise RuntimeError('lock already released: %s' % self.lockDir)
+            raise RuntimeError('lock already released: {0}'.format(self.lockDir))
         self._removeLockDir()
         self._locked = False
-        logging.debug('released lock: %s' % self.lockDir)
+        logging.debug('released lock: {0}'.format(self.lockDir))
 
     def isLocked(self):
         return self._locked
@@ -159,7 +159,7 @@ class ExclusiveLock:
         """ Return True if the lock is expired or missing; False otherwise. """
         if self.isExpired():
             self._removeLockDir()
-            logging.debug("expired lock: %s" % self.lockDir)
+            logging.debug("expired lock: {0}".format(self.lockDir))
             return True
         return False
 
@@ -169,7 +169,7 @@ class ExclusiveLock:
         """ Make sure directory exists """
         try:
             filesys.mkdir(self.dir)
-            logging.debug('created directory: %s' % self.dir)
+            logging.debug('created directory: {0}'.format(self.dir))
         except OSError as err:
             if err.errno != errno.EEXIST:
                 raise
@@ -178,7 +178,7 @@ class ExclusiveLock:
         """ Remove lockDir ignoring 'No such file or directory' errors """
         try:
             filesys.rmdir(self.lockDir)
-            logging.debug('removed directory: %s' % self.dir)
+            logging.debug('removed directory: {0}'.format(self.dir))
         except OSError as err:
             if err.errno != errno.ENOENT:
                 raise
@@ -237,7 +237,7 @@ class WriteLock(ExclusiveLock):
                     timer.sleep()
             finally:
                 if result:
-                    logging.debug('acquired write lock: %s' % self.lockDir)
+                    logging.debug('acquired write lock: {0}'.format(self.lockDir))
                     return True
                 else:
                     self.release()
@@ -298,7 +298,7 @@ class ReadLock(ExclusiveLock):
             try:
                 self.lockDir = tempfile.mkdtemp('', self.fileName, self.dir)
                 self._locked = True
-                logging.debug('acquired read lock: %s' % self.lockDir)
+                logging.debug('acquired read lock: {0}'.format(self.lockDir))
                 return True
             finally:
                 self.writeLock.release()

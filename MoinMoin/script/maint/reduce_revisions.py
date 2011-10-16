@@ -38,7 +38,7 @@ class Reduce_Revisions(Command):
             for revno in item.list_revisions():
                 if revno < current_revno:
                     rev = item.get_revision(revno)
-                    print "Destroying %r revision %d." % (item_name, revno)
+                    print "Destroying {0!r} revision {1}.".format(item_name, revno)
                     rev.destroy()
 
         print "Finished reducing backend."

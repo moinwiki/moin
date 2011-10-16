@@ -111,7 +111,7 @@ class RegistryItem(RegistryBase):
             return NotImplemented
 
         def __repr__(self):
-            return '<%s: %s, prio %d [%r]>' % (self.__class__.__name__,
+            return '<{0}: {1}, prio {2} [{3!r}]>' % (self.__class__.__name__,
                     self.content_type,
                     self.priority,
                     self.factory)
@@ -177,12 +177,12 @@ class Item(object):
             else:
                 name = item.name
         if not item: # except NoSuchItemError:
-            logging.debug("No such item: %r" % name)
+            logging.debug("No such item: {0!r}".format(name))
             item = DummyItem(name)
             rev = DummyRev(item, contenttype)
-            logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
+            logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
         else:
-            logging.debug("Got item: %r" % name)
+            logging.debug("Got item: {0!r}".format(name))
             try:
                 rev = item.get_revision(rev_id)
                 contenttype = u'application/octet-stream' # it exists
@@ -191,16 +191,16 @@ class Item(object):
                     rev = item.get_revision(CURRENT) # fall back to current revision
                     # XXX add some message about invalid revision
                 except KeyError: # NoSuchRevisionError:
-                    logging.debug("Item %r has no revisions." % name)
+                    logging.debug("Item {0!r} has no revisions.".format(name))
                     rev = DummyRev(item, contenttype)
-                    logging.debug("Item %r, created dummy revision with contenttype %r" % (name, contenttype))
-            logging.debug("Got item %r, revision: %r" % (name, rev_id))
+                    logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
+            logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
-        logging.debug("Item %r, got contenttype %r from revision meta" % (name, contenttype))
+        logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
         item = item_registry.get(name, Type(contenttype), rev=rev)
-        logging.debug("ItemClass %r handles %r" % (item.__class__, contenttype))
+        logging.debug("ItemClass {0!r} handles {1!r}".format(item.__class__, contenttype))
         return item
 
     def __init__(self, name, rev=None, contenttype=None):
@@ -238,7 +238,7 @@ class Item(object):
             from MoinMoin.converter import default_registry as reg
             input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
-                raise TypeError("We cannot handle the conversion from %s to the DOM tree" % self.contenttype)
+                raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
             smiley_conv = reg.get(type_moin_document, type_moin_document,
                     icon='smiley')
 
@@ -373,7 +373,7 @@ class Item(object):
             new_rev.data.write(content)
             written += len(content)
         else:
-            raise StorageError("unsupported content object: %r" % content)
+            raise StorageError("unsupported content object: {0!r}".format(content))
         return written
 
     def _rename(self, name, comment, action):
@@ -392,7 +392,7 @@ class Item(object):
         trash_prefix = u'Trash/' # XXX move to config
         now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
         # make trash name unique by including timestamp:
-        trashname = u'%s%s (%s UTC)' % (trash_prefix, self.name, now)
+        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
         return self._rename(trashname, comment, action=u'TRASH')
 
     def revert(self):
@@ -557,7 +557,7 @@ class Item(object):
 
         unknown_item_group = "unknown items"
         if startswith:
-            startswith = (u'%s' % startswith, u'%s' % startswith.swapcase())
+            startswith = (u'{0}'.format(startswith), u'{0}'.format(startswith.swapcase()))
             if not selected_groups or unknown_item_group in selected_groups:
                 index = [(fullname, relname, contenttype)
                          for fullname, relname, contenttype in index
@@ -596,7 +596,7 @@ class Item(object):
         all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
         for fullname, relname, contenttype in index:
             hassubitem = False
-            subitem_name_re = u"^%s/[^/]+$" % re.escape(relname)
+            subitem_name_re = u"^{0}/[^/]+$".format(re.escape(relname))
             regex = re.compile(subitem_name_re, re.UNICODE|re.M)
             if regex.search(all_item_text):
                 hassubitem = True
@@ -654,7 +654,7 @@ There is no help, you're doomed!
     data = property(fget=get_data)
 
     def _render_meta(self):
-        return "<pre>%s</pre>" % escape(self.meta_dict_to_text(self.meta, use_filter=False))
+        return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
@@ -800,7 +800,7 @@ class TarMixin(object):
         :param expected_members: set of expected member file names
         """
         if not name in expected_members:
-            raise StorageError("tried to add unexpected member %r to container item %r" % (name, self.name))
+            raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
         if isinstance(name, unicode):
             name = name.encode('utf-8')
         temp_fname = os.path.join(tempfile.gettempdir(), 'TarContainer_' +
@@ -812,15 +812,15 @@ class TarMixin(object):
                 content_length = len(content)
             content = StringIO(content) # we need a file obj
         elif not hasattr(content, 'read'):
-            logging.error("unsupported content object: %r" % content)
-            raise StorageError("unsupported content object: %r" % content)
+            logging.error("unsupported content object: {0!r}".format(content))
+            raise StorageError("unsupported content object: {0!r}".format(content))
         assert content_length >= 0  # we don't want -1 interpreted as 4G-1
         ti.size = content_length
         tf.addfile(ti, content)
         tf_members = set(tf.getnames())
         tf.close()
         if tf_members - expected_members:
-            msg = "found unexpected members in container item %r" % self.name
+            msg = "found unexpected members in container item {0!r}".format(self.name)
             logging.error(msg)
             os.remove(temp_fname)
             raise StorageError(msg)
@@ -935,7 +935,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         elif content_type == 'image/gif':
             output_type = 'GIF'
         else:
-            raise ValueError("content_type %r not supported" % content_type)
+            raise ValueError("content_type {0!r} not supported".format(content_type))
 
         # revision obj has read() seek() tell(), thus this works:
         image = PILImage.open(self.rev.data)
@@ -1014,7 +1014,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
         url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup('<img src="%s" />' % escape(url))
+        return Markup('<img src="{0}" />'.format(escape(url)))
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -1035,7 +1035,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             elif content_type == 'image/gif':
                 output_type = 'GIF'
             else:
-                raise ValueError("content_type %r not supported" % content_type)
+                raise ValueError("content_type {0!r} not supported".format(content_type))
 
             try:
                 oldimage = PILImage.open(oldrev)
@@ -1050,7 +1050,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
                 app.cache.set(cid, (headers, data))
             except (IOError, ValueError) as err:
-                logging.exception("error during PILdiff: %s", err.message)
+                logging.exception("error during PILdiff: {0}".format(err.message))
                 abort(404) # TODO render user friendly error image
         else:
             # XXX TODO check ACL behaviour
@@ -1335,12 +1335,12 @@ class TWikiDraw(TarMixin, Image):
             image_map = image_map.replace('%MAPNAME%', mapid)
             # add alt and title tags to areas
             image_map = re.sub(r'href\s*=\s*"((?!%TWIKIDRAW%).+?)"', r'href="\1" alt="\1" title="\1"', image_map)
-            image_map = image_map.replace('%TWIKIDRAW%"', '%s" alt="%s" title="%s"' % (drawing_url, title, title))
+            image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format((drawing_url, title, title)))
             title = _('Clickable drawing: %(filename)s', filename=item_name)
 
-            return Markup(image_map + '<img src="%s" alt="%s" usemap="#%s" />' % (png_url, title, mapid))
+            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="%s" alt="%s" />' % (png_url, title))
+            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
@@ -1430,13 +1430,13 @@ class AnyWikiDraw(TarMixin, Image):
             # we have also to set a unique ID
             mapid = 'ImageMapOf' + self.name
             image_map = image_map.replace(u'id="drawing.svg"', '')
-            image_map = image_map.replace(u'name="drawing.svg"', u'name="%s"' % mapid)
+            image_map = image_map.replace(u'name="drawing.svg"', u'name="{0}"'.format(mapid))
             # unxml, because 4.01 concrete will not validate />
             image_map = image_map.replace(u'/>', u'>')
             title = _('Clickable drawing: %(filename)s', filename=self.name)
-            return Markup(image_map + '<img src="%s" alt="%s" usemap="#%s" />' % (png_url, title, mapid))
+            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="%s" alt="%s" />' % (png_url, title))
+            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
@@ -1497,7 +1497,7 @@ class SvgDraw(TarMixin, Image):
         item_name = self.name
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
-        return Markup('<img src="%s" alt="%s" />' % (png_url, drawing_url))
+        return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
 

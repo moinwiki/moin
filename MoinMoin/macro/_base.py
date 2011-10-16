@@ -79,7 +79,7 @@ class MacroNumberPageLinkListBase(MacroBlockBase):
         """ creates an ET with a list of pagelinks from a list of pagenames """
         num_page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
         for num, pagename in num_pagenames:
-            num_code = moin_page.code(children=["%6d " % num])
+            num_code = moin_page.code(children=["{0:6d} ".format(num)])
             # This link can never reach pagelinks
             url = unicode(iri.Iri(scheme=u'wiki', authority=u'', path=u'/' + pagename))
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[pagename])

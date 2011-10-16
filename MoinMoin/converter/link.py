@@ -130,7 +130,7 @@ class ConverterExternOutput(ConverterBase):
                 if k == 'rev':
                     rev = v
                     continue # we remove rev=n from qs
-                result.append(u'%s=%s' % (k, v))
+                result.append(u'{0}={1}'.format(k, v))
         if result:
             query = separator.join(result)
         else:

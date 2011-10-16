@@ -183,7 +183,7 @@ class _TableArguments(object):
         args.keyword['style'] = args.keyword.get('style', "") + attr + " "
 
     def hex_color_code_repl(self, args, hex_color_code):
-        self.add_attr_to_style(args, "background-color: #%s;" % hex_color_code)
+        self.add_attr_to_style(args, "background-color: #{0};".format(hex_color_code))
 
     def vertical_align_top_repl(self, args, vertical_align_top):
         self.add_attr_to_style(args, "vertical-align: top;")
@@ -201,7 +201,7 @@ class _TableArguments(object):
         self.add_attr_to_style(args, "text-align: right;")
 
     def width_percent_repl(self, args, width_percent):
-        self.add_attr_to_style(args, "width: %s;" % width_percent)
+        self.add_attr_to_style(args, "width: {0};".format(width_percent))
 
     def syntax_error_repl(self, args, syntax_error):
         args.keyword['error'] = syntax_error
@@ -211,7 +211,7 @@ class _TableArguments(object):
 
         for match in self._re.finditer(input):
             data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
-            getattr(self, '%s_repl' % match.lastgroup)(args, **data)
+            getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
 
         return args
 
@@ -382,11 +382,11 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class = u'moin-hr%s'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class = u'moin-hr{0}'):
         stack.clear()
         hr_height = min((len(separator) - 3), 6)
         hr_height = max(hr_height, 1)
-        attrib = {moin_page('class'): hr_class % hr_height}
+        attrib = {moin_page('class'): hr_class.format(hr_height)}
         elem = moin_page.separator(attrib = attrib)
         stack.top_append(elem)
 
@@ -800,7 +800,7 @@ class Converter(ConverterMacro):
                 return
             else:
                 # assume local language uses ":" inside of words, set link_item and continue
-                link_item = '%s:%s' % (link_interwiki_site, link_interwiki_item)
+                link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
         if link_args:
             link_args = parse_arguments(link_args) # XXX needs different parsing
             query = url_encode(link_args.keyword, charset=config.charset, encode_keys=True)
@@ -993,15 +993,15 @@ class Converter(ConverterMacro):
                 if key == 'bgcolor':
                     if no_errors:
                         # avoid overriding error highlighting
-                        add_attr_to_style(element.attrib, 'background-color: %s;' % value)
+                        add_attr_to_style(element.attrib, 'background-color: {0};'.format(value))
                 elif key == 'rowbgcolor':
-                    add_attr_to_style(row.attrib, 'background-color: %s;' % value)
+                    add_attr_to_style(row.attrib, 'background-color: {0};'.format(value))
                 elif key == 'tablebgcolor':
-                    add_attr_to_style(table.attrib, 'background-color: %s;' % value)
+                    add_attr_to_style(table.attrib, 'background-color: {0};'.format(value))
                 elif key == 'width':
-                    add_attr_to_style(element.attrib, 'width: %s' % value)
+                    add_attr_to_style(element.attrib, 'width: {0};'.format(value))
                 elif key == 'tablewidth':
-                    add_attr_to_style(table.attrib, 'width: %s;' % value)
+                    add_attr_to_style(table.attrib, 'width: {0};'.format(value))
                 elif key == 'tableclass':
                     table.attrib[moin_page('class')] = value
                 elif key == 'rowclass':
@@ -1034,7 +1034,7 @@ class Converter(ConverterMacro):
                     cell_markup = cell_markup.split('<')[1]
                     msg1 = _('Error:')
                     msg2 = _('is invalid within')
-                    cell_text = '[ %s "%s" %s <%s>&nbsp;]<<BR>>%s' % (msg1, error, msg2, cell_markup, cell_text)
+                    cell_text = '[ {0} "{1}" {2} <{3}>&nbsp;]<<BR>>{4}'.format(msg1, error, msg2, cell_markup, cell_text)
                     if no_errors:
                         add_attr_to_style(element.attrib, 'background-color: pink; color: black;')
                     no_errors = False
@@ -1096,7 +1096,7 @@ class Converter(ConverterMacro):
         Call the _repl method for the last matched group with the given prefix.
         """
         data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
-        func = '%s_%s_repl' % (prefix, match.lastgroup)
+        func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
         #logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 

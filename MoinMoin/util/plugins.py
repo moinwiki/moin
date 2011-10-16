@@ -68,7 +68,7 @@ def importWikiPlugin(cfg, kind, name, function="execute"):
     modname = plugins.get(name, None)
     if modname is None:
         raise PluginMissingError()
-    moduleName = '%s.%s' % (modname, name)
+    moduleName = '{0}.{1}'.format(modname, name)
     return importNameFromPlugin(moduleName, function)
 
 
@@ -79,7 +79,7 @@ def importBuiltinPlugin(kind, name, function="execute"):
     """
     if not name in builtinPlugins(kind):
         raise PluginMissingError()
-    moduleName = 'MoinMoin.%s.%s' % (kind, name)
+    moduleName = 'MoinMoin.{0}.{1}'.format(kind, name)
     return importNameFromPlugin(moduleName, function)
 
 
@@ -142,7 +142,7 @@ def wikiPlugins(kind, cfg):
                 plugins = pysupport.getPluginModules(packagepath)
                 for p in plugins:
                     if not p in result:
-                        result[p] = '%s.%s' % (modname, kind)
+                        result[p] = '{0}.{1}'.format(modname, kind)
             except AttributeError:
                 pass
         cache[kind] = result
@@ -181,7 +181,7 @@ def searchAndImportPlugin(cfg, type, name, what=None):
         except PluginMissingError:
             pass
     else:
-        raise PluginMissingError("Plugin not found! (%r %r %r)" % (type, name, what))
+        raise PluginMissingError("Plugin not found! ({0!r} {1!r} {2!r})".format(type, name, what))
     return plugin
 
 
@@ -203,8 +203,8 @@ def _loadPluginModule(cfg):
         imp.acquire_lock()
         try:
             for pdir in cfg.plugin_dirs:
-                csum = 'p_%s' % hashlib.new('sha1', pdir).hexdigest()
-                modname = '%s.%s' % (cfg.siteid, csum)
+                csum = 'p_{0}'.format(hashlib.new('sha1', pdir).hexdigest())
+                modname = '{0}.{1}'.format(cfg.siteid, csum)
                 # If the module is not loaded, try to load it
                 if not modname in sys.modules:
                     # Find module on disk and try to load - slow!

@@ -281,7 +281,7 @@ class NodeVisitor(object):
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
-        self.open_moin_page_node(u'%s:' % node.astext())
+        self.open_moin_page_node(u'{0}:'.format(node.astext()))
         node.children = []
         self.close_moin_page_node()
 
@@ -400,7 +400,7 @@ class NodeVisitor(object):
             for name, value in named_args:
                 args.append(moin_page.argument(attrib={moin_page.name: name}, children=[value]))
             arguments = moin_page.arguments(children=args)
-            self.open_moin_page_node(moin_page.part(children=[arguments], attrib={moin_page.content_type: "x-moin/format;name=%s" % parser.split(' ')[0]}))
+            self.open_moin_page_node(moin_page.part(children=[arguments], attrib={moin_page.content_type: "x-moin/format;name={0}".format(parser.split(' ')[0])}))
         else:
             self.open_moin_page_node(moin_page.blockcode())
 
@@ -444,7 +444,7 @@ class NodeVisitor(object):
                 moin_page.part(
                     attrib={
                         moin_page.content_type:\
-                            "x-moin/macro;name=%s" % macro_name, }))
+                            "x-moin/macro;name={0}".format(macro_name)}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
                 for i in arguments:
@@ -678,7 +678,7 @@ class MoinDirectives(object):
             return []
 
         if content:
-            macro = u'<<Include(%s)>>' % content[0]
+            macro = u'<<Include({0})>>'.format(content[0])
         else:
             macro = u'<<Include()>>'
         ref = reference(macro, refuri=macro)
@@ -703,7 +703,7 @@ class MoinDirectives(object):
             if content[0].startswith(u'<<'):
                 macro = content[0]
             else:
-                macro = u'<<%s>>' % content[0]
+                macro = u'<<{0}>>'.format(content[0])
             ref = reference(macro, refuri=macro)
             ref['name'] = macro
             return [ref]
@@ -722,7 +722,7 @@ class MoinDirectives(object):
             if m and len(m.groups()) == 2:
                 if m.groups()[0] == u'depth':
                     text = m.groups()[1]
-        macro = u'<<TableOfContents(%s)>>' % text
+        macro = u'<<TableOfContents({0})>>'.format(text)
         ref = reference(macro, refuri=macro)
         ref['name'] = macro
         return [ref]
@@ -764,10 +764,10 @@ class Converter(object):
                     str_num = string_numb.group(1)
                     input = input.split('\n')
                     if str_num:
-                        input = ['.. error::\n ::\n\n  Parse error on line number %s:\n\n  %s\n\n  Go back and try fix that.\n\n' % (str_num, string_numb.group(2).replace('\n', '\n  '))]
+                        input = ['.. error::\n ::\n\n  Parse error on line number {0}:\n\n  {1}\n\n  Go back and try fix that.\n\n'.format(str_num, string_numb.group(2).replace('\n', '\n  '))]
                         continue
                 else:
-                    input = ['.. error::\n ::\n\n  %s\n\n' % str(inst).replace('\n', '\n  ')]
+                    input = ['.. error::\n ::\n\n  {0}\n\n'.format(str(inst).replace('\n', '\n  '))]
                 raise inst
             break
         visitor = NodeVisitor()

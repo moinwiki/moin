@@ -240,7 +240,7 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        ret = self.new_copy(html('h%d' % level), elem)
+        ret = self.new_copy(html('h{0}'.format(level)), elem)
         ret.level = level
         return ret
 
@@ -303,7 +303,7 @@ class Converter(object):
                     attrib_new[html('class')] = 'moin-nobullet-list'
                 ret = html.ul(attrib=attrib_new)
             else:
-                raise ElementException('page:item-label-generate does not support "%s"' % generate)
+                raise ElementException('page:item-label-generate does not support "{0}"'.format(generate))
         else:
             ret = html.dl(attrib=attrib_new)
 
@@ -386,7 +386,7 @@ class Converter(object):
             if item.tag.uri == moin_page and item.tag.name == 'body':
                 return self.new_copy(html.div, item)
 
-        raise RuntimeError('page:page need to contain exactly one page:body tag, got %r' % elem[:])
+        raise RuntimeError('page:page need to contain exactly one page:body tag, got {0!r}'.format(elem[:]))
 
     def visit_moinpage_part(self, elem):
         body = error = None
@@ -458,7 +458,7 @@ class Converter(object):
             else:
                 attribute = {}
                 key = html('class')
-                attribute[key] = "element-%s" % generate
+                attribute[key] = "element-{0}".format(generate)
                 return self.new_copy(html.span, elem, attribute)
         # If no any attributes is handled by our converter, just return span
         return self.new_copy(html.span, elem)
@@ -505,7 +505,7 @@ class SpecialId(object):
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         if nr == 1:
             return id
-        return id + u'-%d' % nr
+        return id + u'-{0}'.format(nr)
 
 
 class SpecialPage(object):
@@ -519,7 +519,7 @@ class SpecialPage(object):
 
     def add_heading(self, elem, level, id=None):
         elem.append(html.a(attrib={
-            html.href: "#%s" % id,
+            html.href: "#{0}".format(id),
             html.class_: "permalink",
         }, children=(u"¶", )))
         self._headings.append((elem, level, id))
@@ -613,15 +613,15 @@ class ConverterPage(Converter):
                         if maxlevel != 1:
                             stack_top_append(old_toggle)
                         stack_push(html.ol())
-                        stack_push(html.li({html.id_: 'li%s' % id}))
+                        stack_push(html.li({html.id_: 'li{0}'.format(id)}))
                         last_level += 1
                     if need_item:
                         stack.pop()
-                        stack_push(html.li({html.id_: 'li%s' % id}))
+                        stack_push(html.li({html.id_: 'li{0}'.format(id)}))
                     togglelink = html.a(attrib={
                                          html.href_: "#",
                                          html.onclick_:
-                                            "$('#li%s ol').toggle();return false;" % id,
+                                            "$('#li{0} ol').toggle();return false;".format(id),
                                          html.class_: 'showhide',
                                      },
                                      children=["[+]", ])
@@ -671,12 +671,12 @@ class ConverterPage(Converter):
         id = self._id.gen_id('note')
 
         elem_ref = ET.XML("""
-<html:sup xmlns:html="%s" html:id="note-%d-ref" html:class="moin-footnote"><html:a html:href="#note-%d">%d</html:a></html:sup>
-""" % (html, id, id, id))
+<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote"><html:a html:href="#note-{2}">{3}</html:a></html:sup>
+""".format(html, id, id, id))
 
         elem_note = ET.XML("""
-<html:p xmlns:html="%s" html:id="note-%d"><html:sup><html:a html:href="#note-%d-ref">%d</html:a></html:sup></html:p>
-""" % (html, id, id, id))
+<html:p xmlns:html="{0}" html:id="note-{1}"><html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup></html:p>
+""".format(html, id, id, id))
 
         elem_note.extend(body)
         self._special_stack[-1].add_footnote(elem_note)

@@ -45,7 +45,7 @@ class ProtectingMiddleware(object):
             if itemname.startswith(prefix):
                 return acls
         else:
-            raise ValueError('No acl_mapping entry found for item %r' % itemname)
+            raise ValueError('No acl_mapping entry found for item {0!r}'.format(itemname))
 
     def query_parser(self, default_fields, idx_name=LATEST_REVS):
         return self.indexer.query_parser(default_fields, idx_name=idx_name)
@@ -197,7 +197,7 @@ class ProtectedItem(object):
 
     def require(self, capability):
         if not self.allows(capability):
-            raise AccessDenied("item does not allow user '%r' to '%r'" % (self.protector.user.name, capability))
+            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}'".format(self.protector.user.name, capability))
 
     def iter_revs(self):
         self.require(READ)
@@ -252,7 +252,7 @@ class ProtectedRevision(object):
 
     def require(self, capability):
         if not self.allows(capability):
-            raise AccessDenied("revision does not allow '%r'" % (capability, ))
+            raise AccessDenied("revision does not allow '{0!r}'".format(capability))
 
     @property
     def revid(self):

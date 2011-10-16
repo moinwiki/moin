@@ -297,14 +297,14 @@ def test_Iri_quote_1():
     assert u.fragment.fullquoted == fragment
     assert u.fragment.quoted == u'fragment_ä%25?#'
     assert u.fragment.urlquoted == u'fragment_%C3%A4%25?%23'
-    assert unicode(u) == u'wiki://%s%s?%s#%s' % (authority, path, query, fragment)
+    assert unicode(u) == u'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
 
 def test_Iri_quote_2():
     authority = u'authority_ä%25%3F%23'
     path = u'/path_ä%25%3F%23'
     query = u'query_ä%25?%23'
     fragment = u'fragment_ä%25?%23'
-    i = u'wiki://%s%s?%s#%s' % (authority, path, query, fragment)
+    i = u'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
     u = Iri(i)
     assert unicode(u) == i
 

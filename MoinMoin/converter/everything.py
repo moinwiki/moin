@@ -25,9 +25,9 @@ class Converter(object):
     def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev=%s' % rev.revid),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev={0}'.format(rev.revid)),
         }
-        return moin_page.a(attrib=attrib, children=["Download %s." % item_name])
+        return moin_page.a(attrib=attrib, children=["Download {0}.".format(item_name)])
 
 
 from . import default_registry

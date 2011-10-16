@@ -39,8 +39,7 @@ class Base(object):
         f = StringIO.StringIO()
         out = self.conv_html_dom(input, **args)
         out.write(f.write, namespaces=self.namespaces, )
-        logging.debug("After the HTML_IN conversion : %s" %
-                      self.output_re.sub(u'', f.getvalue()))
+        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub(u'', f.getvalue())))
         out = self.conv_dom_html(out, **args)
         f = StringIO.StringIO()
         out.write(f.write, namespaces=self.namespaces, )
@@ -48,7 +47,7 @@ class Base(object):
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
-        logging.debug("After the roundtrip : %s" % string_to_parse)
+        logging.debug("After the roundtrip : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
         assert (tree.xpath(path))
 

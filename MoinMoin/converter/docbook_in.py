@@ -353,7 +353,7 @@ class Converter(object):
 
         # We should ignore this element
         if element.tag.name in self.ignored_tags:
-            logging.warning("Ignored tag:%s" % element.tag.name)
+            logging.warning("Ignored tag:{0}".format(element.tag.name))
             return
 
         # We have an admonition element

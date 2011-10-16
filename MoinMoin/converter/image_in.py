@@ -29,7 +29,7 @@ class Converter(object):
         item_name = rev.item.name
         attrib = {
             moin_page.type_: unicode(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev=%s' % rev.revid),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev={0}'.format(rev.revid)),
         }
         return moin_page.object_(attrib=attrib, children=[item_name, ])
 

@@ -43,20 +43,20 @@ def get_locale():
     if u and u.locale is not None:
         # locale is given in user profile, use it
         locale = u.locale
-        logging.debug("user locale = %r" % locale)
+        logging.debug("user locale = {0!r}".format(locale))
     else:
         # try to guess the language from the user accept
         # header the browser transmits. The best match wins.
-        logging.debug("request.accept_languages = %r" % request.accept_languages)
+        logging.debug("request.accept_languages = {0!r}".format(request.accept_languages))
         supported_locales = [Locale('en')] + current_app.babel_instance.list_translations()
-        logging.debug("supported_locales = %r" % supported_locales)
+        logging.debug("supported_locales = {0!r}".format(supported_locales))
         supported_languages = [str(l) for l in supported_locales]
-        logging.debug("supported_languages = %r" % supported_languages)
+        logging.debug("supported_languages = {0!r}".format(supported_languages))
         locale = request.accept_languages.best_match(supported_languages, 'en')
-        logging.debug("best match locale = %r" % locale)
+        logging.debug("best match locale = {0!r}".format(locale))
     if not locale:
         locale = current_app.cfg.locale_default
-        logging.debug("default locale = %r" % locale)
+        logging.debug("default locale = {0!r}".format(locale))
     return locale
 
 

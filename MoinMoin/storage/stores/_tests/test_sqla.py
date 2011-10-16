@@ -16,7 +16,7 @@ from ..sqla import BytesStore, FileStore
 def test_create(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
     assert not dbfile.check()
-    store = Store('sqlite:///%s' % str(dbfile))
+    store = Store('sqlite:///{0!s}'.format(dbfile))
     assert not dbfile.check()
     store.create()
     assert dbfile.check()

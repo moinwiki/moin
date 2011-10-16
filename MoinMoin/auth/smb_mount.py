@@ -48,7 +48,7 @@ class SMBMount(BaseAuth):
         self.coding = coding
 
     def do_smb(self, username, password, login):
-        logging.debug("login=%s logout=%s: got name=%s" % (login, not login, username))
+        logging.debug("login={0} logout={1}: got name={2}".format(login, not login, username))
 
         import os, pwd, subprocess
         web_username = self.dir_user
