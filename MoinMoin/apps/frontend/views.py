@@ -1522,10 +1522,10 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
     :returns: start, end, matches dict
     """
     if start_re is None:
-        start_re = re.compile('([{0}][{1}]+)'.format(config.chars_upper,
+        start_re = re.compile(u'([{0}][{1}]+)'.format(config.chars_upper,
                                                      config.chars_lower))
     if end_re is None:
-        end_re = re.compile('([{0}][{1}]+)$'.format(config.chars_upper,
+        end_re = re.compile(u'([{0}][{1}]+)$'.format(config.chars_upper,
                                                     config.chars_lower))
 
     # If we don't get results with wiki words matching, fall back to
@@ -1653,7 +1653,7 @@ def global_tags():
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0} rev {1} tags {2}".format(rev.meta[NAME], rev.meta[REVID], tags))
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
