@@ -67,6 +67,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                   'MoinMoin.apps.admin.templates': ['*.html', ],
                   'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
                  },
+    include_package_data=True,
     zip_safe=False,
     dependency_links = [
         # hack needed as install from pypi fails for Werkzeug==dev due to
