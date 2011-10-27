@@ -13,9 +13,9 @@ import pytest
 pytest.importorskip('MoinMoin.storage.stores.kt')
 
 
-from MoinMoin._tests import test_connection
+from MoinMoin._tests import check_connection
 try:
-    test_connection(1978)
+    check_connection(1978)
 except Exception as err:
     pytest.skip(str(err))
 

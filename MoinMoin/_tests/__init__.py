@@ -71,7 +71,7 @@ def nuke_item(name):
     item.destroy()
 
 
-def test_connection(port, host='127.0.0.1'):
+def check_connection(port, host='127.0.0.1'):
     """
     Check if we can make a connection to host:port.
 
