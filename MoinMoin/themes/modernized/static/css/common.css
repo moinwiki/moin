@@ -107,7 +107,7 @@ strong.highlight { background-color: #CCE0FF; padding: 1px; }
 
 /* pre */
 pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear: both;
-            font-family: courier, monospace; margin: .33em 0; white-space: pre; }
+            font-family: monospace; margin: .33em 0; white-space: pre; }
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
 
@@ -333,9 +333,9 @@ a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em
 
 .moin-diff-line-number { background-color: #C0C0C0; }
 .moin-diff-added { background-color: #E0FFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
-            font-family: courier, monospace; }
+            font-family: monospace; }
 .moin-diff-removed { background-color: #FFFFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
-            font-family: courier, monospace; }
+            font-family: monospace; }
 .moin-diff-added span { background-color: #80FF80; }
 .moin-diff-removed span { background-color: #FFFF80; }
 
@@ -670,7 +670,7 @@ h6:hover .permalink { display: inline; }
 
 @media print {
 
-html { font-family: Times, serif; font-size: 12pt; width: 100%; }
+html { font-family: serif; font-size: 12pt; width: 100%; }
 body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
 
 a, a:visited,
