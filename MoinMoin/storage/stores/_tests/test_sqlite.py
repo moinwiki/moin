@@ -46,3 +46,14 @@ def test_destroy(tmpdir, Store):
     store.destroy()
     # XXX: check for dropped table
 
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(tmpdir, Store):
+    store = Store.from_uri("%s:test_table:0" % tmpdir)
+    assert store.db_name == tmpdir
+    assert store.table_name == 'test_table'
+    assert store.compression_level == 0
+
+    store = Store.from_uri("%s:test_table:2" % tmpdir)
+    assert store.db_name == tmpdir
+    assert store.table_name == 'test_table'
+    assert store.compression_level == 2
