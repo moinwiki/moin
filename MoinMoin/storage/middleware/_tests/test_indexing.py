@@ -354,11 +354,10 @@ class TestProtectedIndexingMiddleware(object):
     reinit_storage = True # cleanup after each test method
 
     class Config(wikiconfig.Config):
-        auth = [GivenAuth(user_name=u'joe'), ] # XXX does NOT login user joe
+        auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
 
     def setup_method(self, method):
-        flaskg.user.name = u'joe' # XXX hack because of GivenAuth does not work
-        self.imw = flaskg.unprotected_storage # XXX use .storage
+        self.imw = flaskg.storage
 
     def teardown_method(self, method):
         pass
@@ -368,7 +367,8 @@ class TestProtectedIndexingMiddleware(object):
         item = self.imw[item_name]
         r = item.store_revision(dict(name=item_name, acl=u'joe:read'), StringIO('public content'))
         revid_public = r.revid
-        revids = [rev.revid for rev in self.imw.documents()]
+        revids = [rev.revid for rev in self.imw.documents()
+                  if rev.meta[NAME] != u'joe'] # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):
