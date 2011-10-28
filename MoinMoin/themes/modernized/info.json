@@ -1,0 +1,10 @@
+{
+    "identifier":   "modernized",
+    "application":  "MoinMoin",
+    "name":         "Modernized Theme",
+    "description":  "moin2's builtin theme",
+    "author":       "Thomas Waldmann",
+    "website":      "http://moinmo.in/",
+    "license":      "see MoinMoin license",
+    "doctype":      "html5"
+}

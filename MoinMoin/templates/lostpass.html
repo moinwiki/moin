@@ -1,0 +1,18 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block item %}
+<h1>{{ _("Lost Password") }}</h1>
+<div class="moin-form">
+{{ _("Please note that you only need to fill out one form field.") }}
+{{ gen.form.open(form, method="post", action=url_for('frontend.lostpass')) }}
+  {{ forms.render_errors(form) }}
+  <dl>
+    {{ forms.render_field(gen, form['username'], 'text') }}
+    {{ forms.render_field(gen, form['email'], 'text') }}
+  </dl>
+  {{ gen.input(form['submit'], type='submit') }}
+{{ gen.form.close() }}
+</div>
+{% endblock %}
+
