@@ -45,8 +45,8 @@ def serialize_rev(meta, data):
             yield block
 
 def serialize_iter(backend):
-    for revid in backend:
-        meta, data = backend.retrieve(revid)
+    for mountpoint, revid in backend:
+        meta, data = backend.retrieve(mountpoint, revid)
         for data in serialize_rev(meta, data):
             yield data
     for data in serialize_rev(None, None):

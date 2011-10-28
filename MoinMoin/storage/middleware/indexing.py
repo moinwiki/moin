@@ -379,21 +379,21 @@ class IndexingMiddleware(object):
             if docnum_remove is not None:
                 # we are removing a revid that is in latest revs index
                 try:
-                    latest_revids = self._find_latest_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
+                    latest_names_revids = self._find_latest_names_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
                 except AttributeError:
                     # workaround for bug #200 AttributeError: 'FieldCache' object has no attribute 'code'
-                    latest_revids = []
-                if latest_revids:
+                    latest_names_revids = []
+                if latest_names_revids:
                     # we have a latest revision, just update the document in the index:
-                    assert len(latest_revids) == 1 # this item must have only one latest revision
-                    latest_revid = latest_revids[0]
+                    assert len(latest_names_revids) == 1 # this item must have only one latest revision
+                    latest_name_revid = latest_names_revids[0]
                     # we must fetch from backend because schema for LATEST_REVS is different than for ALL_REVS
                     # (and we can't be sure we have all fields stored, too)
-                    meta, _ = self.backend.retrieve(latest_revid)
+                    meta, _ = self.backend.retrieve(*latest_name_revid)
                     # we only use meta (not data), because we do not want to transform data->content again (this
                     # is potentially expensive) as we already have the transformed content stored in ALL_REVS index:
                     with self.ix[ALL_REVS].searcher() as searcher:
-                        doc = searcher.document(revid=latest_revid)
+                        doc = searcher.document(revid=latest_name_revid[1])
                         content = doc[CONTENT]
                     doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname)
                     writer.update_document(**doc)
@@ -415,9 +415,9 @@ class IndexingMiddleware(object):
         else:
             writer = MultiSegmentWriter(index, procs, limitmb)
         with writer as writer:
-            for revid in revids:
+            for mountpoint, revid in revids:
                 if mode in ['add', 'update', ]:
-                    meta, data = self.backend.retrieve(revid)
+                    meta, data = self.backend.retrieve(mountpoint, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname)
                 if mode == 'update':
@@ -429,13 +429,13 @@ class IndexingMiddleware(object):
                 else:
                     raise ValueError("mode must be 'update', 'add' or 'delete', not '{0}'".format(mode))
 
-    def _find_latest_revids(self, index, query=None):
+    def _find_latest_names_revids(self, index, query=None):
         """
         find the latest revids using the all-revs index
 
         :param index: an up-to-date and open ALL_REVS index
         :param query: query to search only specific revisions (optional, default: all items/revisions)
-        :returns: a list of the latest revids
+        :returns: a list of tuples (name, latest revid)
         """
         if query is None:
             query = Every()
@@ -443,8 +443,10 @@ class IndexingMiddleware(object):
             result = searcher.search(query, groupedby=ITEMID, sortedby=FieldFacet(MTIME, reverse=True))
             by_item = result.groups(ITEMID)
             # values in v list are in same relative order as in results, so latest MTIME is first:
-            latest_revids = [searcher.stored_fields(v[0])[REVID] for v in by_item.values()]
-        return latest_revids
+            latest_names_revids = [(searcher.stored_fields(v[0])[NAME],
+                                    searcher.stored_fields(v[0])[REVID])
+                                   for v in by_item.values()]
+        return latest_names_revids
 
     def rebuild(self, tmp=False, procs=1, limitmb=256):
         """
@@ -461,13 +463,13 @@ class IndexingMiddleware(object):
             # build an index of all we have (so we know what we have)
             all_revids = self.backend # the backend is an iterator over all revids
             self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, 'add', procs, limitmb)
-            latest_revids = self._find_latest_revids(index)
+            latest_names_revids = self._find_latest_names_revids(index)
         finally:
             index.close()
         # now build the index of the latest revisions:
         index = open_dir(index_dir, indexname=LATEST_REVS)
         try:
-            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_revids, 'add', procs, limitmb)
+            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_names_revids, 'add', procs, limitmb)
         finally:
             index.close()
 
@@ -487,17 +489,24 @@ class IndexingMiddleware(object):
         index_dir = self.index_dir_tmp if tmp else self.index_dir
         index_all = open_dir(index_dir, indexname=ALL_REVS)
         try:
+            # NOTE: self.backend iterator gives (mountpoint, revid) tuples, which is NOT
+            # the same as (name, revid), thus we do the set operations just on the revids.
             # first update ALL_REVS index:
-            backend_revids = set(self.backend)
+            revids_mountpoints = dict((revid, mountpoint) for mountpoint, revid in self.backend)
+            backend_revids = set(revids_mountpoints)
             with index_all.searcher() as searcher:
-                ix_revids = set([doc[REVID] for doc in searcher.all_stored_fields()])
+                ix_revids_names = dict((doc[REVID], doc[NAME]) for doc in searcher.all_stored_fields())
+            revids_mountpoints.update(ix_revids_names) # this is needed for stuff that was deleted from storage
+            ix_revids = set(ix_revids_names)
             add_revids = backend_revids - ix_revids
             del_revids = ix_revids - backend_revids
             changed = add_revids or del_revids
+            add_revids = [(revids_mountpoints[revid], revid) for revid in add_revids]
+            del_revids = [(revids_mountpoints[revid], revid) for revid in del_revids]
             self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, add_revids, 'add')
             self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, del_revids, 'delete')
 
-            backend_latest_revids = set(self._find_latest_revids(index_all))
+            backend_latest_names_revids = set(self._find_latest_names_revids(index_all))
         finally:
             index_all.close()
         index_latest = open_dir(index_dir, indexname=LATEST_REVS)
@@ -505,7 +514,9 @@ class IndexingMiddleware(object):
             # now update LATEST_REVS index:
             with index_latest.searcher() as searcher:
                 ix_revids = set(doc[REVID] for doc in searcher.all_stored_fields())
+            backend_latest_revids = set(revid for name, revid in backend_latest_names_revids)
             upd_revids = backend_latest_revids - ix_revids
+            upd_revids = [(revids_mountpoints[revid], revid) for revid in upd_revids]
             self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, 'update')
             self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, del_revids, 'delete')
         finally:
@@ -754,6 +765,8 @@ class Item(object):
         meta[ITEMID] = self.itemid
         if MTIME not in meta:
             meta[MTIME] = int(time.time())
+        #if CONTENTTYPE not in meta:
+        #    meta[CONTENTTYPE] = u'application/octet-stream'
         content = convert_to_indexable(meta, data, is_new=True)
         return meta, data, content
 
@@ -798,7 +811,8 @@ class Item(object):
         """
         Destroy revision <revid>.
         """
-        self.backend.remove(revid)
+        rev = Revision(self, revid)
+        self.backend.remove(rev.name, revid)
         self.indexer.remove_revision(revid)
 
     def destroy_all_revisions(self):
@@ -840,7 +854,7 @@ class Revision(object):
         return self.meta.get(NAME, 'DoesNotExist')
 
     def _load(self):
-        meta, data = self.backend.retrieve(self.revid) # raises KeyError if rev does not exist
+        meta, data = self.backend.retrieve(self._doc[NAME], self.revid) # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)
         self._data = data
         return meta, data
