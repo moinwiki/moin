@@ -34,3 +34,8 @@ def test_destroy(tmpdir, Store):
     store.destroy()
     assert not target.check()
 
+
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(tmpdir, Store):
+    store = Store.from_uri("%s" % tmpdir)
+    assert store.path == tmpdir

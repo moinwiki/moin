@@ -73,11 +73,10 @@ class Backend(MutableBackendBase):
         #       can be given to get_revision and be routed to the right backend.
         for mountpoint, backend in self.mapping:
             for revid in backend:
-                yield u'{0}:{1}'.format(mountpoint, revid)
+                yield (mountpoint, revid)
 
-    def retrieve(self, revid):
-        mountpoint, revid = revid.rsplit(u':', 1)
-        backend = self._get_backend(mountpoint)[0]
+    def retrieve(self, name, revid):
+        backend, _, mountpoint = self._get_backend(name)
         meta, data = backend.retrieve(revid)
         if mountpoint:
             meta[NAME] = u'{0}/{1}'.format(mountpoint, meta[NAME])
@@ -97,16 +96,17 @@ class Backend(MutableBackendBase):
             #XXX else: log info?
 
     def store(self, meta, data):
-        itemname = meta[NAME]
-        backend, itemname, mountpoint = self._get_backend(itemname)
+        mountpoint_itemname = meta[NAME]
+        backend, itemname, mountpoint = self._get_backend(mountpoint_itemname)
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
         meta[NAME] = itemname
-        return u'{0}:{1}'.format(mountpoint, backend.store(meta, data))
+        revid = backend.store(meta, data)
+        meta[NAME] = mountpoint_itemname # restore the original name
+        return revid
 
-    def remove(self, revid):
-        mountpoint, revid = revid.rsplit(u':', 1)
-        backend = self._get_backend(mountpoint)[0]
+    def remove(self, name, revid):
+        backend, _, mountpoint = self._get_backend(name)
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
         backend.remove(revid)

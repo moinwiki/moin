@@ -27,7 +27,18 @@ class _Store(MutableStoreBase):
     """
     @classmethod
     def from_uri(cls, uri):
-        return cls(uri)
+        """
+        Create a new cls instance from the using the uri
+
+        :param cls: Class to create
+        :param uri: The database uri that we pass on to SQLAlchemy.
+        """
+
+        params = [uri]
+        if '/' in uri.rsplit("//")[-1]:
+            table_name = uri.rsplit("/")[-1]
+            params.append(table_name)
+        return cls(*params)
 
     def __init__(self, db_uri=None, table_name='store', verbose=False):
         """
