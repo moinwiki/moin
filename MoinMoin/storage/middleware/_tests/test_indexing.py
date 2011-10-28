@@ -13,33 +13,38 @@ import hashlib
 
 import pytest
 
+from flask import g as flaskg
+
 from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
                             LATEST_REVS, ALL_REVS
 
 from ..indexing import IndexingMiddleware
 
+from MoinMoin.auth import GivenAuth
+from MoinMoin._tests import wikiconfig
 from MoinMoin.storage.backends.stores import MutableBackend
 from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
 from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
+from MoinMoin.storage import create_simple_mapping
+from MoinMoin.storage.middleware import routing
+
+
+def dumper(indexer, idx_name):
+    print "*** %s ***" % idx_name
+    for kvs in indexer.dump(idx_name=idx_name):
+        for k, v in kvs:
+            print k, repr(v)[:70]
+        print
 
 
 class TestIndexingMiddleware(object):
+    reinit_storage = True # cleanup after each test method
+
     def setup_method(self, method):
-        meta_store = MemoryBytesStore()
-        data_store = MemoryFileStore()
-        self.be = MutableBackend(meta_store, data_store)
-        self.be.create()
-        self.be.open()
-        index_dir = 'ix'
-        self.imw = IndexingMiddleware(index_dir=index_dir, backend=self.be)
-        self.imw.create()
-        self.imw.open()
+        self.imw = flaskg.unprotected_storage
 
     def teardown_method(self, method):
-        self.imw.close()
-        self.imw.destroy()
-        self.be.close()
-        self.be.destroy()
+        pass
 
     def test_nonexisting_item(self):
         item = self.imw[u'foo']
@@ -251,6 +256,9 @@ class TestIndexingMiddleware(object):
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
 
+        dumper(self.imw, ALL_REVS)
+        dumper(self.imw, LATEST_REVS)
+
         # now build a fresh index at tmp location:
         self.imw.create(tmp=True)
         self.imw.rebuild(tmp=True)
@@ -278,6 +286,9 @@ class TestIndexingMiddleware(object):
         self.imw.move_index()
         self.imw.open()
 
+        dumper(self.imw, ALL_REVS)
+        dumper(self.imw, LATEST_REVS)
+
         # read the index contents we have now:
         all_revids = [doc[REVID] for doc in self.imw._documents(idx_name=ALL_REVS)]
         latest_revids = [doc[REVID] for doc in self.imw._documents()]
@@ -292,9 +303,12 @@ class TestIndexingMiddleware(object):
         self.imw.update()
         self.imw.open()
 
+        dumper(self.imw, ALL_REVS)
+        dumper(self.imw, LATEST_REVS)
+
         # read the index contents we have now:
-        all_revids = [rev.revid for rev in self.imw.documents(idx_name=ALL_REVS)]
-        latest_revids = [rev.revid for rev in self.imw.documents()]
+        all_revids = [doc[REVID] for doc in self.imw._documents(idx_name=ALL_REVS)]
+        latest_revids = [doc[REVID] for doc in self.imw._documents()]
 
         # now it should have the previously missing rev and all should be as expected:
         for missing_revid in missing_revids:
@@ -337,29 +351,24 @@ class TestIndexingMiddleware(object):
         assert unicode(data) == doc[CONTENT]
 
 class TestProtectedIndexingMiddleware(object):
+    reinit_storage = True # cleanup after each test method
+
+    class Config(wikiconfig.Config):
+        auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
+
     def setup_method(self, method):
-        meta_store = MemoryBytesStore()
-        data_store = MemoryFileStore()
-        self.be = MutableBackend(meta_store, data_store)
-        self.be.create()
-        self.be.open()
-        index_dir = 'ix'
-        self.imw = IndexingMiddleware(index_dir=index_dir, backend=self.be, user_name=u'joe', acl_support=True)
-        self.imw.create()
-        self.imw.open()
+        self.imw = flaskg.storage
 
     def teardown_method(self, method):
-        self.imw.close()
-        self.imw.destroy()
-        self.be.close()
-        self.be.destroy()
+        pass
 
     def test_documents(self):
         item_name = u'public'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=item_name, acl=u'joe:read'), StringIO('public content'))
         revid_public = r.revid
-        revids = [rev.revid for rev in self.imw.documents()]
+        revids = [rev.revid for rev in self.imw.documents()
+                  if rev.meta[NAME] != u'joe'] # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):

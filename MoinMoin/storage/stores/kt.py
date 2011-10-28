@@ -26,7 +26,10 @@ class _Store(MutableStoreBase):
     """
     @classmethod
     def from_uri(cls, uri):
-        return cls(uri)
+        params = uri.split(':')
+        if len(params) == 2:
+            params[1] = int(params[1])
+        return cls(*params)
 
     def __init__(self, host='127.0.0.1', port=1978, timeout=30):
         """
