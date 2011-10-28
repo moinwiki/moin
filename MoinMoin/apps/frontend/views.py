@@ -260,6 +260,8 @@ def highlight_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     return render_template('highlight.html',
                            item=item, item_name=item.name,
                            data_text=Markup(item._render_data_highlight()),
@@ -274,6 +276,8 @@ def show_item_meta(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     show_revision = rev != CURRENT
     show_navigation = False # TODO
     first_rev = None
@@ -309,6 +313,8 @@ def content_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     return render_template('content.html',
                            item_name=item.name,
                            data_rendered=Markup(item._render_data()),
@@ -416,6 +422,8 @@ def revert_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = RevertItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -438,6 +446,8 @@ def rename_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = RenameItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -462,6 +472,8 @@ def delete_item(item_name):
         item = Item.create(item_name)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = DeleteItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -554,6 +566,8 @@ def destroy_item(item_name, rev):
         item = Item.create(item_name, rev_id=_rev)
     except AccessDeniedError:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -1370,6 +1384,7 @@ def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDeniedError.
     #      If this happens for get_item, don't show the diff at all
     #      If it happens for get_revision, we may just want to skip that rev in the list
+    # TODO verify if it does crash when the item does not exist
     try:
         item = flaskg.storage.get_item(item_name)
     except AccessDeniedError:
@@ -1693,3 +1708,7 @@ def tagged_items(tag):
                            item_name=tag,
                            item_names=item_names)
 
+@frontend.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html',
+                           item_name=e.description), 404
