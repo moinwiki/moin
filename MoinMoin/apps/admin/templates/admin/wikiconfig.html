@@ -1,0 +1,36 @@
+{% extends theme("layout.html") %}
+{% block content %}
+<h1>{{ _("Wiki configuration") }}</h1>
+<p>
+{{ _("This table shows all settings in this wiki that do not have default values. "
+     "Settings that the configuration system doesn't know about are shown in italic, "
+     "those may be due to third-party extensions needing configuration or settings that "
+     "were removed from Moin.")
+}}
+</p>
+<table>
+<thead>
+<tr>
+<td><strong>{{ _('Variable name') }}</strong></td>
+<td><strong>{{ _('Setting') }}</strong></td>
+</tr>
+</thead>
+<tbody>
+{% for name, value in found %}
+<tr>
+<td>
+    {% if name in settings %}
+        {{ name }}
+    {% else %}
+        <em>{{ name }}</em>
+    {% endif %}
+</td>
+<td>
+    <code>{{ "%r" % (value, ) }}</code>
+</td>
+</tr>
+{% endfor %}
+</tdbody>
+</table>
+{% endblock %}
+
