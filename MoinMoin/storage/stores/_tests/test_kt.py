@@ -35,3 +35,13 @@ def test_destroy(Store):
     store = Store()
     store.destroy()
 
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(Store):
+    store = Store.from_uri("localhost")
+    assert store.host == 'localhost'
+    assert store.port == 1978
+
+    store = Store.from_uri("localhost:1970")
+    assert store.host == 'localhost'
+    assert store.port == 1970
+
