@@ -26,7 +26,7 @@ from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
 from MoinMoin import wikiutil
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
-from MoinMoin.util.iri import Iri
+from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.tree import html, moin_page, xinclude, xlink
 
 from MoinMoin.converter.html_out import wrap_object_with_overlay
@@ -220,9 +220,13 @@ class Converter(object):
 
                 included_elements = []
                 for page, page_href in pages:
+                    if page_href.path[0] != '/':
+                        page_href.path = IriPath('/' + '/'.join(page_href.path))
                     if page_href in self.stack:
-                        w = ('<p xmlns="{0}"><strong class="error">Recursive include of "{1}" forbidden</strong></p>'.format(html.namespace, page.name))
-                        div.append(ET.XML(w))
+                        attrib = {getattr(html, 'class'): 'error'}
+                        msg = 'Recursive include of "{0}" forbidden'.format(page.name)
+                        strong = ET.Element(html.strong, attrib, (msg, ))
+                        included_elements.append(strong)
                         continue
                     # TODO: Is this correct?
                     if not flaskg.user.may.read(page.name):
@@ -234,7 +238,7 @@ class Converter(object):
                         elem_a = ET.Element(self.tag_a, attrib, children=children)
                         attrib = {self.tag_outline_level: xp_include_level or '1'}
                         elem_h = ET.Element(self.tag_h, attrib, children=(elem_a, ))
-                        div.append(elem_h)
+                        included_elements.append(elem_h)
 
                     page_doc = page.internal_representation()
                     # page_doc.tag = self.tag_div # XXX why did we have this?
