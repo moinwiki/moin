@@ -25,12 +25,13 @@ logging = log.getLogger(__name__)
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
-from MoinMoin.config import NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, MTIME, REVID, ALL_REVS
+from MoinMoin.config import (NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS,
+                            HOSTNAME, USERID, COMMENT, MTIME, REVID, ALL_REVS,
+                            PARENTID)
 from MoinMoin.themes import get_editor_info
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.interwiki import url_for_item
-
 
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
@@ -75,7 +76,7 @@ def atom(item_name):
                      content=content, content_type=content_type,
                      author=get_editor_info(rev.meta, external=True),
                      url=url_for_item(name, rev=this_revid, _external=True),
-                     updated=rev.meta[MTIME],
+                     updated=datetime.fromtimestamp(rev.meta[MTIME]),
                     )
         content = feed.to_string()
         app.cache.set(cid, content)
