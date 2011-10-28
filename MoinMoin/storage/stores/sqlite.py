@@ -27,7 +27,16 @@ class _Store(MutableStoreBase):
     """
     @classmethod
     def from_uri(cls, uri):
-        return cls(uri)
+        """
+        :param cls: Class to create
+        :param uri: The URI should follow the following template
+                    db_name:table_name:compression_level
+                    where table_name and compression level are optional
+        """
+        params = uri.split(":")
+        if len(params) == 3:
+            params[2] = int(params[2])
+        return cls(*params)
 
     def __init__(self, db_name, table_name='store', compression_level=0):
         """
