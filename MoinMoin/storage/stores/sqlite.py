@@ -28,6 +28,8 @@ class _Store(MutableStoreBase):
     @classmethod
     def from_uri(cls, uri):
         """
+        Create a new cls instance from the using the uri
+
         :param cls: Class to create
         :param uri: The URI should follow the following template
                     db_name:table_name:compression_level
