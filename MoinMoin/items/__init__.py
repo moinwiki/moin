@@ -525,13 +525,34 @@ class Item(object):
                  for rev in revs]
         return items
 
+    def _connect_levels(self, index):
+        new_index = []
+        last = self.name
+        for item in index:
+            name = item[0]
+
+            while not name.startswith(last):
+                last = last.rpartition('/')[0]
+
+            missing_layers = name.split('/')[last.count('/')+1:-1]
+
+            for layer in missing_layers:
+                last = '/'.join([last, layer])
+                new_index.append((last, last[len(self.name)+1:], u'application/x-nonexistent'))
+
+            last = item[0]
+            new_index.append(item)
+
+        return new_index
+
     def flat_index(self, startswith=None, selected_groups=None):
         """
-        creates an top level index of sub items of this item
+        creates a top level index of sub items of this item
         if startswith is set, filtering is done on the basis of starting letter of item name
         if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
         """
         index = self.get_index()
+        index = self._connect_levels(index)
 
         all_ctypes = [[ctype for ctype, clabel in contenttypes]
                       for gname, contenttypes in CONTENTTYPE_GROUPS]
