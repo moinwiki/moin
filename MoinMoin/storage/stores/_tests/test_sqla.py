@@ -28,3 +28,8 @@ def test_destroy(tmpdir, Store):
     store.destroy()
     # XXX: check for dropped table
 
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(tmpdir, Store):
+    store = Store.from_uri("sqlite://%s/test_base" % tmpdir)
+    assert store.db_uri == "sqlite://%s/test_base" % tmpdir
+    assert store.table_name == "test_base"
