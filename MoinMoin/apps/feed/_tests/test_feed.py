@@ -8,7 +8,8 @@ MoinMoin - basic tests for feeds
 from MoinMoin._tests import wikiconfig
 
 from MoinMoin.items import Item
-from MoinMoin.config import CONTENTTYPE
+from MoinMoin.config import CONTENTTYPE, COMMENT
+from MoinMoin._tests import update_item
 
 class TestFeeds(object):
     class Config(wikiconfig.Config):
@@ -26,12 +27,21 @@ class TestFeeds(object):
             assert '</feed>' in rv.data
 
     def test_global_atom_with_an_item(self):
-        basename = u'Bar'
-        item = Item.create(basename)
-        item._save({CONTENTTYPE: u'text/plain;charset=utf-8'}, "foo data for feed item")
+        basename = u'Foo'
+        item = update_item(basename, {COMMENT: u"foo data for feed item"}, '')
         with self.app.test_client() as c:
             rv = c.get('/+feed/atom')
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'application/atom+xml'
             assert rv.data.startswith('<?xml')
             assert "foo data for feed item" in rv.data
+
+        # tests the cache invalidation
+        update_item(basename, {COMMENT: u"checking if the cache invalidation works"}, '')
+        with self.app.test_client() as c:
+            rv = c.get('/+feed/atom')
+            assert rv.status == '200 OK'
+            assert rv.headers['Content-Type'] == 'application/atom+xml'
+            assert rv.data.startswith('<?xml')
+            assert "checking if the cache invalidation works" in rv.data
+
