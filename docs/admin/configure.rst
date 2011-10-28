@@ -1142,9 +1142,16 @@ Features:
 * very fast
 * single-process only, local only
 
-.. todo:
+`uri` for `create_simple_mapping` looks like e.g.::
 
-   add kc store configuration example
+    stores:kc:/srv/mywiki/data/%%(nsname)s_%%%%(kind)s.kch
+
+Please see the kyoto cabinet docs about the part after `kc:`.
+
+If you use kc with the builtin server of moin, you must not use the reloader,
+but disable it by commandline option::
+
+  moin moin -r
 
 
 kt store
