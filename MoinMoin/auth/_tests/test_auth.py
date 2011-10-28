@@ -5,11 +5,23 @@
 Test for auth.__init__
 """
 
+from flask import current_app as app
 from flask import g as flaskg
 
+import pytest
+
+from MoinMoin._tests import wikiconfig
 from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
 from MoinMoin.user import create_user
-import pytest
+
+class TestConfiguredGivenAuth(object):
+    """ Test: configured GivenAuth """
+    class Config(wikiconfig.Config):
+        auth = [GivenAuth(user_name=u'JoeDoe', autocreate=True), ]
+
+    def test(self):
+        assert flaskg.user.name == u'JoeDoe'
+
 
 class TestGivenAuth(object):
     """ Test: GivenAuth """

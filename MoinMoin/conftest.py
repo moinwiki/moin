@@ -80,10 +80,11 @@ class MoinTestFunction(pytest.collect.Function):
         if inspect.isclass(self.parent.obj.__class__):
             cls = self.parent.obj.__class__
             cfg = getattr(cls, 'Config', wikiconfig.Config)
-            if prev_cfg is not cfg and prev_app is not None:
+            reinit = getattr(cls, 'reinit_storage', False)
+            if (prev_cfg is not cfg or reinit) and prev_app is not None:
                 # other config, previous app exists, so deinit it:
                 deinit_test_app(prev_app, prev_ctx)
-            if prev_cfg is not cfg or prev_app is None:
+            if prev_cfg is not cfg or reinit or prev_app is None:
                 # other config or no app yet, init app:
                 self.app, self.ctx = init_test_app(cfg)
             else:
