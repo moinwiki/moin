@@ -64,7 +64,9 @@ from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, 
 from whoosh.index import open_dir, create_in, EmptyIndexError
 from whoosh.writing import AsyncWriter
 from whoosh.filedb.multiproc import MultiSegmentWriter
-from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin
+from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
+                           PseudoFieldPlugin
+from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
@@ -73,7 +75,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
                             LATEST_REVS, ALL_REVS
-
+from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
 from MoinMoin.util.crypto import make_uuid
@@ -575,6 +577,16 @@ class IndexingMiddleware(object):
             raise ValueError("default_fields list must at least contain one field name")
         # TODO before using the RegexPlugin, require a whoosh release that fixes whoosh issues #205 and #206
         #qp.add_plugin(RegexPlugin())
+        def username_pseudo_field(node):
+            username = node.text
+            users = user.search_users(**{NAME_EXACT: username})
+            if users:
+                userid = users[0].meta['userid']
+                node = WordNode(userid)
+                node.set_fieldname("userid")
+                return node
+            return node
+        qp.add_plugin(PseudoFieldPlugin({'username': username_pseudo_field}))
         return qp
 
     def search(self, q, idx_name=LATEST_REVS, **kw):
