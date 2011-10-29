@@ -146,6 +146,7 @@ class SearchForm(Form):
 
 @frontend.route('/+search', methods=['GET', 'POST'])
 def search():
+    title_name = _("Search")
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
     search_form['submit'].set_default() # XXX from_flat() kills all values
@@ -177,14 +178,14 @@ def search():
                                    content_suggestions=content_suggestions,
                                    query=query,
                                    medium_search_form=search_form,
-                                   item_name='+search', # XXX
+                                   title_name=title_name,
                                   )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
-                               item_name='+search', # XXX
+                               title_name=title_name,
                               )
     return html
 
@@ -653,7 +654,7 @@ def mychanges():
     """
     my_changes = _mychanges(flaskg.user.itemid)
     return render_template('item_link_list.html',
-                           item_name='+mychanges', # XXX
+                           title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
                            item_names=my_changes
                           )
@@ -929,7 +930,7 @@ def _using_openid_auth():
 
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
-    item_name = 'Register' # XXX
+    title_name = _(u'Register')
     # is openid_submit in the form?
     isOpenID = 'openid_submit' in request.values
 
@@ -990,7 +991,7 @@ def register():
                     return redirect(url_for('.show_root'))
 
     return render_template(template,
-                           item_name=item_name,
+                           title_name=title_name,
                            form=form,
                           )
 
@@ -1023,7 +1024,7 @@ class PasswordLostForm(Form):
 @frontend.route('/+lostpass', methods=['GET', 'POST'])
 def lostpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    item_name = 'LostPass' # XXX
+    title_name = _(u'Lost Pass')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1048,7 +1049,7 @@ def lostpass():
             flash(_("If this account exists, you will be notified."), "info")
             return redirect(url_for('.show_root'))
     return render_template('lostpass.html',
-                           item_name=item_name,
+                           title_name=title_name,
                            form=form,
                           )
 
@@ -1085,7 +1086,7 @@ class PasswordRecoveryForm(Form):
 @frontend.route('/+recoverpass', methods=['GET', 'POST'])
 def recoverpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    item_name = 'RecoverPass' # XXX
+    title_name = _(u'Recover Pass')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1103,7 +1104,7 @@ def recoverpass():
                 flash(_('Your token is invalid!'), "error")
             return redirect(url_for('.show_root'))
     return render_template('recoverpass.html',
-                           item_name=item_name,
+                           title_name=title_name,
                            form=form,
                           )
 
@@ -1153,7 +1154,7 @@ class LoginForm(Form):
 @frontend.route('/+login', methods=['GET', 'POST'])
 def login():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    item_name = 'Login' # XXX
+    title_name = _(u'Login')
 
     # multistage return
     if flaskg._login_multistage_name == 'openid':
@@ -1174,7 +1175,7 @@ def login():
         for msg in flaskg._login_messages:
             flash(msg, "error")
     return render_template('login.html',
-                           item_name=item_name,
+                           title_name=title_name,
                            login_inputs=app.cfg.auth_login_inputs,
                            form=form,
                           )
@@ -1253,7 +1254,7 @@ class UserSettingsOptionsForm(Form):
 @frontend.route('/+usersettings/<part>', methods=['GET', 'POST'])
 def usersettings(part):
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    item_name = 'User Settings' # XXX
+    title_name = _('User Settings')
 
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
@@ -1295,7 +1296,7 @@ def usersettings(part):
         # 'main' part or some invalid part
         return render_template('usersettings.html',
                                part='main',
-                               item_name=item_name,
+                               title_name=title_name,
                               )
     if request.method == 'GET':
         form = FormClass.from_object(flaskg.user)
@@ -1334,7 +1335,7 @@ def usersettings(part):
                     form = FormClass.from_object(flaskg.user)
                     form['submit'].set_default() # XXX from_object() kills all values
     return render_template('usersettings.html',
-                           item_name=item_name,
+                           title_name=title_name,
                            part=part,
                            form=form,
                           )
