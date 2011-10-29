@@ -27,7 +27,7 @@ from MoinMoin.security import require_permission
 
 @admin.route('/')
 def index():
-    return render_template('admin/index.html', item_name="+admin")
+    return render_template('admin/index.html', title_name=_(u"Admin"))
 
 
 @admin.route('/userbrowser')
@@ -45,7 +45,7 @@ def userbrowser():
                           groups=[groupname for groupname in groups if doc[NAME] in groups[groupname]],
                      )
                      for doc in docs]
-    return render_template('admin/userbrowser.html', user_accounts=user_accounts, item_name="+admin/Userbrowser")
+    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"User Browser"))
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
@@ -101,7 +101,7 @@ def sysitems_upgrade():
         action = 'syspages_upgrade'
         label = 'Upgrade System Pages'
         return render_template('admin/sysitems_upgrade.html',
-                               item_name="+admin/System items upgrade")
+                               title_name=_(u"System items upgrade"))
     if request.method == 'POST':
         xmlfile = request.files.get('xmlfile')
         try:
@@ -156,7 +156,7 @@ def wikiconfig():
 
     found.sort()
     return render_template('admin/wikiconfig.html',
-                           item_name="+admin/wikiconfig",
+                           title_name=_(u"Wiki Configuration"),
                            found=found, settings=settings)
 
 
@@ -185,7 +185,7 @@ def wikiconfighelp():
         groups.append((heading, desc, opts))
     groups.sort()
     return render_template('admin/wikiconfighelp.html',
-                           item_name="+admin/wikiconfighelp",
+                           title_name=_(u"Wiki Configuration Help"),
                            groups=groups)
 
 
@@ -202,7 +202,7 @@ def highlighterhelp():
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
     return render_template('admin/highlighterhelp.html',
-                           item_name="+admin/highlighterhelp",
+                           title_name=_(u"Highlighter Help"),
                            headings=headings,
                            rows=rows)
 
@@ -215,7 +215,7 @@ def interwikihelp():
                ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('admin/interwikihelp.html',
-                           item_name="+admin/interwikihelp",
+                           title_name=_(u"Interwiki Help"),
                            headings=headings,
                            rows=rows)
 
@@ -230,7 +230,7 @@ def itemsize():
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('admin/itemsize.html',
-                           item_name="+admin/itemsize",
+                           title_name=_(u"Item Size"),
                            headings=headings,
                            rows=rows)
 
