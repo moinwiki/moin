@@ -1031,14 +1031,14 @@ Call it like::
 The `uri` depends on the kind of storage backend and stores you want to use
 (see below). Usually it is a URL-like string that looks like::
 
-    stores:fs:/srv/mywiki/%(nsname)s/%%(kind)s
+    stores:fs:/srv/mywiki/%(nsname)s/%(kind)s
     
 `stores` is the name of the backend, followed by a colon, followed by a store
 specification. `fs` is the name of the store, followed by a specification
 that makes sense for the fs (filesystem) store (== a path with placeholders).
 
 `%(nsname)s` placeholder will be replaced 'content' or 'userprofiles' for
-the respective backend. `%%(kind)s` will be replaced by 'meta' or 'data'
+the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
 In this case, the mapping created will look like this:
@@ -1100,7 +1100,7 @@ Configuration::
 
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
-        uri='stores:fs:%s/%%(nsname)s/%%%%(kind)s' % data_dir,
+        uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
         content_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                          default=u'All:read,write,create',
                          after=u'', ),
@@ -1142,9 +1142,16 @@ Features:
 * very fast
 * single-process only, local only
 
-.. todo:
+`uri` for `create_simple_mapping` looks like e.g.::
 
-   add kc store configuration example
+    stores:kc:/srv/mywiki/data/%(nsname)s_%(kind)s.kch
+
+Please see the kyoto cabinet docs about the part after `kc:`.
+
+If you use kc with the builtin server of moin, you must not use the reloader,
+but disable it by commandline option::
+
+  moin moin -r
 
 
 kt store

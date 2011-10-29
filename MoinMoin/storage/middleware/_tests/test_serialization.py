@@ -11,6 +11,7 @@ from __future__ import absolute_import, division
 from StringIO import StringIO
 
 from ..indexing import IndexingMiddleware
+from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
 from MoinMoin.storage.backends.stores import MutableBackend
@@ -49,7 +50,9 @@ def make_middleware(request):
 
     meta_store = BytesStore()
     data_store = FileStore()
-    backend = MutableBackend(meta_store, data_store)
+    _backend = MutableBackend(meta_store, data_store)
+    mapping = [('', _backend)]
+    backend = RoutingBackend(mapping)
     backend.create()
     backend.open()
     request.addfinalizer(backend.destroy)

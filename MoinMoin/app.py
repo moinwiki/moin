@@ -168,7 +168,6 @@ def init_backends(app):
     if app.cfg.create_storage:
         app.router.create()
     app.router.open()
-    app.router = app.router._get_backend('')[0] # XXX hack until router works correctly
     app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router,
                                               wiki_name=app.cfg.interwikiname,
                                               acl_rights_contents=app.cfg.acl_rights_contents)

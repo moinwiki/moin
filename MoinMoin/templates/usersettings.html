@@ -3,7 +3,7 @@
 
 {% block item %}
 {% if part == 'main' %}
-<h1>{{ _("Settings") }}</h1>
+<h1>{{ _("User Settings") }}</h1>
 <ul>
     <li><a href="{{ url_for('frontend.usersettings', part='personal') }}">{{ _("Personal Settings") }}</a></li>
     <li><a href="{{ url_for('frontend.usersettings', part='password') }}">{{ _("Change password") }}</a></li>
