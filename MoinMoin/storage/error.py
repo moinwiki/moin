@@ -33,21 +33,6 @@ class CouldNotDestroyError(AccessError):
     """
     pass
 
-class AccessDeniedError(AccessError):
-    """
-    Raised if the required rights are not available to perform the action.
-    """
-    def __init__(self, username=None, priv=None, item=None):
-        if None in (username, priv, item):
-            message = _("Permission denied!")
-        else:
-            username = username or L_("You")
-            message = _("%(username)s may not %(priv)s '%(item)s'.",
-                        username=username, priv=_(priv), item=item)
-            # XXX add _('...') for all privs elsewhere for extraction
-
-        AccessError.__init__(self, message)
-
 class LockingError(AccessError):
     """
     Raised if the action could not be commited because the Item is locked
