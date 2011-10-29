@@ -629,6 +629,12 @@ class Item(object):
                    for name in names]
         return initials
 
+    delete_template = 'delete.html'
+    destroy_template = 'destroy.html'
+    diff_template = 'diff.html'
+    rename_template = 'rename.html'
+    revert_template = 'revert.html'
+
 class NonExistent(Item):
     def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
@@ -715,12 +721,6 @@ There is no help, you're doomed!
                                help=self.modify_help,
                                form=form,
                               )
-
-    delete_template = 'delete.html'
-    destroy_template = 'destroy.html'
-    diff_template = 'diff.html'
-    rename_template = 'rename.html'
-    revert_template = 'revert.html'
 
     def _render_data_diff(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
