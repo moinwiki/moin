@@ -423,6 +423,8 @@ def revert_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
         abort(403)
+    if not flaskg.user.may.write(item_name):
+        abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
     if request.method == 'GET':
@@ -446,6 +448,8 @@ def rename_item(item_name):
     try:
         item = Item.create(item_name)
     except AccessDenied:
+        abort(403)
+    if not flaskg.user.may.write(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -472,6 +476,8 @@ def delete_item(item_name):
     try:
         item = Item.create(item_name)
     except AccessDenied:
+        abort(403)
+    if not flaskg.user.may.write(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -566,6 +572,8 @@ def destroy_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=_rev)
     except AccessDenied:
+        abort(403)
+    if not flaskg.user.may.destroy(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
