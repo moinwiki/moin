@@ -56,8 +56,9 @@ from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, I
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.signalling import item_displayed, item_modified
+from MoinMoin.storage.middleware.protecting import AccessDenied
 
 
 @frontend.route('/+dispatch', methods=['GET', ])
@@ -198,7 +199,7 @@ def show_item(item_name, rev):
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     show_revision = rev != CURRENT
     show_navigation = False # TODO
@@ -231,7 +232,7 @@ def redirect_show_item(item_name):
 def show_dom(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     if isinstance(item, NonExistent):
         status = 404
@@ -259,8 +260,10 @@ def indexable(item_name, rev):
 def highlight_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     return render_template('highlight.html',
                            item=item, item_name=item.name,
                            data_text=Markup(item._render_data_highlight()),
@@ -273,8 +276,10 @@ def show_item_meta(item_name, rev):
     flaskg.user.addTrail(item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     show_revision = rev != CURRENT
     show_navigation = False # TODO
     first_rev = None
@@ -308,8 +313,10 @@ def content_item(item_name, rev):
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     return render_template('content.html',
                            item_name=item.name,
                            data_rendered=Markup(item._render_data()),
@@ -320,7 +327,7 @@ def content_item(item_name, rev):
 def get_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     return item.do_get()
 
@@ -330,7 +337,7 @@ def download_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         mimetype = request.values.get("mimetype")
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     return item.do_get(force_attachment=True, mimetype=mimetype)
 
@@ -348,7 +355,7 @@ def convert_item(item_name):
     contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, rev_id=CURRENT)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     # We don't care about the name of the converted object
     # It should just be a name which does not exist.
@@ -356,7 +363,7 @@ def convert_item(item_name):
     item_name_converted = item_name + 'converted'
     try:
         converted_item = Item.create(item_name_converted, contenttype=contenttype)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     return converted_item._convert(item.internal_representation())
 
@@ -373,7 +380,7 @@ def modify_item(item_name):
     template_name = request.values.get('template')
     try:
         item = Item.create(item_name, contenttype=contenttype)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     if not flaskg.user.may.write(item_name):
         abort(403)
@@ -415,8 +422,10 @@ class ContenttypeFilterForm(Form):
 def revert_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = RevertItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -437,8 +446,10 @@ def revert_item(item_name, rev):
 def rename_item(item_name):
     try:
         item = Item.create(item_name)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = RenameItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -461,8 +472,10 @@ def rename_item(item_name):
 def delete_item(item_name):
     try:
         item = Item.create(item_name)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = DeleteItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -498,7 +511,7 @@ def ajaxdelete(item_name):
                 item = Item.create(itemname)
                 item.delete(comment)
                 response["status"].append(True)
-            except AccessDeniedError:
+            except AccessDenied:
                 response["status"].append(False)
 
     return jsonify(response)
@@ -523,7 +536,7 @@ def ajaxdestroy(item_name):
                 item = Item.create(itemname)
                 item.destroy(comment=comment, destroy_item=True)
                 response["status"].append(True)
-            except AccessDeniedError:
+            except AccessDenied:
                 response["status"].append(False)
 
     return jsonify(response)
@@ -553,8 +566,10 @@ def destroy_item(item_name, rev):
         destroy_item = False
     try:
         item = Item.create(item_name, rev_id=_rev)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
     if request.method == 'GET':
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -595,7 +610,7 @@ def jfu_server(item_name):
                        url=url_for('.show_item', item_name=item_name, rev=revid),
                        contenttype=contenttype_to_class(contenttype),
                       )
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
 
 
@@ -604,7 +619,7 @@ def jfu_server(item_name):
 def index(item_name):
     try:
         item = Item.create(item_name) # when item_name='', it gives toplevel index
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
 
     if request.method == 'GET':
@@ -1368,12 +1383,13 @@ def bookmark():
 
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):
-    # TODO get_item and get_revision calls may raise an AccessDeniedError.
+    # TODO get_item and get_revision calls may raise an AccessDenied.
     #      If this happens for get_item, don't show the diff at all
     #      If it happens for get_revision, we may just want to skip that rev in the list
+    # TODO verify if it does crash when the item does not exist
     try:
         item = flaskg.storage.get_item(item_name)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     rev1 = request.values.get('rev1')
     rev2 = request.values.get('rev2')
@@ -1425,7 +1441,7 @@ def _diff(item, revid1, revid2):
 
     try:
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
@@ -1445,7 +1461,7 @@ def _diff_raw(item, revid1, revid2):
 
     try:
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
-    except AccessDeniedError:
+    except AccessDenied:
         abort(403)
     return item._render_data_diff_raw(oldrev, newrev)
 
@@ -1628,7 +1644,7 @@ class NestedItemListBuilder(object):
         # does not recurse
         try:
             item = flaskg.storage[name]
-        except AccessDeniedError:
+        except AccessDenied:
             return []
         rev = item[CURRENT]
         itemlinks = rev.meta.get(ITEMLINKS, [])
@@ -1694,3 +1710,7 @@ def tagged_items(tag):
                            item_name=tag,
                            item_names=item_names)
 
+@frontend.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html',
+                           item_name=e.description), 404
