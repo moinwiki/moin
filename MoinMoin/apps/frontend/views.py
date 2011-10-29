@@ -649,14 +649,18 @@ def index(item_name):
     detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
 
     item_names = item_name.split(u'/')
+    if item_name:
+        args = dict(item_name=item_name)
+    else:
+        args = dict(item_name=u'', title_name=_(u'Global Index'))
     return render_template(item.index_template,
-                           item_name=item_name,
                            item_names=item_names,
                            index=detailed_index,
                            initials=initials,
                            startswith=startswith,
                            contenttype_groups=ct_groups,
                            form=form,
+                           **args
                           )
 
 
@@ -775,10 +779,10 @@ def global_history():
         history.append(dh)
     del history[0]  # kill the dummy
 
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    title_name = _(u'Global History')
     current_timestamp = int(time.time())
     return render_template('global_history.html',
-                           item_name=item_name, # XXX no item
+                           title_name=title_name,
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
@@ -809,10 +813,10 @@ def wanted_items():
     existing, linked, transcluded = _compute_item_sets()
     referred = linked | transcluded
     wanteds = referred - existing
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    title_name = _(u'Wanted Items')
     return render_template('item_link_list.html',
                            headline=_(u'Wanted Items'),
-                           item_name=item_name,
+                           title_name=title_name,
                            item_names=wanteds)
 
 
@@ -825,9 +829,9 @@ def orphaned_items():
     existing, linked, transcluded = _compute_item_sets()
     referred = linked | transcluded
     orphans = existing - referred
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    title_name = _('Orphaned Items')
     return render_template('item_link_list.html',
-                           item_name=item_name,
+                           title_name=title_name,
                            headline=_(u'Orphaned Items'),
                            item_names=orphans)
 
@@ -1039,7 +1043,7 @@ class PasswordLostForm(Form):
 @frontend.route('/+lostpass', methods=['GET', 'POST'])
 def lostpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Lost Pass')
+    title_name = _(u'Lost Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1101,7 +1105,7 @@ class PasswordRecoveryForm(Form):
 @frontend.route('/+recoverpass', methods=['GET', 'POST'])
 def recoverpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Recover Pass')
+    title_name = _(u'Recover Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1665,7 +1669,7 @@ def global_tags():
     """
     show a list or tag cloud of all tags in this wiki
     """
-    item_name = request.values.get('item_name', '') # actions menu puts it into qs
+    title_name = _(u'All tags in this wiki')
     revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     tags_counts = {}
     for rev in revs:
@@ -1693,7 +1697,7 @@ def global_tags():
         tags = []
     return render_template("global_tags.html",
                            headline=_("All tags in this wiki"),
-                           item_name=item_name,
+                           title_name=title_name,
                            tags=tags)
 
 
@@ -1714,3 +1718,4 @@ def tagged_items(tag):
 def page_not_found(e):
     return render_template('404.html',
                            item_name=e.description), 404
+
