@@ -29,3 +29,7 @@ def test_destroy(Store):
     store.destroy()
     assert store._st is None
 
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(Store):
+    store = Store.from_uri("mem://")
+    assert isinstance(store, Store)

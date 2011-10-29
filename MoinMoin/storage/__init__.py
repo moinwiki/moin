@@ -41,7 +41,7 @@ def backend_from_uri(uri):
 
 def create_mapping(uri, mounts, acls):
     namespace_mapping = [(mounts[nsname],
-                          backend_from_uri(uri % dict(nsname=nsname)))
+                          backend_from_uri(uri % dict(nsname=nsname, kind="%(kind)s")))
                          for nsname in mounts]
     acl_mapping = acls.items()
     # we need the longest mountpoints first, shortest last (-> '' is very last)

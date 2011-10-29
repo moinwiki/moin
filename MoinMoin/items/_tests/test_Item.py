@@ -94,6 +94,7 @@ class TestItem(object):
                         ]
         flat_index = baseitem.flat_index()
         assert flat_index == [(u'Foo/ab', u'ab', u'text/plain;charset=utf-8'),
+                              (u'Foo/cd', u'cd', u'application/x-nonexistent'),
                               (u'Foo/gh', u'gh', u'text/plain;charset=utf-8'),
                               (u'Foo/ij', u'ij', u'text/plain;charset=utf-8'),
                               (u'Foo/mn', u'mn', u'image/jpeg'),
@@ -101,17 +102,52 @@ class TestItem(object):
         # check index when startswith param is passed
         flat_index = baseitem.flat_index(startswith=u'a')
         assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8')]
+
+        #check that virtual container item is returned with startswith
+        flat_index = baseitem.flat_index(startswith=u'c')
+        assert flat_index == [(u'Foo/cd', u'cd', u'application/x-nonexistent')]
+
         # check index when contenttype_groups is passed
         ctgroups = ["image items"]
         flat_index = baseitem.flat_index(selected_groups=ctgroups)
         assert flat_index == [(u'Foo/mn', u'mn', 'image/jpeg')]
+
+        # If we ask for text/plain type, should Foo/cd be returned?
+
+        # check detailed index
         detailed_index = baseitem.get_detailed_index(baseitem.flat_index())
         assert detailed_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8', False),
+                                  (u'Foo/cd', u'cd', 'application/x-nonexistent', True),
                                   (u'Foo/gh', u'gh', 'text/plain;charset=utf-8', False),
                                   (u'Foo/ij', u'ij', 'text/plain;charset=utf-8', True),
                                   (u'Foo/mn', u'mn', 'image/jpeg', False),
                                   ]
 
+    def testIndexOnDisconnectedLevels(self):
+        # create a toplevel and some sub-items
+        basename = u'Bar'
+        for name in ['', '/ab', '/ab/cd/ef/gh', '/ij/kl/mn/op', '/ij/kl/rs']:
+            item = Item.create(basename + name)
+            item._save({CONTENTTYPE: u'text/plain;charset=utf-8'}, "foo")
+
+        baseitem = Item.create(basename)
+        index = baseitem.get_index()
+        index = baseitem._connect_levels(index)
+
+        assert index == [(u'Bar/ab', u'ab', u'text/plain;charset=utf-8'),
+                         (u'Bar/ab/cd', u'ab/cd', u'application/x-nonexistent'),
+                         (u'Bar/ab/cd/ef', u'ab/cd/ef', u'application/x-nonexistent'),
+                         (u'Bar/ab/cd/ef/gh', u'ab/cd/ef/gh', u'text/plain;charset=utf-8'),
+                         (u'Bar/ij', u'ij', u'application/x-nonexistent'),
+                         (u'Bar/ij/kl', u'ij/kl', u'application/x-nonexistent'),
+                         (u'Bar/ij/kl/mn', u'ij/kl/mn', u'application/x-nonexistent'),
+                         (u'Bar/ij/kl/mn/op', u'ij/kl/mn/op', u'text/plain;charset=utf-8'),
+                         (u'Bar/ij/kl/rs', u'ij/kl/rs', u'text/plain;charset=utf-8')]
+
+        flat_index = baseitem.flat_index()
+        assert flat_index == [(u'Bar/ab', u'ab', u'text/plain;charset=utf-8'),
+                              (u'Bar/ij', u'ij', u'application/x-nonexistent'),
+                             ]
 
     def test_meta_filter(self):
         name = u'Test_item'
