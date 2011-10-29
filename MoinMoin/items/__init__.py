@@ -37,6 +37,7 @@ from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, html, xlink, docbook
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.crypto import cache_key
+from MoinMoin.storage.middleware.protecting import AccessDenied
 
 try:
     import PIL
@@ -66,8 +67,7 @@ from MoinMoin.themes import render_template
 from MoinMoin import wikiutil, config, user
 from MoinMoin.util.send_file import send_file
 from MoinMoin.util.interwiki import url_for_item
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, AccessDeniedError, \
-                                   StorageError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.config import NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, REVERTED_TO, ACL, \
                             IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
@@ -711,7 +711,7 @@ There is no help, you're doomed!
             if form.validate():
                 try:
                     self.modify() # XXX
-                except AccessDeniedError:
+                except AccessDenied:
                     abort(403)
                 else:
                     return redirect(url_for_item(self.name))
@@ -1166,7 +1166,7 @@ class Text(Binary):
             if form.validate():
                 try:
                     self.modify() # XXX
-                except AccessDeniedError:
+                except AccessDenied:
                     abort(403)
                 else:
                     return redirect(url_for_item(self.name))
@@ -1324,7 +1324,7 @@ class TWikiDraw(TarMixin, Image):
             # this POST comes directly from TWikiDraw (not from Browser), thus no validation
             try:
                 self.modify() # XXX
-            except AccessDeniedError:
+            except AccessDenied:
                 abort(403)
             else:
                 # TWikiDraw POSTs more than once, redirecting would break them
@@ -1414,7 +1414,7 @@ class AnyWikiDraw(TarMixin, Image):
             # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
             try:
                 self.modify() # XXX
-            except AccessDeniedError:
+            except AccessDenied:
                 abort(403)
             else:
                 # AnyWikiDraw POSTs more than once, redirecting would break them
@@ -1500,7 +1500,7 @@ class SvgDraw(TarMixin, Image):
             # this POST comes directly from SvgDraw (not from Browser), thus no validation
             try:
                 self.modify() # XXX
-            except AccessDeniedError:
+            except AccessDenied:
                 abort(403)
             else:
                 # SvgDraw POSTs more than once, redirecting would break them
