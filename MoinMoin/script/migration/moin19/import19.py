@@ -91,8 +91,8 @@ class ImportMoin19(Command):
 
         print "Fix userids..."
         userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID]) for rev in indexer.documents(contenttype=CONTENTTYPE_USER)])
-        for revid in backend:
-            meta, data = backend.retrieve(revid)
+        for mountpoint, revid in backend:
+            meta, data = backend.retrieve(mountpoint, revid)
             if USERID in meta:
                 try:
                     meta[USERID] = userid_map[meta[USERID]]
