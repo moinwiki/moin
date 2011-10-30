@@ -8,6 +8,7 @@
 ^wiki/data/content/
 ^wiki/data/userprofiles/
 ^wiki/data/trash/
+^wiki/index/
 ^instance/
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
