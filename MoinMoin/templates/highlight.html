@@ -1,0 +1,7 @@
+{% extends theme("show.html") %}
+{% block content %}
+{% block headline %}
+<h1>{{ _("Syntax highlighting for Item: %(name)s", name=item_name) }} </h1>
+{% endblock %}
+{{ data_text }}
+{% endblock %}

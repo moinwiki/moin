@@ -1,0 +1,723 @@
+/* common.css - MoinMoin Default Styles
+
+    Copyright: 2001, 2002, 2003 MoinMoin:JuergenHermann
+    Copyright: 2010 MoinMoin:DiogenesAugusto
+    Copyright: 2010 MoinMoin:RogerHaase
+    License: GNU GPL v2 or later, see COPYING for details.
+*/
+
+/*
+Copied from:  http://code.google.com/p/html5resetcss/
+
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http: //richclarkdesign.com
+Twitter: @rich_clark
+*/
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins,
+kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, footer, header, hgroup,
+menu, nav, section, summary, time, mark, audio,
+video { margin: 0; padding: 0; border: 0; outline: 0;
+            font-size: 100%; vertical-align: baseline; background: transparent; }
+body { line-height: 1; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
+section { display: block; }
+nav ul { list-style: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
+ins { background-color: #ff9; color: #000; text-decoration: none; }
+mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
+del { text-decoration: line-through; }
+abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
+table { border-collapse: collapse; border-spacing: 0; }
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #cccccc; margin: 1em 0; padding: 0; }
+input, select { vertical-align: middle; }
+/* end HTML5 reset */
+
+
+
+/* odds and ends */
+html { color: black; font-family: sans-serif; }
+div, p { margin: 1em 0; }
+sub { vertical-align: sub; }
+sup { vertical-align: super; }
+ins { background-color: #FFF; text-decoration: underline; }
+/* fix tests -- currently checking <big> and <small> */
+.moin-big { font-size: 1.17em; }
+.moin-small { font-size: .83em; }
+.moin-integer { text-align: right; padding-right: 1em; }
+
+/* headings - from: http: //www.w3.org/TR/CSS2/sample.html */
+h1 { font-size: 2em; margin: .67em 0; }
+h2 { font-size: 1.5em; margin: .75em 0; }
+h3 { font-size: 1.17em; margin: .83em 0; }
+h4 { margin: 1.12em 0; }
+h5 { font-size: .83em; margin: 1.5em 0; }
+h6 { font-size: .75em; margin: 1.67em 0; }
+
+/* Links - most themes will override */
+a { text-decoration: none; }
+a:link { color: blue; }
+a:visited { color: purple; }
+a:hover { color: red; }
+a:active { color: red; }
+
+/* dead links */
+a.moin-nonexistent:visited,
+a.moin-nonexistent { color: #444; }
+
+/* lists */
+ol, ul { margin-left: 3em; }
+ol ol, ul ul, ol ul, ul ol { margin-left: 2em; }
+li p { margin: .25em 0; }
+ol.moin-upperalpha-list { list-style-type: upper-alpha; }
+ol.moin-loweralpha-list { list-style-type: lower-alpha; }
+ol.moin-upperroman-list { list-style-type: upper-roman; }
+ol.moin-lowerroman-list { list-style-type: lower-roman; }
+ul.moin-nobullet-list { list-style-type: none; }
+ol, ul { margin-top: 1em; }
+li ol, li ul { margin-top: .25em; }
+
+/* definitions */
+dt { margin-top: 0.5em; font-weight: bold; }
+dd { font-size: .92em; margin-left: 40px; margin-top: 0; margin-bottom: 0; }
+dd p { margin: 0.25em 0; }
+dd + dd p { margin-top: .67em; }
+
+/* horizontal rule ---- and custom rules ----- to ---------- */
+hr { height: 1px; background-color: #9C9C9C; border: 0; margin: .9em 0; }
+.moin-hr1 { height: 2px; }
+.moin-hr2 { height: 3px; }
+.moin-hr3 { height: 5px; }
+.moin-hr4 { height: 7px; }
+.moin-hr5 { height: 9px; }
+.moin-hr6 { height: 12px; }
+
+/* eye catchers */
+.warning,
+.error { color: red; background: #888; } /* obsolete , find and change to moin-warning, moin-error */
+.moin-warning,
+.moin-error { color: red; }
+strong.highlight { background-color: #CCE0FF; padding: 1px; }
+
+/* pre */
+pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear: both;
+            font-family: monospace; margin: .33em 0; white-space: pre; }
+pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
+pre.comment:before { content: url(../img/attention.png); }
+
+/* tables */
+table { margin: 0.5em; border-collapse: collapse; }
+th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1px solid #ADB9CC; vertical-align: middle; }
+td p { margin: 0; padding: 0; }
+
+/* TableOfContents macro */
+div.moin-table-of-contents { border: 1px solid #BBB; color: black;
+            font-size: 80%; margin: 0.5em 0 0.75em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
+            max-width: 35%; text-align: left; float: right; clear: both;
+            box-shadow: 10px 10px 5px #679; border-radius: 15px;
+            -moz-box-shadow: 10px 10px 5px #679; -moz-border-radius: 15px;
+            -webkit-box-shadow: 10px 10px 5px #679; -webkit-border-radius: 15px; }
+.moin-table-of-contents ol { margin: 0; padding: 0 0 0 .92em; }
+.moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none; }
+.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 1em; letter-spacing: 0.075em; }
+.moin-showhide { margin-left: 10px; }
+
+/* Navigation macro */
+table.navigation { background: #FFF; float: right; margin: 2px; }
+
+/* footnotes */
+.moin-footnote a,
+.moin-footnotes sup a {font-size: .87em; }
+.moin-footnotes {border-top: 1px solid gray; margin: 0 1em; }
+.moin-footnotes p {margin: 0 0 .33em 1em; font-size: .92em; }
+
+/* revision navigation */
+#moin-rev-navigation { list-style: none; text-align: center; }
+#moin-rev-navigation li { display: inline; }
+.moin-disabled { color: gray; }
+.moin-rev-navigation-current { font-size: 1.5em; text-transform: uppercase; }
+.moin-rev-navigation-older,
+.moin-rev-navigation-newer { padding: 0 20px 0 20px; }
+
+/* user settings pages -- also login, lost password, and register pages */
+.moin-form dd { margin-bottom: 1em; }
+.moin-form dd input { width: 20em; }
+.moin-form dt label.required:after { content: '*'; color: gray; }
+
+/* Recent changes */
+.rcrss { float: right; margin: 0 7px 0 14px; height: 0; position: relative; top: 9px; }
+.recentchanges table { clear: both; border-collapse: collapse; border: 1px solid #4D7DA9; }
+.recentchanges td { vertical-align: top; border: none; background: #e6eaf0; }
+.recentchanges .rcdaybreak td { background: #81BBF2; border: none; border: 1px solid #4D7DA9; }
+.rcdaybreak td a { font-size: 0.88em; }
+.rcicon1,
+.rcicon2 { text-align: center; }
+.rcpagelink { width: 33%; }
+.rctime { font-size: 0.88em; white-space: nowrap; }
+.rceditor { white-space: nowrap; font-size: 0.88em; }
+.rccomment { width: 50%; color: gray; font-size: 0.88em; }
+
+/* Search results */
+.advancedsearch { border: 1px solid #ADB9CC; }
+.advancedsearch td { vertical-align: top; background-color: #E7E7E7; border: 0px; }
+.advancedsearch td.searchfor { font-weight: bold; }
+.advancedsearch input { border: 1px solid #ADB9CC; background-color: #fff; }
+.advancedsearch input[disabled] { background-color: #EEE; }
+.advancedsearch td.submit { border-top: 1px solid #ADB9CC; background-color: #FFF; text-align: right; }
+.advancedsearch optioni,
+.advancedsearch select { border: 1px solid #ADB9CC; background-color: #FFF; }
+.searchresults dt { margin-top: 1em; font-weight: normal; }
+.searchresults dd,
+.searchresults p { font-size: 0.85em; }
+.searchresults td { border-width: 0; }
+.searchresults p.info { margin-left: 2%; }
+.searchresults .searchhitinfobar { color: #008000; margin-left: 15px; margin-top: 0; }
+.searchresults .foundtext { margin-left: 15px; margin-top: 0; }
+p.searchstats { font-size: 0.8em; text-align: right; width: 100%;
+             padding: 2px; margin-top: -15px; }
+p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2px; }
+.searchpages { margin-left: auto; margin-right: auto; }
+.searchpages tr,
+.searchpages td { border: 0; padding: 5px; margin: 0; text-align: center; vertical-align: middle;
+            color: #b93a58; font-weight: bold; font-size: 1.05em; }
+.searchpages td a,
+.searchpages td a:link { text-decoration: underline; }
+
+/* edit and edit preview page  */
+textarea { border: 1px solid #8cacbb; font-family: monospace; margin: .33em 0; padding: 3px; width: 100%; }
+input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; padding: 3px; width: 70%; }
+/*  placeholder
+#editor-help { font-size: small; background-color: #EEEEFF; }
+#editor-comment { font-size: 100%; border: 1px solid #8cacbb; color: black; background-color: white;
+            vertical-align: middle; padding: 1px; display: inline; width: 70%; }
+#preview,
+#previewbelow { border: 1px solid #6C7680; padding: 10px 30px 20px 30px; background: url(../img/draft.png); margin-top: 0.5em; }
+*/
+
+/* textchas */
+/* placeholder
+#textcha { font-size: 100%; margin-top: 0.5em; border: 2px solid #FF8888; color: black; vertical-align: middle; padding: 3px 2px; }
+#textcha-answer { border: 2px solid #000000; padding: 3px 2px; }
+*/
+
+/* global history and page history */
+.moin-hist-rev input { float: left; }
+.moin-hist-rev { margin: 0; }
+#moin-global-history,
+#moin-page-history { font-size: 75%; }
+#moin-page-history tr { border: 1px solid #4D7DA9; } 
+#moin-global-history th,
+#moin-page-history th { background-color: #81BBF2; border: 0px; font-size: 1.12em; padding: 6px .5em; text-align: left; }
+#moin-global-history td {  border: 0px; vertical-align: top;text-align: left; padding: 0.4em 0.3em; }
+#moin-page-history td { background-color: #E6EAF0; border: 0px; vertical-align: top; }
+.moin-wordbreak { word-break: break-all;  word-wrap: break-word; } /* Firefox needs javascript assistance within tables */
+.moin-history-time { width: 10%; }
+.moin-history-contenttype { width: 18%; }
+.moin-history-editorinfo { width: 17%; }
+.moin-history-comment { width: 30%; }
+.moin-action { width: 2%; }
+.moin-action a:hover { text-decoration: none; }
+.moin-history-container { border: 1px solid #4D7DA9; }
+.moin-history-container-header { background: #81BBF2; margin: 0px; padding: 4px; color: #3b3131; border-bottom: 1px solid #4D7DA9; }
+.moin-history-container-header h2 { display: inline; }
+.moin-history-container-header a.bookmark-link { margin-left: 10px; color: #3b3131; }
+.moin-history-container-body { padding: 4px; font-size: 14px; }
+.moin-history-save:before { content: url('../img/moin-edit.png'); }
+.moin-history-trash:before { content: url('../img/moin-deleted.png'); }
+.moin-history-rename:before { content: url('../img/moin-renamed.png'); }
+.moin-history-copy:before { content: url('../img/moin-new.png'); }
+.moin-integer { width: 2%; }
+.moin-history-links { width: 5%; }
+.moin-history-links a { display: block; margin-bottom: 4px; }
+.moin-history-editortext,
+.moin-history-links span,
+.moin-history-comment span { color: #544E4F; display: block; margin-bottom: 5px; }
+.moin-offset-links { float: right; margin-right: 20px; }
+.moin-offset-links a { margin-right: 10px; padding: 3px 7px; font-size: 20px; background: #FFFFFF; border: 1px groove #DDD; border-radius: 5px; }
+.moin-offset-links a:hover { box-shadow: 0px 0px 12px #81BBF2; }
+.moin-clr { clear: both; }
+
+/* item index page */
+#moin-content h1 { display: inline; }
+.moin-select-all { padding: 0.5em; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; text-align: left; }
+.moin-select-actions { position: relative; margin: 0 1em; padding: 0; background: #FFFFFF; z-index: 2; white-space: nowrap; color: #342D7E; text-align: left; }
+.moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
+.moin-select-actions div:hover,
+.action-visible div { background: #4477FF; color: #FFFFFF; }
+.moin-select-actions .show-action { cursor: pointer; }
+.show-action:after { content: url("../img/moin-moveup.png"); margin: 0 0.2em; }
+.action-visible .show-action:after { content: url("../img/moin-movedown.png"); margin: 0 0.2em; }
+.moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
+.allitem-selected:after { content: url("../img/moin-checkbox-on.png"); margin: 0 0.2em; }
+.allitem-toselect:after { content: url("../img/moin-checkbox-off.png"); margin: 0 0.2em; }
+.moin-select-actions ul { position: absolute; margin: 0; left: 0; top: 2em; padding: 0; display: none; background: #fff; border: 1px solid #E5E5E5; z-index: 1; }
+.moin-select-actions ul li { display: list-item; list-style-type: none; padding: 0.5em; min-width: 7em; cursor: pointer; }
+.moin-select-actions ul li:hover { background-color: #4477FF; color: #FFFFFF; }
+.moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
+.moin-index-message span { padding: 4px; background-color: #FFFF00; color: #111111; }
+.moin-download-link { display: none; }
+#moin-initials { width: 90%; margin: 5px auto; text-align: center; }
+#moin-initials a { display: inline-block; margin: 0; padding: 4px 5px; }
+#moin-initials a:hover,
+#moin-initials a.selected { background: #4477FF; border-radius: 5px; color: #FFFFFF; text-decoration: none; }
+.moin-item-index { width: 100%; margin-left: 0.5em; }
+.moin-item-index div { float: left; width: 15em; }
+.moin-item-index div .moin-select-item { visibility: hidden; display: inline-block; width: 17px; cursor: default; background: transparent url("../img/moin-checkbox-off.png") no-repeat; }
+.moin-item-index div.selected-item .moin-select-item,
+.moin-item-index div:hover .moin-select-item { visibility: visible; }
+.moin-item-index div.selected-item .moin-select-item { background-image: url("../img/moin-checkbox-on.png"); }
+.moin-align-right { text-align: right; float: right; }
+.moin-align-right ul { margin: 0; padding: 0;  }
+.moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
+.moin-contenttypes-wrapper { position: relative; margin: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; min-width: 12em; text-align: left; }
+.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em 1.2em 0.5em 0.5em ; height: 1em; } 
+div.ct-shown { background: #4477FF url("../img/moin-movedown.png") no-repeat center right; color: #FFFFFF; }
+div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
+.moin-contenttypes-wrapper ul { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; } 
+.moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em; min-width: 11.5em; }
+.moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
+.moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
+.moin-contenttypes-wrapper ul li:hover { background: #E5E5E5; }
+.moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
+.moin-contenttypes-wrapper ul li a { font-size: 80%; }
+.moin-contenttypes-wrapper form input[type="submit"] { margin: 0.4em 0.5em; }
+.moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; } 
+.filter-toggle { margin: 0 0.2em; font-size: 90%; }
+.moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
+.moin-more-index:hover { text-decoration: none; }
+.moin-index-path { margin-left: 0.5em; }
+.moin-index-path:before { content: url("../img/moin-parent.png"); margin: 0 0.3em; }
+.moin-path-separator { font-size: 120%; color: #4477FF; }
+.moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
+#moin-upload-cont { min-height: 10px; }
+#file_upload { margin-top: 2em; }
+form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer; direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative; text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF; -moz-box-shadow: 0px 0px 5px #4477FF; khtml-box-shadow: 0px 0px 5px #4477FF; }
+form.upload_file:hover { color: #FFFFFF; }
+form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); border: 300px solid transparent; cursor: pointer; height: 100%;  margin: 0; opacity: 0; position: absolute; right: 0; top: 0;}
+form.upload_file input { height: auto; }
+form.upload_file button { display: none;}
+form.upload_file { display: block; }
+.file_upload_template .file_upload_start { visibility: hidden; border-width: 0px; padding: 0px; }
+.file_upload_template .file_upload_start button { width: 0px; }
+.upload-form { display: none; }
+.moin-drag { font-size: 0.7em; color: #6C7680; }
+a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
+
+/* popup */
+#popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 40%; position: absolute; top: 10%; left: 30%; display: none; z-index: 10; }
+.popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
+.popup-closer { color: #FFFFFF; font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: 1px solid #E5E5E5; }
+.popup-closer:hover { background-color: #F6F6F6; color: #4477FF; }
+.popup-body { clear: both; background-color: #FFFFFF; color: #111111; padding: 10px; margin: 0; }
+.popup-body label { margin: 5px; display: block; font-weight: bold; }
+.popup-body input { margin: 8px 5px; padding: 3px; border: 1px solid #E5E5E5; }
+.popup-body input[type="text"] { width: 300px; }
+.popup-body input.blank { border-color: #FF0000; border-width: 2px; }
+.popup-container { margin: 0; }
+#lightbox { background: #FFFFFF; opacity: 0.7; filter:alpha(opacity=70); position: fixed !important; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
+
+/* diffs */
+.moin-diff { width:99%; table-layout: fixed; }
+.moin-diff-header { vertical-align: top; font-size: 92%; }
+.moin-diff-info { margin: .33em .25em; }
+.moin-diff-info-value { white-space: normal; }
+.moin-diff-info-heading { background-color: #E8E8E8; width: 100%; padding: 0.25em 0.5em;
+            margin: -0.25em -0.5em; margin-bottom: 0.25em; text-align: center; }
+.moin-diff-info-caption {display: inline-block; min-width: 5em; }
+
+.moin-diff-line-number { background-color: #C0C0C0; }
+.moin-diff-added { background-color: #E0FFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
+            font-family: monospace; }
+.moin-diff-removed { background-color: #FFFFE0; vertical-align: top; width: 50%; white-space: pre-wrap; word-wrap: break-word;
+            font-family: monospace; }
+.moin-diff-added span { background-color: #80FF80; }
+.moin-diff-removed span { background-color: #FFFF80; }
+
+/* tags list / tag cloud */
+ul.moin-tags { list-style: none; }
+ul.moin-tags li { display: inline; }
+ul.moin-tags li.weight0 { font-size: 50%; }
+ul.moin-tags li.weight1 { font-size: 65%; }
+ul.moin-tags li.weight2 { font-size: 80%; }
+ul.moin-tags li.weight3 { font-size: 90%; }
+ul.moin-tags li.weight4 { font-size: 100%; }
+ul.moin-tags li.weight5 { font-size: 120%; }
+ul.moin-tags li.weight6 { font-size: 140%; }
+ul.moin-tags li.weight7 { font-size: 160%; }
+ul.moin-tags li.weight8 { font-size: 180%; }
+ul.moin-tags li.weight9 { font-size: 200%; }
+
+/* MonthCalendar css */
+/* placeholder, none of this is working yet */
+/* days without and with pages linked to them */
+a.cal-emptyday { color: #777; text-align: center; }
+a.cal-usedday { color: #000; font-weight: bold; text-align: center; }
+/* general stuff: workdays, weekend, today */
+td.cal-workday { background-color: #DDF; text-align: center; }
+td.cal-weekend { background-color: #FDD; text-align: center; }
+td.cal-today { background-color: #CFC; border-style: solid; border-width: 2px; text-align: center; }
+/* invalid places on the monthly calendar sheet */
+td.cal-invalidday { background-color: #CCC; }
+/* links to prev/next month/year */
+a.cal-link { color: #000; text-decoration: none; }
+th.cal-header { background-color: #DBF; text-align: center; }
+/* for MonthCalendar mouseover info boxes */
+TABLE.tip { color: black; background-color: #F88; font-size: small; font-weight: normal;
+            border-style: solid; border-width: 1px; }
+TH.tip { background-color: #F44; font-weight: bold; text-align: center; }
+TD.tip { text-align: left; }
+
+/* wiki parser  - no moin- prefix added here, these classes are used within pages: {{{#!wiki solid  */
+.comment { color: #555; background-color: #DDF; }
+.red { background-color: #FCC; }
+.green { background-color: #CFC; }
+.blue { background-color: #CCF; }
+.yellow { background-color: #FFF29F; }
+.orange { background-color: #FFD59B; }
+.solid { border: 2px solid #000; padding: 2px; clear: both; }
+.dashed { border: 2px dashed #AEBDCC; padding: 2px; clear: both; }
+.dotted { border: 2px dotted #AEBDCC; padding: 2px; clear: both; }
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.justify { text-align: justify; }
+
+/* admonitions  - no moin- prefix added  here, these classes are used within pages: {{{#!wiki caution */
+#moin-content div.caution,
+#moin-content div.important,
+#moin-content div.note,
+#moin-content div.tip,
+#moin-content div.warning { border: 1px solid #E5E5E5; background-color: #F9F9FF;
+            background-repeat: no-repeat; background-position: 8px 8px;  color: black;
+            margin: 10px 30px 10px 30px; min-height: 64px; padding-left: 64px; clear: both; }
+#moin-content div.caution p,
+#moin-content div.important p,
+#moin-content div.note p,
+#moin-content div.tip p,
+#moin-content div.warning p { margin-top: 8px; /*to align text with big graphic*/ }
+#moin-content div.caution { background-image: url("../img/admonitions/caution.png"); }
+#moin-content div.important { background-image: url("../img/admonitions/important.png"); }
+#moin-content div.note { background-image: url("../img/admonitions/note.png"); }
+#moin-content div.tip { background-image: url("../img/admonitions/tip.png"); }
+#moin-content div.warning { background-image: url("../img/admonitions/warning.png"); }
+
+/* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
+.moin-text-icon { font-size: 0; color: transparent; }
+.moin-alert:before { content: url('../img/smileys/alert.png'); }
+.moin-angry:before { content: url('../img/smileys/angry.png'); }
+.moin-attention:before { content: url('../img/smileys/attention.png'); }
+.moin-biggrin:before { content: url('../img/smileys/biggrin.png'); }
+.moin-checkmark:before { content: url('../img/smileys/checkmark.png'); }
+.moin-devil:before { content: url('../img/smileys/devil.png'); }
+.moin-frown:before { content: url('../img/smileys/frown.png'); }
+.moin-icon-error:before { content: url('../img/smileys/icon-error.png'); }
+.moin-icon-info:before { content: url('../img/smileys/icon-info.png'); }
+.moin-idea:before { content: url('../img/smileys/idea.png'); }
+.moin-ohwell:before { content: url('../img/smileys/ohwell.png'); }
+.moin-prio1:before { content: url('../img/smileys/prio1.png'); }
+.moin-prio2:before { content: url('../img/smileys/prio2.png'); }
+.moin-prio3:before { content: url('../img/smileys/prio3.png'); }
+.moin-redface:before { content: url('../img/smileys/redface.png'); }
+.moin-sad:before { content: url('../img/smileys/sad.png'); }
+.moin-smile:before { content: url('../img/smileys/smile.png'); }
+.moin-smile2:before { content: url('../img/smileys/smile2.png'); }
+.moin-smile3:before { content: url('../img/smileys/smile3.png'); }
+.moin-smile4:before { content: url('../img/smileys/smile4.png'); }
+.moin-star_off:before { content: url('../img/smileys/star_off.png'); }
+.moin-star_on:before { content: url('../img/smileys/star_on.png'); }
+.moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
+.moin-tired:before { content: url('../img/smileys/tired.png'); }
+.moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+
+/* icons for external links -- www, mailto, attachment, interwiki, and action are not working yet */
+a.moin-www:before,
+a.moin-http:before,
+a.moin-https:before { content: url(../img/moin-www.png); margin: 0 0.2em; }
+a.moin-file:before,
+a.moin-ftp:before { content: url(../img/moin-ftp.png); margin: 0 0.2em; }
+a.moin-nntp:before,
+a.moin-news:before { content: url(../img/moin-news.png); margin: 0 0.2em; }
+a.moin-telnet:before,
+a.moin-ssh:before,
+a.moin-irc:before,
+a.moin-ircs:before { content: url(../img/moin-telnet.png); margin: 0 0.2em; }
+a.moin-mailto:before { content: url(../img/moin-email.png); margin: 0 0.2em; }
+a.moin-attachment:before { content: url(../img/moin-attach.png); margin: 0 0.2em; }
+a.moin-interwiki:before { content: url(../img/moin-inter.png); margin: 0 0.2em; }
+a.moin-action:before { content: url(../img/moin-action.png); margin: 0 0.2em; }
+
+/* icons for links to different mimetypes */
+/* major types */
+a.moin-mime-text:before { content: url(../img/moin-text.png); margin: 0 0.2em; }
+a.moin-mime-image:before { content: url(../img/moin-image.png); margin: 0 0.2em; }
+a.moin-mime-audio:before { content: url(../img/moin-audio.png); margin: 0 0.2em; }
+a.moin-mime-video:before { content: url(../img/moin-video.png); margin: 0 0.2em; }
+a.moin-mime-application:before { content: url(../img/moin-application.png); margin: 0 0.2em; }
+/* some common specific types */
+a.moin-mime-pdf:before { content: url(../img/moin-pdf.png); margin: 0 0.2em; }
+a.moin-mime-package:before { content: url(../img/moin-package.png); margin: 0 0.2em; }
+a.moin-mime-drawing:before { content: url(../img/moin-drawing.png); margin: 0 0.2em; }
+
+/* Flash messages used by Flask */
+.moin-flash { margin: 0; padding: 6px 6px 6px 38px; background-color: #f0f2f5;
+            border-bottom: 1px solid #ccc; background-repeat: no-repeat;
+            background-position: 16px center; }
+.moin-flash-hint { background-image: url(../img/smileys/idea.png); }
+.moin-flash-info { background-image: url(../img/smileys/icon-info.png); }
+.moin-flash-warning { background-image: url(../img/smileys/alert.png);
+            background-color: #f1f3dc; }
+.moin-flash-error { background-image: url(../img/smileys/icon-error.png);
+            background-color: #f1dadc; }
+
+/* auto-generated by pygments */
+.highlight .hll { background-color: #FFC; }
+.highlight { background: #F8F8F8; }
+.highlight .c { color: #408080; font-style: italic; } /* Comment */
+.highlight .err { border: 1px solid #F00; } /* Error */
+.highlight .k { color: #008000; font-weight: bold; } /* Keyword */
+.highlight .o { color: #666666; } /* Operator */
+.highlight .cm { color: #408080; font-style: italic; } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00; } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic; } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic; } /* Comment.Special */
+.highlight .gd { color: #A00000; } /* Generic.Deleted */
+.highlight .ge { font-style: italic; } /* Generic.Emph */
+.highlight .gr { color: #FF0000; } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold; } /* Generic.Heading */
+.highlight .gi { color: #00A000; } /* Generic.Inserted */
+.highlight .go { color: #808080; } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold; } /* Generic.Prompt */
+.highlight .gs { font-weight: bold; } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold; } /* Generic.Subheading */
+.highlight .gt { color: #0040D0; } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold; } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold; } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold; } /* Keyword.Namespace */
+.highlight .kp { color: #008000; } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold; } /* Keyword.Reserved */
+.highlight .kt { color: #B00040; } /* Keyword.Type */
+.highlight .m { color: #666666; } /* Literal.Number */
+.highlight .s { color: #BA2121; } /* Literal.String */
+.highlight .na { color: #7D9029; } /* Name.Attribute */
+.highlight .nb { color: #008000; } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold; } /* Name.Class */
+.highlight .no { color: #880000; } /* Name.Constant */
+.highlight .nd { color: #AA22FF; } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold; } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold; } /* Name.Exception */
+.highlight .nf { color: #0000FF; } /* Name.Function */
+.highlight .nl { color: #A0A000; } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold; } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold; } /* Name.Tag */
+.highlight .nv { color: #19177C; } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold; } /* Operator.Word */
+.highlight .w { color: #BBBBBB; } /* Text.Whitespace */
+.highlight .mf { color: #666666; } /* Literal.Number.Float */
+.highlight .mh { color: #666666; } /* Literal.Number.Hex */
+.highlight .mi { color: #666666; } /* Literal.Number.Integer */
+.highlight .mo { color: #666666; } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121; } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121; } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic; } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121; } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold; } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121; } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold; } /* Literal.String.Interpol */
+.highlight .sx { color: #008000; } /* Literal.String.Other */
+.highlight .sr { color: #BB6688; } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121; } /* Literal.String.Single */
+.highlight .ss { color: #19177C; } /* Literal.String.Symbol */
+.highlight .bp { color: #008000; } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C; } /* Name.Variable.Class */
+.highlight .vg { color: #19177C; } /* Name.Variable.Global */
+.highlight .vi { color: #19177C; } /* Name.Variable.Instance */
+.highlight .il { color: #666666; } /* Literal.Number.Integer.Long */
+
+/* end of CSS declarations common to all devices */
+
+
+@media screen, projection {
+
+/* general */
+body { background-color: #F3F7FD; }
+
+/* moin-content */
+#moin-page { margin: 0; padding: 2px 20px 20px; box-shadow: 1px 1px 33px -11px inset;
+/* support for firefox 3.5/3.6 and safari */
+-moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
+
+/* links */
+a:link { color: #47F; text-decoration: none; }
+a:visited { text-decoration: none; color: #04A; }
+a:visited:hover { text-decoration: none; color: red; }
+a:hover,
+a:active { text-decoration: underline; color: green; }
+a.moin-nonexistent:link { color: #666; }
+a.moin-nonexistent:hover { color: black; text-decoration: underline; }
+/* placeholder - not used yet
+a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; background: #E7E7E7;
+            border: 1px solid #9C9C9C; padding: 0.5em; text-align: center; }
+*/
+
+/* moin-header */
+#moin-header { margin: 0px; padding: 0px;
+            background: url(../img/white-clouds.jpg); /* background: #E6EAF0; */
+            line-height: 1.12em; }
+
+/* moin-header searchform */
+#moin-searchform { margin: 8px .5em; padding: 0; font-size: 0.82em; float: right;  text-align: right; }
+#moin-searchform input { font-size: 100%; vertical-align: middle;
+            background-color: #F3F7FD; /* same as body bg col */
+            border: 1px solid #A4B9DF; }
+#moin-searchform #moin-search-submit { display: none; }
+#moin-searchform div { margin: 0; }
+#moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
+#moin-searchform li { list-style:none; }
+
+/* moin-extended searchform */
+#moin-long-searchform { padding: 0; font-size: 0.82em; text-align: left; }
+#moin-long-searchform div { margin: 0; }
+#moin-search-query { width: 50%; }
+
+/* moin-header moin-logo -- logos may be text only */
+#moin-logo { float: left; margin: 5px 10px; padding: 0; font-size: 1.4em; line-height: 1em; font-weight: bold; }
+#moin-logo img { vertical-align: middle; }
+#moin-logo a { color: black; text-decoration: none; }
+
+/* moin-header moin-username */
+#moin-username { display: block; margin: 0px 12px 4px 12px; padding: 0; font-size: 0.82em; }
+#moin-username form { display: inline; }
+#moin-username input { display: inline; padding: 0; margin: 0; border: none; background: transparent; color: blue; font-size: 0.82em; cursor: pointer; }
+#moin-username input:hover { color: red; }
+
+/* moin-header moin-locationline */
+#moin-locationline { padding: 0; font-size: 100%; font-weight: normal; margin: 0.25em 12px 5px 12px; }
+#moin-pagelocation { font-size: 1.5em; letter-spacing: 0.05em; }
+
+/* moin-header moin-pagetrail */
+#moin-pagetrail { margin: 0 0.88em 0.25em 12px; padding: 0; font-size: 0.88em; }
+
+/* moin-header moin-navibar */
+#moin-navibar { clear: both;  display: block; margin: 0; padding: 0 10px; font-size: 0.82em; }
+#moin-navibar li { float: left; display: inline; margin: 0 2px; padding: 2px 5px; border: 1px solid #A4B9DF;
+            border-bottom: none; white-space: nowrap; font-size: .88em; }
+#moin-navibar li.wikilink { background: #F3F7FD; } /* same as body background */
+#moin-navibar li.userlink { background: #C4D9FF; }
+#moin-navibar a,
+#moin-navibar a:visited { color: black; text-decoration: none; }
+#moin-navibar li:hover { background: #A4B9DF; }
+
+/* moin-header moin-pageline  */
+#moin-pageline { clear: both; margin: 0; padding: 0; width: 100%; height: 4px;
+            border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; background: #81BBF2; }
+
+/* moin-header moin-itemviews -- also applies to moin-footer */
+.moin-itemviews { clear: both; display: block; margin: 0; padding: 2px 8px; background: #C4D9FF;
+                  font-size: 0.8em; border-bottom: 1px solid #4D7DA9; border-top: 1px solid #4D7DA9; margin-top: -1px; }
+.moin-itemviews li { display: inline-block; padding: 0; margin: 4px 6px; line-height: 1em; }
+.moin-itemviews a,
+.moin-itemviews a:visited { color: #0044B3; }
+.moin-itemviews a:hover { text-decoration: underline; }
+.moin-itemviews form,
+.moin-itemviews form div { display: inline; margin: 0; }
+.moin-itemviews select { font-size: 100%; vertical-align: middle; }
+
+/* moin-page moin-footer */
+#moin-footer { clear: both; margin: 0 0; }
+#moin-footer hr { margin: 0; background-color: #ccc; }
+#moin-pageinfo,
+#moin-wikilicense,
+#moin-credits,
+#moin-version,
+#moin-timings { margin: 10px 20px; text-align: left; font-size: 0.7em; color: #6C7680; }
+#moin-timings li { display: inline-block; margin: 0 20px 0 0; }
+#moin-credits span {display: inline-block; margin: 0 5px; }
+#moin-creditlogos { float: right; list-style: none; margin: 0 10px; }
+#moin-creditlogos li { display: inline-block; margin: 10px 0 10px 10px; }
+
+/* wikiconfig -- page_footer1/2 and page_header1/2 if defined */
+/* placeholder, not working yet */
+
+.page-object { margin: 0px; width: auto; height: auto; display: block; position: relative; }
+.object-overlay { background-color: black; position: absolute; padding: 5px; border-radius: 1em;
+            -moz-border-radius: 1em; -webkit-border-radius: 1em; text-align: center; white-space: nowrap; font-size: 120%;
+            font-weight: bold; display: none; margin: 0; opacity: .5; }
+.object-overlay-wrapper { width: 20px; height: 20px; position: absolute; z-index: 100; top: 0px; left: 0px; margin: 0; }
+.object-overlay-wrapper:hover  .object-overlay { display: block; top: -20px; left: 0px; }
+.page-object:hover .object-overlay:hover { opacity: .8; filter: alpha(opacity=90); }
+.object-overlay a:link,
+.object-overlay a:visited { color: white; }
+
+/* special style for heading with mouseover permalinks */
+.permalink { display: none; cursor: pointer; font-size: 80%; margin-left: 3px; }
+a.permalink { color: #95A09F; }
+a:hover.permalink { color: #C1CFCD; }
+h1:hover .permalink,
+h2:hover .permalink,
+h3:hover .permalink,
+h4:hover .permalink,
+h5:hover .permalink,
+h6:hover .permalink { display: inline; }
+
+} /* end of @media screen, projection */
+
+
+@media print {
+
+html { font-family: serif; font-size: 12pt; width: 100%; }
+body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
+
+a, a:visited,
+a.nonexistent { color: black !important; text-decoration: none !important; }
+
+a.interwiki:before { content: attr(title) ":"; }
+a.interwiki img { display: none; }
+
+pre { font-size: 10pt; }
+.footnotes div { width: 5em; border-top: 1pt solid gray; }
+div.moin-table-of-contents { box-shadow: none; -moz-box-shadow:  none; -webkit-box-shadow:  none;  }
+
+a.permalink, a.moin-showhide, a.showhide,
+#moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+#moin-pagelocation { display: none; }
+
+#moin-pageinfo { color: gray; font-size: .67em; float: right; }
+#moin-pageinfo a { color: gray; }
+
+}   /* end of @media print */
+
+
+@media projection {
+
+html { line-height: 1.8em; }
+
+body, b, em, a, span, div, p, td { font-size: 18pt; }
+
+h1 { font-size: 26pt; }
+h2 { font-size: 22pt; }
+h3 { font-size: 20pt; }
+h4 { font-size: 18pt; }
+h5 { font-size: 16pt; }
+h6 { font-size: 14pt; }
+
+tt, pre { font-size: 16pt; }
+sup, sub { font-size: 12pt; }
+
+table.navigation { float: right; margin: 2px; }
+.navigation td, .navigation a {  font-size: 10pt; padding: 2px; }
+
+#moin-interwiki, #moin-pagelocation, #moin-pageinfo { display: none; }
+
+#moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+#moin-pagelocation { display: none; }
+
+#moin-pageinfo { color: gray; font-size: .67em; float: right; }
+#moin-pageinfo a { color: gray; }
+
+}   /* end of @media projection */
