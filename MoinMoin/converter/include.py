@@ -12,7 +12,7 @@ Expands include elements in an internal Moin document.
 from __future__ import absolute_import, division
 
 from emeraldtree import ElementTree as ET
-import re
+import re, types
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -261,12 +261,44 @@ class Converter(object):
 
                 return result
 
-            for i in xrange(len(elem)):
+            container = [elem]
+
+            i = 0
+            while i < len(elem):
                 child = elem[i]
                 if isinstance(child, ET.Node):
                     ret = self.recurse(child, page_href)
                     if ret:
-                        elem[i] = ret
+                        if type(ret) == types.ListType:
+                            elem[i:i+1] = ret
+                        elif elem.tag.name == 'p':
+                            try:
+                                body = ret[0][0]
+                                if len(body) == 1 and body[0].tag.name == 'p':
+                                    single = True
+                                else:
+                                    single = False
+                            except AttributeError:
+                                single = False
+
+                            if single:
+                                # content inside P is inserted directly into this P
+                                p = ret[0][0][0]
+                                elem[i:i+1] = [p[k] for k in xrange(len(p))]
+                            else:
+                                # P is closed and element is inserted after
+                                pa = ET.Element(html.p)
+                                pa[0:i] = elem[0:i]
+                                ret[0:1] = elem[i:i+1]
+                                elem[0:i+1] = []
+                                container[0:0] = [pa, ret]
+                                i = 0
+                        else:
+                            elem[i] = ret
+                i += 1
+            if len(container) > 1:
+                return container
+
         finally:
             self.stack.pop()
 
