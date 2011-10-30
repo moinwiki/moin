@@ -13,9 +13,9 @@ import pytest
 pytest.importorskip('MoinMoin.storage.stores.kt')
 
 
-from MoinMoin._tests import test_connection
+from MoinMoin._tests import check_connection
 try:
-    test_connection(1978)
+    check_connection(1978)
 except Exception as err:
     pytest.skip(str(err))
 
@@ -34,4 +34,14 @@ def test_create(Store):
 def test_destroy(Store):
     store = Store()
     store.destroy()
+
+@pytest.mark.multi(Store=[BytesStore, FileStore])
+def test_from_uri(Store):
+    store = Store.from_uri("localhost")
+    assert store.host == 'localhost'
+    assert store.port == 1978
+
+    store = Store.from_uri("localhost:1970")
+    assert store.host == 'localhost'
+    assert store.port == 1970
 

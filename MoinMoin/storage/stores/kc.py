@@ -17,7 +17,7 @@ Note: only ONE process can open a kyoto cabinet in OWRITER (writable) mode.
 
 from __future__ import absolute_import, division
 
-import os
+import os, errno
 from StringIO import StringIO
 
 from kyotocabinet import *
@@ -50,6 +50,12 @@ class _Store(MutableStoreBase):
         self.db_opts = db_opts
 
     def create(self):
+        basedir = os.path.dirname(self.path)
+        try:
+            os.makedirs(basedir)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
         self.open(mode=self.mode|DB.OCREATE)
         self.close()
 
