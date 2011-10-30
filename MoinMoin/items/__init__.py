@@ -293,7 +293,7 @@ class Item(object):
                               {moin_page.namespace: '',
                                xlink.namespace: 'xlink',
                                html.namespace: 'html',
-                              })
+                               })
 
     def _render_data_highlight(self):
         # override this in child classes
@@ -312,23 +312,23 @@ class Item(object):
                                last_rev_id=rev_ids and rev_ids[-1],
                                meta_rendered='',
                                data_rendered='',
-                              )
+                               )
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
         kill_keys = [# shall not get copied from old rev to new rev
-                     SYSITEM_VERSION,
-                     NAME_OLD,
-                     # are automatically implanted when saving
-                     NAME,
-                     ITEMID, REVID, DATAID,
-                     HASH_ALGORITHM,
-                     SIZE,
-                     COMMENT,
-                     MTIME,
-                     ACTION,
-                     ADDRESS, HOSTNAME, USERID,
-                    ]
+            SYSITEM_VERSION,
+            NAME_OLD,
+            # are automatically implanted when saving
+            NAME,
+            ITEMID, REVID, DATAID,
+            HASH_ALGORITHM,
+            SIZE,
+            COMMENT,
+            MTIME,
+            ACTION,
+            ADDRESS, HOSTNAME, USERID,
+            ]
         for key in kill_keys:
             meta.pop(key, None)
         return meta
@@ -378,6 +378,9 @@ class Item(object):
 
     def _rename(self, name, comment, action):
         self._save(self.meta, self.data, name=name, action=action, comment=comment)
+        for child in self.get_index():
+            item = Item.create(child[0])
+            item._save(item.meta, item.data, name='/'.join((name, child[1])), action=action, comment=comment)
 
     def rename(self, name, comment=u''):
         """

@@ -79,7 +79,11 @@ class Backend(MutableBackendBase):
         backend, _, mountpoint = self._get_backend(name)
         meta, data = backend.retrieve(revid)
         if mountpoint:
-            meta[NAME] = u'{0}/{1}'.format(mountpoint, meta[NAME])
+            name = meta[NAME]
+            if name:
+                meta[NAME] = u'{0}/{1}'.format(mountpoint, meta[NAME])
+            else:
+                meta[NAME] = mountpoint # no trailing slash!
         return meta, data
 
     # writing part
