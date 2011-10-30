@@ -16,8 +16,9 @@ from flask import g as flaskg
 
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
-from MoinMoin.items import Item, AccessDeniedError
+from MoinMoin.items import Item
 from MoinMoin.macro._base import MacroInlineBase
+from MoinMoin.storage.middleware.protecting import AccessDenied
 
 
 class Macro(MacroInlineBase):
@@ -43,7 +44,7 @@ class Macro(MacroInlineBase):
                 item = Item.create(item_name)
                 random_item_names.append(item_name)
                 found += 1
-            except AccessDeniedError:
+            except AccessDenied:
                 pass
 
         if not random_item_names:

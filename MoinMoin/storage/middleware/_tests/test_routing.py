@@ -46,33 +46,26 @@ def pytest_funcarg__router(request):
 
     return router
 
-def revid_split(revid):
-    # router revids are <backend_mountpoint>:<backend_revid>, split that:
-    return revid.rsplit(u':', 1)
-
 def test_store_get_del(router):
     root_name = u'foo'
     root_revid = router.store(dict(name=root_name), StringIO(''))
     sub_name = u'sub/bar'
     sub_revid = router.store(dict(name=sub_name), StringIO(''))
 
-    assert revid_split(root_revid)[0] == ''
-    assert revid_split(sub_revid)[0] == 'sub'
-
     # when going via the router backend, we get back fully qualified names:
-    root_meta, _ = router.retrieve(root_revid)
-    sub_meta, _ = router.retrieve(sub_revid)
+    root_meta, _ = router.retrieve(root_name, root_revid)
+    sub_meta, _ = router.retrieve(sub_name, sub_revid)
     assert root_name == root_meta[NAME]
     assert sub_name == sub_meta[NAME]
 
     # when looking into the storage backend, we see relative names (without mountpoint):
-    root_meta, _ = router.mapping[-1][1].retrieve(revid_split(root_revid)[1])
-    sub_meta, _ = router.mapping[0][1].retrieve(revid_split(sub_revid)[1])
+    root_meta, _ = router.mapping[-1][1].retrieve(root_revid)
+    sub_meta, _ = router.mapping[0][1].retrieve(sub_revid)
     assert root_name == root_meta[NAME]
     assert sub_name == 'sub' + '/' + sub_meta[NAME]
     # delete revs:
-    router.remove(root_revid)
-    router.remove(sub_revid)
+    router.remove(root_name, root_revid)
+    router.remove(sub_name, sub_revid)
 
 
 def test_store_readonly_fails(router):
@@ -100,8 +93,9 @@ def test_destroy_create_dont_touch_ro(router):
 
 
 def test_iter(router):
-    existing = set(router)
+    existing_before = set([revid for mountpoint, revid in router])
     root_revid = router.store(dict(name=u'foo'), StringIO(''))
     sub_revid = router.store(dict(name=u'sub/bar'), StringIO(''))
-    assert set(router) == (set([root_revid, sub_revid])|existing)
+    existing_now = set([revid for mountpoint, revid in router])
+    assert existing_now == set([root_revid, sub_revid]) | existing_before
 
