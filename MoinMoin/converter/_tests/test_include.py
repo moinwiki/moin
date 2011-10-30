@@ -74,7 +74,7 @@ class TestInclude(object):
 
         page1._render_data()
 
-    def test_IncludeOfSingleLinePage(self):
+    def test_InlineInclude(self):
         # issue #28
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is "{{page2}}"')
 
