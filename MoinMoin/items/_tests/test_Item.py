@@ -11,7 +11,7 @@ import pytest
 
 from flask import g as flaskg
 
-from MoinMoin._tests import become_trusted
+from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
@@ -202,6 +202,44 @@ class TestItem(object):
         assert item.meta['name_old'] == u'Test_Item'
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'test_data'
+
+    def test_rename_recursion(self):
+        update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
+        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'this is child')
+        update_item(u'Page/Child/Another', {CONTENTTYPE: u'text/x.moin.wiki'}, u'another child')
+
+        item = Item.create(u'Page')
+        item.rename(u'Renamed_Page', comment=u'renamed')
+
+        # items at original name and its contents after renaming
+        item = Item.create(u'Page')
+        assert item.name == u'Page'
+        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        item = Item.create(u'Page/Child')
+        assert item.name == u'Page/Child'
+        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        item = Item.create(u'Page/Child/Another')
+        assert item.name == u'Page/Child/Another'
+        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+
+        # item at new name and its contents after renaming
+        item = Item.create(u'Renamed_Page')
+        assert item.name == u'Renamed_Page'
+        assert item.meta['name_old'] == u'Page'
+        assert item.meta['comment'] == u'renamed'
+        assert item.data == u'Page 1'
+
+        item = Item.create(u'Renamed_Page/Child')
+        assert item.name == u'Renamed_Page/Child'
+        assert item.meta['name_old'] == u'Page/Child'
+        assert item.meta['comment'] == u'renamed'
+        assert item.data == u'this is child'
+
+        item = Item.create(u'Renamed_Page/Child/Another')
+        assert item.name == u'Renamed_Page/Child/Another'
+        assert item.meta['name_old'] == u'Page/Child/Another'
+        assert item.meta['comment'] == u'renamed'
+        assert item.data == u'another child'
 
     def test_delete(self):
         name = u'Test_Item2'
