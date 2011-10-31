@@ -259,6 +259,10 @@ class ProtectedRevision(object):
         return self.rev.revid
 
     @property
+    def name(self):
+        return self.rev.name
+
+    @property
     def meta(self):
         self.require(READ)
         return self.rev.meta

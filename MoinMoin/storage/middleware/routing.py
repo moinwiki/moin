@@ -99,8 +99,13 @@ class Backend(MutableBackendBase):
                 backend.destroy()
             #XXX else: log info?
 
-    def store(self, meta, data):
-        mountpoint_itemname = meta[NAME]
+    def store(self, meta, data, name = None):
+        if name is None:
+            name = meta[NAME]
+        import types
+        if type(name) is types.ListType:
+            name = name[0]
+        mountpoint_itemname = name
         backend, itemname, mountpoint = self._get_backend(mountpoint_itemname)
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
