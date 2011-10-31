@@ -221,7 +221,7 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(new_name)
         assert item.name == u'Test_new_Item'
-        assert item.meta['name_old'] == u'Test_Item'
+        assert item.meta['name_old'] == [u'Test_Item']
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'test_data'
 

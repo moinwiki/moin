@@ -20,6 +20,7 @@ import tarfile
 import zipfile
 import tempfile
 import itertools
+import types
 from StringIO import StringIO
 from array import array
 
@@ -469,9 +470,19 @@ class Item(object):
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if type(oldname) is not types.ListType:
+                oldname = [oldname]
+            if name not in oldname: #this is a rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
