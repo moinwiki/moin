@@ -229,16 +229,17 @@ class TestItem(object):
         content = u"This is page content"
 
         update_item(u'Page', 
-                    {NAME: [u'Page', 
-                            u'Another name',
+                    {NAME: [u'First', 
+                            u'Second',
+                            u'Third',
                             ], 
                      CONTENTTYPE: u'text/x.moin.wiki'}, content)
         
-        item = Item.create(u'Another name')
+        item = Item.create(u'Second')
         item.rename(u'New name', comment=u'renamed')
 
-        item1 = Item.create(u'Page')
-        assert item1.name == u'Page'
+        item1 = Item.create(u'First')
+        assert item1.name == u'First'
         assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
         assert item1.data == content
 
@@ -247,10 +248,15 @@ class TestItem(object):
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
         assert item2.data == content
 
-        assert item1.rev.revid == item2.rev.revid
+        item3 = Item.create(u'Third')
+        assert item3.name == u'Third'
+        assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item3.data == content
 
-        item3 = Item.create(u'Another name')
-        assert item3.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item1.rev.revid == item2.rev.revid == item3.rev.revid
+
+        item4 = Item.create(u'Second')
+        assert item4.meta[CONTENTTYPE] == 'application/x-nonexistent'
 
     def test_rename_recursion(self):
         update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
@@ -289,6 +295,36 @@ class TestItem(object):
         assert item.meta['name_old'] == [u'Page/Child/Another']
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'another child'
+
+    def test_rename_recursion_with_multiple_names_and_children(self):
+        update_item(u'Foo', 
+                    {CONTENTTYPE: u'text/x.moin.wiki', \
+                         NAME: [u'Other', u'Page', u'Foo']}, \
+                    u'Parent')
+        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
+        update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
+        update_item(u'Another', 
+                    {CONTENTTYPE: u'text/x.moin.wiki', 
+                     NAME: [u'Another', u'Page/Second']
+                         },
+                    u'Both')
+        update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Second')
+        update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
+
+        item = Item.create(u'Page')
+        item.rename(u'Renamed', comment=u'renamed')
+
+        assert Item.create(u'Page/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Child').data == u'Child of Page'
+        assert Item.create(u'Page/Second').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Second').data == u'Both'
+        assert Item.create(u'Another').data == u'Both'
+        assert Item.create(u'Page/Second/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Second/Child').data == u'Child of Second'
+        assert Item.create(u'Other/Child2').data == u'Child of Other'
+        assert Item.create(u'Another/Child').data == u'Child of Another'
+        
+        
 
     def test_delete(self):
         name = u'Test_Item2'
