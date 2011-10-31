@@ -56,6 +56,7 @@ import shutil
 import itertools
 import time
 import datetime
+import types
 from StringIO import StringIO
 
 import logging
@@ -110,7 +111,7 @@ from MoinMoin.util.tree import moin_page
 from MoinMoin.converter import default_registry
 from MoinMoin.util.iri import Iri
 
-def convert_to_indexable(meta, data, is_new=False):
+def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     Convert revision data to a indexable content.
 
@@ -139,6 +140,10 @@ def convert_to_indexable(meta, data, is_new=False):
             return self.data.seek(*args, **kw)
         def tell(self, *args, **kw):
             return self.data.tell(*args, **kw)
+
+    if not item_name:
+        # only used for logging, below
+        item_name = unicode(meta[NAME])
 
     rev = PseudoRev(meta, data)
     try:
@@ -170,7 +175,7 @@ def convert_to_indexable(meta, data, is_new=False):
             # transclusions.
             if is_new:
                 # we only can modify new, uncommitted revisions, not stored revs
-                i = Iri(scheme='wiki', authority='', path='/' + meta[NAME])
+                i = Iri(scheme='wiki', authority='', path='/' + item_name)
                 doc.set(moin_page.page_href, unicode(i))
                 refs_conv(doc)
                 # side effect: we update some metadata:
@@ -181,7 +186,7 @@ def convert_to_indexable(meta, data, is_new=False):
         # no way
         raise TypeError("No converter for {0} --> {1}".format(input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(meta[NAME], meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
+        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
         doc = u'ERROR [{0!s}]'.format(e)
         return doc
 
@@ -708,6 +713,7 @@ class Item(object):
             # we need to call the method without acl check to avoid endless recursion:
             latest_doc = self.indexer._document(**query) or {}
         self._current = latest_doc
+        self._name = query.get('name_exact')
 
     def _get_itemid(self):
         return self._current.get(ITEMID)
@@ -721,7 +727,15 @@ class Item(object):
 
     @property
     def name(self):
-        return self._current.get(NAME, 'DoesNotExist')
+        name = self._current.get(NAME, self._name)
+        if type(name) is types.ListType:
+            if self._name and self._name in name:
+                name = self._name
+            else:
+                name = name[0]
+        elif not name:
+            name = 'DoesNotExist'
+        return name
 
     @classmethod
     def create(cls, indexer, **query):
@@ -779,7 +793,7 @@ class Item(object):
             meta[MTIME] = int(time.time())
         #if CONTENTTYPE not in meta:
         #    meta[CONTENTTYPE] = u'application/octet-stream'
-        content = convert_to_indexable(meta, data, is_new=True)
+        content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
     def store_revision(self, meta, data, overwrite=False):
@@ -863,7 +877,10 @@ class Revision(object):
 
     @property
     def name(self):
-        return self.meta.get(NAME, 'DoesNotExist')
+        name = self.meta.get(NAME, 'DoesNotExist')
+        if type(name) is types.ListType:
+            name = name[0]
+        return name
 
     def _load(self):
         meta, data = self.backend.retrieve(self._doc[NAME], self.revid) # raises KeyError if rev does not exist

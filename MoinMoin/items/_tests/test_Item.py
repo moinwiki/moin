@@ -13,7 +13,7 @@ from flask import g as flaskg
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION, NAME
 
 class TestItem(object):
 
@@ -123,6 +123,7 @@ class TestItem(object):
                                   (u'Foo/mn', u'mn', 'image/jpeg', False),
                                   ]
 
+
     def testIndexOnDisconnectedLevels(self):
         # create a toplevel and some sub-items
         basename = u'Bar'
@@ -177,6 +178,27 @@ class TestItem(object):
         expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
+    def test_item_can_have_several_names(self):
+        content = u"This is page content"
+
+        update_item(u'Page', 
+                    {NAME: [u'Page', 
+                            u'Another name',
+                            ], 
+                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+        
+        item1 = Item.create(u'Page')
+        assert item1.name == u'Page'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.data == content
+
+        item2 = Item.create(u'Another name')
+        assert item2.name == u'Another name'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.data == content
+
+        assert item1.rev.revid == item2.rev.revid
+
     def test_rename(self):
         name = u'Test_Item'
         contenttype = u'text/plain;charset=utf-8'
@@ -202,6 +224,33 @@ class TestItem(object):
         assert item.meta['name_old'] == u'Test_Item'
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'test_data'
+
+    def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
+        content = u"This is page content"
+
+        update_item(u'Page', 
+                    {NAME: [u'Page', 
+                            u'Another name',
+                            ], 
+                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+        
+        item = Item.create(u'Another name')
+        item.rename(u'New name', comment=u'renamed')
+
+        item1 = Item.create(u'Page')
+        assert item1.name == u'Page'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.data == content
+
+        item2 = Item.create(u'New name')
+        assert item2.name == u'New name'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.data == content
+
+        assert item1.rev.revid == item2.rev.revid
+
+        item3 = Item.create(u'Another name')
+        assert item3.meta[CONTENTTYPE] == 'application/x-nonexistent'
 
     def test_rename_recursion(self):
         update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
