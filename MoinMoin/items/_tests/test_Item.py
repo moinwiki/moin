@@ -150,6 +150,43 @@ class TestItem(object):
                               (u'Bar/ij', u'ij', u'application/x-nonexistent'),
                              ]
 
+    def test_index_on_pages_with_multiple_names(self):
+        update_item(u'FooBar', 
+                    {NAME: [u'FooBar', 
+                            u'BarFoo',
+                            ], 
+                     CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+
+        update_item(u'One',
+                    {NAME: [u'One',
+                            u'FooBar/FBChild',
+                            ], 
+                     CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'Two',
+                    {NAME: [u'BarFoo/BFChild', 
+                            u'Two',
+                            ], 
+                     CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+
+        update_item(u'FooBar/FBChild/Grand', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'Two/TwoChild', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'One/OneChild', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+
+        index = Item.create(u'FooBar').get_index()
+        assert index == [(u'FooBar/FBChild', u'FBChild', u'text/x.moin.wiki'),
+                         (u'FooBar/FBChild/Grand', u'FBChild/Grand', u'text/x.moin.wiki'),
+                         ]
+        index = Item.create(u'BarFoo').get_index()
+        assert index == [(u'BarFoo/BFChild', u'BFChild', u'text/x.moin.wiki')]
+
+        assert Item.create(u'BarFoo/BFChild').get_index() == []
+
+        index = Item.create(u'One').get_index()
+        assert index == [(u'One/OneChild', u'OneChild', u'text/x.moin.wiki')]
+
+        index = Item.create(u'Two').get_index()
+        assert index == [(u'Two/TwoChild', u'TwoChild', u'text/x.moin.wiki')]
+
     def test_meta_filter(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
@@ -312,6 +349,7 @@ class TestItem(object):
         update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
 
         item = Item.create(u'Page')
+
         item.rename(u'Renamed', comment=u'renamed')
 
         assert Item.create(u'Page/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
