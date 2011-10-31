@@ -109,9 +109,9 @@ class Backend(MutableBackendBase):
         backend, itemname, mountpoint = self._get_backend(mountpoint_itemname)
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
-        meta[NAME] = itemname
+        #meta[NAME] = itemname
         revid = backend.store(meta, data)
-        meta[NAME] = mountpoint_itemname # restore the original name
+        #meta[NAME] = mountpoint_itemname # restore the original name
         return revid
 
     def remove(self, name, revid):

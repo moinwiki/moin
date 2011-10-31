@@ -883,7 +883,10 @@ class Revision(object):
         return name
 
     def _load(self):
-        meta, data = self.backend.retrieve(self._doc[NAME], self.revid) # raises KeyError if rev does not exist
+        name = self._doc[NAME]
+        if type(name) is types.ListType:
+            name = name[0]
+        meta, data = self.backend.retrieve(name, self.revid) # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)
         self._data = data
         return meta, data
