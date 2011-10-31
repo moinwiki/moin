@@ -274,19 +274,19 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(u'Renamed_Page')
         assert item.name == u'Renamed_Page'
-        assert item.meta['name_old'] == u'Page'
+        assert item.meta['name_old'] == [u'Page']
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'Page 1'
 
         item = Item.create(u'Renamed_Page/Child')
         assert item.name == u'Renamed_Page/Child'
-        assert item.meta['name_old'] == u'Page/Child'
+        assert item.meta['name_old'] == [u'Page/Child']
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'this is child'
 
         item = Item.create(u'Renamed_Page/Child/Another')
         assert item.name == u'Renamed_Page/Child/Another'
-        assert item.meta['name_old'] == u'Page/Child/Another'
+        assert item.meta['name_old'] == [u'Page/Child/Another']
         assert item.meta['comment'] == u'renamed'
         assert item.data == u'another child'
 
