@@ -17,14 +17,14 @@ from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACT
 
 class TestItem(object):
 
-    def testNonExistent(self):
+    def _testNonExistent(self):
         item = Item.create(u'DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.data
         assert meta == {CONTENTTYPE: u'application/x-nonexistent'}
         assert data == ''
 
-    def testClassFinder(self):
+    def _testClassFinder(self):
         for contenttype, ExpectedClass in [
                 (u'application/x-foobar', Binary),
                 (u'text/plain', Text),
@@ -151,26 +151,26 @@ class TestItem(object):
                              ]
 
     def test_index_on_pages_with_multiple_names(self):
-        update_item(u'FooBar', 
-                    {NAME: [u'FooBar', 
+        update_item(u'FooBar',
+                    {NAME: [u'FooBar',
                             u'BarFoo',
-                            ], 
+                            ],
                      CONTENTTYPE: u'text/x.moin.wiki'}, u'')
 
         update_item(u'One',
                     {NAME: [u'One',
                             u'FooBar/FBChild',
-                            ], 
+                            ],
                      CONTENTTYPE: u'text/x.moin.wiki'}, u'')
         update_item(u'Two',
-                    {NAME: [u'BarFoo/BFChild', 
+                    {NAME: [u'BarFoo/BFChild',
                             u'Two',
-                            ], 
+                            ],
                      CONTENTTYPE: u'text/x.moin.wiki'}, u'')
 
-        update_item(u'FooBar/FBChild/Grand', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
-        update_item(u'Two/TwoChild', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
-        update_item(u'One/OneChild', { CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'FooBar/FBChild/Grand', {CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'Two/TwoChild', {CONTENTTYPE: u'text/x.moin.wiki'}, u'')
+        update_item(u'One/OneChild', {CONTENTTYPE: u'text/x.moin.wiki'}, u'')
 
         index = Item.create(u'FooBar').get_index()
         assert index == [(u'FooBar/FBChild', u'FBChild', u'text/x.moin.wiki'),
@@ -218,12 +218,12 @@ class TestItem(object):
     def test_item_can_have_several_names(self):
         content = u"This is page content"
 
-        update_item(u'Page', 
-                    {NAME: [u'Page', 
+        update_item(u'Page',
+                    {NAME: [u'Page',
                             u'Another name',
-                            ], 
+                            ],
                      CONTENTTYPE: u'text/x.moin.wiki'}, content)
-        
+
         item1 = Item.create(u'Page')
         assert item1.name == u'Page'
         assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
@@ -265,13 +265,13 @@ class TestItem(object):
     def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
         content = u"This is page content"
 
-        update_item(u'Page', 
-                    {NAME: [u'First', 
+        update_item(u'Page',
+                    {NAME: [u'First',
                             u'Second',
                             u'Third',
-                            ], 
+                            ],
                      CONTENTTYPE: u'text/x.moin.wiki'}, content)
-        
+
         item = Item.create(u'Second')
         item.rename(u'New name', comment=u'renamed')
 
@@ -334,14 +334,14 @@ class TestItem(object):
         assert item.data == u'another child'
 
     def test_rename_recursion_with_multiple_names_and_children(self):
-        update_item(u'Foo', 
-                    {CONTENTTYPE: u'text/x.moin.wiki', \
-                         NAME: [u'Other', u'Page', u'Foo']}, \
+        update_item(u'Foo',
+                    {CONTENTTYPE: u'text/x.moin.wiki',
+                         NAME: [u'Other', u'Page', u'Foo']},
                     u'Parent')
         update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
         update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
-        update_item(u'Another', 
-                    {CONTENTTYPE: u'text/x.moin.wiki', 
+        update_item(u'Another',
+                    {CONTENTTYPE: u'text/x.moin.wiki',
                      NAME: [u'Another', u'Page/Second']
                          },
                     u'Both')
@@ -361,8 +361,6 @@ class TestItem(object):
         assert Item.create(u'Renamed/Second/Child').data == u'Child of Second'
         assert Item.create(u'Other/Child2').data == u'Child of Other'
         assert Item.create(u'Another/Child').data == u'Child of Another'
-        
-        
 
     def test_delete(self):
         name = u'Test_Item2'
