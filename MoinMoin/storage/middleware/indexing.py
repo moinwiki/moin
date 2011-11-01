@@ -853,7 +853,7 @@ class Revision(object):
     """
     An existing revision (exists in the backend).
     """
-    def __init__(self, item, revid, doc=None):
+    def __init__(self, item, revid, doc=None, name=None):
         is_current = revid == CURRENT
         if doc is None:
             if is_current:
@@ -872,21 +872,32 @@ class Revision(object):
         self._doc = doc
         self.meta = Meta(self, self._doc)
         self._data = None
+        if name and name in self.names:
+            self._name = name
+        else:
+            self._name = None
         # Note: this does not immediately raise a KeyError for non-existing revs any more
         # If you access data or meta, it will, though.
 
     @property
+    def names(self):
+        names = self.meta.get(NAME, 'DoesNotExist')
+        if type(names) is not types.ListType:
+            names = [names]
+        return names
+
+    @property
     def name(self):
-        name = self.meta.get(NAME, 'DoesNotExist')
-        if type(name) is types.ListType:
-            name = name[0]
-        return name
+        return self._name or self.names[0]
+
+    def set_context(self, context):
+        for name in self.names:
+            if name.startswith(context):
+                self._name = name
+                return
 
     def _load(self):
-        name = self._doc[NAME]
-        if type(name) is types.ListType:
-            name = name[0]
-        meta, data = self.backend.retrieve(name, self.revid) # raises KeyError if rev does not exist
+        meta, data = self.backend.retrieve(self.name, self.revid) # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)
         self._data = data
         return meta, data
