@@ -263,6 +263,8 @@ class User(object):
 
     @property
     def avatar(self, size=30):
+        if not app.cfg.user_use_gravatar:
+            return ''
         param = {}
         if not self.email:
             return '/_themes/%s/%s' % (theme.info['identifier'],
