@@ -69,11 +69,11 @@ class MoinShell(Command):
                 sh(global_ns=dict(), local_ns=context)
                 return
             except ImportError:
+                pass
+            except AttributeError:
                 # IPython = 0.11
                 import IPython
                 sh = IPython.embed(banner2=self.banner, user_ns=context)
                 sh()
-            finally:
-                pass
 
         code.interact(self.banner, local=context)

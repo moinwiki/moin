@@ -60,7 +60,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         assert item # does exist
         rev = item.get_revision(revid)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.data.read() == data
         revids = [rev.revid for rev in item.iter_revs()]
         assert revids == [revid]
@@ -77,7 +77,7 @@ class TestIndexingMiddleware(object):
         # check if the revision was overwritten:
         item = self.imw[item_name]
         rev = item.get_revision(revid)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.meta[COMMENT] == u'no spam'
         assert rev.data.read() == newdata
         revids = [rev.revid for rev in item.iter_revs()]
@@ -167,7 +167,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=item_name), StringIO(data))
         print repr(rev.meta)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.meta[SIZE] == len(data)
         assert rev.meta[HASH_ALGORITHM] == hashlib.new(HASH_ALGORITHM, data).hexdigest()
         assert ITEMID in rev.meta
@@ -368,7 +368,7 @@ class TestProtectedIndexingMiddleware(object):
         r = item.store_revision(dict(name=item_name, acl=u'joe:read'), StringIO('public content'))
         revid_public = r.revid
         revids = [rev.revid for rev in self.imw.documents()
-                  if rev.meta[NAME] != u'joe'] # the user profile is a revision in the backend
+                  if rev.name != u'joe'] # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):

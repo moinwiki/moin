@@ -20,6 +20,7 @@ import tarfile
 import zipfile
 import tempfile
 import itertools
+import types
 from StringIO import StringIO
 from array import array
 
@@ -198,7 +199,6 @@ class Item(object):
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
-
         item = item_registry.get(name, Type(contenttype), rev=rev)
         logging.debug("ItemClass {0!r} handles {1!r}".format(item.__class__, contenttype))
         return item
@@ -470,9 +470,19 @@ class Item(object):
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if type(oldname) is not types.ListType:
+                oldname = [oldname]
+            if name not in oldname: #this is a rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
@@ -523,10 +533,13 @@ class Item(object):
             query = Term(WIKINAME, app.cfg.interwikiname)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        items = [(rev.meta[NAME], rev.meta[NAME][prefix_len:], rev.meta[CONTENTTYPE])
-                 for rev in revs]
-        return items
+        revs = flaskg.storage.search(query, limit=None)
+        items = []
+        for rev in revs:
+            rev.set_context(self.name)
+            items.append((rev.name, rev.name[prefix_len:], rev.meta[CONTENTTYPE]))
+
+        return sorted(items, key=lambda item: item[0])
 
     def _connect_levels(self, index):
         new_index = []
@@ -693,7 +706,7 @@ There is no help, you're doomed!
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        return [rev.meta[NAME] for rev in revs]
+        return [rev.name for rev in revs]
 
     def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support

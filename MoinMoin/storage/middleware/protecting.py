@@ -259,6 +259,10 @@ class ProtectedRevision(object):
         return self.rev.revid
 
     @property
+    def name(self):
+        return self.rev.name
+
+    @property
     def meta(self):
         self.require(READ)
         return self.rev.meta
@@ -267,6 +271,9 @@ class ProtectedRevision(object):
     def data(self):
         self.require(READ)
         return self.rev.data
+
+    def set_context(self, context):
+        self.rev.set_context(context)
 
     def close(self):
         self.rev.close()
