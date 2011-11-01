@@ -16,7 +16,7 @@ import pytest
 from flask import g as flaskg
 
 from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
-                            LATEST_REVS, ALL_REVS
+                            LATEST_REVS, ALL_REVS, NAMESPACE
 
 from ..indexing import IndexingMiddleware
 
@@ -349,6 +349,22 @@ class TestIndexingMiddleware(object):
         assert doc is not None
         assert expected_revid == doc[REVID]
         assert unicode(data) == doc[CONTENT]
+
+    def test_namespaces(self):
+        item_name_n = u'normal'
+        item = self.imw[item_name_n]
+        rev_n = item.store_revision(dict(name=item_name_n, contenttype=u'text/plain'), StringIO(str(item_name_n)))
+        item_name_u = u'userprofiles:userprofile'
+        item = self.imw[item_name_u]
+        rev_u = item.store_revision(dict(name=item_name_u, contenttype=u'text/plain'), StringIO(str(item_name_u)))
+        item = self.imw[item_name_n]
+        rev_n = item.get_revision(rev_n.revid)
+        assert rev_n.meta[NAMESPACE] == u''
+        assert rev_n.meta[NAME] == item_name_n
+        item = self.imw[item_name_u]
+        rev_u = item.get_revision(rev_u.revid)
+        assert rev_u.meta[NAMESPACE] == u'userprofiles'
+        assert rev_u.meta[NAME] == item_name_u.split(':')[1]
 
 class TestProtectedIndexingMiddleware(object):
     reinit_storage = True # cleanup after each test method

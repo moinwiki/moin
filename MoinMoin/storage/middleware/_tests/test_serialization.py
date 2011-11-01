@@ -19,11 +19,11 @@ from MoinMoin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    (u'Foo', {'name': u'Foo'}, ''),
-    (u'Foo', {'name': u'Foo'}, '2nd'),
-    (u'Subdir', {'name': u'Subdir'}, ''),
-    (u'Subdir/Foo', {'name': u'Subdir/Foo'}, ''),
-    (u'Subdir/Bar', {'name': u'Subdir/Bar'}, ''),
+    (u'Foo', {'name': u'Foo', 'contenttype': u'text/plain'}, ''),
+    (u'Foo', {'name': u'Foo', 'contenttype': u'text/plain'}, '2nd'),
+    (u'Subdir', {'name': u'Subdir', 'contenttype': u'text/plain'}, ''),
+    (u'Subdir/Foo', {'name': u'Subdir/Foo', 'contenttype': u'text/plain'}, ''),
+    (u'Subdir/Bar', {'name': u'Subdir/Bar', 'contenttype': u'text/plain'}, ''),
 ]
 
 
@@ -51,8 +51,9 @@ def make_middleware(request):
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
-    mapping = [('', _backend)]
-    backend = RoutingBackend(mapping)
+    namespaces = [('', u'backend')]
+    backends = {u'backend': _backend}
+    backend = RoutingBackend(namespaces, backends)
     backend.create()
     backend.open()
     request.addfinalizer(backend.destroy)
