@@ -267,7 +267,7 @@ class User(object):
 
         from MoinMoin.themes import get_current_theme
         from flask.ext.themes import static_file_url
-        
+
         theme = get_current_theme()
 
         if not self.email:

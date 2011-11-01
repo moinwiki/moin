@@ -14,11 +14,11 @@ class MoinShell(Command):
     Runs a Python shell inside Flask application context.
 
     :param banner: banner appearing at top of shell when started
-    :param make_context: a callable returning a dict of variables 
-                         used in the shell namespace. By default 
+    :param make_context: a callable returning a dict of variables
+                         used in the shell namespace. By default
                          returns a dict consisting of just the app.
-    :param use_ipython: use IPython shell if available, ignore if not. 
-                        The IPython shell can be turned off in command 
+    :param use_ipython: use IPython shell if available, ignore if not.
+                        The IPython shell can be turned off in command
                         line by passing the **--no-ipython** flag.
     """
 
@@ -45,7 +45,7 @@ class MoinShell(Command):
                 Option('--no-ipython',
                        action="store_true",
                        dest='no_ipython',
-                       default=not(self.use_ipython)),)
+                       default=not(self.use_ipython)), )
 
     def get_context(self):
         """
