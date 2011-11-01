@@ -101,6 +101,12 @@ def get_user_backend():
 
 def search_users(**q):
     """ Searches for a users with given query keys/values """
+
+    # Since item name is a list, it's possible a list have been passed as parameter.
+    # No problem, since user always have just one name (TODO: validate single name for user)
+    if q.get('name_exact') and isinstance(q.get('name_exact'), list):
+        q['name_exact'] = q['name_exact'][0]
+
     q.update({
         WIKINAME: app.cfg.interwikiname, # XXX for now, search only users of THIS wiki
                                          # maybe add option to not index wiki users
@@ -391,7 +397,8 @@ class User(object):
         """
         Save user account data to user account file on disk.
         """
-        backend_name = self.name # XXX maybe UserProfile/<name> later
+        # XXX maybe UserProfile/<name> later
+        backend_name = self.name[0] if isinstance(self.name, list) else self.name
         item = self._user_backend[backend_name]
         meta = {}
         for key, value in self.persistent_items():

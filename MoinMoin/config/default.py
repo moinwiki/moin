@@ -116,6 +116,10 @@ class ConfigFunctionality(object):
             raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. " + \
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
+        if self.backend_mapping is None:
+            raise error.ConfigurationError("No storage configuration specified! You need to define a backend_mapping. " + \
+                                           "For further reference, please see HelpOnStorageConfiguration.")
+
         if self.acl_mapping is None:
             raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. " + \
                                            "For further reference, please see HelpOnStorageConfiguration.")
@@ -411,8 +415,11 @@ options_no_group_name = {
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),
     ('namespace_mapping', None,
-    "This needs to point to a list of tuples, each tuple containing: Namespace identifier, backend. " + \
-    "E.g.: [('/', FSBackend('wiki/data')), ]. Please see HelpOnStorageConfiguration for further reference."),
+    "A list of tuples, each tuple containing: Namespace identifier, backend name. " + \
+    "E.g.: [('', 'default')), ]. Please see HelpOnStorageConfiguration for further reference."),
+    ('backend_mapping', None,
+    "A dictionary that maps backend names to backends. " + \
+    "E.g.: {'default': Backend(), }. Please see HelpOnStorageConfiguration for further reference."),
     ('acl_mapping', None,
     "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " + \
     "E.g.: [('', dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),

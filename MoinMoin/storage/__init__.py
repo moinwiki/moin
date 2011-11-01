@@ -12,7 +12,7 @@ We use a layered approach like this::
  |                                 listing, lookup by name, ACL checks, ...
  v
  Routing  Middleware               dispatches to multiple backends based on the
- |                 |               name, cares about absolute and relative names
+ |                 |               namespace
  v                 v
  "stores" Backend  Other Backend   simple stuff: store, get, destroy revisions
  |           |
@@ -22,7 +22,7 @@ We use a layered approach like this::
 """
 
 
-CONTENT, USERPROFILES = 'content', 'userprofiles'
+CONTENT, USERPROFILES = u'content', u'userprofiles'
 
 BACKENDS_PACKAGE = 'MoinMoin.storage.backends'
 
@@ -39,15 +39,16 @@ def backend_from_uri(uri):
     return module.MutableBackend.from_uri(backend_uri)
 
 
-def create_mapping(uri, mounts, acls):
-    namespace_mapping = [(mounts[nsname],
-                          backend_from_uri(uri % dict(nsname=nsname, kind="%(kind)s")))
-                         for nsname in mounts]
+def create_mapping(uri, namespaces, backends, acls):
+    namespace_mapping = namespaces.items()
     acl_mapping = acls.items()
+    backend_mapping = [(backend_name,
+                        backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s")))
+                        for backend_name in backends]
     # we need the longest mountpoints first, shortest last (-> '' is very last)
     namespace_mapping = sorted(namespace_mapping, key=lambda x: len(x[0]), reverse=True)
     acl_mapping = sorted(acl_mapping, key=lambda x: len(x[0]), reverse=True)
-    return namespace_mapping, acl_mapping
+    return namespace_mapping, dict(backend_mapping), acl_mapping
 
 def create_simple_mapping(uri='stores:fs:instance',
                           content_acl=None, user_profile_acl=None):
@@ -60,9 +61,9 @@ def create_simple_mapping(uri='stores:fs:instance',
 
     :params uri: '<backend_name>:<backend_uri>' (general form)
                  backend_name must be a backend module name (e.g. stores)
-                 the backend_uri must have a %(nsname)s placeholder, it gets replaced
-                 by the CONTENT, USERPROFILES strings and result is given to
-                 to that backend's constructor
+                 the backend_uri must have a %(backend)s placeholder, it gets replaced
+                 by the name of the backend (a simple, ascii string) and result
+                 is given to to that backend's constructor
 
                  for the 'stores' backend, backend_uri looks like '<store_name>:<store_uri>'
                  store_name must be a store module name (e.g. fs)
@@ -70,7 +71,7 @@ def create_simple_mapping(uri='stores:fs:instance',
                  by 'meta' or 'data' and the result is given to that store's constructor
 
                  e.g.:
-                 'stores:fs:/path/to/store/%(nsname)s/%(kind)s' will create a mapping
+                 'stores:fs:/path/to/store/%(backend)s/%(kind)s' will create a mapping
                  using the 'stores' backend with 'fs' stores and everything will be stored
                  to below /path/to/store/.
     """
@@ -79,13 +80,17 @@ def create_simple_mapping(uri='stores:fs:instance',
         content_acl = dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)
     if not user_profile_acl:
         user_profile_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
-    mounts = {
-        CONTENT: '',
-        USERPROFILES: 'UserProfile',
+    namespaces = {
+        u'': CONTENT,
+        u'userprofiles:': USERPROFILES,
+    }
+    backends = {
+        CONTENT: None,
+        USERPROFILES: None,
     }
     acls = {
-        'UserProfile/': user_profile_acl,
+        'userprofiles:': user_profile_acl,
         '': content_acl,
     }
-    return create_mapping(uri, mounts, acls)
+    return create_mapping(uri, namespaces, backends, acls)
 
