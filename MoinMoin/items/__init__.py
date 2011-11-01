@@ -533,10 +533,13 @@ class Item(object):
             query = Term(WIKINAME, app.cfg.interwikiname)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        items = [(rev.name, rev.name[prefix_len:], rev.meta[CONTENTTYPE])
-                 for rev in revs]
-        return items
+        revs = flaskg.storage.search(query, limit=None)
+        items = []
+        for rev in revs:
+            rev.set_context(self.name)
+            items.append((rev.name, rev.name[prefix_len:], rev.meta[CONTENTTYPE]))
+
+        return sorted(items, key=lambda item: item[0])
 
     def _connect_levels(self, index):
         new_index = []
