@@ -1,122 +1,135 @@
-# Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:RonnyPfannschmidt
-# Copyright: 2009 MoinMoin:ChristopherDenter
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - routing middleware
+MoinMoin - namespaces middleware
 
-Routes requests to different backends depending on the item name.
-
-Just think of UNIX filesystems, fstab and mount.
-
-This middleware lets you mount backends that store items belonging to some
-specific part of the namespace. Routing middleware has same API as a backend.
+Routes requests to different backends depending on the namespace.
 """
 
 
 from __future__ import absolute_import, division
 
-from MoinMoin.config import NAME
+from MoinMoin.config import NAME, BACKENDNAME, NAMESPACE
 
 from MoinMoin.storage.backends import BackendBase, MutableBackendBase
 
 
 class Backend(MutableBackendBase):
     """
-    router, behaves readonly for readonly mounts
+    namespace dispatcher, behaves readonly for readonly mounts
     """
-    def __init__(self, mapping):
+    def __init__(self, namespaces, backends):
         """
-        Initialize router backend.
+        Initialize.
 
-        The mapping given must satisfy the following criteria:
+        The namespace mapping given must satisfy the following criteria:
             * Order matters.
-            * Mountpoints are just item names, including the special '' (empty)
-              root item name.
-            * Trailing '/' of a mountpoint will be stripped.
-            * There *must* be a backend with mountpoint '' at the very
-              end of the mapping. That backend is then used as root, which means
-              that all items that don't lie in the namespace of any other
-              backend are stored there.
+            * Namespaces are unicode strings like u'' (default ns), u'userprofiles:'
+              (used to store userprofiles) or u'files:' (could map to a fileserver
+              backend). Can be also a hierarchic ns spec like u'foo:bar:'.
+            * There *must* be a default namespace entry for u'' at the end of
+              the list.
 
-        :type mapping: list of tuples of mountpoint -> backend mappings
-        :param mapping: [(mountpoint, backend), ...]
+        namespaces = [
+            (u'userprofiles:', 'user_be'),
+            (u'', 'default_be'), # default (u'') must be last
+        ]
+
+        The backends mapping maps backend names to backend instances:
+
+        backends = {
+            'default_be': BackendInstance1,
+            'user_be': BackendInstance2,
+        }
+
+        :type namespaces: list of tuples of namespace specifier -> backend names
+        :param mapping: [(namespace, backend_name), ...]
+        :type backends: dict backend names -> backends
+        :param backends: {backend_name: backend, ...}
         """
-        self.mapping = [(mountpoint.rstrip('/'), backend) for mountpoint, backend in mapping]
+        self.namespaces = namespaces
+        self.backends = backends
 
     def open(self):
-        for mountpoint, backend in self.mapping:
+        for backend in self.backends.values():
             backend.open()
 
     def close(self):
-        for mountpoint, backend in self.mapping:
+        for backend in self.backends.values():
             backend.close()
 
-    def _get_backend(self, itemname):
+    def _get_backend(self, fq_names):
         """
-        For a given fully-qualified itemname (i.e. something like Company/Bosses/Mr_Joe)
-        find the backend it belongs to (given by this instance's mapping), the local
-        itemname inside that backend and the mountpoint of the backend.
+        For a given fully-qualified itemname (i.e. something like ns:itemname)
+        find the backend it belongs to, the itemname without namespace
+        spec and the namespace of the backend.
 
-        :param itemname: fully-qualified itemname
-        :returns: tuple of (backend, local itemname, mountpoint)
+        :param fq_name: fully-qualified itemnames
+        :returns: tuple of (backend name, local item name, namespace)
         """
-        for mountpoint, backend in self.mapping:
-            if itemname == mountpoint or itemname.startswith(mountpoint and mountpoint + '/' or ''):
-                lstrip = mountpoint and len(mountpoint)+1 or 0
-                return backend, itemname[lstrip:], mountpoint
-        raise AssertionError("No backend found for {0!r}. Available backends: {1!r}".format(itemname, self.mapping))
+        fq_name = fq_names[0]
+        for namespace, backend_name in self.namespaces:
+            if fq_name.startswith(namespace):
+                item_names = [fq_name[len(namespace):] for fq_name in fq_names]
+                return backend_name, item_names, namespace.rstrip(':')
+        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(itemname, self.namespaces))
 
     def __iter__(self):
-        # Note: yields <backend_mountpoint>/<backend_revid> as router revid, so that this
-        #       can be given to get_revision and be routed to the right backend.
-        for mountpoint, backend in self.mapping:
-            for revid in backend:
-                yield (mountpoint, revid)
+        # Note: yields enough information so we can retrieve the revision from
+        #       the right backend later (this is more than just the revid).
+        for backend_name, backend in self.backends.items():
+            for revid in backend: # TODO maybe directly yield the backend?
+                yield (backend_name, revid)
 
-    def retrieve(self, name, revid):
-        backend, _, mountpoint = self._get_backend(name)
+    def retrieve(self, backend_name, revid):
+        backend = self.backends[backend_name]
         meta, data = backend.retrieve(revid)
-        if mountpoint:
-            name = meta[NAME]
-            if name:
-                meta[NAME] = u'{0}/{1}'.format(mountpoint, meta[NAME])
-            else:
-                meta[NAME] = mountpoint # no trailing slash!
         return meta, data
 
     # writing part
     def create(self):
-        for mountpoint, backend in self.mapping:
+        for backend in self.backends.values():
             if isinstance(backend, MutableBackendBase):
                 backend.create()
-            #XXX else: log info?
 
     def destroy(self):
-        for mountpoint, backend in self.mapping:
+        for backend in self.backends.values():
             if isinstance(backend, MutableBackendBase):
                 backend.destroy()
-            #XXX else: log info?
 
-    def store(self, meta, data, name = None):
-        if name is None:
-            name = meta[NAME]
-        import types
-        if type(name) is types.ListType:
-            name = name[0]
-        mountpoint_itemname = name
-        backend, itemname, mountpoint = self._get_backend(mountpoint_itemname)
+    def store(self, meta, data):
+        namespace = meta.get(NAMESPACE)
+        if namespace is None:
+            # if there is no NAMESPACE in metadata, we assume that the NAME
+            # is fully qualified and determine the namespace from it:
+            fq_names = meta[NAME]
+            if not isinstance(fq_names, list):
+                fq_names = [fq_names]
+            backend_name, item_names, namespace = self._get_backend(fq_names)
+            # side effect: update the metadata with namespace and short item name (no ns)
+            meta[NAMESPACE] = namespace
+            meta[NAME] = item_names
+        else:
+            if namespace:
+                namespace += u':' # needed for _get_backend
+            backend_name, _, _ = self._get_backend([namespace])
+        backend = self.backends[backend_name]
+
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
-        #meta[NAME] = itemname
+            raise TypeError('backend {0} is readonly!'.format(backend_name))
+
         revid = backend.store(meta, data)
-        #meta[NAME] = mountpoint_itemname # restore the original name
-        return revid
 
-    def remove(self, name, revid):
-        backend, _, mountpoint = self._get_backend(name)
+        # add the BACKENDNAME after storing, so it gets only into
+        # the index, but not in stored metadata:
+        meta[BACKENDNAME] = backend_name
+        return backend_name, revid
+
+    def remove(self, backend_name, revid):
+        backend = self.backends[backend_name]
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend {0!r} mounted at {1!r} is readonly'.format(backend, mountpoint))
+            raise TypeError('backend {0} is readonly'.format(backend_name))
         backend.remove(revid)
 

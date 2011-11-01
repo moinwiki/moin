@@ -8,6 +8,7 @@ MoinMoin - meta data key / index field name related constants
 # metadata keys
 NAME = "name"
 NAME_OLD = "name_old"
+NAMESPACE = "namespace"
 
 # if an item is reverted, we store the revision number we used for reverting there:
 REVERTED_TO = "reverted_to"
@@ -61,6 +62,9 @@ CURRENT = "current"
 # stuff from user profiles / for whoosh index
 EMAIL = "email"
 OPENID = "openid"
+
+# in which backend is some revision stored?
+BACKENDNAME = "backendname"
 
 # index names
 LATEST_REVS = 'latest_revs'
