@@ -320,7 +320,6 @@ class Item(object):
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
-            NAME,
             ITEMID, REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
