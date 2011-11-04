@@ -548,6 +548,7 @@ options = {
 
       ('homewiki', u'Self',
        "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL."),
+      ('use_gravatar', False, "if True, gravatar.com will be used to find User's avatar")
     )),
 
     'mail': ('Mail settings',

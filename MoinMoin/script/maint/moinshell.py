@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import code
+
 from flask import Flask, _request_ctx_stack
 from flask import current_app as app
 from flask import g as flaskg
@@ -14,15 +16,15 @@ class MoinShell(Command):
     Runs a Python shell inside Flask application context.
 
     :param banner: banner appearing at top of shell when started
-    :param make_context: a callable returning a dict of variables 
-                         used in the shell namespace. By default 
+    :param make_context: a callable returning a dict of variables
+                         used in the shell namespace. By default
                          returns a dict consisting of just the app.
-    :param use_ipython: use IPython shell if available, ignore if not. 
-                        The IPython shell can be turned off in command 
+    :param use_ipython: use IPython shell if available, ignore if not.
+                        The IPython shell can be turned off in command
                         line by passing the **--no-ipython** flag.
     """
 
-    banner = u'Objects "flaskg" and "app" is in context.'
+    banner = u'"flaskg" and "app" objects are in globals now.'
 
     description = 'Runs a Python shell inside Flask application context.'
 
@@ -45,7 +47,7 @@ class MoinShell(Command):
                 Option('--no-ipython',
                        action="store_true",
                        dest='no_ipython',
-                       default=not(self.use_ipython)),)
+                       default=not(self.use_ipython)), )
 
     def get_context(self):
         """
@@ -68,12 +70,12 @@ class MoinShell(Command):
                 sh = IPython.Shell.IPShellEmbed(banner=self.banner)
                 sh(global_ns=dict(), local_ns=context)
                 return
-            except ImportError:
+            except AttributeError:
                 # IPython = 0.11
                 import IPython
                 sh = IPython.embed(banner2=self.banner, user_ns=context)
-                sh()
-            finally:
+                return
+            except ImportError:
                 pass
 
         code.interact(self.banner, local=context)

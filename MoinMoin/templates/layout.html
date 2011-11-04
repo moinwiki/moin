@@ -36,9 +36,10 @@
 
     <div id="moin-username">
         {% if user.valid -%}
-	    {% if user.avatar %}
-	        <img id="moin-avatar" src="{{ user.avatar }}" />
-	    {%- endif %}
+	    {% set avatar = user.avatar(20) %}
+            {% if avatar %}
+                <img id="moin-avatar" rel="noreferrer" src="{{ avatar }}" />
+            {%- endif %}
             {% if user.name -%}
                 {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
                 <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
