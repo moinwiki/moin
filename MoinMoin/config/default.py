@@ -446,7 +446,7 @@ options_no_group_name = {
     ('user_defaults',
       dict(
         name=u'anonymous',
-        aliasname=None,
+        display_name=None,
         email=None,
         openid=None,
         css_url=None,
