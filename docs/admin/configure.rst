@@ -245,6 +245,21 @@ user has selected, so maybe either only do changes applying to all available
 themes or force all users to use same theme, so that your CSS applies
 correctly.
 
+Displaying user avatars
+~~~~~~~~~~~~~~~~~~~~~~~
+Optionally, moin can display avatar images for the users, using gravatar.com
+service. To enable it, use::
+
+    user_use_gravatar = True
+
+Please note that using the gravatar service has some privacy issues::
+
+* to register your image for your email at gravatar.com, you need to give them
+  your email address (same as you use in your wiki user profile).
+* we try to avoid exposing the referrer URL to gravatar.com, but this only
+  works if your browser correctly implements rel="noreferrer". If it does not,
+  your wiki item URLs will be exposed, so they will roughly know which people
+  read or work on which wiki items.
 
 XStatic Packages
 ----------------
