@@ -118,16 +118,13 @@ class ThemeSupport(object):
         Assemble arguments used to build user homepage link
 
         :rtype: tuple
-        :returns: arguments of user homepage link in tuple (wiki_href, aliasname, title, exists)
+        :returns: arguments of user homepage link in tuple (wiki_href, display_name, title, exists)
         """
         user = self.user
         name = user.name
-        aliasname = user.aliasname
-        if not aliasname:
-            aliasname = name
-
+        display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
-        title = "{0} @ {1}".format(aliasname, wikiname)
+        title = "{0} @ {1}".format(display_name, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -135,7 +132,7 @@ class ThemeSupport(object):
             # We cannot check if wiki pages exists in remote wikis
             exists = True
         wiki_href = url_for_item(itemname, wiki_name=wikiname)
-        return wiki_href, aliasname, title, exists
+        return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):
         """
@@ -295,14 +292,12 @@ def get_editor_info(meta, external=False):
         u = user.User(userid)
         name = u.name
         text = name
-        aliasname = u.aliasname
-        if not aliasname:
-            aliasname = name
+        display_name = u.display_name or name
         if title:
             # we already have some address info
-            title = "{0} @ {1}".format(aliasname, title)
+            title = "{0} @ {1}".format(display_name, title)
         else:
-            title = aliasname
+            title = display_name
         if u.mailto_author and u.email:
             email = u.email
             css = 'editor mail'

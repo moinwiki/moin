@@ -1287,7 +1287,7 @@ def usersettings(part):
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
         name = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-        aliasname = String.using(label=L_('Alias-Name'), optional=True).with_properties(placeholder=L_("Your alias name (informational)"))
+        display_name = String.using(label=L_('Display-Name'), optional=True).with_properties(placeholder=L_("Your display name (informational)"))
         openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
