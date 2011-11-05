@@ -366,7 +366,7 @@ class User(object):
         :rtype: 2 tuple (bool, bool)
         :returns: password is valid, enc_password changed
         """
-        pw_hash = data['enc_password']
+        pw_hash = data.get('enc_password')
 
         # If we have no password set, we don't accept login with username.
         # Require non-empty password.
