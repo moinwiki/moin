@@ -190,29 +190,29 @@ class TestItem(object):
     def test_meta_filter(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name'], 'address': u'1.2.3.4'}
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
         # keys like NAME, ITEMID, REVID, DATAID are filtered
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         assert result == expected
 
     def test_meta_dict_to_text(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         item = Item.create(name)
         result = Item.meta_dict_to_text(item, meta)
-        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
+        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "name": [\n    "test_name"\n  ], \n  "test_key": "test_val"\n}'
         assert result == expected
 
     def test_meta_text_to_dict(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": "test_name" \n}'
+        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": ["test_name"] \n}'
         item = Item.create(name)
         result = Item.meta_text_to_dict(item, text)
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u"test_name"]}
         assert result == expected
 
     def test_item_can_have_several_names(self):
