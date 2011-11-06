@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import code
+
 from flask import Flask, _request_ctx_stack
 from flask import current_app as app
 from flask import g as flaskg
@@ -22,7 +24,7 @@ class MoinShell(Command):
                         line by passing the **--no-ipython** flag.
     """
 
-    banner = u'Objects "flaskg" and "app" is in context.'
+    banner = u'"flaskg" and "app" objects are in globals now.'
 
     description = 'Runs a Python shell inside Flask application context.'
 
@@ -68,12 +70,12 @@ class MoinShell(Command):
                 sh = IPython.Shell.IPShellEmbed(banner=self.banner)
                 sh(global_ns=dict(), local_ns=context)
                 return
-            except ImportError:
-                pass
             except AttributeError:
                 # IPython = 0.11
                 import IPython
                 sh = IPython.embed(banner2=self.banner, user_ns=context)
-                sh()
+                return
+            except ImportError:
+                pass
 
         code.interact(self.banner, local=context)
