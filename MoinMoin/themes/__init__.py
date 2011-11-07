@@ -290,7 +290,7 @@ def get_editor_info(meta, external=False):
     userid = meta.get(USERID)
     if userid:
         u = user.User(userid)
-        name = u.name
+        name = u.name[0]
         text = name
         display_name = u.display_name or name
         if title:
