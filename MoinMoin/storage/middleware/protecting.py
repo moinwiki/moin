@@ -95,6 +95,9 @@ class ProtectingMiddleware(object):
         return ProtectedItem(self, item)
 
     def may(self, itemname, capability, username=None):
+        if isinstance(itemname, list):
+            # if we get a list of names, just use first one to fetch item
+            itemname = itemname[0]
         item = self[itemname]
         allowed = item.allows(capability, user_name=username)
         return allowed
