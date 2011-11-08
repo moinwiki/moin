@@ -375,27 +375,25 @@ class Item(object):
             raise StorageError("unsupported content object: {0!r}".format(content))
         return written
 
-    def _rename(self, name, comment, action):
-        self._save(self.meta, self.data, name=name, action=action, comment=comment)
+    def _rename(self, name, comment, action, delete=False):
+        new_name = name
+        self._save(self.meta, self.data, name=new_name, action=action, comment=comment, delete=delete)
         for child in self.get_index():
             item = Item.create(child[0])
-            item._save(item.meta, item.data, name='/'.join((name, child[1])), action=action, comment=comment)
+            new_name = u'/'.join((name, child[1]))
+            item._save(item.meta, item.data, name=new_name, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
-        rename this item to item <name>
+        rename this item to item <name> (replace current name by another name in the NAME list)
         """
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
         """
-        delete this item
+        delete this item (remove current name from NAME list)
         """
-        trash_prefix = u'Trash/' # XXX move to config
-        now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
-        # make trash name unique by including timestamp:
-        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
-        return self._rename(trashname, comment, action=u'TRASH')
+        return self._rename(None, comment, action=u'TRASH', delete=True)
 
     def revert(self):
         # called from revert UI/POST
@@ -450,7 +448,8 @@ class Item(object):
         comment = request.form.get('comment')
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+              overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
         try:
@@ -472,13 +471,14 @@ class Item(object):
         if oldname:
             if type(oldname) is not types.ListType:
                 oldname = [oldname]
-            if name not in oldname: #this is a rename
+            if delete or name not in oldname: # this is a delete or rename
                 meta[NAME_OLD] = oldname[:]
                 try:
                     oldname.remove(self.name)
                 except ValueError:
                     pass
-                oldname.append(name)
+                if not delete:
+                    oldname.append(name)
                 meta[NAME] = oldname
         else:
             meta[NAME] = [name]

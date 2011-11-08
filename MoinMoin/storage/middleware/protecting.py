@@ -124,6 +124,9 @@ class ProtectedItem(object):
         """
         check permissions in this item without considering before/after acls
         """
+        # TODO we need to use the fq name here: namespace:currently_used_name
+        # to get the right ACLs from the acl mapping.
+        # XXX self.item.name might crash with IndexError if the name list is empty
         acls = self.protector.get_acls(self.item.name)
         acl = self.item.acl
         if acl is not None:
