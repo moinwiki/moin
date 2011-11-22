@@ -958,64 +958,43 @@ def _using_openid_auth():
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
     title_name = _(u'Register')
-    # is openid_submit in the form?
     isOpenID = 'openid_submit' in request.values
 
     if isOpenID:
         # this is an openid continuation
         if not _using_openid_auth():
             return Response('No OpenIDAuth in auth list', 403)
-
         template = 'openid_register.html'
-        if request.method == 'GET':
-            form = OpenIDForm.from_defaults()
-            # we got an openid from the multistage redirect
-            oid = request.values.get('openid_openid')
-            if oid:
-                form['openid'] = oid
-            TextCha(form).amend_form()
-
-        elif request.method == 'POST':
-            form = OpenIDForm.from_flat(request.form)
-            TextCha(form).amend_form()
-
-            if form.validate():
-                msg = user.create_user(username=form['username'].value,
-                                       password=form['password1'].value,
-                                       email=form['email'].value,
-                                       openid=form['openid'].value,
-                                      )
-                if msg:
-                    flash(msg, "error")
-                else:
-                    flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('.show_root'))
-
+        FormClass = OpenIDForm
     else:
         # not openid registration and no MoinAuth
         if not _using_moin_auth():
             return Response('No MoinAuth in auth list', 403)
-
         template = 'register.html'
-        if request.method == 'GET':
-            form = RegistrationForm.from_defaults()
-            TextCha(form).amend_form()
+        FormClass = RegistrationForm
 
-        elif request.method == 'POST':
-            form = RegistrationForm.from_flat(request.form)
-            TextCha(form).amend_form()
+    if request.method == 'GET':
+        form = FormClass.from_defaults()
+        if isOpenID:
+            oid = request.values.get('openid_openid')
+            if oid:
+                form['openid'] = oid
+        TextCha(form).amend_form()
+    elif request.method == 'POST':
+        form = FormClass.from_flat(request.form)
+        TextCha(form).amend_form()
 
-            if form.validate():
-                msg = user.create_user(username=form['username'].value,
-                                       password=form['password1'].value,
-                                       email=form['email'].value,
-                                       openid=form['openid'].value,
-                                      )
-                if msg:
-                    flash(msg, "error")
-                else:
-                    flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('.show_root'))
+        if form.validate():
+            msg = user.create_user(username=form['username'].value,
+                                   password=form['password1'].value,
+                                   email=form['email'].value,
+                                   openid=form['openid'].value,
+                                  )
+            if msg:
+                flash(msg, "error")
+            else:
+                flash(_('Account created, please log in now.'), "info")
+                return redirect(url_for('.show_root'))
 
     return render_template(template,
                            title_name=title_name,
