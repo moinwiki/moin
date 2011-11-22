@@ -9,15 +9,17 @@ it from the repository:
 
 Alternative 1a (using Mercurial DVCS)::
 
- $ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+ hg up -C default  # update workdir to "default" branch
 
 Alternative 1b (using Mercurial DVCS)::
 
  $ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
+ hg up -C default  # update workdir to "default" branch
 
 Alternative 2:
 Visit http://hg.moinmo.in/moin/2.0 with your web browser, download the tgz
-and unpack it.
+(usually for the "default" branch) and unpack it.
 
 Installing
 ==========
@@ -80,11 +82,19 @@ Enter your virtual environment::
 
  source env/bin/activate
 
-Initializing the storage and the index
---------------------------------------
-Creates an (empty) storage and an (empty) index::
+Initializing index and/or storage
+---------------------------------
+If you start from scratch (no storage created yet, no index created yet),
+you need to creates an (empty) storage and an (empty) index::
 
- moin index-create -s -i
+ moin index-build -s -i
+
+If you already have an existing storage, but no index yet::
+
+ moin index-build -i
+
+If you have an existing storage AND a valid index (for this storage's content,
+for this moin version), you can skip this section.
 
 Loading some items
 ------------------
