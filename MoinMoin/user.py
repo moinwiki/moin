@@ -43,7 +43,7 @@ from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_passwor
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
-def create_user(username, password, email, openid=None, validate=True, is_encrypted=False):
+def create_user(username, password, email, openid=None, validate=True, is_encrypted=False, is_disabled=False):
     """ create a user """
     # Create user profile
     theuser = User(auth_method="new-user")
@@ -90,6 +90,8 @@ space between words. Group page name is not allowed.""", name=theuser.name)
     theuser.openid = openid
     if validate and theuser.openid and search_users(openid=theuser.openid):
         return _('This OpenID already belongs to somebody else.')
+
+    theuser.disabled = is_disabled
 
     # save data
     theuser.save()
@@ -677,8 +679,11 @@ class User(object):
         self.save()
         return token
 
+    def validate_recovery_token(self, token):
+        return valid_token(self.recoverpass_key, token)
+
     def apply_recovery_token(self, token, newpass):
-        if not valid_token(self.recoverpass_key, token):
+        if not self.validate_recovery_token(token):
             return False
         self.recoverpass_key = None
         self.enc_password = crypt_password(newpass)
@@ -705,6 +710,28 @@ If you didn't forget your password, please ignore this email.
                         username=self.name, token=token, _external=True))
 
         subject = _('[%(sitename)s] Your wiki password recovery link',
+                    sitename=self._cfg.sitename or "Wiki")
+        mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
+        return mailok, msg
+
+    def mailVerificationLink(self):
+        """ Mail a user a link to verify his email address. """
+        from MoinMoin.mail import sendmail
+        token = self.generate_recovery_token()
+
+        text = _("""\
+Somebody has created an account with this email address.
+
+Please use the link below to verify your email address:
+
+%(link)s
+
+If you didn't create this account, please ignore this email.
+
+""", link=url_for('frontend.verifyemail',
+                        username=self.name, token=token, _external=True))
+
+        subject = _('[%(sitename)s] Verify your email address',
                     sitename=self._cfg.sitename or "Wiki")
         mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
         return mailok, msg
