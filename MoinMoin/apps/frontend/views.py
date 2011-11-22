@@ -985,21 +985,49 @@ def register():
         TextCha(form).amend_form()
 
         if form.validate():
-            msg = user.create_user(username=form['username'].value,
-                                   password=form['password1'].value,
-                                   email=form['email'].value,
-                                   openid=form['openid'].value,
-                                  )
+            user_kwargs = {
+                'username': form['username'].value,
+                'password': form['password1'].value,
+                'email': form['email'].value,
+                'openid': form['openid'].value,
+            }
+            if app.cfg.user_email_verification:
+                user_kwargs['is_disabled'] = True
+            msg = user.create_user(**user_kwargs)
             if msg:
                 flash(msg, "error")
             else:
-                flash(_('Account created, please log in now.'), "info")
+                if user_kwargs['is_disabled']:
+                    u = user.User(auth_username=user_kwargs['username'])
+                    is_ok, msg = u.mailVerificationLink()
+                    if is_ok:
+                        flash(_('Account verification required, please see the email we sent to your address.'), "info")
+                    else:
+                        flash(_('An error occured while sending the verification email: "%(message)" Please contact an adminstrator to activate your account',
+                            message=msg), "error")
+                else:
+                    flash(_('Account created, please log in now.'), "info")
                 return redirect(url_for('.show_root'))
 
     return render_template(template,
                            title_name=title_name,
                            form=form,
                           )
+
+
+@frontend.route('/+verifyemail', methods=['GET'])
+def verifyemail():
+    u = None
+    if 'username' in request.values and 'token' in request.values:
+        u = user.User(auth_username=request.values['username'])
+        token = request.values['token']
+    if u and u.disabled and u.validate_recovery_token(token):
+        u.disabled = False
+        u.save()
+        flash(_("Your account has been activated, you can log in now."), "info")
+    else:
+        flash(_('Your token is invalid!'), "error")
+    return redirect(url_for('.show_root'))
 
 
 class ValidLostPassword(Validator):
