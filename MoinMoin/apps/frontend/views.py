@@ -1003,7 +1003,7 @@ def register():
                     if is_ok:
                         flash(_('Account verification required, please see the email we sent to your address.'), "info")
                     else:
-                        flash(_('An error occured while sending the verification email: "%(message)" Please contact an adminstrator to activate your account',
+                        flash(_('An error occurred while sending the verification email: "%(message)" Please contact an administrator to activate your account.',
                             message=msg), "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
