@@ -989,7 +989,7 @@ def register():
                 'username': form['username'].value,
                 'password': form['password1'].value,
                 'email': form['email'].value,
-                'openid': form['openid'].value,
+                #'openid': form['openid'].value,
             }
             if app.cfg.user_email_verification:
                 user_kwargs['is_disabled'] = True
