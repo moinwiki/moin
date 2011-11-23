@@ -53,13 +53,13 @@ ins { background-color: #FFF; text-decoration: underline; }
 .moin-integer { text-align: right; padding-right: 1em; }
 
 /* headings - from: http: //www.w3.org/TR/CSS2/sample.html */
-h1 { font-size: 2em; margin: .67em 0; }
-h2 { font-size: 1.5em; margin: .75em 0; }
-h3 { font-size: 1.17em; margin: .83em 0; }
-h4 { margin: 1.12em 0; }
-h5 { font-size: .83em; margin: 1.5em 0; }
-h6 { font-size: .75em; margin: 1.67em 0; }
-
+h1 { font-size: 2em; margin: .67em 0; border-bottom: 5px solid #4D7DA9; padding-bottom: 5px; }
+h2 { font-size: 1.5em; margin: .75em 0; padding-bottom: 4px; }
+h3 { font-size: 1.17em; margin: .83em 0; padding-bottom:3px; }
+h4 { margin: 1.12em 0; padding-bottom:2px; }
+h5 { font-size: .83em; margin: 1.5em 0; padding-bottom: 2px; }
+h6 { font-size: .75em; margin: 1.67em 0; padding-bottom:2px; }
+h2,h3,h4,h5,h6{border-bottom: 3px solid #4D7DA9; }
 /* Links - most themes will override */
 a { text-decoration: none; }
 a:link { color: blue; }
@@ -117,7 +117,7 @@ th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1px solid #ADB9CC; vertical
 td p { margin: 0; padding: 0; }
 
 /* TableOfContents macro */
-div.moin-table-of-contents { border: 1px solid #BBB; color: black;
+div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #fff;
             font-size: 80%; margin: 0.5em 0 0.75em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
             max-width: 35%; text-align: left; float: right; clear: both;
             box-shadow: 10px 10px 5px #679; border-radius: 15px;
@@ -244,7 +244,6 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-clr { clear: both; }
 
 /* item index page */
-#moin-content h1 { display: inline; }
 .moin-select-all { padding: 0.5em; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; text-align: left; }
 .moin-select-actions { position: relative; margin: 0 1em; padding: 0; background: #FFFFFF; z-index: 2; white-space: nowrap; color: #342D7E; text-align: left; }
 .moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
@@ -663,7 +662,7 @@ h2:hover .permalink,
 h3:hover .permalink,
 h4:hover .permalink,
 h5:hover .permalink,
-h6:hover .permalink { display: inline; }
+h6:hover .permalink { display: inline; text-decoration: none; }
 
 } /* end of @media screen, projection */
 
