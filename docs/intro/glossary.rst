@@ -14,8 +14,8 @@ Glossary
 
    contenttype
       A formal, standardized way of specifying of which type some data is.
-      E.g. 'text/plain;charset=utf-8' is contenttype for some simple piece
-      of text (encoded using utf-8 encoding), 'image/png' is contenttype
+      E.g. 'text/plain;charset=utf-8' is the contenttype for some simple piece
+      of text (encoded using utf-8 encoding), 'image/png' is the contenttype
       for a PNG image.
 
    item
@@ -28,12 +28,12 @@ Glossary
       revision.
 
    data
-      Just the raw data, no more, no less (can be some text, a image, a pdf).
+      Just the raw data, no more, no less (can be some text, an image, a pdf).
 
    metadata
       Additional information related to or about some data. For example, if
       you create a new PDF item revision, the revision data will be the PDF
-      file's content, but moin will also additionally store revision meta data
+      file's content, but moin will also additionally store revision metadata
       that tells that this revision is in fact a PDF (its contenttype - we do not
       rely on or require .pdf extension on the item name), when it was saved,
       maybe some comment you gave when saving, etc.
@@ -46,12 +46,12 @@ Glossary
       navigation).
 
    wiki engine
-      A software used to run a wiki site.
+      Software used to run a wiki site.
 
    wiki farm
       Running multiple wikis together on one server. Often, there is some
-      shared, common configuration used (inherited) by all wikis, so that
-      the individual wiki's configuration becomes rather small.
+      shared, common configuration used (inherited) by all wikis, so each
+      individual wiki's configuration becomes rather small.
 
    wiki instance
       All configuration and data related to a single wiki.
@@ -60,7 +60,7 @@ Glossary
       A single content item within a wiki site.
 
    wiki page
-      A single content item within a wiki site, maybe rather used for text-like items.
+      A single content item within a wiki site, possibly used for text-like items.
 
    wiki site
       A web site implemented using a wiki engine.
@@ -71,7 +71,7 @@ Glossary
       e.g. MoinMoin). It is a Python standard, described in detail in PEP 333.
 
    emeraldtree
-      A xml / tree processing library used by moin.
+      An XML / tree processing library used by moin.
 
    flask
       A micro framework used by moin.
@@ -80,7 +80,7 @@ Glossary
       A templating engine used by moin.
 
    sqlalchemy
-      A SQL database abstraction library used by moin.
+      An SQL database abstraction library used by moin.
 
    sqlite
       An easy-to-use SQL database used by moin.
