@@ -997,7 +997,7 @@ def register():
             if msg:
                 flash(msg, "error")
             else:
-                if user_kwargs['is_disabled']:
+                if app.cfg.user_email_verification:
                     u = user.User(auth_username=user_kwargs['username'])
                     is_ok, msg = u.mailVerificationLink()
                     if is_ok:
