@@ -545,6 +545,8 @@ options = {
     'user': ('Users / User settings', None, (
       ('email_unique', True,
        "if True, check email addresses for uniqueness and don't accept duplicates."),
+      ('email_verification', False,
+       "if True, require a new user to verify his or her email address before the first login."),
 
       ('homewiki', u'Self',
        "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL."),
