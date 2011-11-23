@@ -2,15 +2,15 @@
 Features
 ========
 We recommend trying out moin rather than reading feature lists.
-But in case you need it nevertheless, here it is:
+But in case you still need one, here it is:
 
 Operating System Support
 ========================
-Moin is implemented in Python and that is a platform independant language.
-So it'll work on Linux, Mac OS X, Windows (and others).
+Moin is implemented in Python, a platform-independant language.
+It works on Linux, Mac OS X, Windows (among other operating systems).
 
 That said, Linux is the preferred and most tested deployment platform and
-likely having less issues than e.g. Windows.
+will likely have fewer issues than, for example, Windows.
 
 Servers
 =======
@@ -19,7 +19,7 @@ Servers
 
   - Apache2 with mod_wsgi
   - IIS with isapi-wsgi (not recommended - if you must use Windows, but have
-    a choice concerning the web server, please rather use Apache2).
+    a choice concerning the web server, please use Apache2).
   - Other WSGI servers, see http://wsgi.org/
 
 * With the help of flup middleware about any other server speaking:
@@ -45,8 +45,8 @@ Authorization
   - local (per wiki item)
   - give rights like:
 
-    + create,destroy
-    + read,write,rename
+    + create, destroy
+    + read, write, rename
     + admin
 
   - to:
@@ -86,8 +86,8 @@ Serialization
 
 Search / Indexing
 =================
-* important metadata is put into index
-* content data is converted and put into index
+* important metadata is indexed
+* content data is converted and indexed
 * fast indexed search, fast internal operations
 * flexible and powerful search queries
 * search current and historical contents
@@ -107,7 +107,7 @@ Templating
 Wiki features
 -------------
 * Global History for all items (full list)
-* Latest Changes ("Recent Changes"), only lists latest changes of an item
+* Latest Changes ("Recent Changes"), only lists the latest changes of an item
 * Local History for one item ("History")
 * Diffs between any revision
 
@@ -143,8 +143,8 @@ Notification
 
 Translation / Localization
 --------------------------
-* currently English and German translations only (this is intended to stay like
-  that until the code and the texts are more stable)
+* currently English and German translations only (no others will be added until
+  the code and texts are more stable)
 * any localization (provided by babel / pytz)
 
 Logging
