@@ -521,6 +521,7 @@ class SpecialPage(object):
         elem.append(html.a(attrib={
             html.href: "#{0}".format(id),
             html.class_: "permalink",
+            html.title_: _("Link to this heading")
         }, children=(u"¶", )))
         self._headings.append((elem, level, id))
 
