@@ -1242,6 +1242,18 @@ You need to configure some stuff before sending E-Mail can be supported::
    describe more moin configuration
 
 
+User E-Mail Address Verification
+--------------------------------
+
+Moin can require new users to verify their E-Mail address by clicking a link
+that is sent to them.
+
+Make sure that Moin is configured to send E-Mails (see previous section) and
+add the following to your configuration file to enable this feature::
+
+    user_email_verification = True
+
+
 =======================
 Framework Configuration
 =======================
