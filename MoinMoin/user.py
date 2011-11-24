@@ -711,7 +711,7 @@ If you didn't forget your password, please ignore this email.
 
         subject = _('[%(sitename)s] Your wiki password recovery link',
                     sitename=self._cfg.sitename or "Wiki")
-        mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
+        mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 
     def mailVerificationLink(self):
@@ -731,8 +731,8 @@ If you didn't create this account, please ignore this email.
 """, link=url_for('frontend.verifyemail',
                         username=self.name, token=token, _external=True))
 
-        subject = _('[%(sitename)s] Verify your email address',
+        subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")
-        mailok, msg = sendmail.sendmail([self.email], subject, text, mail_from=self._cfg.mail_from)
+        mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 

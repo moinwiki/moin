@@ -58,16 +58,24 @@ def encodeAddress(address, charset):
         return str(address)
 
 
-def sendmail(to, subject, text, mail_from=None):
+def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     """ Create and send a text/plain message
 
     Return a tuple of success or error indicator and message.
 
-    :param to: recipients (list)
-    :param subject: subject of email (unicode)
-    :param text: email body text (unicode)
+    :param subject: subject of email
+    :type subject: unicode
+    :param text: email body text
+    :type text: unicode
+    :param to: recipients
+    :type to: list
+    :param cc: recipients (CC)
+    :type cc: list
+    :param bcc: recipients (BCC)
+    :type bcc: list
     :param mail_from: override default mail_from
     :type mail_from: unicode
+
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
@@ -82,7 +90,7 @@ def sendmail(to, subject, text, mail_from=None):
     logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
     logging.debug("send mail, to: {0!r}".format(to))
 
-    if not to:
+    if not to and not cc and not bcc:
         return (1, _("No recipients, nothing to do"))
 
     subject = subject.encode(config.charset)
@@ -107,12 +115,12 @@ def sendmail(to, subject, text, mail_from=None):
 
     msg.set_payload(text)
 
-    # Create message headers
-    # Don't expose emails addreses of the other subscribers, instead we
-    # use the same mail_from, e.g. u"Jürgen Wiki <noreply@mywiki.org>"
     address = encodeAddress(mail_from, charset)
     msg['From'] = address
-    msg['To'] = address
+    if to:
+        msg['To'] = ','.join(to)
+    if cc:
+        msg['CC'] = ','.join(cc)
     msg['Date'] = formatdate()
     msg['Message-ID'] = make_msgid()
     msg['Subject'] = Header(subject, charset)
@@ -120,8 +128,9 @@ def sendmail(to, subject, text, mail_from=None):
     msg['Auto-Submitted'] = 'auto-generated'
 
     if cfg.mail_sendmail:
-        # Set the BCC.  This will be stripped later by sendmail.
-        msg['BCC'] = ','.join(to)
+        if bcc:
+            # Set the BCC.  This will be stripped later by sendmail.
+            msg['BCC'] = ','.join(bcc)
         # Set Return-Path so that it isn't set (generally incorrectly) for us.
         msg['Return-Path'] = address
 
@@ -144,7 +153,7 @@ def sendmail(to, subject, text, mail_from=None):
                         logging.debug("could not establish a tls connection to smtp server, continuing without tls")
                     logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
                     server.login(cfg.mail_username, cfg.mail_password)
-                server.sendmail(mail_from, to, msg.as_string())
+                server.sendmail(mail_from, (to or []) + (cc or []) + (bcc or []), msg.as_string())
             finally:
                 try:
                     server.quit()
