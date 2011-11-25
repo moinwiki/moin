@@ -33,7 +33,7 @@ class TestFrontend(object):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_show_dom(self):
-        self._test_view('frontend.show_dom', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.show_dom', status='404 NOT FOUND', data=['<?xml', '>'], viewopts=dict(item_name='DoesntExist'), content_types=['text/xml; charset=utf-8'])
 
     def test_indexable(self):
         self._test_view('frontend.indexable', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -57,7 +57,7 @@ class TestFrontend(object):
         self._test_view('frontend.convert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_modify_item(self):
-        self._test_view('frontend.modify_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.modify_item', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_rename_item(self):
         self._test_view('frontend.rename_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -66,13 +66,13 @@ class TestFrontend(object):
         self._test_view('frontend.delete_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_index(self):
-        self._test_view('frontend.index', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.index', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_backrefs(self):
-        self._test_view('frontend.backrefs', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.backrefs', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_history(self):
-        self._test_view('frontend.history', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.history', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_diff(self):
         self._test_view('frontend.diff', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -84,7 +84,7 @@ class TestFrontend(object):
         self._test_view('frontend.sitemap', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_tagged_items(self):
-        self._test_view('frontend.tagged_items', status='404 NOT FOUND', viewopts=dict(tag='DoesntExist'))
+        self._test_view('frontend.tagged_items', status='200 OK', viewopts=dict(tag='DoesntExist'))
 
     def test_root(self):
         self._test_view('frontend.index')
