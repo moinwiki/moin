@@ -60,8 +60,8 @@ moin2 is a WSGI application and uses:
 
 How MoinMoin works
 ==================
-This is just a very high level overview about how moin works, if you'ld like
-to know more details, you'll have to read more docs and the code.
+This is just a very high level overview about how moin works. If you would like
+to acquire a more in-depth understanding, try reading more docs and code.
 
 WSGI application creation
 -------------------------
@@ -69,7 +69,7 @@ First, the moin Flask application is created (see `MoinMoin.app.create_app`) -
 this will:
 
 * load the configuration (app.cfg)
-* register some Modules that handle different parts of the functionality
+* register some modules that handle different parts of the functionality
 
   - MoinMoin.apps.frontend - most stuff a normal user uses
   - MoinMoin.apps.admin - some stuff for admins
@@ -104,7 +104,7 @@ Let's look at how it shows a wiki item:
     + by fetching the item of name "WikiItem" from storage
     + it looks at the mimetype of this item (stored in metadata)
     + it creates an appropriately typed Item instance (depending on the mimetype)
-  - calls Item._render_data() to determine how the rendered item looks like
+  - calls Item._render_data() to determine what the rendered item looks like
     as HTML
   - renders the `show_item.html` template (and gives it the rendered item html)
   - returns the result to Flask
@@ -114,14 +114,14 @@ Let's look at how it shows a wiki item:
 Storage
 -------
 Moin supports different stores (like storing directly into files /
-directories, using key/value stores, using a SQL database, etc. - see
+directories, using key/value stores, using an SQL database, etc. - see
 `MoinMoin.storage.stores`). A store is extremly simple: just store a value
 for a key and retrieve the value using the key + iteration over keys.
 
-A backend is one layer above, dealing with objects that have metadata and
-data, see `MoinMoin.storage.backends`), still very simple stuff.
+A backend is one layer above. It deals with objects that have metadata and
+data (see `MoinMoin.storage.backends`) - still very simple stuff.
 
-Above that, there is misc. stuff in `MoinMoin.storage.middleware` for:
+Above that, there is miscellaneous stuff in `MoinMoin.storage.middleware` for:
 
 * routing by name to some specific backend (like fstab / mount)
 * indexing metadata and data + comfortable and fast index-based access,
@@ -130,19 +130,19 @@ Above that, there is misc. stuff in `MoinMoin.storage.middleware` for:
 
 DOM based transformations
 -------------------------
-But how does moin know how the HTML rendering of some item looks like?
+But how does moin know what the HTML rendering of an item looks like?
 
 Each Item has some mimetype (stored in metadata) - the input mimetype.
 We also know what we want as output - the output mimetype.
 
 Moin uses converters to transform the input data into the output data in
-multiple steps and has a registry that knows all converters and their supported
+multiple steps. It also has a registry that knows all converters and their supported
 input and output mimetypes.
 
-For example, if the mimetype is `text/x-moin-wiki`, it'll find that the input
+For example, if the mimetype is `text/x-moin-wiki`, it will find that the input
 converter handling this is the one defined in `converter.moinwiki_in`. It then
 feeds the data of this item into this converter. The converter parses this
-input and creates a in-memory `dom tree` representation from it.
+input and creates an in-memory `dom tree` representation from it.
 
 This dom tree is then transformed through multiple dom-to-dom converters for
 e.g.:
@@ -155,18 +155,18 @@ e.g.:
 Finally, the dom-tree will reach the output converter, which will transform it
 into the desired output format, e.g. `text/html`.
 
-This is just one example of a supported transformation, there are quite a lot
-of converters in `MoinMoin.converter` supporting different input formats,
+This is just one example of a supported transformation. There are quite a few 
+converters in `MoinMoin.converter` supporting different input formats,
 dom-dom transformations and output formats.
 
 Templates and Themes
 --------------------
-Moin uses jinja2 as templating engine and Flask-Themes as a flask extension to
-support multiple themes (each themes has static data, like css, and templates).
+Moin uses jinja2 as its templating engine and Flask-Themes as a flask extension to
+support multiple themes (each theme has static data like css and templates).
 
 When rendering a template, the template is expanded within an environment of
-values it can use. Additionally to this (general) environment, parameters can
-be also given directly to the render call.
+values it can use. In addition to this (general) environment, parameters can
+also be given directly to the render call.
 
 Testing
 =======
@@ -188,7 +188,7 @@ To run tests, enter::
 
 Tests output
 ------------
-Most is quite self-explaining, the characters mean::
+Most output is quite self-explanatory. The characters mean::
 
     . test ran OK
     s test was skipped
@@ -200,10 +200,10 @@ If something went wrong, you'll also see some traceback and stdout/stderr.
 
 Writing tests
 -------------
-Writing tests with `py.test` is easy and low on overhead. You basically just
+Writing tests with `py.test` is easy and has little overhead. You basically just
 use `assert` statements.
 
-For more information, please read on there: http://pytest.org/ - but keep in
+For more information, please read http://pytest.org/ - but keep in
 mind that we currently still use **py.test 1.3.4**.
 
 Documentation
@@ -214,8 +214,8 @@ are located in the `docs/` directory in the source tree.
 
 Creating docs
 -------------
-Sphinx can create all kinds of documentation formats, we'll just list the most
-popular ones below::
+Sphinx can create all kinds of documentation formats. The most
+popular ones are::
 
     cd docs
     make html  # create html docs (to browse online or in the filesystem)
