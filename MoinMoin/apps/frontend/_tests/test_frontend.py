@@ -16,24 +16,7 @@ from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
 import pytest
 
-def pytest_generate_tests(metafunc):
-    if 'action' in metafunc.funcargnames:
-        parameters = metafunc.cls.params[metafunc.func.__name__]
-        arguments = parameters[0].keys()
-        metafunc.parametrize(arguments, [[parameter[argname] for argname in arguments] for parameter in parameters])
-
 class TestFrontend(object):
-    item_actions = ['frontend.' + action for action in
-            ['show_item', 'show_dom', 'indexable', 'highlight_item', 'show_item_meta',
-                'content_item', 'get_item', 'download_item', 'convert_item', 'modify_item',
-                'rename_item', 'delete_item', 'index', 'backrefs', 'history', 'diff',
-                'similar_names', 'sitemap', 'tagged_items'
-            ]
-        ]
-    params = {
-            'test_item_actions': [dict(action=actionname) for actionname in item_actions],
-        }
-
     def _test_view(self, viewname, status='200 OK', data=['<html>', '</html>'], content_types=['text/html; charset=utf-8'], viewopts={}, method='GET'):
         with self.app.test_client() as c:
             if method == 'POST':
@@ -46,13 +29,62 @@ class TestFrontend(object):
             assert rv.headers['Content-Type'] in content_types
             return rv
 
-    def test_item_actions(self, action):
-        # TODO: fix conftest.py so this passes
-        # Problem in MoinMoin/conftest.py, line 112 -
-        # pytest_pycollect_makeitem magic means that pytest_generate_tests is
-        # not called on this method
-        # also affects other local pytest hooks (decorators like @pytest.mark.skip)
-        self._test_view(action, status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+    def test_show_item(self):
+        self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_show_dom(self):
+        self._test_view('frontend.show_dom', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_indexable(self):
+        self._test_view('frontend.indexable', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_highlight_item(self):
+        self._test_view('frontend.highlight_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_show_item_meta(self):
+        self._test_view('frontend.show_item_meta', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_content_item(self):
+        self._test_view('frontend.content_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_get_item(self):
+        self._test_view('frontend.get_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_download_item(self):
+        self._test_view('frontend.download_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_convert_item(self):
+        self._test_view('frontend.convert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_modify_item(self):
+        self._test_view('frontend.modify_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_rename_item(self):
+        self._test_view('frontend.rename_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_delete_item(self):
+        self._test_view('frontend.delete_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_index(self):
+        self._test_view('frontend.index', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_backrefs(self):
+        self._test_view('frontend.backrefs', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_history(self):
+        self._test_view('frontend.history', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_diff(self):
+        self._test_view('frontend.diff', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_similar_names(self):
+        self._test_view('frontend.similar_names', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_sitemap(self):
+        self._test_view('frontend.sitemap', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_tagged_items(self):
+        self._test_view('frontend.tagged_items', status='404 NOT FOUND', viewopts=dict(tag='DoesntExist'))
 
     def test_root(self):
         self._test_view('frontend.index')
