@@ -6,6 +6,7 @@
     MoinMoin - basic tests for frontend
 """
 
+from flask import url_for
 from flask import g as flaskg
 from werkzeug import ImmutableMultiDict
 
@@ -15,57 +16,119 @@ from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
 import pytest
 
+def pytest_generate_tests(metafunc):
+    if 'action' in metafunc.funcargnames:
+        parameters = metafunc.cls.params[metafunc.func.__name__]
+        arguments = parameters[0].keys()
+        metafunc.parametrize(arguments, [[parameter[argname] for argname in arguments] for parameter in parameters])
+
 class TestFrontend(object):
-    def test_root(self):
+    item_actions = ['frontend.' + action for action in
+            ['show_item', 'show_dom', 'indexable', 'highlight_item', 'show_item_meta',
+                'content_item', 'get_item', 'download_item', 'convert_item', 'modify_item',
+                'rename_item', 'delete_item', 'index', 'backrefs', 'history', 'diff',
+                'similar_names', 'sitemap', 'tagged_items'
+            ]
+        ]
+    params = {
+            'test_item_actions': [dict(action=actionname) for actionname in item_actions],
+        }
+
+    def _test_view(self, viewname, status='200 OK', data=['<html>', '</html>'], content_types=['text/html; charset=utf-8'], viewopts={}, method='GET'):
         with self.app.test_client() as c:
-            rv = c.get('/') # / redirects to front page
-            assert rv.status == '302 FOUND'
+            if method == 'POST':
+                rv = c.post(url_for(viewname, **viewopts))
+            else:
+                rv = c.get(url_for(viewname, **viewopts))
+            assert rv.status == status
+            for item in data:
+                assert item in rv.data
+            assert rv.headers['Content-Type'] in content_types
+            return rv
+
+    def test_item_actions(self, action):
+        # TODO: fix conftest.py so this passes
+        # Problem in MoinMoin/conftest.py, line 112 -
+        # pytest_pycollect_makeitem magic means that pytest_generate_tests is
+        # not called on this method
+        # also affects other local pytest hooks (decorators like @pytest.mark.skip)
+        self._test_view(action, status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_root(self):
+        self._test_view('frontend.index')
 
     def test_robots(self):
-        with self.app.test_client() as c:
-            rv = c.get('/robots.txt')
-            assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] == 'text/plain; charset=utf-8'
-            assert 'Disallow:' in rv.data
+        self._test_view('frontend.robots', data=['Disallow:'], content_types=['text/plain; charset=utf-8'])
+
+    def test_search(self):
+        self._test_view('frontend.search')
+
+    def test_revert_item(self):
+        self._test_view('frontend.revert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist', rev='000000'))
+
+    def test_ajaxdelete(self):
+        self._test_view('frontend.ajaxdelete', content_types=[], viewopts=dict(item_name='DoesntExist'), data=['{', '}'], method='POST')
+
+    def test_ajaxdestroy(self):
+        self._test_view('frontend.ajaxdestroy', content_types=[], viewopts=dict(item_name='DoesntExist'), data=['{', '}'], method='POST')
+
+    def test_ajaxmodify(self):
+        self._test_view('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'), method='POST')
+
+    def test_jfu_server(self):
+        self._test_view('frontend.jfu_server', data=['{', '}'], viewopts=dict(item_name='DoesntExist'), method='POST')
+
+    def test_mychanges(self):
+        self._test_view('frontend.mychanges', viewopts=dict(userid='000000'))
+
+    def test_global_history(self):
+        self._test_view('frontend.global_history')
+
+    def test_wanted_items(self):
+        self._test_view('frontend.wanted_items')
+
+    def test_orphaned_items(self):
+        self._test_view('frontend.orphaned_items')
+
+    def test_quicklink_item(self):
+        self._test_view('frontend.quicklink_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!DOCTYPE HTML'])
+
+    def test_subscribe_item(self):
+        self._test_view('frontend.subscribe_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!DOCTYPE HTML'])
+
+    def test_register(self):
+        self._test_view('frontend.register')
+
+    def test_verifyemail(self):
+        self._test_view('frontend.verifyemail', status='302 FOUND', data=['<!DOCTYPE HTML'])
+
+    def test_lostpass(self):
+        self._test_view('frontend.lostpass')
+
+    def test_recoverpass(self):
+        self._test_view('frontend.recoverpass')
+
+    def test_login(self):
+        self._test_view('frontend.login')
+
+    def test_logout(self):
+        self._test_view('frontend.logout', status='302 FOUND', data=['<!DOCTYPE HTML'])
+
+    def test_usersettings(self):
+        self._test_view('frontend.usersettings')
+
+    def test_bookmark(self):
+        self._test_view('frontend.bookmark', status='302 FOUND', data=['<!DOCTYPE HTML'])
+
+    def test_diffraw(self):
+        self._test_view('frontend.diffraw', data=[], viewopts=dict(item_name='DoesntExist'))
 
     def test_favicon(self):
-        with self.app.test_client() as c:
-            rv = c.get('/favicon.ico')
-            assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] in ['image/x-icon', 'image/vnd.microsoft.icon']
-            assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
+        rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon'], data=[])
+        assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
 
-    def test_404(self):
-        with self.app.test_client() as c:
-            rv = c.get('/DoesntExist')
-            assert rv.status == '404 NOT FOUND'
-            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
-            assert '<html>' in rv.data
-            assert '</html>' in rv.data
-
-    def test_global_index(self):
-        with self.app.test_client() as c:
-            rv = c.get('/+index/')
-            assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
-            assert '<html>' in rv.data
-            assert '</html>' in rv.data
-
-    def test_wanteds(self):
-        with self.app.test_client() as c:
-            rv = c.get('/+wanteds')
-            assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
-            assert '<html>' in rv.data
-            assert '</html>' in rv.data
-
-    def test_orphans(self):
-        with self.app.test_client() as c:
-            rv = c.get('/+orphans')
-            assert rv.status == '200 OK'
-            assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
-            assert '<html>' in rv.data
-            assert '</html>' in rv.data
+    def test_global_tags(self):
+        self._test_view('frontend.global_tags')
 
 class TestUsersettings(object):
     def setup_method(self, method):

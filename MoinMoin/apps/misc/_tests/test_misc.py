@@ -5,6 +5,8 @@
 MoinMoin - basic tests for misc views
 """
 
+from flask import url_for
+
 from MoinMoin._tests import wikiconfig
 
 
@@ -16,7 +18,7 @@ class TestMisc(object):
 
     def test_global_sitemap(self):
         with self.app.test_client() as c:
-            rv = c.get('/+misc/sitemap')
+            rv = c.get(url_for('misc.sitemap'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/xml; charset=utf-8'
             assert rv.data.startswith('<?xml')
@@ -25,6 +27,6 @@ class TestMisc(object):
 
     def test_urls_names(self):
         with self.app.test_client() as c:
-            rv = c.get('/+misc/urls_names')
+            rv = c.get(url_for('misc.urls_names'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/plain; charset=utf-8'
