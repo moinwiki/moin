@@ -7,11 +7,9 @@ MoinMoin - basic tests for feeds
 
 from flask import url_for
 
-from MoinMoin._tests import wikiconfig
-
 from MoinMoin.items import Item
 from MoinMoin.config import CONTENTTYPE, COMMENT
-from MoinMoin._tests import update_item
+from MoinMoin._tests import update_item, wikiconfig
 
 class TestFeeds(object):
     class Config(wikiconfig.Config):

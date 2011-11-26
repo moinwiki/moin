@@ -10,16 +10,20 @@ from StringIO import StringIO
 
 from flask import url_for
 from flask import g as flaskg
+import pytest
 from werkzeug import ImmutableMultiDict, FileStorage
 
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
-import pytest
 
 class TestFrontend(object):
-    def _test_view(self, viewname, status='200 OK', data=['<html>', '</html>'], content_types=['text/html; charset=utf-8'], viewopts={}):
+    def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), **kwargs):
+        if kwargs.get('viewopts'):
+            viewopts = kwargs['viewopts']
+        else:
+            viewopts = {}
         print 'GET %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
             rv = c.get(url_for(viewname, **viewopts))
