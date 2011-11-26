@@ -8,21 +8,19 @@
 
 from StringIO import StringIO
 
+import pytest
+
 from flask import url_for
 from flask import g as flaskg
-import pytest
 from werkzeug import ImmutableMultiDict, FileStorage
-
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
 
 class TestFrontend(object):
-    def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), **kwargs):
-        if kwargs.get('viewopts'):
-            viewopts = kwargs['viewopts']
-        else:
+    def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None):
+        if not viewopts:
             viewopts = {}
         print 'GET %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
@@ -33,7 +31,11 @@ class TestFrontend(object):
             assert rv.headers['Content-Type'] in content_types
             return rv
 
-    def _test_view_post(self, viewname, status='302 FOUND', content_type='text/html; charset=utf-8', data=['<html>', '</html>'], form={}, viewopts={}):
+    def _test_view_post(self, viewname, status='302 FOUND', content_type='text/html; charset=utf-8', data=('<html>', '</html>'), form=None, viewopts=None):
+        if not viewopts:
+            viewopts = {}
+        if not form:
+            form = {}
         print 'POST %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
             rv = c.post(url_for(viewname, **viewopts), data=form)
