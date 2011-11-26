@@ -6,9 +6,11 @@
     MoinMoin - basic tests for frontend
 """
 
+from StringIO import StringIO
+
 from flask import url_for
 from flask import g as flaskg
-from werkzeug import ImmutableMultiDict
+from werkzeug import ImmutableMultiDict, FileStorage
 
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
@@ -17,17 +19,44 @@ from MoinMoin._tests import wikiconfig
 import pytest
 
 class TestFrontend(object):
-    def _test_view(self, viewname, status='200 OK', data=['<html>', '</html>'], content_types=['text/html; charset=utf-8'], viewopts={}, method='GET'):
+    def _test_view(self, viewname, status='200 OK', data=['<html>', '</html>'], content_types=['text/html; charset=utf-8'], viewopts={}):
+        print 'GET %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
-            if method == 'POST':
-                rv = c.post(url_for(viewname, **viewopts))
-            else:
-                rv = c.get(url_for(viewname, **viewopts))
+            rv = c.get(url_for(viewname, **viewopts))
             assert rv.status == status
             for item in data:
                 assert item in rv.data
             assert rv.headers['Content-Type'] in content_types
             return rv
+
+    def _test_view_post(self, viewname, status='302 FOUND', content_type='text/html; charset=utf-8', data=['<html>', '</html>'], form={}, viewopts={}):
+        print 'POST %s' % url_for(viewname, **viewopts)
+        with self.app.test_client() as c:
+            rv = c.post(url_for(viewname, **viewopts), data=form)
+            assert rv.status == status
+            assert rv.headers['Content-Type'] in content_type
+            for item in data:
+                assert item in rv.data
+
+    def test_ajaxdelete(self):
+        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+            comment='Test',
+            itemnames='["DoesntExist"]',
+            ), viewopts=dict(item_name='DoesntExist'))
+
+    def test_ajaxdestroy(self):
+        self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+            comment='Test',
+            itemnames='["DoesntExist"]',
+            ), viewopts=dict(item_name='DoesntExist'))
+
+    def test_ajaxmodify(self):
+        self._test_view_post('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+
+    def test_jfu_server(self):
+        self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
+            data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain'),
+            ), viewopts=dict(item_name='WillBeCreated'), content_type='application/json')
 
     def test_show_item(self):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -78,7 +107,7 @@ class TestFrontend(object):
         self._test_view('frontend.diff', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_similar_names(self):
-        self._test_view('frontend.similar_names', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.similar_names', viewopts=dict(item_name='DoesntExist'))
 
     def test_sitemap(self):
         self._test_view('frontend.sitemap', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -97,18 +126,6 @@ class TestFrontend(object):
 
     def test_revert_item(self):
         self._test_view('frontend.revert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist', rev='000000'))
-
-    def test_ajaxdelete(self):
-        self._test_view('frontend.ajaxdelete', content_types=[], viewopts=dict(item_name='DoesntExist'), data=['{', '}'], method='POST')
-
-    def test_ajaxdestroy(self):
-        self._test_view('frontend.ajaxdestroy', content_types=[], viewopts=dict(item_name='DoesntExist'), data=['{', '}'], method='POST')
-
-    def test_ajaxmodify(self):
-        self._test_view('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'), method='POST')
-
-    def test_jfu_server(self):
-        self._test_view('frontend.jfu_server', data=['{', '}'], viewopts=dict(item_name='DoesntExist'), method='POST')
 
     def test_mychanges(self):
         self._test_view('frontend.mychanges', viewopts=dict(userid='000000'))
