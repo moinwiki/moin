@@ -9,7 +9,6 @@ from flask import url_for
 
 from MoinMoin._tests import wikiconfig
 
-
 class TestMisc(object):
     class Config(wikiconfig.Config):
         """
