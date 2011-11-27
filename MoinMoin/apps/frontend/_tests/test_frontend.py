@@ -127,6 +127,7 @@ class TestFrontend(object):
         self._test_view('frontend.history', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_diff(self):
+        # TODO another test with valid rev1 and rev2 url args and an existing item is needed
         self._test_view('frontend.diff', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_similar_names(self):
@@ -193,7 +194,8 @@ class TestFrontend(object):
         self._test_view('frontend.bookmark', status='302 FOUND', data=['<!DOCTYPE HTML'])
 
     def test_diffraw(self):
-        self._test_view('frontend.diffraw', data=[], viewopts=dict(item_name='DoesntExist'))
+        # TODO another test with valid rev1 and rev2 url args and an existing item is needed
+        self._test_view('frontend.diffraw', status='404 NOT FOUND', data=[], viewopts=dict(item_name='DoesntExist'))
 
     def test_favicon(self):
         rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
