@@ -249,8 +249,11 @@ def show_dom(item_name, rev):
 @frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def indexable(item_name, rev):
     from MoinMoin.storage.middleware.indexing import convert_to_indexable
-    item = flaskg.storage[item_name]
-    rev = item[rev]
+    try:
+        item = flaskg.storage[item_name]
+        rev = item[rev]
+    except KeyError:
+        abort(404)
     content = convert_to_indexable(rev.meta, rev.data)
     return Response(content, 200, mimetype='text/plain')
 
@@ -1645,6 +1648,9 @@ def sitemap(item_name):
     """
     sitemap view shows item link structure, relative to current item
     """
+    # first check if this item exists
+    if not flaskg.storage[item_name]:
+        abort(404)
     sitemap = NestedItemListBuilder().recurse_build([item_name])
     del sitemap[0] # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
@@ -1676,9 +1682,9 @@ class NestedItemListBuilder(object):
         # does not recurse
         try:
             item = flaskg.storage[name]
-        except AccessDenied:
+            rev = item[CURRENT]
+        except (AccessDenied, KeyError):
             return []
-        rev = item[CURRENT]
         itemlinks = rev.meta.get(ITEMLINKS, [])
         return [child for child in itemlinks if self.is_ok(child)]
 
