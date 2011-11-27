@@ -46,11 +46,17 @@ class TestFrontend(object):
             for item in data:
                 assert item in rv.data
 
-    def test_ajaxdelete(self):
+    def test_ajaxdelete_item_name_route(self):
         self._test_view_post('frontend.ajaxdelete', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
             ), viewopts=dict(item_name='DoesntExist'))
+
+    def test_ajaxdelete_no_item_name_route(self):
+        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+            comment='Test',
+            itemnames='["DoesntExist"]',
+            ))
 
     def test_ajaxdestroy(self):
         self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
