@@ -1400,6 +1400,21 @@ def bookmark():
     return redirect(url_for('.global_history'))
 
 
+def get_revs():
+    """
+    get 2 revids from values
+    """
+    rev1 = request.values.get('rev1')
+    rev2 = request.values.get('rev2')
+    if rev1 is None:
+        # we require at least rev1
+        abort(404)
+    if rev2 is None:
+        # rev2 is optional, use current rev if not given
+        rev2 = CURRENT
+    return rev1, rev2
+
+
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDenied.
@@ -1410,8 +1425,7 @@ def diffraw(item_name):
         item = flaskg.storage[item_name]
     except AccessDenied:
         abort(403)
-    rev1 = request.values.get('rev1')
-    rev2 = request.values.get('rev2')
+    rev1, rev2 = get_revs()
     return _diff_raw(item, rev1, rev2)
 
 
@@ -1432,8 +1446,7 @@ def diff(item_name):
         rev2 = CURRENT  # and compare it with latest we have
     else:
         # otherwise we should get the 2 revids directly
-        rev1 = request.values.get('rev1')
-        rev2 = request.values.get('rev2')
+        rev1, rev2 = get_revs()
     return _diff(item, rev1, rev2)
 
 
