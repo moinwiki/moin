@@ -19,12 +19,14 @@ from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
 
 class TestFrontend(object):
-    def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None):
+    def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None, params=None):
         if viewopts is None:
             viewopts = {}
+        if params is None:
+            params = {}
         print 'GET %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
-            rv = c.get(url_for(viewname, **viewopts))
+            rv = c.get(url_for(viewname, **viewopts), data=params)
             assert rv.status == status
             for item in data:
                 assert item in rv.data
@@ -89,7 +91,7 @@ class TestFrontend(object):
         self._test_view('frontend.download_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_convert_item(self):
-        self._test_view('frontend.convert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.convert_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'), params=dict(contenttype='text/plain'))
 
     def test_modify_item(self):
         self._test_view('frontend.modify_item', status='200 OK', viewopts=dict(item_name='DoesntExist'))
