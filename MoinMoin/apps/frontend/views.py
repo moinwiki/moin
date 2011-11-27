@@ -1407,7 +1407,7 @@ def diffraw(item_name):
     #      If it happens for get_revision, we may just want to skip that rev in the list
     # TODO verify if it does crash when the item does not exist
     try:
-        item = flaskg.storage.get_item(item_name)
+        item = flaskg.storage[item_name]
     except AccessDenied:
         abort(403)
     rev1 = request.values.get('rev1')
