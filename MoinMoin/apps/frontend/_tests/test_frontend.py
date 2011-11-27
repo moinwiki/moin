@@ -13,10 +13,12 @@ import pytest
 from flask import url_for
 from flask import g as flaskg
 from werkzeug import ImmutableMultiDict, FileStorage
+
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 from MoinMoin.util import crypto
 from MoinMoin._tests import wikiconfig
+
 
 class TestFrontend(object):
     def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None, params=None):
@@ -28,12 +30,12 @@ class TestFrontend(object):
         with self.app.test_client() as c:
             rv = c.get(url_for(viewname, **viewopts), data=params)
             assert rv.status == status
+            assert rv.headers['Content-Type'] in content_types
             for item in data:
                 assert item in rv.data
-            assert rv.headers['Content-Type'] in content_types
             return rv
 
-    def _test_view_post(self, viewname, status='302 FOUND', content_type='text/html; charset=utf-8', data=('<html>', '</html>'), form=None, viewopts=None):
+    def _test_view_post(self, viewname, status='302 FOUND', content_types=('text/html; charset=utf-8', ), data=('<html>', '</html>'), form=None, viewopts=None):
         if viewopts is None:
             viewopts = {}
         if form is None:
@@ -42,30 +44,31 @@ class TestFrontend(object):
         with self.app.test_client() as c:
             rv = c.post(url_for(viewname, **viewopts), data=form)
             assert rv.status == status
-            assert rv.headers['Content-Type'] in content_type
+            assert rv.headers['Content-Type'] in content_types
             for item in data:
                 assert item in rv.data
+            return rv
 
     def test_ajaxdelete_item_name_route(self):
-        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
             ), viewopts=dict(item_name='DoesntExist'))
 
     def test_ajaxdelete_no_item_name_route(self):
-        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+        self._test_view_post('frontend.ajaxdelete', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
             ))
 
     def test_ajaxdestroy_item_name_route(self):
-        self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+        self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
             ), viewopts=dict(item_name='DoesntExist'))
 
     def test_ajaxdestroy_no_item_name_route(self):
-        self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_type='application/json', data=['{', '}'], form=dict(
+        self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
             ))
@@ -76,13 +79,13 @@ class TestFrontend(object):
     def test_jfu_server(self):
         self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
             data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain'),
-            ), viewopts=dict(item_name='WillBeCreated'), content_type='application/json')
+            ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
 
     def test_show_item(self):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_show_dom(self):
-        self._test_view('frontend.show_dom', status='404 NOT FOUND', data=['<?xml', '>'], viewopts=dict(item_name='DoesntExist'), content_types=['text/xml; charset=utf-8'])
+        self._test_view('frontend.show_dom', status='404 NOT FOUND', data=['<?xml', '>'], viewopts=dict(item_name='DoesntExist'), content_types=['text/xml; charset=utf-8', ])
 
     def test_indexable(self):
         self._test_view('frontend.indexable', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -139,7 +142,7 @@ class TestFrontend(object):
         self._test_view('frontend.index')
 
     def test_robots(self):
-        self._test_view('frontend.robots', data=['Disallow:'], content_types=['text/plain; charset=utf-8'])
+        self._test_view('frontend.robots', data=['Disallow:'], content_types=['text/plain; charset=utf-8', ])
 
     def test_search(self):
         self._test_view('frontend.search')
@@ -193,11 +196,12 @@ class TestFrontend(object):
         self._test_view('frontend.diffraw', data=[], viewopts=dict(item_name='DoesntExist'))
 
     def test_favicon(self):
-        rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon'], data=[])
+        rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
         assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
 
     def test_global_tags(self):
         self._test_view('frontend.global_tags')
+
 
 class TestUsersettings(object):
     def setup_method(self, method):
@@ -305,3 +309,4 @@ class TestUsersettings(object):
         if not self.user.exists():
             self.user = None
             pytest.skip("Can't create test user")
+
