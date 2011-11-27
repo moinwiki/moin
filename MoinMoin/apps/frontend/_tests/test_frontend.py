@@ -20,7 +20,7 @@ from MoinMoin._tests import wikiconfig
 
 class TestFrontend(object):
     def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None):
-        if not viewopts:
+        if viewopts is None:
             viewopts = {}
         print 'GET %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
@@ -32,9 +32,9 @@ class TestFrontend(object):
             return rv
 
     def _test_view_post(self, viewname, status='302 FOUND', content_type='text/html; charset=utf-8', data=('<html>', '</html>'), form=None, viewopts=None):
-        if not viewopts:
+        if viewopts is None:
             viewopts = {}
-        if not form:
+        if form is None:
             form = {}
         print 'POST %s' % url_for(viewname, **viewopts)
         with self.app.test_client() as c:
