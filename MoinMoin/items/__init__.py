@@ -642,7 +642,7 @@ class NonExistent(Item):
     def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
 
-    def _convert(self):
+    def _convert(self, doc):
         abort(404)
 
     def do_modify(self, contenttype, template_name):
@@ -735,7 +735,7 @@ There is no help, you're doomed!
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
 
-    def _convert(self):
+    def _convert(self, doc):
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
 
