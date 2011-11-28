@@ -64,7 +64,7 @@
 {% block footer_meta %}
     {% if rev %}
     <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
-        {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revid}}),
+        {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revid | shorten_revid}}),
         {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
         {{ _("by") }} {{ utils.editor_info(rev.meta) }}{% if rev.tags %},
         {{ _("tagged") }}

@@ -344,6 +344,20 @@ def shorten_item_name(name, length=25):
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
+def shorten_revid(name, length=7):
+    """
+    Shorten revision IDs
+
+    Shorten long hex revids into just the first 7 characters. There's
+    no need to display the whole revids everywhere.
+
+    :param name: item name, unicode
+    :param length: Maximum length of the resulting revid, int
+    :rtype: unicode
+    :returns: truncated version
+    """
+
+    return name[:7]
 
 MIMETYPE_TO_CLASS = {
     'application/pdf': 'pdf',
@@ -379,6 +393,7 @@ def utctimestamp(dt):
 
 def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
+    app.jinja_env.filters['shorten_revid'] = shorten_revid
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
