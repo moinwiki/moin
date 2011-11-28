@@ -3,7 +3,7 @@
 {% macro show_meta(rev) %}
     <div class="moin-diff-info moin-diff-info-rev-id">
         <span class="moin-diff-info-caption">Revision:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_revid }}</span>
+        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
     </div>
     <div class="moin-diff-info moin-diff-info-rev-author">
         <span class="moin-diff-info-caption">Editor:</span>
