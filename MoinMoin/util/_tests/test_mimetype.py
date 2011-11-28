@@ -47,6 +47,8 @@ class TestMimeType(object):
         ('.pdf',             'application/pdf'),
         ('.txt',             'text/plain'),
         ('.jpeg',            'image/jpeg'),
+        ('.png',             'image/png'),
+        ('.svg',             'image/svg+xml'),
         ('',                 'application/octet-stream')
         ]
 
