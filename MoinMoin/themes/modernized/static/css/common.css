@@ -574,7 +574,8 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-searchform input { font-size: 100%; vertical-align: middle;
             background-color: #F3F7FD; /* same as body bg col */
             border: 1px solid #A4B9DF; }
-#moin-searchform #moin-search-submit { display: none; }
+#moin-searchform #moin-search-submit { text-indent: -9000%; margin-left: -24px; width: 20px; height: 16px; background: url(../img/moin-search.png) center center no-repeat; background-size: 16px 16px; border: none; overflow: hidden; vertical-align: middle; cursor: pointer; }
+#moin-searchform #moin-search-query { padding-right: 20px; }
 #moin-searchform div { margin: 0; }
 #moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
 #moin-searchform li { list-style:none; }
