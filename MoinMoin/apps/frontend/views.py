@@ -1218,12 +1218,16 @@ def login():
                           )
 
 
-@frontend.route('/+logout')
-def logout():
-    flash(_("You are now logged out."), "info")
+def _logout():
     for key in ['user.itemid', 'user.auth_method', 'user.auth_attribs', ]:
         if key in session:
             del session[key]
+
+
+@frontend.route('/+logout')
+def logout():
+    flash(_("You are now logged out."), "info")
+    _logout()
     return redirect(url_for('.show_root'))
 
 
@@ -1364,13 +1368,31 @@ def usersettings(part):
                         flash(_('This email is already in use'), 'error')
                         success = False
                 if success:
+                    user_old_email = flaskg.user.email
                     form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
+                    if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
+                        # disable account
+                        flaskg.user.disabled = True
+                        # send verification mail
+                        is_ok, msg = flaskg.user.mailVerificationLink()
+                        if is_ok:
+                            _logout()
+                            flaskg.user.save()
+                            flash(_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info")
+                            return redirect(url_for('.show_root'))
+                        else:
+                            # sending the verification email didn't work. reset email change and alert the user.
+                            flaskg.user.disabled = False
+                            flaskg.user.email = user_old_email
+                            flash(_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error")
                     flaskg.user.save()
                     return redirect(url_for('.usersettings'))
                 else:
                     # reset to valid values
                     form = FormClass.from_object(flaskg.user)
                     form['submit'].set_default() # XXX from_object() kills all values
+    if part == 'notification' and app.cfg.user_email_verification:
+        flash(_("Changing your email address requires you to verify it. A link will be sent to you."), "warning")
     return render_template('usersettings.html',
                            title_name=title_name,
                            part=part,
