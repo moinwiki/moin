@@ -1514,7 +1514,7 @@ def _diff(item, revid1, revid2):
 def _diff_raw(item, revid1, revid2):
     oldrev = item[revid1]
     newrev = item[revid2]
-    commonmt = _common_type(oldrev, newrev)
+    commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)

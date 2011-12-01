@@ -1130,6 +1130,8 @@ class Text(Binary):
         difflines = diff_text.diff(oldlines, newlines)
         return '\n'.join(difflines)
 
+    _render_data_diff_raw = _render_data_diff
+
     def _render_data_highlight(self):
         from MoinMoin.converter import default_registry as reg
         data_text = self.data_storage_to_internal(self.data)
