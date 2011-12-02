@@ -5,8 +5,8 @@ Translating MoinMoin
 If your language already exists
 -------------------------------
 
-To find out if someone already started a translation of moin2 into your
-language, check the folder MoinMoin/translations in the source tree.
+To find out if someone has already started a translation of moin2 into your
+language; check the folder MoinMoin/translations in the source tree.
 If there is a folder with your language code (locale) [#]_, you can just
 start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
@@ -29,7 +29,7 @@ language doesn't exist yet`_.
    * find an entry, with an empty or bad translated text (the text after
      msgstr) and do your changes.
    
-   * **never** edit the msgid string, just edit the msgstr field
+   * **never** edit the 'msgid' string, just edit the 'msgstr' field
    
    * Variables like ``%(name)x`` (x can be any character) must be kept as
      they are. They must occur in the translated text.
