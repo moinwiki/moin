@@ -10,6 +10,8 @@
 
 import urllib
 
+from operator import itemgetter
+
 from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request
@@ -112,6 +114,20 @@ class ThemeSupport(object):
                 exists = True  # we can't detect existance of remote items
             breadcrumbs.append((wiki_name, item_name, href, exists, err))
         return breadcrumbs
+
+    def subitem_index(self, item_name):
+        """
+        Get a list of subitems for the given item_name
+
+        :rtype: list
+        :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
+        """
+        from MoinMoin.items import Item
+        item = Item.create(item_name)
+        item_index = item.get_detailed_index(item.flat_index())
+        # Sort items by whether or not they have children, then by name:
+        item_index.sort(key=itemgetter(-1, 0))
+        return item_index
 
     def userhome(self):
         """

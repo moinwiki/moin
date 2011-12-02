@@ -134,6 +134,8 @@
 
     {% block header_itemviews %}{% endblock %}
 
+    {% block subitem_navigation %}{% endblock %}
+
     {% for category, msg in get_flashed_messages(with_categories=true) %}
         <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
     {% endfor %}

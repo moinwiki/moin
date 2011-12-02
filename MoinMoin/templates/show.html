@@ -36,6 +36,33 @@
     </ul>
 {% endmacro %}
 
+{% block subitem_navigation %}
+    <div class="moin-subitem-navigation">
+        <span class="list-header">
+            {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) %}
+                {% if not loop.last %}
+                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}"
+                        {% if not exists %}class="moin-nonexistent"{% endif %}>
+                        {{ segment_name | shorten_item_name }}
+                    </a>
+                    <span class="sep">/</span>
+                {% else %}
+                    {{ segment_name | shorten_item_name }}
+                    <span class="sep">/</span>
+                {% endif %}
+            {% endfor %}
+        </span>
+        <ul>
+            {% for item in theme_supp.subitem_index(item_name) %}
+                <li>
+                    <a href="{{ url_for('frontend.show_item', item_name=item[0]) }}">{{ item[1] }}</a>
+                    {% if item[-1] %}<span class="sep">/</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
 {% block content %}
     {% if show_navigation %}
         {% block rev_navigation %}
