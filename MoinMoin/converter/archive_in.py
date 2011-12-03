@@ -47,11 +47,10 @@ class ArchiveConverter(TableMixin):
     def process_size(self, size):
         return unicode(size)
 
-    def __call__(self, fileobj, contenttype=None, arguments=None):
-        # we get a revision as fileobj
-        self.item_name = fileobj.item.name
+    def __call__(self, rev, contenttype=None, arguments=None):
+        self.item_name = rev.item.name
         try:
-            contents = self.list_contents(fileobj)
+            contents = self.list_contents(rev.data)
             contents = [(self.process_size(size),
                          self.process_datetime(dt),
                          self.process_name(name),
