@@ -126,7 +126,7 @@ class ThemeSupport(object):
         item = Item.create(item_name)
         item_index = item.get_detailed_index(item.flat_index())
         # Sort items by whether or not they have children, then by name:
-        item_index.sort(key=itemgetter(-1, 0))
+        item_index = sorted(item_index, key=itemgetter(-1, 0))
         return item_index
 
     def userhome(self):
