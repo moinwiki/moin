@@ -14,15 +14,13 @@
            {% set latest_timestamp = revs[0].meta['mtime'] %}
             <div class="moin-history-container"> 
                 <div class="moin-history-container-header">
-                    <span>
-                        <h2>{{ day }}</h2>
-                        {% if user.valid %}
-                        <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
-                        {% endif %}
-                   </span>
+                    <h2>{{ day }}</h2>
+                    {% if user.valid %}
+                    <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
+                    {% endif %}
                 </div>
                 <div class="moin-history-container-body">
-                    <table>
+                    <table class="zebra">
                     {% for rev in revs %}
                         {% set meta = rev.meta %}
                         <tr>
