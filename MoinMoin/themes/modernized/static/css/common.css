@@ -547,9 +547,8 @@ a.moin-mime-drawing:before { content: url(../img/moin-drawing.png); margin: 0 0.
 body { background-color: #F3F7FD; }
 
 /* moin-content */
-#moin-page { margin: 0; padding: 2px 20px 20px; box-shadow: 1px 1px 33px -11px inset; }
-/* clear float elements */
-#moin-page:after { content: " "; visibility: hidden; clear: both; display: block; height: 0; }
+#moin-page { margin: 0; padding: 0; display: table; width: 100%; }
+#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 11px 33px; display: table-cell; }
 /* support for firefox 3.5/3.6 and safari */
 -moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
 
@@ -631,13 +630,12 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 .moin-itemviews select { font-size: 100%; vertical-align: middle; }
 
 /* moin-header moin-subitem-navigation */
-.moin-subitem-navigation { display: 10px 10px; padding: 8px 8px; background: #C4D9FF; margin: 10px 10px; height: auto;
-                font-size: 0.8em; border: 2px dotted #4D7DA9; width: 150px; overflow: hidden; float: left; }
+.moin-subitem-navigation {  padding: 2px 4px; background: #C4D9FF; margin: 0; vertical-align: top;
+                font-size: 0.8em; max-width: 100px; overflow: hidden; display: table-cell; white-space: nowrap; }
 .moin-subitem-navigation .list-header { margin: 0; padding: 0; }
 .moin-subitem-navigation .sep { font-size: 1.2em; margin-left: 0px; }
 .moin-subitem-navigation ul { display: block; margin: 0; padding: 0 8px; }
-.moin-subitem-navigation li { padding: 4px 5px; margin: 0 5px; line-height: 1em; list-style: none; border-left: 1px dotted gray; width: 100%; 
-                white-space: nowrap; }
+.moin-subitem-navigation li { padding: 4px 5px; margin: 0 5px; line-height: 1em; list-style: none; border-left: 1px dotted gray; width: 100%; }
 .moin-subitem-navigation li:hover { background: #4D7DA9; border-left: 1px solid #4D7DA9; }
 .moin-subitem-navigation a { color: #0044B3; }
 .moin-subitem-navigation a:hover { text-decoration: underline; }
