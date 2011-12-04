@@ -17,6 +17,7 @@ from ._table import TableMixin
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 
@@ -55,7 +56,7 @@ class ArchiveConverter(TableMixin):
                          self.process_datetime(dt),
                          self.process_name(name),
                         ) for size, dt, name in contents]
-            return self.build_dom_table(contents)
+            return self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
         except ArchiveException as err:
             logging.exception("An exception within archive file handling occurred:")
             # XXX we also use a table for error reporting, could be
