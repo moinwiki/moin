@@ -143,6 +143,8 @@
 
 {{ after_header }}
 
+{% block subitem_navigation %}{% endblock %}
+
 <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
     {% block item -%}
         {# If you want itemviews in your template, extend from show.html, not from here. #}
@@ -155,8 +157,6 @@
 </div>
 
 {{ before_footer }}
-
-{% block subitem_navigation %}{% endblock %}
 
 <div id="moin-footer">
 {% block footer %}

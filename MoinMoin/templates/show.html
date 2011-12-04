@@ -40,14 +40,15 @@
     {% set subitems = theme_supp.subitem_index(item_name) %}
     {% if subitems %}
         <div class="moin-subitem-navigation">
-            <span class="list-header">
+            <div class="list-header">
                 {{ item_name }}
                 <span class="sep">/</span>
-            </span>
+            </div>
             <ul>
                 {% for fullname, shortname, contenttype, has_children in subitems %}
                     <li>
-                        <a href="{{ url_for('frontend.show_item', item_name=fullname) }}">{{ shortname }}</a>
+                        <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
+                            title="{{ shortname }}">{{ shortname }}</a>
                         {% if has_children %}<span class="sep">/</span>{% endif %}
                     </li>
                 {% endfor %}
