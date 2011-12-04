@@ -231,7 +231,7 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-history-container-header h2 { display: inline; border: none; }
 .moin-history-container-header a.bookmark-link { margin-left: 10px; color: #3b3131; }
 .moin-history-container-body { margin: 0; padding: 0; font-size: 14px; }
-.moin-history-container-body table { margin: 0; }
+.moin-history-container-body table { margin: 0; width: 100%; }
 .moin-history-save:before { content: url('../img/moin-edit.png'); }
 .moin-history-trash:before { content: url('../img/moin-deleted.png'); }
 .moin-history-rename:before { content: url('../img/moin-renamed.png'); }
