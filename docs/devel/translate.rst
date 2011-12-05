@@ -13,7 +13,8 @@ language doesn't exist yet`_.
 
 
 1. Make sure you have the latest version of the source tree (hg).
-   You will also need to have python installed.
+   You will also need to have python installed, with setuptools and babel
+   packages.
 
 2. Go to the top directory and execute::
 
