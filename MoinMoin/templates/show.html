@@ -41,8 +41,7 @@
     {% if subitems %}
         <div class="moin-subitem-navigation">
             <div class="list-header">
-                {{ item_name }}
-                <span class="sep">/</span>
+                {{ _('Subitems') }} 
             </div>
             <ul>
                 {% for fullname, shortname, contenttype, has_children in subitems %}
