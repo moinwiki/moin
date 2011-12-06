@@ -4,10 +4,10 @@
 <p>
 {{ _("This item does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.") }}
 </p>
-<table>
+<table class="zebra">
     {% for gname, contenttypes in contenttype_groups %}
     <tr>
-        <td class="green">{{ gname }}</td>
+        <th>{{ gname }}</th>
     </tr>
     <tr>
         <td>
