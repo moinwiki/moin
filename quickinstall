@@ -1,22 +1,38 @@
 #!/bin/bash
 # create a virtual environment in directory $DIR/
+# set PYTHON environment variable to change the python version
+# set VIRTUALENV environment variable to change the virtualenv command
+# for example: PYTHON=/usr/bin/pypy ./quickinstall
 # needs: virtualenv, pip
 
 DIR=env
-PYTHON=python
 DLC=dlc
 
-virtualenv --no-site-packages --python $PYTHON $DIR
+# find the right python version
+if [ -z "$PYTHON" ]; then
+    for PYTHON in python{2.7,2.6,2,}; do
+        hash $PYTHON 2>&- && break
+    done
+fi
 
-source $DIR/bin/activate
+# find the right virtualenv version
+if [ -z "$VIRTUALENV" ]; then
+    for VIRTUALENV in virtualenv{2.7,2.6,2,}; do
+        hash $VIRTUALENV 2>&- && break
+    done
+fi
+
+$VIRTUALENV --no-site-packages --python $PYTHON $DIR || exit 1
+
+source $DIR/bin/activate || exit 1
 
 # first install babel, moin's setup.py will emit a warning if it is not there
-pip install --download-cache=$DLC babel
+pip install --download-cache=$DLC babel || exit 1
 
 # "install" moin2 from repo to the env, this will also install required python
 # packages from pypi. we do this LAST, so that breakage is better visible.
-pip install --download-cache=$DLC -e .
+pip install --download-cache=$DLC -e . || exit 1
 
 # compile the translations
-python setup.py compile_catalog --statistics
+python setup.py compile_catalog --statistics || exit 1
 

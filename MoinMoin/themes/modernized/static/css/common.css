@@ -113,8 +113,16 @@ pre.comment:before { content: url(../img/attention.png); }
 
 /* tables */
 table { margin: 0.5em; border-collapse: collapse; }
-th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1px solid #ADB9CC; vertical-align: middle; }
+th, td { padding: 0.3em 0.4em; vertical-align: middle; text-align: left; }
+th { border: 1px solid #4D7DA9; background-color: #81BBF2; }
+td { border: 1px solid #ADB9CC; }
 td p { margin: 0; padding: 0; }
+table.zebra { border: none; border-collapse: separate; border-spacing: 1px; }
+.zebra thead { background-color: #81BBF2; }
+.zebra tfoot { background-color: #C4D9FF; }
+.zebra th, .zebra td { border: none; }
+.zebra tbody tr, .zebra > tr { background-color: #EEF1F5; }
+.zebra tbody tr:nth-child(odd), .zebra > tr:nth-child(odd) { background-color: #D9DFE8; }
 
 /* TableOfContents macro */
 div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #fff;
@@ -211,11 +219,6 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-hist-rev { margin: 0; }
 #moin-global-history,
 #moin-page-history { font-size: 75%; }
-#moin-page-history tr { border: 1px solid #4D7DA9; } 
-#moin-global-history th,
-#moin-page-history th { background-color: #81BBF2; border: 0px; font-size: 1.12em; padding: 6px .5em; text-align: left; }
-#moin-global-history td {  border: 0px; vertical-align: top;text-align: left; padding: 0.4em 0.3em; }
-#moin-page-history td { background-color: #E6EAF0; border: 0px; vertical-align: top; }
 .moin-wordbreak { word-break: break-all;  word-wrap: break-word; } /* Firefox needs javascript assistance within tables */
 .moin-history-time { width: 10%; }
 .moin-history-contenttype { width: 18%; }
@@ -223,11 +226,12 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-history-comment { width: 30%; }
 .moin-action { width: 2%; }
 .moin-action a:hover { text-decoration: none; }
-.moin-history-container { border: 1px solid #4D7DA9; }
+.moin-history-container { border: 1px solid #4D7DA9; margin: 2em 0; }
 .moin-history-container-header { background: #81BBF2; margin: 0px; padding: 4px; color: #3b3131; border-bottom: 1px solid #4D7DA9; }
-.moin-history-container-header h2 { display: inline; }
+.moin-history-container-header h2 { display: inline; border: none; }
 .moin-history-container-header a.bookmark-link { margin-left: 10px; color: #3b3131; }
-.moin-history-container-body { padding: 4px; font-size: 14px; }
+.moin-history-container-body { margin: 0; padding: 0; font-size: 14px; }
+.moin-history-container-body table { margin: 0; width: 100%; }
 .moin-history-save:before { content: url('../img/moin-edit.png'); }
 .moin-history-trash:before { content: url('../img/moin-deleted.png'); }
 .moin-history-rename:before { content: url('../img/moin-renamed.png'); }

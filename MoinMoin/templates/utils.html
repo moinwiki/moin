@@ -22,11 +22,11 @@
 
 
 {% macro table(headings, rows) %}
-<table>
+<table class="zebra">
 <thead>
     <tr>
         {% for heading in headings %}
-        <td><strong>{{ heading }}</strong></td>
+        <th>{{ heading }}</th>
         {% endfor %}
     </tr>
 </thead>
