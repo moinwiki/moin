@@ -631,7 +631,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header moin-subitem-navigation */
 .moin-subitem-navigation {  padding: 2px 4px; background: #C4D9FF; margin: 0; vertical-align: top;
-                font-size: 0.8em; width: 140px; overflow: hidden; display: table-cell; white-space: nowrap; }
+                font-size: 0.8em; width: 12em; overflow: hidden; display: table-cell; white-space: nowrap; }
 .moin-subitem-navigation .list-header { margin: 0; padding: 0; }
 .moin-subitem-navigation .sep { font-size: 1.2em; margin-left: 0px; }
 .moin-subitem-navigation ul { display: block; margin: 0; padding: 0 8px; }
