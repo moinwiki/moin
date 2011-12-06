@@ -28,7 +28,7 @@ its misc. configuration files:
 Do small steps and have backups
 -------------------------------
 It is a good idea to start from one of the sample configs provided with moin
-and only do small careful changes, then trying it, then doing next change.
+and only do small careful changes, then try it and then do the next change.
 
 If you're not used to the config file format, backup your last working config
 so you can revert to it in case you make some hard to find typo or other error.
@@ -124,7 +124,7 @@ Logo
 ~~~~
 To replace the default MoinMoin logo with your own logo (which is **strongly**
 recommended, especially if your wiki has private or sensitive information),
-so your users will immediately recognize which wiki site they currently use.
+so your users will immediately recognize which wiki site they are currently using.
 
 You can even use some simple text (or just nothing) for the logo, it is not
 required to be an image.
@@ -140,7 +140,7 @@ Example code::
 
 Displaying license information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you need to display something like a license information for your content or
+If you need to display something like license information for your content or
 some other legalese, use this macro to do it::
 
     {# License information in the footer #}
@@ -150,7 +150,7 @@ some other legalese, use this macro to do it::
 
 Inserting pieces of HTML
 ~~~~~~~~~~~~~~~~~~~~~~~~
-At some specific places, you can just add a piece of own html into the
+At some specific places, you can just add a piece of your own html into the
 head or body of the theme's html output::
 
     {# Additional HTML tags inside <head> #}
@@ -219,7 +219,7 @@ You can add scripts like this::
 
 Adding CSS
 ~~~~~~~~~~
-If you just want some style changes, you maybe can do them by just adding
+If you just want some style changes, you can maybe do them by just adding
 some custom css (and overwrite any style you don't like in the base theme)::
 
     {# Additional Stylesheets (after theme css, before user css #}
@@ -296,7 +296,7 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   
 * `anywikidraw <http://pypi.python.org/pypi/XStatic-AnyWikiDraw>`_
   a Java applet loaded from template file of modify_anywikidraw. It can be used for 
-  editing of drawings and diagrams on items.
+  editing drawings and diagrams on items.
 
 * `jquery_multi_download <http://pypi.python.org/pypi/XStatic-multiDownload>`_
   used in the template of index view for multiple parallel downloads.
@@ -340,7 +340,7 @@ and add the required fragment in base.html::
 
 Custom Themes
 -------------
-In case you want to do major changes to how MoinMoin looks like (so just
+In case you want to do major changes to how MoinMoin looks (so just
 changing snippets or CSS is not enough), you could also write your own theme.
 
 Be warned: doing this is a long-term thing, you don't just have to write it,
@@ -359,7 +359,7 @@ lots of the opposite.
 Authentication
 ==============
 MoinMoin uses a configurable `auth` list of authenticators, so the admin can
-configure whatever he likes to allow for authentication. Moin processes this
+configure whatever he/she likes to allow for authentication. Moin processes this
 list from left to right.
 
 Each authenticator is an instance of some specific class, configuration of
@@ -664,7 +664,7 @@ So just keep in mind:
   found). But: a hostile user (or bot) also might put some spam into your wiki
   (you can revert the spam later).
 * if you are rather closed (like requiring every user to first apply for an
-  account and to log in before being able to do changes), you'll never get
+  account and to log in before being able to make changes), you'll never get
   contributions from casual users and maybe also less from members of your
   community. But: likely you won't get spam either.
  
