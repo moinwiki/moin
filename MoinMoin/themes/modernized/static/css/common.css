@@ -548,9 +548,9 @@ body { background-color: #F3F7FD; }
 
 /* moin-content */
 #moin-page { margin: 0; padding: 0; display: table; width: 100%; table-layout: fixed; }
-#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 8px 25px; display: table-cell; }
-/* support for firefox 3.5/3.6 and safari */
--moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
+#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 8px 25px; display: table-cell; 
+    /* support for firefox 3.5/3.6 and safari */
+    -moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
 
 /* links */
 a:link { color: #47F; text-decoration: none; }
