@@ -631,12 +631,12 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header moin-subitem-navigation */
 .moin-subitem-navigation {  padding: 2px 4px; background: #C4D9FF; margin: 0; vertical-align: top;
-                font-size: 0.8em; width: 12em; overflow: hidden; display: table-cell; white-space: nowrap; }
-.moin-subitem-navigation .list-header { margin: 0; padding: 0; }
+                font-size: 0.8em; width: 14em; overflow: hidden; display: table-cell; word-wrap: break-word; }
+.moin-subitem-navigation .list-header { margin: 2px 0; padding: 0; font-size: 1.1em; }
 .moin-subitem-navigation .sep { font-size: 1.2em; margin-left: 0px; }
-.moin-subitem-navigation ul { display: block; margin: 0; padding: 0 8px; }
-.moin-subitem-navigation li { padding: 4px 5px; margin: 0 5px; line-height: 1em; list-style: none; border-left: 1px dotted gray; width: 100%; }
-.moin-subitem-navigation li:hover { background: #4D7DA9; border-left: 1px solid #4D7DA9; }
+.moin-subitem-navigation ul { display: block; margin: 0; padding: 0 4px; }
+.moin-subitem-navigation li { padding: 0.5em 2px; line-height: 1em; list-style: none; }
+.moin-subitem-navigation li:hover { background: #4D7DA9; }
 .moin-subitem-navigation a { color: #0044B3; }
 .moin-subitem-navigation a:hover { text-decoration: underline; }
 
