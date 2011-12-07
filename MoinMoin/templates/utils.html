@@ -42,3 +42,24 @@
 </table>
 {% endmacro %}
 
+{% macro render_subitem_navigation(subitems) %}
+    <div class="moin-subitem-navigation">
+        <div class="list-header">
+            {{ _('Subitems') }} 
+        </div>
+        <ul>
+            {% for fullname, shortname, contenttype, has_children in subitems %}
+                <li>
+                    {# call our caller with all the data we have if they exist, used to implement
+                        transclude/link actions in the modify view #}
+                    {% if caller %}
+                        {{ caller(fullname, shortname, contenttype, has_children) }}
+                    {% endif %}
+                    <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
+                        title="{{ shortname }}" class="subitem-link">{{ shortname }}</a>
+                    {% if has_children %}<span class="sep">/</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}

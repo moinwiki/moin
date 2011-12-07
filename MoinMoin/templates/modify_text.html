@@ -1,4 +1,22 @@
 {% extends "modify_binary.html" %}
+{% import "utils.html" as utils %}
+
+{% set subitems = theme_supp.subitem_index(item_name) %}
+{% if subitems %}
+    {% block subitem_navigation %}
+        {% call(fullname, shortname, contenttype, has_children) utils.render_subitem_navigation(subitems) %}
+            {# XXX: The replace filter is used to prevent XSS attacks
+                This needs security review, it could still be vulnerable #}
+            <a href="#" onclick="linkSubitem('{{ shortname|replace("\\", "\\\\")|replace("'", "\\'") }}')" title="{{ _('Link to Subitem') }}">
+                {{ _('Link') }}
+            </a>
+            <a href="#" onclick="transcludeSubitem('{{ shortname|replace("\\", "\\\\")|replace("'", "\\'") }}')" title="{{ _('Transclude Subitem') }}">
+                {{ _('Transclude') }}
+            </a>
+        {% endcall %}
+    {% endblock %}
+{% endif %}
+
 {% block data_editor %}
 {{ gen.textarea(form['data_text'], lang=lang, dir=direction, rows=rows_data, cols=cols) }}
 <br />

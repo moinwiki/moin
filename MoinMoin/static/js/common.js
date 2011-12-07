@@ -908,3 +908,26 @@ function QuicklinksExpander() {
 jQuery(document).ready(function() {
     new QuicklinksExpander();
 })
+
+function guessContentType() {
+    /* Used in the modify_text template to guess the data content type client-side 
+     * This approach has the advantage of reacting to content type changes for the 
+     * link/transclude code without having to re-fetch the page */
+    var meta_text = $("#f_meta_text").val();
+    var ctype_regex = /["']contenttype["']\s*:\s*["']([\w-_+.]+\/[\w-_+.]+)(;|["'])/;
+    if (meta_text) {
+        var match = ctype_regex.exec(meta_text);
+        if (match) return match[1];
+    }
+    return null;
+}
+
+function transcludeSubitem(subitem_name) {
+    var input_element = $("#f_data_text");
+    input_element.val(input_element.val() + " {{/" + subitem_name + "}}");
+}
+
+function linkSubitem(subitem_name) {
+    var input_element = $("#f_data_text");
+    input_element.val(input_element.val() + "[[/" + subitem_name + "]]");
+}
