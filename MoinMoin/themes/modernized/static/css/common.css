@@ -111,6 +111,11 @@ pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear:
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
 
+/* tt (teletype) replacement */
+.monospaced {
+    font-family: monospace;
+}
+
 /* tables */
 table { margin: 0.5em; border-collapse: collapse; }
 th, td { padding: 0.3em 0.4em; vertical-align: middle; text-align: left; }

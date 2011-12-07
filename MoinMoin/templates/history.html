@@ -33,7 +33,7 @@
                 {% for doc in history %}
                 <tr>
                     <td class="moin-wordbreak">{{ doc.name }}</td>
-                    <td class="moin-integer"><tt>{{ doc.revid | shorten_id }}</tt></td>
+                    <td class="moin-integer monospaced">{{ doc.revid | shorten_id }}</td>
                     <td>{{ doc.mtime|datetimeformat }}</td>
                     <td class="moin-integer">{{ doc.size }}</td>
                     <td>
