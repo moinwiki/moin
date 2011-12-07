@@ -1,0 +1,65 @@
+{% macro show_editor_info(info) %}
+  {%- if info.uri -%}
+      <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
+  {%- elif info.email -%}
+      <a href="mailto:{{ info.email }}" class="{{ info.css }}" title="{{ info.title }}">
+  {%- else -%}
+      <span class="{{ info.css }}" title="{{ info.title }}">
+  {%- endif -%}
+  {{ info.text }}
+  {%- if info.uri or info.email -%}
+    </a>
+  {%- else -%}
+    </span>
+  {%- endif -%}
+{% endmacro %}
+
+
+{% macro editor_info(meta) %}
+  {%- set info = get_editor_info(meta) -%}
+  {{ show_editor_info(info) }}
+{% endmacro %}
+
+
+{% macro table(headings, rows) %}
+<table class="zebra">
+<thead>
+    <tr>
+        {% for heading in headings %}
+        <th>{{ heading }}</th>
+        {% endfor %}
+    </tr>
+</thead>
+<tbody>
+{% for row in rows %}
+    <tr>
+        {% for col in row %}
+        <td>{{ col }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endmacro %}
+
+{% macro render_subitem_navigation(subitems) %}
+    <div class="moin-subitem-navigation">
+        <div class="list-header">
+            {{ _('Subitems') }} 
+        </div>
+        <ul>
+            {% for fullname, shortname, contenttype, has_children in subitems %}
+                <li>
+                    {# call our caller with all the data we have if they exist, used to implement
+                        transclude/link actions in the modify view #}
+                    {% if caller %}
+                        {{ caller(fullname, shortname, contenttype, has_children) }}
+                    {% endif %}
+                    <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
+                        title="{{ shortname }}" class="subitem-link">{{ shortname }}</a>
+                    {% if has_children %}<span class="sep">/</span>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
