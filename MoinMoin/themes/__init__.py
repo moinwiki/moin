@@ -10,6 +10,7 @@
 
 import urllib
 
+from json import dumps
 from operator import itemgetter
 
 from flask import current_app as app
@@ -337,7 +338,7 @@ def get_editor_info(meta, external=False):
         result['email'] = email
     return result
 
-def js_string_escape(data):
+def json_dumps(data):
     """
     Escape the given string so it is safe to use as a Javscript string
 
@@ -345,7 +346,7 @@ def js_string_escape(data):
     :rtype: str
     :returns: Javascript escaped version
     """
-    return data.replace("\\", r"\\").replace("'", r"\'").replace('"', r'\"')
+    return dumps(data)
 
 def shorten_item_name(name, length=25):
     """
@@ -420,7 +421,7 @@ def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
-    app.jinja_env.filters['js_string_escape'] = js_string_escape
+    app.jinja_env.filters['json_dumps'] = json_dumps
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
