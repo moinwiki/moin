@@ -338,16 +338,6 @@ def get_editor_info(meta, external=False):
         result['email'] = email
     return result
 
-def json_dumps(data):
-    """
-    Escape the given string so it is safe to use as a Javscript string
-
-    :param data: string to be escaped
-    :rtype: str
-    :returns: Javascript escaped version
-    """
-    return dumps(data)
-
 def shorten_item_name(name, length=25):
     """
     Shorten item names
@@ -421,7 +411,7 @@ def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
-    app.jinja_env.filters['json_dumps'] = json_dumps
+    app.jinja_env.filters['json_dumps'] = dumps
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
