@@ -37,10 +37,7 @@
 {% endmacro %}
 
 {% block subitem_navigation %}
-    {% set subitems = theme_supp.subitem_index(item_name) %}
-    {% if subitems %}
-        {{ utils.render_subitem_navigation(subitems) }}
-    {% endif %}
+    {{ utils.render_subitem_navigation(item_name, False) }}
 {% endblock %}
 
 {% block content %}
