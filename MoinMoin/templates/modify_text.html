@@ -7,7 +7,8 @@
             {% set fullname = fullname|json_dumps %}
             <button class="link-action" onclick='linkSubitem({{ shortname }}, {{ fullname }})'
                 title="{{ _('Link to Subitem') }}">{{ _('Link') }}</button>
-            <button class="transclude-action" onclick='transcludeSubitem({{ shortname }}, {{ fullname }})'
+            <button class="transclude-action" 
+                onclick='transcludeSubitem({{ shortname }}, {{ fullname }})'
                 title="{{ _('Transclude Subitem') }}">{{ _('Transclude') }}</button>
         {% endcall %}
 {% endblock %}
