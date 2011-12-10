@@ -42,24 +42,38 @@
 </table>
 {% endmacro %}
 
-{% macro render_subitem_navigation(subitems) %}
-    <div class="moin-subitem-navigation">
-        <div class="list-header">
-            {{ _('Subitems') }} 
+{% macro _render_subitem_navigation_tree(subitems, newtab, parentcaller) %}
+    <ul>
+        {% for fullname, shortname, contenttype, has_children in subitems %}
+            <li>
+                {# call our parent's caller with all the data we have if they exist, used to implement
+                    transclude/link actions in the modify view #}
+                {% if parentcaller %}
+                    {{ parentcaller(fullname, shortname, contenttype, has_children) }}
+                {% endif %}
+                <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
+                    title="{{ shortname }}" class="subitem-link"
+                    {% if newtab %}target="_blank"{% endif %}>{{ shortname }}</a>
+                {% if has_children %}
+                    <span class="sep">/</span>
+                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(fullname), newtab, parentcaller) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% macro render_subitem_navigation(itemname, newtab) %}
+    {% set subitems = theme_supp.subitem_index(itemname) %}
+    {% if caller %}
+        {% set mycaller = caller %}
+    {% endif %}
+    {% if subitems %}
+        <div class="moin-subitem-navigation">
+            <div class="list-header">
+                {{ _('Subitems') }} 
+            </div>
+            {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
         </div>
-        <ul>
-            {% for fullname, shortname, contenttype, has_children in subitems %}
-                <li>
-                    {# call our caller with all the data we have if they exist, used to implement
-                        transclude/link actions in the modify view #}
-                    {% if caller %}
-                        {{ caller(fullname, shortname, contenttype, has_children) }}
-                    {% endif %}
-                    <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
-                        title="{{ shortname }}" class="subitem-link">{{ shortname }}</a>
-                    {% if has_children %}<span class="sep">/</span>{% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+    {% endif %}
 {% endmacro %}

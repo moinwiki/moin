@@ -643,6 +643,7 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 .moin-subitem-navigation li:hover { background: #4D7DA9; }
 .moin-subitem-navigation a { color: #0044B3; }
 .moin-subitem-navigation a:hover { text-decoration: underline; }
+.moin-subitem-navigation li ul { border-left: 1px dotted gray; }
 .link-action,
 .transclude-action { border: hidden; text-indent: -9000%; padding: 0; margin: 0 -2px; vertical-align: middle;
                 height: 16px; width: 16px; overflow: hidden; cursor: pointer; }
