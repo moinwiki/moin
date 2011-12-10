@@ -909,6 +909,12 @@ jQuery(document).ready(function() {
     new QuicklinksExpander();
 })
 
+function toggleSubtree(item) {
+    /* used to toggle subtrees in the subitem widget */
+    var subtree = $(item).siblings("ul");
+    subtree.toggle(200);
+}
+
 function guessContentType() {
     /* Used in the modify_text template to guess the data content type client-side 
      * This approach has the advantage of reacting to content type changes for the 
