@@ -1492,8 +1492,11 @@ def _common_type(ct1, ct2):
 
 
 def _diff(item, revid1, revid2):
-    oldrev = item[revid1]
-    newrev = item[revid2]
+    try:
+        oldrev = item[revid1]
+        newrev = item[revid2]
+    except KeyError:
+        abort(404)
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
