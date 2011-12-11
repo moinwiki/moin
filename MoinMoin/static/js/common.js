@@ -931,7 +931,7 @@ function guessContentType() {
 
 function transcludeSubitem(subitem_name, fullname) {
     function moinwiki(subitem_name, fullname) {
-        return "{{/" + subitem_name.replace("{{", "\\}}") + "}} ";
+        return "{{" + fullname.replace("{{", "\\}}") + "}} ";
     }
     function mediawiki(subitem_name, fullname) {
         return "{{:" + fullname.replace("}}", "\\}}") + "}} ";
@@ -960,9 +960,6 @@ function transcludeSubitem(subitem_name, fullname) {
 
 function linkSubitem(subitem_name, fullname) {
     function moinwiki(subitem_name, fullname) {
-        return "[[/" + subitem_name.replace("]", "\\]") + "]] ";
-    }
-    function mediawiki(subitem_name, fullname) {
         return "[[" + fullname.replace("]", "\\]") + "|" + subitem_name.replace("]", "\\]") + "]] ";
     }
     function rst(subitem_name, fullname) {
@@ -974,7 +971,7 @@ function linkSubitem(subitem_name, fullname) {
     var link_formats = {
         "text/x.moin.wiki" : moinwiki,
         "text/x.moin.creole" : moinwiki,
-        "text/x-mediawiki" : mediawiki,
+        "text/x-mediawiki" : moinwiki,
         "text/x-rst" : rst,
         "application/docbook+xml" : docbook,
         "text/plain" : function(x){return x + " ";},
