@@ -955,6 +955,7 @@ function transcludeSubitem(subitem_name, fullname) {
     var ctype_format = transclude_formats[ctype];
     if (!ctype_format) ctype_format = transclude_formats["text/plain"];
     input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
+    input_element.focus();
 }
 
 function linkSubitem(subitem_name, fullname) {
@@ -983,4 +984,5 @@ function linkSubitem(subitem_name, fullname) {
     var ctype_format = link_formats[ctype];
     if (!ctype_format) ctype_format = link_formats["text/plain"];
     input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
+    input_element.focus();
 }
