@@ -113,6 +113,19 @@ def send_file(filename=None, file=None,
         mimetype = 'application/octet-stream'
 
     headers = Headers()
+
+    # We must compute size the smart way rather than letting
+    # werkzeug turn our iterable into an in-memory sequence
+    # See `_ensure_sequence` in werkzeug/wrappers.py
+    if filename:
+        fsize = os.path.getsize(filename)
+    else:
+        # Seek 0 bytes (0) from the end of the file (2)
+        file.seek(0, 2)
+        fsize = file.tell()
+        file.seek(0, 0)
+    headers.add('Content-Length', fsize)
+
     if as_attachment:
         if attachment_filename is None:
             if not filename:
