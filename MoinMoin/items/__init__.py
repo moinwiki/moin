@@ -1062,8 +1062,8 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 raise ValueError("content_type {0!r} not supported".format(content_type))
 
             try:
-                oldimage = PILImage.open(oldrev)
-                newimage = PILImage.open(newrev)
+                oldimage = PILImage.open(oldrev.data)
+                newimage = PILImage.open(newrev.data)
                 oldimage.load()
                 newimage.load()
                 diffimage = PILdiff(newimage, oldimage)
