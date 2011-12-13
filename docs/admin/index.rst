@@ -4,19 +4,18 @@ Indexes
 
 General
 =======
-moin strongly relies on indexes that accelerate access to item metadata and
-data and makes it possible to have simple backends, because the index layer
+MoinMoin relies strongly on indexes that accelerate access to item metadata and
+data, and make it possible to have simple backends, because the index layer
 is doing all the hard and complex work.
 
 Indexes are used internally for many operations like item lookup, history,
-iterating over items, search (also for interactive searches), etc..
+iterating over items, search (also for interactive searches), etc.
 
-moin won't be able to start with damaged, inaccessible or non-existing indexes.
-
-So, you need to configure and initialize indexing correctly first.
+MoinMoin won't be able to start with damaged, inaccessible or non-existing indexes.
+As a result, you'll need to configure and initialize indexing correctly first.
 
 moin will automatically update the index when items are created, updated, deleted,
-destroyed or renamed (via the storage api of moin, indexing layer or above).
+destroyed, or renamed (via the storage api of moin, indexing layer or above).
 
 Configuration
 =============
@@ -28,8 +27,8 @@ Use something like::
 
 **Note:**
 * The path MUST be absolute.
-* Moin will use `index_dir`.temp location also, if you build an index at
-the so-called `temporary location`.
+* Moin will use `index_dir`.temp location as well, if you build an index at
+the `temporary location`.
 
 
 moin index script reference
@@ -43,26 +42,26 @@ index location.
 
 moin index-create
 -----------------
-Creates an empty, but valid index.
+Creates an empty but valid index.
 
-**Note:** the moin wsgi application needs an index to successfully start up.
-As the moin index-* script commands are also based on the moin wsgi application,
-this can lead to "which came first, the chicken or the egg?" like problems.
+**Note:** the moin WSGI application needs an index to successfully start up.
+As the moin index-* script commands are also based on the moin WSGI application,
+this can lead to a chicken and the egg problem.
 
 To solve this, the moin command has a ``-i`` (``--index-create``) option that
 will trigger index creation on startup.
 
-Additionally, if the storage is also non-existant yet, one might also need
+Additionally, if the storage is also non-existent yet, one might also need
 ``-s`` (``--storage-create``) to create an empty storage on startup.
 
 moin index-build
 ----------------
-Process all revisions of this wiki and add the indexable documents to the index.
+Process all revisions of the wiki and add the indexable documents to the index.
 
 **Note:**
-* For big wikis, this can take rather long, consider using --tmp.
+* For big wikis, this can take rather long; consider using --tmp.
 * index-build does NOT clear the index at the beginning.
-* index-build does not check the current contents of the index, you must not run
+* index-build does not check the current contents of the index. Therefore you must not run
   index-build multiple times for the same data / same wiki.
 
 moin index-update
@@ -70,13 +69,13 @@ moin index-update
 Compare an index to the current storage contents and update the index as
 needed (add, remove, update stuff) to reflect the current storage contents.
 
-**Note:** You can use this after building at the tmp location, to also get
-the changes that happened to the wiki while building the index. You can run
-index-update multiple times to increasingly catch up.
+**Note:** You can use this after building at the tmp location to get
+the changes that happened to the wiki while building the index as well. You can run
+index-update multiple times to keep even more caught up.
 
 moin index-destroy
 ------------------
-Destroy an index (nothing left at the respective location).
+Destroy an index, such that nothing left at the respective location.
 
 moin index-move
 ---------------
@@ -84,7 +83,7 @@ Move the index from the temporary location to the normal location.
 
 moin index-optimize
 -------------------
-Optimize an index, see Whoosh docs for more details.
+Optimize an index:: see Whoosh docs for more details.
 
 moin index-dump
 ---------------
@@ -103,15 +102,15 @@ Use::
     moin index-create --storage-create --index-create
     moin index-create -s -i  # same, but shorter
 
-Storage and index is now initialized (both empty).
+Storage and index are now initialized (both empty).
 
-If you add stuff to your wiki, the index will get updated on the fly.
+If you add data to your wiki, the index will get updated on the fly.
 
 
 If your wiki has data and is shut down
 --------------------------------------
 If index needs a rebuild for some reason (e.g. index lost, index damaged,
-incompatible upgrade, ...), use::
+incompatible upgrade, etc.), use::
 
     moin index-create -i
     moin index-build  # can take a while...
@@ -130,28 +129,27 @@ Use::
      # start the wiki again (or allow changes now again)
 
 **Note:** Indexing puts load onto your server, so if you like to do regular
-index rebuilds, schedule them at some time when your server is not too busy
-otherwise.
+index rebuilds, schedule them at some time when your server is not too busy.
 
 
 Building an index for a wiki farm
 =================================
-If you run a wiki farm (multiple, but related wikis), you may share the index
-between the farm wikis, so farm wiki users will be able to search in one wiki
+If you run a wiki farm (multiple related wikis), you may share the index
+between the wikis, so users will be able to search in one wiki
 and also see results from the others.
 
-Before start you must prepare your wiki configs.
+Before you start, you must prepare your wiki configs.
 
-For example, imagine some company uses 2 farm wikis: ``Sales``, ``Engineering``
+For example, imagine a company that uses 2 "farm" wikis: ``Sales``, ``Engineering``
 
-So, wiki configs will be looking like 
+Their respective wiki configs would look like:
 
-wiki config for ``Sales``::
+``Sales``::
 
       interwikiname = u"Sales"
       index_dir = "/path/to/wiki/index"
 
-wiki config for ``Engineering``::
+``Engineering``::
 
       interwikiname = u"Engineering"
       index_dir = "/path/to/wiki/index"
@@ -165,6 +163,6 @@ Now do the initial index building::
 
 Now you should have a shared index for all these wikis.
 
-**Note:** Do not build indexes for multiple wikis in parallel, this is not
+**Note:** Do not build indexes for multiple wikis in parallel. This is not
 supported.
 
