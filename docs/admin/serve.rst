@@ -3,7 +3,7 @@ Server options
 ==============
 
 Built-in Web Server (easy)
-=========================
+==========================
 Moin comes with a simple built-in web server (powered by Werkzeug), which
 is suitable for development, debugging, and personal and small group wikis.
 
@@ -25,7 +25,7 @@ find the moin script, the moin code, and all its library dependencies::
  env\Scripts\activate.bat  # for windows
 
 Running the built-in server
---------------------------
+---------------------------
 Then you can run the moin built-in server by::
 
  moin
@@ -47,7 +47,7 @@ While the moin server is starting up, you will see some log output, for example:
 Now point your browser at that URL - your moin wiki is running!
 
 Stopping the built-in server
----------------------------
+----------------------------
 To stop the wiki server, either use `Ctrl-C` or close the window.
 
 
