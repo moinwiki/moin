@@ -6,7 +6,7 @@ Downloading
 ===========
 For moin2, there is currently no packaged download available, so you have to get
 it from the repository.
-You can use one of two repository URLs (there is little difference between them), 
+You can use one of two repository URLs (there is little difference between them),
 and either use Mercurial to keep a constantly updated copy of the code or download an archive of the files in tar.gz format:
 
 Example using Mercurial with the first URL::
@@ -33,27 +33,27 @@ Using your standard Python install or a virtualenv directory
 Please make sure you have `virtualenv` installed (it includes `pip`).
 
 Please make sure you have virtualenv installed (it includes pip).
-If you just want to run moin in-place in your mercurial working directory 
-with your normal system installation of Python, 
-run the following command from your mercurial moin2 
+If you just want to run moin in-place in your mercurial working directory
+with your normal system installation of Python,
+run the following command from your mercurial moin2
 working directory (you should not run this as an administrator; use your standard user account)::
 
  ./quickinstall  # for Linux (or other posix OS's)
  # or
  quickinstall.bat  # for windows
 
-This will use virtualenv to create a directory `env/` within the current directory, 
-create a virtual environment for MoinMoin and then install moin2 including all dependencies into that directory. 
-`pip` will automatically fetch all dependencies from PyPI and install them, so this may take a while. 
+This will use virtualenv to create a directory `env/` within the current directory,
+create a virtual environment for MoinMoin and then install moin2 including all dependencies into that directory.
+`pip` will automatically fetch all dependencies from PyPI and install them, so this may take a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
 Please review the output of the quickinstall script, and check whether there were fatal errors.
 If you have a bad network connection that makes the downloads fail, you can try to do the steps in quickinstall manually.
-Further, the quickinstall script will create a `moin` script for your 
-platform which you can use for starting the built-in server or invoke moin script commands. 
-After you activated the virtual environment, the built-in server script (named `moin`) will be in the standard PATH, 
+Further, the quickinstall script will create a `moin` script for your
+platform which you can use for starting the built-in server or invoke moin script commands.
+After you activated the virtual environment, the built-in server script (named `moin`) will be in the standard PATH,
 so you can just run the command `moin` verbatim on the command line.
-Note: in this special mode, it won’t copy the MoinMoin code to the env/ directory, 
-it will run everything from your work dir, so you can modify code and directly try it out 
+Note: in this special mode, it won’t copy the MoinMoin code to the env/ directory,
+it will run everything from your work dir, so you can modify code and directly try it out
 (you only need to do this installation procedure once).
 
 Using a different Python or a different virtualenv directory
@@ -81,11 +81,11 @@ To enter your virtual environment::
 
 Initializing index and/or storage
 ---------------------------------
-If you have an existing storage AND a valid index (for this storage’s content, and for this moin version), 
+If you have an existing storage AND a valid index (for this storage’s content, and for this moin version),
 you can skip this section.
-If you start from scratch (no storage created yet, and no index created yet), 
+If you start from scratch (no storage created yet, and no index created yet),
 you need to create an (empty) storage and an (empty) index::
-    
+
  moin index-build -s -i
 
 If you already have an existing storage, but no index yet::
@@ -106,9 +106,9 @@ can load them like this::
 
 Installing PIL
 ~~~~~~~~~~~~~~
-For some image processing functions that MoinMoin uses (like resizing, rotating), 
-you need PIL (Python Imaging Library). 
-If you install PIL with pip, pip will try to find a jpeg support library and associated development 
+For some image processing functions that MoinMoin uses (like resizing, rotating),
+you need PIL (Python Imaging Library).
+If you install PIL with pip, pip will try to find a jpeg support library and associated development
 headers on your system and if you don’t have that, there will be no jpeg support in PIL.
 So, if you want jpeg support, make sure you have the jpeg libs/headers::
 
@@ -126,7 +126,7 @@ Now install PIL into your virtual environment::
 
 Troubleshooting
 ~~~~~~~~~~~~~~~
-If you have a poor or limited network connection, you may run into trouble with the commands issued by 
+If you have a poor or limited network connection, you may run into trouble with the commands issued by
 the quickinstall script.
 You may see tracebacks from pip, timeout errors, etc. (see the output of the quickinstall script).
 
@@ -142,7 +142,7 @@ Now install each package into your virtual env manually:
 * Find the required packages by looking at "install_requires" within `setup.py`.
 * Download each required package from http://pypi.python.org/
 * Install each of them individually by::
- 
+
     pip install package.tar
 
 * Now try again::
