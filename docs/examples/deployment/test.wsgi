@@ -23,6 +23,8 @@ Apache's VirtualHost definition:
     # you will invoke this test script at the root url, like http://servername/:
     WSGIScriptAlias / /some/path/test.wsgi
 
+    # Windows users stop here: WSGIDaemonProcess and WSGIProcessGroup are not supported on Windows hosts
+
     # create some wsgi daemons - use someuser.somegroup same as your data_dir:
     WSGIDaemonProcess test-wsgi user=someuser group=somegroup processes=5 threads=10 maximum-requests=1000 umask=0007
 

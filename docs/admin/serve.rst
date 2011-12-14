@@ -22,7 +22,7 @@ find the moin script, the moin code, and all its library dependencies::
 
  source env/bin/activate  # for Linux (or other posix OS's)
  # or
- call env\bin\activate  # for windows
+ env\Scripts\activate.bat  # for windows
 
 Running the built-in server
 --------------------------
@@ -78,7 +78,7 @@ you can try a simpler WSGI app first. See `docs/examples/deployment/test.wsgi`.
 As long as you can't make `test.wsgi` work, the problem is not with
 moin, but rather with your web server and WSGI app deployment method.
 
-If the test app starts doing something else than Server Error 500, please
+When the test app starts doing something other than Server Error 500, please
 proceed with the MoinMoin app and its configuration.
 Otherwise, read your web server error log files.
 
