@@ -131,10 +131,10 @@ Now install PIL into your virtual environment::
  pip install pil # for linux (or other posix OSes)
 
 Troubleshooting
------------------
+---------------
 
 Bad Network Connection
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 If you have a poor or limited network connection, you may run into trouble with the commands issued by
 the quickinstall script.
 You may see tracebacks from pip, timeout errors, etc. (see the output of the quickinstall script).
@@ -161,7 +161,7 @@ Now install each package into your virtual env manually:
 Repeat these steps until you don't see fatal errors.
 
 PIL Installation Under Windows
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PIL version 1.1.7 does not install correctly via "pip install pil" on Windows.
 Some users have had success using "pip install pillow" (a fork of PIL fixing
 a packaging issue).  Other users have resorted to installing PIL 1.1.6 in the
