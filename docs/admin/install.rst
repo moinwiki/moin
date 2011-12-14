@@ -77,7 +77,9 @@ Entering the virtual env
 ------------------------
 To enter your virtual environment::
 
- source env/bin/activate
+ source env/bin/activate  # for linux (or other posix OSes)
+ # or
+ env\Scripts\activate.bat  # for windows
 
 Initializing index and/or storage
 ---------------------------------
@@ -108,8 +110,12 @@ Installing PIL
 ~~~~~~~~~~~~~~
 For some image processing functions that MoinMoin uses (like resizing, rotating),
 you need PIL (Python Imaging Library).
+
+Windows users who want to install PIL should skip the remainder of this section and read
+Troubleshooting -- PIL Installation Under Windows below.
+
 If you install PIL with pip, pip will try to find a jpeg support library and associated development
-headers on your system and if you don’t have that, there will be no jpeg support in PIL.
+headers on your system and if you do not have that, there will be no jpeg support in PIL.
 So, if you want jpeg support, make sure you have the jpeg libs/headers::
 
  # install jpeg library and development headers:
@@ -119,12 +125,15 @@ So, if you want jpeg support, make sure you have the jpeg libs/headers::
 Now install PIL into your virtual environment::
 
  # enter your virtual environment:
- source env/bin/activate
+ source env/bin/activate  # for linux (or other posix OSes)
 
  # install Python Imaging Library:
- pip install pil
+ pip install pil # for linux (or other posix OSes)
 
 Troubleshooting
+-----------------
+
+Bad Network Connection
 ~~~~~~~~~~~~~~~
 If you have a poor or limited network connection, you may run into trouble with the commands issued by
 the quickinstall script.
@@ -151,3 +160,10 @@ Now install each package into your virtual env manually:
 
 Repeat these steps until you don't see fatal errors.
 
+PIL Installation Under Windows
+~~~~~~~~~~~~~~~~~~~~
+PIL version 1.1.7 does not install correctly via "pip install pil" on Windows.
+Some users have had success using "pip install pillow" (a fork of PIL fixing
+a packaging issue).  Other users have resorted to installing PIL 1.1.6 in the
+main Python directory using the Windows installers available at
+http://www.pythonware.com/products/pil/

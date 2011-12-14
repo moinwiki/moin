@@ -47,7 +47,7 @@ class IndexBuild(Command):
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
             help='use the temporary location.'),
-        Option('--procs', '-p', required=False, dest='procs', type=int, default=None,
+        Option('--procs', '-p', required=False, dest='procs', type=int, default=1,
             help='Number of processors the writer will use.'),
         Option('--limitmb', '-l', required=False, dest='limitmb', type=int, default=10,
             help='Maximum memory (in megabytes) each index-writer will use for the indexing pool.'),

@@ -48,8 +48,8 @@ class Config(DefaultConfig):
     # Load the interwiki map from intermap.txt:
     interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
     # we must add entries for 'Self' and our interwikiname:
-    interwiki_map[interwikiname] = 'http://localhost:8080/'
-    interwiki_map['Self'] = 'http://localhost:8080/'
+    interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'
+    interwiki_map['Self'] = 'http://127.0.0.1:8080/'
 
     # for now we load some 3rd party stuff from the place within moin where it is currently located,
     # but soon we'll get rid of this stuff:
@@ -76,7 +76,7 @@ class Config(DefaultConfig):
 MOINCFG = Config # Flask only likes uppercase stuff
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
-SERVER_NAME = "localhost:8080"
+SERVER_NAME = "127.0.0.1:8080"
 #DEBUG = False # use True for development only, not for public sites!
 #TESTING = False
 #SESSION_COOKIE_NAME = 'session'
