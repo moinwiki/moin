@@ -119,11 +119,13 @@ def send_file(filename=None, file=None,
     # See `_ensure_sequence` in werkzeug/wrappers.py
     if filename:
         fsize = os.path.getsize(filename)
-    else:
+    elif file:
         # Seek 0 bytes (0) from the end of the file (2)
         file.seek(0, 2)
         fsize = file.tell()
         file.seek(0, 0)
+    else:
+        fsize = 0
     headers.add('Content-Length', fsize)
 
     if as_attachment:
