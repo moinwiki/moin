@@ -644,29 +644,29 @@ with random salt (currently ssha256 is the default).
 
 Authorization
 =============
-Moin uses Access Control Lists (ACLs) to specify who is authorized to do
-something.
+Moin uses Access Control Lists (ACLs) to specify who is authorized to perform
+a given action.
 
 Please note that wikis usually make much use of so-called *soft security*,
-that means that they are rather open and give freedom to the users, while
+which means that they are rather open and give freedom to users, while
 providing means to revert damage in case it happens.
 
-*Hard security* means to lock stuff so that no damage can happen.
+*Hard security* means that one would lock items, etc. so that no damage can possibly be done.
 
 Moin's default configuration tries to give a sane compromise of both soft
-and hard security. But, depending on the situation the wiki
-admin/owner/community has to deal with, you may need different settings.
+and hard security. Depending on the situation the wiki
+admin/owner/community has to deal with, however, you may need different settings.
 
 So just keep in mind:
 
-* if your wiki is rather open, you make it easy to contribute (like e.g. a
+* if your wiki is rather open, you might make it easy to contribute (e.g. a
   user who is not a regular user of your wiki could fix some typos he has just
-  found). But: a hostile user (or bot) also might put some spam into your wiki
-  (you can revert the spam later).
-* if you are rather closed (like requiring every user to first apply for an
-  account and to log in before being able to make changes), you'll never get
+  found). However, a hostile user (or bot) might also put some spam into your wiki
+  (you'd be able to revert the spam later).
+* if your wiki is rather closed (e.g. you require every user to first apply for an
+  account and to log in before being able to do changes), you'll rarely get
   contributions from casual users and maybe also less from members of your
-  community. But: likely you won't get spam either.
+  community. But, it's likely you won't get spam either.
  
 
 ACL for functions
@@ -680,16 +680,16 @@ This ACL controls access to some specific functions / views of moin::
 
 Supported capabilities (rights):
 
-* superuser - used for misc. administrative functions, give this only to
+* superuser - used for miscellaneous administrative functions. Give this only to
   highly trusted people
-* notextcha - if you have TextChas enabled, users with notextcha capability
+* notextcha - if you have TextChas enabled, users with the notextcha capability
   won't get questions to answer. Give this to known and trusted users who
   regularly edit in your wiki.
 
 ACLs for contents
 -----------------
 These ACLs control access to contents stored in the wiki - they are configured
-per storage backend (see also there) and (optionally) in the metadata of wiki
+per storage backend (see storage backend docs) and optionally in the metadata of wiki
 items::
 
     # we just show the default value of acl_rights_contents for information,
@@ -715,15 +715,15 @@ How to use before/default/after:
 
 * `before` is usually used to force stuff (e.g. if you want to give some
   wiki admin all permissions no matter what)
-* `default` is behaviour if nothing special has been specified (no ACL in
+* `default` is the behavior if nothing special has been specified (no ACL in
   item metadata)
-* `after` is (rarely) used to "not forget something unless otherwise specified".
+* `after` is rarely used. When it is, it's used to "not forget something unless otherwise specified".
 
 When configuring content ACLs, you can choose between standard (flat) ACL
 processing and hierarchic ACL processing. Hierarchic processing means that
-subitems inherit ACLs from their parent items if they have no own ACL.
+subitems inherit ACLs from their parent items if they don't have an ACL.
 
-Note: while hierarchic ACLs are rather convenient sometimes, they make the
+Note that while hierarchic ACLs are rather convenient sometimes, they make the
 system more complex. You have to be very careful with potential permissions
 changes happening due to changes in the hierarchy, like when you create,
 rename or delete items.
@@ -733,34 +733,31 @@ Supported capabilities (rights):
 * read - read content
 * write - write (edit, modify) content
 * create - create new items
-* destroy - completely destroy revisions or items (never give this to not
-  fully trusted users)
-* admin - change (create, remove) ACLs for the item (never give this to not
-  fully trusted users)
+* destroy - completely destroy revisions or items (give this only to *fully-trusted* users)
+* admin - change (create, remove) ACLs for the item (give this only to *fully-trusted* users)
 
 ACLs - special groups
 ---------------------
-Additionally to the groups provided by the group backend(s), there are some
+In addition to the groups provided by the group backend(s), there are some
 special group names available within ACLs:
 
 * All - a virtual group containing every user
 * Known - a virtual group containing every logged-in user
-* Trusted - a virtual group containing every logged-in user, who was logged
-  in by some specific "trusted" authentication methods
+* Trusted - a virtual group containing every logged-in user who was logged
+  in by some specific "trusted" authentication method
 
 
 ACLs - basic syntax
 -------------------
-An ACL is a (unicode) string with one or multiple access control entries
-(space separated).
+An ACL is a unicode string with one or more access control entries
+which are space separated.
 
-An entry has:
+An entry is a colon-separated set of two values::
 
-* a left side with user and/or group names (comma separated)
-* a colon ':' as separator and
-* a right side with rights / capabilities (comma separated).
+* the left side is a comma-separated list of user and/or group names and
+* the right side is a comma-separated list of rights / capabilities for those users/groups.
 
-An ACL is processed from left to right, first left-side match counts.
+An ACL is processed from left to right, where the first left-side match counts.
 
 Example::
 
@@ -773,10 +770,10 @@ on the right side of this entry.
 
 If "JoeDoe" is currently logged in and moin processes this ACL, the first entry
 won't match, so moin will proceed left-to-right and look at the second entry.
-Here we have the special group name "All" (and JoeDoe obviously is a member of
-this group), so we have a match here.
+Here we have the special group name, "All" (and JoeDoe is obviously a member of
+this group), so this entry matches.
 If moin wants to know whether he may destroy, the answer will be "no", as
-destroy is not listed on the right side of this entry. If moin wants to know
+destroy is not listed on the right side of the "All" entry. If moin wants to know
 whether he may write, the answer will be "yes".
 
 Notes:
@@ -784,7 +781,7 @@ Notes:
 * As a consequence of the left-to-right and first-match-counts processing,
   you must order ACL entries so that the more specific ones (like for
   "SuperMan") are left of the less specific ones.
-  Usually you want this order:
+  Usually, you want this order:
 
   1) usernames
   2) special groups
@@ -793,23 +790,24 @@ Notes:
   5) Known
   6) All
 
-* Do not put any spaces into an ACL entry (except if it is part of a user or
-  group name)
+* Do not put any spaces into an ACL entry, unless it is part of a user or
+  group name.
 
 * A right that is not explicitly given by an applicable ACL is denied.
 
-* For most ACLs there are builtin defaults, which give some rights.
+* For most ACLs there are built-in defaults which give some limited rights.
 
 ACLs - entry prefixes
 ---------------------
-To make the system more flexible, there are also two ACL entry modifiers: the prefixes '+' and '-'.
+To make the system more flexible, there are two ways to modify an ACL entry: prefixing it with a '+' or a '-'.
 
-If you use them, matches will have to be left-side *and* right-side (otherwise
-it will just continue with the next entry).
+If you use one of the two, MoinMoin will search for both a username and permission, and a match will have to match
+both the name of user (left-side) *and* the permission MoinMoin is searching for (right-side), otherwise
+it will just continue with the next entry.
 
-'+' means to give the permission(s) specified on the right side.
+'+' indicates that MoinMoin should give the permission(s) specified on the right side.
 
-'-' means to deny the permission(s) specified on the right side.
+'-' indicates that MoinMoin should deny the permission(s) specified on the right side.
 
 Example::
 
@@ -831,16 +829,16 @@ look at the third entry).
 
 Notes:
 
-* you usually use these modifiers if most of the rights shall be as specified
+* you usually use these modifiers if most of the rights for a given user shall be specified
   later, but a special user or group should be treated slightly different for
   a few special rights.
 
 ACLs - Default entry
 --------------------
-There is a special ACL entry "Default" which expands itself in-place to the
+There is a special ACL entry, "Default", which expands itself in-place to the
 default ACL.
 
-This is useful if e.g. for some items you mostly want the default ACL, but
+This is useful, for example, if when you mostly want the default ACL, but
 with a slight modification - but you don't want to type in the default ACL
 all the time (and you also want to be able to change the default ACL without
 having to edit lots of items).
@@ -863,9 +861,9 @@ prevent wiki spamming and it has proven to be very effective.
 
 Features:
 
-* when registering a user or saving an item, ask a random question
+* when registering a user or saving an item, it can ask a random question
 * match the given answer against a regular expression
-* q and a can be configured in the wiki config
+* questions and answers can be configured in the wiki config
 * multi language support: a user gets a textcha in his language or in
   language_default or in English (depending on availability of questions and
   answers for the language)
@@ -877,9 +875,9 @@ Tips for configuration:
 
 * have 1 word / 1 number answers
 * ask questions that normal users of your site are likely to be able to answer
-* do not ask too hard questions
+* do not ask overly complex questions
 * do not ask "computable" questions, like "1+1" or "2*3"
-* do not ask too common questions
+* do not ask overly obvious questions
 * do not share your questions with other sites / copy questions from other
   sites (or spammers might try to adapt to this) 
 * you should at least give textchas for 'en' (or for your language_default, if
@@ -908,7 +906,7 @@ Note that users with 'notextcha' ACL capability won't get TextChas to answer.
 
 Secrets
 =======
-Moin uses secrets (just use a long random strings, don't reuse any of your
+Moin uses secrets (just use a long random string; *not* a reuse of any of your
 passwords) to encrypt or cryptographically sign some stuff like:
 
 * textchas
@@ -931,21 +929,21 @@ Groups and Dicts
 Moin can get group and dictionary information from some supported backends
 (like the wiki configuration or wiki items).
 
-A group is just a list of unicode names. It can be used for any application,
+A group is just a list of unicode names. It can be used for any application:
 one application is defining user groups for usage in ACLs.
 
 A dict is a mapping of unicode keys to unicode values. It can be used for any
-application, currently it is not used by moin itself.
+application. Currently, it is not used by moin itself.
 
 Group backend configuration
 ---------------------------
-WikiGroups backend gets groups from wiki items and is used by default::
+The WikiGroups backend gets groups from wiki items and is used by default::
 
     def groups(self, request):
         from MoinMoin.datastruct import WikiGroups
         return WikiGroups(request)
 
-ConfigGroups uses groups defined in the configuration file::
+The ConfigGroups backend uses groups defined in the configuration file::
 
     def groups(self, request):
         from MoinMoin.datastruct import ConfigGroups
@@ -954,7 +952,7 @@ ConfigGroups uses groups defined in the configuration file::
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
         return ConfigGroups(request, groups)
 
-CompositeGroups to use both ConfigGroups and WikiGroups backends::
+CompositeGroups can use, for the most part, any combination of backends. The following is an example of using the ConfigGroups and WikiGroups backends::
 
     def groups(self, request):
         from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
@@ -972,13 +970,13 @@ CompositeGroups to use both ConfigGroups and WikiGroups backends::
 Dict backend configuration
 --------------------------
 
-WikiDicts backend gets dicts from wiki items and is used by default::
+The WikiDicts backend gets dicts from wiki items and is used by default::
 
     def dicts(self, request):
         from MoinMoin.datastruct import WikiDicts
         return WikiDicts(request)
 
-ConfigDicts backend uses dicts defined in the configuration file::
+The ConfigDicts backend uses dicts defined in the configuration file::
 
     def dicts(self, request):
         from MoinMoin.datastruct import ConfigDicts
@@ -988,7 +986,7 @@ ConfigDicts backend uses dicts defined in the configuration file::
                                   u'2': 'Two'}}
         return ConfigDicts(request, dicts)
 
-CompositeDicts to use both ConfigDicts and WikiDicts::
+The CompositeDicts backend can use any combination of backends. The following is an example of using the ConfigDicts and WikiDicts backends::
 
     def dicts(self, request):
         from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
@@ -1003,13 +1001,13 @@ CompositeDicts to use both ConfigDicts and WikiDicts::
 
 Storage
 =======
-MoinMoin supports storage backends for different ways of storing wiki items.
+MoinMoin supports storage backends as different ways of storing wiki items.
 
 Setup of storage is rather complex and layered, involving:
 
 * a router middleware that dispatches parts of the namespace to the respective
   backend
-* ACL checking middlewares that make sure nobody accesses something he is not
+* ACL checking middlewares that make sure nobody accesses something he/she is not
   authorized to access
 * Indexing mixin that indexes some data automatically on commit, so items can
   be selected / retrieved faster.
@@ -1017,7 +1015,7 @@ Setup of storage is rather complex and layered, involving:
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier - it helps you to:
+This is a helper function to make storage setup easier - it helps you:
 
 * create a simple setup that uses 3 storage backends internally for these
   parts of the namespace:
@@ -1044,13 +1042,13 @@ Call it like::
     )
 
 The `uri` depends on the kind of storage backend and stores you want to use
-(see below). Usually it is a URL-like string that looks like::
+(see below). Usually it is a URL-like string in the form of::
 
     stores:fs:/srv/mywiki/%(nsname)s/%(kind)s
     
 `stores` is the name of the backend, followed by a colon, followed by a store
 specification. `fs` is the name of the store, followed by a specification
-that makes sense for the fs (filesystem) store (== a path with placeholders).
+that makes sense for the fs (filesystem) store (i.e. a path with placeholders).
 
 `%(nsname)s` placeholder will be replaced 'content' or 'userprofiles' for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
@@ -1076,7 +1074,7 @@ Features:
 
 * protects access to lower storage layers by ACLs (Access Control Lists)
 * makes sure there won't be ACL security issues, even if upper layers have bugs
-* if you use create_simple_mapping, you just give the ACL parameters, the
+* if you use create_simple_mapping, you just give the ACL parameters. The
   middleware will be set up automatically by moin.
 
 routing middleware
@@ -1084,7 +1082,7 @@ routing middleware
 Features:
 
 * dispatches storage access to different backends depending on the item name
-* in POSIX terms: something fstab/mount-like
+* in POSIX terms, it's something like fstab/mount
 * if you use create_simple_mapping, the router middleware will be set up
   automatically by moin.
 
@@ -1094,7 +1092,7 @@ Features:
 
 * maintains an index for important metadata values
 * speeds up looking up / selecting items
-* makes it possible that lower storage layers can be simpler
+* makes it possible for lower storage layers to be simpler
 * the indexing middleware will be set up automatically by moin.
 
 stores backend
@@ -1129,9 +1127,9 @@ sqla store
 ----------
 Features:
 
-* stores data into a (SQL) database / table
-* uses slqalchemy (without ORM) as database abstraction
-* supports multiple types of databases, like:
+* stores data into an (SQL) database / table
+* uses slqalchemy (without the ORM) for database abstraction
+* supports multiple types of databases. For example:
  
   - sqlite (default, comes built-into Python)
   - postgresql
@@ -1153,7 +1151,7 @@ kc store
 --------
 Features:
 
-* uses a Kyoto Cabinet file to store
+* uses a Kyoto Cabinet file for storage
 * very fast
 * single-process only, local only
 
@@ -1163,8 +1161,8 @@ Features:
 
 Please see the kyoto cabinet docs about the part after `kc:`.
 
-If you use kc with the builtin server of moin, you must not use the reloader,
-but disable it by commandline option::
+If you use kc with the builtin server of moin, you cannot use the reloader.
+Disable it with the commandline option::
 
   moin moin -r
 
@@ -1173,7 +1171,7 @@ kt store
 --------
 Features:
 
-* uses a Kyoto Tycoon server to store
+* uses a Kyoto Tycoon server for storage
 * fast
 * multi-process, local or remote.
 
@@ -1216,17 +1214,17 @@ Mail configuration
 
 Sending E-Mail
 --------------
-Moin can optionally send E-Mail, e.g. to:
+Moin can optionally send E-Mail. Possible uses:
 
 * send out item change notifications.
 * enable users to reset forgotten passwords
 
-You need to configure some stuff before sending E-Mail can be supported::
+You need to configure some settings before sending E-Mail can be supported::
 
     # the "from:" address [Unicode]
     mail_from = u"wiki <wiki@example.org>"
 
-    # a) using a SMTP server, e.g. "mail.provider.com" (None to disable mail)
+    # a) using an SMTP server, e.g. "mail.provider.com" (None to disable mail)
     mail_smarthost = "smtp.example.org"
 
     # if you need to use SMTP AUTH at your mail_smarthost:
@@ -1249,7 +1247,7 @@ At account creation time, Moin can require new users to verify their E-Mail
 address by clicking a link that is sent to them.
 
 Make sure that Moin is able to send E-Mails (see previous section) and add the
-following to your configuration file to enable this feature::
+following line to your configuration file to enable this feature::
 
     user_email_verification = True
 
@@ -1280,8 +1278,8 @@ Logging configuration
 =====================
 
 By default, logging is configured to emit output on `stderr`. This will work
-OK for the builtin server (will just show on the console) or for e.g. Apache2
-(will be put into error.log).
+well for the built-in server (it will just show up on the console) or for Apache2 and similar
+(logging will be put into error.log).
 
 Logging is very configurable and flexible due to the use of the `logging`
 module of the Python standard library.
