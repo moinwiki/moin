@@ -455,7 +455,7 @@ class NodeVisitor(object):
             self.close_moin_page_node()
             return
 
-        refuri = refuri if allowed_uri_scheme(refuri) else None
+        refuri = refuri if allowed_uri_scheme(refuri) else ''
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
     def depart_reference(self, node):

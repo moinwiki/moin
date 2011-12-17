@@ -360,7 +360,7 @@ class Converter(object):
         if self.base_url:
             attrib[key] = ''.join([self.base_url, href])
         else:
-            attrib[key] = href if allowed_uri_scheme(href) else None
+            attrib[key] = href if allowed_uri_scheme(href) else ''
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):
