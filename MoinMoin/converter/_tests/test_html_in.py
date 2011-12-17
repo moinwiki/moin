@@ -175,6 +175,9 @@ class TestConverter(Base):
             ('<html><base href="http://www.base-url.com/" /><body><div><p><a href="myPage.html">Test</a></p></div></body></html>',
               # <page><body><div><p><a xlink:href="http://www.base-url.com/myPage.html">Test</a></p></div></body></page>
               '/page/body/div/p/a[@xlink:href="http://www.base-url.com/myPage.html"]'),
+            ('<html><p><a href="javascript:alert(\'hi\')">Test</a></p></html>',
+              # <page><body><p><a xlink:href>Test</a></p></body></page>
+                '/page/body/p/a[text()="Test"][@xlink:href=""]'),
         ]
         for i in data:
             yield (self.do, ) + i
