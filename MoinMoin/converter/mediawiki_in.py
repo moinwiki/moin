@@ -648,7 +648,7 @@ class Converter(ConverterMacro):
             text = link_url
         if external_link_url:
             target = Iri(external_link_url)
-            text = alt_text if alt_text else external_link_url
+            text = alt_text
         element = moin_page.a(attrib={xlink.href: target})
         stack.push(element)
         if link_text:

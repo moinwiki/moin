@@ -37,6 +37,7 @@ class TestConverter(object):
             (u'**Text**', '<page><body><p><strong>Text</strong></p></body></page>' ),
             (u'*Text*', '<page><body><p><emphasis>Text</emphasis></p></body></page>' ),
             (u'``Text``', '<page><body><p><code>Text</code></p></body></page>' ),
+            (u"`Text <javascript:alert('xss')>`_", u'<page><body><p><a xlink:href="">Text</a></p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
