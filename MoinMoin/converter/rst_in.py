@@ -29,7 +29,7 @@ from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
-from ._util import decode_data, normalize_split_text
+from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 #### TODO: try block (do not crash if we don't have docutils)
 pytest.importorskip('docutils')
@@ -455,6 +455,7 @@ class NodeVisitor(object):
             self.close_moin_page_node()
             return
 
+        refuri = refuri if allowed_uri_scheme(refuri) else None
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
     def depart_reference(self, node):
