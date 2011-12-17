@@ -37,10 +37,10 @@ class TestMonitor(object):
         Monitor_test_obj = Monitor()
         # activate the hook first
         Monitor_test_obj.activate_hook()
-        f = open(self.src, "w")
-        result = Monitor_test_obj.trigger_dump(f)
+        with open(self.src, "w") as f:
+            result = Monitor_test_obj.trigger_dump(f)
         # read the content of first line
-        f = open(self.src, "r")
-        f.seek(1)
-        assert 'Dumping thread' in f.readline()
+        with open(self.src, "r") as f:
+            f.seek(1)
+            assert 'Dumping thread' in f.readline()
 
