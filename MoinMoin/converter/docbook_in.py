@@ -27,7 +27,7 @@ from MoinMoin import wikiutil
 from MoinMoin.util.tree import moin_page, xlink, docbook, xml, html
 
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text
+from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 
 class NameSpaceError(Exception):
@@ -641,7 +641,7 @@ class Converter(object):
         """
         attrib = {}
         for key, value in element.attrib.iteritems():
-            if key.uri == xlink:
+            if key.uri == xlink and allowed_uri_scheme(value):
                 attrib[key] = value
         linkend = element.get('linkend')
         if linkend:
@@ -669,7 +669,7 @@ class Converter(object):
         """
         targetdoc = element.get('targetdoc')
         targetptr = element.get('targetptr')
-        if targetdoc and targetptr:
+        if targetdoc and targetptr and allowed_uri_scheme(targetdoc):
             attrib = {}
             attrib[xlink.href] = ''.join([targetdoc, '#', targetptr])
             return self.new_copy(moin_page.a, element,
@@ -984,7 +984,7 @@ class Converter(object):
         # The namespace does not always work, so we will try to retrive the attribute whatever
         if not(href):
             for key, value in element.attrib.iteritems():
-                if key.name == 'url':
+                if key.name == 'url' and allowed_uri_scheme(value):
                     href = value
         key = xlink.href
         attrib[key] = href
