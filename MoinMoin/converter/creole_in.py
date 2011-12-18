@@ -495,13 +495,13 @@ class Converter(ConverterMacro):
             (^ | (?<=\s | [.,:;!?()/=]))
             (?P<escaped_url>~)?
             (?P<url_target>
-                (%(url_schemas)s)
+                (%(uri_schemes)s)
                 :
                 \S+?
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """ % dict(url_schemas='|'.join(config.url_schemas))
+    """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""
