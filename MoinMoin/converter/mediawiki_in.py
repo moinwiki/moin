@@ -584,7 +584,7 @@ class Converter(ConverterMacro):
             \[
             \s*
             (?P<external_link_url>
-                    [a-zA-Z0-9+.-]+
+                    (%(uri_schemes)s)
                     :
                     [^ ]*
             )
@@ -593,7 +593,7 @@ class Converter(ConverterMacro):
             \s*
             \]
         )
-    """
+    """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
                             link_args=None, external_link_url=None, alt_text=''):
@@ -627,7 +627,7 @@ class Converter(ConverterMacro):
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:
-                    target = Iri(object_url)
+                    target = Iri(scheme='wiki.local', path=object_url)
                     text = object_url
 
                 attrib = {xlink.href: target}
@@ -644,7 +644,7 @@ class Converter(ConverterMacro):
                     stack.top_append(text)
                 stack.pop()
                 return
-            target = Iri(link_url)
+            target = Iri(scheme='wiki.local', path=link_url)
             text = link_url
         if external_link_url:
             target = Iri(external_link_url)
