@@ -8,13 +8,13 @@ MoinMoin - converter utilities
 
 from __future__ import absolute_import, division
 
-from MoinMoin.config import url_schemas
+from MoinMoin.config import uri_schemes
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type
 
 def allowed_uri_scheme(uri):
     parsed = Iri(uri)
-    return not parsed.scheme or parsed.scheme in url_schemas
+    return not parsed.scheme or parsed.scheme in uri_schemes
 
 def decode_data(data, contenttype=None):
     """

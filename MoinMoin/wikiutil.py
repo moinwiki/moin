@@ -240,18 +240,18 @@ def getUnicodeIndexGroup(name):
         return c.upper() # we put lower and upper case words into the same index group
 
 
-def is_URL(arg, schemas=config.url_schemas):
-    """ Return True if arg is a URL (with a schema given in the schemas list).
+def is_URL(arg, schemes=config.uri_schemes):
+    """ Return True if arg is a URL (with a scheme given in the schemes list).
 
         Note: there are not that many requirements for generic URLs, basically
-        the only mandatory requirement is the ':' between schema and rest.
-        Schema itself could be anything, also the rest (but we only support some
-        schemas, as given in config.url_schemas, so it is a bit less ambiguous).
+        the only mandatory requirement is the ':' between scheme and rest.
+        Scheme itself could be anything, also the rest (but we only support some
+        schemes, as given in config.uri_schemes, so it is a bit less ambiguous).
     """
     if ':' not in arg:
         return False
-    for schema in schemas:
-        if arg.startswith(schema + ':'):
+    for scheme in schemes:
+        if arg.startswith(scheme + ':'):
             return True
     return False
 

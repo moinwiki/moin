@@ -37,7 +37,7 @@ for c in u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f' \
 del c
 
 # Other stuff
-url_schemas = ['http', 'https', 'ftp', 'file',
+uri_schemes = ['http', 'https', 'ftp', 'file',
                'mailto', 'nntp', 'news',
                'ssh', 'telnet', 'irc', 'ircs', 'xmpp', 'mumble',
                'webcal', 'ed2k', 'apt', 'rootz',
