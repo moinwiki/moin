@@ -36,6 +36,8 @@ class TestConverter(object):
                 '<page><body><p>Text</p><p>Test</p></body></page>'),
             (u'[[http://moinmo.in/]]',
                 '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
+            (u'[[javascript:alert("xss")]]',
+                '<page><body><p><a xlink:href="wiki.local:javascript:alert%28%22xss%22%29">javascript:alert("xss")</a></p></body></page>'),
             (u'[[http://moinmo.in/|MoinMoin]]',
                 '<page><body><p><a xlink:href="http://moinmo.in/">MoinMoin</a></p></body></page>'),
             (u'[[MoinMoin]]',

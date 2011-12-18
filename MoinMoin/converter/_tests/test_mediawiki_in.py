@@ -45,7 +45,8 @@ class TestConverter(object):
 ====level 4====
 =====level 5=====
 ======level 6======
-""", u'<page><body><h outline-level="1">level 1</h><h outline-level="2">level 2</h><h outline-level="3">level 3</h><h outline-level="4">level 4</h><h outline-level="5">level 5</h><h outline-level="6">level 6</h></body></page>')
+""", u'<page><body><h outline-level="1">level 1</h><h outline-level="2">level 2</h><h outline-level="3">level 3</h><h outline-level="4">level 4</h><h outline-level="5">level 5</h><h outline-level="6">level 6</h></body></page>'),
+            (u"[javascript:alert('xss')]", "<page><body><p>[javascript:alert('xss')]</p></body></page>"),
         ]
         for i in data:
             yield (self.do, ) + i

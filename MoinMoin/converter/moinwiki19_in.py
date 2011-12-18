@@ -129,7 +129,7 @@ class ConverterFormat19(Converter):
                 )
             )
             (?P<url_target>
-                (%(url_schemas)s):
+                (%(uri_schemes)s):
                 \S+?
             )
             (
@@ -143,7 +143,7 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """ % dict(url_schemas='|'.join(config.url_schemas))
+    """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)

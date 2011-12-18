@@ -24,7 +24,7 @@ from MoinMoin import wikiutil
 from MoinMoin.util.tree import html, moin_page, xlink, xml
 
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text
+from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 
 class Converter(object):
@@ -356,10 +356,14 @@ class Converter(object):
         """
         key = xlink('href')
         attrib = {}
+        href = element.get(html.href)
         if self.base_url:
-            attrib[key] = ''.join([self.base_url, element.get(html.href)])
+            attrib[key] = ''.join([self.base_url, href])
         else:
-            attrib[key] = element.get(html.href)
+            if allowed_uri_scheme(href):
+                attrib[key] = href
+            else:
+                return href
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):
