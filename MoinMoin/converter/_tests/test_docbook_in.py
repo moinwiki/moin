@@ -272,6 +272,10 @@ class TestConverter(Base):
             ('<article><para><olink targetdoc="uri" targetptr="anchor">link</olink></para></article>',
             # <page><body><div html:class="article"><para><a xlink:href="uri#anchor">link</a></para></div></body></page>
              '/page/body/div/p/a[@xlink:href="uri#anchor"][text()="link"]'),
+            # Link w/ javascript: scheme
+            ('<article><para><ulink url="javascript:alert(\'xss\')">link</ulink></para></article>',
+            # <page><body><div html:class="article"><p><a xlink:href="url:test">link</a></p></div></body></page>
+             '/page/body/div/p/a[@xlink:href=""][text()="link"]'),
         ]
         for i in data:
             yield (self.do, ) + i

@@ -752,7 +752,7 @@ class Converter(ConverterMacro):
             \s*
             (
                 (?P<link_url>
-                    (%(url_schemas)s):
+                    (%(uri_schemes)s):
                     [^|]+?
                 )
                 |
@@ -779,7 +779,7 @@ class Converter(ConverterMacro):
             )?
             \]\]
         )
-    """ % dict(url_schemas='|'.join(config.url_schemas))
+    """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
             link_text=None, link_args=None,
