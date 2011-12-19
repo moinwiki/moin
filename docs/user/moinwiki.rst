@@ -8,7 +8,7 @@
 Moin Wiki markup overview
 ==========================
 
-The report follows moin 1.9 help page and reports syntaxes that do not verify 1.9 help syntax documentation.
+The report follows the moin 1.9 help page and reports syntaxes that do not match 1.9 help syntax documentation.
 The structure and order has been matched with other markup rst files namely creoleWiki.rst and mediaWiki.rst at http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
 
 Features currently not working with moin's Wiki parser are marked with **MOINTODO**.

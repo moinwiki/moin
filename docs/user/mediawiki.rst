@@ -29,7 +29,7 @@ Headings
 Level 1
 =======
 
-**Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+**Intentionally not rendered as level 1 so it does not interfere with Sphinx's indexing**
 
 Level 2
 =======
@@ -49,7 +49,7 @@ Level 6
 Text formatting
 ===============
 
-These markups can be used within text to apply character styles.
+These markups can be used within text to apply character style.
 
 +------------------------------------+------------------------------------+
 | Markup                             | Result                             |
@@ -77,7 +77,7 @@ These markups can be used within text to apply character styles.
 +------------------------------------+------------------------------------+
 
 **SPHINXTODO**
-following css is needed to display bold&italic, underline and strikethrough correctly: ::
+The following css is needed to display formatted text correctly: ::
 
  span.underline { text-decoration: underline; }
  span.strikethrough { text-decoration: line-through; }
