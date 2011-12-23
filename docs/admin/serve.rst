@@ -82,4 +82,3 @@ When the test app starts doing something other than Server Error 500, please
 proceed with the MoinMoin app and its configuration.
 Otherwise, read your web server error log files.
 
-Apache users may wish to look at the example virtual host configuration file in `docs/examples/deployment/moin.conf`.

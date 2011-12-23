@@ -424,7 +424,7 @@ username (like with german umlauts or accented characters). If moin does not
 crash (log a Unicode Error), you have likely found the correct coding.
 
 For users configuring GivenAuth on Apache, an example virtual host configuration
-file is included with MoinMoin in `docs/examples/deployment/moin.conf`.
+file is included with MoinMoin in `docs/examples/deployment/moin-http-basic-auth.conf`.
 
 OpenID
 ------
