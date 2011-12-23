@@ -423,6 +423,9 @@ To try it out, change configuration, restart moin and then use some non-ASCII
 username (like with german umlauts or accented characters). If moin does not
 crash (log a Unicode Error), you have likely found the correct coding.
 
+For users configuring GivenAuth on Apache, an example virtual host configuration
+file is included with MoinMoin in `docs/examples/deployment/moin-http-basic-auth.conf`.
+
 OpenID
 ------
 With OpenID moin can re-use the authentication done by some OpenID provider
