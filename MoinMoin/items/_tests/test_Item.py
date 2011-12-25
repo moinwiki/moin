@@ -405,8 +405,8 @@ class TestTransformableBitmapImage(object):
             # The assert statement works with both older and newer versions of Werkzeug
             # Probably not an intentional change on the werkzeug side, see issue:
             # https://github.com/mitsuhiko/werkzeug/issues/146
-            assert True in [str(result).startswith('<img src="/+diffraw/image_Item?rev'),
-                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')]
+            assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or \
+                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')
         except ImportError:
             # no PIL
             pass
