@@ -401,7 +401,12 @@ class TestTransformableBitmapImage(object):
         try:
             from PIL import Image as PILImage
             result = TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev)
-            assert str(result).startswith('<img src="/+diffraw/image_Item?rev')
+            # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
+            # The assert statement works with both older and newer versions of Werkzeug
+            # Probably not an intentional change on the werkzeug side, see issue:
+            # https://github.com/mitsuhiko/werkzeug/issues/146
+            assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or \
+                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')
         except ImportError:
             # no PIL
             pass
