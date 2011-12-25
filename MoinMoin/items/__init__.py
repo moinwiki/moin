@@ -158,6 +158,8 @@ class DummyItem(object):
         self.name = name
     def list_revisions(self):
         return [] # same as an empty Item
+    def destroy_all_revisions(self):
+        return True
 
 
 class Item(object):
