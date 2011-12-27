@@ -8,8 +8,6 @@ Features currently not working with moin's WikiCreole parser are marked with **C
 
 Features currently not working with moin's rst parser are marked with **RSTTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
 Headings
 ========
 
@@ -66,13 +64,6 @@ The following is a table of inline markup that can be used to format text in Cre
 | ``First line\\Second line``         | | First line                          |
 |                                     | | Second line                         | 
 +-------------------------------------+---------------------------------------+
-
-**SPHINXTODO** **RSTTODO**: Restructured Text cannot be both **bold** and *italic*. This is because bold and italic are simply
-treated as different levels of emphasis. It should be noted that this is a problem with the spec rather than Sphinx or Moin itself.
-
-It requires the following CSS to rectify: ::
-
-   .bolditalic{font-weight:bold;font-style:italic;}
 
 **RSTTODO**: Restructured Text line blocks are not working in Moin2
 

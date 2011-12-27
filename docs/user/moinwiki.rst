@@ -13,11 +13,6 @@ The structure and order has been matched with other markup rst files namely creo
 
 Features currently not working with moin's Wiki parser are marked with **MOINTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
-
-**SPHINXTODO CSS**, the tables seem to have missing borders despite of the fact that the rst markup is correct.
-
 Table Of Contents
 =================
 
@@ -95,9 +90,6 @@ The following is a table of inline markup that can be used to control text forma
 +-------------------------------------+---------------------------------------+
 | ``--(Stroke)--``                    | :strikethrough:`Stroke`               |
 +-------------------------------------+---------------------------------------+
-
-**Notes**:
- - **SPHINXTODO** Superscript, subscript and underline are not working in rst.
 
 Hyperlinks
 ==========
@@ -226,6 +218,7 @@ Unordered Lists
    
 **Note**:
  - moin markup allows a square, white and a bulletless item for unordered lists, these cannot be chosen in rst
+ - One or more blank lines are required before and after lists using the Moin Wiki syntax.
 
 Ordered Lists
 ---------------
@@ -290,11 +283,6 @@ With Letters
    
  B. item 2
    
-**Notes**:
- - **SPHINXTODO** sphinx will remove the first space before every list item.
- - Moin increases the order number/roman/letter automaticaly. rst does not do any such thing, so i have to manually increase them here.
- - even the base level item has to have a space in the begining
-
 Definition Lists
 ================
 
@@ -347,7 +335,7 @@ Cell Width
 
 **Notes**:
  - **MOINTODO:** the cell width does not work in moin 2.
- - **SPHINXTODO** rst does not support percentage cell width so cell has been made long manually
+ - reStructuredText does not support percentage cell width so cell has been made long manually. In MoinMoin the second cell will take up the maximum amount of horizontal space.
 
 Spanning Rows and Columns
 -------------------------
@@ -394,7 +382,7 @@ Alignment of Cell Contents
 +----------------+---------------------------------------+-------------------+
 
 **Notes**:
- - **SPHINXTODO** bottom align cannot be shown in rst.
+ - Text cannot be aligned in reStructuredText, but the text will appear as is described when used in MoinMoin.
 
 HTML-like Options for Tables
 ----------------------------
@@ -478,13 +466,15 @@ Syntax Highlighting
     print "Hello World!"
  }}}
  
-**Result**: ::
+**Result**:
 
- ---
- 
+.. code-block:: python
+
+    def hello():
+        print "Hello, world!"
+
 **Notes**:
  - The syntax crashes moin2.
- - **SPHINXTODO** The html required for the syntax box cannot be shown in rst.
 
 Using the wiki parser with css classes
 --------------------------------------
@@ -502,7 +492,7 @@ Using the wiki parser with css classes
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 **Notes**:
- - **SPHINXTODO** The div cannot be shown in rst, so a table cell has been made to imitate it.
+ - The div cannot be shown in reStructuredText, so a table cell has been made to demonstrate the border produced. In MoinMoin, this border will appear red.
 
 Admonitions
 -----------
@@ -517,10 +507,10 @@ Admonitions
  
 **Result**:
 
----
+.. warning::
+    **Don't overuse admonitions**
 
-**Notes**:
- - **SPHINXTODO** The Admonition cannot be shown in rst.
+    Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
 
 Comments
 --------
@@ -535,8 +525,12 @@ Comments
  
 **Result**:
 
----
++--------------------------------------------------------------------------------+
+| This is a wiki parser section with class "comment dotted" (see HelpOnParsers). |
+|                                                                                |
+| Its visibility gets toggled the same way.                                      |
++--------------------------------------------------------------------------------+
 
 **Notes**:
- - **SPHINXTODO** The wiki parser section with class "comment dotted" cannot be shown in rst.
+ - reStructuredText has no support for dotted borders, so a table cell is used to illustrate the border which will be produced. This markup will actually produce a dotted border in MoinMoin.
  - The toggle display feature does not work yet
