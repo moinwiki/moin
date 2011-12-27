@@ -34,11 +34,3 @@ table.docutils td {
     border-width: 1px;
     border-color: #AAAAAA;
 }
-
-.border-red {
-    border-color: red;
-}
-
-.border-dotted {
-    border-style: dotted;
-}
