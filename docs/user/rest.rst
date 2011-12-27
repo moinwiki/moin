@@ -6,11 +6,6 @@ The report gives reST syntax documentation. The structure and order has been mat
 
 Features currently not working with moin's Wiki parser are marked with **RSTTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
-
-**SPHINXTODO CSS**, The tables are missing borders despite the fact that the rst markup is correct.
-
 Headings
 ========
 
@@ -224,8 +219,7 @@ Ordered Lists
    
 **Notes**:
  - The order and the numbering agent have to be maintained by the user. Any character can be used to number the items (e.g. a/A or i/I).
- - **SPHINXTODO** sphinx will remove the first space before every list item.
- - even the base level item has to have a space in the beginning
+ - One or more blank lines are required before and after reStructuredText lists.
 
 Definition Lists
 ================

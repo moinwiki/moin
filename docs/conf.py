@@ -97,6 +97,11 @@ modindex_common_prefix = ['MoinMoin.', ]
 # a list of builtin themes.
 html_theme = 'default'
 
+# The style sheet to use for HTML pages. A file of that name must exist either
+# in Sphinx’ static/ path, or in one of the custom paths given in
+# html_static_path. Default is the stylesheet given by the selected theme.
+html_style = 'custom.css'
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
