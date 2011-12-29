@@ -298,8 +298,12 @@ Definition Lists
  term
   definition
  object
-  description 1
-  description 2
+  | description 1
+  | description 2
+
+**Notes**:
+ - reStructuredText does not support multiple definitions for a single term, so a line break has been forced to illustrate the appearance of several definitions.
+   Using the prescribed Moin Wiki markup will, in fact, produce two separate definitions in MoinMoin (using separate ``<dd>`` tags).
   
 Tables
 ======
