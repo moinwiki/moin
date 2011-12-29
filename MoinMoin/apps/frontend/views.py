@@ -496,7 +496,7 @@ def delete_item(item_name):
             try:
                 item.delete(comment)
             except AccessDenied:
-                abort (403)
+                abort(403)
             return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
