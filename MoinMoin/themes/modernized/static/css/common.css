@@ -163,6 +163,16 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .moin-form dd input { width: 20em; }
 .moin-form dt label.required:after { content: '*'; color: gray; }
 
+/* tabs on user settings page */
+.moin-tab-titles { margin: 0; padding: -10px 0 0; list-style: none; border-bottom: 3px solid #4D7DA9; }
+.moin-tab-titles li { display: inline-block; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4D7DA9; }
+.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #81BBF2; border-width: 1px 1px 0;
+            border-style: solid; border-color: #4D7DA9; color: #222 !important; }
+.moin-tab-titles a:hover { background-color: #4D7DA9; text-decoration: none; }
+.moin-tab-titles a.current { background: #4D7DA9; padding-top: 8px; margin-top: -4px; }
+.moin-tab-titles .change-indicator { font-weight: bold; color: #D22; }
+.moin-tab-title a { color: #000 !important; text-decoration: none !important; }
+
 /* Recent changes */
 .rcrss { float: right; margin: 0 7px 0 14px; height: 0; position: relative; top: 9px; }
 .recentchanges table { clear: both; border-collapse: collapse; border: 1px solid #4D7DA9; }

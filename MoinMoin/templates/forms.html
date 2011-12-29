@@ -51,6 +51,14 @@ Helpers for using flatland with jinja2 to create html forms.
   </dd>
 {% endmacro %}
 
+{% macro render_hidden(name, value) %}
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+{% endmacro %}
+
+{% macro render_button(text) %}
+  <button>{{ text }}</button>
+{% endmacro %}
+
 {% macro render_textcha(gen, form) %}
     {% if form.textcha_question.value %}
     <dt>

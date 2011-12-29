@@ -983,3 +983,137 @@ function linkSubitem(subitem_name, fullname) {
     input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
     input_element.focus();
 }
+
+function initMoinTabs($) {
+    "use strict";
+    // find all .moin-tabs elements and initialize them
+    $('.moin-tabs').each(function () {
+        var tabs = $(this),
+            titles = $(document.createElement('ul')),
+            lastLocationHash;
+        titles.addClass('moin-tab-titles');
+
+        // switching between tabs based on the current location hash
+        function updateFromLocationHash() {
+            if (location.hash !== undefined && location.hash !== '' && tabs.children(location.hash).length) {
+                if (location.hash !== lastLocationHash) {
+                    lastLocationHash = location.hash;
+                    tabs.children('.moin-tab-body').hide();
+                    tabs.children(location.hash).show();
+                    titles.children('li').children('a').removeClass('current');
+                    titles.children('li').children('a[href="' + location.hash + '"]').addClass('current');
+                }
+            } else {
+                $(titles.children('li').children('a')[0]).click();
+            }
+        }
+
+        // move all tab titles to an <ul> at the beginning of .moin-tabs
+        tabs.children('.moin-tab-title').each(function () {
+            var li = $(document.createElement('li')),
+                a = $(this).children('a');
+            a.click(function () {
+                location.hash = this.hash;
+                updateFromLocationHash();
+                return false;
+            });
+            li.append(a);
+            titles.append(li);
+            $(this).remove();
+        });
+        tabs.prepend(titles);
+
+        updateFromLocationHash();
+        setInterval(updateFromLocationHash, 40); // there is no event for that
+    });
+}
+
+jQuery(document).ready(initMoinTabs);
+
+function initMoinUsersettings($) {
+    "use strict";
+    // save initial values of each form
+    $('#moin-usersettings form').each(function () {
+        $(this).data('initialForm', $(this).serialize());
+    });
+
+    // check if any changes were made
+    function changeHandler(ev) {
+        var form = $(ev.currentTarget),
+            title = $('.moin-tab-titles a.current', form.parentsUntil('.moin-tabs').parent()),
+            e;
+        if (form.data('initialForm') === form.serialize()) {
+            // current values are identicaly to initial ones, remove all change indicators (if any)
+            $('.change-indicator', title).remove();
+        } else {
+            // the values differ
+            if (!$('.change-indicator', title).length) {
+                // only add a change indicator if there none
+                e = $(document.createElement('span'));
+                e.addClass('change-indicator');
+                e.text('*');
+                title.append(e);
+            }
+        }
+    }
+    $('#moin-usersettings form').change(changeHandler);
+
+    function submitHandler(ev) {
+        var form = $(ev.target),
+            button = $('button', form),
+            buttonBaseText = button.html(),
+            buttonDotList = [' .&nbsp;&nbsp;', ' &nbsp;.&nbsp;', ' &nbsp;&nbsp;.'],
+            buttonDotIndex = 0,
+            buttonDotAnimation;
+
+        // disable the button
+        button.attr('disabled', true);
+
+        // remove change indicators from the current tab as we are now saving it
+        $('.moin-tab-titles a.current .change-indicator',
+                form.parentsUntil('.moin-tabs').parent()).remove();
+
+        // animate the submit button to indicating a running request
+        function buttonRunAnimation() {
+            button.html(buttonBaseText + buttonDotList[buttonDotIndex % buttonDotList.length]);
+            buttonDotIndex += 1;
+        }
+        buttonDotAnimation = setInterval(buttonRunAnimation, 500);
+        buttonRunAnimation();
+
+        // send the form to the server
+        $.post(form.attr('action'), form.serialize(), function (data) {
+            var i, f, newform;
+            clearInterval(buttonDotAnimation);
+            // if the response indicates a redirect, set the new location
+            if (data.redirect) {
+                location.href = data.redirect;
+                return;
+            }
+            // remove all flash messages previously added via javascript
+            $('#moin-header .moin-flash-javascript').remove();
+            // add new flash messages from the response
+            for (i = 0; i < data.flash.length; i += 1) {
+                f = $(document.createElement('p'));
+                f.html(data.flash[i][0]);
+                f.addClass('moin-flash');
+                f.addClass('moin-flash-javascript');
+                f.addClass('moin-flash-' + data.flash[i][1]);
+                $('#moin-header').append(f);
+            }
+            // get the new form element from the response
+            newform = $(data.form);
+            // set event handlers on the new form
+            newform.submit(submitHandler);
+            newform.change(changeHandler);
+            // store the forms initial data
+            newform.data('initialForm', newform.serialize());
+            // replace the old form with the new one
+            form.replaceWith(newform);
+        }, 'json');
+        return false;
+    }
+    $('#moin-usersettings form').submit(submitHandler);
+}
+
+jQuery(document).ready(initMoinUsersettings);
