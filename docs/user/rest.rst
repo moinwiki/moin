@@ -201,24 +201,25 @@ Ordered Lists
 
  1. item 1
  
-   1. item 1.1
+    1. item 1.1
+    #. item 1.2
    
-   2. item 1.2
-   
- 2. item 2
+ #. item 2
 
 **Result**:
 
  1. item 1
  
-   1. item 1.1
+    1. item 1.1
+    #. item 1.2
    
-   2. item 1.2
-   
- 2. item 2
+ #. item 2
    
 **Notes**:
- - The order and the numbering agent have to be maintained by the user. Any character can be used to number the items (e.g. a/A or i/I).
+ - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
+   auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
+   (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
+   enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
 
 Definition Lists
