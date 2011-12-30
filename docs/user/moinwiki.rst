@@ -223,7 +223,6 @@ Unordered Lists
    
 **Note**:
  - moin markup allows a square, white and a bulletless item for unordered lists, these cannot be chosen in rst
- - One or more blank lines are required before and after lists using the Moin Wiki syntax.
 
 Ordered Lists
 ---------------
