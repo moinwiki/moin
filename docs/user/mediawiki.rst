@@ -10,8 +10,6 @@ Features currently not working with moin's mediawiki parser are marked with **MW
 
 Features currently not working with moin's rst parser are marked with **RSTTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
 Headings
 ========
 
@@ -75,13 +73,6 @@ These markups can be used within text to apply character style.
 | | ``<pre>Preformatted text``       | | ``Preformatted text``            |
 | | ``without '''markups'''</pre>``  | | ``without '''markups'''``        |
 +------------------------------------+------------------------------------+
-
-**SPHINXTODO**
-The following css is needed to display formatted text correctly: ::
-
- span.underline { text-decoration: underline; }
- span.strikethrough { text-decoration: line-through; }
- span.bolditalic { font-weight: bold; font-style: italic; }
 
 **RSTTODO**
 table headers are not formatted as headers
