@@ -1,12 +1,19 @@
 #!/bin/bash
 # create a virtual environment in directory $DIR/
+#
 # set PYTHON environment variable to change the python version
+# set DIR environment variable to change the virtual env directory
 # set VIRTUALENV environment variable to change the virtualenv command
-# for example: PYTHON=/usr/bin/pypy ./quickinstall
+# for example: PYTHON=/usr/bin/pypy DIR=env-pypy ./quickinstall
+#
 # needs: virtualenv, pip
 
-DIR=env
 DLC=dlc
+
+# if DIR is not given, use ./env
+if [ -z "$DIR" ]; then
+    DIR=env
+fi
 
 # find the right python version
 if [ -z "$PYTHON" ]; then
