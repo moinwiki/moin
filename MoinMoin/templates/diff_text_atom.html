@@ -1,0 +1,30 @@
+{% import "utils.html" as utils %}
+
+{% macro show_meta(rev) %}
+    <div class="moin-diff-info moin-diff-info-rev-id">
+        <span class="moin-diff-info-caption">Revision:</span>
+        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
+    </div>
+{% endmacro %}
+
+<table class="moin-diff" style="width: 100%;">
+    <tr>
+        <td class="moin-diff-header-line" style="width: 3%;">
+        </td>
+        <td class="moin-diff-header" style="width: 47%;">
+            {{ show_meta(oldrev) }}
+        </td>
+        <td class="moin-diff-header-line" style="width: 3%;">
+        </td>
+        <td class="moin-diff-header" style="width: 47%;">
+            {{ show_meta(newrev) }}
+        </td>    </tr>
+    {% for llineno, lcontent, rlineno, rcontent in diffs %}
+        <tr>
+            <td style="vertical-align: top;"><a href="#{{ llineno }}">{{ llineno }}:</a></td>
+            <td class="moin-diff-removed" style="vertical-align: top; background-color: lightYellow; word-wrap: break-word;">{{ lcontent }}</td>
+            <td style="vertical-align: top;"><a href="#{{ rlineno }}">{{ rlineno }}:</a></td>
+            <td class="moin-diff-added" style="vertical-align: top; background-color: #E0FFE0; word-wrap: break-word;">{{ rcontent }}</td>
+        </tr>
+    {% endfor %}
+</table>

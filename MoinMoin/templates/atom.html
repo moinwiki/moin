@@ -1,0 +1,7 @@
+{%- if get == 'xml' -%}
+    <?xml-stylesheet type="text/xsl" href="{{ theme_static('atom.xslt') }}"?>
+{%- elif get == 'comment_cont_merge' -%}
+    <p style="font-size: 14px">...{{ comment }}</p> <br /> {{ content }}
+{%- elif get == 'first_revision' -%}
+    <p style='font-style: italic;'>{{ _('First revision') }}</p><br />{{ content }}
+{%- endif -%}
