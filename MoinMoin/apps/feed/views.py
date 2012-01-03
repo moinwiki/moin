@@ -96,7 +96,7 @@ def atom(item_name):
                      updated=datetime.fromtimestamp(rev.meta[MTIME]),
                     )
         content = feed.to_string()
-        # Hack to add XSLT stylesheet declaration since AtomFeed doens't allow this
+        # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
         content = content.split("\n")
         content.insert(1, render_template('atom.html', get='xml'))
         content = "\n".join(content)

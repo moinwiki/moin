@@ -737,7 +737,7 @@ There is no help, you're doomed!
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
     _render_data_diff_atom = _render_data_diff
-    
+
     def _convert(self, doc):
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
@@ -1112,7 +1112,7 @@ class Text(Binary):
     def data_storage_to_internal(self, data):
         """ convert data from storage format to memory format """
         return data.decode(config.charset).replace(u'\r\n', u'\n')
- 
+
     def _get_data_diff_html(self, oldrev, newrev, template):
         from MoinMoin.util.diff_html import diff
         old_text = self.data_storage_to_internal(oldrev.data.read())
@@ -1125,14 +1125,14 @@ class Text(Binary):
                                newrev=newrev,
                                diffs=diffs,
                                )
-                               
+
     def _render_data_diff_atom(self, oldrev, newrev):
         """ renders diff in HTML for atom feed """
         return self._get_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
 
     def _render_data_diff(self, oldrev, newrev):
         return Markup(self._get_data_diff_html(oldrev, newrev, 'diff_text.html'))
-                                      
+
     def _render_data_diff_text(self, oldrev, newrev):
         from MoinMoin.util import diff_text
         oldlines = self.data_storage_to_internal(oldrev.data.read()).split('\n')
