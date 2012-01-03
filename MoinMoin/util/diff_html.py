@@ -53,8 +53,8 @@ def diff(old, new):
             lastmatch = (match[0] + match[2], match[1] + match[2])
             continue
         llineno, rlineno = lastmatch[0]+1, lastmatch[1]+1
-        leftpane = ''
-        rightpane = ''
+        leftpane = u''
+        rightpane = u''
         linecount = max(match[0] - lastmatch[0], match[1] - lastmatch[1])
         for line in range(linecount):
             if line < match[0] - lastmatch[0]:
@@ -72,33 +72,33 @@ def diff(old, new):
         if charobj.ratio() < 0.5:
             # Insufficient similarity.
             if leftpane:
-                leftresult = """<span>{0}</span>""".format(indent(escape(leftpane)))
+                leftresult = u"""<span>{0}</span>""".format(indent(escape(leftpane)))
             else:
-                leftresult = ''
+                leftresult = u''
 
             if rightpane:
-                rightresult = """<span>{0}</span>""".format(indent(escape(rightpane)))
+                rightresult = u"""<span>{0}</span>""".format(indent(escape(rightpane)))
             else:
-                rightresult = ''
+                rightresult = u''
         else:
             # Some similarities; markup changes.
             charlast = (0, 0)
 
-            leftresult = ''
-            rightresult = ''
+            leftresult = u''
+            rightresult = u''
             for thismatch in charmatch:
                 if thismatch[0] - charlast[0] != 0:
-                    leftresult += """<span>{0}</span>""".format(indent(
+                    leftresult += u"""<span>{0}</span>""".format(indent(
                         escape(leftpane[charlast[0]:thismatch[0]])))
                 if thismatch[1] - charlast[1] != 0:
-                    rightresult += """<span>{0}</span>""".format(indent(
+                    rightresult += u"""<span>{0}</span>""".format(indent(
                         escape(rightpane[charlast[1]:thismatch[1]])))
                 leftresult += escape(leftpane[thismatch[0]:thismatch[0] + thismatch[2]])
                 rightresult += escape(rightpane[thismatch[1]:thismatch[1] + thismatch[2]])
                 charlast = (thismatch[0] + thismatch[2], thismatch[1] + thismatch[2])
 
-        leftpane = '<br>'.join([indent(x) for x in leftresult.splitlines()])
-        rightpane = '<br>'.join([indent(x) for x in rightresult.splitlines()])
+        leftpane = u'<br>'.join([indent(x) for x in leftresult.splitlines()])
+        rightpane = u'<br>'.join([indent(x) for x in rightresult.splitlines()])
         result.append((llineno, leftpane, rlineno, rightpane))
 
         lastmatch = (match[0] + match[2], match[1] + match[2])
