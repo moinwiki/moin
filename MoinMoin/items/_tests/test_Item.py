@@ -400,7 +400,7 @@ class TestTransformableBitmapImage(object):
         item1 = Binary.create(item_name)
         try:
             from PIL import Image as PILImage
-            result = TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev)
+            result = Markup(TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev))
             # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
             # The assert statement works with both older and newer versions of Werkzeug
             # Probably not an intentional change on the werkzeug side, see issue:

@@ -1131,7 +1131,7 @@ class Text(Binary):
         return self._get_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
 
     def _render_data_diff(self, oldrev, newrev):
-        return Markup(self._get_data_diff_html(oldrev, newrev, 'diff_text.html'))
+        return self._get_data_diff_html(oldrev, newrev, 'diff_text.html')
 
     def _render_data_diff_text(self, oldrev, newrev):
         from MoinMoin.util import diff_text
