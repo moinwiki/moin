@@ -455,6 +455,23 @@ class TestText(object):
         expected = test_text
         assert result == expected
 
+    def test__render_data_diff(self):
+        # Test for HTML render with Unicode text
+        item_name = u'Html_Item'
+        item = Text.create(item_name)
+        contenttype = u'text/html;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta, u'<span></span>')
+        item1 = Text.create(item_name)
+        data = u'<span>한국어</span>'
+        comment = u'next revision'
+        item1._save(meta, data, comment=comment)
+        item2 = Text.create(item_name)
+        result = Text._render_data_diff(item1, item1.rev, item2.rev)
+        expected = u'<span>한국어</span>'
+        assert expected in result
+        assert item2.data == ''
+
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
         item = Text.create(item_name)
