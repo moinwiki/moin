@@ -11,6 +11,8 @@ import pytest
 
 from flask import g as flaskg
 
+from werkzeug import escape
+
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
@@ -458,19 +460,18 @@ class TestText(object):
     def test__render_data_diff(self):
         # Test for HTML render with Unicode text
         item_name = u'Html_Item'
-        item = Text.create(item_name)
         contenttype = u'text/html;charset=utf-8'
+        empty_html = u'<span></span>'
+        html = u'<span>한국어</span>'
         meta = {CONTENTTYPE: contenttype}
-        item._save(meta, u'<span></span>')
-        item1 = Text.create(item_name)
-        data = u'<span>한국어</span>'
-        comment = u'next revision'
-        item1._save(meta, data, comment=comment)
-        item2 = Text.create(item_name)
-        result = Text._render_data_diff(item1, item1.rev, item2.rev)
-        expected = u'<span>한국어</span>'
+        item = Text.create(item_name)
+        item._save(meta, empty_html)
+        item = Text.create(item_name)
+        rev1 = update_item(item_name, meta, html)
+        rev2 = update_item(item_name, {}, u'')
+        result = Text._render_data_diff(item, rev1, rev2)
+        expected = escape(html)
         assert expected in result
-        assert item2.data == ''
 
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
