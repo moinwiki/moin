@@ -13,6 +13,8 @@ from flask import g as flaskg
 
 from werkzeug import escape
 
+from MoinMoin.util import diff_html
+
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
@@ -481,6 +483,8 @@ class TestText(object):
         result = Text._render_data_diff(item, rev1, rev2)
         assert '<span>One </span>Two Three Four' in result
         assert 'Two Three <span>Seven </span>Four' in result
+        # Check for diff_html.diff return types
+        assert reduce(lambda x, y: x and y, [isinstance(i[1], unicode) and isinstance(i[3], unicode) for i in diff_html.diff(u'One Two Three Four\nSix\n', u'Two Three Seven Four\nSix Seven\n')], True)
 
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
