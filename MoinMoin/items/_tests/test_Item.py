@@ -458,20 +458,29 @@ class TestText(object):
         assert result == expected
 
     def test__render_data_diff(self):
-        # Test for HTML render with Unicode text
         item_name = u'Html_Item'
-        contenttype = u'text/html;charset=utf-8'
         empty_html = u'<span></span>'
-        html = u'<span>한국어</span>'
-        meta = {CONTENTTYPE: contenttype}
+        html = u'<span>\ud55c</span>'
+        meta = {CONTENTTYPE: u'text/html;charset=utf-8'}
         item = Text.create(item_name)
         item._save(meta, empty_html)
         item = Text.create(item_name)
+        # Unicode test, html escaping
         rev1 = update_item(item_name, meta, html)
-        rev2 = update_item(item_name, {}, u'')
+        rev2 = update_item(item_name, {}, u'     ')
         result = Text._render_data_diff(item, rev1, rev2)
-        expected = escape(html)
-        assert expected in result
+        assert escape(html) in result
+        # Unicode test, whitespace
+        rev1 = update_item(item_name, {}, u'\n\n')
+        rev2 = update_item(item_name, {}, u'\n     \n')
+        result = Text._render_data_diff(item, rev1, rev2)
+        assert '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' in result
+        # If fairly similar diffs are correctly spanned or not, also check indent
+        rev1 = update_item(item_name, {}, u'One Two Three Four\nSix\n\ud55c')
+        rev2 = update_item(item_name, {}, u'Two Three Seven Four\nSix\n\ud55c')
+        result = Text._render_data_diff(item, rev1, rev2)
+        assert '<span>One </span>Two Three Four' in result
+        assert 'Two Three <span>Seven </span>Four' in result
 
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'

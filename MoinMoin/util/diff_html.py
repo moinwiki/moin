@@ -20,7 +20,7 @@ def indent(line):
         line = line[1:]
     stripped = line.lstrip()
     if len(line) - len(stripped):
-        line = "&nbsp;" * (len(line) - len(stripped)) + stripped
+        line = u"&nbsp;" * (len(line) - len(stripped)) + stripped
     #return "%d / %d / %s" % (len(line), len(stripped), line)
     return eol + line
 
@@ -83,7 +83,6 @@ def diff(old, new):
         else:
             # Some similarities; markup changes.
             charlast = (0, 0)
-
             leftresult = u''
             rightresult = u''
             for thismatch in charmatch:
