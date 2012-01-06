@@ -31,7 +31,7 @@
 {%- if get == 'xml' -%}
     <?xml-stylesheet type="text/xsl" href="{{ theme_static('atom.xslt') }}"?>
 {%- elif get == 'comment_cont_merge' -%}
-    <p style="font-size: 14px">...{{ comment }}</p> <br /> {{ content }}
+    <p style="font-size: 1.2em">…{{ comment }}</p> <br /> {{ content }}
 {%- elif get == 'first_revision' -%}
     {{ content }}
     <br />
@@ -42,7 +42,7 @@
             </td>
         </tr>
     </table>
-    <strong>{{ safe_style() }}</strong>
+    {{ safe_style() }}
 {%- elif get == 'binary' -%}
     {{ content }}
     <br />
@@ -58,3 +58,4 @@
     </table>
     {{ safe_style() }}
 {%- endif -%}
+
