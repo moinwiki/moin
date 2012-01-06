@@ -84,19 +84,18 @@ def atom(item_name):
                 logging.exception("content rendering crashed")
                 content = _(u'MoinMoin feels unhappy.')
                 content_type = 'text'
+            author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
             if rev_comment:
                 # Trim down extremely long revision comment
                 if len(rev_comment) > 80:
                     content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:], content=Markup(content))
                     rev_comment = u"{0}...".format(rev_comment[:79])
-            author = get_editor_info(rev.meta, external=True)
-            if rev_comment is not '':
-                feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
+                feed_title = u"{0} - {1}".format(author.get(NAME, ''), rev_comment)
             else:
-                feed_title = "{0}".format(author.get(NAME, ''))
+                feed_title = u"{0}".format(author.get(NAME, ''))
             if not item_name:
-                feed_title = "{0} - {1}".format(name, feed_title)
+                feed_title = u"{0} - {1}".format(name, feed_title)
             feed.add(title=feed_title, title_type='text',
                      summary=content, summary_type=content_type,
                      author=author,
@@ -111,3 +110,4 @@ def atom(item_name):
         if cid is not None:
             app.cache.set(cid, content)
     return Response(content, content_type='application/atom+xml')
+
