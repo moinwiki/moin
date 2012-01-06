@@ -1,10 +1,60 @@
+{% import "utils.html" as utils %}
+{% macro show_meta(rev) %}
+    <div class="moin-diff-info moin-diff-info-rev-id">
+        <span class="moin-diff-info-caption">{{ _('Revision') }}:</span>
+        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
+    </div>
+    <div class="moin-diff-info moin-diff-info-rev-size">
+        <span class="moin-diff-info-caption">{{ _('Size') }}:</span>
+        <span class="moin-diff-info-value">{{ rev.meta['size'] }}</span>
+    </div>
+    <div class="moin-diff-info moin-diff-info-rev-comment">
+        <span class="moin-diff-info-caption">{{ _('Comment') }}:</span>
+        <span class="moin-diff-info-value">{{ rev.meta['comment'] }}</span>
+    </div>
+{% endmacro %}
+
+{% macro safe_style() %}
+    <style type="text/css">
+        img {
+            max-width: 100%;
+        }
+        td {
+            padding-right: 10px;
+        }
+        table {
+            width: 100%;
+        }
+    </style>
+{% endmacro %}
+
 {%- if get == 'xml' -%}
     <?xml-stylesheet type="text/xsl" href="{{ theme_static('atom.xslt') }}"?>
 {%- elif get == 'comment_cont_merge' -%}
     <p style="font-size: 14px">...{{ comment }}</p> <br /> {{ content }}
 {%- elif get == 'first_revision' -%}
-    <div class="moin-diff-info moin-diff-info-rev-id">
-        <span class="moin-diff-info-caption"><strong>Revision: {{ revision | shorten_id }}</strong> - <i>{{ _('First revision') }}</i></span>
-    </div><br />
+    <table class="moin-diff" cellpadding="10" width="100%">
+        <tr>
+            <td class="moin-diff-header" style="width: 100%;">
+                <strong>{{ show_meta(rev) }}</strong>
+            </td>
+        </tr>
+    </table>
+    <br />
     {{ content }}
+    <strong>{{ safe_style() }}</strong>
+{%- elif get == 'binary' -%}
+    <table class="moin-diff" cellpadding="10" width="100%">
+        <tr>
+            <td class="moin-diff-header" style="width: 50%;">
+                <strong>{{ show_meta(oldrev) }}</strong>
+            </td>
+            <td class="moin-diff-header" style="width: 50%;">
+                <strong>{{ show_meta(newrev) }}</strong>
+            </td>
+        </tr>
+    </table>
+    <br />
+    {{ content }}
+    {{ safe_style() }}
 {%- endif -%}
