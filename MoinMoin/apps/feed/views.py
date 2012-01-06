@@ -78,23 +78,26 @@ def atom(item_name):
                     content = hl_item._render_data_diff_atom(previous_rev, this_rev)
                 else:
                     # full html rendering for new items
-                    content = render_template('atom.html', get='first_revision', content=hl_item._render_data(), revision=this_revid)
+                    content = render_template('atom.html', get='first_revision', content=Markup(hl_item._render_data()), revision=this_revid)
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
                 content = _(u'MoinMoin feels unhappy.')
                 content_type = 'text'
             rev_comment = rev.meta.get(COMMENT, '')
-            if not rev_comment:
-                rev_comment = _(u'Revision: {0}').format(this_revid[0:7])
-            else:
+            if rev_comment:
                 # Trim down extremely long revision comment
                 if len(rev_comment) > 80:
                     content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:], content=Markup(content))
                     rev_comment = u"{0}...".format(rev_comment[:79])
-            feed.add(title=rev_comment, title_type='text',
+            author = get_editor_info(rev.meta, external=True)
+            if rev_comment is not '':
+                feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
+            else:
+                feed_title = "{0}".format(author.get(NAME, ''))
+            feed.add(title=feed_title, title_type='text',
                      summary=content, summary_type=content_type,
-                     author=get_editor_info(rev.meta, external=True),
+                     author=author,
                      url=url_for_item(name, rev=this_revid, _external=True),
                      updated=datetime.fromtimestamp(rev.meta[MTIME]),
                     )

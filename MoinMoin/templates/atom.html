@@ -5,6 +5,6 @@
 {%- elif get == 'first_revision' -%}
     <div class="moin-diff-info moin-diff-info-rev-id">
         <span class="moin-diff-info-caption"><strong>Revision: {{ revision | shorten_id }}</strong> - <i>{{ _('First revision') }}</i></span>
-    </div>
-    <div style="background-color: #cfc"><blockquote>{{ content }}</blockquote></div>
+    </div><br />
+    {{ content }}
 {%- endif -%}
