@@ -55,7 +55,10 @@ def atom(item_name):
         content = None
         cid = None
     if content is None:
-        title = u"{0} - {1}".format(app.cfg.sitename, item_name)
+        if not item_name:
+            title = u"{0}".format(app.cfg.sitename)
+        else:
+            title = u"{0} - {1}".format(app.cfg.sitename, item_name)
         feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
         query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
