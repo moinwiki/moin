@@ -736,7 +736,12 @@ There is no help, you're doomed!
 
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
-    _render_data_diff_atom = _render_data_diff
+    
+    def _render_data_diff_atom(self, oldrev, newrev):
+        url = url_for('frontend.get_item', _external=True, item_name=self.name, rev=newrev.revid)
+        return render_template('atom.html', url=url, 
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup(self._render_data()))
 
     def _convert(self, doc):
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
@@ -924,7 +929,9 @@ item_registry.register(Audio._factory, Type('audio/*'))
 
 class Image(Binary):
     """ Base class for image/* """
-
+    def _render_data_diff(self, oldrev, newrev):
+        print 'test'
+        print self._internal_representation()
 item_registry.register(Image._factory, Type('image/*'))
 
 

@@ -78,7 +78,7 @@ def atom(item_name):
                     content = hl_item._render_data_diff_atom(previous_rev, this_rev)
                 else:
                     # full html rendering for new items
-                    content = render_template('atom.html', get='first_revision', content=Markup(hl_item._render_data()), revision=this_revid)
+                    content = render_template('atom.html', get='first_revision', rev=this_rev, content=Markup(hl_item._render_data()), revision=this_revid)
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
@@ -95,6 +95,8 @@ def atom(item_name):
                 feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
             else:
                 feed_title = "{0}".format(author.get(NAME, ''))
+            if not item_name:
+                feed_title = "{0} - {1}".format(name, feed_title)
             feed.add(title=feed_title, title_type='text',
                      summary=content, summary_type=content_type,
                      author=author,
