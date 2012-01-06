@@ -6,7 +6,6 @@
         <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
     </div>
 {% endmacro %}
-
 <table class="moin-diff" style="width: 100%;">
     <tr>
         <td class="moin-diff-header-line" style="width: 3%;">
@@ -22,9 +21,13 @@
     {% for llineno, lcontent, rlineno, rcontent in diffs %}
         <tr>
             <td style="vertical-align: top;"><a href="#{{ llineno }}">{{ llineno }}:</a></td>
-            <td class="moin-diff-removed" style="vertical-align: top; background-color: lightYellow; word-wrap: break-word;"><blockquote>{{ lcontent }}</blockquote></td>
+            <td class="moin-diff-removed" style="vertical-align: top; background-color:#ff9; word-wrap: break-word;"><blockquote>{{ lcontent }}</blockquote></td>
             <td style="vertical-align: top;"><a href="#{{ rlineno }}">{{ rlineno }}:</a></td>
-            <td class="moin-diff-added" style="vertical-align: top; background-color: #E0FFE0; word-wrap: break-word;"><blockquote>{{ rcontent }}</blockquote></td>
+            <td class="moin-diff-added" style="vertical-align: top; background-color: #cfc; word-wrap: break-word;"><blockquote>{{ rcontent }}</blockquote></td>
         </tr>
     {% endfor %}
 </table>
+<style type="text/css">
+    .moin-diff-added span { background-color: #80FF80; }
+    .moin-diff-removed span { background-color: #FFFF80; }
+</style>

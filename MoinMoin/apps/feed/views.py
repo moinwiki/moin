@@ -78,7 +78,7 @@ def atom(item_name):
                     content = hl_item._render_data_diff_atom(previous_rev, this_rev)
                 else:
                     # full html rendering for new items
-                    content = render_template('atom.html', get='first_revision', content=Markup(hl_item._render_data()))
+                    content = render_template('atom.html', get='first_revision', content=hl_item._render_data(), revision=this_revid)
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
@@ -86,7 +86,7 @@ def atom(item_name):
                 content_type = 'text'
             rev_comment = rev.meta.get(COMMENT, '')
             if not rev_comment:
-                rev_comment = _(u'(No comment)')
+                rev_comment = _(u'Revision: {0}').format(this_revid[0:7])
             else:
                 # Trim down extremely long revision comment
                 if len(rev_comment) > 80:

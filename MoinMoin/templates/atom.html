@@ -3,5 +3,8 @@
 {%- elif get == 'comment_cont_merge' -%}
     <p style="font-size: 14px">...{{ comment }}</p> <br /> {{ content }}
 {%- elif get == 'first_revision' -%}
-    <p><i>{{ _('First revision') }}</i></p><br />{{ content }}
+    <div class="moin-diff-info moin-diff-info-rev-id">
+        <span class="moin-diff-info-caption"><strong>Revision: {{ revision | shorten_id }}</strong> - <i>{{ _('First revision') }}</i></span>
+    </div>
+    <div style="background-color: #cfc"><blockquote>{{ content }}</blockquote></div>
 {%- endif -%}
