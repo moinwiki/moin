@@ -12,19 +12,19 @@
         <td class="moin-diff-header-line" style="width: 3%;">
         </td>
         <td class="moin-diff-header" style="width: 47%;">
-            {{ show_meta(oldrev) }}
+            <strong>{{ show_meta(oldrev) }}</strong>
         </td>
         <td class="moin-diff-header-line" style="width: 3%;">
         </td>
         <td class="moin-diff-header" style="width: 47%;">
-            {{ show_meta(newrev) }}
+            <strong>{{ show_meta(newrev) }}</strong>
         </td>    </tr>
     {% for llineno, lcontent, rlineno, rcontent in diffs %}
         <tr>
             <td style="vertical-align: top;"><a href="#{{ llineno }}">{{ llineno }}:</a></td>
-            <td class="moin-diff-removed" style="vertical-align: top; background-color: lightYellow; word-wrap: break-word;">{{ lcontent }}</td>
+            <td class="moin-diff-removed" style="vertical-align: top; background-color: lightYellow; word-wrap: break-word;"><blockquote>{{ lcontent }}</blockquote></td>
             <td style="vertical-align: top;"><a href="#{{ rlineno }}">{{ rlineno }}:</a></td>
-            <td class="moin-diff-added" style="vertical-align: top; background-color: #E0FFE0; word-wrap: break-word;">{{ rcontent }}</td>
+            <td class="moin-diff-added" style="vertical-align: top; background-color: #E0FFE0; word-wrap: break-word;"><blockquote>{{ rcontent }}</blockquote></td>
         </tr>
     {% endfor %}
 </table>
