@@ -38,11 +38,12 @@ from MoinMoin.util.interwiki import url_for_item
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
 def atom(item_name):
-    # maybe we need different modes:
-    # - diffs in html don't look great without stylesheet
-    # - full item in html is nice
-    # - diffs in textmode are OK, but look very simple
-    # - full-item content in textmode is OK, but looks very simple
+    # Currently atom feeds behave in the fol. way
+    # - Text diffs are shown in a side-by-side fashion
+    # - The current binary item is fully rendered in the feed
+    # - Image(binary)'s diff is shown using PIL
+    # - First item is always rendered fully
+    # - Revision meta(id, size and comment) is shown for parent and current revision
     query = Term(WIKINAME, app.cfg.interwikiname)
     if item_name:
         query = And([query, Term(NAME_EXACT, item_name), ])
