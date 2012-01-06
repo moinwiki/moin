@@ -1370,8 +1370,8 @@ class TWikiDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=item_name)
 
         mapfile = self.get_member('drawing.map')
@@ -1465,8 +1465,8 @@ class AnyWikiDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
 
         mapfile = self.get_member('drawing.map')
@@ -1546,8 +1546,8 @@ class SvgDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
