@@ -33,6 +33,8 @@
 {%- elif get == 'comment_cont_merge' -%}
     <p style="font-size: 14px">...{{ comment }}</p> <br /> {{ content }}
 {%- elif get == 'first_revision' -%}
+    {{ content }}
+    <br />
     <table class="moin-diff" cellpadding="10" width="100%">
         <tr>
             <td class="moin-diff-header" style="width: 100%;">
@@ -40,10 +42,10 @@
             </td>
         </tr>
     </table>
-    <br />
-    {{ content }}
     <strong>{{ safe_style() }}</strong>
 {%- elif get == 'binary' -%}
+    {{ content }}
+    <br />
     <table class="moin-diff" cellpadding="10" width="100%">
         <tr>
             <td class="moin-diff-header" style="width: 50%;">
@@ -54,7 +56,5 @@
             </td>
         </tr>
     </table>
-    <br />
-    {{ content }}
     {{ safe_style() }}
 {%- endif -%}
