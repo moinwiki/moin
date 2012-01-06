@@ -738,8 +738,7 @@ There is no help, you're doomed!
     _render_data_diff_raw = _render_data_diff
     
     def _render_data_diff_atom(self, oldrev, newrev):
-        url = url_for('frontend.get_item', _external=True, item_name=self.name, rev=newrev.revid)
-        return render_template('atom.html', url=url, 
+        return render_template('atom.html', 
                                oldrev=oldrev, newrev=newrev, get='binary',
                                content=Markup(self._render_data()))
 
@@ -1042,6 +1041,15 @@ class TransformableBitmapImage(RenderableBitmapImage):
             return Response(data, headers=headers)
         else:
             return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
+
+    def _render_data_diff_atom(self, oldrev, newrev):
+        if PIL is None:
+            # no PIL, we can't do anything, we just call the base class method
+            return super(TransformableBitmapImage, self)._render_data_diff_atom(oldrev, newrev)
+        url = url_for('frontend.get_item', _external=True, item_name=self.name, rev=newrev.revid)
+        return render_template('atom.html',
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup('<img src="{0}" />'.format(escape(url))))
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
