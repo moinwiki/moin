@@ -736,9 +736,9 @@ There is no help, you're doomed!
 
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
-    
+
     def _render_data_diff_atom(self, oldrev, newrev):
-        return render_template('atom.html', 
+        return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
                                content=Markup(self._render_data()))
 
