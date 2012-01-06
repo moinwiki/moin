@@ -1046,7 +1046,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff_atom(oldrev, newrev)
-        url = url_for('frontend.get_item', _external=True, item_name=self.name, rev=newrev.revid)
+        url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
                                content=Markup('<img src="{0}" />'.format(escape(url))))
