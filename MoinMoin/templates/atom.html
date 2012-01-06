@@ -14,7 +14,8 @@
     </div>
 {% endmacro %}
 
-{% macro safe_style() %}
+{# A few style rules to ensure the content doesn't overflow #}
+{% macro atom_style() %}
     <style type="text/css">
         img {
             max-width: 100%;
@@ -42,7 +43,7 @@
             </td>
         </tr>
     </table>
-    {{ safe_style() }}
+    {{ atom_style() }}
 {%- elif get == 'binary' -%}
     {{ content }}
     <br />
@@ -56,6 +57,6 @@
             </td>
         </tr>
     </table>
-    {{ safe_style() }}
+    {{ atom_style() }}
 {%- endif -%}
 

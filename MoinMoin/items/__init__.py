@@ -928,8 +928,7 @@ item_registry.register(Audio._factory, Type('audio/*'))
 
 class Image(Binary):
     """ Base class for image/* """
-    def _render_data_diff(self, oldrev, newrev):
-        print self._internal_representation()
+
 item_registry.register(Image._factory, Type('image/*'))
 
 
