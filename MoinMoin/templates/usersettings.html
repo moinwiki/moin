@@ -1,101 +1,42 @@
 {% extends theme("layout.html") %}
-{% import "forms.html" as forms %}
+{% import "usersettings_forms.html" as user_forms %}
 
 {% block item %}
-{% if part == 'main' %}
-<h1>{{ _("User Settings") }}</h1>
-<ul>
-    <li><a href="{{ url_for('frontend.usersettings', part='personal') }}">{{ _("Personal Settings") }}</a></li>
-    <li><a href="{{ url_for('frontend.usersettings', part='password') }}">{{ _("Change password") }}</a></li>
-    <li><a href="{{ url_for('frontend.usersettings', part='notification') }}">{{ _("Notification Settings") }}</a></li>
-    <li><a href="{{ url_for('frontend.usersettings', part='ui') }}">{{ _("Wiki Appearance Settings") }}</a></li>
-    <li><a href="{{ url_for('frontend.usersettings', part='navigation') }}">{{ _("Navigation Settings") }}</a></li>
-    <li><a href="{{ url_for('frontend.usersettings', part='options') }}">{{ _("Options") }}</a></li>
-</ul>
+<div id="moin-content">
+    <h1>{{ _("User Settings") }}</h1>
 
-{% elif part == 'personal' %}
-<h1>{{ _("Personal Settings") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {{ forms.render_field(gen, form['name'], 'text') }}
-    {{ forms.render_field(gen, form['aliasname'], 'text') }}
-    {{ forms.render_field(gen, form['openid'], 'url') }}
-    {{ forms.render_select(gen, form['timezone']) }}
-    {{ forms.render_select(gen, form['locale']) }}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
+    <div id="moin-usersettings" class="moin-tabs">
+        <h2 class="moin-tab-title"><a href="#personal">{{ _("Personal Settings") }}</a></h2>
+        <div id="personal" class="moin-tab-body moin-form">
+            {{ user_forms.personal(form_objs.personal) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#password">{{ _("Change Password") }}</a></h2>
+        <div id="password" class="moin-tab-body moin-form">
+            {{ user_forms.password(form_objs.password) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#notification">{{ _("Notification Settings") }}</a></h2>
+        <div id="notification" class="moin-tab-body moin-form">
+            {{ user_forms.notification(form_objs.notification) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#ui">{{ _("Wiki Appearance Settings") }}</a></h2>
+        <div id="ui" class="moin-tab-body moin-form">
+            {{ user_forms.ui(form_objs.ui) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#navigation">{{ _("Navigation Settings") }}</a></h2>
+        <div id="navigation" class="moin-tab-body moin-form">
+            {{ user_forms.navigation(form_objs.navigation) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#options">{{ _("Options") }}</a></h2>
+        <div id="options" class="moin-tab-body moin-form">
+            {{ user_forms.options(form_objs.options) }}
+        </div>
+    </div>
 </div>
 
-{% elif part == 'password' %}
-<h1>{{ _("Change Password") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {{ forms.render_field(gen, form['password_current'], 'password') }}
-    {{ forms.render_field(gen, form['password1'], 'password') }}
-    {{ forms.render_field(gen, form['password2'], 'password') }}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
-</div>
-
-{% elif part == 'notification' %}
-<h1>{{ _("Notification Settings") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {{ forms.render_field(gen, form['email'], 'email') }}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
-</div>
-
-{% elif part == 'ui' %}
-<h1>{{ _("Wiki Appearance Settings") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {{ forms.render_select(gen, form['theme_name']) }}
-    {{ forms.render_field(gen, form['css_url'], 'url') }}
-    {{ forms.render_field(gen, form['edit_rows'], 'text') }}
-    {{ forms.render_field(gen, form['results_per_page'], 'number') }}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
-</div>
-
-{% elif part == 'navigation' %}
-<h1>{{ _("Navigation Settings") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {# TODO: find a good way to handle quicklinks #}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
-</div>
-
-{% elif part == 'options' %}
-<h1>{{ _("Options") }}</h1>
-<div class="moin-form">
-{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings', part=part)) }}
-  {{ forms.render_errors(form) }}
-  <dl>
-    {{ forms.render_field(gen, form['mailto_author'], 'checkbox') }}
-    {{ forms.render_field(gen, form['edit_on_doubleclick'], 'checkbox') }}
-    {{ forms.render_field(gen, form['show_comments'], 'checkbox') }}
-    {{ forms.render_field(gen, form['disabled'], 'checkbox') }}
-  </dl>
-  {{ gen.input(form['submit'], type='submit') }}
-{{ gen.form.close() }}
-</div>
-{% endif %}
 {% endblock %}
 

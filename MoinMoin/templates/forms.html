@@ -20,7 +20,17 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.label(field) }}
   </dt>
   <dd>
-    {{ gen.input(field, type=field_type) }}
+    {% if field_type == 'checkbox' %}
+      {#
+      Flatland adds the value to the ID of checkboxes which we do not want as
+      the for attributes of the labels will point to a non-existent ID in that
+      case. To fix this we manually generate the ID for checkboxes here.
+      related issue in flatland: https://bitbucket.org/jek/flatland/issue/9
+      #}
+      {{ gen.input(field, type='checkbox', id='f_' + field.flattened_name()) }}
+    {% else %}
+      {{ gen.input(field, type=field_type) }}
+    {% endif %}
     {{ render_errors(field) }}
   </dd>
 {% endmacro %}
@@ -49,6 +59,14 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.select.close() }}
     {{ render_errors(field) }}
   </dd>
+{% endmacro %}
+
+{% macro render_hidden(name, value) %}
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+{% endmacro %}
+
+{% macro render_button(text) %}
+  <button>{{ text }}</button>
 {% endmacro %}
 
 {% macro render_textcha(gen, form) %}
