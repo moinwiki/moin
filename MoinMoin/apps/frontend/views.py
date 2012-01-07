@@ -493,7 +493,10 @@ def delete_item(item_name):
         TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
-            item.delete(comment)
+            try:
+                item.delete(comment)
+            except AccessDenied:
+                abort(403)
             return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
@@ -589,7 +592,10 @@ def destroy_item(item_name, rev):
         TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
-            item.destroy(comment=comment, destroy_item=destroy_item)
+            try:
+                item.destroy(comment=comment, destroy_item=destroy_item)
+            except AccessDenied:
+                abort(403)
             return redirect(url_for_item(item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
@@ -1542,6 +1548,7 @@ def _diff(item, revid1, revid2):
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
+                           diff_html=Markup(item._render_data_diff(oldrev, newrev)),
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
                            last_rev_id=rev_ids[-1],

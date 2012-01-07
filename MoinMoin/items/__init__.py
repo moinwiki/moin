@@ -737,6 +737,11 @@ There is no help, you're doomed!
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
 
+    def _render_data_diff_atom(self, oldrev, newrev):
+        return render_template('atom.html',
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup(self._render_data()))
+
     def _convert(self, doc):
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
@@ -1035,6 +1040,15 @@ class TransformableBitmapImage(RenderableBitmapImage):
         else:
             return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
+    def _render_data_diff_atom(self, oldrev, newrev):
+        if PIL is None:
+            # no PIL, we can't do anything, we just call the base class method
+            return super(TransformableBitmapImage, self)._render_data_diff_atom(oldrev, newrev)
+        url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
+        return render_template('atom.html',
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup('<img src="{0}" />'.format(escape(url))))
+
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
@@ -1112,18 +1126,25 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(config.charset).replace(u'\r\n', u'\n')
 
-    def _render_data_diff(self, oldrev, newrev):
+    def _get_data_diff_html(self, oldrev, newrev, template):
         from MoinMoin.util.diff_html import diff
         old_text = self.data_storage_to_internal(oldrev.data.read())
         new_text = self.data_storage_to_internal(newrev.data.read())
         storage_item = flaskg.storage[self.name]
         diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in diff(old_text, new_text)]
-        return Markup(render_template('diff_text.html',
-                                      item_name=self.name,
-                                      oldrev=oldrev,
-                                      newrev=newrev,
-                                      diffs=diffs,
-                                     ))
+        return render_template(template,
+                               item_name=self.name,
+                               oldrev=oldrev,
+                               newrev=newrev,
+                               diffs=diffs,
+                               )
+
+    def _render_data_diff_atom(self, oldrev, newrev):
+        """ renders diff in HTML for atom feed """
+        return self._get_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
+
+    def _render_data_diff(self, oldrev, newrev):
+        return self._get_data_diff_html(oldrev, newrev, 'diff_text.html')
 
     def _render_data_diff_text(self, oldrev, newrev):
         from MoinMoin.util import diff_text
@@ -1347,8 +1368,8 @@ class TWikiDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=item_name)
 
         mapfile = self.get_member('drawing.map')
@@ -1442,8 +1463,8 @@ class AnyWikiDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
 
         mapfile = self.get_member('drawing.map')
@@ -1523,8 +1544,8 @@ class SvgDraw(TarMixin, Image):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
