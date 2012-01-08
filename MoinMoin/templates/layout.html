@@ -18,7 +18,6 @@
 
 <div id="moin-header">
 {% block header %}
-    {% if search_form %} 
     {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
         <div>
             {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='40') }}
@@ -26,7 +25,6 @@
             {{ forms.render_errors(search_form) }}
         </div>
     {{ gen.form.close() }}
-    {% endif %} 
 
     {% if logo %}
     <div id="moin-logo">

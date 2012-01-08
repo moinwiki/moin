@@ -24,6 +24,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.config import USERID, ADDRESS, HOSTNAME
+from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
@@ -432,5 +433,6 @@ def setup_jinja_env():
                             'get_editor_info': lambda meta: get_editor_info(meta),
                             'utctimestamp': lambda dt: utctimestamp(dt),
                             'gen': make_generator(),
+                            'search_form': SearchForm.from_defaults(),
                             })
 
