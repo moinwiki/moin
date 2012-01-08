@@ -287,7 +287,11 @@ class Item(object):
         flaskg.clock.start('conv_dom_html')
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
-        return conv_serialize(doc, {html.namespace: ''})
+        rendered_data = conv_serialize(doc, {html.namespace: ''})
+        # Return a break if rendered_data has no content in it
+        # to avoid CSS theming issues
+        return "<br />" if rendered_data == "<div xmlns=\"http://www.w3.org/1999/xhtml\" />" \
+                        else rendered_data
 
     def _render_data_xml(self):
         doc = self.internal_representation()
