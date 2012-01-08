@@ -1,7 +1,8 @@
 {% set exists = storage.has_item(item_name) %}
 <ul class="moin-itemviews">
     {% for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-        {% if (not check_exists or check_exists and exists) and endpoint in [
+      {% if not check_exists or check_exists and exists %}
+        {% if endpoint in [
                'frontend.show_item', 'frontend.index',
                'frontend.highlight_item', 'frontend.show_item_meta', 'frontend.download_item',
                'frontend.history', 'frontend.backrefs', 'frontend.sitemap',
@@ -14,7 +15,7 @@
         {%- endif %}
 
 		{% if endpoint in [
-            'frontend.modify_item', 'frontend.rename_item', 'frontend.delete_item', 'frontend.rename_item'
+            'frontend.modify_item', 'frontend.rename_item', 'frontend.delete_item'
            ] and user.may.write(item_name) -%}
             <li>
             <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow"> {{ label }}</a>
@@ -77,5 +78,6 @@
                 {%- endif %}
             {%- endfor -%}
         {%- endif %}
+      {% endif %}
     {% endfor %}
 </ul>
