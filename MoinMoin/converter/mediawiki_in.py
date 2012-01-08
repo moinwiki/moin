@@ -595,19 +595,52 @@ class Converter(ConverterMacro):
         )
     """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
+    def parse_args(self, input):
+        """
+        Parses media wiki arguments, this is taken from _args_wiki > parse function. The primary difference
+        being that mediawiki breaks on pipes whereas the default parser breaks on spaces. Apart from that
+        this parser also supports a few extra characters such as "<, >, ., /", mostly for URL linking
+
+        :param input: can be like a|b|c=f|something else caption|g='long caption'|link=http://google.com
+        :return Arguments instance
+        """
+        parse_rules = r'''
+        (?:
+            (?P<key>[\w-]+)=    # Matches 'key=' part of the string, optional
+        )?
+        (?:
+            (?P<unquote_val>[-\w\s:\./<>]+) # Unquoted value, intended to break after a |
+            |
+            # Matches quoted values with every character, breaks after the quote
+            "(?P<dquote_val>.*?)(?<!\\)"    # Quoted value with double quotes
+            |
+            '(?P<squote_val>.*?)(?<!\\)'    # Quoted value with single quotes
+        )
+        '''
+        parse_re = re.compile(parse_rules, re.X | re.U)
+        ret = Arguments()
+        for match in parse_re.finditer(input):
+            key = match.group('key')
+            value = match.group('unquote_val') or match.group('squote_val') or match.group('dquote_val')
+            if key:
+                ret.keyword[key] = value
+            else:
+                ret.positional.append(value)
+        return ret
+
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-                            link_args=None, external_link_url=None, alt_text=''):
+                            link_args=u'', external_link_url=None, alt_text=u''):
         """Handle all kinds of links."""
         link_text = ''
-        if link_args and len(link_args.split('|')) > 2:
-            link_args = parse_arguments(' '.join(link_args.split('|')[:-1])) # TODO needs parsing for mediawiki_args
-            query = url_encode(link_args.keyword, charset=config.charset, encode_keys=True)
-        else:
-            if link_args:
-                link_text = link_args.split('|')[-1]
-                link_args = parse_arguments(' '.join(link_args.split('|')[:-1]))
-
-            query = None
+        link_args_list = []
+        # Remove the first pipe/space, example of link_args : |arg1|arg2 or " arg1 arg2"
+        parsed_args = self.parse_args(link_args[1:])
+        query = None
+        if parsed_args.keyword:
+            query = url_encode(parsed_args.keyword, charset=config.charset, encode_keys=True)
+        # Take the last of positional parameters as link_text(caption)
+        if parsed_args.positional:
+            link_text = parsed_args.positional.pop()
         if link_item is not None:
             if '#' in link_item:
                 path, fragment = link_item.rsplit('#', 1)
@@ -618,7 +651,7 @@ class Converter(ConverterMacro):
         else:
             if link_url and len(link_url.split(':')) > 0 and link_url.split(':')[0] == 'File':
                 object_item = ':'.join(link_url.split(':')[1:])
-                args = link_args.keyword
+                args = parsed_args.keyword
                 if object_item is not None:
                     if 'do' not in args:
                         # by default, we want the item's get url for transclusion of raw data:
@@ -630,9 +663,10 @@ class Converter(ConverterMacro):
                     target = Iri(scheme='wiki.local', path=object_url)
                     text = object_url
 
+                if not link_text:
+                    link_text = text
                 attrib = {xlink.href: target}
-                if link_text is not None:
-                    attrib[moin_page.alt] = link_text
+                attrib[moin_page.alt] = link_text
 
                 element = moin_page.object(attrib)
                 stack.push(element)
