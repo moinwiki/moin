@@ -30,5 +30,3 @@ class SearchForm(Form):
 
     validators = [ValidSearch()]
 
-
-
