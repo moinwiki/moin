@@ -55,6 +55,7 @@ from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, I
                             ALL_REVS, LATEST_REVS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.search import SearchForm, ValidSearch
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.signalling import item_displayed, item_modified
@@ -122,27 +123,6 @@ def favicon():
     # although we tell that favicon.ico is at /static/logos/favicon.ico,
     # some browsers still request it from /favicon.ico...
     return app.send_static_file('logos/favicon.ico')
-
-
-class ValidSearch(Validator):
-    """Validator for a valid search form
-    """
-    too_short_query_msg = L_('Search query too short.')
-
-    def validate(self, element, state):
-        if element['q'].value is None:
-            # no query, nothing to search for
-            return False
-        if len(element['q'].value) < 2:
-            return self.note_error(element, state, 'too_short_query_msg')
-        return True
-
-class SearchForm(Form):
-    q = String.using(optional=False, default=u'').with_properties(autofocus=True, placeholder=L_("Search Query"))
-    history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
-    submit = String.using(default=L_('Search'), optional=True)
-
-    validators = [ValidSearch()]
 
 
 @frontend.route('/+search', methods=['GET', 'POST'])
@@ -217,7 +197,6 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
