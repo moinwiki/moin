@@ -139,7 +139,17 @@ Apple
             (u"[http://external.link]", u'<page><body><p><a xlink:href="http://external.link"></a></p></body></page>'),
             (u"[http://external.link alt text]", u'<page><body><p><a xlink:href="http://external.link">alt text</a></p></body></page>'),
             (u"[[SomeLink|Some text]]", u'<page><body><p><a xlink:href="wiki.local:SomeLink">Some text</a></p></body></page>'),
-            (u"[[File:Test.jpg|test]]", u'<page><body><p><object alt="test" xlink:href="wiki.local:Test.jpg?do=get">test</object></p></body></page>')
+            (u"[[SomeLink|arg1=value|arg2=otherval|Some text]]", u'<page><body><p><a xlink:href="wiki.local:SomeLink?arg1=value&amp;arg2=otherval">Some text</a></p></body></page>'),
+            (u"[[File:Test.jpg|test]]", u'<page><body><p><object alt="test" xlink:href="wiki.local:Test.jpg?do=get">test</object></p></body></page>'),
+            (u"[[File:MyImage.png]]", u'<page><body><p><object alt="MyImage.png" xlink:href="wiki.local:MyImage.png?do=get">MyImage.png</object></p></body></page>'),
+            (u"[[File:MyImage.png|arg=http://google.com|caption]]", u'<page><body><p><object alt="caption" xlink:href="wiki.local:MyImage.png?do=get&amp;arg=http%253A%252F%252Fgoogle.com">caption</object></p></body></page>'),
+            (u"[[File:Test.png|do=get|arg1=test|arg2=something else]]", u'<page><body><p><object alt="Test.png" xlink:href="wiki.local:Test.png?do=get&amp;arg2=something+else&amp;arg1=test">Test.png</object></p></body></page>'),
+            # The do=xxx part is just to test if do in args is being updated correctly, it's invalid otherwise
+            (u"[[File:Test2.png|do=xxx|caption|arg1=test]]", u'<page><body><p><object alt="caption" xlink:href="wiki.local:Test2.png?do=xxx&amp;arg1=test">caption</object></p></body></page>'),
+            (u"[[File:myimg.png|'Graph showing width |= k for 5 < k < 10']]", u'<page><body><p><object alt="Graph showing width |= k for 5 &lt; k &lt; 10" xlink:href="wiki.local:myimg.png?do=get">Graph showing width |= k for 5 &lt; k &lt; 10</object></p></body></page>'),
+            (u"[[File:myimg.png|arg1='longish caption value with |= to test'|arg2=other|test stuff]]", u'<page><body><p><object alt="test stuff" xlink:href="wiki.local:myimg.png?arg1=longish+caption+value+with+%257C%253D+to+test&amp;arg2=other&amp;do=get">test stuff</object></p></body></page>'),
+            # Unicode test
+            (u"[[File:Test.jpg|\xe8]]", u'<page><body><p><object alt="\xe8" xlink:href="wiki.local:Test.jpg?do=get">\xe8</object></p></body></page>')
         ]
         for i in data:
             yield (self.do, ) + i
