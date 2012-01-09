@@ -732,6 +732,7 @@ There is no help, you're doomed!
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data_diff(self, oldrev, newrev):
@@ -1210,6 +1211,7 @@ class Text(Binary):
                                rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
 item_registry.register(Text._factory, Type('text/*'))
@@ -1369,6 +1371,7 @@ class TWikiDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
@@ -1464,6 +1467,7 @@ class AnyWikiDraw(TarMixin, Image):
                                help=self.modify_help,
                                drawing_exists=drawing_exists,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
@@ -1545,6 +1549,7 @@ class SvgDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
