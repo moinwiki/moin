@@ -288,10 +288,13 @@ class Item(object):
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
         rendered_data = conv_serialize(doc, {html.namespace: ''})
-        # Return a break if rendered_data has no content in it
-        # to avoid CSS theming issues
-        return "<br />" if rendered_data == "<div xmlns=\"http://www.w3.org/1999/xhtml\" />" \
-                        else rendered_data
+        # This is a work-around to avoid the invalid <div /> tag from being passed
+        # and causing layout issues in many browsers
+        # Instead, send a <div></div> tag which is valid according to the HTML spec
+        # The wider issue with serialization is covered here:
+        # https://bitbucket.org/thomaswaldmann/moin-2.0/issue/145/xml-mode-serialization-returns-self
+        return "<div></div>" if rendered_data == "<div xmlns=\"http://www.w3.org/1999/xhtml\" />" \
+                             else rendered_data
 
     def _render_data_xml(self):
         doc = self.internal_representation()
