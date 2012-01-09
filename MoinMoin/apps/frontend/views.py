@@ -1297,9 +1297,8 @@ class UserSettingsOptionsForm(Form):
     submit = String.using(default=L_('Save'), optional=True)
 
 
-@frontend.route('/+usersettings', defaults=dict(part='main'), methods=['GET'])
-@frontend.route('/+usersettings/<part>', methods=['GET', 'POST'])
-def usersettings(part):
+@frontend.route('/+usersettings', methods=['GET', 'POST'])
+def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
@@ -1330,7 +1329,7 @@ def usersettings(part):
         results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
         submit = String.using(default=L_('Save'), optional=True)
 
-    dispatch = dict(
+    form_classes = dict(
         personal=UserSettingsPersonalForm,
         password=UserSettingsPasswordForm,
         notification=UserSettingsNotificationForm,
@@ -1338,71 +1337,108 @@ def usersettings(part):
         navigation=UserSettingsNavigationForm,
         options=UserSettingsOptionsForm,
     )
-    FormClass = dispatch.get(part)
-    if FormClass is None:
-        # 'main' part or some invalid part
-        return render_template('usersettings.html',
-                               part='main',
-                               title_name=title_name,
-                              )
-    if request.method == 'GET':
-        form = FormClass.from_object(flaskg.user)
-        form['submit'].set_default() # XXX from_object() kills all values
-    elif request.method == 'POST':
-        form = FormClass.from_flat(request.form)
-        if form.validate():
-            # successfully modified everything
-            success = True
-            if part == 'password':
-                flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
-                flaskg.user.save()
-                flash(_("Your password has been changed."), "info")
-            else:
-                if part == 'personal':
-                    if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
-                        # duplicate openid
-                        flash(_("This openid is already in use."), "error")
-                        success = False
-                    if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
-                        # duplicate name
-                        flash(_("This username is already in use."), "error")
-                        success = False
-                if part == 'notification':
-                    if (form['email'].value != flaskg.user.email and
-                        user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
-                        # duplicate email
-                        flash(_('This email is already in use'), 'error')
-                        success = False
-                if success:
-                    user_old_email = flaskg.user.email
-                    form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
-                    if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
-                        # disable account
-                        flaskg.user.disabled = True
-                        # send verification mail
-                        is_ok, msg = flaskg.user.mailVerificationLink()
-                        if is_ok:
-                            _logout()
-                            flaskg.user.save()
-                            flash(_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info")
-                            return redirect(url_for('.show_root'))
-                        else:
-                            # sending the verification email didn't work. reset email change and alert the user.
-                            flaskg.user.disabled = False
-                            flaskg.user.email = user_old_email
-                            flash(_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error")
+    forms = dict()
+
+    if request.method == 'POST':
+        part = request.form.get('part')
+        if part not in form_classes:
+            # the current part does not exist
+            if request.is_xhr:
+                # if the request is made via XHR, we return 404 Not Found
+                abort(404)
+            # otherwise we basically fall back to a normal GET request
+            part = None
+
+        if part:
+            # create form object from request.form
+            form = form_classes[part].from_flat(request.form)
+
+            # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
+            response = dict(
+                form = None,
+                flash = [],
+                redirect = None,
+            )
+
+            if form.validate():
+                # successfully modified everything
+                success = True
+                if part == 'password':
+                    flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
                     flaskg.user.save()
-                    return redirect(url_for('.usersettings'))
+                    response['flash'].append((_("Your password has been changed."), "info"))
                 else:
-                    # reset to valid values
-                    form = FormClass.from_object(flaskg.user)
-                    form['submit'].set_default() # XXX from_object() kills all values
-    if part == 'notification' and app.cfg.user_email_verification:
-        flash(_("Changing your email address requires you to verify it. A link will be sent to you."), "warning")
+                    if part == 'personal':
+                        if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
+                            # duplicate openid
+                            response['flash'].append((_("This openid is already in use."), "error"))
+                            success = False
+                        if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
+                            # duplicate name
+                            response['flash'].append((_("This username is already in use."), "error"))
+                            success = False
+                    if part == 'notification':
+                        if (form['email'].value != flaskg.user.email and
+                            user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
+                            # duplicate email
+                            response['flash'].append((_('This email is already in use'), 'error'))
+                            success = False
+                    if success:
+                        user_old_email = flaskg.user.email
+                        form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
+                        if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
+                            # disable account
+                            flaskg.user.disabled = True
+                            # send verification mail
+                            is_ok, msg = flaskg.user.mailVerificationLink()
+                            if is_ok:
+                                _logout()
+                                flaskg.user.save()
+                                response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
+                                response['redirect'] = url_for('.show_root')
+                            else:
+                                # sending the verification email didn't work. reset email change and alert the user.
+                                flaskg.user.disabled = False
+                                flaskg.user.email = user_old_email
+                                flaskg.user.save()
+                                response['flash'].append((_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error"))
+                        else:
+                            flaskg.user.save()
+
+            if not response['flash']:
+                # if no flash message was added until here, we add a generic success message
+                response['flash'].append((_("Your changes have been saved."), "info"))
+
+            if response['redirect'] is not None or not request.is_xhr:
+                # if we redirect or it is no XHR request, we just flash() the messages normally
+                for f in response['flash']:
+                    flash(*f)
+
+            if request.is_xhr:
+                # if it is a XHR request, render the part from the usersettings_ajax.html template
+                # and send the response encoded as an JSON object
+                response['form'] = render_template('usersettings_ajax.html',
+                                                   part=part,
+                                                   form=form,
+                                                  )
+                return jsonify(**response)
+            else:
+                # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
+                if response['redirect'] is not None:
+                    return redirect(response['redirect'])
+
+            # if the view did not return until here, we add the current form to the forms dict
+            # and continue with rendering the normal template
+            forms[part] = form
+
+    # initialize all remaining forms
+    for p, FormClass in form_classes.iteritems():
+        if p not in forms:
+            forms[p] = FormClass.from_object(flaskg.user)
+
     return render_template('usersettings.html',
                            title_name=title_name,
-                           part=part,
-                           form=form,
+                           form_objs=forms,
                           )
 
 
