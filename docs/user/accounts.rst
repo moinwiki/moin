@@ -151,15 +151,77 @@ Show comment sections
  Show the comment sections for wiki items you view.
 
 Disable this account forever
- Tick this box if you want to delete your account forever. **This action is permanent, do not
- delete your account unless you really need to.**
+ Tick this box if you want to disable your account. Your username or alias will still show in the
+ history pages of items you edit, but you will not be able to log in using your account.
+
+Other Features for Users with Accounts
+======================================
 
 Your User Page
-==============
+--------------
+
+.. warning::
+ **MOINTODO** User pages are currently broken as they have no handler for their content type. Because
+ of this, they use the binary content type and cannot be viewed (they must be downloaded).
 
 You user page is a wiki space in which you may share information about yourself with other users of
 that wiki. It can be accessed by clicking the button with your username on it at the top of the
 screen, and is edited like a normal wiki item.
+
+"My Changes"
+------------
+
+To view your modifications to a wiki, navigate to the URL ``/+mychanges``. This will show a list of
+modifications you have made to wiki items.
+
+.. warning::
+ **MOINTODO** There is currently no button to get to +mychanges. This should be fixed.
+
+ **MOINTODO** +mychanges only links to the item which you edit, not the specific revision. If you edit
+ and item several times, it just inserts several identical links to that item. This behaviour should be
+ checked and rectified.
+
+ **MOINTODO** +mychanges isn't very pretty if you visit it without making any changes, it just says 
+ "My Changes" at the top with the rest of the page left blank.
+
+Bookmarking
+-----------
+
+Some MoinMoin users spend a lot of time sifting through the global changes list (accessible via the
+:guilabel:`History` button at the top of every MoinMoin page) looking for undesirable actions like
+vandalism. To help users remember which revisions they have verified and which they have yet to verify,
+MoinMoin provides bookmarks. If you verify revisions up until the 13th of January, for example, you would
+simply click the :guilabel:`Set bookmark` button next to the revisions from the 13th of January to hide
+all revisions from before that date. If you wish to examine those revisions again, navigate back to the 
+global history page and click :guilabel:`Remove bookmark`.
+
+Quicklinks
+----------
+
+At the top of every MoinMoin page, there is a row of buttons for quick access to commonly used MoinMoin
+features like the global index, global history and homepage. Often, users need quick access to MoinMoin
+items without having to search for them each time - quicklinks allow you to access your favourite wiki
+items at the click of a button by placing links to them at the top of every page. To quicklink an item,
+click the :guilabel:`Add Link` button at the top or bottom of a MoinMoin item. To remove a quicklink,
+simply navigate back to the item and click the :guilabel:`Remove Link` button.
+
+Quicklinks are associated with your account, so you will be able to access them from anywhere by simply
+logging into the wiki.
+
+Page Trail
+----------
+
+The page trail appears at the top of each page and lists previous pages which you have visited. Users
+with accounts may view this trail wherever they log in, whereas anonymous users have a different trail
+on each computer that they visit.
+
+Subscribing to Items
+--------------------
+
+Subscribing to items allows you to be notified via email when changes are made. To subscribe, navigate
+to the item in question and click the :guilabel:`Subscribe` button at the top or bottom of the page. You 
+will now receive an email each time a user modifies this item. To unsubscribe, navigate to the item
+again and click the :guilabel:`Unsubscribe` button at the top or bottom of the page.
 
 Logging out
 ===========
