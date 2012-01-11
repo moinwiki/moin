@@ -152,7 +152,8 @@ Show comment sections
 
 Disable this account forever
  Tick this box if you want to disable your account. Your username or alias will still show in the
- history pages of items you edit, but you will not be able to log in using your account.
+ history pages of items you have edited, but you will no longer be able to log in using your
+ account.
 
 Other Features for Users with Accounts
 ======================================
@@ -188,9 +189,9 @@ Bookmarking
 -----------
 
 Some MoinMoin users spend a lot of time sifting through the global changes list (accessible via the
-:guilabel:`History` button at the top of every MoinMoin page) looking for undesirable actions like
-vandalism. To help users remember which revisions they have verified and which they have yet to verify,
-MoinMoin provides bookmarks. If you verify revisions up until the 13th of January, for example, you would
+:guilabel:`History` button at the top of every MoinMoin page) looking for unread changes.
+To help users remember which revisions they have read and which they have yet to read,
+MoinMoin provides bookmarks. If you have read revisions up until the 13th of January, for example, you would
 simply click the :guilabel:`Set bookmark` button next to the revisions from the 13th of January to hide
 all revisions from before that date. If you wish to examine those revisions again, navigate back to the 
 global history page and click :guilabel:`Remove bookmark`.
