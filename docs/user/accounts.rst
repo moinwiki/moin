@@ -2,9 +2,9 @@
 User Accounts
 =============
 
-Accounts provide an easy way for wiki users to identify themselves to MoinMoin, store personal
-preferences and track wiki contributions. Account creation is simple and straight forward, and
-provides many benefits over browsing and editing anonymously.
+Accounts provide an easy way for wiki users to identify themselves to MoinMoin and other wiki users, 
+store personal preferences and track wiki contributions. Account creation is simple and 
+straightforward, and provides many benefits over browsing and editing anonymously.
 
 Account Creation
 ================
@@ -155,8 +155,8 @@ Disable this account forever
  history pages of items you have edited, but you will no longer be able to log in using your
  account.
 
-Other Features for Users with Accounts
-======================================
+Special Features for Users with Accounts
+========================================
 
 Your User Page
 --------------
@@ -209,10 +209,10 @@ simply navigate back to the item and click the :guilabel:`Remove Link` button.
 Quicklinks are associated with your account, so you will be able to access them from anywhere by simply
 logging into the wiki.
 
-Page Trail
+Item Trail
 ----------
 
-The page trail appears at the top of each page and lists previous pages which you have visited. Users
+The item trail appears at the top of each page and lists previous items which you have visited. Users
 with accounts may view this trail wherever they log in, whereas anonymous users have a different trail
 on each computer that they visit.
 
