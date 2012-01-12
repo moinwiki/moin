@@ -655,6 +655,10 @@ class NonExistent(Item):
         abort(404)
 
     def do_modify(self, contenttype, template_name):
+        # First, check if the current user has the required privileges
+        if not flaskg.user.may.create(self.name):
+            abort(403)
+
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
