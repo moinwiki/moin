@@ -15,15 +15,6 @@ recommend that you use a normal (unprivileged) user account instead. If you
 are running a desktop wiki or doing moin development, just use your normal
 login user.
 
-Entering the virtual env
-------------------------
-If you installed MoinMoin to a virtualenv, you need to activate it first. Doing so will
-find the moin script, the moin code, and all its library dependencies::
-
- source env/bin/activate  # for Linux (or other posix OS's)
- # or
- env\Scripts\activate.bat  # for windows
-
 Running the built-in server
 ---------------------------
 Then you can run the moin built-in server by::
