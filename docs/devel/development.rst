@@ -176,11 +176,7 @@ into your virtualenv as a dependency).
 
 Running the tests
 -----------------
-To run the tests you first need to enter your virtualenv::
-
-    . env/bin/activate
-
-To run tests, enter::
+To run the tests, activate your virtual env and run::
 
     py.test  # runs all tests
     py.test -k somekeyword  # just run the tests matching somekeyword

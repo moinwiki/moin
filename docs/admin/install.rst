@@ -9,15 +9,15 @@ it from the repository.
 You can use one of two repository URLs (there is little difference between them),
 and either use Mercurial to keep a constantly updated copy of the code or download an archive of the files in tar.gz format:
 
-Example using Mercurial with the first URL::
+Using Mercurial to clone one of our repos::
 
  hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
- hg up -C default  # update workdir to "default" branch
+ OR
+ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
 
-Example using Mercurial with the second URL::
+Now make sure your work dir is using the default branch::
 
- $ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
- hg up -C default  # update workdir to "default" branch
+ hg up -C default
 
 Alternatively, visit http://hg.moinmo.in/moin/2.0 with your web browser and download the archive
 (usually for the "default" branch) and unpack it.
@@ -32,11 +32,10 @@ Using your standard Python install or a virtualenv directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Please make sure you have `virtualenv` installed (it includes `pip`).
 
-Please make sure you have virtualenv installed (it includes pip).
 If you just want to run moin in-place in your mercurial working directory
-with your normal system installation of Python,
-run the following command from your mercurial moin2
-working directory (you should not run this as an administrator; use your standard user account)::
+with your normal system installation of Python, run the following command
+from your mercurial moin2 working directory (you should not run this as an
+administrator/root user; use your standard user account)::
 
  ./quickinstall  # for Linux (or other posix OS's)
  # or
@@ -46,12 +45,17 @@ This will use virtualenv to create a directory `env/` within the current directo
 create a virtual environment for MoinMoin and then install moin2 including all dependencies into that directory.
 `pip` will automatically fetch all dependencies from PyPI and install them, so this may take a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
+
 Please review the output of the quickinstall script, and check whether there were fatal errors.
+
 If you have a bad network connection that makes the downloads fail, you can try to do the steps in quickinstall manually.
+
 Further, the quickinstall script will create a `moin` script for your
 platform which you can use for starting the built-in server or invoke moin script commands.
+
 After you activated the virtual environment, the built-in server script (named `moin`) will be in the standard PATH,
 so you can just run the command `moin` verbatim on the command line.
+
 Note: in this special mode, it won’t copy the MoinMoin code to the env/ directory,
 it will run everything from your work dir, so you can modify code and directly try it out
 (you only need to do this installation procedure once).
@@ -59,32 +63,32 @@ it will run everything from your work dir, so you can modify code and directly t
 Using a different Python or a different virtualenv directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the `quickinstall` script and just modify the following lines as needed before
-running it::
-
-    DIR=env
-    PYTHON=python
-
 For example, if you want to use `PyPy` and want to name the virtualenv directory `env-pypy`,
 use::
 
+    # for linux
     DIR=env-pypy
     PYTHON=/opt/pypy/bin/pypy
 
 That way, you can test with different versions of Python in different virtualenv directories within your moin2 workdir.
 
-Entering the virtual env
-------------------------
-To enter your virtual environment::
+Activating the virtual env
+--------------------------
 
  source env/bin/activate  # for linux (or other posix OSes)
  # or
  env\Scripts\activate.bat  # for windows
 
+IMPORTANT: you always need to activate the virtual environment before running
+anything that executes moin code! Otherwise it won't find the moin command,
+nor the moin code nor the libraries it needs. Also, if you want to install
+additional software into the virtual environment, activate it before running pip!
+
 Initializing index and/or storage
 ---------------------------------
 If you have an existing storage AND a valid index (for this storage’s content, and for this moin version),
 you can skip this section.
+
 If you start from scratch (no storage created yet, and no index created yet),
 you need to create an (empty) storage and an (empty) index::
 
@@ -122,12 +126,8 @@ So, if you want jpeg support, make sure you have the jpeg libs/headers::
  sudo apt-get install libjpeg62-dev  # Ubuntu / Debian-based
  yum install libjpeg-turbo-devel  # Fedora / Redhat-based
 
-Now install PIL into your virtual environment::
+Now activate your virtual environment and install PIL into it::
 
- # enter your virtual environment:
- source env/bin/activate  # for linux (or other posix OSes)
-
- # install Python Imaging Library:
  pip install pil # for linux (or other posix OSes)
 
 Troubleshooting
@@ -167,3 +167,4 @@ Some users have had success using "pip install pillow" (a fork of PIL fixing
 a packaging issue).  Other users have resorted to installing PIL 1.1.6 in the
 main Python directory using the Windows installers available at
 http://www.pythonware.com/products/pil/
+
