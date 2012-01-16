@@ -24,7 +24,15 @@
 
     {% block head_title %}
     <title>
-    {%- if title -%}{{ title }}{% else %}{{ item_name }}{%- endif %} -
+        {%- if title -%}
+            {{ title }}
+        {% elif title_name %}
+            {{ title_name }}
+        {% elif headline %}
+            {{ headline }}
+        {% else %}
+            {{ item_name }}
+        {%- endif %} -
     {%- if cfg.html_pagetitle -%} {{ cfg.html_pagetitle }}{% else %} {{ cfg.sitename }}{%- endif -%}
     </title>
     {% endblock %}

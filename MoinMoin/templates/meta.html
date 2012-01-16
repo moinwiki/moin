@@ -1,12 +1,14 @@
 {% extends theme("show.html") %}
 
+{% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
+
 {% block rev_navigation %}
     {{ rev_navigation(view='frontend.show_item_meta') }}
 {% endblock %}
 
 {% block headline %}
 <h1>
-    {{ _("Metadata of '%(item_name)s'", item_name=item_name) }}
+    {{ title }}
     {% if show_revision %}({{ _("Revision") }} {{ rev.revid }}){% endif %}
 </h1>
 {% endblock %}

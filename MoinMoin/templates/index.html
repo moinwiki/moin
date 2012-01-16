@@ -1,5 +1,12 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
+
+{% if item_name %}
+    {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
+{% else %}
+    {% set title = _("Global Index") %}
+{% endif %}
+
 {% block head_scripts %}
 {{ super() }}
     <script src="{{ url_for('serve.files', name='jquery_multi_download', filename='jquery.multiDownload.js') }}"></script>
@@ -66,7 +73,7 @@
     </div>
     <div>
     {% if item_name: %}
-        <h1>{{ _("Index of subitems of '%(item_name)s'", item_name=item_name) }}</h1>
+        <h1>{{ title }}</h1>
         <div class="moin-index-path">
             <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
             <span class="moin-path-separator">{{ ("/") }}</span>
@@ -78,7 +85,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <h1>{{ _("Global Index") }}</h1>
+        <h1>{{ title }}</h1>
     {% endif %}
     </div>
     <div class='moin-clr'></div>

@@ -701,7 +701,7 @@ def backrefs(item_name):
     refs_here = _backrefs(item_name)
     return render_template('item_link_list.html',
                            item_name=item_name,
-                           headline=_(u'Refers Here'),
+                           headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
                           )
 
@@ -1568,7 +1568,7 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 item_names.append(name)
     return render_template("item_link_list.html",
-                           headline=_("Items with similar names"),
+                           headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
                            item_name=item_name, # XXX no item
                            item_names=item_names)
 

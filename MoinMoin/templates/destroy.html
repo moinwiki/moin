@@ -1,8 +1,11 @@
 {% import "forms.html" as forms %}
 {% extends theme("layout.html") %}
+
+{% set title = _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) %}
+
 {% block content %}
 {% if rev_id == None %}
-    <h1>{{ _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) }}</h1>
+    <h1>{{ title }}</h1>
     <div class="moin-form">
     {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name)) }}
       {{ forms.render_errors(form) }}

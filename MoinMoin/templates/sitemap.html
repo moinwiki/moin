@@ -1,6 +1,9 @@
 {% extends theme("layout.html") %}
+
+{% set title = _("SiteMap of %(item_name)s", item_name=item_name) %}
+
 {% block content %}
-<h1>{{ _("SiteMap of %(item_name)s", item_name=item_name) }}</h1>
+<h1>{{ title }}</h1>
 {% for entry in sitemap recursive %}
     {% if isinstance(entry, list) %}
         <ul>
