@@ -23,13 +23,6 @@ Then you can run the moin built-in server by::
  # or, if you need another ip/port:
  moin moin --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
 
-If you plan to use an IP or hostname different from 127.0.0.1, please also set::
-
- SERVER_NAME = "127.0.0.1:8080"
-
-accordingly in your wiki config. Use the IP or hostname that you use in the web
-browser when accessing the wiki.
-
 MoinMoin will start the built-in server and try to locate the wiki configuration
 from one of the following: **NOTE: please use an absolute path**
 
