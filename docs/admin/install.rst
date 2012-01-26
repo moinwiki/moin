@@ -133,6 +133,16 @@ Now activate your virtual environment and install PIL into it::
 Troubleshooting
 ---------------
 
+PyPi down
+~~~~~~~~~
+Now and then, PyPi might be down or unreachable.
+There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
+you can use in such cases, you just need to tell pip to do so:
+
+ # put this into ~/.pip/pip.conf
+ [global]
+ index-url = http://c.pypi.python.org/simple
+
 Bad Network Connection
 ~~~~~~~~~~~~~~~~~~~~~~
 If you have a poor or limited network connection, you may run into trouble with the commands issued by
