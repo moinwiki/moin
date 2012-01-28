@@ -735,10 +735,13 @@ class Item(object):
         if type(name) is types.ListType:
             if self._name and self._name in name:
                 name = self._name
-            else:
+            elif name:
                 name = name[0]
-        elif not name:
-            name = 'DoesNotExist'
+            else:
+                # empty name list, no name:
+                name = None
+        if not name:
+            name = u'DoesNotExist' # TODO: hack, solve this in a better way
         return name
 
     @classmethod
