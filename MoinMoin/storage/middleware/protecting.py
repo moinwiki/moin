@@ -95,6 +95,9 @@ class ProtectingMiddleware(object):
         return ProtectedItem(self, item)
 
     def may(self, itemname, capability, username=None):
+        if isinstance(itemname, list):
+            # if we get a list of names, just use first one to fetch item
+            itemname = itemname[0]
         item = self[itemname]
         allowed = item.allows(capability, user_name=username)
         return allowed
@@ -124,6 +127,9 @@ class ProtectedItem(object):
         """
         check permissions in this item without considering before/after acls
         """
+        # TODO we need to use the fq name here: namespace:currently_used_name
+        # to get the right ACLs from the acl mapping.
+        # XXX self.item.name might crash with IndexError if the name list is empty
         acls = self.protector.get_acls(self.item.name)
         acl = self.item.acl
         if acl is not None:
@@ -259,6 +265,10 @@ class ProtectedRevision(object):
         return self.rev.revid
 
     @property
+    def name(self):
+        return self.rev.name
+
+    @property
     def meta(self):
         self.require(READ)
         return self.rev.meta
@@ -267,6 +277,9 @@ class ProtectedRevision(object):
     def data(self):
         self.require(READ)
         return self.rev.data
+
+    def set_context(self, context):
+        self.rev.set_context(context)
 
     def close(self):
         self.rev.close()

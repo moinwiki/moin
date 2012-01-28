@@ -27,7 +27,7 @@ class TestSimple(object):
         assert ret is None, "create_user returned: {0}".format(ret)
         # now try to use it
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name]
         assert u.email == email
         assert u.valid
 
@@ -76,6 +76,7 @@ class TestLoginWithPassword(object):
         """
         Create user with {SSHA} password and check that user can login.
         """
+
         # Create test user
         name = u'Test User'
         # pass = 12345
