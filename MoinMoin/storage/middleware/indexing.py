@@ -889,14 +889,22 @@ class Revision(object):
 
     @property
     def names(self):
-        names = self.meta.get(NAME, 'DoesNotExist')
+        names = self.meta.get(NAME, u'DoesNotExist')
         if type(names) is not types.ListType:
             names = [names]
         return names
 
     @property
     def name(self):
-        return self._name or self.names[0]
+        name = self._name
+        if name is None:
+            try:
+                name = self.names[0]
+            except IndexError:
+                name = None
+        if not name:
+            name = u'DoesNotExist' # TODO: hack, solve this in a better way
+        return name
 
     def set_context(self, context):
         for name in self.names:
