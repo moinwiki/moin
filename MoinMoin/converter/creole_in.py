@@ -27,7 +27,7 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import wikiutil
+from MoinMoin import config, wikiutil
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 
@@ -495,13 +495,13 @@ class Converter(ConverterMacro):
             (^ | (?<=\s | [.,:;!?()/=]))
             (?P<escaped_url>~)?
             (?P<url_target>
-                # TODO: config.url_schemas
-                (http|https|ftp|nntp|news|mailto|telnet|file|irc):
+                (%(uri_schemes)s)
+                :
                 \S+?
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """
+    """ % dict(uri_schemes='|'.join(config.uri_schemes))
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""

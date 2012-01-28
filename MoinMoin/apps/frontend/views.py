@@ -55,6 +55,7 @@ from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, I
                             ALL_REVS, LATEST_REVS
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.search import SearchForm, ValidSearch
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.signalling import item_displayed, item_modified
@@ -122,27 +123,6 @@ def favicon():
     # although we tell that favicon.ico is at /static/logos/favicon.ico,
     # some browsers still request it from /favicon.ico...
     return app.send_static_file('logos/favicon.ico')
-
-
-class ValidSearch(Validator):
-    """Validator for a valid search form
-    """
-    too_short_query_msg = L_('Search query too short.')
-
-    def validate(self, element, state):
-        if element['q'].value is None:
-            # no query, nothing to search for
-            return False
-        if len(element['q'].value) < 2:
-            return self.note_error(element, state, 'too_short_query_msg')
-        return True
-
-class SearchForm(Form):
-    q = String.using(optional=False, default=u'').with_properties(autofocus=True, placeholder=L_("Search Query"))
-    history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
-    submit = String.using(default=L_('Search'), optional=True)
-
-    validators = [ValidSearch()]
 
 
 @frontend.route('/+search', methods=['GET', 'POST'])
@@ -217,7 +197,6 @@ def show_item(item_name, rev):
                               data_rendered=Markup(item._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
-                              search_form=SearchForm.from_defaults(),
                              )
     return Response(content, status)
 
@@ -249,8 +228,11 @@ def show_dom(item_name, rev):
 @frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def indexable(item_name, rev):
     from MoinMoin.storage.middleware.indexing import convert_to_indexable
-    item = flaskg.storage[item_name]
-    rev = item[rev]
+    try:
+        item = flaskg.storage[item_name]
+        rev = item[rev]
+    except KeyError:
+        abort(404)
     content = convert_to_indexable(rev.meta, rev.data, item_name)
     return Response(content, 200, mimetype='text/plain')
 
@@ -490,7 +472,10 @@ def delete_item(item_name):
         TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
-            item.delete(comment)
+            try:
+                item.delete(comment)
+            except AccessDenied:
+                abort(403)
             return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
@@ -586,7 +571,10 @@ def destroy_item(item_name, rev):
         TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
-            item.destroy(comment=comment, destroy_item=destroy_item)
+            try:
+                item.destroy(comment=comment, destroy_item=destroy_item)
+            except AccessDenied:
+                abort(403)
             return redirect(url_for_item(item_name))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
@@ -713,7 +701,7 @@ def backrefs(item_name):
     refs_here = _backrefs(item_name)
     return render_template('item_link_list.html',
                            item_name=item_name,
-                           headline=_(u'Refers Here'),
+                           headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
                           )
 
@@ -958,69 +946,76 @@ def _using_openid_auth():
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
     title_name = _(u'Register')
-    # is openid_submit in the form?
     isOpenID = 'openid_submit' in request.values
 
     if isOpenID:
         # this is an openid continuation
         if not _using_openid_auth():
             return Response('No OpenIDAuth in auth list', 403)
-
         template = 'openid_register.html'
-        if request.method == 'GET':
-            form = OpenIDForm.from_defaults()
-            # we got an openid from the multistage redirect
-            oid = request.values.get('openid_openid')
-            if oid:
-                form['openid'] = oid
-            TextCha(form).amend_form()
-
-        elif request.method == 'POST':
-            form = OpenIDForm.from_flat(request.form)
-            TextCha(form).amend_form()
-
-            if form.validate():
-                msg = user.create_user(username=form['username'].value,
-                                       password=form['password1'].value,
-                                       email=form['email'].value,
-                                       openid=form['openid'].value,
-                                      )
-                if msg:
-                    flash(msg, "error")
-                else:
-                    flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('.show_root'))
-
+        FormClass = OpenIDForm
     else:
         # not openid registration and no MoinAuth
         if not _using_moin_auth():
             return Response('No MoinAuth in auth list', 403)
-
         template = 'register.html'
-        if request.method == 'GET':
-            form = RegistrationForm.from_defaults()
-            TextCha(form).amend_form()
+        FormClass = RegistrationForm
 
-        elif request.method == 'POST':
-            form = RegistrationForm.from_flat(request.form)
-            TextCha(form).amend_form()
+    if request.method == 'GET':
+        form = FormClass.from_defaults()
+        if isOpenID:
+            oid = request.values.get('openid_openid')
+            if oid:
+                form['openid'] = oid
+        TextCha(form).amend_form()
+    elif request.method == 'POST':
+        form = FormClass.from_flat(request.form)
+        TextCha(form).amend_form()
 
-            if form.validate():
-                msg = user.create_user(username=form['username'].value,
-                                       password=form['password1'].value,
-                                       email=form['email'].value,
-                                       openid=form['openid'].value,
-                                      )
-                if msg:
-                    flash(msg, "error")
+        if form.validate():
+            user_kwargs = {
+                'username': form['username'].value,
+                'password': form['password1'].value,
+                'email': form['email'].value,
+                #'openid': form['openid'].value,
+            }
+            if app.cfg.user_email_verification:
+                user_kwargs['is_disabled'] = True
+            msg = user.create_user(**user_kwargs)
+            if msg:
+                flash(msg, "error")
+            else:
+                if app.cfg.user_email_verification:
+                    u = user.User(auth_username=user_kwargs['username'])
+                    is_ok, msg = u.mailVerificationLink()
+                    if is_ok:
+                        flash(_('Account verification required, please see the email we sent to your address.'), "info")
+                    else:
+                        flash(_('An error occurred while sending the verification email: "%(message)s" Please contact an administrator to activate your account.',
+                            message=msg), "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
-                    return redirect(url_for('.show_root'))
+                return redirect(url_for('.show_root'))
 
     return render_template(template,
                            title_name=title_name,
                            form=form,
                           )
+
+
+@frontend.route('/+verifyemail', methods=['GET'])
+def verifyemail():
+    u = None
+    if 'username' in request.values and 'token' in request.values:
+        u = user.User(auth_username=request.values['username'])
+        token = request.values['token']
+    if u and u.disabled and u.validate_recovery_token(token):
+        u.disabled = False
+        u.save()
+        flash(_("Your account has been activated, you can log in now."), "info")
+    else:
+        flash(_('Your token is invalid!'), "error")
+    return redirect(url_for('.show_root'))
 
 
 class ValidLostPassword(Validator):
@@ -1208,12 +1203,16 @@ def login():
                           )
 
 
-@frontend.route('/+logout')
-def logout():
-    flash(_("You are now logged out."), "info")
+def _logout():
     for key in ['user.itemid', 'user.auth_method', 'user.auth_attribs', ]:
         if key in session:
             del session[key]
+
+
+@frontend.route('/+logout')
+def logout():
+    flash(_("You are now logged out."), "info")
+    _logout()
     return redirect(url_for('.show_root'))
 
 
@@ -1277,9 +1276,8 @@ class UserSettingsOptionsForm(Form):
     submit = String.using(default=L_('Save'), optional=True)
 
 
-@frontend.route('/+usersettings', defaults=dict(part='main'), methods=['GET'])
-@frontend.route('/+usersettings/<part>', methods=['GET', 'POST'])
-def usersettings(part):
+@frontend.route('/+usersettings', methods=['GET', 'POST'])
+def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
@@ -1310,7 +1308,7 @@ def usersettings(part):
         results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
         submit = String.using(default=L_('Save'), optional=True)
 
-    dispatch = dict(
+    form_classes = dict(
         personal=UserSettingsPersonalForm,
         password=UserSettingsPasswordForm,
         notification=UserSettingsNotificationForm,
@@ -1318,53 +1316,108 @@ def usersettings(part):
         navigation=UserSettingsNavigationForm,
         options=UserSettingsOptionsForm,
     )
-    FormClass = dispatch.get(part)
-    if FormClass is None:
-        # 'main' part or some invalid part
-        return render_template('usersettings.html',
-                               part='main',
-                               title_name=title_name,
-                              )
-    if request.method == 'GET':
-        form = FormClass.from_object(flaskg.user)
-        form['submit'].set_default() # XXX from_object() kills all values
-    elif request.method == 'POST':
-        form = FormClass.from_flat(request.form)
-        if form.validate():
-            # successfully modified everything
-            success = True
-            if part == 'password':
-                flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
-                flaskg.user.save()
-                flash(_("Your password has been changed."), "info")
-            else:
-                if part == 'personal':
-                    if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
-                        # duplicate openid
-                        flash(_("This openid is already in use."), "error")
-                        success = False
-                    if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
-                        # duplicate name
-                        flash(_("This username is already in use."), "error")
-                        success = False
-                if part == 'notification':
-                    if (form['email'].value != flaskg.user.email and
-                        user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
-                        # duplicate email
-                        flash(_('This email is already in use'), 'error')
-                        success = False
-                if success:
-                    form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
+    forms = dict()
+
+    if request.method == 'POST':
+        part = request.form.get('part')
+        if part not in form_classes:
+            # the current part does not exist
+            if request.is_xhr:
+                # if the request is made via XHR, we return 404 Not Found
+                abort(404)
+            # otherwise we basically fall back to a normal GET request
+            part = None
+
+        if part:
+            # create form object from request.form
+            form = form_classes[part].from_flat(request.form)
+
+            # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
+            response = dict(
+                form = None,
+                flash = [],
+                redirect = None,
+            )
+
+            if form.validate():
+                # successfully modified everything
+                success = True
+                if part == 'password':
+                    flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
                     flaskg.user.save()
-                    return redirect(url_for('.usersettings'))
+                    response['flash'].append((_("Your password has been changed."), "info"))
                 else:
-                    # reset to valid values
-                    form = FormClass.from_object(flaskg.user)
-                    form['submit'].set_default() # XXX from_object() kills all values
+                    if part == 'personal':
+                        if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
+                            # duplicate openid
+                            response['flash'].append((_("This openid is already in use."), "error"))
+                            success = False
+                        if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
+                            # duplicate name
+                            response['flash'].append((_("This username is already in use."), "error"))
+                            success = False
+                    if part == 'notification':
+                        if (form['email'].value != flaskg.user.email and
+                            user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
+                            # duplicate email
+                            response['flash'].append((_('This email is already in use'), 'error'))
+                            success = False
+                    if success:
+                        user_old_email = flaskg.user.email
+                        form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
+                        if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
+                            # disable account
+                            flaskg.user.disabled = True
+                            # send verification mail
+                            is_ok, msg = flaskg.user.mailVerificationLink()
+                            if is_ok:
+                                _logout()
+                                flaskg.user.save()
+                                response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
+                                response['redirect'] = url_for('.show_root')
+                            else:
+                                # sending the verification email didn't work. reset email change and alert the user.
+                                flaskg.user.disabled = False
+                                flaskg.user.email = user_old_email
+                                flaskg.user.save()
+                                response['flash'].append((_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error"))
+                        else:
+                            flaskg.user.save()
+
+            if not response['flash']:
+                # if no flash message was added until here, we add a generic success message
+                response['flash'].append((_("Your changes have been saved."), "info"))
+
+            if response['redirect'] is not None or not request.is_xhr:
+                # if we redirect or it is no XHR request, we just flash() the messages normally
+                for f in response['flash']:
+                    flash(*f)
+
+            if request.is_xhr:
+                # if it is a XHR request, render the part from the usersettings_ajax.html template
+                # and send the response encoded as an JSON object
+                response['form'] = render_template('usersettings_ajax.html',
+                                                   part=part,
+                                                   form=form,
+                                                  )
+                return jsonify(**response)
+            else:
+                # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
+                if response['redirect'] is not None:
+                    return redirect(response['redirect'])
+
+            # if the view did not return until here, we add the current form to the forms dict
+            # and continue with rendering the normal template
+            forms[part] = form
+
+    # initialize all remaining forms
+    for p, FormClass in form_classes.iteritems():
+        if p not in forms:
+            forms[p] = FormClass.from_object(flaskg.user)
+
     return render_template('usersettings.html',
                            title_name=title_name,
-                           part=part,
-                           form=form,
+                           form_objs=forms,
                           )
 
 
@@ -1393,6 +1446,21 @@ def bookmark():
     return redirect(url_for('.global_history'))
 
 
+def get_revs():
+    """
+    get 2 revids from values
+    """
+    rev1 = request.values.get('rev1')
+    rev2 = request.values.get('rev2')
+    if rev1 is None:
+        # we require at least rev1
+        abort(404)
+    if rev2 is None:
+        # rev2 is optional, use current rev if not given
+        rev2 = CURRENT
+    return rev1, rev2
+
+
 @frontend.route('/+diffraw/<path:item_name>')
 def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDenied.
@@ -1400,11 +1468,10 @@ def diffraw(item_name):
     #      If it happens for get_revision, we may just want to skip that rev in the list
     # TODO verify if it does crash when the item does not exist
     try:
-        item = flaskg.storage.get_item(item_name)
+        item = flaskg.storage[item_name]
     except AccessDenied:
         abort(403)
-    rev1 = request.values.get('rev1')
-    rev2 = request.values.get('rev2')
+    rev1, rev2 = get_revs()
     return _diff_raw(item, rev1, rev2)
 
 
@@ -1425,8 +1492,7 @@ def diff(item_name):
         rev2 = CURRENT  # and compare it with latest we have
     else:
         # otherwise we should get the 2 revids directly
-        rev1 = request.values.get('rev1')
-        rev2 = request.values.get('rev2')
+        rev1, rev2 = get_revs()
     return _diff(item, rev1, rev2)
 
 
@@ -1447,8 +1513,11 @@ def _common_type(ct1, ct2):
 
 
 def _diff(item, revid1, revid2):
-    oldrev = item[revid1]
-    newrev = item[revid2]
+    try:
+        oldrev = item[revid1]
+        newrev = item[revid2]
+    except KeyError:
+        abort(404)
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
@@ -1458,6 +1527,7 @@ def _diff(item, revid1, revid2):
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
+                           diff_html=Markup(item._render_data_diff(oldrev, newrev)),
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
                            last_rev_id=rev_ids[-1],
@@ -1469,7 +1539,7 @@ def _diff(item, revid1, revid2):
 def _diff_raw(item, revid1, revid2):
     oldrev = item[revid1]
     newrev = item[revid2]
-    commonmt = _common_type(oldrev, newrev)
+    commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
@@ -1498,7 +1568,7 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 item_names.append(name)
     return render_template("item_link_list.html",
-                           headline=_("Items with similar names"),
+                           headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
                            item_name=item_name, # XXX no item
                            item_names=item_names)
 
@@ -1625,6 +1695,9 @@ def sitemap(item_name):
     """
     sitemap view shows item link structure, relative to current item
     """
+    # first check if this item exists
+    if not flaskg.storage[item_name]:
+        abort(404)
     sitemap = NestedItemListBuilder().recurse_build([item_name])
     del sitemap[0] # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
@@ -1656,9 +1729,9 @@ class NestedItemListBuilder(object):
         # does not recurse
         try:
             item = flaskg.storage[name]
-        except AccessDenied:
+            rev = item[CURRENT]
+        except (AccessDenied, KeyError):
             return []
-        rev = item[CURRENT]
         itemlinks = rev.meta.get(ITEMLINKS, [])
         return [child for child in itemlinks if self.is_ok(child)]
 

@@ -12,6 +12,9 @@ import mimetypes
 
 from MoinMoin import config
 
+# prevents unexpected results on Windows
+# see http://bugs.python.org/issue10551
+mimetypes.init(mimetypes.knownfiles)
 
 MIMETYPES_MORE = {
  # OpenOffice 2.x & other open document stuff
@@ -40,6 +43,7 @@ MIMETYPES_MORE = {
  '.rst': 'text/x-rst',
  '.flv': 'video/x-flv',
  '.wmv': 'video/x-ms-wmv',
+ '.wma': 'audio/x-ms-wma',
  '.swf': 'application/x-shockwave-flash',
  '.awd': 'application/x-anywikidraw',
  '.twd': 'application/x-twikidraw',
@@ -48,6 +52,8 @@ MIMETYPES_MORE = {
  '.moin': 'text/x.moin.wiki',
  '.creole': 'text/x.moin.creole',
  '.mediawiki': 'text/x-mediawiki',
+ '.ico': 'image/x-icon',
+ '.svg': 'image/svg+xml'
 }
 
 # add all mimetype patterns of pygments

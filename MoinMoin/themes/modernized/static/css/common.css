@@ -53,13 +53,13 @@ ins { background-color: #FFF; text-decoration: underline; }
 .moin-integer { text-align: right; padding-right: 1em; }
 
 /* headings - from: http: //www.w3.org/TR/CSS2/sample.html */
-h1 { font-size: 2em; margin: .67em 0; }
-h2 { font-size: 1.5em; margin: .75em 0; }
-h3 { font-size: 1.17em; margin: .83em 0; }
-h4 { margin: 1.12em 0; }
-h5 { font-size: .83em; margin: 1.5em 0; }
-h6 { font-size: .75em; margin: 1.67em 0; }
-
+h1 { font-size: 2em; margin: .67em 0; border-bottom: 5px solid #4D7DA9; padding-bottom: 5px; }
+h2 { font-size: 1.5em; margin: .75em 0; padding-bottom: 4px; }
+h3 { font-size: 1.17em; margin: .83em 0; padding-bottom:3px; }
+h4 { margin: 1.12em 0; padding-bottom:2px; }
+h5 { font-size: .83em; margin: 1.5em 0; padding-bottom: 2px; }
+h6 { font-size: .75em; margin: 1.67em 0; padding-bottom:2px; }
+h2,h3,h4,h5,h6{border-bottom: 3px solid #4D7DA9; }
 /* Links - most themes will override */
 a { text-decoration: none; }
 a:link { color: blue; }
@@ -111,13 +111,26 @@ pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear:
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
 
+/* tt (teletype) replacement */
+.monospaced {
+    font-family: monospace;
+}
+
 /* tables */
 table { margin: 0.5em; border-collapse: collapse; }
-th, td { padding: 0.25em 0.5em 0.25em 0.5em; border: 1px solid #ADB9CC; vertical-align: middle; }
+th, td { padding: 0.3em 0.4em; vertical-align: middle; text-align: left; }
+th { border: 1px solid #4D7DA9; background-color: #81BBF2; }
+td { border: 1px solid #ADB9CC; }
 td p { margin: 0; padding: 0; }
+table.zebra { border: none; border-collapse: separate; border-spacing: 1px; }
+.zebra thead { background-color: #81BBF2; }
+.zebra tfoot { background-color: #C4D9FF; }
+.zebra th, .zebra td { border: none; }
+.zebra tbody tr, .zebra > tr { background-color: #EEF1F5; }
+.zebra tbody tr:nth-child(odd), .zebra > tr:nth-child(odd) { background-color: #D9DFE8; }
 
 /* TableOfContents macro */
-div.moin-table-of-contents { border: 1px solid #BBB; color: black;
+div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #fff;
             font-size: 80%; margin: 0.5em 0 0.75em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
             max-width: 35%; text-align: left; float: right; clear: both;
             box-shadow: 10px 10px 5px #679; border-radius: 15px;
@@ -149,6 +162,16 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .moin-form dd { margin-bottom: 1em; }
 .moin-form dd input { width: 20em; }
 .moin-form dt label.required:after { content: '*'; color: gray; }
+
+/* tabs on user settings page */
+.moin-tab-titles { margin: 0; padding: -10px 0 0; list-style: none; border-bottom: 3px solid #4D7DA9; }
+.moin-tab-titles li { display: inline-block; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4D7DA9; }
+.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #81BBF2; border-width: 1px 1px 0;
+            border-style: solid; border-color: #4D7DA9; color: #222 !important; }
+.moin-tab-titles a:hover { background-color: #4D7DA9; text-decoration: none; }
+.moin-tab-titles a.current { background: #4D7DA9; padding-top: 8px; margin-top: -4px; }
+.moin-tab-titles .change-indicator { font-weight: bold; color: #D22; }
+.moin-tab-title a { color: #000 !important; text-decoration: none !important; }
 
 /* Recent changes */
 .rcrss { float: right; margin: 0 7px 0 14px; height: 0; position: relative; top: 9px; }
@@ -211,11 +234,6 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-hist-rev { margin: 0; }
 #moin-global-history,
 #moin-page-history { font-size: 75%; }
-#moin-page-history tr { border: 1px solid #4D7DA9; } 
-#moin-global-history th,
-#moin-page-history th { background-color: #81BBF2; border: 0px; font-size: 1.12em; padding: 6px .5em; text-align: left; }
-#moin-global-history td {  border: 0px; vertical-align: top;text-align: left; padding: 0.4em 0.3em; }
-#moin-page-history td { background-color: #E6EAF0; border: 0px; vertical-align: top; }
 .moin-wordbreak { word-break: break-all;  word-wrap: break-word; } /* Firefox needs javascript assistance within tables */
 .moin-history-time { width: 10%; }
 .moin-history-contenttype { width: 18%; }
@@ -223,11 +241,12 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-history-comment { width: 30%; }
 .moin-action { width: 2%; }
 .moin-action a:hover { text-decoration: none; }
-.moin-history-container { border: 1px solid #4D7DA9; }
+.moin-history-container { border: 1px solid #4D7DA9; margin: 2em 0; }
 .moin-history-container-header { background: #81BBF2; margin: 0px; padding: 4px; color: #3b3131; border-bottom: 1px solid #4D7DA9; }
-.moin-history-container-header h2 { display: inline; }
+.moin-history-container-header h2 { display: inline; border: none; }
 .moin-history-container-header a.bookmark-link { margin-left: 10px; color: #3b3131; }
-.moin-history-container-body { padding: 4px; font-size: 14px; }
+.moin-history-container-body { margin: 0; padding: 0; font-size: 14px; }
+.moin-history-container-body table { margin: 0; width: 100%; }
 .moin-history-save:before { content: url('../img/moin-edit.png'); }
 .moin-history-trash:before { content: url('../img/moin-deleted.png'); }
 .moin-history-rename:before { content: url('../img/moin-renamed.png'); }
@@ -244,7 +263,6 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-clr { clear: both; }
 
 /* item index page */
-#moin-content h1 { display: inline; }
 .moin-select-all { padding: 0.5em; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; text-align: left; }
 .moin-select-actions { position: relative; margin: 0 1em; padding: 0; background: #FFFFFF; z-index: 2; white-space: nowrap; color: #342D7E; text-align: left; }
 .moin-select-actions div { margin: 0; padding: 0.5em; border: 1px groove #E5E5E5; }
@@ -548,9 +566,10 @@ a.moin-mime-drawing:before { content: url(../img/moin-drawing.png); margin: 0 0.
 body { background-color: #F3F7FD; }
 
 /* moin-content */
-#moin-page { margin: 0; padding: 2px 20px 20px; box-shadow: 1px 1px 33px -11px inset;
-/* support for firefox 3.5/3.6 and safari */
--moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
+#moin-page { margin: 0; padding: 0; display: table; width: 100%; table-layout: fixed; }
+#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 8px 25px; display: table-cell; 
+    /* support for firefox 3.5/3.6 and safari */
+    -moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
 
 /* links */
 a:link { color: #47F; text-decoration: none; }
@@ -575,7 +594,8 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-searchform input { font-size: 100%; vertical-align: middle;
             background-color: #F3F7FD; /* same as body bg col */
             border: 1px solid #A4B9DF; }
-#moin-searchform #moin-search-submit { display: none; }
+#moin-searchform #moin-search-submit { text-indent: -9000%; margin-left: -24px; width: 20px; height: 16px; background: url(../img/moin-search.png) center center no-repeat; background-size: 16px 16px; border: none; overflow: hidden; vertical-align: middle; cursor: pointer; }
+#moin-searchform #moin-search-query { padding-right: 20px; }
 #moin-searchform div { margin: 0; }
 #moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
 #moin-searchform li { list-style:none; }
@@ -628,6 +648,25 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 .moin-itemviews form div { display: inline; margin: 0; }
 .moin-itemviews select { font-size: 100%; vertical-align: middle; }
 
+/* moin-header moin-subitem-navigation */
+.moin-subitem-navigation {  padding: 2px 4px; background: #C4D9FF; margin: 0; vertical-align: top;
+                font-size: 0.8em; width: 14em; overflow: hidden; display: table-cell; word-wrap: break-word; }
+.moin-subitem-navigation .list-header { margin: 2px 0; padding: 0; font-size: 1.1em; }
+.moin-subitem-navigation .sep { font-size: 1.2em; margin-left: 0px; }
+.moin-subitem-navigation ul { display: block; margin: 0; padding: 0 4px; }
+.moin-subitem-navigation li { padding: 0.5em 2px; line-height: 1em; list-style: none; }
+.moin-subitem-navigation li:hover { background: #4D7DA9; }
+.moin-subitem-navigation a { color: #0044B3; }
+.moin-subitem-navigation a:hover { text-decoration: underline; }
+.moin-subitem-navigation li ul { border-left: 1px dotted gray; display: none; }
+.moin-subitem-navigation .expander { background: url(../img/moin-expand.png) no-repeat center center; cursor: pointer;
+                height: 16px; overflow: hidden; vertical-align: middle; width: 16px; border: hidden; text-indent: -9000%; }
+.link-action,
+.transclude-action { border: hidden; text-indent: -9000%; padding: 0; margin: 0 -2px; vertical-align: middle;
+                height: 16px; width: 16px; overflow: hidden; cursor: pointer; }
+.moin-subitem-navigation .link-action { background: url(../img/moin-link.png) no-repeat center center; }
+.moin-subitem-navigation .transclude-action { background: url(../img/moin-transclusion.png) no-repeat center center; }
+
 /* moin-page moin-footer */
 #moin-footer { clear: both; margin: 0 0; }
 #moin-footer hr { margin: 0; background-color: #ccc; }
@@ -663,7 +702,7 @@ h2:hover .permalink,
 h3:hover .permalink,
 h4:hover .permalink,
 h5:hover .permalink,
-h6:hover .permalink { display: inline; }
+h6:hover .permalink { display: inline; text-decoration: none; }
 
 } /* end of @media screen, projection */
 

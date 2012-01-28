@@ -184,16 +184,16 @@ def testgetUnicodeIndexGroup():
         result = wikiutil.getUnicodeIndexGroup('')
 
 def testis_URL():
-    sample_schemas = ['http', 'https', 'ftp', 'ssh']
-    for schema in sample_schemas:
-        result = wikiutil.is_URL(schema + ':MoinMoin')
+    sample_schemes = ['http', 'https', 'ftp', 'ssh']
+    for scheme in sample_schemes:
+        result = wikiutil.is_URL(scheme + ':MoinMoin')
         assert result
 
     # arg without ':' which is a mandatory requirement
     result = wikiutil.is_URL('MoinMoin')
     assert not result
-    # invalid schema
-    result = wikiutil.is_URL('invalid_schema:MoinMoin')
+    # invalid scheme
+    result = wikiutil.is_URL('invalid_scheme:MoinMoin')
     assert not result
 
 def testcontainsConflictMarker():

@@ -10,6 +10,9 @@
 
 import urllib
 
+from json import dumps
+from operator import itemgetter
+
 from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request
@@ -21,6 +24,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.config import USERID, ADDRESS, HOSTNAME
+from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
@@ -112,6 +116,20 @@ class ThemeSupport(object):
                 exists = True  # we can't detect existance of remote items
             breadcrumbs.append((wiki_name, item_name, href, exists, err))
         return breadcrumbs
+
+    def subitem_index(self, item_name):
+        """
+        Get a list of subitems for the given item_name
+
+        :rtype: list
+        :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
+        """
+        from MoinMoin.items import Item
+        item = Item.create(item_name)
+        item_index = item.get_detailed_index(item.flat_index())
+        # Sort items by whether or not they have children, then by name:
+        item_index = sorted(item_index, key=itemgetter(-1, 0))
+        return item_index
 
     def userhome(self):
         """
@@ -316,7 +334,6 @@ def get_editor_info(meta, external=False):
         result['email'] = email
     return result
 
-
 def shorten_item_name(name, length=25):
     """
     Shorten item names
@@ -339,6 +356,20 @@ def shorten_item_name(name, length=25):
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
+def shorten_id(name, length=7):
+    """
+    Shorten IDs to specified length
+
+    Shorten long IDs into just the first <length> characters. There's
+    no need to display the whole IDs everywhere.
+
+    :param name: item name, unicode
+    :param length: Maximum length of the resulting ID, int
+    :rtype: unicode
+    :returns: <name> truncated to <length> characters
+    """
+
+    return name[:length]
 
 MIMETYPE_TO_CLASS = {
     'application/pdf': 'pdf',
@@ -374,7 +405,9 @@ def utctimestamp(dt):
 
 def setup_jinja_env():
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
+    app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
+    app.jinja_env.filters['json_dumps'] = dumps
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
@@ -395,5 +428,6 @@ def setup_jinja_env():
                             'get_editor_info': lambda meta: get_editor_info(meta),
                             'utctimestamp': lambda dt: utctimestamp(dt),
                             'gen': make_generator(),
+                            'search_form': SearchForm.from_defaults(),
                             })
 

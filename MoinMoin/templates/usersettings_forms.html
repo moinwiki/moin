@@ -1,0 +1,83 @@
+{% import "forms.html" as forms %}
+
+{% macro personal(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render_field(gen, form['name'], 'text') }}
+    {{ forms.render_field(gen, form['display_name'], 'text') }}
+    {{ forms.render_field(gen, form['openid'], 'url') }}
+    {{ forms.render_select(gen, form['timezone']) }}
+    {{ forms.render_select(gen, form['locale']) }}
+</dl>
+{{ forms.render_hidden('part', 'personal') }}
+{{ forms.render_button(_("Save")) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
+
+{% macro password(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render_field(gen, form['password_current'], 'password') }}
+    {{ forms.render_field(gen, form['password1'], 'password') }}
+    {{ forms.render_field(gen, form['password2'], 'password') }}
+</dl>
+{{ forms.render_hidden('part', 'password') }}
+{{ forms.render_button(_("Change password")) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
+{% macro notification(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{% if cfg.user_email_verification %}
+<p>{{ _("Changing your email address requires you to verify it. A link will be sent to you.") }}</p>
+{% endif %}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render_field(gen, form['email'], 'email') }}
+</dl>
+{{ forms.render_hidden('part', 'notification') }}
+{{ forms.render_button(_("Save")) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
+{% macro ui(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render_select(gen, form['theme_name']) }}
+    {{ forms.render_field(gen, form['css_url'], 'url') }}
+    {{ forms.render_field(gen, form['edit_rows'], 'text') }}
+    {{ forms.render_field(gen, form['results_per_page'], 'text') }}
+</dl>
+{{ forms.render_hidden('part', 'ui') }}
+{{ forms.render_button(_("Save")) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
+{% macro navigation(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {# TODO: find a good way to handle quicklinks #}
+</dl>
+{{ forms.render_hidden('part', 'navigation') }}
+{{ forms.render_button(_("Save")) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
+{% macro options(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render_field(gen, form['mailto_author'], 'checkbox') }}
+    {{ forms.render_field(gen, form['edit_on_doubleclick'], 'checkbox') }}
+    {{ forms.render_field(gen, form['show_comments'], 'checkbox') }}
+    {{ forms.render_field(gen, form['disabled'], 'checkbox') }}
+</dl>
+{{ forms.render_hidden('part', 'options') }}
+{{ forms.render_button(_("Save")) }}
+{{ gen.form.close() }}
+{% endmacro %}

@@ -30,7 +30,7 @@ class Create_User(Command):
     )
 
     def run(self, name, display_name, email, openid, password):
-        flaskg.unprotected_storage = app.unprotected_storage
+        flaskg.unprotected_storage = app.storage
         msg = user.create_user(username=name,
                                password=password,
                                email=email,
@@ -40,5 +40,5 @@ class Create_User(Command):
             print msg
         else:
             u = user.User(auth_username=name)
-            print " %-20s %-25s %-35s - created." % (u.id, u.name, u.email),
+            print " %-20s %-25s %-35s - created." % (u.itemid, u.name, u.email),
 

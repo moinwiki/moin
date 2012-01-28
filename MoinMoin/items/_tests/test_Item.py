@@ -10,6 +10,11 @@
 import pytest
 
 from flask import g as flaskg
+from flask import Markup
+
+from werkzeug import escape
+
+from MoinMoin.util import diff_html
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
@@ -521,9 +526,13 @@ class TestTransformableBitmapImage(object):
         item1 = Binary.create(item_name)
         try:
             from PIL import Image as PILImage
-            result = TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev)
-            expected = '<img src="/+diffraw/image_Item?rev2=0" />'
-            assert str(result) == expected
+            result = Markup(TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev))
+            # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
+            # The assert statement works with both older and newer versions of Werkzeug
+            # Probably not an intentional change on the werkzeug side, see issue:
+            # https://github.com/mitsuhiko/werkzeug/issues/146
+            assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or \
+                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')
         except ImportError:
             # no PIL
             pass
@@ -571,6 +580,33 @@ class TestText(object):
         result = Text.data_storage_to_internal(item, data_storage)
         expected = test_text
         assert result == expected
+
+    def test__render_data_diff(self):
+        item_name = u'Html_Item'
+        empty_html = u'<span></span>'
+        html = u'<span>\ud55c</span>'
+        meta = {CONTENTTYPE: u'text/html;charset=utf-8'}
+        item = Text.create(item_name)
+        item._save(meta, empty_html)
+        item = Text.create(item_name)
+        # Unicode test, html escaping
+        rev1 = update_item(item_name, meta, html)
+        rev2 = update_item(item_name, {}, u'     ')
+        result = Text._render_data_diff(item, rev1, rev2)
+        assert escape(html) in result
+        # Unicode test, whitespace
+        rev1 = update_item(item_name, {}, u'\n\n')
+        rev2 = update_item(item_name, {}, u'\n     \n')
+        result = Text._render_data_diff(item, rev1, rev2)
+        assert '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' in result
+        # If fairly similar diffs are correctly spanned or not, also check indent
+        rev1 = update_item(item_name, {}, u'One Two Three Four\nSix\n\ud55c')
+        rev2 = update_item(item_name, {}, u'Two Three Seven Four\nSix\n\ud55c')
+        result = Text._render_data_diff(item, rev1, rev2)
+        assert '<span>One </span>Two Three Four' in result
+        assert 'Two Three <span>Seven </span>Four' in result
+        # Check for diff_html.diff return types
+        assert reduce(lambda x, y: x and y, [isinstance(i[1], unicode) and isinstance(i[3], unicode) for i in diff_html.diff(u'One Two Three Four\nSix\n', u'Two Three Seven Four\nSix Seven\n')], True)
 
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'

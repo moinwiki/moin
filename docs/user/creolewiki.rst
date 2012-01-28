@@ -8,8 +8,6 @@ Features currently not working with moin's WikiCreole parser are marked with **C
 
 Features currently not working with moin's rst parser are marked with **RSTTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
 Headings
 ========
 
@@ -27,7 +25,7 @@ Headings
 Level 1
 =======
 
-**Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+**Intentionally not rendered as level 1 so it does not interfere with Sphinx's indexing**
 
 Level 2
 =======
@@ -46,13 +44,13 @@ Level 6
 
 **Notes**:
 
-Closing equals signs are optional, and if they are used they will not affect the output.
+Closing equals signs are optional and do not affect the output.
 Also, whitespace between the first word of the heading and the opening equals sign will not be shown in the output (ie. leading whitespace is stripped).
 
 Text formatting
 ===============
 
-The following is a table of inline markup that can be used to control text formatting in Creole.
+The following is a table of inline markup that can be used to format text in Creole.
 
 +-------------------------------------+---------------------------------------+
 | Markup                              | Result                                |
@@ -67,14 +65,7 @@ The following is a table of inline markup that can be used to control text forma
 |                                     | | Second line                         | 
 +-------------------------------------+---------------------------------------+
 
-**SPHINXTODO** **RSTTODO**: Restructured Text does not allow text to be both **bold** and *italic*. This is because bold and italic are simply
-treated as different levels of emphasis. It should be noted that this is a problem with the spec rather than Sphinx or Moin itself.
-
-It requires the following CSS to rectify: ::
-
-   .bolditalic{font-weight:bold;font-style:italic;}
-
-**RSTTODO**: reStructuredText line blocks are not working in Moin2
+**RSTTODO**: Restructured Text line blocks are not working in Moin2
 
 Hyperlinks
 ==========
@@ -248,7 +239,7 @@ Syntax Highlighting
 
     spam()
 
-**CREOLETODO**: Use of syntax highlighting currently crashes moin.
+**CREOLETODO**:The use of syntax highlighting currently crashes moin.
 
 Lists
 =====
@@ -257,7 +248,7 @@ Ordered lists
 -------------
 
 Ordered lists are formed of lines that start with number signs (``#``).
-The count of number signs at the beginning of a line determines the level.
+The number of '#' signs at the beginning of a line determines the current level.
 
 **Markup**: ::
 
@@ -347,7 +338,7 @@ Tables
 **Notes**:
 
 Table cells start with a pipe symbol (``|``), and header cells start with a pipe symbol and equals sign (``|=``).
-The closing pipe symbol at the end of a row is completely optional.
+The closing pipe symbol at the end of a row is optional.
 
 **CREOLETODO** **RSTTODO**: Table headers are not interpreted as such when rendered.
 

@@ -37,14 +37,14 @@ def userbrowser():
     User Account Browser
     """
     groups = flaskg.groups
-    docs = user.search_users() # all users
-    user_accounts = [dict(uid=doc[ITEMID],
-                          name=doc[NAME],
-                          email=doc[EMAIL],
+    revs = user.search_users() # all users
+    user_accounts = [dict(uid=rev.meta[ITEMID],
+                          name=rev.meta[NAME],
+                          email=u'', # rev.meta[EMAIL],  # TODO: fix KeyError
                           disabled=False,  # TODO: add to index
-                          groups=[groupname for groupname in groups if doc[NAME] in groups[groupname]],
+                          groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      )
-                     for doc in docs]
+                     for rev in revs]
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"User Browser"))
 
 

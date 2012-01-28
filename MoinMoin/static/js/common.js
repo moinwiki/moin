@@ -908,3 +908,212 @@ function QuicklinksExpander() {
 jQuery(document).ready(function() {
     new QuicklinksExpander();
 })
+
+function toggleSubtree(item) {
+    /* used to toggle subtrees in the subitem widget */
+    var subtree = $(item).siblings("ul");
+    subtree.toggle(200);
+}
+
+function guessContentType() {
+    /* Used in the modify_text template to guess the data content type client-side 
+     * This approach has the advantage of reacting to content type changes for the 
+     * link/transclude code without having to re-fetch the page */
+    var meta_text = $("#f_meta_text").val();
+    var ctype_regex = /["']contenttype["']\s*:\s*["']([\w-_+.]+\/[\w-_+.]+)(;|["'])/;
+    if (meta_text) {
+        var match = ctype_regex.exec(meta_text);
+        if (match) return match[1];
+    }
+    // text/plain is the default value
+    return "text/plain";
+}
+
+function transcludeSubitem(subitem_name, fullname) {
+    function moinwiki(subitem_name, fullname) {
+        return "{{" + fullname.replace("{{", "\\}}") + "}} ";
+    }
+    function mediawiki(subitem_name, fullname) {
+        return "{{:" + fullname.replace("}}", "\\}}") + "}} ";
+    }
+    function rst(subitem_name, fullname) {
+        return "\n.. include:: " + subitem_name + "\n";
+    }
+    function docbook(subitem_name, fullname) {
+        return ""; //XXX: the docbook converter currently doesn't handle transclusion with <ref> tags
+    }
+    var transclude_formats = {
+        "text/x.moin.wiki" : moinwiki,
+        "text/x.moin.creole" : moinwiki,
+        "text/x-mediawiki" : mediawiki,
+        "text/x-rst" : rst,
+        "application/docbook+xml" : docbook,
+        "text/plain" : function(x){return x + " ";},
+    }
+    var ctype = guessContentType();
+    var input_element = $("#f_data_text");
+    var ctype_format = transclude_formats[ctype];
+    if (!ctype_format) ctype_format = transclude_formats["text/plain"];
+    input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
+    input_element.focus();
+}
+
+function linkSubitem(subitem_name, fullname) {
+    function moinwiki(subitem_name, fullname) {
+        return "[[" + fullname.replace("]", "\\]") + "|" + subitem_name.replace("]", "\\]") + "]] ";
+    }
+    function rst(subitem_name, fullname) {
+        return "`" + subitem_name.replace(">", "\\>").replace("`", "\\`") + " <" + fullname.replace(">", "\\>") + ">`_ ";
+    }
+    function docbook(subitem_name, fullname) {
+        return '<ulink url="/' + fullname.replace('"', '\\"') + '">' + subitem_name + "</ulink>";;
+    }
+    var link_formats = {
+        "text/x.moin.wiki" : moinwiki,
+        "text/x.moin.creole" : moinwiki,
+        "text/x-mediawiki" : moinwiki,
+        "text/x-rst" : rst,
+        "application/docbook+xml" : docbook,
+        "text/plain" : function(x){return x + " ";},
+    }
+    var ctype = guessContentType();
+    var input_element = $("#f_data_text");
+    var ctype_format = link_formats[ctype];
+    if (!ctype_format) ctype_format = link_formats["text/plain"];
+    input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
+    input_element.focus();
+}
+
+function initMoinTabs($) {
+    "use strict";
+    // find all .moin-tabs elements and initialize them
+    $('.moin-tabs').each(function () {
+        var tabs = $(this),
+            titles = $(document.createElement('ul')),
+            lastLocationHash;
+        titles.addClass('moin-tab-titles');
+
+        // switching between tabs based on the current location hash
+        function updateFromLocationHash() {
+            if (location.hash !== undefined && location.hash !== '' && tabs.children(location.hash).length) {
+                if (location.hash !== lastLocationHash) {
+                    lastLocationHash = location.hash;
+                    tabs.children('.moin-tab-body').hide();
+                    tabs.children(location.hash).show();
+                    titles.children('li').children('a').removeClass('current');
+                    titles.children('li').children('a[href="' + location.hash + '"]').addClass('current');
+                }
+            } else {
+                $(titles.children('li').children('a')[0]).click();
+            }
+        }
+
+        // move all tab titles to an <ul> at the beginning of .moin-tabs
+        tabs.children('.moin-tab-title').each(function () {
+            var li = $(document.createElement('li')),
+                a = $(this).children('a');
+            a.click(function () {
+                location.hash = this.hash;
+                updateFromLocationHash();
+                return false;
+            });
+            li.append(a);
+            titles.append(li);
+            $(this).remove();
+        });
+        tabs.prepend(titles);
+
+        updateFromLocationHash();
+        setInterval(updateFromLocationHash, 40); // there is no event for that
+    });
+}
+
+jQuery(document).ready(initMoinTabs);
+
+function initMoinUsersettings($) {
+    "use strict";
+    // save initial values of each form
+    $('#moin-usersettings form').each(function () {
+        $(this).data('initialForm', $(this).serialize());
+    });
+
+    // check if any changes were made
+    function changeHandler(ev) {
+        var form = $(ev.currentTarget),
+            title = $('.moin-tab-titles a.current', form.parentsUntil('.moin-tabs').parent()),
+            e;
+        if (form.data('initialForm') === form.serialize()) {
+            // current values are identicaly to initial ones, remove all change indicators (if any)
+            $('.change-indicator', title).remove();
+        } else {
+            // the values differ
+            if (!$('.change-indicator', title).length) {
+                // only add a change indicator if there none
+                e = $(document.createElement('span'));
+                e.addClass('change-indicator');
+                e.text('*');
+                title.append(e);
+            }
+        }
+    }
+    $('#moin-usersettings form').change(changeHandler);
+
+    function submitHandler(ev) {
+        var form = $(ev.target),
+            button = $('button', form),
+            buttonBaseText = button.html(),
+            buttonDotList = [' .&nbsp;&nbsp;', ' &nbsp;.&nbsp;', ' &nbsp;&nbsp;.'],
+            buttonDotIndex = 0,
+            buttonDotAnimation;
+
+        // disable the button
+        button.attr('disabled', true);
+
+        // remove change indicators from the current tab as we are now saving it
+        $('.moin-tab-titles a.current .change-indicator',
+                form.parentsUntil('.moin-tabs').parent()).remove();
+
+        // animate the submit button to indicating a running request
+        function buttonRunAnimation() {
+            button.html(buttonBaseText + buttonDotList[buttonDotIndex % buttonDotList.length]);
+            buttonDotIndex += 1;
+        }
+        buttonDotAnimation = setInterval(buttonRunAnimation, 500);
+        buttonRunAnimation();
+
+        // send the form to the server
+        $.post(form.attr('action'), form.serialize(), function (data) {
+            var i, f, newform;
+            clearInterval(buttonDotAnimation);
+            // if the response indicates a redirect, set the new location
+            if (data.redirect) {
+                location.href = data.redirect;
+                return;
+            }
+            // remove all flash messages previously added via javascript
+            $('#moin-header .moin-flash-javascript').remove();
+            // add new flash messages from the response
+            for (i = 0; i < data.flash.length; i += 1) {
+                f = $(document.createElement('p'));
+                f.html(data.flash[i][0]);
+                f.addClass('moin-flash');
+                f.addClass('moin-flash-javascript');
+                f.addClass('moin-flash-' + data.flash[i][1]);
+                $('#moin-header').append(f);
+            }
+            // get the new form element from the response
+            newform = $(data.form);
+            // set event handlers on the new form
+            newform.submit(submitHandler);
+            newform.change(changeHandler);
+            // store the forms initial data
+            newform.data('initialForm', newform.serialize());
+            // replace the old form with the new one
+            form.replaceWith(newform);
+        }, 'json');
+        return false;
+    }
+    $('#moin-usersettings form').submit(submitHandler);
+}
+
+jQuery(document).ready(initMoinUsersettings);

@@ -2,14 +2,9 @@
 ReST (ReStructured Text) Markup
 ===============================
 
-The report gives reST syntax documentation. The structure and order has been matched with other markup rst files namely creolewiki.rst and mediawiki.rst at http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
+The report gives reST syntax documentation. The structure and order has been matched with the other markup rst files namely creolewiki.rst and mediawiki.rst at http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
 
 Features currently not working with moin's Wiki parser are marked with **RSTTODO**.
-
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
-
-**SPHINXTODO CSS**, the tables seem to have missing borders despite of the fact that the rst markup is correct.
 
 Headings
 ========
@@ -22,7 +17,7 @@ The first style encountered will be an outermost title (like HTML H1), the secon
  Level 1
  =======
 
- **Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+ **Intentionally not rendered as level 1 so it doesn't interfere with Sphinx's indexing**
 
  Level 2
  =======
@@ -44,7 +39,7 @@ The first style encountered will be an outermost title (like HTML H1), the secon
 Level 1
 =======
 
-**Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+**Intentionally not rendered as level 1 so it doesn't interfere with Sphinx's indexing**
 
 Level 2
 =======
@@ -66,7 +61,7 @@ Level 6
 Text formatting
 ===============
 
-The following is a table of inline markup that can be used to control text formatting in Moin.
+The following is a table of inline markup that can be used to format text in Moin.
 
 +-------------------------------------+---------------------------------------+
 | Markup                              | Result                                |
@@ -142,12 +137,12 @@ Every additional space before the first word in a line will add an indent before
 **Markup**: ::
 
  indented text
-  text indented to the 2nd level
+  text indented for the 2nd level
 
 **Result**:
 
  indented text
-  text indented to the 2nd level
+  text indented for the 2nd level
 
 **Markup**: ::
 
@@ -206,26 +201,26 @@ Ordered Lists
 
  1. item 1
  
-   1. item 1.1
+    1. item 1.1
+    #. item 1.2
    
-   2. item 1.2
-   
- 2. item 2
+ #. item 2
 
 **Result**:
 
  1. item 1
  
-   1. item 1.1
+    1. item 1.1
+    #. item 1.2
    
-   2. item 1.2
-   
- 2. item 2
+ #. item 2
    
 **Notes**:
- - The order and the numbering agent have to be maintained by user. Any thing can be used to number the items (e.g. a/A or i/I).
- - **SPHINXTODO** sphinx will remove the first space before every list item.
- - even the base level item has to have a space in the beginning
+ - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
+   auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
+   (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
+   enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+ - One or more blank lines are required before and after reStructuredText lists.
 
 Definition Lists
 ================
@@ -342,7 +337,7 @@ Admonitions are used as a caution/notification block.
 Comments
 ========
 
-Comments are not shown on the page but depending on the output formatter, they might be included as HTML comments (``<!-- -->``).
+Comments are not shown on the page but depending on the output formatter they might be included as HTML comments (``<!-- -->``).
 
 **Markup**: ::
  
@@ -373,7 +368,7 @@ Comments are not shown on the page but depending on the output formatter, they m
 Literals Blocks
 ===============
 
-Literal blocks are used to show test as-is. i.e no markup processing is done within a literal block. A minimum (1) indentation is required for the text block to be recognized as a literal block.
+Literal blocks are used to show test as-it-is. i.e no markup processing is done within a literal block. A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**: ::
 

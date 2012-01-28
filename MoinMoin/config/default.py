@@ -374,8 +374,8 @@ options_no_group_name = {
         ('special.comments', L_('Comments'), L_('Switch showing comments on or off'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
-        ('frontend.quicklink_item', None, L_('Create or remove a navigation link to this item'), True, ),
-        ('frontend.subscribe_item', None, L_('Switch notifications about item changes on or off'), True, ),
+        ('frontend.quicklink_item', None, L_('Create or remove a navigation link to this item'), False, ),
+        ('frontend.subscribe_item', None, L_('Switch notifications about item changes on or off'), False, ),
         ('frontend.rename_item', L_('Rename'), L_('Rename this item'), True, ),
         ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
         ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
@@ -552,6 +552,8 @@ options = {
     'user': ('Users / User settings', None, (
       ('email_unique', True,
        "if True, check email addresses for uniqueness and don't accept duplicates."),
+      ('email_verification', False,
+       "if True, require a new user to verify his or her email address before the first login."),
 
       ('homewiki', u'Self',
        "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL."),

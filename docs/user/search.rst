@@ -5,21 +5,21 @@ Searching and Finding
 Entering search queries
 =======================
 
-Usually there is a simple and rather short search query input field offered by
-the theme - if you submit a query from there, it will search in item names and
+Usually there is a simple but rather short search query input field offered by
+the theme - by submiting a query it will search in item names and
 content (but only in the current stuff, not in non-current revisions) and display
 the search results to you.
 
-On that search results view, you will get a bigger search query input field
+On the search results view you will get a bigger search query input field
 (e.g. for refining your query) and you may also choose to additionally search
-in non-current revision item revisions (selecting that will search in all
+in non-current item revisions (selecting that will search in all
 revisions).
 
 Simple search queries
 =====================
-Just enter one or few simple words into the query input field and hit ``Enter``.
+Just enter one or more words into the query input field and hit ``Enter``.
 
-If you give multiple words, it will only find documents containing ALL those
+If your query consists of multiple words, it will only find documents containing ALL those
 words ("AND" is the default).
 
 You can use AND (default), OR, NOT to refine your search.
@@ -50,7 +50,7 @@ Using wildcards
 ===============
 
 If you want to enter word fragments or if you are not sure about spelling or
-word form, use wildcards for the parts you do not know:
+word form, you can use wildcards for the parts you do not know:
 
 +----------------+-----------------------------------+
 | Wildcard       | Matches                           |
@@ -138,9 +138,9 @@ Notes
 =====
 moin uses indexed search - keep in mind that this has some special properties:
 
- * as it is using an index, it is rather fast usually
- * because it is only using the index, it can only find what was put there
- * if you use wildcards, it will still use the index, but in a different, slower way
+ * By using an index, the search is rather usually fast 
+ * Because it is only using an index, it can only find what was put there
+ * If you use wildcards, it will still use the index, but in a different, slower way
 
 E.g.:
 

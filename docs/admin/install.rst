@@ -4,20 +4,23 @@ Downloading and Installing
 
 Downloading
 ===========
-For moin2, there is currently no packaged download available, you have to get
-it from the repository:
+For moin2, there is currently no packaged download available, so you have to get
+it from the repository.
+You can use one of two repository URLs (there is little difference between them),
+and either use Mercurial to keep a constantly updated copy of the code or download an archive of the files in tar.gz format:
 
-Alternative 1a (using Mercurial DVCS)::
+Using Mercurial to clone one of our repos::
 
- $ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+ hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+ OR
+ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
 
-Alternative 1b (using Mercurial DVCS)::
+Now make sure your work dir is using the default branch::
 
- $ hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
+ hg up -C default
 
-Alternative 2:
-Visit http://hg.moinmo.in/moin/2.0 with your web browser, download the tgz
-and unpack it.
+Alternatively, visit http://hg.moinmo.in/moin/2.0 with your web browser and download the archive
+(usually for the "default" branch) and unpack it.
 
 Installing
 ==========
@@ -25,110 +28,128 @@ Before you can run moin, you need to install it:
 
 Developer install
 -----------------
+Using your standard Python install or a virtualenv directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Please make sure you have `virtualenv` installed (it includes `pip`).
 
-If you just want to run moin in-place in your mercurial workdir, with your
-normal system Python, run this from your mercurial moin2 work dir (you should
-do this using your normal user login, no root or Administrator privileges needed)::
+If you just want to run moin in-place in your mercurial working directory
+with your normal system installation of Python, run the following command
+from your mercurial moin2 working directory (you should not run this as an
+administrator/root user; use your standard user account)::
 
- ./quickinstall  # for linux (or other posix OSes)
+ ./quickinstall  # for Linux (or other posix OS's)
  # or
  quickinstall.bat  # for windows
 
-This will use virtualenv to create a directory `env/` and create a virtual
-environment for moin there and then install moin2 including all dependencies
-into that directory.
-pip will fetch all dependencies from pypi and install them, so this may take
-a while.
+This will use virtualenv to create a directory `env/` within the current directory,
+create a virtual environment for MoinMoin and then install moin2 including all dependencies into that directory.
+`pip` will automatically fetch all dependencies from PyPI and install them, so this may take a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
 
-Please review the output of the quickinstall script, whether there were fatal
-errors. In case you have a bad network connection that makes the downloads
-fail, you can try to do the steps in quickinstall manually.
+Please review the output of the quickinstall script, and check whether there were fatal errors.
 
-Further, it will create a "moin" script for your platform which you can use
-for starting moin (the builtin server) or invoke moin script commands.
-After you activated the virtual environment, the moin script will be in the
-PATH, so you can just type "moin" on the shell / cmd.
+If you have a bad network connection that makes the downloads fail, you can try to do the steps in quickinstall manually.
 
-Note: in this special mode, it won't copy the MoinMoin code to the env/
-directory, it will run everything from your work dir, so you can modify code
-and directly try it out (you only need to do this installation procedure once).
+Further, the quickinstall script will create a `moin` script for your
+platform which you can use for starting the built-in server or invoke moin script commands.
+
+After you activated the virtual environment, the built-in server script (named `moin`) will be in the standard PATH,
+so you can just run the command `moin` verbatim on the command line.
+
+Note: in this special mode, it won’t copy the MoinMoin code to the env/ directory,
+it will run everything from your work dir, so you can modify code and directly try it out
+(you only need to do this installation procedure once).
 
 Using a different Python or a different virtualenv directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the `quickinstall` script and just modify these lines as needed before
-running it::
-
-    DIR=env
-    PYTHON=python
-
-E.g. if you want to use `pypy` and name the virtualenv directory `env-pypy`,
+For example, if you want to use `PyPy` and want to name the virtualenv directory `env-pypy`,
 use::
 
+    # for linux
     DIR=env-pypy
     PYTHON=/opt/pypy/bin/pypy
 
-That way, you can have all sorts of Pythons in different virtualenv directories
-within your moin2 workdir.
+That way, you can test with different versions of Python in different virtualenv directories within your moin2 workdir.
 
+Activating the virtual env
+--------------------------
 
-Entering the virtual env
-------------------------
-Enter your virtual environment::
+ source env/bin/activate  # for linux (or other posix OSes)
+ # or
+ env\Scripts\activate.bat  # for windows
 
- source env/bin/activate
+IMPORTANT: you always need to activate the virtual environment before running
+anything that executes moin code! Otherwise it won't find the moin command,
+nor the moin code nor the libraries it needs. Also, if you want to install
+additional software into the virtual environment, activate it before running pip!
 
-Initializing the storage and the index
---------------------------------------
-Creates an (empty) storage and an (empty) index::
+Initializing index and/or storage
+---------------------------------
+If you have an existing storage AND a valid index (for this storage’s content, and for this moin version),
+you can skip this section.
 
- moin index-create -s -i
+If you start from scratch (no storage created yet, and no index created yet),
+you need to create an (empty) storage and an (empty) index::
+
+ moin index-build -s -i
+
+If you already have an existing storage, but no index yet::
+
+ moin index-build -i
 
 Loading some items
 ------------------
-In case you do not want to have a completely empty wiki, you may want to load
-some items into it. We provide some in `contrib/serialized` directory and you
+If you don't want to have a completely empty wiki, you may want to load
+some default items into it. We provide some in the `contrib/serialized` directory and you
 can load them like this::
 
  # load some example items:
  moin load --file contrib/serialized/preloaded_items.moin
 
 .. todo::
-   example items file is missing, build one.
+   Example items file is missing, and we still need to build one.
 
 Installing PIL
 ~~~~~~~~~~~~~~
-For some image processing functions (like resizing, rotating) of moin, you
-need PIL (Python Imaging Library). If you install it with pip, it'll try to
-find some jpeg support library and development headers on your system and
-in case you don't have that, there will be no jpeg support in PIL.
+For some image processing functions that MoinMoin uses (like resizing, rotating),
+you need PIL (Python Imaging Library).
 
+Windows users who want to install PIL should skip the remainder of this section and read
+Troubleshooting -- PIL Installation Under Windows below.
+
+If you install PIL with pip, pip will try to find a jpeg support library and associated development
+headers on your system and if you do not have that, there will be no jpeg support in PIL.
 So, if you want jpeg support, make sure you have the jpeg libs/headers::
 
  # install jpeg library and development headers:
- sudo apt-get install libjpeg62-dev  # ubuntu / debian
- yum install libjpeg-turbo-devel  # fedora / red hat
+ sudo apt-get install libjpeg62-dev  # Ubuntu / Debian-based
+ yum install libjpeg-turbo-devel  # Fedora / Redhat-based
 
-Now install PIL into your virtual environment::
+Now activate your virtual environment and install PIL into it::
 
- # enter your virtual environment:
- source env/bin/activate
-
- # install Python Imaging Library:
- pip install pil
+ pip install pil # for linux (or other posix OSes)
 
 Troubleshooting
-~~~~~~~~~~~~~~~
-If you have a bad or limited network connection, you may run into trouble
-with the commands issued by the quickinstall script.
+---------------
 
-You may see tracebacks from pip, timeout errors, etc. (see the output of the
-quickinstall script).
+PyPi down
+~~~~~~~~~
+Now and then, PyPi might be down or unreachable.
+There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
+you can use in such cases, you just need to tell pip to do so:
 
-If this is the case, try it manually::
+ # put this into ~/.pip/pip.conf
+ [global]
+ index-url = http://c.pypi.python.org/simple
 
+Bad Network Connection
+~~~~~~~~~~~~~~~~~~~~~~
+If you have a poor or limited network connection, you may run into trouble with the commands issued by
+the quickinstall script.
+You may see tracebacks from pip, timeout errors, etc. (see the output of the quickinstall script).
+
+If this is the case, try it manually:
  # enter your virtual environment:
  source env/bin/activate
 
@@ -137,15 +158,23 @@ If this is the case, try it manually::
 
 Now install each package into your virtual env manually:
 
-* Find the required packages by looking into setup.py (see install_requires).
-* Download the package from http://pypi.python.org/
+* Find the required packages by looking at "install_requires" within `setup.py`.
+* Download each required package from http://pypi.python.org/
 * Install each of them individually by::
- 
+
     pip install package.tar
 
 * Now try again::
 
     pip install -e .
 
-Repeat these steps until you don't see fatal errors any more.
+Repeat these steps until you don't see fatal errors.
+
+PIL Installation Under Windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PIL version 1.1.7 does not install correctly via "pip install pil" on Windows.
+Some users have had success using "pip install pillow" (a fork of PIL fixing
+a packaging issue).  Other users have resorted to installing PIL 1.1.6 in the
+main Python directory using the Windows installers available at
+http://www.pythonware.com/products/pil/
 

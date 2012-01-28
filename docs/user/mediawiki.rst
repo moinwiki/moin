@@ -10,8 +10,6 @@ Features currently not working with moin's mediawiki parser are marked with **MW
 
 Features currently not working with moin's rst parser are marked with **RSTTODO**.
 
-Features currently not working with moin's sphinx setup are marked with **SPHINXTODO**.
-
 Headings
 ========
 
@@ -29,7 +27,7 @@ Headings
 Level 1
 =======
 
-**Intentionally not rendered as level 1 so as to not interfere with Sphinx's indexing**
+**Intentionally not rendered as level 1 so it does not interfere with Sphinx's indexing**
 
 Level 2
 =======
@@ -49,7 +47,7 @@ Level 6
 Text formatting
 ===============
 
-These markups can be used within text to apply character styles.
+These markups can be used within text to apply character style.
 
 +------------------------------------+------------------------------------+
 | Markup                             | Result                             |
@@ -75,13 +73,6 @@ These markups can be used within text to apply character styles.
 | | ``<pre>Preformatted text``       | | ``Preformatted text``            |
 | | ``without '''markups'''</pre>``  | | ``without '''markups'''``        |
 +------------------------------------+------------------------------------+
-
-**SPHINXTODO**
-following css is needed to display bold&italic, underline and strikethrough correctly: ::
-
- span.underline { text-decoration: underline; }
- span.strikethrough { text-decoration: line-through; }
- span.bolditalic { font-weight: bold; font-style: italic; }
 
 **RSTTODO**
 table headers are not formatted as headers

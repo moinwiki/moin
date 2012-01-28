@@ -159,6 +159,8 @@ class DummyItem(object):
         self.name = name
     def list_revisions(self):
         return [] # same as an empty Item
+    def destroy_all_revisions(self):
+        return True
 
 
 class Item(object):
@@ -285,7 +287,14 @@ class Item(object):
         flaskg.clock.start('conv_dom_html')
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
-        return conv_serialize(doc, {html.namespace: ''})
+        rendered_data = conv_serialize(doc, {html.namespace: ''})
+        # This is a work-around to avoid the invalid <div /> tag from being passed
+        # and causing layout issues in many browsers
+        # Instead, send a <div></div> tag which is valid according to the HTML spec
+        # The wider issue with serialization is covered here:
+        # https://bitbucket.org/thomaswaldmann/moin-2.0/issue/145/xml-mode-serialization-returns-self
+        return "<div></div>" if rendered_data == "<div xmlns=\"http://www.w3.org/1999/xhtml\" />" \
+                             else rendered_data
 
     def _render_data_xml(self):
         doc = self.internal_representation()
@@ -654,10 +663,14 @@ class NonExistent(Item):
     def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
 
-    def _convert(self):
+    def _convert(self, doc):
         abort(404)
 
     def do_modify(self, contenttype, template_name):
+        # First, check if the current user has the required privileges
+        if not flaskg.user.may.create(self.name):
+            abort(403)
+
         # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
@@ -735,6 +748,7 @@ There is no help, you're doomed!
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data_diff(self, oldrev, newrev):
@@ -747,7 +761,12 @@ There is no help, you're doomed!
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
 
-    def _convert(self):
+    def _render_data_diff_atom(self, oldrev, newrev):
+        return render_template('atom.html',
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup(self._render_data()))
+
+    def _convert(self, doc):
         return _("Impossible to convert the data to the contenttype: %(contenttype)s",
                  contenttype=request.values.get('contenttype'))
 
@@ -1045,6 +1064,15 @@ class TransformableBitmapImage(RenderableBitmapImage):
         else:
             return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
+    def _render_data_diff_atom(self, oldrev, newrev):
+        if PIL is None:
+            # no PIL, we can't do anything, we just call the base class method
+            return super(TransformableBitmapImage, self)._render_data_diff_atom(oldrev, newrev)
+        url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
+        return render_template('atom.html',
+                               oldrev=oldrev, newrev=newrev, get='binary',
+                               content=Markup('<img src="{0}" />'.format(escape(url))))
+
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
@@ -1074,8 +1102,8 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 raise ValueError("content_type {0!r} not supported".format(content_type))
 
             try:
-                oldimage = PILImage.open(oldrev)
-                newimage = PILImage.open(newrev)
+                oldimage = PILImage.open(oldrev.data)
+                newimage = PILImage.open(newrev.data)
                 oldimage.load()
                 newimage.load()
                 diffimage = PILdiff(newimage, oldimage)
@@ -1122,18 +1150,25 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(config.charset).replace(u'\r\n', u'\n')
 
-    def _render_data_diff(self, oldrev, newrev):
+    def _get_data_diff_html(self, oldrev, newrev, template):
         from MoinMoin.util.diff_html import diff
         old_text = self.data_storage_to_internal(oldrev.data.read())
         new_text = self.data_storage_to_internal(newrev.data.read())
         storage_item = flaskg.storage[self.name]
         diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in diff(old_text, new_text)]
-        return Markup(render_template('diff_text.html',
-                                      item_name=self.name,
-                                      oldrev=oldrev,
-                                      newrev=newrev,
-                                      diffs=diffs,
-                                     ))
+        return render_template(template,
+                               item_name=self.name,
+                               oldrev=oldrev,
+                               newrev=newrev,
+                               diffs=diffs,
+                               )
+
+    def _render_data_diff_atom(self, oldrev, newrev):
+        """ renders diff in HTML for atom feed """
+        return self._get_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
+
+    def _render_data_diff(self, oldrev, newrev):
+        return self._get_data_diff_html(oldrev, newrev, 'diff_text.html')
 
     def _render_data_diff_text(self, oldrev, newrev):
         from MoinMoin.util import diff_text
@@ -1141,6 +1176,8 @@ class Text(Binary):
         newlines = self.data_storage_to_internal(newrev.data.read()).split('\n')
         difflines = diff_text.diff(oldlines, newlines)
         return '\n'.join(difflines)
+
+    _render_data_diff_raw = _render_data_diff
 
     def _render_data_highlight(self):
         from MoinMoin.converter import default_registry as reg
@@ -1190,6 +1227,7 @@ class Text(Binary):
                                rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
 item_registry.register(Text._factory, Type('text/*'))
@@ -1349,14 +1387,15 @@ class TWikiDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=item_name)
 
         mapfile = self.get_member('drawing.map')
@@ -1444,14 +1483,15 @@ class AnyWikiDraw(TarMixin, Image):
                                help=self.modify_help,
                                drawing_exists=drawing_exists,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
 
         mapfile = self.get_member('drawing.map')
@@ -1525,14 +1565,15 @@ class SvgDraw(TarMixin, Image):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
+                               search_form=None,
                               )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg')
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png')
+        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
