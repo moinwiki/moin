@@ -715,11 +715,21 @@ class Item(object):
         """
         self.indexer = indexer
         self.backend = self.indexer.backend
+        self._name = query.get('name_exact')
         if latest_doc is None:
             # we need to call the method without acl check to avoid endless recursion:
-            latest_doc = self.indexer._document(**query) or {}
+            latest_doc = self.indexer._document(**query)
+            if latest_doc is None:
+                # no such item, create a dummy doc that has a NAME entry to
+                # avoid issues in the name(s) property code. if this was a
+                # lookup for some specific item (using a name_exact query), we
+                # put that name into the NAME list, otherwise it'll be empty:
+                if self._name is not None:
+                    names = [self._name, ]
+                else:
+                    names = []
+                latest_doc = {NAME: names}
         self._current = latest_doc
-        self._name = query.get('name_exact')
 
     def _get_itemid(self):
         return self._current.get(ITEMID)
@@ -735,7 +745,7 @@ class Item(object):
     def names(self):
         names = self._current.get(NAME)
         if not isinstance(names, list):
-            #raise ValueError # for debugging the issues
+            #raise TypeError # for debugging the issues
             # TODO make sure meta[NAME] is always there, so this never happens
             # TODO make sure meta[NAME] is always a list of unicode
             logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
@@ -906,7 +916,7 @@ class Revision(object):
     def names(self):
         names = self.meta.get(NAME)
         if not isinstance(names, list):
-            #raise ValueError # for debugging the issues
+            #raise TypeError # for debugging the issues
             # TODO make sure meta[NAME] is always there, so this never happens
             # TODO make sure meta[NAME] is always a list of unicode
             logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
