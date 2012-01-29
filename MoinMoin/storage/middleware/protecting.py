@@ -127,10 +127,7 @@ class ProtectedItem(object):
         """
         check permissions in this item without considering before/after acls
         """
-        # TODO we need to use the fq name here: namespace:currently_used_name
-        # to get the right ACLs from the acl mapping.
-        # XXX self.item.name might crash with IndexError if the name list is empty
-        acls = self.protector.get_acls(self.item.name)
+        acls = self.protector.get_acls(self.item.fqname)
         acl = self.item.acl
         if acl is not None:
             # If the item has an acl (even one that doesn't match) we *do not*
@@ -183,7 +180,7 @@ class ProtectedItem(object):
         if user_name is None:
             user_name = self.protector.user.name
 
-        acls = self.protector.get_acls(self.item.name)
+        acls = self.protector.get_acls(self.item.fqname)
 
         before = AccessControlList([acls['before'], ], valid=self.protector.valid_rights)
         allowed = before.may(user_name, right)
