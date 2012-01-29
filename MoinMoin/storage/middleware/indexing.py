@@ -59,7 +59,9 @@ import datetime
 import types
 from StringIO import StringIO
 
-import logging
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
@@ -730,18 +732,31 @@ class Item(object):
         return self._current.get(ACL)
 
     @property
+    def names(self):
+        names = self._current.get(NAME)
+        if not isinstance(names, list):
+            #raise ValueError # for debugging the issues
+            # TODO make sure meta[NAME] is always there, so this never happens
+            # TODO make sure meta[NAME] is always a list of unicode
+            logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
+            if names is None:
+                names = u'DoesNotExist'
+            elif isinstance(names, str):
+                names = unicode(names)
+            names = [names, ]
+            logging.warning("DOC: %r - Workaround returns names = %r" % (self._current, names))
+        return names
+
+    @property
     def name(self):
-        name = self._current.get(NAME, self._name)
-        if type(name) is types.ListType:
-            if self._name and self._name in name:
-                name = self._name
-            elif name:
-                name = name[0]
-            else:
+        if self._name and self._name in self.names:
+            name = self._name
+        else:
+            try:
+                name = self.names[0]
+            except IndexError:
                 # empty name list, no name:
                 name = None
-        if not name:
-            name = u'DoesNotExist' # TODO: hack, solve this in a better way
         return name
 
     @classmethod
@@ -889,9 +904,18 @@ class Revision(object):
 
     @property
     def names(self):
-        names = self.meta.get(NAME, u'DoesNotExist')
-        if type(names) is not types.ListType:
-            names = [names]
+        names = self.meta.get(NAME)
+        if not isinstance(names, list):
+            #raise ValueError # for debugging the issues
+            # TODO make sure meta[NAME] is always there, so this never happens
+            # TODO make sure meta[NAME] is always a list of unicode
+            logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
+            if names is None:
+                names = u'DoesNotExist'
+            elif isinstance(names, str):
+                names = unicode(names)
+            names = [names, ]
+            logging.warning("DOC: %r - Workaround returns names = %r" % (self.meta, names))
         return names
 
     @property
@@ -901,9 +925,8 @@ class Revision(object):
             try:
                 name = self.names[0]
             except IndexError:
+                # empty name list, no name:
                 name = None
-        if not name:
-            name = u'DoesNotExist' # TODO: hack, solve this in a better way
         return name
 
     def set_context(self, context):
