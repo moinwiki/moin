@@ -19,11 +19,11 @@ from MoinMoin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    (u'Foo', {'name': u'Foo', 'contenttype': u'text/plain'}, ''),
-    (u'Foo', {'name': u'Foo', 'contenttype': u'text/plain'}, '2nd'),
-    (u'Subdir', {'name': u'Subdir', 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Foo', {'name': u'Subdir/Foo', 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Bar', {'name': u'Subdir/Bar', 'contenttype': u'text/plain'}, ''),
+    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, ''),
+    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, '2nd'),
+    (u'Subdir', {'name': [u'Subdir', ], 'contenttype': u'text/plain'}, ''),
+    (u'Subdir/Foo', {'name': [u'Subdir/Foo', ], 'contenttype': u'text/plain'}, ''),
+    (u'Subdir/Bar', {'name': [u'Subdir/Bar', ], 'contenttype': u'text/plain'}, ''),
 ]
 
 
@@ -71,7 +71,7 @@ def make_middleware(request):
 def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:
-        item = source['name']
+        item = source[u'name']
         item.store_revision(dict(meta, mtime=i), StringIO(data))
         i += 1
 

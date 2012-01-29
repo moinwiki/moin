@@ -73,7 +73,7 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
+from MoinMoin.config import WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
@@ -742,9 +742,15 @@ class Item(object):
         return self._current.get(ACL)
 
     @property
+    def namespace(self):
+        return self._current.get(NAMESPACE)
+
+    @property
     def names(self):
         names = self._current.get(NAME)
-        if not isinstance(names, list):
+        if isinstance(names, tuple):
+            names = list(names)
+        elif not isinstance(names, list):
             #raise TypeError # for debugging the issues
             # TODO make sure meta[NAME] is always there, so this never happens
             # TODO make sure meta[NAME] is always a list of unicode
@@ -755,6 +761,7 @@ class Item(object):
                 names = unicode(names)
             names = [names, ]
             logging.warning("DOC: %r - Workaround returns names = %r" % (self._current, names))
+        assert isinstance(names, list)
         return names
 
     @property
@@ -767,7 +774,22 @@ class Item(object):
             except IndexError:
                 # empty name list, no name:
                 name = None
+        assert name is None or isinstance(name, unicode)
         return name
+
+    @property
+    def fqname(self):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        ns = self.namespace
+        name = self.name or u''
+        if ns:
+            fqn = ns + u':' + name
+        else:
+            fqn = name
+        assert isinstance(fqn, unicode)
+        return fqn
 
     @classmethod
     def create(cls, indexer, **query):
@@ -915,7 +937,9 @@ class Revision(object):
     @property
     def names(self):
         names = self.meta.get(NAME)
-        if not isinstance(names, list):
+        if isinstance(names, tuple):
+            names = list(names)
+        elif not isinstance(names, list):
             #raise TypeError # for debugging the issues
             # TODO make sure meta[NAME] is always there, so this never happens
             # TODO make sure meta[NAME] is always a list of unicode
