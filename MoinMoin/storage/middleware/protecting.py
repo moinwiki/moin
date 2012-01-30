@@ -16,6 +16,8 @@ from __future__ import absolute_import, division
 
 import logging
 
+from whoosh.util import lru_cache
+
 from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
@@ -39,7 +41,8 @@ class ProtectingMiddleware(object):
         self.user = user
         self.acl_mapping = acl_mapping
         self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
-        self.parse_acl = self._parse_acl # prepare for caching wrapper
+        lru_cache_decorator = lru_cache(100)
+        self.parse_acl = lru_cache_decorator(self._parse_acl)
 
     def get_acls(self, itemname):
         for prefix, acls in self.acl_mapping:
