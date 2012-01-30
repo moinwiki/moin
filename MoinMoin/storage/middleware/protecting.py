@@ -41,8 +41,13 @@ class ProtectingMiddleware(object):
         self.user = user
         self.acl_mapping = acl_mapping
         self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
+        # The ProtectingMiddleware exists just 1 request long, but might have
+        # to parse and evaluate huge amounts of ACLs. We avoid doing same stuff
+        # again and again by using a fresh lru cache for each PMW instance.
         lru_cache_decorator = lru_cache(100)
         self.parse_acl = lru_cache_decorator(self._parse_acl)
+        lru_cache_decorator = lru_cache(500)
+        self.eval_acl = lru_cache_decorator(self._eval_acl)
 
     def get_acls(self, itemname):
         for prefix, acls in self.acl_mapping:
@@ -53,6 +58,10 @@ class ProtectingMiddleware(object):
 
     def _parse_acl(self, acl, default=''):
         return AccessControlList([acl, ], default=default, valid=self.valid_rights)
+
+    def _eval_acl(self, acl, default_acl, user_name, right):
+        aclobj = self.parse_acl(acl, default_acl)
+        return aclobj.may(user_name, right)
 
     def query_parser(self, default_fields, idx_name=LATEST_REVS):
         return self.indexer.query_parser(default_fields, idx_name=idx_name)
@@ -140,8 +149,7 @@ class ProtectedItem(object):
             # If the item has an acl (even one that doesn't match) we *do not*
             # check the parents. We only check the parents if there's no acl on
             # the item at all.
-            acl = self.protector.parse_acl(acl, acls['default'])
-            allowed = acl.may(user_name, right)
+            allowed = self.protector.eval_acl(acl, acls['default'], user_name, right)
             if allowed is not None:
                 return allowed
         else:
@@ -155,8 +163,7 @@ class ProtectedItem(object):
                     if allowed is not None:
                         return allowed
 
-            acl = self.protector.parse_acl(acls['default'])
-            allowed = acl.may(user_name, right)
+            allowed = self.protector.eval_acl(acls['default'], '', user_name, right)
             if allowed is not None:
                 return allowed
 
@@ -189,8 +196,7 @@ class ProtectedItem(object):
 
         acls = self.protector.get_acls(self.item.fqname)
 
-        before = self.protector.parse_acl(acls['before'])
-        allowed = before.may(user_name, right)
+        allowed = self.protector.eval_acl(acls['before'], '', user_name, right)
         if allowed is not None:
             return allowed
 
@@ -198,8 +204,7 @@ class ProtectedItem(object):
         if allowed is not None:
             return allowed
 
-        after = self.protector.parse_acl(acls['after'])
-        allowed = after.may(user_name, right)
+        allowed = self.protector.eval_acl(acls['after'], '', user_name, right)
         if allowed is not None:
             return allowed
 
