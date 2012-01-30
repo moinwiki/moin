@@ -39,6 +39,7 @@ class ProtectingMiddleware(object):
         self.user = user
         self.acl_mapping = acl_mapping
         self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
+        self.parse_acl = self._parse_acl # prepare for caching wrapper
 
     def get_acls(self, itemname):
         for prefix, acls in self.acl_mapping:
@@ -46,6 +47,9 @@ class ProtectingMiddleware(object):
                 return acls
         else:
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(itemname))
+
+    def _parse_acl(self, acl, default=''):
+        return AccessControlList([acl, ], default=default, valid=self.valid_rights)
 
     def query_parser(self, default_fields, idx_name=LATEST_REVS):
         return self.indexer.query_parser(default_fields, idx_name=idx_name)
@@ -133,7 +137,7 @@ class ProtectedItem(object):
             # If the item has an acl (even one that doesn't match) we *do not*
             # check the parents. We only check the parents if there's no acl on
             # the item at all.
-            acl = AccessControlList([acl, ], acls['default'], valid=self.protector.valid_rights)
+            acl = self.protector.parse_acl(acl, acls['default'])
             allowed = acl.may(user_name, right)
             if allowed is not None:
                 return allowed
@@ -148,7 +152,7 @@ class ProtectedItem(object):
                     if allowed is not None:
                         return allowed
 
-            acl = AccessControlList([acls['default'], ], valid=self.protector.valid_rights)
+            acl = self.protector.parse_acl(acls['default'])
             allowed = acl.may(user_name, right)
             if allowed is not None:
                 return allowed
@@ -182,7 +186,7 @@ class ProtectedItem(object):
 
         acls = self.protector.get_acls(self.item.fqname)
 
-        before = AccessControlList([acls['before'], ], valid=self.protector.valid_rights)
+        before = self.protector.parse_acl(acls['before'])
         allowed = before.may(user_name, right)
         if allowed is not None:
             return allowed
@@ -191,7 +195,7 @@ class ProtectedItem(object):
         if allowed is not None:
             return allowed
 
-        after = AccessControlList([acls['after'], ], valid=self.protector.valid_rights)
+        after = self.protector.parse_acl(acls['after'])
         allowed = after.may(user_name, right)
         if allowed is not None:
             return allowed
