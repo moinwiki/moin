@@ -92,23 +92,24 @@ you can skip this section.
 If you start from scratch (no storage created yet, and no index created yet),
 you need to create an (empty) storage and an (empty) index::
 
- moin index-build -s -i
-
-If you already have an existing storage, but no index yet::
-
- moin index-build -i
+ # create storage and index:
+ moin index-create -s -i
 
 Loading some items
 ------------------
-If you don't want to have a completely empty wiki, you may want to load
-some default items into it. We provide some in the `contrib/serialized` directory and you
-can load them like this::
+If you don't want to have a completely empty wiki, you can optionally load
+some example items into the storage like this::
 
  # load some example items:
- moin load --file contrib/serialized/preloaded_items.moin
+ moin load --file contrib/serialized/items.moin
 
-.. todo::
-   Example items file is missing, and we still need to build one.
+Building the index
+------------------
+If you have some items in your storage, but no index built yet, you need
+to build an index::
+
+ moin index-build
+
 
 Installing PIL
 ~~~~~~~~~~~~~~
