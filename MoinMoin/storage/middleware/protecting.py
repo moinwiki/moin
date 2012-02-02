@@ -43,15 +43,19 @@ class ProtectingMiddleware(object):
         self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
         # The ProtectingMiddleware exists just 1 request long, but might have
         # to parse and evaluate huge amounts of ACLs. We avoid doing same stuff
-        # again and again by using a fresh lru cache for each PMW instance.
+        # again and again by using some fresh lru caches for each PMW instance.
         lru_cache_decorator = lru_cache(100)
         self.parse_acl = lru_cache_decorator(self._parse_acl)
         lru_cache_decorator = lru_cache(500)
         self.eval_acl = lru_cache_decorator(self._eval_acl)
-        #TODO: this cache makes some protecting middleware tests fail:
-        #lru_cache_decorator = lru_cache(100)
-        #self.get_acl = lru_cache_decorator(self._get_acl)
-        self.get_acl = self._get_acl
+        lru_cache_decorator = lru_cache(100)
+        self.get_acl = lru_cache_decorator(self._get_acl)
+
+    def _clear_acl_cache(self):
+        # if we have modified the backend somehow so ACL lookup is influenced,
+        # this functions need to get called, so it clears the ACL cache.
+        # ACL lookups afterwards will fetch fresh info from the lower layers.
+        self.get_acl.cache_clear()
 
     def _get_configured_acls(self, itemname):
         """
@@ -234,15 +238,18 @@ class ProtectedItem(object):
         if overwrite:
             self.require(DESTROY)
         rev = self.item.store_revision(meta, data, overwrite=overwrite)
+        self.protector._clear_acl_cache()
         return ProtectedRevision(self.protector, rev, p_item=self)
 
     def store_all_revisions(self, meta, data):
         self.require(DESTROY)
         self.item.store_all_revisions(meta, data)
+        self.protector._clear_acl_cache()
 
     def destroy_revision(self, revid):
         self.require(DESTROY)
         self.item.destroy_revision(revid)
+        self.protector._clear_acl_cache()
 
     def destroy_all_revisions(self):
         for rev in self.item.iter_revs():
