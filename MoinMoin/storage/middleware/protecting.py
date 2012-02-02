@@ -22,6 +22,11 @@ from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
+# max sizes of some lru caches:
+LOOKUP_CACHE = 100  # ACL lookup for some itemname
+PARSE_CACHE = 100  # ACL string -> ACL object parsing
+EVAL_CACHE = 500  # ACL evaluation for some username / capability
+
 
 class AccessDenied(Exception):
     """
@@ -44,11 +49,11 @@ class ProtectingMiddleware(object):
         # The ProtectingMiddleware exists just 1 request long, but might have
         # to parse and evaluate huge amounts of ACLs. We avoid doing same stuff
         # again and again by using some fresh lru caches for each PMW instance.
-        lru_cache_decorator = lru_cache(100)
+        lru_cache_decorator = lru_cache(PARSE_CACHE)
         self.parse_acl = lru_cache_decorator(self._parse_acl)
-        lru_cache_decorator = lru_cache(500)
+        lru_cache_decorator = lru_cache(EVAL_CACHE)
         self.eval_acl = lru_cache_decorator(self._eval_acl)
-        lru_cache_decorator = lru_cache(100)
+        lru_cache_decorator = lru_cache(LOOKUP_CACHE)
         self.get_acl = lru_cache_decorator(self._get_acl)
 
     def _clear_acl_cache(self):
