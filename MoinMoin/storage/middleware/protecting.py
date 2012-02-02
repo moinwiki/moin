@@ -48,6 +48,10 @@ class ProtectingMiddleware(object):
         self.parse_acl = lru_cache_decorator(self._parse_acl)
         lru_cache_decorator = lru_cache(500)
         self.eval_acl = lru_cache_decorator(self._eval_acl)
+        #TODO: this cache makes some protecting middleware tests fail:
+        #lru_cache_decorator = lru_cache(100)
+        #self.get_acl = lru_cache_decorator(self._get_acl)
+        self.get_acl = self._get_acl
 
     def _get_configured_acls(self, itemname):
         """
@@ -62,6 +66,26 @@ class ProtectingMiddleware(object):
                 return acls
         else:
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(itemname))
+
+    def _get_acl(self, fqname):
+        """
+        return the effective item_acl for item fqname (= its own acl, or,
+        if hierarchic acl mode is enabled, of some parent item) - without
+        before/default/after acls. return None if no acl was found.
+        """
+        item = self[fqname]
+        acl = item.acl
+        if acl is not None:
+            return acl
+        acl_cfg = self._get_configured_acls(fqname)
+        if acl_cfg['hierarchic']:
+            # check parent(s), recursively
+            parent_tail = fqname.rsplit('/', 1)
+            if len(parent_tail) == 2:
+                parent, _ = parent_tail
+                acl = self.get_acl(parent)
+                if acl is not None:
+                    return acl
 
     def _parse_acl(self, acl, default=''):
         return AccessControlList([acl, ], default=default, valid=self.valid_rights)
@@ -143,41 +167,26 @@ class ProtectedItem(object):
     def name(self):
         return self.item.name
 
+    @property
+    def acl(self):
+        return self.item.acl
+
     def __nonzero__(self):
         return bool(self.item)
 
-    def item_acl(self):
-        """
-        return this item's acl (or, if hierarchic acl mode is enabled, of
-        some parent item) - without before/default/after acls.
-        return None if no acl was found.
-        """
-        item = self.item
-        acl = item.acl
-        if acl is not None:
-            return acl
-        acl_cfg = self.protector._get_configured_acls(item.fqname)
-        if acl_cfg['hierarchic']:
-            # check parent(s), recursively
-            parent_tail = item.name.rsplit('/', 1)
-            if len(parent_tail) == 2:
-                parent, _ = parent_tail
-                parent_item = self.protector[parent]
-                acl = parent_item.item_acl()
-                if acl is not None:
-                    return acl
-
-    def acl(self):
+    def full_acl(self):
         """
         return the full acl for this item, including before/default/after acl.
         """
-        acl_cfg = self.protector._get_configured_acls(self.item.fqname)
-        item_acl = self.item_acl()
+        fqname = self.item.fqname
+        acl_cfg = self.protector._get_configured_acls(fqname)
+        before_acl = acl_cfg['before']
+        item_acl = self.protector.get_acl(fqname)
         if item_acl is None:
             item_acl = acl_cfg['default']
-        return u' '.join([acl_cfg['before'],
-                          item_acl,
-                          acl_cfg['after']])
+        after_acl = acl_cfg['after']
+        acl = u' '.join([before_acl, item_acl, after_acl])
+        return acl
 
     def allows(self, right, user_name=None):
         """ Check if username may have <right> access on this item.
@@ -192,7 +201,7 @@ class ProtectedItem(object):
             user_name = self.protector.user.name
 
         acl_cfg = self.protector._get_configured_acls(self.item.fqname)
-        full_acl = self.acl()
+        full_acl = self.full_acl()
 
         allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
         if allowed is not None:
