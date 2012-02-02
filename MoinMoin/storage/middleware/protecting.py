@@ -139,72 +139,55 @@ class ProtectedItem(object):
     def __nonzero__(self):
         return bool(self.item)
 
-    def _allows(self, right, user_name):
+    def item_acl(self):
         """
-        check permissions in this item without considering before/after acls
+        return this item's acl (or, if hierarchic acl mode is enabled, of
+        some parent item) - without before/default/after acls.
+        return None if no acl was found.
         """
-        acls = self.protector.get_acls(self.item.fqname)
-        acl = self.item.acl
+        item = self.item
+        acl = item.acl
         if acl is not None:
-            # If the item has an acl (even one that doesn't match) we *do not*
-            # check the parents. We only check the parents if there's no acl on
-            # the item at all.
-            allowed = self.protector.eval_acl(acl, acls['default'], user_name, right)
-            if allowed is not None:
-                return allowed
-        else:
-            if acls['hierarchic']:
-                # check parent(s), recursively
-                parent_tail = self.item.name.rsplit('/', 1)
-                if len(parent_tail) == 2:
-                    parent, _ = parent_tail
-                    parent_item = self.protector[parent]
-                    allowed = parent_item._allows(right, user_name)
-                    if allowed is not None:
-                        return allowed
+            return acl
+        acl_cfg = self.protector.get_acls(item.fqname)
+        if acl_cfg['hierarchic']:
+            # check parent(s), recursively
+            parent_tail = item.name.rsplit('/', 1)
+            if len(parent_tail) == 2:
+                parent, _ = parent_tail
+                parent_item = self.protector[parent]
+                acl = parent_item.item_acl()
+                if acl is not None:
+                    return acl
 
-            allowed = self.protector.eval_acl(acls['default'], '', user_name, right)
-            if allowed is not None:
-                return allowed
+    def acl(self):
+        """
+        return the full acl for this item, including before/default/after acl.
+        """
+        acl_cfg = self.protector.get_acls(self.item.fqname)
+        item_acl = self.item_acl()
+        if item_acl is None:
+            item_acl = acl_cfg['default']
+        return u' '.join([acl_cfg['before'],
+                          item_acl,
+                          acl_cfg['after']])
 
     def allows(self, right, user_name=None):
-        """ Check if username may have <right> access on item <itemname>.
+        """ Check if username may have <right> access on this item.
 
-        For hierarchic=False we just check the item in question.
-
-        For hierarchic=True, we check each item in the hierarchy. We
-        start with the deepest item and recurse to the top of the tree.
-        If one of those permits, True is returned.
-        This is done *only* if there is *no ACL at all* (not even an empty one)
-        on the items we 'recurse over'.
-
-        For both configurations, we check `before` before the item/default
-        acl and `after` after the item/default acl, of course.
-
-        `default` is only used if there is no ACL on the item (and none on
-        any of the item's parents when using hierarchic.)
-
-        :param itemname: item to get permissions from
         :param right: the right to check
-        :param username: username to use for permissions check (default is to
-                         use the username doing the current request)
+        :param user_name: user name to use for permissions check (default is to
+                          use the user name doing the current request)
         :rtype: bool
         :returns: True if you have permission or False
         """
         if user_name is None:
             user_name = self.protector.user.name
 
-        acls = self.protector.get_acls(self.item.fqname)
+        acl_cfg = self.protector.get_acls(self.item.fqname)
+        full_acl = self.acl()
 
-        allowed = self.protector.eval_acl(acls['before'], '', user_name, right)
-        if allowed is not None:
-            return allowed
-
-        allowed = self._allows(right, user_name)
-        if allowed is not None:
-            return allowed
-
-        allowed = self.protector.eval_acl(acls['after'], '', user_name, right)
+        allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
         if allowed is not None:
             return allowed
 
