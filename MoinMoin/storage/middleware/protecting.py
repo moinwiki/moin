@@ -49,7 +49,14 @@ class ProtectingMiddleware(object):
         lru_cache_decorator = lru_cache(500)
         self.eval_acl = lru_cache_decorator(self._eval_acl)
 
-    def get_acls(self, itemname):
+    def _get_configured_acls(self, itemname):
+        """
+        for a fully-qualified itemname (namespace:name), get the acl configuration
+        for that (part of the) namespace.
+
+        @param itemname: fully qualified itemname
+        @returns: acl configuration (acl dict from the acl_mapping)
+        """
         for prefix, acls in self.acl_mapping:
             if itemname.startswith(prefix):
                 return acls
@@ -149,7 +156,7 @@ class ProtectedItem(object):
         acl = item.acl
         if acl is not None:
             return acl
-        acl_cfg = self.protector.get_acls(item.fqname)
+        acl_cfg = self.protector._get_configured_acls(item.fqname)
         if acl_cfg['hierarchic']:
             # check parent(s), recursively
             parent_tail = item.name.rsplit('/', 1)
@@ -164,7 +171,7 @@ class ProtectedItem(object):
         """
         return the full acl for this item, including before/default/after acl.
         """
-        acl_cfg = self.protector.get_acls(self.item.fqname)
+        acl_cfg = self.protector._get_configured_acls(self.item.fqname)
         item_acl = self.item_acl()
         if item_acl is None:
             item_acl = acl_cfg['default']
@@ -184,7 +191,7 @@ class ProtectedItem(object):
         if user_name is None:
             user_name = self.protector.user.name
 
-        acl_cfg = self.protector.get_acls(self.item.fqname)
+        acl_cfg = self.protector._get_configured_acls(self.item.fqname)
         full_acl = self.acl()
 
         allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
