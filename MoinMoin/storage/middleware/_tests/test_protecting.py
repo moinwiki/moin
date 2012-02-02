@@ -59,7 +59,8 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         revids = []
         for item_name, acl, content in items:
             item = self.imw[item_name]
-            r = item.store_revision(dict(name=item_name, acl=acl), StringIO(content))
+            r = item.store_revision(dict(name=item_name, acl=acl, contenttype=u'text/plain'),
+                                    StringIO(content))
             revids.append(r.revid)
         return revids
 
@@ -82,26 +83,26 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         revid_unprotected, revid_protected = self.make_items(u'joe:write', u'boss:write')
         # now testing:
         item = self.imw[UNPROTECTED]
-        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write'), StringIO(UNPROTECTED_CONTENT))
+        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write', contenttype=u'text/plain'), StringIO(UNPROTECTED_CONTENT))
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
-            item.store_revision(dict(name=PROTECTED, acl=u'boss:write'), StringIO(UNPROTECTED_CONTENT))
+            item.store_revision(dict(name=PROTECTED, acl=u'boss:write', contenttype=u'text/plain'), StringIO(UNPROTECTED_CONTENT))
 
     def test_write_create(self):
         # now testing:
         item_name = u'newitem'
         item = self.imw[item_name]
-        item.store_revision(dict(name=item_name), StringIO('new content'))
+        item.store_revision(dict(name=item_name, contenttype=u'text/plain'), StringIO('new content'))
 
     def test_overwrite_revision(self):
         revid_unprotected, revid_protected = self.make_items(u'joe:write,destroy', u'boss:write,destroy')
         # now testing:
         item = self.imw[UNPROTECTED]
-        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write,destroy', revid=revid_unprotected),
+        item.store_revision(dict(name=UNPROTECTED, acl=u'joe:write,destroy', contenttype=u'text/plain', revid=revid_unprotected),
                             StringIO(UNPROTECTED_CONTENT), overwrite=True)
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
-            item.store_revision(dict(name=PROTECTED, acl=u'boss:write,destroy', revid=revid_protected),
+            item.store_revision(dict(name=PROTECTED, acl=u'boss:write,destroy', contenttype=u'text/plain', revid=revid_protected),
                                 StringIO(UNPROTECTED_CONTENT), overwrite=True)
 
     def test_destroy_revision(self):
