@@ -232,7 +232,7 @@ def indexable(item_name, rev):
         item = flaskg.storage[item_name]
         rev = item[rev]
     except KeyError:
-        abort(404)
+        abort(404, item_name)
     content = convert_to_indexable(rev.meta, rev.data)
     return Response(content, 200, mimetype='text/plain')
 
@@ -538,7 +538,7 @@ def ajaxdestroy(item_name):
 def ajaxmodify(item_name):
     newitem = request.values.get("newitem")
     if not newitem:
-        abort(404)
+        abort(404, item_name)
     if item_name:
         newitem = item_name + u'/' + newitem
 
@@ -1697,7 +1697,7 @@ def sitemap(item_name):
     """
     # first check if this item exists
     if not flaskg.storage[item_name]:
-        abort(404)
+        abort(404, item_name)
     sitemap = NestedItemListBuilder().recurse_build([item_name])
     del sitemap[0] # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
