@@ -488,6 +488,13 @@ Syntax Highlighting
 Using the wiki parser with css classes
 --------------------------------------
 
+CSS classes for use with wiki parsers include:
+ - Background colors: red, green, blue, yellow, or orange
+ - Borders: solid, dashed, or dotted
+ - Text-alignment: left, center, right, or justify
+ - Admonitions: caution, important, note, tip, warning
+ - Comments: comment
+
 **Markup**: ::
  
  {{{#!wiki red/solid

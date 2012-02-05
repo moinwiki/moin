@@ -40,14 +40,12 @@ input, select { vertical-align: middle; }
 /* end HTML5 reset */
 
 
-
 /* odds and ends */
 html { color: black; font-family: sans-serif; }
 div, p { margin: 1em 0; }
 sub { vertical-align: sub; }
 sup { vertical-align: super; }
 ins { background-color: #FFF; text-decoration: underline; }
-/* fix tests -- currently checking <big> and <small> */
 .moin-big { font-size: 1.17em; }
 .moin-small { font-size: .83em; }
 .moin-integer { text-align: right; padding-right: 1em; }
@@ -59,16 +57,15 @@ h3 { font-size: 1.17em; margin: .83em 0; padding-bottom:3px; }
 h4 { margin: 1.12em 0; padding-bottom:2px; }
 h5 { font-size: .83em; margin: 1.5em 0; padding-bottom: 2px; }
 h6 { font-size: .75em; margin: 1.67em 0; padding-bottom:2px; }
-h2,h3,h4,h5,h6{border-bottom: 3px solid #4D7DA9; }
+h2,h3,h4,h5,h6 {border-bottom: 3px solid #4D7DA9; }
+
 /* Links - most themes will override */
 a { text-decoration: none; }
 a:link { color: blue; }
 a:visited { color: purple; }
 a:hover { color: red; }
 a:active { color: red; }
-
-/* dead links */
-a.moin-nonexistent:visited,
+ a.moin-nonexistent:visited,
 a.moin-nonexistent { color: #444; }
 
 /* lists */
@@ -112,9 +109,7 @@ pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border:
 pre.comment:before { content: url(../img/attention.png); }
 
 /* tt (teletype) replacement */
-.monospaced {
-    font-family: monospace;
-}
+.monospaced { font-family: monospace; }
 
 /* tables */
 table { margin: 0.5em; border-collapse: collapse; }
@@ -133,9 +128,7 @@ table.zebra { border: none; border-collapse: separate; border-spacing: 1px; }
 div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #fff;
             font-size: 80%; margin: 0.5em 0 0.75em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
             max-width: 35%; text-align: left; float: right; clear: both;
-            box-shadow: 10px 10px 5px #679; border-radius: 15px;
-            -moz-box-shadow: 10px 10px 5px #679; -moz-border-radius: 15px;
-            -webkit-box-shadow: 10px 10px 5px #679; -webkit-border-radius: 15px; }
+            box-shadow: 10px 10px 5px #679; border-radius: 15px; }
 .moin-table-of-contents ol { margin: 0; padding: 0 0 0 .92em; }
 .moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none; }
 .moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 1em; letter-spacing: 0.075em; }
@@ -173,28 +166,7 @@ table.navigation { background: #FFF; float: right; margin: 2px; }
 .moin-tab-titles .change-indicator { font-weight: bold; color: #D22; }
 .moin-tab-title a { color: #000 !important; text-decoration: none !important; }
 
-/* Recent changes */
-.rcrss { float: right; margin: 0 7px 0 14px; height: 0; position: relative; top: 9px; }
-.recentchanges table { clear: both; border-collapse: collapse; border: 1px solid #4D7DA9; }
-.recentchanges td { vertical-align: top; border: none; background: #e6eaf0; }
-.recentchanges .rcdaybreak td { background: #81BBF2; border: none; border: 1px solid #4D7DA9; }
-.rcdaybreak td a { font-size: 0.88em; }
-.rcicon1,
-.rcicon2 { text-align: center; }
-.rcpagelink { width: 33%; }
-.rctime { font-size: 0.88em; white-space: nowrap; }
-.rceditor { white-space: nowrap; font-size: 0.88em; }
-.rccomment { width: 50%; color: gray; font-size: 0.88em; }
-
 /* Search results */
-.advancedsearch { border: 1px solid #ADB9CC; }
-.advancedsearch td { vertical-align: top; background-color: #E7E7E7; border: 0px; }
-.advancedsearch td.searchfor { font-weight: bold; }
-.advancedsearch input { border: 1px solid #ADB9CC; background-color: #fff; }
-.advancedsearch input[disabled] { background-color: #EEE; }
-.advancedsearch td.submit { border-top: 1px solid #ADB9CC; background-color: #FFF; text-align: right; }
-.advancedsearch optioni,
-.advancedsearch select { border: 1px solid #ADB9CC; background-color: #FFF; }
 .searchresults dt { margin-top: 1em; font-weight: normal; }
 .searchresults dd,
 .searchresults p { font-size: 0.85em; }
@@ -294,10 +266,10 @@ input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; pad
 .moin-align-right ul { margin: 0; padding: 0;  }
 .moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
 .moin-contenttypes-wrapper { position: relative; margin: 0; color: #342D7E; background: #FFFFFF; border: 1px solid #E5E5E5; min-width: 12em; text-align: left; }
-.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em 1.2em 0.5em 0.5em ; height: 1em; } 
+.moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em 1.2em 0.5em 0.5em ; height: 1em; }
 div.ct-shown { background: #4477FF url("../img/moin-movedown.png") no-repeat center right; color: #FFFFFF; }
 div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
-.moin-contenttypes-wrapper ul { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; } 
+.moin-contenttypes-wrapper ul { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; }
 .moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em; min-width: 11.5em; }
 .moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
 .moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }
@@ -305,7 +277,7 @@ div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat ce
 .moin-contenttypes-wrapper ul li:hover .helper-text { display: block; }
 .moin-contenttypes-wrapper ul li a { font-size: 80%; }
 .moin-contenttypes-wrapper form input[type="submit"] { margin: 0.4em 0.5em; }
-.moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; } 
+.moin-contenttypes-wrapper:hover div { background-color: #4477FF; color: #FFFFFF; }
 .filter-toggle { margin: 0 0.2em; font-size: 90%; }
 .moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
 .moin-more-index:hover { text-decoration: none; }
@@ -315,7 +287,9 @@ div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat ce
 .moin-index-separator { clear: both; border-top: 1px dashed #CCCCCC; width: 80%; display: none; }
 #moin-upload-cont { min-height: 10px; }
 #file_upload { margin-top: 2em; }
-form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer; direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative; text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF; -moz-box-shadow: 0px 0px 5px #4477FF; khtml-box-shadow: 0px 0px 5px #4477FF; }
+form.upload_file { background-color: #4477FF; border: 1px solid #e5e5e5; color: #E5E5E5; cursor: pointer;
+            direction: ltr; font-weight: bold; height: 2.5em; line-height: 2.5em; overflow: hidden; position: relative;
+            text-align: center; width: 15em; box-shadow: 0px 0px 5px #4477FF;  }
 form.upload_file:hover { color: #FFFFFF; }
 form.upload_file input { -moz-transform: translate(-800px, 0pt) scale(10); border: 300px solid transparent; cursor: pointer; height: 100%;  margin: 0; opacity: 0; position: absolute; right: 0; top: 0;}
 form.upload_file input { height: auto; }
@@ -567,9 +541,7 @@ body { background-color: #F3F7FD; }
 
 /* moin-content */
 #moin-page { margin: 0; padding: 0; display: table; width: 100%; table-layout: fixed; }
-#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 8px 25px; display: table-cell; 
-    /* support for firefox 3.5/3.6 and safari */
-    -moz-box-shadow: 1px 1px 33px -11px inset; -webkit-box-shadow: inset 1px 1px 33px -11px black; }
+#moin-content { background: #FFF; overflow: hidden; box-shadow: 1px 1px 33px -11px inset; padding: 8px 25px; display: table-cell; }
 
 /* links */
 a:link { color: #47F; text-decoration: none; }
@@ -594,11 +566,10 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-searchform input { font-size: 100%; vertical-align: middle;
             background-color: #F3F7FD; /* same as body bg col */
             border: 1px solid #A4B9DF; }
-#moin-searchform #moin-search-submit { text-indent: -9000%; margin-left: -24px; width: 20px; height: 16px; background: url(../img/moin-search.png) center center no-repeat; background-size: 16px 16px; border: none; overflow: hidden; vertical-align: middle; cursor: pointer; }
+#moin-searchform #moin-search-submit { text-indent: -9000%; margin-left: -24px; width: 20px; height: 16px;
+            background: url(../img/moin-search.png) center center no-repeat; background-size: 16px 16px; border: none; overflow: hidden; vertical-align: middle; cursor: pointer; }
 #moin-searchform #moin-search-query { padding-right: 20px; }
 #moin-searchform div { margin: 0; }
-#moin-searchform ul { border: 1px solid #A4B9DF; margin: 0; padding: 0; background-color: #F3F7FD; }
-#moin-searchform li { list-style:none; }
 
 /* moin-extended searchform */
 #moin-long-searchform { padding: 0; font-size: 0.82em; text-align: left; }
@@ -612,8 +583,6 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 
 /* moin-header moin-username */
 #moin-username { display: block; margin: 0px 12px 4px 12px; padding: 0; font-size: 0.82em; }
-#moin-username form { display: inline; }
-#moin-username input { display: inline; padding: 0; margin: 0; border: none; background: transparent; color: blue; font-size: 0.82em; cursor: pointer; }
 #moin-username input:hover { color: red; }
 
 /* moin-header moin-locationline */
@@ -680,12 +649,10 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-creditlogos { float: right; list-style: none; margin: 0 10px; }
 #moin-creditlogos li { display: inline-block; margin: 10px 0 10px 10px; }
 
-/* wikiconfig -- page_footer1/2 and page_header1/2 if defined */
-/* placeholder, not working yet */
-
+/* transclusion overlay */
 .page-object { margin: 0px; width: auto; height: auto; display: block; position: relative; }
 .object-overlay { background-color: black; position: absolute; padding: 5px; border-radius: 1em;
-            -moz-border-radius: 1em; -webkit-border-radius: 1em; text-align: center; white-space: nowrap; font-size: 120%;
+            text-align: center; white-space: nowrap; font-size: 120%;
             font-weight: bold; display: none; margin: 0; opacity: .5; }
 .object-overlay-wrapper { width: 20px; height: 20px; position: absolute; z-index: 100; top: 0px; left: 0px; margin: 0; }
 .object-overlay-wrapper:hover  .object-overlay { display: block; top: -20px; left: 0px; }
@@ -720,7 +687,7 @@ a.interwiki img { display: none; }
 
 pre { font-size: 10pt; }
 .footnotes div { width: 5em; border-top: 1pt solid gray; }
-div.moin-table-of-contents { box-shadow: none; -moz-box-shadow:  none; -webkit-box-shadow:  none;  }
+div.moin-table-of-contents { box-shadow: none; }
 
 a.permalink, a.moin-showhide, a.showhide,
 #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,

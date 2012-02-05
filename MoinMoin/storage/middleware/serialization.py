@@ -67,8 +67,13 @@ def deserialize(src, backend):
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
         data_size = meta[u'size']
-
+        curr_pos = src.tell()
         limited = LimitedStream(src, data_size)
         backend.store(meta, limited)
-        assert limited.is_exhausted
+        if not limited.is_exhausted:
+            # if we already have the DATAID in the backend, the backend code
+            # does not read from the limited stream:
+            assert limited._pos == 0
+            # but we must seek to get forward to the next item:
+            src.seek(curr_pos + data_size)
 
