@@ -65,10 +65,11 @@ class TestInclude(object):
 
     def test_IncludeHandlesCircularRecursion(self):
         # issue #80
-        # we choosed MoinWiki items so tests get simpler
+        # we use MoinWiki items to make tests simple
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page2}}')
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page3}}')
-        update_item(u'page3', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page1}}')
+        update_item(u'page3', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page4}}')
+        update_item(u'page4', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page2}}')
 
         page1 = MoinWiki.create(u'page1')
 
