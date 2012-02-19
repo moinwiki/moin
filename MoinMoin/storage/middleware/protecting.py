@@ -14,7 +14,8 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 from __future__ import absolute_import, division
 
-import logging
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
                             ALL_REVS, LATEST_REVS

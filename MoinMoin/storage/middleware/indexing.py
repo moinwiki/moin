@@ -58,8 +58,6 @@ import time
 import datetime
 from StringIO import StringIO
 
-import logging
-
 from flask import request
 from flask import g as flaskg
 from flask import current_app as app
@@ -73,6 +71,9 @@ from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
 from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
@@ -841,11 +842,12 @@ class Item(object):
             Schema = ContentMetaSchema
         m = Schema(meta)
         valid = m.validate(state)
-        # TODO: currently we just print validation results. in the end we should
+        # TODO: currently we just log validation results. in the end we should
         # reject invalid stuff in some comfortable way.
         if not valid:
+            logging.warning("metadata validation failed, see below")
             for e in m.children:
-                print e.valid, e
+                logging.warning("{0}, {1}".format(e.valid, e))
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
