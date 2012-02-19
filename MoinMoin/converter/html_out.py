@@ -262,7 +262,7 @@ class Converter(object):
                 ret = html.span(children=error)
             else:
                 ret = html.span(children=('Error', ))
-            ret.set(html.class_, 'error')
+            ret.set(html.class_, 'moin-error')
             return ret
 
         # XXX: Move handling of namespace-less attributes into emeraldtree
@@ -406,7 +406,7 @@ class Converter(object):
                 ret = html.p(children=error)
             else:
                 ret = html.p(children=('Error', ))
-            ret.set(html.class_, 'error')
+            ret.set(html.class_, 'moin-error')
             return ret
 
         # XXX: Move handling of namespace-less attributes into emeraldtree
