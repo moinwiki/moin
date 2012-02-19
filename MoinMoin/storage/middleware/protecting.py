@@ -213,13 +213,13 @@ class ProtectedItem(object):
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False):
+    def store_revision(self, meta, data, overwrite=False, **kw):
         self.require(WRITE)
         if not self:
             self.require(CREATE)
         if overwrite:
             self.require(DESTROY)
-        rev = self.item.store_revision(meta, data, overwrite=overwrite)
+        rev = self.item.store_revision(meta, data, overwrite=overwrite, **kw)
         return ProtectedRevision(self.protector, rev, p_item=self)
 
     def store_all_revisions(self, meta, data):
