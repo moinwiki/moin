@@ -16,6 +16,7 @@ parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html'
                        'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole', )
 
 CONTENTTYPE_USER = u'application/x.moin.userprofile'
+CONTENTTYPE_DEFAULT = u'application/octet-stream'
 
 # structure for contenttype groups
 CONTENTTYPE_GROUPS = [
