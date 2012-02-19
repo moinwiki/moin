@@ -227,7 +227,7 @@ class Converter(object):
                         loop = self.stack[self.stack.index(p_href):]
                         loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
                         msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
-                        attrib = {getattr(html, 'class'): 'error'}
+                        attrib = {getattr(html, 'class'): 'moin-error'}
                         strong = ET.Element(html.strong, attrib, (msg, ))
                         included_elements.append(strong)
                         continue

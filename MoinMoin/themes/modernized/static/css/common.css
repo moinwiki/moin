@@ -96,11 +96,8 @@ hr { height: 1px; background-color: #9C9C9C; border: 0; margin: .9em 0; }
 .moin-hr6 { height: 12px; }
 
 /* eye catchers */
-.warning,
-.error { color: red; background: #888; } /* obsolete , find and change to moin-warning, moin-error */
-.moin-warning,
-.moin-error { color: red; }
-strong.highlight { background-color: #CCE0FF; padding: 1px; }
+.moin-error { color: red; background: #DDD; padding: 4px; }
+.moin-highlight { background-color: #CCE0FF; padding: 1px; }
 
 /* pre */
 pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 5px; clear: both;
@@ -128,7 +125,7 @@ table.zebra { border: none; border-collapse: separate; border-spacing: 1px; }
 div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #fff;
             font-size: 80%; margin: 0.5em 0 0.75em 1em; padding: 0.5em 0.75em 0.5em 0.5em; text-indent: -1em;
             max-width: 35%; text-align: left; float: right; clear: both;
-            box-shadow: 10px 10px 5px #679; border-radius: 15px; }
+            box-shadow: 3px 3px 6px #679; border-radius: 15px; }
 .moin-table-of-contents ol { margin: 0; padding: 0 0 0 .92em; }
 .moin-table-of-contents li { margin: .12em 0 0 0; padding: 0; list-style:none; }
 .moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 0.5em 1em; letter-spacing: 0.075em; }
