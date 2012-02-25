@@ -24,6 +24,9 @@ global-exclude *.rej
 
 prune docs/_build
 prune env
+prune env-pypy
+prune env-py26
+prune env-py27
 
 prune wiki/data/content
 prune wiki/data/userprofiles
