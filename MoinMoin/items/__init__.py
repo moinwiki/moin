@@ -495,18 +495,6 @@ class Item(object):
         if comment:
             meta[COMMENT] = unicode(comment)
 
-        if CONTENTTYPE not in meta:
-            # make sure we have CONTENTTYPE
-            meta[CONTENTTYPE] = unicode(contenttype_current or contenttype_guessed or 'application/octet-stream')
-
-        if ADDRESS not in meta:
-            meta[ADDRESS] = u'0.0.0.0' # TODO
-
-        if USERID not in meta and flaskg.user.valid:
-            meta[USERID] = flaskg.user.itemid
-
-        meta[ACTION] = unicode(action)
-
         if not overwrite and REVID in meta:
             # we usually want to create a new revision, thus we must remove the existing REVID
             del meta[REVID]
@@ -520,12 +508,16 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(config.charset)
+            data = data.encode(config.charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)
 
-        newrev = storage_item.store_revision(meta, data, overwrite=overwrite)
+        newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
+                                             action=unicode(action),
+                                             contenttype_current=contenttype_current,
+                                             contenttype_guessed=contenttype_guessed,
+                                             )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
 
@@ -1198,7 +1190,7 @@ class Text(Binary):
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
+            data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':

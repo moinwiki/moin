@@ -62,6 +62,9 @@ from StringIO import StringIO
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from flask import request
+from flask import g as flaskg
+from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
@@ -77,11 +80,16 @@ from MoinMoin.config import WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTEN
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
                             CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
-                            LATEST_REVS, ALL_REVS, BACKENDNAME
+                            LATEST_REVS, ALL_REVS, BACKENDNAME, \
+                            CONTENTTYPE_USER
+from MoinMoin.constants import keys
+
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
 from MoinMoin.util.crypto import make_uuid
+from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
+
 
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
@@ -842,15 +850,20 @@ class Item(object):
         """
         preprocess a revision before it gets stored and put into index.
         """
-        meta[ITEMID] = self.itemid
-        if MTIME not in meta:
-            meta[MTIME] = int(time.time())
-        #if CONTENTTYPE not in meta:
-        #    meta[CONTENTTYPE] = u'application/octet-stream'
         content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
-    def store_revision(self, meta, data, overwrite=False):
+    def store_revision(self, meta, data, overwrite=False,
+                       trusted=False, # True for loading a serialized representation or other trusted sources
+                       name=None, # TODO name we decoded from URL path
+                       action=u'SAVE',
+                       remote_addr=None,
+                       userid=None,
+                       wikiname=None,
+                       contenttype_current=None,
+                       contenttype_guessed=None,
+                       acl_parent=None,
+                       ):
         """
         Store a revision into the backend, write metadata and data to it.
 
@@ -863,8 +876,55 @@ class Item(object):
         :param overwrite: if True, allow overwriting of existing revs.
         :returns: a Revision instance of the just created revision
         """
+        if remote_addr is None:
+            try:
+                # if we get here outside a request, this won't work:
+                remote_addr = unicode(request.remote_addr)
+            except:
+                pass
+        if userid is None:
+            try:
+                # if we get here outside a request, this won't work:
+                userid = flaskg.user.valid and flaskg.user.itemid or None
+            except:
+                pass
+        if wikiname is None:
+            wikiname = app.cfg.interwikiname
+        state = {'trusted': trusted,
+                 keys.NAME: [name],
+                 keys.ACTION: action,
+                 keys.ADDRESS: remote_addr,
+                 keys.USERID: userid,
+                 keys.WIKINAME: wikiname,
+                 keys.NAMESPACE: u'',
+                 keys.ITEMID: self.itemid, # real itemid or None
+                 'contenttype_current': contenttype_current,
+                 'contenttype_guessed': contenttype_guessed,
+                 'acl_parent': acl_parent,
+                }
+        ct = meta.get(keys.CONTENTTYPE)
+        if ct == CONTENTTYPE_USER:
+            Schema = UserMetaSchema
+        else:
+            Schema = ContentMetaSchema
+        m = Schema(meta)
+        valid = m.validate(state)
+        # TODO: currently we just log validation results. in the end we should
+        # reject invalid stuff in some comfortable way.
+        if not valid:
+            logging.warning("metadata validation failed, see below")
+            for e in m.children:
+                logging.warning("{0}, {1}".format(e.valid, e))
+
+        # we do not have anything in m that is not defined in the schema,
+        # e.g. userdefined meta keys or stuff we do not validate. thus, we
+        # just update the meta dict with the validated stuff:
+        meta.update(dict(m.value.items()))
+        # we do not want None / empty values:
+        meta = dict([(k, v) for k, v in meta.items() if v not in [None, []]])
+
         if self.itemid is None:
-            self.itemid = make_uuid()
+            self.itemid = meta[ITEMID]
         backend = self.backend
         if not overwrite:
             revid = meta.get(REVID)

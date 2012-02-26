@@ -32,7 +32,7 @@ class Converter(object):
                         new_childs.append(text)
 
                         text = child[match.start():match.end()]
-                        attrib = {html.class_: 'highlight'}
+                        attrib = {html.class_: 'moin-highlight'}
                         e = moin_page.strong(attrib=attrib, children=[text])
                         new_childs.append(e)
 

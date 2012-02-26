@@ -70,7 +70,6 @@ Item Types
 * we store data of any type (text, images, audio, binary)
 * we separately store any metadata
 * everything is revisioned
-* all important metadata is indexed
 
 Storage Backend Types
 ---------------------
@@ -87,7 +86,7 @@ Serialization
 Search / Indexing
 =================
 * important metadata is indexed
-* content data is converted and indexed
+* content data is converted (if possible) and indexed
 * fast indexed search, fast internal operations
 * flexible and powerful search queries
 * search current and historical contents

@@ -46,6 +46,7 @@ COMMENT = "comment"
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
 # some backends may use this also for other purposes.
 HASH_ALGORITHM = 'sha1'
+HASH_LEN = 40 # length of hex str representation of hash value
 
 # some field names for whoosh index schema / documents in index:
 NAME_EXACT = "name_exact"

@@ -408,7 +408,6 @@ class User(object):
                 value = tuple(value)
             meta[key] = value
         meta[CONTENTTYPE] = CONTENTTYPE_USER
-        meta[ACTION] = u'SAVE'
         item.store_revision(meta, StringIO(''), overwrite=True)
 
         if not self.disabled:
