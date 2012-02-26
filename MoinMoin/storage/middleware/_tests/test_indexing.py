@@ -87,11 +87,14 @@ class TestIndexingMiddleware(object):
     def test_destroy_revision(self):
         item_name = u'foo'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=item_name, mtime=1), StringIO('bar'))
+        rev = item.store_revision(dict(name=item_name, mtime=1),
+                                  StringIO('bar'), trusted=True)
         revid0 = rev.revid
-        rev = item.store_revision(dict(name=item_name, mtime=2), StringIO('baz'))
+        rev = item.store_revision(dict(name=item_name, mtime=2),
+                                  StringIO('baz'), trusted=True)
         revid1 = rev.revid
-        rev = item.store_revision(dict(name=item_name, mtime=3), StringIO('...'))
+        rev = item.store_revision(dict(name=item_name, mtime=3),
+                                  StringIO('...'), trusted=True)
         revid2 = rev.revid
         print "revids:", revid0, revid1, revid2
         # destroy a non-current revision:
@@ -126,9 +129,11 @@ class TestIndexingMiddleware(object):
         revids = []
         item_name = u'foo'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=item_name, mtime=1), StringIO('bar'))
+        rev = item.store_revision(dict(name=item_name, mtime=1),
+                                  StringIO('bar'), trusted=True)
         revids.append(rev.revid)
-        rev = item.store_revision(dict(name=item_name, mtime=2), StringIO('baz'))
+        rev = item.store_revision(dict(name=item_name, mtime=2),
+                                  StringIO('baz'), trusted=True)
         revids.append(rev.revid)
         # destroy item:
         item.destroy_all_revisions()
@@ -192,12 +197,15 @@ class TestIndexingMiddleware(object):
         expected_latest_revids = []
         item_name = u'foo'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=1), StringIO('does not count, different name'))
+        r = item.store_revision(dict(name=item_name, mtime=1),
+                                StringIO('does not count, different name'), trusted=True)
         expected_latest_revids.append(r.revid)
         item_name = u'bar'
         item = self.imw[item_name]
-        item.store_revision(dict(name=item_name, mtime=1), StringIO('1st'))
-        r = item.store_revision(dict(name=item_name, mtime=2), StringIO('2nd'))
+        item.store_revision(dict(name=item_name, mtime=1),
+                            StringIO('1st'), trusted=True)
+        r = item.store_revision(dict(name=item_name, mtime=2),
+                                StringIO('2nd'), trusted=True)
         expected_latest_revids.append(r.revid)
 
         # now we remember the index contents built that way:
@@ -238,21 +246,25 @@ class TestIndexingMiddleware(object):
         missing_revids = []
         item_name = u'updated'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=1), StringIO('updated 1st'))
+        r = item.store_revision(dict(name=item_name, mtime=1),
+                                StringIO('updated 1st'), trusted=True)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
         item_name = u'destroyed'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=1), StringIO('destroyed 1st'))
+        r = item.store_revision(dict(name=item_name, mtime=1),
+                                StringIO('destroyed 1st'), trusted=True)
         destroy_revid = r.revid
         # we destroy this item below, so we don't add it to expected_all_revids
         # we destroy this item below, so we don't add it to expected_latest_revids
         item_name = u'stayssame'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=1), StringIO('stayssame 1st'))
+        r = item.store_revision(dict(name=item_name, mtime=1),
+                                StringIO('stayssame 1st'), trusted=True)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
-        r = item.store_revision(dict(name=item_name, mtime=2), StringIO('stayssame 2nd'))
+        r = item.store_revision(dict(name=item_name, mtime=2),
+                                StringIO('stayssame 2nd'), trusted=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
 
@@ -267,13 +279,15 @@ class TestIndexingMiddleware(object):
         # this will not change the fresh index, but the old index we are still using.
         item_name = u'updated'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=2), StringIO('updated 2nd'))
+        r = item.store_revision(dict(name=item_name, mtime=2),
+                                StringIO('updated 2nd'), trusted=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)
         item_name = u'added'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=item_name, mtime=1), StringIO('added 1st'))
+        r = item.store_revision(dict(name=item_name, mtime=1),
+                                StringIO('added 1st'), trusted=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)

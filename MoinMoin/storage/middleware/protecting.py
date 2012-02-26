@@ -14,7 +14,8 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 from __future__ import absolute_import, division
 
-import logging
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from whoosh.util import lru_cache
 
@@ -236,13 +237,13 @@ class ProtectedItem(object):
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False):
+    def store_revision(self, meta, data, overwrite=False, **kw):
         self.require(WRITE)
         if not self:
             self.require(CREATE)
         if overwrite:
             self.require(DESTROY)
-        rev = self.item.store_revision(meta, data, overwrite=overwrite)
+        rev = self.item.store_revision(meta, data, overwrite=overwrite, **kw)
         self.protector._clear_acl_cache()
         return ProtectedRevision(self.protector, rev, p_item=self)
 

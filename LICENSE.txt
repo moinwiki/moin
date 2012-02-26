@@ -2,7 +2,7 @@ MoinMoin's Copyright and License
 ================================
 
 Copyright (c) 2000-2006 by Juergen Hermann <jh@web.de>
-Copyright (c) 2006-2011 The MoinMoin development team, see
+Copyright (c) 2006-2012 The MoinMoin development team, see
                         http://moinmo.in/MoinCoreTeamGroup
 
 MoinMoin is free software: you can redistribute it and/or modify

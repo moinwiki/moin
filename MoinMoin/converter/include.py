@@ -219,12 +219,15 @@ class Converter(object):
                     pages = ((Item.create(p), Iri(scheme='wiki', authority='', path='/' + p)) for p in pagelist)
 
                 included_elements = []
-                for page, page_href in pages:
-                    if page_href.path[0] != '/':
-                        page_href.path = IriPath('/' + '/'.join(page_href.path))
-                    if page_href in self.stack:
-                        attrib = {getattr(html, 'class'): 'error'}
-                        msg = 'Recursive include of "{0}" forbidden'.format(page.name)
+                for page, p_href in pages:
+                    if p_href.path[0] != '/':
+                        p_href.path = IriPath('/' + '/'.join(p_href.path))
+                    if p_href in self.stack:
+                        # we have a transclusion loop, create an error message showing list of pages forming loop
+                        loop = self.stack[self.stack.index(p_href):]
+                        loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
+                        msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
+                        attrib = {getattr(html, 'class'): 'moin-error'}
                         strong = ET.Element(html.strong, attrib, (msg, ))
                         included_elements.append(strong)
                         continue
@@ -233,7 +236,7 @@ class Converter(object):
                         continue
 
                     if xp_include_heading is not None:
-                        attrib = {self.tag_href: page_href}
+                        attrib = {self.tag_href: p_href}
                         children = (xp_include_heading or page.name, )
                         elem_a = ET.Element(self.tag_a, attrib, children=children)
                         attrib = {self.tag_outline_level: xp_include_level or '1'}
@@ -246,7 +249,7 @@ class Converter(object):
                     # Wrap the page with the overlay, but only if it's a "page", or "a".
                     # The href needs to be an absolute URI, without the prefix "wiki://"
                     if page_doc.tag.endswith("page") or page_doc.tag.endswith("a"):
-                        page_doc = wrap_object_with_overlay(page_doc, href=unicode(page_href.path))
+                        page_doc = wrap_object_with_overlay(page_doc, href=unicode(p_href.path))
 
                     included_elements.append(page_doc)
 
