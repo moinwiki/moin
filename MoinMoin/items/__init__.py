@@ -1178,7 +1178,7 @@ class Text(Binary):
         from MoinMoin.apps.frontend.views import CommentForm
         class ModifyForm(CommentForm):
             meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_text = String.using(optional=True).with_properties(placeholder=L_("Type your text here"))
+            data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
             data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
         if request.method == 'GET':
