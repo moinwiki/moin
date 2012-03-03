@@ -16,7 +16,7 @@ import pytest
 from flask import g as flaskg
 
 from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
-                            LATEST_REVS, ALL_REVS
+                            LATEST_REVS, ALL_REVS, NAMESPACE
 
 from ..indexing import IndexingMiddleware
 
@@ -60,7 +60,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         assert item # does exist
         rev = item.get_revision(revid)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.data.read() == data
         revids = [rev.revid for rev in item.iter_revs()]
         assert revids == [revid]
@@ -77,7 +77,7 @@ class TestIndexingMiddleware(object):
         # check if the revision was overwritten:
         item = self.imw[item_name]
         rev = item.get_revision(revid)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.meta[COMMENT] == u'no spam'
         assert rev.data.read() == newdata
         revids = [rev.revid for rev in item.iter_revs()]
@@ -172,7 +172,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=item_name), StringIO(data))
         print repr(rev.meta)
-        assert rev.meta[NAME] == item_name
+        assert rev.name == item_name
         assert rev.meta[SIZE] == len(data)
         assert rev.meta[HASH_ALGORITHM] == hashlib.new(HASH_ALGORITHM, data).hexdigest()
         assert ITEMID in rev.meta
@@ -364,6 +364,22 @@ class TestIndexingMiddleware(object):
         assert expected_revid == doc[REVID]
         assert unicode(data) == doc[CONTENT]
 
+    def test_namespaces(self):
+        item_name_n = u'normal'
+        item = self.imw[item_name_n]
+        rev_n = item.store_revision(dict(name=[item_name_n], contenttype=u'text/plain'), StringIO(str(item_name_n)))
+        item_name_u = u'userprofiles:userprofile'
+        item = self.imw[item_name_u]
+        rev_u = item.store_revision(dict(name=[item_name_u], contenttype=u'text/plain'), StringIO(str(item_name_u)))
+        item = self.imw[item_name_n]
+        rev_n = item.get_revision(rev_n.revid)
+        assert rev_n.meta[NAMESPACE] == u''
+        assert rev_n.meta[NAME] == [item_name_n]
+        item = self.imw[item_name_u]
+        rev_u = item.get_revision(rev_u.revid)
+        assert rev_u.meta[NAMESPACE] == u'userprofiles'
+        assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
+
 class TestProtectedIndexingMiddleware(object):
     reinit_storage = True # cleanup after each test method
 
@@ -382,7 +398,7 @@ class TestProtectedIndexingMiddleware(object):
         r = item.store_revision(dict(name=item_name, acl=u'joe:read'), StringIO('public content'))
         revid_public = r.revid
         revids = [rev.revid for rev in self.imw.documents()
-                  if rev.meta[NAME] != u'joe'] # the user profile is a revision in the backend
+                  if rev.name != u'joe'] # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):

@@ -114,6 +114,10 @@ def update_user_query(**q):
 
 def search_users(**q):
     """ Searches for a users with given query keys/values """
+    # Since item name is a list, it's possible a list have been passed as parameter.
+    # No problem, since user always have just one name (TODO: validate single name for user)
+    if q.get('name_exact') and isinstance(q.get('name_exact'), list):
+        q['name_exact'] = q['name_exact'][0]
     q = update_user_query(**q)
     backend = get_user_backend()
     docs = backend.documents(**q)

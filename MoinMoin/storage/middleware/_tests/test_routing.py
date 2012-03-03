@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - router middleware tests
+MoinMoin - routing middleware tests
 """
 
 
@@ -12,9 +12,9 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.config import NAME, REVID
+from MoinMoin.config import NAME, NAMESPACE, REVID
 
-from ..routing import Backend as RouterBackend
+from ..routing import Backend as RoutingBackend
 
 from MoinMoin.storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
 from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
@@ -32,10 +32,12 @@ def make_ro_backend():
 
 
 def pytest_funcarg__router(request):
-    root_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
-    sub_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
+    default_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
+    other_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     ro_be = make_ro_backend()
-    router = RouterBackend([('sub', sub_be), ('ro', ro_be), ('', root_be)])
+    namespaces = [(u'other:', 'other'), (u'ro:', 'ro'), (u'', 'default')]
+    backends = {'other': other_be, 'ro': ro_be, 'default': default_be, }
+    router = RoutingBackend(namespaces, backends)
     router.create()
     router.open()
 
@@ -47,42 +49,37 @@ def pytest_funcarg__router(request):
     return router
 
 def test_store_get_del(router):
-    root_name = u'foo'
-    root_revid = router.store(dict(name=root_name), StringIO(''))
-    sub_name = u'sub/bar'
-    sub_revid = router.store(dict(name=sub_name), StringIO(''))
+    default_name = u'foo'
+    default_backend_name, default_revid = router.store(dict(name=default_name), StringIO(''))
+    other_name = u'other:bar'
+    other_backend_name, other_revid = router.store(dict(name=other_name), StringIO(''))
 
-    # when going via the router backend, we get back fully qualified names:
-    root_meta, _ = router.retrieve(root_name, root_revid)
-    sub_meta, _ = router.retrieve(sub_name, sub_revid)
-    assert root_name == root_meta[NAME]
-    assert sub_name == sub_meta[NAME]
+    # check if store() updates the to-store metadata with correct NAMESPACE and NAME
+    default_meta, _ = router.retrieve(default_backend_name, default_revid)
+    other_meta, _ = router.retrieve(other_backend_name, other_revid)
+    assert (u'', default_name == default_meta[NAMESPACE], default_meta[NAME])
+    assert (other_name.split(':') == other_meta[NAMESPACE], other_meta[NAME])
 
-    # when looking into the storage backend, we see relative names (without mountpoint):
-    root_meta, _ = router.mapping[-1][1].retrieve(root_revid)
-    sub_meta, _ = router.mapping[0][1].retrieve(sub_revid)
-    assert root_name == root_meta[NAME]
-    assert sub_name == 'sub' + '/' + sub_meta[NAME]
     # delete revs:
-    router.remove(root_name, root_revid)
-    router.remove(sub_name, sub_revid)
+    router.remove(default_backend_name, default_revid)
+    router.remove(other_backend_name, other_revid)
 
 
 def test_store_readonly_fails(router):
     with pytest.raises(TypeError):
-        router.store(dict(name=u'ro/testing'), StringIO(''))
+        router.store(dict(name=u'ro:testing'), StringIO(''))
 
 def test_del_readonly_fails(router):
-    ro_id = next(iter(router)) # we have only readonly items
-    print ro_id
+    ro_be_name, ro_id = next(iter(router)) # we have only readonly items
+    print ro_be_name, ro_id
     with pytest.raises(TypeError):
-        router.remove(ro_id)
+        router.remove(ro_be_name, ro_id)
 
 
 def test_destroy_create_dont_touch_ro(router):
     existing = set(router)
-    root_revid = router.store(dict(name=u'foo'), StringIO(''))
-    sub_revid = router.store(dict(name=u'sub/bar'), StringIO(''))
+    default_be_name, default_revid = router.store(dict(name=u'foo'), StringIO(''))
+    other_be_name, other_revid = router.store(dict(name=u'other:bar'), StringIO(''))
 
     router.close()
     router.destroy()
@@ -93,9 +90,9 @@ def test_destroy_create_dont_touch_ro(router):
 
 
 def test_iter(router):
-    existing_before = set([revid for mountpoint, revid in router])
-    root_revid = router.store(dict(name=u'foo'), StringIO(''))
-    sub_revid = router.store(dict(name=u'sub/bar'), StringIO(''))
-    existing_now = set([revid for mountpoint, revid in router])
-    assert existing_now == set([root_revid, sub_revid]) | existing_before
+    existing_before = set([revid for be_name, revid in router])
+    default_be_name, default_revid = router.store(dict(name=u'foo'), StringIO(''))
+    other_be_name, other_revid = router.store(dict(name=u'other:bar'), StringIO(''))
+    existing_now = set([revid for be_name, revid in router])
+    assert existing_now == set([default_revid, other_revid]) | existing_before
 

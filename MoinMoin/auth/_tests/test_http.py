@@ -33,7 +33,7 @@ class TestHTTPAuthMoin(object):
         httpauthmoin_obj = HTTPAuthMoin()
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert test_user.valid
-        assert test_user.name == u'ValidUser'
+        assert test_user.name == [u'ValidUser']
         assert bool_val
 
         # when auth_method is not 'http'

@@ -53,7 +53,7 @@ def update_item(name, meta, data):
     item = flaskg.storage[name]
 
     if NAME not in meta:
-        meta[NAME] = name
+        meta[NAME] = [name]
     if CONTENTTYPE not in meta:
         meta[CONTENTTYPE] = u'application/octet-stream'
     rev = item.store_revision(meta, StringIO(data))

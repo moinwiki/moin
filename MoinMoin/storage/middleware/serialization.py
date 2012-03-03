@@ -45,8 +45,13 @@ def serialize_rev(meta, data):
             yield block
 
 def serialize_iter(backend):
-    for mountpoint, revid in backend:
-        meta, data = backend.retrieve(mountpoint, revid)
+    for revid in backend:
+        if isinstance(revid, tuple):
+            # router middleware gives tuples and wants both values for retrieve:
+            meta, data = backend.retrieve(*revid)
+        else:
+            # lower level backends have simple revids
+            meta, data = backend.retrieve(revid)
         for data in serialize_rev(meta, data):
             yield data
     for data in serialize_rev(None, None):

@@ -232,7 +232,7 @@ def indexable(item_name, rev):
         rev = item[rev]
     except KeyError:
         abort(404, item_name)
-    content = convert_to_indexable(rev.meta, rev.data)
+    content = convert_to_indexable(rev.meta, rev.data, item_name)
     return Response(content, 200, mimetype='text/plain')
 
 
@@ -685,7 +685,7 @@ def _mychanges(userid):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
     revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.meta[NAME] for rev in revs]
+    return [rev.name for rev in revs]
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
@@ -716,7 +716,7 @@ def _backrefs(item_name):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return [rev.meta[NAME] for rev in revs]
+    return [rev.name for rev in revs]
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -789,7 +789,7 @@ def _compute_item_sets():
     existing = set()
     revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     for rev in revs:
-        existing.add(rev.meta[NAME])
+        existing.add(rev.name)
         linked.update(rev.meta.get(ITEMLINKS, []))
         transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
     return existing, linked, transcluded
@@ -1281,7 +1281,7 @@ def usersettings():
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
         name = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-        aliasname = String.using(label=L_('Alias-Name'), optional=True).with_properties(placeholder=L_("Your alias name (informational)"))
+        display_name = String.using(label=L_('Display-Name'), optional=True).with_properties(placeholder=L_("Your display name (informational)"))
         openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
@@ -1577,7 +1577,7 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.meta[NAME] for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
+    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word
@@ -1750,7 +1750,7 @@ def global_tags():
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.name, rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -1784,7 +1784,7 @@ def tagged_items(tag):
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
     revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-    item_names = [rev.meta[NAME] for rev in revs]
+    item_names = [rev.name for rev in revs]
     return render_template("item_link_list.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,

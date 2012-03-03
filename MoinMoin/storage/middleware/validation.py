@@ -132,6 +132,14 @@ def wikiname_validator(element, state):
     return name_validator(element, state)
 
 
+def namespace_validator(element, state):
+    """
+    a namespace (part of a wiki site)
+    """
+    if element.raw is Unset:
+        element.set(state[keys.NAMESPACE])
+    return name_validator(element, state)
+
 
 def user_contenttype_validator(element, state):
     """
@@ -310,7 +318,8 @@ common_meta = (
     String.named(keys.REVID).validated_by(revid_validator),
     String.named(keys.PARENTID).validated_by(uuid_validator).using(optional=True),
     String.named(keys.WIKINAME).using(strip=False).validated_by(wikiname_validator),
-    String.named(keys.NAME).using(strip=False).validated_by(name_validator),
+    String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),
+    List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)),
     String.named(keys.NAME_OLD).using(strip=False).validated_by(name_validator).using(optional=True),
     Integer.named(keys.MTIME).validated_by(mtime_validator),
     String.named(keys.ACTION).validated_by(action_validator),
@@ -357,5 +366,4 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     #TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
 )
-
 
