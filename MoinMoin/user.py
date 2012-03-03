@@ -453,19 +453,24 @@ class User(object):
 
     # Bookmarks --------------------------------------------------------------
 
-    def setBookmark(self, tm):
+    def _set_bookmark(self, tm):
         """ Set bookmark timestamp.
 
-        :param tm: timestamp
+        :param tm: timestamp (int or None)
         """
         if self.valid:
-            self.profile[BOOKMARKS][self._cfg.interwikiname] = int(tm)
-            self.save()
+            if not (tm is None or isinstance(tm, int)):
+                raise ValueError('tm should be int or None')
+            if tm is None:
+                self.profile[BOOKMARKS].pop(self._cfg.interwikiname)
+            else:
+                self.profile[BOOKMARKS][self._cfg.interwikiname] = tm
+            self.save(force=True)
 
-    def getBookmark(self):
+    def _get_bookmark(self):
         """ Get bookmark timestamp.
 
-        :rtype: int
+        :rtype: int / None
         :returns: bookmark timestamp or None
         """
         bm = None
@@ -476,20 +481,7 @@ class User(object):
                 pass
         return bm
 
-    def delBookmark(self):
-        """ Removes bookmark timestamp.
-
-        :rtype: int
-        :returns: 0 on success, 1 on failure
-        """
-        if self.valid:
-            try:
-                del self.profile[BOOKMARKS][self._cfg.interwikiname]
-            except KeyError:
-                return 1
-            self.save()
-            return 0
-        return 1
+    bookmark = property(_get_bookmark, _set_bookmark)
 
     # Subscribed Items -------------------------------------------------------
 

@@ -749,11 +749,8 @@ def history(item_name):
 def global_history():
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
-    if flaskg.user.valid:
-        bookmark_time = flaskg.user.getBookmark()
-    else:
-        bookmark_time = None
     query = Term(WIKINAME, app.cfg.interwikiname)
+    bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
     revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
@@ -1438,11 +1435,7 @@ def bookmark():
                     tm = int(time.time())
         else:
             tm = int(time.time())
-
-        if tm is None:
-            flaskg.user.delBookmark()
-        else:
-            flaskg.user.setBookmark(tm)
+        flaskg.user.bookmark = tm
     else:
         flash(_("You must log in to use bookmarks."), "error")
     return redirect(url_for('.global_history'))
