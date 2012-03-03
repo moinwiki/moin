@@ -22,14 +22,20 @@ class TestSimple(object):
         name = u"foo"
         password = u"barbaz4711"
         email = u"foo@example.org"
-        # first create a user
+        # nonexisting user
+        u = user.User(name=name, password=password)
+        assert u.name == name
+        assert not u.valid
+        assert not u.exists()
+        # create a user
         ret = user.create_user(name, password, email, validate=False)
         assert ret is None, "create_user returned: {0}".format(ret)
-        # now try to use it
+        # existing user
         u = user.User(name=name, password=password)
         assert u.name == name
         assert u.email == email
         assert u.valid
+        assert u.exists()
 
 
 class TestLoginWithPassword(object):
@@ -202,13 +208,11 @@ class TestLoginWithPassword(object):
         upgrades to {SSHA256}.
         """
         name = u'/no such user/'
-        #pass = MoinMoin
-        #salr = 12345
+        # pass = 'MoinMoin', salt = '12345'
         password = '{SSHA}xkDIIx1I7A4gC98Vt/+UelIkTDYxMjM0NQ=='
         self.createUser(name, password, True)
 
-        # User is not required to be valid
-        theuser = user.User(name=name, password='12345')
+        theuser = user.User(name=name, password='MoinMoin')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
     def test_upgrade_password_from_sha_to_ssha256(self):
@@ -220,7 +224,6 @@ class TestLoginWithPassword(object):
         password = '{SHA}jLIjfQZ5yojbZGTqxg2pY0VROWQ=' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -235,7 +238,6 @@ class TestLoginWithPassword(object):
         password = '{APR1}$apr1$NG3VoiU5$PSpHT6tV0ZMKkSZ71E3qg.' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -249,7 +251,6 @@ class TestLoginWithPassword(object):
         password = '{MD5}$1$salt$etVYf53ma13QCiRbQOuRk/' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -264,20 +265,8 @@ class TestLoginWithPassword(object):
         password = '{DES}gArsfn7O5Yqfo' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_for_email_attribute_by_name(self):
-        """
-        checks for no access to the email attribute by getting the user object from name
-        """
-        name = u"__TestUser__"
-        password = u"ekfdweurwerh"
-        email = u"__TestUser__@moinhost"
-        self.createUser(name, password, email=email)
-        theuser = user.User(name=name)
-        assert theuser.email is None
 
     # Bookmarks -------------------------------------------------------
 
@@ -312,7 +301,6 @@ class TestLoginWithPassword(object):
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
-        theUser.subscribe(pagename)
 
         # no quick links exist yet
         result_before = theUser.getQuickLinks()
@@ -321,26 +309,16 @@ class TestLoginWithPassword(object):
         result = theUser.isQuickLinkedTo([pagename])
         assert not result
 
-        # quicklinks for the user - theUser exist now
-        theUser.quicklinks = [pagename]
-        result_after = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink']
-        assert result_after == expected
-
         # test for addQuicklink()
         theUser.addQuicklink(u'Test_page_added')
         result_on_addition = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink', u'MoinTest:Test_page_added']
+        expected = [u'MoinTest:Test_page_added']
         assert result_on_addition == expected
-
-        # user should be quicklinked to [pagename]
-        result = theUser.isQuickLinkedTo([pagename])
-        assert result
 
         # previously added page u'Test_page_added' is removed
         theUser.removeQuicklink(u'Test_page_added')
         result_on_removal = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink']
+        expected = []
         assert result_on_removal == expected
 
     # Trail -----------------------------------------------------------

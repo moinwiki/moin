@@ -448,6 +448,7 @@ options_no_group_name = {
         show_comments=False,
         want_trivial=False,
         disabled=False,
+        bookmarks={},
         quicklinks=[],
         subscribed_items=[],
         email_subscribed_events=[

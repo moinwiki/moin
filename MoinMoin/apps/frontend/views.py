@@ -50,9 +50,8 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util, wikiutil
-from MoinMoin.config import ACTION, COMMENT, WIKINAME, CONTENTTYPE, ITEMLINKS, ITEMTRANSCLUSIONS, NAME, NAME_EXACT, \
-                            CONTENTTYPE_GROUPS, MTIME, TAGS, ITEMID, REVID, USERID, CURRENT, CONTENT, \
-                            ALL_REVS, LATEST_REVS
+from MoinMoin.config import CONTENTTYPE_GROUPS
+from MoinMoin.constants.keys import *
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm, ValidSearch
@@ -1010,7 +1009,7 @@ def verifyemail():
         u = user.User(auth_username=request.values['username'])
         token = request.values['token']
     if u and u.disabled and u.validate_recovery_token(token):
-        u.disabled = False
+        u.profile[DISABLED] = False
         u.save()
         flash(_("Your account has been activated, you can log in now."), "info")
     else:
@@ -1343,7 +1342,7 @@ def usersettings():
                 # successfully modified everything
                 success = True
                 if part == 'password':
-                    flaskg.user.enc_password = crypto.crypt_password(form['password1'].value)
+                    flaskg.user.set_password(form['password1'].value)
                     flaskg.user.save()
                     response['flash'].append((_("Your password has been changed."), "info"))
                 else:
@@ -1364,10 +1363,13 @@ def usersettings():
                             success = False
                     if success:
                         user_old_email = flaskg.user.email
-                        form.update_object(flaskg.user, omit=['submit']) # don't save submit button value :)
+                        d = dict(form.value)
+                        d.pop('submit')
+                        for k, v in d.items():
+                            flaskg.user.profile[k] = v
                         if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
                             # disable account
-                            flaskg.user.disabled = True
+                            flaskg.user.profile[DISABLED] = True
                             # send verification mail
                             is_ok, msg = flaskg.user.mailVerificationLink()
                             if is_ok:
@@ -1377,8 +1379,8 @@ def usersettings():
                                 response['redirect'] = url_for('.show_root')
                             else:
                                 # sending the verification email didn't work. reset email change and alert the user.
-                                flaskg.user.disabled = False
-                                flaskg.user.email = user_old_email
+                                flaskg.user.profile[DISABLED] = False
+                                flaskg.user.profile[EMAIL] = user_old_email
                                 flaskg.user.save()
                                 response['flash'].append((_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error"))
                         else:

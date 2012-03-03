@@ -8,8 +8,11 @@ Test for security.textcha
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
 import pytest
+
+from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
+from MoinMoin.constants.keys import LOCALE
+
 
 class TestTextCha(object):
     """ Test: class TextCha """
@@ -20,13 +23,13 @@ class TestTextCha(object):
                             'What is the question?': 'Test_Answer'}
                        }
         cfg.secrets['security/textcha'] = "test_secret"
-        flaskg.user.locale = 'test_user_locale'
+        flaskg.user.profile[LOCALE] = 'test_user_locale'
 
     def teardown_method(self, method):
         cfg = app.cfg
         cfg.textchas = None
         cfg.secrets.pop('security/textcha')
-        flaskg.user.locale = None
+        flaskg.user.profile[LOCALE] = None
 
     def test_textcha(self):
         """ test for textchas and its attributes """
@@ -72,7 +75,7 @@ class TestTextCha(object):
 
     def test_amend_form(self):
         # textchas are disabled for 'some_locale'
-        flaskg.user.locale = 'some_locale'
+        flaskg.user.profile[LOCALE] = 'some_locale'
         test_form = TextChaizedForm()
         test_form['textcha_question'].value = None
         textcha_obj = TextCha(test_form)
@@ -92,13 +95,13 @@ class TestTextChaValid(object):
                             {'Good Question': 'Good Answer'}
                        }
         cfg.secrets['security/textcha'] = "test_secret"
-        flaskg.user.locale = 'test_user_locale'
+        flaskg.user.profile[LOCALE] = 'test_user_locale'
 
     def teardown_method(self, method):
         cfg = app.cfg
         cfg.textchas = None
         cfg.secrets.pop('security/textcha')
-        flaskg.user.locale = None
+        flaskg.user.profile[LOCALE] = None
 
     class Element:
         def __init__(self):

@@ -26,7 +26,7 @@ from __future__ import absolute_import, division
 
 import time
 
-from flatland import Dict, List, Unset, Integer, String
+from flatland import Dict, List, Unset, Boolean, Integer, String
 
 from MoinMoin.constants import keys
 from MoinMoin.config import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
@@ -344,13 +344,13 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     String.named('timezone').using(optional=True),
     String.named('locale').using(optional=True),
     String.named('css_url').using(optional=True),
-    Integer.named('disabled').using(optional=True),
-    Integer.named('want_trivial').using(optional=True),
-    Integer.named('show_comments').using(optional=True),
     Integer.named('results_per_page').using(optional=True),
     Integer.named('edit_rows').using(optional=True),
-    Integer.named('edit_on_doubleclick').using(optional=True),
-    Integer.named('mailto_author').using(optional=True),
+    Boolean.named('disabled').using(optional=True),
+    Boolean.named('want_trivial').using(optional=True),
+    Boolean.named('show_comments').using(optional=True),
+    Boolean.named('edit_on_doubleclick').using(optional=True),
+    Boolean.named('mailto_author').using(optional=True),
     List.named('quicklinks').of(String.named('quicklinks')).using(optional=True),
     List.named('subscribed_items').of(String.named('subscribed_item')).using(optional=True),
     List.named('email_subscribed_events').of(String.named('email_subscribed_event')).using(optional=True),

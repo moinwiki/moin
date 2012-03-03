@@ -33,7 +33,7 @@ def become_valid(username=u"ValidUser"):
         Thus, for testing purposes (e.g. if you need delete rights), it is
         easier to use become_trusted().
     """
-    flaskg.user.name = username
+    flaskg.user.profile[NAME] = username
     flaskg.user.may.name = username
     flaskg.user.valid = 1
 
@@ -41,7 +41,6 @@ def become_valid(username=u"ValidUser"):
 def become_trusted(username=u"TrustedUser"):
     """ modify flaskg.user to make the user valid and trusted, so it is in acl group Trusted """
     become_valid(username)
-    flaskg.user.auth_trusted = True
     flaskg.user.auth_method = app.cfg.auth_methods_trusted[0]
 
 
