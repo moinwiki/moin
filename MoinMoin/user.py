@@ -246,7 +246,7 @@ class UserProfile(object):
 class User(object):
     """ A MoinMoin User """
 
-    def __init__(self, uid=None, name="", password=None, auth_username="", **kw):
+    def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
         """ Initialize User object
 
         :param uid: (optional) user ID
@@ -264,6 +264,7 @@ class User(object):
         self.profile = UserProfile()
         self._cfg = app.cfg
         self.valid = False
+        self.trusted = trusted # trusted auth methods can set this to True
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
 
@@ -310,13 +311,6 @@ class User(object):
             return self.profile[name]
         else:
             return object.__getattr__(self, name)
-
-    @property
-    def auth_trusted(self):
-        # TODO: auth_trusted should be set by the auth method (auth class
-        # could have a param where the admin could tell whether he wants to
-        # trust it)
-        return self.auth_method in app.cfg.auth_methods_trusted
 
     @property
     def language(self):

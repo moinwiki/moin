@@ -1,7 +1,7 @@
 # Copyright: 2005-2006 Bastian Blank, Florian Festi
 # Copyright: MoinMoin:AlexanderSchremmer, Nick Phillips
 # Copyright: MoinMoin:FrankieChow, MoinMoin:NirSoffer
-# Copyright: 2005-2009 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2007      MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -202,8 +202,10 @@ class BaseAuth(object):
     name = None
     login_inputs = []
     logout_possible = False
-    def __init__(self):
-        pass
+    def __init__(self, trusted=False, **kw):
+        self.trusted = trusted
+        if kw:
+            raise TypeError("got unexpected arguments %r" % kw)
     def login(self, user_obj, **kw):
         return ContinueLogin(user_obj)
     def request(self, user_obj, **kw):
@@ -218,8 +220,8 @@ class BaseAuth(object):
 
 class MoinAuth(BaseAuth):
     """ handle login from moin login form """
-    def __init__(self):
-        BaseAuth.__init__(self)
+    def __init__(self, **kw):
+        super(MoinAuth, self).__init__(**kw)
 
     login_inputs = ['username', 'password']
     name = 'moin'
@@ -241,7 +243,7 @@ class MoinAuth(BaseAuth):
         if username and not password:
             return ContinueLogin(user_obj, _('Missing password. Please enter user name and password.'))
 
-        u = user.User(name=username, password=password, auth_method=self.name)
+        u = user.User(name=username, password=password, auth_method=self.name, trusted=self.trusted)
         if u.valid:
             logging.debug("{0}: successfully authenticated user {1!r} (valid)".format(self.name, u.name))
             return ContinueLogin(u)
@@ -276,7 +278,9 @@ class GivenAuth(BaseAuth):
                  titlecase=False,  # joe doe -> Joe Doe
                  remove_blanks=False,  # Joe Doe -> JoeDoe
                  coding='utf-8',  # for decoding REMOTE_USER correctly
+                 **kw
                 ):
+        super(GivenAuth, self).__init__(**kw)
         self.env_var = env_var
         self.user_name = user_name
         self.autocreate = autocreate
@@ -285,7 +289,6 @@ class GivenAuth(BaseAuth):
         self.titlecase = titlecase
         self.remove_blanks = remove_blanks
         self.coding = coding
-        BaseAuth.__init__(self)
 
     def decode_username(self, name):
         """ decode the name we got from the environment var to unicode """
@@ -341,7 +344,7 @@ class GivenAuth(BaseAuth):
             auth_username = self.transform_username(auth_username)
             logging.debug("auth_username (after decode/transform) = {0!r}".format(auth_username))
             u = user.User(auth_username=auth_username,
-                          auth_method=self.name, auth_attribs=('name', 'password'))
+                          auth_method=self.name, auth_attribs=('name', 'password'), trusted=self.trusted)
 
         logging.debug("u: {0!r}".format(u))
         if u and self.autocreate:
@@ -427,15 +430,17 @@ def handle_request(userobj):
 def setup_from_session():
     userobj = None
     if 'user.itemid' in session:
-        auth_userid = session['user.itemid']
+        itemid = session['user.itemid']
+        trusted = session['user.trusted']
         auth_method = session['user.auth_method']
-        auth_attrs = session['user.auth_attribs']
-        logging.debug("got from session: {0!r} {1!r}".format(auth_userid, auth_method))
+        auth_attribs = session['user.auth_attribs']
+        logging.debug("got from session: {0!r} {1!r} {2!r} {3!r}".format(itemid, trusted, auth_method, auth_attribs))
         logging.debug("current auth methods: {0!r}".format(app.cfg.auth_methods))
         if auth_method and auth_method in app.cfg.auth_methods:
-            userobj = user.User(auth_userid,
+            userobj = user.User(itemid,
                                 auth_method=auth_method,
-                                auth_attribs=auth_attrs)
+                                auth_attribs=auth_attribs,
+                                trusted=trusted)
     logging.debug("session started for user {0!r}".format(userobj))
     return userobj
 

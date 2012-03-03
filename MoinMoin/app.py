@@ -215,6 +215,7 @@ def setup_user():
     # if we have a valid user we store it in the session
     if userobj.valid:
         session['user.itemid'] = userobj.itemid
+        session['user.trusted'] = userobj.trusted
         session['user.auth_method'] = userobj.auth_method
         session['user.auth_attribs'] = userobj.auth_attribs
     return userobj

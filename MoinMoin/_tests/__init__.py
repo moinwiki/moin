@@ -41,7 +41,7 @@ def become_valid(username=u"ValidUser"):
 def become_trusted(username=u"TrustedUser"):
     """ modify flaskg.user to make the user valid and trusted, so it is in acl group Trusted """
     become_valid(username)
-    flaskg.user.auth_method = app.cfg.auth_methods_trusted[0]
+    flaskg.user.trusted = True
 
 
 # Creating and destroying test items --------------------------------

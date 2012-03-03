@@ -1203,7 +1203,7 @@ def login():
 
 
 def _logout():
-    for key in ['user.itemid', 'user.auth_method', 'user.auth_attribs', ]:
+    for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', ]:
         if key in session:
             del session[key]
 
