@@ -271,24 +271,23 @@ class TestLoginWithPassword(object):
     # Bookmarks -------------------------------------------------------
 
     def test_bookmark(self):
-        name = u'Test_User_quicklink'
+        name = u'Test_User_bookmark'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
 
-        theUser.setBookmark(7)
-        result_added = theUser.getBookmark()
-        expected = 7
-        assert result_added == expected
-        # delete the bookmark
-        result_success = theUser.delBookmark()
-        assert result_success == 0
-        result_deleted = theUser.getBookmark()
-        assert not result_deleted
+        # set / retrieve the bookmark
+        bookmark = 1234567
+        theUser.bookmark = bookmark
+        theUser = user.User(name=name, password=password)
+        result = theUser.bookmark
+        assert result == bookmark
 
-        # delBookmark should return 1 on failure
-        result_failure = theUser.delBookmark()
-        assert result_failure == 1
+        # delete the bookmark
+        theUser.bookmark = None
+        theUser = user.User(name=name, password=password)
+        result = theUser.bookmark
+        assert result is None
 
     # Quicklinks ------------------------------------------------------
 
