@@ -1347,7 +1347,7 @@ def usersettings():
                     response['flash'].append((_("Your password has been changed."), "info"))
                 else:
                     if part == 'personal':
-                        if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
+                        if form['openid'].value and form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False
