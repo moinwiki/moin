@@ -39,7 +39,7 @@
             {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        {%- if user.isQuickLinkedTo([item_name]) %}
+                        {%- if user.is_quicklinked_to([item_name]) %}
                             {{ _('Remove Link') }}
                         {%- else %}
                             {{ _('Add Link') }}
@@ -51,7 +51,7 @@
             {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        {%- if user.isSubscribedTo([item_name]) %}
+                        {%- if user.is_subscribed_to([item_name]) %}
                             {{ _('Unsubscribe') }}
                         {%- else %}
                             {{ _('Subscribe') }}
