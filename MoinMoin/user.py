@@ -317,7 +317,7 @@ class User(object):
                    ]:
             return self.profile[name]
         else:
-            return object.__getattr__(self, name)
+            raise AttributeError(name)
 
     @property
     def language(self):
