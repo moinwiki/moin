@@ -485,7 +485,7 @@ class User(object):
 
     # Subscribed Items -------------------------------------------------------
 
-    def isSubscribedTo(self, pagelist):
+    def is_subscribed_to(self, pagelist):
         """ Check if user subscription matches any page in pagelist.
 
         The subscription contains interwiki page names. e.g 'WikiName:Page_Name'
@@ -560,11 +560,11 @@ class User(object):
         if interWikiName and interWikiName in subscribed_items:
             subscribed_items.remove(interWikiName)
             self.save(force=True)
-        return not self.isSubscribedTo([pagename])
+        return not self.is_subscribed_to([pagename])
 
     # Quicklinks -------------------------------------------------------------
 
-    def isQuickLinkedTo(self, pagelist):
+    def is_quicklinked_to(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
 
         :param pagelist: list of pages to check for quicklinks
@@ -582,7 +582,7 @@ class User(object):
 
         return False
 
-    def addQuicklink(self, pagename):
+    def quicklink(self, pagename):
         """ Adds a page to the user quicklinks
 
         Add links as interwiki names.
@@ -600,7 +600,7 @@ class User(object):
             return True
         return False
 
-    def removeQuicklink(self, pagename):
+    def quickunlink(self, pagename):
         """ Remove a page from user quicklinks
 
         Remove interwiki name from quicklinks.
@@ -620,7 +620,7 @@ class User(object):
 
     # Trail ------------------------------------------------------------------
 
-    def addTrail(self, item_name):
+    def add_trail(self, item_name):
         """ Add item name to trail.
 
         :param item_name: the item name (unicode) to add to the trail
@@ -634,7 +634,7 @@ class User(object):
         if trail != trail_in_session:
             session['trail'] = trail
 
-    def getTrail(self):
+    def get_trail(self):
         """ Return list of recently visited item names.
 
         :rtype: list
@@ -644,7 +644,7 @@ class User(object):
 
     # Other ------------------------------------------------------------------
 
-    def isCurrentUser(self):
+    def is_current_user(self):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
 
@@ -667,7 +667,7 @@ class User(object):
         self.save()
         return True
 
-    def mailAccountData(self, cleartext_passwd=None):
+    def mail_password_recovery(self, cleartext_passwd=None):
         """ Mail a user who forgot his password a message enabling
             him to login again.
         """
@@ -690,7 +690,7 @@ If you didn't forget your password, please ignore this email.
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 
-    def mailVerificationLink(self):
+    def mail_email_verification(self):
         """ Mail a user a link to verify his email address. """
         token = self.generate_recovery_token()
 

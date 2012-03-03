@@ -180,7 +180,7 @@ class TestLoginWithPassword(object):
         assert theuser.valid
 
     def testSubscriptionSubscribedPage(self):
-        """ user: tests isSubscribedTo  """
+        """ user: tests is_subscribed_to  """
         pagename = u'HelpMiscellaneous'
         name = u'__Jürgen Herman__'
         password = name
@@ -188,10 +188,10 @@ class TestLoginWithPassword(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert theUser.isSubscribedTo([pagename]) # list(!) of pages to check
+        assert theUser.is_subscribed_to([pagename]) # list(!) of pages to check
 
     def testSubscriptionSubPage(self):
-        """ user: tests isSubscribedTo on a subpage """
+        """ user: tests is_subscribed_to on a subpage """
         pagename = u'HelpMiscellaneous'
         testPagename = u'HelpMiscellaneous/FrequentlyAskedQuestions'
         name = u'__Jürgen Herman__'
@@ -200,7 +200,7 @@ class TestLoginWithPassword(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert not theUser.isSubscribedTo([testPagename]) # list(!) of pages to check
+        assert not theUser.is_subscribed_to([testPagename]) # list(!) of pages to check
 
     def test_upgrade_password_from_ssha_to_ssha256(self):
         """
@@ -305,17 +305,17 @@ class TestLoginWithPassword(object):
         result_before = theUser.quicklinks
         assert result_before == []
 
-        result = theUser.isQuickLinkedTo([pagename])
+        result = theUser.is_quicklinked_to([pagename])
         assert not result
 
-        # test for addQuicklink()
-        theUser.addQuicklink(u'Test_page_added')
+        # add quicklink
+        theUser.quicklink(u'Test_page_added')
         result_on_addition = theUser.quicklinks
         expected = [u'MoinTest:Test_page_added']
         assert result_on_addition == expected
 
-        # previously added page u'Test_page_added' is removed
-        theUser.removeQuicklink(u'Test_page_added')
+        # remove quicklink
+        theUser.quickunlink(u'Test_page_added')
         result_on_removal = theUser.quicklinks
         expected = []
         assert result_on_removal == expected
@@ -330,13 +330,14 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
 
         # no item name added to trail
-        result = theUser.getTrail()
+        result = theUser.get_trail()
         expected = []
         assert result == expected
 
         # item name added to trail
-        theUser.addTrail(u'item_added')
-        result = theUser.getTrail()
+        theUser.add_trail(u'item_added')
+        theUser = user.User(name=name, password=password)
+        result = theUser.get_trail()
         expected = [u'MoinTest:item_added']
         assert result == expected
 

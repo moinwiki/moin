@@ -173,7 +173,7 @@ def search():
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    flaskg.user.addTrail(item_name)
+    flaskg.user.add_trail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
@@ -254,7 +254,7 @@ def highlight_item(item_name, rev):
 @frontend.route('/+meta/<itemname:item_name>', defaults=dict(rev=CURRENT))
 @frontend.route('/+meta/+<rev>/<itemname:item_name>')
 def show_item_meta(item_name, rev):
-    flaskg.user.addTrail(item_name)
+    flaskg.user.add_trail(item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -835,11 +835,11 @@ def quicklink_item(item_name):
     msg = None
     if not u.valid:
         msg = _("You must login to use this action: %(action)s.", action="quicklink/quickunlink"), "error"
-    elif not flaskg.user.isQuickLinkedTo([item_name]):
-        if not u.addQuicklink(item_name):
+    elif not flaskg.user.is_quicklinked_to([item_name]):
+        if not u.quicklink(item_name):
             msg = _('A quicklink to this page could not be added for you.'), "error"
     else:
-        if not u.removeQuicklink(item_name):
+        if not u.quickunlink(item_name):
             msg = _('Your quicklink to this page could not be removed.'), "error"
     if msg:
         flash(*msg)
@@ -856,7 +856,7 @@ def subscribe_item(item_name):
         msg = _("You must login to use this action: %(action)s.", action="subscribe/unsubscribe"), "error"
     elif not u.may.read(item_name):
         msg = _("You are not allowed to subscribe to an item you may not read."), "error"
-    elif u.isSubscribedTo([item_name]):
+    elif u.is_subscribed_to([item_name]):
         # Try to unsubscribe
         if not u.unsubscribe(item_name):
             msg = _("Can't remove regular expression subscription!") + u' ' + \
@@ -983,7 +983,7 @@ def register():
             else:
                 if app.cfg.user_email_verification:
                     u = user.User(auth_username=user_kwargs['username'])
-                    is_ok, msg = u.mailVerificationLink()
+                    is_ok, msg = u.mail_email_verification()
                     if is_ok:
                         flash(_('Account verification required, please see the email we sent to your address.'), "info")
                     else:
@@ -1061,7 +1061,7 @@ def lostpass():
                 users = user.search_users(email=email)
                 u = users and user.User(users[0][ITEMID])
             if u and u.valid:
-                is_ok, msg = u.mailAccountData()
+                is_ok, msg = u.mail_password_recovery()
                 if not is_ok:
                     flash(msg, "error")
             flash(_("If this account exists, you will be notified."), "info")
@@ -1368,7 +1368,7 @@ def usersettings():
                             # disable account
                             flaskg.user.profile[DISABLED] = True
                             # send verification mail
-                            is_ok, msg = flaskg.user.mailVerificationLink()
+                            is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
                                 _logout()
                                 flaskg.user.save()

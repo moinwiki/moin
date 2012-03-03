@@ -104,7 +104,7 @@ class ThemeSupport(object):
         """
         user = self.user
         breadcrumbs = []
-        trail = user.getTrail()
+        trail = user.get_trail()
         for interwiki_item_name in trail:
             wiki_name, item_name = split_interwiki(interwiki_item_name)
             err = not is_known_wiki(wiki_name)
