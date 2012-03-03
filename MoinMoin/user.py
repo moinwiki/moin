@@ -306,7 +306,7 @@ class User(object):
         """
         if name in [NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
                     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
-                    THEME_NAME, LOCALE, TIMEZONE,
+                    THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
                    ]:
             return self.profile[name]
         else:
@@ -492,14 +492,6 @@ class User(object):
     # -----------------------------------------------------------------
     # Subscribe
 
-    def getSubscriptionList(self):
-        """ Get list of pages this user has subscribed to
-
-        :rtype: list
-        :returns: pages this user has subscribed to
-        """
-        return self.profile[SUBSCRIBED_ITEMS]
-
     def isSubscribedTo(self, pagelist):
         """ Check if user subscription matches any page in pagelist.
 
@@ -521,7 +513,7 @@ class User(object):
         # Create text for regular expression search
         text = '\n'.join(pages)
 
-        for pattern in self.getSubscriptionList():
+        for pattern in self.subscribed_items:
             # Try simple match first
             if pattern in pages:
                 return True
@@ -546,7 +538,7 @@ class User(object):
         :returns: if page was subscribed
         """
         pagename = getInterwikiName(pagename)
-        subscribed_items = self.profile[SUBSCRIBED_ITEMS]
+        subscribed_items = self.subscribed_items
         if pagename not in subscribed_items:
             subscribed_items.append(pagename)
             self.save(force=True)
@@ -581,16 +573,6 @@ class User(object):
     # -----------------------------------------------------------------
     # Quicklinks
 
-    def getQuickLinks(self):
-        """ Get list of pages this user wants in the navibar
-
-        TODO: implement as a property
-
-        :rtype: list
-        :returns: quicklinks from user account
-        """
-        return self.profile[QUICKLINKS]
-
     def isQuickLinkedTo(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
 
@@ -601,7 +583,7 @@ class User(object):
         if not self.valid:
             return False
 
-        quicklinks = self.getQuickLinks()
+        quicklinks = self.quicklinks
         for pagename in pagelist:
             interWikiName = getInterwikiName(pagename)
             if interWikiName and interWikiName in quicklinks:
@@ -619,7 +601,7 @@ class User(object):
         :rtype: bool
         :returns: if pagename was added
         """
-        quicklinks = self.getQuickLinks()
+        quicklinks = self.quicklinks
         interWikiName = getInterwikiName(pagename)
         if interWikiName and interWikiName not in quicklinks:
             quicklinks.append(interWikiName)
@@ -637,7 +619,7 @@ class User(object):
         :rtype: bool
         :returns: if pagename was removed
         """
-        quicklinks = self.getQuickLinks()
+        quicklinks = self.quicklinks
         interWikiName = getInterwikiName(pagename)
         if interWikiName and interWikiName in quicklinks:
             quicklinks.remove(interWikiName)

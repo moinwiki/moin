@@ -220,8 +220,7 @@ class ThemeSupport(object):
                  for cls, endpoint, args, link_text, title in self.cfg.navi_bar]
 
         # Add user links to wiki links.
-        userlinks = self.user.getQuickLinks()
-        for text in userlinks:
+        for text in self.user.quicklinks:
             url, link_text, title = self.split_navilink(text)
             items.append(('userlink', url, link_text, title))
 
