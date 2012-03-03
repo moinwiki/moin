@@ -206,6 +206,8 @@ class TestFrontend(object):
 
 
 class TestUsersettings(object):
+    reinit_storage = True  # avoid username / email collisions
+
     def setup_method(self, method):
         # Save original user
         self.saved_user = flaskg.user
@@ -291,24 +293,7 @@ class TestUsersettings(object):
     def createUser(self, name, password, pwencoded=False, email=None):
         """ helper to create test user
         """
-        # Create user
-        self.user = user.User()
-        self.user.name = name
-        self.user.email = email
-        if not pwencoded:
-            password = crypto.crypt_password(password)
-        self.user.enc_password = password
-
-        # Validate that we are not modifying existing user data file!
-        if self.user.exists():
-            self.user = None
-            pytest.skip("Test user exists, will not override existing user data file!")
-
-        # Save test user
-        self.user.save()
-
-        # Validate user creation
-        if not self.user.exists():
-            self.user = None
-            pytest.skip("Can't create test user")
+        if email is None:
+            email = "user@example.org"
+        user.create_user(name, password, email, is_encrypted=pwencoded)
 

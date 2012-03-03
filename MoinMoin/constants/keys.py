@@ -62,6 +62,20 @@ CURRENT = "current"
 # stuff from user profiles / for whoosh index
 EMAIL = "email"
 OPENID = "openid"
+ALIASNAME = "aliasname"
+THEME_NAME = "theme_name"
+LOCALE = "locale"
+TIMEZONE = "timezone"
+ENC_PASSWORD = "enc_password"
+SUBSCRIBED_ITEMS = "subscribed_items"
+BOOKMARKS = "bookmarks"
+QUICKLINKS = "quicklinks"
+RECOVERPASS_KEY = "recoverpass_key"
+EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
+SHOW_COMMENTS = "show_comments"
+MAILTO_AUTHOR = "mailto_author"
+RESULTS_PER_PAGE = "results_per_page"
+DISABLED = "disabled"
 
 # index names
 LATEST_REVS = 'latest_revs'
