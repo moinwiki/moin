@@ -262,12 +262,12 @@ class AccessControlList(object):
         return None
 
     def _special_Trusted(self, name, dowhat, rightsdict):
-        """ check if user <name> is known AND has logged in using a trusted
-            authentication method.
+        """ check if user <name> is the current user AND is has logged in using
+            an authentication method that set the trusted attribute.
             Does not work for subsription emails that should be sent to <user>,
-            as he is not logged in in that case.
+            as the user is not logged in in that case.
         """
-        if flaskg.user.name == name and flaskg.user.auth_trusted:
+        if flaskg.user.name == name and flaskg.user.trusted:
             return rightsdict.get(dowhat)
         return None
 

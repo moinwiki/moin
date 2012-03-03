@@ -104,7 +104,7 @@ class ThemeSupport(object):
         """
         user = self.user
         breadcrumbs = []
-        trail = user.getTrail()
+        trail = user.get_trail()
         for interwiki_item_name in trail:
             wiki_name, item_name = split_interwiki(interwiki_item_name)
             err = not is_known_wiki(wiki_name)
@@ -217,8 +217,7 @@ class ThemeSupport(object):
                  for cls, endpoint, args, link_text, title in self.cfg.navi_bar]
 
         # Add user links to wiki links.
-        userlinks = self.user.getQuickLinks()
-        for text in userlinks:
+        for text in self.user.quicklinks:
             url, link_text, title = self.split_navilink(text)
             items.append(('userlink', url, link_text, title))
 

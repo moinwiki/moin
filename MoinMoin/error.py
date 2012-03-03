@@ -1,9 +1,8 @@
 # Copyright: 2004-2005 Nir Soffer <nirs@freeshell.org>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-""" MoinMoin errors
-
-    Supply Error class and sub classes used to raise various errors
+"""
+MoinMoin errors / exception classes
 """
 
 
@@ -106,13 +105,4 @@ class ConfigurationError(FatalError):
 
 class InternalError(FatalError):
     """ Raise when internal fatal error is found """
-
-class NoConfigMatchedError(Exception):
-    """ we didn't find a configuration for this URL """
-    pass
-
-class ConvertError(FatalError):
-    """ Raise when html to storage format (e.g. 'wiki') conversion fails """
-    name = "MoinMoin Convert Error"
-
 

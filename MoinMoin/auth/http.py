@@ -14,8 +14,6 @@
 
     from MoinMoin.auth.http import HTTPAuthMoin
     auth = [HTTPAuthMoin()]
-    # check if you want 'http' auth name in there:
-    auth_methods_trusted = ['http', ]
 """
 
 
@@ -33,11 +31,11 @@ class HTTPAuthMoin(BaseAuth):
     """ authenticate via http (basic) auth """
     name = 'http'
 
-    def __init__(self, autocreate=False, realm='MoinMoin', coding='iso-8859-1'):
+    def __init__(self, autocreate=False, realm='MoinMoin', coding='iso-8859-1', **kw):
+        super(HTTPAuthMoin, self).__init__(**kw)
         self.autocreate = autocreate
         self.realm = realm
         self.coding = coding
-        BaseAuth.__init__(self)
 
     def request(self, user_obj, **kw):
         u = None
@@ -53,7 +51,7 @@ class HTTPAuthMoin(BaseAuth):
             logging.debug("http basic auth, received username: {0!r} password: {1!r}".format(auth.username, auth.password))
             u = user.User(name=auth.username.decode(self.coding),
                           password=auth.password.decode(self.coding),
-                          auth_method=self.name, auth_attribs=[])
+                          auth_method=self.name, auth_attribs=[], trusted=self.trusted)
             logging.debug("user: {0!r}".format(u))
 
         if not u or not u.valid:

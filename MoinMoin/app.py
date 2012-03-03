@@ -214,11 +214,8 @@ def setup_user():
         userobj = user.User(auth_method='invalid')
     # if we have a valid user we store it in the session
     if userobj.valid:
-        # TODO: auth_trusted should be set by the auth method (auth class
-        # could have a param where the admin could tell whether he wants to
-        # trust it)
-        userobj.auth_trusted = userobj.auth_method in app.cfg.auth_methods_trusted
         session['user.itemid'] = userobj.itemid
+        session['user.trusted'] = userobj.trusted
         session['user.auth_method'] = userobj.auth_method
         session['user.auth_attribs'] = userobj.auth_attribs
     return userobj

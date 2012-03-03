@@ -89,6 +89,7 @@ from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclToke
 from MoinMoin.themes import utctimestamp
 from MoinMoin.util.crypto import make_uuid
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
+from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
 INDEXES = [LATEST_REVS, ALL_REVS, ]
@@ -807,7 +808,7 @@ class Item(object):
         item = cls(indexer, **query)
         if not item:
             return item
-        raise ItemAlreadyExists(repr(query))
+        raise ItemAlreadyExistsError(repr(query))
 
     @classmethod
     def existing(cls, indexer, **query):
@@ -817,7 +818,7 @@ class Item(object):
         item = cls(indexer, **query)
         if item:
             return item
-        raise ItemDoesNotExist(repr(query))
+        raise NoSuchItemError(repr(query))
 
     def __nonzero__(self):
         """

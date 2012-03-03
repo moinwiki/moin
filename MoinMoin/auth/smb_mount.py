@@ -34,8 +34,9 @@ class SMBMount(BaseAuth):
         iocharset='utf-8', # mount.cifs -o iocharset=... (try 'iso8859-1' if default does not work)
         coding='utf-8', # encoding used for username/password/cmdline (try 'iso8859-1' if default does not work)
         log='/dev/null', # logfile for mount.cifs output
+        **kw
         ):
-        BaseAuth.__init__(self)
+        super(SMBMount, self).__init__(**kw)
         self.server = server
         self.share = share
         self.mountpoint_fn = mountpoint_fn

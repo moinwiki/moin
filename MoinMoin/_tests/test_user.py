@@ -22,14 +22,20 @@ class TestSimple(object):
         name = u"foo"
         password = u"barbaz4711"
         email = u"foo@example.org"
-        # first create a user
+        # nonexisting user
+        u = user.User(name=name, password=password)
+        assert u.name == name
+        assert not u.valid
+        assert not u.exists()
+        # create a user
         ret = user.create_user(name, password, email, validate=False)
         assert ret is None, "create_user returned: {0}".format(ret)
-        # now try to use it
+        # existing user
         u = user.User(name=name, password=password)
         assert u.name == [name]
         assert u.email == email
         assert u.valid
+        assert u.exists()
 
 
 class TestLoginWithPassword(object):
@@ -175,7 +181,7 @@ class TestLoginWithPassword(object):
         assert theuser.valid
 
     def testSubscriptionSubscribedPage(self):
-        """ user: tests isSubscribedTo  """
+        """ user: tests is_subscribed_to  """
         pagename = u'HelpMiscellaneous'
         name = u'__Jürgen Herman__'
         password = name
@@ -183,10 +189,10 @@ class TestLoginWithPassword(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert theUser.isSubscribedTo([pagename]) # list(!) of pages to check
+        assert theUser.is_subscribed_to([pagename]) # list(!) of pages to check
 
     def testSubscriptionSubPage(self):
-        """ user: tests isSubscribedTo on a subpage """
+        """ user: tests is_subscribed_to on a subpage """
         pagename = u'HelpMiscellaneous'
         testPagename = u'HelpMiscellaneous/FrequentlyAskedQuestions'
         name = u'__Jürgen Herman__'
@@ -195,7 +201,7 @@ class TestLoginWithPassword(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert not theUser.isSubscribedTo([testPagename]) # list(!) of pages to check
+        assert not theUser.is_subscribed_to([testPagename]) # list(!) of pages to check
 
     def test_upgrade_password_from_ssha_to_ssha256(self):
         """
@@ -203,13 +209,11 @@ class TestLoginWithPassword(object):
         upgrades to {SSHA256}.
         """
         name = u'/no such user/'
-        #pass = MoinMoin
-        #salr = 12345
+        # pass = 'MoinMoin', salt = '12345'
         password = '{SSHA}xkDIIx1I7A4gC98Vt/+UelIkTDYxMjM0NQ=='
         self.createUser(name, password, True)
 
-        # User is not required to be valid
-        theuser = user.User(name=name, password='12345')
+        theuser = user.User(name=name, password='MoinMoin')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
     def test_upgrade_password_from_sha_to_ssha256(self):
@@ -221,7 +225,6 @@ class TestLoginWithPassword(object):
         password = '{SHA}jLIjfQZ5yojbZGTqxg2pY0VROWQ=' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -236,7 +239,6 @@ class TestLoginWithPassword(object):
         password = '{APR1}$apr1$NG3VoiU5$PSpHT6tV0ZMKkSZ71E3qg.' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -250,7 +252,6 @@ class TestLoginWithPassword(object):
         password = '{MD5}$1$salt$etVYf53ma13QCiRbQOuRk/' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
 
@@ -265,42 +266,29 @@ class TestLoginWithPassword(object):
         password = '{DES}gArsfn7O5Yqfo' # 12345
         self.createUser(name, password, True)
 
-        # User is not required to be valid
         theuser = user.User(name=name, password='12345')
         assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_for_email_attribute_by_name(self):
-        """
-        checks for no access to the email attribute by getting the user object from name
-        """
-        name = u"__TestUser__"
-        password = u"ekfdweurwerh"
-        email = u"__TestUser__@moinhost"
-        self.createUser(name, password, email=email)
-        theuser = user.User(name=name)
-        assert theuser.email is None
 
     # Bookmarks -------------------------------------------------------
 
     def test_bookmark(self):
-        name = u'Test_User_quicklink'
+        name = u'Test_User_bookmark'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
 
-        theUser.setBookmark(7)
-        result_added = theUser.getBookmark()
-        expected = 7
-        assert result_added == expected
-        # delete the bookmark
-        result_success = theUser.delBookmark()
-        assert result_success == 0
-        result_deleted = theUser.getBookmark()
-        assert not result_deleted
+        # set / retrieve the bookmark
+        bookmark = 1234567
+        theUser.bookmark = bookmark
+        theUser = user.User(name=name, password=password)
+        result = theUser.bookmark
+        assert result == bookmark
 
-        # delBookmark should return 1 on failure
-        result_failure = theUser.delBookmark()
-        assert result_failure == 1
+        # delete the bookmark
+        theUser.bookmark = None
+        theUser = user.User(name=name, password=password)
+        result = theUser.bookmark
+        assert result is None
 
     # Quicklinks ------------------------------------------------------
 
@@ -313,35 +301,24 @@ class TestLoginWithPassword(object):
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
-        theUser.subscribe(pagename)
 
         # no quick links exist yet
-        result_before = theUser.getQuickLinks()
+        result_before = theUser.quicklinks
         assert result_before == []
 
-        result = theUser.isQuickLinkedTo([pagename])
+        result = theUser.is_quicklinked_to([pagename])
         assert not result
 
-        # quicklinks for the user - theUser exist now
-        theUser.quicklinks = [pagename]
-        result_after = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink']
-        assert result_after == expected
-
-        # test for addQuicklink()
-        theUser.addQuicklink(u'Test_page_added')
-        result_on_addition = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink', u'MoinTest:Test_page_added']
+        # add quicklink
+        theUser.quicklink(u'Test_page_added')
+        result_on_addition = theUser.quicklinks
+        expected = [u'MoinTest:Test_page_added']
         assert result_on_addition == expected
 
-        # user should be quicklinked to [pagename]
-        result = theUser.isQuickLinkedTo([pagename])
-        assert result
-
-        # previously added page u'Test_page_added' is removed
-        theUser.removeQuicklink(u'Test_page_added')
-        result_on_removal = theUser.getQuickLinks()
-        expected = [u'Test_page_quicklink']
+        # remove quicklink
+        theUser.quickunlink(u'Test_page_added')
+        result_on_removal = theUser.quicklinks
+        expected = []
         assert result_on_removal == expected
 
     # Trail -----------------------------------------------------------
@@ -354,13 +331,14 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
 
         # no item name added to trail
-        result = theUser.getTrail()
+        result = theUser.get_trail()
         expected = []
         assert result == expected
 
         # item name added to trail
-        theUser.addTrail(u'item_added')
-        result = theUser.getTrail()
+        theUser.add_trail(u'item_added')
+        theUser = user.User(name=name, password=password)
+        result = theUser.get_trail()
         expected = [u'MoinTest:item_added']
         assert result == expected
 

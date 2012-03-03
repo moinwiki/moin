@@ -26,7 +26,8 @@ from MoinMoin.i18n import _, L_, N_
 
 
 class OpenIDAuth(BaseAuth):
-    def __init__(self, trusted_providers=[]):
+    def __init__(self, trusted_providers=[], **kw):
+        super(OpenIDAuth, self).__init__(**kw)
         # the name
         self.name = 'openid'
         # we only need openid
@@ -37,7 +38,6 @@ class OpenIDAuth(BaseAuth):
         self.store = MemoryStore()
 
         self._trusted_providers = list(trusted_providers)
-        BaseAuth.__init__(self)
 
     def _handleContinuationVerify(self):
         """
@@ -83,7 +83,7 @@ class OpenIDAuth(BaseAuth):
                 # we get the user with this openid associated to him
                 identity = oid_info.identity_url
                 users = user.search_users(openid=identity)
-                user_obj = users and user.User(users[0][ITEMID])
+                user_obj = users and user.User(users[0][ITEMID], trusted=self.trusted)
 
                 # if the user actually exists
                 if user_obj:

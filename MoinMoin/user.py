@@ -1,5 +1,5 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2003-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:ChristopherDenter
@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import, division
 
-import time
+import re
 import copy
 import hashlib
 import werkzeug
@@ -33,10 +33,11 @@ from flask import session, request, url_for
 
 from whoosh.query import Term, And, Or
 
-from MoinMoin import config, wikiutil
-from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, ITEMID, ACTION, CONTENTTYPE, \
-                            EMAIL, OPENID, CURRENT, MTIME, CONTENTTYPE_USER
+from MoinMoin import wikiutil
+from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.keys import *
 from MoinMoin.i18n import _, L_, N_
+from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
                                  generate_token, valid_token, make_uuid
@@ -47,51 +48,50 @@ def create_user(username, password, email, openid=None, validate=True, is_encryp
     """ create a user """
     # Create user profile
     theuser = User(auth_method="new-user")
-    theuser.name = unicode(username)
 
     # Don't allow creating users with invalid names
-    if validate and not isValidName(theuser.name):
+    if validate and not isValidName(username):
         return _("""Invalid user name '%(name)s'.
 Name may contain any Unicode alpha numeric character, with optional one
-space between words. Group page name is not allowed.""", name=theuser.name)
+space between words. Group page name is not allowed.""", name=username)
 
     # Name required to be unique. Check if name belong to another user.
-    if validate and search_users(name_exact=theuser.name):
+    if validate and search_users(name_exact=username):
         return _("This user name already belongs to somebody else.")
+
+    theuser.profile[NAME] = unicode(username)
 
     pw_checker = app.cfg.password_checker
     if validate and pw_checker:
-        pw_error = pw_checker(theuser.name, password)
+        pw_error = pw_checker(username, password)
         if pw_error:
             return _("Password not acceptable: %(msg)s", msg=pw_error)
 
-    # Encode password
     try:
-        if is_encrypted:
-            theuser.enc_password = password
-        else:
-            theuser.enc_password = crypt_password(password)
+        theuser.set_password(password, is_encrypted)
     except UnicodeError as err:
         # Should never happen
         return "Can't encode password: %(msg)s" % dict(msg=str(err))
 
     # try to get the email, for new users it is required
-    theuser.email = email
-    if validate and not theuser.email:
+    if validate and not email:
         return _("Please provide your email address. If you lose your"
                  " login information, you can get it by email.")
 
     # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
-    if validate and theuser.email and app.cfg.user_email_unique:
-        if search_users(email=theuser.email):
+    if validate and email and app.cfg.user_email_unique:
+        if search_users(email=email):
             return _("This email already belongs to somebody else.")
 
+    theuser.profile[EMAIL] = email
+
     # Openid should be unique
-    theuser.openid = openid
-    if validate and theuser.openid and search_users(openid=theuser.openid):
+    if validate and openid and search_users(openid=openid):
         return _('This OpenID already belongs to somebody else.')
 
-    theuser.disabled = is_disabled
+    theuser.profile[OPENID] = openid
+
+    theuser.profile[DISABLED] = is_disabled
 
     # save data
     theuser.save()
@@ -101,20 +101,24 @@ def get_user_backend():
     return flaskg.unprotected_storage
 
 
+def update_user_query(**q):
+    USER_QUERY_STDARGS = {
+        CONTENTTYPE: CONTENTTYPE_USER,
+        WIKINAME: app.cfg.interwikiname,  # XXX for now, search only users of THIS wiki
+                                          # maybe add option to not index wiki users
+                                          # separately, but share them in the index also.
+    }
+    q.update(USER_QUERY_STDARGS)
+    return q
+
+
 def search_users(**q):
     """ Searches for a users with given query keys/values """
-
     # Since item name is a list, it's possible a list have been passed as parameter.
     # No problem, since user always have just one name (TODO: validate single name for user)
     if q.get('name_exact') and isinstance(q.get('name_exact'), list):
         q['name_exact'] = q['name_exact'][0]
-
-    q.update({
-        WIKINAME: app.cfg.interwikiname, # XXX for now, search only users of THIS wiki
-                                         # maybe add option to not index wiki users
-                                         # separately, but share them in the index also.
-        CONTENTTYPE: CONTENTTYPE_USER,
-    })
+    q = update_user_query(**q)
     backend = get_user_backend()
     docs = backend.documents(**q)
     return list(docs)
@@ -179,17 +183,84 @@ def isValidName(name):
     return (name == normalized) and not wikiutil.isGroupItem(name)
 
 
+class UserProfile(object):
+    """ A User Profile"""
+
+    def __init__(self, **q):
+        self._defaults = copy.deepcopy(app.cfg.user_defaults)
+        self._meta = {}
+        self._stored = False
+        self._changed = False
+        if q:
+            self.load(**q)
+
+    @property
+    def stored(self):
+        return self._stored
+
+    def __getitem__(self, name):
+        """
+        get a value from the profile or,
+        if not present, from the configured defaults
+        """
+        try:
+            return self._meta[name]
+        except KeyError:
+            v = self._defaults[name]
+            if isinstance(v, (list, dict, set)): # mutable
+                self._meta[name] = v
+            return v
+
+    def __setitem__(self, name, value):
+        """
+        set a value, update changed status
+        """
+        prev_value = self._meta.get(name)
+        self._meta[name] = value
+        if value != prev_value:
+            self._changed = True
+
+    def load(self, **q):
+        """
+        load a user profile, the query q can use any indexed (unique) field
+        """
+        q = update_user_query(**q)
+        item = get_user_backend().existing_item(**q)
+        rev = item[CURRENT]
+        self._meta = dict(rev.meta)
+        self._stored = True
+        self._changed = False
+
+    def save(self, force=False):
+        """
+        save a user profile (if it was changed since loading it)
+
+        Note: if mutable profile values were modified, you need to use
+              force=True because these changes are not detected!
+        """
+        if self._changed or force:
+            self[CONTENTTYPE] = CONTENTTYPE_USER
+            q = {ITEMID: self[ITEMID]}
+            q = update_user_query(**q)
+            item = get_user_backend().get_item(**q)
+            item.store_revision(self._meta, StringIO(''), overwrite=True)
+            self._stored = True
+            self._changed = False
+
+
 class User(object):
     """ A MoinMoin User """
 
-    def __init__(self, uid=None, name="", password=None, auth_username="", **kw):
+    def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
         """ Initialize User object
 
-        :param uid: (optional) user ID
+        :param uid: (optional) user ID (user itemid)
         :param name: (optional) user name
         :param password: (optional) user password (unicode)
         :param auth_username: (optional) already authenticated user name
                               (e.g. when using http basic auth) (unicode)
+        :param trusted: (optional) whether user instance is created by a
+                        trusted auth method / session
         :keyword auth_method: method that was used for authentication,
                               default: 'internal'
         :keyword auth_attribs: tuple of user object attribute names that are
@@ -197,54 +268,32 @@ class User(object):
                                changeable by preferences, default: ().
                                First tuple element was used for authentication.
         """
-        self._user_backend = get_user_backend()
-
+        self.profile = UserProfile()
         self._cfg = app.cfg
-        self.valid = 0
-        self.itemid = uid
-        self.auth_username = auth_username
+        self.valid = False
+        self.trusted = trusted
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
-        self.bookmarks = {} # interwikiname: bookmark
 
-        self.__dict__.update(copy.deepcopy(self._cfg.user_defaults))
+        _name = name or auth_username
 
-        if name:
-            self.name = name
-        elif auth_username: # this is needed for user autocreate
-            self.name = auth_username
-
-        self.recoverpass_key = None
-
-        if password:
-            self.enc_password = crypt_password(password)
-
-        self._stored = False
-
-        # attrs not saved to profile
-
-        # we got an already authenticated username:
-        check_password = None
-        if not self.itemid and self.auth_username:
-            users = search_users(name_exact=self.auth_username)
+        itemid = uid
+        if not itemid and auth_username:
+            users = search_users(name_exact=auth_username)
             if users:
-                self.itemid = users[0].meta[ITEMID]
-            if not password is None:
-                check_password = password
-        if self.itemid:
-            self.load_from_id(check_password)
-        elif self.name and self.name != 'anonymous':
-            users = search_users(name_exact=self.name)
+                itemid = users[0].meta[ITEMID]
+        if not itemid and _name and _name != 'anonymous':
+            users = search_users(name_exact=_name)
             if users:
-                self.itemid = users[0].meta[ITEMID]
-            if self.itemid:
-                # no password given should fail
-                self.load_from_id(password or u'')
-        # Still no ID - make new user
-        if not self.itemid:
-            self.itemid = make_uuid()
+                itemid = users[0].meta[ITEMID]
+        if itemid:
+            self.load_from_id(itemid, password)
+        else:
+            self.profile[ITEMID] = make_uuid()
+            if _name:
+                self.profile[NAME] = _name
             if password is not None:
-                self.enc_password = crypt_password(password)
+                self.set_password(password)
 
         # "may" so we can say "if user.may.read(pagename):"
         if self._cfg.SecurityPolicy:
@@ -254,17 +303,29 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
-        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r}>".format(
+        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name, self.itemid, self.valid)
+            self.name, self.itemid, self.valid, self.trusted)
+
+    def __getattr__(self, name):
+        """
+        delegate some lookups into the .profile
+        """
+        if name in [NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
+                    MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
+                    THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
+                   ]:
+            return self.profile[name]
+        else:
+            return object.__getattr__(self, name)
 
     @property
     def language(self):
         l = self._cfg.language_default
-        # .locale is either None or something like 'en_US'
-        if self.locale is not None:
+        locale = self.locale  # is either None or something like 'en_US'
+        if locale is not None:
             try:
-                l = parse_locale(self.locale)[0]
+                l = parse_locale(locale)[0]
             except ValueError:
                 pass
         return l
@@ -278,18 +339,19 @@ class User(object):
 
         theme = get_current_theme()
 
-        if not self.email:
+        email = self.email
+        if not email:
             return static_file_url(theme, theme.info.get('default_avatar', 'img/default_avatar.png'))
 
         param = {}
-        param['gravatar_id'] = hashlib.md5(self.email.lower()).hexdigest()
+        param['gravatar_id'] = hashlib.md5(email.lower()).hexdigest()
 
         param['default'] = static_file_url(theme,
                                            theme.info.get('default_avatar', 'img/default_avatar.png'),
                                            True)
 
         param['size'] = str(size)
-        #TODO: use same protocol of Moin site (might be https instead of http)]
+        # TODO: use same protocol of Moin site (might be https instead of http)]
         gravatar_url = "http://www.gravatar.com/avatar.php?"
         gravatar_url += werkzeug.url_encode(param)
 
@@ -304,60 +366,42 @@ class User(object):
             self.save() # yes, create/update user profile
 
     def exists(self):
-        """ Do we have a user account for this user?
+        """ Do we have a user profile for this user?
 
         :rtype: bool
         :returns: true, if we have a user account
         """
-        return self._user_backend.has_item(self.name)
+        return self.profile.stored
 
-    def load_from_id(self, password=None):
+    def load_from_id(self, itemid, password=None):
         """ Load user account data from disk.
-
-        Can only load user data if the id number is already known.
-
-        This loads all member variables, except "id" and "valid" and
-        those starting with an underscore.
 
         :param password: If not None, then the given password must match the
                          password in the user account file.
         """
         try:
-            item = self._user_backend.get_item(itemid=self.itemid)
-            rev = item[CURRENT]
-        except KeyError: # was: (NoSuchItemError, NoSuchRevisionError):
+            self.profile.load(itemid=itemid)
+        except (NoSuchItemError, NoSuchRevisionError):
             return
-
-        user_data = dict(rev.meta)
 
         # Validate data from user file. In case we need to change some
         # values, we set 'changed' flag, and later save the user data.
-        changed = 0
+        changed = False
 
         if password is not None:
             # Check for a valid password, possibly changing storage
-            valid, changed = self._validatePassword(user_data, password)
+            valid, changed = self._validate_password(self.profile, password)
             if not valid:
                 return
 
-        # Copy user data into user object
-        for key, val in user_data.items():
-            if isinstance(val, tuple):
-                val = list(val)
-            vars(self)[key] = val
-
         if not self.disabled:
-            self.valid = 1
-
-        # Mark this user as stored so saves don't send
-        # the "user created" event
-        self._stored = True
+            self.valid = True
 
         # If user data has been changed, save fixed user data.
         if changed:
-            self.save()
+            self.profile.save()
 
-    def _validatePassword(self, data, password):
+    def _validate_password(self, data, password):
         """
         Check user password.
 
@@ -368,7 +412,7 @@ class User(object):
         :rtype: 2 tuple (bool, bool)
         :returns: password is valid, enc_password changed
         """
-        pw_hash = data.get('enc_password')
+        pw_hash = data[ENC_PASSWORD]
 
         # If we have no password set, we don't accept login with username.
         # Require non-empty password.
@@ -383,39 +427,26 @@ class User(object):
         if not new_pw_hash:
             return True, False
 
-        data['enc_password'] = new_pw_hash
+        data[ENC_PASSWORD] = new_pw_hash
         return True, True
 
-    def persistent_items(self):
-        """ items we want to store into the user profile """
-        nonpersistent_keys = ['valid', 'may', 'auth_username',
-                              'password', 'password2',
-                              'auth_method', 'auth_attribs', 'auth_trusted',
-                             ]
-        return [(key, value) for key, value in vars(self).items()
-                    if key not in nonpersistent_keys and key[0] != '_' and value is not None]
+    def set_password(self, password, is_encrypted=False):
+        if not is_encrypted:
+            password = crypt_password(password)
+        self.profile[ENC_PASSWORD] = password
 
-    def save(self):
+    def save(self, force=False):
         """
         Save user account data to user account file on disk.
         """
-        # XXX maybe UserProfile/<name> later
-        backend_name = self.name[0] if isinstance(self.name, list) else self.name
-        item = self._user_backend[backend_name]
-        meta = {}
-        for key, value in self.persistent_items():
-            if isinstance(value, list):
-                value = tuple(value)
-            meta[key] = value
-        meta[CONTENTTYPE] = CONTENTTYPE_USER
-        item.store_revision(meta, StringIO(''), overwrite=True)
+        exists = self.exists
+        self.profile.save(force=force)
 
         if not self.disabled:
-            self.valid = 1
+            self.valid = True
 
-        if not self._stored:
-            self._stored = True
-            # XXX UserCreatedEvent
+        if not exists:
+            pass # XXX UserCreatedEvent
         else:
             pass #  XXX UserChangedEvent
 
@@ -424,63 +455,44 @@ class User(object):
         return text # FIXME, was: self._request.getText(text, lang=self.language)
 
 
-    # -----------------------------------------------------------------
-    # Bookmark
+    # Bookmarks --------------------------------------------------------------
 
-    def setBookmark(self, tm):
+    def _set_bookmark(self, tm):
         """ Set bookmark timestamp.
 
-        :param tm: timestamp
+        :param tm: timestamp (int or None)
         """
         if self.valid:
-            self.bookmarks[self._cfg.interwikiname] = int(tm)
-            self.save()
+            if not (tm is None or isinstance(tm, int)):
+                raise ValueError('tm should be int or None')
+            if tm is None:
+                self.profile[BOOKMARKS].pop(self._cfg.interwikiname)
+            else:
+                self.profile[BOOKMARKS][self._cfg.interwikiname] = tm
+            self.save(force=True)
 
-    def getBookmark(self):
+    def _get_bookmark(self):
         """ Get bookmark timestamp.
 
-        :rtype: int
+        :rtype: int / None
         :returns: bookmark timestamp or None
         """
         bm = None
         if self.valid:
             try:
-                bm = self.bookmarks[self._cfg.interwikiname]
+                bm = self.profile[BOOKMARKS][self._cfg.interwikiname]
             except (ValueError, KeyError):
                 pass
         return bm
 
-    def delBookmark(self):
-        """ Removes bookmark timestamp.
+    bookmark = property(_get_bookmark, _set_bookmark)
 
-        :rtype: int
-        :returns: 0 on success, 1 on failure
-        """
-        if self.valid:
-            try:
-                del self.bookmarks[self._cfg.interwikiname]
-            except KeyError:
-                return 1
-            self.save()
-            return 0
-        return 1
+    # Subscribed Items -------------------------------------------------------
 
-    # -----------------------------------------------------------------
-    # Subscribe
-
-    def getSubscriptionList(self):
-        """ Get list of pages this user has subscribed to
-
-        :rtype: list
-        :returns: pages this user has subscribed to
-        """
-        return self.subscribed_items
-
-    def isSubscribedTo(self, pagelist):
+    def is_subscribed_to(self, pagelist):
         """ Check if user subscription matches any page in pagelist.
 
-        The subscription list may contain page names or interwiki page
-        names. e.g 'Page Name' or 'WikiName:Page_Name'
+        The subscription contains interwiki page names. e.g 'WikiName:Page_Name'
 
         TODO: check if it's fast enough when getting called for many
               users from page.getSubscribersList()
@@ -492,14 +504,12 @@ class User(object):
         if not self.valid:
             return False
 
-        import re
-        # Create a new list with both names and interwiki names.
-        pages = pagelist[:] # TODO: get rid of non-interwiki subscriptions?
-        pages += [getInterwikiName(pagename) for pagename in pagelist]
+        # Create a new list with interwiki names.
+        pages = [getInterwikiName(pagename) for pagename in pagelist]
         # Create text for regular expression search
         text = '\n'.join(pages)
 
-        for pattern in self.getSubscriptionList():
+        for pattern in self.subscribed_items:
             # Try simple match first
             if pattern in pages:
                 return True
@@ -516,8 +526,7 @@ class User(object):
     def subscribe(self, pagename):
         """ Subscribe to a wiki page.
 
-        To enable shared farm users, if the wiki has an interwiki name,
-        page names are saved as interwiki names.
+        Page names are saved as interwiki names.
 
         :param pagename: name of the page to subscribe
         :type pagename: unicode
@@ -525,9 +534,10 @@ class User(object):
         :returns: if page was subscribed
         """
         pagename = getInterwikiName(pagename)
-        if pagename not in self.subscribed_items:
-            self.subscribed_items.append(pagename)
-            self.save()
+        subscribed_items = self.subscribed_items
+        if pagename not in subscribed_items:
+            subscribed_items.append(pagename)
+            self.save(force=True)
             # XXX SubscribedToPageEvent
             return True
         return False
@@ -535,48 +545,30 @@ class User(object):
     def unsubscribe(self, pagename):
         """ Unsubscribe a wiki page.
 
-        Try to unsubscribe by removing non-interwiki name (leftover
-        from old use files) and interwiki name from the subscription
+        Try to unsubscribe by removing interwiki name from the subscription
         list.
 
         Its possible that the user will be subscribed to a page by more
-        then one pattern. It can be both pagename and interwiki name,
-        or few patterns that all of them match the page. Therefore, we
-        must check if the user is still subscribed to the page after we
-        try to remove names from the list.
+        than one pattern. It can be both interwiki name and a regex pattern that
+        both match the page. Therefore, we must check if the user is
+        still subscribed to the page after we try to remove names from the list.
 
         :param pagename: name of the page to subscribe
         :type pagename: unicode
         :rtype: bool
-        :returns: if unsubscrieb was successful. If the user has a
-            regular expression that match, it will always fail.
+        :returns: if unsubscribe was successful. If the user has a
+            regular expression that matches, unsubscribe will always fail.
         """
-        changed = False
-        if pagename in self.subscribed_items:
-            self.subscribed_items.remove(pagename)
-            changed = True
-
         interWikiName = getInterwikiName(pagename)
-        if interWikiName and interWikiName in self.subscribed_items:
-            self.subscribed_items.remove(interWikiName)
-            changed = True
+        subscribed_items = self.profile[SUBSCRIBED_ITEMS]
+        if interWikiName and interWikiName in subscribed_items:
+            subscribed_items.remove(interWikiName)
+            self.save(force=True)
+        return not self.is_subscribed_to([pagename])
 
-        if changed:
-            self.save()
-        return not self.isSubscribedTo([pagename])
+    # Quicklinks -------------------------------------------------------------
 
-    # -----------------------------------------------------------------
-    # Quicklinks
-
-    def getQuickLinks(self):
-        """ Get list of pages this user wants in the navibar
-
-        :rtype: list
-        :returns: quicklinks from user account
-        """
-        return self.quicklinks
-
-    def isQuickLinkedTo(self, pagelist):
+    def is_quicklinked_to(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
 
         :param pagelist: list of pages to check for quicklinks
@@ -586,71 +578,53 @@ class User(object):
         if not self.valid:
             return False
 
+        quicklinks = self.quicklinks
         for pagename in pagelist:
-            if pagename in self.quicklinks:
-                return True
             interWikiName = getInterwikiName(pagename)
-            if interWikiName and interWikiName in self.quicklinks:
+            if interWikiName and interWikiName in quicklinks:
                 return True
 
         return False
 
-    def addQuicklink(self, pagename):
+    def quicklink(self, pagename):
         """ Adds a page to the user quicklinks
 
-        If the wiki has an interwiki name, all links are saved as
-        interwiki names. If not, as simple page name.
+        Add links as interwiki names.
 
         :param pagename: page name
         :type pagename: unicode
         :rtype: bool
         :returns: if pagename was added
         """
-        changed = False
+        quicklinks = self.quicklinks
         interWikiName = getInterwikiName(pagename)
-        if interWikiName:
-            if pagename in self.quicklinks:
-                self.quicklinks.remove(pagename)
-                changed = True
-            if interWikiName not in self.quicklinks:
-                self.quicklinks.append(interWikiName)
-                changed = True
-        else:
-            if pagename not in self.quicklinks:
-                self.quicklinks.append(pagename)
-                changed = True
+        if interWikiName and interWikiName not in quicklinks:
+            quicklinks.append(interWikiName)
+            self.save(force=True)
+            return True
+        return False
 
-        if changed:
-            self.save()
-        return changed
-
-    def removeQuicklink(self, pagename):
+    def quickunlink(self, pagename):
         """ Remove a page from user quicklinks
 
-        Remove both interwiki and simple name from quicklinks.
+        Remove interwiki name from quicklinks.
 
         :param pagename: page name
         :type pagename: unicode
         :rtype: bool
         :returns: if pagename was removed
         """
-        changed = False
+        quicklinks = self.quicklinks
         interWikiName = getInterwikiName(pagename)
-        if interWikiName and interWikiName in self.quicklinks:
-            self.quicklinks.remove(interWikiName)
-            changed = True
-        if pagename in self.quicklinks:
-            self.quicklinks.remove(pagename)
-            changed = True
+        if interWikiName and interWikiName in quicklinks:
+            quicklinks.remove(interWikiName)
+            self.save(force=True)
+            return True
+        return False
 
-        if changed:
-            self.save()
-        return changed
+    # Trail ------------------------------------------------------------------
 
-    # -----------------------------------------------------------------
-    # Trail
-
-    def addTrail(self, item_name):
+    def add_trail(self, item_name):
         """ Add item name to trail.
 
         :param item_name: the item name (unicode) to add to the trail
@@ -664,7 +638,7 @@ class User(object):
         if trail != trail_in_session:
             session['trail'] = trail
 
-    def getTrail(self):
+    def get_trail(self):
         """ Return list of recently visited item names.
 
         :rtype: list
@@ -672,35 +646,35 @@ class User(object):
         """
         return session.get('trail', [])
 
-    # -----------------------------------------------------------------
-    # Other
+    # Other ------------------------------------------------------------------
 
-    def isCurrentUser(self):
+    def is_current_user(self):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
 
+    # Account verification / Password recovery -------------------------------
+
     def generate_recovery_token(self):
         key, token = generate_token()
-        self.recoverpass_key = key
+        self.profile[RECOVERPASS_KEY] = key
         self.save()
         return token
 
     def validate_recovery_token(self, token):
-        return valid_token(self.recoverpass_key, token)
+        return valid_token(self.profile[RECOVERPASS_KEY], token)
 
     def apply_recovery_token(self, token, newpass):
         if not self.validate_recovery_token(token):
             return False
-        self.recoverpass_key = None
-        self.enc_password = crypt_password(newpass)
+        self.profile[RECOVERPASS_KEY] = None
+        self.set_password(newpass)
         self.save()
         return True
 
-    def mailAccountData(self, cleartext_passwd=None):
+    def mail_password_recovery(self, cleartext_passwd=None):
         """ Mail a user who forgot his password a message enabling
             him to login again.
         """
-        from MoinMoin.mail import sendmail
         token = self.generate_recovery_token()
 
         text = _("""\
@@ -720,9 +694,8 @@ If you didn't forget your password, please ignore this email.
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 
-    def mailVerificationLink(self):
+    def mail_email_verification(self):
         """ Mail a user a link to verify his email address. """
-        from MoinMoin.mail import sendmail
         token = self.generate_recovery_token()
 
         text = _("""\

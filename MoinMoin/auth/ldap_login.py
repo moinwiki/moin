@@ -86,7 +86,9 @@ class LDAPAuth(BaseAuth):
         autocreate=False, # set to True if you want to autocreate user profiles
         name='ldap', # use e.g. 'ldap_pdc' and 'ldap_bdc' (or 'ldap1' and 'ldap2') if you auth against 2 ldap servers
         report_invalid_credentials=True, # whether to emit "invalid username or password" msg at login time or not
+        **kw
         ):
+        super(LDAPAuth, self).__init__(**kw)
         self.server_uri = server_uri
         self.bind_dn = bind_dn
         self.bind_pw = bind_pw
@@ -232,10 +234,12 @@ class LDAPAuth(BaseAuth):
                     username = self.name_callback(ldap_dict)
 
                 if email:
-                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'email', 'mailto_author', ))
+                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'email', 'mailto_author', ),
+                                  trusted=self.trusted)
                     u.email = email
                 else:
-                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'mailto_author', ))
+                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'mailto_author', ),
+                                  trusted=self.trusted)
                 u.name = username
                 u.display_name = display_name
                 logging.debug("creating user object with name {0!r} email {1!r} display name {2!r}".format(username, email, display_name))

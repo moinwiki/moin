@@ -305,8 +305,6 @@ options_no_group_name = {
   'auth': ('Authentication / Authorization / Security settings', None, (
     ('auth', DefaultExpression('[MoinAuth()]'),
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
-    ('auth_methods_trusted', ['http', 'given', ], # Note: 'http' auth method is currently just a redirect to 'given'
-     'authentication methods for which users should be included in the special "Trusted" ACL group.'),
     ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
     ('SecurityPolicy',
      None,
@@ -455,6 +453,7 @@ options_no_group_name = {
         show_comments=False,
         want_trivial=False,
         disabled=False,
+        bookmarks={},
         quicklinks=[],
         subscribed_items=[],
         email_subscribed_events=[

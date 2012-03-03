@@ -18,6 +18,9 @@ class AuthLog(BaseAuth):
     """ just log the call, do nothing else """
     name = "log"
 
+    def __init__(self, **kw):
+        super(AuthLog, self).__init__(**kw)
+
     def log(self, action, user_obj, kw):
         logging.info('{0}: user_obj={1!r} kw={2!r}'.format(action, user_obj, kw))
 
