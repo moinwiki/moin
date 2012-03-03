@@ -303,7 +303,7 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
 
         # no quick links exist yet
-        result_before = theUser.getQuickLinks()
+        result_before = theUser.quicklinks
         assert result_before == []
 
         result = theUser.isQuickLinkedTo([pagename])
@@ -311,13 +311,13 @@ class TestLoginWithPassword(object):
 
         # test for addQuicklink()
         theUser.addQuicklink(u'Test_page_added')
-        result_on_addition = theUser.getQuickLinks()
+        result_on_addition = theUser.quicklinks
         expected = [u'MoinTest:Test_page_added']
         assert result_on_addition == expected
 
         # previously added page u'Test_page_added' is removed
         theUser.removeQuicklink(u'Test_page_added')
-        result_on_removal = theUser.getQuickLinks()
+        result_on_removal = theUser.quicklinks
         expected = []
         assert result_on_removal == expected
 
