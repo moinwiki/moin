@@ -566,6 +566,8 @@ class UserRevision(object):
             if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:
                 del metadata[key]
 
+        # TODO quicklinks and subscribed_items - check for non-interwiki elements and convert them to interwiki
+
         return metadata
 
 

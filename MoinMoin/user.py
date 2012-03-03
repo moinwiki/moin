@@ -509,8 +509,7 @@ class User(object):
     def isSubscribedTo(self, pagelist):
         """ Check if user subscription matches any page in pagelist.
 
-        The subscription list may contain page names or interwiki page
-        names. e.g 'Page Name' or 'WikiName:Page_Name'
+        The subscription contains interwiki page names. e.g 'WikiName:Page_Name'
 
         TODO: check if it's fast enough when getting called for many
               users from page.getSubscribersList()
@@ -523,9 +522,8 @@ class User(object):
             return False
 
         import re
-        # Create a new list with both names and interwiki names.
-        pages = pagelist[:] # TODO: get rid of non-interwiki subscriptions?
-        pages += [getInterwikiName(pagename) for pagename in pagelist]
+        # Create a new list with interwiki names.
+        pages = [getInterwikiName(pagename) for pagename in pagelist]
         # Create text for regular expression search
         text = '\n'.join(pages)
 
@@ -546,8 +544,7 @@ class User(object):
     def subscribe(self, pagename):
         """ Subscribe to a wiki page.
 
-        To enable shared farm users, if the wiki has an interwiki name,
-        page names are saved as interwiki names.
+        Page names are saved as interwiki names.
 
         :param pagename: name of the page to subscribe
         :type pagename: unicode
@@ -566,36 +563,24 @@ class User(object):
     def unsubscribe(self, pagename):
         """ Unsubscribe a wiki page.
 
-        Try to unsubscribe by removing non-interwiki name (leftover
-        from old use files) and interwiki name from the subscription
+        Try to unsubscribe by removing interwiki name from the subscription
         list.
 
         Its possible that the user will be subscribed to a page by more
-        then one pattern. It can be both pagename and interwiki name,
-        or few patterns that all of them match the page. Therefore, we
-        must check if the user is still subscribed to the page after we
-        try to remove names from the list.
-
-        TODO: remove the non-interwiki kind of subscriptions
+        than one pattern. It can be both interwiki name and a regex pattern that
+        both match the page. Therefore, we must check if the user is
+        still subscribed to the page after we try to remove names from the list.
 
         :param pagename: name of the page to subscribe
         :type pagename: unicode
         :rtype: bool
-        :returns: if unsubscrieb was successful. If the user has a
-            regular expression that match, it will always fail.
+        :returns: if unsubscribe was successful. If the user has a
+            regular expression that matches, unsubscribe will always fail.
         """
-        changed = False
-        subscribed_items = self.profile[SUBSCRIBED_ITEMS]
-        if pagename in subscribed_items:
-            subscribed_items.remove(pagename)
-            changed = True
-
         interWikiName = getInterwikiName(pagename)
+        subscribed_items = self.profile[SUBSCRIBED_ITEMS]
         if interWikiName and interWikiName in subscribed_items:
             subscribed_items.remove(interWikiName)
-            changed = True
-
-        if changed:
             self.save(force=True)
         return not self.isSubscribedTo([pagename])
 
@@ -615,8 +600,6 @@ class User(object):
     def isQuickLinkedTo(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
 
-        TODO: remove the non-interwiki kind of subscriptions
-
         :param pagelist: list of pages to check for quicklinks
         :rtype: bool
         :returns: if user has quicklinked any page in pagelist
@@ -626,8 +609,6 @@ class User(object):
 
         quicklinks = self.getQuickLinks()
         for pagename in pagelist:
-            if pagename in quicklinks:
-                return True
             interWikiName = getInterwikiName(pagename)
             if interWikiName and interWikiName in quicklinks:
                 return True
@@ -637,60 +618,38 @@ class User(object):
     def addQuicklink(self, pagename):
         """ Adds a page to the user quicklinks
 
-        If the wiki has an interwiki name, all links are saved as
-        interwiki names. If not, as simple page name.
-
-        TODO: remove the non-interwiki kind of subscriptions
+        Add links as interwiki names.
 
         :param pagename: page name
         :type pagename: unicode
         :rtype: bool
         :returns: if pagename was added
         """
-        changed = False
         quicklinks = self.getQuickLinks()
         interWikiName = getInterwikiName(pagename)
-        if interWikiName:
-            if pagename in quicklinks:
-                quicklinks.remove(pagename)
-                changed = True
-            if interWikiName not in quicklinks:
-                quicklinks.append(interWikiName)
-                changed = True
-        else:
-            if pagename not in quicklinks:
-                quicklinks.append(pagename)
-                changed = True
-
-        if changed:
+        if interWikiName and interWikiName not in quicklinks:
+            quicklinks.append(interWikiName)
             self.save(force=True)
-        return changed
+            return True
+        return False
 
     def removeQuicklink(self, pagename):
         """ Remove a page from user quicklinks
 
-        Remove both interwiki and simple name from quicklinks.
-
-        TODO: remove the non-interwiki kind of subscriptions
+        Remove interwiki name from quicklinks.
 
         :param pagename: page name
         :type pagename: unicode
         :rtype: bool
         :returns: if pagename was removed
         """
-        changed = False
         quicklinks = self.getQuickLinks()
         interWikiName = getInterwikiName(pagename)
         if interWikiName and interWikiName in quicklinks:
             quicklinks.remove(interWikiName)
-            changed = True
-        if pagename in quicklinks:
-            quicklinks.remove(pagename)
-            changed = True
-
-        if changed:
             self.save(force=True)
-        return changed
+            return True
+        return False
 
     # -----------------------------------------------------------------
     # Trail
