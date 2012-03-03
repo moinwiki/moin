@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import, division
 
-import time
+import re
 import copy
 import hashlib
 import werkzeug
@@ -33,10 +33,11 @@ from flask import session, request, url_for
 
 from whoosh.query import Term, And, Or
 
-from MoinMoin import config, wikiutil
+from MoinMoin import wikiutil
 from MoinMoin.config import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
 from MoinMoin.i18n import _, L_, N_
+from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
                                  generate_token, valid_token, make_uuid
@@ -249,11 +250,13 @@ class User(object):
     def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
         """ Initialize User object
 
-        :param uid: (optional) user ID
+        :param uid: (optional) user ID (user itemid)
         :param name: (optional) user name
         :param password: (optional) user password (unicode)
         :param auth_username: (optional) already authenticated user name
                               (e.g. when using http basic auth) (unicode)
+        :param trusted: (optional) whether user instance is created by a
+                        trusted auth method / session
         :keyword auth_method: method that was used for authentication,
                               default: 'internal'
         :keyword auth_attribs: tuple of user object attribute names that are
@@ -264,7 +267,7 @@ class User(object):
         self.profile = UserProfile()
         self._cfg = app.cfg
         self.valid = False
-        self.trusted = trusted # trusted auth methods can set this to True
+        self.trusted = trusted
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
 
@@ -296,9 +299,9 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
-        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r}>".format(
+        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name, self.itemid, self.valid)
+            self.name, self.itemid, self.valid, self.trusted)
 
     def __getattr__(self, name):
         """
@@ -344,7 +347,7 @@ class User(object):
                                            True)
 
         param['size'] = str(size)
-        #TODO: use same protocol of Moin site (might be https instead of http)]
+        # TODO: use same protocol of Moin site (might be https instead of http)]
         gravatar_url = "http://www.gravatar.com/avatar.php?"
         gravatar_url += werkzeug.url_encode(param)
 
@@ -383,7 +386,7 @@ class User(object):
 
         if password is not None:
             # Check for a valid password, possibly changing storage
-            valid, changed = self._validatePassword(self.profile, password)
+            valid, changed = self._validate_password(self.profile, password)
             if not valid:
                 return
 
@@ -394,7 +397,7 @@ class User(object):
         if changed:
             self.profile.save()
 
-    def _validatePassword(self, data, password):
+    def _validate_password(self, data, password):
         """
         Check user password.
 
@@ -448,8 +451,7 @@ class User(object):
         return text # FIXME, was: self._request.getText(text, lang=self.language)
 
 
-    # -----------------------------------------------------------------
-    # Bookmark
+    # Bookmarks --------------------------------------------------------------
 
     def setBookmark(self, tm):
         """ Set bookmark timestamp.
@@ -489,8 +491,7 @@ class User(object):
             return 0
         return 1
 
-    # -----------------------------------------------------------------
-    # Subscribe
+    # Subscribed Items -------------------------------------------------------
 
     def isSubscribedTo(self, pagelist):
         """ Check if user subscription matches any page in pagelist.
@@ -507,7 +508,6 @@ class User(object):
         if not self.valid:
             return False
 
-        import re
         # Create a new list with interwiki names.
         pages = [getInterwikiName(pagename) for pagename in pagelist]
         # Create text for regular expression search
@@ -570,8 +570,7 @@ class User(object):
             self.save(force=True)
         return not self.isSubscribedTo([pagename])
 
-    # -----------------------------------------------------------------
-    # Quicklinks
+    # Quicklinks -------------------------------------------------------------
 
     def isQuickLinkedTo(self, pagelist):
         """ Check if user quicklink matches any page in pagelist.
@@ -627,8 +626,7 @@ class User(object):
             return True
         return False
 
-    # -----------------------------------------------------------------
-    # Trail
+    # Trail ------------------------------------------------------------------
 
     def addTrail(self, item_name):
         """ Add item name to trail.
@@ -652,12 +650,13 @@ class User(object):
         """
         return session.get('trail', [])
 
-    # -----------------------------------------------------------------
-    # Other
+    # Other ------------------------------------------------------------------
 
     def isCurrentUser(self):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
+
+    # Account verification / Password recovery -------------------------------
 
     def generate_recovery_token(self):
         key, token = generate_token()
@@ -680,7 +679,6 @@ class User(object):
         """ Mail a user who forgot his password a message enabling
             him to login again.
         """
-        from MoinMoin.mail import sendmail
         token = self.generate_recovery_token()
 
         text = _("""\
@@ -702,7 +700,6 @@ If you didn't forget your password, please ignore this email.
 
     def mailVerificationLink(self):
         """ Mail a user a link to verify his email address. """
-        from MoinMoin.mail import sendmail
         token = self.generate_recovery_token()
 
         text = _("""\
