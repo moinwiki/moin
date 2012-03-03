@@ -201,7 +201,10 @@ class UserProfile(object):
         try:
             return self._meta[name]
         except KeyError:
-            return self._defaults[name]
+            v = self._defaults[name]
+            if isinstance(v, (list, dict, set)): # mutable
+                self._meta[name] = v
+            return v
 
     def __setitem__(self, name, value):
         """
@@ -223,11 +226,14 @@ class UserProfile(object):
         self._stored = True
         self._changed = False
 
-    def save(self):
+    def save(self, force=False):
         """
         save a user profile (if it was changed since loading it)
+
+        Note: if mutable profile values were modified, you need to use
+              force=True because these changes are not detected!
         """
-        if self._changed:
+        if self._changed or force:
             self[CONTENTTYPE] = CONTENTTYPE_USER
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)
@@ -428,12 +434,12 @@ class User(object):
             password = crypt_password(password)
         self.profile[ENC_PASSWORD] = password
 
-    def save(self):
+    def save(self, force=False):
         """
         Save user account data to user account file on disk.
         """
         exists = self.exists
-        self.profile.save()
+        self.profile.save(force=force)
 
         if not self.disabled:
             self.valid = True
@@ -552,7 +558,7 @@ class User(object):
         subscribed_items = self.profile[SUBSCRIBED_ITEMS]
         if pagename not in subscribed_items:
             subscribed_items.append(pagename)
-            self.save()
+            self.save(force=True)
             # XXX SubscribedToPageEvent
             return True
         return False
@@ -590,7 +596,7 @@ class User(object):
             changed = True
 
         if changed:
-            self.save()
+            self.save(force=True)
         return not self.isSubscribedTo([pagename])
 
     # -----------------------------------------------------------------
@@ -657,7 +663,7 @@ class User(object):
                 changed = True
 
         if changed:
-            self.save()
+            self.save(force=True)
         return changed
 
     def removeQuicklink(self, pagename):
@@ -683,7 +689,7 @@ class User(object):
             changed = True
 
         if changed:
-            self.save()
+            self.save(force=True)
         return changed
 
     # -----------------------------------------------------------------
