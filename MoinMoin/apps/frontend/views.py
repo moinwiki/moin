@@ -31,7 +31,7 @@ from flask import g as flaskg
 from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
-from flatland import Form, String, Integer, Boolean, Enum
+from flatland import Form, String, Integer, Boolean, Enum, List
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from jinja2 import Markup
@@ -1280,7 +1280,7 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
+        name = List.using(label=L_('Name')).of(String.with_properties(placeholder=L_("The login name you want to use")).validated_by(Present()))
         display_name = String.using(label=L_('Display-Name'), optional=True).with_properties(placeholder=L_("Your display name (informational)"))
         openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
         #timezones_keys = sorted(Locale('en').time_zones.keys())
