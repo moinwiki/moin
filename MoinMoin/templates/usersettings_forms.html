@@ -4,7 +4,7 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_field(gen, form['name'], 'text') }}
+    {{ forms.render_fieldlist(gen, form['name'], 'text') }}
     {{ forms.render_field(gen, form['display_name'], 'text') }}
     {{ forms.render_field(gen, form['openid'], 'url') }}
     {{ forms.render_select(gen, form['timezone']) }}

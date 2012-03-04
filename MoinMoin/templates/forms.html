@@ -15,6 +15,18 @@ Helpers for using flatland with jinja2 to create html forms.
   {% endif %}
 {% endmacro %}
 
+{% macro render_fieldlist(gen, fieldlist, field_type) %}
+  <dt>
+    {{ gen.label(fieldlist) }}
+  </dt>
+  <dd>
+  {% for field in fieldlist %}
+      {{ gen.input(field, type=field_type) }}
+      {{ render_errors(field) }}
+  {% endfor %}
+  </dd>
+{% endmacro %}
+
 {% macro render_field(gen, field, field_type) %}
   <dt>
     {{ gen.label(field) }}
