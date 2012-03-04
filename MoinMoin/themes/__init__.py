@@ -139,7 +139,7 @@ class ThemeSupport(object):
         :returns: arguments of user homepage link in tuple (wiki_href, display_name, title, exists)
         """
         user = self.user
-        name = user.name
+        name = user.name0
         display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
         title = "{0} @ {1}".format(display_name, wikiname)
@@ -307,7 +307,7 @@ def get_editor_info(meta, external=False):
     userid = meta.get(USERID)
     if userid:
         u = user.User(userid)
-        name = u.name[0]
+        name = u.name0
         text = name
         display_name = u.display_name or name
         if title:

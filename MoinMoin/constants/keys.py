@@ -63,7 +63,7 @@ CURRENT = "current"
 # stuff from user profiles / for whoosh index
 EMAIL = "email"
 OPENID = "openid"
-ALIASNAME = "aliasname"
+DISPLAY_NAME = "display_name"
 THEME_NAME = "theme_name"
 LOCALE = "locale"
 TIMEZONE = "timezone"

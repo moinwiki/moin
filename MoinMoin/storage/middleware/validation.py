@@ -320,7 +320,7 @@ common_meta = (
     String.named(keys.WIKINAME).using(strip=False).validated_by(wikiname_validator),
     String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),
     List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)),
-    String.named(keys.NAME_OLD).using(strip=False).validated_by(name_validator).using(optional=True),
+    List.named(keys.NAME_OLD).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
     Integer.named(keys.MTIME).validated_by(mtime_validator),
     String.named(keys.ACTION).validated_by(action_validator),
     String.named(keys.ACL).validated_by(acl_validator),
