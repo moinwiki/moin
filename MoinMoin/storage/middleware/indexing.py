@@ -897,7 +897,7 @@ class Item(object):
                  keys.ADDRESS: remote_addr,
                  keys.USERID: userid,
                  keys.WIKINAME: wikiname,
-                 keys.NAMESPACE: u'',
+                 keys.NAMESPACE: None,
                  keys.ITEMID: self.itemid, # real itemid or None
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
