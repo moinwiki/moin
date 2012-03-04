@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright: 2001 by Juergen Hermann <jh@web.de>
-# Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2001-2012 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import sys, os
@@ -70,11 +70,8 @@ Topic :: Text Processing :: Markup""".splitlines(),
     include_package_data=True,
     zip_safe=False,
     dependency_links = [
-        # hack needed as install from pypi fails for Werkzeug==dev due to
-        # wrong dev URL in the long description.
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
-        # no whoosh 2.3.1 on pypi yet:
-        'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
+        #'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
     ],
@@ -92,7 +89,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
-        'whoosh>=2.3.1', # needed for indexed search
+        'whoosh>=2.3.2', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2',
