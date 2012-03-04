@@ -59,7 +59,8 @@ space between words. Group page name is not allowed.""", name=username)
     if validate and search_users(name_exact=username):
         return _("This user name already belongs to somebody else.")
 
-    theuser.profile[NAME] = unicode(username)
+    # XXX currently we just support creating with 1 name:
+    theuser.profile[NAME] = [unicode(username), ]
 
     pw_checker = app.cfg.password_checker
     if validate and pw_checker:
@@ -139,7 +140,7 @@ def get_editor(userid, addr, hostname):
         if userdata.mailto_author and userdata.email:
             return ('email', userdata.email)
         elif userdata.name:
-            interwiki = getInterwikiHome(userdata.name)
+            interwiki = getInterwikiHome(userdata.name0)
             if interwiki:
                 result = ('interwiki', interwiki)
     return result
@@ -275,6 +276,7 @@ class User(object):
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
 
+        # XXX currently we just support creating with 1 name:
         _name = name or auth_username
 
         itemid = uid
@@ -291,7 +293,7 @@ class User(object):
         else:
             self.profile[ITEMID] = make_uuid()
             if _name:
-                self.profile[NAME] = _name
+                self.profile[NAME] = [_name, ]
             if password is not None:
                 self.set_password(password)
 
@@ -305,19 +307,28 @@ class User(object):
     def __repr__(self):
         return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name, self.itemid, self.valid, self.trusted)
+            self.name0, self.itemid, self.valid, self.trusted)
 
     def __getattr__(self, name):
         """
         delegate some lookups into the .profile
         """
-        if name in [NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
+        if name in [NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
                     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
                     THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
                    ]:
             return self.profile[name]
         else:
             raise AttributeError(name)
+
+    @property
+    def name0(self):
+        try:
+            names = self.name
+            assert isinstance(names, list)
+            return names[0]
+        except IndexError:
+            return u'anonymous'
 
     @property
     def language(self):
@@ -687,7 +698,7 @@ Please use the link below to change your password to a known value:
 If you didn't forget your password, please ignore this email.
 
 """, link=url_for('frontend.recoverpass',
-                        username=self.name, token=token, _external=True))
+                        username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Your wiki password recovery link',
                     sitename=self._cfg.sitename or "Wiki")
@@ -708,7 +719,7 @@ Please use the link below to verify your email address:
 If you didn't create this account, please ignore this email.
 
 """, link=url_for('frontend.verifyemail',
-                        username=self.name, token=token, _external=True))
+                        username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")

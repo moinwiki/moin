@@ -208,7 +208,7 @@ class ProtectedItem(object):
         :returns: True if you have permission or False
         """
         if user_name is None:
-            user_name = self.protector.user.name
+            user_name = self.protector.user.name0
 
         acl_cfg = self.protector._get_configured_acls(self.item.fqname)
         full_acl = self.full_acl()
@@ -221,7 +221,7 @@ class ProtectedItem(object):
 
     def require(self, capability):
         if not self.allows(capability):
-            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}'".format(self.protector.user.name, capability))
+            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}'".format(self.protector.user.name0, capability))
 
     def iter_revs(self):
         self.require(READ)

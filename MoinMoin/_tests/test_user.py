@@ -24,7 +24,7 @@ class TestSimple(object):
         email = u"foo@example.org"
         # nonexisting user
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name, ]
         assert not u.valid
         assert not u.exists()
         # create a user
@@ -32,7 +32,7 @@ class TestSimple(object):
         assert ret is None, "create_user returned: {0}".format(ret)
         # existing user
         u = user.User(name=name, password=password)
-        assert u.name == [name]
+        assert u.name == [name, ]
         assert u.email == email
         assert u.valid
         assert u.exists()

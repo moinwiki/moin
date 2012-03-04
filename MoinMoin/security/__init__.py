@@ -66,7 +66,7 @@ class Permissions(object):
             return Permissions.read(itemname)
     """
     def __init__(self, user):
-        self.name = user.name
+        self.name = user.name0 # XXX currently we just use first name
 
     def __getattr__(self, attr):
         """ Shortcut to handle all known ACL rights.

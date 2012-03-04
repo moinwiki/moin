@@ -922,7 +922,7 @@ class Item(object):
         # just update the meta dict with the validated stuff:
         meta.update(dict(m.value.items()))
         # we do not want None / empty values:
-        meta = dict([(k, v) for k, v in meta.items() if v not in [None, []]])
+        meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]]) # do not kick out empty lists before fixing NAME processing
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]

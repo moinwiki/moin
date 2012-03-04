@@ -443,7 +443,7 @@ options_no_group_name = {
   'user': ('User Preferences related', None, (
     ('user_defaults',
       dict(
-        name=u'anonymous',
+        name=[],
         display_name=None,
         email=None,
         openid=None,

@@ -33,8 +33,8 @@ def become_valid(username=u"ValidUser"):
         Thus, for testing purposes (e.g. if you need delete rights), it is
         easier to use become_trusted().
     """
-    flaskg.user.profile[NAME] = username
-    flaskg.user.may.name = username
+    flaskg.user.profile[NAME] = [username, ]
+    flaskg.user.may.name = username # currently just one/first name, see security.Permissions class
     flaskg.user.valid = 1
 
 
@@ -53,7 +53,7 @@ def update_item(name, meta, data):
     item = flaskg.storage[name]
 
     if NAME not in meta:
-        meta[NAME] = [name]
+        meta[NAME] = [name, ]
     if CONTENTTYPE not in meta:
         meta[CONTENTTYPE] = u'application/octet-stream'
     rev = item.store_revision(meta, StringIO(data))
