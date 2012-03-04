@@ -105,8 +105,7 @@ class Backend(MutableBackendBase):
             # if there is no NAMESPACE in metadata, we assume that the NAME
             # is fully qualified and determine the namespace from it:
             fq_names = meta[NAME]
-            if not isinstance(fq_names, list):
-                fq_names = [fq_names]
+            assert isinstance(fq_names, list)
             backend_name, item_names, namespace = self._get_backend(fq_names)
             # side effect: update the metadata with namespace and short item name (no ns)
             meta[NAMESPACE] = namespace

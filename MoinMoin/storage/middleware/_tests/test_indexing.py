@@ -26,7 +26,6 @@ from MoinMoin.storage.backends.stores import MutableBackend
 from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
 from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
 from MoinMoin.storage import create_simple_mapping
-from MoinMoin.storage.middleware import routing
 
 
 def dumper(indexer, idx_name):
