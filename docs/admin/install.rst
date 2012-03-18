@@ -66,23 +66,23 @@ Using a different Python or a different virtualenv directory
 For example, if you want to use `PyPy` and want to name the virtualenv directory `env-pypy`,
 use::
 
-    # for linux
-    DIR=env-pypy
-    PYTHON=/opt/pypy/bin/pypy
+ # for linux
+ DIR=env-pypy
+ PYTHON=/opt/pypy/bin/pypy
 
 That way, you can test with different versions of Python in different virtualenv directories within your moin2 workdir.
 
 Activating the virtual env
 --------------------------
 
- source env/bin/activate  # for linux (or other posix OSes)
- # or
- env\Scripts\activate.bat  # for windows
-
 IMPORTANT: you always need to activate the virtual environment before running
 anything that executes moin code! Otherwise it won't find the moin command,
 nor the moin code nor the libraries it needs. Also, if you want to install
-additional software into the virtual environment, activate it before running pip!
+additional software into the virtual environment, activate it before running pip!::
+
+ source env/bin/activate  # for linux (or other posix OSes)
+ # or
+ env\Scripts\activate.bat  # for windows
 
 Initializing index and/or storage
 ---------------------------------
@@ -138,7 +138,7 @@ PyPi down
 ~~~~~~~~~
 Now and then, PyPi might be down or unreachable.
 There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
-you can use in such cases, you just need to tell pip to do so:
+you can use in such cases, you just need to tell pip to do so::
 
  # put this into ~/.pip/pip.conf
  [global]
@@ -150,7 +150,8 @@ If you have a poor or limited network connection, you may run into trouble with 
 the quickinstall script.
 You may see tracebacks from pip, timeout errors, etc. (see the output of the quickinstall script).
 
-If this is the case, try it manually:
+If this is the case, try it manually::
+
  # enter your virtual environment:
  source env/bin/activate
 
