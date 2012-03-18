@@ -12,48 +12,50 @@ Converts an internal document tree into a HTML tree.
 
 from __future__ import absolute_import, division
 
+import re
+
+from flask import request
 from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.tree import html, moin_page, xlink, xml, Name
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
-def remove_overlay_prefixes(url):
+
+def convert_getlink_to_showlink(href):
     """
-    Returns url without the prefixes, like +get or +modify
-
-    TODO: Find a way to limit the removal to internal links only
-    This could remove +get or +modify for external links,
-        when they shouldn't really be removed.
+    If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
     """
-    return unicode(url).replace("/+get/", "/+show/").replace("/+modify/", "/+show/")
+    if href.startswith('/'):
+        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
+    return href
 
-
-def wrap_object_with_overlay(elem, href):
+def mark_item_as_transclusion(elem, href):
     """
-    Given both an element and either an href or text, wraps an object with the appropriate div,
-    and attaches the overlay element.
+    Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
+    a link to the transcluded item.
+
+    On the client side, a Javascript function will wrap the element (or a parent element)
+    in a span or div and 2 overlay siblings will be created.
     """
-    txt = u"→"
-
-    href = remove_overlay_prefixes(href)
-
-    child = html.a(attrib={
-        html.href: href
-    }, children=(txt, ))
-
-    overlay = html.div(attrib={
-        html.class_: "object-overlay"
-    }, children=(child, ))
-
-    owrapper = html.div(attrib={
-        html.class_: "object-overlay-wrapper"
-    }, children=(overlay, ))
-
-    return html.div(attrib={
-        html.class_: "page-object"
-    }, children=(elem, owrapper))
+    href = unicode(href)
+    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
+    # or "http://Some.Org/SomeThing" for external link
+    if elem.tag.name == 'page':
+        # if wiki is not running at server root, prefix href with wiki root
+        wiki_root = request.url_root[len(request.host_url):-1]
+        if wiki_root:
+            href = '/' + wiki_root + href
+    href = convert_getlink_to_showlink(href)
+    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
+    elem.attrib[html.data_href] = href
+    classes = elem.attrib.get(html.class_, '').split()
+    classes.append('moin-transclusion')
+    elem.attrib[html.class_] = ' '.join(classes)
+    return elem
 
 
 class ElementException(RuntimeError):
@@ -376,7 +378,7 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
-        return wrap_object_with_overlay(new_elem, href=href)
+        return mark_item_as_transclusion(new_elem, href)
 
     def visit_moinpage_p(self, elem):
         return self.new_copy(html.p, elem)
@@ -384,7 +386,11 @@ class Converter(object):
     def visit_moinpage_page(self, elem):
         for item in elem:
             if item.tag.uri == moin_page and item.tag.name == 'body':
-                return self.new_copy(html.div, item)
+                # if this is a transcluded page, we must pass the class and data-href attribs
+                attribs = elem.attrib.copy()
+                if moin_page.page_href in attribs:
+                    del attribs[moin_page.page_href]
+                return self.new_copy(html.div, item, attribs)
 
         raise RuntimeError('page:page need to contain exactly one page:body tag, got {0!r}'.format(elem[:]))
 
