@@ -1,0 +1,10 @@
+{% extends theme("local.html") %}
+{% block content %}
+<h1>{{ _("Metadata of '%(item_name)s'", item_name=item.name) }}</h1>
+{% if meta_rendered %}
+<div id="moin-content-meta">
+    {{ meta_rendered }}
+</div>
+{% endif %}
+{% endblock %}
+
