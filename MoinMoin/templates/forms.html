@@ -1,0 +1,119 @@
+{#
+Helpers for using flatland with jinja2 to create html forms.
+
+@copyright: Thomas Waldmann, Jason Kirtland, Scott Wilson
+@license: see flatland license
+#}
+
+{% macro render_errors(field) %}
+  {% if field.errors %}
+    <ul class="moin-error">
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_field(gen, field, field_type) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {% if field_type == 'checkbox' %}
+      {#
+      Flatland adds the value to the ID of checkboxes which we do not want as
+      the for attributes of the labels will point to a non-existent ID in that
+      case. To fix this we manually generate the ID for checkboxes here.
+      related issue in flatland: https://bitbucket.org/jek/flatland/issue/9
+      #}
+      {{ gen.input(field, type='checkbox', id='f_' + field.flattened_name()) }}
+    {% else %}
+      {{ gen.input(field, type=field_type) }}
+    {% endif %}
+    {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro render_filter_field(gen, field, field_type, helper_text) %}
+  <li>
+    {{ gen.input(field, type=field_type) }}
+    {{ render_errors(field) }}
+    {{ gen.label(field) }}
+    <span class="helper-text">
+        {{ helper_text }}
+    </span>
+  </li>
+{% endmacro %}
+
+{% macro render_select(gen, field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ gen.select.open(field) }}
+    {% set labels = field.properties.get('labels', {}) %}
+    {% for value in field.valid_values %}
+      {{ gen.option(field, value=value, contents=labels.get(value, value)) }}
+    {% endfor %}
+    {{ gen.select.close() }}
+    {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro render_hidden(name, value) %}
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+{% endmacro %}
+
+{% macro render_button(text) %}
+  <button>{{ text }}</button>
+{% endmacro %}
+
+{% macro render_textcha(gen, form) %}
+    {% if form.textcha_question.value %}
+    <dt>
+        {{ gen.label(form.textcha) }}
+    </dt>
+    <dd>
+        {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
+        {{ form.textcha_question.value[:-51] }}
+        {{ gen.input(form.textcha_question, type='hidden') }}<br />
+        {{ gen.input(form.textcha) }}
+        {{ render_errors(form.textcha) }}
+    </dd>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_field_without_markup(gen, field, field_type) %}
+    {{ gen.input(field, type=field_type) }}
+    {{ gen.label(field) }}
+    {{ render_errors(field) }}
+{% endmacro %}
+
+{% macro render_file_uploader(submit_url) %}
+    <div id="file_upload">
+        <div class="upload-form">
+        <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
+            <input type="file" name="data_file" multiple>
+            <button type="submit">{{ _("Upload") }}</button>
+            <div class="file_upload_label" style="margin: 0;">{{ _("Upload files") }}</div>
+        </form>
+        </div>
+        <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
+        <div class="file_upload_buttons">
+            <button class="file_upload_start" style="display:none;">{{ _("Start All") }}</button> 
+            <button class="file_upload_cancel" style="display:none;">{{ _("Cancel All") }}</button> 
+        </div>
+        <table class="files">
+            <tr class="file_upload_template" style="display:none;">
+                <td class="file_upload_start"><button>{{ _("Start") }}</button></td>
+                <td class="file_upload_cancel"><button>{{ _("Cancel") }}</button></td>
+                <td class="file_name"></td>
+                <td class="file_upload_progress"><div></div></td>
+            </tr>
+        </table>
+    </div>
+    <link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
+{% endmacro %}
