@@ -27,7 +27,7 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import config, wikiutil
+from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 

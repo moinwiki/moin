@@ -12,6 +12,7 @@ recursive-include   MoinMoin/apps/admin/templates *
 recursive-include   MoinMoin/apps/misc/templates *
 
 recursive-include   MoinMoin/themes/modernized *
+recursive-include   MoinMoin/themes/foobar *
 
 global-include */_tests/*
 
