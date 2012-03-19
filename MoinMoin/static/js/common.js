@@ -114,35 +114,6 @@ function show_switch2gui() {
     }
 }
 
-// for long documents with many comments this is expensive to calculate,
-// thus we keep it here:
-comments = null;
-
-function toggleComments() {
-    // Toggle visibility of every tag with class "comment"
-    for (i = 0; i < comments.length; i++){
-        el = comments[i];
-        if ( el.style.display != 'none' ) {
-            el.style.display = 'none';
-        } else {
-            el.style.display = '';
-        }
-    }
-}
-
-function show_toggleComments() {
-    // Show edit bar item for toggling inline comments on/off only if inline comments exist on the page
-    comments = getElementsByClassName('comment', null, document);
-    if (comments.length > 0) {
-        var buttons = getElementsByClassName('toggleCommentsButton', null, document);
-        for (i = 0; i < buttons.length; i++){
-            el = buttons[i];
-            el.style.display = '';
-        }
-    }
-}
-
-
 function load() {
     // Do not name this "onload", it does not work with IE :-)
     // TODO: create separate onload for each type of view and set the
@@ -155,9 +126,6 @@ function load() {
 
     // Editor stuff
     show_switch2gui();
-
-    // Enable menu item "ToggleComments" if inline comments exist
-    show_toggleComments();
 
     // data browser widget
     dbw_hide_buttons();
@@ -786,10 +754,55 @@ function moinFirefoxWordBreak() {
 }
 jQuery(moinFirefoxWordBreak);
 
+// globals used to save translated show/hide titles (tooltips) for Comments buttons
+var pageComments = null;
+var commentsShowTitle = ''; // "Show comments"
+var commentsHideTitle = ''; // "Hide comments"
+
+// This is executed when user clicks a Comments button and conditionally on dom ready
+function toggleComments() {
+    // Toggle visibility of every tag with class "comment"
+    var buttons = jQuery('.moin-toggle-comments-button > a');
+    if (pageComments.is(':hidden')) {
+        pageComments.show();
+        buttons.attr('title', commentsHideTitle);
+    } else {
+        pageComments.hide();
+        buttons.attr('title', commentsShowTitle);
+    }
+}
+
+// Comments initialization is executed once after document ready
+function initToggleComments() {
+    var titles;
+    var show_comments = '0';
+    pageComments = jQuery('.comment');
+    if (pageComments.length > 0) {
+        // There are comments, so show itemview Comments button
+        jQuery('.moin-toggle-comments-button').css('display', '');
+        // read translated show|hide Comments button title, split into show and hide parts, and save
+        titles = jQuery('.moin-toggle-comments-button > a').attr('title').split('|');
+        if (titles.length === 2) {
+            commentsShowTitle = titles[0];
+            commentsHideTitle = titles[1];
+            jQuery('.moin-toggle-comments-button > a').attr('title', commentsHideTitle);
+        }
+        // show or hide comments based on user option or default option:
+        //     show comments if  there is a <meta name="moin-show-comments" content="1" />
+        if (document.getElementsByName('moin-show-comments').length > 0) {
+            show_comments = document.getElementsByName('moin-show-comments')[0].content;
+        }
+        if (show_comments !== '1') {
+            // user option is to hide comments
+            toggleComments();
+        }
+    }
+}
+jQuery(document).ready(initToggleComments);
 
 // globals used to save translated show/hide titles (tooltips) for Transclusions buttons
-transclusionShowTitle = ''; // "Show Transclusions"
-transclusionHideTitle = ''; // "Hide Transclusions"
+var transclusionShowTitle = ''; // "Show Transclusions"
+var transclusionHideTitle = ''; // "Hide Transclusions"
 
 // This is executed when user clicks a Transclusions button
 function toggleTransclusionOverlays() {
