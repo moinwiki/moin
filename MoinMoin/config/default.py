@@ -365,8 +365,8 @@ options_no_group_name = {
         ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
         ('special.supplementation', None, None, False, ),
         ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
-        ('special.comments', L_('Comments'), L_('Switch showing comments on or off'), True, ),
-        # note: the | character below separates the off/on title (tooltip) values that will be swapped by javascript
+        # The | character in the comments and transclusions lines below separate the off/on title (tooltip) values used by javascript
+        ('special.comments', L_('Comments'), L_('Show comments|Hide comments'), True, ),
         ('special.transclusions', L_('Transclusions'), L_('Show transclusions|Hide transclusions'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
