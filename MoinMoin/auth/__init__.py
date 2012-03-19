@@ -144,7 +144,7 @@ from flask import g as flaskg
 from flask import current_app as app
 from jinja2 import Markup
 
-from MoinMoin import user, wikiutil
+from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 
 
