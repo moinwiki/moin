@@ -20,7 +20,6 @@ from emeraldtree.html import HTML
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil
 from MoinMoin.util.tree import html, moin_page, xlink, xml
 
 from ._wiki_macro import ConverterMacro
