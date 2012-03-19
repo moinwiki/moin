@@ -24,7 +24,6 @@ from whoosh.query import Term, And
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
 from MoinMoin.config import (NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS,

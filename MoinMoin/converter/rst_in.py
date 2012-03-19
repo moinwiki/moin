@@ -25,7 +25,7 @@ logging = log.getLogger(__name__)
 
 from flask import g as flaskg
 
-from MoinMoin import config, wikiutil
+from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 

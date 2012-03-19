@@ -564,7 +564,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     int, long, float or unicode object, then the given value
     is converted to the type of that default value before passing
     it to the macro function. That way, macros need not call the
-    wikiutil.get_* functions for any arguments that have a default.
+    get_* functions for any arguments that have a default.
 
     :param function: the function to invoke
     :param args: unicode string with arguments (or evaluating to False)
