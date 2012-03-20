@@ -74,6 +74,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         #'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
+        'https://github.com/rduplain/flask-script/tarball/master#egg=Flask-Script-0.3.3dev',
     ],
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
@@ -81,7 +82,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
         'Flask-Cache>=0.3.4', # caching support
-        'Flask-Script>=0.3.1', # scripting support
+        'Flask-Script>=0.3.3dev', # scripting support
         'Flask-Themes>=0.1.3.1', # theme support
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
