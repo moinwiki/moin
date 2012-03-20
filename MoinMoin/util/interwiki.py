@@ -27,7 +27,7 @@ def is_local_wiki(wiki_name):
     """
     check if <wiki_name> is THIS wiki
     """
-    return wiki_name in ['', 'Self', app.cfg.interwikiname, ]
+    return wiki_name in [u'', u'Self', app.cfg.interwikiname, ]
 
 
 def is_known_wiki(wiki_name):
@@ -40,7 +40,7 @@ def is_known_wiki(wiki_name):
     return wiki_name in app.cfg.interwiki_map
 
 
-def url_for_item(item_name, wiki_name='', rev=CURRENT, endpoint='frontend.show_item', _external=False):
+def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=u'frontend.show_item', _external=False):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -57,6 +57,8 @@ def url_for_item(item_name, wiki_name='', rev=CURRENT, endpoint='frontend.show_i
     Computed URLs are always fully specified.
     """
     if is_local_wiki(wiki_name):
+        if namespace:
+            item_name = u':{0}:{1}'.format(namespace, item_name)
         if rev is None or rev == CURRENT:
             url = url_for(endpoint, item_name=item_name, _external=_external)
         else:
@@ -66,46 +68,102 @@ def url_for_item(item_name, wiki_name='', rev=CURRENT, endpoint='frontend.show_i
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
         except KeyError, err:
             logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
-            url = '' # can we find something useful?
+            if namespace:
+                item_name = u'{0}:{1}'.format(namespace, item_name)
+            if wiki_name:
+                url = u'{0}:{1}'.format(wiki_name, item_name)
+            url = u'/{0}'.format(url)
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
                 # we just want to show latest revision (no special revision given) -
                 # this is the generic interwiki url support, should work for any remote wiki
-                url = join_wiki(wiki_base_url, item_name)
+                url = join_wiki(wiki_base_url, item_name, namespace)
             else:
                 # rev and/or endpoint was given, assume same URL building as for local wiki.
                 # we need this for moin wiki farms, e.g. to link from search results to
                 # some specific item/revision in another farm wiki.
+                if namespace:
+                    item_name = u'{0}:{1}'.format(namespace, item_name)
                 local_url = url_for(endpoint, item_name=item_name, rev=rev, _external=False)
                 # we know that everything left of the + belongs to script url, but we
                 # just want e.g. +show/42/FooBar to append it to the other wiki's
                 # base URL.
-                i = local_url.index('/+')
+                i = local_url.index('/%2B')
                 path = local_url[i+1:]
                 url = wiki_base_url + path
     return url
 
+def _split_namespace(namespaces, url):
+    """
+    Find the longest namespace in the set.
+    the namespaces are separated by colons (:).
+    Example:
+        namespaces_set(['ns1', 'ns1:ns2'])
+        url: ns1:urlalasd return: ns1, urlalasd
+        url: ns3:urlalasd return: '', ns3:urlalasd
+        url: ns2:urlalasd return: '', ns2:urlalasd
+        url: ns1:ns2:urlalasd return: ns1:ns2, urlalasd
+    param namespaces_set: set of namespaces (strings) to search
+    param url: string
+    returns: (namespace, url)
+    """
+    namespace = u''
+    tokens_list = url.split(':')
+    for token in tokens_list:
+        if namespace:
+            token = u'{0}:{1}'.format(namespace, token)
+        if token in namespaces:
+            namespace = token
+        else:
+            break
+    if namespace:
+        length = len(namespace) + 1
+        url = url[length:]
+    return namespace, url
 
 def split_interwiki(wikiurl):
     """ Split a interwiki name, into wikiname and pagename, e.g:
 
-    'MoinMoin:FrontPage' -> "MoinMoin", "FrontPage"
-    'FrontPage' -> "Self", "FrontPage"
-    'MoinMoin:Page with blanks' -> "MoinMoin", "Page with blanks"
-    'MoinMoin:' -> "MoinMoin", ""
-
+    'MoinMoin:FrontPage' -> "MoinMoin", "", "FrontPage"
+    'FrontPage' -> "Self", "", "FrontPage"
+    'MoinMoin:Page with blanks' -> "MoinMoin", "", "Page with blanks"
+    'MoinMoin:' -> "MoinMoin", "", ""
+    'MoinMoin:interwikins:AnyPage' -> "MoinMoin", "interwikins", "AnyPage"
+    ':ns:AnyPage' -> "Self", "ns", "AnyPage" if ns namespace exists or "Self", "", ":ns:AnyPage" if not.
+    'ns:AnyPage' -> "Self", "ns", "AnyPage" if ns namespace exists or "Self", "", "ns:AnyPage" if not.
+    ':ns1:ns2:AnyPage' -> "Self", "ns1:ns2", "AnyPage" if ns1:ns2 namespace exists OR
+                         "Self", "ns1", "ns2:AnyPage" if ns1 namespace exists OR
+                         "Self", "", "ns1:ns2:AnyPage" else.
     :param wikiurl: the url to split
     :rtype: tuple
-    :returns: (wikiname, pagename)
+    :returns: (wikiname, namespace, pagename)
     """
-    try:
-        wikiname, pagename = wikiurl.split(":", 1)
-    except ValueError:
-        wikiname, pagename = 'Self', wikiurl
-    return wikiname, pagename
+    if not isinstance(wikiurl, unicode):
+        wikiurl = wikiurl.decode('utf-8')
+    namespace_mapping = set()
+    for namespace, _ in app.cfg.namespace_mapping:
+        namespace_mapping.add(namespace.rstrip(':'))
+    # Base case: no colon in wikiurl
+    if not ':' in wikiurl:
+        return u'Self', u'', wikiurl
+    if not wikiurl.startswith(':'):
+        wikiname, item_name = _split_namespace(set(app.cfg.interwiki_map.keys()), wikiurl)
+        namespace = u''
+        if not wikiname:
+            namespace, item_name =  _split_namespace(set(namespace_mapping), wikiurl)
+            wikiname = u'Self'
+        else:
+            if ':' in wikiname:
+                namespace = wikiname.split(':', 1)[1]
+                wikiname = wikiname.split(':', 1)[0]
+        return wikiname, namespace, item_name
+    else:
+        namespace, item_name =  _split_namespace(set(namespace_mapping), wikiurl.split(':', 1)[1])
+        if not namespace:
+            item_name = u':{0}'.format(item_name)
+        return u'Self', namespace, item_name
 
-
-def join_wiki(wikiurl, wikitail):
+def join_wiki(wikiurl, wikitail, namespace):
     """
     Add a (url_quoted) page name to an interwiki url.
 
@@ -114,15 +172,23 @@ def join_wiki(wikiurl, wikitail):
 
     :param wikiurl: wiki url, maybe including a $PAGE placeholder
     :param wikitail: page name
+    :param namespace: namespace
     :rtype: string
     :returns: generated URL of the page in the other wiki
     """
     wikitail = url_quote(wikitail, charset=config.charset, safe='/')
+    namespace = url_quote(namespace, charset=config.charset, safe='/')
+    if not('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl):
+        if namespace:
+            namespace = u':{0}:'.format(namespace)
+        elif not wikiurl:
+            return wikitail
+        return wikiurl + namespace + wikitail
     if '$PAGE' in wikiurl:
-        return wikiurl.replace('$PAGE', wikitail)
-    else:
-        return wikiurl + wikitail
-
+        wikiurl = wikiurl.replace('$PAGE', wikitail)
+    if '$NAMESPACE' in wikiurl:
+        wikiurl = wikiurl.replace('$NAMESPACE', namespace)
+    return wikiurl
 
 def getInterwikiName(item_name):
     """
@@ -132,7 +198,7 @@ def getInterwikiName(item_name):
     :rtype: unicode
     :returns: wiki_name:item_name
     """
-    return "{0}:{1}".format(app.cfg.interwikiname, item_name)
+    return u'{0}:{1}'.format(app.cfg.interwikiname, item_name)
 
 
 def getInterwikiHome(username):

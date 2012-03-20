@@ -106,9 +106,9 @@ class ThemeSupport(object):
         breadcrumbs = []
         trail = user.get_trail()
         for interwiki_item_name in trail:
-            wiki_name, item_name = split_interwiki(interwiki_item_name)
+            wiki_name, namespace, item_name = split_interwiki(interwiki_item_name)
             err = not is_known_wiki(wiki_name)
-            href = url_for_item(item_name, wiki_name=wiki_name)
+            href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
             if is_local_wiki(wiki_name):
                 exists = self.storage.has_item(item_name)
                 wiki_name = ''  # means "this wiki" for the theme code
@@ -195,10 +195,10 @@ class ThemeSupport(object):
         if target.startswith("wiki:"):
             target = target[5:]
 
-        wiki_name, item_name = split_interwiki(target)
+        wiki_name, namespace, item_name = split_interwiki(target)
         if wiki_name == 'Self':
             wiki_name = ''
-        href = url_for_item(item_name, wiki_name=wiki_name)
+        href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
         if not title:
             title = item_name
         return href, title, wiki_name
