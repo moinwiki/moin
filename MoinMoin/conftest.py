@@ -57,7 +57,7 @@ def init_test_app(given_config):
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,
                          **more_config)
-    ctx = app.test_request_context('/')
+    ctx = app.test_request_context('/', base_url="http://localhost:8080/")
     ctx.push()
     before_wiki()
     return app, ctx
