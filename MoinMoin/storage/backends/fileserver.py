@@ -27,6 +27,8 @@ from . import BackendBase
 
 from MoinMoin.util.mimetype import MimeType
 
+NAME_SEP = '/'
+
 
 class Backend(BackendBase):
     """
@@ -50,26 +52,38 @@ class Backend(BackendBase):
 
     def _mkpath(self, key):
         """
-        key -> rel path, absolute path (strip mtime)
+        key -> itemname, absolute path (strip mtime)
         """
         # XXX unsafe keys?
         try:
-            relpath, mtime = key.rsplit('.', 1)
+            itemname, mtime = key.rsplit('.', 1)
         except ValueError:
             # we only generate revids that look like path.mtime,
             # so if the split does not work, the revid is invalid
             # and we raise KeyError like if the rev is not there
             raise KeyError(key)
-        return relpath, os.path.join(self.path, relpath)
+        # we get NAME_SEP and need to replace them by os.sep to make valid pathes:
+        if os.sep == NAME_SEP:
+            relpath = itemname
+        else:
+            relpath = itemname.replace(NAME_SEP, os.sep)
+        return itemname, os.path.join(self.path, relpath)
 
     def _mkkey(self, path):
         """
-        absolute path -> relpath, mtime
+        absolute path -> itemname, mtime
         """
         st = os.stat(path)
         root = self.path
         assert path.startswith(root)
-        return path[len(root)+1:], int(st.st_mtime)
+        relpath = path[len(root)+1:]
+        # we always want to give NAME_SEP-separated names (not backslash):
+        if os.sep == NAME_SEP:
+            itemname = relpath
+        else:
+            itemname = relpath.replace(os.sep, NAME_SEP)
+        mtime = int(st.st_mtime)
+        return itemname, mtime
 
     def _encode(self, key):
         """
@@ -81,15 +95,15 @@ class Backend(BackendBase):
     def _decode(self, qkey):
         return url_unquote(qkey)
 
-    def _get_meta(self, fn, path):
+    def _get_meta(self, itemname, path):
         try:
             st = os.stat(path)
         except OSError as e:
             if e.errno == errno.ENOENT:
-                raise KeyError(fn)
+                raise KeyError(itemname)
             raise
         meta = {}
-        meta[NAME] = fn
+        meta[NAME] = itemname
         meta[MTIME] = int(st.st_mtime) # use int, not float
         meta[REVID] = unicode(self._encode('%s.%d' % (meta[NAME], meta[MTIME])))
         meta[ITEMID] = meta[REVID]
@@ -101,7 +115,7 @@ class Backend(BackendBase):
             size = 0
         elif stat.S_ISREG(st.st_mode):
             # normal file
-            ct = unicode(MimeType(filename=fn).content_type())
+            ct = unicode(MimeType(filename=itemname).content_type())
             size = int(st.st_size) # use int instead of long
         else:
             # symlink, device file, etc.
@@ -134,7 +148,7 @@ class Backend(BackendBase):
             content = unicode(err)
         return content
 
-    def _get_data(self, fn, path):
+    def _get_data(self, itemname, path):
         try:
             st = os.stat(path)
             if stat.S_ISDIR(st.st_mode):
@@ -146,7 +160,7 @@ class Backend(BackendBase):
                 return StringIO('')
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
-                raise KeyError(fn)
+                raise KeyError(itemname)
             raise
 
     def __iter__(self):
@@ -162,8 +176,8 @@ class Backend(BackendBase):
 
     def retrieve(self, key):
         key = self._decode(key)
-        fn, path = self._mkpath(key)
-        meta = self._get_meta(fn, path)
-        data = self._get_data(fn, path)
+        itemname, path = self._mkpath(key)
+        meta = self._get_meta(itemname, path)
+        data = self._get_data(itemname, path)
         return meta, data
 
