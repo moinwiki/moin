@@ -84,6 +84,28 @@ additional software into the virtual environment, activate it before running pip
  # or
  env\Scripts\activate.bat  # for windows
 
+As you have activated the virtual env now, the moin command should be in your
+path now, so you can just invoke it using "moin".
+
+Letting moin find the wiki configuration
+----------------------------------------
+
+moin needs to find the wiki configuration. If you want it to run in the most
+simple way (without giving parameters to the moin command), it is easiest if
+you are in the same directory as the configuration files (e.g. wikiconfig.py).
+
+If you are working from a repository workdir, this is just the top level
+directory and there is already a ready-to-use wikiconfig.py.
+
+In case you want to just give the configuration file location, make sure you
+use an **absolute path**. moin will try to find its configuration in this
+order:
+
+- command line argument `--config /path/to/wikiconfig.py`
+- environment variable `MOINCFG=/path/to/wikiconfig.py`
+- current directory, file `wikiconfig_local.py`
+- current directory, file `wikiconfig.py`
+
 Initializing index and/or storage
 ---------------------------------
 If you have an existing storage AND a valid index (for this storage’s content, and for this moin version),
