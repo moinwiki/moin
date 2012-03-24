@@ -32,10 +32,11 @@ class _Store(MutableStoreBase):
 
         :param cls: Class to create
         :param uri: The URI should follow the following template
-                    db_name:table_name:compression_level
+                    db_name::table_name::compression_level
                     where table_name and compression level are optional
         """
-        params = uri.split(":")
+        params = uri.split("::") # using "::" to support windows pathnames that
+                                 # may include ":" after the drive letter.
         if len(params) == 3:
             params[2] = int(params[2])
         return cls(*params)

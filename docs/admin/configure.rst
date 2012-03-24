@@ -1150,6 +1150,31 @@ Please see the sqlalchemy docs about the part after `sqla:`.
 Grant 'myuser' (his password: 'mypassword') full access to these databases.
 
 
+sqlite store
+------------
+Features:
+
+* directly talks to sqlite, not using sqlalchemy
+* stores data into an sqlite database, which is a single file
+* can either use 1 database per store or 1 table per store (you need to
+  give different table names then)
+* can optionally compress/decompress the data using zlib (default compression
+  level is 0, which means to not compress)
+ 
+`uri` for `create_simple_mapping` looks like e.g.::
+
+    stores:sqlite:/srv/mywiki/data/mywiki_%(nsname)s.db
+    stores:sqlite:/srv/mywiki/data/mywiki.db::%(nsname)s
+    stores:sqlite:/srv/mywiki/data/mywiki.db::%(nsname)s::1
+
+The uri part after "sqlite:" is like::
+
+    PATH::TABLENAME::COMPRESSION
+
+It uses "::" as separator to support windows pathes which may have ":" after
+the drive letter.
+
+
 kc store
 --------
 Features:
