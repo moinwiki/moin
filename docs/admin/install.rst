@@ -159,12 +159,20 @@ Troubleshooting
 PyPi down
 ~~~~~~~~~
 Now and then, PyPi might be down or unreachable.
+
 There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
 you can use in such cases, you just need to tell pip to do so::
 
  # put this into ~/.pip/pip.conf
  [global]
  index-url = http://c.pypi.python.org/simple
+
+In case that doesn't work either, try our mini pypi that should have all
+packages you need for moin::
+
+ # put this into ~/.pip/pip.conf
+ [global]
+ index-url = http://pypi.moinmo.in/simple
 
 Bad Network Connection
 ~~~~~~~~~~~~~~~~~~~~~~
