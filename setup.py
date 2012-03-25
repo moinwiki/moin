@@ -12,7 +12,8 @@ if sys.hexversion < 0x2060000:
     sys.stderr.write("%s %s requires Python 2.6 or greater.\n" % (project, str(version)))
     sys.exit(1)
 
-long_description = open('README.txt').read()
+with open('README.txt') as f:
+    long_description = f.read()
 
 from setuptools import setup, find_packages
 
@@ -55,6 +56,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     #package_dir={'MoinMoin.translations': 'MoinMoin/translations',
     #             'MoinMoin.static': 'MoinMoin/static',
     #             'MoinMoin.themes.modernized': 'MoinMoin/themes/modernized',
+    #             'MoinMoin.themes.foobar': 'MoinMoin/themes/foobar',
     #             'MoinMoin.templates': 'MoinMoin/templates',
     #             'MoinMoin.apps.admin.templates': 'MoinMoin/apps/admin/templates',
     #             'MoinMoin.apps.misc.templates': 'MoinMoin/apps/misc/templates',
@@ -63,6 +65,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     package_data={'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
                   'MoinMoin.static': ['*', ],
                   'MoinMoin.themes.modernized': ['*', ],
+                  'MoinMoin.themes.foobar': ['*', ],
                   'MoinMoin.templates': ['*.html', '*.xml', ],
                   'MoinMoin.apps.admin.templates': ['*.html', ],
                   'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
@@ -92,7 +95,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'whoosh>=2.3.2', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
-        'XStatic>=0.0.2',
+        'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.6.1.4',
         'XStatic-jQuery-File-Upload>=4.4.2',
