@@ -35,6 +35,15 @@ We use Mercurial DVCS (hg) for distributed version control.
 If you are not using Mercurial, you can of course also just send us patches.
 In that case, open an issue in the issue tracker and attach the patch there.
 
+Code review:
+
+Please use http://codereview.appspot.com/ for getting feedback on moin-related
+code (especially if you want to contribute or publish that code).
+
+If you are using a local mercurial repository/workdir you can very easily
+upload your uncommitted workdir state to codereview (using their "upload.py").
+
+Then just ask on the IRC channel for review (give the codereview URL).
 
 MoinMoin architecture
 =====================
