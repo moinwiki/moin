@@ -3,20 +3,30 @@ MoinMoin Supports You
 
 Free Support
 ------------
-.. todo::
-
-   copy stuff from MoinMoin:Support
+You can get free support and informations there:
+* on our chat channels, see http://moinmo.in/MoinMoinChat
+* on our wiki, see http://moinmo.in/ - please note that quite a lot of content
+  there is about moin 1.x and does not apply to moin2. One page has a lot
+  of information about moin2 and also links to all sorts of moin2 resources:
+  http://moinmo.in/MoinMoin2.0
+* on our mailing list, see http://moinmo.in/MoinMoinMailingLists
+* on our issue tracker: https://bitbucket.org/thomaswaldmann/moin-2.0/issues
+* from our repository: https://bitbucket.org/thomaswaldmann/moin-2.0/overview
 
 .. note::
+   All free support is done voluntarily by helpful MoinMoin community members.
+   Thanks to everyone who is helping!
 
    If you enjoyed / want to enjoy free community support, please also consider
-   being an active part of the community and giving support, see below.
+   being an active part of the community and also supporting it.
+
 
 Commercial Support
 ------------------
-.. todo::
+As MoinMoin 2.0 is not released yet, there is no support for production
+systems based on it (we do not recommend that and do not support that).
 
-   copy stuff from MoinMoin:Support
+If you want to talk about development topics, please contact the developers.
 
 
 You Support MoinMoin
@@ -35,7 +45,7 @@ Found a bug?
 
 Have an idea?
 -------------
-* Discuss it on IRC and file a feature request on the wiki.
+* Discuss it on IRC and file a feature request (on bitbucket).
 * Even better: discuss + write some Python code implementing it.
 
 Born to code?
@@ -43,13 +53,9 @@ Born to code?
 * Help to work on moin2 core, so it gets finished faster.
 * Help maintaining moin 1.9 until moin2 is ready.
 
-No time, but money?
--------------------
-* If you use moin in your business and you would like some help from a moin
-  developer or administrator, consider buying some commercial support (see
-  above). It'll save you some of your precious time, likely improve your
-  moin experience and help moin administrators and developers to spend more
-  time on moin.
+Loving UI / UX design?
+----------------------
+* Help us making moin2 look and feel better!
 
 Have good language or documentation skills?
 -------------------------------------------
