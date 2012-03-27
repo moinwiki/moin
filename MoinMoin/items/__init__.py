@@ -20,6 +20,7 @@ import tarfile
 import zipfile
 import tempfile
 import itertools
+import types
 from StringIO import StringIO
 from array import array
 
@@ -200,7 +201,6 @@ class Item(object):
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
-
         item = item_registry.get(name, Type(contenttype), rev=rev)
         logging.debug("ItemClass {0!r} handles {1!r}".format(item.__class__, contenttype))
         return item
@@ -329,7 +329,6 @@ class Item(object):
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
-            NAME,
             ITEMID, REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
@@ -385,27 +384,25 @@ class Item(object):
             raise StorageError("unsupported content object: {0!r}".format(content))
         return written
 
-    def _rename(self, name, comment, action):
-        self._save(self.meta, self.data, name=name, action=action, comment=comment)
+    def _rename(self, name, comment, action, delete=False):
+        new_name = name
+        self._save(self.meta, self.data, name=new_name, action=action, comment=comment, delete=delete)
         for child in self.get_index():
             item = Item.create(child[0])
-            item._save(item.meta, item.data, name='/'.join((name, child[1])), action=action, comment=comment)
+            new_name = u'/'.join((name, child[1]))
+            item._save(item.meta, item.data, name=new_name, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
-        rename this item to item <name>
+        rename this item to item <name> (replace current name by another name in the NAME list)
         """
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
         """
-        delete this item
+        delete this item (remove current name from NAME list)
         """
-        trash_prefix = u'Trash/' # XXX move to config
-        now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
-        # make trash name unique by including timestamp:
-        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
-        return self._rename(trashname, comment, action=u'TRASH')
+        return self._rename(None, comment, action=u'TRASH', delete=True)
 
     def revert(self):
         # called from revert UI/POST
@@ -460,7 +457,8 @@ class Item(object):
         comment = request.form.get('comment')
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+              overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
         try:
@@ -479,9 +477,20 @@ class Item(object):
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if type(oldname) is not types.ListType:
+                oldname = [oldname]
+            if delete or name not in oldname: # this is a delete or rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                if not delete:
+                    oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
@@ -524,10 +533,13 @@ class Item(object):
             query = Term(WIKINAME, app.cfg.interwikiname)
         # We only want the sub-item part of the item names, not the whole item objects.
         prefix_len = len(prefix)
-        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        items = [(rev.meta[NAME], rev.meta[NAME][prefix_len:], rev.meta[CONTENTTYPE])
-                 for rev in revs]
-        return items
+        revs = flaskg.storage.search(query, limit=None)
+        items = []
+        for rev in revs:
+            rev.set_context(self.name)
+            items.append((rev.name, rev.name[prefix_len:], rev.meta[CONTENTTYPE]))
+
+        return sorted(items, key=lambda item: item[0])
 
     def _connect_levels(self, index):
         new_index = []
@@ -698,7 +710,7 @@ There is no help, you're doomed!
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        return [rev.meta[NAME] for rev in revs]
+        return [rev.name for rev in revs]
 
     def do_modify(self, contenttype, template_name):
         # XXX think about and add item template support

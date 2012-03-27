@@ -65,7 +65,7 @@ def atom(item_name):
             query = And([query, Term(NAME_EXACT, item_name), ])
         history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
         for rev in history:
-            name = rev.meta[NAME]
+            name = rev.name
             item = rev.item
             this_revid = rev.meta[REVID]
             previous_revid = rev.meta.get(PARENTID)
