@@ -526,7 +526,7 @@ class SpecialPage(object):
     def add_heading(self, elem, level, id=None):
         elem.append(html.a(attrib={
             html.href: "#{0}".format(id),
-            html.class_: "permalink",
+            html.class_: "moin-permalink",
             html.title_: _("Link to this heading")
         }, children=(u"¶", )))
         self._headings.append((elem, level, id))
@@ -629,7 +629,7 @@ class ConverterPage(Converter):
                                          html.href_: "#",
                                          html.onclick_:
                                             "$('#li{0} ol').toggle();return false;".format(id),
-                                         html.class_: 'showhide',
+                                         html.class_: 'moin-showhide',
                                      },
                                      children=["[+]", ])
                     elem_a = html.a(attrib={html.href: '#' + id},

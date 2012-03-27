@@ -34,7 +34,11 @@
 {% for row in rows %}
     <tr>
         {% for col in row %}
-        <td>{{ col }}</td>
+            {% if col is number %}
+                <td class="moin-integer">{{ col }}</td>
+            {%- else -%}
+                <td>{{ col }}</td>
+            {% endif %}
         {% endfor %}
     </tr>
 {% endfor %}
@@ -72,7 +76,7 @@
     {% if subitems %}
         <div class="moin-subitem-navigation">
             <div class="list-header">
-                {{ _('Subitems') }} 
+                {{ _('Subitems') }}
             </div>
             {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
         </div>

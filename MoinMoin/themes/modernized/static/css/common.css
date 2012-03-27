@@ -65,7 +65,7 @@ a:link { color: blue; }
 a:visited { color: purple; }
 a:hover { color: red; }
 a:active { color: red; }
- a.moin-nonexistent:visited,
+a.moin-nonexistent:visited,
 a.moin-nonexistent { color: #444; }
 
 /* lists */
@@ -134,7 +134,7 @@ div.moin-table-of-contents { border: 1px solid #BBB; color: black; background: #
 /* Navigation macro */
 table.navigation { background: #FFF; float: right; margin: 2px; }
 
-/* footnotes */
+/* footnotes - footnote is a footnote number; footnotes is the list of footnotes */
 .moin-footnote a,
 .moin-footnotes sup a {font-size: .87em; }
 .moin-footnotes {border-top: 1px solid gray; margin: 0 1em; }
@@ -181,22 +181,12 @@ p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2p
 .searchpages td a,
 .searchpages td a:link { text-decoration: underline; }
 
-/* edit and edit preview page  */
-textarea { border: 1px solid #8cacbb; font-family: monospace; margin: .33em 0; padding: 3px; width: 100%; }
-input#comment { border: 1px solid #8cacbb; display: inline; margin: .33em 0; padding: 3px; width: 70%; }
-/*  placeholder
-#editor-help { font-size: small; background-color: #EEEEFF; }
-#editor-comment { font-size: 100%; border: 1px solid #8cacbb; color: black; background-color: white;
-            vertical-align: middle; padding: 1px; display: inline; width: 70%; }
-#preview,
-#previewbelow { border: 1px solid #6C7680; padding: 10px 30px 20px 30px; background: url(../img/draft.png); margin-top: 0.5em; }
-*/
-
-/* textchas */
-/* placeholder
-#textcha { font-size: 100%; margin-top: 0.5em; border: 2px solid #FF8888; color: black; vertical-align: middle; padding: 3px 2px; }
-#textcha-answer { border: 2px solid #000000; padding: 3px 2px; }
-*/
+/* edit and textchas  TODO: preview not implemented; better names for f_... selectors */
+#f_data_text { border: 1px solid #8cacbb; font-family: monospace; margin: .33em 0; padding: 3px; width: 100%; }
+#f_comment,
+#f_textcha { border: 1px solid #8cacbb; display: inline; margin: .33em 0; padding: 3px; width: 70%; }
+#moin-editor-help { font-size: small; background-color: #EEEEFF; }
+#preview { border: 1px solid #6C7680; padding: 10px 30px 20px 30px; background: url(../img/draft.png); margin-top: 0.5em; }
 
 /* global history and page history */
 .moin-hist-rev input { float: left; }
@@ -316,8 +306,6 @@ a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em
 .moin-diff-header { vertical-align: top; font-size: 92%; }
 .moin-diff-info { margin: .33em .25em; }
 .moin-diff-info-value { white-space: normal; }
-.moin-diff-info-heading { background-color: #E8E8E8; width: 100%; padding: 0.25em 0.5em;
-            margin: -0.25em -0.5em; margin-bottom: 0.25em; text-align: center; }
 .moin-diff-info-caption {display: inline-block; min-width: 5em; }
 
 .moin-diff-line-number { background-color: #C0C0C0; }
@@ -341,26 +329,6 @@ ul.moin-tags li.weight6 { font-size: 140%; }
 ul.moin-tags li.weight7 { font-size: 160%; }
 ul.moin-tags li.weight8 { font-size: 180%; }
 ul.moin-tags li.weight9 { font-size: 200%; }
-
-/* MonthCalendar css */
-/* placeholder, none of this is working yet */
-/* days without and with pages linked to them */
-a.cal-emptyday { color: #777; text-align: center; }
-a.cal-usedday { color: #000; font-weight: bold; text-align: center; }
-/* general stuff: workdays, weekend, today */
-td.cal-workday { background-color: #DDF; text-align: center; }
-td.cal-weekend { background-color: #FDD; text-align: center; }
-td.cal-today { background-color: #CFC; border-style: solid; border-width: 2px; text-align: center; }
-/* invalid places on the monthly calendar sheet */
-td.cal-invalidday { background-color: #CCC; }
-/* links to prev/next month/year */
-a.cal-link { color: #000; text-decoration: none; }
-th.cal-header { background-color: #DBF; text-align: center; }
-/* for MonthCalendar mouseover info boxes */
-TABLE.tip { color: black; background-color: #F88; font-size: small; font-weight: normal;
-            border-style: solid; border-width: 1px; }
-TH.tip { background-color: #F44; font-weight: bold; text-align: center; }
-TD.tip { text-align: left; }
 
 /* wiki parser  - no moin- prefix added here, these classes are used within pages: {{{#!wiki solid  */
 .comment { color: #555; background-color: #DDF; }
@@ -548,10 +516,6 @@ a:hover,
 a:active { text-decoration: underline; color: green; }
 a.moin-nonexistent:link { color: #666; }
 a.moin-nonexistent:hover { color: black; text-decoration: underline; }
-/* placeholder - not used yet
-a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; background: #E7E7E7;
-            border: 1px solid #9C9C9C; padding: 0.5em; text-align: center; }
-*/
 
 /* moin-header */
 #moin-header { margin: 0px; padding: 0px;
@@ -667,15 +631,15 @@ a.moin-item-overlay-lr { display: none; position: absolute; color: transparent; 
  div.moin-item-wrapper > div >  p:first-child ~ p:last-child { margin-top: 1em; }
 
 /* special style for heading with mouseover permalinks */
-.permalink { display: none; cursor: pointer; font-size: 80%; margin-left: 3px; }
-a.permalink { color: #95A09F; }
-a:hover.permalink { color: #C1CFCD; }
-h1:hover .permalink,
-h2:hover .permalink,
-h3:hover .permalink,
-h4:hover .permalink,
-h5:hover .permalink,
-h6:hover .permalink { display: inline; text-decoration: none; }
+.moin-permalink { display: none; cursor: pointer; font-size: 80%; margin-left: 3px; }
+a.moin-permalink { color: #95A09F; }
+a:hover.moin-permalink { color: #C1CFCD; }
+h1:hover .moin-permalink,
+h2:hover .moin-permalink,
+h3:hover .moin-permalink,
+h4:hover .moin-permalink,
+h5:hover .moin-permalink,
+h6:hover .moin-permalink { display: inline; text-decoration: none; }
 
 } /* end of @media screen, projection */
 
@@ -686,16 +650,15 @@ html { font-family: serif; font-size: 12pt; width: 100%; }
 body, #moin-page, #moin-page, #moin-content-data { margin: 0; padding: 0; }
 
 a, a:visited,
-a.nonexistent { color: black !important; text-decoration: none !important; }
+a.moin-nonexistent { color: black !important; text-decoration: none !important; }
 
-a.interwiki:before { content: attr(title) ":"; }
-a.interwiki img { display: none; }
+a.moin-interwiki:before { content: attr(title) ":"; }
+a.moin-interwiki img { display: none; }
 
 pre { font-size: 10pt; }
-.footnotes div { width: 5em; border-top: 1pt solid gray; }
 div.moin-table-of-contents { box-shadow: none; }
 
-a.permalink, a.moin-showhide, a.showhide,
+a.moin-permalink, a.moin-showhide,
 #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
 #moin-pagelocation { display: none; }
 
@@ -724,12 +687,7 @@ sup, sub { font-size: 12pt; }
 table.navigation { float: right; margin: 2px; }
 .navigation td, .navigation a {  font-size: 10pt; padding: 2px; }
 
-#moin-interwiki, #moin-pagelocation, #moin-pageinfo { display: none; }
-
 #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
-#moin-pagelocation { display: none; }
-
-#moin-pageinfo { color: gray; font-size: .67em; float: right; }
-#moin-pageinfo a { color: gray; }
+#moin-pagelocation, #moin-pageinfo  { display: none; }
 
 }   /* end of @media projection */
