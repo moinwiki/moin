@@ -23,7 +23,6 @@ page_invalid_chars_regex = re.compile(
     re.UNICODE | re.VERBOSE
     )
 
-# used for wikiutil.clean_input
 clean_input_translation_map = {
     # these chars will be replaced by blanks
     ord(u'\t'): u' ',

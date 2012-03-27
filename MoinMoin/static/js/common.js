@@ -114,35 +114,6 @@ function show_switch2gui() {
     }
 }
 
-// for long documents with many comments this is expensive to calculate,
-// thus we keep it here:
-comments = null;
-
-function toggleComments() {
-    // Toggle visibility of every tag with class "comment"
-    for (i = 0; i < comments.length; i++){
-        el = comments[i];
-        if ( el.style.display != 'none' ) {
-            el.style.display = 'none';
-        } else {
-            el.style.display = '';
-        }
-    }
-}
-
-function show_toggleComments() {
-    // Show edit bar item for toggling inline comments on/off only if inline comments exist on the page
-    comments = getElementsByClassName('comment', null, document);
-    if (comments.length > 0) {
-        var buttons = getElementsByClassName('toggleCommentsButton', null, document);
-        for (i = 0; i < buttons.length; i++){
-            el = buttons[i];
-            el.style.display = '';
-        }
-    }
-}
-
-
 function load() {
     // Do not name this "onload", it does not work with IE :-)
     // TODO: create separate onload for each type of view and set the
@@ -155,9 +126,6 @@ function load() {
 
     // Editor stuff
     show_switch2gui();
-
-    // Enable menu item "ToggleComments" if inline comments exist
-    show_toggleComments();
 
     // data browser widget
     dbw_hide_buttons();
@@ -786,27 +754,116 @@ function moinFirefoxWordBreak() {
 }
 jQuery(moinFirefoxWordBreak);
 
-/* For the overlays on transcluded objects */
-function removeURLPrefixes(url) {
-    return url.replace("+get/", "").replace("+modify/", "")
+// globals used to save translated show/hide titles (tooltips) for Comments buttons
+var pageComments = null;
+var commentsShowTitle = ''; // "Show comments"
+var commentsHideTitle = ''; // "Hide comments"
+
+// This is executed when user clicks a Comments button and conditionally on dom ready
+function toggleComments() {
+    // Toggle visibility of every tag with class "comment"
+    var buttons = jQuery('.moin-toggle-comments-button > a');
+    if (pageComments.is(':hidden')) {
+        pageComments.show();
+        buttons.attr('title', commentsHideTitle);
+    } else {
+        pageComments.hide();
+        buttons.attr('title', commentsShowTitle);
+    }
 }
-function attachHoverToObjects() {
-    $(".page-object").mouseenter(function(e) {
-        elements = $(".object-overlay", this)
-        elements.each(function(i) {
-            if (location.href == removeURLPrefixes(this.firstChild.href)) {
-                var elem = $(this)
-                setTimeout(function() {
-                    elem.hide()
-                }, 10)
+
+// Comments initialization is executed once after document ready
+function initToggleComments() {
+    var titles;
+    var show_comments = '0';
+    pageComments = jQuery('.comment');
+    if (pageComments.length > 0) {
+        // There are comments, so show itemview Comments button
+        jQuery('.moin-toggle-comments-button').css('display', '');
+        // read translated show|hide Comments button title, split into show and hide parts, and save
+        titles = jQuery('.moin-toggle-comments-button > a').attr('title').split('|');
+        if (titles.length === 2) {
+            commentsShowTitle = titles[0];
+            commentsHideTitle = titles[1];
+            jQuery('.moin-toggle-comments-button > a').attr('title', commentsHideTitle);
+        }
+        // show or hide comments based on user option or default option:
+        //     show comments if  there is a <meta name="moin-show-comments" content="1" />
+        if (document.getElementsByName('moin-show-comments').length > 0) {
+            show_comments = document.getElementsByName('moin-show-comments')[0].content;
+        }
+        if (show_comments !== '1') {
+            // user option is to hide comments
+            toggleComments();
+        }
+    }
+}
+jQuery(document).ready(initToggleComments);
+
+// globals used to save translated show/hide titles (tooltips) for Transclusions buttons
+var transclusionShowTitle = ''; // "Show Transclusions"
+var transclusionHideTitle = ''; // "Hide Transclusions"
+
+// This is executed when user clicks a Transclusions button
+function toggleTransclusionOverlays() {
+    var overlays = jQuery('.moin-item-overlay-ul, .moin-item-overlay-lr');
+    if (overlays.length > 0) {
+        var buttons = jQuery('.moin-transclusions-button > a');
+        if (overlays.is(':visible')) {
+            overlays.hide();
+            buttons.attr('title', transclusionShowTitle);
+        } else {
+            overlays.show();
+            buttons.attr('title', transclusionHideTitle);
+}
             }
-        })
-
-        $(elements.slice(1)).hide()
-    })
 }
 
-$(document).ready(attachHoverToObjects)
+// Transclusion initialization is executed once after document ready
+function initTransclusionOverlays() {
+    var elem, overlayUL, overlayLR, wrapper, wrappers;
+    var rightArrow = '\u2192';
+    // get list of elements to be wrapped;  must work in reverse order in case there are nested transclusions
+    var transclusions = jQuery(jQuery('.moin-transclusion').get().reverse());
+    transclusions.each(function (index) {
+        elem = transclusions[index];
+        // if this is the transcluded item page, do not wrap (avoid creating useless overlay links to same page)
+        if (location.href !== elem.getAttribute('data-href')) {
+            if (elem.tagName === 'DIV') {
+                wrapper = jQuery('<div class="moin-item-wrapper"></div>');
+            } else {
+                wrapper = jQuery('<span class="moin-item-wrapper"></span>');
+            }
+            overlayUL = jQuery('<a class="moin-item-overlay-ul"></a>');
+            jQuery(overlayUL).attr('href', elem.getAttribute('data-href'));
+            jQuery(overlayUL).append(rightArrow);
+            overlayLR = jQuery(overlayUL).clone(true);
+            jQuery(overlayLR).attr('class', 'moin-item-overlay-lr');
+            // if the parent of this element is an A, then wrap parent (avoid A's within A's)
+            if (jQuery(elem).parent()[0].tagName === 'A') {
+                elem = jQuery(elem).parent()[0];
+            }
+            // wrap element, add UL and LR overlay siblings, and replace old elem with wrapped elem
+            jQuery(wrapper).append(jQuery(elem).clone(true));
+            jQuery(wrapper).append(overlayUL);
+            jQuery(wrapper).append(overlayLR);
+            jQuery(elem).replaceWith(wrapper);
+        }
+    });
+    // if an element was wrapped above, then make the Transclusions buttons visible
+    wrappers = jQuery('.moin-item-wrapper');
+    if (wrappers.length > 0) {
+        jQuery('.moin-transclusions-button').css('display', '');
+        // read translated show|hide Transclusions button title, split into show and hide parts, and save
+        var titles = jQuery('.moin-transclusions-button > a').attr('title').split('|');
+        if (titles.length === 2) {
+            transclusionShowTitle = titles[0];
+            transclusionHideTitle = titles[1];
+            jQuery('.moin-transclusions-button > a').attr('title', transclusionShowTitle);
+        }
+    }
+}
+jQuery(document).ready(initTransclusionOverlays);
 
 /*
     For the quicklinks patch that

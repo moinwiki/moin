@@ -15,6 +15,9 @@
         user.edit_on_doubleclick and user.may.write(item_name) -%}
             <meta name="edit_on_doubleclick" content="1" />
     {%- endif %}
+    {%- if user.show_comments -%}
+            <meta name="moin-show-comments" content="1" />
+    {%- endif %}
     {% for name, content in theme_supp.meta_items -%}
         <meta name="{{ name }}" content="{{ content }}" />
     {% endfor %}

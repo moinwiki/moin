@@ -49,7 +49,7 @@ from MoinMoin.themes import render_template, get_editor_info, contenttype_to_cla
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
-from MoinMoin import config, user, util, wikiutil
+from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
 from MoinMoin.util import crypto
@@ -973,7 +973,7 @@ def register():
                 'username': form['username'].value,
                 'password': form['password1'].value,
                 'email': form['email'].value,
-                #'openid': form['openid'].value,
+                'openid': form['openid'].value,
             }
             if app.cfg.user_email_verification:
                 user_kwargs['is_disabled'] = True
@@ -1344,7 +1344,7 @@ def usersettings():
                     response['flash'].append((_("Your password has been changed."), "info"))
                 else:
                     if part == 'personal':
-                        if form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
+                        if form['openid'].value and form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False

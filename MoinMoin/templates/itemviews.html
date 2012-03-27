@@ -61,10 +61,16 @@
             {%- endif %}
 
             {%- if endpoint == 'special.comments' %}
-                <li class="toggleCommentsButton" style="display:none;">
+                <li class="moin-toggle-comments-button" style="display:none;">
                     <a href="#" onClick="toggleComments();return false;" title="{{ title }}">{{ label }}</a>
                 </li>
             {%- endif %}
+
+        {% if endpoint == 'special.transclusions' -%}
+            <li class="moin-transclusions-button" style="display:none;">
+            <a href="#" onClick="toggleTransclusionOverlays();return false;" title="{{ title }}">{{ label }}</a>
+            </li>
+        {%- endif %}
 
             {%- if endpoint == 'special.supplementation' %}
                 {%- for sub_item_name in cfg.supplementation_item_names %}

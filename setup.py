@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright: 2001 by Juergen Hermann <jh@web.de>
-# Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2001-2012 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import sys, os
@@ -12,7 +12,8 @@ if sys.hexversion < 0x2060000:
     sys.stderr.write("%s %s requires Python 2.6 or greater.\n" % (project, str(version)))
     sys.exit(1)
 
-long_description = open('README.txt').read()
+with open('README.txt') as f:
+    long_description = f.read()
 
 from setuptools import setup, find_packages
 
@@ -55,6 +56,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     #package_dir={'MoinMoin.translations': 'MoinMoin/translations',
     #             'MoinMoin.static': 'MoinMoin/static',
     #             'MoinMoin.themes.modernized': 'MoinMoin/themes/modernized',
+    #             'MoinMoin.themes.foobar': 'MoinMoin/themes/foobar',
     #             'MoinMoin.templates': 'MoinMoin/templates',
     #             'MoinMoin.apps.admin.templates': 'MoinMoin/apps/admin/templates',
     #             'MoinMoin.apps.misc.templates': 'MoinMoin/apps/misc/templates',
@@ -63,6 +65,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     package_data={'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
                   'MoinMoin.static': ['*', ],
                   'MoinMoin.themes.modernized': ['*', ],
+                  'MoinMoin.themes.foobar': ['*', ],
                   'MoinMoin.templates': ['*.html', '*.xml', ],
                   'MoinMoin.apps.admin.templates': ['*.html', ],
                   'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
@@ -70,11 +73,8 @@ Topic :: Text Processing :: Markup""".splitlines(),
     include_package_data=True,
     zip_safe=False,
     dependency_links = [
-        # hack needed as install from pypi fails for Werkzeug==dev due to
-        # wrong dev URL in the long description.
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
-        # no whoosh 2.3.1 on pypi yet:
-        'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
+        #'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
     ],
@@ -84,7 +84,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
         'Flask-Cache>=0.3.4', # caching support
-        'Flask-Script>=0.3.1', # scripting support
+        'Flask-Script>=0.3.3', # scripting support
         'Flask-Themes>=0.1.3.1', # theme support
         'emeraldtree>=0.9.0', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
@@ -92,10 +92,10 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
-        'whoosh>=2.3.1', # needed for indexed search
+        'whoosh>=2.3.2', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
-        'XStatic>=0.0.2',
+        'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.6.1.4',
         'XStatic-jQuery-File-Upload>=4.4.2',

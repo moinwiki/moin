@@ -66,23 +66,45 @@ Using a different Python or a different virtualenv directory
 For example, if you want to use `PyPy` and want to name the virtualenv directory `env-pypy`,
 use::
 
-    # for linux
-    DIR=env-pypy
-    PYTHON=/opt/pypy/bin/pypy
+ # for linux
+ DIR=env-pypy
+ PYTHON=/opt/pypy/bin/pypy
 
 That way, you can test with different versions of Python in different virtualenv directories within your moin2 workdir.
 
 Activating the virtual env
 --------------------------
 
+IMPORTANT: you always need to activate the virtual environment before running
+anything that executes moin code! Otherwise it won't find the moin command,
+nor the moin code nor the libraries it needs. Also, if you want to install
+additional software into the virtual environment, activate it before running pip!::
+
  source env/bin/activate  # for linux (or other posix OSes)
  # or
  env\Scripts\activate.bat  # for windows
 
-IMPORTANT: you always need to activate the virtual environment before running
-anything that executes moin code! Otherwise it won't find the moin command,
-nor the moin code nor the libraries it needs. Also, if you want to install
-additional software into the virtual environment, activate it before running pip!
+As you have activated the virtual env now, the moin command should be in your
+path now, so you can just invoke it using "moin".
+
+Letting moin find the wiki configuration
+----------------------------------------
+
+moin needs to find the wiki configuration. If you want it to run in the most
+simple way (without giving parameters to the moin command), it is easiest if
+you are in the same directory as the configuration files (e.g. wikiconfig.py).
+
+If you are working from a repository workdir, this is just the top level
+directory and there is already a ready-to-use wikiconfig.py.
+
+In case you want to just give the configuration file location, make sure you
+use an **absolute path**. moin will try to find its configuration in this
+order:
+
+- command line argument `--config /path/to/wikiconfig.py`
+- environment variable `MOINCFG=/path/to/wikiconfig.py`
+- current directory, file `wikiconfig_local.py`
+- current directory, file `wikiconfig.py`
 
 Initializing index and/or storage
 ---------------------------------
@@ -137,12 +159,20 @@ Troubleshooting
 PyPi down
 ~~~~~~~~~
 Now and then, PyPi might be down or unreachable.
+
 There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
-you can use in such cases, you just need to tell pip to do so:
+you can use in such cases, you just need to tell pip to do so::
 
  # put this into ~/.pip/pip.conf
  [global]
  index-url = http://c.pypi.python.org/simple
+
+In case that doesn't work either, try our mini pypi that should have all
+packages you need for moin::
+
+ # put this into ~/.pip/pip.conf
+ [global]
+ index-url = http://pypi.moinmo.in/simple
 
 Bad Network Connection
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -150,7 +180,8 @@ If you have a poor or limited network connection, you may run into trouble with 
 the quickinstall script.
 You may see tracebacks from pip, timeout errors, etc. (see the output of the quickinstall script).
 
-If this is the case, try it manually:
+If this is the case, try it manually::
+
  # enter your virtual environment:
  source env/bin/activate
 

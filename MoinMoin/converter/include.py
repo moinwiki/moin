@@ -6,6 +6,9 @@
 MoinMoin - Include handling
 
 Expands include elements in an internal Moin document.
+
+Although this module is named include.py, many comments within and the moin docs
+use the word transclude as defined by http://www.linfo.org/transclusion.html, etc.
 """
 
 
@@ -23,13 +26,12 @@ from flask import g as flaskg
 from whoosh.query import Term, And, Wildcard
 
 from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
-from MoinMoin import wikiutil
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.tree import html, moin_page, xinclude, xlink
 
-from MoinMoin.converter.html_out import wrap_object_with_overlay
+from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
 
 
 class XPointer(list):
@@ -113,7 +115,9 @@ class Converter(object):
             return cls()
 
     def recurse(self, elem, page_href):
-        # Check if we reached a new page
+        # on first call, elem.tag.name=='page'. Decendants (body, div, p, include, page, etc.) are processed by recursing through DOM
+
+        # stack is used to detect transclusion loops
         page_href_new = elem.get(self.tag_page_href)
         if page_href_new:
             page_href_new = Iri(page_href_new)
@@ -127,6 +131,8 @@ class Converter(object):
 
         try:
             if elem.tag == self.tag_xi_include:
+                # we have already recursed several levels and found a transclusion: "{{SomePage}}" or similar
+                # process the transclusion and add it to the DOM.  Subsequent recursions will traverse through the transclusion's elements.
                 href = elem.get(self.tag_xi_href)
                 xpointer = elem.get(self.tag_xi_xpointer)
 
@@ -173,7 +179,7 @@ class Converter(object):
                                 xp_include_level = data
 
                 if href:
-                    # We have a single page to include
+                    # We have a single page to transclude
                     href = Iri(href)
                     link = Iri(scheme='wiki', authority='')
                     if href.scheme == 'wiki':
@@ -245,12 +251,13 @@ class Converter(object):
 
                     page_doc = page.internal_representation()
                     # page_doc.tag = self.tag_div # XXX why did we have this?
-                    self.recurse(page_doc, page_href)
-                    # Wrap the page with the overlay, but only if it's a "page", or "a".
-                    # The href needs to be an absolute URI, without the prefix "wiki://"
-                    if page_doc.tag.endswith("page") or page_doc.tag.endswith("a"):
-                        page_doc = wrap_object_with_overlay(page_doc, href=unicode(p_href.path))
 
+                    self.recurse(page_doc, page_href)
+
+                    # if this is an existing item, mark it as a transclusion.  non-existent items are not marked (page_doc.tag.name == u'a')
+                    # The href needs to be an absolute URI, without the prefix "wiki://"
+                    if page_doc.tag.name == u'page':
+                        page_doc = mark_item_as_transclusion(page_doc, p_href.path)
                     included_elements.append(page_doc)
 
                 if len(included_elements) > 1:
@@ -261,45 +268,73 @@ class Converter(object):
                     result = included_elements[0]
                 else:
                     result = None
-
+                #  end of processing for transclusion; the "result" will get inserted into the DOM below
                 return result
 
-            container = [elem]
 
+            # Traverse the DOM by calling self.recurse with each child of the current elem.  Starting elem.tag.name=='page'.
+            container = []
             i = 0
             while i < len(elem):
                 child = elem[i]
                 if isinstance(child, ET.Node):
+                    # almost everything in the DOM will be an ET.Node, exceptions are unicode nodes under p nodes
+
                     ret = self.recurse(child, page_href)
+
                     if ret:
-                        if type(ret) == types.ListType:
+                        # "Normally" we are here because child.tag.name==include and ret is a transcluded item (ret.tag.name=page, image, or object, etc.)
+                        # that must be inserted into the DOM replacing elem[i].
+                        # This is complicated by the DOM having many inclusions, such as "\n{{SomePage}}\n" that are a child of a "p".
+                        # To prevent generation of invalid HTML5 (e.g. "<p>text<p>text</p></p>"), the DOM must be adjusted.
+                        if isinstance(ret, types.ListType):
+                            # the transclusion may be a return of the container variable from below, add to DOM replacing the current node
                             elem[i:i+1] = ret
                         elif elem.tag.name == 'p':
-                            try:
-                                body = ret[0][0]
-                                if len(body) == 1 and body[0].tag.name == 'p':
-                                    single = True
-                                else:
-                                    single = False
-                            except AttributeError:
-                                single = False
-
-                            if single:
-                                # content inside P is inserted directly into this P
-                                p = ret[0][0][0]
-                                elem[i:i+1] = [p[k] for k in xrange(len(p))]
-                            else:
-                                # P is closed and element is inserted after
-                                pa = ET.Element(html.p)
-                                pa[0:i] = elem[0:i]
-                                ret[0:1] = elem[i:i+1]
+                            # ancestor P nodes with tranclusions  have special case issues, we may need to mangle the ret
+                            body = ret[0]
+                            # check for instance where ret is a page, ret[0] a body, ret[0][0] a P
+                            if not isinstance(body, unicode) and ret.tag.name == 'page' and body.tag.name == 'body' and \
+                                len(body) == 1 and body[0].tag.name == 'p':
+                                # special case:  "some text {{SomePage}} more text" or "\n{{SomePage}}\n" where SomePage contains a single p.
+                                # the content of the transcluded P will be inserted directly into ancestor P.
+                                p = body[0]
+                                # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
+                                attrib = Attributes(ret).convert()
+                                # make new span node and "convert" p to span by copying all of p's children
+                                span = ET.Element(html.span, attrib=attrib, children=p[:])
+                                # insert the new span into the DOM replacing old include, page, body, and p elements
+                                elem[i] = span
+                            elif not isinstance(body, unicode) and ret.tag.name == 'page' and body.tag.name == 'body':
+                                # special case: "some text {{SomePage}} more text" or "\n{{SomePage}}\n" and SomePage body contains multiple p's, a table, preformatted text, etc.
+                                # note: ancestor P may have text before or after include
+                                if i > 0:
+                                    # there is text before transclude, make new p node to hold text before include and save in container
+                                    pa = ET.Element(html.p)
+                                    pa[:] = elem[0:i]
+                                    container.append(pa)
+                                # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
+                                attrib = Attributes(ret).convert()
+                                # make new div node, copy all of body's children, and save in container
+                                div = ET.Element(html.div, attrib=attrib, children=body[:])
+                                container.append(div)
+                                 # empty elem of siblings that were just placed in container
                                 elem[0:i+1] = []
-                                container[0:0] = [pa, ret]
-                                i = 0
+                                if len(elem) > 0:
+                                    # there is text after transclude, make new p node to hold text, copy siblings, save in container
+                                    pa = ET.Element(html.p)
+                                    pa[:] = elem[:]
+                                    container.append(pa)
+                                    elem[:] = []
+                                # elem is now empty so while loop will terminate and container will be returned up one level in recursion
+                            else:
+                                # ret may be a unicode string: take default action
+                                elem[i] = ret
                         else:
+                            # default action for any ret not fitting special cases above
                             elem[i] = ret
                 i += 1
-            if len(container) > 1:
+            if len(container) > 0:
                 return container
 
         finally:
@@ -307,7 +342,6 @@ class Converter(object):
 
     def __call__(self, tree):
         self.stack = []
-
         self.recurse(tree, None)
 
         return tree

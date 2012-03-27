@@ -33,11 +33,8 @@ class _Store(MutableStoreBase):
         :param cls: Class to create
         :param uri: The database uri that we pass on to SQLAlchemy.
         """
-
-        params = [uri]
-        if '/' in uri.rsplit("//")[-1]:
-            table_name = uri.rsplit("/")[-1]
-            params.append(table_name)
+        params = uri.split("::") # using "::" to support windows pathnames that
+                                 # may include ":" after the drive letter.
         return cls(*params)
 
     def __init__(self, db_uri=None, table_name='store', verbose=False):

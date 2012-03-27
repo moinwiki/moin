@@ -72,32 +72,36 @@ class TestInclude(object):
         update_item(u'page4', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{page2}}')
 
         page1 = MoinWiki.create(u'page1')
+        rendered = page1._render_data()
+        # an error message will follow strong tag
+        assert '<strong class="moin-error">' in rendered
 
-        page1._render_data()
+    def test_ExternalInclude(self):
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{http://moinmo.in}}')
+        rendered = MoinWiki.create(u'page1')._render_data()
+        assert '<object class="moin-http moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object>' in rendered
 
     def test_InlineInclude(self):
         # issue #28
-        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is "{{page2}}"')
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is "{{page2}}".')
 
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Single line')
         rendered = MoinWiki.create(u'page1')._render_data()
-        assert 'Content of page2 is "Single line"' in rendered
+        assert '<p>Content of page2 is "<span class="moin-transclusion" data-href="/page2">Single line</span>".</p>' in rendered
 
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Two\n\nParagraphs')
         rendered = MoinWiki.create(u'page1')._render_data()
-        assert '<p>Two</p>' in rendered
-        assert '<p>Paragraphs</p>' in rendered
+        assert '<p>Content of page2 is "</p><div class="moin-transclusion" data-href="/page2"><p>Two</p><p>Paragraphs</p></div><p>".</p></div>' in rendered
 
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"this text contains ''italic'' string")
         rendered = MoinWiki.create(u'page1')._render_data()
-        assert 'Content of page2 is "this text contains' in rendered
-        assert '<em>italic</em>' in rendered
+        assert 'Content of page2 is "<span class="moin-transclusion" data-href="/page2">this text contains <em>italic</em>' in rendered
 
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is\n\n{{page2}}')
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"Single Line")
         rendered = MoinWiki.create(u'page1')._render_data()
-        assert 'Content of page2 is</p>' in rendered
-        assert '<p>Single Line</p>' in rendered
+        assert '<p>Content of page2 is</p><p><span class="moin-transclusion" data-href="/page2">Single Line</span></p>' in rendered
+        #           '<p>Content of page2 is</p><p><span class="moin-transclusion" data-href="http://127.0.0.1:8080/page2">Single Line</span></p>'
 
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is "{{page2}}"')
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"|| table || cell ||")
@@ -112,3 +116,17 @@ class TestInclude(object):
         assert 'Content of page2 is "</p>' in rendered
         assert '<table>' in rendered
         assert rendered.count('<table>') == 1
+
+    def test_InlineIncludeLogo(self):
+        # the 3rd parameter, u'',  should be a binary string defining a png image, but it is not needed for this simple test
+        update_item(u'logo', {CONTENTTYPE: u'image/png'}, u'')
+
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{logo}}')
+        rendered = MoinWiki.create(u'page1')._render_data()
+        assert '<img alt="logo" class="moin-transclusion"' in rendered
+
+        # <p /> is not valid html5; should be <p></p>. to be valid.  Even better, there should be no empty p's.
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{logo}}{{logo}}')
+        rendered = MoinWiki.create(u'page1')._render_data()
+        assert '<p />' not in rendered
+        assert '<p></p>' not in rendered

@@ -646,16 +646,25 @@ a.download { font-size: 120%; letter-spacing: 0.05em; font-weight: bold; backgro
 #moin-creditlogos { float: right; list-style: none; margin: 0 10px; }
 #moin-creditlogos li { display: inline-block; margin: 10px 0 10px 10px; }
 
-/* transclusion overlay */
-.page-object { margin: 0px; width: auto; height: auto; display: block; position: relative; }
-.object-overlay { background-color: black; position: absolute; padding: 5px; border-radius: 1em;
-            text-align: center; white-space: nowrap; font-size: 120%;
-            font-weight: bold; display: none; margin: 0; opacity: .5; }
-.object-overlay-wrapper { width: 20px; height: 20px; position: absolute; z-index: 100; top: 0px; left: 0px; margin: 0; }
-.object-overlay-wrapper:hover  .object-overlay { display: block; top: -20px; left: 0px; }
-.page-object:hover .object-overlay:hover { opacity: .8; filter: alpha(opacity=90); }
-.object-overlay a:link,
-.object-overlay a:visited { color: white; }
+/* Transcluded items are wrapped in a div or span and have two overlay siblings that link to the item page. */
+/* When a Transclusions button is clicked, a Javascript function will show/hide the corners of the overlay siblings. */
+.moin-item-wrapper { position: relative; display: inline-block; }
+.moin-item-wrapper > a:hover { color: blue; text-decoration: none; }
+a.moin-item-overlay-ul,
+a.moin-item-overlay-lr { display: none; position: absolute; color: transparent; background-color: transparent;
+            font-size: 120%; font-weight: bold; margin: 0; opacity: .5; filter: alpha(opacity=50);
+            padding: 1px; border-color: blue; border-style: double; }
+.moin-item-overlay-ul { top: -4px; left: -4px; border-width: 3px 0 0 3px; }
+.moin-item-overlay-lr { bottom: -4px; right: -4px;  border-width: 0 3px 3px 0; }
+/* On overlay mouseover (if Transclusions toggle state is "show"), the arrow and background are revealed. */
+.moin-item-overlay-ul:hover,
+.moin-item-overlay-lr:hover { opacity: .8; filter: alpha(opacity=80); background-color: #C4D9FF; color: blue; }
+/* Prevent double spacing in nested transclusions that consist of paragraphs of text */
+ div.moin-item-wrapper,
+ div.moin-item-wrapper > div,
+ div.moin-item-wrapper > div > p:first-child,
+ div.moin-item-wrapper > div > p:last-child { margin: 0px; }
+ div.moin-item-wrapper > div >  p:first-child ~ p:last-child { margin-top: 1em; }
 
 /* special style for heading with mouseover permalinks */
 .permalink { display: none; cursor: pointer; font-size: 80%; margin-left: 3px; }

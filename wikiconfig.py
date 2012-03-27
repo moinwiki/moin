@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-"""MoinMoin Wiki - Configuration"""
+"""
+MoinMoin Wiki - Configuration
 
-import sys, os
+Developers can use this configuration to run moin right from their mercurial workdir.
+"""
+
+import os
 
 from MoinMoin.config.default import DefaultConfig
 from MoinMoin.storage import create_simple_mapping
@@ -9,24 +13,23 @@ from MoinMoin.util.interwiki import InterWikiMap
 
 
 class Config(DefaultConfig):
-    # vvv DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO vvv
     # Directory containing THIS wikiconfig:
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
     # We assume this structure for a simple "unpack and run" scenario:
     # wikiconfig.py
     # wiki/
     #      data/
+    #      index/
     # contrib/
-    #      xml/
-    #          preloaded_items.xml
+    #      interwiki/
+    #          intermap.txt
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
     index_dir = os.path.join(instance_dir, "index")
 
     # This provides a simple default setup for your backend configuration.
-    # 'fs:' indicates that you want to use the filesystem backend. You can also use
-    # 'hg:' instead to indicate that you want to use the mercurial backend.
+    # 'stores:fs:...' indicates that you want to use the filesystem backend.
     # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
     namespace_mapping, backend_mapping, acl_mapping = \
         create_simple_mapping(uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
@@ -41,8 +44,10 @@ class Config(DefaultConfig):
                                                     hierarchic=False, ),
                              )
 
-    sitename = u'My MoinMoin'
+    #item_root = u'Home' # front page
 
+    # for display purposes:
+    sitename = u'My MoinMoin'
     # it is required that you set this to a unique, stable and non-empty name:
     interwikiname = u'MyMoinMoin'
     # Load the interwiki map from intermap.txt:
@@ -51,26 +56,22 @@ class Config(DefaultConfig):
     interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'
     interwiki_map['Self'] = 'http://127.0.0.1:8080/'
 
-    # for now we load some 3rd party stuff from the place within moin where it is currently located,
-    # but soon we'll get rid of this stuff:
-    env_dir = 'env'
+    # setup static files' serving:
     serve_files = dict(
-        docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),
+        docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
     )
-
-    # we slowly migrate all stuff from above (old) method, to xstatic (new) method,
-    # see https://bitbucket.org/thomaswaldmann/xstatic for details:
+    # see https://bitbucket.org/thomaswaldmann/xstatic for infos about xstatic:
     from xstatic.main import XStatic
-    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor', 'svgweb', 'svgedit_moin', 'twikidraw_moin', 'anywikidraw', 'jquery_multi_download', ]
+    mod_names = ['jquery', 'jquery_file_upload', 'jquery_multi_download',
+                 'ckeditor',
+                 'svgweb',
+                 'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
+                ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
         serve_files.update([(xs.name, xs.base_dir)])
-
-    # ^^^ DON'T TOUCH THIS EXCEPT IF YOU KNOW WHAT YOU DO ^^^
-
-    #item_root = u'Home' # change to some better value
 
 
 MOINCFG = Config # Flask only likes uppercase stuff

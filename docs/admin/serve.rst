@@ -19,17 +19,15 @@ Running the built-in server
 ---------------------------
 Then you can run the moin built-in server by::
 
+ # easiest for debugging (single-process, single-threaded server):
  moin
+
+ # required for some browsers like IE9 or Chrome in incognito mode (try this
+ # in case you encounter a hanging browser / not responding server):
+ moin moin --threaded
+
  # or, if you need another ip/port:
  moin moin --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
-
-MoinMoin will start the built-in server and try to locate the wiki configuration
-from one of the following: **NOTE: please use an absolute path**
-
-- command line argument `--config /path/to/wikiconfig.py`
-- environment variable `MOINCFG=/path/to/wikiconfig.py`
-- current directory, file `wikiconfig_local.py`
-- current directory, file `wikiconfig.py`
 
 While the moin server is starting up, you will see some log output, for example::
 

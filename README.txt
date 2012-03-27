@@ -11,6 +11,14 @@ open to individuals sharing the same interests, goals or projects.
 Documentation and Support
 =========================
 
+NOTE: moin2 is not released yet, so much information you find on the wiki
+(and elsewhere) will be about moin 1.x (and NOT applicable to moin2).
+
+There is one wiki page collecting all moin2 specific links and infos:
+
+http://moinmo.in/MoinMoin2.0 < READ THIS!
+
+
 Project homepage is at http://moinmo.in/ - there are also links to support
 resources and informations about MoinMoin development status and plans.
 
