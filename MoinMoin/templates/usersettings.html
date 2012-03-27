@@ -1,0 +1,42 @@
+{% extends theme("layout.html") %}
+{% import "usersettings_forms.html" as user_forms %}
+
+{% block item %}
+<div id="moin-content">
+    <h1>{{ _("User Settings") }}</h1>
+
+    <div id="moin-usersettings" class="moin-tabs">
+        <h2 class="moin-tab-title"><a href="#personal">{{ _("Personal Settings") }}</a></h2>
+        <div id="personal" class="moin-tab-body moin-form">
+            {{ user_forms.personal(form_objs.personal) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#password">{{ _("Change Password") }}</a></h2>
+        <div id="password" class="moin-tab-body moin-form">
+            {{ user_forms.password(form_objs.password) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#notification">{{ _("Notification Settings") }}</a></h2>
+        <div id="notification" class="moin-tab-body moin-form">
+            {{ user_forms.notification(form_objs.notification) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#ui">{{ _("Wiki Appearance Settings") }}</a></h2>
+        <div id="ui" class="moin-tab-body moin-form">
+            {{ user_forms.ui(form_objs.ui) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#navigation">{{ _("Navigation Settings") }}</a></h2>
+        <div id="navigation" class="moin-tab-body moin-form">
+            {{ user_forms.navigation(form_objs.navigation) }}
+        </div>
+
+        <h2 class="moin-tab-title"><a href="#options">{{ _("Options") }}</a></h2>
+        <div id="options" class="moin-tab-body moin-form">
+            {{ user_forms.options(form_objs.options) }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
