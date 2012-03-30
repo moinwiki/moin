@@ -29,7 +29,7 @@ from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath
-from MoinMoin.util.tree import html, moin_page, xinclude, xlink
+from MoinMoin.util.tree import moin_page, xinclude, xlink
 
 from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
 
@@ -233,8 +233,8 @@ class Converter(object):
                         loop = self.stack[self.stack.index(p_href):]
                         loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
                         msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
-                        attrib = {getattr(html, 'class'): 'moin-error'}
-                        strong = ET.Element(html.strong, attrib, (msg, ))
+                        attrib = {getattr(moin_page, 'class'): 'moin-error'}
+                        strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
                         continue
                     # TODO: Is this correct?
@@ -302,7 +302,7 @@ class Converter(object):
                                 # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
                                 attrib = Attributes(ret).convert()
                                 # make new span node and "convert" p to span by copying all of p's children
-                                span = ET.Element(html.span, attrib=attrib, children=p[:])
+                                span = ET.Element(moin_page.span, attrib=attrib, children=p[:])
                                 # insert the new span into the DOM replacing old include, page, body, and p elements
                                 elem[i] = span
                             elif not isinstance(body, unicode) and ret.tag.name == 'page' and body.tag.name == 'body':
@@ -310,19 +310,19 @@ class Converter(object):
                                 # note: ancestor P may have text before or after include
                                 if i > 0:
                                     # there is text before transclude, make new p node to hold text before include and save in container
-                                    pa = ET.Element(html.p)
+                                    pa = ET.Element(moin_page.p)
                                     pa[:] = elem[0:i]
                                     container.append(pa)
                                 # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
                                 attrib = Attributes(ret).convert()
                                 # make new div node, copy all of body's children, and save in container
-                                div = ET.Element(html.div, attrib=attrib, children=body[:])
+                                div = ET.Element(moin_page.div, attrib=attrib, children=body[:])
                                 container.append(div)
                                  # empty elem of siblings that were just placed in container
                                 elem[0:i+1] = []
                                 if len(elem) > 0:
                                     # there is text after transclude, make new p node to hold text, copy siblings, save in container
-                                    pa = ET.Element(html.p)
+                                    pa = ET.Element(moin_page.p)
                                     pa[:] = elem[:]
                                     container.append(pa)
                                     elem[:] = []

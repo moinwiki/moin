@@ -16,7 +16,7 @@ from flask import g as flaskg
 from MoinMoin.util.interwiki import is_known_wiki, url_for_item
 from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import html, moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude
 from MoinMoin.wikiutil import AbsItemName
 
 
@@ -63,7 +63,7 @@ class ConverterBase(object):
             elif xlink_href.scheme == 'wiki':
                 self.handle_wiki_links(elem, xlink_href)
             elif xlink_href.scheme:
-                elem.set(html.class_, 'moin-' + xlink_href.scheme)
+                elem.set(moin_page.class_, 'moin-' + xlink_href.scheme)
 
         elif xinclude_href:
             xinclude_href = Iri(xinclude_href)
@@ -152,7 +152,7 @@ class ConverterExternOutput(ConverterBase):
             wn = unicode(input.authority.host)
             if is_known_wiki(wn):
                 # interwiki link
-                elem.set(html.class_, 'moin-interwiki')
+                elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
         item_name = unicode(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
@@ -167,7 +167,7 @@ class ConverterExternOutput(ConverterBase):
             path = self.absolute_path(path, page.path)
             item_name = unicode(path)
             if not flaskg.storage.has_item(item_name):
-                elem.set(html.class_, 'moin-nonexistent')
+                elem.set(moin_page.class_, 'moin-nonexistent')
         else:
             item_name = unicode(page.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
