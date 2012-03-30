@@ -101,7 +101,6 @@ class TestInclude(object):
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"Single Line")
         rendered = MoinWiki.create(u'page1')._render_data()
         assert '<p>Content of page2 is</p><p><span class="moin-transclusion" data-href="/page2">Single Line</span></p>' in rendered
-        #           '<p>Content of page2 is</p><p><span class="moin-transclusion" data-href="http://127.0.0.1:8080/page2">Single Line</span></p>'
 
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Content of page2 is "{{page2}}"')
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"|| table || cell ||")
