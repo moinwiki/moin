@@ -11,13 +11,6 @@
     {% if pi_refresh -%}
         {{ '<meta http-equiv="refresh" content="%d;URL=%s" />' % pi_refresh }}
     {%- endif %}
-    {%- if item_name and allow_doubleclick and
-        user.edit_on_doubleclick and user.may.write(item_name) -%}
-            <meta name="edit_on_doubleclick" content="1" />
-    {%- endif %}
-    {%- if user.show_comments -%}
-            <meta name="moin-show-comments" content="1" />
-    {%- endif %}
     {% for name, content in theme_supp.meta_items -%}
         <meta name="{{ name }}" content="{{ content }}" />
     {% endfor %}
@@ -72,5 +65,12 @@
 {% block layout %}
     <h1>Extend this block only if you want to change layout. If you want to put content, extends layout.html and use placeholders item and content.</h1>
 {% endblock %}
+
+<div id="moin-options-for-javascript" style="display: none">
+{% block options_for_javascript %}
+    {# implement this block to pass server side options to client side javascript. #}
+{% endblock %}
+</div>
+
 </body>
 </html>

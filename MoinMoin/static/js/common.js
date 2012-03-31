@@ -787,13 +787,8 @@ function initToggleComments() {
             commentsHideTitle = titles[1];
             jQuery('.moin-toggle-comments-button > a').attr('title', commentsHideTitle);
         }
-        // show or hide comments based on user option or default option:
-        //     show comments if  there is a <meta name="moin-show-comments" content="1" />
-        if (document.getElementsByName('moin-show-comments').length > 0) {
-            show_comments = document.getElementsByName('moin-show-comments')[0].content;
-        }
-        if (show_comments !== '1') {
-            // user option is to hide comments
+        // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
+        if (!document.getElementById('moin-show-comments')) {
             toggleComments();
         }
     }
@@ -973,8 +968,8 @@ function toggleSubtree(item) {
 }
 
 function guessContentType() {
-    /* Used in the modify_text template to guess the data content type client-side 
-     * This approach has the advantage of reacting to content type changes for the 
+    /* Used in the modify_text template to guess the data content type client-side
+     * This approach has the advantage of reacting to content type changes for the
      * link/transclude code without having to re-fetch the page */
     var meta_text = $("#f_meta_text").val();
     var ctype_regex = /["']contenttype["']\s*:\s*["']([\w-_+.]+\/[\w-_+.]+)(;|["'])/;
