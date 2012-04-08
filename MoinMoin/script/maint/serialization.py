@@ -27,6 +27,11 @@ class Serialize(Command):
 
     def run(self, filename=None):
         if filename is None:
+            # On Windows force the stdout to be in binary mode.
+            if sys.platform == "win32":
+                import os, msvcrt
+                msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+
             f = sys.stdout
         else:
             f = open(filename, "wb")
@@ -44,6 +49,11 @@ class Deserialize(Command):
 
     def run(self, filename=None):
         if filename is None:
+            # On Windows force the stdin to be in binary mode.
+            if sys.platform == "win32":
+                import os, msvcrt
+                msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
+
             f = sys.stdin
         else:
             f = open(filename, "rb")
