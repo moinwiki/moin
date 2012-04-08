@@ -16,6 +16,25 @@ from MoinMoin.storage.middleware.serialization import serialize, deserialize
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+def open_file(filename, mode):
+    if filename is None:
+        # Guess the IO stream from the mode:
+        if "a" in mode or "w" in mode:
+            stream = sys.stdout
+        elif "r" in mode:
+            stream = sys.stdin
+        else:
+            raise ValueError("Invalid mode string. Must contain 'r', 'w' or 'a'")
+        
+        # On Windows force the stream to be in binary mode if it's needed.
+        if sys.platform == "win32" and "b" in mode:
+            import os, msvcrt
+            msvcrt.setmode(stream.fileno(), os.O_BINARY)
+
+        f = stream
+    else:
+        f = open(filename, mode)
+    return f
 
 class Serialize(Command):
     description = 'Serialize the backend into a file.'
@@ -26,11 +45,7 @@ class Serialize(Command):
     ]
 
     def run(self, filename=None):
-        if filename is None:
-            f = sys.stdout
-        else:
-            f = open(filename, "wb")
-        with f as f:
+        with open_file(filename, "wb") as f:
             serialize(app.storage.backend, f)
 
 
@@ -43,10 +58,6 @@ class Deserialize(Command):
     ]
 
     def run(self, filename=None):
-        if filename is None:
-            f = sys.stdin
-        else:
-            f = open(filename, "rb")
-        with f as f:
+        with open_file(filename, "rb") as f:
             deserialize(f, app.storage.backend)
 
