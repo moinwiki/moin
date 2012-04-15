@@ -130,7 +130,7 @@ function initTransclusionOverlays() {
     transclusions.each(function (index) {
         elem = transclusions[index];
         // if this is the transcluded item page, do not wrap (avoid creating useless overlay links to same page)
-        if (location.href !== elem.getAttribute('data-href')) {
+        if (location.pathname !== elem.getAttribute('data-href')) {
             if (elem.tagName === 'DIV') {
                 wrapper = $('<div class="moin-item-wrapper"></div>');
             } else {
