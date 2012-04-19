@@ -470,7 +470,7 @@ function initMoinUsersettings() {
                 f.addClass('moin-flash');
                 f.addClass('moin-flash-javascript');
                 f.addClass('moin-flash-' + data.flash[i][1]);
-                $('#moin-header').append(f);
+                $('#moin-flash').append(f);
             }
             // get the new form element from the response
             newform = $(data.form);
