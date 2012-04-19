@@ -422,6 +422,7 @@ a.moin-mime-package:before { content: url(../img/moin-package.png); margin: 0 0.
 a.moin-mime-drawing:before { content: url(../img/moin-drawing.png); margin: 0 0.2em; }
 
 /* Flash messages used by Flask */
+#moin-flash { margin: 0; }
 .moin-flash { margin: 0; padding: 6px 6px 6px 38px; background-color: #f0f2f5;
             border-bottom: 1px solid #ccc; background-repeat: no-repeat;
             background-position: 16px center; }
