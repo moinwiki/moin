@@ -76,6 +76,38 @@ Matches on clean, cleaner, cleanest, cleaning, ...::
 
   clean*
 
+Using regular expressions
+=========================
+
+Regular expressions enable even more flexibility for specifying search terms.
+
+See http://en.wikipedia.org/wiki/Regular_expression for basics about regexes.
+
+See http://docs.python.org/library/re.html about python's regex implementation,
+which we use for MoinMoin.
+
+You need to use this syntax when entering regexes: r"yourregex"
+
+Examples
+--------
+Search for hello or hallo::
+
+  r"h[ae]llo"
+
+Search for words starting with foo::
+
+  r"^foo"
+  r"\Afoo"
+
+Search for something like wiki, wika, wikb, ...::
+
+  r"wik."
+
+Search for something like wiki, willi, wi, ...::
+
+  r"w.*i"
+
+
 Searching in specific fields
 ============================
 
@@ -140,14 +172,14 @@ moin uses indexed search - keep in mind that this has some special properties:
 
  * By using an index, the search is rather usually fast 
  * Because it is only using an index, it can only find what was put there
- * If you use wildcards, it will still use the index, but in a different, slower way
+ * If you use wildcards or regexes, it will still use the index, but in a different, slower way
 
 E.g.:
 
  * "foobar" is put into the index somehow
  * you search for "ooba" - you will not find it, because only "foobar" was put into the index
  * solution: search for "foobar" - fast and will find it
- * solution: search for "*ooba*" - slow, but will find it
+ * solution: search for "*ooba*" or r".*ooba.*" - slow, but will find it
 
 More infos
 ==========
