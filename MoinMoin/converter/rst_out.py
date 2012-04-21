@@ -505,7 +505,7 @@ class Converter(object):
         return u' [#]_ '
 
     def open_moinpage_object(self, elem):
-        # TODO: object parametrs support
+        # TODO: object parameters support
         href = elem.get(xlink.href, u'')
         href = href.split(u'?')
         args = u''
