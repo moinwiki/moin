@@ -65,7 +65,6 @@ from flask import current_app as app
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 from whoosh.writing import AsyncWriter
-from whoosh.filedb.multiproc import MultiSegmentWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
 from whoosh.qparser import WordNode
@@ -422,13 +421,7 @@ class IndexingMiddleware(object):
         Note: mode == 'add' is faster but you need to make sure to not create duplicate
               documents in the index.
         """
-        if procs == 1:
-            # MultiSegmentWriter sometimes has issues and is pointless for procs == 1,
-            # so use the simple writer when --procs 1 is given:
-            writer = index.writer()
-        else:
-            writer = MultiSegmentWriter(index, procs, limitmb)
-        with writer as writer:
+        with index.writer(procs=procs, limitmb=limitmb) as writer:
             for mountpoint, revid in revids:
                 if mode in ['add', 'update', ]:
                     meta, data = self.backend.retrieve(mountpoint, revid)
