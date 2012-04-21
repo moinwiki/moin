@@ -77,7 +77,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
-                            CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
+                            CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
                             LATEST_REVS, ALL_REVS, \
                             CONTENTTYPE_USER
@@ -187,6 +187,7 @@ def convert_to_indexable(meta, data, is_new=False):
                 # side effect: we update some metadata:
                 meta[ITEMLINKS] = refs_conv.get_links()
                 meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+                meta[EXTERNALLINKS] = refs_conv.get_external_links()
             doc = output_conv(doc)
             return doc
         # no way

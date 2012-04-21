@@ -65,6 +65,16 @@ class TestConverterExternOutput(object):
         for i in pairs:
             yield (self._do_wikilocal, ) + i
 
+    def test_wikiexternal(self):
+        pairs = [
+            ('http://moinmo.in/',
+             'http://moinmo.in/'),
+            ('mailto:foo.bar@example.org',
+             'mailto:foo.bar@example.org'),
+        ]
+        for i in pairs:
+            yield (self._do_wikiexternal, ) + i
+
     def _do_wiki(self, input, output, skip=None):
         if skip:
             pytest.skip(skip)
@@ -78,6 +88,14 @@ class TestConverterExternOutput(object):
         elem = ET.Element(None)
         self.conv.handle_wikilocal_links(elem, Iri(input), Iri(page))
         assert elem.get(xlink.href) == output
+
+    def _do_wikiexternal(self, input, output, skip=None):
+        if skip:
+            pytest.skip(skip)
+        elem = ET.Element(None)
+        self.conv.handle_external_links(elem, Iri(input))
+        href = elem.get(xlink.href)
+        assert href == output
 
 
 class TestConverterRefs(object):
@@ -99,8 +117,9 @@ class TestConverterRefs(object):
         """
         transclusions_expected = [u"moin_transcluded", u"moin2_transcluded"]
         links_expected = [u"moin_linked", u"moin2_linked"]
+        external_expected = []
 
-        self.runItemTest(tree_xml, links_expected, transclusions_expected)
+        self.runItemTest(tree_xml, links_expected, transclusions_expected, external_expected)
 
     def testRelativeItems(self):
         tree_xml = u"""
@@ -112,17 +131,33 @@ class TestConverterRefs(object):
         """
         transclusions_expected = [u"Home/Subpage/moin2_transcluded", u"moin_transcluded"]
         links_expected = [u"moin_linked", u"Home/Subpage/moin2_linked"]
+        external_expected = []
 
-        self.runItemTest(tree_xml, links_expected, transclusions_expected)
+        self.runItemTest(tree_xml, links_expected, transclusions_expected, external_expected)
 
-    def runItemTest(self, tree_xml, links_expected, transclusions_expected):
+    def testExternal(self):
+        tree_xml = u"""
+        <ns0:page ns0:page-href="wiki:///Home/Subpage" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://www.w3.org/2001/XInclude">
+        <ns0:body><ns0:p><ns0:a ns1:href="http://example.org/">test</ns0:a>
+        <ns0:a ns1:href="mailto:foo.bar@example.org">test</ns0:a>
+        </ns0:p></ns0:body></ns0:page>
+        """
+        transclusions_expected = []
+        links_expected = []
+        external_expected = [u"http://example.org/", u"mailto:foo.bar@example.org"]
+
+        self.runItemTest(tree_xml, links_expected, transclusions_expected, external_expected)
+
+    def runItemTest(self, tree_xml, links_expected, transclusions_expected, external_expected):
         tree = ET.XML(tree_xml)
         self.converter(tree)
         links_result = self.converter.get_links()
         transclusions_result = self.converter.get_transclusions()
+        external_result = self.converter.get_external_links()
 
         # sorting instead of sets
         # so that we avoid deduplicating duplicated items in the result
         assert sorted(links_result) == sorted(links_expected)
         assert sorted(transclusions_result) == sorted(transclusions_expected)
+        assert sorted(external_result) == sorted(external_expected)
 
