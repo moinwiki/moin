@@ -1,0 +1,11 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block content_container %}
+<div id="moin-content-no-panel" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+    {% block content %}
+        {# All content templates should have implement this block. #}
+    {% endblock %}
+</div>
+{% endblock %}
+

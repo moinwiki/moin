@@ -1,0 +1,63 @@
+# Copyright: 2011 MoinMoin:ThomasWaldmann
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin - backend serialization / deserialization
+"""
+
+import sys
+
+from flask import current_app as app
+from flask import g as flaskg
+from flaskext.script import Command, Option
+
+from MoinMoin.storage.middleware.serialization import serialize, deserialize
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
+def open_file(filename, mode):
+    if filename is None:
+        # Guess the IO stream from the mode:
+        if "a" in mode or "w" in mode:
+            stream = sys.stdout
+        elif "r" in mode:
+            stream = sys.stdin
+        else:
+            raise ValueError("Invalid mode string. Must contain 'r', 'w' or 'a'")
+        
+        # On Windows force the stream to be in binary mode if it's needed.
+        if sys.platform == "win32" and "b" in mode:
+            import os, msvcrt
+            msvcrt.setmode(stream.fileno(), os.O_BINARY)
+
+        f = stream
+    else:
+        f = open(filename, mode)
+    return f
+
+class Serialize(Command):
+    description = 'Serialize the backend into a file.'
+
+    option_list = [
+        Option('--file', '-f', dest='filename', type=unicode, required=False,
+               help='Filename of the output file.'),
+    ]
+
+    def run(self, filename=None):
+        with open_file(filename, "wb") as f:
+            serialize(app.storage.backend, f)
+
+
+class Deserialize(Command):
+    description = 'Deserialize a file into the backend.'
+
+    option_list = [
+        Option('--file', '-f', dest='filename', type=unicode, required=False,
+               help='Filename of the input file.'),
+    ]
+
+    def run(self, filename=None):
+        with open_file(filename, "rb") as f:
+            deserialize(f, app.storage.backend)
+

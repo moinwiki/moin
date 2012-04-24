@@ -1,0 +1,17 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block item %}
+<h1>{{ _("Recover Password") }}</h1>
+{{ gen.form.open(form, method="post", action=url_for('frontend.recoverpass')) }}
+  {{ forms.render_errors(form) }}
+  <dl>
+    {{ forms.render_field(gen, form['username'], 'text') }}
+    {{ forms.render_field(gen, form['token'], 'text') }}
+    {{ forms.render_field(gen, form['password1'], 'password') }}
+    {{ forms.render_field(gen, form['password2'], 'password') }}
+  </dl>
+  {{ gen.input(form['submit'], type='submit') }}
+{{ gen.form.close() }}
+{% endblock %}
+
