@@ -134,9 +134,11 @@
 
     {% block header_itemviews %}{% endblock %}
 
+    <div id="moin-flash">  {# client side javascript may add messages here #}
     {% for category, msg in get_flashed_messages(with_categories=true) %}
         <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
     {% endfor %}
+    </div>
 
 {% endblock %}
 </div>

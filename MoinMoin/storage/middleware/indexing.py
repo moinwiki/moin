@@ -65,7 +65,6 @@ from flask import current_app as app
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.index import open_dir, create_in, EmptyIndexError
 from whoosh.writing import AsyncWriter
-from whoosh.filedb.multiproc import MultiSegmentWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
 from whoosh.qparser import WordNode
@@ -77,7 +76,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
-                            CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
+                            CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
                             LATEST_REVS, ALL_REVS, \
                             CONTENTTYPE_USER
@@ -187,6 +186,7 @@ def convert_to_indexable(meta, data, is_new=False):
                 # side effect: we update some metadata:
                 meta[ITEMLINKS] = refs_conv.get_links()
                 meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+                meta[EXTERNALLINKS] = refs_conv.get_external_links()
             doc = output_conv(doc)
             return doc
         # no way
@@ -391,11 +391,7 @@ class IndexingMiddleware(object):
                     itemid = searcher.stored_fields(docnum_remove)[ITEMID]
             if docnum_remove is not None:
                 # we are removing a revid that is in latest revs index
-                try:
-                    latest_names_revids = self._find_latest_names_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
-                except AttributeError:
-                    # workaround for bug #200 AttributeError: 'FieldCache' object has no attribute 'code'
-                    latest_names_revids = []
+                latest_names_revids = self._find_latest_names_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
                 if latest_names_revids:
                     # we have a latest revision, just update the document in the index:
                     assert len(latest_names_revids) == 1 # this item must have only one latest revision
@@ -421,13 +417,7 @@ class IndexingMiddleware(object):
         Note: mode == 'add' is faster but you need to make sure to not create duplicate
               documents in the index.
         """
-        if procs == 1:
-            # MultiSegmentWriter sometimes has issues and is pointless for procs == 1,
-            # so use the simple writer when --procs 1 is given:
-            writer = index.writer()
-        else:
-            writer = MultiSegmentWriter(index, procs, limitmb)
-        with writer as writer:
+        with index.writer(procs=procs, limitmb=limitmb) as writer:
             for mountpoint, revid in revids:
                 if mode in ['add', 'update', ]:
                     meta, data = self.backend.retrieve(mountpoint, revid)
@@ -586,8 +576,7 @@ class IndexingMiddleware(object):
             qp = QueryParser(default_fields[0], schema=schema)
         else:
             raise ValueError("default_fields list must at least contain one field name")
-        # TODO before using the RegexPlugin, require a whoosh release that fixes whoosh issues #205 and #206
-        #qp.add_plugin(RegexPlugin())
+        qp.add_plugin(RegexPlugin())
         def username_pseudo_field(node):
             username = node.text
             users = user.search_users(**{NAME_EXACT: username})
