@@ -430,6 +430,8 @@ class User(object):
         if not is_encrypted:
             password = crypt_password(password)
         self.profile[ENC_PASSWORD] = password
+        # Invalidate all other browser sessions except this one.
+        session['user.session_token'] = self.generate_session_token(False)
 
     def save(self, force=False):
         """
@@ -647,6 +649,29 @@ class User(object):
     def is_current_user(self):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
+
+    # Sessions ---------------------------------------------------
+
+    def generate_session_token(self, save=True):
+        """ Generate new session token and key pair. Used to validate sessions. """
+        key, token = generate_token()
+        self.profile[SESSION_TOKEN] = token
+        self.profile[SESSION_KEY] = key
+        if save:
+            self.save()
+
+        return token
+
+    def get_session_token(self):
+        """ Get current session token. If there is no token, generate a new one. """
+        try:
+            return self.profile[SESSION_TOKEN]
+        except KeyError:
+            return self.generate_session_token()
+
+    def validate_session(self, token):
+        """ Check if the session token is valid. """
+        return valid_token(self.profile[SESSION_KEY], token)
 
     # Account verification / Password recovery -------------------------------
 

@@ -218,6 +218,7 @@ def setup_user():
         session['user.trusted'] = userobj.trusted
         session['user.auth_method'] = userobj.auth_method
         session['user.auth_attribs'] = userobj.auth_attribs
+        session['user.session_token'] = userobj.get_session_token()
     return userobj
 
 
