@@ -28,7 +28,7 @@ def sitemap():
     """
     def format_timestamp(t):
         tm = time.gmtime(t)
-        return time.strftime("%Y-%m-%dT%H:%M:%S%z", tm)
+        return time.strftime("%Y-%m-%dT%H:%M:%S+00:00", tm)
 
     sitemap = []
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
