@@ -24,7 +24,7 @@ class ValidSearch(Validator):
         return True
 
 class SearchForm(Form):
-    q = String.using(optional=False, default=u'').with_properties(autofocus=True, placeholder=L_("Search Query"))
+    q = String.using(optional=False, default=u'').with_properties(placeholder=L_("Search Query"))
     history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
     submit = String.using(default=L_('Search'), optional=True)
 
