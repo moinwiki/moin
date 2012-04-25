@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 
-{% block item %}
+{% block content %}
 <h1>{{ _("Recover Password") }}</h1>
 {{ gen.form.open(form, method="post", action=url_for('frontend.recoverpass')) }}
   {{ forms.render_errors(form) }}

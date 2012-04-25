@@ -1,8 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 
-{% block item %}
-<div id="moin-content">
+{% block content %}
 <div class="moin-form">
 {{ forms.render_errors(form) }}
 
@@ -38,7 +37,6 @@
 {{ gen.form.close() }}
 {% endif %}
 
-</div>
 </div>
 {% endblock %}
 
