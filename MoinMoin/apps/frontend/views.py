@@ -39,7 +39,7 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
-from whoosh.query import Term, And, Or, DateRange
+from whoosh.query import Term, Prefix, And, Or, DateRange
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -122,6 +122,85 @@ def favicon():
     # although we tell that favicon.ico is at /static/logos/favicon.ico,
     # some browsers still request it from /favicon.ico...
     return app.send_static_file('logos/favicon.ico')
+
+
+class LookupForm(Form):
+    name = String.using(label=L_('name'), optional=True)
+    name_exact = String.using(label=L_('name_exact'), optional=True)
+    itemid = String.using(label=L_('itemid'), optional=True)
+    revid = String.using(label=L_('revid'), optional=True)
+    history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
+    submit = String.using(default=L_('Lookup'), optional=True)
+
+
+@frontend.route('/+lookup', methods=['GET', 'POST'])
+def lookup():
+    """
+    lookup is like search, but it only deals with specific fields that identify
+    an item / revision. no query string parsing.
+
+    for uuid fields, it performs a prefix search, so you can just give the
+    first few digits. same is done for name_exact field.
+    if you give a complete uuid or you do a lookup via the name field, it
+    will use a simple search term.
+    for one result, it directly redirects to the item/revision found.
+    for none or multipe results, a result page is shown.
+
+    usually this is used for links with a query string, like:
+    /+lookup?itemid=123cba  (prefix match on itemid 123cba.......)
+    /+lookup?revid=c0ddcda9a092499c92920cc4a9b11704  (full uuid simple term match)
+    /+lookup?name_exact=FooBar/  (prefix match on name_exact FooBar/...)
+
+    When giving history=1 it will use the all revisions index for lookup.
+    """
+    status = 200
+    title_name = _("Lookup")
+    lookup_form = LookupForm.from_flat(request.values)
+    valid = lookup_form.validate()
+    lookup_form['submit'].set_default() # XXX from_flat() kills all values
+    if valid:
+        history = bool(request.values.get('history'))
+        idx_name = ALL_REVS if history else LATEST_REVS
+        terms = []
+        for key in [NAME, NAME_EXACT, ITEMID, REVID, ]:
+            value = lookup_form[key].value
+            if value:
+                if (key in [ITEMID, REVID, ] and len(value) < crypto.UUID_LEN
+                    or
+                    key in [NAME_EXACT]):
+                    term = Prefix(key, value)
+                else:
+                    term = Term(key, value)
+                terms.append(term)
+        if terms:
+            terms.append(Term(WIKINAME, app.cfg.interwikiname))
+            q = And(terms)
+            with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
+                flaskg.clock.start('lookup')
+                results = searcher.search(q, limit=100)
+                flaskg.clock.stop('lookup')
+                num_results = results.scored_length()
+                if num_results == 1:
+                    result = results[0]
+                    rev = result[REVID] if history else CURRENT
+                    url = url_for('.show_item', item_name=result[NAME], rev=rev)
+                    return redirect(url)
+                else:
+                    flaskg.clock.start('lookup render')
+                    html = render_template('lookup.html',
+                                           title_name=title_name,
+                                           lookup_form=lookup_form,
+                                           results=results,
+                                          )
+                    flaskg.clock.stop('lookup render')
+                    if not num_results:
+                        status = 404
+                    return Response(html, status)
+    html = render_template('lookup.html',
+                           title_name=title_name,
+                           lookup_form=lookup_form,
+                          )
+    return Response(html, status)
 
 
 @frontend.route('/+search', methods=['GET', 'POST'])
