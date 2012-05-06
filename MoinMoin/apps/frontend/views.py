@@ -1456,7 +1456,7 @@ def get_revs():
     return rev1, rev2
 
 
-@frontend.route('/+diffraw/<path:item_name>')
+@frontend.route('/+diffraw/<itemname:item_name>')
 def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDenied.
     #      If this happens for get_item, don't show the diff at all
@@ -1470,7 +1470,7 @@ def diffraw(item_name):
     return _diff_raw(item, rev1, rev2)
 
 
-@frontend.route('/+diff/<path:item_name>')
+@frontend.route('/+diff/<itemname:item_name>')
 def diff(item_name):
     item = flaskg.storage[item_name]
     bookmark_time = request.values.get('bookmark')
@@ -1685,7 +1685,7 @@ def closeMatches(item_name, item_names):
     return matches
 
 
-@frontend.route('/+sitemap/<item_name>')
+@frontend.route('/+sitemap/<itemname:item_name>')
 def sitemap(item_name):
     """
     sitemap view shows item link structure, relative to current item
