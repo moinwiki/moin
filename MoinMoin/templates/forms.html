@@ -20,17 +20,11 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.label(field) }}
   </dt>
   <dd>
-    {% if field_type == 'checkbox' %}
-      {#
-      Flatland adds the value to the ID of checkboxes which we do not want as
-      the for attributes of the labels will point to a non-existent ID in that
-      case. To fix this we manually generate the ID for checkboxes here.
-      related issue in flatland: https://bitbucket.org/jek/flatland/issue/9
-      #}
-      {{ gen.input(field, type='checkbox', id='f_' + field.flattened_name()) }}
-    {% else %}
-      {{ gen.input(field, type=field_type) }}
-    {% endif %}
+    {# Use of auto_value=false below prevents flatland from appending _1
+       to the input id attribute ensuring it will match the for attribute
+       in the matching label above.
+    #}
+    {{ gen.input(field, type=field_type, auto_value=False) }}
     {{ render_errors(field) }}
   </dd>
 {% endmacro %}
@@ -85,7 +79,11 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro render_field_without_markup(gen, field, field_type) %}
-    {{ gen.input(field, type=field_type) }}
+    {# Use of auto_value=false below prevents flatland from appending _1
+       to the input id attribute ensuring it will match the for attribute
+       in the matching label.
+    #}
+    {{ gen.input(field, type=field_type, auto_value=False) }}
     {{ gen.label(field) }}
     {{ render_errors(field) }}
 {% endmacro %}
@@ -101,8 +99,8 @@ Helpers for using flatland with jinja2 to create html forms.
         </div>
         <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
         <div class="file_upload_buttons">
-            <button class="file_upload_start" style="display:none;">{{ _("Start All") }}</button> 
-            <button class="file_upload_cancel" style="display:none;">{{ _("Cancel All") }}</button> 
+            <button class="file_upload_start" style="display:none;">{{ _("Start All") }}</button>
+            <button class="file_upload_cancel" style="display:none;">{{ _("Cancel All") }}</button>
         </div>
         <table class="files">
             <tr class="file_upload_template" style="display:none;">
