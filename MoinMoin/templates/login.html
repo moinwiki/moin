@@ -8,18 +8,16 @@
 {% if 'username' in login_inputs or 'password' in login_inputs %}
 <h2>{{ _('Moin login') }}</h2>
 {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+{{ gen.input(form['submit'], type='hidden') }}
 <dl>
-  {{ gen.input(form['submit'], type='hidden') }}
-
   {% if 'username' in login_inputs %}
   {{ forms.render_field(gen, form['username'], 'text') }}
   {% endif %}
   {% if 'password' in login_inputs %}
   {{ forms.render_field(gen, form['password'], 'password') }}
   {% endif %}
-
-  <input type="submit" value="{{ _('Log in') }}" />
 </dl>
+<input type="submit" value="{{ _('Log in') }}" />
 {{ gen.form.close() }}
 {% endif %}
 
