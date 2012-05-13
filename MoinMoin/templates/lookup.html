@@ -11,6 +11,12 @@
             {{ forms.render_field(gen, lookup_form['name_exact'], 'text') }}
             {{ forms.render_field(gen, lookup_form['itemid'], 'text') }}
             {{ forms.render_field(gen, lookup_form['revid'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['userid'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['language'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['itemlinks'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['itemtransclusions'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['refs'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['tags'], 'text') }}
             {{ forms.render_field_without_markup(gen, lookup_form['history'], 'checkbox') }}
         </dl>
         {{ gen.input(lookup_form['submit'], type='submit') }}

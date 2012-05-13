@@ -31,7 +31,7 @@ from flask import g as flaskg
 from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
-from flatland import Form, String, Integer, Boolean, Enum
+from flatland import Form, String, Integer, Boolean, Enum, MultiValue
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from jinja2 import Markup
@@ -129,6 +129,12 @@ class LookupForm(Form):
     name_exact = String.using(label=L_('name_exact'), optional=True)
     itemid = String.using(label=L_('itemid'), optional=True)
     revid = String.using(label=L_('revid'), optional=True)
+    userid = String.using(label=L_('userid'), optional=True)
+    language = String.using(label=L_('language'), optional=True)
+    itemlinks = String.using(label=L_('itemlinks'), optional=True)
+    itemtransclusions = String.using(label=L_('itemtransclusions'), optional=True)
+    refs = String.using(label=L_('refs'), optional=True)
+    tags = MultiValue.of(String).using(label=L_('tags'), optional=True)
     history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
     submit = String.using(default=L_('Lookup'), optional=True)
 
@@ -155,20 +161,28 @@ def lookup():
     """
     status = 200
     title_name = _("Lookup")
-    lookup_form = LookupForm.from_flat(request.values)
+    # TAGS might be there multiple times, thus we need multi:
+    lookup_form = LookupForm.from_flat(request.values.items(multi=True))
     valid = lookup_form.validate()
     lookup_form['submit'].set_default() # XXX from_flat() kills all values
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
         terms = []
-        for key in [NAME, NAME_EXACT, ITEMID, REVID, ]:
+        for key in [NAME, NAME_EXACT, ITEMID, REVID, USERID,
+                    LANGUAGE,
+                    TAGS,
+                    ITEMLINKS, ITEMTRANSCLUSIONS, 'refs', ]:
             value = lookup_form[key].value
             if value:
-                if (key in [ITEMID, REVID, ] and len(value) < crypto.UUID_LEN
+                if (key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN
                     or
                     key in [NAME_EXACT]):
                     term = Prefix(key, value)
+                elif key == 'refs':
+                    term = Or([Term(ITEMLINKS, value), Term(ITEMTRANSCLUSIONS, value)])
+                elif key == TAGS:
+                    term = And([Term(TAGS, v.value) for v in lookup_form[key]])
                 else:
                     term = Term(key, value)
                 terms.append(term)
