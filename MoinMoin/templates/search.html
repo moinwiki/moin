@@ -39,11 +39,13 @@
                                 <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['revid']) }}"><b>{{ result['name'] }}</b></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <p class="info searchhitinfobar">{{ _("Summary: %(summary)s", summary=result['summary']) }}</p>
-                                </td>
-                            </tr>
+                            {% if result['summary'] %}
+                                <tr>
+                                    <td>
+                                        <p class="info searchhitinfobar">{{ _("Summary: %(summary)s", summary=result['summary']) }}</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
                             <tr>
                                 <td>
                                     <p class="info searchhitinfobar">{{ _("Revision: %(revid)s Last Change: %(mtime)s", revid=result['revid'], mtime=result['mtime']|datetimeformat) }}</p>
