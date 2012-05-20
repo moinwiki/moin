@@ -22,6 +22,7 @@ from MoinMoin.converter._args import Arguments
 from MoinMoin.util import iri
 from MoinMoin.util.mime import type_moin_document, Type
 from MoinMoin.util.tree import html, moin_page
+from MoinMoin.util.plugins import PluginMissingError
 
 
 class Converter(object):
@@ -67,12 +68,15 @@ class Converter(object):
         elem_body = context_block and moin_page.body() or moin_page.inline_body()
         elem_error = moin_page.error()
 
-        cls = plugins.importPlugin(app.cfg, 'macro', name, function='Macro')
-
         try:
+            cls = plugins.importPlugin(app.cfg, 'macro', name, function='Macro')
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)
+
+        except PluginMissingError:
+            elem_error.append('<<%s>> %s' % (name, _('Error: invalid macro name.')))
+
         except Exception as e:
             # we do not want that a faulty macro aborts rendering of the page
             # and makes the wiki UI unusable (by emitting a Server Error),

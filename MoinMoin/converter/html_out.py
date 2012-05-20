@@ -506,6 +506,12 @@ class SpecialId(object):
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         return nr
 
+    def zero_id(self, id):
+        self._ids[id] = 0
+
+    def get_id(self, id):
+        return self._ids.get(id, 0)
+
     def gen_text(self, text):
         id = wikiutil.anchor_name_from_text(text)
         nr = self._ids[id] = self._ids.get(id, 0) + 1
@@ -522,6 +528,9 @@ class SpecialPage(object):
 
     def add_footnote(self, elem):
         self._footnotes.append(elem)
+
+    def remove_footnotes(self):
+        self._footnotes = []
 
     def add_heading(self, elem, level, id=None):
         elem.append(html.a(attrib={
@@ -579,10 +588,8 @@ class ConverterPage(Converter):
 
         for special in self._special:
             if special._footnotes:
-                footnotes_div = html.div({html.class_: "moin-footnotes"})
+                footnotes_div = self.create_footnotes(special)
                 special.root.append(footnotes_div)
-                for elem in special.footnotes():
-                    footnotes_div.append(elem)
 
             for elem, headings in special.tocs():
                 headings = list(headings)
@@ -666,8 +673,27 @@ class ConverterPage(Converter):
         self._special_stack[-1].add_heading(elem, elem.level, id)
         return elem
 
+    def create_footnotes(self, top):
+        """Return footnotes formatted into an ET structure."""
+        footnotes_div = html.div({html.class_: "moin-footnotes"})
+        for elem in top.footnotes():
+            footnotes_div.append(elem)
+        return footnotes_div
+
     def visit_moinpage_note(self, elem):
         # TODO: Check note-class
+        top = self._special_stack[-1]
+        if len(elem) == 0:
+            # explicit footnote placement:  show prior footnotes, empty stack, reset counter
+            if len(top._footnotes) == 0:
+                return
+
+            footnotes_div = self.create_footnotes(top)
+            top.remove_footnotes()
+            self._id.zero_id('note')
+            # bump note-placement counter to insure unique footnote ids
+            self._id.gen_id('note-placement')
+            return footnotes_div
 
         body = None
         for child in elem:
@@ -676,17 +702,18 @@ class ConverterPage(Converter):
                     body = self.do_children(child)
 
         id = self._id.gen_id('note')
+        prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
 
         elem_ref = ET.XML("""
 <html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote"><html:a html:href="#note-{2}">{3}</html:a></html:sup>
-""".format(html, id, id, id))
+""".format(html, prefixed_id, prefixed_id, id))
 
         elem_note = ET.XML("""
 <html:p xmlns:html="{0}" html:id="note-{1}"><html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup></html:p>
-""".format(html, id, id, id))
+""".format(html, prefixed_id, prefixed_id, id))
 
         elem_note.extend(body)
-        self._special_stack[-1].add_footnote(elem_note)
+        top.add_footnote(elem_note)
 
         return elem_ref
 
