@@ -227,7 +227,7 @@ def search():
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], idx_name=idx_name)
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT], idx_name=idx_name)
         q = qp.parse(query)
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             flaskg.clock.start('search')
