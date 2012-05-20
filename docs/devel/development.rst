@@ -189,9 +189,11 @@ into your virtualenv as a dependency).
 
 Running the tests
 -----------------
-To run the tests, activate your virtual env and run::
+To run the tests, activate your virtual env and invoke py.test from the
+toplevel directory::
 
     py.test  # runs all tests
+    py.test -rs  # runs all tests and outputs infos about skipped tests
     py.test -k somekeyword  # just run the tests matching somekeyword
     py.test sometests.py  # just run the tests contained in sometests.py
 

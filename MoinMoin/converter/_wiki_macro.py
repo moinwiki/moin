@@ -22,13 +22,13 @@ class ConverterMacro(object):
 
     def _FootNote_repl(self, args, text, context_block):
         if not args:
-            # TODO: footnote placing
-            return
+            # return a minimal note elem to indicate explicit footnote placement
+            elem = moin_page.note()
+            return elem
 
         text = self.macro_text(' '.join(args.positional))
         elem_body = moin_page.note_body(children=text)
         attrib = {moin_page.note_class: 'footnote'}
-
         elem = moin_page.note(attrib=attrib, children=[elem_body])
 
         if context_block:
