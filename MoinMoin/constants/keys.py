@@ -41,6 +41,7 @@ USERID = "userid"
 MTIME = "mtime"
 EXTRA = "extra"
 COMMENT = "comment"
+SUMMARY = "summary"
 
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)

@@ -49,6 +49,11 @@
 
     {% block headline %}
     {# <h1>{{ rev.item.name }} {% if show_revision %}(Revision {{ rev.revid }}){% endif %}</h1> #}
+    {% if item.meta['summary'] %}
+        <div id="moin-summary">
+            {{ _('Summary: %(summary)s', summary=item.meta['summary']) }}
+        </div>
+    {% endif %}
     {% endblock %}
     {% block content_data %}
     {% if data_rendered %}

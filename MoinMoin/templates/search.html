@@ -37,6 +37,11 @@
                     </tr>
                     <tr>
                         <td>
+                            <p class="info searchhitinfobar">{{ _("Summary: %(summary)s", summary=result['summary']) }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <p class="info searchhitinfobar">{{ _("Revision: %(revid)s Last Change: %(mtime)s", revid=result['revid'], mtime=result['mtime']|datetimeformat) }}</p>
                         </td>
                     </tr>

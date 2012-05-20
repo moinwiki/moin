@@ -75,7 +75,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
-                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
+                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, \
                             CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
                             LATEST_REVS, ALL_REVS, \
@@ -241,6 +241,8 @@ class IndexingMiddleware(object):
             ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
             COMMENT: TEXT(stored=True),
+            # SUMMARY from metadata
+            SUMMARY: TEXT(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True),
         }

@@ -184,6 +184,7 @@ p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2p
 /* edit and textchas  TODO: preview not implemented; better names for f_... selectors */
 #f_data_text { border: 1px solid #8cacbb; font-family: monospace; margin: .33em 0; padding: 3px; width: 100%; }
 #f_comment,
+#f_summary,
 #f_textcha { border: 1px solid #8cacbb; display: inline; margin: .33em 0; padding: 3px; width: 70%; }
 #moin-editor-help { font-size: small; background-color: #EEEEFF; }
 #preview { border: 1px solid #6C7680; padding: 10px 30px 20px 30px; background: url(../img/draft.png); margin-top: 0.5em; }
