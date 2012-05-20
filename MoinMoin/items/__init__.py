@@ -278,13 +278,11 @@ class Item(object):
 
     def _render_data(self):
         from MoinMoin.converter import default_registry as reg
-        include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
-        macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         # TODO: Real output format
-        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = self.internal_representation()
         doc = self._expand_document(doc)
         flaskg.clock.start('conv_dom_html')
+        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
         rendered_data = conv_serialize(doc, {html.namespace: ''})
