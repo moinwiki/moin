@@ -134,10 +134,10 @@ class RegistryItem(RegistryBase):
 item_registry = RegistryItem()
 
 
-def conv_serialize(doc, namespaces):
+def conv_serialize(doc, namespaces, method='polyglot'):
     out = array('u')
     flaskg.clock.start('conv_serialize')
-    doc.write(out.fromunicode, namespaces=namespaces, method='xml')
+    doc.write(out.fromunicode, namespaces=namespaces, method=method)
     out = out.tounicode()
     flaskg.clock.stop('conv_serialize')
     return out
@@ -288,13 +288,7 @@ class Item(object):
         doc = html_conv(doc)
         flaskg.clock.stop('conv_dom_html')
         rendered_data = conv_serialize(doc, {html.namespace: ''})
-        # This is a work-around to avoid the invalid <div /> tag from being passed
-        # and causing layout issues in many browsers
-        # Instead, send a <div></div> tag which is valid according to the HTML spec
-        # The wider issue with serialization is covered here:
-        # https://bitbucket.org/thomaswaldmann/moin-2.0/issue/145/xml-mode-serialization-returns-self
-        return "<div></div>" if rendered_data == "<div xmlns=\"http://www.w3.org/1999/xhtml\" />" \
-                             else rendered_data
+        return rendered_data
 
     def _render_data_xml(self):
         doc = self.internal_representation()
@@ -302,7 +296,8 @@ class Item(object):
                               {moin_page.namespace: '',
                                xlink.namespace: 'xlink',
                                html.namespace: 'html',
-                               })
+                              },
+                              'xml')
 
     def _render_data_highlight(self):
         # override this in child classes
