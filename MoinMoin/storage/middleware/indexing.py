@@ -78,6 +78,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, \
                             CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
+                            PTIME, \
                             LATEST_REVS, ALL_REVS, \
                             CONTENTTYPE_USER
 from MoinMoin.constants import keys
@@ -106,9 +107,10 @@ def backend_to_index(meta, content, schema, wikiname):
     doc = dict([(str(key), value)
                 for key, value in meta.items()
                 if key in schema])
-    if MTIME in doc:
-        # we have UNIX UTC timestamp (int), whoosh wants datetime
-        doc[MTIME] = datetime.datetime.utcfromtimestamp(doc[MTIME])
+    for TIME in [MTIME, PTIME]:
+        if TIME in doc:
+            # we have UNIX UTC timestamp (int), whoosh wants datetime
+            doc[TIME] = datetime.datetime.utcfromtimestamp(doc[TIME])
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content
@@ -264,6 +266,12 @@ class IndexingMiddleware(object):
             OPENID: ID(unique=True, stored=True),
         }
         latest_revs_fields.update(**userprofile_fields)
+
+        blogpost_fields = {
+            # publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True)
+        }
+        latest_revs_fields.update(**blogpost_fields)
 
         all_revs_fields = {
             ITEMID: ID(stored=True),
@@ -973,7 +981,7 @@ class Meta(Mapping):
             # we have a result document from whoosh, which has quite a lot
             # of the usually wanted metadata, avoid storage access, use this.
             value = self._doc[key]
-            if key == MTIME:
+            if key in [MTIME, PTIME]:
                 # whoosh has a datetime object, but we want a UNIX timestamp
                 value = utctimestamp(value)
             return value
