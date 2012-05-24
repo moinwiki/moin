@@ -107,10 +107,10 @@ def backend_to_index(meta, content, schema, wikiname):
     doc = dict([(str(key), value)
                 for key, value in meta.items()
                 if key in schema])
-    for TIME in [MTIME, PTIME]:
-        if TIME in doc:
+    for key in [MTIME, PTIME]:
+        if key in doc:
             # we have UNIX UTC timestamp (int), whoosh wants datetime
-            doc[TIME] = datetime.datetime.utcfromtimestamp(doc[TIME])
+            doc[key] = datetime.datetime.utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content
