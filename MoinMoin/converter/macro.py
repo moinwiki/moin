@@ -13,8 +13,9 @@ from __future__ import absolute_import, division
 from flask import current_app as app
 
 from emeraldtree import ElementTree as ET
-import logging
-logger = logging.getLogger(__name__)
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from MoinMoin.util import plugins
 from MoinMoin.i18n import _, L_, N_
@@ -32,6 +33,7 @@ class Converter(object):
             return cls()
 
     def handle_macro(self, elem, page):
+        logging.debug("handle_macro elem: %r" % elem)
         type = elem.get(moin_page.content_type)
         alt = elem.get(moin_page.alt)
 
@@ -40,6 +42,7 @@ class Converter(object):
 
         type = Type(type)
         if not (type.type == 'x-moin' and type.subtype == 'macro'):
+            logging.debug("not a macro, skipping: %r" % type)
             return
 
         name = type.parameters['name']
@@ -109,7 +112,6 @@ class Converter(object):
     def __call__(self, tree):
         for elem, page in self.recurse(tree, None):
             self.handle_macro(elem, page)
-
         return tree
 
 from . import default_registry
