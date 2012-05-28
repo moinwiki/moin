@@ -361,7 +361,7 @@ class Converter(ConverterMacro):
                 args = Arguments(keyword={'_old': nowiki_args_old})
             else:
                 args = None
-
+            logging.debug("nowiki_name: %r" % nowiki_name)
             # Parse it directly if the type is ourself
             if not nowiki_name or nowiki_name == 'wiki':
                 body = self.parse_block(lines, args)

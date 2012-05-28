@@ -84,6 +84,7 @@ if pygments:
                 else:
                     pygments_name = None
 
+            logging.debug("pygments_name: %r" % pygments_name)
             if pygments_name:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())
