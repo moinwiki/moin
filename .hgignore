@@ -25,3 +25,4 @@
 .orig$
 .rej$
 .~$
+^docs/devel/api/modules.rst
