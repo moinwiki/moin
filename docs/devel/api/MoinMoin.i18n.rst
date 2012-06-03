@@ -7,6 +7,5 @@ i18n Package
 .. automodule:: MoinMoin.i18n
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

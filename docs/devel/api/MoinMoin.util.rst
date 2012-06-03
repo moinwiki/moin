@@ -7,7 +7,6 @@ util Package
 .. automodule:: MoinMoin.util
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`SubProcess` Module
@@ -16,25 +15,6 @@ util Package
 .. automodule:: MoinMoin.util.SubProcess
     :members:
     :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-
-:mod:`chartypes` Module
------------------------
-
-.. automodule:: MoinMoin.util.chartypes
-    :members:
-    :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-
-:mod:`chartypes_create` Module
-------------------------------
-
-.. automodule:: MoinMoin.util.chartypes_create
-    :members:
-    :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`clock` Module
@@ -43,7 +23,6 @@ util Package
 .. automodule:: MoinMoin.util.clock
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`crypto` Module
@@ -52,7 +31,6 @@ util Package
 .. automodule:: MoinMoin.util.crypto
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`diff3` Module
@@ -61,7 +39,6 @@ util Package
 .. automodule:: MoinMoin.util.diff3
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`diff_html` Module
@@ -70,7 +47,6 @@ util Package
 .. automodule:: MoinMoin.util.diff_html
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`diff_text` Module
@@ -79,16 +55,6 @@ util Package
 .. automodule:: MoinMoin.util.diff_text
     :members:
     :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-
-:mod:`edit_lock` Module
------------------------
-
-.. automodule:: MoinMoin.util.edit_lock
-    :members:
-    :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`filesys` Module
@@ -97,7 +63,6 @@ util Package
 .. automodule:: MoinMoin.util.filesys
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`forms` Module
@@ -106,7 +71,6 @@ util Package
 .. automodule:: MoinMoin.util.forms
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`interwiki` Module
@@ -115,7 +79,6 @@ util Package
 .. automodule:: MoinMoin.util.interwiki
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`iri` Module
@@ -124,7 +87,6 @@ util Package
 .. automodule:: MoinMoin.util.iri
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`lock` Module
@@ -133,7 +95,6 @@ util Package
 .. automodule:: MoinMoin.util.lock
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`md5crypt` Module
@@ -142,7 +103,6 @@ util Package
 .. automodule:: MoinMoin.util.md5crypt
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`mime` Module
@@ -151,7 +111,6 @@ util Package
 .. automodule:: MoinMoin.util.mime
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`mimetype` Module
@@ -160,7 +119,6 @@ util Package
 .. automodule:: MoinMoin.util.mimetype
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`monkeypatch` Module
@@ -169,7 +127,6 @@ util Package
 .. automodule:: MoinMoin.util.monkeypatch
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`paramparser` Module
@@ -178,7 +135,6 @@ util Package
 .. automodule:: MoinMoin.util.paramparser
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`plugins` Module
@@ -187,7 +143,6 @@ util Package
 .. automodule:: MoinMoin.util.plugins
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`profile` Module
@@ -196,7 +151,6 @@ util Package
 .. automodule:: MoinMoin.util.profile
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`pysupport` Module
@@ -205,7 +159,6 @@ util Package
 .. automodule:: MoinMoin.util.pysupport
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`registry` Module
@@ -214,7 +167,6 @@ util Package
 .. automodule:: MoinMoin.util.registry
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`send_file` Module
@@ -223,7 +175,6 @@ util Package
 .. automodule:: MoinMoin.util.send_file
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`thread_monitor` Module
@@ -232,7 +183,6 @@ util Package
 .. automodule:: MoinMoin.util.thread_monitor
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`tree` Module
@@ -241,7 +191,6 @@ util Package
 .. automodule:: MoinMoin.util.tree
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`version` Module
@@ -250,6 +199,5 @@ util Package
 .. automodule:: MoinMoin.util.version
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

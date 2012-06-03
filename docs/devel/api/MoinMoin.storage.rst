@@ -7,7 +7,6 @@ storage Package
 .. automodule:: MoinMoin.storage
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`error` Module
@@ -16,7 +15,6 @@ storage Package
 .. automodule:: MoinMoin.storage.error
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 Subpackages
