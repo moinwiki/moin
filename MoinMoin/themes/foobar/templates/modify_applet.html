@@ -1,0 +1,17 @@
+{% import "forms.html" as forms %}
+{% extends theme("local.html") %}
+{% block content %}
+<h1>{{ _("Modifying %(item_name)s", item_name=item_name) }}</h1>
+<div class="moin-form">
+{{ gen.form.open(form, method='post', action='', enctype='multipart/form-data') }}
+{{ forms.render_errors(form) }}
+{% block extra_form %}{% endblock %}
+{% block data_editor %}{% endblock %}
+{{ forms.render_field(gen, form['data_file'], 'file') }}
+<pre>{{ help }}</pre>
+{{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
+<br />
+{{ forms.render_errors(form['meta_text']) }}
+{{ gen.form.close() }}
+</div>
+{% endblock %}
