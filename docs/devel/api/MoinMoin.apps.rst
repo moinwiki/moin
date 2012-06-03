@@ -7,7 +7,6 @@ apps Package
 .. automodule:: MoinMoin.apps
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 Subpackages

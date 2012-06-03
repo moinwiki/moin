@@ -7,7 +7,6 @@ mail Package
 .. automodule:: MoinMoin.mail
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`sendmail` Module
@@ -16,6 +15,5 @@ mail Package
 .. automodule:: MoinMoin.mail.sendmail
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
