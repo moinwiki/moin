@@ -200,12 +200,12 @@ ul.moin-tags li.weight6{font-size:144%}
 ul.moin-tags li.weight7{font-size:172.79999999999998%}
 ul.moin-tags li.weight8{font-size:207.35999999999999%}
 ul.moin-tags li.weight9{font-size:248.83199999999994%}
-h1{font-size:1.7279999999999998em;margin:.5787037037037038em 0;border-bottom:3px solid #4d7da9;padding-bottom:3px}
-h2{font-size:1.44em;margin:.6944444444444444em 0;border-bottom:3px solid #4d7da9;padding-bottom:3px}
-h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #4d7da9;padding-bottom:2px}
-h4{font-size:1em;margin:1em 0;border-bottom:2px solid #4d7da9;padding-bottom:2px}
-h5{font-size:.8333333333333334em;margin:1.2em 0;border-bottom:1px solid #4d7da9;padding-bottom:1px}
-h6{font-size:.6944444444444445em;margin:1.4399999999999997em 0;border-bottom:1px solid #4d7da9;padding-bottom:1px}
+h1{font-size:1.7279999999999998em;margin:.5787037037037038em 0;border-bottom:3px solid #ccc;padding-bottom:3px}
+h2{font-size:1.44em;margin:.6944444444444444em 0;border-bottom:3px solid #ccc;padding-bottom:3px}
+h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #ccc;padding-bottom:2px}
+h4{font-size:1em;margin:1em 0;border-bottom:2px solid #ccc;padding-bottom:2px}
+h5{font-size:.8333333333333334em;margin:1.2em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
+h6{font-size:.6944444444444445em;margin:1.4399999999999997em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
 a.permalink{display:none;cursor:pointer;margin-left:.1em;color:#888;}
 a.permalink:hover{color:#444}
 h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink,h6:hover .permalink{display:inline;text-decoration:none}
