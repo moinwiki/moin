@@ -25,7 +25,7 @@ border_style = 1px solid border_color
 header_bg_color = #eeffee
 footer_color = #888888
 heading_color = #000088
-panel_items_color = #000000
+panel_color = #000000
 border_color = #cccccc
 shadow_color = #444444
 table_bg_color = #EEF1F5
@@ -140,6 +140,7 @@ body
     list-style-type none 
     margin 0
     li
+        background-color panel_color
         font-size main_font_size
         color heading_color
         font-weight bold
@@ -155,7 +156,7 @@ body
             padding 0.2em 0.1em
             li
                 font-size small_font_size
-                color panel_items_color
+                color heading_color
                 font-weight normal
                 padding 0.1em 0.1em 0.1em 0.1em
                 border none
