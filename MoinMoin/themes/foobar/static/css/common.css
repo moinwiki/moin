@@ -151,7 +151,8 @@ body{color:#444;background-color:#eee;font-family:sans-serif}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
 #moin-main-box{background-color:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #444;overflow:hidden}
-#moin-header{background-color:#efe;border-bottom:1px solid #ccc;padding:.2% .5%;overflow:auto}
+#moin-header{background-color:#efe;color:#008;border-bottom:1px solid #ccc;padding:.2% .5%;overflow:auto;}
+#moin-header a{color:#008}
 #moin-content-no-panel{float:left;width:98.56746096959736%;padding:.6162695152013148%;border-right:1px solid #ccc}
 #moin-content-with-panel{float:left;width:76.79260476581759%;padding:.6162695152013148%;border-right:1px solid #ccc}
 #moin-local-panel{float:left;width:20.54231717337716%;padding:.6162695152013148%;margin-left:-1px;border-left:1px solid #ccc}
