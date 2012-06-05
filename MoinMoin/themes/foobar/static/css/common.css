@@ -173,7 +173,7 @@ a:link{color:#47f}
 a:visited{color:#04a}
 a:hover{color:#f00;text-decoration:underline}
 a:active{color:#008000;text-decoration:underline}
-a.moin-nonexistent:link{color:#666}
+a.moin-nonexistent:link{color:#808080}
 a.moin-nonexistent:visited{color:#808080}
 a.moin-nonexistent:hover{color:#000}
 a.moin-nonexistent:active{color:#000}
@@ -218,16 +218,16 @@ hr.moin-hr5{height:9px}
 hr.moin-hr6{height:12px}
 table{margin:.5em;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
-table th{border:1px solid #ccc;background-color:#81bbf2}
+table th{border:1px solid #ccc;background-color:#efe}
 table td{border:1px solid #ccc}
 table.zebra{border:none;border-collapse:separate;border-spacing:1px;}
-table.zebra thead{background-color:#81bbf2}
-table.zebra tfoot{background-color:#c4d9ff}
+table.zebra thead{background-color:#efe}
+table.zebra tfoot{background-color:#eee}
 table.zebra tbody tr,table.zebra > tr{background-color:#eef1f5}
-table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#d9dfe8}
+table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#eef1f5}
 table.zebra th,table.zebra td{border:none}
-pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#f3f5f7;margin:.33em 0;padding:5px;clear:both;}
-pre.comment{background-color:#ccc;color:#f00;margin:0;padding:0;border:0;}
+pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#eee;margin:.33em 0;padding:5px;clear:both;}
+pre.comment{background-color:#efe;color:#008;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
 textarea{font-family:monospace;width:100%;border:1px solid #ccc}
 input#f_comment{width:100%;border:1px solid #ccc;margin:.3em 0}
