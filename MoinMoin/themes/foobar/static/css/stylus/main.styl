@@ -28,6 +28,13 @@ heading_color = #000088
 panel_items_color = #000000
 border_color = #4D7DA9
 shadow_color = #444444
+table_bg_color = #EEF1F5
+link_color = #47F
+hover_color = red
+active_color = green
+visited_color = #04A
+nonexistent_link_color = grey
+nonexistent_hover_color = black
 
 font_family = sans-serif
 main_font_size = 1em
@@ -173,21 +180,21 @@ a
     text-decoration none
     // order must be: link, visited, hover, active
     &:link
-        color #47F
+        color link_color
     &:visited
-        color #04A
+        color visited_color
     &:hover
-        color red
+        color hover_color
         text-decoration underline
     &:active
-        color green
+        color active_color
         text-decoration underline
     &.moin-nonexistent:link
         color #666
     &.moin-nonexistent:visited
-        color grey
+        color nonexistent_link_color
     &.moin-nonexistent:hover
-        color black
+        color nonexistent_hover_color
     &.moin-nonexistent:active
         color black
 
@@ -308,7 +315,7 @@ table.zebra
         background-color #C4D9FF
     tbody tr,
     > tr
-        background-color #EEF1F5
+        background-color table_bg_color
     tbody tr:nth-child(odd),
     > tr:nth-child(odd)
         background-color #D9DFE8
