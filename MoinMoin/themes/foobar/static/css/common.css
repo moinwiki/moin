@@ -161,9 +161,9 @@ body{color:#444;background-color:#eee;font-family:sans-serif}
 #moin-logo{width:100%;padding:0 0 1em 0;}
 #moin-logo a{display:block;width:100%;height:70px;background-repeat:no-repeat;background-position:center center}
 #moin-global-panel ul,#moin-local-panel ul{list-style-type:none;margin:0;}
-#moin-global-panel ul li,#moin-local-panel ul li{font-size:1em;color:#008;font-weight:bold;padding:.5em;border:1px solid #ccc;border-radius:4px;box-shadow:1px 1px 2px #444;margin-left:.5em;margin-bottom:.5em;overflow:hidden;word-wrap:break-word;}
+#moin-global-panel ul li,#moin-local-panel ul li{background-color:#000;font-size:1em;color:#008;font-weight:bold;padding:.5em;border:1px solid #ccc;border-radius:4px;box-shadow:1px 1px 2px #444;margin-left:.5em;margin-bottom:.5em;overflow:hidden;word-wrap:break-word;}
 #moin-global-panel ul li ul,#moin-local-panel ul li ul{padding:.2em .1em;}
-#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#000;font-weight:normal;padding:.1em .1em .1em .1em;border:none;box-shadow:none;margin:0}
+#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#008;font-weight:normal;padding:.1em .1em .1em .1em;border:none;box-shadow:none;margin:0}
 #moin-footer ul,#moin-credits{float:left;list-style-type:none;}
 #moin-footer ul li,#moin-credits li{padding:.1em}
 #moin-footer-logos{float:right;}
