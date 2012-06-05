@@ -147,37 +147,37 @@ input, select { vertical-align: middle; }
 .center { text-align: center; }
 .right { text-align: right; }
 .justify { text-align: justify; }
-body{color:#444;background-color:#eee;font-family:sans-serif}
+body{color:#000;background-color:#d6d5d0;font-family:sans-serif}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
-#moin-main-box{background-color:#fff;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #444;overflow:hidden}
-#moin-header{background-color:#efe;color:#008;border-bottom:1px solid #ccc;padding:.2% .5%;overflow:auto;}
-#moin-header a{color:#008}
+#moin-main-box{background-color:#f0f0f0;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #9d9d9b;overflow:hidden}
+#moin-header{background-color:#2c2c2a;color:#fff;border-bottom:1px solid #ccc;padding:.2% .5%;overflow:auto;}
+#moin-header a{color:#fff}
 #moin-content-no-panel{float:left;width:98.56746096959736%;padding:.6162695152013148%;border-right:1px solid #ccc}
 #moin-content-with-panel{float:left;width:76.79260476581759%;padding:.6162695152013148%;border-right:1px solid #ccc}
 #moin-local-panel{float:left;width:20.54231717337716%;padding:.6162695152013148%;margin-left:-1px;border-left:1px solid #ccc}
-#moin-footer{clear:both;font-size:.8em;color:#888;padding:.5% .5%;overflow:auto}
+#moin-footer{clear:both;font-size:.8em;color:#000;padding:.5% .5%;overflow:auto}
 #moin-breadcrumbs-location{float:left;padding:.3em .5em .2em .5em;font-weight:bold}
 #moin-search{float:right;padding:.3em .5em .2em .5em}
 #moin-logo{width:100%;padding:0 0 1em 0;}
 #moin-logo a{display:block;width:100%;height:70px;background-repeat:no-repeat;background-position:center center}
 #moin-global-panel ul,#moin-local-panel ul{list-style-type:none;margin:0;}
-#moin-global-panel ul li,#moin-local-panel ul li{background-color:#000;font-size:1em;color:#008;font-weight:bold;padding:.5em;border:1px solid #ccc;border-radius:4px;box-shadow:1px 1px 2px #444;margin-left:.5em;margin-bottom:.5em;overflow:hidden;word-wrap:break-word;}
+#moin-global-panel ul li,#moin-local-panel ul li{background-color:#2c2c2a;font-size:1em;color:#fff;font-weight:bold;padding:.5em;border:1px solid #ccc;border-radius:4px;box-shadow:1px 1px 2px #9d9d9b;margin-left:.5em;margin-bottom:.5em;overflow:hidden;word-wrap:break-word;}
 #moin-global-panel ul li ul,#moin-local-panel ul li ul{padding:.2em .1em;}
-#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#008;font-weight:normal;padding:.1em .1em .1em .1em;border:none;box-shadow:none;margin:0}
+#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#fff;font-weight:normal;padding:.1em .1em .1em .1em;border:none;box-shadow:none;margin:0}
 #moin-footer ul,#moin-credits{float:left;list-style-type:none;}
 #moin-footer ul li,#moin-credits li{padding:.1em}
 #moin-footer-logos{float:right;}
 #moin-footer-logos ul li{display:inline}
 a{text-decoration:none;}
-a:link{color:#47f}
-a:visited{color:#04a}
-a:hover{color:#f00;text-decoration:underline}
-a:active{color:#008000;text-decoration:underline}
-a.moin-nonexistent:link{color:#808080}
-a.moin-nonexistent:visited{color:#808080}
-a.moin-nonexistent:hover{color:#000}
-a.moin-nonexistent:active{color:#000}
+a:link{color:#4fa8fa}
+a:visited{color:#5e84a7}
+a:hover{color:#007cef;text-decoration:underline}
+a:active{color:#51d443;text-decoration:underline}
+a.moin-nonexistent:link{color:#f1f1f1}
+a.moin-nonexistent:visited{color:#f1f1f1}
+a.moin-nonexistent:hover{color:#ff2727}
+a.moin-nonexistent:active{color:#ff2727}
 ul,dl{margin-left:1.5em}
 ol{margin-left:3em;}
 ol ol{margin-left:1.5em}
@@ -207,10 +207,10 @@ h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #ccc;pad
 h4{font-size:1em;margin:1em 0;border-bottom:2px solid #ccc;padding-bottom:2px}
 h5{font-size:.8333333333333334em;margin:1.2em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
 h6{font-size:.6944444444444445em;margin:1.4399999999999997em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
-a.permalink{display:none;cursor:pointer;margin-left:.1em;color:#888;}
-a.permalink:hover{color:#444}
+a.permalink{display:none;cursor:pointer;margin-left:.1em;color:#000;}
+a.permalink:hover{color:#000}
 h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink,h6:hover .permalink{display:inline;text-decoration:none}
-hr{background-color:#444;border:0;margin:.9em 0;height:1px;}
+hr{background-color:#000;border:0;margin:.9em 0;height:1px;}
 hr.moin-hr1{height:2px}
 hr.moin-hr2{height:3px}
 hr.moin-hr3{height:5px}
@@ -219,16 +219,16 @@ hr.moin-hr5{height:9px}
 hr.moin-hr6{height:12px}
 table{margin:.5em;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
-table th{border:1px solid #ccc;background-color:#efe}
+table th{border:1px solid #ccc;background-color:#2c2c2a}
 table td{border:1px solid #ccc}
 table.zebra{border:none;border-collapse:separate;border-spacing:1px;}
-table.zebra thead{background-color:#efe}
-table.zebra tfoot{background-color:#eee}
-table.zebra tbody tr,table.zebra > tr{background-color:#eef1f5}
-table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#eef1f5}
+table.zebra thead{background-color:#2c2c2a}
+table.zebra tfoot{background-color:#d6d5d0}
+table.zebra tbody tr,table.zebra > tr{background-color:#d0d0d0}
+table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#d0d0d0}
 table.zebra th,table.zebra td{border:none}
-pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#eee;margin:.33em 0;padding:5px;clear:both;}
-pre.comment{background-color:#efe;color:#008;margin:0;padding:0;border:0;}
+pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.33em 0;padding:5px;clear:both;}
+pre.comment{background-color:#2c2c2a;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
 textarea{font-family:monospace;width:100%;border:1px solid #ccc}
 input#f_comment{width:100%;border:1px solid #ccc;margin:.3em 0}
