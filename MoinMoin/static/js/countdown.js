@@ -40,6 +40,6 @@ function countdown() {
     counter -= step
 
     // Set timer for next update
-    setTimeout("countdown()", delay);    
+    setTimeout("countdown()", delay);
 }
 

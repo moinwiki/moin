@@ -135,3 +135,4 @@ class Parser:
 
 coverage_modules = ['MoinMoin.util.pysupport']
 pytest.main("-x test_pysupport.py")
+

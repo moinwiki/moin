@@ -25,7 +25,7 @@ def open_file(filename, mode):
             stream = sys.stdin
         else:
             raise ValueError("Invalid mode string. Must contain 'r', 'w' or 'a'")
-        
+
         # On Windows force the stream to be in binary mode if it's needed.
         if sys.platform == "win32" and "b" in mode:
             import os, msvcrt

@@ -245,3 +245,4 @@ class TestConverterPage(Base):
     def test_unknown(self):
         page = ET.XML("<page:unknown {0}/>".format(self.input_namespaces))
         pytest.raises(ElementException, self.conv.__call__, page)
+
