@@ -89,3 +89,4 @@ class Registry(RegistryBase):
         :param factory: Factory to register. Callable, have to return a class
         """
         return self._register(self.Entry(factory, priority))
+

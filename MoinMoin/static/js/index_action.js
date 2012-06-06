@@ -1,6 +1,6 @@
 /*
  * Script for the actions performed on the items at index page.
- * Copyright 2011, AkashSinha<akash2607@gmail.com> 
+ * Copyright 2011, AkashSinha<akash2607@gmail.com>
  */
 
 var actionLoading = [];
@@ -81,7 +81,7 @@ function do_action(comment, action) {
                     else {
                         show_conflict($('.selected-item').children('a.moin-item[title="' + itemname + '"]'));
                         left_item++;
-                   }  
+                   }
                    });
                    var message = "Items " + actionDone[action] + ": " + success_item ;
                    if(left_item)
@@ -125,7 +125,7 @@ $("document").ready(function () {
         else {
             $(".moin-contenttypes-wrapper form").find(".helper-text").css("display", "block");
         }
-            
+
         return false;
     });
 
@@ -156,7 +156,7 @@ $("document").ready(function () {
              actionsDiv.addClass("action-visible");
          }
     });
-    
+
     $(".moin-select-allitem").click(function () {
         if($(this).hasClass("allitem-toselect")) {
             $(".moin-item-index div").removeClass().addClass("selected-item");
@@ -185,7 +185,7 @@ $("document").ready(function () {
             }, 4000);
         }
         else {
-            if(this.id == "moin-delete-trigger") 
+            if(this.id == "moin-delete-trigger")
                 showpop("delete");
             else
                 showpop("destroy");
@@ -240,3 +240,4 @@ $("document").ready(function () {
     $('#moin-download-trigger').multiDownload('click', { delay: 3000 });
 
 });
+

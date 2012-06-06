@@ -147,3 +147,4 @@ class TestConverter(Base):
             yield (self.do, ) + i
 
 coverage_modules = ['MoinMoin.converter.moinwiki_out']
+

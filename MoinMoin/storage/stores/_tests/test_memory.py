@@ -33,3 +33,4 @@ def test_destroy(Store):
 def test_from_uri(Store):
     store = Store.from_uri("mem://")
     assert isinstance(store, Store)
+

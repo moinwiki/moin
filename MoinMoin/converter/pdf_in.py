@@ -67,3 +67,4 @@ class PDFIndexingConverter(object):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_text_plain
 default_registry.register(PDFIndexingConverter._factory, Type('application/pdf'), type_text_plain)
+
