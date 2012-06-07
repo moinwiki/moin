@@ -61,7 +61,7 @@ function do_action(comment, action) {
     });
     var itemnames = JSON.stringify(links);
     var actionTrigger = "moin-" + action + "-trigger";
-    url = $("#" + actionTrigger).attr("actionurl");
+    url = $("#" + actionTrigger).attr("data-actionurl");
     $("#popup").css("display", "none");
     $(".moin-index-message span").text(actionLoading[action]);
     $(".moin-index-message").css("display", "block");
