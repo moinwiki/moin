@@ -35,3 +35,4 @@ class TestFuid(object):
 
         with pytest.raises(TypeError):
             send_file.send_file(None, as_attachment = True)
+

@@ -454,3 +454,4 @@ class LogFile:
             self._output.write(line)
             self._output.close() # does this maybe help against the sporadic fedora wikis 160 \0 bytes in the edit-log?
             del self._output # re-open the output file automagically
+

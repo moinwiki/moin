@@ -7,7 +7,6 @@ maint Package
 .. automodule:: MoinMoin.script.maint
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`index` Module
@@ -16,7 +15,6 @@ maint Package
 .. automodule:: MoinMoin.script.maint.index
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`modified_systemitems` Module
@@ -25,7 +23,6 @@ maint Package
 .. automodule:: MoinMoin.script.maint.modified_systemitems
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`modify_item` Module
@@ -34,7 +31,14 @@ maint Package
 .. automodule:: MoinMoin.script.maint.modify_item
     :members:
     :undoc-members:
-    :inherited-members:
+    :show-inheritance:
+
+:mod:`moinshell` Module
+-----------------------
+
+.. automodule:: MoinMoin.script.maint.moinshell
+    :members:
+    :undoc-members:
     :show-inheritance:
 
 :mod:`reduce_revisions` Module
@@ -43,7 +47,6 @@ maint Package
 .. automodule:: MoinMoin.script.maint.reduce_revisions
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`serialization` Module
@@ -52,7 +55,6 @@ maint Package
 .. automodule:: MoinMoin.script.maint.serialization
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`set_meta` Module
@@ -61,6 +63,5 @@ maint Package
 .. automodule:: MoinMoin.script.maint.set_meta
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

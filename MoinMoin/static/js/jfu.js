@@ -44,7 +44,7 @@
             });
         };
     }
-        
+
     UploadHandler = function (container, options) {
         var uploadHandler = this;
 
@@ -57,11 +57,11 @@
         this.uploadTemplate = this.uploadTable.find('.file_upload_template:first');
         this.downloadTemplate = this.downloadTable.find('.file_download_template:first');
         this.multiButtons = container.find('.file_upload_buttons:first');
-        
+
         this.formatFileName = function (name) {
             return name.replace(/^.*[\/\\]/, '');
         };
-        
+
         this.enableDragToDesktop = function () {
             var link = $(this),
                 url = link.get(0).href,
@@ -118,7 +118,7 @@
             return uploadRow;
             }
             return null;
-            
+
         };
 
         this.buildMultiDownloadRow = function (files, handler) {
@@ -146,7 +146,7 @@
                 .attr('class', fileContenttype || null);
             return downloadRow;
         };
-        
+
         this.beforeSend = function (event, files, index, xhr, handler, callBack) {
             var fileSize = null;
             if (typeof index === 'undefined') {
@@ -201,12 +201,12 @@
 
         this.destroyEventHandlers = function () {
         };
-        
+
         this.multiButtonHandler = function (e) {
             uploadHandler.uploadTable.find(e.data.selector + ' button:visible').click();
             e.preventDefault();
         };
-        
+
         this.initMultiButtons = function () {
             uploadHandler.multiButtons.find('.file_upload_start:first')
                 .button({icons: {primary: 'ui-icon-circle-arrow-e'}})
@@ -215,7 +215,7 @@
                 .button({icons: {primary: 'ui-icon-cancel'}})
                 .bind('click', {selector: '.file_upload_cancel'}, uploadHandler.multiButtonHandler);
         };
-        
+
         this.destroyMultiButtons = function () {
             uploadHandler.multiButtons.find(
                 '.file_upload_start:first, .file_upload_cancel:first'
@@ -241,7 +241,7 @@
                 $(this).fileUploadUI(new UploadHandler($(this), options));
             });
         },
-        
+
         option: function (option, value, namespace) {
             if (!option || (typeof option === 'string' && typeof value === 'undefined')) {
                 return $(this).fileUpload('option', option, value, namespace);
@@ -250,20 +250,20 @@
                 $(this).fileUploadUI('option', option, value, namespace);
             });
         },
-            
+
         destroy : function (namespace) {
             return this.each(function () {
                 $(this).fileUploadUI('destroy', namespace);
             });
         },
-        
+
         upload: function (files, namespace) {
             return this.each(function () {
                 $(this).fileUploadUI('upload', files, namespace);
             });
         }
     };
-    
+
     $.fn.fileUploadUIX = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -273,7 +273,7 @@
             $.error('Method "' + method + '" does not exist on jQuery.fileUploadUIX');
         }
     };
-    
+
 }(jQuery));
 
 
@@ -294,3 +294,4 @@ $(function () {
     // Initialize jQuery File Upload (Extended User Interface Version):
     $('#file_upload').fileUploadUIX();
 });
+
