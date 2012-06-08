@@ -129,3 +129,4 @@ class TestInclude(object):
         rendered = MoinWiki.create(u'page1')._render_data()
         assert '<p />' not in rendered
         assert '<p></p>' not in rendered
+

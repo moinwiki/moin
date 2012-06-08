@@ -29,3 +29,4 @@ class TestMisc(object):
             rv = c.get(url_for('misc.urls_names'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/plain; charset=utf-8'
+

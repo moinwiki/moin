@@ -7,7 +7,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.__init__
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_template` Module
@@ -16,7 +15,6 @@ MoinMoin Package
 .. automodule:: MoinMoin._template
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`app` Module
@@ -25,7 +23,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.app
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`conftest` Module
@@ -34,7 +31,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.conftest
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`error` Module
@@ -43,7 +39,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.error
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`log` Module
@@ -52,7 +47,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.log
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`user` Module
@@ -61,7 +55,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.user
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`wikiutil` Module
@@ -70,7 +63,6 @@ MoinMoin Package
 .. automodule:: MoinMoin.wikiutil
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 Subpackages
@@ -81,6 +73,7 @@ Subpackages
     MoinMoin.apps
     MoinMoin.auth
     MoinMoin.config
+    MoinMoin.constants
     MoinMoin.converter
     MoinMoin.datastruct
     MoinMoin.i18n

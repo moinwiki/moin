@@ -7,7 +7,6 @@ moin19 Package
 .. automodule:: MoinMoin.script.migration.moin19
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_logfile19` Module
@@ -16,7 +15,6 @@ moin19 Package
 .. automodule:: MoinMoin.script.migration.moin19._logfile19
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_utils19` Module
@@ -25,7 +23,6 @@ moin19 Package
 .. automodule:: MoinMoin.script.migration.moin19._utils19
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`import19` Module
@@ -34,6 +31,5 @@ moin19 Package
 .. automodule:: MoinMoin.script.migration.moin19.import19
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

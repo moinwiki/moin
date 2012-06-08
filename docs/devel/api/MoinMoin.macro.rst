@@ -7,7 +7,6 @@ macro Package
 .. automodule:: MoinMoin.macro
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`Anchor` Module
@@ -16,7 +15,6 @@ macro Package
 .. automodule:: MoinMoin.macro.Anchor
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`Date` Module
@@ -25,7 +23,6 @@ macro Package
 .. automodule:: MoinMoin.macro.Date
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`DateTime` Module
@@ -34,7 +31,6 @@ macro Package
 .. automodule:: MoinMoin.macro.DateTime
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`GetText` Module
@@ -43,7 +39,6 @@ macro Package
 .. automodule:: MoinMoin.macro.GetText
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`GetVal` Module
@@ -52,7 +47,6 @@ macro Package
 .. automodule:: MoinMoin.macro.GetVal
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`MailTo` Module
@@ -61,7 +55,6 @@ macro Package
 .. automodule:: MoinMoin.macro.MailTo
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`PagenameList` Module
@@ -70,7 +63,6 @@ macro Package
 .. automodule:: MoinMoin.macro.PagenameList
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`RandomItem` Module
@@ -79,7 +71,6 @@ macro Package
 .. automodule:: MoinMoin.macro.RandomItem
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`Verbatim` Module
@@ -88,7 +79,6 @@ macro Package
 .. automodule:: MoinMoin.macro.Verbatim
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_base` Module
@@ -97,6 +87,5 @@ macro Package
 .. automodule:: MoinMoin.macro._base
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

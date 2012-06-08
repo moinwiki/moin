@@ -59,3 +59,4 @@ class TestVersion(object):
 
 
 coverage_modules = ['MoinMoin.util.version']
+

@@ -35,3 +35,4 @@ class AuthLog(BaseAuth):
     def logout(self, user_obj, **kw):
         self.log('logout', user_obj, kw)
         return user_obj, True
+

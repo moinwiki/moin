@@ -7,6 +7,8 @@ MoinMoin - Macro and pseudo-macro handling
 Base class for wiki parser with macro support.
 """
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from emeraldtree import ElementTree as ET
 
@@ -110,8 +112,10 @@ class ConverterMacro(object):
     def macro(self, name, args, text, context_block=False):
         func = getattr(self, '_{0}_repl'.format(name), None)
         if func is not None:
+            logging.debug("builtin macro: %r" % name)
             return func(args, text, context_block)
 
+        logging.debug("extension macro: %r" % name)
         tag = context_block and moin_page.part or moin_page.inline_part
 
         elem = tag(attrib={
@@ -146,6 +150,7 @@ class ConverterMacro(object):
             type = Type(name)
         else:
             type = Type(type='x-moin', subtype='format', parameters={'name': name})
+        logging.debug("parser type: %r" % type)
 
         elem = moin_page.part(attrib={moin_page.content_type: type})
 
@@ -164,5 +169,4 @@ class ConverterMacro(object):
             elem.append(moin_page.body(children=content))
 
         return elem
-
 

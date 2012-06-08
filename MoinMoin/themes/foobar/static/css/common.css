@@ -237,3 +237,4 @@ sup{vertical-align:super}
 .moin-small{font-size:.83em}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-search{display:none}
 }
+

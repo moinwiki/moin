@@ -168,3 +168,4 @@ class TestCopy(object):
             filesys.copytree(self.test_dir, self.test_dest_dir)
 
 coverage_modules = ['MoinMoin.util.filesys']
+
