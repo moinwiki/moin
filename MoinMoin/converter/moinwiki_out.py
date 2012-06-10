@@ -422,10 +422,10 @@ class Converter(object):
         if text_decoration == u'underline':
             return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
         if font_size:
-            return u"{0}{1}{2}".format(Moinwiki.larger_open if font_size == u"120%"\
+            return u"{0}{1}{2}".format(Moinwiki.larger_open if font_size == u"120%"
                                            else Moinwiki.smaller_open,
                                        self.open_children(elem),
-                                       Moinwiki.larger_close if font_size == u"120%"\
+                                       Moinwiki.larger_close if font_size == u"120%"
                                            else Moinwiki.smaller_close)
         if baseline_shift == u'super':
             return u'^{0}^'.format(u''.join(elem.itertext()))
