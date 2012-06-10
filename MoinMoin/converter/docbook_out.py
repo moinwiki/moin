@@ -378,7 +378,6 @@ class Converter(object):
         return self.new(docbook.inlinemediaobject, attrib={},
                         children=[object_element])
 
-
     def visit_moinpage_table(self, element):
         # TODO: Attributes conversion
         title = element.get(html('title'))

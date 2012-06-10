@@ -6,7 +6,6 @@ MoinMoin - MIME helpers
 """
 
 
-
 class Type(object):
     """
     :ivar type: Type part

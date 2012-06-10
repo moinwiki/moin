@@ -39,7 +39,6 @@ def diff(oldlines, newlines, **kw):
 #            lines = [line for line in lines if line[0] != '?']
 #        return lines
 
-
     # calculate the hunks and remove the unchanged lines between them
     i = 0              # actual index in lines
     count = 0          # number of unchanged lines

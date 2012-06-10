@@ -178,7 +178,6 @@ class _TableArguments(object):
     def number_rows_spanned_repl(self, args, number_rows_spanned):
         args.keyword['number-rows-spanned'] = int(number_rows_spanned)
 
-
     def add_attr_to_style(self, args, attr):
         args.keyword['style'] = args.keyword.get('style', "") + attr + " "
 

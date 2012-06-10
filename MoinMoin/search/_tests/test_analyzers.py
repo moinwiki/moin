@@ -116,7 +116,6 @@ class TestAclTokenizer(TokenizerTestBase):
 class TestMimeTokenizer(TokenizerTestBase):
     """ analyzers: test content type analyzer """
 
-
     test_cases_query = [
                   # (query, tokens)
                   (u'text/plain',

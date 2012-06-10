@@ -101,7 +101,6 @@ class MoinTestFunction(pytest.collect.Function):
         if hasattr(self._obj, 'im_self'):
             self._obj.im_self.app = self.app
 
-
     def teardown(self):
         super(MoinTestFunction, self).teardown()
 
