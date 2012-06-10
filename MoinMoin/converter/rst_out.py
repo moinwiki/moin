@@ -492,7 +492,7 @@ class Converter(object):
 
         ret = self.define_references() + ret + self.open_children(elem)
         if self.last_closed == "text":
-            return  ret + u'\n'
+            return ret + u'\n'
         return ret
 
     def open_moinpage_note(self, elem):
