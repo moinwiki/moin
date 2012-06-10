@@ -110,7 +110,7 @@ class MutableBackendTestBase(BackendTestBase):
             metaid = self.be.store(meta, StringIO(data))
 
     def test_iter(self):
-        mds = [#(metadata items, data str)
+        mds = [# (metadata items, data str)
                 (dict(name='one'), 'ONE'),
                 (dict(name='two'), 'TWO'),
                 (dict(name='three'), 'THREE'),
