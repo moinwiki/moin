@@ -446,7 +446,7 @@ class User(object):
         if not exists:
             pass # XXX UserCreatedEvent
         else:
-            pass #  XXX UserChangedEvent
+            pass # XXX UserChangedEvent
 
     def getText(self, text):
         """ translate a text to the language of this user """

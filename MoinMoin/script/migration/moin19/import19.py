@@ -411,7 +411,7 @@ class EditLog(LogFile):
             self.to_end()
             raise KeyError
         del meta['__rev']
-        del meta[EXTRA] #  we have full name in NAME
+        del meta[EXTRA] # we have full name in NAME
         meta[ACTION] = u'SAVE'
         meta = dict([(k, v) for k, v in meta.items() if v]) # remove keys with empty values
         return meta
