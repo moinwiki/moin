@@ -10,7 +10,6 @@ can return a callable to consider itself as a match.
 """
 
 
-
 class RegistryBase(object):
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10

@@ -132,7 +132,6 @@ def wikiname_validator(element, state):
     return name_validator(element, state)
 
 
-
 def user_contenttype_validator(element, state):
     """
     user profile content type

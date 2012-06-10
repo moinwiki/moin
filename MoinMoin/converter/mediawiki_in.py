@@ -142,7 +142,6 @@ class Converter(ConverterMacro):
         stack.clear()
         stack.top_append(moin_page.separator())
 
-
     block_table = r"""
         ^
         (?P<table>
@@ -947,7 +946,6 @@ class Converter(ConverterMacro):
                         break
                 return ''.join(post_line)
             self.opened_tags = tags
-
 
     def _apply(self, match, prefix, *args):
         """

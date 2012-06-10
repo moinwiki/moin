@@ -452,7 +452,6 @@ class User(object):
         """ translate a text to the language of this user """
         return text # FIXME, was: self._request.getText(text, lang=self.language)
 
-
     # Bookmarks --------------------------------------------------------------
 
     def _set_bookmark(self, tm):

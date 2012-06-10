@@ -18,7 +18,6 @@ class TestMacroBase(object):
         with pytest.raises(NotImplementedError):
             macrobase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
 
-
     def test_MacroBlockBase(self):
         """ test for MacroBlockBase class """
         class Test_MacroBlockBase(MacroBlockBase):
