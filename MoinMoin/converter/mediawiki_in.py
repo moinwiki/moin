@@ -896,11 +896,14 @@ class Converter(ConverterMacro):
                         tag = match.group(1)
                         next_text = match.group(3)
                         text = match.group(2) or match.group(4)
-                        if not text: text = ''
+                        if not text:
+                            text = ''
                         tag_match = re.match(r"/\s*(.*)", tag)
                         status = not tag_match
-                        if tag_match: tag_name = tag_match.group(1).split(' ')[0]
-                        else: tag_name = tag.split(' ')[0]
+                        if tag_match:
+                            tag_name = tag_match.group(1).split(' ')[0]
+                        else:
+                            tag_name = tag.split(' ')[0]
                         if not tag_name in self.all_tags or re.match(r'.*/\s*$', tag)\
                                 or self.nowiki and (status or tag_name != self.nowiki_tag):
                             if not len(tags):
