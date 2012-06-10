@@ -20,11 +20,12 @@ moindir = py.path.local(__file__).pypkgpath()
 EXCLUDE = set([
     moindir/'static', # this is our dist static stuff
     moindir/'_tests/wiki', # this is our test wiki
+    moindir/'util/md5crypt.py', # 3rd party, do not fix pep8 there
 ])
 
 PEP8IGNORE = """
     E202 E221 E222 E241 E301 E302 E401 E501 E701 W391 W601 W602
-    E121 E122 E123 E124 E125 E126 E127 E128 E225 E251 E261 E262 E271 E293 E303
+    E121 E122 E123 E124 E125 E126 E127 E128 E225 E251 E261 E262 E271 E293
 """.split()
 
 # stuff disabled due to malfunctioning of the pep8 checker:
@@ -103,8 +104,9 @@ def check_py_file(reldir, path, mtime):
 
 def pytest_generate_tests(metafunc):
     for pyfile in sorted(moindir.visit('*.py', lambda p: p not in EXCLUDE)):
-        relpath = moindir.bestrelpath(pyfile)
-        metafunc.addcall(id=relpath, funcargs={'path': pyfile})
+        if pyfile not in EXCLUDE:
+            relpath = moindir.bestrelpath(pyfile)
+            metafunc.addcall(id=relpath, funcargs={'path': pyfile})
 
 def test_sourcecode(path):
     mtime = path.stat().mtime
