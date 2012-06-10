@@ -13,7 +13,7 @@ class TestMacroBase(object):
 
     def test_MacroBase(self):
         """ test for MacroBase class """
-        macrobase_obj  = MacroBase()
+        macrobase_obj = MacroBase()
         assert not macrobase_obj.immutable
         with pytest.raises(NotImplementedError):
             macrobase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')

@@ -567,7 +567,7 @@ class Converter(object):
             else:
                 ret = self.open_children(elem)
             if not self.delete_newlines:
-                ret +=  u"\n"
+                ret += u"\n"
         else:
             self.status.append('p')
             ret = self.open_children(elem)
