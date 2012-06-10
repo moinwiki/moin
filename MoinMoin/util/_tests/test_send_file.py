@@ -29,10 +29,10 @@ class TestFuid(object):
 
     def test_temptest(self):
         self.makefile(self.fname, 'test_content')
-        result = send_file.send_file(self.fname, as_attachment = True, conditional = True)
+        result = send_file.send_file(self.fname, as_attachment=True, conditional=True)
         expected = '<Response streamed [200 OK]>'
         assert str(result) == expected
 
         with pytest.raises(TypeError):
-            send_file.send_file(None, as_attachment = True)
+            send_file.send_file(None, as_attachment=True)
 

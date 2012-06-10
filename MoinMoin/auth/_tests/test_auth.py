@@ -57,7 +57,7 @@ class TestGivenAuth(object):
 def test_handle_login():
     # no messages in the beginning
     assert not flaskg._login_messages
-    test_user1 = handle_login(flaskg.user, login_username = 'test_user', login_password = 'test_password', stage = 'moin')
+    test_user1 = handle_login(flaskg.user, login_username='test_user', login_password='test_password', stage='moin')
     test_login_message = [u'Invalid username or password.']
     assert flaskg._login_messages == test_login_message
     assert test_user1.name == u'anonymous'
@@ -70,7 +70,7 @@ def test_handle_login():
     givenauth_obj.user_name = u'Test_User'
     create_user(u'Test_User', u'test_pass', u'test@moinmoin.org')
     test_user, bool_value = givenauth_obj.request(flaskg.user)
-    test_user2 = handle_login(test_user, login_username = 'Test_User', login_password = 'test_pass', stage = 'moin')
+    test_user2 = handle_login(test_user, login_username='Test_User', login_password='test_pass', stage='moin')
     assert not flaskg._login_messages
     assert test_user2.name == u'Test_User'
     assert test_user2.valid

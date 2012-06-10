@@ -381,12 +381,12 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class = u'moin-hr{0}'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr{0}'):
         stack.clear()
         hr_height = min((len(separator) - 3), 6)
         hr_height = max(hr_height, 1)
         attrib = {moin_page('class'): hr_class.format(hr_height)}
-        elem = moin_page.separator(attrib = attrib)
+        elem = moin_page.separator(attrib=attrib)
         stack.top_append(elem)
 
     block_table = r"""
