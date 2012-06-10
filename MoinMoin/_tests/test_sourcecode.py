@@ -68,7 +68,7 @@ RECENTLY = time.time() - 7 * 24*60*60 # we only check stuff touched recently.
 
 def pep8_error_count(path):
     # process_options initializes some data structures and MUST be called before each Checker().check_all()
-    pep8.process_options(['pep8', '--ignore=E202,E221,E222,E241,E301,E302,E401,E501,E701,W391,W601,W602', '--show-source', 'dummy_path'])
+    pep8.process_options(['pep8', '--ignore=E202,E221,E222,E241,E301,E302,E401,E501,E701,W391,W601,W602,E261,E121,E122,E123,E124,E125,E126,E127,E128,E225,E251,E262,E271,E293,E303,E502', '--show-source', 'dummy_path'])
     error_count = pep8.Checker(path).check_all()
     return error_count
 
