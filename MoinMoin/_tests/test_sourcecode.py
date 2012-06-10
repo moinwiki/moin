@@ -23,13 +23,17 @@ EXCLUDE = set([
     moindir/'util/md5crypt.py', # 3rd party, do not fix pep8 there
 ])
 
-PEP8IGNORE = """
-    E202 E221 E222 E241 E261 E301 E302 E401 E501 E701 W391 W601 W602
-    E121 E122 E123 E124 E125 E126 E127 E128 E225
-""".split()
-
-# stuff disabled due to malfunctioning of the pep8 checker:
-PEP8IGNORE.append("E502")  # https://github.com/jcrocholl/pep8/issues/75
+PEP8IGNORE = (
+    "E121 E122 E123 E124 E125 E126 E127 E128 "  # continuation line indentation
+    "E225 "  # missing whitespace around operator
+    "E241 "  # whitespace around comma (we have some "tabular" formatting in the tests)
+    "E261 "  # less than 2 blanks before inline comment
+    "E301 E302 "  # separate toplevel definitions with 2 empty lines, method defs inside class by 1 empty line
+    "E401 "  # imports on separate lines
+    "E501 "  # maximum line length (default 79 chars)
+    "E502 "  # bug in pep8.py: https://github.com/jcrocholl/pep8/issues/75
+    "W391 "  # trailing blank line(s) at EOF. But: We want one of them so that diff does not complain!
+).split()
 
 TRAILING_SPACES = 'nochange' # 'nochange' or 'fix'
                              # use 'fix' with extreme caution and in a separate changeset!
