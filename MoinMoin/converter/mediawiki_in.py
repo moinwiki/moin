@@ -851,7 +851,7 @@ class Converter(ConverterMacro):
             self.nowiki_tag = ''
             self._stack = []
 
-        def push(self, status = []):
+        def push(self, status=[]):
             self._stack.append(self.opened_tags)
             self.opened_tags = status
             if self.opened_tags:
@@ -876,7 +876,7 @@ class Converter(ConverterMacro):
                     self.nowiki_tag = ''
             return self.opened_tags
 
-        def __call__(self, line, tags = []):
+        def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
             match = re.match(r"(.*?)(\<.*\>.*)|(.*)", line)
             if match:

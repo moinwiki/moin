@@ -25,7 +25,7 @@ EXCLUDE = set([
 
 PEP8IGNORE = """
     E202 E221 E222 E241 E261 E301 E302 E401 E501 E701 W391 W601 W602
-    E121 E122 E123 E124 E125 E126 E127 E128 E225 E251
+    E121 E122 E123 E124 E125 E126 E127 E128 E225
 """.split()
 
 # stuff disabled due to malfunctioning of the pep8 checker:
