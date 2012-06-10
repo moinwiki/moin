@@ -11,7 +11,7 @@ Additionally, we check that the files have no crlf (Windows style) line endings.
 
 import re, time
 import pytest
-from . import pep8
+import pep8
 
 import py
 
