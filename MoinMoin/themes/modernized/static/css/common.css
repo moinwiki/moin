@@ -256,7 +256,7 @@ p.searchhint { background-color: #E6EAF0; border: 1px solid #9088DC; padding: 2p
 .moin-contenttypes-wrapper div { cursor: pointer; margin: 0.1em; padding: 0.5em 1.2em 0.5em 0.5em ; height: 1em; }
 div.ct-shown { background: #4477FF url("../img/moin-movedown.png") no-repeat center right; color: #FFFFFF; }
 div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
-.moin-contenttypes-wrapper ul { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; }
+.moin-contenttypes-wrapper form { position: absolute; top: 1.9em; left: 0; display: none; margin: 0.3em 0; border-top: 1px solid #E5E5E5; z-index: 2; background: #FFFFFF; border: 1px solid #E5E5E5; }
 .moin-contenttypes-wrapper ul li { list-style-type: none; padding: 0.5em; min-width: 11.5em; }
 .moin-contenttypes-wrapper ul li label { margin-left: 0.5em; }
 .moin-contenttypes-wrapper ul li .helper-text { font-size: 0.7em; color: #6E6A6B; display: none; }

@@ -56,7 +56,6 @@
                     {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
                     {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
                     {{ forms.render_filter_field(gen, form['unknown_items'], 'checkbox', unknown_items_label) }}
-
                 </ul>
                 {{ gen.input(form['submit'], type='submit') }}
                 {{ gen.form.close() }}
@@ -153,9 +152,9 @@
                 <form action={{ url_for('.ajaxmodify') }} method="post">
                     <label for="moin-newitem">{{ _("Item name") }}</label>
                     {% if item_name %}
-                        <input type="text" id="moin-newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
                     {% else %}
-                        <input type="text" id="moin-newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
                     {% endif %}
                     <br/>
                     <input type="submit" value="{{ _("Create") }}"/>

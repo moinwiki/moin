@@ -35,7 +35,7 @@ Helpers for using flatland with jinja2 to create html forms.
        to the input id attribute. This is needed so the id will match the for attribute
        in the matching label generated 2 lines below.
     #}
-    {{ gen.input(field, type=field_type, auto_value=False) }}
+    {{ gen.input(field, type=field_type, auto_value=False, checked="checked") }}
     {{ render_errors(field) }}
     {{ gen.label(field) }}
     <span class="helper-text">

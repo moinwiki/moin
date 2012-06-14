@@ -106,11 +106,11 @@ $("document").ready(function () {
     "use strict";
     $(".moin-contenttypes-wrapper").children("div").click(function () {
         var wrapper = $(this).parent();
-        if (wrapper.find("ul:visible").length) {
-            $(".moin-contenttypes-wrapper").find("ul").fadeOut(200);
+        if (wrapper.find("form:visible").length) {
+            $(".moin-contenttypes-wrapper").find("form").fadeOut(200);
             $(this).removeClass().addClass("ct-hide");
         } else {
-            $(".moin-contenttypes-wrapper").find("ul").fadeIn(200);
+            $(".moin-contenttypes-wrapper").find("form").fadeIn(200);
             $(this).removeClass().addClass("ct-shown");
         }
     });
