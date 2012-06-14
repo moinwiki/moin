@@ -113,7 +113,6 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         with pytest.raises(AccessDenied):
             item.destroy_revision(revid_protected)
 
-
     def test_destroy_item(self):
         revid_unprotected, revid_protected = self.make_items(u'joe:destroy', u'boss:destroy')
         # now testing:

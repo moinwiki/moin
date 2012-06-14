@@ -260,8 +260,12 @@ class IndexingMiddleware(object):
         latest_revs_fields.update(**common_fields)
 
         userprofile_fields = {
-            EMAIL: ID(unique=True, stored=True),
-            OPENID: ID(unique=True, stored=True),
+            # Note: email / openid (if given) should be unique, but we might
+            # have lots of empty values if it is not given and thus it is NOT
+            # unique overall! Wrongly declaring it unique would lead to whoosh
+            # killing other users from index when update_document() is called!
+            EMAIL: ID(stored=True),
+            OPENID: ID(stored=True),
         }
         latest_revs_fields.update(**userprofile_fields)
 

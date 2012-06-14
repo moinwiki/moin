@@ -13,11 +13,10 @@ class TestMacroBase(object):
 
     def test_MacroBase(self):
         """ test for MacroBase class """
-        macrobase_obj  = MacroBase()
+        macrobase_obj = MacroBase()
         assert not macrobase_obj.immutable
         with pytest.raises(NotImplementedError):
             macrobase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
-
 
     def test_MacroBlockBase(self):
         """ test for MacroBlockBase class """
@@ -27,7 +26,7 @@ class TestMacroBase(object):
                 self.alt = 'alt returned'
 
         macroblockbase_obj = Test_MacroBlockBase()
-        result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
         assert result == 'alt returned'
         with pytest.raises(NotImplementedError):
             result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
@@ -40,7 +39,7 @@ class TestMacroBase(object):
                 return 'test_macro'
 
         macroinlinebase_obj = Test_MacroInlineBase()
-        result = macroinlinebase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        result = macroinlinebase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
         assert result == 'test_macro'
         result = macroinlinebase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
         assert result.text == 'test_macro'
@@ -55,6 +54,6 @@ class TestMacroBase(object):
                 return 'test_macro'
 
         macroinlineonlybase_obj = Test_MacroInlineOnlyBase()
-        result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block = False)
+        result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
         assert result == 'test_macro'
 

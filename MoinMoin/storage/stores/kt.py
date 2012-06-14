@@ -112,7 +112,7 @@ class BytesStore(_Store, BytesMutableStoreBase):
             return None
         return body
 
-    def set(self, key, value, xt = None):
+    def set(self, key, value, xt=None):
         if isinstance(key, unicode):
             key = key.encode("utf-8")
         key = "/" + urllib.quote(key)
@@ -146,7 +146,7 @@ class FileStore(_Store, FileMutableStoreBase):
             return None
         return response # XXX can we do that?
 
-    def set(self, key, value, xt = None):
+    def set(self, key, value, xt=None):
         if isinstance(key, unicode):
             key = key.encode("utf-8")
         key = "/" + urllib.quote(key)

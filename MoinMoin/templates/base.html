@@ -35,10 +35,6 @@
 
     {% block head_links %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
-    {% set parent_item = theme_supp.parent_item(item_name) %}
-    {%- if parent_item -%}
-        <link rel="up" href="{{ url_for('frontend.show_item', item_name=parent_item) }}" />
-    {%- endif %}
 
     {% block theme_stylesheets %}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/common.css') }}" />
@@ -74,3 +70,4 @@
 
 </body>
 </html>
+

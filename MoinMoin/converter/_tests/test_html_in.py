@@ -43,7 +43,6 @@ class Base(object):
         out.write(f.write, namespaces=self.namespaces, )
         return self.output_re.sub(u'', f.getvalue())
 
-
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the HTML_IN conversion : {0}".format(string_to_parse))
@@ -271,3 +270,4 @@ class TestConverter(Base):
         ]
         for i in data:
             yield (self.do, ) + i
+

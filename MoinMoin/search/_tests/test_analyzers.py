@@ -116,7 +116,6 @@ class TestAclTokenizer(TokenizerTestBase):
 class TestMimeTokenizer(TokenizerTestBase):
     """ analyzers: test content type analyzer """
 
-
     test_cases_query = [
                   # (query, tokens)
                   (u'text/plain',
@@ -169,3 +168,4 @@ class TestItemNameAnalyzer(TokenizerTestBase):
         for value, expected_tokens in self.test_cases_index:
             tokens = [token.text for token in tokenizer(value, mode="index")]
             assert set(expected_tokens) == set(tokens)
+

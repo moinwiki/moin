@@ -102,7 +102,6 @@ class TestInterWikiMapBackend(object):
         with pytest.raises(ValueError):
             InterWikiMap.from_string(u'foobarbaz')
 
-
     def test_real_interwiki_map(self):
         """
         Test a 'real' interwiki file.

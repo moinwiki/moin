@@ -443,7 +443,7 @@ class NodeVisitor(object):
             self.open_moin_page_node(
                 moin_page.part(
                     attrib={
-                        moin_page.content_type:\
+                        moin_page.content_type:
                             "x-moin/macro;name={0}".format(macro_name)}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())

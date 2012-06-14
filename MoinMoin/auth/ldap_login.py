@@ -124,7 +124,6 @@ class LDAPAuth(BaseAuth):
         username = kw.get('username')
         password = kw.get('password')
 
-
         # we require non-empty password as ldap bind does a anon (not password
         # protected) bind if the password is empty and SUCCEEDS!
         if not password:

@@ -271,7 +271,6 @@ class Converter(object):
                 #  end of processing for transclusion; the "result" will get inserted into the DOM below
                 return result
 
-
             # Traverse the DOM by calling self.recurse with each child of the current elem.  Starting elem.tag.name=='page'.
             container = []
             i = 0

@@ -42,3 +42,4 @@ class TestUtil(object):
 
 
 coverage_modules = ['MoinMoin.util']
+

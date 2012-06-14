@@ -39,3 +39,4 @@ def test_destroy(tmpdir, Store):
 def test_from_uri(tmpdir, Store):
     store = Store.from_uri("%s" % tmpdir)
     assert store.path == tmpdir
+
