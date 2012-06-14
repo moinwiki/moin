@@ -25,3 +25,5 @@
 .orig$
 .rej$
 .~$
+^docs/devel/api/modules.rst
+^upload.py
