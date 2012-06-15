@@ -1,3 +1,4 @@
+# Copyright: 2012 MoinMoin:CheerXiao
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2011 MoinMoin:ReimarBauer
@@ -20,6 +21,8 @@ import time
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
+from functools import wraps
+
 try:
     import json
 except ImportError:
@@ -263,6 +266,36 @@ def search():
     return html
 
 
+def presenter(view, add_trail=False, abort404=True):
+    """
+    Decorator to create new "presenter" views.
+
+    Presenter views handle GET requests to locations like
+    +{view}/+<rev>/<item_name> and +{view}/<item_name>, and always try to
+    look up the item before processing.
+
+    :param view: name of view
+    :param add_trail: whether to call flaskg.user.add_trail
+    :param abort404: whether to abort(404) for nonexistent items
+    """
+    def decorator(wrapped):
+        @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
+        @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
+        @wraps(wrapped)
+        def wrapper(item_name, rev):
+            if add_trail:
+                flaskg.user.add_trail(item_name)
+            try:
+                item = Item.create(item_name, rev_id=rev)
+            except AccessDenied:
+                abort(403)
+            if abort404 and isinstance(item, NonExistent):
+                abort(404, item_name)
+            return wrapped(item)
+        return wrapper
+    return decorator
+
+
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
@@ -298,13 +331,8 @@ def redirect_show_item(item_name):
     return redirect(url_for_item(item_name))
 
 
-@frontend.route('/+dom/+<rev>/<itemname:item_name>')
-@frontend.route('/+dom/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def show_dom(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
+@presenter('dom', abort404=False)
+def show_dom(item):
     if isinstance(item, NonExistent):
         status = 404
     else:
@@ -329,32 +357,17 @@ def indexable(item_name, rev):
     return Response(content, 200, mimetype='text/plain')
 
 
-@frontend.route('/+highlight/+<rev>/<itemname:item_name>')
-@frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def highlight_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
+@presenter('highlight')
+def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
                            data_text=Markup(item._render_data_highlight()),
                           )
 
 
-@frontend.route('/+meta/<itemname:item_name>', defaults=dict(rev=CURRENT))
-@frontend.route('/+meta/+<rev>/<itemname:item_name>')
-def show_item_meta(item_name, rev):
-    flaskg.user.add_trail(item_name)
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
-    show_revision = rev != CURRENT
+@presenter('meta', add_trail=True)
+def show_item_meta(item):
+    show_revision = request.view_args['rev'] != CURRENT
     show_navigation = False # TODO
     first_rev = None
     last_rev = None
@@ -396,23 +409,13 @@ def content_item(item_name, rev):
                            data_rendered=Markup(item._render_data()),
                            )
 
-@frontend.route('/+get/+<rev>/<itemname:item_name>')
-@frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def get_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
+@presenter('get')
+def get_item(item):
     return item.do_get()
 
-@frontend.route('/+download/+<rev>/<itemname:item_name>')
-@frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def download_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-        mimetype = request.values.get("mimetype")
-    except AccessDenied:
-        abort(403)
+@presenter('download')
+def download_item(item):
+    mimetype = request.values.get("mimetype")
     return item.do_get(force_attachment=True, mimetype=mimetype)
 
 @frontend.route('/+convert/<itemname:item_name>')
