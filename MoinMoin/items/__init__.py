@@ -1,3 +1,4 @@
+# Copyright: 2012 MoinMoin:CheerXiao
 # Copyright: 2009 MoinMoin:ThomasWaldmann
 # Copyright: 2009-2011 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
@@ -644,7 +645,6 @@ class NonExistent(Item):
         if not flaskg.user.may.create(self.name):
             abort(403)
 
-        # XXX think about and add item template support
         return render_template('modify_show_type_selection.html',
                                item_name=self.name,
                                contenttype_groups=CONTENTTYPE_GROUPS,
@@ -693,35 +693,58 @@ There is no help, you're doomed!
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return [rev.meta[NAME] for rev in revs]
 
-    def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        from MoinMoin.apps.frontend.views import CommentForm
-        class ModifyForm(CommentForm):
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+    from MoinMoin.apps.frontend.views import CommentForm
+    class ModifyForm(CommentForm):
+        """Base class for ModifyForm of Binary's subclasses."""
+        meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+        data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
-        if request.method == 'GET':
-            form = ModifyForm.from_defaults()
-            TextCha(form).amend_form()
-            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
-        elif request.method == 'POST':
-            form = ModifyForm.from_flat(request.form.items() + request.files.items())
-            TextCha(form).amend_form()
-            if form.validate():
-                try:
-                    self.modify() # XXX
-                except AccessDenied:
-                    abort(403)
-                else:
-                    return redirect(url_for_item(self.name))
+        def _load(self):
+            item = self.item
+            self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
+
+        extra_template_args = {}
+
+        @classmethod
+        def from_item(cls, item):
+            method = request.method
+            if method == 'GET':
+                form = cls.from_defaults()
+                TextCha(form).amend_form()
+                form.item = item
+                form._load()
+            elif method == 'POST':
+                form = cls.from_flat(request.form.items() + request.files.items())
+                form.item = item
+                TextCha(form).amend_form()
+                form.validate()
+            else:
+                raise ValueError("Request method '%s' not supported" % method)
+            return form
+
+    def do_modify(self, contenttype, template_name):
+        method = request.method
+        if method == 'GET' and template_name is None and isinstance(self.rev, DummyRev):
+            return self._do_modify_show_templates()
+
+        if template_name:
+            item = Item.create(template_name)
+
+        form = self.ModifyForm.from_item(self)
+        if method == 'POST' and form.validate():
+            try:
+                self.modify() # XXX
+            except AccessDenied:
+                abort(403)
+            else:
+                return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                help=self.modify_help,
                                form=form,
                                search_form=None,
+                               **form.extra_template_args
                               )
 
     def _render_data_diff(self, oldrev, newrev):
@@ -1106,6 +1129,16 @@ class Text(Binary):
     """ Base class for text/* """
     template = "modify_text.html"
 
+    class ModifyForm(Binary.ModifyForm):
+        data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
+
+        def _load(self):
+            super(Text.ModifyForm, self)._load()
+            item = self.item
+            self['data_text'] = item.data_storage_to_internal(item.data)
+
+        extra_template_args = {'rows_data': str(ROWS_DATA)}
+
     # text/plain mandates crlf - but in memory, we want lf only
     def data_internal_to_form(self, text):
         """ convert data from memory format to form format """
@@ -1163,45 +1196,6 @@ class Text(Binary):
         html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
         doc = html_conv(doc)
         return conv_serialize(doc, {html.namespace: ''})
-
-    def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        from MoinMoin.apps.frontend.views import CommentForm
-        class ModifyForm(CommentForm):
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
-            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
-
-        if request.method == 'GET':
-            if template_name is None and isinstance(self.rev, DummyRev):
-                return self._do_modify_show_templates()
-            form = ModifyForm.from_defaults()
-            TextCha(form).amend_form()
-            if template_name:
-                item = Item.create(template_name)
-                form['data_text'] = self.data_storage_to_internal(item.data)
-            else:
-                form['data_text'] = self.data_storage_to_internal(self.data)
-            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
-        elif request.method == 'POST':
-            form = ModifyForm.from_flat(request.form.items() + request.files.items())
-            TextCha(form).amend_form()
-            if form.validate():
-                try:
-                    self.modify() # XXX
-                except AccessDenied:
-                    abort(403)
-                else:
-                    return redirect(url_for_item(self.name))
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_data=str(ROWS_DATA), rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
-                               form=form,
-                               search_form=None,
-                              )
 
 item_registry.register(Text._factory, Type('text/*'))
 
@@ -1300,7 +1294,39 @@ class DocBook(MarkupItem):
 item_registry.register(DocBook._factory, Type('application/docbook+xml'))
 
 
-class TWikiDraw(TarMixin, Image):
+class Draw(TarMixin, Image):
+    """
+    Base class for *Draw that use special Java/Javascript applets to modify and store data in a tar file.
+    """
+    class ModifyForm(Binary.ModifyForm):
+        pass
+
+    def do_modify(self, contenttype, template_name):
+        # XXX think about and add item template support
+        #if template_name is None and isinstance(self.rev, DummyRev):
+        #    return self._do_modify_show_templates()
+        form = self.ModifyForm.from_item(self)
+        # XXX we don't validate the form as the POST comes from *Draw applets
+        # XXX as the "saving" POSTs come from *Draw (not the form), editing meta_text doesn't work
+        if request.method == 'POST':
+            try:
+                self.modify() # XXX
+            except AccessDenied:
+                abort(403)
+            else:
+                # *Draw Applets POSTs more than once, redirecting would break them
+                return "OK"
+        return render_template(self.template,
+                               item_name=self.name,
+                               rows_meta=str(ROWS_META), cols=str(COLS),
+                               help=self.modify_help,
+                               form=form,
+                               search_form=None,
+                               **form.extra_template_args
+                              )
+
+
+class TWikiDraw(Draw):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
@@ -1330,38 +1356,6 @@ class TWikiDraw(TarMixin, Image):
 
         self.put_member('drawing' + ext, filecontent, content_length,
                         expected_members=set(['drawing.draw', 'drawing.map', 'drawing.png']))
-
-    def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        from MoinMoin.apps.frontend.views import CommentForm
-        class ModifyForm(CommentForm):
-            # XXX as the "saving" POSTs come from TWikiDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
-
-        if request.method == 'GET':
-            form = ModifyForm.from_defaults()
-            TextCha(form).amend_form()
-            # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
-        elif request.method == 'POST':
-            # this POST comes directly from TWikiDraw (not from Browser), thus no validation
-            try:
-                self.modify() # XXX
-            except AccessDenied:
-                abort(403)
-            else:
-                # TWikiDraw POSTs more than once, redirecting would break them
-                return "OK"
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
-                               form=form,
-                               search_form=None,
-                              )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
@@ -1393,12 +1387,21 @@ class TWikiDraw(TarMixin, Image):
 item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
 
-class AnyWikiDraw(TarMixin, Image):
+class AnyWikiDraw(Draw):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
     modify_help = ""
     template = "modify_anywikidraw.html"
+
+    class ModifyForm(Draw.ModifyForm):
+        @property
+        def extra_template_args(self):
+            try:
+                drawing_exists = 'drawing.svg' in item.list_members()
+            except:
+                drawing_exists = False
+            return {'drawing_exists': drawing_exists}
 
     def modify(self):
         # called from modify UI/POST
@@ -1421,43 +1424,6 @@ class AnyWikiDraw(TarMixin, Image):
             filecontent = filecontent.read()
         self.put_member('drawing' + ext, filecontent, content_length,
                         expected_members=set(['drawing.svg', 'drawing.map', 'drawing.png']))
-
-    def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        from MoinMoin.apps.frontend.views import CommentForm
-        class ModifyForm(CommentForm):
-            # XXX as the "saving" POSTs come from AnyWikiDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
-
-        if request.method == 'GET':
-            form = ModifyForm.from_defaults()
-            TextCha(form).amend_form()
-            # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
-        elif request.method == 'POST':
-            # this POST comes directly from AnyWikiDraw (not from Browser), thus no validation
-            try:
-                self.modify() # XXX
-            except AccessDenied:
-                abort(403)
-            else:
-                # AnyWikiDraw POSTs more than once, redirecting would break them
-                return "OK"
-        try:
-            drawing_exists = 'drawing.svg' in self.list_members()
-        except:
-            drawing_exists = False
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
-                               drawing_exists=drawing_exists,
-                               form=form,
-                               search_form=None,
-                              )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
@@ -1490,7 +1456,7 @@ class AnyWikiDraw(TarMixin, Image):
 item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
 
-class SvgDraw(TarMixin, Image):
+class SvgDraw(Draw):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
     modify_help = ""
     template = "modify_svg-edit.html"
@@ -1508,38 +1474,6 @@ class SvgDraw(TarMixin, Image):
                         expected_members=set(['drawing.svg', 'drawing.png']))
         self.put_member("drawing.png", png_content, content_length,
                         expected_members=set(['drawing.svg', 'drawing.png']))
-
-    def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        from MoinMoin.apps.frontend.views import CommentForm
-        class ModifyForm(CommentForm):
-            # XXX as the "saving" POSTs come from SvgDraw (not the form), editing meta_text doesn't work
-            meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-            data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
-
-        if request.method == 'GET':
-            form = ModifyForm.from_defaults()
-            TextCha(form).amend_form()
-            # XXX currently this is rather pointless, as the form does not get POSTed:
-            form['meta_text'] = self.meta_dict_to_text(self.prepare_meta_for_modify(self.meta))
-        elif request.method == 'POST':
-            # this POST comes directly from SvgDraw (not from Browser), thus no validation
-            try:
-                self.modify() # XXX
-            except AccessDenied:
-                abort(403)
-            else:
-                # SvgDraw POSTs more than once, redirecting would break them
-                return "OK"
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
-                               form=form,
-                               search_form=None,
-                              )
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
