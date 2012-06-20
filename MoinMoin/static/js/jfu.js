@@ -10,6 +10,7 @@
  * http://creativecommons.org/licenses/MIT/
  */
 
+/*jslint browser: true, */
 /*jslint regexp: false */
 /*global jQuery */
 
@@ -32,8 +33,7 @@
                     $(this)
                         .addClass('ui-button ui-widget ui-state-default ui-corner-all')
                         .addClass(
-                            options.text === false ? 'ui-button-icon-only' :
-                                'ui-button-text-icon-primary'
+                            options.text === false ? 'ui-button-icon-only' : 'ui-button-text-icon-primary'
                         )
                         .html($('<span class="ui-button-text"/>').text($(this).text()))
                         .prepend(
@@ -48,7 +48,7 @@
     UploadHandler = function (container, options) {
         var uploadHandler = this;
 
-        this.fileArray = new Array();
+        this.fileArray = [];
         this.url = container.find('form:first').attr('action');
         this.dropZone = $("#moin-content");
         this.uploadTable = container.find('.files:first');
@@ -76,8 +76,9 @@
         };
 
         this.fileExist = function (fileName, fileArray) {
-            for(var i=0; i<fileArray.length; i++) {
-                  if (fileArray[i] == fileName) return true;
+            var i;
+            for (i = 0; i < fileArray.length; i += 1) {
+                if (fileArray[i] === fileName) { return true; }
             }
             fileArray.push(fileName);
             return false;
@@ -108,14 +109,14 @@
                 fileName = handler.formatFileName(file.name),
                 uploadRow = handler.uploadTemplate
                     .clone().removeAttr('id');
-            if(!handler.fileExist(fileName, handler.fileArray)) {
-            uploadRow.find('.file_name')
-                .text(fileName);
-            uploadRow.find('.file_upload_start button')
-                .button({icons: {primary: 'ui-icon-circle-arrow-e'}, text: false});
-            uploadRow.find('.file_upload_cancel button')
-                .button({icons: {primary: 'ui-icon-cancel'}, text: false});
-            return uploadRow;
+            if (!handler.fileExist(fileName, handler.fileArray)) {
+                uploadRow.find('.file_name')
+                    .text(fileName);
+                uploadRow.find('.file_upload_start button')
+                    .button({icons: {primary: 'ui-icon-circle-arrow-e'}, text: false});
+                uploadRow.find('.file_upload_cancel button')
+                    .button({icons: {primary: 'ui-icon-cancel'}, text: false});
+                return uploadRow;
             }
             return null;
 
@@ -267,11 +268,11 @@
     $.fn.fileUploadUIX = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method "' + method + '" does not exist on jQuery.fileUploadUIX');
         }
+        if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
+        }
+        $.error('Method "' + method + '" does not exist on jQuery.fileUploadUIX');
     };
 
 }(jQuery));
@@ -291,6 +292,7 @@
 /*global $ */
 
 $(function () {
+    'use strict';
     // Initialize jQuery File Upload (Extended User Interface Version):
     $('#file_upload').fileUploadUIX();
 });

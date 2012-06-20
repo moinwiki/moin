@@ -159,7 +159,7 @@ class TestCopy(object):
         self.test_dest_dir = self.test_dir + '_copy'
         filesys.copytree(self.test_dir, self.test_dest_dir)
         # check for the dir contents
-        assert os.listdir(self.test_dir) == os.listdir(self.test_dest_dir)
+        assert sorted(os.listdir(self.test_dir)) == sorted(os.listdir(self.test_dest_dir))
 
     def test_dir_exist(self):
         """ raise Error if dir already exist """

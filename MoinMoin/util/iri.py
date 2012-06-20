@@ -146,11 +146,16 @@ class Iri(object):
             return unicode(self) == other
 
         if isinstance(other, Iri):
-            if self._scheme != other._scheme: return False
-            if self._authority != other._authority: return False
-            if self._path != other._path: return False
-            if self._query != other._query: return False
-            if self._fragment != other._fragment: return False
+            if self._scheme != other._scheme:
+                return False
+            if self._authority != other._authority:
+                return False
+            if self._path != other._path:
+                return False
+            if self._query != other._query:
+                return False
+            if self._fragment != other._fragment:
+                return False
             return True
 
         return NotImplemented

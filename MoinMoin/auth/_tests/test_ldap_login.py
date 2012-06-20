@@ -179,7 +179,6 @@ class TestLdapFailover(object):
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
-
     def setup_class(self):
         """ Create LDAP servers environment, start slapds """
         self.ldap_envs = []

@@ -29,7 +29,6 @@ class GroupsBackendTest(object):
                    u'EmptyGroup': [],
                    u'CheckNotExistingGroup': [u'NotExistingGroup']}
 
-
     expanded_groups = {u'EditorGroup': [u'Admin1', u'Admin2', u'John',
                                         u'JoeDoe', u'Editor1'],
                        u'AdminGroup': [u'Admin1', u'Admin2', u'John'],
@@ -177,7 +176,6 @@ class DictsBackendTest(object):
         assert u'SomeNotExistingDict' not in dicts
         assert dicts.get(u'SomeNotExistingDict') is None
         assert dicts.get(u'SomeNotExistingDict', {}) == {}
-
 
         for dict_name, expected_dict in self.dicts.items():
             test_dict = dicts[dict_name]

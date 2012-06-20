@@ -52,7 +52,6 @@ if pygments:
             if lastval:
                 self._append(lasttype, lastval, element)
 
-
     class Converter(object):
         @classmethod
         def _factory(cls, type_input, type_output, **kw):
@@ -113,7 +112,6 @@ if pygments:
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)
             body = moin_page.body(children=(blockcode, ))
             return moin_page.page(children=(body, ))
-
 
     from . import default_registry
     from MoinMoin.util.mime import Type, type_moin_document

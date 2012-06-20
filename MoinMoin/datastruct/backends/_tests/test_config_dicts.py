@@ -6,7 +6,7 @@
 """
 
 
-from  MoinMoin.datastruct.backends._tests import DictsBackendTest
+from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct import ConfigDicts
 from MoinMoin._tests import wikiconfig
 
