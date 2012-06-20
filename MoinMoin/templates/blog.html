@@ -1,0 +1,35 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block content %}
+    {% block content_data %}
+        <div id="moin-content-data">
+            {{ item._render_data()|safe }} {# rendered blog header #}
+            {% for post_item in blog_post_items %}
+                {% if post_item.meta['summary'] %}
+                    {% set title = post_item.meta['summary'] %}
+                {% else %}
+                    {% set title = post_item.name %}
+                {% endif %}
+                <h1><a href="{{ url_for('frontend.show_item', item_name=post_item.name) }}"
+                    title="{{ title }}" class="moin-post-link">{{ title }}</a></h1>
+                <p class="moin-post-info">
+                    {{ _("Posted on") }} {{ post_item.meta['ptime']|datetimeformat }}
+                    {{ _("by") }} {{ utils.editor_info(post_item.meta) }}
+                </p>
+                {{ post_item._render_data()|safe }} {# rendered post content #}
+                {% if post_item.meta['tags'] %} {# display a post's tags as a list if they existed #}
+                    {% set tags = post_item.meta['tags']|sort %}
+                    <div class="moin-post-tags">
+                        {{ _("Tags:") }}
+                        <ul class="moin-post-tags">
+                            {% for tag in tags %}
+                                <li><a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endblock %}
+{% endblock %}
