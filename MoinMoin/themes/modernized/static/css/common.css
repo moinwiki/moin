@@ -288,6 +288,13 @@ form.upload_file { display: block; }
 .moin-drag { font-size: 0.7em; color: #6C7680; }
 a.moin-conflict:before { content: url(../img/moin-conflict.png); margin: 0 0.2em; }
 
+/* blog page */
+.moin-post-info { font-size: 0.8em; color: #888888; }
+ul.moin-post-tags { list-style: none; display: inline; margin: 0; }
+ul.moin-post-tags li { display: inline; }
+ul.moin-post-tags li:after { content: ","; } 
+ul.moin-post-tags li:last-child:after { content: ""; }
+
 /* popup */
 #popup { background: transparent url("../img/moin-transparent-bg.png") repeat; padding: 5px; width: 40%; position: absolute; top: 10%; left: 30%; display: none; z-index: 10; }
 .popup-header { background-color: #4477FF; color: #FFFFFF; font-size: 1em; padding: 10px; margin: 0; }
