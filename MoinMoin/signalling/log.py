@@ -21,3 +21,4 @@ def log_item_displayed(app, item_name):
 def log_item_modified(app, item_name):
     wiki_name = app.cfg.interwikiname
     logging.info("item {0}:{1} modified".format(wiki_name, item_name))
+

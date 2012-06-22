@@ -10,7 +10,6 @@ can return a callable to consider itself as a match.
 """
 
 
-
 class RegistryBase(object):
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10
@@ -89,3 +88,4 @@ class Registry(RegistryBase):
         :param factory: Factory to register. Callable, have to return a class
         """
         return self._register(self.Entry(factory, priority))
+

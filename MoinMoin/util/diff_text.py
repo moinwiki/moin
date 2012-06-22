@@ -32,13 +32,13 @@ def diff(oldlines, newlines, **kw):
         if l[0] != ' ':
             changed = 1
             break
-    if not changed: return []
+    if not changed:
+        return []
 
 #    if not "we want the unchanged lines, too":
 #        if "no questionmark lines":
 #            lines = [line for line in lines if line[0] != '?']
 #        return lines
-
 
     # calculate the hunks and remove the unchanged lines between them
     i = 0              # actual index in lines
@@ -65,8 +65,10 @@ def diff(oldlines, newlines, **kw):
             else:
                 count = 0
                 i += 1
-            if marker == '-': lcount_old = lcount_old + 1
-            else: lcount_new = lcount_new + 1
+            if marker == '-':
+                lcount_old = lcount_old + 1
+            else:
+                lcount_new = lcount_new + 1
         elif marker == '?':
             lines[i:i+1] = []
 

@@ -11,7 +11,7 @@ Additionally, we check that the files have no crlf (Windows style) line endings.
 
 import re, time
 import pytest
-from . import pep8
+import pep8
 
 import py
 
@@ -20,7 +20,20 @@ moindir = py.path.local(__file__).pypkgpath()
 EXCLUDE = set([
     moindir/'static', # this is our dist static stuff
     moindir/'_tests/wiki', # this is our test wiki
+    moindir/'util/md5crypt.py', # 3rd party, do not fix pep8 there
 ])
+
+PEP8IGNORE = (
+    "E121 E122 E123 E124 E125 E126 E127 E128 "  # continuation line indentation
+    "E225 "  # missing whitespace around operator
+    "E241 "  # whitespace around comma (we have some "tabular" formatting in the tests)
+    "E261 "  # less than 2 blanks before inline comment
+    "E301 E302 "  # separate toplevel definitions with 2 empty lines, method defs inside class by 1 empty line
+    "E401 "  # imports on separate lines
+    "E501 "  # maximum line length (default 79 chars)
+    "E502 "  # bug in pep8.py: https://github.com/jcrocholl/pep8/issues/75
+    "W391 "  # trailing blank line(s) at EOF. But: We want one of them so that diff does not complain!
+).split()
 
 TRAILING_SPACES = 'nochange' # 'nochange' or 'fix'
                              # use 'fix' with extreme caution and in a separate changeset!
@@ -68,7 +81,7 @@ RECENTLY = time.time() - 7 * 24*60*60 # we only check stuff touched recently.
 
 def pep8_error_count(path):
     # process_options initializes some data structures and MUST be called before each Checker().check_all()
-    pep8.process_options(['pep8', '--ignore=E202,E221,E222,E241,E301,E302,E401,E501,E701,W391,W601,W602', '--show-source', 'dummy_path'])
+    pep8.process_options(['pep8', '--ignore=%s' % ','.join(PEP8IGNORE), '--show-source', 'dummy_path'])
     error_count = pep8.Checker(path).check_all()
     return error_count
 
@@ -95,8 +108,9 @@ def check_py_file(reldir, path, mtime):
 
 def pytest_generate_tests(metafunc):
     for pyfile in sorted(moindir.visit('*.py', lambda p: p not in EXCLUDE)):
-        relpath = moindir.bestrelpath(pyfile)
-        metafunc.addcall(id=relpath, funcargs={'path': pyfile})
+        if pyfile not in EXCLUDE:
+            relpath = moindir.bestrelpath(pyfile)
+            metafunc.addcall(id=relpath, funcargs={'path': pyfile})
 
 def test_sourcecode(path):
     mtime = path.stat().mtime

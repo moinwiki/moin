@@ -187,7 +187,7 @@ class TestACLStringIterator(object):
         """ security: allow extra white space between entries """
         acl_iter = acliter('UserOne,user two:read,write   user three,UserFour:read  All:')
         mod, entries, rights = acl_iter.next()
-        assert  entries == ['UserOne', 'user two']
+        assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
         mod, entries, rights = acl_iter.next()
         assert entries == ['user three', 'UserFour']

@@ -18,7 +18,7 @@
     <div class="moin-align-right">
         <ul>
             {% if index %}
-            <li class="action-bar"> 
+            <li class="action-bar">
             <div class="moin-select-all">
                 <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">{{ _("Select All") }}</span>
             </div>
@@ -27,19 +27,19 @@
             <li class="action-bar">
             <div class="moin-select-actions">
                 <div>
-                    <span class="show-action">Actions</span> 
+                    <span class="show-action">Actions</span>
                 </div>
                 <ul>
                     <li id="moin-create-newitem">{{ _("New item") }}</li>
                     <li id="moin-download-trigger">{{ _("Download") }}</li>
-                    <li class="moin-action-tab" 
-                        id="moin-delete-trigger" 
-                        actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
+                    <li class="moin-action-tab"
+                        id="moin-delete-trigger"
+                        data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
                         {{ _("Delete") }}
                     </li>
-                    <li class="moin-action-tab" 
-                        id="moin-destroy-trigger" 
-                        actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
+                    <li class="moin-action-tab"
+                        id="moin-destroy-trigger"
+                        data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                         {{ _("Destroy") }}
                     </li>
                 </ul>
@@ -63,8 +63,8 @@
                     {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
                     {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
                     {{ forms.render_filter_field(gen, form['unknown_items'], 'checkbox', unknown_items_label) }}
-                    {{ gen.input(form['submit'], type='submit') }}
                 </ul>
+                {{ gen.input(form['submit'], type='submit') }}
                 {{ gen.form.close() }}
             </div>
             </li>
@@ -120,13 +120,13 @@
                 <a href="about:blank" title="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}"
                    class="moin-download-link">
                 </a>
-                <a href="{{ url_for('.show_item', item_name=fullname) }}" 
+                <a href="{{ url_for('.show_item', item_name=fullname) }}"
                    class="{{ contenttype|contenttype_to_class }} moin-item"
                    title="{{ relname }}">
                    {{ relname|truncate(maxchars, true, '..') }}
                 </a>
                 {% if hassubitem %}
-                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" 
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}"
                        title="{{ _("More") }}"
                        class="moin-more-index">&nbsp;
                 </a>
@@ -157,11 +157,11 @@
             </div>
             <div class="popup-body">
                 <form action={{ url_for('.ajaxmodify') }} method="post">
-                    <label for="newitem">{{ _("Item name") }}</label>
+                    <label for="moin-newitem">{{ _("Item name") }}</label>
                     {% if item_name %}
-                        <input type="text" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="true"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
                     {% else %}
-                        <input type="text" name="newitem" placeholder="{{ _("Enter item name here") }}" required="true"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
                     {% endif %}
                     <br/>
                     <input type="submit" value="{{ _("Create") }}"/>
@@ -179,3 +179,4 @@
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     <div id="lightbox">&nbsp;</div>
 {% endblock %}
+

@@ -113,11 +113,11 @@ class ConfigFunctionality(object):
         self.mail_enabled = self.mail_enabled and True or False
 
         if self.namespace_mapping is None:
-            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. " + \
+            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. "
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.acl_mapping is None:
-            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. " + \
+            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. "
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.secrets is None:  # admin did not setup a real secret
@@ -411,10 +411,10 @@ options_no_group_name = {
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),
     ('namespace_mapping', None,
-    "This needs to point to a list of tuples, each tuple containing: Namespace identifier, backend. " + \
+    "This needs to point to a list of tuples, each tuple containing: Namespace identifier, backend. " +
     "E.g.: [('/', FSBackend('wiki/data')), ]. Please see HelpOnStorageConfiguration for further reference."),
     ('acl_mapping', None,
-    "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " + \
+    "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " +
     "E.g.: [('', dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
     ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
     ('create_index', False, "Create (initialize) the index before trying to use them."),
@@ -535,7 +535,7 @@ options = {
     )),
 
     'ns': ('Storage Namespaces',
-    "Storage namespaces can be defined for all sorts of data. All items sharing a common namespace as prefix" + \
+    "Storage namespaces can be defined for all sorts of data. All items sharing a common namespace as prefix" +
     "are then stored within the same backend. The common prefix for all data is ''.",
     (
       ('content', '/', "All content is by default stored below /, hence the prefix is ''."),  # Not really necessary. Just for completeness.

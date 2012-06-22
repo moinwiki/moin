@@ -69,3 +69,4 @@ xinclude = Namespace('http://www.w3.org/2001/XInclude')
 xlink = Namespace('http://www.w3.org/1999/xlink')
 docbook = Namespace('http://docbook.org/ns/docbook')
 xml = Namespace('http://www.w3.org/XML/1998/namespace')
+

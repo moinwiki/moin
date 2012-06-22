@@ -7,7 +7,7 @@
             {% set fullname = fullname|json_dumps %}
             <button class="link-action" onclick='linkSubitem({{ shortname }}, {{ fullname }})'
                 title="{{ _('Link to Subitem') }}">{{ _('Link') }}</button>
-            <button class="transclude-action" 
+            <button class="transclude-action"
                 onclick='transcludeSubitem({{ shortname }}, {{ fullname }})'
                 title="{{ _('Transclude Subitem') }}">{{ _('Transclude') }}</button>
         {% endcall %}
@@ -17,3 +17,4 @@
 {{ gen.textarea(form['data_text'], lang=lang, dir=direction, rows=rows_data, cols=cols) }}
 <br />
 {% endblock %}
+

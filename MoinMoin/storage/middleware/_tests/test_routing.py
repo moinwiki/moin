@@ -30,7 +30,6 @@ def make_ro_backend():
     return ROBackend(store.meta_store, store.data_store)
 
 
-
 def pytest_funcarg__router(request):
     root_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     sub_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())

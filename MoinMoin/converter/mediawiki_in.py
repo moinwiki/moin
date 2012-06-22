@@ -142,7 +142,6 @@ class Converter(ConverterMacro):
         stack.clear()
         stack.top_append(moin_page.separator())
 
-
     block_table = r"""
         ^
         (?P<table>
@@ -852,7 +851,7 @@ class Converter(ConverterMacro):
             self.nowiki_tag = ''
             self._stack = []
 
-        def push(self, status = []):
+        def push(self, status=[]):
             self._stack.append(self.opened_tags)
             self.opened_tags = status
             if self.opened_tags:
@@ -877,7 +876,7 @@ class Converter(ConverterMacro):
                     self.nowiki_tag = ''
             return self.opened_tags
 
-        def __call__(self, line, tags = []):
+        def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
             match = re.match(r"(.*?)(\<.*\>.*)|(.*)", line)
             if match:
@@ -897,11 +896,14 @@ class Converter(ConverterMacro):
                         tag = match.group(1)
                         next_text = match.group(3)
                         text = match.group(2) or match.group(4)
-                        if not text: text = ''
+                        if not text:
+                            text = ''
                         tag_match = re.match(r"/\s*(.*)", tag)
                         status = not tag_match
-                        if tag_match: tag_name = tag_match.group(1).split(' ')[0]
-                        else: tag_name = tag.split(' ')[0]
+                        if tag_match:
+                            tag_name = tag_match.group(1).split(' ')[0]
+                        else:
+                            tag_name = tag.split(' ')[0]
                         if not tag_name in self.all_tags or re.match(r'.*/\s*$', tag)\
                                 or self.nowiki and (status or tag_name != self.nowiki_tag):
                             if not len(tags):
@@ -947,7 +949,6 @@ class Converter(ConverterMacro):
                         break
                 return ''.join(post_line)
             self.opened_tags = tags
-
 
     def _apply(self, match, prefix, *args):
         """

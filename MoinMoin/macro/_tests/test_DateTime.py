@@ -23,7 +23,7 @@ def test_Macro():
     assert test_time == result
 
     arguments = ['2011-08-07T11:11:11', 'argument2']
-    result  = macro_obj.macro('content', arguments, 'page_url', 'alternative')
+    result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
     expected = u'Aug 7, 2011 11:11:11 AM'
     assert result == expected
 

@@ -33,3 +33,4 @@ def test_from_uri(tmpdir, Store):
     store = Store.from_uri("sqlite://%s::test_base" % tmpdir)
     assert store.db_uri == "sqlite://%s" % tmpdir
     assert store.table_name == "test_base"
+
