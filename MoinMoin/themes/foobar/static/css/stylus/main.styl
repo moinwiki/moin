@@ -204,6 +204,51 @@ input.blank
             &.required:after
                 content: '*'
                 color: font_color
+
+// index local panel
+.moin-select-all
+    span
+        cursor pointer
+.moin-select-actions
+    span
+        cursor pointer
+    ul
+        display none
+        li
+            cursor pointer
+.moin-contenttypes-wrapper
+    div
+        cursor pointer
+    form 
+        display none
+        li
+            label
+                cursor pointer
+                display inline
+            span
+                display block
+#f_contenttype_filter_submit
+    padding-left 3em
+    padding-right 3em
+    margin-left 3em
+    cursor pointer
+    box-shadow 1px 1px 2px font_color
+    &:hover
+        box-shadow 1px 1px 2px shadow_color                
+
+.show-action:after,
+.ct-hide:after
+  content url("../img/moin-moveup.png")
+  margin 0 0.2em
+  float right
+  vertical-align middle
+
+.action-visible .show-action:after,
+.ct-shown:after
+  content url("../img/moin-movedown.png")
+  margin 0 0.2em
+  float right
+  vertical-align middle
                 
 // popups
 #popup
