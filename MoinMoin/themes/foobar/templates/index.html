@@ -151,11 +151,11 @@
             </div>
             <div class="popup-body">
                 <form action={{ url_for('.ajaxmodify') }} method="post">
-                    <label for="newitem">{{ _("Item name") }}</label>
+                    <label for="moin-newitem">{{ _("Item name") }}</label>
                     {% if item_name %}
-                        <input type="text" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="true"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
                     {% else %}
-                        <input type="text" name="newitem" placeholder="{{ _("Enter item name here") }}" required="true"/>
+                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
                     {% endif %}
                     <br/>
                     <input type="submit" value="{{ _("Create") }}"/>
