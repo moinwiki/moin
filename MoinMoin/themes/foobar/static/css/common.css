@@ -187,6 +187,7 @@ input.blank{border-color:#ccc;border-width:2px}
 .popup-body label{margin:5px}
 .popup-body input{margin:8px 5px}
 .popup-container{margin:0;border:5px solid #2c2c2a;border-radius:6px 6px 0 0}
+.moin-tab-titles{margin:-.5em;list-style:none}
 a{text-decoration:none;}
 a:link{color:#4fa8fa}
 a:visited{color:#5e84a7}
