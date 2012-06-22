@@ -187,6 +187,18 @@ input.blank{border-color:#ccc;border-width:2px}
 .popup-body label{margin:5px}
 .popup-body input{margin:8px 5px}
 .popup-container{margin:0;border:5px solid #2c2c2a;border-radius:6px 6px 0 0}
+#moin-upload-cont{min-height:10px}
+#file_upload{margin-top:2em}
+form.upload_file{background-color:#d6d5d0;border:1px solid #ccc;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #9d9d9b;}
+form.upload_file:hover{box-shadow:0 0 5px #000}
+form.upload_file input{border:300px solid transparent;cursor:pointer;opacity:0;position:absolute}
+form.upload_file button{display:none}
+form.upload_file{display:block}
+.file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
+.file_upload_template .file_upload_start button{width:0}
+.upload-form{display:none}
+.moin-drag{font-size:.7em;color:#9d9d9b}
+a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-tab-titles{margin:-.5em;list-style:none}
 a{text-decoration:none;}
 a:link{color:#4fa8fa}
