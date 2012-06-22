@@ -204,7 +204,51 @@ input.blank
             &.required:after
                 content: '*'
                 color: font_color
+                
+// popups
+#popup
+    background: transparent url("../img/moin-transparent-bg.png") repeat
+    padding: 5px
+    width: 40%
+    position: absolute
+    top: 10%
+    left: 30%
+    display: none
+    z-index: 10
 
+.popup-header
+    background-color: header_bg_color
+    color: heading_color
+    padding: 10px
+    margin: 0
+
+.popup-closer
+    padding: 0px 1px
+    margin: -0.2em
+    width: 19px
+    border-radius: 2em
+    float: right
+    cursor: pointer
+    &:hover
+        background page_color
+
+.popup-body
+    clear: both
+    background-color: page_color
+    color: font_color
+    padding: 10px
+    margin: 0
+    label
+        margin: 5px
+    input
+        margin: 8px 5px
+
+.popup-container
+    margin: 0
+    border 5px solid header_bg_color
+    border-radius 6px 6px 0px 0px 
+                
+                
 // links
 a
     text-decoration none

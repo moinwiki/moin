@@ -179,6 +179,14 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-form dd{margin-bottom:1em;}
 .moin-form dd input{width:20em}
 .moin-form dt label.required:after{content:'*';color:#000}
+#popup{background:transparent url("../img/moin-transparent-bg.png") repeat;padding:5px;width:40%;position:absolute;top:10%;left:30%;display:none;z-index:10}
+.popup-header{background-color:#2c2c2a;color:#fff;padding:10px;margin:0}
+.popup-closer{padding:0 1px;margin:-.2em;width:19px;border-radius:2em;float:right;cursor:pointer;}
+.popup-closer:hover{background:#f0f0f0}
+.popup-body{clear:both;background-color:#f0f0f0;color:#000;padding:10px;margin:0;}
+.popup-body label{margin:5px}
+.popup-body input{margin:8px 5px}
+.popup-container{margin:0;border:5px solid #2c2c2a;border-radius:6px 6px 0 0}
 a{text-decoration:none;}
 a:link{color:#4fa8fa}
 a:visited{color:#5e84a7}
@@ -248,4 +256,3 @@ sup{vertical-align:super}
 .moin-small{font-size:.83em}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-search{display:none}
 }
-
