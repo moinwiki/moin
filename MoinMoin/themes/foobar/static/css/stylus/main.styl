@@ -163,7 +163,47 @@ body
     float opposite-position(dir)
     ul li
         display inline
+        
+// form
+label
+    display: block
+    font-weight: bold
 
+button
+    background base_color
+    padding 3px 5px
+    border border_style
+    border-radius 2px
+    box-shadow 1px 1px 2px shadow_color
+    cursor pointer
+    &:hover
+        box-shadow 1px 1px 2px font_color
+    
+input,
+select
+    padding: 3px
+    background: page_color
+    border: border_style
+    border-radius 2px
+input[type="text"]
+    width: 300px
+input[type="submit"],
+input[type="button"] 
+    background base_color
+input.blank
+    border-color: border_color
+    border-width: 2px
+
+.moin-form 
+    dd
+        margin-bottom: 1em
+        input
+            width: 20em
+    dt
+        label
+            &.required:after
+                content: '*'
+                color: font_color
 
 // links
 a
