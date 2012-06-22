@@ -147,7 +147,7 @@ input, select { vertical-align: middle; }
 .center { text-align: center; }
 .right { text-align: right; }
 .justify { text-align: justify; }
-body{color:#000;background-color:#d6d5d0;font-family:sans-serif}
+body{color:#000;background-color:#d6d5d0;font-family:sans-serif;background-image:url("../img/base.png")}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
 #moin-main-box{background-color:#f0f0f0;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #9d9d9b;overflow:hidden}
