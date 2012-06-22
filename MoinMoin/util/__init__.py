@@ -114,3 +114,4 @@ def getPageContent(results, offset, results_per_page):
         previous_offset = -1
     next_offset = count
     return (selected_result, next_offset, previous_offset)
+

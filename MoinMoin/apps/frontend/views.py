@@ -1423,9 +1423,9 @@ def usersettings():
 
             # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
             response = dict(
-                form = None,
-                flash = [],
-                redirect = None,
+                form=None,
+                flash=[],
+                redirect=None,
             )
 
             if form.validate():

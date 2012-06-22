@@ -41,3 +41,4 @@ class ConfigLazyGroups(LazyGroupsBackend):
 
     def _group_has_member(self, group_name, member):
         return group_name in self and member in self._groups[group_name]
+

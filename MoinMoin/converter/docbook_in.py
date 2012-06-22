@@ -43,7 +43,7 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = set([#Info elements
+    ignored_tags = set([# Info elements
                        'abstract', 'artpagenums', 'annotation',
                        'artpagenums', 'author', 'authorgroup',
                        'authorinitials', 'bibliocoverage', 'biblioid',

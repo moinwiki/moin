@@ -111,7 +111,7 @@ class RegistryItem(RegistryBase):
             return NotImplemented
 
         def __repr__(self):
-            return '<{0}: {1}, prio {2} [{3!r}]>' % (self.__class__.__name__,
+            return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
                     self.content_type,
                     self.priority,
                     self.factory)

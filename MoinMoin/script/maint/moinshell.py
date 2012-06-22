@@ -30,7 +30,6 @@ class MoinShell(Command):
 
     def __init__(self, banner=None, make_context=None, use_ipython=True):
 
-
         self.banner = banner or self.banner
         self.use_ipython = use_ipython
 
@@ -79,3 +78,4 @@ class MoinShell(Command):
                 pass
 
         code.interact(self.banner, local=context)
+

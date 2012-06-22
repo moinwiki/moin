@@ -348,7 +348,6 @@ class TestIndexingMiddleware(object):
         with pytest.raises(ValueError):
             rev.data.read()
 
-
     def test_indexed_content(self):
         # TODO: this is a very simple check that assumes that data is put 1:1
         # into index' CONTENT field.
