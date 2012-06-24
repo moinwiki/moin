@@ -1484,4 +1484,3 @@ class SvgDraw(Draw):
         return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
-

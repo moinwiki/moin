@@ -180,4 +180,3 @@ class Backend(BackendBase):
         meta = self._get_meta(itemname, path)
         data = self._get_data(itemname, path)
         return meta, data
-

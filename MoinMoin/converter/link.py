@@ -267,4 +267,3 @@ class ConverterItemRefs(ConverterBase):
 from . import default_registry
 default_registry.register(ConverterExternOutput._factory, type_moin_document, type_moin_document)
 default_registry.register(ConverterItemRefs._factory, type_moin_document, type_moin_document)
-

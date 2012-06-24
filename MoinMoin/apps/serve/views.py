@@ -36,4 +36,3 @@ def files(name, filename):
         abort(404)
 
     return send_from_directory(base_path, filename)
-

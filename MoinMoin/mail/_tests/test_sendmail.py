@@ -128,4 +128,3 @@ class TestEncodeAddress(object):
         assert sendmail.encodeAddress(address, self.charset) == expected
 
 coverage_modules = ['MoinMoin.mail.sendmail']
-

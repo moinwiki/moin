@@ -40,4 +40,3 @@ default_registry.register(Converter._factory, Type('image/svg+xml'), type_moin_d
 default_registry.register(Converter._factory, Type('image/png'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/jpeg'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/gif'), type_moin_document)
-

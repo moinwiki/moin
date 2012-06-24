@@ -4,4 +4,3 @@
 """
     MoinMoin - User Accounts Management Scripts
 """
-

@@ -356,5 +356,3 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     #TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
 )
-
-

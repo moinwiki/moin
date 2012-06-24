@@ -243,4 +243,3 @@ def testfile_headers():
     assert result == expected
 
 coverage_modules = ['MoinMoin.wikiutil']
-

@@ -414,5 +414,3 @@ def test_IriPath_5():
     assert u[0] == ''
     assert u[1] == 'test2'
     assert unicode(u) == '/test2'
-
-

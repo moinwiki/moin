@@ -1890,4 +1890,3 @@ def tagged_items(tag):
 def page_not_found(e):
     return render_template('404.html',
                            item_name=e.description), 404
-

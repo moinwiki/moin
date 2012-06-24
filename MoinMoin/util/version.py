@@ -64,4 +64,3 @@ class Version(tuple):
         if self.additional != 'd0':
             version_str += self.additional
         return version_str
-

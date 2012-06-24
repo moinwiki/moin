@@ -110,4 +110,3 @@ def atom(item_name):
         if cid is not None:
             app.cache.set(cid, content)
     return Response(content, content_type='application/atom+xml')
-

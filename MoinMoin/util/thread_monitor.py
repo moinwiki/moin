@@ -65,4 +65,3 @@ mon = Monitor()
 activate_hook = mon.activate_hook
 trigger_dump = mon.trigger_dump
 hook_enabled = mon.hook_enabled
-

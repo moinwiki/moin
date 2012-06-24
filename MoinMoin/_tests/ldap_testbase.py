@@ -258,4 +258,3 @@ try:
 
 except ImportError:
     pass  # obviously pytest not in use
-

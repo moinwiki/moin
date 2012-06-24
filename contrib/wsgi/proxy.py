@@ -34,4 +34,3 @@ class ProxyTrust(object):
         else:
             del environ['REMOTE_ADDR']
         return self.app(environ, start_response)
-

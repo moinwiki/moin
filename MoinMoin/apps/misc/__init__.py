@@ -11,4 +11,3 @@
 from flask import Blueprint
 misc = Blueprint('misc', __name__, template_folder='templates')
 import MoinMoin.apps.misc.views
-

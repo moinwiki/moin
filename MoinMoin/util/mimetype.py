@@ -202,4 +202,3 @@ class MimeType(object):
         yield self.raw_mimestr
         yield fragments[0]
         yield "application_octet_stream"
-

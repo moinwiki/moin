@@ -51,4 +51,3 @@ class Disable_User(Command):
             print "- disabled."
         else:
             print "- is already disabled."
-

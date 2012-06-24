@@ -280,4 +280,3 @@ class ProtectedRevision(object):
 
     def __cmp__(self, other):
         return cmp(self.meta, other.meta)
-

@@ -42,4 +42,3 @@ default_registry.register(Converter._factory, Type('video/ogg'), type_moin_docum
 default_registry.register(Converter._factory, Type('video/webm'), type_moin_document)
 default_registry.register(Converter._factory, Type('audio/ogg'), type_moin_document)
 default_registry.register(Converter._factory, Type('audio/wave'), type_moin_document)
-

@@ -261,4 +261,3 @@ def teardown_wiki(response):
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
     return response
-

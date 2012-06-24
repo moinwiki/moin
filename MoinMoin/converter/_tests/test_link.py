@@ -160,4 +160,3 @@ class TestConverterRefs(object):
         assert sorted(links_result) == sorted(links_expected)
         assert sorted(transclusions_result) == sorted(transclusions_expected)
         assert sorted(external_result) == sorted(external_expected)
-

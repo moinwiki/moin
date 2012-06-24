@@ -31,4 +31,3 @@ def test_text():
     assert result1 == 'text1'
     result2 = N_('text1', 'text2', 2)
     assert result2 == 'text2'
-

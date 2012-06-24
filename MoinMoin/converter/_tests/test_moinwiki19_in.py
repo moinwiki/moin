@@ -37,4 +37,3 @@ class TestConverterFormat19(_Base):
         ]
         for i in data:
             yield (self.do, ) + i
-

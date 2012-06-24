@@ -64,4 +64,3 @@ def checkTicket(ticket, **kw):
     ourticket = createTicket(timestamp_str, **kw)
     logging.debug("checkTicket: returning {0!r}, got {1!r}, expected {2!r}".format(ticket == ourticket, ticket, ourticket))
     return ticket == ourticket
-
