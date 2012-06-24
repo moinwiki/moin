@@ -234,11 +234,11 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-more-index:hover{text-decoration:none}
 .moin-path-separator{font-size:120%;color:#4fa8fa}
 .moin-index-separator{clear:both;border-top:1px dashed #ccc;width:80%;display:none}
-.moin-select-all span{cursor:pointer}
-.moin-select-actions span{cursor:pointer}
+.moin-select-all span{cursor:pointer;font-size:84%}
+.moin-select-actions span{cursor:pointer;font-size:84%}
 .moin-select-actions ul{display:none;}
 .moin-select-actions ul li{cursor:pointer}
-.moin-contenttypes-wrapper div{cursor:pointer}
+.moin-contenttypes-wrapper div{cursor:pointer;font-size:84%}
 .moin-contenttypes-wrapper form{display:none;}
 .moin-contenttypes-wrapper form li label{cursor:pointer;display:inline}
 .moin-contenttypes-wrapper form li span{display:block}
@@ -267,6 +267,7 @@ form.upload_file{display:block}
 .moin-drag{font-size:.7em;color:#9d9d9b}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-tab-titles{margin:-.5em;list-style:none}
+#moin-usersetting-title li a{font-size:84%}
 #moin-global-history,#moin-page-history{font-size:75%}
 #moin-page-history table{border:1px solid #ccc;border-radius:5px;}
 #moin-page-history table thead{border-top-left-radius:5px;border-top-right-radius:5px;}
