@@ -174,7 +174,10 @@ body{color:#000;background-color:#d6d5d0;font-family:sans-serif;background-image
 #moin-local-panel{float:left;width:20.54231717337716%;padding:.6162695152013148%;margin-left:-1px;border-left:1px solid #ccc}
 #moin-footer{clear:both;font-size:.8em;color:#616161;padding:.5% .5%;overflow:auto}
 #moin-breadcrumbs-location{float:left;padding:.3em .5em .2em .5em;font-weight:bold}
+#moin-pagelocation{vertical-align:middle}
+.moin-pagepath{vertical-align:middle}
 #moin-search{float:right;padding:.3em .5em .2em .5em}
+#moin-search-submit{vertical-align:middle}
 #moin-logo{width:100%;padding:0 0 1em 0;}
 #moin-logo a{display:block;width:100%;height:70px;background-repeat:no-repeat;background-position:center center}
 #moin-global-panel ul,#moin-local-panel ul{list-style-type:none;margin:0;}
