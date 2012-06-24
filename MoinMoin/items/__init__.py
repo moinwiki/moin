@@ -70,7 +70,7 @@ from MoinMoin.util.send_file import send_file
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.config import NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, REVERTED_TO, ACL, \
-                            IS_SYSITEM, SYSITEM_VERSION,  USERGROUP, SOMEDICT, \
+                            IS_SYSITEM, SYSITEM_VERSION, USERGROUP, SOMEDICT, \
                             CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
                             TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
                             HASH_ALGORITHM, CONTENTTYPE_GROUPS, ITEMID, REVID, DATAID, \

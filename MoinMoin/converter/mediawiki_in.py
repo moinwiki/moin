@@ -814,7 +814,7 @@ class Converter(ConverterMacro):
     class Mediawiki_preprocessor(object):
 
         class Preprocessor_tag(object):
-            def __init__(self, name='', text='', tag='',  status=True):
+            def __init__(self, name='', text='', tag='', status=True):
                 self.tag_name = name
                 self.tag = tag
                 self.text = [text]

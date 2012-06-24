@@ -27,7 +27,7 @@ def directories_to_ignore(starting_dir):
     level2_dirs = ".hg contrib dlc docs env moin.egg-info wiki".split()
     for dir in level2_dirs:
         ignore_dirs.append((starting_dir, dir))
-    ignore_dirs.append((starting_dir + os.sep + "MoinMoin",  "translations"))
+    ignore_dirs.append((starting_dir + os.sep + "MoinMoin", "translations"))
     return ignore_dirs
 
 
