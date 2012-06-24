@@ -57,7 +57,7 @@ class Config(DefaultConfig):
 
     # setup static files' serving:
     serve_files = dict(
-        docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
+        docs=os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
     )
     # see https://bitbucket.org/thomaswaldmann/xstatic for infos about xstatic:
     from xstatic.main import XStatic

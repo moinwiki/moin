@@ -1,6 +1,6 @@
 """
     WSGI Middleware for running WSGI apps behind proxies.
-    
+
     Analyzes HTTP-X-Forwarded-For header and uses the address our outermost
     trusted proxy is seeing as REMOTE_ADDR.
 
