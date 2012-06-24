@@ -302,13 +302,12 @@ hr.moin-hr5{height:9px}
 hr.moin-hr6{height:12px}
 table{margin:.5em;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
-table th{border:1px solid #ccc;background-color:#2c2c2a}
+table th{border:1px solid #ccc;background-color:#2c2c2a;color:#fff}
 table td{border:1px solid #ccc}
 table.zebra{border:none;border-collapse:separate;border-spacing:1px;}
-table.zebra thead{background-color:#2c2c2a}
+table.zebra thead{background-color:#2c2c2a;color:#fff}
 table.zebra tfoot{background-color:#d6d5d0}
 table.zebra tbody tr,table.zebra > tr{background-color:#d0d0d0}
-table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#d0d0d0}
 table.zebra th,table.zebra td{border:none}
 pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.33em 0;padding:5px;clear:both;}
 pre.comment{background-color:#2c2c2a;color:#fff;margin:0;padding:0;border:0;}
