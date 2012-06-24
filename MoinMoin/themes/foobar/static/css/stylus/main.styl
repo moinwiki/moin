@@ -358,8 +358,16 @@ input.blank
             label
                 cursor pointer
                 display inline
+                vertical-align middle
+                line-height 2em
             span
-                display block
+                display none
+            &:hover
+                background base_color
+                span
+                    display block
+                    font-size 0.8em
+            
 #f_contenttype_filter_submit
     padding-left 3em
     padding-right 3em
