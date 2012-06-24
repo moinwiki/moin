@@ -79,11 +79,10 @@ Locale
 Change Password
 ---------------
 
-Password changes are recommended if you believe that the password you are using has been put into
-the hands of an untrusted third party.
+Password changes are recommended if you believe that the password you are using has been compromised.
 
 Current Password
- Enter the password which you currently use to log into the wiki. This prevents passersby from
+ Enter the password which you currently use to log into the wiki. This prevents passers-by from
  changing the password of a logged in account. This is a required field.
 
 New Password
