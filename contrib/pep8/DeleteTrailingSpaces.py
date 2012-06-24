@@ -5,7 +5,7 @@
 """
 Detect and correct violations of the moin2 coding standards:
     - no trailing blanks
-    - blank line at file end
+    - exactly one linefeed at file end, see PEP8
     - DOS line endings on .bat files, unix line endings everywhere else
 
 Execute this script from the root directory of the moin2 repository or
@@ -17,9 +17,12 @@ import warnings
 warnings.simplefilter("once")
 
 # file types to be processed
-selected_suffixes = "py bat html css js".split()
+SELECTED_SUFFIXES = set("py bat cmd html css js".split())
 
-# directories to ignore
+# stuff considered DOS/WIN
+WIN_SUFFIXES = set("bat cmd".split())
+
+
 def directories_to_ignore(starting_dir):
     """Return a list of directories that will not be processed."""
     # list format: [(fully qualified directory name, sub-directory name), ... ]
@@ -33,9 +36,10 @@ def directories_to_ignore(starting_dir):
 
 def check_files(filename, suffix):
     """Delete trailing blanks,
-        force blank line at file end,
+        force a single linefeed at file end,
         force line ending to be \r\n for bat files and \n for all others."""
-    if suffix.lower() == "bat":
+    suffix = suffix.lower()
+    if suffix in WIN_SUFFIXES:
         line_end = "\r\n"
     else:
         line_end = "\n"
@@ -43,22 +47,25 @@ def check_files(filename, suffix):
     with open(filename, "rb") as f:
         lines = f.readlines()
 
+    # now look at file end and get rid of all whitespace-only lines there:
+    while lines:
+        if not lines[-1].strip():
+            del lines[-1]
+        else:
+            break
+
     with open(filename, "wb") as f:
         for line in lines:
             pep8_line = line.rstrip() + line_end
             f.write(pep8_line)
             # if line was changed, issue warning once for each type of change
-            if suffix == "bat" and not line.endswith("\r\n"):
+            if suffix in WIN_SUFFIXES and not line.endswith("\r\n"):
                 warnings.warn("%s was changed to DOS line endings" % filename)
-            elif suffix != "bat" and line.endswith("\r\n"):
+            elif suffix not in WIN_SUFFIXES and line.endswith("\r\n"):
                 warnings.warn("%s was changed to Unix line endings" % filename)
             elif pep8_line != line:
                 warnings.warn("%s was changed to remove trailing blanks" % filename)
 
-        # add blank line at end of file if needed
-        if lines and pep8_line != line_end:
-            f.write(line_end)
-            warnings.warn("%s was changed to add blank line to end of file" % filename)
 
 def file_picker(starting_dir):
     """Select target files and pass each to file checker."""
@@ -72,13 +79,16 @@ def file_picker(starting_dir):
         # check files with selected suffixes
         for file in files:
             suffix = file.split(".")[-1]
-            if suffix in selected_suffixes:
+            if suffix in SELECTED_SUFFIXES:
                 filename = os.path.join(root, file)
                 check_files(filename, suffix)
 
+
 if __name__ == "__main__":
-    starting_dir = os.path.abspath(os.path.dirname(__file__))
-    starting_dir = starting_dir.split(os.sep + 'contrib')[0]
+    if len(sys.argv) > 1:
+        starting_dir = os.path.abspath(sys.argv[1])
+    else:
+        starting_dir = os.path.abspath(os.path.dirname(__file__))
+        starting_dir = starting_dir.split(os.sep + 'contrib')[0]
     warnings.warn("%s is starting directory" % starting_dir)
     file_picker(starting_dir)
-
