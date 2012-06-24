@@ -93,7 +93,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
-        'pep8', # pep8 style checker is needed by unit tests
+        'pytest-pep8', # coding style checker
         'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
