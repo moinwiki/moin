@@ -1398,8 +1398,8 @@ class AnyWikiDraw(Draw):
         @property
         def extra_template_args(self):
             try:
-                drawing_exists = 'drawing.svg' in item.list_members()
-            except:
+                drawing_exists = 'drawing.svg' in self.item.list_members()
+            except tarfile.TarError: # item doesn't exist yet
                 drawing_exists = False
             return {'drawing_exists': drawing_exists}
 
