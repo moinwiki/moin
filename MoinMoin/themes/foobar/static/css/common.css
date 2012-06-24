@@ -240,8 +240,10 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-select-actions ul li{cursor:pointer}
 .moin-contenttypes-wrapper div{cursor:pointer;font-size:84%}
 .moin-contenttypes-wrapper form{display:none;}
-.moin-contenttypes-wrapper form li label{cursor:pointer;display:inline}
-.moin-contenttypes-wrapper form li span{display:block}
+.moin-contenttypes-wrapper form li label{cursor:pointer;display:inline;vertical-align:middle;line-height:2em}
+.moin-contenttypes-wrapper form li span{display:none}
+.moin-contenttypes-wrapper form li:hover{background:#d6d5d0;}
+.moin-contenttypes-wrapper form li:hover span{display:block;font-size:.8em}
 #f_contenttype_filter_submit{padding-left:3em;padding-right:3em;margin-left:3em;cursor:pointer;box-shadow:1px 1px 2px #000;}
 #f_contenttype_filter_submit:hover{box-shadow:1px 1px 2px #9d9d9b}
 .show-action:after,.ct-hide:after{content:url("../img/moin-moveup.png");margin:0 .2em;float:right;vertical-align:middle}
