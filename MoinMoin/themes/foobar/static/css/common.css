@@ -164,6 +164,7 @@ a.moin-mime-pdf:before{content:url("../img/moin-pdf.png");margin:0 .2em;vertical
 a.moin-mime-package:before{content:url("../img/moin-package.png");margin:0 .2em;vertical-align:middle}
 a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;vertical-align:middle}
 body{color:#000;background-color:#d6d5d0;font-family:sans-serif;background-image:url("../img/base.png")}
+div p{margin:.5em .2em}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
 #moin-main-box{background-color:#f0f0f0;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #9d9d9b;overflow:hidden}
@@ -299,6 +300,27 @@ a.moin-nonexistent:active{color:#ff2727}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
 .moin-flash-error{background-image:url("../img/smileys/icon-error.png");color:#ff2727}
 .moin-error{color:#ff2727;background:#d6d5d0;padding:4px;margin:1em;text-align:centre;list-style-type:none;border-radius:5px}
+#moin-searchform{padding:0;font-size:.82em;float:right;text-align:right;}
+#moin-searchform input{font-size:100%;vertical-align:middle;background-color:#f0f0f0;border:1px solid #ccc}
+#moin-searchform button{box-shadow:none}
+#moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-24px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer}
+#moin-searchform #moin-search-query{padding-right:20px}
+#moin-searchform div{margin:0}
+#moin-long-searchform{padding:0;font-size:.82em;text-align:left;}
+#moin-long-searchform div{margin:0}
+#moin-long-searchform label{display:inline}
+#moin-search-query{width:50%}
+.searchresults dt{margin-top:1em;font-weight:normal}
+.searchresults dd,.searchresults p{font-size:.85em}
+.searchresults td{border-width:0}
+.searchresults p.info{margin-left:2%}
+.searchresults .searchhitinfobar{color:#51d443;margin-left:15px;margin-top:0}
+.searchresults .foundtext{margin-left:15px;margin-top:0}
+p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
+p.searchhint{background-color:#f0f0f0;border:1px solid #9d9d9b;padding:2px}
+.searchpages{margin-left:auto;margin-right:auto;}
+.searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#000;font-weight:bold;font-size:1.05em}
+.searchpages td a,.searchpages td a:link{text-decoration:underline}
 ul,dl{margin-left:1.5em}
 ol{margin-left:3em;}
 ol ol{margin-left:1.5em}
