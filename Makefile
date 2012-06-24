@@ -8,6 +8,9 @@ export PYTHONPATH=$(PWD)
 all:
 	python setup.py build
 
+test:
+	py.test --pep8 -rs
+
 dist: clean-devwiki
 	-rm MANIFEST
 	python setup.py sdist
