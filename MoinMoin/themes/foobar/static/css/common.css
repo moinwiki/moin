@@ -200,6 +200,10 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-form dd{margin-bottom:1em;}
 .moin-form dd input{width:20em}
 .moin-form dt label.required:after{content:'*';color:#000}
+#moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
+#moin-create-table tbody tr th{text-align:center;background:#d0d0d0;margin:2px}
+#moin-create-table tbody tr td{text-align:center;background:#f0f0f0;}
+#moin-create-table tbody tr td a{color:#000}
 .moin-clr{clear:both}
 .moin-index-message{width:50%;margin:1em auto;text-align:center;display:none;}
 .moin-index-message span{padding:4px;background-color:#007cef;color:#fff;border:1px solid #ccc;border-radius:5px}
