@@ -173,7 +173,7 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .moin-diff-added span{background-color:#80ff80}
 .moin-diff-removed{background-color:#ffffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
 .moin-diff-removed span{background-color:#ffff80}
-body{color:#000;background-color:#d6d5d0;font-family:sans-serif;background-image:url("../img/base.png")}
+body{color:#000;background-color:#d6d5d0;font-family:verdana,sans-serif;background-image:url("../img/base.png")}
 div p{margin:.5em .2em}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
