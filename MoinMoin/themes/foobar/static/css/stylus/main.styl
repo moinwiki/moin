@@ -48,6 +48,9 @@ body
     font-family font_family
     background-image url(../img/base.png)
 
+div p
+    margin .5em .2em
+
 // the main elements - just the big picture first: panels, header, content, footer
 
 #moin-global-tray
@@ -633,6 +636,97 @@ a
     list-style-type none
     border-radius 5px
 
+// search
+#moin-searchform
+    padding 0
+    font-size 0.82em
+    float right
+    text-align right
+    input
+        font-size 100%
+        vertical-align middle
+        background-color page_color
+        border border_style
+    button
+        box-shadow none
+
+#moin-searchform #moin-search-submit
+    text-indent -9000%
+    margin-left -24px
+    width 20px
+    height 16px
+    background url(../img/moin-search.png) center center no-repeat
+    background-size 16px 16px
+    border none
+    overflow hidden
+    vertical-align middle
+    cursor pointer
+
+#moin-searchform #moin-search-query
+    padding-right 20px
+
+#moin-searchform div
+    margin 0
+
+#moin-long-searchform
+    padding 0
+    font-size 0.82em
+    text-align left
+    div
+        margin 0
+    label
+        display inline
+
+#moin-search-query
+    width 50%
+
+.searchresults 
+    dt
+        margin-top 1em
+        font-weight normal
+    dd, p
+        font-size 0.85em
+    td
+        border-width 0
+    p.info
+        margin-left 2%
+
+.searchresults .searchhitinfobar
+    color active_color
+    margin-left 15px
+    margin-top 0
+
+.searchresults .foundtext
+    margin-left 15px
+    margin-top 0
+
+p.searchstats
+    font-size 0.8em
+    text-align right
+    width 100%
+    padding 2px
+
+p.searchhint
+    background-color page_color
+    border 1px solid shadow_color
+    padding 2px
+
+.searchpages
+    margin-left auto
+    margin-right auto
+    tr, td
+        border 0
+        padding 5px
+        margin 0
+        text-align center
+        vertical-align middle
+        color font_color
+        font-weight bold
+        font-size 1.05em
+    td
+        a, a:link
+            text-decoration underline    
+    
 // lists
 ul, dl
     margin-left 1.5em
