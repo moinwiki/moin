@@ -71,4 +71,3 @@ class TestComplexStuff(object):
         module_tested.do_that()
         result = None
         return result
-

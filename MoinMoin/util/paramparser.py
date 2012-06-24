@@ -723,4 +723,3 @@ def invoke_extension_function(function, args, fixed_args=[]):
             raise ValueError(_(u'No argument named "%(name)s"', name=kwargs_to_pass.keys()[0]))
 
     return function(*fixed_args, **kwargs)
-

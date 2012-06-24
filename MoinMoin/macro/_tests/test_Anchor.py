@@ -18,4 +18,3 @@ def test_Macro():
     test_anchor = result.attrib.values()
     # test_anchor[0] since it returns a list
     assert test_anchor[0] == arguments[0]
-

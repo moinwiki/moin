@@ -433,4 +433,3 @@ def setup_jinja_env():
                             'gen': make_generator(),
                             'search_form': SearchForm.from_defaults(),
                             })
-

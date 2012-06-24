@@ -38,4 +38,3 @@ class Macro(MacroInlineBase):
             result = moin_page.code(children=[text, "<{0}>".format(email)])
 
         return result
-

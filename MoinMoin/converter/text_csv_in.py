@@ -45,4 +45,3 @@ class Converter(TableMixin):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('text/csv'), type_moin_document)
-

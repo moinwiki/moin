@@ -121,6 +121,3 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
             item.destroy_all_revisions()
-
-
-

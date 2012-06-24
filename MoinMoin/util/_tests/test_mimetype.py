@@ -80,4 +80,3 @@ class TestMimeType(object):
         result3 = MimeType_obj.content_type()
         expected = 'text/x-test_file.mpeg'
         assert result3 == expected
-

@@ -154,4 +154,3 @@ def getLogger(name):
         if isinstance(levelnumber, int): # that list has also the reverse mapping...
             setattr(logger, levelname, levelnumber)
     return logger
-

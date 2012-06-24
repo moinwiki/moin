@@ -296,4 +296,3 @@ $(function () {
     // Initialize jQuery File Upload (Extended User Interface Version):
     $('#file_upload').fileUploadUIX();
 });
-

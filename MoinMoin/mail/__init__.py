@@ -6,5 +6,3 @@
 
     Subpackage containing e-mail support code.
 """
-
-

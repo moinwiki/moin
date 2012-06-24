@@ -21,4 +21,3 @@ class Macro(MacroInlineBase):
         translation = ' '.join(arguments.positional)
         translation = _(translation)
         return translation
-

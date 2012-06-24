@@ -76,4 +76,3 @@ class Set_Meta(Command):
                 print "Processing {0!r}, removing {1}.".format(item_name, key)
 
             item.commit()
-

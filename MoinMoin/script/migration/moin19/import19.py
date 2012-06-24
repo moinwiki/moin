@@ -609,4 +609,3 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
-

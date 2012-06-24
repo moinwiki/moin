@@ -232,4 +232,3 @@ class TestLdapFailover(object):
         u2 = handle_login(None, username='usera', password='usera')
         assert u2 is not None
         assert u2.valid
-

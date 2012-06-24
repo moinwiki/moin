@@ -65,4 +65,3 @@ class Arguments(object):
             yield value
         for value in self.keyword.itervalues():
             yield value
-

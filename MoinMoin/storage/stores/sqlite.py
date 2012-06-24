@@ -126,4 +126,3 @@ class FileStore(_Store, FileMutableStoreBase):
         value = self._compress(value)
         with self.conn:
             self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
-

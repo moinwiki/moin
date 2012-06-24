@@ -107,4 +107,3 @@ class TestWikiGroupBackend(GroupsBackendTest):
         assert has_rights_after, 'AnotherUser must have read rights because after appenditem he is member of NewGroup'
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_groups']
-

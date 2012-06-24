@@ -64,4 +64,3 @@ def test_perf(store):
     for i in range(1000):
         key = str(i)
         del store[key]
-

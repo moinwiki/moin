@@ -736,4 +736,3 @@ class ConverterDocument(ConverterPage):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(ConverterPage._factory, type_moin_document, Type('application/x-xhtml-moin-page'))
-

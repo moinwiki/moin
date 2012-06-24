@@ -101,4 +101,3 @@ SECRET_KEY = 'you need to change this so it is really secret'
 #
 #MOINCFG = LocalConfig
 #DEBUG = True
-

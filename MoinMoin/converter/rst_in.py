@@ -783,4 +783,3 @@ default_registry.register(Converter.factory,
                           Type('text/x-rst'), type_moin_document)
 default_registry.register(Converter.factory,
                           Type('x-moin/format;name=rst'), type_moin_document)
-

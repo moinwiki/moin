@@ -79,4 +79,3 @@ class RegistryConverter(RegistryBase):
 
 default_registry = RegistryConverter()
 load_package_modules(__name__, __path__)
-

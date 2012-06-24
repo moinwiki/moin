@@ -401,4 +401,3 @@ class LazyWriteLock(WriteLock):
             return WriteLock.expire(self)
         else: # POSIX
             return True
-

@@ -22,4 +22,3 @@ class Macro(MacroInlineBase):
         d = flaskg.dicts[item_name]
         result = d.get(key, '')
         return result
-

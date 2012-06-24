@@ -106,4 +106,3 @@ class IndexDump(Command):
                 for k, v in kvs:
                     print k, repr(v)[:70]
                 print
-

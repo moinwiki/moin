@@ -519,4 +519,3 @@ class TestText(object):
         assert item2.data == ''
 
 coverage_modules = ['MoinMoin.items']
-

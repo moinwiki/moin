@@ -63,4 +63,3 @@ class FileStore(_Store, FileMutableStoreBase):
 
     def __setitem__(self, key, stream):
         self._st[key] = stream.read()
-

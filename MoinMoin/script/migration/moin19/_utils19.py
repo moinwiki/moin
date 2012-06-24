@@ -161,4 +161,3 @@ def unquoteWikiname(filename, charset=CHARSET):
         wikiname = ''.join(parts)
 
     return wikiname.decode(charset)
-

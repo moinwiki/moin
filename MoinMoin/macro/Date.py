@@ -65,4 +65,3 @@ class Macro(MacroDateTimeBase):
             stamp = arguments[0]
             tm = self.parse_time(stamp)
         return format_date(datetime.utcfromtimestamp(tm))
-

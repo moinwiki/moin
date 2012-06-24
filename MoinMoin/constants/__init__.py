@@ -4,4 +4,3 @@
 """
 MoinMoin - modules with constant definitions
 """
-

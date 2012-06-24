@@ -94,4 +94,3 @@ def test_Arguments_values():
     assert l[1] == 'both'
     assert True in l
     assert False in l
-

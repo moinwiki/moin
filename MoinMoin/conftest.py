@@ -127,4 +127,3 @@ class Module(pytest.collect.Module):
         if coverage is not None:
             coverage_modules.update(getattr(self.obj, 'coverage_modules', []))
         return super(Module, self).run(*args, **kwargs)
-

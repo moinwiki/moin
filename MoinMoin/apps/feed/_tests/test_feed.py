@@ -44,4 +44,3 @@ class TestFeeds(object):
             assert rv.headers['Content-Type'] == 'application/atom+xml'
             assert rv.data.startswith('<?xml')
             assert "checking if the cache invalidation works" in rv.data
-
