@@ -72,7 +72,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                  },
     include_package_data=True,
     zip_safe=False,
-    dependency_links = [
+    dependency_links=[
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
         'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
@@ -108,7 +108,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-multiDownload>=20110717.1',
     ],
     # optional features and their list of requirements
-    extras_require = {
+    extras_require={
         #'featurename': ["req1", "req2", ],
         'pil': ["PIL"], # used by image get for scaling/rotating/etc.
                         # PIL is a binary dependency and some features of it
@@ -118,12 +118,12 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'openid': ["python-openid>=2.2.4"], # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
     },
-    entry_points = dict(
-        console_scripts = ['moin = MoinMoin.script:main'],
+    entry_points=dict(
+        console_scripts=['moin = MoinMoin.script:main'],
     ),
 
     # stuff for babel:
-    message_extractors = {
+    message_extractors={
         '': [
             ('MoinMoin/templates/**.html', 'jinja2', None),
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
