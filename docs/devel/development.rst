@@ -29,7 +29,7 @@ Code Repositories::
 * http://bitbucket.org/thomaswaldmann/moin-2.0 - bitbucket mirror for your
   convenience, simplifying forking and contributing
 
-We use Mercurial DVCS and mercurial for distributed version control.
+We use Mercurial DVCS for distributed version control.
 
 If you are not using Mercurial, you can still submit patches.
 In that case, open an issue in the issue tracker and attach the patch there.
@@ -137,7 +137,7 @@ Above that, there is miscellaneous functionality in `MoinMoin.storage.middleware
 * routing by name to some specific backend, like fstab / mount
 * indexing metadata and data + comfortable and fast index-based access,
   selection and search
-* protecting content by ACLs (Access Control Lists)
+* protecting items by ACLs (Access Control Lists)
 
 DOM based transformations
 -------------------------
@@ -151,7 +151,7 @@ multiple steps. It also has a registry that knows all converters and their suppo
 input and output mimetypes.
 
 For example, if the mimetype is `text/x-moin-wiki`, it will find that the input
-converter handling, this is the one defined in `converter.moinwiki_in`. It then
+converter handling this is the one defined in `converter.moinwiki_in`. It then
 feeds the data of this item into this converter. The converter parses this
 input and creates an in-memory `dom tree` representation from it.
 

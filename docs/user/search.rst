@@ -12,7 +12,7 @@ the search results to you.
 
 On the search results view you will get a bigger search query input field, 
 for example for refining your query, and you may also choose to additionally search
-in non-current item revisions. Sselecting that will search in all revisions.
+in non-current item revisions. Selecting that will search in all revisions.
 
 Simple search queries
 =====================

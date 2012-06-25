@@ -372,7 +372,7 @@ Comments are not shown on the page but depending on the output formatter they mi
 Literals Blocks
 ===============
 
-Literal blocks are used to show test as-it-is. i.e no markup processing is done within a literal block. 
+Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block. 
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**: ::
