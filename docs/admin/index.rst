@@ -137,7 +137,7 @@ between the wikis, so users will be able to search in one wiki
 and also see results from the other wikis.
 
 Before you start, you must prepare your wiki configs. For example, for a company 
-that uses two wiki farms, such as ``Sales`` and ``Engineering``, Their respective 
+that uses two farm wikis, such as ``Sales`` and ``Engineering``, Their respective 
 wiki configs could look like:
 
 ``Sales``::

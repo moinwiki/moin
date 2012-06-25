@@ -4,8 +4,9 @@ Features
 
 Operating System Support
 ========================
-Moin is implemented in Python, a platform-independant language.
-It works on Linux, Mac OS X, Windows, FreeBSD and OSes compatible with these.
+Moin is implemented in Python, a platform-independent language.
+It works on Linux, Mac OS X, Windows, FreeBSD and other OSes that support
+Python.
 
 That said, Linux is the preferred and most tested deployment platform and
 will likely have fewer issues than, for example, Windows.

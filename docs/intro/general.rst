@@ -42,12 +42,12 @@ minimalistic either.
 
 There are lots of wiki engines out there, making it hard to pick one.
 However, choosing wisely is important because you may have to live with 
-your choice for a long time and switching wiki engines is not easy.
+your choice for a long time because switching wiki engines is not easy.
 
 We won't list all of moin's features, because comparing feature lists
 is just not enough. Some features are best left unimplemented, 
 even if they sound great at first. In moin, you will find most
-important features in most major wiki engines. But still, you and your wiki
+important features like in most major wiki engines. But still, you and your wiki
 users might feel quite a different overall experience just because of a bunch
 of small, superficial differences. Of course the quality of some features'
 implementations can vary greatly. Thus, you have to
