@@ -2,10 +2,7 @@
 ReST (ReStructured Text) Markup
 ===============================
 
-The report gives reST syntax documentation. The structure and order has been matched 
-with the other markup rst files, namely creolewiki.rst and mediawiki.rst at http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
-
-Features currently not working with moin's Wiki parser are marked with **RSTTODO**.
+Features currently not working with moin's ReST parser are marked with **RSTTODO**.
 
 Headings
 ========
