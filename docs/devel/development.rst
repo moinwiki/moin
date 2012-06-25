@@ -113,8 +113,8 @@ Let's look at how it shows a wiki item::
   - creates an in-memory Item
 
     + by fetching the item of name "WikiItem" from storage
-    + it looks at the mimetype of this item, which is stored in the metadata
-    + it creates an appropriately typed Item instance, depending on the mimetype
+    + it looks at the contenttype of this item, which is stored in the metadata
+    + it creates an appropriately typed Item instance, depending on the contenttype
   - calls Item._render_data() to determine what the rendered item looks like
     as HTML
   - renders the `show_item.html` template and returns the rendered item html
@@ -143,17 +143,18 @@ DOM based transformations
 -------------------------
 How does moin know what the HTML rendering of an item looks like?
 
-Each Item has some mimetype that is stored in the metadata, also called the input mimetype.
-We also know what we want as output, also called the output mimetype.
+Each Item has some contenttype that is stored in the metadata, also called the input contenttype.
+We also know what we want as output, also called the output contenttype.
 
 Moin uses converters to transform the input data into the output data in
 multiple steps. It also has a registry that knows all converters and their supported
-input and output mimetypes.
+input and output mimetypes / contenttypes.
 
-For example, if the mimetype is `text/x-moin-wiki`, it will find that the input
-converter handling this is the one defined in `converter.moinwiki_in`. It then
-feeds the data of this item into this converter. The converter parses this
-input and creates an in-memory `dom tree` representation from it.
+For example, if the contenttype is `text/x-moin-wiki;charset=utf-8`, it will
+find that the input converter handling this is the one defined in
+`converter.moinwiki_in`. It then feeds the data of this item into this
+converter. The converter parses this input and creates an in-memory `dom tree`
+representation from it.
 
 This dom tree is then transformed through multiple dom-to-dom converters for example::
 

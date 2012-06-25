@@ -18,7 +18,7 @@ Markups supported by MoinMoin
 .. _MediaWiki: http://www.mediawiki.org/wiki/Help:Formatting
 
 In Moin2, you specify the item's markup language when you create the document. 
-Its markup language can also be changed at any time by modifying the item's ``mimetype`` metadata. 
+Its markup language can also be changed at any time by modifying the item's ``contenttype`` metadata. 
 Currently Moin2 supports `MoinWiki`_, `WikiCreole`_, `reStructuredText`_, `Docbook`_ and `MediaWiki`_ markups.
 
 **MOINTODO**: Currently the use of ``{{{#!syntax content}}}`` parsers crashes moin. 
