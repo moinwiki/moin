@@ -83,4 +83,3 @@ AAA 014
 
 
 coverage_modules = ['MoinMoin.util.diff3']
-

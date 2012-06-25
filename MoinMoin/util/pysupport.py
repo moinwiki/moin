@@ -139,4 +139,3 @@ def makeThreadSafe(function, lock=None):
             lock.release()
 
     return decorated
-

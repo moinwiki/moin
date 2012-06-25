@@ -22,4 +22,3 @@ class Macro(MacroDateTimeBase):
             stamp = arguments[0]
             tm = self.parse_time(stamp)
         return format_datetime(datetime.utcfromtimestamp(tm))
-

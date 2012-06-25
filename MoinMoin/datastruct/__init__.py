@@ -16,4 +16,3 @@ from MoinMoin.datastruct.backends.composite_groups import CompositeGroups
 
 from MoinMoin.datastruct.backends import GroupDoesNotExistError
 from MoinMoin.datastruct.backends import DictDoesNotExistError
-

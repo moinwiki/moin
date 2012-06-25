@@ -701,4 +701,3 @@ class TestExtensionInvoking(object):
         assert ief(has_complex, u'2.007, 2.007')
         assert ief(has_complex, u'2.007', [2.007])
         assert ief(has_complex, u'b=2.007', [2.007])
-

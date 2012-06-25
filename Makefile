@@ -8,6 +8,9 @@ export PYTHONPATH=$(PWD)
 all:
 	python setup.py build
 
+test:
+	py.test --pep8 -rs
+
 dist: clean-devwiki
 	-rm MANIFEST
 	python setup.py sdist
@@ -22,9 +25,6 @@ apidoc:
 interwiki:
 	wget -U MoinMoin/Makefile -O contrib/interwiki/intermap.txt "http://master19.moinmo.in/InterWikiMap?action=raw"
 	chmod 664 contrib/interwiki/intermap.txt
-
-check-tabs:
-	@python -c 'import tabnanny ; tabnanny.check("MoinMoin")'
 
 pylint:
 	@pylint --disable-msg=W0142,W0511,W0612,W0613,C0103,C0111,C0302,C0321,C0322 --disable-msg-cat=R MoinMoin

@@ -44,4 +44,3 @@ def test_from_uri(Store):
     store = Store.from_uri("localhost:1970")
     assert store.host == 'localhost'
     assert store.port == 1970
-

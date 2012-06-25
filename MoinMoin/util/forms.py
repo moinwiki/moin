@@ -98,4 +98,3 @@ class FileStorage(Scalar):
         if not isinstance(value, (type(None), werkzeug.FileStorage)):
             raise AdaptationError
         return value
-

@@ -60,4 +60,3 @@ class Deserialize(Command):
     def run(self, filename=None):
         with open_file(filename, "rb") as f:
             deserialize(f, app.storage.backend)
-

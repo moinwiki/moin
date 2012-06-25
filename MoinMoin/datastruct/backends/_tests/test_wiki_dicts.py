@@ -41,4 +41,3 @@ class TestWikiDictsBackend(DictsBackendTest):
         assert result == expected
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_dicts']
-

@@ -13,4 +13,3 @@
 from flask import Blueprint
 serve = Blueprint('serve', __name__)
 import MoinMoin.apps.serve.views
-

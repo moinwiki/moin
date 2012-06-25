@@ -11,4 +11,3 @@ from MoinMoin.constants.chartypes import *
 from MoinMoin.constants.contenttypes import *
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.misc import *
-

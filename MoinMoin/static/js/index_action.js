@@ -247,4 +247,3 @@ $("document").ready(function () {
     $('#moin-download-trigger').multiDownload('click', { delay: 3000 });
 
 });
-

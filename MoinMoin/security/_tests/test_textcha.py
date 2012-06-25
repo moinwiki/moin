@@ -115,4 +115,3 @@ class TestTextChaValid(object):
         test_element.parent = test_form
         result = textchavalid_obj.validate(test_element, 'test_state')
         assert result
-

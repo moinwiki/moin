@@ -345,4 +345,3 @@ def file_headers(filename=None, content_type=None, content_length=None):
         if content_length is not None:
             headers.append(('Content-Length', str(content_length)))
         return headers
-

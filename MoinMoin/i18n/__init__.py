@@ -66,4 +66,3 @@ def get_timezone():
     u = getattr(flaskg, 'user', None)
     if u and u.timezone is not None:
         return u.timezone
-

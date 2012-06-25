@@ -127,4 +127,3 @@ class MutableBackendTestBase(BackendTestBase):
             m = tuple(sorted(m.items()))
             result.add((k, m, d.read()))
         assert result == expected_result
-

@@ -70,4 +70,3 @@ application/vnd.sun.xml.writer.global""".split()
 
 for t in openoffice_types:
     default_registry.register(OpenOfficeIndexingConverter._factory, Type(t), type_text_plain)
-

@@ -356,4 +356,3 @@ class ACLStringIterator(object):
             rights = [r for r in rights.split(',') if r in self.rights]
 
         return modifier, entries, rights
-

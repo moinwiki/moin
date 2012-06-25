@@ -169,4 +169,3 @@ class TestReadLock(object):
             assert lock.acquire(0.1)
 
 coverage_modules = ['MoinMoin.util.lock']
-

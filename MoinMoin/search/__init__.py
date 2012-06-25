@@ -29,4 +29,3 @@ class SearchForm(Form):
     submit = String.using(default=L_('Search'), optional=True)
 
     validators = [ValidSearch()]
-

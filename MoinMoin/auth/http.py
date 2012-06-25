@@ -70,4 +70,3 @@ class HTTPAuthMoin(BaseAuth):
         else:
             logging.debug("returning {0!r}".format(user_obj))
             return user_obj, True
-

@@ -137,4 +137,3 @@ type_moin_wiki = Type(type='text', subtype='x.moin.wiki')
 
 # Generic types, text type
 type_text_plain = Type(type='text', subtype='plain')
-

@@ -189,9 +189,11 @@ Running the tests
 To run the tests, activate your virtual env and invoke py.test from the
 toplevel directory::
 
-    py.test  # run all tests
+    make test  # easiest way (all tests, pep8, skipped info)
+    py.test --pep8  # run all tests, including pep8 checks
     py.test -rs  # run all tests and outputs information about skipped tests
     py.test -k somekeyword  # run the tests matching somekeyword only
+    py.test --pep8 -k pep8  # runs pep8 checks only
     py.test sometests.py  # run the tests contained in sometests.py
 
 Tests output
@@ -211,8 +213,7 @@ Writing tests
 Writing tests with `py.test` is easy and has little overhead. Just
 use the `assert` statements.
 
-For more information, please read http://pytest.org/, but keep in
-mind that we currently still use **py.test 1.3.4**.
+For more information, please read: http://pytest.org/
 
 Documentation
 =============

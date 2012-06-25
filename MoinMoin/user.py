@@ -734,4 +734,3 @@ If you didn't create this account, please ignore this email.
                     sitename=self._cfg.sitename or "Wiki")
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
-

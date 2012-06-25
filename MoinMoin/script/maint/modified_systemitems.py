@@ -40,4 +40,3 @@ class Modified_SystemItems(Command):
                 print item_name
         else:
             print "Not any modified system items found!"
-

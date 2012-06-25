@@ -116,4 +116,3 @@ class TestConverter(object):
         result = self.conv.parser(name, args, text)
         if output is not None or result is not None:
             assert self.serialize(result) == output
-

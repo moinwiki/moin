@@ -78,4 +78,3 @@ class MoinShell(Command):
                 pass
 
         code.interact(self.banner, local=context)
-

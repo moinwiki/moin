@@ -134,4 +134,3 @@ def item_name_analyzer():
                      )
     analyzer = RegexTokenizer(r"\S+") | iwf | LowercaseFilter()
     return analyzer
-

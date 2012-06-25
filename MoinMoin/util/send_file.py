@@ -184,4 +184,3 @@ def send_file(filename=None, file=None,
             if rv.status_code == 304:
                 rv.headers.pop('x-sendfile', None)
     return rv
-
