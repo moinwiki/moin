@@ -105,4 +105,3 @@ class FileStore(_Store, FileMutableStoreBase):
     def __setitem__(self, key, stream):
         if not self._db.set(key, stream.read()):
             raise KeyError("set error: " + str(self._db.error()))
-

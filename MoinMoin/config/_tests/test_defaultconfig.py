@@ -37,4 +37,3 @@ class TestPasswordChecker(object):
                 assert result == (pw_error is None)
 
 coverage_modules = ['MoinMoin.config.default']
-

@@ -118,4 +118,3 @@ class TestInterWikiMapBackend(object):
 
 
 coverage_modules = ['MoinMoin.util.interwiki']
-

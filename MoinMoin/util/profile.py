@@ -180,4 +180,3 @@ class TwistedProfiler(Profiler):
 if __name__ == '__main__':
     # In case someone try to run as a script
     print __doc__
-

@@ -65,4 +65,3 @@ def test_contenttype_to_class():
     test_result = themes.contenttype_to_class(u'MoinMoin/some/value')
     expected = u'moin-mime-MoinMoin'
     assert test_result == expected
-

@@ -224,4 +224,3 @@ def cache_key(**kw):
     :param kw: keys/values to compute cache key from
     """
     return hashlib.md5(repr(kw)).hexdigest()
-

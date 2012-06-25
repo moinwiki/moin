@@ -94,4 +94,3 @@ class SMBMount(BaseAuth):
         if user_obj and not user_obj.valid:
             self.do_smb(user_obj.name, None, False)
         return user_obj, True
-

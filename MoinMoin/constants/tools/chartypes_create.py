@@ -43,4 +43,3 @@ chars_spaces = u"%(chars_spaces)s"
 
 if __name__ == '__main__':
     main()
-

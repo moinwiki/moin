@@ -203,4 +203,3 @@ class InterWikiMap(object):
             parser = InterWikiMap(f.read())
 
         return parser
-

@@ -183,4 +183,3 @@ class DictsBackendTest(object):
                 assert u'SomeNotExistingKey' not in test_dict
                 assert test_dict.get(u'SomeNotExistingKey') is None
                 assert test_dict.get(u'SomeNotExistingKey', {}) == {}
-

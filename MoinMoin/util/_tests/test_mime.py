@@ -89,4 +89,3 @@ def test_Type_compare():
     assert t1 != t2
     assert not t1.issupertype(t2)
     assert not t2.issupertype(t1)
-

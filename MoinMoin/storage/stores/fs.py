@@ -83,4 +83,3 @@ class FileStore(_Store, FileMutableStoreBase):
         with open(self._mkpath(key), "wb") as f:
             blocksize = 64 * 1024
             shutil.copyfileobj(stream, f, blocksize)
-

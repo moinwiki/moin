@@ -41,4 +41,3 @@ class Create_User(Command):
         else:
             u = user.User(auth_username=name)
             print " %-20s %-25s %-35s - created." % (u.itemid, u.name, u.email),
-

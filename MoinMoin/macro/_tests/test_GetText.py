@@ -16,4 +16,3 @@ def test_Macro():
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
     expected = u'test_argument1 test_argument2'
     assert result == expected
-

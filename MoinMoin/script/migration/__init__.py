@@ -4,4 +4,3 @@
 """
 MoinMoin - migration scripts
 """
-

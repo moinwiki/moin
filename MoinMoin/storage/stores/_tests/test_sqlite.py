@@ -57,4 +57,3 @@ def test_from_uri(tmpdir, Store):
     assert store.db_name == tmpdir
     assert store.table_name == 'test_table'
     assert store.compression_level == 2
-

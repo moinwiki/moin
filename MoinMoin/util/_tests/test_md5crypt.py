@@ -26,4 +26,3 @@ def test_apache_md5_crypt():
     result = md5crypt.apache_md5_crypt('test_pass', 'Moin_test')
     expected = '$apr1$Moin_tes$4/5zV8nADrNv3BJcY1rZX1'
     assert result == expected
-

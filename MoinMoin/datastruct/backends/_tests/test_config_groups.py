@@ -21,4 +21,3 @@ class TestConfigGroupsBackend(GroupsBackendTest):
 
 
 coverage_modules = ['MoinMoin.datastruct.backends.config_groups']
-

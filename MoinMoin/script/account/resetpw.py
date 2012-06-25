@@ -47,4 +47,3 @@ class Set_Password(Command):
         u.enc_password = crypto.crypt_password(password)
         u.save()
         print 'Password set.'
-

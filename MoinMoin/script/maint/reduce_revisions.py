@@ -42,4 +42,3 @@ class Reduce_Revisions(Command):
                     rev.destroy()
 
         print "Finished reducing backend."
-

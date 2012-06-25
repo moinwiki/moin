@@ -31,12 +31,12 @@ class TestCleanInput(object):
 class TestAnchorNames(object):
     def test_anchor_name_encoding(self):
         tests = [
-            # text                    expected output
-            (u'\xf6\xf6ll\xdf\xdf',   'A.2BAPYA9g-ll.2BAN8A3w-'),
-            (u'level 2',              'level_2'),
-            (u'level_2',              'level_2'),
-            (u'',                     'A'),
-            (u'123',                  'A123'),
+            # text, expected output
+            (u'\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
+            (u'level 2', 'level_2'),
+            (u'level_2', 'level_2'),
+            (u'', 'A'),
+            (u'123', 'A123'),
             # make sure that a valid anchor is not modified:
             (u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-',
              u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-')
@@ -224,12 +224,12 @@ def testsplit_anchor():
 
 def testfile_headers():
     test_headers = [
-                #test_file               #content_type
-                ('imagefile.gif',       'image/gif'),
-                ('testfile.txt',        'text/plain'),
-                ('pdffile.pdf',         'application/pdf'),
-                ('docfile.doc',         'application/msword'),
-                (None,                  'application/octet-stream')
+                #test_file, content_type
+                ('imagefile.gif', 'image/gif'),
+                ('testfile.txt', 'text/plain'),
+                ('pdffile.pdf', 'application/pdf'),
+                ('docfile.doc', 'application/msword'),
+                (None, 'application/octet-stream')
                 ]
 
     for test_file, content_type in test_headers:
@@ -243,4 +243,3 @@ def testfile_headers():
     assert result == expected
 
 coverage_modules = ['MoinMoin.wikiutil']
-
