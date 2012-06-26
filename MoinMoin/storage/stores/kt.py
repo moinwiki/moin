@@ -159,4 +159,3 @@ class FileStore(_Store, FileMutableStoreBase):
         response = self.client.getresponse()
         body = response.read()
         return response.status == 201
-

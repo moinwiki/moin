@@ -86,4 +86,3 @@ class TestCompositeGroup(object):
 
 
 coverage_modules = ['MoinMoin.datastruct.backends.composite_groups']
-

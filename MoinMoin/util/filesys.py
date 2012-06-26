@@ -243,4 +243,3 @@ def lock(file, flags):
 
 def unlock(file):
     raise NotImplementedError
-

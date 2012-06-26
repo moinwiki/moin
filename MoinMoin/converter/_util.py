@@ -48,4 +48,3 @@ def normalize_split_text(text):
     text = text.replace(u'\r\n', u'\n')
     lines = text.split(u'\n')
     return lines
-

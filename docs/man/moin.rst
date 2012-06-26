@@ -1,7 +1,7 @@
 :orphan:
 
-moin commandline interface
-==========================
+moin command line interface
+===========================
 
 Synopsis
 --------
@@ -12,10 +12,10 @@ Synopsis
 Description
 -----------
 
-:program:`moin` is the commandline interface to miscellaneous moin-related tools.
+:program:`moin` is the command line interface to miscellaneous moin-related tools.
 
-If you just invoke :program:`moin` (without any arguments), it will start the
-builtin server and you'll have moin running! This is just a shortcut for
+If you invoke :program:`moin` without any arguments, it will start the
+builtin server and you'll have moin running! This is a shortcut for
 invoking :program:`moin moin`.
 
 :program:`moin help` will give a list of available subcommands.
@@ -28,7 +28,7 @@ Options
 
 .. todo::
 
-   Describe moin commandline options.
+   Describe moin command line options.
 
 See also
 --------

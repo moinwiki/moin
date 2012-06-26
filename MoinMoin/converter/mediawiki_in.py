@@ -814,7 +814,7 @@ class Converter(ConverterMacro):
     class Mediawiki_preprocessor(object):
 
         class Preprocessor_tag(object):
-            def __init__(self, name='', text='', tag='',  status=True):
+            def __init__(self, name='', text='', tag='', status=True):
                 self.tag_name = name
                 self.tag = tag
                 self.text = [text]
@@ -1005,4 +1005,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory, Type('x-moin/format;name=mediawiki'), type_moin_document)
 default_registry.register(Converter.factory, Type('text/x-mediawiki'), type_moin_document)
-

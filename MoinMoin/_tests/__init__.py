@@ -82,5 +82,3 @@ def check_connection(port, host='127.0.0.1'):
         s.close()
     except socket.error as err:
         raise Exception("connecting to {0}:{1:d}, error: {2!s}".format(host, port, err))
-
-

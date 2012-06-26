@@ -69,4 +69,3 @@ def urls_names():
     item_names = sorted([rev.meta[NAME] for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')
-

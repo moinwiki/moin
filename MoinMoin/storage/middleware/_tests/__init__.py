@@ -4,4 +4,3 @@
 """
 MoinMoin - middleware tests
 """
-

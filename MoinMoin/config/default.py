@@ -577,4 +577,3 @@ def _add_options_to_defconfig(opts, addgroup=True):
 
 _add_options_to_defconfig(options)
 _add_options_to_defconfig(options_no_group_name, False)
-

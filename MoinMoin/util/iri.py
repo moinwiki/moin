@@ -700,4 +700,3 @@ class IriQuery(_Value):
 
 class IriFragment(_Value):
     quote_filter = frozenset('@:/?')
-

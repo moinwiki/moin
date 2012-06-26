@@ -45,4 +45,3 @@ class WikiDicts(BaseDictsBackend):
         rev = item.get_revision(CURRENT)
         somedict = rev.meta.get(SOMEDICT, {})
         return somedict
-

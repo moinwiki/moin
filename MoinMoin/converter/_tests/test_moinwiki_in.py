@@ -317,4 +317,3 @@ class TestConverter(object):
             pytest.skip(skip)
         out = self.conv(input, 'text/x.moin.wiki;charset=utf-8', **args)
         assert self.serialize(out) == output
-

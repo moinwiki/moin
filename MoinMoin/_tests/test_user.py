@@ -431,4 +431,3 @@ class TestIsValidName(object):
 
 
 coverage_modules = ['MoinMoin.user']
-

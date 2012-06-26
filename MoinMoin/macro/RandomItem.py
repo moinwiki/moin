@@ -60,4 +60,3 @@ class Macro(MacroInlineBase):
 
         del result[-1] # kill last comma
         return result
-

@@ -38,4 +38,3 @@ DESTROY = 'destroy'
 
 # rights that control access to operations on contents
 ACL_RIGHTS_CONTENTS = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
-

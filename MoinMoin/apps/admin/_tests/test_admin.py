@@ -36,4 +36,3 @@ class TestAdmin(object):
 
     def test_itemsize(self):
         self._test_view_get(url_for('admin.itemsize'))
-

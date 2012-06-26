@@ -163,4 +163,3 @@ class OpenIDAuth(BaseAuth):
 
                 # returns a MultistageFormLogin
                 return MultistageFormLogin(form_html)
-

@@ -67,4 +67,3 @@ class CompositeGroups(BaseGroupsBackend):
 
     def __repr__(self):
         return "<{0} backends={1}>".format(self.__class__, self._backends)
-

@@ -40,4 +40,3 @@ class RevisionAlreadyExistsError(BackendError):
     """
     Raised if the Revision you are trying to create already exists.
     """
-

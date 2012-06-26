@@ -44,4 +44,3 @@ uri_schemes = ['http', 'https', 'ftp', 'file',
                'notes',
                'rtp', 'rtsp', 'rtcp',
               ]
-

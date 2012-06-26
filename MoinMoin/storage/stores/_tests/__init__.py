@@ -12,4 +12,3 @@ class FileStoreTestBase(object):
 
 class BytesStoreTestBase(object):
     pass
-

@@ -176,4 +176,3 @@ class TextChaizedForm(Form):
     """a form providing TextCha support"""
     textcha_question = String
     textcha = String.using(label=L_('TextCha')).validated_by(TextChaValid())
-

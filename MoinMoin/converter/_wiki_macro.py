@@ -169,4 +169,3 @@ class ConverterMacro(object):
             elem.append(moin_page.body(children=content))
 
         return elem
-

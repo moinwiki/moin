@@ -995,4 +995,3 @@ class Meta(Mapping):
 
     def __repr__(self):
         return "Meta _doc: {0!r} _meta: {1!r}".format(self._doc, self._meta)
-
