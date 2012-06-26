@@ -27,7 +27,7 @@ from MoinMoin.security import require_permission
 
 @admin.route('/')
 def index():
-    return render_template('admin/index.html', title_name=_(u"Admin"))
+    return render_template('admin/index.html', title_name=_(u"More"))
 
 
 @admin.route('/userbrowser')
