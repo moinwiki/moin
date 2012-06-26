@@ -45,4 +45,3 @@ class Clock(object):
     def __del__(self):
         if self.timers:
             logging.warning('These timers have not been stopped: {0}'.format(', '.join(self.timers.keys())))
-

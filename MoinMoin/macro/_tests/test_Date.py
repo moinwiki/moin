@@ -40,4 +40,3 @@ class TestMacro(object):
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         expected = u'Aug 7, 2011'
         assert result == expected
-

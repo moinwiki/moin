@@ -24,4 +24,3 @@ class BaseRequestHandler(werkzeug.serving.BaseRequestHandler):
 
 werkzeug.serving.BaseRequestHandler = BaseRequestHandler
 werkzeug.serving.WSGIRequestHandler = BaseRequestHandler
-

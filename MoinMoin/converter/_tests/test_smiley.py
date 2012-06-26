@@ -77,4 +77,3 @@ def test_smiley_convert(input, query):
     result = tree.xpath(query)
     print 'query result:', result
     assert result
-

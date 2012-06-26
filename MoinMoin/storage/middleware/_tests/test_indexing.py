@@ -417,4 +417,3 @@ class TestProtectedIndexingMiddleware(object):
             #print r.meta
             #print r.data.read()
             pass
-

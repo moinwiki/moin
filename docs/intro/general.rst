@@ -5,7 +5,7 @@ General
 About MoinMoin
 --------------
 MoinMoin is a wiki engine written in Python. It is Free and Open Source
-Software under GNU GPL v2+ (for details please read the :ref:`license`).
+Software under GNU GPL v2+. For details please read the :ref:`license`.
 
 Project homepage: http://moinmo.in/
 
@@ -36,18 +36,18 @@ You can run it on:
 
 What makes MoinMoin special?
 ----------------------------
-Moin tries to be a **great wiki engine** (good, powerful, extendable and still
-easy-to-use). We don't try to be everything, but we don't try to be
+Moin tries to be a **great wiki engine**, which encompasses: powerful, extendable and
+easy-to-use. We don't try to be everything, but we don't try to be
 minimalistic either.
 
 There are lots of wiki engines out there, making it hard to pick one.
 However, choosing wisely is important because you may have to live with 
-your choice for a long time (switching wiki engines is not easy).
+your choice for a long time because switching wiki engines is not easy.
 
-We won't list all of moin's features right here, because comparing feature lists
+We won't list all of moin's features, because comparing feature lists
 is just not enough. Some features are best left unimplemented, 
 even if they sound great at first. In moin, you will find most
-important features in most major wiki engines - but still, you and your wiki
+important features like in most major wiki engines. But still, you and your wiki
 users might feel quite a different overall experience just because of a bunch
 of small, superficial differences. Of course the quality of some features'
 implementations can vary greatly. Thus, you have to
@@ -58,21 +58,11 @@ It has rapidly grown and evolved through moin 1.9.x. Its developers have
 increased their experience with Python and wiki technology over the years.
 With **moin 2.0**, there has been a rather **revolutionary cleanup / rewrite** 
 of how moin works based on that experience. This promises to make it easier,
-cleaner, better, more consistent, more powerful, more flexible, and more
+cleaner, more consistent, more powerful, more flexible and more
 modular.
 
-Moin is **written in Python** - an easy to read, high-level, object-oriented,
-dynamic, well-designed, and platform-independent programming language. It's 
-fun to write clean code with Python!
-
-Even if you are but a mere wiki admin or user, you indirectly
-take advantage of this. Believe it or not, software developers are humans,
-too; if they use a crap programming language that is hard to read, badly
-designed, and requires them to write big amounts of code for even trivial
-things, then it is hard for them to create and maintain a great piece of 
-software.
-
-You even could learn a bit of Python and extend moin as you like!
+Moin is **written in Python**, an easy to read, high-level, object-oriented,
+dynamic, well-designed and platform-independent programming language.
 
 Moin is **Free Software** (that implies that it is **Open Source**) and,
 because we use Python, you may even *like* to read and modify moin's code.
@@ -80,8 +70,7 @@ because we use Python, you may even *like* to read and modify moin's code.
 
 Who is using MoinMoin?
 ----------------------
-This just shows some of the better-known users of MoinMoin and is by no 
-means a complete list.
+This shows some of the better-known users of MoinMoin::
 
 Web Sites
 ~~~~~~~~~~~~~~

@@ -36,4 +36,3 @@ default_registry.register(Converter._factory, Type('application/octet-stream'), 
                           default_registry.PRIORITY_MIDDLE + 3)
 default_registry.register(Converter._factory, Type(type=None, subtype=None), type_moin_document,
                           default_registry.PRIORITY_MIDDLE + 3)
-

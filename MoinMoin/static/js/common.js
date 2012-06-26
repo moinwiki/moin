@@ -488,4 +488,3 @@ function initMoinUsersettings() {
     $('#moin-usersettings form').submit(submitHandler);
 }
 $(document).ready(initMoinUsersettings);
-

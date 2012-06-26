@@ -77,4 +77,3 @@ class MutableBackendBase(BackendBase):
         """
         delete meta, data related to metaid from the backend
         """
-

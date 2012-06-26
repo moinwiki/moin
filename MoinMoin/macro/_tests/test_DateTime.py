@@ -30,4 +30,3 @@ def test_Macro():
     arguments = ['incorrect_argument']
     with pytest.raises(ValueError):
         macro_obj.macro('content', arguments, 'page_url', 'alternative')
-

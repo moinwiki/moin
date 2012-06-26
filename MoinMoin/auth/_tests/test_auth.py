@@ -81,4 +81,3 @@ def test_get_multistage_continuation_url():
     assert 'password=test_pass' in test_url
     assert 'stage=test_auth_name' in test_url
     assert 'login_submit=1' in test_url
-

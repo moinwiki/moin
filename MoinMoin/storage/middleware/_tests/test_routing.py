@@ -97,4 +97,3 @@ def test_iter(router):
     sub_revid = router.store(dict(name=u'sub/bar'), StringIO(''))
     existing_now = set([revid for mountpoint, revid in router])
     assert existing_now == set([root_revid, sub_revid]) | existing_before
-

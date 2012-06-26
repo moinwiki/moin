@@ -39,4 +39,3 @@ class Macro(MacroPageLinkListBase):
         item_names.sort()
 
         return self.create_pagelink_list(item_names, ordered=False)
-

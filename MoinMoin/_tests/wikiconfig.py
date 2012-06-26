@@ -25,4 +25,3 @@ class Config(DefaultConfig):
     interwikiname = u'MoinTest'
     interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/')
     interwiki_map[interwikiname] = 'http://localhost:8080/'
-

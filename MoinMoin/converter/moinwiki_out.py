@@ -518,4 +518,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_document, type_moin_wiki)
 default_registry.register(Converter.factory, type_moin_document, Type('x-moin/format;name=wiki'))
-

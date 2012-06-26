@@ -112,4 +112,3 @@ class FileStore(_Store, FileMutableStoreBase):
 
     def __setitem__(self, key, stream):
         self.table.insert().execute(key=key, value=stream.read())
-

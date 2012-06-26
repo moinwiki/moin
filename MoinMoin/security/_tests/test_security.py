@@ -412,4 +412,3 @@ class TestItemHierachicalAcls(object):
 
 
 coverage_modules = ['MoinMoin.security']
-

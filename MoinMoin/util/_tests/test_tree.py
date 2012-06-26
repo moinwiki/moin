@@ -65,4 +65,3 @@ def test_html():
 
 def test_moin_page():
     assert isinstance(moin_page, Namespace)
-

@@ -34,5 +34,3 @@ def test_destroy(tmpdir, Store):
     target = tmpdir.join('store.kch')
     store.destroy()
     assert not target.check()
-
-

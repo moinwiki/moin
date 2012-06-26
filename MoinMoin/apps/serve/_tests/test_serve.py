@@ -20,4 +20,3 @@ class TestServe(object):
             assert rv.status == '404 NOT FOUND'
             assert rv.headers['Content-Type'] == 'text/html'
             assert '<!DOCTYPE HTML' in rv.data
-

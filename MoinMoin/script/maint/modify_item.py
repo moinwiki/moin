@@ -72,4 +72,3 @@ class PutItem(Command):
         item = app.storage[name]
         with open(data_file, 'rb') as df:
             item.store_revision(meta, df, overwrite=overwrite)
-

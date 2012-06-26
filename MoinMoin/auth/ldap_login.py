@@ -264,4 +264,3 @@ class LDAPAuth(BaseAuth):
         except:
             logging.exception("caught an exception, traceback follows...")
             return ContinueLogin(user_obj)
-

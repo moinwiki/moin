@@ -73,4 +73,3 @@ class TestCompositeError(object):
         assert result == expected
 
 coverage_modules = ['MoinMoin.error']
-

@@ -18,6 +18,7 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('..'))
 
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -223,6 +224,7 @@ man_pages = [
     ('man/moin', 'moin', u'MoinMoin Commandline Interface', [u'The MoinMoin developers'], 1),
     ('index', 'moinmoin', u'MoinMoin Documentation', [u'The MoinMoin developers'], 1),
 ]
+
 
 # -- Options for Texinfo output ------------------------------------------------
 

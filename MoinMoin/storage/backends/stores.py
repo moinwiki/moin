@@ -169,4 +169,3 @@ class MutableBackend(Backend, MutableBackendBase):
         dataid = meta[DATAID]
         self._del_meta(metaid)
         self._del_data(dataid)
-
