@@ -386,11 +386,11 @@ table.zebra thead{background-color:#2c2c2a;color:#fff}
 table.zebra tfoot{background-color:#d6d5d0}
 table.zebra tbody tr,table.zebra > tr{background-color:#d0d0d0}
 table.zebra th,table.zebra td{border:none}
-pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.33em 0;padding:5px;clear:both;}
+pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.5em;padding:5px;clear:both;}
 pre.comment{background-color:#2c2c2a;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
-textarea{font-family:monospace;width:100%;border:1px solid #ccc}
-input#f_comment{width:100%;border:1px solid #ccc;margin:.3em 0}
+textarea{font-family:monospace;width:98%;border:1px solid #ccc;margin-left:.5em}
+input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 sub{vertical-align:sub}
 sup{vertical-align:super}
 .moin-big{font-size:1.17em}
