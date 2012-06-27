@@ -190,15 +190,22 @@ label
     display block
     font-weight bold
 
+input[type="submit"],
+input[type="button"],
 button
+    font-weight bold
+    font-size 12px
     background base_color
-    padding 3px 5px
+    padding 4px 15px
     border border_style
-    border-radius 2px
+    border-radius 6px
     box-shadow 1px 1px 2px shadow_color
     cursor pointer
     &:hover
         box-shadow 1px 1px 2px font_color
+    &:active
+        position relative
+        top 1px
     
 input,
 select
@@ -208,9 +215,6 @@ select
     border-radius 2px
 input[type="text"]
     width 300px
-input[type="submit"],
-input[type="button"] 
-    background base_color
 input.blank
     border-color border_color
     border-width 2px
