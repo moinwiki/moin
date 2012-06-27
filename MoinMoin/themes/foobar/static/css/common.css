@@ -250,8 +250,8 @@ input.blank{border-color:#ccc;border-width:2px}
 .action-visible .show-action:after,.ct-shown:after{content:url("../img/moin-movedown.png");margin:0 .2em;float:right;vertical-align:middle}
 #popup{background:transparent url("../img/moin-transparent-bg.png") repeat;padding:5px;width:40%;position:absolute;top:10%;left:30%;display:none;z-index:10}
 .popup-header{background-color:#2c2c2a;color:#fff;padding:10px;margin:0}
-.popup-closer{padding:0 1px;margin:-.2em;width:19px;border-radius:2em;float:right;cursor:pointer;}
-.popup-closer:hover{background:#f0f0f0}
+input[value="X"]{padding:0 1px;margin:-.2em;width:19px;border-radius:2em;float:right;}
+input[value="X"]:hover{background:#f0f0f0}
 .popup-body{clear:both;background-color:#f0f0f0;color:#000;padding:10px;margin:0;}
 .popup-body label{margin:5px}
 .popup-body input{margin:8px 5px}
