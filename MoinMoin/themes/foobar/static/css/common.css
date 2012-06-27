@@ -274,7 +274,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #moin-page-history table{border:1px solid #ccc;border-radius:5px;}
 #moin-page-history table thead{border-top-left-radius:5px;border-top-right-radius:5px;}
 #moin-page-history table thead tr th{text-align:center;}
-#moin-page-history table thead tr th input[type="Submit"]{width:26px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
+#moin-page-history table thead tr th input[type="Submit"]{padding:4px 10px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
 #moin-page-history table thead tr th input[type="Submit"]:hover{box-shadow:1px 1px 2px #000}
 .moin-hist-rev{margin:0;}
 .moin-hist-rev input{float:left}
