@@ -320,7 +320,7 @@ a.moin-nonexistent:active{color:#ff2727}
 #moin-searchform{padding:0;font-size:.82em;float:right;text-align:right;}
 #moin-searchform input{font-size:100%;vertical-align:middle;background-color:#f0f0f0;border:1px solid #ccc}
 #moin-searchform button{box-shadow:none}
-#moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-24px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer}
+#moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-24px;padding:0;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer}
 #moin-searchform #moin-search-query{padding-right:20px}
 #moin-searchform div{margin:0}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left;}
