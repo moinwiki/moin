@@ -512,7 +512,7 @@ def revert_item(item_name, rev):
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
         if form.validate():
-            item.revert()
+            item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
@@ -686,6 +686,7 @@ def jfu_server(item_name):
     data_file = request.files.get('data_file')
     subitem_name = data_file.filename
     contenttype = data_file.content_type # guess by browser, based on file name
+    data = data_file.stream
     if item_name:
         subitem_prefix = item_name + u'/'
     else:
@@ -693,7 +694,7 @@ def jfu_server(item_name):
     item_name = subitem_prefix + subitem_name
     try:
         item = Item.create(item_name)
-        revid, size = item.modify()
+        revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
                            item_name=item_name)
         return jsonify(name=subitem_name,
