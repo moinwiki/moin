@@ -201,11 +201,11 @@ div p{margin:.5em .2em}
 #moin-footer-logos{float:right;}
 #moin-footer-logos ul li{display:inline}
 label{display:block;font-weight:bold}
-button{background:#d6d5d0;padding:3px 5px;border:1px solid #ccc;border-radius:2px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
-button:hover{box-shadow:1px 1px 2px #000}
+input[type="submit"],input[type="button"],button{font-weight:bold;font-size:12px;background:#d6d5d0;padding:4px 15px;border:1px solid #ccc;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
+input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
+input[type="submit"]:active,input[type="button"]:active,button:active{position:relative;top:1px}
 input,select{padding:3px;background:#f0f0f0;border:1px solid #ccc;border-radius:2px}
 input[type="text"]{width:300px}
-input[type="submit"],input[type="button"]{background:#d6d5d0}
 input.blank{border-color:#ccc;border-width:2px}
 .moin-form dd{margin-bottom:1em;}
 .moin-form dd input{width:20em}
