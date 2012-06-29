@@ -1117,7 +1117,10 @@ class Text(Binary):
 
         def _load(self, item):
             super(Text.ModifyForm, self)._load(item)
-            self['data_text'] = item.data_storage_to_internal(item.data)
+            data = item.data
+            data = item.data_storage_to_internal(data)
+            data = item.data_internal_to_form(data)
+            self['data_text'] = data
 
         def _dump(self, item):
             meta, data, contenttype_guessed, comment = super(Text.ModifyForm, self)._dump(item)
@@ -1383,7 +1386,6 @@ class AnyWikiDraw(Draw):
     class ModifyForm(Draw.ModifyForm):
         def _load(self, item):
             super(AnyWikiDraw.ModifyForm, self)._load(item)
-            Draw.ModifyForm._load(self, item)
             try:
                 drawing_exists = 'drawing.svg' in item.list_members()
             except tarfile.TarError: # item doesn't exist yet
