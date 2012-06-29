@@ -1050,14 +1050,14 @@ class TransformableBitmapImage(RenderableBitmapImage):
         url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
-                               content=Markup('<img src="{0}" />'.format(escape(url))))
+                               content=Markup(u'<img src="{0}" />'.format(escape(url))))
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
         url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup('<img src="{0}" />'.format(escape(url)))
+        return Markup(u'<img src="{0}" />'.format(escape(url)))
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -1369,9 +1369,9 @@ class TWikiDraw(Draw):
             image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format((drawing_url, title, title)))
             title = _('Clickable drawing: %(filename)s', filename=item_name)
 
-            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
+            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
@@ -1438,9 +1438,9 @@ class AnyWikiDraw(Draw):
             # unxml, because 4.01 concrete will not validate />
             image_map = image_map.replace(u'/>', u'>')
             title = _('Clickable drawing: %(filename)s', filename=self.name)
-            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
+            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
@@ -1470,6 +1470,6 @@ class SvgDraw(Draw):
         item_name = self.name
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
-        return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
+        return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
