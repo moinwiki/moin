@@ -401,10 +401,8 @@ class Item(object):
         trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
         return self._rename(trashname, comment, action=u'TRASH')
 
-    def revert(self):
-        # called from revert UI/POST
-        comment = request.form.get('comment')
-        self._save(self.meta, self.data, action=u'REVERT', comment=comment)
+    def revert(self, comment=u''):
+        return self._save(self.meta, self.data, action=u'REVERT', comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
         # called from destroy UI/POST
@@ -415,43 +413,11 @@ class Item(object):
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
 
-    def modify(self):
-        # called from modify UI/POST
-        meta = data = contenttype_guessed = None
-        contenttype_qs = request.values.get('contenttype')
-        data_file = request.files.get('data_file')
-        if data_file and data_file.filename: # XXX is this the right way to check if there was a file uploaded?
-            data = data_file.stream
-            # this is likely a guess by the browser, based on the filename
-            contenttype_guessed = data_file.content_type # comes from form multipart data
-        if data is None:
-            # no file upload, try taking stuff from textarea
-            data = request.form.get('data_text')
-            if data is not None:
-                # there was a data_text field with (possibly empty) content
-                assert isinstance(data, unicode) # we get unicode from the form
-                data = self.data_form_to_internal(data)
-                data = self.data_internal_to_storage(data)
-                # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
-                contenttype_guessed = u'text/plain;charset=utf-8'
-        # data might be None here, if we have a form with just the data_file field, no file was uploaded
-        # and no data_text field. this can happen if just metadata of a non-text item is edited.
-
-        meta_text = request.form.get('meta_text')
-        if meta_text is not None:
-            # there was a meta_text field with (possibly empty) content
-            # Note: if you get crashes here, please see the ValidJSON validator
-            # to catch invalid json issues early.
-            meta = self.meta_text_to_dict(meta_text)
-        if meta is None:
-            # no form metadata - reuse some stuff from previous metadata?
-            meta = {}
-
+    def modify(self, meta, data, comment=u'', contenttype_guessed=None, contenttype_qs=None):
         if contenttype_qs:
             # we use querystring param to FORCE content type
             meta[CONTENTTYPE] = contenttype_qs
 
-        comment = request.form.get('comment')
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
     def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
@@ -699,45 +665,62 @@ There is no help, you're doomed!
         meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
         data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
 
-        def _load(self):
-            item = self.item
+        def _load(self, item):
             self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
+
+        def _dump(self, item):
+            data = meta = contenttype_guessed = None
+            data_file = self['data_file'].value
+            if data_file:
+                data = data_file.stream
+                # this is likely a guess by the browser, based on the filename
+                contenttype_guessed = data_file.content_type # comes from form multipart data
+            meta = item.meta_text_to_dict(self['meta_text'].value)
+            comment = self['comment'].value
+            return meta, data, contenttype_guessed, comment
 
         extra_template_args = {}
 
         @classmethod
         def from_item(cls, item):
-            method = request.method
-            if method == 'GET':
-                form = cls.from_defaults()
-                TextCha(form).amend_form()
-                form.item = item
-                form._load()
-            elif method == 'POST':
-                form = cls.from_flat(request.form.items() + request.files.items())
-                form.item = item
-                TextCha(form).amend_form()
-                form.validate()
-            else:
-                raise ValueError("Request method '%s' not supported" % method)
+            form = cls.from_defaults()
+            TextCha(form).amend_form()
+            form._load(item)
+            return form
+
+        @classmethod
+        def from_request(cls, request):
+            form = cls.from_flat(request.form.items() + request.files.items())
+            TextCha(form).amend_form()
             return form
 
     def do_modify(self, contenttype, template_name):
+        """
+        Handle +modify requests, both GET and POST.
+
+        This method can be overridden in subclasses, providing polymorphic
+        behavior for the +modify view.
+        """
         method = request.method
-        if method == 'GET' and template_name is None and isinstance(self.rev, DummyRev):
-            return self._do_modify_show_templates()
-
-        if template_name:
-            item = Item.create(template_name)
-
-        form = self.ModifyForm.from_item(self)
-        if method == 'POST' and form.validate():
-            try:
-                self.modify() # XXX
-            except AccessDenied:
-                abort(403)
-            else:
-                return redirect(url_for_item(self.name))
+        if method == 'GET':
+            item = self
+            if isinstance(self.rev, DummyRev):
+                if template_name is None:
+                    return self._do_modify_show_templates()
+                elif template_name:
+                    item = Item.create(template_name)
+            form = self.ModifyForm.from_item(item)
+        elif method == 'POST':
+            form = self.ModifyForm.from_request(request)
+            if form.validate():
+                meta, data, contenttype_guessed, comment = form._dump(self)
+                contenttype_qs = request.values.get('contenttype')
+                try:
+                    self.modify(meta, data, comment, contenttype_guessed, contenttype_qs)
+                except AccessDenied:
+                    abort(403)
+                else:
+                    return redirect(url_for_item(self.name))
         return render_template(self.template,
                                item_name=self.name,
                                rows_meta=str(ROWS_META), cols=str(COLS),
@@ -1067,14 +1050,14 @@ class TransformableBitmapImage(RenderableBitmapImage):
         url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
-                               content=Markup('<img src="{0}" />'.format(escape(url))))
+                               content=Markup(u'<img src="{0}" />'.format(escape(url))))
 
     def _render_data_diff(self, oldrev, newrev):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
         url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup('<img src="{0}" />'.format(escape(url)))
+        return Markup(u'<img src="{0}" />'.format(escape(url)))
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -1132,10 +1115,22 @@ class Text(Binary):
     class ModifyForm(Binary.ModifyForm):
         data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
 
-        def _load(self):
-            super(Text.ModifyForm, self)._load()
-            item = self.item
-            self['data_text'] = item.data_storage_to_internal(item.data)
+        def _load(self, item):
+            super(Text.ModifyForm, self)._load(item)
+            data = item.data
+            data = item.data_storage_to_internal(data)
+            data = item.data_internal_to_form(data)
+            self['data_text'] = data
+
+        def _dump(self, item):
+            meta, data, contenttype_guessed, comment = super(Text.ModifyForm, self)._dump(item)
+            if data is None:
+                data = self['data_text'].value
+                data = item.data_form_to_internal(data)
+                data = item.data_internal_to_storage(data)
+                # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
+                contenttype_guessed = u'text/plain;charset=utf-8'
+            return meta, data, contenttype_guessed, comment
 
         extra_template_args = {'rows_data': str(ROWS_DATA)}
 
@@ -1301,29 +1296,23 @@ class Draw(TarMixin, Image):
     class ModifyForm(Binary.ModifyForm):
         pass
 
+    def handle_post():
+        raise NotImplementedError
+
     def do_modify(self, contenttype, template_name):
-        # XXX think about and add item template support
-        #if template_name is None and isinstance(self.rev, DummyRev):
-        #    return self._do_modify_show_templates()
-        form = self.ModifyForm.from_item(self)
-        # XXX we don't validate the form as the POST comes from *Draw applets
-        # XXX as the "saving" POSTs come from *Draw (not the form), editing meta_text doesn't work
+        # XXX as the "saving" POSTs come from *Draw applets (not the form),
+        # they need to be handled specially for each applet. Besides, editing
+        # meta_text doesn't work
         if request.method == 'POST':
             try:
-                self.modify() # XXX
+                self.handle_post()
             except AccessDenied:
                 abort(403)
             else:
                 # *Draw Applets POSTs more than once, redirecting would break them
                 return "OK"
-        return render_template(self.template,
-                               item_name=self.name,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
-                               form=form,
-                               search_form=None,
-                               **form.extra_template_args
-                              )
+        else:
+            return super(Draw, self).do_modify(contenttype, template_name)
 
 
 class TWikiDraw(Draw):
@@ -1333,7 +1322,7 @@ class TWikiDraw(Draw):
     modify_help = ""
     template = "modify_twikidraw.html"
 
-    def modify(self):
+    def handle_post(self):
         # called from modify UI/POST
         file_upload = request.files.get('filepath')
         filename = request.form['filename']
@@ -1380,9 +1369,9 @@ class TWikiDraw(Draw):
             image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format((drawing_url, title, title)))
             title = _('Clickable drawing: %(filename)s', filename=item_name)
 
-            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
+            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
@@ -1395,15 +1384,15 @@ class AnyWikiDraw(Draw):
     template = "modify_anywikidraw.html"
 
     class ModifyForm(Draw.ModifyForm):
-        @property
-        def extra_template_args(self):
+        def _load(self, item):
+            super(AnyWikiDraw.ModifyForm, self)._load(item)
             try:
-                drawing_exists = 'drawing.svg' in self.item.list_members()
+                drawing_exists = 'drawing.svg' in item.list_members()
             except tarfile.TarError: # item doesn't exist yet
                 drawing_exists = False
-            return {'drawing_exists': drawing_exists}
+            self.extra_template_args = {'drawing_exists': drawing_exists}
 
-    def modify(self):
+    def handle_post(self):
         # called from modify UI/POST
         file_upload = request.files.get('filepath')
         filename = request.form['filename']
@@ -1449,9 +1438,9 @@ class AnyWikiDraw(Draw):
             # unxml, because 4.01 concrete will not validate />
             image_map = image_map.replace(u'/>', u'>')
             title = _('Clickable drawing: %(filename)s', filename=self.name)
-            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
+            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
@@ -1461,7 +1450,7 @@ class SvgDraw(Draw):
     modify_help = ""
     template = "modify_svg-edit.html"
 
-    def modify(self):
+    def handle_post(self):
         # called from modify UI/POST
         png_upload = request.values.get('png_data')
         svg_upload = request.values.get('filepath')
@@ -1481,6 +1470,6 @@ class SvgDraw(Draw):
         item_name = self.name
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
-        return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
+        return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
 item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))

@@ -274,7 +274,7 @@ class TestItem(object):
         item = Item.create(name)
         item._save(meta, data, comment=comment)
         item = Item.create(name)
-        item.revert()
+        item.revert(u'revert')
         item = Item.create(name)
         assert item.meta['action'] == u'REVERT'
 
@@ -289,12 +289,16 @@ class TestItem(object):
         item = Item.create(name)
         assert item.name == u'Test_Item'
         assert item.meta['test_key'] == 'test_value'
-        # call item.modify
-        item.modify()
+        # modify
+        another_data = 'another_test_data'
+        another_meta = {'another_test_key': 'another_test_value'}
+        item.modify(another_meta, another_data)
         item = Item.create(name)
         assert item.name == u'Test_Item'
         with pytest.raises(KeyError):
             item.meta['test_key']
+        assert item.meta['another_test_key'] == another_meta['another_test_key']
+        assert item.data == another_data
 
 
 class TestBinary(object):
