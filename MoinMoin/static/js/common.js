@@ -462,7 +462,7 @@ function initMoinUsersettings() {
                 return;
             }
             // remove all flash messages previously added via javascript
-            $('#moin-header .moin-flash-javascript').remove();
+            $('#moin-flash .moin-flash-javascript').remove();
             // add new flash messages from the response
             for (i = 0; i < data.flash.length; i += 1) {
                 f = $(document.createElement('p'));

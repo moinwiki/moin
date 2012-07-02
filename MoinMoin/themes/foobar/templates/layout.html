@@ -147,6 +147,10 @@
 </div>
 
 {% block content_container %}
+    <div id="moin-content-no-panel" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+    {% block content %}
+    {% endblock %}
+    </div>
 {% endblock %}
 </div>
 

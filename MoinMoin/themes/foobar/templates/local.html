@@ -12,6 +12,7 @@
 </div>
 
 <div id="moin-local-panel">
+{% block local %}
 <ul>
     <li>Views
         {% set exists = storage.has_item(item_name) %}
@@ -128,5 +129,6 @@
         {{ utils.render_subitem_navigation(item_name, False) }}
     </li>
 </ul>
+{% endblock %}
 </div>
 {% endblock %}
