@@ -236,7 +236,6 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-index-separator{clear:both;border-top:1px dashed #ccc;width:80%;display:none}
 .moin-select-all span{cursor:pointer;font-size:.84em}
 .moin-select-actions span{cursor:pointer;font-size:.84em}
-.moin-select-actions ul{display:none;}
 .moin-select-actions ul li{cursor:pointer}
 .moin-contenttypes-wrapper div{cursor:pointer;font-size:.84em}
 .moin-contenttypes-wrapper form{display:none;}
@@ -246,8 +245,8 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-contenttypes-wrapper form li:hover span{display:block;font-size:.8em}
 #f_contenttype_filter_submit{padding-left:3em;padding-right:3em;margin-left:3em;cursor:pointer;box-shadow:1px 1px 2px #000;}
 #f_contenttype_filter_submit:hover{box-shadow:1px 1px 2px #9d9d9b}
-.show-action:after,.ct-hide:after{content:url("../img/moin-moveup.png");margin:0 .2em;float:right;vertical-align:middle}
-.action-visible .show-action:after,.ct-shown:after{content:url("../img/moin-movedown.png");margin:0 .2em;float:right;vertical-align:middle}
+.ct-hide:after{content:url("../img/moin-moveup.png");margin:0 .2em;float:right;vertical-align:middle}
+.ct-shown:after{content:url("../img/moin-movedown.png");margin:0 .2em;float:right;vertical-align:middle}
 #popup{background:transparent url("../img/moin-transparent-bg.png") repeat;padding:5px;width:40%;position:absolute;top:10%;left:30%;display:none;z-index:10}
 .popup-header{background-color:#2c2c2a;color:#fff;padding:10px;margin:0}
 input[value="X"]{padding:0 1px;margin:-.2em;width:19px;border-radius:2em;float:right;}
