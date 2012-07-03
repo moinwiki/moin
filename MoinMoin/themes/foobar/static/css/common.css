@@ -200,6 +200,8 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-footer ul a,#moin-credits a{color:#616161}
 #moin-footer-logos{float:right;}
 #moin-footer-logos ul li{display:inline}
+.moin-itemviews a[title="Show"],.moin-itemviews a[title="Delete this item"],.moin-itemviews a[title="Completely destroy this item"],.moin-itemviews a[title="Rename this item"],.moin-itemviews a[title="Edit or Upload"]{color:#4fa8fa}
+#moin-global-panel a.moin-usersettings,#moin-global-panel a.moin-logout{color:#4fa8fa}
 label{display:block;font-weight:bold}
 input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#d6d5d0;padding:4px 15px;border:1px solid #ccc;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
 input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
@@ -303,7 +305,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-offset-links a:hover{box-shadow:0 0 12px #9d9d9b}
 a{text-decoration:none;}
 a:link{color:#4fa8fa}
-a:visited{color:#5693c1}
+a:visited{color:#9787b5}
 a:hover{color:#007cef;text-decoration:underline}
 a:active{color:#51d443;text-decoration:underline}
 a.moin-nonexistent:link{color:#bababa}
