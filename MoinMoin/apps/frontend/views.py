@@ -483,8 +483,31 @@ def show_blog(item_name, rev):
     revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
     blog_post_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
     return render_template('blog.html',
-                           item=item, item_name=item.name,
+                           title_name=item.name,
+                           blog_item=item,
                            blog_post_items=blog_post_items,
+                          )
+
+@frontend.route('/+post/+<rev>/<itemname:item_name>', methods=['GET'])
+@frontend.route('/+post/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
+def show_post(item_name, rev):
+    flaskg.user.add_trail(item_name)
+    blog_item_name = item_name.rsplit('/', 1)[0]
+    if blog_item_name == item_name:
+        abort(403)
+    try:
+        item = Item.create(item_name, rev_id=rev)
+        blog_item = Item.create(blog_item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
+    if isinstance(blog_item, NonExistent):
+        abort(404, blog_item_name)
+    return render_template('post.html',
+                           title_name=item.name,
+                           blog_item=blog_item,
+                           blog_post_item=item,
                           )
 
 
