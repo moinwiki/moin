@@ -1,0 +1,72 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% macro show_post(post_item) %}
+    {% if post_item.meta['summary'] %}
+        {% set title = post_item.meta['summary'] %}
+    {% else %}
+        {% set title = post_item.name %}
+    {% endif %}
+    <h1><a href="{{ url_for('frontend.show_item', item_name=post_item.name) }}"
+        title="{{ title }}" class="moin-post-link">{{ title }}</a></h1>
+    <div class="moin-post-info">
+        {{ _("Posted on") }} {{ post_item.meta['ptime']|datetimeformat }}
+        {{ _("by") }} {{ utils.editor_info(post_item.meta) }}
+    </div>
+    <div class="moin-post-content">
+        {{ post_item._render_data()|safe }} {# rendered post content #}
+    </div>
+    <div class="moin-post-bottominfo">
+        {% set tags = post_item.meta['tags']|sort %}
+        {% if tags %} {# display post's tags as a list if they existed #}
+            <div class="moin-post-tags">
+                {{ _("Tags:") }}
+                <ul class="moin-post-tags">
+                    {% for tag in tags %}
+                        <li><a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="moin-post-comments">
+            {% set discussion_item_name = '{0}/{1}'.format(post_item.name, 'Discussion') %}
+            <a href="{{ url_for('frontend.show_item', item_name=discussion_item_name) }}">Discussion page</a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro widget_categories(categories) %}
+    <div id="moin-blog-categories">
+        <h2>{{ _("Categories") }}</h2>
+        <ul>
+            {% for category in categories %}
+                <li><a href="{{ url_for('frontend.tagged_items', tag=category) }}">{{ category }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% if blog_item %}
+    {% set blog_header = blog_item._render_data()|safe %}
+    {% set categories = blog_item.meta['supertags'] %}
+{% endif %}
+
+{% block content %}
+    {% block content_data %}
+        <div id="moin-content-data">
+            <div id="moin-blog-header">
+                {% if blog_header %}
+                    {{ blog_header }}
+                {% endif %}
+            </div>
+            <div id="moin-blog-content">
+            {% block blog_content %}<br />{% endblock %}
+            </div>
+            {% if categories %}
+                <div id="moin-blog-sidebar">
+                    {{ widget_categories(categories) }}
+                </div>
+            {% endif %} 
+        </div>
+    {% endblock %}
+{% endblock %}
