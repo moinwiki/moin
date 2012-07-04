@@ -81,6 +81,12 @@ MAILTO_AUTHOR = "mailto_author"
 RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
 
+# keys for blog homepages
+LOGO = "logo"
+SUPERTAGS = "supertags"
+# keys for blog posts
+PTIME = "ptime"
+
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'

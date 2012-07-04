@@ -1,0 +1,11 @@
+{% extends theme("blog_layout.html") %}
+
+{% block blog_content %}
+    {% if blog_post_items %}
+        {% for post_item in blog_post_items %}
+            {{ show_post(post_item) }}
+        {% endfor %}
+    {% else %}
+        {{ _("There are no posts in this blog.") }}
+    {% endif %}
+{% endblock %}
