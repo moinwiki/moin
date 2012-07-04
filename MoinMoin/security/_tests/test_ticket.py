@@ -27,4 +27,3 @@ class TestTickets(object):
 
 
 coverage_modules = ['MoinMoin.security.ticket']
-

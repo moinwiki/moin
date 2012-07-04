@@ -233,5 +233,3 @@ def itemsize():
                            title_name=_(u"Item Size"),
                            headings=headings,
                            rows=rows)
-
-

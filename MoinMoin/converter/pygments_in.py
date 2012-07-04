@@ -137,4 +137,3 @@ else:
                 blockcode.append(line.expandtabs())
             body = moin_page.body(children=(blockcode, ))
             return moin_page.page(children=(body, ))
-

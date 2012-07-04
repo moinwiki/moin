@@ -103,4 +103,3 @@ def diff(old, new):
         lastmatch = (match[0] + match[2], match[1] + match[2])
 
     return result
-

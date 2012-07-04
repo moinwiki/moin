@@ -19,4 +19,3 @@ if sys.hexversion < 0x2060000:
 from MoinMoin.util.version import Version
 
 version = Version(2, 0, 0, 'a0')
-

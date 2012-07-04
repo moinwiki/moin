@@ -97,4 +97,3 @@ def pytest_funcarg__store(request):
     if kind == 'FileStore':
         store = ByteToStreamWrappingStore(store)
     return store
-

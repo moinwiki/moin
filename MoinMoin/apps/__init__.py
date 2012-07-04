@@ -11,4 +11,3 @@ This package contains some Flask Modules:
 - admin Module for special stuff for wiki admins
 - serve Module for static file serving
 """
-

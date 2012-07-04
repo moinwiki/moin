@@ -40,8 +40,8 @@ class TestComplexStuff(object):
     can add a test by adding another line to this list
     """
     _tests = (
-        # description,  test,            expected
-        ('Line break',  '<<BR>>',        '<br>'),
+        # description, test, expected
+        ('Line break', '<<BR>>', '<br>'),
     )
 
     from MoinMoin._tests import wikiconfig
@@ -71,4 +71,3 @@ class TestComplexStuff(object):
         module_tested.do_that()
         result = None
         return result
-

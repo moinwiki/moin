@@ -64,4 +64,3 @@ CONTENTTYPE_GROUPS = [
         ('application/octet-stream', 'binary file'),
     ]),
 ]
-

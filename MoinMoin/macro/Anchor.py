@@ -16,4 +16,3 @@ class Macro(MacroInlineBase):
 
         anchor = arguments[0]
         return moin_page.span(attrib={moin_page.id: anchor})
-

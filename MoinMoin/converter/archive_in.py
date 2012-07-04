@@ -122,4 +122,3 @@ from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(TarConverter._factory, Type('application/x-tar'), type_moin_document)
 default_registry.register(TarConverter._factory, Type('application/x-gtar'), type_moin_document)
 default_registry.register(ZipConverter._factory, Type('application/zip'), type_moin_document)
-

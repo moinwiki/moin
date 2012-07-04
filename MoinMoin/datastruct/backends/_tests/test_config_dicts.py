@@ -27,4 +27,3 @@ class TestConfigDictsBackend(DictsBackendTest):
             assert result in expected
 
 coverage_modules = ['MoinMoin.datastruct.backends.config_dicts']
-

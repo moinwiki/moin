@@ -116,4 +116,3 @@ member: cn=dummy
 member: cn=Group A,ou=Groups,ou=testing,dc=example,dc=org
 objectClass: groupOfNames
 """
-

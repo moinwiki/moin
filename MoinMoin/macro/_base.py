@@ -98,4 +98,3 @@ class MacroDefinitionListBase(MacroBlockBase):
             item = moin_page.list_item(children=[item_label, item_body])
             def_list.append(item)
         return def_list
-

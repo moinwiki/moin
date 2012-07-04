@@ -77,4 +77,3 @@ def diff(oldlines, newlines, **kw):
         lines[-count+3:] = []
 
     return lines
-

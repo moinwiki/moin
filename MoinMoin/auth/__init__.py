@@ -447,4 +447,3 @@ def setup_from_session():
                 userobj = None
     logging.debug("session started for user {0!r}".format(userobj))
     return userobj
-

@@ -155,4 +155,3 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         assert self.serialize(out) == output
 
 coverage_modules = ['MoinMoin.converter.rst_in']
-

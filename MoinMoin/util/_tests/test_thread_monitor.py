@@ -43,4 +43,3 @@ class TestMonitor(object):
         with open(self.src, "r") as f:
             f.seek(1)
             assert 'Dumping thread' in f.readline()
-

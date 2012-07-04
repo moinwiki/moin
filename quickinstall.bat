@@ -17,4 +17,3 @@ pip install --download-cache=dlc -e .
 
 echo Compiling translations (not required if wiki is English only) ...
 python setup.py compile_catalog --statistics
-

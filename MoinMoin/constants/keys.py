@@ -90,4 +90,3 @@ PTIME = "ptime"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
-

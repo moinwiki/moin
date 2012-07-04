@@ -59,4 +59,3 @@ def main(default_command='moin', wiki_config=None):
 
 def fatal(msg):
     sys.exit(msg)
-

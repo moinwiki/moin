@@ -236,4 +236,3 @@ that the data/plugin directory has an __init__.py file.
     'err': str(err),
 }
         raise error.ConfigurationError(msg)
-

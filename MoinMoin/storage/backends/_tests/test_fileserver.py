@@ -114,4 +114,3 @@ class TestFileServerBackend(BackendTestBase):
             data = data.read()
             result.add((meta, data))
         assert result == expected_result
-

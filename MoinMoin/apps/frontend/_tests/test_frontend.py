@@ -296,4 +296,3 @@ class TestUsersettings(object):
         if email is None:
             email = "user@example.org"
         user.create_user(name, password, email, is_encrypted=pwencoded)
-

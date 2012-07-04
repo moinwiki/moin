@@ -53,4 +53,3 @@ class WikiGroups(BaseGroupsBackend):
         rev = item[CURRENT]
         usergroup = rev.meta.get(USERGROUP, [])
         return usergroup
-

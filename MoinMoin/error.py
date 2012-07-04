@@ -105,4 +105,3 @@ class ConfigurationError(FatalError):
 
 class InternalError(FatalError):
     """ Raise when internal fatal error is found """
-

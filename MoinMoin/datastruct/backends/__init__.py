@@ -330,4 +330,3 @@ class BaseDictsBackend(object):
             return self[key]
         except DictDoesNotExistError:
             return default
-

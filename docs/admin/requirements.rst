@@ -26,6 +26,6 @@ Dependencies
 
 For dependency information, please see setup.py.
 
-If you use easy_install or pip (or our ``quickinstall`` script),
+If you use easy_install or pip or our ``quickinstall`` script, then
 dependencies are usually automatically dealt with.
 

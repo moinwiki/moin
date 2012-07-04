@@ -67,4 +67,3 @@ BBB 003
 
 
 coverage_modules = ['MoinMoin.util.diff_text']
-

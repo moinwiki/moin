@@ -38,4 +38,3 @@ def do(wiki, positional, keyword):
 
     s = unparse(Arguments(positional, keyword))
     assert s == wiki
-

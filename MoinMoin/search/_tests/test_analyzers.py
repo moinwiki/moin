@@ -168,4 +168,3 @@ class TestItemNameAnalyzer(TokenizerTestBase):
         for value, expected_tokens in self.test_cases_index:
             tokens = [token.text for token in tokenizer(value, mode="index")]
             assert set(expected_tokens) == set(tokens)
-
