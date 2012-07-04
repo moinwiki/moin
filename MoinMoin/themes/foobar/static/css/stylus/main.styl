@@ -225,22 +225,58 @@ select
     border border_style
     border-radius 2px
 input[type="text"]
-    width 300px
+    width 96%
 input.blank
     border-color border_color
     border-width 2px
     
 .moin-form 
     dd
+        float left
+        width 69%
         margin-bottom 1em
+        margin-left 0
         input
-            width 20em
+            width 70%
     dt
+        clear both
+        float left
+        width 30%
+        text-align right
+        margin-top .3em
+        padding-right 1%
         label
             &.required:after
                 content '*'
                 color font_color
+    button,
+    input[type="submit"]
+        margin-left 48%
+    
+#moin-modify
+    dd
+        margin-left 0.9em
+        width 100%
+        float none
+    dt
+        float none
+        text-align left
+        width auto
+    input[type="submit"]
+        margin-left 0
 
+#moin-options
+    dd
+        float none
+        width 38%
+        display table-cell
+        padding 1.2em
+    dt
+        margin-left 10%
+        text-align left
+        width 61%
+        margin-top 1.3em
+        
 // create table
 #moin-create-table
     width 95%
