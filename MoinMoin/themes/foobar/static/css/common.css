@@ -349,8 +349,8 @@ p.searchhint{background-color:#f0f0f0;border:1px solid #9d9d9b;padding:2px}
 ul,dl{margin-left:1.5em}
 ol{margin-left:3em;}
 ol ol{margin-left:1.5em}
-li,dt{padding:.1em}
-dt{font-weight:bold}
+li{padding:.2em}
+dt{font-weight:bold;padding:.1em}
 dd{margin-left:1.5em}
 ul.moin-nobullet-list{list-style-type:none}
 ol.moin-upperalpha-list{list-style-type:upper-alpha}
