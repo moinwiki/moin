@@ -276,7 +276,8 @@ form.upload_file{display:block}
 .upload-form{display:none}
 .moin-drag{font-size:.7em;color:#9d9d9b}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
-.moin-tab-titles{margin:-.5em;list-style:none}
+.moin-tab-titles{margin:-.5em;list-style:none;}
+.moin-tab-titles span{display:none}
 #moin-usersetting-title li a{font-size:.84em;color:#fff}
 #moin-global-history,#moin-page-history{font-size:.75em}
 #moin-page-history table{border:1px solid #ccc;border-radius:5px;}
