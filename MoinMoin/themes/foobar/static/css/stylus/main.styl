@@ -188,13 +188,14 @@ div p
     ul li
         display inline
 
-.moin-itemviews
-    a[title="Show"], a[title="Delete this item"], a[title="Completely destroy this item"],
-    a[title="Rename this item"], a[title="Edit or Upload"]
-        color link_color
-#moin-global-panel
-    a.moin-usersettings, a.moin-logout
-        color link_color
+.moin-itemviews,
+#moin-trail,
+#moin-user
+    a
+        &:visited
+            color link_color
+        &:hover
+            color hover_color
         
 // form
 label
