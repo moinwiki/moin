@@ -29,7 +29,7 @@ from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLVa
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.util.forms import FileStorage
+from MoinMoin.forms import RequiredText, OptionalText, File, Submit
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.signalling import item_modified
@@ -631,6 +631,11 @@ class ValidJSON(Validator):
         return True
 
 
+class BaseChangeForm(TextChaizedForm):
+    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
+    submit = Submit
+
+
 class Binary(Item):
     """ An arbitrary binary item, fallback class for every item mimetype. """
     modify_help = """\
@@ -659,11 +664,10 @@ There is no help, you're doomed!
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return [rev.meta[NAME] for rev in revs]
 
-    from MoinMoin.apps.frontend.views import CommentForm
-    class ModifyForm(CommentForm):
+    class ModifyForm(BaseChangeForm):
         """Base class for ModifyForm of Binary's subclasses."""
-        meta_text = String.using(optional=False).with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-        data_file = FileStorage.using(optional=True, label=L_('Upload file:'))
+        meta_text = RequiredText.with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
+        data_file = File.using(optional=True, label=L_('Upload file:'))
 
         def _load(self, item):
             self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))

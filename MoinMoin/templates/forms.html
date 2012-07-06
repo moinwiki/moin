@@ -1,7 +1,7 @@
 {#
 Helpers for using flatland with jinja2 to create html forms.
 
-@copyright: Thomas Waldmann, Jason Kirtland, Scott Wilson
+@copyright: Thomas Waldmann, Jason Kirtland, Scott Wilson, Cheer Xiao
 @license: see flatland license
 #}
 
@@ -13,50 +13,6 @@ Helpers for using flatland with jinja2 to create html forms.
       {% endfor %}
     </ul>
   {% endif %}
-{% endmacro %}
-
-{% macro render_field(gen, field, field_type) %}
-  <dt>
-    {{ gen.label(field) }}
-  </dt>
-  <dd>
-    {# Use of auto_value=false below prevents flatland from appending _1
-       to the input id attribute ensuring it will match the for attribute
-       in the matching label above.
-    #}
-    {{ gen.input(field, type=field_type, auto_value=False) }}
-    {{ render_errors(field) }}
-  </dd>
-{% endmacro %}
-
-{% macro render_filter_field(gen, field, field_type, helper_text) %}
-  <li>
-    {# Use of auto_value=false below prevents flatland from appending _1
-       to the input id attribute. This is needed so the id will match the for attribute
-       in the matching label generated 2 lines below.
-    #}
-    {{ gen.input(field, type=field_type, auto_value=False, checked="checked") }}
-    {{ render_errors(field) }}
-    {{ gen.label(field) }}
-    <span class="helper-text">
-        {{ helper_text }}
-    </span>
-  </li>
-{% endmacro %}
-
-{% macro render_select(gen, field) %}
-  <dt>
-    {{ gen.label(field) }}
-  </dt>
-  <dd>
-    {{ gen.select.open(field) }}
-    {% set labels = field.properties.get('labels', {}) %}
-    {% for value in field.valid_values %}
-      {{ gen.option(field, value=value, contents=labels.get(value, value)) }}
-    {% endfor %}
-    {{ gen.select.close() }}
-    {{ render_errors(field) }}
-  </dd>
 {% endmacro %}
 
 {% macro render_hidden(name, value) %}
@@ -82,14 +38,116 @@ Helpers for using flatland with jinja2 to create html forms.
     {% endif %}
 {% endmacro %}
 
-{% macro render_field_without_markup(gen, field, field_type) %}
-    {# Use of auto_value=false below prevents flatland from appending _1
-       to the input id attribute ensuring it will match the for attribute
-       in the matching label.
-    #}
-    {{ gen.input(field, type=field_type, auto_value=False) }}
+{% macro render(field) %}
+  {%- set macro = {
+      'text': annotated_input,
+      'url': annotated_input,
+      'email': annotated_input,
+      'password': annotated_input,
+      'file': annotated_input,
+      'checkbox': annotated_input,
+      'multiline_text': multiline_text,
+      'inline_checkbox': inline_checkbox,
+      'any_integer': any_integer,
+      'small_natural': small_natural,
+      'search': search,
+      'submit': raw_input,
+      'hidden': raw_input,
+      'select': select,
+  }[field.properties.widget] or stub -%}
+  {{ macro(field, *varargs, **kwargs) }}
+{% endmacro %}
+
+{% macro stub(field) %}
+  <fieldset>
+    STUB: no widget for {{ field.name }} ({{ field.properties }}) yet
+  </fieldset>
+{% endmacro %}
+
+{% macro raw_input(field, type=none) %}
+  {{ gen.input(field, type=type or field.properties.widget, class=field.properties.class_ or '', **kwargs) }}
+{% endmacro %}
+
+{% macro annotated_input(field, type=none) %}
+  <dt>
     {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ raw_input(field, type) }}
     {{ render_errors(field) }}
+    {# TODO make the helper more explicit and look better #}
+    {% if field.properties.helper %}
+      <p>{{ field.properties.helper | e }}</p>
+    {% endif %}
+  </dd>
+{% endmacro %}
+
+{% macro multiline_text(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string) }}
+    {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro _valued_label(field, value, contents=none) %}
+  {# XXX Patch <label>'s `for` attribute with value when element referred to is
+     checkbox or radio. See: https://bitbucket.org/jek/flatland/issue/9 #}
+  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value), contents=contents) }}
+{% endmacro %}
+
+{% macro _checkbox_label(field) %}
+  {{ _valued_label(field, '1') }}
+{% endmacro %}
+
+{% macro _radio_label(field, value) %}
+  {{ _valued_label(field, value, value) }}
+{% endmacro %}
+
+{% macro inline_checkbox(field) %}
+  {{ raw_input(field, 'checkbox') }}
+  {{ _checkbox_label(field) }}
+  {{ render_errors(field) }}
+  {% if field.properties.helper is defined %}
+    <span class="helper-text">
+      {{ field.properties.helper }}
+    </span>
+  {% endif %}
+{% endmacro %}
+
+{% macro any_integer(field) %}
+  {{ annotated_input(field, 'text') }}
+{% endmacro %}
+
+{% macro small_natural(field) %}
+    {{ gen.label(field) }}
+    <dd>
+        {% for i in range(field.properties.lower, field.properties.upper+1) %}
+            {{ gen.input(field, type='radio', value=i|string) }}
+            {{ _radio_label(field, value=i|string) }}
+        {% endfor %}
+    </dd>
+{% endmacro %}
+
+{% macro search(field) %}
+  {{ raw_input(field, id='moin-search-query') }}
+{% endmacro %}
+
+{% macro select(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ gen.select.open(field) }}
+    {% set labels = field.properties.get('labels', {}) %}
+    {% for value in field.valid_values %}
+      {{ gen.option(field, value=value, contents=labels.get(value, value)) }}
+    {% endfor %}
+    {{ gen.select.close() }}
+    {{ render_errors(field) }}
+  </dd>
 {% endmacro %}
 
 {% macro render_file_uploader(submit_url) %}
