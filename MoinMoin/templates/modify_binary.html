@@ -1,0 +1,9 @@
+{% import "forms.html" as forms %}
+{% extends "modify_applet.html" %}
+{% block extra_form %}
+{{ forms.render(form['submit']) }}
+<dl>
+    {{ forms.render_textcha(gen, form) }}
+    {{ forms.render(form['comment']) }}
+</dl>
+{% endblock %}
