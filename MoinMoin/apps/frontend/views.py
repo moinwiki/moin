@@ -1411,6 +1411,9 @@ def usersettings():
     )
     forms = dict()
 
+    if not flaskg.user.valid:
+        return redirect(url_for('.login'))
+
     if request.method == 'POST':
         part = request.form.get('part')
         if part not in form_classes:
