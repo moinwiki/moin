@@ -1,36 +1,36 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 
-{% macro show_post(post_item) %}
-    {% if post_item.meta['summary'] %}
-        {% set title = post_item.meta['summary'] %}
+{% macro show_blog_entry(entry_item) %}
+    {% if entry_item.meta['summary'] %}
+        {% set title = entry_item.meta['summary'] %}
     {% else %}
-        {% set title = post_item.name %}
+        {% set title = entry_item.name %}
     {% endif %}
-    <h1><a href="{{ url_for('frontend.show_item', item_name=post_item.name) }}"
-        title="{{ title }}" class="moin-post-link">{{ title }}</a></h1>
-    <div class="moin-post-info">
-        {{ _("Posted on") }} {{ post_item.meta['ptime']|datetimeformat }}
-        {{ _("by") }} {{ utils.editor_info(post_item.meta) }}
+    <h1><a href="{{ url_for('frontend.show_item', item_name=entry_item.name) }}"
+        title="{{ title }}" class="moin-blog-entry-link">{{ title }}</a></h1>
+    <div class="moin-blog-entry-info">
+        {{ _("Published on") }} {{ entry_item.meta['ptime']|datetimeformat }}
+        {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
     </div>
-    <div class="moin-post-content">
-        {{ post_item._render_data()|safe }} {# rendered post content #}
+    <div class="moin-blog-entry-content">
+        {{ entry_item._render_data()|safe }} {# rendered blog entry content #}
     </div>
-    <div class="moin-post-bottominfo">
-        {% set tags = post_item.meta['tags']|sort %}
-        {% if tags %} {# display post's tags as a list if they existed #}
-            <div class="moin-post-tags">
+    <div class="moin-blog-entry-bottominfo">
+        {% set tags = entry_item.meta['tags']|sort %}
+        {% if tags %} {# display blog entry's tags as a list if it is not empty #}
+            <div class="moin-blog-entry-tags">
                 {{ _("Tags:") }}
-                <ul class="moin-post-tags">
+                <ul class="moin-blog-entry-tags">
                     {% for tag in tags %}
                         <li><a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
         {% endif %}
-        <div class="moin-post-comments">
-            {% set discussion_item_name = '{0}/{1}'.format(post_item.name, 'Discussion') %}
-            <a href="{{ url_for('frontend.show_item', item_name=discussion_item_name) }}">Discussion page</a>
+        <div class="moin-blog-entry-comments">
+            {% set discussion_item_name = '{0}/{1}'.format(entry_item.name, cfg.supplementation_item_names[0]) %}
+            <a href="{{ url_for('frontend.show_item', item_name=discussion_item_name) }}">{{ _("Discussion page") }}</a>
         </div>
     </div>
 {% endmacro %}
