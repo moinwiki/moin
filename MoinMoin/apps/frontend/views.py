@@ -1576,7 +1576,7 @@ def diff(item_name):
         # try to find the latest rev1 before bookmark <date>
         revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
         for mtime, revid in revs:
-            if mtime <= bookmark_time:
+            if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
         else:
