@@ -77,9 +77,9 @@ def userprofile(user_name):
         if ok:
             setattr(u, key, val)
             u.save()
-            flash('{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
+            flash(u'{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
-            flash('modifying {0}.{1} failed'.format(user_name, key, ), "error")
+            flash(u'modifying {0}.{1} failed'.format(user_name, key, ), "error")
     return redirect(url_for('.userbrowser'))
 
 
