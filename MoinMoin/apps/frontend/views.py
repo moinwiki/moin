@@ -484,16 +484,16 @@ def show_blog(item_name, rev):
                  DateRange(PTIME, start=None, end=datetime.utcfromtimestamp(current_timestamp))
                 ])
     revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
-    blog_post_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
+    blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
     return render_template('blog.html',
                            title_name=item.name,
                            blog_item=item,
-                           blog_post_items=blog_post_items,
+                           blog_entry_items=blog_entry_items,
                           )
 
-@frontend.route('/+post/+<rev>/<itemname:item_name>', methods=['GET'])
-@frontend.route('/+post/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
-def show_post(item_name, rev):
+@frontend.route('/+blog_entry/+<rev>/<itemname:item_name>', methods=['GET'])
+@frontend.route('/+blog_entry/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
+def show_blog_entry(item_name, rev):
     flaskg.user.add_trail(item_name)
     blog_item_name = item_name.rsplit('/', 1)[0]
     if blog_item_name == item_name:
@@ -507,10 +507,10 @@ def show_post(item_name, rev):
         abort(404, item_name)
     if isinstance(blog_item, NonExistent):
         abort(404, blog_item_name)
-    return render_template('post.html',
+    return render_template('blog_entry.html',
                            title_name=item.name,
                            blog_item=blog_item,
-                           blog_post_item=item,
+                           blog_entry_item=item,
                           )
 
 
