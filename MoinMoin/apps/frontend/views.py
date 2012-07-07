@@ -1156,7 +1156,7 @@ def lostpass():
             email = form['email'].value
             if form['email'].valid and email:
                 users = user.search_users(email=email)
-                u = users and user.User(users[0][ITEMID])
+                u = users and user.User(users[0].meta[ITEMID])
             if u and u.valid:
                 is_ok, msg = u.mail_password_recovery()
                 if not is_ok:
