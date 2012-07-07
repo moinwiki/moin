@@ -1,0 +1,24 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h1>{{ _("Create Account") }}</h1>
+<div class="moin-form">
+{{ gen.form.open(form, method="post", action=url_for('frontend.register')) }}
+  {{ forms.render_errors(form) }}
+  <dl>
+    {{ gen.input(form['submit'], type='hidden') }}
+
+    <dt>{{ gen.label(form['openid']) }}</dt>
+    <dd>{{ gen.input(form['openid'], type='text', readonly='1') }}</dd>
+
+    {{ forms.render_field(gen, form['username'], 'text') }}
+    {{ forms.render_field(gen, form['password1'], 'password') }}
+    {{ forms.render_field(gen, form['password2'], 'password') }}
+    {{ forms.render_field(gen, form['email'], 'text') }}
+    {{ forms.render_textcha(gen, form) }}
+  </dl>
+  <input type="submit" value="{{ _("Register") }}" />
+{{ gen.form.close() }}
+</div>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% import "forms.html" as forms %}
+{% extends theme("base.html") %}
+
+{% import theme("snippets.html") as snippets with context %}
+{% set logo = snippets.logo() %}
+{% set footer_logos = snippets.creditlogos() %}
+{% set footer_items = '' %}
+{% set credits = snippets.credits() %}
+
+
+{% block layout %}
+
+<div id="moin-global-tray">
+
+{% if logo %}
+<div id="moin-logo">
+    <a style="background-image: url({{ '/static/logos/moinmoin.png' }});" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}"></a>
+</div>
+{% endif %}
+
+<div id="moin-global-panel">
+    <ul>
+        {% set navibar_items = theme_supp.navibar(item_name) %}
+        {% if navibar_items %}
+            <li>Links
+            <ul>
+            {% for cls, url, text, title in navibar_items %}
+                <li class="{{ cls }}">
+                    <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+            </li>
+        {% endif %}
+
+        {% set trail_items = theme_supp.path_breadcrumbs() %}
+        {% if trail_items %}
+        <li>Trail
+            <ul>
+            {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+                <li>
+                {%- if wiki_name -%}
+                    <a href="{{ item_href }}"{{ " " }}
+                       title="{{ wiki_name }}"
+                       class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+                       {{ item_name|shorten_item_name }}
+                    </a>
+                {%- else -%}
+                    <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                       {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                       {{ item_name|shorten_item_name }}
+                    </a>
+                {%- endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </li>
+        {% endif %}
+        <li>User
+        <ul>
+        {% if user.valid -%}
+	    {% set avatar = user.avatar(20) %}
+            {% if avatar %}
+                <li><img id="moin-avatar" rel="noreferrer" src="{{ avatar }}" /></li>
+            {%- endif %}
+            {% if user.name -%}
+                {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                <li>
+                <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                    {{ aliasname }}
+                </a>
+                </li>
+                {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                    <li>
+                    <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">{{ _('Settings') }}</a>
+                    </li>
+                {%- endif %}
+            {%- endif %}
+            {% if user.auth_method in cfg.auth_can_logout %}
+                <li>
+                <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                    {{ _('Logout') }}
+                </a>
+                </li>
+            {% endif %}
+        {% else %}
+            {% set login_url = theme_supp.login_url() %}
+            {% if login_url %}
+                <li>
+                <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                </li>
+            {% endif %}
+        {%- endif %}
+        </ul>
+    </ul>
+</div>
+</div>
+
+<div id="moin-main-container">
+<div id="moin-main-box">
+<div id="moin-header">
+    {% if search_form %}
+    <div id="moin-search">
+    {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+        {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='40') }}
+        {{ gen.button(search_form['submit'], type='submit', id='moin-search-submit') }}
+        {{ forms.render_errors(search_form) }}
+    {{ gen.form.close() }}
+    </div>
+    {% endif %}
+    <div id="moin-breadcrumbs-location">
+        {% if cfg.show_interwiki -%}
+        <span id="moin-interwiki">
+            <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}" rel="nofollow">
+                {% if cfg.interwikiname %}{{ cfg.interwikiname }}{% else %}Self{% endif %}
+            </a>
+            <span class="sep">: </span>
+        </span>
+        {%- endif %}
+        <span id="moin-pagelocation">
+            <span class="moin-pagepath">
+                {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
+                    {% if not loop.last -%}
+                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                            {{ segment_name|shorten_item_name }}
+                        </a>
+			<span class="sep">/</span>
+                    {% else %}
+		        {% if title_name %}
+                            {{ title_name }}
+                        {% else %}
+                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                            {{ segment_name|shorten_item_name }}
+                        </a>
+		        {%- endif %}
+                    {%- endif %}
+                {%- endfor %}
+            </span>
+        </span>
+    </div>
+</div>
+
+<div id="moin-flash">
+{% for category, msg in get_flashed_messages(with_categories=true) %}
+    <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+{% endfor %}
+</div>
+
+{% block content_container %}
+{% endblock %}
+</div>
+
+
+<div id="moin-footer">
+    {% block footer %}
+    <div id="moin-footer-logos">
+        {{ footer_logos }}
+    </div>
+    <div id="moin-footer-items">
+        {{ footer_items }}
+    </div>
+    <div>
+        {{ credits }}
+    </div>
+{% endblock %}
+</div>
+</div>
+
+{% endblock %}
