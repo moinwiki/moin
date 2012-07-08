@@ -117,6 +117,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'ldap': ["python-ldap>=2.0.0"], # used by ldap auth
         'openid': ["python-openid>=2.2.4"], # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
+        'mongodb': ["pymongo"], # used by mongodb store
     },
     entry_points=dict(
         console_scripts=['moin = MoinMoin.script:main'],
