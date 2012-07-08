@@ -1,0 +1,132 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block content_container %}
+<div id="moin-content-with-panel" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+    {% block item -%}
+        {# If you want itemviews in your template, extend from show.html, not from here. #}
+        {% block content %}
+            {# All content templates should have implement this block. #}
+        {% endblock %}
+    {%- endblock %}
+</div>
+
+<div id="moin-local-panel">
+<ul>
+    <li>Views
+        {% set exists = storage.has_item(item_name) %}
+        <ul class="moin-itemviews">
+            {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+                {%- if not check_exists or check_exists and exists %}
+                    {%- if endpoint in [
+                        'frontend.show_item', 'frontend.index', 'frontend.highlight_item',
+                        'frontend.show_item_meta', 'frontend.download_item',
+                        'frontend.history', 'frontend.backrefs', 'frontend.sitemap',
+                        'frontend.similar_names', 'frontend.copy_item',
+                    ] %}
+                        <li>
+                            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'frontend.modify_item' and user.may.write(item_name) %}
+                        <li>
+                            <a class="moin-modify-button" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint in [
+                        'frontend.rename_item', 'frontend.delete_item',
+                    ] and user.may.write(item_name) %}
+                        <li>
+                            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
+                        <li>
+                            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint in [
+                        'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
+                        'admin.index',
+                    ] %}
+                        <li>
+                            <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
+                        <li>
+                            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                                {%- if user.is_quicklinked_to([item_name]) %}
+                                    {{ _('Remove Link') }}
+                                {%- else %}
+                                    {{ _('Add Link') }}
+                                {%- endif %}
+                            </a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
+                        <li>
+                            <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                                {%- if user.is_subscribed_to([item_name]) %}
+                                    {{ _('Unsubscribe') }}
+                                {%- else %}
+                                    {{ _('Subscribe') }}
+                                {%- endif %}
+                            </a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'special.comments' %}
+                        <li class="toggleCommentsButton" style="display:none;">
+                            <a href="#" onClick="toggleComments();return false;" title="{{ title }}">{{ label }}</a>
+                        </li>
+                    {%- endif %}
+
+                    {%- if endpoint == 'special.supplementation' %}
+                        {%- for sub_item_name in cfg.supplementation_item_names %}
+                            {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
+                            {%- if not current_sub in cfg.supplementation_item_names %}
+                                {%- set supp_name = '%s/%s' % (item_name, sub_item_name) %}
+                                {%- if storage.has_item(supp_name) or user.may.write(supp_name) %}
+                                    <li>
+                                        <a href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">{{ _(sub_item_name) }}</a>
+                                    </li>
+                                {%- endif %}
+                            {%- endif %}
+                        {%- endfor %}
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor %}
+        </ul>
+    </li>
+    {% if rev %}
+    <li>Metadata
+        <ul>
+            <li>{{ _("Revision:") }} {{rev.revid | shorten_id}}</li>
+            <li>({{ rev.meta['mtime']|datetimeformat }})</li>
+            <li>{{ _("By:") }} {{ utils.editor_info(rev.meta) }}</li>
+            <li>{{ _("Size:") }} {{ rev.meta['size'] }}</li>
+            <li>{{ _("Type:") }} {{ rev.meta['contenttype'] }}</li>
+            {% if rev.meta.tags %}
+            <li>
+            {{ _("Tags:") }}
+            {% for tag in rev.meta.tags -%}
+            <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+            {%- endfor -%}
+            </li>
+            {% endif %}
+        </ul>
+    </li>
+    {% endif %}
+    <li>
+        {{ utils.render_subitem_navigation(item_name, False) }}
+    </li>
+</ul>
+</div>
+{% endblock %}

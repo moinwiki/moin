@@ -1,0 +1,50 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% import "forms.html" as forms %}
+{% block content %}
+    {% if results is not defined %}
+    <h1>{{ _("Lookup") }}</h1>
+    {{ gen.form.open(lookup_form, id='moin-lookup-form', method='get', action=url_for('frontend.lookup')) }}
+        {{ forms.render_errors(lookup_form) }}
+        <dl>
+            {{ forms.render_field(gen, lookup_form['name'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['name_exact'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['itemid'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['revid'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['userid'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['language'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['itemlinks'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['itemtransclusions'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['refs'], 'text') }}
+            {{ forms.render_field(gen, lookup_form['tags'], 'text') }}
+            {{ forms.render_field_without_markup(gen, lookup_form['history'], 'checkbox') }}
+        </dl>
+        {{ gen.input(lookup_form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    {% else %}
+    {% if not results %}
+    <h1>{{ _("No results") }}</h1>
+    {% else %}
+    <h1>{{ _("More than one result") }}</h1>
+    <div class="lookupresults">
+        <table>
+            {% for result in results %}
+                {% if result['wikiname'] == cfg.interwikiname %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['revid']) }}"><b>{{ result['name'] }}</b></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
+{% endblock %}
