@@ -367,7 +367,7 @@ class Converter(object):
 
         if obj_type == "img":
             # Images have alt text
-            alt = ''.join(str(e) for e in elem) # XXX handle non-text e
+            alt = ''.join(unicode(e) for e in elem) # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
