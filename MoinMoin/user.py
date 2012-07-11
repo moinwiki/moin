@@ -216,6 +216,13 @@ class UserProfile(object):
         if value != prev_value:
             self._changed = True
 
+    def __delitem__(self, name):
+        """
+        delete a value, update changed status
+        """
+        del self._meta[name]
+        self._changed = True
+
     def load(self, **q):
         """
         load a user profile, the query q can use any indexed (unique) field
@@ -299,9 +306,13 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
+        # In rare cases we might not have these profile settings when the __repr__ is called.
+        name = getattr(self, NAME, None)
+        itemid = getattr(self, ITEMID, None)
+
         return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name, self.itemid, self.valid, self.trusted)
+            name, itemid, self.valid, self.trusted)
 
     def __getattr__(self, name):
         """
