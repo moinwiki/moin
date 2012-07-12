@@ -164,15 +164,15 @@ a.moin-mime-pdf:before{content:url("../img/moin-pdf.png");margin:0 .2em;vertical
 a.moin-mime-package:before{content:url("../img/moin-package.png");margin:0 .2em;vertical-align:middle}
 a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;vertical-align:middle}
 .moin-diff{width:99%;table-layout:fixed;margin:.3em}
-.moin-diff-header{vertical-align:top;font-size:92%}
+.moin-diff-header{vertical-align:top;word-wrap:break-word;font-size:92%}
 .moin-diff-info{margin:.33em .25em}
 .moin-diff-info-value{white-space:normal}
 .moin-diff-info-caption{display:inline-block;min-width:5em}
-.moin-diff-line-number{background-color:#ffe6e6}
-.moin-diff-added{background-color:#e0ffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
-.moin-diff-added span{background-color:#80ff80}
-.moin-diff-removed{background-color:#ffffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
-.moin-diff-removed span{background-color:#ffff80}
+.moin-diff-line-number{background-color:#e6e6e7}
+.moin-diff-added{background-color:#f0f8ff;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;padding:.5em;}
+.moin-diff-added span{background-color:#b5f2b6}
+.moin-diff-removed{background-color:#fff5ee;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;padding:.5em;}
+.moin-diff-removed span{background-color:#f1eeb9}
 body{color:#000;background-color:#d6d5d0;font-family:verdana,sans-serif;background-image:url("../img/base.png")}
 div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
