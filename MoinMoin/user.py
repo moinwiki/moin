@@ -662,6 +662,15 @@ class User(object):
 
     # Sessions ---------------------------------------------------
 
+    def logout_session(self, all_browsers=True):
+        """ Terminate session in all browsers unless all_browsers is set to False """
+        if all_browsers:
+            self.generate_session_token(False)
+
+        for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', 'user.session_token', ]:
+            if key in session:
+                del session[key]
+
     def generate_session_token(self, save=True):
         """ Generate new session token and key pair. Used to validate sessions. """
         key, token = generate_token()
@@ -681,7 +690,8 @@ class User(object):
 
     def validate_session(self, token):
         """ Check if the session token is valid. """
-        return valid_token(self.profile[SESSION_KEY], token)
+        # Ignore timeout, it's already handled by session cookie and session key should never timeout.
+        return valid_token(self.profile[SESSION_KEY], token, None)
 
     # Account verification / Password recovery -------------------------------
 

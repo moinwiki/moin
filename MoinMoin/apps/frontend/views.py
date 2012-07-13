@@ -1296,16 +1296,10 @@ def login():
                           )
 
 
-def _logout():
-    for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', ]:
-        if key in session:
-            del session[key]
-
-
 @frontend.route('/+logout')
 def logout():
     flash(_("You are now logged out."), "info")
-    _logout()
+    flaskg.user.logout_session()
     return redirect(url_for('.show_root'))
 
 
@@ -1470,8 +1464,7 @@ def usersettings():
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
-                                _logout()
-                                flaskg.user.save()
+                                flaskg.user.logout_session()
                                 response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
