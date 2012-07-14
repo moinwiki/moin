@@ -15,9 +15,9 @@ logging = log.getLogger(__name__)
 @item_displayed.connect_via(ANY)
 def log_item_displayed(app, item_name):
     wiki_name = app.cfg.interwikiname
-    logging.info("item {0}:{1} displayed".format(wiki_name, item_name))
+    logging.info(u"item {0}:{1} displayed".format(wiki_name, item_name))
 
 @item_modified.connect_via(ANY)
 def log_item_modified(app, item_name):
     wiki_name = app.cfg.interwikiname
-    logging.info("item {0}:{1} modified".format(wiki_name, item_name))
+    logging.info(u"item {0}:{1} modified".format(wiki_name, item_name))

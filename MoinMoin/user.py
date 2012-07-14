@@ -216,6 +216,13 @@ class UserProfile(object):
         if value != prev_value:
             self._changed = True
 
+    def __delitem__(self, name):
+        """
+        delete a value, update changed status
+        """
+        del self._meta[name]
+        self._changed = True
+
     def load(self, **q):
         """
         load a user profile, the query q can use any indexed (unique) field
@@ -299,9 +306,13 @@ class User(object):
             self.may = Default(self)
 
     def __repr__(self):
+        # In rare cases we might not have these profile settings when the __repr__ is called.
+        name = getattr(self, NAME, None)
+        itemid = getattr(self, ITEMID, None)
+
         return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name, self.itemid, self.valid, self.trusted)
+            name, itemid, self.valid, self.trusted)
 
     def __getattr__(self, name):
         """
@@ -651,6 +662,15 @@ class User(object):
 
     # Sessions ---------------------------------------------------
 
+    def logout_session(self, all_browsers=True):
+        """ Terminate session in all browsers unless all_browsers is set to False """
+        if all_browsers:
+            self.generate_session_token(False)
+
+        for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', 'user.session_token', ]:
+            if key in session:
+                del session[key]
+
     def generate_session_token(self, save=True):
         """ Generate new session token and key pair. Used to validate sessions. """
         key, token = generate_token()
@@ -670,7 +690,8 @@ class User(object):
 
     def validate_session(self, token):
         """ Check if the session token is valid. """
-        return valid_token(self.profile[SESSION_KEY], token)
+        # Ignore timeout, it's already handled by session cookie and session key should never timeout.
+        return valid_token(self.profile[SESSION_KEY], token, None)
 
     # Account verification / Password recovery -------------------------------
 
