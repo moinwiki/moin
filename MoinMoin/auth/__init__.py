@@ -444,6 +444,9 @@ def setup_from_session():
                                 trusted=trusted)
             if userobj.valid and not userobj.validate_session(session_token):
                 logging.debug("session token doesn't validate")
+                # Destroy current session since it's no longer valid.
+                userobj.logout_session(False)
+                # We didn't find user in session data.
                 userobj = None
     logging.debug("session started for user {0!r}".format(userobj))
     return userobj

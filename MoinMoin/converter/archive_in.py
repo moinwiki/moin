@@ -38,7 +38,7 @@ class ArchiveConverter(TableMixin):
 
     def process_name(self, member_name):
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query='do=get&member={0}'.format(member_name)),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query=u'do=get&member={0}'.format(member_name)),
         }
         return moin_page.a(attrib=attrib, children=[member_name, ])
 

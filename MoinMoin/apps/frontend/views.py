@@ -1145,7 +1145,7 @@ def lostpass():
             email = form['email'].value
             if form['email'].valid and email:
                 users = user.search_users(email=email)
-                u = users and user.User(users[0][ITEMID])
+                u = users and user.User(users[0].meta[ITEMID])
             if u and u.valid:
                 is_ok, msg = u.mail_password_recovery()
                 if not is_ok:
@@ -1283,16 +1283,10 @@ def login():
                           )
 
 
-def _logout():
-    for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', ]:
-        if key in session:
-            del session[key]
-
-
 @frontend.route('/+logout')
 def logout():
     flash(_("You are now logged out."), "info")
-    _logout()
+    flaskg.user.logout_session()
     return redirect(url_for('.show_root'))
 
 
@@ -1398,6 +1392,9 @@ def usersettings():
     )
     forms = dict()
 
+    if not flaskg.user.valid:
+        return redirect(url_for('.login'))
+
     if request.method == 'POST':
         part = request.form.get('part')
         if part not in form_classes:
@@ -1454,8 +1451,7 @@ def usersettings():
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
-                                _logout()
-                                flaskg.user.save()
+                                flaskg.user.logout_session()
                                 response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
@@ -1563,7 +1559,7 @@ def diff(item_name):
         # try to find the latest rev1 before bookmark <date>
         revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
         for mtime, revid in revs:
-            if mtime <= bookmark_time:
+            if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
         else:
