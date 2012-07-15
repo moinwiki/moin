@@ -126,9 +126,10 @@ Topic :: Text Processing :: Markup""".splitlines(),
     message_extractors={
         '': [
             ('MoinMoin/templates/**.html', 'jinja2', None),
+            ('MoinMoin/templates/**.js', 'javascript', None),
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
+            ('MoinMoin/apps/**/templates/**.js', 'javascript', None),
             ('MoinMoin/**/_tests/**', 'ignore', None),
-            ('MoinMoin/static/**.js', 'javascript', None),
             ('MoinMoin/static/**', 'ignore', None),
             ('MoinMoin/**.py', 'python', None),
         ],
