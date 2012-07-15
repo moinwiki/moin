@@ -7,7 +7,7 @@
 {{ forms.render_errors(form) }}
 {% block extra_form %}{% endblock %}
 {% block data_editor %}{% endblock %}
-{{ forms.render_field(gen, form['data_file'], 'file') }}
+{{ forms.render(form['data_file']) }}
 <pre>{{ help }}</pre>
 {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
 <br />
