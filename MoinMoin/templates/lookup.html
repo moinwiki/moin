@@ -7,17 +7,21 @@
     {{ gen.form.open(lookup_form, id='moin-lookup-form', method='get', action=url_for('frontend.lookup')) }}
         {{ forms.render_errors(lookup_form) }}
         <dl>
-            {{ forms.render_field(gen, lookup_form['name'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['name_exact'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['itemid'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['revid'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['userid'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['language'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['itemlinks'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['itemtransclusions'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['refs'], 'text') }}
-            {{ forms.render_field(gen, lookup_form['tags'], 'text') }}
-            {{ forms.render_field_without_markup(gen, lookup_form['history'], 'checkbox') }}
+            {% for e in [
+                'name',
+                'name_exact',
+                'itemid',
+                'revid',
+                'userid',
+                'language',
+                'itemlinks',
+                'itemtransclusions',
+                'refs',
+                'tags',
+                'history',
+                ] %}
+                {{ forms.render(lookup_form[e]) }}
+            {% endfor %}
         </dl>
         {{ gen.input(lookup_form['submit'], type='submit') }}
     {{ gen.form.close() }}

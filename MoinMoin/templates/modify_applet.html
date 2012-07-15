@@ -11,7 +11,7 @@
     {% block extra_form %}{% endblock %}
     {% block data_editor %}{% endblock %}
     <dl>
-        {{ forms.render_field(gen, form['data_file'], 'file') }}
+        {{ forms.render(form['data_file']) }}
     </dl>
     <pre id="moin-editor-help">{{ help }}</pre>
     {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
