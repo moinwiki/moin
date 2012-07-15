@@ -1,5 +1,5 @@
 {% extends theme("local.html") %}
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% block head_scripts %}
 {{ super() }}
     <script src="{{ url_for('serve.files', name='jquery_multi_download', filename='jquery.multiDownload.js') }}"></script>
@@ -47,15 +47,19 @@
                     <a href="#" class="filter-toggle">&raquo; {{ _("Toggle") }}</a>
                     <a href="#" class="filter-more">&raquo; {{ _("More") }}</a>
                 </li>
-                {{ forms.render_filter_field(gen, form['markup_text_items'], 'checkbox', contenttype_groups['markup text items']) }}
-                {{ forms.render_filter_field(gen, form['other_text_items'], 'checkbox', contenttype_groups['other text items']) }}
-                {{ forms.render_filter_field(gen, form['image_items'], 'checkbox', contenttype_groups['image items']) }}
-                {{ forms.render_filter_field(gen, form['audio_items'], 'checkbox', contenttype_groups['audio items']) }}
-                {{ forms.render_filter_field(gen, form['video_items'], 'checkbox', contenttype_groups['video items']) }}
-                {{ forms.render_filter_field(gen, form['other_items'], 'checkbox', contenttype_groups['other items']) }}
-                {{ forms.render_filter_field(gen, form['unknown_items'], 'checkbox', unknown_items_label) }}
-                {{ gen.input(form['submit'], type='submit') }}
+                {% for e in [
+                    'markup_text_items',
+                    'other_text_items',
+                    'image_items',
+                    'audio_items',
+                    'video_items',
+                    'other_items',
+                    'unknown_items',
+                    ] %}
+                    <li>{{ forms.render(form[e]) }}</li>
+                {% endfor %}
             </ul>
+            {{ forms.render(form['submit']) }}
             {{ gen.form.close() }}
         </div>
         </li>
