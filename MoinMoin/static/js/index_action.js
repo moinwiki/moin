@@ -15,8 +15,10 @@ $("document").ready(function () {
         IFRAME_CREATE_DELAY = 200, // delay between start of multiple downloads
         IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
         MESSAGE_VIEW_TIME = 4000, // life expectancy of delete/destroy status messages
-        ACTION_LOADING = {"delete": "Deleting..", "destroy": "Destroying.."}, // process started messages
-        ACTION_DONE = {"delete": "deleted", "destroy": "destroyed"}; // process completed messages
+        // delete and destroy process started and completed messages
+        {{ "ACTION_LOADING = {'delete': '%s', 'destroy': '%s'}," % (_("Deleting.."), _("Destroying..")) }}
+        {{ "ACTION_DONE = {'delete': '%s', 'destroy': '%s'}," % (_("Items deleted: "), _("Items destroyed: ")) }}
+        {{ "ACTION_FAILED = {'delete': '%s', 'destroy': '%s'};" % (_(", Items not deleted: "), _(", Items not destroyed: ")) }}
 
     // called by click handlers New Item, Delete item, and Destroy item within Actions dropdown menu
     function showpop(action) {
@@ -105,9 +107,9 @@ $("document").ready(function () {
                 }
             });
             // show a message summarizing delete/destroy results for 4 seconds
-            message = "Items " + ACTION_DONE[action] + ": " + success_item;
+            message = ACTION_DONE[action] + success_item;
             if (left_item) {
-                message += ", Items not " + ACTION_DONE[action] + ": " + left_item + ".";
+                message += ACTION_FAILED[action] + left_item + ".";
             }
             $(".moin-index-message span").text(message);
             setTimeout(function () {
@@ -181,7 +183,7 @@ $("document").ready(function () {
     $("#moin-download-trigger").click(function () {
         if (!($("div.selected-item").length)) {
             // no items selected, show message for 4 seconds
-            $(".moin-index-message span").text("Nothing was selected.");
+            {{ "$('.moin-index-message span').text('%s');" % _("Nothing was selected.") }}
             $(".moin-index-message").fadeIn();
             setTimeout(function () {
                 $(".moin-index-message").fadeOut();
@@ -202,7 +204,7 @@ $("document").ready(function () {
     $(".moin-action-tab").click(function () {
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
         if (!($("div.selected-item").length)) {
-            $(".moin-index-message span").text("Nothing was selected.");
+            {{ "$('.moin-index-message span').text('%s');" % _("Nothing was selected.") }}
             $(".moin-index-message").fadeIn();
             setTimeout(function () {
                 $(".moin-index-message").fadeOut();
