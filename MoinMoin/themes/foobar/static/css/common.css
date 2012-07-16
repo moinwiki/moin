@@ -403,6 +403,17 @@ pre.comment{background-color:#2d2d2d;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
 textarea{font-family:monospace;width:98%;border:1px solid #ccc;margin-left:.5em}
 input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
+.moin-subitem-navigation{overflow:hidden;display:table-cell;word-wrap:break-word;}
+.moin-subitem-navigation ul{display:block;}
+.moin-subitem-navigation ul li{padding:.4em !important}
+.moin-subitem-navigation ul a{color:#1e90ff;font-size:1.2em;}
+.moin-subitem-navigation ul a:hover{text-decoration:underline}
+.moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
+.moin-subitem-navigation li ul{display:none;border-left:1px dotted #ccc;text-indent:10%}
+.moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%;box-shadow:none}
+.link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none}
+.link-action{background:url("../img/moin-link.png") no-repeat center center}
+.transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
 sub{vertical-align:sub}
 sup{vertical-align:super}
 .moin-big{font-size:1.17em}
