@@ -38,7 +38,7 @@
         {% if index %}
         <li class="action-bar">
         <div class="moin-contenttypes-wrapper">
-            <div class="ct-hide">{{ _("Filter by content type") }}</div>
+            <div class="ct-hide">{{ _("Filter by type") }}</div>
             {% set unknown_items_label = _("items having unknown mime types") %}
             {{ gen.form.open(form, method="post", action=url_for('frontend.index', item_name=item_name)) }}
             <ul>

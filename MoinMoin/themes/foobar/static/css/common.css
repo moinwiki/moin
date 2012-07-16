@@ -248,12 +248,12 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-more-index:hover{text-decoration:none}
 .moin-path-separator{font-size:1.2em;color:#1e90ff}
 .moin-index-separator{clear:both;border-top:1px dashed #ccc;width:80%;display:none}
-.moin-select-all span{cursor:pointer;font-size:.84em}
-.moin-select-actions span{cursor:pointer;font-size:.84em}
-.moin-select-actions ul li{cursor:pointer}
-.moin-contenttypes-wrapper div{cursor:pointer;font-size:.84em}
+.moin-select-all span{cursor:pointer}
+.moin-select-actions span{cursor:pointer}
+.moin-select-actions ul li{cursor:pointer;color:#1e90ff !important}
+.moin-contenttypes-wrapper div{cursor:pointer}
 .moin-contenttypes-wrapper form{display:none;}
-.moin-contenttypes-wrapper form li label{cursor:pointer;display:inline;vertical-align:middle;line-height:2em}
+.moin-contenttypes-wrapper form li label{cursor:pointer;display:inline;vertical-align:middle;line-height:2em;color:#1e90ff}
 .moin-contenttypes-wrapper form li span{display:none}
 .moin-contenttypes-wrapper form li:hover{background:#d6d5d0;}
 .moin-contenttypes-wrapper form li:hover span{display:block;font-size:.8em}
