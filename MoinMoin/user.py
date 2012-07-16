@@ -322,7 +322,10 @@ class User(object):
                     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
                     THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
                    ]:
-            return self.profile[name]
+            try:
+                return self.profile[name]
+            except KeyError:
+                raise AttributeError(name)
         else:
             raise AttributeError(name)
 
