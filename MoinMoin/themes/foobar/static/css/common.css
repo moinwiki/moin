@@ -217,9 +217,11 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-form dt{clear:both;float:left;width:30%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
 .moin-form button,.moin-form input[type="submit"]{margin-left:48%}
-#moin-modify dd{margin-left:.9em;width:100%;float:none}
-#moin-modify dt{float:none;text-align:left;width:auto}
-#moin-modify input[type="submit"]{margin-left:0}
+#moin-modify dd,form[name="delete_item"] dd,form[name="rename_item"] dd,form[name="destroy_item"] dd{margin-left:.9em;width:100%;float:none;}
+#moin-modify dd input,form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:96%}
+#moin-modify dt,form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{float:none;text-align:left;width:auto}
+#moin-modify input[type="submit"],form[name="delete_item"] input[type="submit"],form[name="rename_item"] input[type="submit"],form[name="destroy_item"] input[type="submit"]{margin-left:0}
+#moin-modify dl,form[name="delete_item"] dl,form[name="rename_item"] dl,form[name="destroy_item"] dl{margin:0}
 #moin-options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #moin-options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
