@@ -185,6 +185,9 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-local-panel{float:left;width:20.54231717337716%;padding:.6162695152013148%;margin-left:-1px;border-left:1px solid #ccc}
 #moin-footer{clear:both;font-size:.8em;color:#616161;padding:.5% .5%;overflow:auto}
 #moin-breadcrumbs-location{float:left;padding:.3em .5em .2em .5em;font-weight:bold}
+#moin-interwiki{vertical-align:middle;}
+#moin-interwiki a{vertical-align:middle}
+.sep{vertical-align:middle}
 #moin-pagelocation{vertical-align:middle}
 .moin-pagepath{vertical-align:middle}
 #moin-search{float:right;padding:.3em .5em .2em .5em}
