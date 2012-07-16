@@ -225,9 +225,9 @@ input.blank{border-color:#ccc;border-width:2px}
 #moin-options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #moin-options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
-#moin-create-table tbody tr th{text-align:center;background:#d9d9d9;margin:2px}
+#moin-create-table tbody tr th{text-align:center;background:#808080;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#f4f4f4;}
-#moin-create-table tbody tr td a{color:#000}
+#moin-create-table tbody tr td a{color:#1e90ff}
 .moin-clr{clear:both}
 .moin-index-message{width:50%;margin:1em auto;text-align:center;display:none;}
 .moin-index-message span{padding:4px;background-color:#007cef;color:#fff;border:1px solid #ccc;border-radius:5px}
