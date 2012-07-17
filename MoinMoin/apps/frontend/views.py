@@ -18,6 +18,7 @@
 import re
 import difflib
 import time
+import mimetypes
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
@@ -28,7 +29,7 @@ try:
 except ImportError:
     import simplejson as json
 
-from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
 from flaskext.babel import format_date
@@ -1869,6 +1870,18 @@ def tagged_items(tag):
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)
+
+
+@frontend.route('/+template/<path:filename>')
+def template(filename):
+    """
+    serve a rendered template from <filename>
+    """
+    content = render_template(filename)
+    ct, enc = mimetypes.guess_type(filename)
+    response = make_response((content, 200, {'content-type': ct or 'text/plain;charset=utf-8'}))
+    return response
+
 
 @frontend.errorhandler(404)
 def page_not_found(e):

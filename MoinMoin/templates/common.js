@@ -60,19 +60,17 @@ $(moinFirefoxWordBreak);
 
 
 // toggleComments is executed when user clicks a Comments button and conditionally on dom ready.
-var pageComments = null, // will hold list of elements with class "comment"
-    commentsShowTitle = '', // "Show comments"
-    commentsHideTitle = ''; // "Hide comments"
+var pageComments = null; // will hold list of elements with class "comment"
 function toggleComments() {
     "use strict";
     // Toggle visibility of every tag with class "comment"
     var buttons = $('.moin-toggle-comments-button > a');
     if (pageComments.is(':hidden')) {
         pageComments.show();
-        buttons.attr('title', commentsHideTitle);
+        {{ "buttons.attr('title', '%s');" % _("Hide comments") }}
     } else {
         pageComments.hide();
-        buttons.attr('title', commentsShowTitle);
+        {{ "buttons.attr('title', '%s');" % _("Show comments") }}
     }
 }
 
@@ -84,13 +82,6 @@ function initToggleComments() {
     if (pageComments.length > 0) {
         // There are comments, so show itemview Comments button
         $('.moin-toggle-comments-button').css('display', '');
-        // read translated show|hide Comments button title, split into show and hide parts, and save
-        titles = $('.moin-toggle-comments-button > a').attr('title').split('|');
-        if (titles.length === 2) {
-            commentsShowTitle = titles[0];
-            commentsHideTitle = titles[1];
-            $('.moin-toggle-comments-button > a').attr('title', commentsHideTitle);
-        }
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
             toggleComments();
@@ -102,8 +93,6 @@ $(document).ready(initToggleComments);
 
 
 // toggleTransclusionOverlays is executed when user clicks a Transclusions button on the Show item page.
-var transclusionShowTitle = '', // "Show Transclusions"
-    transclusionHideTitle = ''; // "Hide Transclusions"
 function toggleTransclusionOverlays() {
     "use strict";
     var overlays = $('.moin-item-overlay-ul, .moin-item-overlay-lr'),
@@ -112,10 +101,10 @@ function toggleTransclusionOverlays() {
         buttons = $('.moin-transclusions-button > a');
         if (overlays.is(':visible')) {
             overlays.hide();
-            buttons.attr('title', transclusionShowTitle);
+            {{ "buttons.attr('title', '%s');" % _("Show transclusions") }}
         } else {
             overlays.show();
-            buttons.attr('title', transclusionHideTitle);
+            {{ "buttons.attr('title', '%s');" % _("Hide transclusions") }}
         }
     }
 }
@@ -156,13 +145,6 @@ function initTransclusionOverlays() {
     wrappers = $('.moin-item-wrapper');
     if (wrappers.length > 0) {
         $('.moin-transclusions-button').css('display', '');
-        // read translated show|hide Transclusions button title, split into show and hide parts, and save
-        titles = $('.moin-transclusions-button > a').attr('title').split('|');
-        if (titles.length === 2) {
-            transclusionShowTitle = titles[0];
-            transclusionHideTitle = titles[1];
-            $('.moin-transclusions-button > a').attr('title', transclusionShowTitle);
-        }
     }
 }
 $(document).ready(initTransclusionOverlays);
@@ -283,10 +265,14 @@ function guessContentType() {
 function transcludeSubitem(subitem_name, fullname) {
     "use strict";
     function moinwiki(subitem_name, fullname) {
-        return "{{" + fullname.replace("{{", "\\}}") + "}} ";
+        // note: keep the many plusses, to avoid jinja2 templating kicking in
+        // when seeing two curly opening / closing braces
+        return "{"+"{" + fullname.replace("{"+"{", "\\"+"}"+"}") + "}"+"} ";
     }
     function mediawiki(subitem_name, fullname) {
-        return "{{:" + fullname.replace("}}", "\\}}") + "}} ";
+        // note: keep the many plusses, to avoid jinja2 templating kicking in
+        // when seeing two curly opening / closing braces
+        return "{"+"{:" + fullname.replace("}"+"}", "\\"+"}"+"}") + "}"+"} ";
     }
     function rst(subitem_name, fullname) {
         return "\n.. include:: " + subitem_name + "\n";
