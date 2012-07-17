@@ -2,7 +2,6 @@
 {% import "forms.html" as forms %}
 {% block head_scripts %}
 {{ super() }}
-    <script src="{{ url_for('serve.files', name='jquery_multi_download', filename='jquery.multiDownload.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
 {% endblock %}
 
@@ -110,8 +109,7 @@
             <div>
                 <span class="moin-select-item">&nbsp;</span>
                 {% set mimetype = "application/x.moin.download" %}
-                <a href="about:blank" title="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}"
-                   class="moin-download-link">
+                <a href="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}" class="moin-download-link">
                 </a>
                 <a href="{{ url_for('.show_item', item_name=fullname) }}"
                    class="{{ contenttype|contenttype_to_class }} moin-item"

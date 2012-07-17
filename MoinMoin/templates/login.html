@@ -8,16 +8,15 @@
 {% if 'username' in login_inputs or 'password' in login_inputs %}
 <h2>{{ _('Moin login') }}</h2>
 {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
-{{ gen.input(form['submit'], type='hidden') }}
 <dl>
   {% if 'username' in login_inputs %}
-  {{ forms.render_field(gen, form['username'], 'text') }}
+  {{ forms.render(form['username']) }}
   {% endif %}
   {% if 'password' in login_inputs %}
-  {{ forms.render_field(gen, form['password'], 'password') }}
+  {{ forms.render(form['password']) }}
   {% endif %}
 </dl>
-<input type="submit" value="{{ _('Log in') }}" />
+{{ forms.render(form['submit']) }}
 {{ gen.form.close() }}
 {% endif %}
 
@@ -27,11 +26,9 @@
 
 {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
 <dl>
-  {{ gen.input(form['submit'], type='hidden') }}
-
-  {{ forms.render_field(gen, form['openid'], 'text') }}
-  <input type="submit" value="{{ _('Log in') }}" />
+  {{ forms.render(form['openid']) }}
 </dl>
+{{ forms.render(form['submit']) }}
 {{ gen.form.close() }}
 {% endif %}
 

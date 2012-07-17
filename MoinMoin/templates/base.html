@@ -48,7 +48,7 @@
     {% block head_scripts %}
     <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
     <script src="{{ url_for('serve.files', name='svgweb', filename='svg.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('frontend.template', filename='common.js') }}"></script>
     {{ scripts }}
     <!--[if lt IE 9]>
         {# TODO: use a local copy later #}
