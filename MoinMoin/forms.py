@@ -8,9 +8,6 @@
 """
 
 
-from functools import reduce
-from operator import add
-
 from flatland import Element, Form, String, Integer, Boolean, Enum, MultiValue, Dict
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
