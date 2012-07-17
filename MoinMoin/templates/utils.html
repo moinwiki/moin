@@ -60,7 +60,7 @@
                     {% if newtab %}target="_blank"{% endif %}>{{ shortname }}</a>
                 {% if has_children %}
                     <button class="expander" title="{{ _('Expand Subitem') }}"
-                        onclick="toggleSubtree(this)">/</button>
+                        onclick="toggleSubtree(this)"></button>
                     {{ _render_subitem_navigation_tree(theme_supp.subitem_index(fullname), newtab, parentcaller) }}
                 {% endif %}
             </li>

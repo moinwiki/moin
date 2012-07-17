@@ -12,6 +12,7 @@
 </div>
 
 <div id="moin-local-panel">
+{% block local %}
 <ul>
     <li>Views
         {% set exists = storage.has_item(item_name) %}
@@ -51,7 +52,7 @@
 
                     {%- if endpoint in [
                         'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
-                        'admin.index',
+                        'admin.index', 'admin.index_user',
                     ] %}
                         <li>
                             <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
@@ -125,8 +126,11 @@
     </li>
     {% endif %}
     <li>
+        {% block subitem_navigation %}
         {{ utils.render_subitem_navigation(item_name, False) }}
+        {% endblock %}
     </li>
 </ul>
+{% endblock %}
 </div>
 {% endblock %}
