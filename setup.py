@@ -105,7 +105,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2011.07.07.2',
-        'XStatic-multiDownload>=20110717.1',
     ],
     # optional features and their list of requirements
     extras_require={
@@ -117,6 +116,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'ldap': ["python-ldap>=2.0.0"], # used by ldap auth
         'openid': ["python-openid>=2.2.4"], # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
+        'mongodb': ["pymongo"], # used by mongodb store
     },
     entry_points=dict(
         console_scripts=['moin = MoinMoin.script:main'],
@@ -126,7 +126,9 @@ Topic :: Text Processing :: Markup""".splitlines(),
     message_extractors={
         '': [
             ('MoinMoin/templates/**.html', 'jinja2', None),
+            ('MoinMoin/templates/**.js', 'javascript', None),
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
+            ('MoinMoin/apps/**/templates/**.js', 'javascript', None),
             ('MoinMoin/**/_tests/**', 'ignore', None),
             ('MoinMoin/static/**', 'ignore', None),
             ('MoinMoin/**.py', 'python', None),

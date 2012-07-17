@@ -18,6 +18,7 @@
 import re
 import difflib
 import time
+import mimetypes
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
@@ -28,14 +29,14 @@ try:
 except ImportError:
     import simplejson as json
 
-from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
 from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
-from flatland import Form, String, Integer, Boolean, Enum, MultiValue
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
+from flatland import Form
+from flatland.validation import Validator
 
 from jinja2 import Markup
 
@@ -50,7 +51,8 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.items import Item, NonExistent
+from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden
+from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
@@ -128,18 +130,18 @@ def favicon():
 
 
 class LookupForm(Form):
-    name = String.using(label=L_('name'), optional=True)
-    name_exact = String.using(label=L_('name_exact'), optional=True)
-    itemid = String.using(label=L_('itemid'), optional=True)
-    revid = String.using(label=L_('revid'), optional=True)
-    userid = String.using(label=L_('userid'), optional=True)
-    language = String.using(label=L_('language'), optional=True)
-    itemlinks = String.using(label=L_('itemlinks'), optional=True)
-    itemtransclusions = String.using(label=L_('itemtransclusions'), optional=True)
-    refs = String.using(label=L_('refs'), optional=True)
-    tags = MultiValue.of(String).using(label=L_('tags'), optional=True)
-    history = Boolean.using(label=L_('search also in non-current revisions'), optional=True)
-    submit = String.using(default=L_('Lookup'), optional=True)
+    name = OptionalText.using(label=L_('name'))
+    name_exact = OptionalText.using(label=L_('name_exact'))
+    itemid = OptionalText.using(label=L_('itemid'))
+    revid = OptionalText.using(label=L_('revid'))
+    userid = OptionalText.using(label=L_('userid'))
+    language = OptionalText.using(label=L_('language'))
+    itemlinks = OptionalText.using(label=L_('itemlinks'))
+    itemtransclusions = OptionalText.using(label=L_('itemtransclusions'))
+    refs = OptionalText.using(label=L_('refs'))
+    tags = Tags.using(optional=True)
+    history = InlineCheckbox.using(label=L_('search also in non-current revisions'))
+    submit = Submit.using(default=L_('Lookup'))
 
 
 @frontend.route('/+lookup', methods=['GET', 'POST'])
@@ -514,35 +516,36 @@ def show_blog_entry(item_name, rev):
                           )
 
 
-class CommentForm(TextChaizedForm):
-    comment = String.using(label=L_('Comment'), optional=True).with_properties(placeholder=L_("Comment about your change"))
-    submit = String.using(default=L_('OK'), optional=True)
+class TargetChangeForm(BaseChangeForm):
+    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
-class TargetCommentForm(CommentForm):
-    target = String.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item")).validated_by(Present())
-
-class RevertItemForm(CommentForm):
+class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
 
-class DeleteItemForm(CommentForm):
+class DeleteItemForm(BaseChangeForm):
     name = 'delete_item'
 
-class DestroyItemForm(CommentForm):
+class DestroyItemForm(BaseChangeForm):
     name = 'destroy_item'
 
-class RenameItemForm(TargetCommentForm):
+class RenameItemForm(TargetChangeForm):
     name = 'rename_item'
 
 class ContenttypeFilterForm(Form):
     name = 'contenttype_filter'
-    markup_text_items = Boolean.using(label=L_('markup text'), optional=True, default=1)
-    other_text_items = Boolean.using(label=L_('other text'), optional=True, default=1)
-    image_items = Boolean.using(label=L_('image'), optional=True, default=1)
-    audio_items = Boolean.using(label=L_('audio'), optional=True, default=1)
-    video_items = Boolean.using(label=L_('video'), optional=True, default=1)
-    other_items = Boolean.using(label=L_('other'), optional=True, default=1)
-    unknown_items = Boolean.using(label=L_('unknown'), optional=True, default=1)
-    submit = String.using(default=L_('Filter'), optional=True)
+    markup_text_items = InlineCheckbox.using(label=L_('markup text'))
+    other_text_items = InlineCheckbox.using(label=L_('other text'))
+    image_items = InlineCheckbox.using(label=L_('image'))
+    audio_items = InlineCheckbox.using(label=L_('audio'))
+    video_items = InlineCheckbox.using(label=L_('video'))
+    other_items = InlineCheckbox.using(label=L_('other'))
+    unknown_items = InlineCheckbox.using(label=L_('unknown'))
+    submit = Submit.using(default=L_('Filter'))
+
+for gname, contenttypes in CONTENTTYPE_GROUPS:
+    filter_ = ContenttypeFilterForm.field_schema_mapping.get(gname.replace(' ', '_'))
+    if filter_:
+        filter_.properties['helper'] = ", ".join([ctlabel for ctname, ctlabel in contenttypes])
 
 
 @frontend.route('/+revert/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -779,10 +782,6 @@ def index(item_name):
     startswith = request.values.get("startswith")
     index = item.flat_index(startswith, selected_groups)
 
-    ct_groups = [(gname, ", ".join([ctlabel for ctname, ctlabel in contenttypes]))
-                 for gname, contenttypes in CONTENTTYPE_GROUPS]
-    ct_groups = dict(ct_groups)
-
     initials = item.name_initial(item.flat_index())
     initials = [initial.upper() for initial in initials]
     initials = list(set(initials))
@@ -800,7 +799,6 @@ def index(item_name):
                            index=detailed_index,
                            initials=initials,
                            startswith=startswith,
-                           contenttype_groups=ct_groups,
                            form=form,
                            **args
                           )
@@ -1036,31 +1034,23 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
-    submit = String.using(default=L_('Register'), optional=True)
+    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
+    password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
+    email = YourEmail
+    openid = YourOpenID.using(optional=True)
+    submit = Submit.using(default=L_('Register'))
 
     validators = [ValidRegistration()]
 
 
-class OpenIDForm(TextChaizedForm):
+class OpenIDForm(RegistrationForm):
     """
     OpenID registration form, inherited from the simple registration form.
     """
     name = 'openid'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID')).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
-    submit = String.using(optional=True)
-
-    validators = [ValidRegistration()]
+    openid = YourOpenID
 
 def _using_moin_auth():
     """Check if MoinAuth is being used for authentication.
@@ -1179,9 +1169,9 @@ class PasswordLostForm(Form):
     """a simple password lost form"""
     name = 'lostpass'
 
-    username = String.using(label=L_('Name'), optional=True).with_properties(placeholder=L_("Your login name"))
-    email = String.using(label=L_('E-Mail'), optional=True).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    submit = String.using(default=L_('Recover password'), optional=True)
+    username = OptionalText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
+    email = YourEmail.using(optional=True)
+    submit = Submit.using(default=L_('Recover password'))
 
     validators = [ValidLostPassword()]
 
@@ -1206,7 +1196,7 @@ def lostpass():
             email = form['email'].value
             if form['email'].valid and email:
                 users = user.search_users(email=email)
-                u = users and user.User(users[0][ITEMID])
+                u = users and user.User(users[0].meta[ITEMID])
             if u and u.valid:
                 is_ok, msg = u.mail_password_recovery()
                 if not is_ok:
@@ -1239,11 +1229,11 @@ class PasswordRecoveryForm(Form):
     """a simple password recovery form"""
     name = 'recoverpass'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("Your login name")).validated_by(Present())
-    token = String.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you")).validated_by(Present())
-    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    submit = String.using(default=L_('Change password'), optional=True)
+    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
+    token = RequiredText.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    submit = Submit.using(default=L_('Change password'))
 
     validators = [ValidPasswordRecovery()]
 
@@ -1306,12 +1296,10 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = String.using(label=L_('Name'), optional=False).with_properties(autofocus=True).validated_by(Present())
-    password = String.using(label=L_('Password'), optional=False).validated_by(Present())
-    openid = String.using(label=L_('OpenID'), optional=True).validated_by(Present(), URLValidator())
-
-    # the submit hidden field
-    submit = String.using(optional=True)
+    username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
+    password = RequiredPassword
+    openid = YourOpenID.using(optional=True)
+    submit = Submit.using(default=L_('Log in'))
 
     validators = [ValidLogin()]
 
@@ -1346,16 +1334,10 @@ def login():
                           )
 
 
-def _logout():
-    for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', ]:
-        if key in session:
-            del session[key]
-
-
 @frontend.route('/+logout')
 def logout():
     flash(_("You are now logged out."), "info")
-    _logout()
+    flaskg.user.logout_session()
     return redirect(url_for('.show_root'))
 
 
@@ -1385,23 +1367,23 @@ class ValidChangePass(Validator):
 
 class UserSettingsPasswordForm(Form):
     name = 'usersettings_password'
-    password_current = String.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password")).validated_by(Present())
-    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    submit = String.using(default=L_('Change password'), optional=True)
     validators = [ValidChangePass()]
 
+    password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    submit = Submit.using(default=L_('Change password'))
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    submit = String.using(default=L_('Save'), optional=True)
+    email = YourEmail
+    submit = Submit.using(default=L_('Save'))
 
 
 class UserSettingsNavigationForm(Form):
     name = 'usersettings_navigation'
     # TODO: find a good way to handle quicklinks here
-    submit = String.using(default=L_('Save'), optional=True)
+    submit = Submit.using(default=L_('Save'))
 
 
 class UserSettingsOptionsForm(Form):
@@ -1412,11 +1394,11 @@ class UserSettingsOptionsForm(Form):
     # builtin defaults (for some True, for some others False). Makes
     # edit_on_doubleclick malfunctioning (because its default is True).
     name = 'usersettings_options'
-    mailto_author = Boolean.using(label=L_('Publish my email (not my wiki homepage) in author info'), optional=True)
-    edit_on_doubleclick = Boolean.using(label=L_('Open editor on double click'), optional=True)
-    show_comments = Boolean.using(label=L_('Show comment sections'), optional=True)
-    disabled = Boolean.using(label=L_('Disable this account forever'), optional=True)
-    submit = String.using(default=L_('Save'), optional=True)
+    mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
+    edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
+    show_comments = Checkbox.using(label=L_('Show comment sections'))
+    disabled = Checkbox.using(label=L_('Disable this account forever'))
+    submit = Submit.using(default=L_('Save'))
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1427,29 +1409,29 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-        aliasname = String.using(label=L_('Alias-Name'), optional=True).with_properties(placeholder=L_("Your alias name (informational)"))
-        openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
+        name = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
+        aliasname = OptionalText.using(label=L_('Alias-Name')).with_properties(placeholder=L_("Your alias name (informational)"))
+        openid = YourOpenID.using(optional=True)
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
-        timezone = Enum.using(label=L_('Timezone')).valued(*timezones_keys)
+        timezone = Select.using(label=L_('Timezone')).valued(*timezones_keys)
         supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locales_available = sorted([(unicode(l), l.display_name) for l in supported_locales],
                                    key=lambda x: x[1])
         locales_keys = [l[0] for l in locales_available]
-        locale = Enum.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
-        submit = String.using(default=L_('Save'), optional=True)
+        locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
+        submit = Submit.using(default=L_('Save'))
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
         themes_available = sorted([(unicode(t.identifier), t.name) for t in get_themes_list()],
                                   key=lambda x: x[1])
         themes_keys = [t[0] for t in themes_available]
-        theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
-        css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
-        edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
-        results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
-        submit = String.using(default=L_('Save'), optional=True)
+        theme_name = Select.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
+        css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)"))
+        edit_rows = Natural.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)"))
+        results_per_page = Natural.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)"))
+        submit = Submit.using(default=L_('Save'))
 
     form_classes = dict(
         personal=UserSettingsPersonalForm,
@@ -1460,6 +1442,9 @@ def usersettings():
         options=UserSettingsOptionsForm,
     )
     forms = dict()
+
+    if not flaskg.user.valid:
+        return redirect(url_for('.login'))
 
     if request.method == 'POST':
         part = request.form.get('part')
@@ -1517,8 +1502,7 @@ def usersettings():
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
-                                _logout()
-                                flaskg.user.save()
+                                flaskg.user.logout_session()
                                 response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
@@ -1626,7 +1610,7 @@ def diff(item_name):
         # try to find the latest rev1 before bookmark <date>
         revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
         for mtime, revid in revs:
-            if mtime <= bookmark_time:
+            if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
         else:
@@ -1936,6 +1920,18 @@ def tagged_items(tag):
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)
+
+
+@frontend.route('/+template/<path:filename>')
+def template(filename):
+    """
+    serve a rendered template from <filename>
+    """
+    content = render_template(filename)
+    ct, enc = mimetypes.guess_type(filename)
+    response = make_response((content, 200, {'content-type': ct or 'text/plain;charset=utf-8'}))
+    return response
+
 
 @frontend.errorhandler(404)
 def page_not_found(e):

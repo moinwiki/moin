@@ -132,7 +132,7 @@ def getInterwikiName(item_name):
     :rtype: unicode
     :returns: wiki_name:item_name
     """
-    return "{0}:{1}".format(app.cfg.interwikiname, item_name)
+    return u"{0}:{1}".format(app.cfg.interwikiname, item_name)
 
 
 def getInterwikiHome(username):
