@@ -181,7 +181,7 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-header{background-color:#2d2d2d;color:#fff;border-bottom:1px solid #ccc;padding:.2% .5%;overflow:auto;}
 #moin-header a{color:#fff}
 #moin-content-no-panel{float:left;width:98.56746096959736%;padding:.6162695152013148%;border-right:1px solid #ccc}
-#moin-content-with-panel{float:left;width:76.79260476581759%;padding:.6162695152013148%;border-right:1px solid #ccc}
+#moin-content{float:left;width:76.79260476581759%;padding:.6162695152013148%;border-right:1px solid #ccc}
 #moin-local-panel{float:left;width:20.54231717337716%;padding:.6162695152013148%;margin-left:-1px;border-left:1px solid #ccc}
 #moin-footer{clear:both;font-size:.8em;color:#616161;padding:.5% .5%;overflow:auto}
 #moin-breadcrumbs-location{float:left;padding:.3em .5em .2em .5em;font-weight:bold}
