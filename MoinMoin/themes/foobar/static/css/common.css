@@ -276,6 +276,7 @@ form.upload_file button{display:none}
 form.upload_file{display:block}
 .file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
 .file_upload_template .file_upload_start button{width:0}
+.file_name{word-break:break-all;word-wrap:break-word;max-width:10em}
 .upload-form{display:none}
 .moin-drag{font-size:.7em;color:#9d9d9b}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
