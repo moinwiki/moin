@@ -177,10 +177,12 @@ div p
                 font-size small_font_size
                 color nonexistent_link_color
                 font-weight normal
-                padding 0.1em 0.1em 0.1em 0.1em
+                padding 0.1em 0.1em 0.2em 0.1em
                 border none
                 box-shadow none
                 margin 0
+                &:hover
+                    background border_color
 
 #moin-footer ul,
 #moin-credits
@@ -204,6 +206,11 @@ div p
             color link_color
         &:hover
             color hover_color
+
+#moin-metadata
+    ul 
+        li:hover
+            background panel_color !important
 
 // form
 label

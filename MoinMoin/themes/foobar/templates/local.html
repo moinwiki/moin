@@ -19,7 +19,7 @@
         {{ itemviews }}    
     </li>
     {% if rev %}
-    <li>Metadata
+    <li id="moin-metadata">Metadata
         <ul>
             <li>{{ _("Revision:") }} {{rev.revid | shorten_id}}</li>
             <li>({{ rev.meta['mtime']|datetimeformat }})</li>
