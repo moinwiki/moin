@@ -421,6 +421,13 @@ input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
 .moin-item-overlay-lr{bottom:-4px;right:-4px;border-width:0 3px 3px 0}
 .moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#d6d5d0;color:#1e90ff}
+.moin-table-of-contents{border:1px solid #ccc;background:#f4f4f4;font-size:.8em;margin:.5em 0 .5em .5em;padding:.5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #9d9d9b;border-radius:15px}
+.moin-table-of-contents ol{margin:0;padding:0 0 0 .92em}
+.moin-table-of-contents li{margin:.12em 0 0 0;padding:0;list-style:none}
+.moin-table-of-contents-heading{font-weight:bold;padding:0;margin:0 0 .5em 1em;letter-spacing:.075em}
+.moin-showhide{margin-left:10px}
+table.navigation{float:right;margin:2px}
+.moin-permalink{display:none}
 sub{vertical-align:sub}
 sup{vertical-align:super}
 .moin-big{font-size:1.17em}
