@@ -5,7 +5,7 @@
 /*global $:false */
 
 
-// Enter edit mode when user doubleclicks within the page body.  Executed once on page load.
+// Enter edit mode when user doubleclicks within the content area.  Executed once on page load.
 function editOnDoubleClick() {
     "use strict";
     var modifyButton;
@@ -13,8 +13,8 @@ function editOnDoubleClick() {
     if (document.getElementById('moin-edit-on-doubleclick')) {
         modifyButton = $('.moin-modify-button')[0];
         if (modifyButton) {
-            // add a doubleclick action to the body tag
-            $('body').dblclick(function () {
+            // add a doubleclick action to the moin content
+            $('#moin-content').dblclick(function () {
                 document.location = modifyButton.href;
             });
         }
