@@ -417,6 +417,7 @@ input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none}
 .link-action{background:url("../img/moin-link.png") no-repeat center center}
 .transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
+.moin-transclusion{max-width:100%}
 .moin-item-wrapper{position:relative;display:inline-block}
 .moin-item-wrapper > a:hover{color:#1e90ff;text-decoration:none}
 .moin-item-overlay-ul,.moin-item-overlay-lr{display:none;position:absolute;font-size:1.2em;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#1e90ff;border-style:double}
