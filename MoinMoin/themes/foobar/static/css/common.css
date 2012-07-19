@@ -197,7 +197,8 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-global-panel ul,#moin-local-panel ul{list-style-type:none;margin:0;}
 #moin-global-panel ul li,#moin-local-panel ul li{background-color:#f1f1f1;font-size:1em;color:#696969;font-weight:bold;padding:.5em;border:1px solid #ccc;border-radius:4px;box-shadow:1px 1px 2px #9d9d9b;margin-left:.5em;margin-bottom:.5em;overflow:hidden;word-wrap:break-word;}
 #moin-global-panel ul li ul,#moin-local-panel ul li ul{padding:.2em .1em;}
-#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#808080;font-weight:normal;padding:.1em .1em .1em .1em;border:none;box-shadow:none;margin:0}
+#moin-global-panel ul li ul li,#moin-local-panel ul li ul li{font-size:.8em;color:#808080;font-weight:normal;padding:.1em .1em .2em .1em;border:none;box-shadow:none;margin:0;}
+#moin-global-panel ul li ul li:hover,#moin-local-panel ul li ul li:hover{background:#ccc}
 #moin-footer ul,#moin-credits{float:left;list-style-type:none;}
 #moin-footer ul li,#moin-credits li{padding:.1em}
 #moin-footer ul a,#moin-credits a{color:#616161}
@@ -205,6 +206,7 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-footer-logos ul li{display:inline}
 .moin-itemviews a:visited,#moin-trail a:visited,#moin-user a:visited{color:#1e90ff}
 .moin-itemviews a:hover,#moin-trail a:hover,#moin-user a:hover{color:#007cef}
+#moin-metadata ul li:hover{background:#f1f1f1 !important}
 label{display:block;font-weight:bold}
 input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#d6d5d0;padding:4px 15px;border:1px solid #ccc;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
 input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
