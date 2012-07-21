@@ -250,7 +250,7 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-more-index{background:transparent url("../img/moin-expand.png") no-repeat;display:inline-block;width:20px;}
 .moin-more-index:hover{text-decoration:none}
 .moin-path-separator{font-size:1.2em;color:#1e90ff}
-.moin-index-separator{clear:both;border-top:1px dashed #ccc;width:80%;display:none}
+.moin-index-separator{clear:both;border-top:1px dashed #ccc;display:none}
 .moin-select-all span{cursor:pointer}
 .moin-select-actions span{cursor:pointer}
 .moin-select-actions ul li{cursor:pointer;color:#1e90ff !important}
