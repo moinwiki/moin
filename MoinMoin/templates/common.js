@@ -22,6 +22,25 @@ function editOnDoubleClick() {
 }
 $(document).ready(editOnDoubleClick);
 
+// Highlight currently selected link in side panel. Executed on page load
+function selected_link() {
+   var selected = window.location.pathname;
+   
+   var list = document.getElementsByClassName('panel');
+   for (var j = 0; j < list.length; j++) {
+      nav_links = list[j].getElementsByTagName('a');
+      
+      for (var i = 0; i < nav_links.length; i++) {
+         var link = nav_links[i].attributes.href.value;
+             
+             if (link == selected) {
+               nav_links[i].setAttribute('class', 'current');
+               break;
+            }
+        }
+    }
+}
+$(document).ready(selected_link);
 
 
 // Insert Zero-Width-Space characters into long text strings of textNode elements.  Executed on page load.
