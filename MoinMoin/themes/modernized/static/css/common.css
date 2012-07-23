@@ -74,6 +74,13 @@ input, select { vertical-align: middle; }
 .moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
 .moin-tired:before { content: url('../img/smileys/tired.png'); }
 .moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+#moin-content div.caution{background-image:url("../img/admonitions/caution.png")}
+#moin-content div.important{background-image:url("../img/admonitions/important.png")}
+#moin-content div.note{background-image:url("../img/admonitions/note.png")}
+#moin-content div.tip{background-image:url("../img/admonitions/tip.png")}
+#moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
+#moin-content div.caution,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{color:#000;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;border:1px solid #e5e5e5;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both;}
+#moin-content div.caution p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
 html{color:#000;font-family:sans-serif}
 div,p{margin:1em 0}
 sub{vertical-align:sub}
@@ -306,13 +313,6 @@ ul.moin-tags li.weight9{font-size:200%}
 .center{text-align:center}
 .right{text-align:right}
 .justify{text-align:justify}
-#moin-content div.caution,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{border:1px solid #e5e5e5;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;color:#000;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both}
-#moin-content div.caution p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
-#moin-content div.caution{background-image:url("../img/admonitions/caution.png")}
-#moin-content div.important{background-image:url("../img/admonitions/important.png")}
-#moin-content div.note{background-image:url("../img/admonitions/note.png")}
-#moin-content div.tip{background-image:url("../img/admonitions/tip.png")}
-#moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em}
