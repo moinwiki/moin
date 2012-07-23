@@ -111,6 +111,16 @@ a.moin-mime-application:before{content:url("../img/moin-application.png");margin
 a.moin-mime-pdf:before{content:url("../img/moin-pdf.png");margin:0 .2em;vertical-align:middle}
 a.moin-mime-package:before{content:url("../img/moin-package.png");margin:0 .2em;vertical-align:middle}
 a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;vertical-align:middle}
+.moin-diff{width:99%;table-layout:fixed}
+.moin-diff-header{vertical-align:top;font-size:92%}
+.moin-diff-info{margin:.33em .25em}
+.moin-diff-info-value{white-space:normal}
+.moin-diff-info-caption{display:inline-block;min-width:5em}
+.moin-diff-line-number{background-color:#c0c0c0}
+.moin-diff-added{background-color:#e0ffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
+.moin-diff-added span{background-color:#80ff80}
+.moin-diff-removed{background-color:#ffffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
+.moin-diff-removed span{background-color:#ffff80}
 html{color:#000;font-family:sans-serif}
 div,p{margin:1em 0}
 sub{vertical-align:sub}
@@ -308,16 +318,6 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .popup-body input.blank{border-color:#f00;border-width:2px}
 .popup-container{margin:0}
 #lightbox{background:#fff;opacity:.7;filter:alpha;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
-.moin-diff{width:99%;table-layout:fixed}
-.moin-diff-header{vertical-align:top;font-size:92%}
-.moin-diff-info{margin:.33em .25em}
-.moin-diff-info-value{white-space:normal}
-.moin-diff-info-caption{display:inline-block;min-width:5em}
-.moin-diff-line-number{background-color:#c0c0c0}
-.moin-diff-added{background-color:#e0ffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace}
-.moin-diff-removed{background-color:#ffffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace}
-.moin-diff-added span{background-color:#80ff80}
-.moin-diff-removed span{background-color:#ffff80}
 ul.moin-tags{list-style:none}
 ul.moin-tags li{display:inline}
 ul.moin-tags li.weight0{font-size:50%}
