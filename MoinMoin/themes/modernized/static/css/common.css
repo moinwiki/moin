@@ -47,6 +47,33 @@ table { border-collapse: collapse; border-spacing: 0; }
 hr { display: block; height: 1px; border: 0; border-top: 1px solid #cccccc; margin: 1em 0; padding: 0; }
 input, select { vertical-align: middle; }
 /* end HTML5 reset */
+/* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
+.moin-text-icon { font-size: 0; color: transparent; }
+.moin-alert:before { content: url('../img/smileys/alert.png'); }
+.moin-angry:before { content: url('../img/smileys/angry.png'); }
+.moin-attention:before { content: url('../img/smileys/attention.png'); }
+.moin-biggrin:before { content: url('../img/smileys/biggrin.png'); }
+.moin-checkmark:before { content: url('../img/smileys/checkmark.png'); }
+.moin-devil:before { content: url('../img/smileys/devil.png'); }
+.moin-frown:before { content: url('../img/smileys/frown.png'); }
+.moin-icon-error:before { content: url('../img/smileys/icon-error.png'); }
+.moin-icon-info:before { content: url('../img/smileys/icon-info.png'); }
+.moin-idea:before { content: url('../img/smileys/idea.png'); }
+.moin-ohwell:before { content: url('../img/smileys/ohwell.png'); }
+.moin-prio1:before { content: url('../img/smileys/prio1.png'); }
+.moin-prio2:before { content: url('../img/smileys/prio2.png'); }
+.moin-prio3:before { content: url('../img/smileys/prio3.png'); }
+.moin-redface:before { content: url('../img/smileys/redface.png'); }
+.moin-sad:before { content: url('../img/smileys/sad.png'); }
+.moin-smile:before { content: url('../img/smileys/smile.png'); }
+.moin-smile2:before { content: url('../img/smileys/smile2.png'); }
+.moin-smile3:before { content: url('../img/smileys/smile3.png'); }
+.moin-smile4:before { content: url('../img/smileys/smile4.png'); }
+.moin-star_off:before { content: url('../img/smileys/star_off.png'); }
+.moin-star_on:before { content: url('../img/smileys/star_on.png'); }
+.moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
+.moin-tired:before { content: url('../img/smileys/tired.png'); }
+.moin-tongue:before { content: url('../img/smileys/tongue.png'); }
 html{color:#000;font-family:sans-serif}
 div,p{margin:1em 0}
 sub{vertical-align:sub}
@@ -286,32 +313,6 @@ ul.moin-tags li.weight9{font-size:200%}
 #moin-content div.note{background-image:url("../img/admonitions/note.png")}
 #moin-content div.tip{background-image:url("../img/admonitions/tip.png")}
 #moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
-.moin-text-icon{font-size:0;color:transparent}
-.moin-alert:before{content:url("../img/smileys/alert.png")}
-.moin-angry:before{content:url("../img/smileys/angry.png")}
-.moin-attention:before{content:url("../img/smileys/attention.png")}
-.moin-biggrin:before{content:url("../img/smileys/biggrin.png")}
-.moin-checkmark:before{content:url("../img/smileys/checkmark.png")}
-.moin-devil:before{content:url("../img/smileys/devil.png")}
-.moin-frown:before{content:url("../img/smileys/frown.png")}
-.moin-icon-error:before{content:url("../img/smileys/icon-error.png")}
-.moin-icon-info:before{content:url("../img/smileys/icon-info.png")}
-.moin-idea:before{content:url("../img/smileys/idea.png")}
-.moin-ohwell:before{content:url("../img/smileys/ohwell.png")}
-.moin-prio1:before{content:url("../img/smileys/prio1.png")}
-.moin-prio2:before{content:url("../img/smileys/prio2.png")}
-.moin-prio3:before{content:url("../img/smileys/prio3.png")}
-.moin-redface:before{content:url("../img/smileys/redface.png")}
-.moin-sad:before{content:url("../img/smileys/sad.png")}
-.moin-smile:before{content:url("../img/smileys/smile.png")}
-.moin-smile2:before{content:url("../img/smileys/smile2.png")}
-.moin-smile3:before{content:url("../img/smileys/smile3.png")}
-.moin-smile4:before{content:url("../img/smileys/smile4.png")}
-.moin-star_off:before{content:url("../img/smileys/star_off.png")}
-.moin-star_on:before{content:url("../img/smileys/star_on.png")}
-.moin-thumbs-up:before{content:url("../img/smileys/thumbs-up.png")}
-.moin-tired:before{content:url("../img/smileys/tired.png")}
-.moin-tongue:before{content:url("../img/smileys/tongue.png")}
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em}
