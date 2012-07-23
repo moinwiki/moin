@@ -22,7 +22,7 @@
     <ul>
         {% set navibar_items = theme_supp.navibar(item_name) %}
         {% if navibar_items %}
-            <li>Links
+            <li class="panel">Links
             <ul>
             {% for cls, url, text, title in navibar_items %}
                 <li class="{{ cls }}">
@@ -56,7 +56,7 @@
             </ul>
         </li>
         {% endif %}
-        <li id="moin-user">User
+        <li id="moin-user" class="panel">User
         <ul>
         {% if user.valid -%}
 	    {% set avatar = user.avatar(20) %}
