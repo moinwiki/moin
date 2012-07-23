@@ -81,6 +81,20 @@ input, select { vertical-align: middle; }
 #moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
 #moin-content div.caution,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{color:#000;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;border:1px solid #e5e5e5;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both;}
 #moin-content div.caution p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
+/* wiki parser  - no moin- prefix added here, these classes are used within pages: {{{#!wiki solid  */
+.comment { color: #555; background-color: #DDF; }
+.red { background-color: #FCC; }
+.green { background-color: #CFC; }
+.blue { background-color: #CCF; }
+.yellow { background-color: #FFF29F; }
+.orange { background-color: #FFD59B; }
+.solid { border: 2px solid #000; padding: 2px; clear: both; }
+.dashed { border: 2px dashed #AEBDCC; padding: 2px; clear: both; }
+.dotted { border: 2px dotted #AEBDCC; padding: 2px; clear: both; }
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.justify { text-align: justify; }
 html{color:#000;font-family:sans-serif}
 div,p{margin:1em 0}
 sub{vertical-align:sub}
@@ -300,19 +314,6 @@ ul.moin-tags li.weight6{font-size:140%}
 ul.moin-tags li.weight7{font-size:160%}
 ul.moin-tags li.weight8{font-size:180%}
 ul.moin-tags li.weight9{font-size:200%}
-.comment{color:#555;background-color:#ddf}
-.red{background-color:#fcc}
-.green{background-color:#cfc}
-.blue{background-color:#ccf}
-.yellow{background-color:#fff29f}
-.orange{background-color:#ffd59b}
-.solid{border:2px solid #000;padding:2px;clear:both}
-.dashed{border:2px dashed #aebdcc;padding:2px;clear:both}
-.dotted{border:2px dotted #aebdcc;padding:2px;clear:both}
-.left{text-align:left}
-.center{text-align:center}
-.right{text-align:right}
-.justify{text-align:justify}
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em}
