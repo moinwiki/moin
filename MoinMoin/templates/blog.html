@@ -1,11 +1,29 @@
 {% extends theme("blog_layout.html") %}
 
+{% set no_entries_msg = _("There are no entries in this blog.") %}
+{% if supertag %}
+    {% set no_entries_msg = _("There are no entries in the \"%(supertag)s\" blog category.", supertag=supertag) %}
+{% endif %}
+
+{% block pagepath %}
+    {{ super() }}
+    {% if supertag %}
+        <span class="sep">/</span>
+        {{ _("Category:") }}
+        {% if blog_name %}
+            <a href="{{ url_for('frontend.show_blog', item_name=blog_name, supertag=supertag) }}">{{ supertag }}</a>
+        {% else %}
+            {{ supertag }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
 {% block blog_content %}
     {% if blog_entry_items %}
         {% for entry_item in blog_entry_items %}
             {{ show_blog_entry(entry_item) }}
         {% endfor %}
     {% else %}
-        {{ _("There are no entries in this blog.") }}
+        {{ no_entries_msg }}
     {% endif %}
 {% endblock %}
