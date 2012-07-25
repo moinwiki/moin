@@ -397,7 +397,7 @@ ul.moin-tags li.weight9{font-size:200%}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png")}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");background-color:#f1f3dc}
 .moin-flash-error{background-image:url("../img/smileys/icon-error.png");background-color:#f1dadc}
-@media screenprojection{body{background-color:#f3f7fd}
+body{background-color:#f3f7fd}
 #moin-page{margin:0;padding:0;display:table;width:100%;table-layout:fixed}
 #moin-content{background:#fff;overflow:hidden;box-shadow:1px 1px 33px -11px inset;padding:8px 25px;display:table-cell}
 a:link{color:#47f;text-decoration:none}
@@ -468,7 +468,7 @@ div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
 a.moin-permalink{color:#95a09f}
 a:hover.moin-permalink{color:#c1cfcd}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
-}@media print{html{font-family:serif;font-size:12pt;width:100%}
+@media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-page,#moin-content-data{margin:0;padding:0}
 a,a:visited,a.moin-nonexistent{color:#000;text-decoration:none}
 a.moin-interwiki:before{content:attr(title) ":"}
