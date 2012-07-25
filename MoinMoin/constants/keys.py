@@ -82,10 +82,10 @@ RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
 
 # keys for blog homepages
-LOGO = "logo"
-SUPERTAGS = "supertags"
-# keys for blog posts
-PTIME = "ptime"
+LOGO = u"logo"
+SUPERTAGS = u"supertags"
+# keys for blog entries
+PTIME = u"ptime"
 
 # index names
 LATEST_REVS = 'latest_revs'

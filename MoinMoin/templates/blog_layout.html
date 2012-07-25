@@ -10,8 +10,13 @@
     <h1><a href="{{ url_for('frontend.show_item', item_name=entry_item.name) }}"
         title="{{ title }}" class="moin-blog-entry-link">{{ title }}</a></h1>
     <div class="moin-blog-entry-info">
-        {{ _("Published on") }} {{ entry_item.meta['ptime']|datetimeformat }}
-        {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
+        {% set publish_time = entry_item.meta['ptime'] %}
+        {% if publish_time %}
+            {{ _("Published on") }} {{ entry_item.meta['ptime']|datetimeformat }}
+            {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
+        {% else %}
+            {{ _("It is not published yet.") }}
+        {% endif %}
     </div>
     <div class="moin-blog-entry-content">
         {{ entry_item._render_data()|safe }} {# rendered blog entry content #}
@@ -35,12 +40,12 @@
     </div>
 {% endmacro %}
 
-{% macro widget_categories(categories) %}
+{% macro widget_supertags(blog_name, supertags) %}
     <div id="moin-blog-categories">
         <h2>{{ _("Categories") }}</h2>
         <ul>
-            {% for category in categories %}
-                <li><a href="{{ url_for('frontend.tagged_items', tag=category) }}">{{ category }}</a></li>
+            {% for supertag in supertags %}
+                <li><a href="{{ url_for('frontend.show_blog', item_name=blog_name, supertag=supertag) }}">{{ supertag }}</a></li>
             {% endfor %}
         </ul>
     </div>
@@ -48,7 +53,8 @@
 
 {% if blog_item %}
     {% set blog_header = blog_item._render_data()|safe %}
-    {% set categories = blog_item.meta['supertags'] %}
+    {% set blog_name = blog_item.name %}
+    {% set supertags = blog_item.meta['supertags'] %}
 {% endif %}
 
 {% block content %}
@@ -62,11 +68,11 @@
             <div id="moin-blog-content">
             {% block blog_content %}<br />{% endblock %}
             </div>
-            {% if categories %}
+            {% if blog_name and supertags %}
                 <div id="moin-blog-sidebar">
-                    {{ widget_categories(categories) }}
+                    {{ widget_supertags(blog_name, supertags) }}
                 </div>
-            {% endif %} 
+            {% endif %}
         </div>
     {% endblock %}
 {% endblock %}

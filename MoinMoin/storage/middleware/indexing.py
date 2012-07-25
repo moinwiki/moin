@@ -271,11 +271,11 @@ class IndexingMiddleware(object):
         }
         latest_revs_fields.update(**userprofile_fields)
 
-        blogpost_fields = {
+        blog_entry_fields = {
             # publish time from metadata (converted to UTC datetime)
             PTIME: DATETIME(stored=True)
         }
-        latest_revs_fields.update(**blogpost_fields)
+        latest_revs_fields.update(**blog_entry_fields)
 
         all_revs_fields = {
             ITEMID: ID(stored=True),
