@@ -305,7 +305,7 @@ table.navigation
     display inline
 
 .moin-disabled
-    color gray
+    color footer_color
 
 .moin-rev-navigation-current
     font-size 1.5em
@@ -325,6 +325,10 @@ table.navigation
     content '*'
     color footer_color
 
+#moin-usersettings
+    a
+        color link_color
+
 .moin-tab-titles
     margin 0
     padding -10px 0 0
@@ -340,7 +344,7 @@ table.navigation
 .moin-tab-titles a
     display inline-block
     padding 4px
-    background-color page_color
+    background-color table_bg_color
     border-width 1px 1px 0
     border-style solid
     border-color border_color
@@ -552,7 +556,7 @@ p.searchhint
 .moin-select-all
     padding 0.5em
     color link_color
-    background page_color
+    background table_bg_color
     border border_style
     text-align left
 
@@ -560,7 +564,7 @@ p.searchhint
     position relative
     margin 0 1em
     padding 0
-    background page_color
+    background table_bg_color
     z-index 2
     white-space nowrap
     color link_color
@@ -691,7 +695,7 @@ p.searchhint
     position relative
     margin 0
     color link_color
-    background page_color
+    background table_bg_color
     border border_style
     min-width 12em
     text-align left
@@ -1024,6 +1028,7 @@ a.moin-nonexistent:hover
     margin 0px
     padding 0px
     background header_bg_color
+    color heading_color
     line-height 1.12em
 
 #moin-searchform
@@ -1088,7 +1093,9 @@ a.moin-nonexistent:hover
     margin 0px 12px 4px 12px
     padding 0
     font-size 0.82em
-    
+    a
+        color heading_color
+
 #moin-username input:hover
     color hover_color
 
@@ -1106,7 +1113,13 @@ a.moin-nonexistent:hover
     margin 0 0.88em 0.25em 12px
     padding 0
     font-size 0.88em
-    
+    a
+        color heading_color
+        
+.moin-pagepath
+    a
+        color heading_color !important
+
 #moin-navibar
     clear both
     display block
@@ -1269,7 +1282,9 @@ a.moin-nonexistent:hover
     text-align left
     font-size 0.7em
     color footer_color
-    
+    a
+        color footer_color
+
 #moin-timings li
     display inline-block
     margin 0 20px 0 0
