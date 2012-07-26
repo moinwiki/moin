@@ -261,7 +261,7 @@ table.navigation{background:#fff;float:right;margin:2px}
 #moin-usersettings a{color:#708090}
 .moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
 .moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
-.moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#708090}
+.moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#708090;border-top-left-radius:7px;border-top-right-radius:7px}
 .moin-tab-titles a:hover{background-color:#eef1f6;text-decoration:none}
 .moin-tab-titles a.current{background:#d8dfe9;padding-top:8px;margin-top:-4px}
 .moin-tab-titles .change-indicator{font-weight:bold;color:#1f9ae0}
@@ -429,7 +429,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-pagetrail a{color:#fff}
 .moin-pagepath a{color:#fff !important}
 #moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em}
-#moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em}
+#moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em;border-top-left-radius:5px;border-top-right-radius:5px}
 #moin-navibar li.wikilink{background:#eef1f6}
 #moin-navibar li.userlink{background:#eef1f6}
 #moin-navibar a,#moin-navibar a:visited{color:#000;text-decoration:none}
