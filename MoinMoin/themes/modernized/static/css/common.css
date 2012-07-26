@@ -190,19 +190,19 @@ ins{background-color:#fff;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
 .moin-integer{text-align:right;padding-right:1em}
-h1{font-size:2em;margin:.67em 0;border-bottom:5px solid #4d7da9;padding-bottom:5px}
+h1{font-size:2em;margin:.67em 0;border-bottom:5px solid #4e7da9;padding-bottom:5px}
 h2{font-size:1.5em;margin:.75em 0;padding-bottom:4px}
 h3{font-size:1.17em;margin:.83em 0;padding-bottom:3px}
 h4{margin:1.12em 0;padding-bottom:2px}
 h5{font-size:.83em;margin:1.5em 0;padding-bottom:2px}
 h6{font-size:.75em;margin:1.67em 0;padding-bottom:2px}
-h2,h3,h4,h5,h6{border-bottom:3px solid #4d7da9}
+h2,h3,h4,h5,h6{border-bottom:3px solid #4e7da9}
 a{text-decoration:none}
-a:link{color:#00f}
-a:visited{color:#800080}
-a:hover{color:#f00}
-a:active{color:#f00}
-a.moin-nonexistent:visited,a.moin-nonexistent{color:#444}
+a:link{color:#708090}
+a:visited{color:#88c2b5}
+a:hover{color:#1f9ae0}
+a:active{color:#51d443}
+a.moin-nonexistent:visited,a.moin-nonexistent{color:#939393}
 ol,ul{margin-left:3em}
 ol ol,ul ul,ol ul,ul ol{margin-left:2em}
 li p{margin:.25em 0}
@@ -217,38 +217,38 @@ dt{margin-top:.5em;font-weight:bold}
 dd{font-size:.92em;margin-left:40px;margin-top:0;margin-bottom:0}
 dd p{margin:.25em 0}
 dd + dd p{margin-top:.67em}
-hr{height:1px;background-color:#9c9c9c;border:0;margin:.9em 0}
+hr{height:1px;background-color:#4e7da9;border:0;margin:.9em 0}
 .moin-hr1{height:2px}
 .moin-hr2{height:3px}
 .moin-hr3{height:5px}
 .moin-hr4{height:7px}
 .moin-hr5{height:9px}
 .moin-hr6{height:12px}
-.moin-error{color:#f00;background:#ddd;padding:4px}
-.moin-highlight{background-color:#cce0ff;padding:1px}
-pre{border:1px solid #aebdcc;background-color:#f3f5f7;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre}
-pre.comment{background-color:#ccc;color:#f00;padding:0;margin:0;border:0}
+.moin-error{color:#ff2727;background:#eef1f6;padding:4px}
+.moin-highlight{background-color:#d8dfe9;padding:1px}
+pre{border:1px solid #4e7da9;background-color:#dfdfdf;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre}
+pre.comment{background-color:#708090;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
 .monospaced{font-family:monospace}
 table{margin:.5em;border-collapse:collapse}
 th,td{padding:.3em .4em;vertical-align:middle;text-align:left}
-th{border:1px solid #4d7da9;background-color:#81bbf2}
-td{border:1px solid #adb9cc}
+th{border:1px solid #4e7da9;background-color:#708090}
+td{border:1px solid #4e7da9}
 td p{margin:0;padding:0}
 table.zebra{border:none;border-collapse:separate;border-spacing:1px}
-.zebra thead{background-color:#81bbf2}
-.zebra tfoot{background-color:#c4d9ff}
+.zebra thead{background-color:#708090}
+.zebra tfoot{background-color:#dfdfdf}
 .zebra th,.zebra td{border:none}
-.zebra tbody tr,.zebra > tr{background-color:#eef1f5}
-.zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d9dfe8}
-div.moin-table-of-contents{border:1px solid #bbb;color:#000;background:#fff;font-size:80%;margin:.5em 0 .75em 1em;padding:.5em .75em .5em .5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #679;border-radius:15px}
+.zebra tbody tr,.zebra > tr{background-color:#eef1f6}
+.zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d8dfe9}
+div.moin-table-of-contents{border:1px solid #4e7da9;color:#000;background:#fff;font-size:80%;margin:.5em 0 .75em 1em;padding:.5em .75em .5em .5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #9d9d9b;border-radius:15px}
 .moin-table-of-contents ol{margin:0;padding:0 0 0 .92em}
 .moin-table-of-contents li{margin:.12em 0 0 0;padding:0;list-style:none}
 .moin-table-of-contents-heading{font-weight:bold;padding:0;margin:0 0 .5em 1em;letter-spacing:.075em}
 .moin-showhide{margin-left:10px}
 table.navigation{background:#fff;float:right;margin:2px}
 .moin-footnote a,.moin-footnotes sup a{font-size:.87em}
-.moin-footnotes{border-top:1px solid #808080;margin:0 1em}
+.moin-footnotes{border-top:1px solid #4e7da9;margin:0 1em}
 .moin-footnotes p{margin:0 0 .33em 1em;font-size:.92em}
 #moin-rev-navigation{list-style:none;text-align:center}
 #moin-rev-navigation li{display:inline}
@@ -257,29 +257,29 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
 .moin-form dd{margin-bottom:1em}
 .moin-form dd input{width:20em}
-.moin-form dt label.required:after{content:'*';color:#808080}
-.moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4d7da9}
-.moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4d7da9}
-.moin-tab-titles a{display:inline-block;padding:4px;background-color:#81bbf2;border-width:1px 1px 0;border-style:solid;border-color:#4d7da9;color:#222}
-.moin-tab-titles a:hover{background-color:#4d7da9;text-decoration:none}
-.moin-tab-titles a.current{background:#4d7da9;padding-top:8px;margin-top:-4px}
-.moin-tab-titles .change-indicator{font-weight:bold;color:#d22}
+.moin-form dt label.required:after{content:'*';color:#737373}
+.moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
+.moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
+.moin-tab-titles a{display:inline-block;padding:4px;background-color:#fff;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#708090}
+.moin-tab-titles a:hover{background-color:#eef1f6;text-decoration:none}
+.moin-tab-titles a.current{background:#d8dfe9;padding-top:8px;margin-top:-4px}
+.moin-tab-titles .change-indicator{font-weight:bold;color:#1f9ae0}
 .moin-tab-title a{color:#000;text-decoration:none}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
 .searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{color:#008000;margin-left:15px;margin-top:0}
+.searchresults .searchhitinfobar{color:#939393;margin-left:15px;margin-top:0}
 .searchresults .foundtext{margin-left:15px;margin-top:0}
 p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
-p.searchhint{background-color:#e6eaf0;border:1px solid #9088dc;padding:2px}
+p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .searchpages{margin-left:auto;margin-right:auto}
-.searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#b93a58;font-weight:bold;font-size:1.05em}
+.searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#000;font-weight:bold;font-size:1.05em}
 .searchpages td a,.searchpages td a:link{text-decoration:underline}
-#f_data_text{border:1px solid #8cacbb;font-family:monospace;margin:.33em 0;padding:3px;width:100%}
-#f_comment,#f_summary,#f_textcha{border:1px solid #8cacbb;display:inline;margin:.33em 0;padding:3px;width:70%}
-#moin-editor-help{font-size:small;background-color:#eef}
-#preview{border:1px solid #6c7680;padding:10px 30px 20px 30px;background:url("../img/draft.png");margin-top:.5em}
+#f_data_text{border:1px solid #4e7da9;font-family:monospace;margin:.33em 0;padding:3px;width:100%}
+#f_comment,#f_summary,#f_textcha{border:1px solid #4e7da9;display:inline;margin:.33em 0;padding:3px;width:70%}
+#moin-editor-help{font-size:small;background-color:#eef1f6}
+#preview{border:1px solid #4e7da9;padding:10px 30px 20px 30px;background:url("../img/draft.png");margin-top:.5em}
 .moin-hist-rev input{float:left}
 .moin-hist-rev{margin:0}
 #moin-global-history,#moin-page-history{font-size:75%}
@@ -290,10 +290,10 @@ p.searchhint{background-color:#e6eaf0;border:1px solid #9088dc;padding:2px}
 .moin-history-comment{width:30%}
 .moin-action{width:2%}
 .moin-action a:hover{text-decoration:none}
-.moin-history-container{border:1px solid #4d7da9;margin:2em 0}
-.moin-history-container-header{background:#81bbf2;margin:0;padding:4px;color:#3b3131;border-bottom:1px solid #4d7da9}
+.moin-history-container{border:1px solid #4e7da9;margin:2em 0}
+.moin-history-container-header{background:#708090;margin:0;padding:4px;color:#fff;border-bottom:1px solid #4e7da9}
 .moin-history-container-header h2{display:inline;border:none}
-.moin-history-container-header a.bookmark-link{margin-left:10px;color:#3b3131}
+.moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
 .moin-history-container-body{margin:0;padding:0;font-size:14px}
 .moin-history-container-body table{margin:0;width:100%}
 .moin-history-save:before{content:url("../img/moin-edit.png")}
@@ -303,30 +303,30 @@ p.searchhint{background-color:#e6eaf0;border:1px solid #9088dc;padding:2px}
 .moin-integer{width:2%}
 .moin-history-links{width:5%}
 .moin-history-links a{display:block;margin-bottom:4px}
-.moin-history-editortext,.moin-history-links span,.moin-history-comment span{color:#544e4f;display:block;margin-bottom:5px}
+.moin-history-editortext,.moin-history-links span,.moin-history-comment span{color:#000;display:block;margin-bottom:5px}
 .moin-offset-links{float:right;margin-right:20px}
-.moin-offset-links a{margin-right:10px;padding:3px 7px;font-size:20px;background:#fff;border:1px groove #ddd;border-radius:5px}
-.moin-offset-links a:hover{box-shadow:0 0 12px #81bbf2}
+.moin-offset-links a{margin-right:10px;padding:3px 7px;font-size:20px;background:#fff;border:1px groove #4e7da9;border-radius:5px}
+.moin-offset-links a:hover{box-shadow:0 0 12px #9d9d9b}
 .moin-clr{clear:both}
-.moin-select-all{padding:.5em;color:#342d7e;background:#fff;border:1px solid #e5e5e5;text-align:left}
-.moin-select-actions{position:relative;margin:0 1em;padding:0;background:#fff;z-index:2;white-space:nowrap;color:#342d7e;text-align:left}
-.moin-select-actions div{margin:0;padding:.5em;border:1px groove #e5e5e5}
-.moin-select-actions div:hover,.action-visible div{background:#47f;color:#fff}
+.moin-select-all{padding:.5em;color:#708090;background:#fff;border:1px solid #4e7da9;text-align:left}
+.moin-select-actions{position:relative;margin:0 1em;padding:0;background:#fff;z-index:2;white-space:nowrap;color:#708090;text-align:left}
+.moin-select-actions div{margin:0;padding:.5em;border:1px groove #4e7da9}
+.moin-select-actions div:hover,.action-visible div{background:#d8dfe9;color:#1f9ae0}
 .moin-select-actions .show-action{cursor:pointer}
 .show-action:after{content:url("../img/moin-moveup.png");margin:0 .2em}
 .action-visible .show-action:after{content:url("../img/moin-movedown.png");margin:0 .2em}
 .moin-select-allitem{display:inline-block;cursor:default;text-align:left}
 .allitem-selected:after{content:url("../img/moin-checkbox-on.png");margin:0 .2em}
 .allitem-toselect:after{content:url("../img/moin-checkbox-off.png");margin:0 .2em}
-.moin-select-actions ul{position:absolute;margin:0;left:0;top:2em;padding:0;display:none;background:#fff;border:1px solid #e5e5e5;z-index:1}
+.moin-select-actions ul{position:absolute;margin:0;left:0;top:2em;padding:0;display:none;background:#fff;border:1px solid #4e7da9;z-index:1}
 .moin-select-actions ul li{display:list-item;list-style-type:none;padding:.5em;min-width:7em;cursor:pointer}
-.moin-select-actions ul li:hover{background-color:#47f;color:#fff}
+.moin-select-actions ul li:hover{background-color:#eef1f6;color:#000}
 .moin-index-message{width:50%;margin:1em auto;text-align:center;display:none}
-.moin-index-message span{padding:4px;background-color:#ff0;color:#111}
+.moin-index-message span{padding:4px;background-color:#d8dfe9;color:#000}
 .moin-download-link{display:none}
 #moin-initials{width:90%;margin:5px auto;text-align:center}
 #moin-initials a{display:inline-block;margin:0;padding:4px 5px}
-#moin-initials a:hover,#moin-initials a.selected{background:#47f;border-radius:5px;color:#fff;text-decoration:none}
+#moin-initials a:hover,#moin-initials a.selected{background:#708090;border-radius:5px;color:#fff;text-decoration:none}
 .moin-item-index{width:100%;margin-left:.5em}
 .moin-item-index div{float:left;width:15em}
 .moin-item-index div .moin-select-item{visibility:hidden;display:inline-block;width:17px;cursor:default;background:transparent url("../img/moin-checkbox-off.png") no-repeat}
@@ -335,29 +335,29 @@ p.searchhint{background-color:#e6eaf0;border:1px solid #9088dc;padding:2px}
 .moin-align-right{text-align:right;float:right}
 .moin-align-right ul{margin:0;padding:0}
 .moin-align-right ul li.action-bar{list-style-type:none;display:inline-block}
-.moin-contenttypes-wrapper{position:relative;margin:0;color:#342d7e;background:#fff;border:1px solid #e5e5e5;min-width:12em;text-align:left}
+.moin-contenttypes-wrapper{position:relative;margin:0;color:#708090;background:#fff;border:1px solid #4e7da9;min-width:12em;text-align:left}
 .moin-contenttypes-wrapper div{cursor:pointer;margin:.1em;padding:.5em 1.2em .5em .5em;height:1em}
-div.ct-shown{background:#47f url("../img/moin-movedown.png") no-repeat center right;color:#fff}
+div.ct-shown{background:#d8dfe9 url("../img/moin-movedown.png") no-repeat center right;color:#000}
 div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat center right}
-.moin-contenttypes-wrapper form{position:absolute;top:1.9em;left:0;display:none;margin:.3em 0;border-top:1px solid #e5e5e5;z-index:2;background:#fff;border:1px solid #e5e5e5}
+.moin-contenttypes-wrapper form{position:absolute;top:1.9em;left:0;display:none;margin:.3em 0;border-top:1px solid #4e7da9;z-index:2;background:#fff;border:1px solid #4e7da9}
 .moin-contenttypes-wrapper ul li{list-style-type:none;padding:.5em;min-width:11.5em}
 .moin-contenttypes-wrapper ul li label{margin-left:.5em}
-.moin-contenttypes-wrapper ul li .helper-text{font-size:.7em;color:#6e6a6b;display:none}
-.moin-contenttypes-wrapper ul li:hover{background:#e5e5e5}
+.moin-contenttypes-wrapper ul li .helper-text{font-size:.7em;color:#737373;display:none}
+.moin-contenttypes-wrapper ul li:hover{background:#eef1f6}
 .moin-contenttypes-wrapper ul li:hover .helper-text{display:block}
 .moin-contenttypes-wrapper ul li a{font-size:80%}
 .moin-contenttypes-wrapper form input[type="submit"]{margin:.4em .5em}
-.moin-contenttypes-wrapper:hover div{background-color:#47f;color:#fff}
+.moin-contenttypes-wrapper:hover div{background-color:#d8dfe9;color:#1f9ae0}
 .filter-toggle{margin:0 .2em;font-size:90%}
 .moin-more-index{background:transparent url("../img/moin-expand.png") no-repeat;display:inline-block;width:20px}
 .moin-more-index:hover{text-decoration:none}
 .moin-index-path{margin-left:.5em}
 .moin-index-path:before{content:url("../img/moin-parent.png");margin:0 .3em}
-.moin-path-separator{font-size:120%;color:#47f}
-.moin-index-separator{clear:both;border-top:1px dashed #ccc;width:80%;display:none}
+.moin-path-separator{font-size:120%;color:#708090}
+.moin-index-separator{clear:both;border-top:1px solid #4e7da9;width:80%;display:none}
 #moin-upload-cont{min-height:10px}
 #file_upload{margin-top:2em}
-form.upload_file{background-color:#47f;border:1px solid #e5e5e5;color:#e5e5e5;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #47f}
+form.upload_file{background-color:#708090;border:1px solid boredr_color;color:#e6e6e6;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
 form.upload_file:hover{color:#fff}
 form.upload_file input{-moz-transform:translate(-800px,0) scale(10);border:300px solid transparent;cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
 form.upload_file input{height:auto}
@@ -366,17 +366,17 @@ form.upload_file{display:block}
 .file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
 .file_upload_template .file_upload_start button{width:0}
 .upload-form{display:none}
-.moin-drag{font-size:.7em;color:#6c7680}
+.moin-drag{font-size:.7em;color:#737373}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #popup{background:transparent url("../img/moin-transparent-bg.png") repeat;padding:5px;width:40%;position:absolute;top:10%;left:30%;display:none;z-index:10}
-.popup-header{background-color:#47f;color:#fff;font-size:1em;padding:10px;margin:0}
-.popup-closer{color:#fff;font-size:1em;padding:1px 4px;margin:0;float:right;cursor:pointer;border:1px solid #e5e5e5}
-.popup-closer:hover{background-color:#f6f6f6;color:#47f}
-.popup-body{clear:both;background-color:#fff;color:#111;padding:10px;margin:0}
+.popup-header{background-color:#708090;color:#fff;font-size:1em;padding:10px;margin:0}
+.popup-closer{color:#fff;font-size:1em;padding:1px 4px;margin:0;float:right;cursor:pointer;border:1px solid #4e7da9}
+.popup-closer:hover{background-color:#1f9ae0;color:#e6e6e6}
+.popup-body{clear:both;background-color:#fff;color:#000;padding:10px;margin:0}
 .popup-body label{margin:5px;display:block;font-weight:bold}
-.popup-body input{margin:8px 5px;padding:3px;border:1px solid #e5e5e5}
+.popup-body input{margin:8px 5px;padding:3px;border:1px solid #4e7da9}
 .popup-body input[type="text"]{width:300px}
-.popup-body input.blank{border-color:#f00;border-width:2px}
+.popup-body input.blank{border-color:#4e7da9;border-width:2px}
 .popup-container{margin:0}
 #lightbox{background:#fff;opacity:.7;filter:alpha;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
 ul.moin-tags{list-style:none}
@@ -392,24 +392,24 @@ ul.moin-tags li.weight7{font-size:160%}
 ul.moin-tags li.weight8{font-size:180%}
 ul.moin-tags li.weight9{font-size:200%}
 #moin-flash{margin:0}
-.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#f0f2f5;border-bottom:1px solid #ccc;background-repeat:no-repeat;background-position:16px center}
+.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png")}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png")}
-.moin-flash-warning{background-image:url("../img/smileys/alert.png");background-color:#f1f3dc}
-.moin-flash-error{background-image:url("../img/smileys/icon-error.png");background-color:#f1dadc}
-body{background-color:#f3f7fd}
+.moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
+.moin-flash-error{background-image:url("../img/smileys/icon-error.png");color:#ff2727}
+body{background-color:#dfdfdf}
 #moin-main-wrapper{width:76%;min-width:700px;margin-left:auto;margin-right:auto;margin-top:0}
 #moin-page{margin:0;padding:0;display:table;width:100%;table-layout:fixed}
 #moin-content{background:#fff;overflow:hidden;box-shadow:1px 1px 33px -11px inset;padding:8px 25px;display:table-cell}
-a:link{color:#47f;text-decoration:none}
-a:visited{text-decoration:none;color:#04a}
-a:visited:hover{text-decoration:none;color:#f00}
-a:hover,a:active{text-decoration:underline;color:#008000}
-a.moin-nonexistent:link{color:#666}
-a.moin-nonexistent:hover{color:#000;text-decoration:underline}
-#moin-header{margin:0;padding:0;background:url("../img/white-clouds.jpg");line-height:1.12em}
+a:link{color:#708090;text-decoration:none}
+a:visited{text-decoration:none;color:#88c2b5}
+a:visited:hover{text-decoration:none;color:#1f9ae0}
+a:hover,a:active{text-decoration:underline;color:#1f9ae0}
+a.moin-nonexistent:link{color:#939393}
+a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
+#moin-header{margin:0;padding:0;background:#708090;line-height:1.12em}
 #moin-searchform{margin:8px .5em;padding:0;font-size:.82em;float:right;text-align:right}
-#moin-searchform input{font-size:100%;vertical-align:middle;background-color:#f3f7fd;border:1px solid #a4b9df}
+#moin-searchform input{font-size:100%;vertical-align:middle;background-color:#fff;border:1px solid #4e7da9}
 #moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-24px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer}
 #moin-searchform #moin-search-query{padding-right:20px}
 #moin-searchform div{margin:0}
@@ -418,67 +418,67 @@ a.moin-nonexistent:hover{color:#000;text-decoration:underline}
 #moin-search-query{width:50%}
 #moin-logo{float:left;margin:5px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
-#moin-logo a{color:#000;text-decoration:none}
+#moin-logo a{color:#fff;text-decoration:none}
 #moin-username{display:block;margin:0 12px 4px 12px;padding:0;font-size:.82em}
-#moin-username input:hover{color:#f00}
+#moin-username input:hover{color:#1f9ae0}
 #moin-locationline{padding:0;font-size:100%;font-weight:normal;margin:.25em 12px 5px 12px}
 #moin-pagelocation{font-size:1.5em;letter-spacing:.05em}
 #moin-pagetrail{margin:0 .88em .25em 12px;padding:0;font-size:.88em}
 #moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em}
-#moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #a4b9df;border-bottom:none;white-space:nowrap;font-size:.88em}
-#moin-navibar li.wikilink{background:#f3f7fd}
-#moin-navibar li.userlink{background:#c4d9ff}
+#moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em}
+#moin-navibar li.wikilink{background:#eef1f6}
+#moin-navibar li.userlink{background:#eef1f6}
 #moin-navibar a,#moin-navibar a:visited{color:#000;text-decoration:none}
-#moin-navibar li:hover{background:#a4b9df}
-#moin-pageline{clear:both;margin:0;padding:0;width:100%;height:4px;border-bottom:1px solid #4d7da9;border-top:1px solid #4d7da9;background:#81bbf2}
-.moin-itemviews{clear:both;display:block;margin:0;padding:2px 8px;background:#c4d9ff;font-size:.8em;border-bottom:1px solid #4d7da9;border-top:1px solid #4d7da9;margin-top:-1px}
+#moin-navibar li:hover{background:#d8dfe9}
+#moin-pageline{clear:both;margin:0;padding:0;width:100%;height:4px;border-bottom:1px solid #fff;border-top:1px solid #fff;background:#fff}
+.moin-itemviews{clear:both;display:block;margin:0;padding:2px 8px;background:#708090;font-size:.8em;border-bottom:1px solid #4e7da9;border-top:1px solid #4e7da9;margin-top:-1px}
 .moin-itemviews li{display:inline-block;padding:0;margin:4px 6px;line-height:1em}
-.moin-itemviews a,.moin-itemviews a:visited{color:#0044b3}
+.moin-itemviews a,.moin-itemviews a:visited{color:#e6e6e6}
 .moin-itemviews a:hover{text-decoration:underline}
 .moin-itemviews form,.moin-itemviews form div{display:inline;margin:0}
 .moin-itemviews select{font-size:100%;vertical-align:middle}
-.moin-subitem-navigation{padding:2px 4px;background:#c4d9ff;margin:0;vertical-align:top;font-size:.8em;width:14em;overflow:hidden;display:table-cell;word-wrap:break-word}
+.moin-subitem-navigation{padding:2px 4px;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:14em;overflow:hidden;display:table-cell;word-wrap:break-word}
 .moin-subitem-navigation .list-header{margin:2px 0;padding:0;font-size:1.1em}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation ul{display:block;margin:0;padding:0 4px}
 .moin-subitem-navigation li{padding:.5em 2px;line-height:1em;list-style:none}
-.moin-subitem-navigation li:hover{background:#4d7da9}
-.moin-subitem-navigation a{color:#0044b3}
+.moin-subitem-navigation li:hover{background:#eef1f6}
+.moin-subitem-navigation a{color:#708090}
 .moin-subitem-navigation a:hover{text-decoration:underline}
-.moin-subitem-navigation li ul{border-left:1px dotted #808080;display:none}
+.moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
 .link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer}
 .moin-subitem-navigation .link-action{background:url("../img/moin-link.png") no-repeat center center}
 .moin-subitem-navigation .transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
 #moin-footer{clear:both;margin:0 0}
-#moin-footer hr{margin:0;background-color:#ccc}
-#moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#6c7680}
+#moin-footer hr{margin:0;background-color:#4e7da9}
+#moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373}
 #moin-timings li{display:inline-block;margin:0 20px 0 0}
 #moin-credits span{display:inline-block;margin:0 5px}
 #moin-creditlogos{float:right;list-style:none;margin:0 10px}
 #moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
-.moin-item-wrapper > a:hover{color:#00f;text-decoration:none}
+.moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
 a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#00f;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
 .moin-item-overlay-lr{bottom:-4px;right:-4px;border-width:0 3px 3px 0}
-.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#c4d9ff;color:#00f}
+.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:table_bg_colot;color:#1f9ae0}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
 .moin-permalink{display:none;cursor:pointer;font-size:80%;margin-left:3px}
-a.moin-permalink{color:#95a09f}
-a:hover.moin-permalink{color:#c1cfcd}
+a.moin-permalink{color:#939393}
+a:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 @media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-page,#moin-content-data{margin:0;padding:0}
-a,a:visited,a.moin-nonexistent{color:#000;text-decoration:none}
+a,a:visited,a.moin-nonexistent{color:#939393;text-decoration:none}
 a.moin-interwiki:before{content:attr(title) ":"}
 a.moin-interwiki img{display:none}
 pre{font-size:10pt}
 div.moin-table-of-contents{box-shadow:none}
 a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation{display:none}
-#moin-pageinfo{color:#808080;font-size:.67em;float:right}
-#moin-pageinfo a{color:#808080}
+#moin-pageinfo{color:#737373;font-size:.67em;float:right}
+#moin-pageinfo a{color:#737373}
 }@media projection{html{line-height:1.8em}
 body,b,em,a,span,div,p,td{font-size:18pt}
 h1{font-size:26pt}
