@@ -398,6 +398,7 @@ ul.moin-tags li.weight9{font-size:200%}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");background-color:#f1f3dc}
 .moin-flash-error{background-image:url("../img/smileys/icon-error.png");background-color:#f1dadc}
 body{background-color:#f3f7fd}
+#moin-main-wrapper{width:76%;min-width:700px;margin-left:auto;margin-right:auto;margin-top:0}
 #moin-page{margin:0;padding:0;display:table;width:100%;table-layout:fixed}
 #moin-content{background:#fff;overflow:hidden;box-shadow:1px 1px 33px -11px inset;padding:8px 25px;display:table-cell}
 a:link{color:#47f;text-decoration:none}
