@@ -15,6 +15,9 @@
 // user styles used by moin wiki parser (and maybe others) like red/green/solid/dashed/comment...
 @import "userstyles.css"
 
+// color have been used from the color palette 
+@import "color_palette"
+
 // mime type icons
 @import "mime_type_icons"
 
@@ -25,7 +28,7 @@
 @import "pygments_default.css"
 
 html
-    color black
+    color font_color
     font-family sans-serif
 
 div, p
@@ -38,7 +41,7 @@ sup
     vertical-align super
 
 ins
-    background-color #FFF
+    background-color page_color
     text-decoration underline
 
 .moin-big
@@ -54,7 +57,7 @@ ins
 h1
     font-size 2em
     margin .67em 0
-    border-bottom 5px solid #4D7DA9
+    border-bottom 5px solid border_color
     padding-bottom 5px
 
 h2
@@ -82,26 +85,26 @@ h6
     padding-bottom 2px
 
 h2,h3,h4,h5,h6
-    border-bottom 3px solid #4D7DA9
+    border-bottom 3px solid border_color
 
 a
     text-decoration none
 
 a:link
-    color blue
+    color link_color
 
 a:visited
-    color purple
+    color visited_color
 
 a:hover
-    color red
+    color hover_color
 
 a:active
-    color red
+    color active_color
 
 a.moin-nonexistent:visited,
 a.moin-nonexistent
-    color #444
+    color nonexistent_link_color
 
 ol, ul
     margin-left 3em
@@ -151,7 +154,7 @@ dd + dd p
 
 hr
     height 1px
-    background-color #9C9C9C
+    background-color border_color
     border 0
     margin .9em 0
 
@@ -174,17 +177,17 @@ hr
     height 12px
 
 .moin-error
-    color red
-    background #DDD
+    color error_color
+    background table_bg_color
     padding 4px
 
 .moin-highlight
-    background-color #CCE0FF
+    background-color table_row_color
     padding 1px
 
 pre
-    border 1px solid #AEBDCC
-    background-color #F3F5F7
+    border border_style
+    background-color base_color
     padding 5px
     clear both
     font-family monospace
@@ -192,8 +195,8 @@ pre
     white-space pre
 
 pre.comment
-    background-color #CCC
-    color red
+    background-color header_bg_color
+    color heading_color
     padding 0
     margin 0
     border 0
@@ -214,11 +217,11 @@ th, td
     text-align left
 
 th
-    border 1px solid #4D7DA9
-    background-color #81BBF2
+    border border_style
+    background-color header_bg_color
 
 td
-    border 1px solid #ADB9CC
+    border border_style
 
 td p
     margin 0
@@ -230,24 +233,24 @@ table.zebra
     border-spacing 1px
 
 .zebra thead
-    background-color #81BBF2
+    background-color header_bg_color
 
 .zebra tfoot
-    background-color #C4D9FF
+    background-color base_color
 
 .zebra th, .zebra td
     border none
 
 .zebra tbody tr, .zebra > tr
-    background-color #EEF1F5
+    background-color table_bg_color
 
 .zebra tbody tr:nth-child(odd), .zebra > tr:nth-child(odd)
-    background-color #D9DFE8
+    background-color table_row_color
 
 div.moin-table-of-contents
-    border 1px solid #BBB
-    color black
-    background #fff
+    border border_style
+    color font_color
+    background page_color
     font-size 80%
     margin 0.5em 0 0.75em 1em
     padding 0.5em 0.75em 0.5em 0.5em
@@ -256,7 +259,7 @@ div.moin-table-of-contents
     text-align left
     float right
     clear both
-    box-shadow 3px 3px 6px #679
+    box-shadow 3px 3px 6px shadow_color
     border-radius 15px
 
 .moin-table-of-contents ol
@@ -278,7 +281,7 @@ div.moin-table-of-contents
     margin-left 10px
 
 table.navigation
-    background #FFF
+    background page_color
     float right
     margin 2px
 
@@ -287,7 +290,7 @@ table.navigation
     font-size .87em
 
 .moin-footnotes
-    border-top 1px solid gray
+    border-top border_style
     margin 0 1em
 
 .moin-footnotes p
@@ -320,44 +323,44 @@ table.navigation
 
 .moin-form dt label.required:after
     content '*'
-    color gray
+    color footer_color
 
 .moin-tab-titles
     margin 0
     padding -10px 0 0
     list-style none
-    border-bottom 3px solid #4D7DA9
+    border-bottom 3px solid border_color
 
 .moin-tab-titles li
     display inline-block
     margin 10px 0 -3px
     padding 0 5px
-    border-bottom 3px solid #4D7DA9
+    border-bottom 3px solid border_color
 
 .moin-tab-titles a
     display inline-block
     padding 4px
-    background-color #81BBF2
+    background-color page_color
     border-width 1px 1px 0
     border-style solid
-    border-color #4D7DA9
-    color #222
+    border-color border_color
+    color link_color
 
 .moin-tab-titles a:hover
-    background-color #4D7DA9
+    background-color table_bg_color
     text-decoration none
 
 .moin-tab-titles a.current
-    background #4D7DA9
+    background table_row_color
     padding-top 8px
     margin-top -4px
 
 .moin-tab-titles .change-indicator
     font-weight bold
-    color #D22
+    color hover_color
 
 .moin-tab-title a
-    color #000
+    color font_color
     text-decoration none
 
 .searchresults dt
@@ -375,7 +378,7 @@ table.navigation
     margin-left 2%
 
 .searchresults .searchhitinfobar
-    color #008000
+    color nonexistent_link_color
     margin-left 15px
     margin-top 0
 
@@ -390,8 +393,8 @@ p.searchstats
     padding 2px
 
 p.searchhint
-    background-color #E6EAF0
-    border 1px solid #9088DC
+    background-color table_bg_color
+    border border_style
     padding 2px
 
 .searchpages
@@ -405,7 +408,7 @@ p.searchhint
     margin 0
     text-align center
     vertical-align middle
-    color #b93a58
+    color font_color
     font-weight bold
     font-size 1.05em
 
@@ -414,7 +417,7 @@ p.searchhint
     text-decoration underline
 
 #f_data_text
-    border 1px solid #8cacbb
+    border border_style
     font-family monospace
     margin .33em 0
     padding 3px
@@ -423,7 +426,7 @@ p.searchhint
 #f_comment,
 #f_summary,
 #f_textcha
-    border 1px solid #8cacbb
+    border border_style
     display inline
     margin .33em 0
     padding 3px
@@ -431,10 +434,10 @@ p.searchhint
 
 #moin-editor-help
     font-size small
-    background-color #EEEEFF
+    background-color table_bg_color
 
 #preview
-    border 1px solid #6C7680
+    border border_style
     padding 10px 30px 20px 30px
     background url(../img/draft.png)
     margin-top 0.5em
@@ -472,15 +475,15 @@ p.searchhint
     text-decoration none
 
 .moin-history-container
-    border 1px solid #4D7DA9
+    border border_style
     margin 2em 0
 
 .moin-history-container-header
-    background #81BBF2
+    background header_bg_color
     margin 0px
     padding 4px
-    color #3b3131
-    border-bottom 1px solid #4D7DA9
+    color heading_color
+    border-bottom border_style
 
 .moin-history-container-header h2
     display inline
@@ -488,7 +491,7 @@ p.searchhint
 
 .moin-history-container-header a.bookmark-link
     margin-left 10px
-    color #3b3131
+    color heading_color
 
 .moin-history-container-body
     margin 0
@@ -524,7 +527,7 @@ p.searchhint
 .moin-history-editortext,
 .moin-history-links span,
 .moin-history-comment span
-    color #544E4F
+    color font_color
     display block
     margin-bottom 5px
 
@@ -536,42 +539,42 @@ p.searchhint
     margin-right 10px
     padding 3px 7px
     font-size 20px
-    background #FFFFFF
-    border 1px groove #DDD
+    background page_color
+    border 1px groove border_color
     border-radius 5px
 
 .moin-offset-links a:hover
-    box-shadow 0px 0px 12px #81BBF2
+    box-shadow 0px 0px 12px shadow_color
 
 .moin-clr
     clear both
 
 .moin-select-all
     padding 0.5em
-    color #342D7E
-    background #FFFFFF
-    border 1px solid #E5E5E5
+    color link_color
+    background page_color
+    border border_style
     text-align left
 
 .moin-select-actions
     position relative
     margin 0 1em
     padding 0
-    background #FFFFFF
+    background page_color
     z-index 2
     white-space nowrap
-    color #342D7E
+    color link_color
     text-align left
 
 .moin-select-actions div
     margin 0
     padding 0.5em
-    border 1px groove #E5E5E5
+    border 1px groove border_color
 
 .moin-select-actions div:hover,
 .action-visible div
-    background #4477FF
-    color #FFFFFF
+    background table_row_color
+    color hover_color
 
 .moin-select-actions .show-action
     cursor pointer
@@ -604,8 +607,8 @@ p.searchhint
     top 2em
     padding 0
     display none
-    background #fff
-    border 1px solid #E5E5E5
+    background page_color
+    border border_style
     z-index 1
 
 .moin-select-actions ul li
@@ -616,8 +619,8 @@ p.searchhint
     cursor pointer
 
 .moin-select-actions ul li:hover
-    background-color #4477FF
-    color #FFFFFF
+    background-color table_bg_color
+    color font_color
 
 .moin-index-message
     width 50%
@@ -627,8 +630,8 @@ p.searchhint
 
 .moin-index-message span
     padding 4px
-    background-color #FFFF00
-    color #111111
+    background-color table_row_color
+    color font_color
 
 .moin-download-link
     display none
@@ -645,9 +648,9 @@ p.searchhint
 
 #moin-initials a:hover,
 #moin-initials a.selected
-    background #4477FF
+    background link_color
     border-radius 5px
-    color #FFFFFF
+    color heading_color
     text-decoration none
 
 .moin-item-index
@@ -687,9 +690,9 @@ p.searchhint
 .moin-contenttypes-wrapper
     position relative
     margin 0
-    color #342D7E
-    background #FFFFFF
-    border 1px solid #E5E5E5
+    color link_color
+    background page_color
+    border border_style
     min-width 12em
     text-align left
 
@@ -700,8 +703,8 @@ p.searchhint
     height 1em
 
 div.ct-shown
-    background #4477FF url("../img/moin-movedown.png") no-repeat center right
-    color #FFFFFF
+    background table_row_color url("../img/moin-movedown.png") no-repeat center right
+    color font_color
 
 div.ct-hide
     background transparent url("../img/moin-moveup.png") no-repeat center right
@@ -712,10 +715,10 @@ div.ct-hide
     left 0
     display none
     margin 0.3em 0
-    border-top 1px solid #E5E5E5
+    border-top border_style
     z-index 2
-    background #FFFFFF
-    border 1px solid #E5E5E5
+    background page_color
+    border border_style
 
 .moin-contenttypes-wrapper ul li
     list-style-type none
@@ -727,11 +730,11 @@ div.ct-hide
 
 .moin-contenttypes-wrapper ul li .helper-text
     font-size 0.7em
-    color #6E6A6B
+    color footer_color
     display none
 
 .moin-contenttypes-wrapper ul li:hover
-    background #E5E5E5
+    background table_bg_color
 
 .moin-contenttypes-wrapper ul li:hover .helper-text
     display block
@@ -743,8 +746,8 @@ div.ct-hide
     margin 0.4em 0.5em
 
 .moin-contenttypes-wrapper:hover div
-    background-color #4477FF
-    color #FFFFFF
+    background-color table_row_color
+    color hover_color
 
 .filter-toggle
     margin 0 0.2em
@@ -767,11 +770,11 @@ div.ct-hide
 
 .moin-path-separator
     font-size 120%
-    color #4477FF
+    color link_color
 
 .moin-index-separator
     clear both
-    border-top 1px dashed #CCCCCC
+    border-top border_style
     width 80%
     display none
 
@@ -782,9 +785,9 @@ div.ct-hide
     margin-top 2em
 
 form.upload_file
-    background-color #4477FF
-    border 1px solid #e5e5e5
-    color #E5E5E5
+    background-color header_bg_color
+    border 1px solid boredr_color
+    color panel_item_color
     cursor pointer
     direction ltr
     font-weight bold
@@ -794,10 +797,10 @@ form.upload_file
     position relative
     text-align center
     width 15em
-    box-shadow 0px 0px 5px #4477FF
+    box-shadow 0px 0px 5px header_bg_color
 
 form.upload_file:hover
-    color #FFFFFF
+    color heading_color
 
 form.upload_file input
     -moz-transform translate(-800px, 0pt) scale(10)
@@ -832,7 +835,7 @@ form.upload_file
 
 .moin-drag
     font-size 0.7em
-    color #6C7680
+    color footer_color
 
 a.moin-conflict:before
     content url(../img/moin-conflict.png)
@@ -849,29 +852,29 @@ a.moin-conflict:before
     z-index 10
 
 .popup-header
-    background-color #4477FF
-    color #FFFFFF
+    background-color header_bg_color
+    color heading_color
     font-size 1em
     padding 10px
     margin 0
 
 .popup-closer
-    color #FFFFFF
+    color heading_color
     font-size 1em
     padding 1px 4px
     margin 0
     float right
     cursor pointer
-    border 1px solid #E5E5E5
+    border border_style
 
 .popup-closer:hover
-    background-color #F6F6F6
-    color #4477FF
+    background-color hover_color
+    color panel_item_color
 
 .popup-body
     clear both
-    background-color #FFFFFF
-    color #111111
+    background-color page_color
+    color font_color
     padding 10px
     margin 0
 
@@ -883,20 +886,20 @@ a.moin-conflict:before
 .popup-body input
     margin 8px 5px
     padding 3px
-    border 1px solid #E5E5E5
+    border border_style
 
 .popup-body input[type="text"]
     width 300px
 
 .popup-body input.blank
-    border-color #FF0000
+    border-color border_color
     border-width 2px
 
 .popup-container
     margin 0
 
 #lightbox
-    background #FFFFFF
+    background page_color
     opacity 0.7
     filter alpha
     position absolute
@@ -950,8 +953,8 @@ ul.moin-tags li.weight9
 .moin-flash
     margin 0
     padding 6px 6px 6px 38px
-    background-color #f0f2f5
-    border-bottom 1px solid #ccc
+    background-color table_row_color
+    border-bottom border_style
     background-repeat no-repeat
     background-position 16px center
 
@@ -963,14 +966,14 @@ ul.moin-tags li.weight9
 
 .moin-flash-warning
     background-image url(../img/smileys/alert.png)
-    background-color #f1f3dc
+    color error_color
 
 .moin-flash-error
     background-image url(../img/smileys/icon-error.png)
-    background-color #f1dadc
+    color error_color
 
 body
-    background-color #F3F7FD
+    background-color base_color
 
 #moin-main-wrapper
     width 76%
@@ -987,40 +990,40 @@ body
     table-layout fixed
 
 #moin-content
-    background #FFF
+    background page_color
     overflow hidden
     box-shadow 1px 1px 33px -11px inset
     padding 8px 25px
     display table-cell
 
 a:link
-    color #47F
+    color link_color
     text-decoration none
 
 a:visited
     text-decoration none
-    color #04A
+    color visited_color
 
 a:visited:hover
     text-decoration none
-    color red
+    color hover_color
 
 a:hover,
 a:active
     text-decoration underline
-    color green
+    color hover_color
 
 a.moin-nonexistent:link
-    color #666
+    color nonexistent_link_color
 
 a.moin-nonexistent:hover
-    color black
+    color hover_color 
     text-decoration underline
 
 #moin-header
     margin 0px
     padding 0px
-    background url(../img/white-clouds.jpg)
+    background header_bg_color
     line-height 1.12em
 
 #moin-searchform
@@ -1033,8 +1036,8 @@ a.moin-nonexistent:hover
 #moin-searchform input
     font-size 100%
     vertical-align middle
-    background-color #F3F7FD
-    border 1px solid #A4B9DF
+    background-color page_color
+    border border_style
 
 #moin-searchform #moin-search-submit
     text-indent -9000%
@@ -1077,7 +1080,7 @@ a.moin-nonexistent:hover
     vertical-align middle
 
 #moin-logo a
-    color black
+    color heading_color
     text-decoration none
 
 #moin-username
@@ -1085,9 +1088,9 @@ a.moin-nonexistent:hover
     margin 0px 12px 4px 12px
     padding 0
     font-size 0.82em
-
+    
 #moin-username input:hover
-    color red
+    color hover_color
 
 #moin-locationline
     padding 0
@@ -1103,7 +1106,7 @@ a.moin-nonexistent:hover
     margin 0 0.88em 0.25em 12px
     padding 0
     font-size 0.88em
-
+    
 #moin-navibar
     clear both
     display block
@@ -1116,24 +1119,24 @@ a.moin-nonexistent:hover
     display inline
     margin 0 2px
     padding 2px 5px
-    border 1px solid #A4B9DF
+    border border_style
     border-bottom none
     white-space nowrap
     font-size .88em
 
 #moin-navibar li.wikilink
-    background #F3F7FD
+    background table_bg_color
 
 #moin-navibar li.userlink
-    background #C4D9FF
+    background table_bg_color
 
 #moin-navibar a,
 #moin-navibar a:visited
-    color black
+    color font_color
     text-decoration none
 
 #moin-navibar li:hover
-    background #A4B9DF
+    background table_row_color
 
 #moin-pageline
     clear both
@@ -1141,19 +1144,19 @@ a.moin-nonexistent:hover
     padding 0
     width 100%
     height 4px
-    border-bottom 1px solid #4D7DA9
-    border-top 1px solid #4D7DA9
-    background #81BBF2
+    border-bottom 1px solid heading_color
+    border-top 1px solid heading_color
+    background heading_color
 
 .moin-itemviews
     clear both
     display block
     margin 0
     padding 2px 8px
-    background #C4D9FF
+    background panel_color
     font-size 0.8em
-    border-bottom 1px solid #4D7DA9
-    border-top 1px solid #4D7DA9
+    border-bottom border_style
+    border-top border_style
     margin-top -1px
 
 .moin-itemviews li
@@ -1164,7 +1167,7 @@ a.moin-nonexistent:hover
 
 .moin-itemviews a,
 .moin-itemviews a:visited
-    color #0044B3
+    color panel_item_color
 
 .moin-itemviews a:hover
     text-decoration underline
@@ -1180,7 +1183,7 @@ a.moin-nonexistent:hover
 
 .moin-subitem-navigation
     padding 2px 4px
-    background #C4D9FF
+    background table_row_color
     margin 0
     vertical-align top
     font-size 0.8em
@@ -1209,16 +1212,16 @@ a.moin-nonexistent:hover
     list-style none
 
 .moin-subitem-navigation li:hover
-    background #4D7DA9
+    background table_bg_color
 
 .moin-subitem-navigation a
-    color #0044B3
+    color link_color
 
 .moin-subitem-navigation a:hover
     text-decoration underline
 
 .moin-subitem-navigation li ul
-    border-left 1px dotted gray
+    border-left 1px dotted border_color
     display none
 
 .moin-subitem-navigation .expander
@@ -1255,7 +1258,7 @@ a.moin-nonexistent:hover
 
 #moin-footer hr
     margin 0
-    background-color #ccc
+    background-color border_color
 
 #moin-pageinfo,
 #moin-wikilicense,
@@ -1265,8 +1268,8 @@ a.moin-nonexistent:hover
     margin 10px 20px
     text-align left
     font-size 0.7em
-    color #6C7680
-
+    color footer_color
+    
 #moin-timings li
     display inline-block
     margin 0 20px 0 0
@@ -1289,7 +1292,7 @@ a.moin-nonexistent:hover
     display inline-block
 
 .moin-item-wrapper > a:hover
-    color blue
+    color hover_color
     text-decoration none
 
 a.moin-item-overlay-ul,
@@ -1321,8 +1324,8 @@ a.moin-item-overlay-lr
 .moin-item-overlay-lr:hover
     opacity .8
     filter alpha
-    background-color #C4D9FF
-    color blue
+    background-color table_bg_colot
+    color hover_color
 
 div.moin-item-wrapper,
 div.moin-item-wrapper > div,
@@ -1340,10 +1343,10 @@ div.moin-item-wrapper > div >  p:first-child ~ p:last-child
     margin-left 3px
 
 a.moin-permalink
-    color #95A09F
+    color nonexistent_link_color
 
 a:hover.moin-permalink
-    color #C1CFCD
+    color nonexistent_hover_color
 
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
@@ -1366,7 +1369,7 @@ h6:hover .moin-permalink
 
     a, a:visited,
 a.moin-nonexistent
-        color black
+        color nonexistent_link_color
         text-decoration none
 
     a.moin-interwiki:before
@@ -1387,12 +1390,12 @@ a.moin-nonexistent
         display none
 
     #moin-pageinfo
-        color gray
+        color footer_color
         font-size .67em
         float right
 
     #moin-pageinfo a
-        color gray
+        color footer_color
 
 @media projection
     html
