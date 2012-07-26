@@ -441,7 +441,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .moin-itemviews a:hover{text-decoration:underline}
 .moin-itemviews form,.moin-itemviews form div{display:inline;margin:0}
 .moin-itemviews select{font-size:100%;vertical-align:middle}
-.moin-subitem-navigation{padding:2px 4px;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:14em;overflow:hidden;display:table-cell;word-wrap:break-word}
+.moin-subitem-navigation{padding:2px 4px;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:15%;overflow:hidden;display:table-cell;word-wrap:break-word}
 .moin-subitem-navigation .list-header{margin:2px 0;padding:0;font-size:1.1em}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation ul{display:block;margin:0;padding:0 4px}
