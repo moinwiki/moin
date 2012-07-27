@@ -8,44 +8,30 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - misc. mimetype items
+    MoinMoin - high-level (frontend) items
 
     While MoinMoin.storage cares for backend storage of items,
     this module cares for more high-level, frontend items,
     e.g. showing, editing, etc. of wiki items.
-"""
-# TODO: split this huge module into multiple ones after code has stabilized
 
-import os, re, time, datetime, base64
-import tarfile
-import zipfile
-import tempfile
+    Each class in this module corresponds to an itemtype.
+"""
+
+import re, time
 import itertools
 from StringIO import StringIO
-from array import array
 
-from flatland import Form, String, Integer, Boolean, Enum
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted
+from flatland import Form
+from flatland.validation import Validator
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.forms import RequiredText, OptionalText, File, Submit
+from MoinMoin.forms import RequiredText, OptionalText, OptionalMultilineText, Tags, Submit
 
-from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
+from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
-from MoinMoin.util.mimetype import MimeType
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page, html, xlink, docbook
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.crypto import cache_key
+from MoinMoin.util.mime import Type
 from MoinMoin.storage.middleware.protecting import AccessDenied
-
-try:
-    import PIL
-    from PIL import Image as PILImage
-    from PIL.ImageChops import difference as PILdiff
-except ImportError:
-    PIL = None
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -58,47 +44,44 @@ except ImportError:
 from flask import current_app as app
 from flask import g as flaskg
 
-from flask import request, url_for, flash, Response, redirect, abort, escape
+from flask import request, Response, redirect, abort, escape
 
 from werkzeug import is_resource_modified
-from jinja2 import Markup
 
-from MoinMoin.i18n import _, L_, N_
+from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
-from MoinMoin import wikiutil, config, user
-from MoinMoin.util.send_file import send_file
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
-from MoinMoin.config import NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, REVERTED_TO, ACL, \
-                            IS_SYSITEM, SYSITEM_VERSION, USERGROUP, SOMEDICT, \
-                            CONTENTTYPE, SIZE, LANGUAGE, ITEMLINKS, ITEMTRANSCLUSIONS, \
-                            TAGS, ACTION, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT, \
-                            HASH_ALGORITHM, CONTENTTYPE_GROUPS, ITEMID, REVID, DATAID, \
-                            CURRENT, PARENTID
+from MoinMoin.util.registry import RegistryBase
+from MoinMoin.constants.keys import (
+    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
+    CONTENTTYPE, SIZE, TAGS, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
+    )
+from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
+
+#from .content import content_registry
+
 
 COLS = 80
-ROWS_DATA = 20
 ROWS_META = 10
-
-
-from ..util.registry import RegistryBase
 
 
 class RegistryItem(RegistryBase):
     class Entry(object):
-        def __init__(self, factory, content_type, priority):
+        def __init__(self, factory, itemtype, priority):
             self.factory = factory
-            self.content_type = content_type
+            self.itemtype = itemtype
             self.priority = priority
 
-        def __call__(self, name, content_type, kw):
-            if self.content_type.issupertype(content_type):
-                return self.factory(name, content_type, **kw)
+        def __call__(self, name, itemtype, kw):
+            if self.itemtype == itemtype:
+                return self.factory(name, itemtype, **kw)
 
         def __eq__(self, other):
             if isinstance(other, self.__class__):
                 return (self.factory == other.factory and
-                        self.content_type == other.content_type and
+                        self.itemtype == other.itemtype and
                         self.priority == other.priority)
             return NotImplemented
 
@@ -106,42 +89,31 @@ class RegistryItem(RegistryBase):
             if isinstance(other, self.__class__):
                 if self.priority < other.priority:
                     return True
-                if self.content_type != other.content_type:
-                    return other.content_type.issupertype(self.content_type)
-                return False
+                return self.itemtype == other.itemtype
             return NotImplemented
 
         def __repr__(self):
             return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
-                    self.content_type,
+                    self.itemtype,
                     self.priority,
                     self.factory)
 
-    def get(self, name, content_type, **kw):
+    def get(self, name, itemtype, **kw):
         for entry in self._entries:
-            item = entry(name, content_type, kw)
+            item = entry(name, itemtype, kw)
             if item is not None:
                 return item
 
-    def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
+    def register(self, factory, itemtype, priority=RegistryBase.PRIORITY_MIDDLE):
         """
         Register a factory
 
         :param factory: Factory to register. Callable, must return an object.
         """
-        return self._register(self.Entry(factory, content_type, priority))
+        return self._register(self.Entry(factory, itemtype, priority))
 
 
 item_registry = RegistryItem()
-
-
-def conv_serialize(doc, namespaces, method='polyglot'):
-    out = array('u')
-    flaskg.clock.start('conv_serialize')
-    doc.write(out.fromunicode, namespaces=namespaces, method=method)
-    out = out.tounicode()
-    flaskg.clock.stop('conv_serialize')
-    return out
 
 
 class DummyRev(dict):
@@ -163,17 +135,69 @@ class DummyItem(object):
         return True
 
 
-class Item(object):
-    """ Highlevel (not storage) Item """
-    @classmethod
-    def _factory(cls, name=u'', contenttype=None, **kw):
-        return cls(name, contenttype=unicode(contenttype), **kw)
+# XXX To code reviewers: Code chunks within {{{ }}} were moved verbatim from
+# somewhere else. Wherever I declare it to be "untouched", "untouched except
+# for ..." I double checked by isolating the same chunk in old and new
+# revisions and did a manual `diff` on that. FYI, the workflow is (in Vim):
 
+# 1. in the new revision select the chunk in visual line mode (V)
+# 2. :'<,'>w! /tmp/chunk.new
+# 3. do the same with the old revision, writing to /tmp/chunk.old
+# 4. :!diff /tmp/chunk.old /tmp/chunk.new
+
+# So trust me :-P
+
+
+# XXX Moved verbatim from below Item untouched {{{
+class ValidJSON(Validator):
+    """Validator for JSON
+    """
+    invalid_json_msg = L_('Invalid JSON.')
+
+    def validate(self, element, state):
+        try:
+            json.loads(element.value)
+        except:
+            return self.note_error(element, state, 'invalid_json_msg')
+        return True
+
+
+class BaseChangeForm(TextChaizedForm):
+    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
+    submit = Submit
+# }}}
+
+
+class Item(object):
+    """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
-    def create(cls, name=u'', contenttype=None, rev_id=CURRENT, item=None):
+    def _factory(cls, name=u'', itemtype=None, **kw):
+        return cls(name, **kw)
+
+    # TODO split Content creation to Content.create
+    @classmethod
+    def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+        """
+        Create a highlevel Item by looking up :name or directly wrapping
+        :item and extract the Revision designated by :rev_id revision.
+
+        The highlevel Item is created by creating an instance of Content
+        subclass according to the item's contenttype metadata entry; The
+        :contenttype argument can be used to override contenttype. It is used
+        only when handling +convert (when deciding the contenttype of target
+        item), +modify (when creating a new item whose contenttype is not yet
+        decided), +diff and +diffraw (to coerce the Content to a common
+        super-contenttype of both revisions).
+
+        After that the Content instance, an instance of Item subclass is
+        created according to the item's itemtype metadata entry, and the
+        previously created Content instance is assigned to its content
+        property.
+        """
         if contenttype is None:
             contenttype = u'application/x-nonexistent'
-
+        if itemtype is None:
+            itemtype = u'nonexistent'
         if 1: # try:
             if item is None:
                 item = flaskg.storage[name]
@@ -189,6 +213,7 @@ class Item(object):
             try:
                 rev = item.get_revision(rev_id)
                 contenttype = u'application/octet-stream' # it exists
+                itemtype = u'default' # default itemtype to u'default' for compatibility
             except KeyError: # NoSuchRevisionError:
                 try:
                     rev = item.get_revision(CURRENT) # fall back to current revision
@@ -202,120 +227,37 @@ class Item(object):
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
-        item = item_registry.get(name, Type(contenttype), rev=rev)
-        logging.debug("ItemClass {0!r} handles {1!r}".format(item.__class__, contenttype))
+        # XXX Cannot pass item=item to Content.__init__ via
+        # content_registry.get yet, have to patch it later.
+        content = content_registry.get(name, Type(contenttype))
+        logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
+
+        itemtype = rev.meta.get(ITEMTYPE) or itemtype
+        logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
+
+        item = item_registry.get(name, itemtype, rev=rev, content=content)
+        logging.debug("Item class {0!r} handles {1!r}".format(item.__class__, itemtype))
+
+        content.item = item
+
         return item
 
-    def __init__(self, name, rev=None, contenttype=None):
+    def __init__(self, name, rev=None, content=None):
         self.name = name
         self.rev = rev
-        self.contenttype = contenttype
+        self.content = content
 
     def get_meta(self):
         return self.rev.meta
     meta = property(fget=get_meta)
 
+    # XXX Backward compatibility, remove soon
+    @property
+    def contenttype(self):
+        return self.content.contenttype if self.content else None
+
     def _render_meta(self):
-        # override this in child classes
-        return ''
-
-    def internal_representation(self, converters=['smiley']):
-        """
-        Return the internal representation of a document using a DOM Tree
-        """
-        flaskg.clock.start('conv_in_dom')
-        hash_name = HASH_ALGORITHM
-        hash_hexdigest = self.rev.meta.get(hash_name)
-        if hash_hexdigest:
-            cid = cache_key(usage="internal_representation",
-                            hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest)
-            doc = app.cache.get(cid)
-        else:
-            # likely a non-existing item
-            doc = cid = None
-        if doc is None:
-            # We will see if we can perform the conversion:
-            # FROM_mimetype --> DOM
-            # if so we perform the transformation, otherwise we don't
-            from MoinMoin.converter import default_registry as reg
-            input_conv = reg.get(Type(self.contenttype), type_moin_document)
-            if not input_conv:
-                raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
-            smiley_conv = reg.get(type_moin_document, type_moin_document,
-                    icon='smiley')
-
-            # We can process the conversion
-            links = Iri(scheme='wiki', authority='', path='/' + self.name)
-            doc = input_conv(self.rev, self.contenttype)
-            # XXX is the following assuming that the top element of the doc tree
-            # is a moin_page.page element? if yes, this is the wrong place to do that
-            # as not every doc will have that element (e.g. for images, we just get
-            # moin_page.object, for a tar item, we get a moin_page.table):
-            doc.set(moin_page.page_href, unicode(links))
-            for conv in converters:
-                if conv == 'smiley':
-                    doc = smiley_conv(doc)
-            if cid:
-                app.cache.set(cid, doc)
-        flaskg.clock.stop('conv_in_dom')
-        return doc
-
-    def _expand_document(self, doc):
-        from MoinMoin.converter import default_registry as reg
-        include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
-        macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
-        link_conv = reg.get(type_moin_document, type_moin_document, links='extern')
-        flaskg.clock.start('conv_include')
-        doc = include_conv(doc)
-        flaskg.clock.stop('conv_include')
-        flaskg.clock.start('conv_macro')
-        doc = macro_conv(doc)
-        flaskg.clock.stop('conv_macro')
-        flaskg.clock.start('conv_link')
-        doc = link_conv(doc)
-        flaskg.clock.stop('conv_link')
-        return doc
-
-    def _render_data(self):
-        from MoinMoin.converter import default_registry as reg
-        # TODO: Real output format
-        doc = self.internal_representation()
-        doc = self._expand_document(doc)
-        flaskg.clock.start('conv_dom_html')
-        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
-        doc = html_conv(doc)
-        flaskg.clock.stop('conv_dom_html')
-        rendered_data = conv_serialize(doc, {html.namespace: ''})
-        return rendered_data
-
-    def _render_data_xml(self):
-        doc = self.internal_representation()
-        return conv_serialize(doc,
-                              {moin_page.namespace: '',
-                               xlink.namespace: 'xlink',
-                               html.namespace: 'html',
-                              },
-                              'xml')
-
-    def _render_data_highlight(self):
-        # override this in child classes
-        return ''
-
-    def _do_modify_show_templates(self):
-        # call this if the item is still empty
-        rev_ids = []
-        item_templates = self.get_templates(self.contenttype)
-        return render_template('modify_show_template_selection.html',
-                               item_name=self.name,
-                               rev=self.rev,
-                               contenttype=self.contenttype,
-                               templates=item_templates,
-                               first_rev_id=rev_ids and rev_ids[0],
-                               last_rev_id=rev_ids and rev_ids[-1],
-                               meta_rendered='',
-                               data_rendered='',
-                               )
+        return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
@@ -359,31 +301,11 @@ class Item(object):
             meta[PARENTID] = revid
         return meta
 
-    def get_data(self):
-        return '' # TODO create a better method for binary stuff
-    data = property(fget=get_data)
-
-    def _write_stream(self, content, new_rev, bufsize=8192):
-        written = 0
-        if hasattr(content, "read"):
-            while True:
-                buf = content.read(bufsize)
-                if not buf:
-                    break
-                new_rev.data.write(buf)
-                written += len(buf)
-        elif isinstance(content, str):
-            new_rev.data.write(content)
-            written += len(content)
-        else:
-            raise StorageError("unsupported content object: {0!r}".format(content))
-        return written
-
     def _rename(self, name, comment, action):
-        self._save(self.meta, self.data, name=name, action=action, comment=comment)
+        self._save(self.meta, self.content.data, name=name, action=action, comment=comment)
         for child in self.get_index():
             item = Item.create(child[0])
-            item._save(item.meta, item.data, name='/'.join((name, child[1])), action=action, comment=comment)
+            item._save(item.meta, item.content.data, name='/'.join((name, child[1])), action=action, comment=comment)
 
     def rename(self, name, comment=u''):
         """
@@ -402,7 +324,7 @@ class Item(object):
         return self._rename(trashname, comment, action=u'TRASH')
 
     def revert(self, comment=u''):
-        return self._save(self.meta, self.data, action=u'REVERT', comment=comment)
+        return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
         # called from destroy UI/POST
@@ -419,6 +341,42 @@ class Item(object):
             meta[CONTENTTYPE] = contenttype_qs
 
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
+
+    class _ModifyForm(BaseChangeForm):
+        """Base class for ModifyForm of Item subclasses."""
+        meta_text = OptionalMultilineText.using(label=L_("MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS).validated_by(ValidJSON())
+
+        def _load(self, item):
+            self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
+            self['content_form']._load(item.content)
+
+        def _dump(self, item):
+            meta = item.meta_text_to_dict(self['meta_text'].value)
+            data, contenttype_guessed = self['content_form']._dump(item.content)
+            comment = self['comment'].value
+            return meta, data, contenttype_guessed, comment
+
+        @classmethod
+        def from_item(cls, item):
+            form = cls.from_defaults()
+            TextCha(form).amend_form()
+            form._load(item)
+            return form
+
+        @classmethod
+        def from_request(cls, request):
+            form = cls.from_flat(request.form.items() + request.files.items())
+            TextCha(form).amend_form()
+            return form
+
+    def do_modify(self):
+        """
+        Handle +modify requests, both GET and POST.
+
+        This method should be overridden in subclasses, providing polymorphic
+        behavior for the +modify view.
+        """
+        raise NotImplementedError
 
     def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
         backend = flaskg.storage
@@ -459,7 +417,7 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(config.charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = data.encode(charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)
@@ -599,122 +557,74 @@ class Item(object):
     rename_template = 'rename.html'
     revert_template = 'revert.html'
 
-class NonExistent(Item):
-    def do_get(self, force_attachment=False, mimetype=None):
-        abort(404)
 
-    def _convert(self, doc):
-        abort(404)
-
-    def do_modify(self, contenttype, template_name):
-        # First, check if the current user has the required privileges
-        if not flaskg.user.may.create(self.name):
-            abort(403)
-
-        return render_template('modify_show_type_selection.html',
-                               item_name=self.name,
-                               contenttype_groups=CONTENTTYPE_GROUPS,
-                              )
-
-item_registry.register(NonExistent._factory, Type('application/x-nonexistent'))
-
-class ValidJSON(Validator):
-    """Validator for JSON
+class Contentful(Item):
     """
-    invalid_json_msg = L_('Invalid JSON.')
-
-    def validate(self, element, state):
-        try:
-            json.loads(element.value)
-        except:
-            return self.note_error(element, state, 'invalid_json_msg')
-        return True
-
-
-class BaseChangeForm(TextChaizedForm):
-    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
-    submit = Submit
+    Base class for Item subclasses that have content.
+    """
+    @property
+    def ModifyForm(self):
+        class C(Item._ModifyForm):
+            content_form = self.content.ModifyForm
+        C.__name__ = 'ModifyForm'
+        return C
 
 
-class Binary(Item):
-    """ An arbitrary binary item, fallback class for every item mimetype. """
-    modify_help = """\
-There is no help, you're doomed!
-"""
+# TODO better name and clearer definition
+class Default(Contentful):
+    """
+    A "conventional" wiki item.
+    """
+    # XXX this method was moved from Item, untouched except for the addition
+    # of itemtype keyword argument plus the comment above it.
+    def _do_modify_show_templates(self):
+        # call this if the item is still empty
+        rev_ids = []
+        item_templates = self.content.get_templates(self.contenttype)
+        return render_template('modify_show_template_selection.html',
+                               item_name=self.name,
+                               # XXX avoid the magic string
+                               itemtype=u'default',
+                               rev=self.rev,
+                               contenttype=self.contenttype,
+                               templates=item_templates,
+                               first_rev_id=rev_ids and rev_ids[0],
+                               last_rev_id=rev_ids and rev_ids[-1],
+                               meta_rendered='',
+                               data_rendered='',
+                               )
 
-    template = "modify_binary.html"
-
-    # XXX reads item rev data into memory!
-    def get_data(self):
-        if self.rev is not None:
-            return self.rev.data.read()
-        else:
-            return ''
-    data = property(fget=get_data)
-
-    def _render_meta(self):
-        return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
-
-    def get_templates(self, contenttype=None):
-        """ create a list of templates (for some specific contenttype) """
-        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, u'template')]
-        if contenttype is not None:
-            terms.append(Term(CONTENTTYPE, contenttype))
-        query = And(terms)
-        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        return [rev.meta[NAME] for rev in revs]
-
-    class ModifyForm(BaseChangeForm):
-        """Base class for ModifyForm of Binary's subclasses."""
-        meta_text = RequiredText.with_properties(placeholder=L_("MetaData (JSON)")).validated_by(ValidJSON())
-        data_file = File.using(optional=True, label=L_('Upload file:'))
-
-        def _load(self, item):
-            self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
-
-        def _dump(self, item):
-            data = meta = contenttype_guessed = None
-            data_file = self['data_file'].value
-            if data_file:
-                data = data_file.stream
-                # this is likely a guess by the browser, based on the filename
-                contenttype_guessed = data_file.content_type # comes from form multipart data
-            meta = item.meta_text_to_dict(self['meta_text'].value)
-            comment = self['comment'].value
-            return meta, data, contenttype_guessed, comment
-
-        extra_template_args = {}
-
-        @classmethod
-        def from_item(cls, item):
-            form = cls.from_defaults()
-            TextCha(form).amend_form()
-            form._load(item)
-            return form
-
-        @classmethod
-        def from_request(cls, request):
-            form = cls.from_flat(request.form.items() + request.files.items())
-            TextCha(form).amend_form()
-            return form
-
-    def do_modify(self, contenttype, template_name):
-        """
-        Handle +modify requests, both GET and POST.
-
-        This method can be overridden in subclasses, providing polymorphic
-        behavior for the +modify view.
-        """
+    # To code reviewers: this method was mostly merged from Item.do_modify and
+    # Draw, with modifications.
+    def do_modify(self):
         method = request.method
         if method == 'GET':
+            if isinstance(self.content, NonExistentContent):
+                return render_template('modify_show_contenttype_selection.html',
+                                       item_name=self.name,
+                                       # XXX avoid the magic string
+                                       itemtype=u'default',
+                                       contenttype_groups=CONTENTTYPE_GROUPS,
+                                      )
             item = self
             if isinstance(self.rev, DummyRev):
+                template_name = request.values.get('template')
                 if template_name is None:
                     return self._do_modify_show_templates()
                 elif template_name:
                     item = Item.create(template_name)
             form = self.ModifyForm.from_item(item)
         elif method == 'POST':
+            # XXX workaround for *Draw items
+            if isinstance(self.content, Draw):
+                try:
+                    self.content.handle_post()
+                except AccessDenied:
+                    abort(403)
+                else:
+                    # *Draw Applets POSTs more than once, redirecting would
+                    # break them
+                    return "OK"
             form = self.ModifyForm.from_request(request)
             if form.validate():
                 meta, data, contenttype_guessed, comment = form._dump(self)
@@ -725,14 +635,357 @@ There is no help, you're doomed!
                     abort(403)
                 else:
                     return redirect(url_for_item(self.name))
-        return render_template(self.template,
+        return render_template(self.modify_template,
                                item_name=self.name,
                                rows_meta=str(ROWS_META), cols=str(COLS),
-                               help=self.modify_help,
                                form=form,
                                search_form=None,
-                               **form.extra_template_args
                               )
+
+    modify_template = 'modify.html'
+
+item_registry.register(Default._factory, u'default')
+
+
+class Ticket(Contentful):
+    """
+    Stub for ticket item class.
+    """
+
+item_registry.register(Ticket._factory, u'ticket')
+
+
+class Userprofile(Item):
+    """
+    Currently userprofile is implemented as a contenttype. This is a stub of an
+    itemtype implementation of userprofile.
+    """
+
+item_registry.register(Userprofile._factory, u'userprofile')
+
+
+class NonExistent(Item):
+    def _convert(self, doc):
+        abort(404)
+
+    def do_modify(self):
+        # First, check if the current user has the required privileges
+        if not flaskg.user.may.create(self.name):
+            abort(403)
+
+        # TODO Construct this list from the item_registry. Two more fields (ie.
+        # display name and description) are needed in the registry then to
+        # support the automatic construction.
+        ITEMTYPES = [
+            (u'default', u'Default', 'Wiki item'),
+            (u'ticket', u'Ticket', 'Ticket item'),
+        ]
+
+        return render_template('modify_show_itemtype_selection.html',
+                               item_name=self.name,
+                               itemtypes=ITEMTYPES,
+                              )
+
+item_registry.register(NonExistent._factory, u'nonexistent')
+
+
+# This should be a separate module items/content.py. Included here to
+# faciliate codereview.
+"""
+    MoinMoin - item contents
+
+    Classes handling the content part of items (ie. minus metadata). The
+    content part is sometimes called the "data" part in other places, but is
+    always called content in this module to avoid confusion.
+
+    Each class in this module corresponds to a contenttype value.
+"""
+
+import os, re, base64
+import tarfile
+import zipfile
+import tempfile
+from StringIO import StringIO
+from array import array
+
+from flatland import Form, String
+
+from whoosh.query import Term, And
+
+from MoinMoin.forms import File
+
+from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page, html, xlink, docbook
+from MoinMoin.util.iri import Iri
+from MoinMoin.util.crypto import cache_key
+from MoinMoin.storage.middleware.protecting import AccessDenied
+
+try:
+    import PIL
+    from PIL import Image as PILImage
+    from PIL.ImageChops import difference as PILdiff
+except ImportError:
+    PIL = None
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
+from flask import current_app as app
+from flask import g as flaskg
+
+from flask import request, url_for, Response, abort, escape
+
+from jinja2 import Markup
+
+from MoinMoin.i18n import _, L_
+from MoinMoin.themes import render_template
+from MoinMoin import wikiutil, config
+from MoinMoin.util.send_file import send_file
+from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.storage.error import StorageError
+from MoinMoin.util.registry import RegistryBase
+from MoinMoin.constants.keys import (
+    NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
+    )
+
+
+COLS = 80
+ROWS_DATA = 20
+
+
+# XXX Too much boilerplate in Entry implementation. Maybe use namedtuple
+# as a starting point?
+# Renamed from old RegistryItem, whole class untouched
+class RegistryContent(RegistryBase):
+    class Entry(object):
+        def __init__(self, factory, content_type, priority):
+            self.factory = factory
+            self.content_type = content_type
+            self.priority = priority
+
+        def __call__(self, name, content_type, kw):
+            if self.content_type.issupertype(content_type):
+                return self.factory(name, content_type, **kw)
+
+        def __eq__(self, other):
+            if isinstance(other, self.__class__):
+                return (self.factory == other.factory and
+                        self.content_type == other.content_type and
+                        self.priority == other.priority)
+            return NotImplemented
+
+        def __lt__(self, other):
+            if isinstance(other, self.__class__):
+                if self.priority < other.priority:
+                    return True
+                if self.content_type != other.content_type:
+                    return other.content_type.issupertype(self.content_type)
+                return False
+            return NotImplemented
+
+        def __repr__(self):
+            return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
+                    self.content_type,
+                    self.priority,
+                    self.factory)
+
+    def get(self, name, content_type, **kw):
+        for entry in self._entries:
+            item = entry(name, content_type, kw)
+            if item is not None:
+                return item
+
+    def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
+        """
+        Register a factory
+
+        :param factory: Factory to register. Callable, must return an object.
+        """
+        return self._register(self.Entry(factory, content_type, priority))
+
+
+content_registry = RegistryContent()
+
+
+def conv_serialize(doc, namespaces, method='polyglot'):
+    out = array('u')
+    flaskg.clock.start('conv_serialize')
+    doc.write(out.fromunicode, namespaces=namespaces, method=method)
+    out = out.tounicode()
+    flaskg.clock.stop('conv_serialize')
+    return out
+
+
+class Content(object):
+    """
+    Base for content classes defining some helpers, agnostic about content
+    data.
+    """
+    @classmethod
+    def _factory(cls, name=u'', contenttype=None, **kw):
+        return cls(name, contenttype=unicode(contenttype), **kw)
+
+    def __init__(self, item, contenttype=None):
+        self.item = item
+        # TODO gradually remove self.contenttype as theoretically there is
+        # one-to-one correspondance of contenttype and Content type
+        # (pun intended :)
+        self.contenttype = contenttype
+
+    # XXX For backward-compatibility (so code can be moved from Item
+    # untouched), remove soon
+    @property
+    def rev(self):
+        return self.item.rev
+
+    @property
+    def name(self):
+        return self.item.name
+
+    def get_data(self):
+        return '' # TODO create a better method for binary stuff
+    data = property(fget=get_data)
+
+    # Moved from Item, untouched {{{
+    def internal_representation(self, converters=['smiley']):
+        """
+        Return the internal representation of a document using a DOM Tree
+        """
+        flaskg.clock.start('conv_in_dom')
+        hash_name = HASH_ALGORITHM
+        hash_hexdigest = self.rev.meta.get(hash_name)
+        if hash_hexdigest:
+            cid = cache_key(usage="internal_representation",
+                            hash_name=hash_name,
+                            hash_hexdigest=hash_hexdigest)
+            doc = app.cache.get(cid)
+        else:
+            # likely a non-existing item
+            doc = cid = None
+        if doc is None:
+            # We will see if we can perform the conversion:
+            # FROM_mimetype --> DOM
+            # if so we perform the transformation, otherwise we don't
+            from MoinMoin.converter import default_registry as reg
+            input_conv = reg.get(Type(self.contenttype), type_moin_document)
+            if not input_conv:
+                raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
+            smiley_conv = reg.get(type_moin_document, type_moin_document,
+                    icon='smiley')
+
+            # We can process the conversion
+            links = Iri(scheme='wiki', authority='', path='/' + self.name)
+            doc = input_conv(self.rev, self.contenttype)
+            # XXX is the following assuming that the top element of the doc tree
+            # is a moin_page.page element? if yes, this is the wrong place to do that
+            # as not every doc will have that element (e.g. for images, we just get
+            # moin_page.object, for a tar item, we get a moin_page.table):
+            doc.set(moin_page.page_href, unicode(links))
+            for conv in converters:
+                if conv == 'smiley':
+                    doc = smiley_conv(doc)
+            if cid:
+                app.cache.set(cid, doc)
+        flaskg.clock.stop('conv_in_dom')
+        return doc
+
+    def _expand_document(self, doc):
+        from MoinMoin.converter import default_registry as reg
+        include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
+        macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
+        link_conv = reg.get(type_moin_document, type_moin_document, links='extern')
+        flaskg.clock.start('conv_include')
+        doc = include_conv(doc)
+        flaskg.clock.stop('conv_include')
+        flaskg.clock.start('conv_macro')
+        doc = macro_conv(doc)
+        flaskg.clock.stop('conv_macro')
+        flaskg.clock.start('conv_link')
+        doc = link_conv(doc)
+        flaskg.clock.stop('conv_link')
+        return doc
+
+    def _render_data(self):
+        from MoinMoin.converter import default_registry as reg
+        # TODO: Real output format
+        doc = self.internal_representation()
+        doc = self._expand_document(doc)
+        flaskg.clock.start('conv_dom_html')
+        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
+        doc = html_conv(doc)
+        flaskg.clock.stop('conv_dom_html')
+        rendered_data = conv_serialize(doc, {html.namespace: ''})
+        return rendered_data
+
+    def _render_data_xml(self):
+        doc = self.internal_representation()
+        return conv_serialize(doc,
+                              {moin_page.namespace: '',
+                               xlink.namespace: 'xlink',
+                               html.namespace: 'html',
+                              },
+                              'xml')
+
+    def _render_data_highlight(self):
+        # override this in child classes
+        return ''
+    # }}}
+
+    # Moved from Binary, untouched {{{
+    def get_templates(self, contenttype=None):
+        """ create a list of templates (for some specific contenttype) """
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, u'template')]
+        if contenttype is not None:
+            terms.append(Term(CONTENTTYPE, contenttype))
+        query = And(terms)
+        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
+        return [rev.meta[NAME] for rev in revs]
+    # }}}
+
+
+class NonExistentContent(Content):
+    """Dummy Content to use with NonExistent."""
+    def do_get(self, force_attachment=False, mimetype=None):
+        abort(404)
+
+    def _convert(self, doc):
+        abort(404)
+
+
+content_registry.register(NonExistentContent._factory, Type('application/x-nonexistent'))
+
+
+class Binary(Content):
+    """ An arbitrary binary item, fallback class for every item mimetype. """
+
+    # XXX reads item rev data into memory!
+    def get_data(self):
+        if self.rev is not None:
+            return self.rev.data.read()
+        else:
+            return ''
+    data = property(fget=get_data)
+
+    class ModifyForm(Form):
+        template = 'modify_binary.html'
+        help = """\
+There is no help, you're doomed!
+"""
+        data_file = File.using(optional=True, label=L_('Upload file:'))
+
+        def _load(self, item):
+            pass
+
+        def _dump(self, item):
+            data_file = self['data_file'].value
+            if data_file:
+                data = data_file.stream
+                # this is likely a guess by the browser, based on the filename
+                contenttype_guessed = data_file.content_type # comes from form multipart data
+                return data, contenttype_guessed
+            else:
+                return None, None
 
     def _render_data_diff(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -792,7 +1045,7 @@ There is no help, you're doomed!
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
-item_registry.register(Binary._factory, Type('*/*'))
+content_registry.register(Binary._factory, Type('*/*'))
 
 
 class RenderableBinary(Binary):
@@ -866,7 +1119,7 @@ class TarMixin(object):
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
             data = open(temp_fname, 'rb')
-            self._save(meta, data, name=self.name, action=u'SAVE', comment='')
+            self.item._save(meta, data, name=self.name, action=u'SAVE', comment='')
             data.close()
             os.remove(temp_fname)
 
@@ -876,8 +1129,8 @@ class ApplicationXTar(TarMixin, Application):
     Tar items
     """
 
-item_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
-item_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
+content_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
+content_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
 
 
 class ZipMixin(object):
@@ -912,31 +1165,31 @@ class ApplicationZip(ZipMixin, Application):
     Zip items
     """
 
-item_registry.register(ApplicationZip._factory, Type('application/zip'))
+content_registry.register(ApplicationZip._factory, Type('application/zip'))
 
 
 class PDF(Application):
     """ PDF """
 
-item_registry.register(PDF._factory, Type('application/pdf'))
+content_registry.register(PDF._factory, Type('application/pdf'))
 
 
 class Video(Binary):
     """ Base class for video/* """
 
-item_registry.register(Video._factory, Type('video/*'))
+content_registry.register(Video._factory, Type('video/*'))
 
 
 class Audio(Binary):
     """ Base class for audio/* """
 
-item_registry.register(Audio._factory, Type('audio/*'))
+content_registry.register(Audio._factory, Type('audio/*'))
 
 
 class Image(Binary):
     """ Base class for image/* """
 
-item_registry.register(Image._factory, Type('image/*'))
+content_registry.register(Image._factory, Type('image/*'))
 
 
 class RenderableImage(RenderableBinary):
@@ -946,7 +1199,7 @@ class RenderableImage(RenderableBinary):
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
 
-item_registry.register(SvgImage._factory, Type('image/svg+xml'))
+content_registry.register(SvgImage._factory, Type('image/svg+xml'))
 
 
 class RenderableBitmapImage(RenderableImage):
@@ -1107,17 +1360,19 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff_text(self, oldrev, newrev):
         return super(TransformableBitmapImage, self)._render_data_diff_text(oldrev, newrev)
 
-item_registry.register(TransformableBitmapImage._factory, Type('image/png'))
-item_registry.register(TransformableBitmapImage._factory, Type('image/jpeg'))
-item_registry.register(TransformableBitmapImage._factory, Type('image/gif'))
+content_registry.register(TransformableBitmapImage._factory, Type('image/png'))
+content_registry.register(TransformableBitmapImage._factory, Type('image/jpeg'))
+content_registry.register(TransformableBitmapImage._factory, Type('image/gif'))
 
 
 class Text(Binary):
     """ Base class for text/* """
-    template = "modify_text.html"
 
     class ModifyForm(Binary.ModifyForm):
+        template = 'modify_text.html'
         data_text = String.using(strip=False, optional=True).with_properties(placeholder=L_("Type your text here"))
+        rows = ROWS_DATA
+        cols = COLS
 
         def _load(self, item):
             super(Text.ModifyForm, self)._load(item)
@@ -1127,16 +1382,14 @@ class Text(Binary):
             self['data_text'] = data
 
         def _dump(self, item):
-            meta, data, contenttype_guessed, comment = super(Text.ModifyForm, self)._dump(item)
+            data, contenttype_guessed = super(Text.ModifyForm, self)._dump(item)
             if data is None:
                 data = self['data_text'].value
                 data = item.data_form_to_internal(data)
                 data = item.data_internal_to_storage(data)
                 # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
                 contenttype_guessed = u'text/plain;charset=utf-8'
-            return meta, data, contenttype_guessed, comment
-
-        extra_template_args = {'rows_data': str(ROWS_DATA)}
+            return data, contenttype_guessed
 
     # text/plain mandates crlf - but in memory, we want lf only
     def data_internal_to_form(self, text):
@@ -1196,7 +1449,7 @@ class Text(Binary):
         doc = html_conv(doc)
         return conv_serialize(doc, {html.namespace: ''})
 
-item_registry.register(Text._factory, Type('text/*'))
+content_registry.register(Text._factory, Type('text/*'))
 
 
 class MarkupItem(Text):
@@ -1209,25 +1462,25 @@ class MarkupItem(Text):
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
 
-item_registry.register(MoinWiki._factory, Type('text/x.moin.wiki'))
+content_registry.register(MoinWiki._factory, Type('text/x.moin.wiki'))
 
 
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
 
-item_registry.register(CreoleWiki._factory, Type('text/x.moin.creole'))
+content_registry.register(CreoleWiki._factory, Type('text/x.moin.creole'))
 
 
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
 
-item_registry.register(MediaWiki._factory, Type('text/x-mediawiki'))
+content_registry.register(MediaWiki._factory, Type('text/x-mediawiki'))
 
 
 class ReST(MarkupItem):
     """ ReStructured Text markup """
 
-item_registry.register(ReST._factory, Type('text/x-rst'))
+content_registry.register(ReST._factory, Type('text/x-rst'))
 
 
 class HTML(Text):
@@ -1240,9 +1493,10 @@ class HTML(Text):
 
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
-    template = "modify_text_html.html"
+    class ModifyForm(Text.ModifyForm):
+        template = "modify_text_html.html"
 
-item_registry.register(HTML._factory, Type('text/html'))
+content_registry.register(HTML._factory, Type('text/html'))
 
 
 class DocBook(MarkupItem):
@@ -1290,7 +1544,7 @@ class DocBook(MarkupItem):
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
-item_registry.register(DocBook._factory, Type('application/docbook+xml'))
+content_registry.register(DocBook._factory, Type('application/docbook+xml'))
 
 
 class Draw(TarMixin, Image):
@@ -1298,33 +1552,21 @@ class Draw(TarMixin, Image):
     Base class for *Draw that use special Java/Javascript applets to modify and store data in a tar file.
     """
     class ModifyForm(Binary.ModifyForm):
-        pass
+        # Set the workaround flag respected in modify.html
+        is_draw = True
 
     def handle_post():
         raise NotImplementedError
-
-    def do_modify(self, contenttype, template_name):
-        # XXX as the "saving" POSTs come from *Draw applets (not the form),
-        # they need to be handled specially for each applet. Besides, editing
-        # meta_text doesn't work
-        if request.method == 'POST':
-            try:
-                self.handle_post()
-            except AccessDenied:
-                abort(403)
-            else:
-                # *Draw Applets POSTs more than once, redirecting would break them
-                return "OK"
-        else:
-            return super(Draw, self).do_modify(contenttype, template_name)
 
 
 class TWikiDraw(Draw):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
-    modify_help = ""
-    template = "modify_twikidraw.html"
+
+    class ModifyForm(Draw.ModifyForm):
+        template = "modify_twikidraw.html"
+        help = ""
 
     def handle_post(self):
         # called from modify UI/POST
@@ -1377,24 +1619,24 @@ class TWikiDraw(Draw):
         else:
             return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
-item_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
+content_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
 
 class AnyWikiDraw(Draw):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
-    modify_help = ""
-    template = "modify_anywikidraw.html"
 
     class ModifyForm(Draw.ModifyForm):
+        template = "modify_anywikidraw.html"
+        help = ""
         def _load(self, item):
             super(AnyWikiDraw.ModifyForm, self)._load(item)
             try:
                 drawing_exists = 'drawing.svg' in item.list_members()
             except tarfile.TarError: # item doesn't exist yet
                 drawing_exists = False
-            self.extra_template_args = {'drawing_exists': drawing_exists}
+            self.drawing_exists = drawing_exists
 
     def handle_post(self):
         # called from modify UI/POST
@@ -1446,13 +1688,15 @@ class AnyWikiDraw(Draw):
         else:
             return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
-item_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
+content_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
 
 class SvgDraw(Draw):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
-    modify_help = ""
-    template = "modify_svg-edit.html"
+
+    class ModifyForm(Draw.ModifyForm):
+        template = "modify_svg-edit.html"
+        help = ""
 
     def handle_post(self):
         # called from modify UI/POST
@@ -1476,4 +1720,4 @@ class SvgDraw(Draw):
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
 
-item_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
+content_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))

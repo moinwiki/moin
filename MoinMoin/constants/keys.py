@@ -27,6 +27,7 @@ USERGROUP = "usergroup"
 SOMEDICT = "somedict"
 
 CONTENTTYPE = "contenttype"
+ITEMTYPE = u"itemtype"
 SIZE = "size"
 LANGUAGE = "language"
 EXTERNALLINKS = "externallinks"
