@@ -135,20 +135,6 @@ class DummyItem(object):
         return True
 
 
-# XXX To code reviewers: Code chunks within {{{ }}} were moved verbatim from
-# somewhere else. Wherever I declare it to be "untouched", "untouched except
-# for ..." I double checked by isolating the same chunk in old and new
-# revisions and did a manual `diff` on that. FYI, the workflow is (in Vim):
-
-# 1. in the new revision select the chunk in visual line mode (V)
-# 2. :'<,'>w! /tmp/chunk.new
-# 3. do the same with the old revision, writing to /tmp/chunk.old
-# 4. :!diff /tmp/chunk.old /tmp/chunk.new
-
-# So trust me :-P
-
-
-# XXX Moved verbatim from below Item untouched {{{
 class ValidJSON(Validator):
     """Validator for JSON
     """
@@ -165,7 +151,6 @@ class ValidJSON(Validator):
 class BaseChangeForm(TextChaizedForm):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
     submit = Submit
-# }}}
 
 
 class Item(object):
@@ -575,8 +560,6 @@ class Default(Contentful):
     """
     A "conventional" wiki item.
     """
-    # XXX this method was moved from Item, untouched except for the addition
-    # of itemtype keyword argument plus the comment above it.
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_ids = []
@@ -847,7 +830,6 @@ class Content(object):
         return '' # TODO create a better method for binary stuff
     data = property(fget=get_data)
 
-    # Moved from Item, untouched {{{
     def internal_representation(self, converters=['smiley']):
         """
         Return the internal representation of a document using a DOM Tree
@@ -930,9 +912,7 @@ class Content(object):
     def _render_data_highlight(self):
         # override this in child classes
         return ''
-    # }}}
 
-    # Moved from Binary, untouched {{{
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
         terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, u'template')]
@@ -941,7 +921,6 @@ class Content(object):
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return [rev.meta[NAME] for rev in revs]
-    # }}}
 
 
 class NonExistentContent(Content):
