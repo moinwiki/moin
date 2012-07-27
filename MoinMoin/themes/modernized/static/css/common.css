@@ -312,8 +312,10 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-select-all{padding:.5em;color:#708090;background:#eef1f6;border:1px solid #4e7da9;text-align:left}
 .moin-select-actions{position:relative;margin:0 1em;padding:0;background:#eef1f6;z-index:2;white-space:nowrap;color:#708090;text-align:left}
 .moin-select-actions div{margin:0;padding:.5em;border:1px groove #4e7da9}
-.moin-select-actions div:hover,.action-visible div{background:#d8dfe9;color:#1f9ae0}
-.moin-select-actions .show-action{cursor:pointer}
+.moin-select-actionsdiv:hover{background:#d8dfe9;color:#1f9ae0}
+.moin-select-actions.action-visible div{color:#000}
+.moin-select-actions .show-action{cursor:pointer;}
+.moin-select-actions .show-action:hover{color:#1f9ae0}
 .show-action:after{content:url("../img/moin-moveup.png");margin:0 .2em}
 .action-visible .show-action:after{content:url("../img/moin-movedown.png");margin:0 .2em}
 .moin-select-allitem{display:inline-block;cursor:default;text-align:left}
@@ -321,7 +323,7 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .allitem-toselect:after{content:url("../img/moin-checkbox-off.png");margin:0 .2em}
 .moin-select-actions ul{position:absolute;margin:0;left:0;top:2em;padding:0;display:none;background:#fff;border:1px solid #4e7da9;z-index:1}
 .moin-select-actions ul li{display:list-item;list-style-type:none;padding:.5em;min-width:7em;cursor:pointer}
-.moin-select-actions ul li:hover{background-color:#eef1f6;color:#000}
+.moin-select-actions ul li:hover{background-color:#eef1f6;color:#708090}
 .moin-index-message{width:50%;margin:1em auto;text-align:center;display:none}
 .moin-index-message span{padding:4px;background-color:#d8dfe9;color:#000}
 .moin-download-link{display:none}

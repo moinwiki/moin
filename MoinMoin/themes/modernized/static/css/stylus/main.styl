@@ -577,13 +577,17 @@ p.searchhint
     padding 0.5em
     border 1px groove border_color
 
-.moin-select-actions div:hover,
-.action-visible div
-    background table_row_color
-    color hover_color
+.moin-select-actions 
+    &div:hover
+        background table_row_color
+        color hover_color
+    &.action-visible div
+        color font_color
 
 .moin-select-actions .show-action
     cursor pointer
+    &:hover
+        color hover_color
 
 .show-action:after
     content url("../img/moin-moveup.png")
@@ -626,7 +630,7 @@ p.searchhint
 
 .moin-select-actions ul li:hover
     background-color table_bg_color
-    color font_color
+    color link_color
 
 .moin-index-message
     width 50%
