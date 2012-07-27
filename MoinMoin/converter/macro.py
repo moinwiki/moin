@@ -85,7 +85,7 @@ class Converter(object):
             # and makes the wiki UI unusable (by emitting a Server Error),
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
-            logger.exception("Macro {0} raised an exception:".format(name))
+            logging.exception("Macro {0} raised an exception:".format(name))
             elem_error.append(_('<<%(macro_name)s: execution failed [%(error_msg)s] (see also the log)>>',
                     macro_name=name,
                     error_msg=unicode(e),

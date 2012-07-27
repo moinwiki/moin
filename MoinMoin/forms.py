@@ -8,10 +8,9 @@
 """
 
 
-from functools import reduce
-from operator import add
+import re
 
-from flatland import Element, Form, String, Integer, Boolean, Enum, MultiValue, Dict
+from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, JoinedString
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 
 from MoinMoin.constants.forms import *
@@ -53,7 +52,7 @@ InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 
 # XXX Need a better one than plain text box
-Tags = MultiValue.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True)
+Tags = JoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 
