@@ -60,7 +60,7 @@ from MoinMoin.constants.keys import (
     )
 from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
 
-from .content import content_registry
+from .content import Draw, NonExistentContent, content_registry
 
 
 COLS = 80

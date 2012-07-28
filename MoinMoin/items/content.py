@@ -24,6 +24,8 @@ import tempfile
 from StringIO import StringIO
 from array import array
 
+from werkzeug import is_resource_modified
+
 from flatland import Form, String
 
 from whoosh.query import Term, And
