@@ -442,7 +442,7 @@ def convert_item(item_name):
     # XXX Maybe use a random name to be sure it does not exist
     item_name_converted = item_name + 'converted'
     try:
-        # TODO implement Content.create and use it Content.create here
+        # TODO implement Content.create and use it here
         converted_item = Item.create(item_name_converted, itemtype=u'default', contenttype=contenttype)
     except AccessDenied:
         abort(403)
