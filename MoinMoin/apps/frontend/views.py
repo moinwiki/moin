@@ -53,8 +53,6 @@ from MoinMoin.themes import render_template, get_editor_info, contenttype_to_cla
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
-from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
-#from MoinMoin.items.content import ROWS_DATA
 from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
