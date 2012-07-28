@@ -249,7 +249,7 @@ class Converter(object):
                         elem_h = ET.Element(self.tag_h, attrib, children=(elem_a, ))
                         included_elements.append(elem_h)
 
-                    page_doc = page.internal_representation()
+                    page_doc = page.content.internal_representation()
                     # page_doc.tag = self.tag_div # XXX why did we have this?
 
                     self.recurse(page_doc, page_href)

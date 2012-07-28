@@ -27,6 +27,7 @@ USERGROUP = "usergroup"
 SOMEDICT = "somedict"
 
 CONTENTTYPE = "contenttype"
+ITEMTYPE = "itemtype"
 SIZE = "size"
 LANGUAGE = "language"
 EXTERNALLINKS = "externallinks"
@@ -82,10 +83,10 @@ RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
 
 # keys for blog homepages
-LOGO = u"logo"
-SUPERTAGS = u"supertags"
+LOGO = "logo"
+SUPERTAGS = "supertags"
 # keys for blog entries
-PTIME = u"ptime"
+PTIME = "ptime"
 
 # index names
 LATEST_REVS = 'latest_revs'

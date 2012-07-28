@@ -1,5 +1,4 @@
-{% extends "modify_applet.html" %}
-{% block data_editor %}
+{% macro data_editor(form) %}
 <p>
 <applet code="CH.ifa.draw.twiki.TWikiDraw.class"
         archive="{{ url_for('serve.files', name='twikidraw_moin', filename='twikidraw_moin.jar') }}"
@@ -14,4 +13,4 @@
 </applet>
 </p>
 <br />
-{% endblock %}
+{% endmacro %}

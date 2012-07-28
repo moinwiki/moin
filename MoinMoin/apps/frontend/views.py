@@ -22,7 +22,7 @@ import mimetypes
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
-from functools import wraps
+from functools import wraps, partial
 
 try:
     import json
@@ -53,7 +53,6 @@ from MoinMoin.themes import render_template, get_editor_info, contenttype_to_cla
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
-from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
 from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
@@ -268,9 +267,9 @@ def search():
     return html
 
 
-def presenter(view, add_trail=False, abort404=True):
+def add_presenter(wrapped, view, add_trail=False, abort404=True):
     """
-    Decorator to create new "presenter" views.
+    Add new "presenter" views.
 
     Presenter views handle GET requests to locations like
     +{view}/+<rev>/<item_name> and +{view}/<item_name>, and always try to
@@ -280,22 +279,27 @@ def presenter(view, add_trail=False, abort404=True):
     :param add_trail: whether to call flaskg.user.add_trail
     :param abort404: whether to abort(404) for nonexistent items
     """
-    def decorator(wrapped):
-        @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
-        @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
-        @wraps(wrapped)
-        def wrapper(item_name, rev):
-            if add_trail:
-                flaskg.user.add_trail(item_name)
-            try:
-                item = Item.create(item_name, rev_id=rev)
-            except AccessDenied:
-                abort(403)
-            if abort404 and isinstance(item, NonExistent):
-                abort(404, item_name)
-            return wrapped(item)
-        return wrapper
-    return decorator
+    @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
+    @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
+    @wraps(wrapped)
+    def wrapper(item_name, rev):
+        if add_trail:
+            flaskg.user.add_trail(item_name)
+        try:
+            item = Item.create(item_name, rev_id=rev)
+        except AccessDenied:
+            abort(403)
+        if abort404 and isinstance(item, NonExistent):
+            abort(404, item_name)
+        return wrapped(item)
+    return wrapper
+
+
+def presenter(view, add_trail=False, abort404=True):
+    """
+    Decorator factory to apply add_presenter().
+    """
+    return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
@@ -321,7 +325,7 @@ def show_item(item_name, rev):
                               contenttype=item.contenttype,
                               first_rev_id=first_rev,
                               last_rev_id=last_rev,
-                              data_rendered=Markup(item._render_data()),
+                              data_rendered=Markup(item.content._render_data()),
                               show_revision=show_revision,
                               show_navigation=show_navigation,
                              )
@@ -340,7 +344,7 @@ def show_dom(item):
     else:
         status = 200
     content = render_template('dom.xml',
-                              data_xml=Markup(item._render_data_xml()),
+                              data_xml=Markup(item.content._render_data_xml()),
                              )
     return Response(content, status, mimetype='text/xml')
 
@@ -363,7 +367,7 @@ def indexable(item_name, rev):
 def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
-                           data_text=Markup(item._render_data_highlight()),
+                           data_text=Markup(item.content._render_data_highlight()),
                           )
 
 
@@ -408,17 +412,17 @@ def content_item(item_name, rev):
         abort(404, item_name)
     return render_template('content.html',
                            item_name=item.name,
-                           data_rendered=Markup(item._render_data()),
+                           data_rendered=Markup(item.content._render_data()),
                            )
 
 @presenter('get')
 def get_item(item):
-    return item.do_get()
+    return item.content.do_get()
 
 @presenter('download')
 def download_item(item):
     mimetype = request.values.get("mimetype")
-    return item.do_get(force_attachment=True, mimetype=mimetype)
+    return item.content.do_get(force_attachment=True, mimetype=mimetype)
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
@@ -441,10 +445,11 @@ def convert_item(item_name):
     # XXX Maybe use a random name to be sure it does not exist
     item_name_converted = item_name + 'converted'
     try:
-        converted_item = Item.create(item_name_converted, contenttype=contenttype)
+        # TODO implement Content.create and use it here
+        converted_item = Item.create(item_name_converted, itemtype=u'default', contenttype=contenttype)
     except AccessDenied:
         abort(403)
-    return converted_item._convert(item.internal_representation())
+    return converted_item.content._convert(item.content.internal_representation())
 
 
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
@@ -455,15 +460,15 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
+    itemtype = request.values.get('itemtype')
     contenttype = request.values.get('contenttype')
-    template_name = request.values.get('template')
     try:
-        item = Item.create(item_name, contenttype=contenttype)
+        item = Item.create(item_name, itemtype=itemtype, contenttype=contenttype)
     except AccessDenied:
         abort(403)
     if not flaskg.user.may.write(item_name):
         abort(403)
-    return item.do_modify(contenttype, template_name)
+    return item.do_modify()
 
 
 @frontend.route('/+blog/+<rev>/<itemname:item_name>', methods=['GET'])
@@ -1664,7 +1669,7 @@ def _diff(item, revid1, revid2):
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
-                           diff_html=Markup(item._render_data_diff(oldrev, newrev)),
+                           diff_html=Markup(item.content._render_data_diff(oldrev, newrev)),
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
                            last_rev_id=rev_ids[-1],
@@ -1682,7 +1687,7 @@ def _diff_raw(item, revid1, revid2):
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
-    return item._render_data_diff_raw(oldrev, newrev)
+    return item.content._render_data_diff_raw(oldrev, newrev)
 
 
 @frontend.route('/+similar_names/<itemname:item_name>')

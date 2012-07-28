@@ -1,11 +1,10 @@
+# Copyright: 2012 MoinMoin:CheerXiao
 # Copyright: 2009 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
     MoinMoin - MoinMoin.items Tests
 """
-
-# TODO: split the tests into multiple files after the items/__init__.py is split.
 
 import pytest
 
@@ -17,7 +16,8 @@ from werkzeug import escape
 from MoinMoin.util import diff_html
 
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.items import Item, ApplicationXTar, NonExistent, Binary, Text, Image, TransformableBitmapImage, MarkupItem
+from MoinMoin.items import Item, NonExistent
+from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 class TestItem(object):
@@ -25,10 +25,11 @@ class TestItem(object):
     def testNonExistent(self):
         item = Item.create(u'DoesNotExist')
         assert isinstance(item, NonExistent)
-        meta, data = item.meta, item.data
+        meta, data = item.meta, item.content.data
         assert meta == {CONTENTTYPE: u'application/x-nonexistent'}
         assert data == ''
 
+    # TODO move this to testContent after implementing Content.create
     def testClassFinder(self):
         for contenttype, ExpectedClass in [
                 (u'application/x-foobar', Binary),
@@ -38,7 +39,7 @@ class TestItem(object):
                 (u'image/png', TransformableBitmapImage),
             ]:
             item = Item.create(u'foo', contenttype=contenttype)
-            assert isinstance(item, ExpectedClass)
+            assert isinstance(item.content, ExpectedClass)
 
     def testCRUD(self):
         name = u'NewItem'
@@ -52,7 +53,7 @@ class TestItem(object):
         item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
-        saved_meta, saved_data = item.meta, item.data
+        saved_meta, saved_data = item.meta, item.content.data
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
@@ -63,7 +64,7 @@ class TestItem(object):
         item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
-        saved_meta, saved_data = dict(item.meta), item.data
+        saved_meta, saved_data = dict(item.meta), item.content.data
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
@@ -74,7 +75,7 @@ class TestItem(object):
         item._save(meta, data, comment=comment)
         # check save result
         item = Item.create(name)
-        saved_meta, saved_data = dict(item.meta), item.data
+        saved_meta, saved_data = dict(item.meta), item.content.data
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
@@ -206,7 +207,7 @@ class TestItem(object):
         assert item.name == u'Test_new_Item'
         assert item.meta['name_old'] == u'Test_Item'
         assert item.meta['comment'] == u'renamed'
-        assert item.data == u'test_data'
+        assert item.content.data == u'test_data'
 
     def test_rename_recursion(self):
         update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
@@ -232,19 +233,19 @@ class TestItem(object):
         assert item.name == u'Renamed_Page'
         assert item.meta['name_old'] == u'Page'
         assert item.meta['comment'] == u'renamed'
-        assert item.data == u'Page 1'
+        assert item.content.data == u'Page 1'
 
         item = Item.create(u'Renamed_Page/Child')
         assert item.name == u'Renamed_Page/Child'
         assert item.meta['name_old'] == u'Page/Child'
         assert item.meta['comment'] == u'renamed'
-        assert item.data == u'this is child'
+        assert item.content.data == u'this is child'
 
         item = Item.create(u'Renamed_Page/Child/Another')
         assert item.name == u'Renamed_Page/Child/Another'
         assert item.meta['name_old'] == u'Page/Child/Another'
         assert item.meta['comment'] == u'renamed'
-        assert item.data == u'another child'
+        assert item.content.data == u'another child'
 
     def test_delete(self):
         name = u'Test_Item2'
@@ -298,228 +299,6 @@ class TestItem(object):
         with pytest.raises(KeyError):
             item.meta['test_key']
         assert item.meta['another_test_key'] == another_meta['another_test_key']
-        assert item.data == another_data
-
-
-class TestBinary(object):
-    """ Test for arbitrary binary items """
-
-    def test_get_templates(self):
-        item_name1 = u'Template_Item1'
-        item1 = Binary.create(item_name1)
-        contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
-        item1._save(meta)
-        item1 = Binary.create(item_name1)
-
-        item_name2 = u'Template_Item2'
-        item2 = Binary.create(item_name2)
-        contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
-        item2._save(meta)
-        item2 = Binary.create(item_name2)
-
-        item_name3 = u'Template_Item3'
-        item3 = Binary.create(item_name3)
-        contenttype2 = u'image/png'
-        meta = {CONTENTTYPE: contenttype2, 'tags': ['template']}
-        item3._save(meta)
-        item3 = Binary.create(item_name3)
-        # two items of same content type
-        result1 = item1.get_templates(contenttype1)
-        assert result1 == [item_name1, item_name2]
-        # third of different content type
-        result2 = item1.get_templates(contenttype2)
-        assert result2 == [item_name3]
-
-class TestTarItems(object):
-    """
-    tests for the container items
-    """
-
-    def testCreateContainerRevision(self):
-        """
-        creates a container and tests the content saved to the container
-        """
-        item_name = u'ContainerItem1'
-        item = Item.create(item_name, contenttype=u'application/x-tar')
-        filecontent = 'abcdefghij'
-        content_length = len(filecontent)
-        members = set(['example1.txt', 'example2.txt'])
-        item.put_member('example1.txt', filecontent, content_length, expected_members=members)
-        item.put_member('example2.txt', filecontent, content_length, expected_members=members)
-
-        item = Item.create(item_name, contenttype=u'application/x-tar')
-        tf_names = set(item.list_members())
-        assert tf_names == members
-        assert item.get_member('example1.txt').read() == filecontent
-
-    def testRevisionUpdate(self):
-        """
-        creates two revisions of a container item
-        """
-        item_name = u'ContainerItem2'
-        item = Item.create(item_name, contenttype=u'application/x-tar')
-        filecontent = 'abcdefghij'
-        content_length = len(filecontent)
-        members = set(['example1.txt'])
-        item.put_member('example1.txt', filecontent, content_length, expected_members=members)
-        filecontent = 'AAAABBBB'
-        content_length = len(filecontent)
-        item.put_member('example1.txt', filecontent, content_length, expected_members=members)
-
-        item = Item.create(item_name, contenttype=u'application/x-tar')
-        assert item.get_member('example1.txt').read() == filecontent
-
-class TestZipMixin(object):
-    """ Test for zip-like items """
-
-    def test_put_member(self):
-        item_name = u'Zip_file'
-        item = Item.create(item_name, contenttype='application/zip')
-        filecontent = 'test_contents'
-        content_length = len(filecontent)
-        members = set(['example1.txt', 'example2.txt'])
-        with pytest.raises(NotImplementedError):
-            item.put_member('example1.txt', filecontent, content_length, expected_members=members)
-
-class TestTransformableBitmapImage(object):
-
-    def test__transform(self):
-        item_name = u'image_Item'
-        item = Binary.create(item_name)
-        contenttype = u'image/jpeg'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item = Binary.create(item_name)
-        try:
-            from PIL import Image as PILImage
-            with pytest.raises(ValueError):
-                result = TransformableBitmapImage._transform(item, 'text/plain')
-        except ImportError:
-            result = TransformableBitmapImage._transform(item, contenttype)
-            assert result == (u'image/jpeg', '')
-
-    def test__render_data_diff(self):
-        item_name = u'image_Item'
-        item = Binary.create(item_name)
-        contenttype = u'image/jpeg'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item1 = Binary.create(item_name)
-        try:
-            from PIL import Image as PILImage
-            result = Markup(TransformableBitmapImage._render_data_diff(item1, item.rev, item1.rev))
-            # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
-            # The assert statement works with both older and newer versions of Werkzeug
-            # Probably not an intentional change on the werkzeug side, see issue:
-            # https://github.com/mitsuhiko/werkzeug/issues/146
-            assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or \
-                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')
-        except ImportError:
-            # no PIL
-            pass
-
-    def test__render_data_diff_text(self):
-        item_name = u'image_Item'
-        item = Binary.create(item_name)
-        contenttype = u'image/jpeg'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item1 = Binary.create(item_name)
-        data = 'test_data'
-        comment = u'next revision'
-        item1._save(meta, data, comment=comment)
-        item2 = Binary.create(item_name)
-        try:
-            from PIL import Image as PILImage
-            result = TransformableBitmapImage._render_data_diff_text(item1, item1.rev, item2.rev)
-            expected = u'The items have different data.'
-            assert result == expected
-        except ImportError:
-            pass
-
-class TestText(object):
-
-    def test_data_conversion(self):
-        item_name = u'Text_Item'
-        item = Text.create(item_name, u'text/plain')
-        test_text = u'This \n is \n a \n Test'
-        # test for data_internal_to_form
-        result = Text.data_internal_to_form(item, test_text)
-        expected = u'This \r\n is \r\n a \r\n Test'
-        assert result == expected
-        # test for data_form_to_internal
-        test_form = u'This \r\n is \r\n a \r\n Test'
-        result = Text.data_form_to_internal(item, test_text)
-        expected = test_text
-        assert result == expected
-        # test for data_internal_to_storage
-        result = Text.data_internal_to_storage(item, test_text)
-        expected = 'This \r\n is \r\n a \r\n Test'
-        assert result == expected
-        # test for data_storage_to_internal
-        data_storage = 'This \r\n is \r\n a \r\n Test'
-        result = Text.data_storage_to_internal(item, data_storage)
-        expected = test_text
-        assert result == expected
-
-    def test__render_data_diff(self):
-        item_name = u'Html_Item'
-        empty_html = u'<span></span>'
-        html = u'<span>\ud55c</span>'
-        meta = {CONTENTTYPE: u'text/html;charset=utf-8'}
-        item = Text.create(item_name)
-        item._save(meta, empty_html)
-        item = Text.create(item_name)
-        # Unicode test, html escaping
-        rev1 = update_item(item_name, meta, html)
-        rev2 = update_item(item_name, {}, u'     ')
-        result = Text._render_data_diff(item, rev1, rev2)
-        assert escape(html) in result
-        # Unicode test, whitespace
-        rev1 = update_item(item_name, {}, u'\n\n')
-        rev2 = update_item(item_name, {}, u'\n     \n')
-        result = Text._render_data_diff(item, rev1, rev2)
-        assert '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' in result
-        # If fairly similar diffs are correctly spanned or not, also check indent
-        rev1 = update_item(item_name, {}, u'One Two Three Four\nSix\n\ud55c')
-        rev2 = update_item(item_name, {}, u'Two Three Seven Four\nSix\n\ud55c')
-        result = Text._render_data_diff(item, rev1, rev2)
-        assert '<span>One </span>Two Three Four' in result
-        assert 'Two Three <span>Seven </span>Four' in result
-        # Check for diff_html.diff return types
-        assert reduce(lambda x, y: x and y, [isinstance(i[1], unicode) and isinstance(i[3], unicode) for i in diff_html.diff(u'One Two Three Four\nSix\n', u'Two Three Seven Four\nSix Seven\n')], True)
-
-    def test__render_data_diff_text(self):
-        item_name = u'Text_Item'
-        item = Text.create(item_name)
-        contenttype = u'text/plain'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item1 = Text.create(item_name)
-        data = 'test_data'
-        comment = u'next revision'
-        item1._save(meta, data, comment=comment)
-        item2 = Text.create(item_name)
-        result = Text._render_data_diff_text(item1, item1.rev, item2.rev)
-        expected = u'- \n+ test_data'
-        assert result == expected
-        assert item2.data == ''
-
-    def test__render_data_highlight(self):
-        item_name = u'Text_Item'
-        item = Text.create(item_name)
-        contenttype = u'text/plain'
-        meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
-        item1 = Text.create(item_name)
-        data = 'test_data\nnext line'
-        comment = u'next revision'
-        item1._save(meta, data, comment=comment)
-        item2 = Text.create(item_name)
-        result = Text._render_data_highlight(item2)
-        assert u'<pre class="highlight">test_data\n' in result
-        assert item2.data == ''
+        assert item.content.data == another_data
 
 coverage_modules = ['MoinMoin.items']
