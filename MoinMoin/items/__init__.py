@@ -555,7 +555,6 @@ class Contentful(Item):
         return C
 
 
-# TODO better name and clearer definition
 class Default(Contentful):
     """
     A "conventional" wiki item.
@@ -566,7 +565,7 @@ class Default(Contentful):
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_show_template_selection.html',
                                item_name=self.name,
-                               # XXX avoid the magic string
+                               # XXX u'default' should be a constant
                                itemtype=u'default',
                                rev=self.rev,
                                contenttype=self.contenttype,
@@ -577,15 +576,13 @@ class Default(Contentful):
                                data_rendered='',
                                )
 
-    # To code reviewers: this method was mostly merged from Item.do_modify and
-    # Draw, with modifications.
     def do_modify(self):
         method = request.method
         if method == 'GET':
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_show_contenttype_selection.html',
                                        item_name=self.name,
-                                       # XXX avoid the magic string
+                                       # XXX see comment above
                                        itemtype=u'default',
                                        contenttype_groups=CONTENTTYPE_GROUPS,
                                       )
@@ -739,7 +736,6 @@ ROWS_DATA = 20
 
 # XXX Too much boilerplate in Entry implementation. Maybe use namedtuple
 # as a starting point?
-# Renamed from old RegistryItem, whole class untouched
 class RegistryContent(RegistryBase):
     class Entry(object):
         def __init__(self, factory, content_type, priority):
