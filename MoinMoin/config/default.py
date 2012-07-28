@@ -334,7 +334,8 @@ options_no_group_name = {
         ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
         ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),
         ('wikilink', 'frontend.global_tags', dict(), L_('Tags'), L_('Global Tags Index')),
-        ('wikilink', 'admin.index', dict(), L_('More'), L_('Administration & Docs')),
+        ('wikilink', 'admin.index_user', dict(), L_('User'), L_('User')),
+        ('wikilink', 'admin.index', dict(), L_('Admin'), L_('Administration & Docs')),
      ],
      'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
 
