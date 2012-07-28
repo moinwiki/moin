@@ -22,7 +22,7 @@ import mimetypes
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
-from functools import wraps
+from functools import wraps, partial
 
 try:
     import json
@@ -267,9 +267,9 @@ def search():
     return html
 
 
-def presenter(view, add_trail=False, abort404=True):
+def add_presenter(wrapped, view, add_trail=False, abort404=True):
     """
-    Decorator to create new "presenter" views.
+    Add new "presenter" views.
 
     Presenter views handle GET requests to locations like
     +{view}/+<rev>/<item_name> and +{view}/<item_name>, and always try to
@@ -279,22 +279,27 @@ def presenter(view, add_trail=False, abort404=True):
     :param add_trail: whether to call flaskg.user.add_trail
     :param abort404: whether to abort(404) for nonexistent items
     """
-    def decorator(wrapped):
-        @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
-        @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
-        @wraps(wrapped)
-        def wrapper(item_name, rev):
-            if add_trail:
-                flaskg.user.add_trail(item_name)
-            try:
-                item = Item.create(item_name, rev_id=rev)
-            except AccessDenied:
-                abort(403)
-            if abort404 and isinstance(item, NonExistent):
-                abort(404, item_name)
-            return wrapped(item)
-        return wrapper
-    return decorator
+    @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
+    @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
+    @wraps(wrapped)
+    def wrapper(item_name, rev):
+        if add_trail:
+            flaskg.user.add_trail(item_name)
+        try:
+            item = Item.create(item_name, rev_id=rev)
+        except AccessDenied:
+            abort(403)
+        if abort404 and isinstance(item, NonExistent):
+            abort(404, item_name)
+        return wrapped(item)
+    return wrapper
+
+
+def presenter(view, add_trail=False, abort404=True):
+    """
+    Decorator factory to apply add_presenter().
+    """
+    return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
