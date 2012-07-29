@@ -563,7 +563,7 @@ class Default(Contentful):
         # call this if the item is still empty
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
-        return render_template('modify_show_template_selection.html',
+        return render_template('modify_select_template.html',
                                item_name=self.name,
                                # XXX u'default' should be a constant
                                itemtype=u'default',
@@ -580,7 +580,7 @@ class Default(Contentful):
         method = request.method
         if method == 'GET':
             if isinstance(self.content, NonExistentContent):
-                return render_template('modify_show_contenttype_selection.html',
+                return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
                                        # XXX see comment above
                                        itemtype=u'default',
@@ -661,7 +661,7 @@ class NonExistent(Item):
             (u'ticket', u'Ticket', 'Ticket item'),
         ]
 
-        return render_template('modify_show_itemtype_selection.html',
+        return render_template('modify_select_itemtype.html',
                                item_name=self.name,
                                itemtypes=ITEMTYPES,
                               )
