@@ -405,8 +405,8 @@ ul.moin-tags li.weight6{font-size:140%}
 ul.moin-tags li.weight7{font-size:160%}
 ul.moin-tags li.weight8{font-size:180%}
 ul.moin-tags li.weight9{font-size:200%}
-#moin-flash{margin:0}
-.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center;color:#000}
+#moin-flash{margin:0;display:table-row}
+.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center;border-top-right-radius:9px;border-top-left-radius:9px;color:#000}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png")}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png")}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
