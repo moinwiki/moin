@@ -66,7 +66,7 @@ Natural = AnyInteger.validated_by(ValueAtLeast(0))
 SmallNatural = _Integer.with_properties(widget=WIDGET_SMALL_NATURAL)
 
 DateTime = (_DateTime.with_properties(widget=WIDGET_DATETIME, placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2999-12-31 23:59:59)"))
-               .validated_by(Converted(incorrect=L_("Please use the following format: YYYY-MM-DD HH:MM:SS"))))
+            .validated_by(Converted(incorrect=L_("Please use the following format: YYYY-MM-DD HH:MM:SS"))))
 
 File = FileStorage.with_properties(widget=WIDGET_FILE)
 
