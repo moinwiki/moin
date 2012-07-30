@@ -57,7 +57,6 @@ ul.moin-blog-entry-tags { list-style: none; display: inline; margin: 0; }
 ul.moin-blog-entry-tags li { display: inline; }
 ul.moin-blog-entry-tags li:after { content: ","; } 
 ul.moin-blog-entry-tags li:last-child:after { content: ""; }
-
 /* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
 .moin-text-icon { font-size: 0; color: transparent; }
 .moin-alert:before { content: url('../img/smileys/alert.png'); }
@@ -273,7 +272,7 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
 .moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
 .moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#00008b;border-top-left-radius:7px;border-top-right-radius:7px}
-.moin-tab-titles a:hover{background-color:#eef1f6;text-decoration:none}
+.moin-tab-titles a:hover{background-color:#d8dfe9;text-decoration:none}
 .moin-tab-titles a.current{background:#d8dfe9;padding-top:8px;margin-top:-4px}
 .moin-tab-titles .change-indicator{font-weight:bold;color:#1f9ae0}
 .moin-tab-title a{color:#000;text-decoration:none}
