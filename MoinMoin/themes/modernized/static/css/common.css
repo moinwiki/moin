@@ -449,7 +449,8 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-pageline{clear:both;margin:auto;padding:0;width:98%;height:1px;border-bottom:1px solid #fff;border-top:1px solid #fff;background:#fff}
 .moin-itemviews{clear:both;display:block;margin:0 0 -8px 0;padding:2px 8px;background:#708090;font-size:.8em;border-bottom:1px solid #4e7da9;border-top:1px solid #4e7da9;border-radius:9px}
 .moin-itemviews li{display:inline-block;padding:0;margin:4px 6px;line-height:1em}
-.moin-itemviews a,.moin-itemviews a:visited{color:#e6e6e6}
+.moin-itemviews a,.moin-itemviews a:visited{color:#e6e6e6;}
+.moin-itemviews a:hover,.moin-itemviews a:visited:hover{color:#fff}
 .moin-itemviews a:hover{text-decoration:underline}
 .moin-itemviews form,.moin-itemviews form div{display:inline;margin:0}
 .moin-itemviews select{font-size:100%;vertical-align:middle}
