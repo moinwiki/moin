@@ -265,9 +265,22 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-disabled{color:#737373}
 .moin-rev-navigation-current{font-size:1.5em;text-transform:uppercase}
 .moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
-.moin-form dd{margin-bottom:1em}
-.moin-form dd input{width:20em}
-.moin-form dt label.required:after{content:'*';color:#737373}
+label{display:block;font-weight:bold}
+input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#dfdfdf;padding:4px 15px;border:1px solid #4e7da9;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
+input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
+input[type="submit"]:active,input[type="button"]:active,button:active{position:relative;top:1px}
+input,select{padding:3px;background:#fff;border:1px solid #4e7da9;border-radius:2px}
+input[type="text"]{width:96%}
+input.blank{border-color:#4e7da9;border-width:2px}
+.moin-form dd{float:left;width:70%;margin-bottom:1em;margin-left:0;}
+.moin-form dd input{width:75%}
+.moin-form dt{clear:both;float:left;width:25%;text-align:right;margin-top:.3em;padding-right:1%;}
+.moin-form dt label.required:after{content:'*';color:#000}
+.moin-form button,.moin-form input[type="submit"]{margin-left:48%}
+form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
+form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
+#options dd{float:none;width:38%;display:table-cell;padding:1.2em}
+#options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
 #moin-usersettings a{color:#00008b}
 .moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
 .moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
