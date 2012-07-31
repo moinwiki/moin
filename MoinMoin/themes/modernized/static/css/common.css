@@ -441,9 +441,9 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-header{margin:0;padding:0 0 10px 0;background:#708090;color:#fff;line-height:1.12em;border-bottom-left-radius:9px;border-bottom-right-radius:9px}
 #moin-searchform{margin:8px .5em;padding:0;font-size:.82em;float:right;text-align:right}
 #moin-searchform input{font-size:100%;vertical-align:middle;background-color:#fff;border:1px solid #4e7da9}
-#moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-24px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer}
+#moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-26px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer;padding:0;box-shadow:none}
 #moin-searchform #moin-search-query{padding-right:20px}
-#moin-searchform div{margin:0}
+#moin-searchform div{margin:0 5px 0 0}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
 #moin-long-searchform div{margin:0}
 #moin-search-query{width:50%}
