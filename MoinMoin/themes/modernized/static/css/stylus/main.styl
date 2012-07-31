@@ -315,15 +315,81 @@ table.navigation
 .moin-rev-navigation-newer
     padding 0 20px 0 20px
 
-.moin-form dd
-    margin-bottom 1em
+// form
+label
+    display block
+    font-weight bold
 
-.moin-form dd input
-    width 20em
-
-.moin-form dt label.required:after
-    content '*'
-    color footer_color
+input[type="submit"],
+input[type="button"],
+button
+    font-weight bold
+    font-size .75em
+    background base_color
+    padding 4px 15px
+    border border_style
+    border-radius 6px
+    box-shadow 1px 1px 2px shadow_color
+    cursor pointer
+    &:hover
+        box-shadow 1px 1px 2px font_color
+    &:active
+        position relative
+        top 1px
+    
+input,
+select
+    padding 3px
+    background page_color
+    border border_style
+    border-radius 2px
+input[type="text"]
+    width 96%
+input.blank
+    border-color border_color
+    border-width 2px
+    
+.moin-form 
+    dd
+        float left
+        width 70%
+        margin-bottom 1em
+        margin-left 0
+        input
+            width 75%
+    dt
+        clear both
+        float left
+        width 25%
+        text-align right
+        margin-top .3em
+        padding-right 1%
+        label
+            &.required:after
+                content '*'
+                color font_color
+    button,
+    input[type="submit"]
+        margin-left 48%
+    
+form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"] 
+    dd
+        input
+            width 100%
+    dt
+        width 20%
+        
+#options
+    dd
+        float none
+        width 38%
+        display table-cell
+        padding 1.2em
+    dt
+        margin-left 10%
+        text-align left
+        width 61%
+        margin-top 1.3em
 
 #moin-usersettings
     a
