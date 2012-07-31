@@ -77,9 +77,9 @@ class RegistryItem(RegistryBase):
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority < other.priority:
-                    return True
-                return self.itemtype == other.itemtype
+                if self.priority != other.priority:
+                    return self.priority < other.priority
+                return self.itemtype < other.itemtype
             return NotImplemented
 
 
