@@ -477,7 +477,7 @@ def show_blog(item_name, rev):
     """
     Show a blog item and a list of blog entries below it.
 
-    If supertag GET-parameter is defined, the list of blog entries consist only
+    If supertag GET-parameter is defined, the list of blog entries consists only
     of those entries that contain the supertag value in their lists of tags.
     """
     supertag = request.values.get('supertag')
@@ -488,7 +488,6 @@ def show_blog(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    # TODO: move to BlogItem class
     prefix = item_name + u'/'
     current_timestamp = int(time.time())
     terms = [Term(WIKINAME, app.cfg.interwikiname),
