@@ -1,0 +1,29 @@
+{% import "forms.html" as forms %}
+{% extends theme("local.html") %}
+{% block content %}
+{% if rev_id == None %}
+    <h1>{{ _("DESTROY COMPLETE item '%(item_name)s'", item_name=item.name) }}</h1>
+    <div class="moin-form">
+    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name)) }}
+      {{ forms.render_errors(form) }}
+      <dl>
+        {{ forms.render_field(gen, form['comment'], 'text') }}
+        {{ forms.render_textcha(gen, form) }}
+      </dl>
+      {{ gen.input(form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    </div>
+{% else %}
+    <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_id)s)", item_name=item.name, rev_id=rev_id) }}</h1>
+    <div class="moin-form">
+    {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name, rev=rev_id)) }}
+      {{ forms.render_errors(form) }}
+      <dl>
+        {{ forms.render_field(gen, form['comment'], 'text') }}
+        {{ forms.render_textcha(gen, form) }}
+      </dl>
+      {{ gen.input(form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    </div>
+{% endif %}
+{% endblock %}
