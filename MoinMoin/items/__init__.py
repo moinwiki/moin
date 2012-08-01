@@ -132,6 +132,14 @@ class BaseChangeForm(TextChaizedForm):
     submit = Submit
 
 
+class BaseMetaForm(Form):
+    wikiname = OptionalText.using(label=L_("Wiki name")).with_properties(placeholder=L_("Wiki name"))
+    itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
+    contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
+    acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
+    summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
+    tags = Tags
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
@@ -308,14 +316,22 @@ class Item(object):
 
     class _ModifyForm(BaseChangeForm):
         """Base class for ModifyForm of Item subclasses."""
-        meta_text = OptionalMultilineText.using(label=L_("MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS).validated_by(ValidJSON())
+        meta_form = BaseMetaForm
+        extra_meta_text = OptionalMultilineText.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS).validated_by(ValidJSON())
+        meta_template = 'modify_meta.html'
 
         def _load(self, item):
-            self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
+            meta = item.prepare_meta_for_modify(item.meta)
+            self['meta_form'].set(meta, 'duck')
+            for k in self['meta_form'].field_schema_mapping.keys():
+                meta.pop(k, None)
+            self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)
 
         def _dump(self, item):
-            meta = item.meta_text_to_dict(self['meta_text'].value)
+            meta = self['meta_form'].value.copy()
+            meta['tags'] = list(self['meta_form']['tags'])
+            meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
