@@ -265,6 +265,10 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-disabled{color:#737373}
 .moin-rev-navigation-current{font-size:1.5em;text-transform:uppercase}
 .moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
+#moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
+#moin-create-table tbody tr th{text-align:center;background:header_color;margin:2px}
+#moin-create-table tbody tr td{text-align:center;background:#fff;}
+#moin-create-table tbody tr td a{color:#00008b}
 label{display:block;font-weight:bold}
 input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#dfdfdf;padding:4px 15px;border:1px solid #4e7da9;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
 input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
