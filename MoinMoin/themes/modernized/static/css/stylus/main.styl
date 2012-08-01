@@ -219,6 +219,8 @@ th, td
 th
     border border_style
     background-color header_bg_color
+    text-align center
+    color table_row_color
 
 td
     border border_style
@@ -228,17 +230,16 @@ td p
     padding 0
 
 table.zebra
-    border none
     border-collapse separate
     border-spacing 1px
 
 .zebra thead
     background-color header_bg_color
-
+   
 .zebra tfoot
     background-color base_color
 
-.zebra th, .zebra td
+.zebra td
     border none
 
 .zebra tbody tr, .zebra > tr
@@ -536,6 +537,24 @@ p.searchhint
 #moin-global-history,
 #moin-page-history
     font-size 75%
+    
+#moin-page-history
+    table
+        border border_style
+        border-radius 5px
+        thead 
+            border-top-left-radius 5px
+            border-top-right-radius 5px
+            tr th
+                    text-align center
+                    input[type="Submit"]
+                        padding 4px 10px
+                        box-shadow 1px 1px 2px shadow_color
+                        cursor pointer
+                        font-size 1em
+                        &:hover
+                            box-shadow 1px 1px 2px font_color
+
 
 .moin-wordbreak
     word-break break-all
@@ -561,7 +580,9 @@ p.searchhint
 
 .moin-history-container
     border border_style
-    margin 2em 0
+    margin 2em 2em
+    border-top-left-radius 5px
+    border-top-right-radius 5px
 
 .moin-history-container-header
     background header_bg_color
@@ -569,23 +590,22 @@ p.searchhint
     padding 4px
     color heading_color
     border-bottom border_style
-
-.moin-history-container-header h2
-    display inline
-    border none
-
-.moin-history-container-header a.bookmark-link
-    margin-left 10px
-    color heading_color
+    border-top-left-radius 5px
+    border-top-right-radius 5px
+    h2
+        display inline
+        border none
+    a.bookmark-link
+        margin-left 10px
+        color heading_color
 
 .moin-history-container-body
     margin 0
     padding 0
-    font-size 14px
-
-.moin-history-container-body table
-    margin 0
-    width 100%
+    font-size 1.2em
+    table
+        margin 0
+        width 100%
 
 .moin-history-save:before
     content url('../img/moin-edit.png')
