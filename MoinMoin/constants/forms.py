@@ -16,6 +16,7 @@ WIDGET_CHECKBOX = u'checkbox'
 WIDGET_INLINE_CHECKBOX = u'inline_checkbox'
 WIDGET_ANY_INTEGER = u'any_integer'
 WIDGET_SMALL_NATURAL = u'small_natural'
+WIDGET_DATETIME = u'datetime'
 
 WIDGET_FILE = u'file'
 WIDGET_SEARCH = u'search'

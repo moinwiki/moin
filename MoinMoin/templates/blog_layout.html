@@ -19,7 +19,7 @@
         {% endif %}
     </div>
     <div class="moin-blog-entry-content">
-        {{ entry_item._render_data()|safe }} {# rendered blog entry content #}
+        {{ entry_item.content._render_data()|safe }} {# rendered blog entry content #}
     </div>
     <div class="moin-blog-entry-bottominfo">
         {% set tags = entry_item.meta['tags']|sort %}
@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% if blog_item %}
-    {% set blog_header = blog_item._render_data()|safe %}
+    {% set blog_header = blog_item.content._render_data()|safe %}
     {% set blog_name = blog_item.name %}
     {% set supertags = blog_item.meta['supertags'] %}
 {% endif %}

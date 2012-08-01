@@ -50,6 +50,7 @@ Helpers for using flatland with jinja2 to create html forms.
       'inline_checkbox': inline_checkbox,
       'any_integer': any_integer,
       'small_natural': small_natural,
+      'datetime': datetime,
       'search': search,
       'submit': raw_input,
       'hidden': raw_input,
@@ -129,6 +130,10 @@ Helpers for using flatland with jinja2 to create html forms.
             {{ _radio_label(field, value=i|string) }}
         {% endfor %}
     </dd>
+{% endmacro %}
+
+{% macro datetime(field) %}
+  {{ annotated_input(field, 'text') }}
 {% endmacro %}
 
 {% macro search(field) %}

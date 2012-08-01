@@ -5,6 +5,10 @@
 MoinMoin - meta data key / index field name related constants
 """
 
+# IMPORTANT: until we require a python >= 2.6.5, we need to keep the keys as
+#            str (not unicode), because of "Issue #4978: Passing keyword
+#            arguments as unicode strings is now allowed." (from 2.6.5 chglog)
+
 # metadata keys
 NAME = "name"
 NAME_OLD = "name_old"
