@@ -32,6 +32,21 @@ OptionalMultilineText = MultilineText.using(optional=True)
 
 RequiredMultilineText = MultilineText.validated_by(Present())
 
+
+class ValidJSON(Validator):
+    """Validator for JSON
+    """
+    invalid_json_msg = L_('Invalid JSON.')
+
+    def validate(self, element, state):
+        try:
+            json.loads(element.value)
+        except:
+            return self.note_error(element, state, 'invalid_json_msg')
+        return True
+
+JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
+
 URL = String.with_properties(widget=WIDGET_TEXT).validated_by(URLValidator())
 
 OpenID = URL.using(label=L_('OpenID')).with_properties(placeholder=L_("OpenID address"))
