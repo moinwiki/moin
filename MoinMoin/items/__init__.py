@@ -28,7 +28,7 @@ from flatland.validation import Validator
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.forms import RequiredText, OptionalText, OptionalMultilineText, Tags, Submit
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
@@ -111,19 +111,6 @@ class DummyItem(object):
     def list_revisions(self):
         return [] # same as an empty Item
     def destroy_all_revisions(self):
-        return True
-
-
-class ValidJSON(Validator):
-    """Validator for JSON
-    """
-    invalid_json_msg = L_('Invalid JSON.')
-
-    def validate(self, element, state):
-        try:
-            json.loads(element.value)
-        except:
-            return self.note_error(element, state, 'invalid_json_msg')
         return True
 
 
@@ -317,7 +304,7 @@ class Item(object):
     class _ModifyForm(BaseChangeForm):
         """Base class for ModifyForm of Item subclasses."""
         meta_form = BaseMetaForm
-        extra_meta_text = OptionalMultilineText.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS).validated_by(ValidJSON())
+        extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
