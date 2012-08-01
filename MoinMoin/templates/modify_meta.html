@@ -1,0 +1,17 @@
+{% import "forms.html" as forms %}
+
+{% macro meta_editor(form) %}
+    <h2>General meta</h2>
+    <dl>
+        {% for e in [
+            'wikiname',
+            'itemtype',
+            'contenttype',
+            'acl',
+            'summary',
+            'tags',
+            ] %}
+            {{ forms.render(form[e]) }}
+        {% endfor %}
+    </dl>
+{% endmacro %}

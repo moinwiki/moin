@@ -1,0 +1,22 @@
+{% extends theme("layout.html") %}
+{% block content %}
+<h1>{{ _("Documentation") }}</h1>
+<ul>
+    <li><a href="{{ url_for('serve.files', name='docs', filename='index.html') }}">{{ _("Documentation (local)") }}</a></li>
+</ul>
+<h1>{{ _("Admin Menu") }}</h1>
+<ul>
+    <li><a href="{{ url_for('admin.userbrowser') }}">{{ _("User Browser") }}</a></li>
+    <li><a href="{{ url_for('admin.sysitems_upgrade') }}">{{ _("Upgrade system items") }}</a></li>
+    <li><a href="{{ url_for('admin.wikiconfig') }}">{{ _("Show Wiki Configuration") }}</a></li>
+    <li><a href="{{ url_for('admin.wikiconfighelp') }}">{{ _("Show Wiki Configuration Help") }}</a></li>
+</ul>
+<h1>{{ _("User Menu") }}</h1>
+<ul>
+    <li><a href="{{ url_for('frontend.wanted_items') }}">{{ _("Wanted Items") }}</a></li>
+    <li><a href="{{ url_for('frontend.orphaned_items') }}">{{ _("Orphaned Items") }}</a></li>
+    <li><a href="{{ url_for('admin.itemsize') }}">{{ _("Item sizes (latest revision)") }}</a></li>
+    <li><a href="{{ url_for('admin.interwikihelp') }}">{{ _("Known InterWiki names") }}</a></li>
+    <li><a href="{{ url_for('admin.highlighterhelp') }}">{{ _("Available Highlighters") }}</a></li>
+</ul>
+{% endblock %}
