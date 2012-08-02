@@ -34,7 +34,7 @@ function selected_link() {
          var link = nav_links[i].attributes.href.value;
              
              if (link == selected) {
-               nav_links[i].setAttribute('class', 'current');
+               nav_links[i].setAttribute('class', 'current-link');
                break;
             }
         }
