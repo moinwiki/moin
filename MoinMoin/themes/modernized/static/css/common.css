@@ -397,7 +397,7 @@ div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat cente
 .moin-index-separator{clear:both;border-top:1px solid #4e7da9;width:80%;display:none}
 #moin-upload-cont{min-height:10px}
 #file_upload{margin-top:2em}
-form.upload_file{background-color:#708090;border:1px solid boredr_color;color:#e6e6e6;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
+form.upload_file{background-color:#708090;border:1px solid boredr_color;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
 form.upload_file:hover{color:#fff}
 form.upload_file input{-moz-transform:translate(-800px,0) scale(10);border:300px solid transparent;cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
 form.upload_file input{height:auto}
@@ -411,7 +411,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #popup{background:transparent url("../img/moin-transparent-bg.png") repeat;padding:5px;width:40%;position:absolute;top:10%;left:30%;display:none;z-index:10}
 .popup-header{background-color:#708090;color:#fff;font-size:1em;padding:10px;margin:0}
 .popup-closer{color:#fff;font-size:1em;padding:1px 4px;margin:0;float:right;cursor:pointer;border:1px solid #4e7da9}
-.popup-closer:hover{background-color:#1f9ae0;color:#e6e6e6}
+.popup-closer:hover{background-color:#1f9ae0;color:#cfcfcf}
 .popup-body{clear:both;background-color:#fff;color:#000;padding:10px;margin:0}
 .popup-body label{margin:5px;display:block;font-weight:bold}
 .popup-body input{margin:8px 5px;padding:3px;border:1px solid #4e7da9}
@@ -447,6 +447,7 @@ a:visited:hover{text-decoration:none;color:#1f9ae0}
 a:hover,a:active{text-decoration:underline;color:#1f9ae0}
 a.moin-nonexistent:link{color:#939393}
 a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
+.current-link{color:inherit !important}
 #moin-header{margin:0;padding:0 0 10px 0;background:#708090;color:#fff;line-height:1.12em;border-bottom-left-radius:9px;border-bottom-right-radius:9px}
 #moin-searchform{margin:8px .5em;padding:0;font-size:.82em;float:right;text-align:right}
 #moin-searchform input{font-size:100%;vertical-align:middle;background-color:#fff;border:1px solid #4e7da9}
@@ -467,16 +468,16 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-pagetrail{margin:0 .88em .25em 12px;padding:0;font-size:.88em;}
 #moin-pagetrail a{color:#fff}
 .moin-pagepath a{color:#fff !important}
-#moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em}
+#moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em;color:#008b8b}
 #moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em;border-top-left-radius:5px;border-top-right-radius:5px}
 #moin-navibar li.wikilink{background:#eef1f6}
 #moin-navibar li.userlink{background:#eef1f6}
 #moin-navibar a,#moin-navibar a:visited{color:#000;text-decoration:none}
 #moin-navibar li:hover{background:#d8dfe9}
 #moin-pageline{clear:both;margin:auto;padding:0;width:98%;height:1px;border-bottom:1px solid #fff;border-top:1px solid #fff;background:#fff}
-.moin-itemviews{clear:both;display:block;margin:0 0 -8px 0;padding:2px 8px;background:#708090;font-size:.8em;border-bottom:1px solid #4e7da9;border-top:1px solid #4e7da9;border-radius:9px}
+.moin-itemviews{clear:both;display:block;margin:0 0 -8px 0;padding:2px 8px;background:#708090;font-size:.8em;border-bottom:1px solid #4e7da9;border-top:1px solid #4e7da9;border-radius:9px;color:#fff}
 .moin-itemviews li{display:inline-block;padding:0;margin:4px 6px;line-height:1em}
-.moin-itemviews a,.moin-itemviews a:visited{color:#e6e6e6;}
+.moin-itemviews a,.moin-itemviews a:visited{color:#cfcfcf;}
 .moin-itemviews a:hover,.moin-itemviews a:visited:hover{color:#fff}
 .moin-itemviews a:hover{text-decoration:underline}
 .moin-itemviews form,.moin-itemviews form div{display:inline;margin:0}
