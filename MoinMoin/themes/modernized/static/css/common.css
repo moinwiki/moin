@@ -240,15 +240,16 @@ pre{border:1px solid #4e7da9;background-color:#dfdfdf;padding:5px;clear:both;fon
 pre.comment{background-color:#708090;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
 .monospaced{font-family:monospace}
-table{margin:.5em;border-collapse:collapse}
+table{margin:1%;border-collapse:collapse}
 th,td{padding:.3em .4em;vertical-align:middle;text-align:left}
 th{border:1px solid #4e7da9;background-color:#708090;text-align:center;color:#d8dfe9}
 td{border:1px solid #4e7da9}
 td p{margin:0;padding:0}
-table.zebra{border-collapse:separate;border-spacing:1px}
+table.zebra{border-collapse:separate;border-spacing:1px;width:98%;border:1px solid #4e7da9;border-radius:6px}
 .zebra thead{background-color:#708090}
 .zebra tfoot{background-color:#dfdfdf}
-.zebra td{border:none}
+.zebra td{border:none;}
+.zebra td form input{width:100%;box-shadow:none}
 .zebra tbody tr,.zebra > tr{background-color:#eef1f6}
 .zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d8dfe9}
 div.moin-table-of-contents{border:1px solid #4e7da9;color:#000;background:#fff;font-size:80%;margin:.5em 0 .75em 1em;padding:.5em .75em .5em .5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #9d9d9b;border-radius:15px}
@@ -265,7 +266,7 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-disabled{color:#737373}
 .moin-rev-navigation-current{font-size:1.5em;text-transform:uppercase}
 .moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
-#moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
+#moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
 #moin-create-table tbody tr th{text-align:center;background:header_color;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
 #moin-create-table tbody tr td a{color:#00008b}
@@ -333,7 +334,7 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-history-container-header h2{display:inline;border:none}
 .moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
 .moin-history-container-body{margin:0;padding:0;font-size:1.2em;}
-.moin-history-container-body table{margin:0;width:100%}
+.moin-history-container-body table{margin:0;border:none;width:100%}
 .moin-history-save:before{content:url("../img/moin-edit.png")}
 .moin-history-trash:before{content:url("../img/moin-deleted.png")}
 .moin-history-rename:before{content:url("../img/moin-renamed.png")}

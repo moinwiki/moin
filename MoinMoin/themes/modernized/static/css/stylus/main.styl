@@ -208,7 +208,7 @@ pre.comment:before
     font-family monospace
 
 table
-    margin 0.5em
+    margin 1%
     border-collapse collapse
 
 th, td
@@ -232,6 +232,9 @@ td p
 table.zebra
     border-collapse separate
     border-spacing 1px
+    width 98%
+    border border_style
+    border-radius 6px
 
 .zebra thead
     background-color header_bg_color
@@ -241,6 +244,10 @@ table.zebra
 
 .zebra td
     border none
+    form
+        input
+            width 100%
+            box-shadow none
 
 .zebra tbody tr, .zebra > tr
     background-color table_bg_color
@@ -321,6 +328,7 @@ table.navigation
     width 95%
     margin-left auto
     margin-right auto
+    border none
     tbody tr 
             th
                 text-align center
@@ -621,6 +629,7 @@ p.searchhint
     font-size 1.2em
     table
         margin 0
+        border none
         width 100%
 
 .moin-history-save:before
