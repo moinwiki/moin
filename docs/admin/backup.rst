@@ -5,7 +5,7 @@ Backup and Restore
 Full Backup / Restore
 =====================
 
-The best way to recover from data loss is to have a **full** backup of your machine. 
+The best way to recover from data loss is to have a **full** backup of your machine.
 With this backup you can easily restore your machine to a working condition.
 
 The procedure below explains how to selectively backup only the files
@@ -14,16 +14,14 @@ and a selective backup, having at least one of the two is strongly recommended.
 
 Selective Backup
 ================
-If you want a backup of MoinMoin and your data, then backup the following::
+If you want a backup of MoinMoin and your data, then backup the following:
 
 * your data
 * moin configuration, e.g. wikiconfig.py
 * logging configuration, e.g. logging.conf
 * moin script, e.g. moin.wsgi
 * web server configuration, e.g. apache virtualhost config
-* optional: moin code + dependencies; you should at least know which
-  version you ran, so you can reinstall that version when you
-  need to restore
+* optional: moin code + dependencies; you should at least know which version you ran, so you can reinstall that version when you need to restore
 
 To create a dump of all data stored in moinmoin (wiki items, user profiles), run the
 following command::
@@ -46,3 +44,8 @@ place, create an empty wiki first::
 To load the backup file into your empty wiki, run::
 
  moin load --file backup.moin
+
+Then build an index of the loaded data::
+
+ moin index-build -i
+
