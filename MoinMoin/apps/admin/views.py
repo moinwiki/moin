@@ -29,7 +29,7 @@ from MoinMoin.security import require_permission
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
 
-@admin.route('/user')    
+@admin.route('/user')
 def index_user():
     return render_template('user/index_user.html', title_name=_(u"User"))
 
