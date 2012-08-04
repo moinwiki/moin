@@ -227,7 +227,7 @@ input.blank{border-color:#ccc;border-width:2px}
 #moin-modify dl,form[name="delete_item"] dl,form[name="rename_item"] dl,form[name="destroy_item"] dl{margin:0}
 #moin-options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #moin-options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
-#moin-create-table{width:95%;margin-left:auto;margin-right:auto;}
+#moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
 #moin-create-table tbody tr th{text-align:center;background:#808080;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#f4f4f4;}
 #moin-create-table tbody tr td a{color:#1e90ff}
@@ -394,15 +394,16 @@ hr.moin-hr3{height:5px}
 hr.moin-hr4{height:7px}
 hr.moin-hr5{height:9px}
 hr.moin-hr6{height:12px}
-table{margin:.5em;border-collapse:collapse;}
+table{margin:1%;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
 table th{border:1px solid #ccc;background-color:#808080;color:#fff}
 table td{border:1px solid #ccc}
-table.zebra{border:none;border-collapse:separate;border-spacing:1px;}
+table.zebra{border:1px solid #ccc;border-collapse:separate;border-spacing:1px;width:98%;border-radius:6px;}
 table.zebra thead{background-color:#808080;color:#fff}
 table.zebra tfoot{background-color:#d6d5d0}
 table.zebra tbody tr,table.zebra > tr{background-color:#d9d9d9}
 table.zebra th,table.zebra td{border:none}
+table.zebra td form input{width:100%}
 pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.5em;padding:5px;clear:both;}
 pre.comment{background-color:#2d2d2d;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
