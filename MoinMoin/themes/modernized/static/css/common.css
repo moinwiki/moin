@@ -395,6 +395,7 @@ div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat cente
 .moin-index-path:before{content:url("../img/moin-parent.png");margin:0 .3em}
 .moin-path-separator{font-size:120%;color:#00008b}
 .moin-index-separator{clear:both;border-top:1px solid #4e7da9;width:99%;margin-left:.5%;display:none}
+.moin-transclusion{max-width:100%}
 #moin-upload-cont{min-height:10px}
 #file_upload{margin-top:2em}
 form.upload_file{background-color:#708090;border:1px solid boredr_color;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
