@@ -305,6 +305,7 @@ input.blank
     width 95%
     margin-left auto
     margin-right auto
+    border none
     tbody tr 
             th
                 text-align center
@@ -936,7 +937,7 @@ hr
 
 // tables
 table
-    margin 0.5em
+    margin 1%
     border-collapse collapse
     th, td
         padding 0.3em 0.4em
@@ -950,9 +951,11 @@ table
         border border_style
 
 table.zebra
-    border none
+    border border_style
     border-collapse separate
     border-spacing 1px
+    width 98%
+    border-radius 6px
     thead
         background-color table_header_color
         color heading_color
@@ -964,6 +967,10 @@ table.zebra
     th,
     td
         border none
+    td
+        form
+            input
+                width 100%
 
 pre
     font-family monospace
