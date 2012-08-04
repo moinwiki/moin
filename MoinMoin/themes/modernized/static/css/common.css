@@ -211,7 +211,7 @@ ol.moin-loweralpha-list{list-style-type:lower-alpha}
 ol.moin-upperroman-list{list-style-type:upper-roman}
 ol.moin-lowerroman-list{list-style-type:lower-roman}
 ul.moin-nobullet-list{list-style-type:none}
-ol,ul{margin-top:1em}
+ol,ul{margin-top:.5em;margin-bottom:.5em}
 li ol,li ul{margin-top:.25em}
 dt{margin-top:.5em;font-weight:bold}
 dd{font-size:.92em;margin-left:40px;margin-top:0;margin-bottom:0}
