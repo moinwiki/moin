@@ -407,6 +407,7 @@ pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px s
 pre.comment{background-color:#2d2d2d;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
 textarea{font-family:monospace;width:98%;border:1px solid #ccc;margin-left:.5em}
+#f_meta_text{margin-left:-.6em}
 input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .moin-subitem-navigation{overflow:hidden;word-wrap:break-word;}
 .moin-subitem-navigation ul{display:block;}
