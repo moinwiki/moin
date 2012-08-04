@@ -90,8 +90,6 @@ class RegistryContent(RegistryBase):
                 return False
             return NotImplemented
 
-
-
     def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
         """
         Register a factory
