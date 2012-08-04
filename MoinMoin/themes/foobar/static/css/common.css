@@ -355,7 +355,7 @@ p.searchhint{background-color:#f4f4f4;border:1px solid #9d9d9b;padding:2px}
 .searchpages{margin-left:auto;margin-right:auto;}
 .searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#000;font-weight:bold;font-size:1.05em}
 .searchpages td a,.searchpages td a:link{text-decoration:underline}
-ul,dl{margin-left:1.5em}
+ul,dl{margin-left:1.5em;margin-bottom:.5em}
 ol{margin-left:3em;}
 ol ol{margin-left:1.5em}
 li{padding:.2em}
