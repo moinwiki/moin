@@ -82,7 +82,6 @@ class RegistryItem(RegistryBase):
                 return self.itemtype < other.itemtype
             return NotImplemented
 
-
     def register(self, factory, itemtype, priority=RegistryBase.PRIORITY_MIDDLE):
         """
         Register a factory
