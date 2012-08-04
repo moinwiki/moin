@@ -226,7 +226,7 @@ hr{height:1px;background-color:#4e7da9;border:0;margin:.9em 0}
 .moin-hr6{height:12px}
 .moin-error{color:#ff2727;background:#eef1f6;padding:4px}
 .moin-highlight{background-color:#d8dfe9;padding:1px}
-pre{border:1px solid #4e7da9;background-color:#dfdfdf;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre}
+pre{border:1px solid #4e7da9;background-color:#dfdfdf;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre-wrap}
 pre.comment{background-color:#708090;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
 .monospaced{font-family:monospace}
