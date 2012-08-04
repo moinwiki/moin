@@ -306,7 +306,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-history-container-header h2{display:inline;border:none}
 .moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
 .moin-history-container-body{margin:0;padding:0;font-size:1.2em;}
-.moin-history-container-body table{margin:0;width:100%}
+.moin-history-container-body table{margin:0;width:100% !important;border:none !important}
 .moin-history-save:before{content:url("../img/moin-edit.png")}
 .moin-history-trash:before{content:url("../img/moin-deleted.png")}
 .moin-history-rename:before{content:url("../img/moin-renamed.png")}
