@@ -525,6 +525,7 @@ div.moin-table-of-contents{box-shadow:none}
 a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation{display:none}
 #moin-pageinfo{color:#737373;font-size:.67em;float:right}
 #moin-pageinfo a{color:#737373}
+.moin-subitem-navigation{display:none}
 }@media projection{html{line-height:1.8em}
 body,b,em,a,span,div,p,td{font-size:18pt}
 h1{font-size:26pt}
