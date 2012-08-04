@@ -328,7 +328,7 @@ a.moin-nonexistent:visited{color:#808080}
 a.moin-nonexistent:hover{color:#ff2727}
 a.moin-nonexistent:active{color:#ff2727}
 .current-link{color:#f82a2a !important}
-.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#fff;border-bottom:border style;background-repeat:no-repeat;background-position:16px center}
+.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#fff;border-bottom:1px solid #ccc;background-repeat:no-repeat;background-position:16px center}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png");color:#007cef}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png");color:#007cef}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
