@@ -120,10 +120,11 @@ class BaseChangeForm(TextChaizedForm):
 
 
 class BaseMetaForm(Form):
-    wikiname = OptionalText.using(label=L_("Wiki name")).with_properties(placeholder=L_("Wiki name"))
     itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
     contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
-    acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
+    # Disabled - Flatland doesn't distinguish emtpy value and nonexistent
+    # value, while an emtpy acl and no acl have different semantics
+    #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     tags = Tags
 
