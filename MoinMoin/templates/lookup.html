@@ -1,0 +1,54 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% import "forms.html" as forms %}
+{% block content %}
+    {% if results is not defined %}
+    <h1>{{ _("Lookup") }}</h1>
+    {{ gen.form.open(lookup_form, id='moin-lookup-form', method='get', action=url_for('frontend.lookup')) }}
+        {{ forms.render_errors(lookup_form) }}
+        <dl>
+            {% for e in [
+                'name',
+                'name_exact',
+                'itemid',
+                'revid',
+                'userid',
+                'language',
+                'itemlinks',
+                'itemtransclusions',
+                'refs',
+                'tags',
+                'history',
+                ] %}
+                {{ forms.render(lookup_form[e]) }}
+            {% endfor %}
+        </dl>
+        {{ gen.input(lookup_form['submit'], type='submit') }}
+    {{ gen.form.close() }}
+    {% else %}
+    {% if not results %}
+    <h1>{{ _("No results") }}</h1>
+    {% else %}
+    <h1>{{ _("More than one result") }}</h1>
+    <div class="lookupresults">
+        <table>
+            {% for result in results %}
+                {% if result['wikiname'] == cfg.interwikiname %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['revid']) }}"><b>{{ result['name'] }}</b></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.pos + 1 }}
+                        <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
+{% endblock %}
