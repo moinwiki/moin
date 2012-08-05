@@ -1,0 +1,11 @@
+{% from "modify_binary.html" import data_editor as base_editor %}
+
+{% macro data_editor(form) %}
+{{ base_editor(form) }}
+{% if direction %}
+    {{ gen.textarea(form['data_text'], lang=lang, dir=direction, rows=form.rows|string, cols=form.cols|string) }}
+{% else %}
+    {{ gen.textarea(form['data_text'], lang=lang, rows=form.rows|string, cols=form.cols|string) }}
+{% endif %}
+<br />
+{% endmacro %}
