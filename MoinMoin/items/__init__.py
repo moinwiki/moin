@@ -19,6 +19,7 @@
 
 import re, time
 import itertools
+import json
 from StringIO import StringIO
 from collections import namedtuple
 from functools import partial
@@ -37,11 +38,6 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 from flask import current_app as app
 from flask import g as flaskg

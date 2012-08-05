@@ -19,15 +19,11 @@ import re
 import difflib
 import time
 import mimetypes
+import json
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
 from functools import wraps, partial
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
 from flask import current_app as app
