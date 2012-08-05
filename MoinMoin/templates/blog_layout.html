@@ -15,7 +15,7 @@
             {{ _("Published on") }} {{ entry_item.meta['ptime']|datetimeformat }}
             {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
         {% else %}
-            {{ _("It is not published yet.") }}
+            {{ _("Not published yet.") }}
         {% endif %}
     </div>
     <div class="moin-blog-entry-content">
