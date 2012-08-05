@@ -318,10 +318,7 @@ class User(object):
         """
         delegate some lookups into the .profile
         """
-        if name in [NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
-                    MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
-                    THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
-                   ]:
+        if name in USEROBJ_ATTRS:
             try:
                 return self.profile[name]
             except KeyError:

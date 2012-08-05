@@ -5,7 +5,7 @@
 /*global $:false */
 
 
-// Enter edit mode when user doubleclicks within the page body.  Executed once on page load.
+// Enter edit mode when user doubleclicks within the content area.  Executed once on page load.
 function editOnDoubleClick() {
     "use strict";
     var modifyButton;
@@ -13,8 +13,8 @@ function editOnDoubleClick() {
     if (document.getElementById('moin-edit-on-doubleclick')) {
         modifyButton = $('.moin-modify-button')[0];
         if (modifyButton) {
-            // add a doubleclick action to the body tag
-            $('body').dblclick(function () {
+            // add a doubleclick action to the moin content
+            $('#moin-content').dblclick(function () {
                 document.location = modifyButton.href;
             });
         }
@@ -22,6 +22,25 @@ function editOnDoubleClick() {
 }
 $(document).ready(editOnDoubleClick);
 
+// Highlight currently selected link in side panel. Executed on page load
+function selected_link() {
+   var selected = window.location.pathname;
+   
+   var list = document.getElementsByClassName('panel');
+   for (var j = 0; j < list.length; j++) {
+      nav_links = list[j].getElementsByTagName('a');
+      
+      for (var i = 0; i < nav_links.length; i++) {
+         var link = nav_links[i].attributes.href.value;
+             
+             if (link == selected) {
+               nav_links[i].setAttribute('class', 'current-link');
+               break;
+            }
+        }
+    }
+}
+$(document).ready(selected_link);
 
 
 // Insert Zero-Width-Space characters into long text strings of textNode elements.  Executed on page load.
@@ -448,7 +467,7 @@ function initMoinUsersettings() {
                 return;
             }
             // remove all flash messages previously added via javascript
-            $('#moin-header .moin-flash-javascript').remove();
+            $('#moin-flash .moin-flash-javascript').remove();
             // add new flash messages from the response
             for (i = 0; i < data.flash.length; i += 1) {
                 f = $(document.createElement('p'));

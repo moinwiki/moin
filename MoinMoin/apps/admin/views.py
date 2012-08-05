@@ -25,9 +25,13 @@ from MoinMoin.config import NAME, ITEMID, SIZE, EMAIL
 from MoinMoin.config import SUPERUSER
 from MoinMoin.security import require_permission
 
-@admin.route('/')
+@admin.route('/superuser')
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
+
+@admin.route('/user')
+def index_user():
+    return render_template('user/index_user.html', title_name=_(u"User"))
 
 
 @admin.route('/userbrowser')
@@ -40,7 +44,7 @@ def userbrowser():
     revs = user.search_users() # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
-                          email=u'', # rev.meta[EMAIL],  # TODO: fix KeyError
+                          email=rev.meta[EMAIL],
                           disabled=False,  # TODO: add to index
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      )
@@ -201,7 +205,7 @@ def highlighterhelp():
     lexers = pygments.lexers.get_all_lexers()
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
-    return render_template('admin/highlighterhelp.html',
+    return render_template('user/highlighterhelp.html',
                            title_name=_(u"Highlighter Help"),
                            headings=headings,
                            rows=rows)
@@ -214,7 +218,7 @@ def interwikihelp():
                 _('URL'),
                ]
     rows = sorted(app.cfg.interwiki_map.items())
-    return render_template('admin/interwikihelp.html',
+    return render_template('user/interwikihelp.html',
                            title_name=_(u"Interwiki Help"),
                            headings=headings,
                            rows=rows)
@@ -229,7 +233,7 @@ def itemsize():
     rows = [(rev.meta[SIZE], rev.meta[NAME])
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
-    return render_template('admin/itemsize.html',
+    return render_template('user/itemsize.html',
                            title_name=_(u"Item Size"),
                            headings=headings,
                            rows=rows)

@@ -1,5 +1,5 @@
 {% set exists = storage.has_item(item_name) %}
-<ul class="moin-itemviews">
+<ul class="moin-itemviews panel">
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
             {%- if endpoint in [
@@ -35,7 +35,7 @@
 
             {%- if endpoint in [
                 'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
-                'admin.index',
+                'admin.index', 'admin.index_user',
             ] %}
                 <li>
                     <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>

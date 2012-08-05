@@ -12,7 +12,10 @@
 {% set credits = snippets.credits() %}
 
 
+
 {% block layout %}
+
+<div id="moin-main-wrapper">
 
 {{ before_header }}
 
@@ -121,7 +124,7 @@
 
     {% set navibar_items = theme_supp.navibar(item_name) %}
     {% if navibar_items %}
-        <ul id="moin-navibar">
+        <ul id="moin-navibar" class="panel">
         {% for cls, url, text, title in navibar_items %}
             <li class="{{ cls }}">
                 <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
@@ -136,12 +139,6 @@
 
     {% block header_itemviews %}{% endblock %}
 
-    <div id="moin-flash">  {# client side javascript may add messages here #}
-    {% for category, msg in get_flashed_messages(with_categories=true) %}
-        <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
-    {% endfor %}
-    </div>
-
 {% endblock %}
 </div>
 
@@ -149,6 +146,12 @@
 
 <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
 
+    <div id="moin-flash">  {# client side javascript may add messages here #}
+    {% for category, msg in get_flashed_messages(with_categories=true) %}
+        <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+    {% endfor %}
+    </div>
+    
     {% block subitem_navigation %}{% endblock %}
 
     {% block item -%}
@@ -176,4 +179,7 @@
 
 {{ after_footer }}
 
+</div>
+
 {% endblock %}
+
