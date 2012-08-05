@@ -6,12 +6,7 @@ MoinMoin - get an item revision from the wiki, put it back into the wiki.
 """
 
 import shutil
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
+import json
 
 from flask import current_app as app
 from flask import g as flaskg
