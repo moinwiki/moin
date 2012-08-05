@@ -20,6 +20,8 @@
 import re, time
 import itertools
 from StringIO import StringIO
+from collections import namedtuple
+from functools import partial
 
 from flatland import Form
 from flatland.validation import Validator
@@ -68,41 +70,17 @@ ROWS_META = 10
 
 
 class RegistryItem(RegistryBase):
-    class Entry(object):
-        def __init__(self, factory, itemtype, priority):
-            self.factory = factory
-            self.itemtype = itemtype
-            self.priority = priority
-
-        def __call__(self, name, itemtype, kw):
+    class Entry(namedtuple('Entry', 'factory itemtype priority')):
+        def __call__(self, itemtype, *args, **kw):
             if self.itemtype == itemtype:
-                return self.factory(name, itemtype, **kw)
-
-        def __eq__(self, other):
-            if isinstance(other, self.__class__):
-                return (self.factory == other.factory and
-                        self.itemtype == other.itemtype and
-                        self.priority == other.priority)
-            return NotImplemented
+                return self.factory(*args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority < other.priority:
-                    return True
-                return self.itemtype == other.itemtype
+                if self.priority != other.priority:
+                    return self.priority < other.priority
+                return self.itemtype < other.itemtype
             return NotImplemented
-
-        def __repr__(self):
-            return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
-                    self.itemtype,
-                    self.priority,
-                    self.factory)
-
-    def get(self, name, itemtype, **kw):
-        for entry in self._entries:
-            item = entry(name, itemtype, kw)
-            if item is not None:
-                return item
 
     def register(self, factory, itemtype, priority=RegistryBase.PRIORITY_MIDDLE):
         """
@@ -156,8 +134,8 @@ class BaseChangeForm(TextChaizedForm):
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
-    def _factory(cls, name=u'', itemtype=None, **kw):
-        return cls(name, **kw)
+    def _factory(cls, *args, **kw):
+        return cls(*args, **kw)
 
     # TODO split Content creation to Content.create
     @classmethod
@@ -214,13 +192,13 @@ class Item(object):
 
         # XXX Cannot pass item=item to Content.__init__ via
         # content_registry.get yet, have to patch it later.
-        content = content_registry.get(name, Type(contenttype))
+        content = content_registry.get(contenttype)
         logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
-        item = item_registry.get(name, itemtype, rev=rev, content=content)
+        item = item_registry.get(itemtype, name, rev=rev, content=content)
         logging.debug("Item class {0!r} handles {1!r}".format(item.__class__, itemtype))
 
         content.item = item

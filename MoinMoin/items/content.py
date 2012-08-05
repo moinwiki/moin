@@ -23,6 +23,9 @@ import zipfile
 import tempfile
 from StringIO import StringIO
 from array import array
+from collections import namedtuple
+from functools import partial
+from types import TypeType
 
 from werkzeug import is_resource_modified
 
@@ -72,46 +75,20 @@ COLS = 80
 ROWS_DATA = 20
 
 
-# XXX Too much boilerplate in Entry implementation. Maybe use namedtuple
-# as a starting point?
 class RegistryContent(RegistryBase):
-    class Entry(object):
-        def __init__(self, factory, content_type, priority):
-            self.factory = factory
-            self.content_type = content_type
-            self.priority = priority
-
-        def __call__(self, name, content_type, kw):
-            if self.content_type.issupertype(content_type):
-                return self.factory(name, content_type, **kw)
-
-        def __eq__(self, other):
-            if isinstance(other, self.__class__):
-                return (self.factory == other.factory and
-                        self.content_type == other.content_type and
-                        self.priority == other.priority)
-            return NotImplemented
+    class Entry(namedtuple('Entry', 'factory content_type priority')):
+        def __call__(self, content_type, *args, **kw):
+            if self.content_type.issupertype(Type(content_type)):
+                return self.factory(content_type, *args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority < other.priority:
-                    return True
+                if self.priority != other.priority:
+                    return self.priority < other.priority
                 if self.content_type != other.content_type:
                     return other.content_type.issupertype(self.content_type)
                 return False
             return NotImplemented
-
-        def __repr__(self):
-            return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
-                    self.content_type,
-                    self.priority,
-                    self.factory)
-
-    def get(self, name, content_type, **kw):
-        for entry in self._entries:
-            item = entry(name, content_type, kw)
-            if item is not None:
-                return item
 
     def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
         """
@@ -140,15 +117,16 @@ class Content(object):
     data.
     """
     @classmethod
-    def _factory(cls, name=u'', contenttype=None, **kw):
-        return cls(name, contenttype=unicode(contenttype), **kw)
+    def _factory(cls, *args, **kw):
+        return cls(*args, **kw)
 
-    def __init__(self, item, contenttype=None):
-        self.item = item
-        # TODO gradually remove self.contenttype as theoretically there is
-        # one-to-one correspondance of contenttype and Content type
-        # (pun intended :)
+    def __init__(self, contenttype, item=None):
+        # We need to keep the exact contenttype since contents may be handled
+        # by a Content subclass with wildcard contenttype (eg. an unknown
+        # contenttype some/type gets handled by Binary)
+        # TODO use Type instead of strings?
         self.contenttype = contenttype
+        self.item = item
 
     # XXX For backward-compatibility (so code can be moved from Item
     # untouched), remove soon
