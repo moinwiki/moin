@@ -10,6 +10,9 @@ can return a callable to consider itself as a match.
 """
 
 
+from collections import namedtuple
+
+
 class RegistryBase(object):
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10
@@ -17,25 +20,14 @@ class RegistryBase(object):
     PRIORITY_LAST = 10
     PRIORITY_REALLY_LAST = 20
 
-    class Entry(object):
-        def __init__(self, factory, priority):
-            self.factory, self.priority = factory, priority
-
-        def __eq__(self, other):
-            if isinstance(other, self.__class__):
-                return (self.factory == other.factory and
-                        self.priority == other.priority)
-            return NotImplemented
+    class Entry(namedtuple('Entry', 'factory priority')):
+        def __call__(self, *args, **kw):
+            return self.factory(*args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
                 return self.priority < other.priority
             return NotImplemented
-
-        def __repr__(self):
-            return '<{0}: prio {1} [{2!r}]>'.format(self.__class__.__name__,
-                    self.priority,
-                    self.factory)
 
     def __init__(self):
         self._entries = []
@@ -51,7 +43,7 @@ class RegistryBase(object):
         the first matching wins.
         """
         for entry in self._entries:
-            conv = entry.factory(*args, **kw)
+            conv = entry(*args, **kw)
             if conv is not None:
                 return conv
 

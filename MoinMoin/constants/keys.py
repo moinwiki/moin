@@ -83,8 +83,18 @@ RECOVERPASS_KEY = "recoverpass_key"
 EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
 SHOW_COMMENTS = "show_comments"
 MAILTO_AUTHOR = "mailto_author"
+CSS_URL = "css_url"
+EDIT_ROWS = "edit_rows"
 RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
+
+USEROBJ_ATTRS = [
+    # User objects proxy these attributes of the UserProfile objects:
+    NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
+    MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
+    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
+    CSS_URL,
+]
 
 # keys for blog homepages
 LOGO = "logo"
