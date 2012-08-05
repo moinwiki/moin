@@ -1,7 +1,13 @@
 {% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
 
 {% set search_form = None %} {# layout will not show search form in header #}
+
+{% block pagepath %}
+    {{ _("Search") }}
+    {{ super() }}
+{% endblock %}
 
 {% block content %}
     {% if results is defined %}
@@ -16,7 +22,7 @@
         {% endif %}
     </p>
     {% endif %}
-    {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search')) }}
+    {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <div>
             {{ forms.render(medium_search_form['q']) }}
             {{ forms.render(medium_search_form['submit']) }}
