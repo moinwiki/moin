@@ -10,6 +10,7 @@
 
 
 import re
+import json
 
 from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, DateTime as _DateTime, JoinedString
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
@@ -41,7 +42,7 @@ class ValidJSON(Validator):
     def validate(self, element, state):
         try:
             json.loads(element.value)
-        except:
+        except: # catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
         return True
 

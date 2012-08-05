@@ -127,6 +127,7 @@ class BaseMetaForm(Form):
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     tags = Tags
 
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
