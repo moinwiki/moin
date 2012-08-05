@@ -310,7 +310,11 @@ class Item(object):
 
         def _load(self, item):
             meta = item.prepare_meta_for_modify(item.meta)
-            self['meta_form'].set(meta, 'duck')
+            # Default value of `policy` argument of Flatland.Dict.set's is
+            # 'strict', which causes KeyError to be thrown when meta contains
+            # meta keys that are not present in self['meta_form']. Setting
+            # policy to 'duck' suppresses this behavior.
+            self['meta_form'].set(meta, policy='duck')
             for k in self['meta_form'].field_schema_mapping.keys():
                 meta.pop(k, None)
             self['extra_meta_text'].set(item.meta_dict_to_text(meta))
