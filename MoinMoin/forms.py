@@ -68,8 +68,22 @@ InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 
-# XXX Need a better one than plain text box
-Tags = JoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+
+# Need a better name to capture the behavior
+class MyJoinedString(JoinedString):
+    """
+    A JoinedString that offers the list of children (not the joined string) as
+    value property.
+    """
+    @property
+    def value(self):
+        return [child.value for child in self]
+
+    @property
+    def u(self):
+        return self.separator.join(child.u for child in self)
+
+Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

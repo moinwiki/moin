@@ -319,7 +319,6 @@ class Item(object):
 
         def _dump(self, item):
             meta = self['meta_form'].value.copy()
-            meta['tags'] = list(self['meta_form']['tags'])
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
