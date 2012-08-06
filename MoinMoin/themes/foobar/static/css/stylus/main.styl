@@ -128,9 +128,6 @@ div p
     a
         vertical-align middle
 
-.sep
-    vertical-align middle
-
 #moin-pagelocation
     vertical-align middle
 
@@ -647,7 +644,8 @@ a.moin-conflict:before
     font-size 1.2em
     table
         margin 0
-        width 100%
+        width 100% !important
+        border none !important
 
 .moin-history-save:before
     content url('../img/moin-edit.png')
@@ -720,7 +718,7 @@ a
     margin 0
     padding 6px 6px 6px 38px
     background-color heading_color
-    border-bottom border style
+    border-bottom border_style
     background-repeat no-repeat
     background-position 16px center
 

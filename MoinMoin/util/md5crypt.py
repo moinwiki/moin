@@ -170,4 +170,3 @@ md5crypt = unix_md5_crypt
 
 if __name__ == "__main__":
     print unix_md5_crypt("cat", "hat")
-

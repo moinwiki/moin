@@ -187,7 +187,6 @@ div p{margin:.5em .2em;font-size:.9em;line-height:1.2em;text-align:justify}
 #moin-breadcrumbs-location{float:left;padding:.3em .5em .2em .5em;font-weight:bold}
 #moin-interwiki{vertical-align:middle;}
 #moin-interwiki a{vertical-align:middle}
-.sep{vertical-align:middle}
 #moin-pagelocation{vertical-align:middle}
 .moin-pagepath{vertical-align:middle}
 #moin-search{float:right;padding:.3em .5em .2em .5em}
@@ -306,7 +305,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-history-container-header h2{display:inline;border:none}
 .moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
 .moin-history-container-body{margin:0;padding:0;font-size:1.2em;}
-.moin-history-container-body table{margin:0;width:100%}
+.moin-history-container-body table{margin:0;width:100% !important;border:none !important}
 .moin-history-save:before{content:url("../img/moin-edit.png")}
 .moin-history-trash:before{content:url("../img/moin-deleted.png")}
 .moin-history-rename:before{content:url("../img/moin-renamed.png")}
@@ -328,7 +327,7 @@ a.moin-nonexistent:visited{color:#808080}
 a.moin-nonexistent:hover{color:#ff2727}
 a.moin-nonexistent:active{color:#ff2727}
 .current-link{color:#f82a2a !important}
-.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#fff;border-bottom:border style;background-repeat:no-repeat;background-position:16px center}
+.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#fff;border-bottom:1px solid #ccc;background-repeat:no-repeat;background-position:16px center}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png");color:#007cef}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png");color:#007cef}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}

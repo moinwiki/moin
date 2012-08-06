@@ -19,15 +19,11 @@ import re
 import difflib
 import time
 import mimetypes
+import json
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
 from functools import wraps, partial
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
 from flask import current_app as app
@@ -43,7 +39,7 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
-from whoosh.query import Term, Prefix, And, Or, DateRange
+from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -221,9 +217,26 @@ def lookup():
     return Response(html, status)
 
 
-@frontend.route('/+search', methods=['GET', 'POST'])
-def search():
-    title_name = _("Search")
+def _compute_item_transclusions(item_name):
+    """Compute which items are transcluded into item <item_name>.
+
+    :returns: a set of their item names.
+    """
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        # The search process should be as fast as possible so use
+        # the indexer low-level documents instead of high-level Revisions.
+        doc = searcher.document(name_exact=item_name)
+        if not doc:
+            return set()
+        transcluded_names = set(doc[ITEMTRANSCLUSIONS])
+        for item_name in transcluded_names.copy():
+            transclusions = _compute_item_transclusions(item_name)
+            transcluded_names.update(transclusions)
+        return transcluded_names
+
+@frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
+def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
     search_form['submit'].set_default() # XXX from_flat() kills all values
@@ -233,9 +246,38 @@ def search():
         idx_name = ALL_REVS if history else LATEST_REVS
         qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT], idx_name=idx_name)
         q = qp.parse(query)
+
+        _filter = None
+        if item_name: # Only search this item and subitems
+            prefix_name = item_name + u'/'
+            terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
+
+            show_transclusions = True
+            if show_transclusions:
+                # XXX Search subitems and all transcluded items (even recursively),
+                # still looks like a hack. Imaging you have "foo" on main page and
+                # "bar" on transcluded one. Then you search for "foo AND bar".
+                # Such stuff would only work if we expand transcluded items
+                # at indexing time (and we currently don't).
+                with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+                    subq = Or([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ])
+                    subq = And([subq, Every(ITEMTRANSCLUSIONS), ])
+                    flaskg.clock.start('search subitems with transclusions')
+                    results = searcher.search(subq, limit=None)
+                    flaskg.clock.stop('search subitems with transclusions')
+                    transcluded_names = set()
+                    for hit in results:
+                        name = hit[NAME]
+                        transclusions = _compute_item_transclusions(name)
+                        transcluded_names.update(transclusions)
+                # XXX Will whoosh cope with such a large filter query?
+                terms.extend([Term(NAME_EXACT, name) for name in transcluded_names])
+
+            _filter = Or(terms)
+
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             flaskg.clock.start('search')
-            results = searcher.search(q, limit=100)
+            results = searcher.search(q, filter=_filter, limit=100)
             flaskg.clock.stop('search')
             # XXX if found that calling key_terms like you see below is 1000..10000x
             # slower than the search itself, so we better don't do that right now.
@@ -255,14 +297,14 @@ def search():
                                    content_suggestions=content_suggestions,
                                    query=query,
                                    medium_search_form=search_form,
-                                   title_name=title_name,
+                                   item_name=item_name,
                                   )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
-                               title_name=title_name,
+                               item_name=item_name,
                               )
     return html
 
@@ -477,7 +519,7 @@ def show_blog(item_name, rev):
     """
     Show a blog item and a list of blog entries below it.
 
-    If supertag GET-parameter is defined, the list of blog entries consist only
+    If supertag GET-parameter is defined, the list of blog entries consists only
     of those entries that contain the supertag value in their lists of tags.
     """
     supertag = request.values.get('supertag')
@@ -488,7 +530,6 @@ def show_blog(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    # TODO: move to BlogItem class
     prefix = item_name + u'/'
     current_timestamp = int(time.time())
     terms = [Term(WIKINAME, app.cfg.interwikiname),
