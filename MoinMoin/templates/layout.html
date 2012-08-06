@@ -1,4 +1,3 @@
-{% import "forms.html" as forms %}
 {% extends "base.html" %}
 
 {% import "snippets.html" as snippets with context %}
@@ -12,6 +11,11 @@
 {% set credits = snippets.credits() %}
 
 
+{# This allows child templates passing their header_search macro to the common layout.
+   If there is no header_search macro defined in child templates use the default one. #}
+{% if not header_search %}
+    {% from "utils.html" import header_search %}
+{% endif %}
 
 {% block layout %}
 
@@ -22,13 +26,7 @@
 <div id="moin-header">
 {% block header %}
     {% if search_form %}
-    {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
-        <div>
-            {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='40') }}
-            {{ gen.button(search_form['submit'], type='submit', id='moin-search-submit') }}
-            {{ forms.render_errors(search_form) }}
-        </div>
-    {{ gen.form.close() }}
+        {{ header_search(search_form) }}
     {% endif %}
 
     {% if logo %}
