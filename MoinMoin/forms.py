@@ -10,6 +10,7 @@
 
 
 import re
+import json
 
 from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, DateTime as _DateTime, JoinedString
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
@@ -32,6 +33,21 @@ OptionalMultilineText = MultilineText.using(optional=True)
 
 RequiredMultilineText = MultilineText.validated_by(Present())
 
+
+class ValidJSON(Validator):
+    """Validator for JSON
+    """
+    invalid_json_msg = L_('Invalid JSON.')
+
+    def validate(self, element, state):
+        try:
+            json.loads(element.value)
+        except: # catch ANY exception that happens due to unserializing
+            return self.note_error(element, state, 'invalid_json_msg')
+        return True
+
+JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
+
 URL = String.with_properties(widget=WIDGET_TEXT).validated_by(URLValidator())
 
 OpenID = URL.using(label=L_('OpenID')).with_properties(placeholder=L_("OpenID address"))
@@ -52,8 +68,22 @@ InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 
-# XXX Need a better one than plain text box
-Tags = JoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+
+# Need a better name to capture the behavior
+class MyJoinedString(JoinedString):
+    """
+    A JoinedString that offers the list of children (not the joined string) as
+    value property.
+    """
+    @property
+    def value(self):
+        return [child.value for child in self]
+
+    @property
+    def u(self):
+        return self.separator.join(child.u for child in self)
+
+Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

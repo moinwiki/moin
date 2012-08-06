@@ -44,7 +44,7 @@ def userbrowser():
     revs = user.search_users() # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
-                          email=u'', # rev.meta[EMAIL],  # TODO: fix KeyError
+                          email=rev.meta[EMAIL],
                           disabled=False,  # TODO: add to index
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      )

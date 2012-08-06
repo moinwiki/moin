@@ -19,14 +19,17 @@
 
 import re, time
 import itertools
+import json
 from StringIO import StringIO
+from collections import namedtuple
+from functools import partial
 
 from flatland import Form
 from flatland.validation import Validator
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.forms import RequiredText, OptionalText, OptionalMultilineText, Tags, Submit
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
@@ -35,11 +38,6 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -68,41 +66,17 @@ ROWS_META = 10
 
 
 class RegistryItem(RegistryBase):
-    class Entry(object):
-        def __init__(self, factory, itemtype, priority):
-            self.factory = factory
-            self.itemtype = itemtype
-            self.priority = priority
-
-        def __call__(self, name, itemtype, kw):
+    class Entry(namedtuple('Entry', 'factory itemtype priority')):
+        def __call__(self, itemtype, *args, **kw):
             if self.itemtype == itemtype:
-                return self.factory(name, itemtype, **kw)
-
-        def __eq__(self, other):
-            if isinstance(other, self.__class__):
-                return (self.factory == other.factory and
-                        self.itemtype == other.itemtype and
-                        self.priority == other.priority)
-            return NotImplemented
+                return self.factory(*args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority < other.priority:
-                    return True
-                return self.itemtype == other.itemtype
+                if self.priority != other.priority:
+                    return self.priority < other.priority
+                return self.itemtype < other.itemtype
             return NotImplemented
-
-        def __repr__(self):
-            return '<{0}: {1}, prio {2} [{3!r}]>'.format(self.__class__.__name__,
-                    self.itemtype,
-                    self.priority,
-                    self.factory)
-
-    def get(self, name, itemtype, **kw):
-        for entry in self._entries:
-            item = entry(name, itemtype, kw)
-            if item is not None:
-                return item
 
     def register(self, factory, itemtype, priority=RegistryBase.PRIORITY_MIDDLE):
         """
@@ -135,29 +109,26 @@ class DummyItem(object):
         return True
 
 
-class ValidJSON(Validator):
-    """Validator for JSON
-    """
-    invalid_json_msg = L_('Invalid JSON.')
-
-    def validate(self, element, state):
-        try:
-            json.loads(element.value)
-        except:
-            return self.note_error(element, state, 'invalid_json_msg')
-        return True
-
-
 class BaseChangeForm(TextChaizedForm):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
     submit = Submit
 
 
+class BaseMetaForm(Form):
+    itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
+    contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
+    # Disabled - Flatland doesn't distinguish emtpy value and nonexistent
+    # value, while an emtpy acl and no acl have different semantics
+    #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
+    summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
+    tags = Tags
+
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
-    def _factory(cls, name=u'', itemtype=None, **kw):
-        return cls(name, **kw)
+    def _factory(cls, *args, **kw):
+        return cls(*args, **kw)
 
     # TODO split Content creation to Content.create
     @classmethod
@@ -214,13 +185,13 @@ class Item(object):
 
         # XXX Cannot pass item=item to Content.__init__ via
         # content_registry.get yet, have to patch it later.
-        content = content_registry.get(name, Type(contenttype))
+        content = content_registry.get(contenttype)
         logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
-        item = item_registry.get(name, itemtype, rev=rev, content=content)
+        item = item_registry.get(itemtype, name, rev=rev, content=content)
         logging.debug("Item class {0!r} handles {1!r}".format(item.__class__, itemtype))
 
         content.item = item
@@ -329,14 +300,25 @@ class Item(object):
 
     class _ModifyForm(BaseChangeForm):
         """Base class for ModifyForm of Item subclasses."""
-        meta_text = OptionalMultilineText.using(label=L_("MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS).validated_by(ValidJSON())
+        meta_form = BaseMetaForm
+        extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
+        meta_template = 'modify_meta.html'
 
         def _load(self, item):
-            self['meta_text'] = item.meta_dict_to_text(item.prepare_meta_for_modify(item.meta))
+            meta = item.prepare_meta_for_modify(item.meta)
+            # Default value of `policy` argument of Flatland.Dict.set's is
+            # 'strict', which causes KeyError to be thrown when meta contains
+            # meta keys that are not present in self['meta_form']. Setting
+            # policy to 'duck' suppresses this behavior.
+            self['meta_form'].set(meta, policy='duck')
+            for k in self['meta_form'].field_schema_mapping.keys():
+                meta.pop(k, None)
+            self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)
 
         def _dump(self, item):
-            meta = item.meta_text_to_dict(self['meta_text'].value)
+            meta = self['meta_form'].value.copy()
+            meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
