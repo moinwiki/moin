@@ -465,6 +465,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-username a{color:#fff}
 #moin-username input:hover{color:#1f9ae0}
 #moin-locationline{padding:0;font-size:100%;font-weight:normal;margin:.25em 12px 5px 12px}
+#moin-interwiki a{color:#fff}
 #moin-pagelocation{font-size:1.5em;letter-spacing:.05em}
 #moin-pagetrail{margin:0 .88em .25em 12px;padding:0;font-size:.88em;}
 #moin-pagetrail a{color:#fff}

@@ -21,16 +21,13 @@ See the stores package for already implemented key/value stores.
 
 from __future__ import absolute_import, division
 
+import json
+
 from MoinMoin.config import REVID, DATAID, SIZE, HASH_ALGORITHM
 from MoinMoin.util.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 STORES_PACKAGE = 'MoinMoin.storage.stores'
 
