@@ -8,7 +8,7 @@
 {% block local %}
     <ul>
         {% if index %}
-        <li class="action-bar"> 
+        <li class="action-bar">
         <div class="moin-select-all">
             <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">{{ _("Select All") }}</span>
         </div>
@@ -17,18 +17,18 @@
         <li class="action-bar">
         <div class="moin-select-actions">
             <div>
-                <span>Actions</span> 
+                <span>Actions</span>
             </div>
             <ul>
                 <li id="moin-create-newitem">{{ _("New item") }}</li>
                 <li id="moin-download-trigger">{{ _("Download") }}</li>
-                <li class="moin-action-tab" 
-                    id="moin-delete-trigger" 
+                <li class="moin-action-tab"
+                    id="moin-delete-trigger"
                     actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
                     {{ _("Delete") }}
                 </li>
-                <li class="moin-action-tab" 
-                    id="moin-destroy-trigger" 
+                <li class="moin-action-tab"
+                    id="moin-destroy-trigger"
                     actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                     {{ _("Destroy") }}
                 </li>
@@ -115,13 +115,13 @@
                 {% set mimetype = "application/x.moin.download" %}
                 <a href="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}" class="moin-download-link">
                 </a>
-                <a href="{{ url_for('.show_item', item_name=fullname) }}" 
+                <a href="{{ url_for('.show_item', item_name=fullname) }}"
                    class="{{ contenttype|contenttype_to_class }} moin-item"
                    title="{{ relname }}">
                    {{ relname|truncate(maxchars, true, '..') }}
                 </a>
                 {% if hassubitem %}
-                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" 
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}"
                        title="{{ _("More") }}"
                        class="moin-more-index">&nbsp;
                 </a>
