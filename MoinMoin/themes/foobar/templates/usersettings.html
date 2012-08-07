@@ -1,0 +1,54 @@
+{% extends theme("local.html") %}
+{% import "usersettings_forms.html" as user_forms %}
+
+{% block local %}
+<ul id="moin-usersetting-title">
+<li class="moin-tab-title"><a href="#moin-personal">{{ _("Personal Settings") }}</a></li>
+<li class="moin-tab-title"><a href="#moin-password">{{ _("Change Password") }}</a></li>
+<li class="moin-tab-title"><a href="#moin-notification">{{ _("Notification Settings") }}</a></li>
+<li class="moin-tab-title"><a href="#moin-ui">{{ _("Wiki Appearance Settings") }}</a></li>
+<li class="moin-tab-title"><a href="#moin-navigation">{{ _("Navigation Settings") }}</a></li>
+<li class="moin-tab-title"><a href="#moin-options">{{ _("Options") }}</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div id="moin-usersettings" class="moin-tabs">
+    <div class="moin-tab-title"><a href="#moin-personal"></a></div>
+    <div id="moin-personal" class="moin-tab-body moin-form">
+        <h2>{{ _("Personal Settings") }}</h2>
+        {{ user_forms.personal(form_objs.personal) }}
+    </div>
+
+
+    <div id="moin-password" class="moin-tab-body moin-form">
+        <h2>{{ _("Change Password") }}</h2>
+        {{ user_forms.password(form_objs.password) }}
+    </div>
+
+
+    <div id="moin-notification" class="moin-tab-body moin-form">
+        <h2>{{ _("Notification Settings") }}</h2>
+        {{ user_forms.notification(form_objs.notification) }}
+    </div>
+
+
+    <div id="moin-ui" class="moin-tab-body moin-form">
+        <h2>{{ _("Wiki Appearance Settings") }}</h2>
+        {{ user_forms.ui(form_objs.ui) }}
+    </div>
+
+
+    <div id="moin-navigation" class="moin-tab-body moin-form">
+        <h2>{{ _("Navigation Settings") }}</h2>
+        {{ user_forms.navigation(form_objs.navigation) }}
+    </div>
+
+
+    <div id="moin-options" class="moin-tab-body moin-form">
+        <h2>{{ _("Options") }}</h2>
+        {{ user_forms.options(form_objs.options) }}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends theme("layout.html") %}
+{% block content %}
+<h1>{{ _("Create new item?") }}</h1>
+<p>
+{{ _("This item does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.") }}
+</p>
+<table class="zebra">
+    {% for itname, itlabel, itdesc in itemtypes %}
+    <tr>
+        <td>
+            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=itname) }}">{{ itlabel }}</a> - {{ itdesc }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
