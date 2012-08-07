@@ -2,6 +2,7 @@
 {% import "utils.html" as utils %}
 {% extends theme("local.html") %}
 
+{% from form.meta_template import meta_editor %}
 {# Import macros data_editor and extra_head from content_form's template.
    extra_head is optional, so instead of a simple "import from" we need to do
    this manually #}
@@ -52,8 +53,9 @@
     {% if form['content_form'].help %}
         <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
     {% endif %}
+    {{ meta_editor(form['meta_form']) }}
     <dl>
-        {{ forms.render(form['meta_text']) }}
+        {{ forms.render(form['extra_meta_text']) }}
     </dl>
     {#
     {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
