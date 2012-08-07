@@ -9,11 +9,12 @@
 """
 
 
-import re
+import re, datetime
 import json
 
 from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, DateTime as _DateTime, JoinedString
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
+from flatland.exc import AdaptationError
 
 from MoinMoin.constants.forms import *
 from MoinMoin.i18n import _, L_, N_
@@ -95,7 +96,43 @@ Natural = AnyInteger.validated_by(ValueAtLeast(0))
 
 SmallNatural = _Integer.with_properties(widget=WIDGET_SMALL_NATURAL)
 
-DateTime = (_DateTime.with_properties(widget=WIDGET_DATETIME, placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2999-12-31 23:59:59)"))
+
+class DateTimeUNIX(_DateTime):
+    """
+    A DateTime that uses a UNIX timestamp instead of datetime as internal
+    representation of DateTime.
+    """
+    def serialize(self, value):
+        """Serializes value to string."""
+        if isinstance(value, int):
+            try:
+                value = datetime.datetime.utcfromtimestamp(value)
+            except ValueError:
+                pass
+        return super(DateTimeUNIX, self).serialize(value)
+
+    def adapt(self, value):
+        """Coerces value to a native UNIX timestamp.
+
+        If value is an instance of int and it is a correct UNIX timestamp,
+        returns it unchanged. Otherwise uses DateTime superclass to parse it.
+        """
+        if isinstance(value, int):
+            try:
+                # check if a value is a correct timestamp
+                dt = datetime.datetime.utcfromtimestamp(value)
+                return value
+            except ValueError:
+                raise AdaptationError()
+        dt = super(DateTimeUNIX, self).adapt(value)
+        if isinstance(dt, datetime.datetime):
+            # XXX forces circular dependency when it is in the head import block
+            from MoinMoin.themes import utctimestamp
+            # TODO: Add support for timezones
+            dt = utctimestamp(dt)
+        return dt
+
+DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME, placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2999-12-31 23:59:59)"))
             .validated_by(Converted(incorrect=L_("Please use the following format: YYYY-MM-DD HH:MM:SS"))))
 
 File = FileStorage.with_properties(widget=WIDGET_FILE)
