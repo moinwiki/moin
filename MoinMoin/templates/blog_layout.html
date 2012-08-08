@@ -1,4 +1,5 @@
 {% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
 
 {% macro show_blog_entry(entry_item) %}
@@ -15,7 +16,7 @@
             {{ _("Published on") }} {{ entry_item.meta['ptime']|datetimeformat }}
             {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
         {% else %}
-            {{ _("It is not published yet.") }}
+            {{ _("Not published yet.") }}
         {% endif %}
     </div>
     <div class="moin-blog-entry-content">
@@ -55,6 +56,22 @@
     {% set blog_header = blog_item.content._render_data()|safe %}
     {% set blog_name = blog_item.name %}
     {% set supertags = blog_item.meta['supertags'] %}
+{% endif %}
+
+{% if blog_name %}
+    {% macro header_search(form) %}
+        {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+            <div>
+                {{ forms.render(form['q']) }}
+                {{ gen.button(form['submit'], type='submit', id='moin-search-submit') }}
+                {{ forms.render_errors(form) }}
+                <br />
+                <input type="checkbox" id="moin-blog-search-this"
+                onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', item_name=blog_name) }}' : '{{ url_for('frontend.search') }}' );" />
+                {{ _("only this blog") }}
+            </div>
+        {{ gen.form.close() }}
+    {% endmacro %}
 {% endif %}
 
 {% block content %}
