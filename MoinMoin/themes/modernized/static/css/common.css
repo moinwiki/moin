@@ -358,8 +358,8 @@ ul.moin-blog-entry-tags li:last-child:after{content:""}
 .moin-select-allitem{display:inline-block;cursor:default;text-align:left}
 .allitem-selected:after{content:url("../img/moin-checkbox-on.png");margin:0 .2em}
 .allitem-toselect:after{content:url("../img/moin-checkbox-off.png");margin:0 .2em}
-.moin-select-actions ul{position:absolute;margin:0;left:0;top:2em;padding:0;display:none;background:#fff;border:1px solid #4e7da9;z-index:1}
-.moin-select-actions ul li{display:list-item;list-style-type:none;padding:.5em;min-width:7em;cursor:pointer}
+.moin-select-actions ul{position:absolute;float:right;left:0;background:#fff;border:1px solid #4e7da9;z-index:1}
+.moin-select-actions ul li{display:list-item;list-style-type:none;padding:.5em;width:5em;cursor:pointer}
 .moin-select-actions ul li:hover{background-color:#eef1f6;color:#00008b}
 .moin-index-message{width:50%;margin:1em auto;text-align:center;display:none}
 .moin-index-message span{padding:4px;background-color:#d8dfe9;color:#000}
@@ -379,14 +379,14 @@ ul.moin-blog-entry-tags li:last-child:after{content:""}
 .moin-contenttypes-wrapper div{cursor:pointer;margin:.1em;padding:.5em 1.2em .5em .5em;height:1em}
 div.ct-shown{background:#d8dfe9 url("../img/moin-movedown.png") no-repeat center right;color:#000}
 div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat center right}
-.moin-contenttypes-wrapper form{position:absolute;top:1.9em;left:0;display:none;margin:.3em 0;border-top:1px solid #4e7da9;z-index:2;background:#fff;border:1px solid #4e7da9}
-.moin-contenttypes-wrapper ul li{list-style-type:none;padding:.5em;min-width:11.5em}
-.moin-contenttypes-wrapper ul li label{margin-left:.5em}
-.moin-contenttypes-wrapper ul li .helper-text{font-size:.7em;color:#737373;display:none}
+.moin-contenttypes-wrapper form{position:absolute;float:right;max-width:12.5em;border-top:1px solid #4e7da9;z-index:2;background:#fff;border:1px solid #4e7da9;padding:.2em}
+.moin-contenttypes-wrapper ul li{list-style-type:none;padding:.3em;min-width:11.5em}
+.moin-contenttypes-wrapper ul li label{display:inline;vertical-align:middle}
+.moin-contenttypes-wrapper ul li .helper-text{font-size:.7em;color:#737373;display:block}
 .moin-contenttypes-wrapper ul li:hover{background:#eef1f6}
 .moin-contenttypes-wrapper ul li:hover .helper-text{display:block}
 .moin-contenttypes-wrapper ul li a{font-size:80%}
-.moin-contenttypes-wrapper form input[type="submit"]{margin:.4em .5em}
+.moin-contenttypes-wrapper form input[type="submit"]{margin-left:22%;padding-left:20%;padding-right:20%}
 .moin-contenttypes-wrapper:hover div{background-color:#d8dfe9;color:#1f9ae0}
 .filter-toggle{margin:0 .2em;font-size:90%}
 .moin-more-index{background:transparent url("../img/moin-expand.png") no-repeat;display:inline-block;width:20px}
@@ -441,7 +441,7 @@ ul.moin-tags li.weight9{font-size:200%}
 body{background-color:#dfdfdf;background:url("../img/base.png")}
 #moin-main-wrapper{width:87%;min-width:700px;margin-left:auto;margin-right:auto;margin-top:0}
 #moin-page{padding:1px;display:table;width:100%;background:#fff;border-radius:9px}
-#moin-content{overflow:hidden;padding:8px 25px;display:table-cell}
+#moin-content{padding:8px 25px;display:table-cell}
 a:link{color:#00008b;text-decoration:none}
 a:visited{text-decoration:none;color:#008b8b}
 a:visited:hover{text-decoration:none;color:#1f9ae0}
