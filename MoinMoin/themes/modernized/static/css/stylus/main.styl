@@ -772,11 +772,8 @@ ul.moin-blog-entry-tags li:last-child
 
 .moin-select-actions ul
     position absolute
-    margin 0
+    float right
     left 0
-    top 2em
-    padding 0
-    display none
     background page_color
     border border_style
     z-index 1
@@ -785,7 +782,7 @@ ul.moin-blog-entry-tags li:last-child
     display list-item
     list-style-type none
     padding 0.5em
-    min-width 7em
+    width 5em
     cursor pointer
 
 .moin-select-actions ul li:hover
@@ -881,27 +878,27 @@ div.ct-hide
 
 .moin-contenttypes-wrapper form
     position absolute
-    top 1.9em
-    left 0
-    display none
-    margin 0.3em 0
+    float right
+    max-width 12.5em
     border-top border_style
     z-index 2
     background page_color
     border border_style
+    padding .2em
 
 .moin-contenttypes-wrapper ul li
     list-style-type none
-    padding 0.5em
+    padding 0.3em
     min-width 11.5em
 
 .moin-contenttypes-wrapper ul li label
-    margin-left 0.5em
+    display inline
+    vertical-align middle
 
 .moin-contenttypes-wrapper ul li .helper-text
     font-size 0.7em
     color footer_color
-    display none
+    display block
 
 .moin-contenttypes-wrapper ul li:hover
     background table_bg_color
@@ -913,7 +910,9 @@ div.ct-hide
     font-size 80%
 
 .moin-contenttypes-wrapper form input[type="submit"]
-    margin 0.4em 0.5em
+    margin-left 22%
+    padding-left 20%
+    padding-right 20%
 
 .moin-contenttypes-wrapper:hover div
     background-color table_row_color
@@ -1168,7 +1167,6 @@ body
     border-radius 9px
 
 #moin-content
-    overflow hidden
     padding 8px 25px
     display table-cell
 
