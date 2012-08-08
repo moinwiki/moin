@@ -96,9 +96,9 @@ def register(cls):
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, contenttype):
+    def __init__(self, item, itemtype, contenttype):
         self.item = item
-        self.meta = {CONTENTTYPE: contenttype}
+        self.meta = {ITEMTYPE: itemtype, CONTENTTYPE: contenttype}
         self.data = StringIO('')
         self.revid = None
 
@@ -165,7 +165,7 @@ class Item(object):
         if not item: # except NoSuchItemError:
             logging.debug("No such item: {0!r}".format(name))
             item = DummyItem(name)
-            rev = DummyRev(item, contenttype)
+            rev = DummyRev(item, itemtype, contenttype)
             logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
         else:
             logging.debug("Got item: {0!r}".format(name))
@@ -179,7 +179,7 @@ class Item(object):
                     # XXX add some message about invalid revision
                 except KeyError: # NoSuchRevisionError:
                     logging.debug("Item {0!r} has no revisions.".format(name))
-                    rev = DummyRev(item, contenttype)
+                    rev = DummyRev(item, itemtype, contenttype)
                     logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
             logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
