@@ -19,6 +19,7 @@ from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.constants.keys import ITEMTYPE
 
 class TestItem(object):
 
@@ -26,7 +27,10 @@ class TestItem(object):
         item = Item.create(u'DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
-        assert meta == {CONTENTTYPE: u'application/x-nonexistent'}
+        assert meta == {
+                ITEMTYPE: u'nonexistent',
+                CONTENTTYPE: u'application/x-nonexistent',
+                }
         assert data == ''
 
     def testCRUD(self):
