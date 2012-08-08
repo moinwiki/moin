@@ -29,18 +29,6 @@ class TestItem(object):
         assert meta == {CONTENTTYPE: u'application/x-nonexistent'}
         assert data == ''
 
-    # TODO move this to testContent after implementing Content.create
-    def testClassFinder(self):
-        for contenttype, ExpectedClass in [
-                (u'application/x-foobar', Binary),
-                (u'text/plain', Text),
-                (u'text/plain;charset=utf-8', Text),
-                (u'image/tiff', Image),
-                (u'image/png', TransformableBitmapImage),
-            ]:
-            item = Item.create(u'foo', contenttype=contenttype)
-            assert isinstance(item.content, ExpectedClass)
-
     def testCRUD(self):
         name = u'NewItem'
         contenttype = u'text/plain;charset=utf-8'
