@@ -89,6 +89,10 @@ class RegistryItem(RegistryBase):
 
 item_registry = RegistryItem()
 
+def register(cls):
+    item_registry.register(cls._factory, cls.itemtype)
+    return cls
+
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
@@ -535,18 +539,20 @@ class Contentful(Item):
         return C
 
 
+@register
 class Default(Contentful):
     """
     A "conventional" wiki item.
     """
+    itemtype = u'default'
+
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_select_template.html',
                                item_name=self.name,
-                               # XXX u'default' should be a constant
-                               itemtype=u'default',
+                               itemtype=self.itemtype,
                                rev=self.rev,
                                contenttype=self.contenttype,
                                templates=item_templates,
@@ -562,8 +568,7 @@ class Default(Contentful):
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
-                                       # XXX see comment above
-                                       itemtype=u'default',
+                                       itemtype=self.itemtype,
                                        contenttype_groups=CONTENTTYPE_GROUPS,
                                       )
             item = self
@@ -604,27 +609,32 @@ class Default(Contentful):
 
     modify_template = 'modify.html'
 
-item_registry.register(Default._factory, u'default')
 
-
+@register
 class Ticket(Contentful):
     """
     Stub for ticket item class.
     """
+    itemtype = u'ticket'
 
-item_registry.register(Ticket._factory, u'ticket')
 
-
+@register
 class Userprofile(Item):
     """
     Currently userprofile is implemented as a contenttype. This is a stub of an
     itemtype implementation of userprofile.
     """
+    itemtype = u'userprofile'
 
-item_registry.register(Userprofile._factory, u'userprofile')
 
-
+@register
 class NonExistent(Item):
+    """
+    A dummy Item for nonexistent items (when modifying, a nonexistent item with
+    undetermined itemtype)
+    """
+    itemtype = u'nonexistent'
+
     def _convert(self, doc):
         abort(404)
 
@@ -645,5 +655,3 @@ class NonExistent(Item):
                                item_name=self.name,
                                itemtypes=ITEMTYPES,
                               )
-
-item_registry.register(NonExistent._factory, u'nonexistent')
