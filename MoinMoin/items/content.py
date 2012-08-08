@@ -120,6 +120,12 @@ class Content(object):
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
 
+    @classmethod
+    def create(cls, contenttype, item=None):
+        content = content_registry.get(contenttype, item)
+        logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
+        return content
+
     def __init__(self, contenttype, item=None):
         # We need to keep the exact contenttype since contents may be handled
         # by a Content subclass with wildcard contenttype (eg. an unknown

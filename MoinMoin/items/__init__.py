@@ -58,7 +58,7 @@ from MoinMoin.constants.keys import (
     )
 from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
 
-from .content import Draw, NonExistentContent, content_registry
+from .content import Content, NonExistentContent, Draw, content_registry
 
 
 COLS = 80
@@ -130,7 +130,6 @@ class Item(object):
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
 
-    # TODO split Content creation to Content.create
     @classmethod
     def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
         """
@@ -185,8 +184,7 @@ class Item(object):
 
         # XXX Cannot pass item=item to Content.__init__ via
         # content_registry.get yet, have to patch it later.
-        content = content_registry.get(contenttype)
-        logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
+        content = Content.create(contenttype)
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
