@@ -18,18 +18,23 @@ from MoinMoin.util import diff_html
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
-from MoinMoin.items.content import ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
+from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 
-# TODO: When testing Content and derived classes, instead of creating a full
-# item with Item.create and test against item.content, implement
-# Content.create and test for returned Content instance directly. Item.create
-# will still be needed when it is required to create new items in the storage
-# to set up the test environment, but its use should be restricted to that
-# only.
 class TestContent(object):
     """ Test for arbitrary content """
+
+    def testClassFinder(self):
+        for contenttype, ExpectedClass in [
+                (u'application/x-foobar', Binary),
+                (u'text/plain', Text),
+                (u'text/plain;charset=utf-8', Text),
+                (u'image/tiff', Image),
+                (u'image/png', TransformableBitmapImage),
+            ]:
+            content = Content.create(contenttype)
+            assert isinstance(content, ExpectedClass)
 
     def test_get_templates(self):
         item_name1 = u'Template_Item1'

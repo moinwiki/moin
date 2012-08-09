@@ -18,7 +18,7 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 class TestItem(object):
 
@@ -26,20 +26,11 @@ class TestItem(object):
         item = Item.create(u'DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
-        assert meta == {CONTENTTYPE: u'application/x-nonexistent'}
+        assert meta == {
+                ITEMTYPE: u'nonexistent',
+                CONTENTTYPE: u'application/x-nonexistent',
+                }
         assert data == ''
-
-    # TODO move this to testContent after implementing Content.create
-    def testClassFinder(self):
-        for contenttype, ExpectedClass in [
-                (u'application/x-foobar', Binary),
-                (u'text/plain', Text),
-                (u'text/plain;charset=utf-8', Text),
-                (u'image/tiff', Image),
-                (u'image/png', TransformableBitmapImage),
-            ]:
-            item = Item.create(u'foo', contenttype=contenttype)
-            assert isinstance(item.content, ExpectedClass)
 
     def testCRUD(self):
         name = u'NewItem'
