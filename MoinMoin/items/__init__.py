@@ -58,7 +58,7 @@ from MoinMoin.constants.keys import (
     )
 from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
 
-from .content import Draw, NonExistentContent, content_registry
+from .content import Content, NonExistentContent, Draw, content_registry
 
 
 COLS = 80
@@ -89,12 +89,16 @@ class RegistryItem(RegistryBase):
 
 item_registry = RegistryItem()
 
+def register(cls):
+    item_registry.register(cls._factory, cls.itemtype)
+    return cls
+
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, contenttype):
+    def __init__(self, item, itemtype, contenttype):
         self.item = item
-        self.meta = {CONTENTTYPE: contenttype}
+        self.meta = {ITEMTYPE: itemtype, CONTENTTYPE: contenttype}
         self.data = StringIO('')
         self.revid = None
 
@@ -130,7 +134,6 @@ class Item(object):
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
 
-    # TODO split Content creation to Content.create
     @classmethod
     def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
         """
@@ -162,7 +165,7 @@ class Item(object):
         if not item: # except NoSuchItemError:
             logging.debug("No such item: {0!r}".format(name))
             item = DummyItem(name)
-            rev = DummyRev(item, contenttype)
+            rev = DummyRev(item, itemtype, contenttype)
             logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
         else:
             logging.debug("Got item: {0!r}".format(name))
@@ -176,7 +179,7 @@ class Item(object):
                     # XXX add some message about invalid revision
                 except KeyError: # NoSuchRevisionError:
                     logging.debug("Item {0!r} has no revisions.".format(name))
-                    rev = DummyRev(item, contenttype)
+                    rev = DummyRev(item, itemtype, contenttype)
                     logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
             logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
@@ -185,8 +188,7 @@ class Item(object):
 
         # XXX Cannot pass item=item to Content.__init__ via
         # content_registry.get yet, have to patch it later.
-        content = content_registry.get(contenttype)
-        logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
+        content = Content.create(contenttype)
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
@@ -537,18 +539,20 @@ class Contentful(Item):
         return C
 
 
+@register
 class Default(Contentful):
     """
     A "conventional" wiki item.
     """
+    itemtype = u'default'
+
     def _do_modify_show_templates(self):
         # call this if the item is still empty
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_select_template.html',
                                item_name=self.name,
-                               # XXX u'default' should be a constant
-                               itemtype=u'default',
+                               itemtype=self.itemtype,
                                rev=self.rev,
                                contenttype=self.contenttype,
                                templates=item_templates,
@@ -564,8 +568,7 @@ class Default(Contentful):
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
-                                       # XXX see comment above
-                                       itemtype=u'default',
+                                       itemtype=self.itemtype,
                                        contenttype_groups=CONTENTTYPE_GROUPS,
                                       )
             item = self
@@ -606,27 +609,32 @@ class Default(Contentful):
 
     modify_template = 'modify.html'
 
-item_registry.register(Default._factory, u'default')
 
-
+@register
 class Ticket(Contentful):
     """
     Stub for ticket item class.
     """
+    itemtype = u'ticket'
 
-item_registry.register(Ticket._factory, u'ticket')
 
-
+@register
 class Userprofile(Item):
     """
     Currently userprofile is implemented as a contenttype. This is a stub of an
     itemtype implementation of userprofile.
     """
+    itemtype = u'userprofile'
 
-item_registry.register(Userprofile._factory, u'userprofile')
 
-
+@register
 class NonExistent(Item):
+    """
+    A dummy Item for nonexistent items (when modifying, a nonexistent item with
+    undetermined itemtype)
+    """
+    itemtype = u'nonexistent'
+
     def _convert(self, doc):
         abort(404)
 
@@ -647,5 +655,3 @@ class NonExistent(Item):
                                item_name=self.name,
                                itemtypes=ITEMTYPES,
                               )
-
-item_registry.register(NonExistent._factory, u'nonexistent')
