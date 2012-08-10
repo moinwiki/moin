@@ -1,0 +1,7 @@
+{% extends theme("blog_layout.html") %}
+
+{% block blog_content %}
+    {% if blog_entry_item %}
+        {{ show_blog_entry(blog_entry_item) }}
+    {% endif %}
+{% endblock %}
