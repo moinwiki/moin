@@ -82,6 +82,7 @@ from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS
                             LATEST_REVS, ALL_REVS, \
                             CONTENTTYPE_USER
 from MoinMoin.constants import keys
+from MoinMoin.constants.keys import ITEMTYPE
 
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
@@ -226,6 +227,8 @@ class IndexingMiddleware(object):
             PARENTID: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
+            # ITEMTYPE from metadata, always matched exactly hence ID
+            ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata

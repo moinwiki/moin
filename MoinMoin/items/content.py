@@ -101,6 +101,10 @@ class RegistryContent(RegistryBase):
 
 content_registry = RegistryContent()
 
+def register(cls):
+    content_registry.register(cls._factory, Type(cls.contenttype))
+    return cls
+
 
 def conv_serialize(doc, namespaces, method='polyglot'):
     out = array('u')
@@ -119,6 +123,12 @@ class Content(object):
     @classmethod
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
+
+    @classmethod
+    def create(cls, contenttype, item=None):
+        content = content_registry.get(contenttype, item)
+        logging.debug("Content class {0!r} handles {1!r}".format(content.__class__, contenttype))
+        return content
 
     def __init__(self, contenttype, item=None):
         # We need to keep the exact contenttype since contents may be handled
@@ -235,8 +245,11 @@ class Content(object):
         return [rev.meta[NAME] for rev in revs]
 
 
+@register
 class NonExistentContent(Content):
     """Dummy Content to use with NonExistent."""
+    contenttype = 'application/x-nonexistent'
+
     def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
 
@@ -244,11 +257,10 @@ class NonExistentContent(Content):
         abort(404)
 
 
-content_registry.register(NonExistentContent._factory, Type('application/x-nonexistent'))
-
-
+@register
 class Binary(Content):
     """ An arbitrary binary item, fallback class for every item mimetype. """
+    contenttype = '*/*'
 
     # XXX reads item rev data into memory!
     def get_data(self):
@@ -336,8 +348,6 @@ There is no help, you're doomed!
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
-content_registry.register(Binary._factory, Type('*/*'))
-
 
 class RenderableBinary(Binary):
     """ Base class for some binary stuff that renders with a object tag. """
@@ -415,13 +425,20 @@ class TarMixin(object):
             os.remove(temp_fname)
 
 
+@register
 class ApplicationXTar(TarMixin, Application):
     """
     Tar items
     """
+    contenttype = 'application/x-tar'
 
-content_registry.register(ApplicationXTar._factory, Type('application/x-tar'))
-content_registry.register(ApplicationXTar._factory, Type('application/x-gtar'))
+
+@register
+class ApplicationXGTar(ApplicationXTar):
+    """
+    Compressed tar items
+    """
+    contenttype = 'application/x-gtar'
 
 
 class ZipMixin(object):
@@ -451,46 +468,46 @@ class ZipMixin(object):
         raise NotImplementedError
 
 
+@register
 class ApplicationZip(ZipMixin, Application):
     """
     Zip items
     """
+    contenttype = 'application/zip'
 
-content_registry.register(ApplicationZip._factory, Type('application/zip'))
 
-
+@register
 class PDF(Application):
     """ PDF """
+    contenttype = 'application/pdf'
 
-content_registry.register(PDF._factory, Type('application/pdf'))
 
-
+@register
 class Video(Binary):
     """ Base class for video/* """
+    contenttype = 'video/*'
 
-content_registry.register(Video._factory, Type('video/*'))
 
-
+@register
 class Audio(Binary):
     """ Base class for audio/* """
+    contenttype = 'audio/*'
 
-content_registry.register(Audio._factory, Type('audio/*'))
 
-
+@register
 class Image(Binary):
     """ Base class for image/* """
-
-content_registry.register(Image._factory, Type('image/*'))
+    contenttype = 'image/*'
 
 
 class RenderableImage(RenderableBinary):
     """ Base class for renderable Image mimetypes """
 
 
+@register
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
-
-content_registry.register(SvgImage._factory, Type('image/svg+xml'))
+    contenttype = 'image/svg+xml'
 
 
 class RenderableBitmapImage(RenderableImage):
@@ -651,13 +668,29 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff_text(self, oldrev, newrev):
         return super(TransformableBitmapImage, self)._render_data_diff_text(oldrev, newrev)
 
-content_registry.register(TransformableBitmapImage._factory, Type('image/png'))
-content_registry.register(TransformableBitmapImage._factory, Type('image/jpeg'))
-content_registry.register(TransformableBitmapImage._factory, Type('image/gif'))
+
+@register
+class PNG(TransformableBitmapImage):
+    """ PNG image. """
+    contenttype = 'image/png'
 
 
+@register
+class JPEG(TransformableBitmapImage):
+    """ JPEG image. """
+    contenttype = 'image/jpeg'
+
+
+@register
+class GIF(TransformableBitmapImage):
+    """ GIF image. """
+    contenttype = 'image/gif'
+
+
+@register
 class Text(Binary):
     """ Base class for text/* """
+    contenttype = 'text/*'
 
     class ModifyForm(Binary.ModifyForm):
         template = 'modify_text.html'
@@ -740,8 +773,6 @@ class Text(Binary):
         doc = html_conv(doc)
         return conv_serialize(doc, {html.namespace: ''})
 
-content_registry.register(Text._factory, Type('text/*'))
-
 
 class MarkupItem(Text):
     """
@@ -750,30 +781,31 @@ class MarkupItem(Text):
     """
 
 
+@register
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
+    contenttype = 'text/x.moin.wiki'
 
-content_registry.register(MoinWiki._factory, Type('text/x.moin.wiki'))
 
-
+@register
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
+    contenttype = 'text/x.moin.creole'
 
-content_registry.register(CreoleWiki._factory, Type('text/x.moin.creole'))
 
-
+@register
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
+    contenttype = 'text/x-mediawiki'
 
-content_registry.register(MediaWiki._factory, Type('text/x-mediawiki'))
 
-
+@register
 class ReST(MarkupItem):
     """ ReStructured Text markup """
+    contenttype = 'text/x-rst'
 
-content_registry.register(ReST._factory, Type('text/x-rst'))
 
-
+@register
 class HTML(Text):
     """
     HTML markup
@@ -784,14 +816,17 @@ class HTML(Text):
 
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
+    contenttype = 'text/html'
+
     class ModifyForm(Text.ModifyForm):
         template = "modify_text_html.html"
 
-content_registry.register(HTML._factory, Type('text/html'))
 
-
+@register
 class DocBook(MarkupItem):
     """ DocBook Document """
+    contenttype = 'application/docbook+xml'
+
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
         from MoinMoin.converter import default_registry as reg
@@ -835,8 +870,6 @@ class DocBook(MarkupItem):
                          cache_timeout=10, # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
-content_registry.register(DocBook._factory, Type('application/docbook+xml'))
-
 
 class Draw(TarMixin, Image):
     """
@@ -850,10 +883,12 @@ class Draw(TarMixin, Image):
         raise NotImplementedError
 
 
+@register
 class TWikiDraw(Draw):
     """
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
+    contenttype = 'application/x-twikidraw'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_twikidraw.html"
@@ -910,13 +945,13 @@ class TWikiDraw(Draw):
         else:
             return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
-content_registry.register(TWikiDraw._factory, Type('application/x-twikidraw'))
 
-
+@register
 class AnyWikiDraw(Draw):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
+    contenttype = 'application/x-anywikidraw'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
@@ -979,11 +1014,11 @@ class AnyWikiDraw(Draw):
         else:
             return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
 
-content_registry.register(AnyWikiDraw._factory, Type('application/x-anywikidraw'))
 
-
+@register
 class SvgDraw(Draw):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
+    contenttype = 'application/x-svgdraw'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_svg-edit.html"
@@ -1010,5 +1045,3 @@ class SvgDraw(Draw):
         drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
         png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
         return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
-
-content_registry.register(SvgDraw._factory, Type('application/x-svgdraw'))
