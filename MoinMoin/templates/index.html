@@ -30,6 +30,7 @@
                 </div>
                 <ul>
                     <li id="moin-create-newitem">{{ _("New item") }}</li>
+                    {% if index %}
                     <li id="moin-download-trigger">{{ _("Download") }}</li>
                     <li class="moin-action-tab"
                         id="moin-delete-trigger"
@@ -41,6 +42,7 @@
                         data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                         {{ _("Destroy") }}
                     </li>
+                    {% endif %}
                 </ul>
             </div>
             </li>
