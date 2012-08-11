@@ -29,7 +29,7 @@ from flatland.validation import Validator
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, DateTime, Submit
 
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
@@ -533,7 +533,7 @@ class Contentful(Item):
     """
     @property
     def ModifyForm(self):
-        class C(Item._ModifyForm):
+        class C(self._ModifyForm):
             content_form = self.content.ModifyForm
         C.__name__ = 'ModifyForm'
         return C
@@ -649,9 +649,39 @@ class NonExistent(Item):
         ITEMTYPES = [
             (u'default', u'Default', 'Wiki item'),
             (u'ticket', u'Ticket', 'Ticket item'),
+            (u'blog', u'Blog', 'Blog item'),
+            (u'blogentry', u'Blog entry', 'Blog entry item'),
         ]
 
         return render_template('modify_select_itemtype.html',
                                item_name=self.name,
                                itemtypes=ITEMTYPES,
                               )
+
+
+# TODO: move into a separate items/blog.py module
+class BlogMetaForm(BaseMetaForm):
+    supertags = (Tags.using(label=L_('Supertags (Categories)'))
+                 .with_properties(placeholder=L_("Ordered comma separated list of tags")))
+
+class BlogEntryMetaForm(BaseMetaForm):
+    summary = (OptionalText.using(label=L_("Title"))
+               .with_properties(placeholder=L_("One-line title of the blog entry")))
+    ptime = DateTime.using(label=L_('Publication time (UTC)'), optional=True)
+
+@register
+class Blog(Default):
+    itemtype = u'blog'
+
+    class _ModifyForm(Default._ModifyForm):
+        meta_form = BlogMetaForm
+        meta_template = 'modify_blog_meta.html'
+
+
+@register
+class BlogEntry(Default):
+    itemtype = u'blogentry'
+
+    class _ModifyForm(Default._ModifyForm):
+        meta_form = BlogEntryMetaForm
+        meta_template = 'modify_blog_entry_meta.html'
