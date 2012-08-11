@@ -24,12 +24,12 @@
                 <li id="moin-download-trigger">{{ _("Download") }}</li>
                 <li class="moin-action-tab"
                     id="moin-delete-trigger"
-                    actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
+                    data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
                     {{ _("Delete") }}
                 </li>
                 <li class="moin-action-tab"
                     id="moin-destroy-trigger"
-                    actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
+                    data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                     {{ _("Destroy") }}
                 </li>
             </ul>
