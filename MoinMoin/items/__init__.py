@@ -650,11 +650,13 @@ class NonExistent(Item):
 
     def do_show(self, revid):
         # First, check if the current user has the required privileges
-        if not flaskg.user.may.create(self.name):
-            return render_template('show_nonexistent.html',
-                                   item_name=self.name,
-                                  )
-        return Response(self._select_itemtype(), 404)
+        if flaskg.user.may.create(self.name):
+            content = self._select_itemtype()
+        else:
+            content = render_template('show_nonexistent.html',
+                                      item_name=self.name,
+                                     )
+        return Response(content, 404)
 
     def do_modify(self):
         # First, check if the current user has the required privileges
