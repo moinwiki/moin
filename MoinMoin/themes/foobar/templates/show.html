@@ -1,0 +1,29 @@
+{% extends theme("local.html") %}
+
+{% block head_links %}
+    {{ super() }}
+    <link rel="alternate" title="{{ item_name }} changes" href="{{ url_for('feed.atom', item_name=item_name) }}" type="application/atom+xml" />
+    {# universal edit button support #}
+    {%- if user.may.write(item_name) and 'frontend.modify_item' not in cfg.endpoints_excluded -%}
+    <link rel="alternate" type="application/wiki" title="{{ _('Modify') }}" href="{{ url_for('frontend.modify_item', item_name=item_name) }}" />
+    {%- endif %}
+{% endblock %}
+
+{% block content %}
+    {% block content_data %}
+    {% if data_rendered %}
+    <div id="moin-content-data">
+        {{ data_rendered }}
+    </div>
+    {% endif %}
+    {% endblock %}
+{% endblock %}
+
+{% block options_for_javascript %}
+{%- if item_name and user.edit_on_doubleclick and user.may.write(item_name) -%}
+    <br id="moin-edit-on-doubleclick" />
+{%- endif %}
+{%- if user.show_comments -%}
+    <br id="moin-show-comments" />
+{%- endif %}
+{% endblock %}
