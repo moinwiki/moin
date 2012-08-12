@@ -629,14 +629,6 @@ class Default(Contentful):
 
 
 @register
-class Ticket(Contentful):
-    """
-    Stub for ticket item class.
-    """
-    itemtype = u'ticket'
-
-
-@register
 class Userprofile(Item):
     """
     Currently userprofile is implemented as a contenttype. This is a stub of an
@@ -713,3 +705,7 @@ class BlogEntry(Default):
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm
         meta_template = 'modify_blog_entry_meta.html'
+
+
+from ..util.pysupport import load_package_modules
+load_package_modules(__name__, __path__)
