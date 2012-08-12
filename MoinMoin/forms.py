@@ -155,11 +155,11 @@ class ValidReference(Validator):
     invalid_reference_msg = L_('Invalid Reference.')
 
     def validate(self, element, state):
-        if element.value not in element.choices:
+        if element.value not in element.valid_values:
             return self.note_error(element, state, 'invalid_reference_msg')
         return True
 
-class Reference(Select.with_properties(empty_label=L_(u'(None)'))):
+class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(ValidReference())):
     """
     A metadata property that points to another item selected out of the
     Results of a search query.
