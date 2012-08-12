@@ -24,6 +24,7 @@ CONTENTTYPE_GROUPS = [
         ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
         ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
         ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
+        ('text/x-markdown;charset=utf-8', 'Markdown'),
         ('text/x-rst;charset=utf-8', 'ReST'),
         ('application/docbook+xml;charset=utf-8', 'DocBook'),
         ('text/html;charset=utf-8', 'HTML'),
