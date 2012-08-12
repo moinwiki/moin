@@ -344,7 +344,9 @@ def presenter(view, add_trail=False, abort404=True):
     return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
+# The first form accepts POST to allow modifying behavior like modify_item.
+# The second form only accpets GET since modifying a historical revision is not allowed (yet).
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.add_trail(item_name)
@@ -354,24 +356,7 @@ def show_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
         abort(403)
-    show_revision = rev != CURRENT
-    show_navigation = False # TODO
-    first_rev = last_rev = None # TODO
-    if isinstance(item, NonExistent):
-        status = 404
-    else:
-        status = 200
-    content = render_template('show.html',
-                              item=item, item_name=item.name,
-                              rev=item.rev,
-                              contenttype=item.contenttype,
-                              first_rev_id=first_rev,
-                              last_rev_id=last_rev,
-                              data_rendered=Markup(item.content._render_data()),
-                              show_revision=show_revision,
-                              show_navigation=show_navigation,
-                             )
-    return Response(content, status)
+    return item.do_show(rev)
 
 
 @frontend.route('/+show/<itemname:item_name>')
