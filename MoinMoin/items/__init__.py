@@ -27,6 +27,8 @@ from functools import partial
 from flatland import Form
 from flatland.validation import Validator
 
+from jinja2 import Markup
+
 from whoosh.query import Term, And, Prefix
 
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, DateTime, Submit
@@ -562,6 +564,21 @@ class Default(Contentful):
                                data_rendered='',
                                )
 
+    def do_show(self, revid):
+        show_revision = revid != CURRENT
+        show_navigation = False # TODO
+        first_rev = last_rev = None # TODO
+        return render_template(self.show_template,
+                               item=self, item_name=self.name,
+                               rev=self.rev,
+                               contenttype=self.contenttype,
+                               first_rev_id=first_rev,
+                               last_rev_id=last_rev,
+                               data_rendered=Markup(self.content._render_data()),
+                               show_revision=show_revision,
+                               show_navigation=show_navigation,
+                              )
+
     def do_modify(self):
         method = request.method
         if method == 'GET':
@@ -607,6 +624,7 @@ class Default(Contentful):
                                search_form=None,
                               )
 
+    show_template = 'show.html'
     modify_template = 'modify.html'
 
 
@@ -638,11 +656,21 @@ class NonExistent(Item):
     def _convert(self, doc):
         abort(404)
 
+    def do_show(self, revid):
+        # First, check if the current user has the required privileges
+        if not flaskg.user.may.create(self.name):
+            return render_template('show_nonexistent.html',
+                                   item_name=self.name,
+                                  )
+        return Response(self._select_itemtype(), 404)
+
     def do_modify(self):
         # First, check if the current user has the required privileges
         if not flaskg.user.may.create(self.name):
             abort(403)
+        return self._select_itemtype()
 
+    def _select_itemtype(self):
         # TODO Construct this list from the item_registry. Two more fields (ie.
         # display name and description) are needed in the registry then to
         # support the automatic construction.
