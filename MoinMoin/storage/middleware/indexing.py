@@ -274,6 +274,19 @@ class IndexingMiddleware(object):
         }
         latest_revs_fields.update(**userprofile_fields)
 
+        # XXX This is a highly adhoc way to support indexing of ticket items.
+        ticket_fields = {
+            'effort': NUMERIC(stored=True),
+            'difficulty': NUMERIC(stored=True),
+            'severity': NUMERIC(stored=True),
+            'priority': NUMERIC(stored=True),
+            'status': ID(stored=True),
+            'assigned_to': ID(stored=True),
+            'superseded_by': ID(stored=True),
+            'depends_on': ID(stored=True),
+        }
+        latest_revs_fields.update(**ticket_fields)
+
         blog_entry_fields = {
             # publish time from metadata (converted to UTC datetime)
             PTIME: DATETIME(stored=True)
