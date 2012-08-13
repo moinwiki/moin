@@ -98,11 +98,16 @@ def register(cls):
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, itemtype, contenttype):
+    def __init__(self, item, itemtype=None, contenttype=None):
         self.item = item
-        self.meta = {ITEMTYPE: itemtype, CONTENTTYPE: contenttype}
+        self.meta = {
+            ITEMTYPE: itemtype or u'nonexistent',
+            CONTENTTYPE: contenttype or u'application/x-nonexistent'
+        }
         self.data = StringIO('')
         self.revid = None
+        if self.item:
+            self.meta[NAME] = self.item.name
 
 
 class DummyItem(object):
@@ -155,10 +160,6 @@ class Item(object):
         previously created Content instance is assigned to its content
         property.
         """
-        if contenttype is None:
-            contenttype = u'application/x-nonexistent'
-        if itemtype is None:
-            itemtype = u'nonexistent'
         if 1: # try:
             if item is None:
                 item = flaskg.storage[name]
