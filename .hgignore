@@ -27,3 +27,5 @@
 .~$
 ^docs/devel/api/modules.rst
 ^upload.py
+^build/
+\..*sw[op]$
