@@ -23,11 +23,14 @@ import json
 from StringIO import StringIO
 from collections import namedtuple
 from functools import partial
+from datetime import datetime
 
 from flatland import Form
 from flatland.validation import Validator
 
-from whoosh.query import Term, And, Prefix
+from jinja2 import Markup
+
+from whoosh.query import Term, And, Prefix, DateRange
 
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, DateTime, Submit
 
@@ -52,7 +55,7 @@ from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.constants.keys import (
-    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
+    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, PTIME, SYSITEM_VERSION, ITEMTYPE,
     CONTENTTYPE, SIZE, TAGS, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
@@ -96,11 +99,16 @@ def register(cls):
 
 class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
-    def __init__(self, item, itemtype, contenttype):
+    def __init__(self, item, itemtype=None, contenttype=None):
         self.item = item
-        self.meta = {ITEMTYPE: itemtype, CONTENTTYPE: contenttype}
+        self.meta = {
+            ITEMTYPE: itemtype or u'nonexistent',
+            CONTENTTYPE: contenttype or u'application/x-nonexistent'
+        }
         self.data = StringIO('')
         self.revid = None
+        if self.item:
+            self.meta[NAME] = self.item.name
 
 
 class DummyItem(object):
@@ -153,10 +161,6 @@ class Item(object):
         previously created Content instance is assigned to its content
         property.
         """
-        if contenttype is None:
-            contenttype = u'application/x-nonexistent'
-        if itemtype is None:
-            itemtype = u'nonexistent'
         if 1: # try:
             if item is None:
                 item = flaskg.storage[name]
@@ -562,6 +566,21 @@ class Default(Contentful):
                                data_rendered='',
                                )
 
+    def do_show(self, revid):
+        show_revision = revid != CURRENT
+        show_navigation = False # TODO
+        first_rev = last_rev = None # TODO
+        return render_template(self.show_template,
+                               item=self, item_name=self.name,
+                               rev=self.rev,
+                               contenttype=self.contenttype,
+                               first_rev_id=first_rev,
+                               last_rev_id=last_rev,
+                               data_rendered=Markup(self.content._render_data()),
+                               show_revision=show_revision,
+                               show_navigation=show_navigation,
+                              )
+
     def do_modify(self):
         method = request.method
         if method == 'GET':
@@ -607,15 +626,8 @@ class Default(Contentful):
                                search_form=None,
                               )
 
+    show_template = 'show.html'
     modify_template = 'modify.html'
-
-
-@register
-class Ticket(Contentful):
-    """
-    Stub for ticket item class.
-    """
-    itemtype = u'ticket'
 
 
 @register
@@ -638,11 +650,23 @@ class NonExistent(Item):
     def _convert(self, doc):
         abort(404)
 
+    def do_show(self, revid):
+        # First, check if the current user has the required privileges
+        if flaskg.user.may.create(self.name):
+            content = self._select_itemtype()
+        else:
+            content = render_template('show_nonexistent.html',
+                                      item_name=self.name,
+                                     )
+        return Response(content, 404)
+
     def do_modify(self):
         # First, check if the current user has the required privileges
         if not flaskg.user.may.create(self.name):
             abort(403)
+        return self._select_itemtype()
 
+    def _select_itemtype(self):
         # TODO Construct this list from the item_registry. Two more fields (ie.
         # display name and description) are needed in the registry then to
         # support the automatic construction.
@@ -677,6 +701,34 @@ class Blog(Default):
         meta_form = BlogMetaForm
         meta_template = 'modify_blog_meta.html'
 
+    def do_show(self, revid):
+        """
+        Show a blog item and a list of its blog entries below it.
+
+        If tag GET-parameter is defined, the list of blog entries consists only
+        of those entries that contain the tag value in their lists of tags.
+        """
+        # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
+        tag = request.values.get('tag')
+        prefix = self.name + u'/'
+        current_timestamp = int(time.time())
+        terms = [Term(WIKINAME, app.cfg.interwikiname),
+                 # Only sub items of this item
+                 Prefix(NAME_EXACT, prefix),
+                 # Filter out those items that do not have a PTIME meta or PTIME is in the future.
+                 DateRange(PTIME, start=None, end=datetime.utcfromtimestamp(current_timestamp)),
+                ]
+        if tag:
+            terms.append(Term(TAGS, tag))
+        query = And(terms)
+        revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
+        blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
+        return render_template('blog.html',
+                               item_name=self.name,
+                               blog_item=self,
+                               blog_entry_items=blog_entry_items,
+                               tag=tag,
+                              )
 
 @register
 class BlogEntry(Default):
@@ -685,3 +737,22 @@ class BlogEntry(Default):
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm
         meta_template = 'modify_blog_entry_meta.html'
+
+    def do_show(self, revid):
+        blog_item_name = self.name.rsplit('/', 1)[0]
+        try:
+            blog_item = Item.create(blog_item_name)
+        except AccessDenied:
+            abort(403)
+        if not isinstance(blog_item, Blog):
+            # The parent item of this blog entry item is not a Blog item.
+            abort(403)
+        return render_template('blog_entry.html',
+                               item_name=self.name,
+                               blog_item=blog_item,
+                               blog_entry_item=self,
+                              )
+
+
+from ..util.pysupport import load_package_modules
+load_package_modules(__name__, __path__)

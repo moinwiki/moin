@@ -46,7 +46,7 @@
         <h2>{{ _("Categories") }}</h2>
         <ul>
             {% for supertag in supertags %}
-                <li><a href="{{ url_for('frontend.show_blog', item_name=blog_name, supertag=supertag) }}">{{ supertag }}</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name=blog_name, tag=supertag) }}">{{ supertag }}</a></li>
             {% endfor %}
         </ul>
     </div>
