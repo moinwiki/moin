@@ -13,10 +13,14 @@ import re, datetime
 import json
 
 from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, DateTime as _DateTime, JoinedString
+from flatland.util import class_cloner, Unspecified
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
 
+from flask import g as flaskg
+
 from MoinMoin.constants.forms import *
+from MoinMoin.constants.keys import ITEMID, NAME
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import FileStorage
@@ -140,3 +144,45 @@ File = FileStorage.with_properties(widget=WIDGET_FILE)
 Submit = String.using(default=L_('OK'), optional=True).with_properties(widget=WIDGET_SUBMIT, class_=CLASS_BUTTON)
 
 Hidden = String.using(optional=True).with_properties(widget=WIDGET_HIDDEN)
+
+
+# XXX When some user chooses a Reference candidate that is removed before the
+# user POSTs, the validator fails. This can be confusing.
+class ValidReference(Validator):
+    """
+    Validator for Reference
+    """
+    invalid_reference_msg = L_('Invalid Reference.')
+
+    def validate(self, element, state):
+        if element.value not in element.valid_values:
+            return self.note_error(element, state, 'invalid_reference_msg')
+        return True
+
+class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(ValidReference())):
+    """
+    A metadata property that points to another item selected out of the
+    Results of a search query.
+    """
+    @class_cloner
+    def to(cls, query, query_args={}):
+        cls._query = query
+        cls._query_args = query_args
+        return cls
+
+    @classmethod
+    def _get_choices(cls):
+        revs = flaskg.storage.search(cls._query, **cls._query_args)
+        choices = [(rev.meta[ITEMID], rev.meta[NAME]) for rev in revs]
+        if cls.optional:
+            choices.append((u'', cls.properties['empty_label']))
+        return choices
+
+    def __init__(self, value=Unspecified, **kw):
+        super(Reference, self).__init__(value, **kw)
+        # NOTE There is a slight chance of two instances of the same Reference
+        # subclass having different set of choices when the storage changes
+        # between their initialization.
+        choices = self._get_choices()
+        self.properties['labels'] = dict(choices)
+        self.valid_values = [id_ for id_, name in choices]

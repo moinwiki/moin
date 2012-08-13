@@ -629,14 +629,6 @@ class Default(Contentful):
 
 
 @register
-class Ticket(Contentful):
-    """
-    Stub for ticket item class.
-    """
-    itemtype = u'ticket'
-
-
-@register
 class Userprofile(Item):
     """
     Currently userprofile is implemented as a contenttype. This is a stub of an
@@ -658,11 +650,13 @@ class NonExistent(Item):
 
     def do_show(self, revid):
         # First, check if the current user has the required privileges
-        if not flaskg.user.may.create(self.name):
-            return render_template('show_nonexistent.html',
-                                   item_name=self.name,
-                                  )
-        return Response(self._select_itemtype(), 404)
+        if flaskg.user.may.create(self.name):
+            content = self._select_itemtype()
+        else:
+            content = render_template('show_nonexistent.html',
+                                      item_name=self.name,
+                                     )
+        return Response(content, 404)
 
     def do_modify(self):
         # First, check if the current user has the required privileges
@@ -713,3 +707,7 @@ class BlogEntry(Default):
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm
         meta_template = 'modify_blog_entry_meta.html'
+
+
+from ..util.pysupport import load_package_modules
+load_package_modules(__name__, __path__)
