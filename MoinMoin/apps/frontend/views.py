@@ -498,66 +498,6 @@ def modify_item(item_name):
     return item.do_modify()
 
 
-@frontend.route('/+blog/+<rev>/<itemname:item_name>', methods=['GET'])
-@frontend.route('/+blog/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
-def show_blog(item_name, rev):
-    """
-    Show a blog item and a list of blog entries below it.
-
-    If supertag GET-parameter is defined, the list of blog entries consists only
-    of those entries that contain the supertag value in their lists of tags.
-    """
-    supertag = request.values.get('supertag')
-    flaskg.user.add_trail(item_name)
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
-    prefix = item_name + u'/'
-    current_timestamp = int(time.time())
-    terms = [Term(WIKINAME, app.cfg.interwikiname),
-             # Only sub items of this item
-             Prefix(NAME_EXACT, prefix),
-             # Filter out those items that do not have a PTIME meta or PTIME is in the future.
-             DateRange(PTIME, start=None, end=datetime.utcfromtimestamp(current_timestamp)),
-            ]
-    if supertag:
-        terms.append(Term(TAGS, supertag))
-    query = And(terms)
-    revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
-    blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
-    return render_template('blog.html',
-                           item_name=item.name,
-                           blog_item=item,
-                           blog_entry_items=blog_entry_items,
-                           supertag=supertag,
-                          )
-
-@frontend.route('/+blog_entry/+<rev>/<itemname:item_name>', methods=['GET'])
-@frontend.route('/+blog_entry/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
-def show_blog_entry(item_name, rev):
-    flaskg.user.add_trail(item_name)
-    blog_item_name = item_name.rsplit('/', 1)[0]
-    if blog_item_name == item_name:
-        abort(403)
-    try:
-        item = Item.create(item_name, rev_id=rev)
-        blog_item = Item.create(blog_item_name)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
-    if isinstance(blog_item, NonExistent):
-        abort(404, blog_item_name)
-    return render_template('blog_entry.html',
-                           item_name=item.name,
-                           blog_item=blog_item,
-                           blog_entry_item=item,
-                          )
-
-
 class TargetChangeForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
