@@ -82,6 +82,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1', # reST markup processing
+        'Markdown>=2.1.1', # Markdown markup processing
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
         'Flask-Cache>=0.3.4', # caching support

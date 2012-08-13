@@ -18,7 +18,7 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent
 from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 class TestItem(object):
 
@@ -29,6 +29,7 @@ class TestItem(object):
         assert meta == {
                 ITEMTYPE: u'nonexistent',
                 CONTENTTYPE: u'application/x-nonexistent',
+                NAME: u'DoesNotExist',
                 }
         assert data == ''
 

@@ -806,6 +806,12 @@ class ReST(MarkupItem):
 
 
 @register
+class Markdown(MarkupItem):
+    """ Markdown markup """
+    contenttype = 'text/x-markdown'
+
+
+@register
 class HTML(Text):
     """
     HTML markup

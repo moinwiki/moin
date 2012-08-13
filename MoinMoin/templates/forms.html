@@ -55,6 +55,8 @@ Helpers for using flatland with jinja2 to create html forms.
       'submit': raw_input,
       'hidden': raw_input,
       'select': select,
+      'readonly_string_list': readonly_string_list,
+      'readonly_item_link_list': readonly_item_link_list,
   }[field.properties.widget] or stub -%}
   {{ macro(field, *varargs, **kwargs) }}
 {% endmacro %}
@@ -152,6 +154,30 @@ Helpers for using flatland with jinja2 to create html forms.
     {% endfor %}
     {{ gen.select.close() }}
     {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro readonly_string_list(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {% for v in field.value %}
+      {# TODO style .moin-string-list-item #}
+      <span class="moin-string-list-item">{{ v }}</span>
+    {% endfor %}
+  </dd>
+{% endmacro %}
+
+{% macro readonly_item_link_list(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {% for v in field.value %}
+      {# TODO style .moin-item-link-list-item #}
+      <span class="moin-item-link-list-item"><a href="{{ url_for_item(v) }}">{{ v }}</a></span>
+    {% endfor %}
   </dd>
 {% endmacro %}
 
