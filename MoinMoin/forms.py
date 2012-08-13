@@ -12,7 +12,7 @@
 import re, datetime
 import json
 
-from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, DateTime as _DateTime, JoinedString
+from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, JoinedString, List, DateTime as _DateTime
 from flatland.util import class_cloner, Unspecified
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
@@ -145,6 +145,11 @@ Submit = String.using(default=L_('OK'), optional=True).with_properties(widget=WI
 
 Hidden = String.using(optional=True).with_properties(widget=WIDGET_HIDDEN)
 
+# optional=True is needed to get rid of the "required field" indicator on the UI (usually an asterisk)
+ReadonlyStringList = List.of(String).using(optional=True).with_properties(widget=WIDGET_READONLY_STRING_LIST)
+
+ReadonlyItemLinkList = ReadonlyStringList.with_properties(widget=WIDGET_READONLY_ITEM_LINK_LIST)
+
 
 # XXX When some user chooses a Reference candidate that is removed before the
 # user POSTs, the validator fails. This can be confusing.
@@ -186,3 +191,12 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
         choices = self._get_choices()
         self.properties['labels'] = dict(choices)
         self.valid_values = [id_ for id_, name in choices]
+
+
+class BackReference(ReadonlyItemLinkList):
+    """
+    Back references built from Whoosh query.
+    """
+    def set(self, query, **query_args):
+        revs = flaskg.storage.search(query, **query_args)
+        super(BackReference, self).set([rev.meta[NAME] for rev in revs])
