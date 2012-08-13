@@ -501,9 +501,10 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-footer hr{margin:0;background-color:#4e7da9}
 #moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373;}
 #moin-pageinfo a,#moin-wikilicense a,#moin-credits a,#moin-version a,#moin-timings a{color:#737373}
+#moin-pageinfo{margin-top:20px}
 #moin-timings li{display:inline-block;margin:0 20px 0 0}
 #moin-credits span{display:inline-block;margin:0 5px}
-#moin-creditlogos{float:right;list-style:none;margin:0 10px}
+#moin-creditlogos{float:right;list-style:none;margin:5 10px}
 #moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
