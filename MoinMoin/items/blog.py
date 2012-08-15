@@ -11,6 +11,7 @@ from datetime import datetime
 
 from flask import request, abort
 from flask import g as flaskg
+from flask import current_app as app
 
 from whoosh.query import Term, And, Prefix, DateRange
 
@@ -18,7 +19,7 @@ from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import OptionalText, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, PTIME
+from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
 
 
