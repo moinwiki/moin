@@ -740,13 +740,13 @@ class BlogEntry(Default):
         meta_form = BlogEntryMetaForm
         meta_template = 'modify_blog_entry_meta.html'
 
-    @classmethod
-    def from_item(cls, item):
-        form = super(BlogEntry._ModifyForm, cls).from_item(item)
-        # preload PTIME with the current datetime
-        if not form['meta_form']['ptime']:
-            form['meta_form']['ptime'].set(datetime.utcnow())
-        return form
+        @classmethod
+        def from_item(cls, item):
+            form = super(BlogEntry._ModifyForm, cls).from_item(item)
+            # preload PTIME with the current datetime
+            if not form['meta_form']['ptime']:
+                form['meta_form']['ptime'].set(datetime.utcnow())
+            return form
 
     def do_show(self, revid):
         blog_item_name = self.name.rsplit('/', 1)[0]
