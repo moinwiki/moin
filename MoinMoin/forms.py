@@ -136,7 +136,7 @@ class DateTimeUNIX(_DateTime):
             dt = utctimestamp(dt)
         return dt
 
-DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME, placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2999-12-31 23:59:59)"))
+DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME, placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2013-12-31 23:59:59)"))
             .validated_by(Converted(incorrect=L_("Please use the following format: YYYY-MM-DD HH:MM:SS"))))
 
 File = FileStorage.with_properties(widget=WIDGET_FILE)
