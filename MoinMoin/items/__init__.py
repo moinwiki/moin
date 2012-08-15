@@ -136,6 +136,21 @@ class BaseMetaForm(Form):
     tags = Tags
 
 
+class BaseModifyForm(BaseChangeForm):
+    @classmethod
+    def from_item(cls, item):
+        form = cls.from_defaults()
+        TextCha(form).amend_form()
+        form._load(item)
+        return form
+
+    @classmethod
+    def from_request(cls, request):
+        form = cls.from_flat(request.form.items() + request.files.items())
+        TextCha(form).amend_form()
+        return form
+
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
@@ -304,7 +319,7 @@ class Item(object):
 
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
-    class _ModifyForm(BaseChangeForm):
+    class _ModifyForm(BaseModifyForm):
         """Base class for ModifyForm of Item subclasses."""
         meta_form = BaseMetaForm
         extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
@@ -328,19 +343,6 @@ class Item(object):
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
-
-        @classmethod
-        def from_item(cls, item):
-            form = cls.from_defaults()
-            TextCha(form).amend_form()
-            form._load(item)
-            return form
-
-        @classmethod
-        def from_request(cls, request):
-            form = cls.from_flat(request.form.items() + request.files.items())
-            TextCha(form).amend_form()
-            return form
 
     def do_modify(self):
         """
