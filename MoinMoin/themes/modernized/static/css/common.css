@@ -9,12 +9,11 @@
 /*
 /* common.css - MoinMoin Default Styles
 
-    Copyright: 2001, 2002, 2003 MoinMoin:JuergenHermann
-    Copyright: 2010 MoinMoin:DiogenesAugusto
-    Copyright: 2010 MoinMoin:RogerHaase
-    License: GNU GPL v2 or later, see COPYING for details.
+  Copyright: 2001, 2002, 2003 MoinMoin:JuergenHermann
+  Copyright: 2010 MoinMoin:DiogenesAugusto
+  Copyright: 2010 MoinMoin:RogerHaase
+  License: GNU GPL v2 or later, see COPYING for details.
 */
-
 /*
 Copied from:  http://code.google.com/p/html5resetcss/
 
@@ -450,14 +449,14 @@ a.moin-nonexistent:link{color:#939393}
 a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .current-link{color:inherit !important}
 #moin-header{margin:0;padding:0 0 10px 0;background:#708090;color:#fff;line-height:1.12em;border-bottom-left-radius:9px;border-bottom-right-radius:9px}
-#moin-searchform{margin:8px .5em;padding:0;font-size:.82em;float:right;text-align:right}
+#moin-searchform{margin:8px .5em;padding:0;font-size:.82em;float:right;text-align:right;width:15em}
 #moin-searchform input{font-size:100%;vertical-align:middle;background-color:#fff;border:1px solid #4e7da9}
 #moin-searchform #moin-search-submit{text-indent:-9000%;margin-left:-26px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer;padding:0;box-shadow:none}
 #moin-searchform #moin-search-query{padding-right:20px}
 #moin-searchform div{margin:0 5px 0 0}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
 #moin-long-searchform div{margin:0}
-#moin-search-query{width:98%}
+#moin-search-query{width:80%}
 #moin-logo{float:left;margin:5px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
 #moin-logo a{color:#fff;text-decoration:none}
@@ -501,9 +500,10 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-footer hr{margin:0;background-color:#4e7da9}
 #moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373;}
 #moin-pageinfo a,#moin-wikilicense a,#moin-credits a,#moin-version a,#moin-timings a{color:#737373}
+#moin-pageinfo{margin-top:20px}
 #moin-timings li{display:inline-block;margin:0 20px 0 0}
 #moin-credits span{display:inline-block;margin:0 5px}
-#moin-creditlogos{float:right;list-style:none;margin:0 10px}
+#moin-creditlogos{float:right;list-style:none;margin:5 10px}
 #moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
