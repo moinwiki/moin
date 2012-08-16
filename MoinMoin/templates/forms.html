@@ -25,10 +25,10 @@ Helpers for using flatland with jinja2 to create html forms.
 
 {% macro render_textcha(gen, form) %}
     {% if form.textcha_question.value %}
-    <dt>
+    <dt class="moin-textcha">
         {{ gen.label(form.textcha) }}
     </dt>
-    <dd>
+    <dd class="moin-textcha">
         {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
         {{ form.textcha_question.value[:-51] }}
         {{ gen.input(form.textcha_question, type='hidden') }}<br />

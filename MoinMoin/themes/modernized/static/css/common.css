@@ -278,6 +278,7 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 #moin-modify dt{width:auto;text-align:left}
 #moin-modify textarea{width:99.5%}
 #moin-modify input[type="submit"]{margin-left:0}
+.moin-textcha{padding-top:.2em}
 #options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
 #moin-usersettings a{color:#00008b}
