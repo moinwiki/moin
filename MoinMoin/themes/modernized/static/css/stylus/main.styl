@@ -1,9 +1,11 @@
 //moin2 modernized theme css
+// stylus bug - https://github.com/LearnBoost/stylus/issues/790
+// do NOT end comment lines with colon until the bug is fixed
 
-// include a comment with a notice that the css file is automatically generated:
-@import "stylus_notice.css"
+// includes comments with notice regarding automatically generated css and licensing
+@import "notice.css"
 
-// reset all browser-specific default to have common defaults everywhere:
+// reset all browser-specific default to have common defaults everywhere
 @import "reset.css"
 
 // smileys used by moin wiki parser (and maybe others)
@@ -1214,6 +1216,7 @@ a.moin-nonexistent:hover
     font-size 0.82em
     float right
     text-align right
+    width 15em
 
 #moin-searchform input
     font-size 100%
@@ -1250,7 +1253,7 @@ a.moin-nonexistent:hover
     margin 0
 
 #moin-search-query
-    width 98%
+    width 80%
 
 #moin-logo
     float left
@@ -1473,6 +1476,9 @@ a.moin-nonexistent:hover
     a
         color footer_color
 
+#moin-pageinfo
+    margin-top 20px
+        
 #moin-timings li
     display inline-block
     margin 0 20px 0 0
@@ -1484,7 +1490,7 @@ a.moin-nonexistent:hover
 #moin-creditlogos
     float right
     list-style none
-    margin 0 10px
+    margin 5 10px
 
 #moin-creditlogos li
     display inline-block
