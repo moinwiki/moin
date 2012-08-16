@@ -1,6 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
+{% import "itemviews.html" as itemviews with context %}
 
 {% macro show_blog_entry(entry_item) %}
     {% if entry_item.meta['summary'] %}
@@ -74,6 +75,10 @@
     {% endmacro %}
 {% endif %}
 
+{% block header_itemviews %}
+    {{ itemviews }}
+{% endblock %}
+
 {% block content %}
     {% block content_data %}
         <div id="moin-content-data">
@@ -92,4 +97,8 @@
             {% endif %}
         </div>
     {% endblock %}
+{% endblock %}
+
+{% block footer_itemviews %}
+    {{ itemviews }}
 {% endblock %}

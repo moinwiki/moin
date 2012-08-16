@@ -308,7 +308,7 @@ function transcludeSubitem(subitem_name, fullname) {
             "text/plain" : function (x) {return x + " "; }
         },
         ctype = guessContentType(),
-        input_element = $("#f_data_text"),
+        input_element = $("#f_content_form_data_text"),
         ctype_format = transclude_formats[ctype];
     if (!ctype_format) {
         ctype_format = transclude_formats["text/plain"];
@@ -340,7 +340,7 @@ function linkSubitem(subitem_name, fullname) {
             "text/plain" : function (x) {return x + " "; }
         },
         ctype = guessContentType(),
-        input_element = $("#f_data_text"),
+        input_element = $("#f_content_form_data_text"),
         ctype_format = link_formats[ctype];
     if (!ctype_format) {
         ctype_format = link_formats["text/plain"];
