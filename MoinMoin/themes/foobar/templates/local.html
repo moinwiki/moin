@@ -1,0 +1,48 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% import "itemviews.html" as itemviews with context %}
+
+{% block content_container %}
+<div id="moin-content" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+    {% block item -%}
+        {# If you want itemviews in your template, extend from show.html, not from here. #}
+        {% block content %}
+            {# All content templates should have implement this block. #}
+        {% endblock %}
+    {%- endblock %}
+</div>
+
+<div id="moin-local-panel">
+{% block local %}
+<ul>
+    <li class="panel">Views
+        {{ itemviews }}
+    </li>
+    {% if rev %}
+    <li id="moin-metadata">Metadata
+        <ul>
+            <li>{{ _("Revision:") }} {{rev.revid | shorten_id}}</li>
+            <li>({{ rev.meta['mtime']|datetimeformat }})</li>
+            <li>{{ _("By:") }} {{ utils.editor_info(rev.meta) }}</li>
+            <li>{{ _("Size:") }} {{ rev.meta['size'] }}</li>
+            <li>{{ _("Type:") }} {{ rev.meta['contenttype'] }}</li>
+            {% if rev.meta.tags %}
+            <li>
+            {{ _("Tags:") }}
+            {% for tag in rev.meta.tags -%}
+            <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+            {%- endfor -%}
+            </li>
+            {% endif %}
+        </ul>
+    </li>
+    {% endif %}
+    <li>
+        {% block subitem_navigation %}
+        {{ utils.render_subitem_navigation(item_name, False) }}
+        {% endblock %}
+    </li>
+</ul>
+{% endblock %}
+</div>
+{% endblock %}
