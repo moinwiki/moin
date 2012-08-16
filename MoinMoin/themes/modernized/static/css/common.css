@@ -494,7 +494,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .moin-subitem-navigation a:hover{text-decoration:underline}
 .moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
-.link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer}
+.link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none}
 .moin-subitem-navigation .link-action{background:url("../img/moin-link.png") no-repeat center center}
 .moin-subitem-navigation .transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
 #moin-footer{clear:both;margin:0 0}
