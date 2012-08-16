@@ -181,8 +181,8 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .vg { color: #19177C } /* Name.Variable.Global */
 .vi { color: #19177C } /* Name.Variable.Instance */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
-html{color:#000;font-family:sans-serif}
-div,p{margin:1em 0}
+html{color:#000;font-family:Helvetica,Arial,sans-serif}
+div,p{margin:1em 0;font-size:1em;line-height:1.3em}
 sub{vertical-align:sub}
 sup{vertical-align:super}
 ins{background-color:#fff;text-decoration:underline}
