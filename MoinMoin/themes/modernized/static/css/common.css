@@ -308,10 +308,13 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-hist-rev input{float:left}
 .moin-hist-rev{margin:0}
 #moin-blog-header{margin:1em 0 -1em 0}
-#moin-blog-content{padding:0 2em 0 0;display:table-cell}
-#moin-blog-sidebar{width:15em;display:table-cell}
+#moin-blog-body{display:table;width:100%}
+#moin-blog-content{padding:0 2em 0 0;display:table-cell;width:80%}
+#moin-blog-sidebar{display:table-cell;width:20%}
+.moin-blog-icon{font-size:1.6em}
 .moin-blog-entry-info{font-size:.8em;color:#737373}
 .moin-blog-entry-bottominfo{font-size:.8em;color:#737373;padding:0 1em;border:1px solid #4e7da9}
+.moin-blog-entry-modify{font-size:.8em;margin:0;float:right}
 ul.moin-blog-entry-tags{list-style:none;display:inline;margin:0;}
 ul.moin-blog-entry-tags li{display:inline;}
 ul.moin-blog-entry-tags li:after{content:","}
