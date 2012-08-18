@@ -93,14 +93,16 @@
                     {{ blog_header }}
                 {% endif %}
             </div>
-            <div id="moin-blog-content">
-            {% block blog_content %}<br />{% endblock %}
-            </div>
-            {% if blog_name and supertags %}
-                <div id="moin-blog-sidebar">
-                    {{ widget_supertags(blog_name, supertags) }}
+            <div id="moin-blog-body">
+                <div id="moin-blog-content">
+                {% block blog_content %}<br />{% endblock %}
                 </div>
-            {% endif %}
+                {% if blog_name and supertags %}
+                    <div id="moin-blog-sidebar">
+                        {{ widget_supertags(blog_name, supertags) }}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     {% endblock %}
 {% endblock %}
