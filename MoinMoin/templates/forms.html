@@ -98,20 +98,20 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro _valued_label(field, value, contents=none) %}
   {# XXX Patch <label>'s `for` attribute with value when element referred to is
      checkbox or radio. See: https://bitbucket.org/jek/flatland/issue/9 #}
-  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value), contents=contents) }}
+  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value), contents=contents, **kwargs) }}
 {% endmacro %}
 
 {% macro _checkbox_label(field) %}
-  {{ _valued_label(field, '1') }}
+  {{ _valued_label(field, '1', **kwargs) }}
 {% endmacro %}
 
 {% macro _radio_label(field, value) %}
-  {{ _valued_label(field, value, value) }}
+  {{ _valued_label(field, value, value, **kwargs) }}
 {% endmacro %}
 
 {% macro inline_checkbox(field) %}
   {{ raw_input(field, 'checkbox') }}
-  {{ _checkbox_label(field) }}
+  {{ _checkbox_label(field, class='moin-inline-label') }}
   {{ render_errors(field) }}
   {% if field.properties.helper is defined %}
     <span class="helper-text">
@@ -125,11 +125,13 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro small_natural(field) %}
-    {{ gen.label(field) }}
+    <dt>
+        {{ gen.label(field) }}
+    </dt>
     <dd>
         {% for i in range(field.properties.lower, field.properties.upper+1) %}
             {{ gen.input(field, type='radio', value=i|string) }}
-            {{ _radio_label(field, value=i|string) }}
+            {{ _radio_label(field, value=i|string, class='moin-inline-label') }}
         {% endfor %}
     </dd>
 {% endmacro %}

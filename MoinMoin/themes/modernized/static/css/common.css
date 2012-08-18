@@ -9,10 +9,10 @@
 /*
 /* common.css - MoinMoin Default Styles
 
-  Copyright: 2001, 2002, 2003 MoinMoin:JuergenHermann
-  Copyright: 2010 MoinMoin:DiogenesAugusto
-  Copyright: 2010 MoinMoin:RogerHaase
-  License: GNU GPL v2 or later, see COPYING for details.
+    Copyright: 2001, 2002, 2003 MoinMoin:JuergenHermann
+    Copyright: 2010 MoinMoin:DiogenesAugusto
+    Copyright: 2010 MoinMoin:RogerHaase
+    License: GNU GPL v2 or later, see COPYING for details.
 */
 /*
 Copied from:  http://code.google.com/p/html5resetcss/
@@ -30,7 +30,7 @@ fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup,
 menu, nav, section, summary, time, mark, audio,
 video { margin: 0; padding: 0; border: 0; outline: 0;
-          font-size: 100%; vertical-align: baseline; background: transparent; }
+            font-size: 100%; vertical-align: baseline; background: transparent; }
 body { line-height: 1; }
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
 section { display: block; }
@@ -189,6 +189,7 @@ ins{background-color:#fff;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
 .moin-integer{text-align:right;padding-right:1em}
+.moin-inline-label{display:inline}
 h1{font-size:2em;margin:.67em 0;border-bottom:5px solid #4e7da9;padding-bottom:5px}
 h2{font-size:1.5em;margin:.75em 0;padding-bottom:4px}
 h3{font-size:1.17em;margin:.83em 0;padding-bottom:3px}
