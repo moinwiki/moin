@@ -52,6 +52,7 @@ def update_item(name, meta, data):
         data = data.encode(config.charset)
     item = flaskg.storage[name]
 
+    meta = meta.copy()
     if NAME not in meta:
         meta[NAME] = name
     if CONTENTTYPE not in meta:
