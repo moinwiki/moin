@@ -26,6 +26,7 @@ from MoinMoin.config import SUPERUSER
 from MoinMoin.security import require_permission
 
 @admin.route('/superuser')
+@require_permission(SUPERUSER)
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
 
