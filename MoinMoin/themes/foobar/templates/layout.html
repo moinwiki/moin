@@ -119,22 +119,24 @@
         {%- endif %}
         <span id="moin-pagelocation">
             <span class="moin-pagepath">
+            {% block pagepath %}
                 {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
                     {% if not loop.last -%}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
                             {{ segment_name|shorten_item_name }}
                         </a>
-			<span class="sep">/</span>
+                        <span class="sep">/</span>
                     {% else %}
-		        {% if title_name %}
+                        {% if title_name %}
                             {{ title_name }}
                         {% else %}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
                             {{ segment_name|shorten_item_name }}
                         </a>
-		        {%- endif %}
+                        {%- endif %}
                     {%- endif %}
                 {%- endfor %}
+            {% endblock %}
             </span>
         </span>
     </div>
