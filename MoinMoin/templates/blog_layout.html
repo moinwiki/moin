@@ -81,6 +81,11 @@
     {% endmacro %}
 {% endif %}
 
+{% block theme_stylesheets %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ theme_static('css/blog.css') }}" />
+{% endblock %}
+
 {% block header_itemviews %}
     {{ itemviews }}
 {% endblock %}
