@@ -42,7 +42,7 @@ class Blog(Default):
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogMetaForm
-        meta_template = 'modify_blog_meta.html'
+        meta_template = 'blog/modify_main_meta.html'
 
     def do_show(self, revid):
         """
@@ -66,7 +66,7 @@ class Blog(Default):
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
         blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
-        return render_template('blog.html',
+        return render_template('blog/main.html',
                                item_name=self.name,
                                blog_item=self,
                                blog_entry_items=blog_entry_items,
@@ -79,7 +79,7 @@ class BlogEntry(Default):
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm
-        meta_template = 'modify_blog_entry_meta.html'
+        meta_template = 'blog/modify_entry_meta.html'
 
         @classmethod
         def from_item(cls, item):
@@ -98,7 +98,7 @@ class BlogEntry(Default):
         if not isinstance(blog_item, Blog):
             # The parent item of this blog entry item is not a Blog item.
             abort(403)
-        return render_template('blog_entry.html',
+        return render_template('blog/entry.html',
                                item_name=self.name,
                                blog_item=blog_item,
                                blog_entry_item=self,
