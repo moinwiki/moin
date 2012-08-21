@@ -1,7 +1,5 @@
-{% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
-{% import "itemviews.html" as itemviews with context %}
 
 {% macro show_blog_entry(entry_item) %}
     {% if entry_item.meta['summary'] %}
@@ -50,7 +48,7 @@
 
 {% macro widget_supertags(blog_name, supertags) %}
     <div id="moin-blog-categories">
-        <h2>{{ _("Categories") }}</h2>
+        {{ _("Categories") }}
         <ul>
             {% for supertag in supertags %}
                 <li><a href="{{ url_for('frontend.show_item', item_name=blog_name, tag=supertag) }}">{{ supertag }}</a></li>
@@ -59,59 +57,16 @@
     </div>
 {% endmacro %}
 
-{% if blog_item %}
-    {% set blog_header = blog_item.content._render_data()|safe %}
-    {% set blog_name = blog_item.name %}
-    {% set supertags = blog_item.meta['supertags'] %}
-{% endif %}
-
-{% if blog_name %}
-    {% macro header_search(form) %}
-        {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
-            <div>
-                {{ forms.render(form['q']) }}
-                {{ gen.button(form['submit'], type='submit', id='moin-search-submit') }}
-                {{ forms.render_errors(form) }}
-                <br />
-                <input type="checkbox" id="moin-blog-search-this"
-                onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', item_name=blog_name) }}' : '{{ url_for('frontend.search') }}' );" />
-                {{ _("only this blog") }}
-            </div>
-        {{ gen.form.close() }}
-    {% endmacro %}
-{% endif %}
-
-{% block theme_stylesheets %}
-    {{ super() }}
-    <link media="all" rel="stylesheet" href="{{ theme_static('css/blog.css') }}" />
-{% endblock %}
-
-{% block header_itemviews %}
-    {{ itemviews }}
-{% endblock %}
-
-{% block content %}
-    {% block content_data %}
-        <div id="moin-content-data">
-            <div id="moin-blog-header">
-                {% if blog_header %}
-                    {{ blog_header }}
-                {% endif %}
-            </div>
-            <div id="moin-blog-body">
-                <div id="moin-blog-content">
-                {% block blog_content %}<br />{% endblock %}
-                </div>
-                {% if blog_name and supertags %}
-                    <div id="moin-blog-sidebar">
-                        {{ widget_supertags(blog_name, supertags) }}
-                    </div>
-                {% endif %}
-            </div>
+{% macro header_search(blog_name, form) %}
+    {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+        <div>
+            {{ forms.render(form['q']) }}
+            {{ gen.button(form['submit'], type='submit', id='moin-search-submit') }}
+            {{ forms.render_errors(form) }}
+            <br />
+            <input type="checkbox" id="moin-blog-search-this"
+            onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', item_name=blog_name) }}' : '{{ url_for('frontend.search') }}' );" />
+            {{ _("only this blog") }}
         </div>
-    {% endblock %}
-{% endblock %}
-
-{% block footer_itemviews %}
-    {{ itemviews }}
-{% endblock %}
+    {{ gen.form.close() }}
+{% endmacro %}
