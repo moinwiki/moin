@@ -59,6 +59,7 @@ from MoinMoin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
 from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
+from MoinMoin.constants.itemtypes import ITEMTYPES
 
 from .content import Content, NonExistentContent, Draw, content_registry
 
@@ -677,16 +678,6 @@ class NonExistent(Item):
         return self._select_itemtype()
 
     def _select_itemtype(self):
-        # TODO Construct this list from the item_registry. Two more fields (ie.
-        # display name and description) are needed in the registry then to
-        # support the automatic construction.
-        ITEMTYPES = [
-            (u'default', u'Default', 'Wiki item'),
-            (u'ticket', u'Ticket', 'Ticket item'),
-            (u'blog', u'Blog', 'Blog item'),
-            (u'blogentry', u'Blog entry', 'Blog entry item'),
-        ]
-
         return render_template('modify_select_itemtype.html',
                                item_name=self.name,
                                itemtypes=ITEMTYPES,
