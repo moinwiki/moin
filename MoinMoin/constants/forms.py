@@ -28,8 +28,5 @@ WIDGET_SELECT = u'select'
 WIDGET_READONLY_STRING_LIST = u'readonly_string_list'
 WIDGET_READONLY_ITEM_LINK_LIST = u'readonly_item_link_list'
 
-WIDGET_MULTI_COLUMN_FORM = u'multi_column_form'
-WIDGET_TABBED_FORM = u'tabbed_form'
-
 # CSS Classes
 CLASS_BUTTON = u'button'
