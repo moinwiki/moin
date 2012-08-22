@@ -150,6 +150,8 @@ class BaseModifyForm(BaseChangeForm):
         return form
 
 
+IndexEntry = namedtuple('IndexEntry', 'relname meta hassubitems')
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     @classmethod
@@ -279,9 +281,13 @@ class Item(object):
 
     def _rename(self, name, comment, action):
         self._save(self.meta, self.content.data, name=name, action=action, comment=comment)
-        for child in self.get_index():
-            item = Item.create(child[0])
-            item._save(item.meta, item.content.data, name='/'.join((name, child[1])), action=action, comment=comment)
+        old_prefixlen = len(self.subitems_prefix)
+        new_prefix = name + '/'
+        for child in self.get_subitem_revs():
+            child_oldname = child.meta[NAME]
+            child_newname = new_prefix + child_oldname[old_prefixlen:]
+            item = Item.create(child_oldname)
+            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment)
 
     def rename(self, name, comment=u''):
         """
@@ -404,125 +410,128 @@ class Item(object):
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
 
-    def get_index(self):
-        """ create an index of sub items of this item """
+    @property
+    def subitems_prefix(self):
+        return self.name + u'/' if self.name else u''
+
+    def get_subitem_revs(self):
+        """
+        Create a list of subitems of this item.
+
+        Subitems are in the form of storage Revisions.
+        """
+        query = Term(WIKINAME, app.cfg.interwikiname)
+        # trick: an item of empty name can be considered as "virtual root item"
+        # that has all wiki items as sub items
         if self.name:
-            prefix = self.name + u'/'
-            query = And([Term(WIKINAME, app.cfg.interwikiname), Prefix(NAME_EXACT, prefix)])
-        else:
-            # trick: an item of empty name can be considered as "virtual root item",
-            # that has all wiki items as sub items
-            prefix = u''
-            query = Term(WIKINAME, app.cfg.interwikiname)
-        # We only want the sub-item part of the item names, not the whole item objects.
-        prefix_len = len(prefix)
+            query = And([query, Prefix(NAME_EXACT, self.subitems_prefix)])
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        items = [(rev.meta[NAME], rev.meta[NAME][prefix_len:], rev.meta[CONTENTTYPE])
-                 for rev in revs]
-        return items
+        return revs
 
-    def _connect_levels(self, index):
-        new_index = []
-        last = self.name
-        for item in index:
-            name = item[0]
-
-            while not name.startswith(last):
-                last = last.rpartition('/')[0]
-
-            missing_layers = name.split('/')[last.count('/')+1:-1]
-
-            for layer in missing_layers:
-                last = '/'.join([last, layer])
-                new_index.append((last, last[len(self.name)+1:], u'application/x-nonexistent'))
-
-            last = item[0]
-            new_index.append(item)
-
-        return new_index
-
-    def flat_index(self, startswith=None, selected_groups=None):
+    def make_flat_index(self, subitems):
         """
-        creates a top level index of sub items of this item
-        if startswith is set, filtering is done on the basis of starting letter of item name
-        if selected_groups is set, items whose contentype belonging to the selected contenttype_groups, are filtered.
+        Create a list of IndexEntry from a list of subitems.
+
+        The resulting list contains only IndexEntry for *direct* subitems, e.g.
+        'foo' but not 'foo/bar'. When the latter is encountered, the former has
+        its `hassubitems` flag set in its IndexEntry.
+
+        When disconnected levels are detected, e.g. when there is foo/bar but no
+        foo, a dummy IndexEntry is created for the latter, with 'nonexistent'
+        itemtype and 'application/x.nonexistent' contenttype. Its `hassubitems`
+        flag is also set.
         """
-        index = self.get_index()
-        index = self._connect_levels(index)
+        prefix = self.subitems_prefix
+        prefixlen = len(prefix)
+        index = []
 
-        all_ctypes = [[ctype for ctype, clabel in contenttypes]
-                      for gname, contenttypes in CONTENTTYPE_GROUPS]
-        all_ctypes_chain = itertools.chain(*all_ctypes)
-        all_contenttypes = list(all_ctypes_chain)
-        contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
-                                         for contenttype in all_contenttypes
-                                         if u';' in contenttype]
-        all_contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
+        # relnames of all encountered subitems
+        relnames = set()
+        # relnames of subitems that need to have `hassubitems` flag set (but didn't)
+        relnames_to_patch = set()
 
-        if selected_groups:
-            ctypes = [[ctype for ctype, clabel in contenttypes]
-                      for gname, contenttypes in CONTENTTYPE_GROUPS
-                      if gname in selected_groups]
-            ctypes_chain = itertools.chain(*ctypes)
-            selected_contenttypes = list(ctypes_chain)
-            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
-                                             for contenttype in selected_contenttypes
-                                             if u';' in contenttype]
-            selected_contenttypes.extend(contenttypes_without_encoding)
-        else:
-            selected_contenttypes = all_contenttypes
-
-        unknown_item_group = "unknown items"
-        if startswith:
-            startswith = (u'{0}'.format(startswith), u'{0}'.format(startswith.swapcase()))
-            if not selected_groups or unknown_item_group in selected_groups:
-                index = [(fullname, relname, contenttype)
-                         for fullname, relname, contenttype in index
-                         if u'/' not in relname
-                         and relname.startswith(startswith)
-                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
-                         # If an item's contenttype not present in the default contenttype list,
-                         # then it will be shown without going through any filter.
+        for rev in subitems:
+            fullname = rev.meta[NAME]
+            relname = fullname[prefixlen:]
+            if '/' in relname:
+                # Find the *direct* subitem that is the ancestor of current
+                # (indirect) subitem. e.g. suppose when the index root is
+                # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
+                # 'foo/bar' will be found.
+                direct_relname = relname.partition('/')[0]
+                direct_fullname = prefix + direct_relname
+                if direct_relname not in relnames:
+                    # Join disconnected level with a dummy IndexEntry.
+                    # NOTE: Patching the index when encountering a disconnected
+                    # subitem might break the ordering. e.g. suppose the global
+                    # index has ['lorem-', 'lorem/ipsum'] (thus 'lorem' is a
+                    # disconnected level; also, note that ord('-') < ord('/'))
+                    # the patched index will have lorem after lorem-, requiring
+                    # one more pass of sorting after generating the index.
+                    e = IndexEntry(direct_relname, DummyRev(DummyItem(direct_fullname)).meta, True)
+                    index.append(e)
+                    relnames.add(direct_relname)
+                else:
+                    relnames_to_patch.add(direct_relname)
             else:
-                index = [(fullname, relname, contenttype)
-                         for fullname, relname, contenttype in index
-                         if u'/' not in relname
-                         and relname.startswith(startswith)
-                         and (contenttype in selected_contenttypes)]
+                e = IndexEntry(relname, rev.meta, False)
+                index.append(e)
+                relnames.add(relname)
 
-        else:
-            if not selected_groups or unknown_item_group in selected_groups:
-                index = [(fullname, relname, contenttype)
-                         for fullname, relname, contenttype in index
-                         if u'/' not in relname
-                         and (contenttype not in all_contenttypes or contenttype in selected_contenttypes)]
-            else:
-                index = [(fullname, relname, contenttype)
-                         for fullname, relname, contenttype in index
-                         if u'/' not in relname
-                         and contenttype in selected_contenttypes]
+        for i in xrange(len(index)):
+            if index[i].relname in relnames_to_patch:
+                index[i] = index[i]._replace(hassubitems=True)
 
         return index
 
+    def filter_index(self, index, startswith=None, selected_groups=None):
+        """
+        Filter a list of IndexEntry.
+
+        :param startswith: if set, only items whose names start with startswith
+                           are selected.
+        :param selected_groups: if set, only items whose contentypes belong to
+                                the selected contenttype_groups are selected.
+        """
+        if startswith is not None:
+            index = [e for e in index
+                     if e.relname.startswith((startswith, startswith.swapcase()))]
+
+        def build_contenttypes(groups):
+            ctypes = [[ctype for ctype, clabel in contenttypes]
+                      for gname, contenttypes in CONTENTTYPE_GROUPS
+                      if gname in groups]
+            ctypes_chain = itertools.chain(*ctypes)
+            contenttypes = list(ctypes_chain)
+            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
+                                             for contenttype in contenttypes
+                                             if u';' in contenttype]
+            contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
+            return contenttypes
+
+        if selected_groups is not None:
+            all_groups = [gname for gname, contenttypes in CONTENTTYPE_GROUPS]
+            selected_contenttypes = build_contenttypes(selected_groups)
+            filtered_index = [e for e in index
+                              if e.meta[CONTENTTYPE] in selected_contenttypes]
+
+            unknown_item_group = "unknown items"
+            if unknown_item_group in selected_groups:
+                all_contenttypes = build_contenttypes(all_groups)
+                filtered_index.extend([e for e in index
+                                       if e.meta[CONTENTTYPE] not in all_contenttypes])
+
+            index = filtered_index
+        return index
+
+    def get_index(self, startswith=None, selected_groups=None):
+        return self.filter_index(self.make_flat_index(self.get_subitem_revs()), startswith, selected_groups)
+
     index_template = 'index.html'
 
-    def get_detailed_index(self, index):
-        """ appends a flag in the index of items indicating that the parent has sub items """
-        detailed_index = []
-        all_item_index = self.get_index()
-        all_item_text = "\n".join(item_info[1] for item_info in all_item_index)
-        for fullname, relname, contenttype in index:
-            hassubitem = False
-            subitem_name_re = u"^{0}/[^/]+$".format(re.escape(relname))
-            regex = re.compile(subitem_name_re, re.UNICODE|re.M)
-            if regex.search(all_item_text):
-                hassubitem = True
-            detailed_index.append((fullname, relname, contenttype, hassubitem))
-        return detailed_index
-
-    def name_initial(self, names=None):
-        initials = [(name[1][0])
-                   for name in names]
+    def name_initial(self, subitems):
+        prefixlen = len(self.subitems_prefix)
+        initials = [(item.meta[NAME][prefixlen]) for item in subitems]
         return initials
 
     delete_template = 'delete.html'

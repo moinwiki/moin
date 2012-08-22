@@ -11,7 +11,7 @@
 import urllib
 
 from json import dumps
-from operator import itemgetter
+from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -125,9 +125,9 @@ class ThemeSupport(object):
         """
         from MoinMoin.items import Item
         item = Item.create(item_name)
-        item_index = item.get_detailed_index(item.flat_index())
+        item_index = item.get_index()
         # Sort items by whether or not they have children, then by name:
-        item_index = sorted(item_index, key=itemgetter(-1, 0))
+        item_index = sorted(item_index, key=attrgetter('hassubitems', 'relname'))
         return item_index
 
     def userhome(self):

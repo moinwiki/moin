@@ -46,7 +46,6 @@
                 </ul>
             </div>
             </li>
-            {% if index %}
             <li class="action-bar">
             <div class="moin-contenttypes-wrapper">
                 <div class="ct-hide">{{ _("Filter by content type") }}</div>
@@ -66,14 +65,13 @@
                         'other_items',
                         'unknown_items',
                         ] %}
-                        <li>{{ forms.render(form[e]) }}</li>
+                        <li>{{ forms.render(form['contenttype'][e]) }}</li>
                     {% endfor %}
                 </ul>
                 {{ forms.render(form['submit']) }}
                 {{ gen.form.close() }}
             </div>
             </li>
-            {% endif %}
         </ul>
     </div>
     <div>
@@ -118,19 +116,19 @@
     </div>
     <div class="moin-item-index">
         {% set maxchars = 20 %}
-        {% for fullname, relname, contenttype, hassubitem in index %}
+        {% for e in index %}
             <div>
                 <span class="moin-select-item">&nbsp;</span>
                 {% set mimetype = "application/x.moin.download" %}
-                <a href="{{ url_for('.download_item', item_name=fullname, mimetype=mimetype) }}" class="moin-download-link">
+                <a href="{{ url_for('.download_item', item_name=e.meta['name'], mimetype=mimetype) }}" class="moin-download-link">
                 </a>
-                <a href="{{ url_for('.show_item', item_name=fullname) }}"
-                   class="{{ contenttype|contenttype_to_class }} moin-item"
-                   title="{{ relname }}">
-                   {{ relname|truncate(maxchars, true, '..') }}
+                <a href="{{ url_for('.show_item', item_name=e.meta['name']) }}"
+                   class="{{ e.meta['contenttype']|contenttype_to_class }} moin-item"
+                   title="{{ e.relname }}">
+                   {{ e.relname|truncate(maxchars, true, '..') }}
                 </a>
-                {% if hassubitem %}
-                    <a href="{{ url_for('frontend.index', item_name=fullname) }}"
+                {% if e.hassubitems %}
+                    <a href="{{ url_for('frontend.index', item_name=e.meta['name']) }}"
                        title="{{ _("More") }}"
                        class="moin-more-index">&nbsp;
                 </a>

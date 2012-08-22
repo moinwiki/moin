@@ -16,9 +16,17 @@ from werkzeug import escape
 from MoinMoin.util import diff_html
 
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.items import Item, NonExistent
+from MoinMoin.items import Item, NonExistent, IndexEntry
 from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+
+
+def build_index(basename, spec):
+    """
+    Build an index by hand, useful as a test helper.
+    """
+    return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta, hassubitem))
+            for relname, hassubitem in spec]
 
 class TestItem(object):
 
@@ -80,72 +88,35 @@ class TestItem(object):
             item._save({CONTENTTYPE: u'text/plain;charset=utf-8'}, "foo")
         item = Item.create(basename + '/mn')
         item._save({CONTENTTYPE: u'image/jpeg'}, "JPG")
-        # check index
+
         baseitem = Item.create(basename)
-        index = baseitem.get_index()
-        assert index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8'),
-                         (u'Foo/cd/ef', u'cd/ef', 'text/plain;charset=utf-8'),
-                         (u'Foo/gh', u'gh', 'text/plain;charset=utf-8'),
-                         (u'Foo/ij', u'ij', 'text/plain;charset=utf-8'),
-                         (u'Foo/ij/kl', u'ij/kl', 'text/plain;charset=utf-8'),
-                         (u'Foo/mn', u'mn', 'image/jpeg'),
-                        ]
-        flat_index = baseitem.flat_index()
-        assert flat_index == [(u'Foo/ab', u'ab', u'text/plain;charset=utf-8'),
-                              (u'Foo/cd', u'cd', u'application/x-nonexistent'),
-                              (u'Foo/gh', u'gh', u'text/plain;charset=utf-8'),
-                              (u'Foo/ij', u'ij', u'text/plain;charset=utf-8'),
-                              (u'Foo/mn', u'mn', u'image/jpeg'),
-                             ]
-        # check index when startswith param is passed
-        flat_index = baseitem.flat_index(startswith=u'a')
-        assert flat_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8')]
 
-        #check that virtual container item is returned with startswith
-        flat_index = baseitem.flat_index(startswith=u'c')
-        assert flat_index == [(u'Foo/cd', u'cd', u'application/x-nonexistent')]
+        # test Item.make_flat_index
+        # TODO: test Item.get_subitem_revs
+        index = baseitem.make_flat_index(baseitem.get_subitem_revs())
+        assert index == build_index(basename, [
+            (u'ab', False),
+            (u'cd', True),
+            (u'gh', False),
+            (u'ij', True),
+            (u'mn', False)
+        ])
 
-        # check index when contenttype_groups is passed
+        # test Item.filter_index
+        # check filtered index when startswith param is passed
+        filtered = baseitem.filter_index(index, startswith=u'a')
+        assert filtered == build_index(basename, [(u'ab', False)])
+
+        # check that virtual container item is returned with startswith
+        filtered = baseitem.filter_index(index, startswith=u'c')
+        assert filtered == build_index(basename, [(u'cd', True)])
+
+        # check filtered index when contenttype_groups is passed
         ctgroups = ["image items"]
-        flat_index = baseitem.flat_index(selected_groups=ctgroups)
-        assert flat_index == [(u'Foo/mn', u'mn', 'image/jpeg')]
+        filtered = baseitem.filter_index(index, selected_groups=ctgroups)
+        assert filtered == build_index(basename, [(u'mn', False)])
 
         # If we ask for text/plain type, should Foo/cd be returned?
-
-        # check detailed index
-        detailed_index = baseitem.get_detailed_index(baseitem.flat_index())
-        assert detailed_index == [(u'Foo/ab', u'ab', 'text/plain;charset=utf-8', False),
-                                  (u'Foo/cd', u'cd', 'application/x-nonexistent', True),
-                                  (u'Foo/gh', u'gh', 'text/plain;charset=utf-8', False),
-                                  (u'Foo/ij', u'ij', 'text/plain;charset=utf-8', True),
-                                  (u'Foo/mn', u'mn', 'image/jpeg', False),
-                                  ]
-
-    def testIndexOnDisconnectedLevels(self):
-        # create a toplevel and some sub-items
-        basename = u'Bar'
-        for name in ['', '/ab', '/ab/cd/ef/gh', '/ij/kl/mn/op', '/ij/kl/rs']:
-            item = Item.create(basename + name)
-            item._save({CONTENTTYPE: u'text/plain;charset=utf-8'}, "foo")
-
-        baseitem = Item.create(basename)
-        index = baseitem.get_index()
-        index = baseitem._connect_levels(index)
-
-        assert index == [(u'Bar/ab', u'ab', u'text/plain;charset=utf-8'),
-                         (u'Bar/ab/cd', u'ab/cd', u'application/x-nonexistent'),
-                         (u'Bar/ab/cd/ef', u'ab/cd/ef', u'application/x-nonexistent'),
-                         (u'Bar/ab/cd/ef/gh', u'ab/cd/ef/gh', u'text/plain;charset=utf-8'),
-                         (u'Bar/ij', u'ij', u'application/x-nonexistent'),
-                         (u'Bar/ij/kl', u'ij/kl', u'application/x-nonexistent'),
-                         (u'Bar/ij/kl/mn', u'ij/kl/mn', u'application/x-nonexistent'),
-                         (u'Bar/ij/kl/mn/op', u'ij/kl/mn/op', u'text/plain;charset=utf-8'),
-                         (u'Bar/ij/kl/rs', u'ij/kl/rs', u'text/plain;charset=utf-8')]
-
-        flat_index = baseitem.flat_index()
-        assert flat_index == [(u'Bar/ab', u'ab', u'text/plain;charset=utf-8'),
-                              (u'Bar/ij', u'ij', u'application/x-nonexistent'),
-                             ]
 
     def test_meta_filter(self):
         name = u'Test_item'
