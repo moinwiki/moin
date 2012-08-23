@@ -10,7 +10,7 @@ It is merge of test_moinwiki_in and test_moinwiki_out, looks bad but works.
 
 
 import pytest
-pytest.skip("too much brokenness here, please help fixing this") # XXX TODO
+# failing tests are commented out and need to be fixed XXX TODO
 
 import re
 
@@ -50,7 +50,7 @@ class TestConverter(object):
             (u"~-smaller-~\n", '~-smaller-~\n'),
             (u"^super^script\n", '^super^script\n'),
             (u",,sub,,script\n", ',,sub,,script\n'),
-            (u"## comment\n", "## comment\n"),
+            # (u"## comment\n", "## comment\n"), # can not work -- "## comments" are not pushed to DOM
             (u"#ANY any", "#ANY any\n"),
         ]
         for i in data:
@@ -59,7 +59,7 @@ class TestConverter(object):
     def test_macros(self):
         data = [
             (u"<<Anchor(anchorname)>>", '<<Anchor(anchorname)>>\n'),
-            (u"<<MonthCalendar(,,12)>>", '<<MonthCalendar(,,12)>>\n'),
+            # (u"<<MonthCalendar(,,12)>>", '<<MonthCalendar(,,12)>>\n'), # MonthCalendar macro not implemented
             (u"<<FootNote(test)>>", "<<FootNote(test)>>\n"),
             (u"<<TableOfContents(2)>>", "<<TableOfContents(2)>>\n"),
             (u"<<TeudView()>>", "<<TeudView()>>\n"),
@@ -71,8 +71,8 @@ class TestConverter(object):
         data = [
             (u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}", u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}\n"),
             (u"{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class=\"red solid\"`.\n}}}", "{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class=\"red solid\"`.\n}}}\n"),
-            (u"{{{#!creole(class=\"par: arg para: arga\" style=\"st: er\")\n... **bold** ...\n}}}", u"{{{#!creole(style=\"st: er\" class=\"par: arg para: arga\")\n... **bold** ...\n}}}\n"),
-            (u"#format creole\n... **bold** ...\n", "#format creole\n... **bold** ...\n"),
+            # (u"{{{#!creole(class=\"par: arg para: arga\" style=\"st: er\")\n... **bold** ...\n}}}", u"{{{#!creole(style=\"st: er\" class=\"par: arg para: arga\")\n... **bold** ...\n}}}\n"),
+            # (u"#format creole\n... **bold** ...\n", "#format creole\n... **bold** ...\n"),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -80,24 +80,24 @@ class TestConverter(object):
     def test_link(self):
         data = [
             (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
-            (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
-            (u'[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]\n'),
+            # (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
+            # (u'[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]\n'),
             (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
-            (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
-            (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
-            (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
-            (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]\n'),
-            (u'[[attachment:filename.txt]]', '[[attachment:filename.txt]]\n')
+            # (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
+            # (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
+            # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
+            # (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]\n'),
+            # (u'[[attachment:filename.txt]]', '[[attachment:filename.txt]]\n')
         ]
         for i in data:
             yield (self.do, ) + i
 
     def test_list(self):
         data = [
-            (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n'),
+            # (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n'),
             (u" i. E\n i. F\n", " i. E\n i. F\n"),
             (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
-            (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
+            # (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -115,19 +115,20 @@ class TestConverter(object):
 
     def test_object(self):
         data = [
-            (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
+            # (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
             (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n", '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
             (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}\n'),
-            (u'{{attachment:image.png}}', '{{attachment:image.png}}\n'),
-            (u'{{attachment:image.png|alt text}}', '{{attachment:image.png|alt text}}\n'),
-            (u'{{attachment:image.png|alt text|width=100 align=left height=150}}', '{{attachment:image.png|alt text|width=100 align=left height=150}}\n'),
+            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}\n'),
+            # (u'{{attachment:image.png}}', '{{attachment:image.png}}\n'),
+            # (u'{{attachment:image.png|alt text}}', '{{attachment:image.png|alt text}}\n'),
+            # (u'{{attachment:image.png|alt text|width=100 align=left height=150}}', '{{attachment:image.png|alt text|width=100 align=left height=150}}\n'),
 
         ]
         for i in data:
             yield (self.do, ) + i
 
     def test_page(self):
+        pytest.skip("please help fixing moin wiki round trip tests") # XXX TODO
         data = [
             (u"""
 This page aims to introduce the most important elements of MoinMoin``'s syntax at a glance, showing first the markup verbatim and then how it is rendered by the wiki engine. Additionally, you'll find links to the relative help pages. Please note that some of the features depend on your configuration.
