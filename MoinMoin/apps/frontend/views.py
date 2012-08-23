@@ -1770,6 +1770,8 @@ def closeMatches(item_name, item_names):
     :rtype: list
     :returns: list of matching item names, sorted by rank
     """
+    if not item_names:
+        return []
     # Match using case insensitive matching
     # Make mapping from lower item names to item names.
     lower = {}
@@ -1782,7 +1784,7 @@ def closeMatches(item_name, item_names):
 
     # Get all close matches
     all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
-                                            len(lower), cutoff=0.6)
+                                            n=len(lower), cutoff=0.6)
 
     # Replace lower names with original names
     matches = []
