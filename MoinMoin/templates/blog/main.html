@@ -1,4 +1,5 @@
-{% extends theme("blog_layout.html") %}
+{% extends theme("blog/layout.html") %}
+{% import theme("blog/utils.html") as blog_utils %}
 
 {% set no_entries_msg = _("There are no entries in this blog.") %}
 {% if tag %}
@@ -21,7 +22,7 @@
 {% block blog_content %}
     {% if blog_entry_items %}
         {% for entry_item in blog_entry_items %}
-            {{ show_blog_entry(entry_item) }}
+            {{ blog_utils.show_blog_entry(entry_item) }}
         {% endfor %}
     {% else %}
         {{ no_entries_msg }}

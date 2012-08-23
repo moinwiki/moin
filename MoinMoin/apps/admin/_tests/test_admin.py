@@ -17,7 +17,7 @@ class TestAdmin(object):
                 assert item in rv.data
 
     def test_index(self):
-        self._test_view_get(url_for('admin.index'))
+        self._test_view_get(url_for('admin.index'), status='403 FORBIDDEN')
 
     def test_userprofile(self):
         self._test_view_get(url_for('admin.userprofile', user_name='DoesntExist'), status='403 FORBIDDEN')

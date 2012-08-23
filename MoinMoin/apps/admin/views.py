@@ -36,6 +36,7 @@ def index_user():
 
 
 @admin.route('/userbrowser')
+@require_permission(SUPERUSER)
 def userbrowser():
     """
     User Account Browser
@@ -53,6 +54,7 @@ def userbrowser():
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
 def userprofile(user_name):
     """
     Set values in user profile
@@ -119,6 +121,7 @@ def sysitems_upgrade():
 from MoinMoin.config import default as defaultconfig
 
 @admin.route('/wikiconfig', methods=['GET', ])
+@require_permission(SUPERUSER)
 def wikiconfig():
     settings = {}
     for groupname in defaultconfig.options:
@@ -163,6 +166,7 @@ def wikiconfig():
 
 
 @admin.route('/wikiconfighelp', methods=['GET', ])
+@require_permission(SUPERUSER)
 def wikiconfighelp():
     def format_default(default):
         if isinstance(default, defaultconfig.DefaultExpression):
