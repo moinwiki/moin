@@ -52,6 +52,7 @@ from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.itemtypes import ITEMTYPES
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm, ValidSearch
@@ -513,22 +514,6 @@ class DestroyItemForm(BaseChangeForm):
 class RenameItemForm(TargetChangeForm):
     name = 'rename_item'
 
-class ContenttypeFilterForm(Form):
-    name = 'contenttype_filter'
-    markup_text_items = InlineCheckbox.using(label=L_('markup text'))
-    other_text_items = InlineCheckbox.using(label=L_('other text'))
-    image_items = InlineCheckbox.using(label=L_('image'))
-    audio_items = InlineCheckbox.using(label=L_('audio'))
-    video_items = InlineCheckbox.using(label=L_('video'))
-    other_items = InlineCheckbox.using(label=L_('other'))
-    unknown_items = InlineCheckbox.using(label=L_('unknown'))
-    submit = Submit.using(default=L_('Filter'))
-
-for gname, contenttypes in CONTENTTYPE_GROUPS:
-    filter_ = ContenttypeFilterForm.field_schema_mapping.get(gname.replace(' ', '_'))
-    if filter_:
-        filter_.properties['helper'] = ", ".join([ctlabel for ctname, ctlabel in contenttypes])
-
 
 @frontend.route('/+revert/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
@@ -741,6 +726,24 @@ def jfu_server(item_name):
         abort(403)
 
 
+class ContenttypeFilterForm(Form):
+    markup_text_items = InlineCheckbox.using(label=L_('markup text'))
+    other_text_items = InlineCheckbox.using(label=L_('other text'))
+    image_items = InlineCheckbox.using(label=L_('image'))
+    audio_items = InlineCheckbox.using(label=L_('audio'))
+    video_items = InlineCheckbox.using(label=L_('video'))
+    other_items = InlineCheckbox.using(label=L_('other'))
+    unknown_items = InlineCheckbox.using(label=L_('unknown'))
+
+for gname, contenttypes in CONTENTTYPE_GROUPS:
+    filter_ = ContenttypeFilterForm.field_schema_mapping.get(gname.replace(' ', '_'))
+    if filter_:
+        filter_.properties['helper'] = ", ".join([ctlabel for ctname, ctlabel in contenttypes])
+
+class IndexForm(Form):
+    contenttype = ContenttypeFilterForm
+    submit = Submit.using(default=L_('Filter'))
+
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
@@ -750,39 +753,30 @@ def index(item_name):
         abort(403)
 
     if request.method == 'GET':
-        form = ContenttypeFilterForm.from_defaults()
+        form = IndexForm.from_defaults()
         selected_groups = None
     elif request.method == "POST":
-        form = ContenttypeFilterForm.from_flat(request.form)
-        selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
-                           if form[gname].value]
-        if u'submit' in selected_groups:
-            selected_groups.remove(u'submit')
-        if not selected_groups:
-            form = ContenttypeFilterForm.from_defaults()
+        form = IndexForm.from_flat(request.form)
+        selected_groups = [k.replace("_", " ") for k, v in form['contenttype'].iteritems() if v]
 
     startswith = request.values.get("startswith")
-    index = item.flat_index(startswith, selected_groups)
 
-    initials = item.name_initial(item.flat_index())
+    initials = item.name_initial(item.get_subitem_revs())
     initials = [initial.upper() for initial in initials]
     initials = list(set(initials))
     initials = sorted(initials)
-    detailed_index = item.get_detailed_index(index)
-    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
+
+    index = item.get_index(startswith, selected_groups)
+    index = sorted(index, key=lambda e: e.relname.lower())
 
     item_names = item_name.split(u'/')
-    if item_name:
-        args = dict(item_name=item_name)
-    else:
-        args = dict(item_name=u'', title_name=_(u'Global Index'))
     return render_template(item.index_template,
                            item_names=item_names,
-                           index=detailed_index,
+                           item_name=item_name,
+                           index=index,
                            initials=initials,
                            startswith=startswith,
                            form=form,
-                           **args
                           )
 
 
