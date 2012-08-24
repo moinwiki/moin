@@ -19,7 +19,7 @@ from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import OptionalText, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, PTIME, TAGS
+from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, ITEMTYPE, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
 
 
@@ -56,6 +56,8 @@ class Blog(Default):
         prefix = self.name + u'/'
         current_timestamp = int(time.time())
         terms = [Term(WIKINAME, app.cfg.interwikiname),
+                 # Only blog entry itemtypes
+                 Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),
                  # Only sub items of this item
                  Prefix(NAME_EXACT, prefix),
                  # Filter out those items that do not have a PTIME meta or PTIME is in the future.
