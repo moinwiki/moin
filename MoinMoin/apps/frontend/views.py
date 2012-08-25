@@ -752,12 +752,10 @@ def index(item_name):
     except AccessDenied:
         abort(403)
 
-    if request.method == 'GET':
-        form = IndexForm.from_defaults()
-        selected_groups = None
-    elif request.method == "POST":
-        form = IndexForm.from_flat(request.form)
-        selected_groups = [k.replace("_", " ") for k, v in form['contenttype'].iteritems() if v]
+    # XXX retain default values when some arg missing from request.args?
+    form = IndexForm.from_flat(request.args)
+
+    selected_groups = [k.replace("_", " ") for k, v in form['contenttype'].iteritems() if v]
 
     startswith = request.values.get("startswith")
 
