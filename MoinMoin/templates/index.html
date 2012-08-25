@@ -56,17 +56,7 @@
                         <a href="#" class="filter-toggle">&raquo; {{ _("Toggle") }}</a>
                         <a href="#" class="filter-more">&raquo; {{ _("More") }}</a>
                     </li>
-                    {% for e in [
-                        'markup_text_items',
-                        'other_text_items',
-                        'image_items',
-                        'audio_items',
-                        'video_items',
-                        'other_items',
-                        'unknown_items',
-                        ] %}
-                        <li>{{ forms.render(form['contenttype'][e]) }}</li>
-                    {% endfor %}
+                    {{ forms.render(form['contenttype']) }}
                 </ul>
                 {{ forms.render(form['submit']) }}
                 {{ gen.form.close() }}

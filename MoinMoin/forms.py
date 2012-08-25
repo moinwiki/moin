@@ -12,7 +12,7 @@
 import re, datetime
 import json
 
-from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, JoinedString, List, DateTime as _DateTime
+from flatland import Element, Form, String, Integer, Boolean, Enum, Dict, JoinedString, List, Array, DateTime as _DateTime
 from flatland.util import class_cloner, Unspecified
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
@@ -200,3 +200,6 @@ class BackReference(ReadonlyItemLinkList):
     def set(self, query, **query_args):
         revs = flaskg.storage.search(query, **query_args)
         super(BackReference, self).set([rev.meta[NAME] for rev in revs])
+
+
+MultiSelect = Array.with_properties(widget=WIDGET_MULTI_SELECT)
