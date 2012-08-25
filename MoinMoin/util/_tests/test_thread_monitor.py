@@ -41,5 +41,5 @@ class TestMonitor(object):
             result = Monitor_test_obj.trigger_dump(f)
         # read the content of first line
         with open(self.src, "r") as f:
-            f.seek(1)
+            f.readline()
             assert 'Dumping thread' in f.readline()

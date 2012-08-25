@@ -80,21 +80,23 @@ class TestExclusiveLock(object):
     def testIsExpired(self):
         """ util.lock: ExclusiveLock: isExpired """
         timeout = 2.0
+        extra = 0.1 # extra delay to avoid occasional failure on windows
         lock = ExclusiveLock(self.lock_dir, timeout=timeout)
         if not lock.acquire(0.1):
             pytest.skip("can't acquire lock")
         assert not lock.isExpired()
-        time.sleep(timeout)
+        time.sleep(timeout + extra)
         assert lock.isExpired()
 
     def testExpire(self):
         """ util.lock: ExclusiveLock: expire """
         timeout = 2.0
+        extra = 0.1 # extra delay to avoid occasional failure on windows
         lock = ExclusiveLock(self.lock_dir, timeout=timeout)
         if not lock.acquire(0.1):
             pytest.skip("can't acquire lock")
         assert not lock.expire()
-        time.sleep(timeout)
+        time.sleep(timeout + extra)
         assert lock.expire()
 
     def testExclusive(self):
