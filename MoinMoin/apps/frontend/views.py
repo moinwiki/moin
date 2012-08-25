@@ -31,7 +31,7 @@ from flask import g as flaskg
 from flaskext.babel import format_date
 from flaskext.themes import get_themes_list
 
-from flatland import Form
+from flatland import Form, Enum
 from flatland.validation import Validator
 
 from jinja2 import Markup
@@ -47,7 +47,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden
+from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin import config, user, util
 from MoinMoin.config import CONTENTTYPE_GROUPS
@@ -726,22 +726,17 @@ def jfu_server(item_name):
         abort(403)
 
 
-class ContenttypeFilterForm(Form):
-    markup_text_items = InlineCheckbox.using(label=L_('markup text'))
-    other_text_items = InlineCheckbox.using(label=L_('other text'))
-    image_items = InlineCheckbox.using(label=L_('image'))
-    audio_items = InlineCheckbox.using(label=L_('audio'))
-    video_items = InlineCheckbox.using(label=L_('video'))
-    other_items = InlineCheckbox.using(label=L_('other'))
-    unknown_items = InlineCheckbox.using(label=L_('unknown'))
-
+contenttype_groups = []
+contenttype_group_descriptions = {}
 for gname, contenttypes in CONTENTTYPE_GROUPS:
-    filter_ = ContenttypeFilterForm.field_schema_mapping.get(gname.replace(' ', '_'))
-    if filter_:
-        filter_.properties['helper'] = ", ".join([ctlabel for ctname, ctlabel in contenttypes])
+    contenttype_groups.append(gname)
+    contenttype_group_descriptions[gname] = ', '.join([ctlabel for ctname, ctlabel in contenttypes])
+contenttype_groups.append('unknown items')
+
+ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(descriptions=contenttype_group_descriptions)).using(optional=True)
 
 class IndexForm(Form):
-    contenttype = ContenttypeFilterForm
+    contenttype = ContenttypeGroup
     submit = Submit.using(default=L_('Filter'))
 
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
@@ -752,11 +747,17 @@ def index(item_name):
     except AccessDenied:
         abort(403)
 
-    # XXX retain default values when some arg missing from request.args?
-    form = IndexForm.from_flat(request.args)
+    # request.args is a MultiDict instance, which degenerates into a normal
+    # single-valued dict on most occasions (making the first value the *only*
+    # value for a specific key) unless explicitly told to expose multiple
+    # values, eg. calling items with multi=True. See Werkzeug documentation for
+    # more.
+    form = IndexForm.from_flat(request.args.items(multi=True))
+    form['submit'].set_default() # XXX from_flat() kills all values
+    if not form['contenttype']:
+        form['contenttype'].set(contenttype_groups)
 
-    selected_groups = [k.replace("_", " ") for k, v in form['contenttype'].iteritems() if v]
-
+    selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
 
     initials = item.name_initial(item.get_subitem_revs())
