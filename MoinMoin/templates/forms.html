@@ -72,8 +72,13 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro annotated_input(field, type=none) %}
+  {% set type = type or field.properties.widget %}
   <dt>
-    {{ gen.label(field) }}
+    {% if type == 'checkbox' %}
+      {{ _checkbox_label(field) }}
+    {% else %}
+      {{ gen.label(field) }}
+    {% endif %}
   </dt>
   <dd>
     {{ raw_input(field, type) }}
