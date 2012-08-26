@@ -126,16 +126,16 @@ def favicon():
 
 
 class LookupForm(Form):
-    name = OptionalText.using(label=L_('name'))
-    name_exact = OptionalText.using(label=L_('name_exact'))
-    itemid = OptionalText.using(label=L_('itemid'))
-    revid = OptionalText.using(label=L_('revid'))
-    userid = OptionalText.using(label=L_('userid'))
-    language = OptionalText.using(label=L_('language'))
-    itemlinks = OptionalText.using(label=L_('itemlinks'))
-    itemtransclusions = OptionalText.using(label=L_('itemtransclusions'))
-    refs = OptionalText.using(label=L_('refs'))
-    tags = Tags.using(optional=True)
+    name = OptionalText.using(label='name')
+    name_exact = OptionalText.using(label='name_exact')
+    itemid = OptionalText.using(label='itemid')
+    revid = OptionalText.using(label='revid')
+    userid = OptionalText.using(label='userid')
+    language = OptionalText.using(label='language')
+    itemlinks = OptionalText.using(label='itemlinks')
+    itemtransclusions = OptionalText.using(label='itemtransclusions')
+    refs = OptionalText.using(label='refs')
+    tags = Tags.using(optional=True).using(label='tags')
     history = InlineCheckbox.using(label=L_('search also in non-current revisions'))
     submit = Submit.using(default=L_('Lookup'))
 
