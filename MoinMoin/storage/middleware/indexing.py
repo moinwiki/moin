@@ -607,16 +607,26 @@ class IndexingMiddleware(object):
         else:
             raise ValueError("default_fields list must at least contain one field name")
         qp.add_plugin(RegexPlugin())
-        def username_pseudo_field(node):
-            username = node.text
-            users = user.search_users(**{NAME_EXACT: username})
-            if users:
-                userid = users[0].meta['userid']
-                node = WordNode(userid)
-                node.set_fieldname("userid")
+        def userid_pseudo_field_factory(fieldname):
+            """generate a translator function, that searches for the userid
+               in the given fieldname when provided with the username
+            """
+            def userid_pseudo_field(node):
+                username = node.text
+                users = user.search_users(**{NAME_EXACT: username})
+                if users:
+                    userid = users[0].meta[ITEMID]
+                    node = WordNode(userid)
+                    node.set_fieldname(fieldname)
+                    return node
                 return node
-            return node
-        qp.add_plugin(PseudoFieldPlugin({'username': username_pseudo_field}))
+            return userid_pseudo_field
+        qp.add_plugin(PseudoFieldPlugin(dict(
+            # username:JoeDoe searches for revisions modified by JoeDoe
+            username=userid_pseudo_field_factory(keys.USERID),
+            # assigned:JoeDoe searches for tickets assigned to JoeDoe
+            assigned=userid_pseudo_field_factory('assigned_to'), # XXX should be keys.ASSIGNED_TO
+        )))
         return qp
 
     def search(self, q, idx_name=LATEST_REVS, **kw):
