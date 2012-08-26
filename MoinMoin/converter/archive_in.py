@@ -56,7 +56,9 @@ class ArchiveConverter(TableMixin):
                          self.process_datetime(dt),
                          self.process_name(name),
                         ) for size, dt, name in contents]
-            return self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
+            table = self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
+            body = moin_page.body(children=(table, ))
+            return moin_page.page(children=(body, ))
         except ArchiveException as err:
             logging.exception("An exception within archive file handling occurred:")
             # XXX we also use a table for error reporting, could be
