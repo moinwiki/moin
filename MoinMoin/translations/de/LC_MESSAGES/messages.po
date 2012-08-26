@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
 "Report-Msgid-Bugs-To: German <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2012-08-26 21:14+0200\n"
+"POT-Creation-Date: 2012-08-26 22:24+0200\n"
 "PO-Revision-Date: 2011-03-20 23:37+0100\n"
 "Last-Translator: Julian Brost <julian.brost@googlemail.com>\n"
 "Language-Team: German <moin-user@lists.sourceforge.net>\n"
@@ -397,42 +397,6 @@ msgstr "Bekannte InterWiki-Namen"
 #: MoinMoin/apps/feed/views.py:85
 msgid "MoinMoin feels unhappy."
 msgstr "MoinMoin ist unglücklich."
-
-#: MoinMoin/apps/frontend/views.py:129
-msgid "name"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:130
-msgid "name_exact"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:131
-msgid "itemid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:132
-msgid "revid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:133
-msgid "userid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:134
-msgid "language"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:135
-msgid "itemlinks"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:136
-msgid "itemtransclusions"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:137
-msgid "refs"
-msgstr ""
 
 #: MoinMoin/apps/frontend/views.py:139 MoinMoin/search/__init__.py:29
 msgid "search also in non-current revisions"
@@ -1865,4 +1829,31 @@ msgstr "Argument \"%(name)s\" wird benötigt"
 #, python-format
 msgid "No argument named \"%(name)s\""
 msgstr "Kein Argument mit dem Namen \"%(name)s\""
+
+#~ msgid "name"
+#~ msgstr ""
+
+#~ msgid "name_exact"
+#~ msgstr ""
+
+#~ msgid "itemid"
+#~ msgstr ""
+
+#~ msgid "revid"
+#~ msgstr ""
+
+#~ msgid "userid"
+#~ msgstr ""
+
+#~ msgid "language"
+#~ msgstr ""
+
+#~ msgid "itemlinks"
+#~ msgstr ""
+
+#~ msgid "itemtransclusions"
+#~ msgstr ""
+
+#~ msgid "refs"
+#~ msgstr ""
 
