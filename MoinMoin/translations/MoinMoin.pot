@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0.0a0\n"
 "Report-Msgid-Bugs-To: English <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2012-08-26 21:14+0200\n"
+"POT-Creation-Date: 2012-08-26 22:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -359,42 +359,6 @@ msgstr ""
 
 #: MoinMoin/apps/feed/views.py:85
 msgid "MoinMoin feels unhappy."
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:129
-msgid "name"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:130
-msgid "name_exact"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:131
-msgid "itemid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:132
-msgid "revid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:133
-msgid "userid"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:134
-msgid "language"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:135
-msgid "itemlinks"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:136
-msgid "itemtransclusions"
-msgstr ""
-
-#: MoinMoin/apps/frontend/views.py:137
-msgid "refs"
 msgstr ""
 
 #: MoinMoin/apps/frontend/views.py:139 MoinMoin/search/__init__.py:29
