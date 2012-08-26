@@ -254,10 +254,8 @@ class Converter(object):
 
                     self.recurse(page_doc, page_href)
 
-                    # if this is an existing item, mark it as a transclusion.  non-existent items are not marked (page_doc.tag.name == u'a')
                     # The href needs to be an absolute URI, without the prefix "wiki://"
-                    if page_doc.tag.name == u'page':
-                        page_doc = mark_item_as_transclusion(page_doc, p_href.path)
+                    page_doc = mark_item_as_transclusion(page_doc, p_href.path)
                     included_elements.append(page_doc)
 
                 if len(included_elements) > 1:
