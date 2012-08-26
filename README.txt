@@ -37,7 +37,7 @@ developers.
 ACKNOWLEDGEMENTS
 ================
 
-We have to thank a lots of people for their valuable ideas, time and
+We have to thank a lot of people for their valuable ideas, time and
 contributions - please see the MoinMoinAcknowledgements page there:
 
 http://moinmo.in/MoinMoinAcknowledgements
