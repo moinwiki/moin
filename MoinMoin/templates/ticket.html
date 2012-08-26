@@ -2,9 +2,9 @@
 {% extends theme("layout.html") %}
 
 {% if is_new %}
-    {% set title = _("Creating new ticket: %(item_name)s", item_name=item_name) %}
+    {% set title = _("Creating new ticket: '%(item_name)s'", item_name=item_name) %}
 {% else %}
-    {% set title = _("Ticket: %(item_name)s", item_name=item_name) %}
+    {% set title = _("Ticket: '%(item_name)s'", item_name=item_name) %}
 {% endif %}
 
 {% block head %}
