@@ -1903,10 +1903,29 @@ def tagged_items(tag):
 def template(filename):
     """
     serve a rendered template from <filename>
+
+    used for (but not limited to) translation of javascript / css / html
     """
     content = render_template(filename)
     ct, enc = mimetypes.guess_type(filename)
     response = make_response((content, 200, {'content-type': ct or 'text/plain;charset=utf-8'}))
+    if ct in ['application/javascript', 'text/css', 'text/html', ]:
+        # this is assuming that:
+        # * js / css / html templates rarely change (maybe just on sw updates)
+        # * we are using templates for these to translate them, translations rarely change
+        # * the rendered template output is just specific per user but does not change in time
+        #   or by other circumstances
+        cache_timeout = 24 * 3600  # 1 day
+        is_public = False  # expanded template may be different for each user (translation)
+    else:
+        # safe defaults:
+        cache_timeout = None
+        is_public = False
+    if cache_timeout is not None:
+        # set some cache control headers, so browsers do not request this again and again:
+        response.cache_control.public = is_public
+        response.cache_control.max_age = cache_timeout
+        response.expires = int(time.time() + cache_timeout)
     return response
 
 
