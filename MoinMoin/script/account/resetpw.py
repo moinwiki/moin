@@ -13,6 +13,7 @@ from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.app import before_wiki
 from MoinMoin.util import crypto
 
 
@@ -28,13 +29,13 @@ class Set_Password(Command):
     )
 
     def run(self, name, uid, password):
-        flaskg.unprotected_storage = app.unprotected_storage
         flags_given = name or uid
         if not flags_given:
             print 'incorrect number of arguments'
             import sys
             sys.exit()
 
+        before_wiki()
         if uid:
             u = user.User(uid)
         elif name:

@@ -12,6 +12,7 @@ from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.app import before_wiki
 
 
 class Create_User(Command):
@@ -30,7 +31,7 @@ class Create_User(Command):
     )
 
     def run(self, name, aliasname, email, openid, password):
-        flaskg.unprotected_storage = app.storage
+        before_wiki()
         msg = user.create_user(username=name,
                                password=password,
                                email=email,

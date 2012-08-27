@@ -12,6 +12,7 @@ from flask import g as flaskg
 from flaskext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.app import before_wiki
 
 
 class Disable_User(Command):
@@ -24,13 +25,13 @@ class Disable_User(Command):
     )
 
     def run(self, name, uid):
-        flaskg.unprotected_storage = app.unprotected_storage
         flags_given = name or uid
         if not flags_given:
             print 'incorrect number of arguments'
             import sys
             sys.exit()
 
+        before_wiki()
         if uid:
             u = user.User(uid)
         elif name:
@@ -40,7 +41,7 @@ class Disable_User(Command):
             print 'This user "{0!r}" does not exists!'.format(u.name)
             return
 
-        print " {0:<20} {1:!r<25} {2:<35}".format(u.id, u.name, u.email),
+        print " {0:<20} {1:!r<25} {2:<35}".format(u.itemid, u.name, u.email),
         if not u.disabled: # only disable once
             u.disabled = 1
             u.name = u"{0}-{1}".format(u.name, u.id)
