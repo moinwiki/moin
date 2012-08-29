@@ -36,11 +36,20 @@ class Reduce_Revisions(Command):
         for current_rev in app.storage.search(q, limit=None):
             current_name = current_rev.meta[NAME]
             current_revid = current_rev.meta[REVID]
+            print "Destroying historical revisions of {0!r}:".format(current_name)
+            has_historical_revision = False
             for rev in current_rev.item.iter_revs():
                 revid = rev.meta[REVID]
-                if revid != current_revid:
-                    name = rev.meta[NAME]
-                    print "Destroying {0!r} revision {1}.".format(name, revid)
-                    current_rev.item.destroy_revision(revid)
+                if revid == current_revid:
+                    continue
+                has_historical_revision = True
+                name = rev.meta[NAME]
+                if name == current_name:
+                    print "    Destroying revision {0}".format(revid)
+                else:
+                    print "    Destroying revision {0} (named {1!r})".format(revid, name)
+                current_rev.item.destroy_revision(revid)
+            if not has_historical_revision:
+                print "    (no historical revisions)"
 
         print "Finished reducing backend."
