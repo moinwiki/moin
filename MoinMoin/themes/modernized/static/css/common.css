@@ -257,7 +257,7 @@ table.navigation{background:#fff;float:right;margin:2px}
 .moin-rev-navigation-current{font-size:1.5em;text-transform:uppercase}
 .moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
-#moin-create-table tbody tr th{text-align:center;background:header_color;margin:2px}
+#moin-create-table tbody tr th{text-align:center;background:#708090;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
 #moin-create-table tbody tr td a{color:#00008b}
 label{display:block;font-weight:bold}
@@ -390,7 +390,7 @@ div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat cente
 .moin-transclusion{max-width:100%}
 #moin-upload-cont{min-height:10px}
 #file_upload{margin-top:2em}
-form.upload_file{background-color:#708090;border:1px solid boredr_color;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
+form.upload_file{background-color:#708090;border:1px solid #4e7da9;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
 form.upload_file:hover{color:#fff}
 form.upload_file input{-moz-transform:translate(-800px,0) scale(10);border:300px solid transparent;cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
 form.upload_file input{height:auto}
@@ -496,14 +496,14 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-pageinfo{margin-top:20px}
 #moin-timings li{display:inline-block;margin:0 20px 0 0}
 #moin-credits span{display:inline-block;margin:0 5px}
-#moin-creditlogos{float:right;list-style:none;margin:5 10px}
+#moin-creditlogos{float:right;list-style:none;margin:5px 10px}
 #moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
 a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#00f;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
 .moin-item-overlay-lr{bottom:-4px;right:-4px;border-width:0 3px 3px 0}
-.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:table_bg_colot;color:#1f9ae0}
+.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#eef1f6;color:#1f9ae0}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
 .moin-permalink{display:none;cursor:pointer;font-size:80%;margin-left:3px}
