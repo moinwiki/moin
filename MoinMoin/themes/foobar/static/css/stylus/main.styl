@@ -20,7 +20,7 @@
 // user styles used by moin wiki parser (and maybe others) like red/green/solid/dashed/comment...
 @import "userstyles.css"
 
-// color have been used from the color palette 
+// color have been used from the color palette
 @import "color_palette"
 
 // mime type icons
@@ -93,7 +93,7 @@ div p
     width content_width_no_panel
     padding local_padding_width
     {'border-' + opposite-position(dir)} border_style
-    
+
 
 #moin-content
     float dir
@@ -114,7 +114,7 @@ div p
     color footer_color
     padding 0.5% 0.5%
     overflow auto
-    
+
 
 // now the stuff inside the main elements
 
@@ -155,7 +155,7 @@ div p
 
 #moin-global-panel ul,
 #moin-local-panel ul
-    list-style-type none 
+    list-style-type none
     margin 0
     li
         background-color panel_color
@@ -188,7 +188,7 @@ div p
 #moin-footer ul,
 #moin-credits
     float dir
-    list-style-type none 
+    list-style-type none
     li
         padding 0.1em
     a
@@ -209,7 +209,7 @@ div p
             color hover_color
 
 #moin-metadata
-    ul 
+    ul
         li:hover
             background panel_color !important
 
@@ -234,7 +234,7 @@ button
     &:active
         position relative
         top 1px
-    
+
 input,
 select
     padding 3px
@@ -246,8 +246,8 @@ input[type="text"]
 input.blank
     border-color border_color
     border-width 2px
-    
-.moin-form 
+
+.moin-form
     dd
         float left
         width 65%
@@ -269,8 +269,8 @@ input.blank
     button,
     input[type="submit"]
         margin-left 48%
-    
-#moin-modify, form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"] 
+
+#moin-modify, form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     dd
         margin-left 0.9em
         width 100%
@@ -300,14 +300,14 @@ input.blank
         text-align left
         width 61%
         margin-top 1.3em
-        
+
 // create table
 #moin-create-table
     width 95%
     margin-left auto
     margin-right auto
     border none
-    tbody tr 
+    tbody tr
             th
                 text-align center
                 background table_header_color
@@ -321,7 +321,7 @@ input.blank
 // index page
 .moin-clr
     clear both
-    
+
 .moin-index-message
     width 50%
     margin 1em auto
@@ -389,7 +389,7 @@ input.blank
     z-index 9
     margin 0
     display none
-  
+
 .filter-toggle
     margin 0 0.2em
     font-size .9em
@@ -423,8 +423,8 @@ input.blank
             color link_color !important
 .moin-contenttypes-wrapper
     div
-        cursor pointer 
-    form 
+        cursor pointer
+    form
         display none
         li
             label
@@ -436,7 +436,7 @@ input.blank
             span
                 display block
                 font-size 0.8em
-            
+
 #f_contenttype_filter_submit
     padding-left 20%
     padding-right 20%
@@ -444,7 +444,7 @@ input.blank
     cursor pointer
     box-shadow 1px 1px 2px font_color
     &:hover
-        box-shadow 1px 1px 2px shadow_color                
+        box-shadow 1px 1px 2px shadow_color
 
 .ct-hide:after
   content url("../img/moin-moveup.png")
@@ -457,7 +457,7 @@ input.blank
   margin 0 0.2em
   float right
   vertical-align middle
-                
+
 // popups
 #popup
     background: transparent url("../img/moin-transparent-bg.png") repeat
@@ -498,7 +498,7 @@ input[value="X"]
 .popup-container
     margin 0
     border 5px solid header_bg_color
-    border-radius 6px 6px 0px 0px 
+    border-radius 6px 6px 0px 0px
 
 // upload content
 #moin-upload-cont
@@ -527,7 +527,7 @@ form.upload_file
         cursor pointer
         opacity 0
         position absolute
-     
+
 
 form.upload_file button
     display none
@@ -542,9 +542,9 @@ form.upload_file
 
 .file_upload_template .file_upload_start button
     width 0px
-    
+
 .file_name
-    word-break break-all    
+    word-break break-all
     word-wrap break-word
     max-width 10em
 
@@ -561,7 +561,7 @@ a.moin-conflict:before
 
 // tabs
 .moin-tab-titles
-    margin -.5em 
+    margin -.5em
     list-style none
     span
         display none
@@ -580,7 +580,7 @@ a.moin-conflict:before
     table
         border border_style
         border-radius 5px
-        thead 
+        thead
             border-top-left-radius 5px
             border-top-right-radius 5px
             tr th
@@ -691,7 +691,7 @@ a.moin-conflict:before
         border-radius 5px
         &:hover
             box-shadow 0px 0px 12px shadow_color
-    
+
 // links
 a
     text-decoration none
@@ -742,13 +742,13 @@ a
 .moin-flash-error
     background-image url(../img/smileys/icon-error.png)
     color error_color
-  
+
 .moin-error
     color error_color
     background base_color
     padding 4px
     margin 1em
-    text-align centre
+    text-align center
     list-style-type none
     border-radius 5px
 
@@ -797,7 +797,7 @@ a
 #moin-search-query
     width 50%
 
-.searchresults 
+.searchresults
     dt
         margin-top 1em
         font-weight normal
@@ -842,8 +842,8 @@ p.searchhint
         font-size 1.05em
     td
         a, a:link
-            text-decoration underline    
-    
+            text-decoration underline
+
 // lists
 ul, dl
     margin-left 1.5em
@@ -1006,7 +1006,7 @@ input#f_comment
     width 96%
     border border_style
     margin .3em 0
-    
+
 // subitem
 .moin-subitem-navigation
     overflow hidden
@@ -1020,7 +1020,7 @@ input#f_comment
             color link_color
             &:hover
                 text-decoration underline
-    
+
 .moin-subitem-navigation .sep
     font-size 1.2em
     margin-left 0px
@@ -1063,7 +1063,7 @@ input#f_comment
 // transclusion
 .moin-transclusion
     max-width 100%
-    
+
 .moin-item-wrapper
     position relative
     display inline-block
@@ -1101,7 +1101,7 @@ input#f_comment
     filter alpha
     background-color base_color
     color link_color
-    
+
 // table of content
 .moin-table-of-contents
     border border_style
@@ -1117,7 +1117,7 @@ input#f_comment
     box-shadow 3px 3px 6px shadow_color
     border-radius 15px
 
-.moin-table-of-contents 
+.moin-table-of-contents
     ol
         margin 0
         padding 0 0 0 .92em
@@ -1159,4 +1159,3 @@ sup
     #moin-footer
     #moin-search
         display none
-

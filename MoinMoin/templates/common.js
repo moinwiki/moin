@@ -24,18 +24,22 @@ $(document).ready(editOnDoubleClick);
 
 // Highlight currently selected link in side panel. Executed on page load
 function selected_link() {
-   var selected = window.location.pathname;
+    "use strict";
+    var selected = window.location.pathname,
+        list = document.getElementsByClassName('panel'),
+        i,
+        j,
+        nav_links,
+        link;
+    for (j = 0; j < list.length; j += 1) {
+        nav_links = list[j].getElementsByTagName('a');
 
-   var list = document.getElementsByClassName('panel');
-   for (var j = 0; j < list.length; j++) {
-      nav_links = list[j].getElementsByTagName('a');
+        for (i = 0; i < nav_links.length; i += 1) {
+            link = nav_links[i].attributes.href.value;
 
-      for (var i = 0; i < nav_links.length; i++) {
-         var link = nav_links[i].attributes.href.value;
-
-             if (link == selected) {
-               nav_links[i].setAttribute('class', 'current-link');
-               break;
+            if (link === selected) {
+                nav_links[i].setAttribute('class', 'current-link');
+                break;
             }
         }
     }
@@ -286,12 +290,12 @@ function transcludeSubitem(subitem_name, fullname) {
     function moinwiki(subitem_name, fullname) {
         // note: keep the many plusses, to avoid jinja2 templating kicking in
         // when seeing two curly opening / closing braces
-        return "{"+"{" + fullname.replace("{"+"{", "\\"+"}"+"}") + "}"+"} ";
+        return "{" + "{" + fullname.replace("{" + "{", "\\" + "}" + "}") + "}" + "} ";
     }
     function mediawiki(subitem_name, fullname) {
         // note: keep the many plusses, to avoid jinja2 templating kicking in
         // when seeing two curly opening / closing braces
-        return "{"+"{:" + fullname.replace("}"+"}", "\\"+"}"+"}") + "}"+"} ";
+        return "{" + "{:" + fullname.replace("}" + "}", "\\" + "}" + "}") + "}" + "} ";
     }
     function rst(subitem_name, fullname) {
         return "\n.. include:: " + subitem_name + "\n";

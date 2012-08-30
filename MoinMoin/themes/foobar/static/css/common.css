@@ -334,7 +334,7 @@ a.moin-nonexistent:active{color:#ff2727}
 .moin-flash-info{background-image:url("../img/smileys/icon-info.png");color:#007cef}
 .moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
 .moin-flash-error{background-image:url("../img/smileys/icon-error.png");color:#ff2727}
-.moin-error{color:#ff2727;background:#d6d5d0;padding:4px;margin:1em;text-align:centre;list-style-type:none;border-radius:5px}
+.moin-error{color:#ff2727;background:#d6d5d0;padding:4px;margin:1em;text-align:center;list-style-type:none;border-radius:5px}
 #moin-searchform{padding:0;font-size:.82em;float:right;text-align:right;}
 #moin-searchform input{font-size:1em;vertical-align:middle;background-color:#f4f4f4;border:1px solid #ccc}
 #moin-searchform button{box-shadow:none}
