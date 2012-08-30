@@ -22,12 +22,11 @@ logging = log.getLogger(__name__)
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
-from MoinMoin.converter.moinwiki_in import _Iter, _Stack
 
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
 
 class _TableArguments(object):
