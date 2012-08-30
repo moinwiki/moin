@@ -6,7 +6,7 @@
 Detect and correct violations of the moin2 coding standards:
     - no trailing blanks
     - exactly one linefeed at file end, see PEP8
-    - DOS line endings on .bat files, unix line endings everywhere else
+    - DOS line endings on .bat and .cmd files, unix line endings everywhere else
 
 Execute this script from the root directory of the moin2 repository or
 from anywhere within the contrib path.
@@ -17,7 +17,7 @@ import warnings
 warnings.simplefilter("once")
 
 # file types to be processed
-SELECTED_SUFFIXES = set("py bat cmd html css js".split())
+SELECTED_SUFFIXES = set("py bat cmd html css js styl".split())
 
 # stuff considered DOS/WIN
 WIN_SUFFIXES = set("bat cmd".split())
@@ -51,6 +51,7 @@ def check_files(filename, suffix):
     while lines:
         if not lines[-1].strip():
             del lines[-1]
+            warnings.warn(u"%s was changed to remove empty lines at eof" % filename)
         else:
             break
 
@@ -60,11 +61,11 @@ def check_files(filename, suffix):
             f.write(pep8_line)
             # if line was changed, issue warning once for each type of change
             if suffix in WIN_SUFFIXES and not line.endswith("\r\n"):
-                warnings.warn("%s was changed to DOS line endings" % filename)
+                warnings.warn(u"%s was changed to DOS line endings" % filename)
             elif suffix not in WIN_SUFFIXES and line.endswith("\r\n"):
-                warnings.warn("%s was changed to Unix line endings" % filename)
+                warnings.warn(u"%s was changed to Unix line endings" % filename)
             elif pep8_line != line:
-                warnings.warn("%s was changed to remove trailing blanks" % filename)
+                warnings.warn(u"%s was changed to remove trailing blanks" % filename)
 
 
 def file_picker(starting_dir):
@@ -90,5 +91,5 @@ if __name__ == "__main__":
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
         starting_dir = starting_dir.split(os.sep + 'contrib')[0]
-    warnings.warn("%s is starting directory" % starting_dir)
+    warnings.warn(u"%s is starting directory" % starting_dir)
     file_picker(starting_dir)
