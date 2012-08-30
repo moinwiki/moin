@@ -424,6 +424,7 @@ input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
 .moin-transclusion{max-width:100%}
 .moin-item-wrapper{position:relative;display:inline-block}
+div.moin-item-wrapper{width:100%}
 .moin-item-wrapper > a:hover{color:#1e90ff;text-decoration:none}
 .moin-item-overlay-ul,.moin-item-overlay-lr{display:none;position:absolute;font-size:1.2em;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#1e90ff;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}

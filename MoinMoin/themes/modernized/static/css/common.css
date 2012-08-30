@@ -499,6 +499,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-creditlogos{float:right;list-style:none;margin:5px 10px}
 #moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
+div.moin-item-wrapper{width:100%}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
 a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#00f;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
