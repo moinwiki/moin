@@ -1,7 +1,11 @@
-{% import "forms.html" as forms %}
+{# If you want itemviews in your template, extend from show.html, not from here. #}
 {% extends theme("base.html") %}
 
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+{% import "itemviews.html" as itemviews with context %}
 {% import theme("snippets.html") as snippets with context %}
+
 {% set logo = snippets.logo() %}
 {% set footer_logos = snippets.creditlogos() %}
 {% set footer_items = '' %}
@@ -149,10 +153,18 @@
 </div>
 
 {% block content_container %}
-    <div id="moin-content-no-panel" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
-    {% block content %}
-    {% endblock %}
+    {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
+    <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+        {% block content %}
+            {# All content templates should implement this block. #}
+        {% endblock %}
     </div>
+
+    {% if self.local_panel %}
+        <div id="moin-local-panel">
+            {{ self.local_panel() }}
+        </div>
+    {% endif %}
 {% endblock %}
 </div>
 

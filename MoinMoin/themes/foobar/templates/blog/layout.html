@@ -1,4 +1,4 @@
-{% extends theme("local.html") %}
+{% extends theme("layout.html") %}
 {% import theme("blog/utils.html") as blog_utils %}
 
 {% if blog_item %}
@@ -29,7 +29,7 @@
     {% endblock %}
 {% endblock %}
 
-{% block local %}
+{% block local_panel  %}
     <ul>
         {% if blog_name and supertags %}
         <li>
