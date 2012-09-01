@@ -58,6 +58,7 @@ from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, html, xlink, docbook
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.crypto import cache_key
+from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
 from MoinMoin.constants.keys import (
     NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
@@ -99,12 +100,11 @@ def register(cls):
     return cls
 
 
+@timed()
 def conv_serialize(doc, namespaces, method='polyglot'):
     out = array('u')
-    flaskg.clock.start('conv_serialize')
     doc.write(out.fromunicode, namespaces=namespaces, method=method)
     out = out.tounicode()
-    flaskg.clock.stop('conv_serialize')
     return out
 
 
@@ -145,11 +145,11 @@ class Content(object):
         return '' # TODO create a better method for binary stuff
     data = property(fget=get_data)
 
+    @timed('conv_in_dom')
     def internal_representation(self, converters=['smiley']):
         """
         Return the internal representation of a document using a DOM Tree
         """
-        flaskg.clock.start('conv_in_dom')
         hash_name = HASH_ALGORITHM
         hash_hexdigest = self.rev.meta.get(hash_name)
         if hash_hexdigest:
@@ -184,7 +184,6 @@ class Content(object):
                     doc = smiley_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
-        flaskg.clock.stop('conv_in_dom')
         return doc
 
     def _expand_document(self, doc):

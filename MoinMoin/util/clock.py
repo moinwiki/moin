@@ -8,8 +8,12 @@
 
 
 import time
+from functools import wraps, partial
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+from flask import g as flaskg
 
 class Clock(object):
     """
@@ -45,3 +49,18 @@ class Clock(object):
     def __del__(self):
         if self.timers:
             logging.warning('These timers have not been stopped: {0}'.format(', '.join(self.timers.keys())))
+
+
+def add_timing(f, name=None):
+    if name is None:
+        name = f.__name__
+    @wraps(f)
+    def wrapper(*args, **kw):
+        flaskg.clock.start(name)
+        retval = f(*args, **kw)
+        flaskg.clock.stop(name)
+        return retval
+    return wrapper
+
+def timed(name=None):
+    return partial(add_timing, name=name)
