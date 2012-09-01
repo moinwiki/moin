@@ -113,6 +113,52 @@ class DummyItem(object):
         return True
 
 
+def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+    """
+    Get a storage Revision.
+
+    If :item is supplied it is used as the storage Item; otherwise the storage
+    Item is looked up with :name. If it is not found (either because the item
+    doesn't exist or the user does not have the required permissions) a
+    DummyItem is created, and a DummyRev is created with appropriate metadata
+    properties and the "item" property pointing to the DummyItem. The DummyRev
+    is then returned.
+
+    If the previous step didn't end up with a DummyRev, the revision
+    designated by :rev_id is then looked up. If it is not found, current
+    revision is looked up and returned instead. If current revision is not
+    found (i.e. the item has no revision), a DummyRev is created. (TODO: in
+    the last two cases, emit warnings or throw exceptions.)
+
+    :itemtype and :contenttype are used when creating a DummyRev, where
+    metadata is not available from the storage.
+    """
+    if 1: # try:
+        if item is None:
+            item = flaskg.storage[name]
+        else:
+            name = item.name
+    if not item: # except NoSuchItemError:
+        logging.debug("No such item: {0!r}".format(name))
+        item = DummyItem(name)
+        rev = DummyRev(item, itemtype, contenttype)
+        logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
+    else:
+        logging.debug("Got item: {0!r}".format(name))
+        try:
+            rev = item.get_revision(rev_id)
+        except KeyError: # NoSuchRevisionError:
+            try:
+                rev = item.get_revision(CURRENT) # fall back to current revision
+                # XXX add some message about invalid revision
+            except KeyError: # NoSuchRevisionError:
+                logging.debug("Item {0!r} has no revisions.".format(name))
+                rev = DummyRev(item, itemtype, contenttype)
+                logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
+        logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
+    return rev
+
+
 class BaseChangeForm(TextChaizedForm):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
     submit = Submit
@@ -170,31 +216,7 @@ class Item(object):
         previously created Content instance is assigned to its content
         property.
         """
-        if 1: # try:
-            if item is None:
-                item = flaskg.storage[name]
-            else:
-                name = item.name
-        if not item: # except NoSuchItemError:
-            logging.debug("No such item: {0!r}".format(name))
-            item = DummyItem(name)
-            rev = DummyRev(item, itemtype, contenttype)
-            logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
-        else:
-            logging.debug("Got item: {0!r}".format(name))
-            try:
-                rev = item.get_revision(rev_id)
-                contenttype = u'application/octet-stream' # it exists
-                itemtype = u'default' # default itemtype to u'default' for compatibility
-            except KeyError: # NoSuchRevisionError:
-                try:
-                    rev = item.get_revision(CURRENT) # fall back to current revision
-                    # XXX add some message about invalid revision
-                except KeyError: # NoSuchRevisionError:
-                    logging.debug("Item {0!r} has no revisions.".format(name))
-                    rev = DummyRev(item, itemtype, contenttype)
-                    logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
-            logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
+        rev = get_storage_revision(name, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
@@ -203,7 +225,7 @@ class Item(object):
         # content_registry.get yet, have to patch it later.
         content = Content.create(contenttype)
 
-        itemtype = rev.meta.get(ITEMTYPE) or itemtype
+        itemtype = rev.meta.get(ITEMTYPE) or itemtype or u'default'
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
         item = item_registry.get(itemtype, name, rev=rev, content=content)
