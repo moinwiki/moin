@@ -28,6 +28,7 @@ from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
+from MoinMoin.util.clock import timed
 
 
 def get_current_theme():
@@ -45,11 +46,9 @@ def get_current_theme():
         return get_theme(theme_name)
 
 
+@timed()
 def render_template(template, **context):
-    flaskg.clock.start('render_template')
-    output = render_theme_template(get_current_theme(), template, **context)
-    flaskg.clock.stop('render_template')
-    return output
+    return render_theme_template(get_current_theme(), template, **context)
 
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
@@ -205,6 +204,7 @@ class ThemeSupport(object):
             title = item_name
         return href, title, wiki_name
 
+    @timed()
     def navibar(self, item_name):
         """
         Assemble the navibar
@@ -212,7 +212,6 @@ class ThemeSupport(object):
         :rtype: list
         :returns: list of tuples (css_class, url, link_text, title)
         """
-        flaskg.clock.start('navibar')
         current = item_name
         # Process config navi_bar
         items = [(cls, url_for(endpoint, **args), link_text, title)
@@ -253,7 +252,6 @@ class ThemeSupport(object):
                 if current in sisteritems:
                     url = sisteritems[current]
                     items.append(('sisterwiki', url, sistername, ''))
-        flaskg.clock.stop('navibar')
         return items
 
     def parent_item(self, item_name):
