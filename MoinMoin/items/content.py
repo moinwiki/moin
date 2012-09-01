@@ -24,23 +24,18 @@ import tempfile
 from StringIO import StringIO
 from array import array
 from collections import namedtuple
-from functools import partial
-from types import TypeType
 
-from werkzeug import is_resource_modified
+from flask import current_app as app
+from flask import g as flaskg
+from flask import request, url_for, Response, abort, escape
 
 from flatland import Form, String
 
+from jinja2 import Markup
+
+from werkzeug import is_resource_modified
+
 from whoosh.query import Term, And
-
-from MoinMoin.forms import File
-
-from MoinMoin.util.mimetype import MimeType
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page, html, xlink, docbook
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.crypto import cache_key
-from MoinMoin.storage.middleware.protecting import AccessDenied
 
 try:
     import PIL
@@ -52,20 +47,18 @@ except ImportError:
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from flask import request, url_for, Response, abort, escape
-
-from jinja2 import Markup
-
+from MoinMoin import wikiutil, config
 from MoinMoin.i18n import _, L_
 from MoinMoin.themes import render_template
-from MoinMoin import wikiutil, config
-from MoinMoin.util.send_file import send_file
-from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.storage.error import StorageError
+from MoinMoin.util.send_file import send_file
 from MoinMoin.util.registry import RegistryBase
+from MoinMoin.util.mimetype import MimeType
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page, html, xlink, docbook
+from MoinMoin.util.iri import Iri
+from MoinMoin.util.crypto import cache_key
+from MoinMoin.forms import File
 from MoinMoin.constants.keys import (
     NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
     )
