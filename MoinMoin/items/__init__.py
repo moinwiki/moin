@@ -17,51 +17,43 @@
     Each class in this module corresponds to an itemtype.
 """
 
-import re, time
+import time
 import itertools
 import json
 from StringIO import StringIO
 from collections import namedtuple
-from functools import partial
+
+from flask import current_app as app
+from flask import g as flaskg
+from flask import request, Response, redirect, abort, escape
 
 from flatland import Form
-from flatland.validation import Validator
 
 from jinja2 import Markup
 
 from whoosh.query import Term, And, Prefix
 
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
-
-from MoinMoin.security.textcha import TextCha, TextChaizedForm
-from MoinMoin.signalling import item_modified
-from MoinMoin.util.mime import Type
-from MoinMoin.storage.middleware.protecting import AccessDenied
-
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from flask import request, Response, redirect, abort, escape
-
-from werkzeug import is_resource_modified
-
+from MoinMoin.security.textcha import TextCha, TextChaizedForm
+from MoinMoin.signalling import item_modified
+from MoinMoin.storage.middleware.protecting import AccessDenied
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.interwiki import url_for_item
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.util.registry import RegistryBase
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
-    CONTENTTYPE, SIZE, TAGS, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
+    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
 from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
 from MoinMoin.constants.itemtypes import ITEMTYPES
 
-from .content import Content, NonExistentContent, Draw, content_registry
+from .content import Content, NonExistentContent, Draw
 
 
 COLS = 80
