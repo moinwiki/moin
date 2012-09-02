@@ -22,7 +22,7 @@ import hashlib
 from StringIO import StringIO
 
 from flask import current_app as app
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

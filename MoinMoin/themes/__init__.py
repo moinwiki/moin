@@ -16,7 +16,7 @@ from operator import attrgetter
 from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request
-from flaskext.themes import get_theme, render_theme_template
+from flask.ext.themes import get_theme, render_theme_template
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

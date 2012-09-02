@@ -15,7 +15,7 @@ and sets or removes metadata.
 from ast import literal_eval
 
 from flask import current_app as app
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from whoosh.query import Every
 

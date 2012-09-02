@@ -18,7 +18,7 @@ from babel import Locale
 
 from flask import current_app, request
 from flask import g as flaskg
-from flaskext.babel import Babel, gettext, ngettext, lazy_gettext
+from flask.ext.babel import Babel, gettext, ngettext, lazy_gettext
 
 _ = gettext
 N_ = ngettext

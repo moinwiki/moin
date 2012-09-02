@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 from flask import g as flaskg
-from flaskext.babel import format_datetime
+from flask.ext.babel import format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase
 
