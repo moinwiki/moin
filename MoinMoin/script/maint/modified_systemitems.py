@@ -10,7 +10,7 @@
 
 
 from flask import current_app as app
-from flaskext.script import Command
+from flask.ext.script import Command
 
 from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
 

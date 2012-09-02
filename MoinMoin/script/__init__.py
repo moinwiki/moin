@@ -14,7 +14,7 @@ def main(default_command='moin', wiki_config=None):
     console_script entry point
     """
     from MoinMoin.app import create_app
-    from flaskext.script import Manager, Server
+    from flask.ext.script import Manager, Server
 
     manager = Manager(create_app)
     manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)

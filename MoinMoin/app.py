@@ -20,8 +20,8 @@ from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
 
-from flaskext.cache import Cache
-from flaskext.themes import setup_themes
+from flask.ext.cache import Cache
+from flask.ext.themes import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 

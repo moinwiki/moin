@@ -10,7 +10,7 @@ MoinMoin - set a user password
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import user
 from MoinMoin.app import before_wiki

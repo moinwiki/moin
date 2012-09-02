@@ -10,7 +10,7 @@ import json
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin.config import NAME, CURRENT, REVID, DATAID, SIZE, HASH_ALGORITHM
 

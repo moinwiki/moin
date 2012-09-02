@@ -8,7 +8,7 @@ MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
