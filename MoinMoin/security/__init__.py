@@ -1,5 +1,5 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2003-2008,2011 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2008,2011-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
 # Copyright: 2007 Alexander Schremmer
@@ -7,15 +7,6 @@
 
 """
 MoinMoin - Wiki Security Interface and Access Control Lists
-
-
-This implements the basic interface for user permissions and
-system policy. If you want to define your own policy, inherit
-from the base class 'Permissions', so that when new permissions
-are defined, you get the defaults.
-
-Then assign your new class to "SecurityPolicy" in wikiconfig;
-and I mean the class, not an instance of it!
 """
 
 
@@ -46,16 +37,22 @@ def require_permission(permission):
     return wrap
 
 
-class Permissions(object):
-    """ Basic interface for user permissions and system policy.
+class DefaultSecurityPolicy(object):
+    """Basic interface for user permissions and system policy.
 
-    Note that you still need to allow some of the related actions, this
-    just controls their behavior, not their activation.
+    If you want to define your own policy, inherit from DefaultSecurityPolicy,
+    so that when new permissions are defined later, you will inherit their
+    default behaviour.
 
-    When sub classing this class, you must extend the class methods, not
-    replace them, or you might break the ACLs in the wiki.
-    Correct sub classing looks like this::
+    Then assign your new class (not an instance!) to "SecurityPolicy" in the
+    wiki configuration.
 
+    When subclassing this class, you must extend the class methods, not replace
+    them, or you might break the ACLs in the wiki.
+
+    Correct subclassing looks like this::
+
+    class MySecPol(DefaultSecurityPolicy):
         def read(self, itemname):
             # Your special security rule
             if something:
@@ -63,7 +60,7 @@ class Permissions(object):
 
             # Do not just return True or you break (ignore) ACLs!
             # This call will return correct permissions by checking ACLs:
-            return Permissions.read(itemname)
+            return super(MySecPol, self).read(itemname)
     """
     def __init__(self, user):
         self.name = user.name
@@ -84,10 +81,6 @@ class Permissions(object):
             may = app.cfg.cache.acl_functions.may
             return lambda: may(self.name, attr)
         raise AttributeError(attr)
-
-
-# make an alias for the default policy
-Default = Permissions
 
 
 class AccessControlList(object):

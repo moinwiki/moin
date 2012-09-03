@@ -299,11 +299,7 @@ class User(object):
                 self.set_password(password)
 
         # "may" so we can say "if user.may.read(pagename):"
-        if self._cfg.SecurityPolicy:
-            self.may = self._cfg.SecurityPolicy(self)
-        else:
-            from MoinMoin.security import Default
-            self.may = Default(self)
+        self.may = self._cfg.SecurityPolicy(self)
 
     def __repr__(self):
         # In rare cases we might not have these profile settings when the __repr__ is called.
