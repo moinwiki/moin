@@ -24,7 +24,7 @@ from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
-from MoinMoin.security import AccessControlList
+from MoinMoin.security import AccessControlList, DefaultSecurityPolicy
 
 
 class CacheClass(object):
@@ -303,7 +303,7 @@ options_no_group_name = {
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
     ('SecurityPolicy',
-     None,
+     DefaultSecurityPolicy,
      "Class object hook for implementing security restrictions or relaxations"),
     ('endpoints_excluded',
      [],
