@@ -16,6 +16,7 @@ from MoinMoin.security import AccessControlList, ACLStringIterator
 
 from MoinMoin.user import User
 from MoinMoin.config import ACL
+from MoinMoin.datastruct import ConfigGroups
 
 from MoinMoin._tests import update_item
 from MoinMoin._tests import become_trusted
@@ -243,6 +244,51 @@ class TestAcl(object):
             # with ACL modifiers
             ('MinusGuy', ()),
             ('PlusGuy', ('read', )),
+            )
+
+        # Check rights
+        for user, may in users:
+            mayNot = [right for right in app.cfg.acl_rights_contents
+                      if right not in may]
+            # User should have these rights...
+            for right in may:
+                assert acl.may(user, right)
+            # But NOT these:
+            for right in mayNot:
+                assert not acl.may(user, right)
+
+
+class TestGroupACL(object):
+
+    from MoinMoin._tests import wikiconfig
+    class Config(wikiconfig.Config):
+        def groups(cfg):
+            groups = {
+                u'PGroup': frozenset([u'Antony', u'Beatrice', ]),
+                u'AGroup': frozenset([u'All', ]),
+                # note: the next line is a INTENDED misnomer, there is "All" in
+                # the group NAME, but not in the group members. This makes
+                # sure that a bug that erroneously checked "in groupname" (instead
+                # of "in groupmembers") does not reappear.
+                u'AllGroup': frozenset([]), # note: intended misnomer
+            }
+            return ConfigGroups(groups)
+
+    def testApplyACLByGroup(self):
+        """ security: applying acl by group name"""
+        # This acl string...
+        acl_rights = [
+            "PGroup,AllGroup:read,write,admin "
+            "AGroup:read "
+            ]
+        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+
+        # Should apply these rights:
+        users = (
+            # user, rights
+            ('Antony', ('read', 'write', 'admin', )),  # in PGroup
+            ('Beatrice', ('read', 'write', 'admin', )),  # in PGroup
+            ('Charles', ('read', )),  # virtually in AGroup
             )
 
         # Check rights

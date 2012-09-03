@@ -235,11 +235,12 @@ class AccessControlList(object):
                 handler = getattr(self, "_special_"+entry, None)
                 allowed = handler(name, dowhat, rightsdict)
             elif entry in groups:
-                if name in groups[entry]:
+                this_group = groups[entry]
+                if name in this_group:
                     allowed = rightsdict.get(dowhat)
                 else:
                     for special in self.special_users:
-                        if special in entry:
+                        if special in this_group:
                             handler = getattr(self, "_special_" + special, None)
                             allowed = handler(name, dowhat, rightsdict)
                             break # order of self.special_users is important
