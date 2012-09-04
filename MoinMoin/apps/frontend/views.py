@@ -488,7 +488,8 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
-    itemtype = request.values.get('itemtype')
+    # XXX drawing applets don't send itemtype
+    itemtype = request.values.get('itemtype', u'default')
     contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, itemtype=itemtype, contenttype=contenttype)
