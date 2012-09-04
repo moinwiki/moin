@@ -49,7 +49,7 @@
             {{ forms.render(form['comment']) }}
         </dl>
     {% endif %}
-    {{ data_editor(form['content_form']) }}
+    {{ data_editor(form['content_form'], item_name) }}
     {% if form['content_form'].help %}
         <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
     {% endif %}

@@ -1,4 +1,4 @@
-{% macro data_editor(form) %}
+{% macro data_editor(form, item_name) %}
 <p>
 <applet code="CH.ifa.draw.twiki.TWikiDraw.class"
         archive="{{ url_for('serve.files', name='twikidraw_moin', filename='twikidraw_moin.jar') }}"
