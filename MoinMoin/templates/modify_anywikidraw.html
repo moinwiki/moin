@@ -1,4 +1,4 @@
-{% macro data_editor(form) %}
+{% macro data_editor(form, item_name) %}
 <p>
 <applet code="org.anywikidraw.moinmoin.MoinMoinDrawingApplet.class" codebase="."
         archive="{{ url_for('serve.files', name='anywikidraw', filename='AnyWikiDrawForMoinMoin.jar') }}"
