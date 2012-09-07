@@ -16,6 +16,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import abort
 
+from MoinMoin.constants import rights
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 
@@ -64,6 +65,16 @@ class DefaultSecurityPolicy(object):
     """
     def __init__(self, user):
         self.name = user.name
+
+    def read(self, itemname):
+        """read permission is special as we have 2 kinds of read capabilities:
+
+           * READ - gives permission to read, unconditionally
+           * PUBREAD - gives permission to read, when published
+        """
+        return (flaskg.storage.may(itemname, rights.READ, username=self.name)
+                or
+                flaskg.storage.may(itemname, rights.PUBREAD, username=self.name))
 
     def __getattr__(self, attr):
         """ Shortcut to handle all known ACL rights.

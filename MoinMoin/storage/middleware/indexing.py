@@ -227,6 +227,8 @@ class IndexingMiddleware(object):
             PARENTID: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
+            # publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
@@ -288,8 +290,6 @@ class IndexingMiddleware(object):
         latest_revs_fields.update(**ticket_fields)
 
         blog_entry_fields = {
-            # publish time from metadata (converted to UTC datetime)
-            PTIME: DATETIME(stored=True)
         }
         latest_revs_fields.update(**blog_entry_fields)
 
@@ -758,6 +758,18 @@ class Item(object):
     @property
     def acl(self):
         return self._current.get(ACL)
+
+    @property
+    def ptime(self):
+        dt = self._current.get(PTIME)
+        if dt is not None:
+            return utctimestamp(dt)
+
+    @property
+    def mtime(self):
+        dt = self._current.get(MTIME)
+        if dt is not None:
+            return utctimestamp(dt)
 
     @property
     def name(self):

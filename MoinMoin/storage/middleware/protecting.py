@@ -14,11 +14,13 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 from __future__ import absolute_import, division
 
+import time
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
-                            ACL_RIGHTS_CONTENTS, \
+from MoinMoin.config import ACL, CREATE, READ, PUBREAD, WRITE, DESTROY, ADMIN, \
+                            PTIME, ACL_RIGHTS_CONTENTS, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
@@ -27,6 +29,19 @@ class AccessDenied(Exception):
     """
     raised when a user is denied access to an Item or Revision by ACL.
     """
+
+
+def pchecker(right, allowed, item):
+    """some permissions need additional checking"""
+    if allowed and right == PUBREAD:
+        # PUBREAD permission is only granted after publication time (ptime)
+        # if PTIME is not defined, we use MTIME (which is usually in the past)
+        # if MTIME is not defined, we use now.
+        # TODO: implement sth like PSTARTTIME <= now <= PENDTIME ?
+        now = time.time()
+        ptime = item.ptime or item.mtime or now
+        allowed = now >= ptime
+    return allowed
 
 
 class ProtectingMiddleware(object):
@@ -55,26 +70,26 @@ class ProtectingMiddleware(object):
     def search(self, q, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.search(q, idx_name, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def documents(self, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.documents(idx_name, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def document(self, idx_name=LATEST_REVS, **kw):
         rev = self.indexer.document(idx_name, **kw)
         if rev:
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 return rev
 
     def has_item(self, name):
@@ -135,7 +150,7 @@ class ProtectedItem(object):
             acl = AccessControlList([acl, ], acls['default'], valid=self.protector.valid_rights)
             allowed = acl.may(user_name, right)
             if allowed is not None:
-                return allowed
+                return pchecker(right, allowed, self.item)
         else:
             if acls['hierarchic']:
                 # check parent(s), recursively
@@ -145,12 +160,12 @@ class ProtectedItem(object):
                     parent_item = self.protector[parent]
                     allowed = parent_item._allows(right, user_name)
                     if allowed is not None:
-                        return allowed
+                        return pchecker(right, allowed, self.item)
 
             acl = AccessControlList([acls['default'], ], valid=self.protector.valid_rights)
             allowed = acl.may(user_name, right)
             if allowed is not None:
-                return allowed
+                return pchecker(right, allowed, self.item)
 
     def allows(self, right, user_name=None):
         """ Check if username may have <right> access on item <itemname>.
@@ -184,16 +199,16 @@ class ProtectedItem(object):
         before = AccessControlList([acls['before'], ], valid=self.protector.valid_rights)
         allowed = before.may(user_name, right)
         if allowed is not None:
-            return allowed
+            return pchecker(right, allowed, self.item)
 
         allowed = self._allows(right, user_name)
         if allowed is not None:
-            return allowed
+            return pchecker(right, allowed, self.item)
 
         after = AccessControlList([acls['after'], ], valid=self.protector.valid_rights)
         allowed = after.may(user_name, right)
         if allowed is not None:
-            return allowed
+            return pchecker(right, allowed, self.item)
 
         return False
 
@@ -211,7 +226,7 @@ class ProtectedItem(object):
                 yield ProtectedRevision(self.protector, rev, p_item=self)
 
     def __getitem__(self, revid):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         rev = self.item[revid]
         return ProtectedRevision(self.protector, rev, p_item=self)
 
@@ -268,12 +283,12 @@ class ProtectedRevision(object):
 
     @property
     def meta(self):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         return self.rev.meta
 
     @property
     def data(self):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         return self.rev.data
 
     def close(self):
