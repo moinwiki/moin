@@ -197,9 +197,12 @@ class ProtectedItem(object):
 
         return False
 
-    def require(self, capability):
-        if not self.allows(capability):
-            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}'".format(self.protector.user.name, capability))
+    def require(self, *capabilities):
+        """require that at least one of the capabilities is allowed"""
+        if not any(self.allows(c) for c in capabilities):
+            capability = " or ".join(capabilities)
+            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+                               self.protector.user.name, capability, self.item.acl))
 
     def iter_revs(self):
         self.require(READ)
@@ -252,9 +255,12 @@ class ProtectedRevision(object):
         # to check allowance for a revision, we always ask the item
         return self.item.allows(capability)
 
-    def require(self, capability):
-        if not self.allows(capability):
-            raise AccessDenied("revision does not allow '{0!r}'".format(capability))
+    def require(self, *capabilities):
+        """require that at least one of the capabilities is allowed"""
+        if not any(self.allows(c) for c in capabilities):
+            capability = " or ".join(capabilities)
+            raise AccessDenied("revision does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+                               self.protector.user.name, capability, self.item.item.acl))
 
     @property
     def revid(self):
