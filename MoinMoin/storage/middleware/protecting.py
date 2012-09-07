@@ -18,6 +18,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
+                            ACL_RIGHTS_CONTENTS, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
@@ -39,7 +40,7 @@ class ProtectingMiddleware(object):
         self.indexer = indexer
         self.user = user
         self.acl_mapping = acl_mapping
-        self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
+        self.valid_rights = ACL_RIGHTS_CONTENTS
 
     def get_acls(self, itemname):
         for prefix, acls in self.acl_mapping:
