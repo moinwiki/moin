@@ -70,7 +70,6 @@ from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
 from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
-from whoosh.filedb.filestore import FileStorage
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -324,18 +323,31 @@ class IndexingMiddleware(object):
         # or latest revs index):
         self.common_fields = set(latest_revs_fields.keys()) & set(all_revs_fields.keys())
 
+    def get_storage(self, tmp=False, create=False):
+        """
+        Get the whoosh storage (whoosh supports different kinds of storage,
+        e.g. to filesystem or to GAE).
+        Currently we only support the FileStorage.
+        """
+        from whoosh.filedb.filestore import FileStorage
+        index_dir = self.index_dir_tmp if tmp else self.index_dir
+        if create:
+            try:
+                os.mkdir(index_dir)
+            except:
+                # ignore exception, we'll get another exception below
+                # in case there are problems with the index_dir
+                pass
+        storage = FileStorage(index_dir)
+        return storage
+
     def open(self):
         """
         Open all indexes.
         """
-        index_dir = self.index_dir
-        try:
-            storage = FileStorage(index_dir)
-            for name in INDEXES:
-                self.ix[name] = storage.open_index(name)
-        except (IOError, OSError, EmptyIndexError) as err:
-            logging.error(u"{0!s} [while trying to open index '{1}' in '{2}']".format(err, name, index_dir))
-            raise
+        storage = self.get_storage()
+        for name in INDEXES:
+            self.ix[name] = storage.open_index(name)
 
     def close(self):
         """
@@ -349,25 +361,15 @@ class IndexingMiddleware(object):
         """
         Create all indexes (empty).
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        try:
-            os.mkdir(index_dir)
-        except:
-            # ignore exception, we'll get another exception below
-            # in case there are problems with the index_dir
-            pass
-        try:
-            storage = FileStorage(index_dir)
-            for name in INDEXES:
-                storage.create_index(self.schemas[name], indexname=name)
-        except (IOError, OSError) as err:
-            logging.error(u"{0!s} [while trying to create index '{1}' in '{2}']".format(err, name, index_dir))
-            raise
+        storage = self.get_storage(tmp, create=True)
+        for name in INDEXES:
+            storage.create_index(self.schemas[name], indexname=name)
 
     def destroy(self, tmp=False):
         """
         Destroy all indexes.
         """
+        # XXX this is whoosh backend specific and currently only works for FileStorage.
         index_dir = self.index_dir_tmp if tmp else self.index_dir
         if os.path.exists(index_dir):
             shutil.rmtree(index_dir)
@@ -376,6 +378,7 @@ class IndexingMiddleware(object):
         """
         Move freshly built indexes from index_dir_tmp to index_dir.
         """
+        # XXX this is whoosh backend specific and currently only works for FileStorage.
         self.destroy()
         os.rename(self.index_dir_tmp, self.index_dir)
 
@@ -493,8 +496,7 @@ class IndexingMiddleware(object):
               create, rebuild wiki1, rebuild wiki2, ...
               create (tmp), rebuild wiki1, rebuild wiki2, ..., move
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        storage = FileStorage(index_dir)
+        storage = self.get_storage(tmp)
         index = storage.open_index(ALL_REVS)
         try:
             # build an index of all we have (so we know what we have)
@@ -523,8 +525,7 @@ class IndexingMiddleware(object):
 
         :returns: index changed (bool)
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        storage = FileStorage(index_dir)
+        storage = self.get_storage(tmp)
         index_all = storage.open_index(ALL_REVS)
         try:
             # NOTE: self.backend iterator gives (mountpoint, revid) tuples, which is NOT
@@ -577,8 +578,7 @@ class IndexingMiddleware(object):
         """
         Optimize whoosh index.
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        storage = FileStorage(index_dir)
+        storage = self.get_storage(tmp)
         for name in INDEXES:
             ix = storage.open_index(name)
             try:
@@ -590,8 +590,7 @@ class IndexingMiddleware(object):
         """
         Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        storage = FileStorage(index_dir)
+        storage = self.get_storage(tmp)
         ix = storage.open_index(idx_name)
         try:
             with ix.searcher() as searcher:
