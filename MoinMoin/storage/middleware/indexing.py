@@ -92,6 +92,7 @@ from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSc
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
+WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 
@@ -201,12 +202,11 @@ def convert_to_indexable(meta, data, is_new=False):
 
 
 class IndexingMiddleware(object):
-    def __init__(self, index_dir, backend, wiki_name=None, acl_rights_contents=[], **kw):
+    def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
         """
-        self.index_dir = index_dir
-        self.index_dir_tmp = index_dir + '.temp'
+        self.index_storage = index_storage
         self.backend = backend
         self.wikiname = wiki_name
         self.ix = {}  # open indexes
@@ -323,23 +323,36 @@ class IndexingMiddleware(object):
         # or latest revs index):
         self.common_fields = set(latest_revs_fields.keys()) & set(all_revs_fields.keys())
 
+    def get_storage_params(self, tmp=False):
+        kind, params, kw = self.index_storage
+        params, kw = list(params), dict(kw)  # better make a (mutable) copy
+        if kind == WHOOSH_FILESTORAGE:
+            # index_storage = 'FileStorage', (index_dir, ), {}
+            if tmp:
+                params[0] += '.temp'
+            from whoosh.filedb.filestore import FileStorage
+            cls = FileStorage
+        else:
+            raise ValueError("index_storage = {0!r} is not supported!".format(kind))
+        return kind, cls, params, kw
+
     def get_storage(self, tmp=False, create=False):
         """
         Get the whoosh storage (whoosh supports different kinds of storage,
         e.g. to filesystem or to GAE).
         Currently we only support the FileStorage.
         """
-        from whoosh.filedb.filestore import FileStorage
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        if create:
-            try:
-                os.mkdir(index_dir)
-            except:
-                # ignore exception, we'll get another exception below
-                # in case there are problems with the index_dir
-                pass
-        storage = FileStorage(index_dir)
-        return storage
+        kind, cls, params, kw = self.get_storage_params(tmp)
+        if kind == WHOOSH_FILESTORAGE:
+            if create:
+                index_dir = params[0]
+                try:
+                    os.mkdir(index_dir)
+                except:
+                    # ignore exception, we'll get another exception below
+                    # in case there are problems with the index_dir
+                    pass
+        return cls(*params, **kw)
 
     def open(self):
         """
@@ -370,17 +383,23 @@ class IndexingMiddleware(object):
         Destroy all indexes.
         """
         # XXX this is whoosh backend specific and currently only works for FileStorage.
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        if os.path.exists(index_dir):
-            shutil.rmtree(index_dir)
+        kind, cls, params, kw = self.get_storage_params(tmp)
+        if kind == WHOOSH_FILESTORAGE:
+            index_dir = params[0]
+            if os.path.exists(index_dir):
+                shutil.rmtree(index_dir)
 
     def move_index(self):
         """
-        Move freshly built indexes from index_dir_tmp to index_dir.
+        Move freshly built indexes from tmp storage to normal storage
         """
         # XXX this is whoosh backend specific and currently only works for FileStorage.
-        self.destroy()
-        os.rename(self.index_dir_tmp, self.index_dir)
+        kind, cls, params, kw = self.get_storage_params(False)
+        if kind == WHOOSH_FILESTORAGE:
+            _, _, params_tmp, _ = self.get_storage_params(True)
+            self.destroy()
+            index_dir, index_dir_tmp = params[0], params_tmp[0]
+            os.rename(index_dir_tmp, index_dir)
 
     def index_revision(self, meta, content, async=True):
         """

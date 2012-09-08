@@ -19,7 +19,7 @@ class Config(DefaultConfig):
     _here = abspath(dirname(__file__))
     _root = abspath(join(_here, '..', '..'))
     data_dir = join(_here, 'wiki', 'data') # needed for plugins package TODO
-    index_dir = join(_here, 'wiki', 'index')
+    index_storage = 'FileStorage', (join(_here, 'wiki', 'index'), ), {}
     content_acl = None
     item_root = 'FrontPage'
     interwikiname = u'MoinTest'

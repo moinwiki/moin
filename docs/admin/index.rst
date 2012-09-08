@@ -19,15 +19,23 @@ destroyed, or renamed via the storage api of moin, indexing layer or above.
 
 Configuration
 =============
-Your wiki config needs ``index_dir`` to point to a writable directory. A fast,
-local filesystem is preferred.
-Use something like::
+Your need to have a ``index_storage`` entry in your wiki config.
 
-    index_dir = "/path/to/moin-2.0/wiki/index"
+We use whoosh for indexing and as whoosh supports multiple storage backends,
+this entry is made to potentially support any storage supported by whoosh.
 
-**Note:**
-* The path MUST be absolute.
-* Moin will use `index_dir`.temp location as well, if you build an index at
+In general, this entry has the form of::
+
+    index_storage = kind, (p1, p2, ...), {kw1=..., kw2=..., ...}
+
+Currently, we only support the 'FileStorage' kind of index storage, which only
+has one parameter - the index directory::
+
+    index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
+
+**Notes for FileStorage:**
+* The path MUST be absolute, writable and should be on a fast, local filesystem.
+* Moin will use `index.temp` directory as well, if you build an index at
 the `temporary location`.
 
 
@@ -143,12 +151,14 @@ wiki configs could look like:
 ``Sales``::
 
       interwikiname = u"Sales"
-      index_dir = "/path/to/wiki/index"
+      index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
+
 
 ``Engineering``::
 
       interwikiname = u"Engineering"
-      index_dir = "/path/to/wiki/index"
+      index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
+
 
 Now do the initial index building::
 

@@ -26,7 +26,7 @@ class Config(DefaultConfig):
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
-    index_dir = os.path.join(instance_dir, "index")
+    index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
