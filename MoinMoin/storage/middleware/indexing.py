@@ -63,13 +63,14 @@ from flask import g as flaskg
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
-from whoosh.index import open_dir, create_in, EmptyIndexError
+from whoosh.index import EmptyIndexError
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
 from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
+from whoosh.filedb.filestore import FileStorage
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -329,8 +330,9 @@ class IndexingMiddleware(object):
         """
         index_dir = self.index_dir
         try:
+            storage = FileStorage(index_dir)
             for name in INDEXES:
-                self.ix[name] = open_dir(index_dir, indexname=name)
+                self.ix[name] = storage.open_index(name)
         except (IOError, OSError, EmptyIndexError) as err:
             logging.error(u"{0!s} [while trying to open index '{1}' in '{2}']".format(err, name, index_dir))
             raise
@@ -355,8 +357,9 @@ class IndexingMiddleware(object):
             # in case there are problems with the index_dir
             pass
         try:
+            storage = FileStorage(index_dir)
             for name in INDEXES:
-                create_in(index_dir, self.schemas[name], indexname=name)
+                storage.create_index(self.schemas[name], indexname=name)
         except (IOError, OSError) as err:
             logging.error(u"{0!s} [while trying to create index '{1}' in '{2}']".format(err, name, index_dir))
             raise
@@ -491,7 +494,8 @@ class IndexingMiddleware(object):
               create (tmp), rebuild wiki1, rebuild wiki2, ..., move
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
-        index = open_dir(index_dir, indexname=ALL_REVS)
+        storage = FileStorage(index_dir)
+        index = storage.open_index(ALL_REVS)
         try:
             # build an index of all we have (so we know what we have)
             all_revids = self.backend # the backend is an iterator over all revids
@@ -500,7 +504,7 @@ class IndexingMiddleware(object):
         finally:
             index.close()
         # now build the index of the latest revisions:
-        index = open_dir(index_dir, indexname=LATEST_REVS)
+        index = storage.open_index(LATEST_REVS)
         try:
             self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_names_revids, 'add', procs, limitmb)
         finally:
@@ -520,7 +524,8 @@ class IndexingMiddleware(object):
         :returns: index changed (bool)
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
-        index_all = open_dir(index_dir, indexname=ALL_REVS)
+        storage = FileStorage(index_dir)
+        index_all = storage.open_index(ALL_REVS)
         try:
             # NOTE: self.backend iterator gives (mountpoint, revid) tuples, which is NOT
             # the same as (name, revid), thus we do the set operations just on the revids.
@@ -542,7 +547,7 @@ class IndexingMiddleware(object):
             backend_latest_names_revids = set(self._find_latest_names_revids(index_all))
         finally:
             index_all.close()
-        index_latest = open_dir(index_dir, indexname=LATEST_REVS)
+        index_latest = storage.open_index(LATEST_REVS)
         try:
             # now update LATEST_REVS index:
             with index_latest.searcher() as searcher:
@@ -573,8 +578,9 @@ class IndexingMiddleware(object):
         Optimize whoosh index.
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
+        storage = FileStorage(index_dir)
         for name in INDEXES:
-            ix = open_dir(index_dir, indexname=name)
+            ix = storage.open_index(name)
             try:
                 ix.optimize()
             finally:
@@ -585,7 +591,8 @@ class IndexingMiddleware(object):
         Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
         index_dir = self.index_dir_tmp if tmp else self.index_dir
-        ix = open_dir(index_dir, indexname=idx_name)
+        storage = FileStorage(index_dir)
+        ix = storage.open_index(idx_name)
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
