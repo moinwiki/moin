@@ -721,8 +721,9 @@ class ConverterPage(Converter):
     def visit_moinpage_table_of_content(self, elem):
         level = int(elem.get(moin_page.outline_level, 6))
 
-        attrib = {html.class_: 'moin-table-of-contents'}
-        elem = html.div(attrib=attrib)
+        attribs = elem.attrib.copy()
+        attribs[html.class_] = 'moin-table-of-contents'
+        elem = html.div(attrib=attribs)
 
         self._special_stack[-1].add_toc(elem, level)
         return elem

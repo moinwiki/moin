@@ -349,6 +349,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named('want_trivial').using(optional=True),
     Boolean.named('show_comments').using(optional=True),
     Boolean.named('edit_on_doubleclick').using(optional=True),
+    Boolean.named('scroll_page_after_edit').using(optional=True),
     Boolean.named('mailto_author').using(optional=True),
     List.named('quicklinks').of(String.named('quicklinks')).using(optional=True),
     List.named('subscribed_items').of(String.named('subscribed_item')).using(optional=True),

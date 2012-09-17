@@ -194,7 +194,7 @@ class Converter(ConverterMacro):
             stack.push(moin_page.blockcode())
             return
 
-        lines = _Iter(self.block_nowiki_lines(iter_content))
+        lines = _Iter(self.block_nowiki_lines(iter_content), startno=iter_content.lineno)
 
         match = self.nowiki_interpret_re.match(firstline)
 
@@ -614,7 +614,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body)
+        stack = _Stack(body, iter_content=iter_content)
 
         # Please note that the iterator can be modified by other functions
         for line in iter_content:

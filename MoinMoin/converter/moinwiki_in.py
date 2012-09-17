@@ -266,7 +266,7 @@ class Converter(ConverterMacro):
 
         nowiki_marker_len = len(nowiki_marker)
 
-        lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len))
+        lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len), startno=iter_content.lineno)
 
         if nowiki_interpret:
             if nowiki_args:
@@ -466,7 +466,7 @@ class Converter(ConverterMacro):
             if list_definition_text:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label)
+                new_stack = _Stack(element_label, iter_content=iter_content)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
 
@@ -474,11 +474,11 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body)
+            new_stack = _Stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
 
-        iter = _Iter(self.indent_iter(iter_content, text, level))
+        iter = _Iter(self.indent_iter(iter_content, text, level), startno=iter_content.lineno)
         for line in iter:
             match = self.block_re.match(line)
             it = iter
@@ -1025,7 +1025,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body)
+        stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
             data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().iteritems() if v is not None))
