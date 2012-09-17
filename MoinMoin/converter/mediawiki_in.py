@@ -182,7 +182,7 @@ class Converter(ConverterMacro):
 
         element = moin_page.table_body()
         stack.push(element)
-        lines = _Iter(self.block_table_lines(iter_content))
+        lines = _Iter(self.block_table_lines(iter_content), startno=iter_content.lineno)
         element = moin_page.table_row()
         stack.push(element)
         preprocessor_status = []
@@ -331,7 +331,7 @@ class Converter(ConverterMacro):
             if list_definition:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label)
+                new_stack = _Stack(element_label, iter_content=iter_content)
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(':')
@@ -344,13 +344,13 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body)
+            new_stack = _Stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
             level = 0
 
         is_list = list_begin
-        iter = _Iter(self.indent_iter(iter_content, text, level, is_list))
+        iter = _Iter(self.indent_iter(iter_content, text, level, is_list), startno=iter_content.lineno)
         for line in iter:
             match = self.block_re.match(line)
             it = iter
@@ -969,7 +969,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body)
+        stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
             match = self.indent_re.match(line)

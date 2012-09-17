@@ -1372,6 +1372,7 @@ class UserSettingsOptionsForm(Form):
     name = 'usersettings_options'
     mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
     edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
+    scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))
     show_comments = Checkbox.using(label=L_('Show comment sections'))
     disabled = Checkbox.using(label=L_('Disable this account forever'))
     submit = Submit.using(default=L_('Save'))

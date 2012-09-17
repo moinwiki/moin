@@ -503,6 +503,7 @@ class UserRevision(object):
         bool_defaults = [ # taken from cfg.checkbox_defaults
             ('show_comments', 'False'),
             ('edit_on_doubleclick', 'True'),
+            ('scroll_page_after_edit', 'True'),
             ('want_trivial', 'False'),
             ('mailto_author', 'False'),
             ('disabled', 'False'),

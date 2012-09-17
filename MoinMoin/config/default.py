@@ -445,6 +445,7 @@ options_no_group_name = {
         css_url=None,
         mailto_author=False,
         edit_on_doubleclick=True,
+        scroll_page_after_edit=True,
         show_comments=False,
         want_trivial=False,
         disabled=False,

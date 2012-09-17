@@ -65,3 +65,9 @@
     {{ gen.form.close() }}
 </div>
 {% endblock %}
+
+{% block options_for_javascript %}
+{%- if user.edit_on_doubleclick -%}
+    <br id="moin-scroll-page-after-edit" />
+{%- endif %}
+{% endblock %}

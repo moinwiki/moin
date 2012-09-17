@@ -4,23 +4,21 @@
 /*jslint browser: true, */
 /*global $:false */
 
+// This file is a Jinja2 template and is not jslint friendly in its raw state.
+// To run jslint, use your browser debugging tools to view, copy and paste this file to jslint.
 
-// Enter edit mode when user doubleclicks within the content area.  Executed once on page load.
-function editOnDoubleClick() {
+
+// Utility function to add a message to moin flash area.
+var MOINFLASHHINT = "moin-flash moin-flash-hint",
+    MOINFLASHINFO = "moin-flash moin-flash-info",
+    MOINFLASHWARNING = "moin-flash moin-flash-warning",
+    MOINFLASHERROR = "moin-flash moin-flash-error";
+function moinFlashMessage(classes, message) {
     "use strict";
-    var modifyButton;
-    // is edit on doubleclick available for this user and item?
-    if (document.getElementById('moin-edit-on-doubleclick')) {
-        modifyButton = $('.moin-modify-button')[0];
-        if (modifyButton) {
-            // add a doubleclick action to the moin content
-            $('#moin-content').dblclick(function () {
-                document.location = modifyButton.href;
-            });
-        }
-    }
+    var pTag = '<P class="' + classes + '">' + message + '</p>';
+    $(pTag).appendTo($('#moin-flash'));
 }
-$(document).ready(editOnDoubleClick);
+
 
 // Highlight currently selected link in side panel. Executed on page load
 function selected_link() {
@@ -497,3 +495,194 @@ function initMoinUsersettings() {
     $('#moin-usersettings form').submit(submitHandler);
 }
 $(document).ready(initMoinUsersettings);
+
+
+// This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
+$(function () {
+    // NOTE: if browser does not support sessionStorage, then auto-scroll is not available
+    //       sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+
+    "use strict";
+
+    var TOPID = 'moin-content',
+        LINENOATTR = "data-lineno",
+        MESSAGEMISSED = ' {{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }} ',
+        MESSAGEOBSOLETE = ' {{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }} ',
+        OPERA = 'Opera', // special handling required because textareas have \r\n line endings
+        modifyButton,
+        lineno,
+        message,
+        caretLineno;
+
+    // called after +modify page loads -- scrolls the textarea after a doubleclick
+    function scrollTextarea(jumpLine) {
+        // jumpLine is textarea scroll-to line
+        var textArea = document.getElementById('f_content_form_data_text'),
+            textLines,
+            scrolledText,
+            scrollAmount,
+            textAreaClone;
+
+        if (textArea && textArea.setSelectionRange) {
+            window.scrollTo(0, 0);
+            // get data from textarea, split into array of lines, truncate based on jumpLine, make into a string
+            textLines = $(textArea).val();
+            scrolledText = textLines.split("\n"); // all browsers yield \n rather than \r\n or \r
+            scrolledText = scrolledText.slice(0, jumpLine);
+            if (navigator.userAgent && navigator.userAgent.substring(0, OPERA.length) === OPERA) {
+                scrolledText = scrolledText.join('\r\n') + '\r\n';
+            } else {
+                scrolledText = scrolledText.join('\n') + '\n';
+            }
+            // clone textarea, paste in truncated textArea data, measure height, delete clone
+            textAreaClone = $(textArea).clone(true);
+            textAreaClone = textAreaClone[0];
+            textAreaClone.id = "moin-textAreaClone";
+            textArea.parentNode.appendChild(textAreaClone);
+            $("#moin-textAreaClone").val(scrolledText);
+            textAreaClone.rows = 1;
+            scrollAmount = textAreaClone.scrollHeight - 100; // get total height of clone - 100 pixels
+            textAreaClone.parentNode.removeChild(textAreaClone);
+            // position the caret, highlight the position of the caret for a second or so
+            textArea.focus();
+            if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
+            textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+        }
+    }
+
+    // called after a "show" page loads, scroll page to textarea caret position
+    function scrollPage(lineno) {
+        var elem = document.getElementById(TOPID),
+            notFound = true,
+            RADIX = 10,
+            saveColor;
+
+        lineno = parseInt(lineno, RADIX);
+        // find a starting point at bottom of moin-content
+        while (elem.lastChild) { elem = elem.lastChild; }
+        // walk DOM backward looking for a lineno attr equal or less than lineno
+        while (notFound && elem.id !== TOPID) {
+            if (elem.hasAttribute && elem.hasAttribute(LINENOATTR) && parseInt(elem.getAttribute(LINENOATTR), RADIX) <= lineno) {
+                notFound = false;
+            }
+            if (notFound) {
+                if (elem.previousSibling) {
+                    elem = elem.previousSibling;
+                    while (elem.lastChild) { elem = elem.lastChild; }
+                } else {
+                    elem = elem.parentNode;
+                }
+            }
+        }
+        // scroll element into view and then back off 100 pixels
+        // TODO: does not scroll when user setting for show comments is off; user toggles show comments on; user doubleclicks and updates comments; (elem has display:none)
+        elem.scrollIntoView();
+        window.scrollTo(window.pageXOffset, window.pageYOffset - 100);
+        // highlight background of selected element for a second or so
+        saveColor = elem.style.backgroundColor;
+        elem.style.backgroundColor = 'yellow';
+        setTimeout(function () { elem.style.backgroundColor = saveColor; }, 1500);
+    }
+
+    // called after user doubleclicks, return a line number close to doubleclick point
+    function findLineNo(elem) {
+        var lineno;
+        // first try easy way via jquery checking event node and all parent nodes
+        lineno = $(elem).closest("[" + LINENOATTR + "]");
+        if (lineno.length) { return $(lineno).attr(LINENOATTR); }
+        // walk DOM backward looking for a lineno attr among siblings, cousins, uncles...
+        while (elem.id !== TOPID) {
+            if (elem.hasAttribute && elem.hasAttribute(LINENOATTR)) {
+                // not perfect, a lineno prior to target
+                return elem.getAttribute(LINENOATTR);
+            }
+            if (elem.previousSibling) {
+                elem = elem.previousSibling;
+                while (elem.lastChild) { elem = elem.lastChild; }
+            } else {
+                elem = elem.parentNode;
+            }
+        }
+        // user double-clicked on dead zone so we walked back to #moin-content
+        return 0;
+    }
+
+    // called after user clicks OK button to save edit changes
+    function getCaretLineno(textArea) {
+        // return the line number of the textarea caret
+        var caretPoint,
+            textLines;
+        if (textArea.selectionStart) {
+            caretPoint = textArea.selectionStart;
+        } else {
+            // IE9 - user has clicked ouside of textarea and textarea focus and caret position has been lost
+            return 0;
+        }
+        // get textarea text, split at caret, return number of lines before caret
+        if (navigator.userAgent && navigator.userAgent.substring(0, OPERA.length) === OPERA) {
+            textLines = textArea.value;
+        } else {
+            textLines = $(textArea).val();
+        }
+        textLines = textLines.substring(0, caretPoint);
+        return textLines.split("\n").length;
+    }
+
+    // doubleclick processing starts here
+    if (Storage !== "undefined") {
+        // Start of processing for "show" pages
+        if (document.getElementById('moin-edit-on-doubleclick')) {
+            // this is a "show" page and the edit on doubleclick option is set for this user
+            modifyButton = $('.moin-modify-button')[0];
+            if (modifyButton) {
+                // add doubleclick event handler when user doubleclicks within the content area
+                $('#moin-content').dblclick(function (e) {
+                    // get clicked line number, save, and go to +modify page
+                    lineno = findLineNo(e.target);
+                    sessionStorage.moinDoubleLineNo = lineno;
+                    document.location = modifyButton.href;
+                });
+            }
+            if (sessionStorage.moinCaretLineNo) {
+                // we have just edited this page; scroll "show" page to last position of caret in edit textarea
+                scrollPage(sessionStorage.moinCaretLineNo);
+                sessionStorage.removeItem('moinCaretLineNo');
+            }
+        }
+
+        // Start of processing for "modify" pages
+        if (sessionStorage.moinDoubleLineNo) {
+            // this is a +modify page, scroll the textarea to the doubleclicked line
+            lineno = sessionStorage.moinDoubleLineNo;
+            sessionStorage.removeItem('moinDoubleLineNo');
+            if (lineno === '0') {
+                // give user a hint because the double-click was a miss
+                moinFlashMessage(MOINFLASHINFO, MESSAGEMISSED);
+                lineno = 1;
+            }
+            scrollTextarea(lineno - 1);
+            // is option to scroll page after edit set?
+            if (document.getElementById('moin-scroll-page-after-edit')) {
+                // add click handler to OK (save) button to capture position of caret in textarea
+                $("#f_submit").click(function () {
+                    caretLineno = getCaretLineno(document.getElementById('f_content_form_data_text'));
+                    // save lineno for use in "show" page load
+                    sessionStorage.moinCaretLineNo = caretLineno;
+                });
+            }
+        }
+    } else {
+        // provide reduced functionality for obsolete browsers that do not support local storage: IE6, IE7, etc.
+        if (document.getElementById('moin-edit-on-doubleclick')) {
+            moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
+            modifyButton = $('.moin-modify-button')[0];
+            if (modifyButton) {
+                // add doubleclick event handler when user doubleclicks within the content area
+                $('#moin-content').dblclick(function (e) {
+                    document.location = modifyButton.href;
+                });
+            }
+        }
+    }
+});
