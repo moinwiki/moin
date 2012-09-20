@@ -2,9 +2,6 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """Functional test: create subitem"""
-
-from selenium import webdriver
-
 import config
 import utils
 
