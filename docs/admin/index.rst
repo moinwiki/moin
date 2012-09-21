@@ -28,16 +28,24 @@ In general, this entry has the form of::
 
     index_storage = kind, (p1, p2, ...), {kw1=..., kw2=..., ...}
 
-Currently, we only support the 'FileStorage' kind of index storage, which only
-has one parameter - the index directory::
+Currently, we support the following kinds of storages::
+
+FileStorage
+-----------
+Stores into a file system and just has one parameter - the index directory::
 
     index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
 
-**Notes for FileStorage:**
+**Notes:**
 * The path MUST be absolute, writable and should be on a fast, local filesystem.
 * Moin will use `index.temp` directory as well, if you build an index at
 the `temporary location`.
 
+DatastoreStorage
+----------------
+Stores into google app engine (GAE) storage, has no parameter::
+
+    index_storage = 'DatastoreStorage', (), {}
 
 moin index script reference
 ===========================
