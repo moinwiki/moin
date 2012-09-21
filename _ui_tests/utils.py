@@ -3,9 +3,15 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """Functions to facilitate functional testing"""
+import pytest
 
 import random
-from selenium import webdriver
+
+try:
+    from selenium import webdriver
+except ImportError:
+    pytest.skip('selenium needs to be installed for this test')
+
 import driver_register
 
 
