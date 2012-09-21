@@ -1202,6 +1202,17 @@ Features::
    add kt store configuration example
 
 
+gae store
+---------
+Features::
+
+* storage for use on google app engine (GAE)
+
+`uri` for `create_simple_mapping` looks like e.g.::
+
+    stores:gae:/%(nsname)s/%(kind)s
+
+
 memory store
 --------------
 Features::
