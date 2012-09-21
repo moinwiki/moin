@@ -33,6 +33,7 @@ Administrating MoinMoin
 
    admin/requirements
    admin/install
+   admin/install_gae
    admin/serve
    admin/configure
    admin/changes
