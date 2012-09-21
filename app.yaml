@@ -1,0 +1,14 @@
+application: moin2-test
+version: dev
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: appengine_main.application
+
+libraries:
+- name: jinja2
+  version: latest
+

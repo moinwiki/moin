@@ -95,7 +95,10 @@ import logging
 import logging.config
 import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
 
-configured = False
+# TODO: configured should be False of course, but this crashes GAE!
+# maybe this is related how we (ab)use and patch the logger as "logging".
+configured = True
+
 fallback_config = False
 
 import warnings
