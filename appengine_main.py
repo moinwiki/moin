@@ -4,9 +4,6 @@
 import os
 import sys
 
-# Configuration constants.
-wiki_config = 'wikiconfig.py'
-
 # Tweak sys.path.
 support_path = os.path.normpath(os.path.join(os.path.dirname(__file__), 'support'))
 if support_path not in sys.path:
@@ -20,4 +17,4 @@ from whoosh.filedb.gae import DatastoreFile
 create_index = DatastoreFile.all().get() is None
 
 # Create the WSGI application object.
-application = create_app(os.path.abspath(wiki_config), create_index)
+application = create_app(create_index=create_index)
