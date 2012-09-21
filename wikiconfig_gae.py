@@ -26,12 +26,12 @@ class Config(DefaultConfig):
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
-    index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
+    index_storage = 'DatastoreStorage', (), {}
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
     namespace_mapping, acl_mapping = create_simple_mapping(
-                            uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
+                            uri='stores:gae:/%(nsname)s/%(kind)s',
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',
                                              default=u'All:read,write,create,destroy,admin',

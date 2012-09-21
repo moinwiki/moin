@@ -4,6 +4,9 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+env_variables:
+  MOINCFG: ../wikiconfig_gae.py
+
 handlers:
 - url: /.*
   script: appengine_main.application
