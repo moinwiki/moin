@@ -9,7 +9,7 @@ env_variables:
 
 handlers:
 - url: /.*
-  script: appengine_main.application
+  script: MoinMoin.appengine_main.application
 
 libraries:
 - name: jinja2
