@@ -4,7 +4,7 @@ Introduction into MoinMoin Configuration
 Kinds of configuration files
 ============================
 To change how moinmoin behaves and looks, you may customize it by editing
-its configuration files::
+its configuration files:
 
 * Wiki Engine Configuration
 
@@ -230,7 +230,7 @@ don't like in the base theme::
 You can either add some normal css stylesheet or add a choice of alternate
 stylesheets.
 
-See::
+See:
 
 * `CSS media types <http://www.w3.org/TR/CSS2/media.html>`_
 * `Alternate Stylesheets <http://www.alistapart.com/articles/alternate/>`_
@@ -249,7 +249,7 @@ service. To enable it, use::
 
     user_use_gravatar = True
 
-Please note that using the gravatar service has some privacy issues::
+Please note that using the gravatar service has some privacy issues:
 
 * to register your image for your email at gravatar.com, you need to give them
   your email address, which is the same as you use in your wiki user profile.
@@ -269,7 +269,7 @@ In many cases, those external static files are maintained by someone else (like 
 javascript library or larger js libraries) and we definitely do not want to merge 
 them into our project.
 
-For MoinMoin we require the following XStatic Packages in setup.py::
+For MoinMoin we require the following XStatic Packages in setup.py:
 
 * `jquery <http://pypi.python.org/pypi/XStatic-jQuery>`_
   for jquery lib functions loaded in the template file base.html
@@ -392,7 +392,7 @@ the result to moin, usually via the environment variable REMOTE_USER::
     from MoinMoin.auth import GivenAuth
     auth = [GivenAuth(autocreate=True, coding='utf-8')]
 
-Using this method has some pros and cons::
+Using this method has some pros and cons:
 
 * you can use lots of authentication extensions available for your web server
 * but the only information moin will get via REMOTE_USER is the authenticated
@@ -650,7 +650,7 @@ Moin's default configuration tries to give a sane compromise of both soft
 and hard security. However, you may need different settings depending on the situation that the wiki
 admin, wiki owner or wiki community will have to deal with.
 
-So keep in mind::
+So keep in mind:
 
 * if your wiki is rather open, you might make it easy to contribute, e.g. a
   user who is not a regular user of your wiki could fix some typos he has just
@@ -702,7 +702,7 @@ is specified in the metadata of the item in question.
    "before" -> "item acl from metadata (if specified)" -> "after";
    "before" -> "default (otherwise)"                   -> "after";
 
-How to use before/default/after::
+How to use before/default/after:
 
 * `before` is usually used to force something, for example if you want to give some
   wiki admin all permissions indiscriminately
@@ -719,7 +719,7 @@ system more complex. You have to be very careful with permission
 changes happening as a result of changes in the hierarchy, such as when you create,
 rename or delete items.
 
-Supported capabilities (rights)::
+Supported capabilities (rights):
 
 * read - read content
 * write - write (edit, modify) content
@@ -730,7 +730,7 @@ Supported capabilities (rights)::
 ACLs - special groups
 ---------------------
 In addition to the groups provided by the group backend(s), there are some
-special group names available within ACLs::
+special group names available within ACLs:
 
 * All - a virtual group containing every user
 * Known - a virtual group containing every logged-in user
@@ -743,7 +743,7 @@ ACLs - basic syntax
 An ACL is a unicode string with one or more access control entries
 which are space separated.
 
-An entry is a colon-separated set of two values::
+An entry is a colon-separated set of two values:
 
 * the left side is a comma-separated list of user and/or group names
 * the right side is a comma-separated list of rights / capabilities for those users/groups.
@@ -767,7 +767,7 @@ If moin wants to know whether he may destroy, the answer will be "no", as
 destroy is not listed on the right side of the "All" entry. If moin wants to know
 whether he may write, the answer will be "yes".
 
-Notes::
+Notes:
 
 * As a consequence of the left-to-right and first-match-counts processing,
   you must order ACL entries so that the more specific ones (like for
@@ -818,7 +818,7 @@ it will find no match in the first entry, but the second entry will match. As
 the prefix is '-', the answer will be "no" and it will not even proceed and
 look at the third entry.
 
-Notes::
+Notes:
 
 * you usually use these modifiers if most of the rights for a given user shall be specified
   later, but a special user or group should be treated slightly different for
@@ -850,7 +850,7 @@ TextChas
 A TextCHA is a pure text alternative to ''CAPTCHAs''. MoinMoin uses it to
 prevent wiki spamming and it has proven to be very effective.
 
-Features::
+Features:
 
 * when registering a user or saving an item, it can ask a random question
 * moin matches the given answer against a regular expression
@@ -862,7 +862,7 @@ Features::
 TextCha Configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
-Tips for configuration::
+Tips for configuration:
 
 * have 1 word / 1 number answers
 * ask questions that normal users of your site are likely to be able to answer
@@ -897,7 +897,7 @@ Note that users with 'notextcha' ACL capability won't get TextChas to answer.
 
 Secrets
 =======
-Moin uses secrets to encrypt or cryptographically sign something like::
+Moin uses secrets to encrypt or cryptographically sign something like:
 
 * textchas
 * tickets
@@ -994,7 +994,7 @@ Storage
 =======
 MoinMoin supports storage backends as different ways of storing wiki items.
 
-Setup of storage is rather complex and layered, involving::
+Setup of storage is rather complex and layered, involving:
 
 * a router middleware that dispatches parts of the namespace to the respective
   backend
@@ -1006,7 +1006,7 @@ Setup of storage is rather complex and layered, involving::
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier. It helps you to::
+This is a helper function to make storage setup easier. It helps you to:
 
 * create a simple setup that uses 3 storage backends internally for these
   parts of the namespace:
@@ -1045,7 +1045,7 @@ that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
-In this case, the mapping created will look like this::
+In this case, the mapping created will look like this:
 
 +----------------+-----------------------------+
 | Namespace part | Filesystem path for storage |
@@ -1061,7 +1061,7 @@ See the docs about ACLs.
 
 protecting middleware
 ---------------------
-Features::
+Features:
 
 * protects access to lower storage layers by ACLs (Access Control Lists)
 * makes sure there won't be ACL security issues, even if upper layers have bugs
@@ -1070,7 +1070,7 @@ Features::
 
 routing middleware
 ------------------
-Features::
+Features:
 
 * dispatches storage access to different backends depending on the item name
 * in POSIX terms, it is something like fstab/mount
@@ -1079,7 +1079,7 @@ Features::
 
 indexing middleware
 -------------------
-Features::
+Features:
 
 * maintains an index for important metadata values
 * speeds up looking up / selecting items
@@ -1092,7 +1092,7 @@ This is a backend that ties together 2 stores to form a backend: one for meta, o
 
 fs store
 --------
-Features::
+Features:
 
 * stores into the filesystem
 * store metadata and data into separate files/directories
@@ -1115,13 +1115,13 @@ Configuration::
 
 sqla store
 ----------
-Features::
+Features:
 
 * stores data into an (SQL) database / table
 * can either use 1 database per store or 1 table per store and you need to
   give different table names then
 * uses slqalchemy (without the ORM) for database abstraction
-* supports multiple types of databases, for example::
+* supports multiple types of databases, for example:
  
   - sqlite (default, comes built-into Python)
   - postgresql
@@ -1146,7 +1146,7 @@ Grant 'myuser' (his password: 'mypassword') full access to these databases.
 
 sqlite store
 ------------
-Features::
+Features:
 
 * directly talks to sqlite, without using sqlalchemy
 * stores data into an sqlite database, which is a single file
@@ -1171,7 +1171,7 @@ the drive letter.
 
 kc store
 --------
-Features::
+Features:
 
 * uses a Kyoto Cabinet file for storage
 * very fast
@@ -1191,7 +1191,7 @@ Disable it with the commandline option::
 
 kt store
 --------
-Features::
+Features:
 
 * uses a Kyoto Tycoon server for storage
 * fast
@@ -1204,7 +1204,7 @@ Features::
 
 memory store
 --------------
-Features::
+Features:
 
 * keeps everything in RAM
 * if your system or the moin process crashes, all data is lost, so definitely not for production use
@@ -1218,7 +1218,7 @@ Features::
 
 fileserver backend
 ------------------
-Features::
+Features:
 
 * exposes a part of the filesystem as read-only wiki items
 
@@ -1235,7 +1235,7 @@ Mail configuration
 
 Sending E-Mail
 --------------
-Moin can optionally send E-Mail. Possible uses::
+Moin can optionally send E-Mail. Possible uses:
 
 * send out item change notifications.
 * enable users to reset forgotten passwords

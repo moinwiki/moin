@@ -34,9 +34,10 @@ has one parameter - the index directory::
     index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
 
 **Notes for FileStorage:**
+
 * The path MUST be absolute, writable and should be on a fast, local filesystem.
 * Moin will use `index.temp` directory as well, if you build an index at
-the `temporary location`.
+  the `temporary location`.
 
 
 moin index script reference
@@ -65,6 +66,7 @@ moin index-build
 Process all revisions of the wiki and add the indexable documents to the index.
 
 **Note:**
+
 * For big wikis, this can take rather long; consider using --tmp.
 * index-build does NOT clear the index at the beginning.
 * index-build does not check the current contents of the index. Therefore you must not run
