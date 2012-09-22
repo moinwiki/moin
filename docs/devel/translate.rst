@@ -96,7 +96,7 @@ the developers, but ...
 First steps with a new ``*.po`` file
 ````````````````````````````````````
 
-A newly created translation needs a few initial preparations::
+A newly created translation needs a few initial preparations:
 
 * replace "``PROJECT``" with "``MoinMoin 2``"
 

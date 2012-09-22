@@ -4,6 +4,7 @@ MoinMoin Supports You
 Free Support
 ------------
 You can get free support and information here:
+
 * on our chat channels, see http://moinmo.in/MoinMoinChat
 * on our wiki, see http://moinmo.in/ - please note that quite a lot of content
   there is about moin 1.x and does not apply to moin2. One page has a lot

@@ -171,7 +171,7 @@ moin uses indexed search. Keep in mind that this has some special properties:
  * Because it is only using an index, it can only find what was put there
  * If you use wildcards or regexes, it will still use the index, but in a different, slower way
 
-For example::
+For example:
 
  * "foobar" is put into the index somehow
  * you search for "ooba" - you will not find it, because only "foobar" was put into the index

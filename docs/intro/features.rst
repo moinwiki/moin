@@ -42,7 +42,7 @@ Authorization
 
   - global, using a mapping, so you can apply ACLs on parts of the namespace
   - local, per wiki item
-  - give rights, such as::
+  - give rights, such as:
 
     + create, destroy
     + read, write, rename

@@ -188,7 +188,7 @@ If this is the case, try it manually::
  # confirm the problems by running:
  pip install -e .
 
-Now install each package into your virtual env manually::
+Now install each package into your virtual env manually:
 
 * Find the required packages by looking at "install_requires" within `setup.py`.
 * Download each required package from http://pypi.python.org/
