@@ -74,7 +74,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     zip_safe=False,
     dependency_links=[
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
-        'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
+        'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
         'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.1',
@@ -95,7 +95,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
         'pytest-pep8', # coding style checker
-        'whoosh>=2.4.0', # needed for indexed search
+        'whoosh>=2.5.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2', # support for static file pypi packages
