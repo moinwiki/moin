@@ -32,3 +32,29 @@ If that works, deploy the files using appcfg.py.
 
 Usage of dev_appserver and appcfg is documented in the GAE SDK documentation.
 
+
+Notes for creating the support directory / archive
+==================================================
+Usually you can just use the ready-to-use moin2-gae-support.tgz as described
+above.
+
+But just for the case you have to recreate it (e.g. to update it), here are
+some hints:
+
+* make sure you run some POSIX OS (like Linux), Windows is currently not
+  supported. You also need "make", "find", "tar" and "gzip" (but usually you
+  should have them).
+* make sure that you have a virtualenv "env" in the moin workdir (this is
+  the default place and name used by the quickinstall script)
+* make sure you use Python 2.7.x
+* from the repo workdir, run::
+
+    make gaesupport
+
+This will create a "support" directory with all the dependencies needed for
+running moin on GAE. For more infos about how this is done, see the Makefile.
+
+If you want to create the moin2-gae-support.tgz, just run additionally::
+
+    make gaetgz
+
