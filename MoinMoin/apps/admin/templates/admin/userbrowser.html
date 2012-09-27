@@ -1,0 +1,34 @@
+{% extends theme("layout.html") %}
+{% block content %}
+    <table class="zebra">
+    <tr>
+        <th>{{ _("User name") }}</th>
+        <th>{{ _("Member of Groups") }}</th>
+        <th>{{ _("Email address") }}</th>
+        <th>{{ _("Actions") }}</th>
+    </tr>
+    {% for u in user_accounts %}
+    <tr>
+        <td><a href="{{ url_for('frontend.show_item', item_name=u.name) }}">{{ u.name }}</a>{{ u.disabled and " (%s)" % _("disabled") or ""}}</td>
+        <td>{{ u.groups|join(',') }}</td>
+        <td>
+            {% if u.email %}
+            <a href="mailto:{{ u.email|e }}" class="mailto">{{ u.email|e }}</a>
+            {% endif %}
+        </td>
+        <td>
+            <form action="{{ url_for('admin.userprofile', user_name=u.name) }}" method="GET">
+                <input type="hidden" name="key" value="disabled" />
+                <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
+                <input type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />
+            </form>
+            <form action="{{ url_for('admin.mail_recovery_token') }}" method="GET">
+                <input type="hidden" name="email" value="{{ u.email }}" />
+                <input type="hidden" name="account_sendmail" value="1" />
+                <input type="submit" name="recoverpass" value="{{ _("Mail account data") }}" />
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
