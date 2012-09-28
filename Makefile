@@ -29,15 +29,13 @@ interwiki:
 pylint:
 	@pylint --disable-msg=W0142,W0511,W0612,W0613,C0103,C0111,C0302,C0321,C0322 --disable-msg-cat=R MoinMoin
 
-# Automate creation of the GAE support archive from a virtualenv site-packages directory
-gaesupport:
+# Automate creation of the support archive from a virtualenv site-packages directory
+support:
 	@# do NOT name it "site-packages", but "support":
 	@cp -a env/lib/python2.7/site-packages support
 	@# remove compiled code files:
 	@find support -name "*.pyc" -exec rm {} \;
 	@find support -name "*.pyo" -exec rm {} \;
-	@# GAE offers jinja2, see app.yaml:
-	@rm -rf support/jinja2
 	@# documentation generation support not needed on GAE:
 	@rm -rf support/sphinx
 	@# package installers not needed/supported on GAE:
