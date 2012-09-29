@@ -16,7 +16,7 @@ You do NOT need to:
 * create a storage (will be done automatically)
 
 Instead, do this:
-* download http://static.moinmo.in/files/moin2-gae-support.tgz
+* download http://static.moinmo.in/files/moin2-support.tgz
 * unpack it into the toplevel directory of the repo workdir (there should
   be a "support" directory on the same level as the "MoinMoin" directory
   after unpacking). These are all the dependencies moin needs for production
@@ -35,8 +35,7 @@ Usage of dev_appserver and appcfg is documented in the GAE SDK documentation.
 
 Notes for creating the support directory / archive
 ==================================================
-Usually you can just use the ready-to-use moin2-gae-support.tgz as described
-above.
+Usually you can just use the ready-to-use moin2-support.tgz as described above.
 
 But just for the case you have to recreate it (e.g. to update it), here are
 some hints:
@@ -49,12 +48,12 @@ some hints:
 * make sure you use Python 2.7.x
 * from the repo workdir, run::
 
-    make gaesupport
+    make support
 
 This will create a "support" directory with all the dependencies needed for
-running moin on GAE. For more infos about how this is done, see the Makefile.
+running moin. For more infos about how this is done, see the Makefile.
 
-If you want to create the moin2-gae-support.tgz, just run additionally::
+If you want to create the moin2-support.tgz, just run additionally::
 
-    make gaetgz
+    make supporttgz
 
