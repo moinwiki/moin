@@ -68,7 +68,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock = Clock()
     clock.start('create_app total')
     app = Flask('MoinMoin')
-    app.on_gae = False
+    app.on_gae = False  # are we running on Google App Engine?
     clock.start('create_app load config')
     if flask_config_file:
         app.config.from_pyfile(flask_config_file)

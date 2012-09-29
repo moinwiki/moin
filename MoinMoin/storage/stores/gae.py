@@ -1,4 +1,4 @@
-# Copyright: 2011 MoinMoin:GuidoVanRossum
+# Copyright: 2012 MoinMoin:GuidoVanRossum
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
