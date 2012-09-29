@@ -73,7 +73,7 @@ class BytesStore(_Store, BytesMutableStoreBase):
 
     def __getitem__(self, key):
         return self._getitem(key)
-    
+
     def __setitem__(self, key, value):
         self._setitem(key, value)
 

@@ -49,9 +49,9 @@ support:
 	@# we need to add a __init__.py to the namespace packages:
 	@touch support/flaskext/__init__.py support/xstatic/__init__.py support/xstatic/pkg/__init__.py
 
-gaetgz:
+supporttgz:
 	@# create the support archive:
-	@tar czf moin2-gae-support.tgz support
+	@tar czf moin2-support.tgz support
 
 clean: clean-devwiki clean-pyc clean-orig clean-rej
 	-rm -rf build
