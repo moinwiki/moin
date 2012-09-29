@@ -190,7 +190,9 @@ class BaseModifyForm(BaseChangeForm):
         return form
 
 
-IndexEntry = namedtuple('IndexEntry', 'relname meta hassubitems')
+IndexEntry = namedtuple('IndexEntry', 'relname meta')
+
+MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
@@ -448,25 +450,27 @@ class Item(object):
     @timed()
     def make_flat_index(self, subitems):
         """
-        Create a list of IndexEntry from a list of subitems.
+        Create two IndexEntry lists - ``dirs`` and ``files`` - from a list of
+        subitems.
 
-        The resulting list contains only IndexEntry for *direct* subitems, e.g.
-        'foo' but not 'foo/bar'. When the latter is encountered, the former has
-        its `hassubitems` flag set in its IndexEntry.
+        Direct subitems are added to the ``files`` list.
 
-        When disconnected levels are detected, e.g. when there is foo/bar but no
-        foo, a dummy IndexEntry is created for the latter, with 'nonexistent'
-        itemtype and 'application/x.nonexistent' contenttype. Its `hassubitems`
-        flag is also set.
+        For indirect subitems, its ancestor which is a direct subitem is added
+        to the ``dirs`` list. Supposing current index root is 'foo' and when
+        'foo/bar/la' is encountered, 'foo/bar' is added to ``dirs``.
+
+        The direct subitem need not exist.
+
+        When both a subitem itself and some of its subitems are in the subitems
+        list, it appears in both ``files`` and ``dirs``.
         """
         prefix = self.subitems_prefix
         prefixlen = len(prefix)
-        index = []
-
-        # relnames of all encountered subitems
-        relnames = set()
-        # relnames of subitems that need to have `hassubitems` flag set (but didn't)
-        relnames_to_patch = set()
+        # IndexEntry instances of "file" subitems
+        files = []
+        # IndexEntry instances of "directory" subitems
+        dirs = []
+        added_dir_relnames = set()
 
         for rev in subitems:
             fullname = rev.meta[NAME]
@@ -477,30 +481,15 @@ class Item(object):
                 # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                 # 'foo/bar' will be found.
                 direct_relname = relname.partition('/')[0]
-                direct_fullname = prefix + direct_relname
-                if direct_relname not in relnames:
-                    # Join disconnected level with a dummy IndexEntry.
-                    # NOTE: Patching the index when encountering a disconnected
-                    # subitem might break the ordering. e.g. suppose the global
-                    # index has ['lorem-', 'lorem/ipsum'] (thus 'lorem' is a
-                    # disconnected level; also, note that ord('-') < ord('/'))
-                    # the patched index will have lorem after lorem-, requiring
-                    # one more pass of sorting after generating the index.
-                    e = IndexEntry(direct_relname, DummyRev(DummyItem(direct_fullname)).meta, True)
-                    index.append(e)
-                    relnames.add(direct_relname)
-                else:
-                    relnames_to_patch.add(direct_relname)
+                if direct_relname not in added_dir_relnames:
+                    added_dir_relnames.add(direct_relname)
+                    direct_fullname = prefix + direct_relname
+                    direct_rev = get_storage_revision(direct_fullname)
+                    dirs.append(IndexEntry(direct_relname, direct_rev.meta))
             else:
-                e = IndexEntry(relname, rev.meta, False)
-                index.append(e)
-                relnames.add(relname)
+                files.append(IndexEntry(relname, rev.meta))
 
-        for i in xrange(len(index)):
-            if index[i].relname in relnames_to_patch:
-                index[i] = index[i]._replace(hassubitems=True)
-
-        return index
+        return dirs, files
 
     @timed()
     def filter_index(self, index, startswith=None, selected_groups=None):
@@ -544,7 +533,15 @@ class Item(object):
         return index
 
     def get_index(self, startswith=None, selected_groups=None):
-        return self.filter_index(self.make_flat_index(self.get_subitem_revs()), startswith, selected_groups)
+        dirs, files = self.make_flat_index(self.get_subitem_revs())
+        return dirs, self.filter_index(files, startswith, selected_groups)
+
+    def get_mixed_index(self):
+        dirs, files = self.make_flat_index(self.get_subitem_revs())
+        dirs_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
+        index_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
+        index_dict.update(dirs_dict)
+        return sorted(index_dict.values())
 
     index_template = 'index.html'
 

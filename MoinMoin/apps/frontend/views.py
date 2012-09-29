@@ -766,14 +766,15 @@ def index(item_name):
     initials = list(set(initials))
     initials = sorted(initials)
 
-    index = item.get_index(startswith, selected_groups)
-    index = sorted(index, key=lambda e: e.relname.lower())
+    dirs, files = item.get_index(startswith, selected_groups)
+    # index = sorted(index, key=lambda e: e.relname.lower())
 
     item_names = item_name.split(u'/')
     return render_template(item.index_template,
                            item_names=item_names,
                            item_name=item_name,
-                           index=index,
+                           files=files,
+                           dirs=dirs,
                            initials=initials,
                            startswith=startswith,
                            form=form,
