@@ -44,6 +44,7 @@ from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.util.registry import RegistryBase
+from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
@@ -429,6 +430,7 @@ class Item(object):
     def subitems_prefix(self):
         return self.name + u'/' if self.name else u''
 
+    @timed()
     def get_subitem_revs(self):
         """
         Create a list of subitems of this item.
@@ -443,6 +445,7 @@ class Item(object):
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
+    @timed()
     def make_flat_index(self, subitems):
         """
         Create a list of IndexEntry from a list of subitems.
@@ -499,6 +502,7 @@ class Item(object):
 
         return index
 
+    @timed()
     def filter_index(self, index, startswith=None, selected_groups=None):
         """
         Filter a list of IndexEntry.
