@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright: 2012 MoinMoin:TarashishMishra
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -24,4 +25,5 @@ if gae:
 
 
 elif __name__ == '__main__':
-    """TODO: call the moin script command interface from here"""
+    from MoinMoin.script import main
+    main()
