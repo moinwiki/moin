@@ -16,16 +16,25 @@ from werkzeug import escape
 from MoinMoin.util import diff_html
 
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.items import Item, NonExistent, IndexEntry
+from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from MoinMoin.items.content import Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
 
 
-def build_index(basename, spec):
+def build_index(basename, relnames):
     """
-    Build an index by hand, useful as a test helper.
+    Build a list of IndexEntry by hand, useful as a test helper.
     """
-    return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta, hassubitem))
+    return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta))
+            for relname in relnames]
+
+def build_mixed_index(basename, spec):
+    """
+    Build a list of MixedIndexEntry by hand, useful as a test helper.
+
+    :spec is a list of (relname, hassubitem) tuples.
+    """
+    return [(MixedIndexEntry(relname, Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
 
 class TestItem(object):
@@ -93,28 +102,29 @@ class TestItem(object):
 
         # test Item.make_flat_index
         # TODO: test Item.get_subitem_revs
-        index = baseitem.make_flat_index(baseitem.get_subitem_revs())
-        assert index == build_index(basename, [
+        dirs, files = baseitem.make_flat_index(baseitem.get_subitem_revs())
+        assert dirs == build_index(basename, [u'cd', u'ij'])
+        assert files == build_index(basename, [u'ab', u'gh', u'ij', u'mn'])
+
+        # test Item.get_mixed_index
+        mixed_index = baseitem.get_mixed_index()
+        assert mixed_index == build_mixed_index(basename, [
             (u'ab', False),
             (u'cd', True),
             (u'gh', False),
             (u'ij', True),
-            (u'mn', False)
+            (u'mn', False),
         ])
 
         # test Item.filter_index
         # check filtered index when startswith param is passed
-        filtered = baseitem.filter_index(index, startswith=u'a')
-        assert filtered == build_index(basename, [(u'ab', False)])
-
-        # check that virtual container item is returned with startswith
-        filtered = baseitem.filter_index(index, startswith=u'c')
-        assert filtered == build_index(basename, [(u'cd', True)])
+        filtered_files = baseitem.filter_index(files, startswith=u'a')
+        assert filtered_files == build_index(basename, [u'ab'])
 
         # check filtered index when contenttype_groups is passed
         ctgroups = ["image items"]
-        filtered = baseitem.filter_index(index, selected_groups=ctgroups)
-        assert filtered == build_index(basename, [(u'mn', False)])
+        filtered_files = baseitem.filter_index(files, selected_groups=ctgroups)
+        assert filtered_files == build_index(basename, [u'mn'])
 
         # If we ask for text/plain type, should Foo/cd be returned?
 

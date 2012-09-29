@@ -119,7 +119,7 @@
         </div>
     </div>
     <div class="moin-index-separator"></div>
-    {% if index %}
+    {% if files or dirs %}
     <div id="moin-initials">
         {% if not startswith %}
             <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
@@ -134,12 +134,24 @@
             {% endif %}
         {% endfor %}
     </div>
-    <div class="moin-item-index">
-        {% for e in index %}
-            {{ render_entry(e) }}
-        {% endfor %}
-    </div>
-    <div class="moin-clr"></div>
+    {% if dirs %}
+        <div class="moin-item-index">
+            <p>{{ _("These items have subitems that match your filter:") }}</p>
+            {% for e in dirs %}
+                {{ render_entry(e) }}
+            {% endfor %}
+        </div>
+        <div class="moin-clr"></div>
+        <hr />
+    {% endif %}
+    {% if files %}
+        <div class="moin-item-index">
+            {% for e in files %}
+                {{ render_entry(e) }}
+            {% endfor %}
+        </div>
+        <div class="moin-clr"></div>
+    {% endif %}
     {% endif %}
     <div id="popup">
         <div id="popup-for-action" class="popup-container">

@@ -124,10 +124,7 @@ class ThemeSupport(object):
         """
         from MoinMoin.items import Item
         item = Item.create(item_name)
-        item_index = item.get_index()
-        # Sort items by whether or not they have children, then by name:
-        item_index = sorted(item_index, key=attrgetter('hassubitems', 'relname'))
-        return item_index
+        return item.get_mixed_index()
 
     def userhome(self):
         """
