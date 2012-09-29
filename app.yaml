@@ -9,7 +9,7 @@ env_variables:
 
 handlers:
 - url: /.*
-  script: MoinMoin.appengine_main.application
+  script: moin.application
 
 # We must include jinja2 in the support directory, so we can use the same
 # support tgz for both GAE and standalone local installations (both do not use
