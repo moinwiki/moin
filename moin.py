@@ -16,6 +16,8 @@ server_sw = os.environ.get('SERVER_SOFTWARE', '')
 gae = server_sw.startswith('Development') or server_sw.startswith('Google')
 
 if gae:
+    from MoinMoin import log
+    log.configured = True  # TODO: without this, it crashes/hangs on GAE
     # Hack: If there are no DatastoreFile instances assume we must create the index.
     from whoosh.filedb.gae import DatastoreFile
     create_index = DatastoreFile.all().get() is None
