@@ -168,7 +168,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro multi_select(field) %}
   {% set valid_values = field.member_schema.valid_values %}
   {% set labels = field.member_schema.properties.get('labels', {}) %}
-  {% set descriptions = field.member_schema.properties.get('helpers', {}) %}
+  {% set descriptions = field.member_schema.properties.get('descriptions', {}) %}
   {% for value in valid_values %}
     <li>
       {{ raw_input(field, 'checkbox', value=value) }}
