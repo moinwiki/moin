@@ -42,6 +42,7 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
+from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
@@ -51,10 +52,10 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
+from MoinMoin.constants.contenttypes import charset
 from MoinMoin.constants.itemtypes import ITEMTYPES
 
-from .content import Content, NonExistentContent, Draw
+from .content import content_registry, Content, NonExistentContent, Draw
 
 
 COLS = 80
@@ -506,28 +507,27 @@ class Item(object):
                      if e.relname.startswith((startswith, startswith.swapcase()))]
 
         def build_contenttypes(groups):
-            ctypes = [[ctype for ctype, clabel in contenttypes]
-                      for gname, contenttypes in CONTENTTYPE_GROUPS
-                      if gname in groups]
-            ctypes_chain = itertools.chain(*ctypes)
-            contenttypes = list(ctypes_chain)
-            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
-                                             for contenttype in contenttypes
-                                             if u';' in contenttype]
-            contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
+            contenttypes = []
+            for g in groups:
+                entries = content_registry.groups.get(g, []) # .get is a temporary workaround for "unknown items" group
+                contenttypes.extend([e.content_type for e in entries])
             return contenttypes
 
+        def contenttype_match(tested, cts):
+            for ct in cts:
+                if ct.issupertype(tested):
+                    return True
+            return False
+
         if selected_groups is not None:
-            all_groups = [gname for gname, contenttypes in CONTENTTYPE_GROUPS]
             selected_contenttypes = build_contenttypes(selected_groups)
-            filtered_index = [e for e in index
-                              if e.meta[CONTENTTYPE] in selected_contenttypes]
+            filtered_index = [e for e in index if contenttype_match(Type(e.meta[CONTENTTYPE]), selected_contenttypes)]
 
             unknown_item_group = "unknown items"
             if unknown_item_group in selected_groups:
-                all_contenttypes = build_contenttypes(all_groups)
+                all_contenttypes = build_contenttypes(content_registry.group_names)
                 filtered_index.extend([e for e in index
-                                       if e.meta[CONTENTTYPE] not in all_contenttypes])
+                                       if not contenttype_match(Type(e.meta[CONTENTTYPE]), all_contenttypes)])
 
             index = filtered_index
         return index
@@ -614,7 +614,8 @@ class Default(Contentful):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
                                        itemtype=self.itemtype,
-                                       contenttype_groups=CONTENTTYPE_GROUPS,
+                                       group_names=content_registry.group_names,
+                                       groups=content_registry.groups,
                                       )
             item = self
             if isinstance(self.rev, DummyRev):

@@ -49,8 +49,8 @@ from MoinMoin.themes import render_template, get_editor_info, contenttype_to_cla
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
+from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
-from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.itemtypes import ITEMTYPES
 from MoinMoin.util import crypto
@@ -727,11 +727,10 @@ def jfu_server(item_name):
         abort(403)
 
 
-contenttype_groups = []
+contenttype_groups = content_registry.group_names[:]
 contenttype_group_descriptions = {}
-for gname, contenttypes in CONTENTTYPE_GROUPS:
-    contenttype_groups.append(gname)
-    contenttype_group_descriptions[gname] = ', '.join([ctlabel for ctname, ctlabel in contenttypes])
+for g in contenttype_groups:
+    contenttype_group_descriptions[g] = ', '.join([e.display_name for e in content_registry.groups[g]])
 contenttype_groups.append('unknown items')
 
 ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(descriptions=contenttype_group_descriptions)).using(optional=True)

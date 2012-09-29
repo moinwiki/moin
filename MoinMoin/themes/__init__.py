@@ -29,6 +29,7 @@ from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.clock import timed
+from MoinMoin.util.mime import Type
 
 
 def get_current_theme():
@@ -414,6 +415,7 @@ def setup_jinja_env():
                             # _, gettext, ngettext
                             'isinstance': isinstance,
                             'list': list,
+                            'Type': Type,
                             # please note that flask-themes installs:
                             # theme, theme_static
                             'theme_supp': ThemeSupport(app.cfg),
