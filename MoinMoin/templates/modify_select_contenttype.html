@@ -6,14 +6,14 @@
 {{ _("Please select the contenttype of the new %(itemtype)s item.", itemtype=itemtype) }}
 </p>
 <table id="moin-create-table" class="zebra">
-    {% for gname, contenttypes in contenttype_groups %}
+    {% for group in group_names %}
     <tr>
-        <th>{{ gname }}</th>
+        <th>{{ group }}</th>
     </tr>
     <tr>
         <td> |&nbsp
-        {% for ctname, ctlabel in contenttypes %}
-            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=itemtype, contenttype=ctname) }}">{{ ctlabel }}</a> &nbsp|&nbsp
+        {% for e in groups[group] %}
+            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp|&nbsp
         {% endfor %}
         </td>
     </tr>
