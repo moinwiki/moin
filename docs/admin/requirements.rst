@@ -16,6 +16,7 @@ For moin, you can use any server compatible with WSGI:
   debugging, development, adhoc-wikis, etc.
 * apache with mod_wsgi is recommended for bigger/busier wikis.
 * other WSGI-compatible servers or middlewares are usable
+* Google App Engine (experimental)
 * For cgi, fastcgi, scgi, ajp, etc., you can use the "flup" middleware:
   http://trac.saddi.com/flup
 * IIS with ISAPI-WSGI gateway is also compatible: http://code.google.com/p/isapi-wsgi/
@@ -27,5 +28,6 @@ Dependencies
 For dependency information, please see setup.py.
 
 If you use easy_install or pip or our ``quickinstall`` script, then
-dependencies are usually automatically dealt with.
+dependencies are usually automatically dealt with. Alternatively, you can
+use a support archive that contains all the dependencies.
 
