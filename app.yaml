@@ -1,0 +1,16 @@
+application: moin2-test
+version: dev
+runtime: python27
+api_version: 1
+threadsafe: true
+
+env_variables:
+  MOINCFG: ../wikiconfig_gae.py
+
+handlers:
+- url: /.*
+  script: MoinMoin.appengine_main.application
+
+# We must include jinja2 in the support directory, so we can use the same
+# support tgz for both GAE and standalone local installations (both do not use
+# setup.py). Thus, we do not use the jinja2 GAE could provide.
