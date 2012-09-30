@@ -42,18 +42,20 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
+from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.util.registry import RegistryBase
+from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_GROUPS
+from MoinMoin.constants.contenttypes import charset
 from MoinMoin.constants.itemtypes import ITEMTYPES
 
-from .content import Content, NonExistentContent, Draw
+from .content import content_registry, Content, NonExistentContent, Draw
 
 
 COLS = 80
@@ -189,7 +191,9 @@ class BaseModifyForm(BaseChangeForm):
         return form
 
 
-IndexEntry = namedtuple('IndexEntry', 'relname meta hassubitems')
+IndexEntry = namedtuple('IndexEntry', 'relname meta')
+
+MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
@@ -429,6 +433,7 @@ class Item(object):
     def subitems_prefix(self):
         return self.name + u'/' if self.name else u''
 
+    @timed()
     def get_subitem_revs(self):
         """
         Create a list of subitems of this item.
@@ -443,27 +448,30 @@ class Item(object):
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
+    @timed()
     def make_flat_index(self, subitems):
         """
-        Create a list of IndexEntry from a list of subitems.
+        Create two IndexEntry lists - ``dirs`` and ``files`` - from a list of
+        subitems.
 
-        The resulting list contains only IndexEntry for *direct* subitems, e.g.
-        'foo' but not 'foo/bar'. When the latter is encountered, the former has
-        its `hassubitems` flag set in its IndexEntry.
+        Direct subitems are added to the ``files`` list.
 
-        When disconnected levels are detected, e.g. when there is foo/bar but no
-        foo, a dummy IndexEntry is created for the latter, with 'nonexistent'
-        itemtype and 'application/x.nonexistent' contenttype. Its `hassubitems`
-        flag is also set.
+        For indirect subitems, its ancestor which is a direct subitem is added
+        to the ``dirs`` list. Supposing current index root is 'foo' and when
+        'foo/bar/la' is encountered, 'foo/bar' is added to ``dirs``.
+
+        The direct subitem need not exist.
+
+        When both a subitem itself and some of its subitems are in the subitems
+        list, it appears in both ``files`` and ``dirs``.
         """
         prefix = self.subitems_prefix
         prefixlen = len(prefix)
-        index = []
-
-        # relnames of all encountered subitems
-        relnames = set()
-        # relnames of subitems that need to have `hassubitems` flag set (but didn't)
-        relnames_to_patch = set()
+        # IndexEntry instances of "file" subitems
+        files = []
+        # IndexEntry instances of "directory" subitems
+        dirs = []
+        added_dir_relnames = set()
 
         for rev in subitems:
             fullname = rev.meta[NAME]
@@ -474,31 +482,17 @@ class Item(object):
                 # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                 # 'foo/bar' will be found.
                 direct_relname = relname.partition('/')[0]
-                direct_fullname = prefix + direct_relname
-                if direct_relname not in relnames:
-                    # Join disconnected level with a dummy IndexEntry.
-                    # NOTE: Patching the index when encountering a disconnected
-                    # subitem might break the ordering. e.g. suppose the global
-                    # index has ['lorem-', 'lorem/ipsum'] (thus 'lorem' is a
-                    # disconnected level; also, note that ord('-') < ord('/'))
-                    # the patched index will have lorem after lorem-, requiring
-                    # one more pass of sorting after generating the index.
-                    e = IndexEntry(direct_relname, DummyRev(DummyItem(direct_fullname)).meta, True)
-                    index.append(e)
-                    relnames.add(direct_relname)
-                else:
-                    relnames_to_patch.add(direct_relname)
+                if direct_relname not in added_dir_relnames:
+                    added_dir_relnames.add(direct_relname)
+                    direct_fullname = prefix + direct_relname
+                    direct_rev = get_storage_revision(direct_fullname)
+                    dirs.append(IndexEntry(direct_relname, direct_rev.meta))
             else:
-                e = IndexEntry(relname, rev.meta, False)
-                index.append(e)
-                relnames.add(relname)
+                files.append(IndexEntry(relname, rev.meta))
 
-        for i in xrange(len(index)):
-            if index[i].relname in relnames_to_patch:
-                index[i] = index[i]._replace(hassubitems=True)
+        return dirs, files
 
-        return index
-
+    @timed()
     def filter_index(self, index, startswith=None, selected_groups=None):
         """
         Filter a list of IndexEntry.
@@ -513,34 +507,41 @@ class Item(object):
                      if e.relname.startswith((startswith, startswith.swapcase()))]
 
         def build_contenttypes(groups):
-            ctypes = [[ctype for ctype, clabel in contenttypes]
-                      for gname, contenttypes in CONTENTTYPE_GROUPS
-                      if gname in groups]
-            ctypes_chain = itertools.chain(*ctypes)
-            contenttypes = list(ctypes_chain)
-            contenttypes_without_encoding = [contenttype[:contenttype.index(u';')]
-                                             for contenttype in contenttypes
-                                             if u';' in contenttype]
-            contenttypes.extend(contenttypes_without_encoding) # adding more mime-types without the encoding term
+            contenttypes = []
+            for g in groups:
+                entries = content_registry.groups.get(g, []) # .get is a temporary workaround for "unknown items" group
+                contenttypes.extend([e.content_type for e in entries])
             return contenttypes
 
+        def contenttype_match(tested, cts):
+            for ct in cts:
+                if ct.issupertype(tested):
+                    return True
+            return False
+
         if selected_groups is not None:
-            all_groups = [gname for gname, contenttypes in CONTENTTYPE_GROUPS]
             selected_contenttypes = build_contenttypes(selected_groups)
-            filtered_index = [e for e in index
-                              if e.meta[CONTENTTYPE] in selected_contenttypes]
+            filtered_index = [e for e in index if contenttype_match(Type(e.meta[CONTENTTYPE]), selected_contenttypes)]
 
             unknown_item_group = "unknown items"
             if unknown_item_group in selected_groups:
-                all_contenttypes = build_contenttypes(all_groups)
+                all_contenttypes = build_contenttypes(content_registry.group_names)
                 filtered_index.extend([e for e in index
-                                       if e.meta[CONTENTTYPE] not in all_contenttypes])
+                                       if not contenttype_match(Type(e.meta[CONTENTTYPE]), all_contenttypes)])
 
             index = filtered_index
         return index
 
     def get_index(self, startswith=None, selected_groups=None):
-        return self.filter_index(self.make_flat_index(self.get_subitem_revs()), startswith, selected_groups)
+        dirs, files = self.make_flat_index(self.get_subitem_revs())
+        return dirs, self.filter_index(files, startswith, selected_groups)
+
+    def get_mixed_index(self):
+        dirs, files = self.make_flat_index(self.get_subitem_revs())
+        dirs_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
+        index_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
+        index_dict.update(dirs_dict)
+        return sorted(index_dict.values())
 
     index_template = 'index.html'
 
@@ -613,7 +614,8 @@ class Default(Contentful):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
                                        itemtype=self.itemtype,
-                                       contenttype_groups=CONTENTTYPE_GROUPS,
+                                       group_names=content_registry.group_names,
+                                       groups=content_registry.groups,
                                       )
             item = self
             if isinstance(self.rev, DummyRev):
