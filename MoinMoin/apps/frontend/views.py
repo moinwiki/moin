@@ -52,7 +52,6 @@ from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
 from MoinMoin.constants.keys import *
-from MoinMoin.constants.itemtypes import ITEMTYPES
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm, ValidSearch
