@@ -49,6 +49,14 @@ support:
 	@# we need to add a __init__.py to the namespace packages:
 	@touch support/flaskext/__init__.py support/xstatic/__init__.py support/xstatic/pkg/__init__.py
 
+# Create Dist archive with support
+supportdist:
+	@python setup.py sdist
+	@find dist -name 'moin-*.tar.gz' -exec tar -xzf {} -C dist/ \;
+	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec cp -r support/ {} \;
+	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec bash -c 'tar czf dist/`basename {}`_with_support.tar.gz -C dist/ `basename {}`' \;
+	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+
 supporttgz:
 	@# create the support archive:
 	@tar czf moin2-support.tgz support
