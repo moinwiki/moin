@@ -5,14 +5,9 @@
 MoinMoin - itemtype related constants
 """
 
-
-from __future__ import absolute_import, division
-
-
-ITEMTYPE_DEFAULT = u'default'
-ITEMTYPE_USERPROFILE = u'userprofile'
 ITEMTYPE_NONEXISTENT = u'nonexistent'
-
+ITEMTYPE_USERPROFILE = u'userprofile'
+ITEMTYPE_DEFAULT = u'default'  # == wiki-like
 ITEMTYPE_TICKET = u'ticket'
 ITEMTYPE_BLOG = u'blog'
 ITEMTYPE_BLOGENTRY = u'blogentry'
