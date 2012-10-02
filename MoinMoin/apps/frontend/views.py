@@ -79,43 +79,7 @@ def show_root():
 
 @frontend.route('/robots.txt')
 def robots():
-    return Response("""\
-User-agent: *
-Crawl-delay: 20
-Disallow: /+convert/
-Disallow: /+dom/
-Disallow: /+download/
-Disallow: /+modify/
-Disallow: /+content/
-Disallow: /+delete/
-Disallow: /+ajaxdelete/
-Disallow: /+ajaxdestroy/
-Disallow: /+ajaxmodify/
-Disallow: /+destroy/
-Disallow: /+rename/
-Disallow: /+revert/
-Disallow: /+index/
-Disallow: /+jfu-server/
-Disallow: /+sitemap/
-Disallow: /+similar_names/
-Disallow: /+quicklink/
-Disallow: /+subscribe/
-Disallow: /+backrefs/
-Disallow: /+wanteds/
-Disallow: /+orphans/
-Disallow: /+register
-Disallow: /+recoverpass
-Disallow: /+usersettings
-Disallow: /+login
-Disallow: /+logout
-Disallow: /+bookmark
-Disallow: /+diff/
-Disallow: /+diffraw/
-Disallow: /+search
-Disallow: /+dispatch/
-Disallow: /+admin/
-Allow: /
-""", mimetype='text/plain')
+    return app.send_static_file('robots.txt')
 
 
 @frontend.route('/favicon.ico')

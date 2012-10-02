@@ -8,6 +8,44 @@ env_variables:
   MOINCFG: ../wikiconfig_gae.py
 
 handlers:
+- url: /%2Bserve/anywikidraw
+  static_dir: support/xstatic/pkg/anywikidraw/data
+
+- url: /%2Bserve/ckeditor
+  static_dir: support/xstatic/pkg/ckeditor/data
+
+- url: /%2Bserve/jquery
+  static_dir: support/xstatic/pkg/jquery/data
+
+- url: /%2Bserve/jquery_file_upload
+  static_dir: support/xstatic/pkg/jquery_file_upload/data
+
+- url: /%2Bserve/svgedit_moin
+  static_dir: support/xstatic/pkg/jsvgedit_moin/data
+
+- url: /%2Bserve/svgweb
+  static_dir: support/xstatic/pkg/svgweb/data
+
+- url: /%2Bserve/twikidraw_moin
+  static_dir: support/xstatic/pkg/twikidraw_moin/data
+
+- url: /_themes/foobar
+  static_dir: MoinMoin/themes/foobar/static
+
+- url: /_themes/modernized
+  static_dir: MoinMoin/themes/modernized/static
+
+- url: /favicon.ico
+  static_files: MoinMoin/static/logos/favicon.ico
+  upload: MoinMoin/static/logos/favicon.ico
+
+- url: /robots.txt
+  static_files: MoinMoin/static/robots.txt
+  upload: MoinMoin/static/robots.txt
+
+- url: /static
+  static_dir: MoinMoin/static
+
 - url: /.*
   script: moin.application
 
