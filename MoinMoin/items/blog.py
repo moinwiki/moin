@@ -39,6 +39,9 @@ class BlogEntryMetaForm(BaseMetaForm):
 @register
 class Blog(Default):
     itemtype = ITEMTYPE_BLOG
+    display_name = L_('Blog')
+    description = L_('Blog item')
+    order = 0
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogMetaForm
@@ -78,6 +81,9 @@ class Blog(Default):
 @register
 class BlogEntry(Default):
     itemtype = ITEMTYPE_BLOG_ENTRY
+    display_name = L_('Blog entry')
+    description = L_('Blog entry item')
+    order = 0
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm
