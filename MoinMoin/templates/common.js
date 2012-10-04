@@ -24,7 +24,7 @@ function moinFlashMessage(classes, message) {
 function selected_link() {
     "use strict";
     var selected = window.location.pathname,
-        list = document.getElementsByClassName('panel'),
+        list = $('.panel'),
         i,
         j,
         nav_links,
@@ -500,18 +500,32 @@ $(document).ready(initMoinUsersettings);
 // This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
 $(function () {
     // NOTE: if browser does not support sessionStorage, then auto-scroll is not available
-    //       sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+
+    //       (sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+).
+    //       IE8 does not scroll page after edit (cannot determine caret position within textarea).
     "use strict";
 
     var TOPID = 'moin-content',
         LINENOATTR = "data-lineno",
         MESSAGEMISSED = ' {{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }} ',
         MESSAGEOBSOLETE = ' {{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }} ',
+        MESSAGEOLD = ' {{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }} ',
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
         lineno,
         message,
         caretLineno;
+
+    // IE8 workaround for missing setSelectionRange
+    function setSelection(textArea, charStart) {
+        // scroll IE8 textarea, target line will be near bottom of textarea
+        var range = textArea.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', charStart);
+        range.moveStart('character', charStart);
+        range.select();
+        //warn user that features are missing with IE8
+        moinFlashMessage(MOINFLASHWARNING, MESSAGEOLD);
+    }
 
     // called after +modify page loads -- scrolls the textarea after a doubleclick
     function scrollTextarea(jumpLine) {
@@ -522,7 +536,7 @@ $(function () {
             scrollAmount,
             textAreaClone;
 
-        if (textArea && textArea.setSelectionRange) {
+        if (textArea && (textArea.setSelectionRange || textArea.createTextRange)) {
             window.scrollTo(0, 0);
             // get data from textarea, split into array of lines, truncate based on jumpLine, make into a string
             textLines = $(textArea).val();
@@ -542,12 +556,18 @@ $(function () {
             textAreaClone.rows = 1;
             scrollAmount = textAreaClone.scrollHeight - 100; // get total height of clone - 100 pixels
             textAreaClone.parentNode.removeChild(textAreaClone);
-            // position the caret, highlight the position of the caret for a second or so
+            // position the caret
             textArea.focus();
             if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
-            textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+            if (textArea.setSelectionRange) {
+                // html5 compliant browsers, highlight the position of the caret for a second or so
+                textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
+                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
+                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+            } else{
+                // IE8 workaround to position the caret and scroll textarea
+                setSelection(textArea, scrolledText.length);
+            }
         }
     }
 
@@ -616,6 +636,7 @@ $(function () {
         if (textArea.selectionStart) {
             caretPoint = textArea.selectionStart;
         } else {
+            // IE7, IE8 or
             // IE9 - user has clicked ouside of textarea and textarea focus and caret position has been lost
             return 0;
         }
@@ -630,7 +651,7 @@ $(function () {
     }
 
     // doubleclick processing starts here
-    if (Storage !== "undefined") {
+    if (window.sessionStorage) {
         // Start of processing for "show" pages
         if (document.getElementById('moin-edit-on-doubleclick')) {
             // this is a "show" page and the edit on doubleclick option is set for this user
@@ -668,7 +689,7 @@ $(function () {
                 $("#f_submit").click(function () {
                     caretLineno = getCaretLineno(document.getElementById('f_content_form_data_text'));
                     // save lineno for use in "show" page load
-                    sessionStorage.moinCaretLineNo = caretLineno;
+                    if (caretLineno > 0) { sessionStorage.moinCaretLineNo = caretLineno; }
                 });
             }
         }
