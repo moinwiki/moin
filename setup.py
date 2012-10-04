@@ -100,8 +100,9 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
-        'XStatic-jQuery>=1.6.1.4',
+        'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
+        'XStatic-JSON-js',
         'XStatic-svgweb>=2011.2.3.2',
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',

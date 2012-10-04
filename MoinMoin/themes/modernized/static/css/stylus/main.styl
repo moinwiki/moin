@@ -452,6 +452,8 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
 
 .moin-tab-titles li
     display inline-block
+    *display: inline; // IE7 hack to display title tabs in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
     margin 10px 0 -3px
     padding 0 5px
     border-bottom 3px solid border_color
@@ -829,6 +831,8 @@ p.searchhint
 .moin-align-right ul li.action-bar
     list-style-type none
     display inline-block
+    *display: inline; // IE7 hack to display index action bar in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
 
 .moin-contenttypes-wrapper
     position relative
@@ -1336,6 +1340,8 @@ a.moin-nonexistent:hover
 
 .moin-itemviews li
     display inline-block
+    *display: inline; // IE7 hack to display itemviews in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
     padding 0
     margin 4px 6px
     line-height 1em
@@ -1456,6 +1462,8 @@ a.moin-nonexistent:hover
 
 #moin-timings li
     display inline-block
+    *display: inline; // IE7 hack to display timings in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
     margin 0 20px 0 0
 
 #moin-credits span
@@ -1469,6 +1477,8 @@ a.moin-nonexistent:hover
 
 #moin-creditlogos li
     display inline-block
+    *display: inline; // IE7 hack to display credit logos in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
     margin 10px 0 10px 10px
 
 .moin-item-wrapper

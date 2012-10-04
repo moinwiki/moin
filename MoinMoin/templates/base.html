@@ -54,6 +54,10 @@
         {# TODO: use a local copy later #}
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <!--[if lt IE 8]>
+        {# required to save user settings with IE7 and earlier #}
+        <script src="{{ url_for('serve.files', name='json_js', filename='json2.js') }}"></script>
+    <![endif]-->
     {% endblock %}
 {% endblock %}
 </head>
