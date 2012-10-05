@@ -69,8 +69,20 @@
     </div>
 {% endblock %}
 
-{% macro render_entry(e) %}
-    {% set maxchars = 20 %}
+{% set maxchars = 20 %}
+
+{% macro render_dir_entry(e) %}
+    <div>
+        <a href="{{ url_for('.index', item_name=e.meta['name']) }}"
+           {# TODO .moin-dir-item class is not styled yet #}
+           class="moin-dir-item"
+           title="{{ e.relname }}">
+           {{ e.relname|truncate(maxchars, true, '..') }}
+        </a>
+    </div>
+{% endmacro %}
+
+{% macro render_file_entry(e) %}
     <div>
         <span class="moin-select-item">&nbsp;</span>
         {% set mimetype = "application/x.moin.download" %}
@@ -82,12 +94,6 @@
            title="{{ e.relname }}">
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
-        {% if e.hassubitems %}
-            <a href="{{ url_for('frontend.index', item_name=e.meta['name']) }}"
-               title="{{ _("More") }}"
-               class="moin-more-index">&nbsp;
-        </a>
-        {% endif %}
     </div>
 {% endmacro %}
 
@@ -138,7 +144,7 @@
         <div class="moin-item-index">
             <p>{{ _("These items have subitems that match your filter:") }}</p>
             {% for e in dirs %}
-                {{ render_entry(e) }}
+                {{ render_dir_entry(e) }}
             {% endfor %}
         </div>
         <div class="moin-clr"></div>
@@ -147,7 +153,7 @@
     {% if files %}
         <div class="moin-item-index">
             {% for e in files %}
-                {{ render_entry(e) }}
+                {{ render_file_entry(e) }}
             {% endfor %}
         </div>
         <div class="moin-clr"></div>
