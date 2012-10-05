@@ -53,9 +53,13 @@ support:
 supportdist:
 	@python setup.py sdist
 	@find dist -name 'moin-*.tar.gz' -exec tar -xzf {} -C dist/ \;
-	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec cp -r support/ {} \;
-	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec bash -c 'tar czf dist/`basename {}`_with_support.tar.gz -C dist/ `basename {}`' \;
-	@find dist -name "moin-*" -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp -r support/ {} \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp moin.py {} \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp app.yaml {} \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp wikiconfig_gae.py {} \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec sh -c "rm -rf {}/moin.egg-info {}/PKG-INFO {}/MANIFEST.in {}/setup.* {}/quickinstall* {}/Makefile" \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec bash -c 'tar czf dist/`basename {}`_with_support.tar.gz -C dist/ `basename {}`' \;
+	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec rm -rf {} \;
 
 supporttgz:
 	@# create the support archive:
