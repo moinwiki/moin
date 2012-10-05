@@ -69,16 +69,26 @@
     </div>
 {% endblock %}
 
+{% macro entry_anchor(type, e) -%}
+    index-{{ type }}-{{ e.meta['itemid'] }}
+{%- endmacro %}
+
 {% set maxchars = 20 %}
 
 {% macro render_dir_entry(e) %}
     <div>
         <a href="{{ url_for('.index', item_name=e.meta['name']) }}"
+           name="{{ entry_anchor('dir', e) }}"
            {# TODO .moin-dir-item class is not styled yet #}
            class="moin-dir-item"
            title="{{ e.relname }}">
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
+        {% if e in files %}
+            <a href="#{{ entry_anchor('file', e) }}"
+               title="{{ _("This item itself also matches your filter.") }}">↓
+            </a>
+        {% endif %}
     </div>
 {% endmacro %}
 
@@ -89,11 +99,17 @@
         <a href="{{ url_for('.download_item', item_name=e.meta['name'], mimetype=mimetype) }}" class="moin-download-link">
         </a>
         <a href="{{ url_for('.show_item', item_name=e.meta['name']) }}"
+           name="{{ entry_anchor('file', e) }}"
            {# TODO .moin-itemtype-* classes are not styled yet #}
            class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
            title="{{ e.relname }}">
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
+        {% if e in dirs %}
+            <a href="#{{ entry_anchor('dir', e) }}"
+               title="{{ _("This item also has subitems that match your filter.") }}">↑
+            </a>
+        {% endif %}
     </div>
 {% endmacro %}
 
