@@ -443,7 +443,7 @@ class NodeVisitor(object):
             self.open_moin_page_node(
                 moin_page.part(
                     attrib={
-                        moin_page.content_type:\
+                        moin_page.content_type:
                             "x-moin/macro;name={0}".format(macro_name)}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
@@ -783,4 +783,3 @@ default_registry.register(Converter.factory,
                           Type('text/x-rst'), type_moin_document)
 default_registry.register(Converter.factory,
                           Type('x-moin/format;name=rst'), type_moin_document)
-

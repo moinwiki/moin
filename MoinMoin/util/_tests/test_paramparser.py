@@ -137,11 +137,11 @@ class TestParamParsing(object):
 
     def testUnitArgument(self):
         result = paramparser.UnitArgument('7mm', float, ['%', 'mm'])
-        assert result.get_default() ==  (7.0, 'mm')
+        assert result.get_default() == (7.0, 'mm')
         assert result.parse_argument('8%') == (8.0, '%')
-        pytest.raises(ValueError, result.parse_argument,  u'7m')
-        pytest.raises(ValueError, result.parse_argument,  u'7')
-        pytest.raises(ValueError, result.parse_argument,  u'mm')
+        pytest.raises(ValueError, result.parse_argument, u'7m')
+        pytest.raises(ValueError, result.parse_argument, u'7')
+        pytest.raises(ValueError, result.parse_argument, u'mm')
 
     def testExtendedParser(self):
         tests = [
@@ -701,4 +701,3 @@ class TestExtensionInvoking(object):
         assert ief(has_complex, u'2.007, 2.007')
         assert ief(has_complex, u'2.007', [2.007])
         assert ief(has_complex, u'b=2.007', [2.007])
-

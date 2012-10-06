@@ -4,11 +4,11 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_fieldlist(gen, form['name'], 'text') }}
-    {{ forms.render_field(gen, form['display_name'], 'text') }}
-    {{ forms.render_field(gen, form['openid'], 'url') }}
-    {{ forms.render_select(gen, form['timezone']) }}
-    {{ forms.render_select(gen, form['locale']) }}
+    {{ forms.render(form['name']) }}
+    {{ forms.render(form['display_name']) }}
+    {{ forms.render(form['openid']) }}
+    {{ forms.render(form['timezone']) }}
+    {{ forms.render(form['locale']) }}
 </dl>
 {{ forms.render_hidden('part', 'personal') }}
 {{ forms.render_button(_("Save")) }}
@@ -20,9 +20,9 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_field(gen, form['password_current'], 'password') }}
-    {{ forms.render_field(gen, form['password1'], 'password') }}
-    {{ forms.render_field(gen, form['password2'], 'password') }}
+    {{ forms.render(form['password_current']) }}
+    {{ forms.render(form['password1']) }}
+    {{ forms.render(form['password2']) }}
 </dl>
 {{ forms.render_hidden('part', 'password') }}
 {{ forms.render_button(_("Change password")) }}
@@ -36,7 +36,7 @@
 {% endif %}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_field(gen, form['email'], 'email') }}
+    {{ forms.render(form['email']) }}
 </dl>
 {{ forms.render_hidden('part', 'notification') }}
 {{ forms.render_button(_("Save")) }}
@@ -47,10 +47,10 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_select(gen, form['theme_name']) }}
-    {{ forms.render_field(gen, form['css_url'], 'url') }}
-    {{ forms.render_field(gen, form['edit_rows'], 'text') }}
-    {{ forms.render_field(gen, form['results_per_page'], 'text') }}
+    {{ forms.render(form['theme_name']) }}
+    {{ forms.render(form['css_url']) }}
+    {{ forms.render(form['edit_rows']) }}
+    {{ forms.render(form['results_per_page']) }}
 </dl>
 {{ forms.render_hidden('part', 'ui') }}
 {{ forms.render_button(_("Save")) }}
@@ -72,10 +72,11 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
 <dl>
-    {{ forms.render_field(gen, form['mailto_author'], 'checkbox') }}
-    {{ forms.render_field(gen, form['edit_on_doubleclick'], 'checkbox') }}
-    {{ forms.render_field(gen, form['show_comments'], 'checkbox') }}
-    {{ forms.render_field(gen, form['disabled'], 'checkbox') }}
+    {{ forms.render(form['mailto_author']) }}
+    {{ forms.render(form['edit_on_doubleclick']) }}
+    {{ forms.render(form['scroll_page_after_edit']) }}
+    {{ forms.render(form['show_comments']) }}
+    {{ forms.render(form['disabled']) }}
 </dl>
 {{ forms.render_hidden('part', 'options') }}
 {{ forms.render_button(_("Save")) }}

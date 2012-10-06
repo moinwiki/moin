@@ -67,22 +67,26 @@ from flask import g as flaskg
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
-from whoosh.index import open_dir, create_in, EmptyIndexError
+from whoosh.index import EmptyIndexError
 from whoosh.writing import AsyncWriter
-from whoosh.filedb.multiproc import MultiSegmentWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
 from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 from MoinMoin.config import WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
-                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, \
-                            CONTENT, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
+                            LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, \
+                            CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
+                            PTIME, \
                             LATEST_REVS, ALL_REVS, BACKENDNAME, \
                             CONTENTTYPE_USER
 from MoinMoin.constants import keys
+from MoinMoin.constants.keys import ITEMTYPE
 
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
@@ -92,6 +96,7 @@ from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSc
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
+WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 
@@ -108,9 +113,10 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc = dict([(str(key), value)
                 for key, value in meta.items()
                 if key in schema])
-    if MTIME in doc:
-        # we have UNIX UTC timestamp (int), whoosh wants datetime
-        doc[MTIME] = datetime.datetime.utcfromtimestamp(doc[MTIME])
+    for key in [MTIME, PTIME]:
+        if key in doc:
+            # we have UNIX UTC timestamp (int), whoosh wants datetime
+            doc[key] = datetime.datetime.utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content
@@ -193,6 +199,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
                 # side effect: we update some metadata:
                 meta[ITEMLINKS] = refs_conv.get_links()
                 meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+                meta[EXTERNALLINKS] = refs_conv.get_external_links()
             doc = output_conv(doc)
             return doc
         # no way
@@ -204,12 +211,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
 
 class IndexingMiddleware(object):
-    def __init__(self, index_dir, backend, wiki_name=None, acl_rights_contents=[], **kw):
+    def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
         """
-        self.index_dir = index_dir
-        self.index_dir_tmp = index_dir + '.temp'
+        self.index_storage = index_storage
         self.backend = backend
         self.wikiname = wiki_name
         self.ix = {}  # open indexes
@@ -232,6 +238,10 @@ class IndexingMiddleware(object):
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
+            # publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True),
+            # ITEMTYPE from metadata, always matched exactly hence ID
+            ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
@@ -249,6 +259,8 @@ class IndexingMiddleware(object):
             ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
             COMMENT: TEXT(stored=True),
+            # SUMMARY from metadata
+            SUMMARY: TEXT(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True),
         }
@@ -266,10 +278,31 @@ class IndexingMiddleware(object):
         latest_revs_fields.update(**common_fields)
 
         userprofile_fields = {
-            EMAIL: ID(unique=True, stored=True),
-            OPENID: ID(unique=True, stored=True),
+            # Note: email / openid (if given) should be unique, but we might
+            # have lots of empty values if it is not given and thus it is NOT
+            # unique overall! Wrongly declaring it unique would lead to whoosh
+            # killing other users from index when update_document() is called!
+            EMAIL: ID(stored=True),
+            OPENID: ID(stored=True),
         }
         latest_revs_fields.update(**userprofile_fields)
+
+        # XXX This is a highly adhoc way to support indexing of ticket items.
+        ticket_fields = {
+            'effort': NUMERIC(stored=True),
+            'difficulty': NUMERIC(stored=True),
+            'severity': NUMERIC(stored=True),
+            'priority': NUMERIC(stored=True),
+            'status': ID(stored=True),
+            'assigned_to': ID(stored=True),
+            'superseded_by': ID(stored=True),
+            'depends_on': ID(stored=True),
+        }
+        latest_revs_fields.update(**ticket_fields)
+
+        blog_entry_fields = {
+        }
+        latest_revs_fields.update(**blog_entry_fields)
 
         all_revs_fields = {
             ITEMID: ID(stored=True),
@@ -301,17 +334,44 @@ class IndexingMiddleware(object):
         # or latest revs index):
         self.common_fields = set(latest_revs_fields.keys()) & set(all_revs_fields.keys())
 
+    def get_storage_params(self, tmp=False):
+        kind, params, kw = self.index_storage
+        params, kw = list(params), dict(kw)  # better make a (mutable) copy
+        if kind == WHOOSH_FILESTORAGE:
+            # index_storage = 'FileStorage', (index_dir, ), {}
+            if tmp:
+                params[0] += '.temp'
+            from whoosh.filedb.filestore import FileStorage
+            cls = FileStorage
+        else:
+            raise ValueError("index_storage = {0!r} is not supported!".format(kind))
+        return kind, cls, params, kw
+
+    def get_storage(self, tmp=False, create=False):
+        """
+        Get the whoosh storage (whoosh supports different kinds of storage,
+        e.g. to filesystem or to GAE).
+        Currently we only support the FileStorage.
+        """
+        kind, cls, params, kw = self.get_storage_params(tmp)
+        if kind == WHOOSH_FILESTORAGE:
+            if create:
+                index_dir = params[0]
+                try:
+                    os.mkdir(index_dir)
+                except:
+                    # ignore exception, we'll get another exception below
+                    # in case there are problems with the index_dir
+                    pass
+        return cls(*params, **kw)
+
     def open(self):
         """
         Open all indexes.
         """
-        index_dir = self.index_dir
-        try:
-            for name in INDEXES:
-                self.ix[name] = open_dir(index_dir, indexname=name)
-        except (IOError, OSError, EmptyIndexError) as err:
-            logging.error(u"{0!s} [while trying to open index '{1}' in '{2}']".format(err, name, index_dir))
-            raise
+        storage = self.get_storage()
+        for name in INDEXES:
+            self.ix[name] = storage.open_index(name)
 
     def close(self):
         """
@@ -325,34 +385,32 @@ class IndexingMiddleware(object):
         """
         Create all indexes (empty).
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        try:
-            os.mkdir(index_dir)
-        except:
-            # ignore exception, we'll get another exception below
-            # in case there are problems with the index_dir
-            pass
-        try:
-            for name in INDEXES:
-                create_in(index_dir, self.schemas[name], indexname=name)
-        except (IOError, OSError) as err:
-            logging.error(u"{0!s} [while trying to create index '{1}' in '{2}']".format(err, name, index_dir))
-            raise
+        storage = self.get_storage(tmp, create=True)
+        for name in INDEXES:
+            storage.create_index(self.schemas[name], indexname=name)
 
     def destroy(self, tmp=False):
         """
         Destroy all indexes.
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        if os.path.exists(index_dir):
-            shutil.rmtree(index_dir)
+        # XXX this is whoosh backend specific and currently only works for FileStorage.
+        kind, cls, params, kw = self.get_storage_params(tmp)
+        if kind == WHOOSH_FILESTORAGE:
+            index_dir = params[0]
+            if os.path.exists(index_dir):
+                shutil.rmtree(index_dir)
 
     def move_index(self):
         """
-        Move freshly built indexes from index_dir_tmp to index_dir.
+        Move freshly built indexes from tmp storage to normal storage
         """
-        self.destroy()
-        os.rename(self.index_dir_tmp, self.index_dir)
+        # XXX this is whoosh backend specific and currently only works for FileStorage.
+        kind, cls, params, kw = self.get_storage_params(False)
+        if kind == WHOOSH_FILESTORAGE:
+            _, _, params_tmp, _ = self.get_storage_params(True)
+            self.destroy()
+            index_dir, index_dir_tmp = params[0], params_tmp[0]
+            os.rename(index_dir_tmp, index_dir)
 
     def index_revision(self, meta, content, backend_name, async=False): # True
         """
@@ -429,15 +487,8 @@ class IndexingMiddleware(object):
         Note: mode == 'add' is faster but you need to make sure to not create duplicate
               documents in the index.
         """
-        if procs == 1:
-            # MultiSegmentWriter sometimes has issues and is pointless for procs == 1,
-            # so use the simple writer when --procs 1 is given:
-            writer = index.writer()
-        else:
-            writer = MultiSegmentWriter(index, procs, limitmb)
-        with writer as writer:
+        with index.writer(procs=procs, limitmb=limitmb) as writer:
             for backend_name, revid in revids:
-                print backend_name, revid
                 if mode in ['add', 'update', ]:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
@@ -479,8 +530,8 @@ class IndexingMiddleware(object):
               create, rebuild wiki1, rebuild wiki2, ...
               create (tmp), rebuild wiki1, rebuild wiki2, ..., move
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        index = open_dir(index_dir, indexname=ALL_REVS)
+        storage = self.get_storage(tmp)
+        index = storage.open_index(ALL_REVS)
         try:
             # build an index of all we have (so we know what we have)
             all_revids = self.backend # the backend is an iterator over all revids
@@ -489,7 +540,7 @@ class IndexingMiddleware(object):
         finally:
             index.close()
         # now build the index of the latest revisions:
-        index = open_dir(index_dir, indexname=LATEST_REVS)
+        index = storage.open_index(LATEST_REVS)
         try:
             self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add', procs, limitmb)
         finally:
@@ -508,8 +559,8 @@ class IndexingMiddleware(object):
 
         :returns: index changed (bool)
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        index_all = open_dir(index_dir, indexname=ALL_REVS)
+        storage = self.get_storage(tmp)
+        index_all = storage.open_index(ALL_REVS)
         try:
             # NOTE: self.backend iterator gives (backend_name, revid) tuples, which is NOT
             # the same as (name, revid), thus we do the set operations just on the revids.
@@ -531,7 +582,7 @@ class IndexingMiddleware(object):
             backend_latest_backends_revids = set(self._find_latest_backends_revids(index_all))
         finally:
             index_all.close()
-        index_latest = open_dir(index_dir, indexname=LATEST_REVS)
+        index_latest = storage.open_index(LATEST_REVS)
         try:
             # now update LATEST_REVS index:
             with index_latest.searcher() as searcher:
@@ -561,9 +612,9 @@ class IndexingMiddleware(object):
         """
         Optimize whoosh index.
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
+        storage = self.get_storage(tmp)
         for name in INDEXES:
-            ix = open_dir(index_dir, indexname=name)
+            ix = storage.open_index(name)
             try:
                 ix.optimize()
             finally:
@@ -573,8 +624,8 @@ class IndexingMiddleware(object):
         """
         Yield key/value tuple lists for all documents in the indexes, fields sorted.
         """
-        index_dir = self.index_dir_tmp if tmp else self.index_dir
-        ix = open_dir(index_dir, indexname=idx_name)
+        storage = self.get_storage(tmp)
+        ix = storage.open_index(idx_name)
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
@@ -595,18 +646,27 @@ class IndexingMiddleware(object):
             qp = QueryParser(default_fields[0], schema=schema)
         else:
             raise ValueError("default_fields list must at least contain one field name")
-        # TODO before using the RegexPlugin, require a whoosh release that fixes whoosh issues #205 and #206
-        #qp.add_plugin(RegexPlugin())
-        def username_pseudo_field(node):
-            username = node.text
-            users = user.search_users(**{NAME_EXACT: username})
-            if users:
-                userid = users[0].meta['userid']
-                node = WordNode(userid)
-                node.set_fieldname("userid")
+        qp.add_plugin(RegexPlugin())
+        def userid_pseudo_field_factory(fieldname):
+            """generate a translator function, that searches for the userid
+               in the given fieldname when provided with the username
+            """
+            def userid_pseudo_field(node):
+                username = node.text
+                users = user.search_users(**{NAME_EXACT: username})
+                if users:
+                    userid = users[0].meta[ITEMID]
+                    node = WordNode(userid)
+                    node.set_fieldname(fieldname)
+                    return node
                 return node
-            return node
-        qp.add_plugin(PseudoFieldPlugin({'username': username_pseudo_field}))
+            return userid_pseudo_field
+        qp.add_plugin(PseudoFieldPlugin(dict(
+            # username:JoeDoe searches for revisions modified by JoeDoe
+            username=userid_pseudo_field_factory(keys.USERID),
+            # assigned:JoeDoe searches for tickets assigned to JoeDoe
+            assigned=userid_pseudo_field_factory('assigned_to'), # XXX should be keys.ASSIGNED_TO
+        )))
         return qp
 
     def search(self, q, idx_name=LATEST_REVS, **kw):
@@ -755,6 +815,12 @@ class Item(object):
         return self._current.get(NAMESPACE)
 
     @property
+    def ptime(self):
+        dt = self._current.get(PTIME)
+        if dt is not None:
+            return utctimestamp(dt)
+
+    @property
     def names(self):
         names = self._current.get(NAME)
         if isinstance(names, tuple):
@@ -772,6 +838,12 @@ class Item(object):
             logging.warning("DOC: %r - Workaround returns names = %r" % (self._current, names))
         assert isinstance(names, list)
         return names
+
+    @property
+    def mtime(self):
+        dt = self._current.get(MTIME)
+        if dt is not None:
+            return utctimestamp(dt)
 
     @property
     def name(self):
@@ -1085,7 +1157,7 @@ class Meta(Mapping):
             # we have a result document from whoosh, which has quite a lot
             # of the usually wanted metadata, avoid storage access, use this.
             value = self._doc[key]
-            if key == MTIME:
+            if key in [MTIME, PTIME]:
                 # whoosh has a datetime object, but we want a UNIX timestamp
                 value = utctimestamp(value)
             return value
@@ -1103,4 +1175,3 @@ class Meta(Mapping):
 
     def __repr__(self):
         return "Meta _doc: {0!r} _meta: {1!r}".format(self._doc, self._meta)
-

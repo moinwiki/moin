@@ -232,15 +232,3 @@ def copytree(src, dst, symlinks=False):
             errors.append((srcname, dstname, why))
     if errors:
         raise EnvironmentError(str(errors))
-
-# Code could come from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/65203
-
-# we currently do not support locking
-LOCK_EX = LOCK_SH = LOCK_NB = 0
-
-def lock(file, flags):
-    raise NotImplementedError
-
-def unlock(file):
-    raise NotImplementedError
-

@@ -1,6 +1,7 @@
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2012 MoinMoin:CheerXiao
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -11,9 +12,11 @@ This script removes all revisions but the last one from all selected items.
 
 
 from flask import current_app as app
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
-from MoinMoin.config import NAME, NAME_EXACT
+from whoosh.query import Every
+
+from MoinMoin.config import NAME, NAME_EXACT, REVID
 
 
 class Reduce_Revisions(Command):
@@ -24,22 +27,29 @@ class Reduce_Revisions(Command):
     )
 
     def run(self, query):
-        storage = app.unprotected_storage
         if query:
-            qp = storage.query_parser([NAME_EXACT, ])
-            q = qp.parse(query)
+            qp = app.storage.query_parser([NAME_EXACT, ])
+            q = qp.parse(query_text)
         else:
             q = Every()
-        results = storage.search(q, limit=None)
-        for result in results:
-            item_name = result[NAME]
-            item = storage.get_item(item_name)
-            current_revno = item.next_revno - 1
-            for revno in item.list_revisions():
-                if revno < current_revno:
-                    rev = item.get_revision(revno)
-                    print "Destroying {0!r} revision {1}.".format(item_name, revno)
-                    rev.destroy()
+
+        for current_rev in app.storage.search(q, limit=None):
+            current_name = current_rev.meta[NAME]
+            current_revid = current_rev.meta[REVID]
+            print "Destroying historical revisions of {0!r}:".format(current_name)
+            has_historical_revision = False
+            for rev in current_rev.item.iter_revs():
+                revid = rev.meta[REVID]
+                if revid == current_revid:
+                    continue
+                has_historical_revision = True
+                name = rev.meta[NAME]
+                if name == current_name:
+                    print "    Destroying revision {0}".format(revid)
+                else:
+                    print "    Destroying revision {0} (named {1!r})".format(revid, name)
+                current_rev.item.destroy_revision(revid)
+            if not has_historical_revision:
+                print "    (no historical revisions)"
 
         print "Finished reducing backend."
-

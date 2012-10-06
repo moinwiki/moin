@@ -12,6 +12,7 @@ import csv
 
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
+from MoinMoin.util.tree import moin_page
 
 
 class Converter(TableMixin):
@@ -39,10 +40,11 @@ class Converter(TableMixin):
                 row.append(encoded_cell.decode('utf-8'))
             if row:
                 rows.append(row)
-        return self.build_dom_table(rows)
+        table = self.build_dom_table(rows)
+        body = moin_page.body(children=(table, ))
+        return moin_page.page(children=(body, ))
 
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('text/csv'), type_moin_document)
-

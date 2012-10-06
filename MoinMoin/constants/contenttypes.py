@@ -18,50 +18,11 @@ parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html'
 CONTENTTYPE_USER = u'application/x.moin.userprofile'
 CONTENTTYPE_DEFAULT = u'application/octet-stream'
 
-# structure for contenttype groups
-CONTENTTYPE_GROUPS = [
-    ('markup text items', [
-        ('text/x.moin.wiki;charset=utf-8', 'Wiki (MoinMoin)'),
-        ('text/x.moin.creole;charset=utf-8', 'Wiki (Creole)'),
-        ('text/x-mediawiki;charset=utf-8', 'Wiki (MediaWiki)'),
-        ('text/x-rst;charset=utf-8', 'ReST'),
-        ('application/docbook+xml;charset=utf-8', 'DocBook'),
-        ('text/html;charset=utf-8', 'HTML'),
-    ]),
-    ('other text items', [
-        ('text/plain;charset=utf-8', 'plain text'),
-        ('text/x-diff;charset=utf-8', 'diff/patch'),
-        ('text/x-python;charset=utf-8', 'python code'),
-        ('text/csv;charset=utf-8', 'csv'),
-        ('text/x-irclog;charset=utf-8', 'IRC log'),
-    ]),
-    ('image items', [
-        ('image/jpeg', 'JPEG'),
-        ('image/png', 'PNG'),
-        ('image/svg+xml', 'SVG'),
-    ]),
-    ('audio items', [
-        ('audio/wave', 'WAV'),
-        ('audio/ogg', 'OGG'),
-        ('audio/mpeg', 'MP3'),
-        ('audio/webm', 'WebM'),
-    ]),
-    ('video items', [
-        ('video/ogg', 'OGG'),
-        ('video/webm', 'WebM'),
-        ('video/mp4', 'MP4'),
-    ]),
-    ('drawing items', [
-        ('application/x-twikidraw', 'TDRAW'),
-        ('application/x-anywikidraw', 'ADRAW'),
-        ('application/x-svgdraw', 'SVGDRAW'),
-    ]),
-    ('other items', [
-        ('application/pdf', 'PDF'),
-        ('application/zip', 'ZIP'),
-        ('application/x-tar', 'TAR'),
-        ('application/x-gtar', 'TGZ'),
-        ('application/octet-stream', 'binary file'),
-    ]),
-]
 
+GROUP_MARKUP_TEXT = 'markup text items'
+GROUP_OTHER_TEXT = 'other text items'
+GROUP_IMAGE = 'image items'
+GROUP_AUDIO = 'audio items'
+GROUP_VIDEO = 'video items'
+GROUP_DRAWING = 'drawing items'
+GROUP_OTHER = 'other items'

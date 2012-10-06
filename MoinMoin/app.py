@@ -20,8 +20,8 @@ from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
 
-from flaskext.cache import Cache
-from flaskext.themes import setup_themes
+from flask.ext.cache import Cache
+from flask.ext.themes import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
@@ -168,7 +168,7 @@ def init_backends(app):
     if app.cfg.create_storage:
         app.router.create()
     app.router.open()
-    app.storage = indexing.IndexingMiddleware(app.cfg.index_dir, app.router,
+    app.storage = indexing.IndexingMiddleware(app.cfg.index_storage, app.router,
                                               wiki_name=app.cfg.interwikiname,
                                               acl_rights_contents=app.cfg.acl_rights_contents)
     if app.cfg.create_index:
@@ -218,6 +218,7 @@ def setup_user():
         session['user.trusted'] = userobj.trusted
         session['user.auth_method'] = userobj.auth_method
         session['user.auth_attribs'] = userobj.auth_attribs
+        session['user.session_token'] = userobj.get_session_token()
     return userobj
 
 
@@ -260,4 +261,3 @@ def teardown_wiki(response):
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
     return response
-

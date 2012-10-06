@@ -261,7 +261,6 @@ AAA 013
 AAA 014
 """
 
-
     text = text_merge(text0, text1, text2)
     print(text)
 

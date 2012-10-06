@@ -7,7 +7,7 @@ If your language already exists
 
 To find out if someone has already started a translation of moin2 into your
 language; check the folder MoinMoin/translations in the source tree.
-If there is a folder with your language code (locale) [#]_, you can just
+If there is a folder with your language code (locale) [#]_, you can 
 start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
 
@@ -27,16 +27,16 @@ language doesn't exist yet`_.
 3. Open the file ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``
    and do your translation. A short explanation of this process follows:
    
-   * find an entry, with an empty or bad translated text (the text after
-     msgstr) and do your changes.
+   * Find an entry with an empty or bad translated text, the text after
+     msgstr, and apply your changes.
    
-   * **never** edit the 'msgid' string, just edit the 'msgstr' field
+   * **never** edit the 'msgid' string, and only edit the 'msgstr' field
    
-   * Variables like ``%(name)x`` (x can be any character) must be kept as
+   * Variables like ``%(name)x``, where x is any character, must be kept as
      they are. They must occur in the translated text.
    
    * For better readability you can divide a text-string over more than
-     one lines, by "surrounding" each line with double quotes (").
+     one line, by "surrounding" each line with double quotes (").
      It is a usual convention to have a maximal line-length of 80
      characters.
    
@@ -52,12 +52,10 @@ language doesn't exist yet`_.
      translator.
      
      An important flag is "fuzzy". It shows that the msgstr string might
-     not be a correct translation (anymore). Only the translator can
+     not be a correct translation. Only the translator can
      judge if the translation requires further modification, or is
-     acceptable as is. Once satisfied with the translation, he/she then
+     acceptable as it is. Once satisfied with the translation, he/she then
      removes this fuzzy attribute.
-     
-     
 
 4. Save the messages.po file and execute::
 
@@ -66,8 +64,8 @@ language doesn't exist yet`_.
 
 Guidelines for translators
 ``````````````````````````
-In languages where a separate polite form of address exists (like the
-German "Sie"/"Du") always use the polite form.
+In languages where a separate polite form of address exists, like the
+German "Sie"/"Du", always use the polite form.
 
    
 If your language doesn't exist yet
@@ -87,26 +85,26 @@ the developers, but ...
 
        python setup.py init_catalog -l <locale>
    
-2. Adjust the ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po`` .
+2. Adjust the ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``.
 
    Follow the instructions in `First steps with a new *.po file`_ and
    then you can remove the fuzzy flag, which prevents the file from
    being compiled.
 
-3. Follow the steps above (`If your language already exists`_).
+3. Follow the steps above, see `If your language already exists`_.
 
 First steps with a new ``*.po`` file
 ````````````````````````````````````
 
-A newly created translation needs a few initial preparations.
+A newly created translation needs a few initial preparations:
 
 * replace "``PROJECT``" with "``MoinMoin 2``"
 
 * replace "``FIRST AUTHOR <EMAIL@ADDRESS>``" with the appropriate information
-  about you
+  about yourself
 
 * replace "``PROJECT VERSION``" in the head msgstr with
-  "``MoinMoin 2.0``" (or newer if neccessary)
+  "``MoinMoin 2.0``" or newer if neccessary
   
 * change the value of "``Last-Translator``" to your data
 
@@ -124,28 +122,28 @@ write ``_(u'Hello %(name)s!', name='World')``.
 
 If the translatable string contains a variable plural, that means
 the string contains an object which you don't know the exact quantity
-of at the time of writing the code, then you will have to use
+of, then you will have to use
 ``ngettext()``. Note that this is not only needed for the decision
 between one and more objects, because other languages have other
-(and more difficult) plurals than English. The usage is
+and more difficult plurals than English. The usage is
 ``ngettext(singular, plural, num, **variables)``. ``**variables``
-enables you to use the newstyle form just as explained above.
+enables you to use the newstyle form as explained above.
 
 For example:
 ``ngettext("%(number)d file removed from %(directory)s", "%(number)d files removed from %(directory)s", num=n, number=n, directory=directory)``
 
-``n`` has to appear twice because the first gives ngettext information
+``n`` has to appear twice because the first gives ngettext() information
 about the exact number and the second is the variable for the format
 string replacement.
 
-If you made changes to any gettext string, please update the .pot file
+If you made changes to any gettext() string, please update the .pot file
 using::
 
     python setup.py extract_messages
 
-Because this sometimes creates large diffs, just because of a slight
+Because this sometimes creates large diffs, just because of a
 change in line numbers, you can of course use this command sparingly.
-Another option (for better readability) is to do a separate commit
+Another option for better readability is to do a separate commit
 for this.
 
 

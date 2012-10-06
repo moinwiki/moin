@@ -60,6 +60,7 @@ class MutableBackendTestBase(BackendTestBase):
         m, d = self.be.retrieve(metaid)
         assert m == meta
         assert d.read() == data
+        d.close()
         self.be.remove(metaid)
         with pytest.raises(KeyError):
             self.be.retrieve(metaid)
@@ -110,7 +111,7 @@ class MutableBackendTestBase(BackendTestBase):
             metaid = self.be.store(meta, StringIO(data))
 
     def test_iter(self):
-        mds = [#(metadata items, data str)
+        mds = [# (metadata items, data str)
                 (dict(name='one'), 'ONE'),
                 (dict(name='two'), 'TWO'),
                 (dict(name='three'), 'THREE'),
@@ -127,4 +128,3 @@ class MutableBackendTestBase(BackendTestBase):
             m = tuple(sorted(m.items()))
             result.add((k, m, d.read()))
         assert result == expected_result
-

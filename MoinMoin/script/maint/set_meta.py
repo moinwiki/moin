@@ -1,6 +1,7 @@
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2012 MoinMoin:CheerXiao
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -12,15 +13,14 @@ and sets or removes metadata.
 
 
 from ast import literal_eval
-from shutil import copyfileobj
 
 from flask import current_app as app
-from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
+
+from whoosh.query import Every
 
 from MoinMoin.config import NAME, NAME_EXACT
 from MoinMoin.script import fatal
-from MoinMoin.storage.error import NoSuchRevisionError
 
 
 class Set_Meta(Command):
@@ -37,43 +37,29 @@ class Set_Meta(Command):
     )
 
     def run(self, key, value, remove, query):
-        storage = app.unprotected_storage
-
         if not ((key and value) or (key and remove)) or (key and value and remove):
             fatal("You need to either specify a proper key/value pair or "
                   "only a key you want to delete (with -r set).")
 
+        if not remove:
+            try:
+                value = literal_eval(value)
+            except ValueError:
+                fatal("You need to specify a valid Python literal as the argument")
+
         if query:
-            qp = storage.query_parser([NAME_EXACT, ])
-            q = qp.parse(query)
+            qp = app.storage.query_parser([NAME_EXACT, ])
+            q = qp.parse(query_text)
         else:
             q = Every()
-        results = storage.search(q, limit=None)
-        for result in results:
-            item_name = result[NAME]
-            item = storage.get_item(item_name)
-            try:
-                last_rev = item.get_revision(-1)
-            except NoSuchRevisionError:
-                last_rev = None
 
-            next_rev = item.create_revision(item.next_revno)
-
-            if last_rev:
-                # Copy data.
-                copyfileobj(last_rev, next_rev)
-                # Copy metadata:
-                for k, v in last_rev.iteritems():
-                    if remove and k == key:
-                        continue
-                    next_rev[k] = v
-
-            if not remove:
-                # Set or overwrite given metadata key with text
-                next_rev[key] = literal_eval(value)
-                print "Processing {0!r}, setting {1}={2!r}.".format(item_name, key, value)
+        for current_rev in app.storage.search(q, limit=None):
+            name = current_rev.meta[NAME]
+            newmeta = dict(current_rev.meta)
+            if remove:
+                newmeta.pop(key)
+                print "Processing {0!r}, removing {1}.".format(name, key)
             else:
-                print "Processing {0!r}, removing {1}.".format(item_name, key)
-
-            item.commit()
-
+                newmeta[key] = value
+                print "Processing {0!r}, setting {1}={2!r}.".format(name, key, value)
+            current_rev.item.store_revision(newmeta, current_rev.data)

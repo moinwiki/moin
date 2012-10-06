@@ -1,7 +1,11 @@
-{% import "forms.html" as forms %}
+{# If you want itemviews in your template, extend from show.html, not from here. #}
 {% extends theme("base.html") %}
 
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+{% import "itemviews.html" as itemviews with context %}
 {% import theme("snippets.html") as snippets with context %}
+
 {% set logo = snippets.logo() %}
 {% set footer_logos = snippets.creditlogos() %}
 {% set footer_items = '' %}
@@ -22,7 +26,7 @@
     <ul>
         {% set navibar_items = theme_supp.navibar(item_name) %}
         {% if navibar_items %}
-            <li>Links
+            <li class="panel">Links
             <ul>
             {% for cls, url, text, title in navibar_items %}
                 <li class="{{ cls }}">
@@ -35,7 +39,7 @@
 
         {% set trail_items = theme_supp.path_breadcrumbs() %}
         {% if trail_items %}
-        <li>Trail
+        <li id="moin-trail">Trail
             <ul>
             {% for wiki_name, item_name, item_href, exists, err in trail_items %}
                 <li>
@@ -56,7 +60,7 @@
             </ul>
         </li>
         {% endif %}
-        <li>User
+        <li id="moin-user" class="panel">User
         <ul>
         {% if user.valid -%}
 	    {% set avatar = user.avatar(20) %}
@@ -99,7 +103,7 @@
 <div id="moin-main-container">
 <div id="moin-main-box">
 <div id="moin-header">
-    {% if search_form %} 
+    {% if search_form %}
     <div id="moin-search">
     {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
         {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='40') }}
@@ -107,7 +111,7 @@
         {{ forms.render_errors(search_form) }}
     {{ gen.form.close() }}
     </div>
-    {% endif %} 
+    {% endif %}
     <div id="moin-breadcrumbs-location">
         {% if cfg.show_interwiki -%}
         <span id="moin-interwiki">
@@ -119,22 +123,24 @@
         {%- endif %}
         <span id="moin-pagelocation">
             <span class="moin-pagepath">
+            {% block pagepath %}
                 {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
                     {% if not loop.last -%}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
                             {{ segment_name|shorten_item_name }}
                         </a>
-			<span class="sep">/</span>
+                        <span class="sep">/</span>
                     {% else %}
-		        {% if title_name %}
+                        {% if title_name %}
                             {{ title_name }}
                         {% else %}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
                             {{ segment_name|shorten_item_name }}
                         </a>
-		        {%- endif %}
+                        {%- endif %}
                     {%- endif %}
                 {%- endfor %}
+            {% endblock %}
             </span>
         </span>
     </div>
@@ -147,6 +153,18 @@
 </div>
 
 {% block content_container %}
+    {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
+    <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+        {% block content %}
+            {# All content templates should implement this block. #}
+        {% endblock %}
+    </div>
+
+    {% if self.local_panel %}
+        <div id="moin-local-panel">
+            {{ self.local_panel() }}
+        </div>
+    {% endif %}
 {% endblock %}
 </div>
 
@@ -159,7 +177,7 @@
     <div id="moin-footer-items">
         {{ footer_items }}
     </div>
-    <div id="moin-credits">
+    <div>
         {{ credits }}
     </div>
 {% endblock %}
@@ -167,4 +185,3 @@
 </div>
 
 {% endblock %}
-

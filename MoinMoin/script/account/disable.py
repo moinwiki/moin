@@ -9,9 +9,10 @@ MoinMoin - disable a user account
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.app import before_wiki
 
 
 class Disable_User(Command):
@@ -24,31 +25,30 @@ class Disable_User(Command):
     )
 
     def run(self, name, uid):
-        flaskg.unprotected_storage = app.unprotected_storage
         flags_given = name or uid
         if not flags_given:
             print 'incorrect number of arguments'
             import sys
             sys.exit()
 
+        before_wiki()
         if uid:
             u = user.User(uid)
         elif name:
             u = user.User(auth_username=name)
 
         if not u.exists():
-            print 'This user "{0}" does not exists!'.format(u.name)
+            print 'This user "{0!r}" does not exists!'.format(u.name)
             return
 
-        print " {0:<20} {1:<25} {2:<35}".format(u.id, u.name, u.email),
+        print " {0:<20} {1:!r<25} {2:<35}".format(u.itemid, u.name, u.email),
         if not u.disabled: # only disable once
             u.disabled = 1
-            u.name = "{0}-{1}".format(u.name, u.id)
+            u.name = u"{0}-{1}".format(u.name, u.id)
             if u.email:
-                u.email = "{0}-{1}".format(u.email, u.id)
+                u.email = u"{0}-{1}".format(u.email, u.id)
             u.subscribed_items = [] # avoid using email
             u.save()
             print "- disabled."
         else:
             print "- is already disabled."
-

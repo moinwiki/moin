@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 
-{% block item %}
+{% block content %}
 <div class="moin-form">
 {{ forms.render_errors(form) }}
 
@@ -9,17 +9,14 @@
 <h2>{{ _('Moin login') }}</h2>
 {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
 <dl>
-  {{ gen.input(form['submit'], type='hidden') }}
-
   {% if 'username' in login_inputs %}
-  {{ forms.render_field(gen, form['username'], 'text') }}
+  {{ forms.render(form['username']) }}
   {% endif %}
   {% if 'password' in login_inputs %}
-  {{ forms.render_field(gen, form['password'], 'password') }}
+  {{ forms.render(form['password']) }}
   {% endif %}
-
-  <input type="submit" value="{{ _('Log in') }}" />
 </dl>
+{{ forms.render(form['submit']) }}
 {{ gen.form.close() }}
 {% endif %}
 
@@ -29,14 +26,11 @@
 
 {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
 <dl>
-  {{ gen.input(form['submit'], type='hidden') }}
-
-  {{ forms.render_field(gen, form['openid'], 'text') }}
-  <input type="submit" value="{{ _('Log in') }}" />
+  {{ forms.render(form['openid']) }}
 </dl>
+{{ forms.render(form['submit']) }}
 {{ gen.form.close() }}
 {% endif %}
 
 </div>
 {% endblock %}
-

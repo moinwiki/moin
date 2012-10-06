@@ -18,7 +18,7 @@ from babel import Locale
 
 from flask import current_app, request
 from flask import g as flaskg
-from flaskext.babel import Babel, gettext, ngettext, lazy_gettext
+from flask.ext.babel import Babel, gettext, ngettext, lazy_gettext
 
 _ = gettext
 N_ = ngettext
@@ -66,4 +66,3 @@ def get_timezone():
     u = getattr(flaskg, 'user', None)
     if u and u.timezone is not None:
         return u.timezone
-

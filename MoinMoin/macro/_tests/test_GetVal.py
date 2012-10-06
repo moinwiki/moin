@@ -49,4 +49,3 @@ class TestMacro(object):
         arguments[1] = u'Two'
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         assert result == u'2'
-

@@ -434,6 +434,7 @@ def setup_from_session():
         trusted = session['user.trusted']
         auth_method = session['user.auth_method']
         auth_attribs = session['user.auth_attribs']
+        session_token = session['user.session_token']
         logging.debug("got from session: {0!r} {1!r} {2!r} {3!r}".format(itemid, trusted, auth_method, auth_attribs))
         logging.debug("current auth methods: {0!r}".format(app.cfg.auth_methods))
         if auth_method and auth_method in app.cfg.auth_methods:
@@ -441,6 +442,11 @@ def setup_from_session():
                                 auth_method=auth_method,
                                 auth_attribs=auth_attribs,
                                 trusted=trusted)
+            if userobj.valid and not userobj.validate_session(session_token):
+                logging.debug("session token doesn't validate")
+                # Destroy current session since it's no longer valid.
+                userobj.logout_session(False)
+                # We didn't find user in session data.
+                userobj = None
     logging.debug("session started for user {0!r}".format(userobj))
     return userobj
-

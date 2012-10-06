@@ -105,4 +105,3 @@ class TestToken(object):
         assert result1 != result2, ("Expected different keys for different <kw> but got the same")
 
 coverage_modules = ['MoinMoin.util.crypto']
-

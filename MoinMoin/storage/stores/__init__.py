@@ -124,4 +124,3 @@ class FileMutableStoreBase(MutableStoreBase):
               closing that file later. caller must not rely on some specific
               file pointer position after we return.
         """
-

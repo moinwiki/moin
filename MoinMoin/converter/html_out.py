@@ -14,7 +14,6 @@ from __future__ import absolute_import, division
 
 import re
 
-from flask import request
 from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
@@ -23,39 +22,6 @@ from MoinMoin.util.tree import html, moin_page, xlink, xml, Name
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-
-def convert_getlink_to_showlink(href):
-    """
-    If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
-    """
-    if href.startswith('/'):
-        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
-    return href
-
-def mark_item_as_transclusion(elem, href):
-    """
-    Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
-    a link to the transcluded item.
-
-    On the client side, a Javascript function will wrap the element (or a parent element)
-    in a span or div and 2 overlay siblings will be created.
-    """
-    href = unicode(href)
-    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
-    # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name == 'page':
-        # if wiki is not running at server root, prefix href with wiki root
-        wiki_root = request.url_root[len(request.host_url):-1]
-        if wiki_root:
-            href = '/' + wiki_root + href
-    href = convert_getlink_to_showlink(href)
-    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
-    elem.attrib[html.data_href] = href
-    classes = elem.attrib.get(html.class_, '').split()
-    classes.append('moin-transclusion')
-    elem.attrib[html.class_] = ' '.join(classes)
-    return elem
 
 
 class ElementException(RuntimeError):
@@ -221,7 +187,7 @@ class Converter(object):
         return pre
 
     def visit_moinpage_blockquote(self, elem):
-        return  self.new_copy(html.blockquote, elem)
+        return self.new_copy(html.blockquote, elem)
 
     def visit_moinpage_code(self, elem):
         return self.new_copy(html.code, elem)
@@ -367,7 +333,7 @@ class Converter(object):
 
         if obj_type == "img":
             # Images have alt text
-            alt = ''.join(str(e) for e in elem) # XXX handle non-text e
+            alt = ''.join(unicode(e) for e in elem) # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
@@ -378,7 +344,7 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
-        return mark_item_as_transclusion(new_elem, href)
+        return new_elem
 
     def visit_moinpage_p(self, elem):
         return self.new_copy(html.p, elem)
@@ -506,6 +472,12 @@ class SpecialId(object):
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         return nr
 
+    def zero_id(self, id):
+        self._ids[id] = 0
+
+    def get_id(self, id):
+        return self._ids.get(id, 0)
+
     def gen_text(self, text):
         id = wikiutil.anchor_name_from_text(text)
         nr = self._ids[id] = self._ids.get(id, 0) + 1
@@ -523,10 +495,13 @@ class SpecialPage(object):
     def add_footnote(self, elem):
         self._footnotes.append(elem)
 
+    def remove_footnotes(self):
+        self._footnotes = []
+
     def add_heading(self, elem, level, id=None):
         elem.append(html.a(attrib={
             html.href: "#{0}".format(id),
-            html.class_: "permalink",
+            html.class_: "moin-permalink",
             html.title_: _("Link to this heading")
         }, children=(u"¶", )))
         self._headings.append((elem, level, id))
@@ -579,10 +554,8 @@ class ConverterPage(Converter):
 
         for special in self._special:
             if special._footnotes:
-                footnotes_div = html.div({html.class_: "moin-footnotes"})
+                footnotes_div = self.create_footnotes(special)
                 special.root.append(footnotes_div)
-                for elem in special.footnotes():
-                    footnotes_div.append(elem)
 
             for elem, headings in special.tocs():
                 headings = list(headings)
@@ -629,7 +602,7 @@ class ConverterPage(Converter):
                                          html.href_: "#",
                                          html.onclick_:
                                             "$('#li{0} ol').toggle();return false;".format(id),
-                                         html.class_: 'showhide',
+                                         html.class_: 'moin-showhide',
                                      },
                                      children=["[+]", ])
                     elem_a = html.a(attrib={html.href: '#' + id},
@@ -666,8 +639,27 @@ class ConverterPage(Converter):
         self._special_stack[-1].add_heading(elem, elem.level, id)
         return elem
 
+    def create_footnotes(self, top):
+        """Return footnotes formatted into an ET structure."""
+        footnotes_div = html.div({html.class_: "moin-footnotes"})
+        for elem in top.footnotes():
+            footnotes_div.append(elem)
+        return footnotes_div
+
     def visit_moinpage_note(self, elem):
         # TODO: Check note-class
+        top = self._special_stack[-1]
+        if len(elem) == 0:
+            # explicit footnote placement:  show prior footnotes, empty stack, reset counter
+            if len(top._footnotes) == 0:
+                return
+
+            footnotes_div = self.create_footnotes(top)
+            top.remove_footnotes()
+            self._id.zero_id('note')
+            # bump note-placement counter to insure unique footnote ids
+            self._id.gen_id('note-placement')
+            return footnotes_div
 
         body = None
         for child in elem:
@@ -676,25 +668,27 @@ class ConverterPage(Converter):
                     body = self.do_children(child)
 
         id = self._id.gen_id('note')
+        prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
 
         elem_ref = ET.XML("""
 <html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote"><html:a html:href="#note-{2}">{3}</html:a></html:sup>
-""".format(html, id, id, id))
+""".format(html, prefixed_id, prefixed_id, id))
 
         elem_note = ET.XML("""
 <html:p xmlns:html="{0}" html:id="note-{1}"><html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup></html:p>
-""".format(html, id, id, id))
+""".format(html, prefixed_id, prefixed_id, id))
 
         elem_note.extend(body)
-        self._special_stack[-1].add_footnote(elem_note)
+        top.add_footnote(elem_note)
 
         return elem_ref
 
     def visit_moinpage_table_of_content(self, elem):
         level = int(elem.get(moin_page.outline_level, 6))
 
-        attrib = {html.class_: 'moin-table-of-contents'}
-        elem = html.div(attrib=attrib)
+        attribs = elem.attrib.copy()
+        attribs[html.class_] = 'moin-table-of-contents'
+        elem = html.div(attrib=attribs)
 
         self._special_stack[-1].add_toc(elem, level)
         return elem
@@ -709,4 +703,3 @@ class ConverterDocument(ConverterPage):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(ConverterPage._factory, type_moin_document, Type('application/x-xhtml-moin-page'))
-

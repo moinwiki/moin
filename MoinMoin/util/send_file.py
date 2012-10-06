@@ -119,14 +119,24 @@ def send_file(filename=None, file=None,
     # See `_ensure_sequence` in werkzeug/wrappers.py
     if filename:
         fsize = os.path.getsize(filename)
-    elif file:
-        # Seek 0 bytes (0) from the end of the file (2)
-        file.seek(0, 2)
-        fsize = file.tell()
-        file.seek(0, 0)
+    elif file and hasattr(file, 'seek') and hasattr(file, 'tell'):
+        fsize = None
+        # be extra careful as some file-like objects (like zip members) have a seek
+        # and tell methods, but they just raise some exception (e.g. UnsupportedOperation)
+        # instead of really doing what they are supposed to do (or just be missing).
+        try:
+            file.seek(0, 2)  # seek to EOF
+            try:
+                fsize = file.tell()  # tell position
+            except Exception:
+                pass
+            file.seek(0, 0)  # seek to start of file
+        except Exception:
+            pass
     else:
-        fsize = 0
-    headers.add('Content-Length', fsize)
+        fsize = None
+    if fsize is not None:
+        headers.add('Content-Length', fsize)
 
     if as_attachment:
         if attachment_filename is None:
@@ -184,4 +194,3 @@ def send_file(filename=None, file=None,
             if rv.status_code == 304:
                 rv.headers.pop('x-sendfile', None)
     return rv
-

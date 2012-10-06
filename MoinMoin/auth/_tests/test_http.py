@@ -41,4 +41,3 @@ class TestHTTPAuthMoin(object):
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert not test_user.valid
         assert test_user.name0 == u'anonymous'
-

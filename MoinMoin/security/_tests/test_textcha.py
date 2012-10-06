@@ -40,8 +40,8 @@ class TestTextCha(object):
 
         # test for textcha
         test_textchas = textcha_obj.textchas
-        expected_textchas  = {'Good Question': 'Good Answer',
-                                'What is the question?': 'Test_Answer'}
+        expected_textchas = {'Good Question': 'Good Answer',
+                             'What is the question?': 'Test_Answer'}
         assert test_textchas == expected_textchas
         # test for the question
         test_question = textcha_obj.question
@@ -115,4 +115,3 @@ class TestTextChaValid(object):
         test_element.parent = test_form
         result = textchavalid_obj.validate(test_element, 'test_state')
         assert result
-

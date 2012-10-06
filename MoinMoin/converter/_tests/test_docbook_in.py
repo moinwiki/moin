@@ -429,4 +429,3 @@ class TestConverter(Base):
         ]
         for i in data:
             yield (self.do_nonamespace, ) + i
-

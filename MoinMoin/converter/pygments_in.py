@@ -52,7 +52,6 @@ if pygments:
             if lastval:
                 self._append(lasttype, lastval, element)
 
-
     class Converter(object):
         @classmethod
         def _factory(cls, type_input, type_output, **kw):
@@ -84,6 +83,7 @@ if pygments:
                 else:
                     pygments_name = None
 
+            logging.debug("pygments_name: %r" % pygments_name)
             if pygments_name:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())
@@ -113,15 +113,10 @@ if pygments:
             body = moin_page.body(children=(blockcode, ))
             return moin_page.page(children=(body, ))
 
-
     from . import default_registry
     from MoinMoin.util.mime import Type, type_moin_document
-    # Pygments type detection is rather expensive, therefore we want to register
-    # after all normal parsers but before the compatibility parsers and wildcard
-    default_registry.register(Converter._factory, Type(type='text'), type_moin_document,
-                              default_registry.PRIORITY_MIDDLE + 1)
-    default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document,
-                              default_registry.PRIORITY_MIDDLE + 1)
+    default_registry.register(Converter._factory, Type(type='text'), type_moin_document)
+    default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document)
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
@@ -138,4 +133,3 @@ else:
                 blockcode.append(line.expandtabs())
             body = moin_page.body(children=(blockcode, ))
             return moin_page.page(children=(body, ))
-

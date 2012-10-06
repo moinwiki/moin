@@ -5,7 +5,7 @@
 
 import sys, os
 
-from MoinMoin import version
+from MoinMoin import project, version
 
 if sys.hexversion < 0x2060000:
     # we require 2.6.x or 2.7.x, python 3.x does not work yet.
@@ -72,41 +72,44 @@ Topic :: Text Processing :: Markup""".splitlines(),
                  },
     include_package_data=True,
     zip_safe=False,
-    dependency_links = [
+    dependency_links=[
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
-        #'https://bitbucket.org/mchaput/whoosh/get/19c2df0a94ef.tar.gz#egg=Whoosh-2.3.1',
+        'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
+        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.1',
     ],
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1', # reST markup processing
+        'Markdown>=2.1.1', # Markdown markup processing
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
         'Flask-Cache>=0.3.4', # caching support
         'Flask-Script>=0.3.3', # scripting support
         'Flask-Themes>=0.1.3.1', # theme support
-        'emeraldtree>=0.9.0', # xml processing
+        'emeraldtree>=0.9.1', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.6', # template engine
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
         'pytest>=2.1', # pytest is needed by unit tests
-        'whoosh>=2.3.2', # needed for indexed search
+        'pytest-pep8', # coding style checker
+        'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
         'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
-        'XStatic-jQuery>=1.6.1.4',
+        'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
+        'XStatic-JSON-js',
         'XStatic-svgweb>=2011.2.3.2',
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2011.07.07.2',
-        'XStatic-multiDownload>=20110717.1',
     ],
     # optional features and their list of requirements
-    extras_require = {
+    extras_require={
         #'featurename': ["req1", "req2", ],
         'pil': ["PIL"], # used by image get for scaling/rotating/etc.
                         # PIL is a binary dependency and some features of it
@@ -115,16 +118,19 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'ldap': ["python-ldap>=2.0.0"], # used by ldap auth
         'openid': ["python-openid>=2.2.4"], # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
+        'mongodb': ["pymongo"], # used by mongodb store
     },
-    entry_points = dict(
-        console_scripts = ['moin = MoinMoin.script:main'],
+    entry_points=dict(
+        console_scripts=['moin = MoinMoin.script:main'],
     ),
 
     # stuff for babel:
-    message_extractors = {
+    message_extractors={
         '': [
             ('MoinMoin/templates/**.html', 'jinja2', None),
+            ('MoinMoin/templates/**.js', 'javascript', None),
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
+            ('MoinMoin/apps/**/templates/**.js', 'javascript', None),
             ('MoinMoin/**/_tests/**', 'ignore', None),
             ('MoinMoin/static/**', 'ignore', None),
             ('MoinMoin/**.py', 'python', None),
@@ -135,4 +141,3 @@ Topic :: Text Processing :: Markup""".splitlines(),
 
 if __name__ == '__main__':
     setup(**setup_args)
-

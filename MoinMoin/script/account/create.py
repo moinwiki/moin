@@ -9,9 +9,10 @@ MoinMoin - create a user account
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import user
+from MoinMoin.app import before_wiki
 
 
 class Create_User(Command):
@@ -30,7 +31,7 @@ class Create_User(Command):
     )
 
     def run(self, name, display_name, email, openid, password):
-        flaskg.unprotected_storage = app.storage
+        before_wiki()
         msg = user.create_user(username=name,
                                password=password,
                                email=email,
@@ -41,4 +42,3 @@ class Create_User(Command):
         else:
             u = user.User(auth_username=name)
             print " %-20s %-25s %-35s - created." % (u.itemid, u.name, u.email),
-

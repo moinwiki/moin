@@ -80,7 +80,7 @@ class BaseGroupsBackend(object):
         raise NotImplementedError()
 
     def __repr__(self):
-        return "<{0} groups={1}>".format(self.__class__, list(self))
+        return "<{0!r} groups={1!r}>".format(self.__class__, list(self))
 
     def _retrieve_members(self, group_name):
         raise NotImplementedError()
@@ -250,7 +250,7 @@ class GreedyGroup(BaseGroup):
                     yield group_name
 
     def __repr__(self):
-        return "<{0} name={1} members={2} member_groups={3}>".format(self.__class__, self.name, self.members, self.member_groups)
+        return "<{0!r} name={1!r} members={2!r} member_groups={3!r}>".format(self.__class__, self.name, self.members, self.member_groups)
 
 
 class BaseDict(object, DictMixin):
@@ -330,4 +330,3 @@ class BaseDictsBackend(object):
             return self[key]
         except DictDoesNotExistError:
             return default
-

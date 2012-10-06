@@ -11,12 +11,12 @@
 import urllib
 
 from json import dumps
-from operator import itemgetter
+from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request
-from flaskext.themes import get_theme, render_theme_template
+from flask.ext.themes import get_theme, render_theme_template
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -28,6 +28,8 @@ from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
+from MoinMoin.util.clock import timed
+from MoinMoin.util.mime import Type
 
 
 def get_current_theme():
@@ -40,17 +42,14 @@ def get_current_theme():
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning("Theme {0} was not found; using default of {1} instead.".format(theme_name, app.cfg.theme_default))
+        logging.warning("Theme {0!r} was not found; using default of {1!r} instead.".format(theme_name, app.cfg.theme_default))
         theme_name = app.cfg.theme_default
         return get_theme(theme_name)
 
 
-
+@timed()
 def render_template(template, **context):
-    flaskg.clock.start('render_template')
-    output = render_theme_template(get_current_theme(), template, **context)
-    flaskg.clock.stop('render_template')
-    return output
+    return render_theme_template(get_current_theme(), template, **context)
 
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
@@ -126,10 +125,7 @@ class ThemeSupport(object):
         """
         from MoinMoin.items import Item
         item = Item.create(item_name)
-        item_index = item.get_detailed_index(item.flat_index())
-        # Sort items by whether or not they have children, then by name:
-        item_index = sorted(item_index, key=itemgetter(-1, 0))
-        return item_index
+        return item.get_mixed_index()
 
     def userhome(self):
         """
@@ -142,7 +138,7 @@ class ThemeSupport(object):
         name = user.name0
         display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
-        title = "{0} @ {1}".format(display_name, wikiname)
+        title = u"{0} @ {1}".format(display_name, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -203,6 +199,7 @@ class ThemeSupport(object):
             title = item_name
         return href, title, wiki_name
 
+    @timed()
     def navibar(self, item_name):
         """
         Assemble the navibar
@@ -210,7 +207,6 @@ class ThemeSupport(object):
         :rtype: list
         :returns: list of tuples (css_class, url, link_text, title)
         """
-        flaskg.clock.start('navibar')
         current = item_name
         # Process config navi_bar
         items = [(cls, url_for(endpoint, **args), link_text, title)
@@ -243,15 +239,14 @@ class ThemeSupport(object):
                                 pass # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)
-                        logging.info("Site: {0} Status: Updated. Pages: {1}".format(sistername, len(sisteritems)))
+                        logging.info("Site: {0!r} Status: Updated. Pages: {1}".format(sistername, len(sisteritems)))
                     except IOError as err:
                         (title, code, msg, headers) = err.args # code e.g. 304
-                        logging.warning("Site: {0} Status: Not updated.".format(sistername))
+                        logging.warning("Site: {0!r} Status: Not updated.".format(sistername))
                         logging.exception("exception was:")
                 if current in sisteritems:
                     url = sisteritems[current]
                     items.append(('sisterwiki', url, sistername, ''))
-        flaskg.clock.stop('navibar')
         return items
 
     def parent_item(self, item_name):
@@ -297,11 +292,11 @@ def get_editor_info(meta, external=False):
         # only tell ip / hostname if show_hosts is True
         if hostname:
             text = hostname[:15]  # 15 = len(ipaddr)
-            name = title = '{0}[{1}]'.format(hostname, addr)
+            name = title = u'{0}[{1}]'.format(hostname, addr)
             css = 'editor host'
         else:
             name = text = addr
-            title = '[{0}]'.format(addr)
+            title = u'[{0}]'.format(addr)
             css = 'editor ip'
 
     userid = meta.get(USERID)
@@ -312,7 +307,7 @@ def get_editor_info(meta, external=False):
         display_name = u.display_name or name
         if title:
             # we already have some address info
-            title = "{0} @ {1}".format(display_name, title)
+            title = u"{0} @ {1}".format(display_name, title)
         else:
             title = display_name
         if u.mailto_author and u.email:
@@ -415,6 +410,7 @@ def setup_jinja_env():
                             # _, gettext, ngettext
                             'isinstance': isinstance,
                             'list': list,
+                            'Type': Type,
                             # please note that flask-themes installs:
                             # theme, theme_static
                             'theme_supp': ThemeSupport(app.cfg),
@@ -429,4 +425,3 @@ def setup_jinja_env():
                             'gen': make_generator(),
                             'search_form': SearchForm.from_defaults(),
                             })
-

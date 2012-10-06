@@ -194,6 +194,7 @@ def valid_token(key, token, timeout=12*60*60):
 
     :param key: give the secret key to verify the token
     :param token: the token to verify
+    :param timeout: timeout seconds, set to None to ignore timeout
     :rtype: bool
     :returns: token is valid and not timed out
     """
@@ -204,7 +205,7 @@ def valid_token(key, token, timeout=12*60*60):
         stamp = int(parts[0])
     except ValueError:
         return False
-    if stamp + timeout < time.time():
+    if timeout and stamp + timeout < time.time():
         return False
     expected_token = generate_token(key, stamp)[1]
     return token == expected_token
@@ -224,4 +225,3 @@ def cache_key(**kw):
     :param kw: keys/values to compute cache key from
     """
     return hashlib.md5(repr(kw)).hexdigest()
-

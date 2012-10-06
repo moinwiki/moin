@@ -3,32 +3,32 @@ Introduction into MoinMoin Configuration
 ========================================
 Kinds of configuration files
 ============================
-To change how moin behaves and looks like, you may customize it by editing
-its misc. configuration files:
+To change how moinmoin behaves and looks, you may customize it by editing
+its configuration files:
 
 * Wiki Engine Configuration
 
   - the file is often called wikiconfig.py, but it can have any name
-  - in that file, there is a Config class - this is the wiki engine's config
-  - this is Python code
+  - in that file, there is a Config class; this is the wiki engine's configuration
+  - it is written in Python
 
 * Framework Configuration
   
   - this is also located in the same file as the Wiki Engine Configuration
-  - there are some UPPERCASE settings at the bottom - this is the framework's
+  - there are some UPPERCASE settings at the bottom; this is the framework's
     config (for Flask and Flask extensions)
-  - this is Python code
+  - it is written in Python
 
 * Logging Configuration
 
-  - optional, if you don't configure this, it'll use builtin defaults
-  - this is a separate file, often called logging.conf or so
-  - .ini-like file format
+  - optional; if you don't configure this, it will use the builtin defaults
+  - this is a separate file, often called logging.conf
+  - it has an .ini-like file format
 
 Do small steps and have backups
 -------------------------------
-It is a good idea to start from one of the sample configs provided with moin
-and only do small careful changes, then try it and then do the next change.
+Start from one of the sample configs provided with moin
+and only perform small changes, then try it before testing the next change.
 
 If you're not used to the config file format, backup your last working config
 so you can revert to it in case you make some hard to find typo or other error.
@@ -36,21 +36,21 @@ so you can revert to it in case you make some hard to find typo or other error.
 Editing Python files
 --------------------
 When editing Python files, be careful with indentation, only use multiples of
-4 spaces to indent, no tabs!
+4 spaces to indent, and no tabs!
 
-Also, be careful with syntax in general, it must be valid python code or else
-it'll crash with some error when trying to load the config. If that happens,
-read the error message, it'll usually tell the line number and what the problem
-is. If you can't fix it easily, just revert to your backup of your last working
+Also, be careful with syntax in general, it must be valid Python code or else
+it will crash with some error when trying to load the config. If that happens,
+read the error message, it will usually tell the line number and what the problem
+is. If you can't fix it easily, then revert to your backup of your last working
 config.
 
-Why Python for configuration?
------------------------------
-At first, you might wonder why we use Python code for configuration. It is
-simply because it is powerful and we can make use of that power there.
-Using something else would usually mean much more work when developing new
-stuff and also would be much less flexible and powerful, dumbing down
-everything.
+Why use Python for configuration?
+---------------------------------
+At first, you might wonder why we use Python code for configuration. One of the 
+reasons is that it is a powerful language. Moinmoin itself is developed in Python 
+and using something else would usually mean much more work when developing new 
+functionality.
+
 
 wikiconfig.py Layout
 ====================
@@ -61,37 +61,37 @@ A wikiconfig.py looks like this::
  from MoinMoin.config.default import DefaultConfig
 
  class Config(DefaultConfig):
-     # a comment
+     # some comment
      sometext = u'your value'
      somelist = [1, 2, 3]
 
- MOINCFG = Config  # Flask only likes uppercase stuff
+ MOINCFG = Config  # Flask only likes uppercase characters
  SOMETHING_FLASKY = 'foobar'
 
-Let's go through this line-by-line:
+Let's go through this line-by-line::
 
-0. this declares the encoding of the config file. make sure your editor uses
-   the same encoding (character set), esp. if you intend to use non-ASCII
-   characters (e.g. non-english stuff).
-1. this gets the DefaultConfig class from the moin code - it has default
-   values for all settings (this will save you work, you only have to define
-   stuff you want different from the default).
-2. an empty line, for better readability
-3. now we define a new class `Config` that inherits most stuff from
-   `DefaultConfig` - this is the wiki engine configuration. If you define some
-   setting within this class, it'll overwrite the setting from DefaultConfig.
-4. with a `#` character you can write a comment into your config. This line (as
-   well as all other following lines with Config settings) is indented by 4
+0. this declares the encoding of the config file; make sure your editor uses
+   the same encoding (character set), especially if you intend to use non-ASCII
+   characters.
+1. this gets the DefaultConfig class from the moin code; it has default
+   values for all settings and this will save you work, because you only have to define
+   the parts that should be different from the defaults.
+2. empty line, for better readability
+3. define a new class `Config` that inherits most content from
+   `DefaultConfig`; this is the wiki engine configuration and if you define some
+   setting within this class, it will overwrite the setting from DefaultConfig.
+4. a `#` character defines a comment in your config. This line, as
+   well as all other following lines with Config settings, is indented by 4
    blanks, because Python defines blocks by indentation.
-5. define a Config attribute called `sometext` with value u'your value' -
+5. define a Config attribute called `sometext` with value u'your value' whereby
    the `u'...'` means that this is a unicode string.
-6. define a Config attribute called `somelist` with value [1, 2, 3] - this is
-   a list with the numbers 1, 2 and 3 as list elements.
+6. define a Config attribute called `somelist` with value [1, 2, 3]; this is
+   a list with the numbers 1, 2 and 3 as its elements.
 7. empty line, for better readability
-8. The special line "MOINCFG = Config" must stay there in exactly this form due to
+8. the special line "MOINCFG = Config" must stay there in exactly this form for
    technical reasons.
-9. UPPERCASE stuff at the bottom, outside the Config class - this is framework
-   configuration (usually something for Flask or some Flask extension).
+9. UPPERCASE code at the bottom, outside the Config class is a framework
+   configuration; usually something for Flask or some Flask extension.
 
 A real-life example of a `wikiconfig.py` can be found in the
 `docs/examples/config/` directory.
@@ -105,43 +105,41 @@ User Interface Customization
 
 Using a custom snippets.html template
 -------------------------------------
-Some user interface or html elements that often need customization are
+The user interface or html elements that often need customization are
 defined as macros in the template file `snippets.html`.
 
-If you'ld like to customize some stuff, you have to make a copy of the built-in
-`MoinMoin/templates/snippets.html` and configure moin so it will prefer your
+If you would like to customize some parts, you have to make a copy of the built-in
+`MoinMoin/templates/snippets.html` and configure moin so it will use your
 copy instead of the built-in one.
 
-This is done by just giving a list of template directories where moin will
+This is done by giving a list of template directories where moin itself will
 look first::
 
     template_dirs = ['path/to/my/templates', ]
 
-To customize something, you usually have to insert your stuff between the
+To customize something, you usually have to insert your code between the
 `{% macro ... %}` and `{% endmacro %}` lines, see below for more details.
 
 Logo
 ~~~~
-To replace the default MoinMoin logo with your own logo (which is **strongly**
-recommended, especially if your wiki has private or sensitive information),
-so your users will immediately recognize which wiki site they are currently using.
-
-You can even use some simple text (or just nothing) for the logo, it is not
-required to be an image.
-
-Make sure the dimensions of your logo image or text fit into the layout of
-the theme(s) your wiki users are using.
-
-Example code::
+To replace the default MoinMoin logo with your own logo, apply the following code::
 
     {% macro logo() -%}
     <img src="http://wiki.example.org/logos/my_logo.png" id="moin-img-logo" alt="Example Logo">
     {%- endmacro %}
 
+This is recommended to allow your users to immediately recognize which wiki site they are currently on.
+
+You can even use some simple text or even nothing at all for the logo, it is not
+required to be an image.
+
+Make sure the dimensions of your logo image or text fit into the layout of
+the theme(s) your wiki users are using.
+
 Displaying license information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you need to display something like license information for your content or
-some other legalese, use this macro to do it::
+some other legalese, use this macro::
 
     {# License information in the footer #}
     {% macro license_info() -%}
@@ -150,7 +148,7 @@ some other legalese, use this macro to do it::
 
 Inserting pieces of HTML
 ~~~~~~~~~~~~~~~~~~~~~~~~
-At some specific places, you can just add a piece of your own html into the
+At some specific places, you can add a piece of your own html into the
 head or body of the theme's html output::
 
     {# Additional HTML tags inside <head> #}
@@ -175,14 +173,14 @@ head or body of the theme's html output::
 
 Credits and Credit Logos
 ~~~~~~~~~~~~~~~~~~~~~~~~
-At the bottom, we usually show some text and image links pointing out that
-this wiki runs MoinMoin, uses Python, that MoinMoin is GPL licensed, etc.
+At the bottom of your wiki pages, usually some text and image links are shown
+pointing out that the wiki runs MoinMoin, uses Python, that MoinMoin is GPL licensed, etc.
 
-If you run a public site using MoinMoin, we would appreciate if you please
-*keep* those links (esp. the "MoinMoin powered" one).
+If you run a public site using MoinMoin, we would appreciate if you
+*keep* those links, especially the "MoinMoin powered" one.
 
 However, if you can't do that for some reason, feel free to modify these
-macros to show whatever you want::
+macros to show something else::
 
     {# Image links in the footer #}
     {% macro creditlogos(start='<ul id="moin-creditlogos"><li>'|safe, end='</li></ul>'|safe, sep='</li><li>'|safe) %}
@@ -219,8 +217,8 @@ You can add scripts like this::
 
 Adding CSS
 ~~~~~~~~~~
-If you just want some style changes, you can maybe do them by just adding
-some custom css (and overwrite any style you don't like in the base theme)::
+To apply some style changes, add some custom css and overwrite any style you 
+don't like in the base theme::
 
     {# Additional Stylesheets (after theme css, before user css #}
     {% macro stylesheets() -%}
@@ -229,7 +227,7 @@ some custom css (and overwrite any style you don't like in the base theme)::
         <link media="screen" href="http://wiki.example.org/static/green.css" title="Green Style" rel="alternate stylesheet" />
     {%- endmacro %}
 
-You can either just add some normal css stylesheet or add a choice of alternate
+You can either add some normal css stylesheet or add a choice of alternate
 stylesheets.
 
 See:
@@ -237,13 +235,12 @@ See:
 * `CSS media types <http://www.w3.org/TR/CSS2/media.html>`_
 * `Alternate Stylesheets <http://www.alistapart.com/articles/alternate/>`_
 
-A good way to test a stylesheet is to first use it as user CSS before you
-configure it for everybody.
+A good way to test a stylesheet is to first use it as user CSS before
+configuring it for the public.
 
-Please note that `stylesheets` will be included no matter what theme the wiki
-user has selected, so maybe either only do changes applying to all available
-themes or force all users to use same theme, so that your CSS applies
-correctly.
+Please note that `stylesheets` will be included no matter what theme the
+user has selected, so either only apply changes to all available themes or 
+force all users to use the same theme, so that your CSS displays correctly.
 
 Displaying user avatars
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,10 +249,10 @@ service. To enable it, use::
 
     user_use_gravatar = True
 
-Please note that using the gravatar service has some privacy issues::
+Please note that using the gravatar service has some privacy issues:
 
 * to register your image for your email at gravatar.com, you need to give them
-  your email address (same as you use in your wiki user profile).
+  your email address, which is the same as you use in your wiki user profile.
 * we try to avoid exposing the referrer URL to gravatar.com, but this only
   works if your browser correctly implements rel="noreferrer". If it does not,
   your wiki item URLs will be exposed, so they will roughly know which people
@@ -264,13 +261,13 @@ Please note that using the gravatar service has some privacy issues::
 XStatic Packages
 ----------------
 `XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard 
-to package external (often 3rd party) static files as a python package. 
-So they are easily usable on all operating systems, 
-with any package management system or even without one.
+to package external static files as a Python package, often third party. 
+That way they are easily usable on all operating systems, whether it has a package management 
+system or not.
 
 In many cases, those external static files are maintained by someone else (like jQuery
-javascript library or even much bigger js libraries or applications) and we
-definitely do not want to merge them into our project.
+javascript library or larger js libraries) and we definitely do not want to merge 
+them into our project.
 
 For MoinMoin we require the following XStatic Packages in setup.py:
 
@@ -302,7 +299,7 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   used in the template of index view for multiple parallel downloads.
 
 
-These packages are imported in wikiconfig by ::
+These packages are imported in wikiconfig by::
 
     from xstatic.main import XStatic
     mod_names = ['jquery', 'jquery_file_upload', 'ckeditor',
@@ -314,7 +311,7 @@ These packages are imported in wikiconfig by ::
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
         serve_files.update([(xs.name, xs.base_dir)])
 
-In a template file you access the files of such a package by its module name ::
+In a template file you access the files of such a package by its module name::
 
     url_for('serve.files', name='the mod name', filename='the file to load')
 
@@ -340,16 +337,11 @@ and add the required fragment in base.html::
 
 Custom Themes
 -------------
-In case you want to do major changes to how MoinMoin looks (so just
-changing snippets or CSS is not enough), you could also write your own theme.
+In case you want to do major changes to how MoinMoin displays its pages, you 
+could also write your own theme.
 
-Be warned: doing this is a long-term thing, you don't just have to write it,
-but you'll also have to maintain and update it. Thus, we suggest you try
-living with the built-in themes or collaborate with the MoinMoin core and
-other interested developers on the internet.
-
-A few well-made, well-maintained and widespread themes are much better than
-lots of the opposite.
+Caution: developing your own theme means you also have to maintain and update it, 
+which normally requires a long-term effort.
 
 .. todo::
 
@@ -364,7 +356,7 @@ list from left to right.
 
 Each authenticator is an instance of some specific class, configuration of
 the authenticators usually works by giving them keyword arguments. Most have
-reasonable defaults, though.
+reasonable defaults though.
 
 MoinAuth
 --------
@@ -378,8 +370,8 @@ profile and if both match, the user is authenticated::
 
 HTTPAuthMoin
 ------------
-With HTTPAuthMoin moin does http basic auth all by itself (without help of
-the web server)::
+With HTTPAuthMoin moin does http basic authentication by itself without the help of
+the web server::
 
     from MoinMoin.auth.http import HTTPAuthMoin
     auth = [HTTPAuthMoin(autocreate=True)]
@@ -389,27 +381,27 @@ http header. Browsers then usually show some login dialogue to the user,
 asking for username and password. Both then gets transmitted to moin and it
 is compared against the password hash stored in the user's profile.
 
-Note: when HTTPAuthMoin is used, the browser will show that login dialogue, so
+**Note:** when HTTPAuthMoin is used, the browser will show that login dialogue, so
 users must login to use the wiki.
 
 GivenAuth
 ---------
 With GivenAuth moin relies on the webserver doing the authentication and giving
-the result to moin (usually via environment variable REMOTE_USER)::
+the result to moin, usually via the environment variable REMOTE_USER::
 
     from MoinMoin.auth import GivenAuth
     auth = [GivenAuth(autocreate=True, coding='utf-8')]
 
-Using this has some pros and cons:
+Using this method has some pros and cons:
 
 * you can use lots of authentication extensions available for your web server
-* but the only information moin will get (via REMOTE_USER) is the authenticated
+* but the only information moin will get via REMOTE_USER is the authenticated
   user's name, nothing else. So, e.g. for LDAP/AD, you won't get additional
-  stuff stored in the LDAP directory.
-* all the stuff you won't get (but you need) will need to be manually stored
-  and updated in the user's profile (e.g. the user's email address, etc.)
+  content stored in the LDAP directory.
+* everything you won't get, but which you need, will need to be manually stored
+  and updated in the user's profile, e.g. the user's email address, etc.
 
-Please note that you must give the correct coding (character set) so that moin
+Please note that you must give the correct character set so that moin
 can decode the username to unicode, if necessary. For environment variables
 like REMOTE_USER, the coding might depend on your operating system.
 
@@ -451,7 +443,7 @@ With LDAPAuth you can authenticate users against a LDAP directory or MS Active D
 
 LDAPAuth with single LDAP server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This example shows how to use it with a single LDAP/AD server::
+This example shows how to use LDAPAuth with a single LDAP/AD server::
 
     from MoinMoin.auth.ldap_login import LDAPAuth
     ldap_common_arguments = dict(
@@ -516,10 +508,10 @@ This example shows how to use it with a single LDAP/AD server::
 
 LDAPAuth with two LDAP servers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This example shows how to use it with a two LDAP/AD servers (like e.g. a primary
-and backup domain controller)::
+This example shows how to use LDAPAuth with a two LDAP/AD servers, such as in a setup
+with a primary controller and backup domain controller::
 
-    # ... same stuff as for single server (except the line with "auth =") ...
+    # ... same as for single server (except the line with "auth =") ...
     ldap_authenticator2 = LDAPAuth(
         server_uri='ldap://otherldap',  # ldap / active directory server URI for second server
         name='ldap2',
@@ -530,8 +522,8 @@ and backup domain controller)::
 
 AuthLog
 -------
-AuthLog is no real authenticator in the sense that it authenticates (logs in) or
-deauthenticates (logs out) users, it is just passively logging informations for
+AuthLog is not a real authenticator in the sense that it authenticates (logs in) or
+deauthenticates (logs out) users. It is passively logging informations for
 authentication debugging::
 
     from MoinMoin.auth import MoinAuth
@@ -545,14 +537,14 @@ Example logging output::
  2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:u'ThomasWaldmann' valid:False> kw={}
  2011-02-05 16:35:06,328 INFO MoinMoin.auth.log:22 session: user_obj=None kw={}
 
-Note: there are sensitive informations like usernames and passwords in this
-log output. Make sure you only use this for testing and delete the logs when
+**Note:** there is sensitive information like usernames and passwords in this
+log output. Make sure you only use this for testing only and delete the logs when
 done.
 
 SMBMount
 --------
 SMBMount is no real authenticator in the sense that it authenticates (logs in)
-or deauthenticates (logs out) users. It just catches the username and password
+or deauthenticates (logs out) users. It instead catches the username and password
 and uses them to mount a SMB share as this user.
 
 SMBMount is only useful for very special applications, e.g. in combination
@@ -588,36 +580,35 @@ Transmission security
 =====================
 Credentials
 -----------
-Some of the authentication methods described above will transmit credentials
-(like usernames and password) in unencrypted form:
+Some of the authentication methods described above will transmit credentials,
+like usernames and password, in unencrypted form:
 
 * MoinAuth: when the login form contents are transmitted to moin, they contain
-  username and password in cleartext.
+  username and password in clear text.
 * HTTPAuthMoin: your browser will transfer username and password in a encoded
-  (but NOT encrypted) form with EVERY request (it uses http basic auth).
-* GivenAuth: please check the potential security issues of the authentication
-  method used by your web server. For http basic auth please see HTTPAuthMoin.
+  (but NOT encrypted) form with EVERY request; it uses http basic auth.
+* GivenAuth: check the potential security issues of the authentication
+  method used by your web server; for http basic auth please see HTTPAuthMoin.
 * OpenID: please check yourself.
 
 Contents
 --------
-http transmits everything in cleartext (not encrypted).
+http transmits everything in clear text and is therefore not encrypted.
 
 Encryption
 ----------
-Transmitting unencrypted credentials or contents is a serious issue in many
+Transmitting unencrypted credentials or contents can cause serious issues in many
 scenarios.
 
-We recommend you make sure connections are encrypted, like with https or VPN
+We recommend you make sure the connections are encrypted, like with https or VPN
 or an ssh tunnel.
 
 For public wikis with very low security / privacy needs, it might not be needed
-to encrypt their content transmissions, but there is still an issue for the
+to encrypt the content transmissions, but there is still an issue for the
 credential transmissions.
 
 When using unencrypted connections, wiki users are advised to make sure they
-use unique credentials (== not reusing passwords that are also used for other
-stuff).
+use unique credentials and not reuse passwords that are used for other purposes.
 
 
 Password security
@@ -625,14 +616,13 @@ Password security
 Password strength
 -----------------
 As you might know, many users are bad at choosing reasonable passwords and some
-are tempted to use passwords like 123456 everywhere.
+are tempted to use easily crackable passwords.
 
-To help the users choose reasonable passwords, moin has a simple builtin
-password checker that does some sanity checks (the checker is enabled by
-default), so users don't choose too short or too easy passwords.
+To help users choose reasonable passwords, moin has a simple builtin
+password checker that is enabled by default and does some sanity checks, 
+so users don't choose easily crackable passwords.
 
-If you don't like this and your site has rather low security requirements,
-feel free to DISABLE the checker by::
+If your site has rather low security requirements, you can disable the checker by::
 
     password_checker = None # no password checking
 
@@ -641,8 +631,8 @@ checks, it e.g. won't forbid using a dictionary word as password.
 
 Password storage
 ----------------
-Moin never stores passwords in cleartext, but always as cryptographic hash
-with random salt (currently ssha256 is the default).
+Moin never stores passwords in clear text, but always as cryptographic hash
+with a random salt. Currently ssha256 is the default.
 
 
 Authorization
@@ -651,33 +641,32 @@ Moin uses Access Control Lists (ACLs) to specify who is authorized to perform
 a given action.
 
 Please note that wikis usually make much use of so-called *soft security*,
-which means that they are rather open and give freedom to users, while
-providing means to revert damage in case it happens.
+which means that they are rather open and give freedom to users, while at the same time
+providing the means to revert any damage that may have been caused.
 
 *Hard security* means that one would lock items, etc. so that no damage can possibly be done.
 
 Moin's default configuration tries to give a sane compromise of both soft
-and hard security. Depending on the situation the wiki
-admin/owner/community has to deal with, however, you may need different settings.
+and hard security. However, you may need different settings depending on the situation that the wiki
+admin, wiki owner or wiki community will have to deal with.
 
-So just keep in mind:
+So keep in mind:
 
-* if your wiki is rather open, you might make it easy to contribute (e.g. a
+* if your wiki is rather open, you might make it easy to contribute, e.g. a
   user who is not a regular user of your wiki could fix some typos he has just
-  found). However, a hostile user (or bot) might also put some spam into your wiki
-  (you'd be able to revert the spam later).
-* if your wiki is rather closed (e.g. you require every user to first apply for an
-  account and to log in before being able to do changes), you'll rarely get
+  found. However, a hostile user or bot might also put some spam into your wiki
+  with the ability to be able to revoke the spam later.
+* if your wiki is rather closed, e.g. you require every user to first apply for an
+  account and to log in before being able to do changes, you will rarely get
   contributions from casual users and maybe also less from members of your
-  community. But, it's likely you won't get spam either.
+  community. But, getting spam is then less likely.
  
 
 ACL for functions
 -----------------
 This ACL controls access to some specific functions / views of moin::
 
-    # we just show the default value of acl_rights_functions for information,
-    # you usually do not have to change it:
+    # the default value of acl_rights_functions for information, you usually do not have to change it:
     #acl_rights_functions = ['superuser', 'notextcha', ]
     acl_functions = u'+YourName:superuser TrustedEditorGroup:notextcha'
 
@@ -691,12 +680,11 @@ Supported capabilities (rights):
 
 ACLs for contents
 -----------------
-These ACLs control access to contents stored in the wiki - they are configured
+These ACLs control access to contents stored in the wiki, they are configured
 per storage backend (see storage backend docs) and optionally in the metadata of wiki
 items::
 
-    # we just show the default value of acl_rights_contents for information,
-    # you usually do not have to change it:
+    # the default value of acl_rights_contents for information, you usually do not have to change it:
     #acl_rights_contents = ['read', 'write', 'create', 'destroy', 'admin', ]
     ... backend configuration ...
     ... before=u'YourName:read,write,create,destroy,admin',
@@ -716,19 +704,19 @@ is specified in the metadata of the item in question.
 
 How to use before/default/after:
 
-* `before` is usually used to force stuff (e.g. if you want to give some
-  wiki admin all permissions no matter what)
-* `default` is the behavior if nothing special has been specified (no ACL in
-  item metadata)
-* `after` is rarely used. When it is, it's used to "not forget something unless otherwise specified".
+* `before` is usually used to force something, for example if you want to give some
+  wiki admin all permissions indiscriminately
+* `default` is the behavior if nothing special has been specified, ie no ACL in the
+  item's metadata
+* `after` is rarely used and when it is, it is used to "not forget something unless otherwise specified".
 
 When configuring content ACLs, you can choose between standard (flat) ACL
 processing and hierarchic ACL processing. Hierarchic processing means that
-subitems inherit ACLs from their parent items if they don't have an ACL.
+subitems inherit ACLs from their parent items if they don't have an ACL themselves.
 
 Note that while hierarchic ACLs are rather convenient sometimes, they make the
-system more complex. You have to be very careful with potential permissions
-changes happening due to changes in the hierarchy, like when you create,
+system more complex. You have to be very careful with permission
+changes happening as a result of changes in the hierarchy, such as when you create,
 rename or delete items.
 
 Supported capabilities (rights):
@@ -736,8 +724,8 @@ Supported capabilities (rights):
 * read - read content
 * write - write (edit, modify) content
 * create - create new items
-* destroy - completely destroy revisions or items (give this only to *fully-trusted* users)
-* admin - change (create, remove) ACLs for the item (give this only to *fully-trusted* users)
+* destroy - completely destroy revisions or items; to be given only to *fully-trusted* users
+* admin - change (create, remove) ACLs for the item; to be given only to *fully-trusted* users
 
 ACLs - special groups
 ---------------------
@@ -755,9 +743,9 @@ ACLs - basic syntax
 An ACL is a unicode string with one or more access control entries
 which are space separated.
 
-An entry is a colon-separated set of two values::
+An entry is a colon-separated set of two values:
 
-* the left side is a comma-separated list of user and/or group names and
+* the left side is a comma-separated list of user and/or group names
 * the right side is a comma-separated list of rights / capabilities for those users/groups.
 
 An ACL is processed from left to right, where the first left-side match counts.
@@ -766,7 +754,7 @@ Example::
 
     u"SuperMan:read,write,create,destroy,admin All:read,write"
 
-If "SuperMan" is currently logged in and moin processes this ACL, it'll find
+If "SuperMan" is currently logged in and moin processes this ACL, it will find
 a name match in the first entry. If moin wants to know whether he may destroy,
 the answer will be "yes", as destroy is one of the capabilities/rights listed
 on the right side of this entry.
@@ -784,7 +772,7 @@ Notes:
 * As a consequence of the left-to-right and first-match-counts processing,
   you must order ACL entries so that the more specific ones (like for
   "SuperMan") are left of the less specific ones.
-  Usually, you want this order:
+  Usually, you want this order::
 
   1) usernames
   2) special groups
@@ -806,7 +794,7 @@ To make the system more flexible, there are two ways to modify an ACL entry: pre
 
 If you use one of the two, MoinMoin will search for both a username and permission, and a match will have to match
 both the name of user (left-side) *and* the permission MoinMoin is searching for (right-side), otherwise
-it will just continue with the next entry.
+it will continue with the next entry.
 
 '+' indicates that MoinMoin should give the permission(s) specified on the right side.
 
@@ -817,18 +805,18 @@ Example::
     u"+SuperMan:create,destroy,admin -Idiot:write All:read,write"
 
 If "SuperMan" is currently logged in and moin wants to know whether he may
-destroy, it'll find a match in the first entry (name matches *and* permission
-in question matches). As the prefix is '+', the answer is "yes".
+destroy, it'll find a match in the first entry, because the name matches *and* permission
+in question matches. As the prefix is '+', the answer is "yes".
 If moin wants to know whether he may write, the first entry will not match
 on both sides, so moin will proceed and look at the second entry. It doesn't
-match, so it'll look at the third entry. Of course "SuperMan" is a member of
+match, so it will look at the third entry. Of course "SuperMan" is a member of
 group "All", so we have a match here. As "write" is listed on the right side,
 the answer will be "yes".
 
 If "Idiot" is currently logged in and moin wants to know whether he may write,
-it'll find no match in the first entry, but the second entry will match. As
-the prefix is '-', the answer will be "no" (and it will not even proceed and
-look at the third entry).
+it will find no match in the first entry, but the second entry will match. As
+the prefix is '-', the answer will be "no" and it will not even proceed and
+look at the third entry.
 
 Notes:
 
@@ -842,9 +830,9 @@ There is a special ACL entry, "Default", which expands itself in-place to the
 default ACL.
 
 This is useful, for example, if when you mostly want the default ACL, but
-with a slight modification - but you don't want to type in the default ACL
-all the time (and you also want to be able to change the default ACL without
-having to edit lots of items).
+with a slight modification, but you don't want to type in the default ACL
+all the time and you also want to be able to change the default ACL without
+having to edit lots of items.
 
 Example::
 
@@ -865,11 +853,11 @@ prevent wiki spamming and it has proven to be very effective.
 Features:
 
 * when registering a user or saving an item, it can ask a random question
-* match the given answer against a regular expression
+* moin matches the given answer against a regular expression
 * questions and answers can be configured in the wiki config
-* multi language support: a user gets a textcha in his language or in
-  language_default or in English (depending on availability of questions and
-  answers for the language)
+* multi language support: a user gets a textcha in his language or in the
+  language_default or in English, depending on availability of questions and
+  answers for the language
 
 TextCha Configuration
 ~~~~~~~~~~~~~~~~~~~~~
@@ -883,8 +871,8 @@ Tips for configuration:
 * do not ask overly obvious questions
 * do not share your questions with other sites / copy questions from other
   sites (or spammers might try to adapt to this) 
-* you should at least give textchas for 'en' (or for your language_default, if
-  that is not 'en') as this will be used as fallback if MoinMoin does not find
+* you should at least give textchas for 'en' or for your language_default, if
+  that is not 'en', as this will be used as fallback if MoinMoin does not find
   a textcha in the user's language
 
 In your wiki config, do something like this::
@@ -909,14 +897,14 @@ Note that users with 'notextcha' ACL capability won't get TextChas to answer.
 
 Secrets
 =======
-Moin uses secrets (just use a long random string; *not* a reuse of any of your
-passwords) to encrypt or cryptographically sign some stuff like:
+Moin uses secrets to encrypt or cryptographically sign something like:
 
 * textchas
 * tickets
 
+Secrets are long random strings and *not* a reuse of any of your passwords.
 Don't use the strings shown below, they are NOT secret as they are part of the
-moin documentation - make up your own secrets::
+moin documentation. Make up your own secrets::
 
     secrets = {
         'security/textcha': 'kjenrfiefbeiaosx5ianxouanamYrnfeorf',
@@ -930,9 +918,9 @@ SECRET_KEY for all secrets it needs.
 Groups and Dicts
 ================
 Moin can get group and dictionary information from some supported backends
-(like the wiki configuration or wiki items).
+like the wiki configuration or wiki items.
 
-A group is just a list of unicode names. It can be used for any application:
+A group is a list of unicode names. It can be used for any application:
 one application is defining user groups for usage in ACLs.
 
 A dict is a mapping of unicode keys to unicode values. It can be used for any
@@ -1014,22 +1002,22 @@ Setup of storage is rather complex and layered, involving:
   authorized to access
 * Indexing mixin that indexes some data automatically on commit, so items can
   be selected / retrieved faster.
-* storage backends that really store wiki items somewhere
+* storage backends that store wiki items
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier - it helps you:
+This is a helper function to make storage setup easier. It helps you to:
 
 * create a simple setup that uses 3 storage backends internally for these
   parts of the namespace:
 
   - content
   - userprofiles
-* to configure ACLs protecting these parts of the namespace
-* to setup a router middleware that dispatches to these parts of the namespace
-* to setup a indexing mixin that maintains an index
+* configure ACLs protecting these parts of the namespace
+* setup a router middleware that dispatches to these parts of the namespace
+* setup a indexing mixin that maintains an index
 
-Call it like::
+Call it as follows::
 
     from MoinMoin.storage import create_simple_mapping
 
@@ -1044,14 +1032,14 @@ Call it like::
                               after=..., ),
     )
 
-The `uri` depends on the kind of storage backend and stores you want to use
-(see below). Usually it is a URL-like string in the form of::
+The `uri` depends on the kind of storage backend and stores you want to use, 
+see below. Usually it is a URL-like string in the form of::
 
     stores:fs:/srv/mywiki/%(nsname)s/%(kind)s
     
 `stores` is the name of the backend, followed by a colon, followed by a store
 specification. `fs` is the name of the store, followed by a specification
-that makes sense for the fs (filesystem) store (i.e. a path with placeholders).
+that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 
 `%(nsname)s` placeholder will be replaced 'content' or 'userprofiles' for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
@@ -1077,7 +1065,7 @@ Features:
 
 * protects access to lower storage layers by ACLs (Access Control Lists)
 * makes sure there won't be ACL security issues, even if upper layers have bugs
-* if you use create_simple_mapping, you just give the ACL parameters. The
+* if you use create_simple_mapping, you just give the ACL parameters; the
   middleware will be set up automatically by moin.
 
 routing middleware
@@ -1085,7 +1073,7 @@ routing middleware
 Features:
 
 * dispatches storage access to different backends depending on the item name
-* in POSIX terms, it's something like fstab/mount
+* in POSIX terms, it is something like fstab/mount
 * if you use create_simple_mapping, the router middleware will be set up
   automatically by moin.
 
@@ -1100,8 +1088,7 @@ Features:
 
 stores backend
 --------------
-This is a backend that ties together 2 stores (one for meta, one for data) to
-form a backend.
+This is a backend that ties together 2 stores to form a backend: one for meta, one for data
 
 fs store
 --------
@@ -1131,15 +1118,15 @@ sqla store
 Features:
 
 * stores data into an (SQL) database / table
-* can either use 1 database per store or 1 table per store (you need to
-  give different table names then)
+* can either use 1 database per store or 1 table per store and you need to
+  give different table names then
 * uses slqalchemy (without the ORM) for database abstraction
-* supports multiple types of databases. For example:
+* supports multiple types of databases, for example:
  
   - sqlite (default, comes built-into Python)
   - postgresql
   - mysql
-  - and others (see sqlalchemy docs).
+  - and others, see sqlalchemy docs.
 
 `uri` for `create_simple_mapping` looks like e.g.::
 
@@ -1161,12 +1148,12 @@ sqlite store
 ------------
 Features:
 
-* directly talks to sqlite, not using sqlalchemy
+* directly talks to sqlite, without using sqlalchemy
 * stores data into an sqlite database, which is a single file
-* can either use 1 database per store or 1 table per store (you need to
-  give different table names then)
-* can optionally compress/decompress the data using zlib (default compression
-  level is 0, which means to not compress)
+* can either use 1 database per store or 1 table per store and you need to
+  give different table names then
+* can optionally compress/decompress the data using zlib: default compression
+  level is 0, which means "do not compress"
  
 `uri` for `create_simple_mapping` looks like e.g.::
 
@@ -1220,9 +1207,8 @@ memory store
 Features:
 
 * keeps everything in RAM
-* definitely not for production use
+* if your system or the moin process crashes, all data is lost, so definitely not for production use
 * mostly intended for testing
-* if your system or the moin process crashes, you'll lose everything
 * single process only
 
 .. todo:
@@ -1291,7 +1277,7 @@ following line to your configuration file to enable this feature::
 Framework Configuration
 =======================
 
-Some stuff you may want to configure for Flask and its extensions (see
+Things you may want to configure for Flask and its extensions (see
 their docs for details)::
 
  # for Flask
@@ -1313,13 +1299,13 @@ Logging configuration
 =====================
 
 By default, logging is configured to emit output on `stderr`. This will work
-well for the built-in server (it will just show up on the console) or for Apache2 and similar
+well for the built-in server (it will show up on the console) or for Apache2 and similar
 (logging will be put into error.log).
 
 Logging is very configurable and flexible due to the use of the `logging`
 module of the Python standard library.
 
-The configuration file format is described there:
+The configuration file format is described there::
 
 http://www.python.org/doc/current/library/logging.html#configuring-logging
 
@@ -1328,7 +1314,7 @@ There are also some logging configurations in the
 `docs/examples/config/logging/` directory.
 
 Logging configuration needs to be done very early, usually it will be done
-from your adaptor script (e.g. moin.wsgi)::
+from your adaptor script, e.g. moin.wsgi::
 
     from MoinMoin import log
     log.load_config('wiki/config/logging/logfile')
@@ -1336,6 +1322,6 @@ from your adaptor script (e.g. moin.wsgi)::
 You have to fix that path to use a logging configuration matching your
 needs.
 
-Please note that the logging configuration has to be a separate file (don't
-try this in your wiki configuration file)!
+Please note that the logging configuration has to be a separate file, so don't
+try this in your wiki configuration file!
 

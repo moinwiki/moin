@@ -13,10 +13,9 @@ from MoinMoin.util.tree import html, moin_page
 
 class Converter(object):
     @classmethod
-    def _factory(cls, input, output, **kw):
-        if input == 'application/x.moin.document' and \
-                output == 'application/x.moin.document;highlight=regex':
-            return cls
+    def _factory(cls, input, output, highlight='', re='', **kw):
+        if highlight == 'regex':
+            return cls(re)
 
     def recurse(self, elem):
         new_childs = []
@@ -57,4 +56,3 @@ class Converter(object):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)
-

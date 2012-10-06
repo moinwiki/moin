@@ -101,7 +101,6 @@ class OpenIDAuth(BaseAuth):
                                                            openid_submit='1'
                                                           ))
 
-
             # not trusted
             return ContinueLogin(None, _('This OpenID provider is not trusted.'))
 
@@ -164,4 +163,3 @@ class OpenIDAuth(BaseAuth):
 
                 # returns a MultistageFormLogin
                 return MultistageFormLogin(form_html)
-

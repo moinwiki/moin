@@ -26,7 +26,7 @@ class Config(DefaultConfig):
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
-    index_dir = os.path.join(instance_dir, "index")
+    index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
@@ -58,11 +58,13 @@ class Config(DefaultConfig):
 
     # setup static files' serving:
     serve_files = dict(
-        docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
+        docs=os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
     )
     # see https://bitbucket.org/thomaswaldmann/xstatic for infos about xstatic:
     from xstatic.main import XStatic
-    mod_names = ['jquery', 'jquery_file_upload', 'jquery_multi_download',
+    # names below must be package names
+    mod_names = ['jquery', 'jquery_file_upload',
+                 'json_js',
                  'ckeditor',
                  'svgweb',
                  'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
@@ -102,4 +104,3 @@ SECRET_KEY = 'you need to change this so it is really secret'
 #
 #MOINCFG = LocalConfig
 #DEBUG = True
-

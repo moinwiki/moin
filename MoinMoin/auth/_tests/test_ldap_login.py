@@ -179,7 +179,6 @@ class TestLdapFailover(object):
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
-
     def setup_class(self):
         """ Create LDAP servers environment, start slapds """
         self.ldap_envs = []
@@ -233,4 +232,3 @@ class TestLdapFailover(object):
         u2 = handle_login(None, username='usera', password='usera')
         assert u2 is not None
         assert u2.valid
-

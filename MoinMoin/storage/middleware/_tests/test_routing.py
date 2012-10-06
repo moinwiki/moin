@@ -30,7 +30,6 @@ def make_ro_backend():
     return ROBackend(store.meta_store, store.data_store)
 
 
-
 def pytest_funcarg__router(request):
     default_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     other_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
@@ -97,4 +96,3 @@ def test_iter(router):
     other_be_name, other_revid = router.store(dict(name=[u'other:bar', ]), StringIO(''))
     existing_now = set([revid for be_name, revid in router])
     assert existing_now == set([default_revid, other_revid]) | existing_before
-

@@ -6,23 +6,20 @@ Entering search queries
 =======================
 
 Usually there is a simple but rather short search query input field offered by
-the theme - by submiting a query it will search in item names and
-content (but only in the current stuff, not in non-current revisions) and display
+the theme. By submiting a query it will search in item names and
+content, but only in the current contents, not in non-current revisions, and display
 the search results to you.
 
-On the search results view you will get a bigger search query input field
-(e.g. for refining your query) and you may also choose to additionally search
-in non-current item revisions (selecting that will search in all
-revisions).
+On the search results view you will get a bigger search query input field, 
+for example for refining your query, and you may also choose to additionally search
+in non-current item revisions. Selecting that will search in all revisions.
 
 Simple search queries
 =====================
 Just enter one or more words into the query input field and hit ``Enter``.
 
 If your query consists of multiple words, it will only find documents containing ALL those
-words ("AND" is the default).
-
-You can use AND (default), OR, NOT to refine your search.
+words. You can use AND, OR, NOT to refine your search. "AND" is the default.
 
 Examples
 --------
@@ -70,11 +67,43 @@ Search for something like wiki, willi, wi, ...::
 
   w*i
 
-You can also use it for poor man's language independant word stemming.
+You can also use it for poor man's language independent word stemming.
 
 Matches on clean, cleaner, cleanest, cleaning, ...::
 
   clean*
+
+Using regular expressions
+=========================
+
+Regular expressions enable even more flexibility for specifying search terms.
+
+See http://en.wikipedia.org/wiki/Regular_expression for basics about regexes.
+
+See http://docs.python.org/library/re.html about python's regex implementation,
+which we use for MoinMoin.
+
+You need to use this syntax when entering regexes: r"yourregex"
+
+Examples
+--------
+Search for hello or hallo::
+
+  r"h[ae]llo"
+
+Search for words starting with foo::
+
+  r"^foo"
+  r"\Afoo"
+
+Search for something like wiki, wika, wikb, ...::
+
+  r"wik."
+
+Search for something like wiki, willi, wi, ...::
+
+  r"w.*i"
+
 
 Searching in specific fields
 ============================
@@ -130,27 +159,27 @@ Search items with an item ACL that explicitly gives Joe read rights::
 
   acl:Joe:+read
 
-Limiting search to a specific wiki (in a wiki farm's shared index)::
+Limiting search to a specific wiki, for example in a wiki farm's shared index::
 
   wikiname:SomeWiki
 
 Notes
 =====
-moin uses indexed search - keep in mind that this has some special properties:
+moin uses indexed search. Keep in mind that this has some special properties:
 
  * By using an index, the search is rather usually fast 
  * Because it is only using an index, it can only find what was put there
- * If you use wildcards, it will still use the index, but in a different, slower way
+ * If you use wildcards or regexes, it will still use the index, but in a different, slower way
 
-E.g.:
+For example:
 
  * "foobar" is put into the index somehow
  * you search for "ooba" - you will not find it, because only "foobar" was put into the index
- * solution: search for "foobar" - fast and will find it
- * solution: search for "*ooba*" - slow, but will find it
+ * solution: search for "foobar": fast and will find it
+ * solution: search for "*ooba*" or r".*ooba.*": slow, but will find it
 
-More infos
-==========
+More information
+================
 
 See the `Whoosh query language docs <http://packages.python.org/Whoosh/querylang.html>`_.
 

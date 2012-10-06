@@ -6,19 +6,14 @@
     {{ rev_navigation(view='frontend.show_item_meta') }}
 {% endblock %}
 
-{% block headline %}
+{% block content_data %}
 <h1>
     {{ title }}
     {% if show_revision %}({{ _("Revision") }} {{ rev.revid }}){% endif %}
 </h1>
-{% endblock %}
-
-{% block content_data %}
 {% if meta_rendered %}
 <div id="moin-content-meta">
     {{ meta_rendered }}
 </div>
 {% endif %}
 {% endblock %}
-
-

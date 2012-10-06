@@ -342,6 +342,28 @@ class TestLoginWithPassword(object):
         expected = [u'MoinTest:item_added']
         assert result == expected
 
+    # Sessions -------------------------------------------------------
+
+    def test_sessions(self):
+        name = u'Test_User_sessions'
+        password = name
+        self.createUser(name, password)
+        theUser = user.User(name=name, password=password)
+
+        # generate test token and validate it
+        test_token = theUser.generate_session_token()
+        result_success = theUser.validate_session(test_token)
+        assert result_success
+
+        # check if the token is saved
+        test_new_token = theUser.get_session_token()
+        assert test_token == test_new_token
+
+        # check if password change invalidates the token
+        theUser.set_password(password, False)
+        result_failure = theUser.validate_session(test_token)
+        assert not result_failure
+
     # Other ----------------------------------------------------------
 
     def test_recovery_token(self):
@@ -410,4 +432,3 @@ class TestIsValidName(object):
 
 
 coverage_modules = ['MoinMoin.user']
-

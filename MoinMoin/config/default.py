@@ -24,7 +24,7 @@ from MoinMoin import config, error
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
-from MoinMoin.security import AccessControlList
+from MoinMoin.security import AccessControlList, DefaultSecurityPolicy
 
 
 class CacheClass(object):
@@ -113,15 +113,15 @@ class ConfigFunctionality(object):
         self.mail_enabled = self.mail_enabled and True or False
 
         if self.namespace_mapping is None:
-            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. " + \
+            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. "
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.backend_mapping is None:
-            raise error.ConfigurationError("No storage configuration specified! You need to define a backend_mapping. " + \
+            raise error.ConfigurationError("No storage configuration specified! You need to define a backend_mapping. " +
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.acl_mapping is None:
-            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. " + \
+            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. "
                                            "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.secrets is None:  # admin did not setup a real secret
@@ -307,7 +307,7 @@ options_no_group_name = {
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
     ('SecurityPolicy',
-     None,
+     DefaultSecurityPolicy,
      "Class object hook for implementing security restrictions or relaxations"),
     ('endpoints_excluded',
      [],
@@ -338,7 +338,8 @@ options_no_group_name = {
         ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
         ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),
         ('wikilink', 'frontend.global_tags', dict(), L_('Tags'), L_('Global Tags Index')),
-        ('wikilink', 'admin.index', dict(), L_('More'), L_('Administration & Docs')),
+        ('wikilink', 'admin.index_user', dict(), L_('User'), L_('User')),
+        ('wikilink', 'admin.index', dict(), L_('Admin'), L_('Administration & Docs')),
      ],
      'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
 
@@ -369,9 +370,8 @@ options_no_group_name = {
         ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
         ('special.supplementation', None, None, False, ),
         ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
-        # The | character in the comments and transclusions lines below separate the off/on title (tooltip) values used by javascript
-        ('special.comments', L_('Comments'), L_('Show comments|Hide comments'), True, ),
-        ('special.transclusions', L_('Transclusions'), L_('Show transclusions|Hide transclusions'), True, ),
+        ('special.comments', L_('Comments'), L_('Hide comments'), True, ),
+        ('special.transclusions', L_('Transclusions'), L_('Show transclusions'), True, ),
         ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
         ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
         ('frontend.quicklink_item', None, L_('Create or remove a navigation link to this item'), False, ),
@@ -415,13 +415,13 @@ options_no_group_name = {
     ('interwiki_map', {},
      "Dictionary of wiki_name -> wiki_url"),
     ('namespace_mapping', None,
-    "A list of tuples, each tuple containing: Namespace identifier, backend name. " + \
+    "A list of tuples, each tuple containing: Namespace identifier, backend name. " +
     "E.g.: [('', 'default')), ]. Please see HelpOnStorageConfiguration for further reference."),
     ('backend_mapping', None,
-    "A dictionary that maps backend names to backends. " + \
+    "A dictionary that maps backend names to backends. " +
     "E.g.: {'default': Backend(), }. Please see HelpOnStorageConfiguration for further reference."),
     ('acl_mapping', None,
-    "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " + \
+    "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " +
     "E.g.: [('', dict(default='All:read,write,create')), ]. Please see HelpOnStorageConfiguration for further reference."),
     ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
     ('create_index', False, "Create (initialize) the index before trying to use them."),
@@ -452,6 +452,7 @@ options_no_group_name = {
         css_url=None,
         mailto_author=False,
         edit_on_doubleclick=True,
+        scroll_page_after_edit=True,
         show_comments=False,
         want_trivial=False,
         disabled=False,
@@ -542,7 +543,7 @@ options = {
     )),
 
     'ns': ('Storage Namespaces',
-    "Storage namespaces can be defined for all sorts of data. All items sharing a common namespace as prefix" + \
+    "Storage namespaces can be defined for all sorts of data. All items sharing a common namespace as prefix" +
     "are then stored within the same backend. The common prefix for all data is ''.",
     (
       ('content', '/', "All content is by default stored below /, hence the prefix is ''."),  # Not really necessary. Just for completeness.
@@ -584,4 +585,3 @@ def _add_options_to_defconfig(opts, addgroup=True):
 
 _add_options_to_defconfig(options)
 _add_options_to_defconfig(options_no_group_name, False)
-

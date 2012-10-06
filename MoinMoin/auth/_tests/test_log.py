@@ -36,4 +36,3 @@ class TestAuthLog(object):
         assert test_user.name0 == u'anonymous'
         assert not test_user.valid
         assert bool_value
-

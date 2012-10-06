@@ -93,4 +93,3 @@ def create_simple_mapping(uri='stores:fs:instance',
         '': content_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)
-

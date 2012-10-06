@@ -243,4 +243,3 @@ def decodeSpamSafeEmail(address):
 
     # return concatenated parts
     return ''.join(email)
-

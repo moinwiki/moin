@@ -75,10 +75,10 @@ def atom(item_name):
                 if previous_revid is not None:
                     # HTML diff for subsequent revisions
                     previous_rev = item[previous_revid]
-                    content = hl_item._render_data_diff_atom(previous_rev, this_rev)
+                    content = hl_item.content._render_data_diff_atom(previous_rev, this_rev)
                 else:
                     # full html rendering for new items
-                    content = render_template('atom.html', get='first_revision', rev=this_rev, content=Markup(hl_item._render_data()), revision=this_revid)
+                    content = render_template('atom.html', get='first_revision', rev=this_rev, content=Markup(hl_item.content._render_data()), revision=this_revid)
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
@@ -110,4 +110,3 @@ def atom(item_name):
         if cid is not None:
             app.cache.set(cid, content)
     return Response(content, content_type='application/atom+xml')
-

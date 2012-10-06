@@ -51,10 +51,10 @@ def init_test_app(given_config):
         namespace_mapping=namespace_mapping,
         backend_mapping=backend_mapping,
         acl_mapping=acl_mapping,
-        create_storage = True, # create a fresh storage at each app start
-        destroy_storage = True, # kill all storage contents at app shutdown
-        create_index = True, # create a fresh index at each app start
-        destroy_index = True, # kill index contents at app shutdown
+        create_storage=True, # create a fresh storage at each app start
+        destroy_storage=True, # kill all storage contents at app shutdown
+        create_index=True, # create a fresh index at each app start
+        destroy_index=True, # kill index contents at app shutdown
     )
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,
@@ -103,7 +103,6 @@ class MoinTestFunction(pytest.collect.Function):
         if hasattr(self._obj, 'im_self'):
             self._obj.im_self.app = self.app
 
-
     def teardown(self):
         super(MoinTestFunction, self).teardown()
 
@@ -113,7 +112,7 @@ def pytest_pycollect_makemodule(path, parent):
 
 def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
     if collector.funcnamefilter(name) and inspect.isfunction(obj):
-        return MoinTestFunction(name, parent = collector)
+        return MoinTestFunction(name, parent=collector)
 
 def pytest_pyfunc_call(pyfuncitem):
     """hook to intercept generators and run them as a single test items"""
@@ -130,4 +129,3 @@ class Module(pytest.collect.Module):
         if coverage is not None:
             coverage_modules.update(getattr(self.obj, 'coverage_modules', []))
         return super(Module, self).run(*args, **kwargs)
-

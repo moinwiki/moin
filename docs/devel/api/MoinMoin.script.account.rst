@@ -7,7 +7,6 @@ account Package
 .. automodule:: MoinMoin.script.account
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`create` Module
@@ -16,7 +15,6 @@ account Package
 .. automodule:: MoinMoin.script.account.create
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`disable` Module
@@ -25,7 +23,6 @@ account Package
 .. automodule:: MoinMoin.script.account.disable
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`resetpw` Module
@@ -34,6 +31,5 @@ account Package
 .. automodule:: MoinMoin.script.account.resetpw
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

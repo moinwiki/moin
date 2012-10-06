@@ -76,4 +76,3 @@ def deserialize(src, backend):
             assert limited._pos == 0
             # but we must seek to get forward to the next item:
             src.seek(curr_pos + data_size)
-

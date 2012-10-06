@@ -23,6 +23,13 @@ try:
 except Exception:
     pass
 
+try:
+    # check if we can connect to the mongodb server
+    check_connection(27017)
+    STORES.append('mongodb')
+except Exception:
+    pass
+
 constructors = {
     'memory': lambda store, _: store(),
     'fs': lambda store, tmpdir: store(str(tmpdir.join('store'))),
@@ -32,6 +39,7 @@ constructors = {
                                           'test_table', compression_level=1),
     'kc': lambda store, tmpdir: store(str(tmpdir.join('store.kch'))),
     'kt': lambda store, _: store(),
+    'mongodb': lambda store, _: store(),
     'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')),
                                         'test_table'),
 }
@@ -77,9 +85,10 @@ def make_store(request):
     store = construct(klass, tmpdir)
     store.create()
     store.open()
-    # no destroy in the normal finalizer
-    # so we can keep the data for example if it's a tmpdir
     request.addfinalizer(store.close)
+    # for debugging, you can disable the next line to see the stuff in the
+    # store and examine it, but usually we want to clean up afterwards:
+    request.addfinalizer(store.destroy)
     return store
 
 
@@ -96,5 +105,5 @@ def pytest_funcarg__store(request):
     storename, kind = request.param
     if kind == 'FileStore':
         store = ByteToStreamWrappingStore(store)
+    # store here always is a ByteStore and can be tested as such
     return store
-

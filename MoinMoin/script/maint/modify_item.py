@@ -6,16 +6,11 @@ MoinMoin - get an item revision from the wiki, put it back into the wiki.
 """
 
 import shutil
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
+import json
 
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin.config import NAME, CURRENT, REVID, DATAID, SIZE, HASH_ALGORITHM
 
@@ -72,4 +67,3 @@ class PutItem(Command):
         item = app.storage[name]
         with open(data_file, 'rb') as df:
             item.store_revision(meta, df, overwrite=overwrite)
-

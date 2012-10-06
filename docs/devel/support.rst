@@ -3,7 +3,8 @@ MoinMoin Supports You
 
 Free Support
 ------------
-You can get free support and informations there:
+You can get free support and information here:
+
 * on our chat channels, see http://moinmo.in/MoinMoinChat
 * on our wiki, see http://moinmo.in/ - please note that quite a lot of content
   there is about moin 1.x and does not apply to moin2. One page has a lot
@@ -24,7 +25,7 @@ You can get free support and informations there:
 Commercial Support
 ------------------
 As MoinMoin 2.0 is not released yet, there is no support for production
-systems based on it (we do not recommend that and do not support that).
+systems based on it.
 
 If you want to talk about development topics, please contact the developers.
 
@@ -39,23 +40,23 @@ others searching for support there.
 
 Found a bug?
 ------------
-* File a bug report on the issue tracker (on bitbucket).
-* Even better: fix the bug, file a bug report and submit a patch (consider
-  adding a unit test)
+* File a bug report on the issue tracker on bitbucket.
+* Even better: fix the bug, file a bug report and submit a patch and consider
+  adding a unit test
 
 Have an idea?
 -------------
-* Discuss it on IRC and file a feature request (on bitbucket).
-* Even better: discuss + write some Python code implementing it.
+* Discuss it on IRC and file a feature request on bitbucket.
+* Even better: discuss and write some Python code implementing it.
 
 Born to code?
 -------------
-* Help to work on moin2 core, so it gets finished faster.
-* Help maintaining moin 1.9 until moin2 is ready.
+* Help to work on moin2 core, so it gets released sooner.
+* Help to maintain moin 1.9 until moin2 is ready.
 
 Loving UI / UX design?
 ----------------------
-* Help us making moin2 look and feel better!
+* Help us make moin2 look and feel better!
 
 Have good language or documentation skills?
 -------------------------------------------

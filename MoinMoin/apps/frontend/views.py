@@ -1,3 +1,4 @@
+# Copyright: 2012 MoinMoin:CheerXiao
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2011 MoinMoin:ReimarBauer
@@ -17,29 +18,28 @@
 import re
 import difflib
 import time
+import mimetypes
+import json
 from datetime import datetime
 from itertools import chain
 from collections import namedtuple
-try:
-    import json
-except ImportError:
-    import simplejson as json
+from functools import wraps, partial
 
-from flask import request, url_for, flash, Response, redirect, session, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.babel import format_date
-from flaskext.themes import get_themes_list
+from flask.ext.babel import format_date
+from flask.ext.themes import get_themes_list
 
-from flatland import Form, String, Integer, Boolean, Enum, List
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
+from flatland import Form, Enum, List
+from flatland.validation import Validator
 
 from jinja2 import Markup
 
 import pytz
 from babel import Locale
 
-from whoosh.query import Term, And, Or, DateRange
+from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -47,10 +47,10 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.items import Item, NonExistent
-from MoinMoin.items import ROWS_META, COLS, ROWS_DATA
+from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden, MultiSelect
+from MoinMoin.items import BaseChangeForm, Item, NonExistent
+from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
-from MoinMoin.config import CONTENTTYPE_GROUPS
 from MoinMoin.constants.keys import *
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
@@ -124,9 +124,119 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-@frontend.route('/+search', methods=['GET', 'POST'])
-def search():
-    title_name = _("Search")
+class LookupForm(Form):
+    name = OptionalText.using(label='name')
+    name_exact = OptionalText.using(label='name_exact')
+    itemid = OptionalText.using(label='itemid')
+    revid = OptionalText.using(label='revid')
+    userid = OptionalText.using(label='userid')
+    language = OptionalText.using(label='language')
+    itemlinks = OptionalText.using(label='itemlinks')
+    itemtransclusions = OptionalText.using(label='itemtransclusions')
+    refs = OptionalText.using(label='refs')
+    tags = Tags.using(optional=True).using(label='tags')
+    history = InlineCheckbox.using(label=L_('search also in non-current revisions'))
+    submit = Submit.using(default=L_('Lookup'))
+
+
+@frontend.route('/+lookup', methods=['GET', 'POST'])
+def lookup():
+    """
+    lookup is like search, but it only deals with specific fields that identify
+    an item / revision. no query string parsing.
+
+    for uuid fields, it performs a prefix search, so you can just give the
+    first few digits. same is done for name_exact field.
+    if you give a complete uuid or you do a lookup via the name field, it
+    will use a simple search term.
+    for one result, it directly redirects to the item/revision found.
+    for none or multipe results, a result page is shown.
+
+    usually this is used for links with a query string, like:
+    /+lookup?itemid=123cba  (prefix match on itemid 123cba.......)
+    /+lookup?revid=c0ddcda9a092499c92920cc4a9b11704  (full uuid simple term match)
+    /+lookup?name_exact=FooBar/  (prefix match on name_exact FooBar/...)
+
+    When giving history=1 it will use the all revisions index for lookup.
+    """
+    status = 200
+    title_name = _("Lookup")
+    # TAGS might be there multiple times, thus we need multi:
+    lookup_form = LookupForm.from_flat(request.values.items(multi=True))
+    valid = lookup_form.validate()
+    lookup_form['submit'].set_default() # XXX from_flat() kills all values
+    if valid:
+        history = bool(request.values.get('history'))
+        idx_name = ALL_REVS if history else LATEST_REVS
+        terms = []
+        for key in [NAME, NAME_EXACT, ITEMID, REVID, USERID,
+                    LANGUAGE,
+                    TAGS,
+                    ITEMLINKS, ITEMTRANSCLUSIONS, 'refs', ]:
+            value = lookup_form[key].value
+            if value:
+                if (key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN
+                    or
+                    key in [NAME_EXACT]):
+                    term = Prefix(key, value)
+                elif key == 'refs':
+                    term = Or([Term(ITEMLINKS, value), Term(ITEMTRANSCLUSIONS, value)])
+                elif key == TAGS:
+                    term = And([Term(TAGS, v.value) for v in lookup_form[key]])
+                else:
+                    term = Term(key, value)
+                terms.append(term)
+        if terms:
+            terms.append(Term(WIKINAME, app.cfg.interwikiname))
+            q = And(terms)
+            with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
+                flaskg.clock.start('lookup')
+                results = searcher.search(q, limit=100)
+                flaskg.clock.stop('lookup')
+                num_results = results.scored_length()
+                if num_results == 1:
+                    result = results[0]
+                    rev = result[REVID] if history else CURRENT
+                    url = url_for('.show_item', item_name=result[NAME], rev=rev)
+                    return redirect(url)
+                else:
+                    flaskg.clock.start('lookup render')
+                    html = render_template('lookup.html',
+                                           title_name=title_name,
+                                           lookup_form=lookup_form,
+                                           results=results,
+                                          )
+                    flaskg.clock.stop('lookup render')
+                    if not num_results:
+                        status = 404
+                    return Response(html, status)
+    html = render_template('lookup.html',
+                           title_name=title_name,
+                           lookup_form=lookup_form,
+                          )
+    return Response(html, status)
+
+
+def _compute_item_transclusions(item_name):
+    """Compute which items are transcluded into item <item_name>.
+
+    :returns: a set of their item names.
+    """
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        # The search process should be as fast as possible so use
+        # the indexer low-level documents instead of high-level Revisions.
+        doc = searcher.document(name_exact=item_name)
+        if not doc:
+            return set()
+        transcluded_names = set(doc[ITEMTRANSCLUSIONS])
+        for item_name in transcluded_names.copy():
+            transclusions = _compute_item_transclusions(item_name)
+            transcluded_names.update(transclusions)
+        return transcluded_names
+
+@frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
+@frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
+def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
     search_form['submit'].set_default() # XXX from_flat() kills all values
@@ -134,11 +244,40 @@ def search():
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, CONTENT], idx_name=idx_name)
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT], idx_name=idx_name)
         q = qp.parse(query)
+
+        _filter = None
+        if item_name: # Only search this item and subitems
+            prefix_name = item_name + u'/'
+            terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
+
+            show_transclusions = True
+            if show_transclusions:
+                # XXX Search subitems and all transcluded items (even recursively),
+                # still looks like a hack. Imaging you have "foo" on main page and
+                # "bar" on transcluded one. Then you search for "foo AND bar".
+                # Such stuff would only work if we expand transcluded items
+                # at indexing time (and we currently don't).
+                with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+                    subq = Or([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ])
+                    subq = And([subq, Every(ITEMTRANSCLUSIONS), ])
+                    flaskg.clock.start('search subitems with transclusions')
+                    results = searcher.search(subq, limit=None)
+                    flaskg.clock.stop('search subitems with transclusions')
+                    transcluded_names = set()
+                    for hit in results:
+                        name = hit[NAME]
+                        transclusions = _compute_item_transclusions(name)
+                        transcluded_names.update(transclusions)
+                # XXX Will whoosh cope with such a large filter query?
+                terms.extend([Term(NAME_EXACT, name) for name in transcluded_names])
+
+            _filter = Or(terms)
+
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             flaskg.clock.start('search')
-            results = searcher.search(q, limit=100)
+            results = searcher.search(q, filter=_filter, limit=100)
             flaskg.clock.stop('search')
             # XXX if found that calling key_terms like you see below is 1000..10000x
             # slower than the search itself, so we better don't do that right now.
@@ -158,19 +297,56 @@ def search():
                                    content_suggestions=content_suggestions,
                                    query=query,
                                    medium_search_form=search_form,
-                                   title_name=title_name,
+                                   item_name=item_name,
                                   )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
-                               title_name=title_name,
+                               item_name=item_name,
                               )
     return html
 
 
-@frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET'])
+def add_presenter(wrapped, view, add_trail=False, abort404=True):
+    """
+    Add new "presenter" views.
+
+    Presenter views handle GET requests to locations like
+    +{view}/+<rev>/<item_name> and +{view}/<item_name>, and always try to
+    look up the item before processing.
+
+    :param view: name of view
+    :param add_trail: whether to call flaskg.user.add_trail
+    :param abort404: whether to abort(404) for nonexistent items
+    """
+    @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
+    @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
+    @wraps(wrapped)
+    def wrapper(item_name, rev):
+        if add_trail:
+            flaskg.user.add_trail(item_name)
+        try:
+            item = Item.create(item_name, rev_id=rev)
+        except AccessDenied:
+            abort(403)
+        if abort404 and isinstance(item, NonExistent):
+            abort(404, item_name)
+        return wrapped(item)
+    return wrapper
+
+
+def presenter(view, add_trail=False, abort404=True):
+    """
+    Decorator factory to apply add_presenter().
+    """
+    return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
+
+
+# The first form accepts POST to allow modifying behavior like modify_item.
+# The second form only accpets GET since modifying a historical revision is not allowed (yet).
+@frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.add_trail(item_name)
@@ -180,24 +356,7 @@ def show_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
         abort(403)
-    show_revision = rev != CURRENT
-    show_navigation = False # TODO
-    first_rev = last_rev = None # TODO
-    if isinstance(item, NonExistent):
-        status = 404
-    else:
-        status = 200
-    content = render_template('show.html',
-                              item=item, item_name=item.name,
-                              rev=item.rev,
-                              contenttype=item.contenttype,
-                              first_rev_id=first_rev,
-                              last_rev_id=last_rev,
-                              data_rendered=Markup(item._render_data()),
-                              show_revision=show_revision,
-                              show_navigation=show_navigation,
-                             )
-    return Response(content, status)
+    return item.do_show(rev)
 
 
 @frontend.route('/+show/<itemname:item_name>')
@@ -205,19 +364,14 @@ def redirect_show_item(item_name):
     return redirect(url_for_item(item_name))
 
 
-@frontend.route('/+dom/+<rev>/<itemname:item_name>')
-@frontend.route('/+dom/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def show_dom(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
+@presenter('dom', abort404=False)
+def show_dom(item):
     if isinstance(item, NonExistent):
         status = 404
     else:
         status = 200
     content = render_template('dom.xml',
-                              data_xml=Markup(item._render_data_xml()),
+                              data_xml=Markup(item.content._render_data_xml()),
                              )
     return Response(content, status, mimetype='text/xml')
 
@@ -236,32 +390,17 @@ def indexable(item_name, rev):
     return Response(content, 200, mimetype='text/plain')
 
 
-@frontend.route('/+highlight/+<rev>/<itemname:item_name>')
-@frontend.route('/+highlight/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def highlight_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
+@presenter('highlight')
+def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
-                           data_text=Markup(item._render_data_highlight()),
+                           data_text=Markup(item.content._render_data_highlight()),
                           )
 
 
-@frontend.route('/+meta/<itemname:item_name>', defaults=dict(rev=CURRENT))
-@frontend.route('/+meta/+<rev>/<itemname:item_name>')
-def show_item_meta(item_name, rev):
-    flaskg.user.add_trail(item_name)
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    if isinstance(item, NonExistent):
-        abort(404, item_name)
-    show_revision = rev != CURRENT
+@presenter('meta', add_trail=True)
+def show_item_meta(item):
+    show_revision = request.view_args['rev'] != CURRENT
     show_navigation = False # TODO
     first_rev = None
     last_rev = None
@@ -300,27 +439,17 @@ def content_item(item_name, rev):
         abort(404, item_name)
     return render_template('content.html',
                            item_name=item.name,
-                           data_rendered=Markup(item._render_data()),
+                           data_rendered=Markup(item.content._render_data()),
                            )
 
-@frontend.route('/+get/+<rev>/<itemname:item_name>')
-@frontend.route('/+get/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def get_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-    except AccessDenied:
-        abort(403)
-    return item.do_get()
+@presenter('get')
+def get_item(item):
+    return item.content.do_get()
 
-@frontend.route('/+download/+<rev>/<itemname:item_name>')
-@frontend.route('/+download/<itemname:item_name>', defaults=dict(rev=CURRENT))
-def download_item(item_name, rev):
-    try:
-        item = Item.create(item_name, rev_id=rev)
-        mimetype = request.values.get("mimetype")
-    except AccessDenied:
-        abort(403)
-    return item.do_get(force_attachment=True, mimetype=mimetype)
+@presenter('download')
+def download_item(item):
+    mimetype = request.values.get("mimetype")
+    return item.content.do_get(force_attachment=True, mimetype=mimetype)
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
@@ -343,10 +472,11 @@ def convert_item(item_name):
     # XXX Maybe use a random name to be sure it does not exist
     item_name_converted = item_name + 'converted'
     try:
-        converted_item = Item.create(item_name_converted, contenttype=contenttype)
+        # TODO implement Content.create and use it here
+        converted_item = Item.create(item_name_converted, itemtype=u'default', contenttype=contenttype)
     except AccessDenied:
         abort(403)
-    return converted_item._convert(item.internal_representation())
+    return converted_item.content._convert(item.content.internal_representation())
 
 
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
@@ -357,46 +487,32 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
+    # XXX drawing applets don't send itemtype
+    itemtype = request.values.get('itemtype', u'default')
     contenttype = request.values.get('contenttype')
-    template_name = request.values.get('template')
     try:
-        item = Item.create(item_name, contenttype=contenttype)
+        item = Item.create(item_name, itemtype=itemtype, contenttype=contenttype)
     except AccessDenied:
         abort(403)
     if not flaskg.user.may.write(item_name):
         abort(403)
-    return item.do_modify(contenttype, template_name)
+    return item.do_modify()
 
 
-class CommentForm(TextChaizedForm):
-    comment = String.using(label=L_('Comment'), optional=True).with_properties(placeholder=L_("Comment about your change"))
-    submit = String.using(default=L_('OK'), optional=True)
+class TargetChangeForm(BaseChangeForm):
+    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
-class TargetCommentForm(CommentForm):
-    target = String.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item")).validated_by(Present())
-
-class RevertItemForm(CommentForm):
+class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
 
-class DeleteItemForm(CommentForm):
+class DeleteItemForm(BaseChangeForm):
     name = 'delete_item'
 
-class DestroyItemForm(CommentForm):
+class DestroyItemForm(BaseChangeForm):
     name = 'destroy_item'
 
-class RenameItemForm(TargetCommentForm):
+class RenameItemForm(TargetChangeForm):
     name = 'rename_item'
-
-class ContenttypeFilterForm(Form):
-    name = 'contenttype_filter'
-    markup_text_items = Boolean.using(label=L_('markup text'), optional=True, default=1)
-    other_text_items = Boolean.using(label=L_('other text'), optional=True, default=1)
-    image_items = Boolean.using(label=L_('image'), optional=True, default=1)
-    audio_items = Boolean.using(label=L_('audio'), optional=True, default=1)
-    video_items = Boolean.using(label=L_('video'), optional=True, default=1)
-    other_items = Boolean.using(label=L_('other'), optional=True, default=1)
-    unknown_items = Boolean.using(label=L_('unknown'), optional=True, default=1)
-    submit = String.using(default=L_('Filter'), optional=True)
 
 
 @frontend.route('/+revert/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -416,7 +532,7 @@ def revert_item(item_name, rev):
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
         if form.validate():
-            item.revert()
+            item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
                            item=item, item_name=item_name,
@@ -590,6 +706,7 @@ def jfu_server(item_name):
     data_file = request.files.get('data_file')
     subitem_name = data_file.filename
     contenttype = data_file.content_type # guess by browser, based on file name
+    data = data_file.stream
     if item_name:
         subitem_prefix = item_name + u'/'
     else:
@@ -597,7 +714,7 @@ def jfu_server(item_name):
     item_name = subitem_prefix + subitem_name
     try:
         item = Item.create(item_name)
-        revid, size = item.modify()
+        revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
                            item_name=item_name)
         return jsonify(name=subitem_name,
@@ -609,6 +726,18 @@ def jfu_server(item_name):
         abort(403)
 
 
+contenttype_groups = content_registry.group_names[:]
+contenttype_group_descriptions = {}
+for g in contenttype_groups:
+    contenttype_group_descriptions[g] = ', '.join([e.display_name for e in content_registry.groups[g]])
+contenttype_groups.append('unknown items')
+
+ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(descriptions=contenttype_group_descriptions)).using(optional=True)
+
+class IndexForm(Form):
+    contenttype = ContenttypeGroup
+    submit = Submit.using(default=L_('Filter'))
+
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
@@ -617,45 +746,36 @@ def index(item_name):
     except AccessDenied:
         abort(403)
 
-    if request.method == 'GET':
-        form = ContenttypeFilterForm.from_defaults()
-        selected_groups = None
-    elif request.method == "POST":
-        form = ContenttypeFilterForm.from_flat(request.form)
-        selected_groups = [gname.replace("_", " ") for gname, value in form.iteritems()
-                           if form[gname].value]
-        if u'submit' in selected_groups:
-            selected_groups.remove(u'submit')
-        if not selected_groups:
-            form = ContenttypeFilterForm.from_defaults()
+    # request.args is a MultiDict instance, which degenerates into a normal
+    # single-valued dict on most occasions (making the first value the *only*
+    # value for a specific key) unless explicitly told to expose multiple
+    # values, eg. calling items with multi=True. See Werkzeug documentation for
+    # more.
+    form = IndexForm.from_flat(request.args.items(multi=True))
+    form['submit'].set_default() # XXX from_flat() kills all values
+    if not form['contenttype']:
+        form['contenttype'].set(contenttype_groups)
 
+    selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
-    index = item.flat_index(startswith, selected_groups)
 
-    ct_groups = [(gname, ", ".join([ctlabel for ctname, ctlabel in contenttypes]))
-                 for gname, contenttypes in CONTENTTYPE_GROUPS]
-    ct_groups = dict(ct_groups)
-
-    initials = item.name_initial(item.flat_index())
+    initials = item.name_initial(item.get_subitem_revs())
     initials = [initial.upper() for initial in initials]
     initials = list(set(initials))
     initials = sorted(initials)
-    detailed_index = item.get_detailed_index(index)
-    detailed_index = sorted(detailed_index, key=lambda name: name[0].lower())
+
+    dirs, files = item.get_index(startswith, selected_groups)
+    # index = sorted(index, key=lambda e: e.relname.lower())
 
     item_names = item_name.split(u'/')
-    if item_name:
-        args = dict(item_name=item_name)
-    else:
-        args = dict(item_name=u'', title_name=_(u'Global Index'))
     return render_template(item.index_template,
                            item_names=item_names,
-                           index=detailed_index,
+                           item_name=item_name,
+                           files=files,
+                           dirs=dirs,
                            initials=initials,
                            startswith=startswith,
-                           contenttype_groups=ct_groups,
                            form=form,
-                           **args
                           )
 
 
@@ -889,31 +1009,23 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
-    submit = String.using(default=L_('Register'), optional=True)
+    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
+    password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
+    email = YourEmail
+    openid = YourOpenID.using(optional=True)
+    submit = Submit.using(default=L_('Register'))
 
     validators = [ValidRegistration()]
 
 
-class OpenIDForm(TextChaizedForm):
+class OpenIDForm(RegistrationForm):
     """
     OpenID registration form, inherited from the simple registration form.
     """
     name = 'openid'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")).validated_by(Present())
-    password1 = String.using(label=L_('Password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('Password')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    openid = String.using(label=L_('OpenID')).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
-    submit = String.using(optional=True)
-
-    validators = [ValidRegistration()]
+    openid = YourOpenID
 
 def _using_moin_auth():
     """Check if MoinAuth is being used for authentication.
@@ -1032,9 +1144,9 @@ class PasswordLostForm(Form):
     """a simple password lost form"""
     name = 'lostpass'
 
-    username = String.using(label=L_('Name'), optional=True).with_properties(placeholder=L_("Your login name"))
-    email = String.using(label=L_('E-Mail'), optional=True).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    submit = String.using(default=L_('Recover password'), optional=True)
+    username = OptionalText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
+    email = YourEmail.using(optional=True)
+    submit = Submit.using(default=L_('Recover password'))
 
     validators = [ValidLostPassword()]
 
@@ -1059,7 +1171,7 @@ def lostpass():
             email = form['email'].value
             if form['email'].valid and email:
                 users = user.search_users(email=email)
-                u = users and user.User(users[0][ITEMID])
+                u = users and user.User(users[0].meta[ITEMID])
             if u and u.valid:
                 is_ok, msg = u.mail_password_recovery()
                 if not is_ok:
@@ -1092,11 +1204,11 @@ class PasswordRecoveryForm(Form):
     """a simple password recovery form"""
     name = 'recoverpass'
 
-    username = String.using(label=L_('Name')).with_properties(placeholder=L_("Your login name")).validated_by(Present())
-    token = String.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you")).validated_by(Present())
-    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    submit = String.using(default=L_('Change password'), optional=True)
+    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
+    token = RequiredText.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    submit = Submit.using(default=L_('Change password'))
 
     validators = [ValidPasswordRecovery()]
 
@@ -1159,12 +1271,10 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = String.using(label=L_('Name'), optional=False).with_properties(autofocus=True).validated_by(Present())
-    password = String.using(label=L_('Password'), optional=False).validated_by(Present())
-    openid = String.using(label=L_('OpenID'), optional=True).validated_by(Present(), URLValidator())
-
-    # the submit hidden field
-    submit = String.using(optional=True)
+    username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
+    password = RequiredPassword
+    openid = YourOpenID.using(optional=True)
+    submit = Submit.using(default=L_('Log in'))
 
     validators = [ValidLogin()]
 
@@ -1199,16 +1309,10 @@ def login():
                           )
 
 
-def _logout():
-    for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', ]:
-        if key in session:
-            del session[key]
-
-
 @frontend.route('/+logout')
 def logout():
     flash(_("You are now logged out."), "info")
-    _logout()
+    flaskg.user.logout_session()
     return redirect(url_for('.show_root'))
 
 
@@ -1238,23 +1342,23 @@ class ValidChangePass(Validator):
 
 class UserSettingsPasswordForm(Form):
     name = 'usersettings_password'
-    password_current = String.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password")).validated_by(Present())
-    password1 = String.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use")).validated_by(Present())
-    password2 = String.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password")).validated_by(Present())
-    submit = String.using(default=L_('Change password'), optional=True)
     validators = [ValidChangePass()]
 
+    password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    submit = Submit.using(default=L_('Change password'))
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
-    email = String.using(label=L_('E-Mail')).with_properties(placeholder=L_("Your E-Mail address")).validated_by(IsEmail())
-    submit = String.using(default=L_('Save'), optional=True)
+    email = YourEmail
+    submit = Submit.using(default=L_('Save'))
 
 
 class UserSettingsNavigationForm(Form):
     name = 'usersettings_navigation'
     # TODO: find a good way to handle quicklinks here
-    submit = String.using(default=L_('Save'), optional=True)
+    submit = Submit.using(default=L_('Save'))
 
 
 class UserSettingsOptionsForm(Form):
@@ -1265,11 +1369,12 @@ class UserSettingsOptionsForm(Form):
     # builtin defaults (for some True, for some others False). Makes
     # edit_on_doubleclick malfunctioning (because its default is True).
     name = 'usersettings_options'
-    mailto_author = Boolean.using(label=L_('Publish my email (not my wiki homepage) in author info'), optional=True)
-    edit_on_doubleclick = Boolean.using(label=L_('Open editor on double click'), optional=True)
-    show_comments = Boolean.using(label=L_('Show comment sections'), optional=True)
-    disabled = Boolean.using(label=L_('Disable this account forever'), optional=True)
-    submit = String.using(default=L_('Save'), optional=True)
+    mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
+    edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
+    scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))
+    show_comments = Checkbox.using(label=L_('Show comment sections'))
+    disabled = Checkbox.using(label=L_('Disable this account forever'))
+    submit = Submit.using(default=L_('Save'))
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1280,29 +1385,29 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = List.using(label=L_('Name')).of(String.with_properties(placeholder=L_("The login name you want to use")).validated_by(Present()))
-        display_name = String.using(label=L_('Display-Name'), optional=True).with_properties(placeholder=L_("Your display name (informational)"))
-        openid = String.using(label=L_('OpenID'), optional=True).with_properties(placeholder=L_("Your OpenID address")).validated_by(URLValidator())
+        name = List.using(label=L_('Name')).of(RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")))
+        display_name = OptionalText.using(label=L_('Display-Name')).with_properties(placeholder=L_("Your display name (informational)"))
+        openid = YourOpenID.using(optional=True)
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
-        timezone = Enum.using(label=L_('Timezone')).valued(*timezones_keys)
+        timezone = Select.using(label=L_('Timezone')).valued(*timezones_keys)
         supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locales_available = sorted([(unicode(l), l.display_name) for l in supported_locales],
                                    key=lambda x: x[1])
         locales_keys = [l[0] for l in locales_available]
-        locale = Enum.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
-        submit = String.using(default=L_('Save'), optional=True)
+        locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
+        submit = Submit.using(default=L_('Save'))
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
         themes_available = sorted([(unicode(t.identifier), t.name) for t in get_themes_list()],
                                   key=lambda x: x[1])
         themes_keys = [t[0] for t in themes_available]
-        theme_name = Enum.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
-        css_url = String.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)")).validated_by(URLValidator())
-        edit_rows = Integer.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)")).validated_by(Converted())
-        results_per_page = Integer.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)")).validated_by(ValueAtLeast(0))
-        submit = String.using(default=L_('Save'), optional=True)
+        theme_name = Select.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
+        css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)"))
+        edit_rows = Natural.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)"))
+        results_per_page = Natural.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)"))
+        submit = Submit.using(default=L_('Save'))
 
     form_classes = dict(
         personal=UserSettingsPersonalForm,
@@ -1313,6 +1418,9 @@ def usersettings():
         options=UserSettingsOptionsForm,
     )
     forms = dict()
+
+    if not flaskg.user.valid:
+        return redirect(url_for('.login'))
 
     if request.method == 'POST':
         part = request.form.get('part')
@@ -1330,9 +1438,9 @@ def usersettings():
 
             # save response to a dict as we can't use HTTP redirects or flash() for XHR requests
             response = dict(
-                form = None,
-                flash = [],
-                redirect = None,
+                form=None,
+                flash=[],
+                redirect=None,
             )
 
             if form.validate():
@@ -1370,8 +1478,7 @@ def usersettings():
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
-                                _logout()
-                                flaskg.user.save()
+                                flaskg.user.logout_session()
                                 response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
@@ -1456,7 +1563,7 @@ def get_revs():
     return rev1, rev2
 
 
-@frontend.route('/+diffraw/<path:item_name>')
+@frontend.route('/+diffraw/<itemname:item_name>')
 def diffraw(item_name):
     # TODO get_item and get_revision calls may raise an AccessDenied.
     #      If this happens for get_item, don't show the diff at all
@@ -1470,7 +1577,7 @@ def diffraw(item_name):
     return _diff_raw(item, rev1, rev2)
 
 
-@frontend.route('/+diff/<path:item_name>')
+@frontend.route('/+diff/<itemname:item_name>')
 def diff(item_name):
     item = flaskg.storage[item_name]
     bookmark_time = request.values.get('bookmark')
@@ -1479,7 +1586,7 @@ def diff(item_name):
         # try to find the latest rev1 before bookmark <date>
         revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
         for mtime, revid in revs:
-            if mtime <= bookmark_time:
+            if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
         else:
@@ -1522,7 +1629,7 @@ def _diff(item, revid1, revid2):
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
-                           diff_html=Markup(item._render_data_diff(oldrev, newrev)),
+                           diff_html=Markup(item.content._render_data_diff(oldrev, newrev)),
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
                            last_rev_id=rev_ids[-1],
@@ -1540,7 +1647,7 @@ def _diff_raw(item, revid1, revid2):
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
-    return item._render_data_diff_raw(oldrev, newrev)
+    return item.content._render_data_diff_raw(oldrev, newrev)
 
 
 @frontend.route('/+similar_names/<itemname:item_name>')
@@ -1663,6 +1770,8 @@ def closeMatches(item_name, item_names):
     :rtype: list
     :returns: list of matching item names, sorted by rank
     """
+    if not item_names:
+        return []
     # Match using case insensitive matching
     # Make mapping from lower item names to item names.
     lower = {}
@@ -1675,7 +1784,7 @@ def closeMatches(item_name, item_names):
 
     # Get all close matches
     all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
-                                            len(lower), cutoff=0.6)
+                                            n=len(lower), cutoff=0.6)
 
     # Replace lower names with original names
     matches = []
@@ -1685,7 +1794,7 @@ def closeMatches(item_name, item_names):
     return matches
 
 
-@frontend.route('/+sitemap/<item_name>')
+@frontend.route('/+sitemap/<itemname:item_name>')
 def sitemap(item_name):
     """
     sitemap view shows item link structure, relative to current item
@@ -1790,8 +1899,38 @@ def tagged_items(tag):
                            item_name=tag,
                            item_names=item_names)
 
+
+@frontend.route('/+template/<path:filename>')
+def template(filename):
+    """
+    serve a rendered template from <filename>
+
+    used for (but not limited to) translation of javascript / css / html
+    """
+    content = render_template(filename)
+    ct, enc = mimetypes.guess_type(filename)
+    response = make_response((content, 200, {'content-type': ct or 'text/plain;charset=utf-8'}))
+    if ct in ['application/javascript', 'text/css', 'text/html', ]:
+        # this is assuming that:
+        # * js / css / html templates rarely change (maybe just on sw updates)
+        # * we are using templates for these to translate them, translations rarely change
+        # * the rendered template output is just specific per user but does not change in time
+        #   or by other circumstances
+        cache_timeout = 24 * 3600  # 1 day
+        is_public = False  # expanded template may be different for each user (translation)
+    else:
+        # safe defaults:
+        cache_timeout = None
+        is_public = False
+    if cache_timeout is not None:
+        # set some cache control headers, so browsers do not request this again and again:
+        response.cache_control.public = is_public
+        response.cache_control.max_age = cache_timeout
+        response.expires = int(time.time() + cache_timeout)
+    return response
+
+
 @frontend.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html',
                            item_name=e.description), 404
-

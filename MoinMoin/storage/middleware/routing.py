@@ -131,4 +131,3 @@ class Backend(MutableBackendBase):
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0} is readonly'.format(backend_name))
         backend.remove(revid)
-

@@ -99,4 +99,3 @@ def test_error_filter_factory():
     attribute_result = test_attributes['class']
     expected = 'test_attribute_class test_moin_error'
     assert attribute_result == expected
-

@@ -187,8 +187,11 @@ class TestFrontend(object):
     def test_logout(self):
         self._test_view('frontend.logout', status='302 FOUND', data=['<!DOCTYPE HTML'])
 
-    def test_usersettings(self):
-        self._test_view('frontend.usersettings')
+    def test_usersettings_notloggedin(self):
+        # if a anon user visits usersettings view, he'll get redirected to the login view
+        self._test_view('frontend.usersettings', status='302 FOUND', data=['<!DOCTYPE HTML'])
+
+    # TODO: implement test_usersettings_loggedin()
 
     def test_bookmark(self):
         self._test_view('frontend.bookmark', status='302 FOUND', data=['<!DOCTYPE HTML'])
@@ -296,4 +299,3 @@ class TestUsersettings(object):
         if email is None:
             email = "user@example.org"
         user.create_user(name, password, email, is_encrypted=pwencoded)
-

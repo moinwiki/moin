@@ -21,9 +21,12 @@ ACL_RIGHTS_FUNCTIONS = [SUPERUSER, NOTEXTCHA, ]
 # admin means to be able to change, add, remove ACLs (change meta[ACL])
 ADMIN = 'admin'
 
-# read means to be able to read revision data
+# read means to be able to read revision data, unconditionally
 # TODO: define revision meta read behaviour
 READ = 'read'
+
+# pubread means to be able to read revision data when published
+PUBREAD = 'pubread'
 
 # write means to be able to change meta/data by creating a new revision,
 # so the previous data is still there, unchanged.
@@ -37,5 +40,4 @@ CREATE = 'create'
 DESTROY = 'destroy'
 
 # rights that control access to operations on contents
-ACL_RIGHTS_CONTENTS = [READ, WRITE, CREATE, ADMIN, DESTROY, ]
-
+ACL_RIGHTS_CONTENTS = [READ, PUBREAD, WRITE, CREATE, ADMIN, DESTROY, ]

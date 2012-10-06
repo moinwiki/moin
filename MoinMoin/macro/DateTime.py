@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 from flask import g as flaskg
-from flaskext.babel import format_datetime
+from flask.ext.babel import format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase
 
@@ -22,4 +22,3 @@ class Macro(MacroDateTimeBase):
             stamp = arguments[0]
             tm = self.parse_time(stamp)
         return format_datetime(datetime.utcfromtimestamp(tm))
-

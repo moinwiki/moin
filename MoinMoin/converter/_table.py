@@ -38,4 +38,3 @@ class TableMixin(object):
             table_body.append(table_row)
         table.append(table_body)
         return table
-

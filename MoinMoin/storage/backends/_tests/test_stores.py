@@ -44,5 +44,3 @@ class TestFSBackend(MutableBackendTestBase):
         self.be = MutableBackend(meta_store, data_store)
         self.be.create()
         self.be.open()
-
-

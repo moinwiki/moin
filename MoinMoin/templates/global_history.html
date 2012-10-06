@@ -12,7 +12,7 @@
     <div id="moin-global-history">
         {% for day, revs in history %}
            {% set latest_timestamp = revs[0].meta['mtime'] %}
-            <div class="moin-history-container"> 
+            <div class="moin-history-container">
                 <div class="moin-history-container-header">
                     <h2>{{ day }}</h2>
                     {% if user.valid %}
@@ -42,7 +42,7 @@
             </div>
         {% endfor %}
         {% if bookmark_time %}
-        <div class="moin-history-container"> 
+        <div class="moin-history-container">
             <div class="moin-history-container-header">
                 <span>
                     <h2>{{ bookmark_time|datetimeformat }}</h2>

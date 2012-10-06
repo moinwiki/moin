@@ -31,7 +31,9 @@ class Converter(object):
             moin_page.type_: unicode(self.input_type),
             xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev={0}'.format(rev.revid)),
         }
-        return moin_page.object_(attrib=attrib, children=[item_name, ])
+        obj = moin_page.object_(attrib=attrib, children=[item_name, ])
+        body = moin_page.body(children=(obj, ))
+        return moin_page.page(children=(body, ))
 
 
 from . import default_registry
@@ -40,4 +42,3 @@ default_registry.register(Converter._factory, Type('image/svg+xml'), type_moin_d
 default_registry.register(Converter._factory, Type('image/png'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/jpeg'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/gif'), type_moin_document)
-

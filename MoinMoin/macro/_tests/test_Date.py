@@ -8,7 +8,7 @@ Test for macro.Date
 import time
 from datetime import datetime
 
-from flaskext.babel import format_date, format_datetime
+from flask.ext.babel import format_date, format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase, Macro
 import pytest
@@ -40,4 +40,3 @@ class TestMacro(object):
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         expected = u'Aug 7, 2011'
         assert result == expected
-

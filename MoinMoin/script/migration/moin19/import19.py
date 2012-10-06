@@ -22,7 +22,7 @@ import hashlib
 from StringIO import StringIO
 
 from flask import current_app as app
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -411,7 +411,7 @@ class EditLog(LogFile):
             self.to_end()
             raise KeyError
         del meta['__rev']
-        del meta[EXTRA] #  we have full name in NAME
+        del meta[EXTRA] # we have full name in NAME
         meta[ACTION] = u'SAVE'
         meta = dict([(k, v) for k, v in meta.items() if v]) # remove keys with empty values
         return meta
@@ -503,6 +503,7 @@ class UserRevision(object):
         bool_defaults = [ # taken from cfg.checkbox_defaults
             ('show_comments', 'False'),
             ('edit_on_doubleclick', 'True'),
+            ('scroll_page_after_edit', 'True'),
             ('want_trivial', 'False'),
             ('mailto_author', 'False'),
             ('disabled', 'False'),
@@ -613,4 +614,3 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
-

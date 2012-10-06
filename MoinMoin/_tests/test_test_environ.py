@@ -52,4 +52,3 @@ class TestStorageEnvironWithConfig(object):
     def test_config(self):
         assert isinstance(app.cfg, wikiconfig.Config)
         assert app.cfg.content_acl == CONTENT_ACL
-

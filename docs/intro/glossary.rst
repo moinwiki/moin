@@ -28,7 +28,7 @@ Glossary
       revision.
 
    data
-      Just the raw data, no more, no less (can be some text, an image, a pdf).
+      Just the raw data, no more, no less; can be some text, an image, a pdf.
 
    metadata
       Additional information related to or about some data. For example, if
@@ -41,16 +41,16 @@ Glossary
    session
       As the protocol (http) used by a web browser is stateless, a means
       to keep state is needed. This is usually done by using a cookie stored
-      within the user's browser. It is used e.g. to stay logged-in into your
-      user account or store the trail of items you visited (for easier
-      navigation).
+      within the user's browser. It is used for example to stay logged-in into your
+      user account or store the trail of items you visited and for easier
+      navigation.
 
    wiki engine
       Software used to run a wiki site.
 
    wiki farm
       Running multiple wikis together on one server. Often, there is some
-      shared, common configuration used (inherited) by all wikis, so each
+      shared, common configuration inherited by all wikis, so each
       individual wiki's configuration becomes rather small.
 
    wiki instance
@@ -66,9 +66,9 @@ Glossary
       A web site implemented using a wiki engine.
 
    WSGI
-      Web Server Gateway Interface. It is a specification about how web servers
-      (like e.g. Apache with mod_wsgi) communicate with web applications (like
-      e.g. MoinMoin). It is a Python standard, described in detail in PEP 333.
+      Web Server Gateway Interface. It is a specification about how web servers,
+      like e.g. Apache with mod_wsgi, communicate with web applications, like
+      MoinMoin. It is a Python standard, described in detail in PEP 333.
 
    emeraldtree
       An XML / tree processing library used by moin.

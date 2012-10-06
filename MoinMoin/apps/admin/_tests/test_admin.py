@@ -13,10 +13,11 @@ class TestAdmin(object):
             rv = c.get(url)
             assert rv.status == status
             assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
-            for item in data: assert item in rv.data
+            for item in data:
+                assert item in rv.data
 
     def test_index(self):
-        self._test_view_get(url_for('admin.index'))
+        self._test_view_get(url_for('admin.index'), status='403 FORBIDDEN')
 
     def test_userprofile(self):
         self._test_view_get(url_for('admin.userprofile', user_name='DoesntExist'), status='403 FORBIDDEN')
@@ -35,4 +36,3 @@ class TestAdmin(object):
 
     def test_itemsize(self):
         self._test_view_get(url_for('admin.itemsize'))
-

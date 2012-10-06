@@ -256,7 +256,7 @@ class Converter(object):
 
         # We will close a section before starting a new one
         # Need more test
-        elif  depth < self.current_section:
+        elif depth < self.current_section:
             if self.parent_section != 0:
                 section_tag = 'sect{0}'.format(self.parent_section)
                 section = ET.Element(docbook(section_tag), attrib={},
@@ -356,7 +356,7 @@ class Converter(object):
         mimetype = Type(_type=element.get(moin_page.type_, 'application/x-nonexistent'))
         if href:
             attrib[docbook.fileref] = href
-            if  Type('image/').issupertype(mimetype):
+            if Type('image/').issupertype(mimetype):
                 object_data = self.new(docbook.imagedata, attrib=attrib,
                                        children=[])
                 object_element = self.new(docbook.imageobject, attrib={},
@@ -377,7 +377,6 @@ class Converter(object):
             return
         return self.new(docbook.inlinemediaobject, attrib={},
                         children=[object_element])
-
 
     def visit_moinpage_table(self, element):
         # TODO: Attributes conversion
@@ -517,4 +516,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document,
     Type('application/docbook+xml'))
-

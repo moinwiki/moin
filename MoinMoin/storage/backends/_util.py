@@ -50,4 +50,3 @@ class TrackingFileWrapper(object):
         if not self._finished:
             raise AttributeError("do not access hash attribute before having read all data")
         return self._hash
-

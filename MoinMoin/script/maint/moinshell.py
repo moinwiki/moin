@@ -5,7 +5,7 @@ import code
 from flask import Flask, _request_ctx_stack
 from flask import current_app as app
 from flask import g as flaskg
-from flaskext.script import Command, Option
+from flask.ext.script import Command, Option
 
 from MoinMoin import user
 from MoinMoin.app import before_wiki
@@ -29,7 +29,6 @@ class MoinShell(Command):
     description = 'Runs a Python shell inside Flask application context.'
 
     def __init__(self, banner=None, make_context=None, use_ipython=True):
-
 
         self.banner = banner or self.banner
         self.use_ipython = use_ipython

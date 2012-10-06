@@ -221,6 +221,13 @@ class UserProfile(object):
         if value != prev_value:
             self._changed = True
 
+    def __delitem__(self, name):
+        """
+        delete a value, update changed status
+        """
+        del self._meta[name]
+        self._changed = True
+
     def load(self, **q):
         """
         load a user profile, the query q can use any indexed (unique) field
@@ -298,26 +305,27 @@ class User(object):
                 self.set_password(password)
 
         # "may" so we can say "if user.may.read(pagename):"
-        if self._cfg.SecurityPolicy:
-            self.may = self._cfg.SecurityPolicy(self)
-        else:
-            from MoinMoin.security import Default
-            self.may = Default(self)
+        self.may = self._cfg.SecurityPolicy(self)
 
     def __repr__(self):
+        # In rare cases we might not have these profile settings when the __repr__ is called.
+        name = getattr(self, NAME, [])
+        name0 = name and name[0] or None
+        itemid = getattr(self, ITEMID, None)
+
         return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
-            self.name0, self.itemid, self.valid, self.trusted)
+            name0, itemid, self.valid, self.trusted)
 
     def __getattr__(self, name):
         """
         delegate some lookups into the .profile
         """
-        if name in [NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
-                    MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK,
-                    THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
-                   ]:
-            return self.profile[name]
+        if name in USEROBJ_ATTRS:
+            try:
+                return self.profile[name]
+            except KeyError:
+                raise AttributeError(name)
         else:
             raise AttributeError(name)
 
@@ -445,6 +453,8 @@ class User(object):
         if not is_encrypted:
             password = crypt_password(password)
         self.profile[ENC_PASSWORD] = password
+        # Invalidate all other browser sessions except this one.
+        session['user.session_token'] = self.generate_session_token(False)
 
     def save(self, force=False):
         """
@@ -459,12 +469,11 @@ class User(object):
         if not exists:
             pass # XXX UserCreatedEvent
         else:
-            pass #  XXX UserChangedEvent
+            pass # XXX UserChangedEvent
 
     def getText(self, text):
         """ translate a text to the language of this user """
         return text # FIXME, was: self._request.getText(text, lang=self.language)
-
 
     # Bookmarks --------------------------------------------------------------
 
@@ -663,6 +672,39 @@ class User(object):
         """ Check if this user object is the user doing the current request """
         return flaskg.user.name == self.name
 
+    # Sessions ---------------------------------------------------
+
+    def logout_session(self, all_browsers=True):
+        """ Terminate session in all browsers unless all_browsers is set to False """
+        if all_browsers:
+            self.generate_session_token(False)
+
+        for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', 'user.session_token', ]:
+            if key in session:
+                del session[key]
+
+    def generate_session_token(self, save=True):
+        """ Generate new session token and key pair. Used to validate sessions. """
+        key, token = generate_token()
+        self.profile[SESSION_TOKEN] = token
+        self.profile[SESSION_KEY] = key
+        if save:
+            self.save()
+
+        return token
+
+    def get_session_token(self):
+        """ Get current session token. If there is no token, generate a new one. """
+        try:
+            return self.profile[SESSION_TOKEN]
+        except KeyError:
+            return self.generate_session_token()
+
+    def validate_session(self, token):
+        """ Check if the session token is valid. """
+        # Ignore timeout, it's already handled by session cookie and session key should never timeout.
+        return valid_token(self.profile[SESSION_KEY], token, None)
+
     # Account verification / Password recovery -------------------------------
 
     def generate_recovery_token(self):
@@ -725,4 +767,3 @@ If you didn't create this account, please ignore this email.
                     sitename=self._cfg.sitename or "Wiki")
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
-

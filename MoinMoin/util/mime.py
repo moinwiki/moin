@@ -6,7 +6,6 @@ MoinMoin - MIME helpers
 """
 
 
-
 class Type(object):
     """
     :ivar type: Type part
@@ -50,9 +49,12 @@ class Type(object):
             return self.__eq__(self.__class__(other))
 
         if isinstance(other, Type):
-            if self.type != other.type: return False
-            if self.subtype != other.subtype: return False
-            if self.parameters != other.parameters: return False
+            if self.type != other.type:
+                return False
+            if self.subtype != other.subtype:
+                return False
+            if self.parameters != other.parameters:
+                return False
             return True
 
         return NotImplemented
@@ -115,8 +117,10 @@ class Type(object):
         - the other parameters are a supperset of this one.
         """
         if isinstance(other, Type):
-            if self.type and self.type != other.type: return False
-            if self.subtype and self.subtype != other.subtype: return False
+            if self.type and self.type != other.type:
+                return False
+            if self.subtype and self.subtype != other.subtype:
+                return False
             self_params = set(self.parameters.iteritems())
             other_params = set(other.parameters.iteritems())
             return self_params <= other_params
@@ -133,4 +137,3 @@ type_moin_wiki = Type(type='text', subtype='x.moin.wiki')
 
 # Generic types, text type
 type_text_plain = Type(type='text', subtype='plain')
-

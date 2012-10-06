@@ -71,4 +71,3 @@ def test_Registry_lifecycle():
 
     pytest.raises(ValueError, r.unregister, factory_none)
     assert len(r._entries) == 0
-

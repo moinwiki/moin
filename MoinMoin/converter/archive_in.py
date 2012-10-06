@@ -38,7 +38,7 @@ class ArchiveConverter(TableMixin):
 
     def process_name(self, member_name):
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query='do=get&member={0}'.format(member_name)),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query=u'do=get&member={0}'.format(member_name)),
         }
         return moin_page.a(attrib=attrib, children=[member_name, ])
 
@@ -56,7 +56,9 @@ class ArchiveConverter(TableMixin):
                          self.process_datetime(dt),
                          self.process_name(name),
                         ) for size, dt, name in contents]
-            return self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
+            table = self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
+            body = moin_page.body(children=(table, ))
+            return moin_page.page(children=(body, ))
         except ArchiveException as err:
             logging.exception("An exception within archive file handling occurred:")
             # XXX we also use a table for error reporting, could be
@@ -122,4 +124,3 @@ from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(TarConverter._factory, Type('application/x-tar'), type_moin_document)
 default_registry.register(TarConverter._factory, Type('application/x-gtar'), type_moin_document)
 default_registry.register(ZipConverter._factory, Type('application/zip'), type_moin_document)
-

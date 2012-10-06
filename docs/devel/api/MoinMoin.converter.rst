@@ -7,7 +7,6 @@ converter Package
 .. automodule:: MoinMoin.converter
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_args` Module
@@ -16,7 +15,6 @@ converter Package
 .. automodule:: MoinMoin.converter._args
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_args_wiki` Module
@@ -25,7 +23,6 @@ converter Package
 .. automodule:: MoinMoin.converter._args_wiki
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_table` Module
@@ -34,7 +31,6 @@ converter Package
 .. automodule:: MoinMoin.converter._table
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_util` Module
@@ -43,7 +39,6 @@ converter Package
 .. automodule:: MoinMoin.converter._util
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`_wiki_macro` Module
@@ -52,7 +47,6 @@ converter Package
 .. automodule:: MoinMoin.converter._wiki_macro
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`archive_in` Module
@@ -61,7 +55,6 @@ converter Package
 .. automodule:: MoinMoin.converter.archive_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`audio_video_in` Module
@@ -70,7 +63,6 @@ converter Package
 .. automodule:: MoinMoin.converter.audio_video_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`creole_in` Module
@@ -79,7 +71,6 @@ converter Package
 .. automodule:: MoinMoin.converter.creole_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`docbook_in` Module
@@ -88,7 +79,6 @@ converter Package
 .. automodule:: MoinMoin.converter.docbook_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`docbook_out` Module
@@ -97,7 +87,6 @@ converter Package
 .. automodule:: MoinMoin.converter.docbook_out
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`everything` Module
@@ -106,7 +95,6 @@ converter Package
 .. automodule:: MoinMoin.converter.everything
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`highlight` Module
@@ -115,7 +103,6 @@ converter Package
 .. automodule:: MoinMoin.converter.highlight
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`html_in` Module
@@ -124,7 +111,6 @@ converter Package
 .. automodule:: MoinMoin.converter.html_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`html_out` Module
@@ -133,7 +119,6 @@ converter Package
 .. automodule:: MoinMoin.converter.html_out
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`image_in` Module
@@ -142,7 +127,6 @@ converter Package
 .. automodule:: MoinMoin.converter.image_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`include` Module
@@ -151,7 +135,6 @@ converter Package
 .. automodule:: MoinMoin.converter.include
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`link` Module
@@ -160,7 +143,6 @@ converter Package
 .. automodule:: MoinMoin.converter.link
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`macro` Module
@@ -169,7 +151,6 @@ converter Package
 .. automodule:: MoinMoin.converter.macro
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`mediawiki_in` Module
@@ -178,7 +159,6 @@ converter Package
 .. automodule:: MoinMoin.converter.mediawiki_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`moinwiki19_in` Module
@@ -187,7 +167,6 @@ converter Package
 .. automodule:: MoinMoin.converter.moinwiki19_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`moinwiki_in` Module
@@ -196,7 +175,6 @@ converter Package
 .. automodule:: MoinMoin.converter.moinwiki_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`moinwiki_out` Module
@@ -205,7 +183,6 @@ converter Package
 .. automodule:: MoinMoin.converter.moinwiki_out
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`nonexistent_in` Module
@@ -214,7 +191,6 @@ converter Package
 .. automodule:: MoinMoin.converter.nonexistent_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`opendocument_in` Module
@@ -223,7 +199,6 @@ converter Package
 .. automodule:: MoinMoin.converter.opendocument_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`pdf_in` Module
@@ -232,7 +207,6 @@ converter Package
 .. automodule:: MoinMoin.converter.pdf_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`pygments_in` Module
@@ -241,7 +215,6 @@ converter Package
 .. automodule:: MoinMoin.converter.pygments_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`rst_in` Module
@@ -250,7 +223,6 @@ converter Package
 .. automodule:: MoinMoin.converter.rst_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`rst_out` Module
@@ -259,7 +231,6 @@ converter Package
 .. automodule:: MoinMoin.converter.rst_out
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`smiley` Module
@@ -268,7 +239,6 @@ converter Package
 .. automodule:: MoinMoin.converter.smiley
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`text_csv_in` Module
@@ -277,7 +247,6 @@ converter Package
 .. automodule:: MoinMoin.converter.text_csv_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`text_in` Module
@@ -286,7 +255,6 @@ converter Package
 .. automodule:: MoinMoin.converter.text_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`text_out` Module
@@ -295,7 +263,6 @@ converter Package
 .. automodule:: MoinMoin.converter.text_out
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 
 :mod:`xml_in` Module
@@ -304,6 +271,5 @@ converter Package
 .. automodule:: MoinMoin.converter.xml_in
     :members:
     :undoc-members:
-    :inherited-members:
     :show-inheritance:
 

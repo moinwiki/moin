@@ -10,7 +10,7 @@ from __future__ import absolute_import, division
 
 from StringIO import StringIO
 
-from ..indexing import IndexingMiddleware
+from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
@@ -59,7 +59,7 @@ def make_middleware(request):
     request.addfinalizer(backend.destroy)
     request.addfinalizer(backend.close)
 
-    mw = IndexingMiddleware(index_dir=str(tmpdir/'foo'),
+    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir/'foo'), ), {}),
                             backend=backend)
     mw.create()
     mw.open()
@@ -84,4 +84,3 @@ def test_serialize_deserialize(source, target):
     print sorted(source.backend)
     print sorted(target.backend)
     assert sorted(source.backend) == sorted(target.backend)
-

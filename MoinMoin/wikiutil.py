@@ -28,7 +28,7 @@ from MoinMoin import config
 from MoinMoin.config import CURRENT, IS_SYSITEM
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util import pysupport, lock
+from MoinMoin.util import pysupport
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
@@ -345,4 +345,3 @@ def file_headers(filename=None, content_type=None, content_length=None):
         if content_length is not None:
             headers.append(('Content-Length', str(content_length)))
         return headers
-

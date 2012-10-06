@@ -22,12 +22,11 @@ logging = log.getLogger(__name__)
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
-from MoinMoin.converter.moinwiki_in import _Iter, _Stack
 
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
 
 class _TableArguments(object):
@@ -142,7 +141,6 @@ class Converter(ConverterMacro):
         stack.clear()
         stack.top_append(moin_page.separator())
 
-
     block_table = r"""
         ^
         (?P<table>
@@ -184,7 +182,7 @@ class Converter(ConverterMacro):
 
         element = moin_page.table_body()
         stack.push(element)
-        lines = _Iter(self.block_table_lines(iter_content))
+        lines = _Iter(self.block_table_lines(iter_content), startno=iter_content.lineno)
         element = moin_page.table_row()
         stack.push(element)
         preprocessor_status = []
@@ -333,7 +331,7 @@ class Converter(ConverterMacro):
             if list_definition:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label)
+                new_stack = _Stack(element_label, iter_content=iter_content)
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(':')
@@ -346,13 +344,13 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body)
+            new_stack = _Stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
             level = 0
 
         is_list = list_begin
-        iter = _Iter(self.indent_iter(iter_content, text, level, is_list))
+        iter = _Iter(self.indent_iter(iter_content, text, level, is_list), startno=iter_content.lineno)
         for line in iter:
             match = self.block_re.match(line)
             it = iter
@@ -815,7 +813,7 @@ class Converter(ConverterMacro):
     class Mediawiki_preprocessor(object):
 
         class Preprocessor_tag(object):
-            def __init__(self, name='', text='', tag='',  status=True):
+            def __init__(self, name='', text='', tag='', status=True):
                 self.tag_name = name
                 self.tag = tag
                 self.text = [text]
@@ -852,7 +850,7 @@ class Converter(ConverterMacro):
             self.nowiki_tag = ''
             self._stack = []
 
-        def push(self, status = []):
+        def push(self, status=[]):
             self._stack.append(self.opened_tags)
             self.opened_tags = status
             if self.opened_tags:
@@ -877,7 +875,7 @@ class Converter(ConverterMacro):
                     self.nowiki_tag = ''
             return self.opened_tags
 
-        def __call__(self, line, tags = []):
+        def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
             match = re.match(r"(.*?)(\<.*\>.*)|(.*)", line)
             if match:
@@ -897,11 +895,14 @@ class Converter(ConverterMacro):
                         tag = match.group(1)
                         next_text = match.group(3)
                         text = match.group(2) or match.group(4)
-                        if not text: text = ''
+                        if not text:
+                            text = ''
                         tag_match = re.match(r"/\s*(.*)", tag)
                         status = not tag_match
-                        if tag_match: tag_name = tag_match.group(1).split(' ')[0]
-                        else: tag_name = tag.split(' ')[0]
+                        if tag_match:
+                            tag_name = tag_match.group(1).split(' ')[0]
+                        else:
+                            tag_name = tag.split(' ')[0]
                         if not tag_name in self.all_tags or re.match(r'.*/\s*$', tag)\
                                 or self.nowiki and (status or tag_name != self.nowiki_tag):
                             if not len(tags):
@@ -948,7 +949,6 @@ class Converter(ConverterMacro):
                 return ''.join(post_line)
             self.opened_tags = tags
 
-
     def _apply(self, match, prefix, *args):
         """
         Call the _repl method for the last matched group with the given prefix.
@@ -969,7 +969,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body)
+        stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
             match = self.indent_re.match(line)
@@ -1004,4 +1004,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory, Type('x-moin/format;name=mediawiki'), type_moin_document)
 default_registry.register(Converter.factory, Type('text/x-mediawiki'), type_moin_document)
-

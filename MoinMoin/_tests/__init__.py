@@ -52,6 +52,7 @@ def update_item(name, meta, data):
         data = data.encode(config.charset)
     item = flaskg.storage[name]
 
+    meta = meta.copy()
     if NAME not in meta:
         meta[NAME] = [name, ]
     if CONTENTTYPE not in meta:
@@ -82,5 +83,3 @@ def check_connection(port, host='127.0.0.1'):
         s.close()
     except socket.error as err:
         raise Exception("connecting to {0}:{1:d}, error: {2!s}".format(host, port, err))
-
-

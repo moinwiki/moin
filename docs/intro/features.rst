@@ -1,20 +1,19 @@
 ========
 Features
 ========
-We recommend trying out moin rather than reading feature lists.
-But in case you still need one, here it is:
 
 Operating System Support
 ========================
-Moin is implemented in Python, a platform-independant language.
-It works on Linux, Mac OS X, Windows (among other operating systems).
+Moin is implemented in Python, a platform-independent language.
+It works on Linux, Mac OS X, Windows, FreeBSD and other OSes that support
+Python.
 
 That said, Linux is the preferred and most tested deployment platform and
 will likely have fewer issues than, for example, Windows.
 
 Servers
 =======
-* Builtin Python server (from werkzeug) - easy to use, just start it.
+* Builtin Python server from werkzeug, which is easy to use.
 * Any server that talks WSGI to moin:
 
   - Apache2 with mod_wsgi
@@ -31,19 +30,19 @@ Servers
 
 Authentication
 ==============
-* Builtin (username / password login form of moin, MoinAuth)
-* Builtin HTTP Basic Auth (browser login form, HTTPAuthMoin)
-* OpenID (relying party, OpenIDAuth)
+* Builtin - username / password login form of moin, MoinAuth
+* Builtin HTTP Basic Auth - browser login form, HTTPAuthMoin
+* OpenID - relying party, OpenIDAuth
 * Auth against LDAP / Active Directory (LDAPAuth)
-* Any authentication your web server supports (via GivenAuth)
+* Any authentication your web server supports via GivenAuth
 
 Authorization
 =============
 * Content Access Control Lists (ACLs)
 
-  - global (using a mapping, so you can apply ACLs on parts of the namespace)
-  - local (per wiki item)
-  - give rights like:
+  - global, using a mapping, so you can apply ACLs on parts of the namespace
+  - local, per wiki item
+  - give rights, such as:
 
     + create, destroy
     + read, write, rename
@@ -67,14 +66,14 @@ Storage
 =======
 Item Types
 ----------
-* we store data of any type (text, images, audio, binary)
+* we store data of any type, such as text, images, audio, binary
 * we separately store any metadata
 * everything is revisioned
 
 Storage Backend Types
 ---------------------
 * file system
-* sql database (sqlite3 or everything supported by SQLalchemy)
+* sql database, such as sqlite3 or everything supported by SQLalchemy
 * Kyoto Tycoon / Kyoto Cabinet
 * you can easily add your own backend with little code
 
@@ -90,7 +89,7 @@ Search / Indexing
 * fast indexed search, fast internal operations
 * flexible and powerful search queries
 * search current and historical contents
-* using a shared index, find stuff in any farm wiki
+* using a shared index, find content in any farm wiki
 
 User Interface
 ==============
@@ -110,7 +109,7 @@ Wiki features
 * Local History for one item ("History")
 * Diffs between any revision
 
-  + text item diffs (rendered nicely with html)
+  + text item diffs, rendered nicely with html
   + image diffs
   + binary "diff" (same or not same)
 * Tags / Tag Cloud
@@ -138,13 +137,13 @@ Feeds
 
 Notification
 ------------
-* by email (smtp or sendmail)
+* by email: smtp or sendmail
 
 Translation / Localization
 --------------------------
-* currently English and German translations only (no others will be added until
-  the code and texts are more stable)
-* any localization (provided by babel / pytz)
+* currently English and German translations only; no others will be added until
+  the code and texts for moin2 are more stable
+* any localization, provided by babel / pytz
 
 Logging
 =======

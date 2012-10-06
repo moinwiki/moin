@@ -1,5 +1,5 @@
 {% import "forms.html" as forms %}
-{% extends theme("layout.html") %}
+{% extends theme("show.html") %}
 
 {% set title = _("Delete '%(item_name)s'", item_name=item.name) %}
 
@@ -9,13 +9,10 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.delete_item', item_name=item.name)) }}
   {{ forms.render_errors(form) }}
   <dl>
-    {{ forms.render_field(gen, form['comment'], 'text') }}
+    {{ forms.render(form['comment']) }}
     {{ forms.render_textcha(gen, form) }}
   </dl>
-  {{ gen.input(form['submit'], type='submit') }}
+  {{ forms.render(form['submit']) }}
 {{ gen.form.close() }}
 </div>
 {% endblock %}
-
-
-

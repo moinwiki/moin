@@ -14,12 +14,15 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 from __future__ import absolute_import, division
 
+import time
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from whoosh.util import lru_cache
 
-from MoinMoin.config import ACL, CREATE, READ, WRITE, DESTROY, ADMIN, \
+from MoinMoin.config import ACL, CREATE, READ, PUBREAD, WRITE, DESTROY, ADMIN, \
+                            PTIME, ACL_RIGHTS_CONTENTS, \
                             ALL_REVS, LATEST_REVS
 from MoinMoin.security import AccessControlList
 
@@ -35,6 +38,19 @@ class AccessDenied(Exception):
     """
 
 
+def pchecker(right, allowed, item):
+    """some permissions need additional checking"""
+    if allowed and right == PUBREAD:
+        # PUBREAD permission is only granted after publication time (ptime)
+        # if PTIME is not defined, we use MTIME (which is usually in the past)
+        # if MTIME is not defined, we use now.
+        # TODO: implement sth like PSTARTTIME <= now <= PENDTIME ?
+        now = time.time()
+        ptime = item.ptime or item.mtime or now
+        allowed = now >= ptime
+    return allowed
+
+
 class ProtectingMiddleware(object):
     def __init__(self, indexer, user, acl_mapping):
         """
@@ -46,7 +62,7 @@ class ProtectingMiddleware(object):
         self.indexer = indexer
         self.user = user
         self.acl_mapping = acl_mapping
-        self.valid_rights = ['read', 'write', 'create', 'admin', 'destroy', ]
+        self.valid_rights = ACL_RIGHTS_CONTENTS
         # The ProtectingMiddleware exists just 1 request long, but might have
         # to parse and evaluate huge amounts of ACLs. We avoid doing same stuff
         # again and again by using some fresh lru caches for each PMW instance.
@@ -110,26 +126,26 @@ class ProtectingMiddleware(object):
     def search(self, q, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.search(q, idx_name, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def documents(self, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.documents(idx_name, **kw):
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def document(self, idx_name=LATEST_REVS, **kw):
         rev = self.indexer.document(idx_name, **kw)
         if rev:
             rev = ProtectedRevision(self, rev)
-            if rev.allows(READ):
+            if rev.allows(READ) or rev.allows(PUBREAD):
                 return rev
 
     def has_item(self, name):
@@ -215,13 +231,16 @@ class ProtectedItem(object):
 
         allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
         if allowed is not None:
-            return allowed
+            return pchecker(right, allowed, self.item)
 
         return False
 
-    def require(self, capability):
-        if not self.allows(capability):
-            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}'".format(self.protector.user.name0, capability))
+    def require(self, *capabilities):
+        """require that at least one of the capabilities is allowed"""
+        if not any(self.allows(c) for c in capabilities):
+            capability = " or ".join(capabilities)
+            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+                               self.protector.user.name, capability, self.item.acl))
 
     def iter_revs(self):
         self.require(READ)
@@ -230,7 +249,7 @@ class ProtectedItem(object):
                 yield ProtectedRevision(self.protector, rev, p_item=self)
 
     def __getitem__(self, revid):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         rev = self.item[revid]
         return ProtectedRevision(self.protector, rev, p_item=self)
 
@@ -277,9 +296,12 @@ class ProtectedRevision(object):
         # to check allowance for a revision, we always ask the item
         return self.item.allows(capability)
 
-    def require(self, capability):
-        if not self.allows(capability):
-            raise AccessDenied("revision does not allow '{0!r}'".format(capability))
+    def require(self, *capabilities):
+        """require that at least one of the capabilities is allowed"""
+        if not any(self.allows(c) for c in capabilities):
+            capability = " or ".join(capabilities)
+            raise AccessDenied("revision does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+                               self.protector.user.name, capability, self.item.item.acl))
 
     @property
     def revid(self):
@@ -291,12 +313,12 @@ class ProtectedRevision(object):
 
     @property
     def meta(self):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         return self.rev.meta
 
     @property
     def data(self):
-        self.require(READ)
+        self.require(READ, PUBREAD)
         return self.rev.data
 
     def set_context(self, context):
@@ -313,4 +335,3 @@ class ProtectedRevision(object):
 
     def __cmp__(self, other):
         return cmp(self.meta, other.meta)
-

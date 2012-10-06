@@ -7,6 +7,7 @@
     Misc. stuff that doesn't fit into another view category.
 """
 
+import time
 
 from flask import Response
 from flask import current_app as app
@@ -25,8 +26,9 @@ def sitemap():
     """
     Google (and others) XML sitemap
     """
-    def format_timestamp(dt):
-        return dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    def format_timestamp(t):
+        tm = time.gmtime(t)
+        return time.strftime("%Y-%m-%dT%H:%M:%S+00:00", tm)
 
     sitemap = []
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
@@ -67,4 +69,3 @@ def urls_names():
     item_names = sorted([rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')
-

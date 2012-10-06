@@ -27,92 +27,7 @@ from MoinMoin.i18n import _
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text
-
-
-class _Iter(object):
-    """
-    Iterator with push back support
-
-    Collected items can be pushed back into the iterator and further calls will
-    return them.
-    """
-
-    def __init__(self, parent):
-        self.__finished = False
-        self.__parent = iter(parent)
-        self.__prepend = []
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        if self.__finished:
-            raise StopIteration
-
-        if self.__prepend:
-            return self.__prepend.pop(0)
-
-        try:
-            return self.__parent.next()
-        except StopIteration:
-            self.__finished = True
-            raise
-
-    def push(self, item):
-        self.__prepend.append(item)
-
-
-class _Stack(object):
-    class Item(object):
-        def __init__(self, elem):
-            self.elem = elem
-            if elem.tag.uri == moin_page:
-                self.name = elem.tag.name
-            else:
-                self.name = None
-
-    def __init__(self, bottom=None):
-        self._list = []
-        if bottom:
-            self._list.append(self.Item(bottom))
-
-    def __len__(self):
-        return len(self._list)
-
-    def clear(self):
-        del self._list[1:]
-
-    def pop(self):
-        self._list.pop()
-
-    def pop_name(self, *names):
-        """
-        Remove anything from the stack including the given node.
-        """
-        while len(self._list) > 2 and not self.top_check(*names):
-            self.pop()
-        self.pop()
-
-    def push(self, elem):
-        self.top_append(elem)
-        self._list.append(self.Item(elem))
-
-    def top(self):
-        return self._list[-1].elem
-
-    def top_append(self, elem):
-        self.top().append(elem)
-
-    def top_append_ifnotempty(self, elem):
-        if elem:
-            self.top_append(elem)
-
-    def top_check(self, *names):
-        """
-        Checks if the name of the top of the stack matches the parameters.
-        """
-        return self._list[-1].name in names
+from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
 
 class _TableArguments(object):
@@ -177,7 +92,6 @@ class _TableArguments(object):
 
     def number_rows_spanned_repl(self, args, number_rows_spanned):
         args.keyword['number-rows-spanned'] = int(number_rows_spanned)
-
 
     def add_attr_to_style(self, args, attr):
         args.keyword['style'] = args.keyword.get('style', "") + attr + " "
@@ -352,7 +266,7 @@ class Converter(ConverterMacro):
 
         nowiki_marker_len = len(nowiki_marker)
 
-        lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len))
+        lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len), startno=iter_content.lineno)
 
         if nowiki_interpret:
             if nowiki_args:
@@ -361,7 +275,7 @@ class Converter(ConverterMacro):
                 args = Arguments(keyword={'_old': nowiki_args_old})
             else:
                 args = None
-
+            logging.debug("nowiki_name: %r" % nowiki_name)
             # Parse it directly if the type is ourself
             if not nowiki_name or nowiki_name == 'wiki':
                 body = self.parse_block(lines, args)
@@ -382,12 +296,12 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class = u'moin-hr{0}'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr{0}'):
         stack.clear()
         hr_height = min((len(separator) - 3), 6)
         hr_height = max(hr_height, 1)
         attrib = {moin_page('class'): hr_class.format(hr_height)}
-        elem = moin_page.separator(attrib = attrib)
+        elem = moin_page.separator(attrib=attrib)
         stack.top_append(elem)
 
     block_table = r"""
@@ -552,7 +466,7 @@ class Converter(ConverterMacro):
             if list_definition_text:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label)
+                new_stack = _Stack(element_label, iter_content=iter_content)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
 
@@ -560,11 +474,11 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body)
+            new_stack = _Stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
 
-        iter = _Iter(self.indent_iter(iter_content, text, level))
+        iter = _Iter(self.indent_iter(iter_content, text, level), startno=iter_content.lineno)
         for line in iter:
             match = self.block_re.match(line)
             it = iter
@@ -1111,7 +1025,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body)
+        stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
             data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().iteritems() if v is not None))
@@ -1138,5 +1052,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_wiki, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=wiki'), type_moin_document)
-
-

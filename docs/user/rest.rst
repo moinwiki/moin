@@ -2,15 +2,15 @@
 ReST (ReStructured Text) Markup
 ===============================
 
-The report gives reST syntax documentation. The structure and order has been matched with the other markup rst files namely creolewiki.rst and mediawiki.rst at http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
-
-Features currently not working with moin's Wiki parser are marked with **RSTTODO**.
+Features currently not working with moin's ReST parser are marked with **RSTTODO**.
 
 Headings
 ========
 
-Rather than imposing a fixed number and order of section title adornment styles, the order enforced will be the order as encountered.
-The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle, the third will be a subsubtitle, and so on.
+Rather than imposing a fixed number and order of section title adornment styles, 
+the order enforced will be the order as encountered.
+The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle, 
+the third will be a subsubtitle, and so on.
 
 **Markup**: ::
 
@@ -161,7 +161,8 @@ Every additional space before the first word in a line will add an indent before
     -- Sherlock Holmes
 
 **Notes**
- - A block quote may end with an attribution: a text block beginning with "--", "---", or a true em-dash, flush left within the block quote.
+ - A block quote may end with an attribution: a text block beginning with "--", "---", 
+   or a true em-dash, flush left within the block quote.
  - **RSTTODO** the attribution does not work in moin2.
 
 Lists
@@ -319,7 +320,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | C                              |
  +--------------------------------+
  
-**Note** **RSTTODO** C does not extend fully upto the end of D.
+**Note** **RSTTODO** C does not extend fully up to the end of D.
 
 Admonitions
 ===========
@@ -368,7 +369,8 @@ Comments are not shown on the page but depending on the output formatter they mi
 Literals Blocks
 ===============
 
-Literal blocks are used to show test as-it-is. i.e no markup processing is done within a literal block. A minimum (1) indentation is required for the text block to be recognized as a literal block.
+Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block. 
+A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**: ::
 

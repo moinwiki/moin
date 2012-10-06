@@ -1,5 +1,5 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2003-2008,2011 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2008,2011-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
 # Copyright: 2007 Alexander Schremmer
@@ -7,15 +7,6 @@
 
 """
 MoinMoin - Wiki Security Interface and Access Control Lists
-
-
-This implements the basic interface for user permissions and
-system policy. If you want to define your own policy, inherit
-from the base class 'Permissions', so that when new permissions
-are defined, you get the defaults.
-
-Then assign your new class to "SecurityPolicy" in wikiconfig;
-and I mean the class, not an instance of it!
 """
 
 
@@ -25,6 +16,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import abort
 
+from MoinMoin.constants import rights
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 
@@ -46,16 +38,22 @@ def require_permission(permission):
     return wrap
 
 
-class Permissions(object):
-    """ Basic interface for user permissions and system policy.
+class DefaultSecurityPolicy(object):
+    """Basic interface for user permissions and system policy.
 
-    Note that you still need to allow some of the related actions, this
-    just controls their behavior, not their activation.
+    If you want to define your own policy, inherit from DefaultSecurityPolicy,
+    so that when new permissions are defined later, you will inherit their
+    default behaviour.
 
-    When sub classing this class, you must extend the class methods, not
-    replace them, or you might break the ACLs in the wiki.
-    Correct sub classing looks like this::
+    Then assign your new class (not an instance!) to "SecurityPolicy" in the
+    wiki configuration.
 
+    When subclassing this class, you must extend the class methods, not replace
+    them, or you might break the ACLs in the wiki.
+
+    Correct subclassing looks like this::
+
+    class MySecPol(DefaultSecurityPolicy):
         def read(self, itemname):
             # Your special security rule
             if something:
@@ -63,10 +61,20 @@ class Permissions(object):
 
             # Do not just return True or you break (ignore) ACLs!
             # This call will return correct permissions by checking ACLs:
-            return Permissions.read(itemname)
+            return super(MySecPol, self).read(itemname)
     """
     def __init__(self, user):
         self.name = user.name0 # XXX currently we just use first name
+
+    def read(self, itemname):
+        """read permission is special as we have 2 kinds of read capabilities:
+
+           * READ - gives permission to read, unconditionally
+           * PUBREAD - gives permission to read, when published
+        """
+        return (flaskg.storage.may(itemname, rights.READ, username=self.name)
+                or
+                flaskg.storage.may(itemname, rights.PUBREAD, username=self.name))
 
     def __getattr__(self, attr):
         """ Shortcut to handle all known ACL rights.
@@ -84,10 +92,6 @@ class Permissions(object):
             may = app.cfg.cache.acl_functions.may
             return lambda: may(self.name, attr)
         raise AttributeError(attr)
-
-
-# make an alias for the default policy
-Default = Permissions
 
 
 class AccessControlList(object):
@@ -235,11 +239,12 @@ class AccessControlList(object):
                 handler = getattr(self, "_special_"+entry, None)
                 allowed = handler(name, dowhat, rightsdict)
             elif entry in groups:
-                if name in groups[entry]:
+                this_group = groups[entry]
+                if name in this_group:
                     allowed = rightsdict.get(dowhat)
                 else:
                     for special in self.special_users:
-                        if special in entry:
+                        if special in this_group:
                             handler = getattr(self, "_special_" + special, None)
                             allowed = handler(name, dowhat, rightsdict)
                             break # order of self.special_users is important
@@ -356,4 +361,3 @@ class ACLStringIterator(object):
             rights = [r for r in rights.split(',') if r in self.rights]
 
         return modifier, entries, rights
-

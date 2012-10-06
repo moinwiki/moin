@@ -65,9 +65,6 @@ Alias-Name
 OpenID
  If you have an OpenID which you would like to associate with your account, enter it here.
 
-.. warning::
- **MOINTODO** Leaving the OpenID field blank gives a warning saying "This OpenID is already in use"
-
 Timezone
  Setting this value will allow you to see edit times as they would appear in your time zone. For
  example, an edit time of 10AM UTC would appear as 8PM AEST if you changed your time zone to 
@@ -79,11 +76,10 @@ Locale
 Change Password
 ---------------
 
-Password changes are recommended if you believe that the password you are using has been put into
-the hands of an untrusted third party.
+Password changes are recommended if you believe that the password you are using has been compromised.
 
 Current Password
- Enter the password which you currently use to log into the wiki. This prevents passersby from
+ Enter the password which you currently use to log into the wiki. This prevents passers-by from
  changing the password of a logged in account. This is a required field.
 
 New Password
@@ -226,11 +222,6 @@ again and click the :guilabel:`Unsubscribe` button at the top or bottom of the p
 
 Logging out
 ===========
-
-.. warning::
- **MOINTODO** Currently logging out just removes the user's session cookie. These cookies remain
- valid after logging out (and even after a password change), and could be used to impersonate a
- user. See BitBucket issue #94.
 
 Logging out of your account can prevent account hijacking on untrusted or insecure computers, and is
 considered best practice for security. To log out, click the :guilabel:`Logout` button at the top

@@ -32,6 +32,7 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'Admin3:read,write,admin',
             [
              u'Admin3:+read',
+             u'Admin3:-pubread',
              u'Admin3:+write',
              u'Admin3:-create',
              u'Admin3:+admin',
@@ -41,20 +42,23 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'Admin1,Admin2:read,write,admin',
             [
              u'Admin1:+read',
+             u'Admin1:-pubread',
              u'Admin1:+write',
              u'Admin1:-create',
              u'Admin1:+admin',
              u'Admin1:-destroy',
              u'Admin2:+read',
+             u'Admin2:-pubread',
              u'Admin2:+write',
              u'Admin2:-create',
              u'Admin2:+admin',
              u'Admin2:-destroy',
             ]
         ),
-        (u'JoeDoe:read,write',
+        (u'JoeDoe:pubread,write',
             [
-             u'JoeDoe:+read',
+             u'JoeDoe:-read',
+             u'JoeDoe:+pubread',
              u'JoeDoe:+write',
              u'JoeDoe:-create',
              u'JoeDoe:-admin',
@@ -64,11 +68,13 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'name with spaces,another one:read,write',
             [
              u'name with spaces:+read',
+             u'name with spaces:-pubread',
              u'name with spaces:+write',
              u'name with spaces:-create',
              u'name with spaces:-admin',
              u'name with spaces:-destroy',
              u'another one:+read',
+             u'another one:-pubread',
              u'another one:+write',
              u'another one:-create',
              u'another one:-admin',
@@ -78,11 +84,13 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'CamelCase,extended name:read,write',
             [
              u'CamelCase:+read',
+             u'CamelCase:-pubread',
              u'CamelCase:+write',
              u'CamelCase:-create',
              u'CamelCase:-admin',
              u'CamelCase:-destroy',
              u'extended name:+read',
+             u'extended name:-pubread',
              u'extended name:+write',
              u'extended name:-create',
              u'extended name:-admin',
@@ -92,6 +100,7 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'BadGuy:',
             [
              u'BadGuy:-read',
+             u'BadGuy:-pubread',
              u'BadGuy:-write',
              u'BadGuy:-create',
              u'BadGuy:-admin',
@@ -101,6 +110,7 @@ class TestAclTokenizer(TokenizerTestBase):
         (u'All:read',
             [
              u'All:+read',
+             u'All:-pubread',
              u'All:-write',
              u'All:-create',
              u'All:-admin',
@@ -115,7 +125,6 @@ class TestAclTokenizer(TokenizerTestBase):
 
 class TestMimeTokenizer(TokenizerTestBase):
     """ analyzers: test content type analyzer """
-
 
     test_cases_query = [
                   # (query, tokens)

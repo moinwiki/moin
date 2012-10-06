@@ -36,4 +36,3 @@ class ConfigDicts(BaseDictsBackend):
             return self._dicts[dict_name]
         except KeyError:
             raise DictDoesNotExistError(dict_name)
-

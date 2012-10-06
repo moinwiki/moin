@@ -150,7 +150,7 @@ def split_interwiki(wikiurl):
         wikiname, item_name = _split_namespace(set(app.cfg.interwiki_map.keys()), wikiurl)
         namespace = u''
         if not wikiname:
-            namespace, item_name =  _split_namespace(set(namespace_mapping), wikiurl)
+            namespace, item_name = _split_namespace(set(namespace_mapping), wikiurl)
             wikiname = u'Self'
         else:
             if ':' in wikiname:
@@ -158,7 +158,7 @@ def split_interwiki(wikiurl):
                 wikiname = wikiname.split(':', 1)[0]
         return wikiname, namespace, item_name
     else:
-        namespace, item_name =  _split_namespace(set(namespace_mapping), wikiurl.split(':', 1)[1])
+        namespace, item_name = _split_namespace(set(namespace_mapping), wikiurl.split(':', 1)[1])
         if not namespace:
             item_name = u':{0}'.format(item_name)
         return u'Self', namespace, item_name
@@ -198,7 +198,7 @@ def getInterwikiName(item_name):
     :rtype: unicode
     :returns: wiki_name:item_name
     """
-    return u'{0}:{1}'.format(app.cfg.interwikiname, item_name)
+    return u"{0}:{1}".format(app.cfg.interwikiname, item_name)
 
 
 def getInterwikiHome(username):
@@ -269,4 +269,3 @@ class InterWikiMap(object):
             parser = InterWikiMap(f.read())
 
         return parser
-

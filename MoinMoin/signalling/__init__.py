@@ -14,4 +14,3 @@ from .signals import *
 
 # import all signal handler modules so they install their handlers:
 from . import log
-

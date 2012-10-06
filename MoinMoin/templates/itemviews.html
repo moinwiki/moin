@@ -1,5 +1,5 @@
 {% set exists = storage.has_item(item_name) %}
-<ul class="moin-itemviews">
+<ul class="moin-itemviews panel">
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
             {%- if endpoint in [
@@ -13,8 +13,14 @@
                 </li>
             {%- endif %}
 
+            {%- if endpoint == 'frontend.modify_item' and user.may.write(item_name) %}
+                <li>
+                    <a class="moin-modify-button" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
             {%- if endpoint in [
-                'frontend.modify_item', 'frontend.rename_item', 'frontend.delete_item',
+                'frontend.rename_item', 'frontend.delete_item',
             ] and user.may.write(item_name) %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
@@ -29,7 +35,7 @@
 
             {%- if endpoint in [
                 'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
-                'admin.index',
+                'admin.index', 'admin.index_user',
             ] %}
                 <li>
                     <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>

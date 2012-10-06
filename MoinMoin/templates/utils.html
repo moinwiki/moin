@@ -1,3 +1,5 @@
+{% import 'forms.html' as forms %}
+
 {% macro show_editor_info(info) %}
   {%- if info.uri -%}
       <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
@@ -34,7 +36,11 @@
 {% for row in rows %}
     <tr>
         {% for col in row %}
-        <td>{{ col }}</td>
+            {% if col is number %}
+                <td class="moin-integer">{{ col }}</td>
+            {%- else -%}
+                <td>{{ col }}</td>
+            {% endif %}
         {% endfor %}
     </tr>
 {% endfor %}
@@ -42,22 +48,22 @@
 </table>
 {% endmacro %}
 
-{% macro _render_subitem_navigation_tree(subitems, newtab, parentcaller) %}
+{% macro _render_subitem_navigation_tree(index, newtab, parentcaller) %}
     <ul>
-        {% for fullname, shortname, contenttype, has_children in subitems %}
+        {% for e in index %}
             <li>
                 {# call our parent's caller with all the data we have if they exist, used to implement
                     transclude/link actions in the modify view #}
                 {% if parentcaller %}
-                    {{ parentcaller(fullname, shortname, contenttype, has_children) }}
+                    {{ parentcaller(e.meta['name'], e.relname, e.meta['contenttype'], e.hassubitems) }}
                 {% endif %}
-                <a href="{{ url_for('frontend.show_item', item_name=fullname) }}"
-                    title="{{ shortname }}" class="subitem-link"
-                    {% if newtab %}target="_blank"{% endif %}>{{ shortname }}</a>
-                {% if has_children %}
+                <a href="{{ url_for('frontend.show_item', item_name=e.meta['name']) }}"
+                    title="{{ e.relname }}" class="subitem-link"
+                    {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
+                {% if e.hassubitems %}
                     <button class="expander" title="{{ _('Expand Subitem') }}"
-                        onclick="toggleSubtree(this)">/</button>
-                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(fullname), newtab, parentcaller) }}
+                        onclick="toggleSubtree(this)"></button>
+                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.meta['name']), newtab, parentcaller) }}
                 {% endif %}
             </li>
         {% endfor %}
@@ -72,9 +78,19 @@
     {% if subitems %}
         <div class="moin-subitem-navigation">
             <div class="list-header">
-                {{ _('Subitems') }} 
+                {{ _('Subitems') }}
             </div>
             {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
         </div>
     {% endif %}
+{% endmacro %}
+
+{% macro header_search(form) %}
+    {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+        <div>
+            {{ forms.render(form['q']) }}
+            {{ gen.button(form['submit'], type='submit', id='moin-search-submit') }}
+            {{ forms.render_errors(form) }}
+        </div>
+    {{ gen.form.close() }}
 {% endmacro %}

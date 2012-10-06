@@ -20,6 +20,7 @@ import re, types
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from flask import request
 from flask import current_app as app
 from flask import g as flaskg
 
@@ -31,7 +32,41 @@ from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.tree import html, moin_page, xinclude, xlink
 
-from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
+from MoinMoin.converter.html_out import Attributes
+
+
+def convert_getlink_to_showlink(href):
+    """
+    If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
+    """
+    if href.startswith('/'):
+        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
+    return href
+
+def mark_item_as_transclusion(elem, href):
+    """
+    Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
+    a link to the transcluded item.
+
+    On the client side, a Javascript function will wrap the element (or a parent element)
+    in a span or div and 2 overlay siblings will be created.
+    """
+    href = unicode(href)
+    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
+    # or "http://Some.Org/SomeThing" for external link
+    if elem.tag.name not in ('object', 'img'):
+        # XXX see issue #167: for wikis not running at root, only object and img elements have complete path
+        # if wiki is not running at server root, prefix href with wiki root
+        wiki_root = request.url_root[len(request.host_url):-1]
+        if wiki_root:
+            href = '/' + wiki_root + href
+    href = convert_getlink_to_showlink(href)
+    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
+    elem.attrib[html.data_href] = href
+    classes = elem.attrib.get(html.class_, '').split()
+    classes.append('moin-transclusion')
+    elem.attrib[html.class_] = ' '.join(classes)
+    return elem
 
 
 class XPointer(list):
@@ -233,8 +268,8 @@ class Converter(object):
                         loop = self.stack[self.stack.index(p_href):]
                         loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
                         msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
-                        attrib = {getattr(html, 'class'): 'moin-error'}
-                        strong = ET.Element(html.strong, attrib, (msg, ))
+                        attrib = {getattr(moin_page, 'class'): 'moin-error'}
+                        strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
                         continue
                     # TODO: Is this correct?
@@ -249,15 +284,13 @@ class Converter(object):
                         elem_h = ET.Element(self.tag_h, attrib, children=(elem_a, ))
                         included_elements.append(elem_h)
 
-                    page_doc = page.internal_representation()
+                    page_doc = page.content.internal_representation()
                     # page_doc.tag = self.tag_div # XXX why did we have this?
 
                     self.recurse(page_doc, page_href)
 
-                    # if this is an existing item, mark it as a transclusion.  non-existent items are not marked (page_doc.tag.name == u'a')
                     # The href needs to be an absolute URI, without the prefix "wiki://"
-                    if page_doc.tag.name == u'page':
-                        page_doc = mark_item_as_transclusion(page_doc, p_href.path)
+                    page_doc = mark_item_as_transclusion(page_doc, p_href.path)
                     included_elements.append(page_doc)
 
                 if len(included_elements) > 1:
@@ -270,7 +303,6 @@ class Converter(object):
                     result = None
                 #  end of processing for transclusion; the "result" will get inserted into the DOM below
                 return result
-
 
             # Traverse the DOM by calling self.recurse with each child of the current elem.  Starting elem.tag.name=='page'.
             container = []
@@ -302,7 +334,7 @@ class Converter(object):
                                 # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
                                 attrib = Attributes(ret).convert()
                                 # make new span node and "convert" p to span by copying all of p's children
-                                span = ET.Element(html.span, attrib=attrib, children=p[:])
+                                span = ET.Element(moin_page.span, attrib=attrib, children=p[:])
                                 # insert the new span into the DOM replacing old include, page, body, and p elements
                                 elem[i] = span
                             elif not isinstance(body, unicode) and ret.tag.name == 'page' and body.tag.name == 'body':
@@ -310,19 +342,19 @@ class Converter(object):
                                 # note: ancestor P may have text before or after include
                                 if i > 0:
                                     # there is text before transclude, make new p node to hold text before include and save in container
-                                    pa = ET.Element(html.p)
+                                    pa = ET.Element(moin_page.p)
                                     pa[:] = elem[0:i]
                                     container.append(pa)
                                 # get attributes from page node; we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
                                 attrib = Attributes(ret).convert()
                                 # make new div node, copy all of body's children, and save in container
-                                div = ET.Element(html.div, attrib=attrib, children=body[:])
+                                div = ET.Element(moin_page.div, attrib=attrib, children=body[:])
                                 container.append(div)
                                  # empty elem of siblings that were just placed in container
                                 elem[0:i+1] = []
                                 if len(elem) > 0:
                                     # there is text after transclude, make new p node to hold text, copy siblings, save in container
-                                    pa = ET.Element(html.p)
+                                    pa = ET.Element(moin_page.p)
                                     pa[:] = elem[:]
                                     container.append(pa)
                                     elem[:] = []
@@ -350,4 +382,3 @@ class Converter(object):
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)
-

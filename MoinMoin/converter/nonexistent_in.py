@@ -28,10 +28,10 @@ class Converter(object):
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=modify'),
         }
-        return moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it?", item_name=item_name)])
-
+        a = moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it?", item_name=item_name)])
+        body = moin_page.body(children=(a, ))
+        return moin_page.page(children=(body, ))
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('application/x-nonexistent'), type_moin_document)
-
