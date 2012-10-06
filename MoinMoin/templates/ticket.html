@@ -1,0 +1,66 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+
+{% if is_new %}
+    {% set title = _("Creating new ticket: '%(item_name)s'", item_name=item_name) %}
+{% else %}
+    {% set title = _("Ticket: '%(item_name)s'", item_name=item_name) %}
+{% endif %}
+
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="moin-form" id="moin-ticket-form">
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+
+    {% if data_rendered %}
+        <div id="moin-content-data">
+            {{ data_rendered }}
+        </div>
+    {% endif %}
+
+    {% if is_new %}
+        <h2>Describe the ticket</h2>
+    {% else %}
+        <h2>Add comment</h2>
+    {% endif %}
+    <dl>
+    {{ forms.render(form['message']) }}
+    </dl>
+
+    <h2>Edit metadata</h2>
+    <dl>
+    {{ forms.render_errors(form) }}
+    {% for e in [
+        'summary',
+        'effort',
+        'difficulty',
+        'severity',
+        'priority',
+        'tags',
+        'assigned_to',
+        'superseded_by',
+        'depends_on',
+        ] %}
+        {{ forms.render(form['meta'][e]) }}
+    {% endfor %}
+    </dl>
+    {{ forms.render(form['submit']) }}
+
+    <h2>Back references</h2>
+    <dl>
+    {% for e in [
+        'supersedes',
+        'required_by',
+        'subscribers',
+        ] %}
+        {{ forms.render(form['backrefs'][e]) }}
+    {% endfor %}
+
+    {{ gen.form.close() }}
+</div>
+{% endblock %}
