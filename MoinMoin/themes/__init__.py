@@ -29,6 +29,7 @@ from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.clock import timed
+from MoinMoin.util.mime import Type
 
 
 def get_current_theme():
@@ -124,10 +125,7 @@ class ThemeSupport(object):
         """
         from MoinMoin.items import Item
         item = Item.create(item_name)
-        item_index = item.get_index()
-        # Sort items by whether or not they have children, then by name:
-        item_index = sorted(item_index, key=attrgetter('hassubitems', 'relname'))
-        return item_index
+        return item.get_mixed_index()
 
     def userhome(self):
         """
@@ -417,6 +415,7 @@ def setup_jinja_env():
                             # _, gettext, ngettext
                             'isinstance': isinstance,
                             'list': list,
+                            'Type': Type,
                             # please note that flask-themes installs:
                             # theme, theme_static
                             'theme_supp': ThemeSupport(app.cfg),

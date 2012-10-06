@@ -34,12 +34,12 @@ class RegistryConverter(RegistryBase):
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority != other.priority:
-                    return self.priority < other.priority
                 if self.type_output != other.type_output:
                     return other.type_output.issupertype(self.type_output)
                 if self.type_input != other.type_input:
                     return other.type_input.issupertype(self.type_input)
+                if self.priority != other.priority:
+                    return self.priority < other.priority
                 return False
             return NotImplemented
 

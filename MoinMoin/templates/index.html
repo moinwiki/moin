@@ -69,24 +69,46 @@
     </div>
 {% endblock %}
 
-{% macro render_entry(e) %}
-    {% set maxchars = 20 %}
+{% macro entry_anchor(type, e) -%}
+    index-{{ type }}-{{ e.meta['itemid'] }}
+{%- endmacro %}
+
+{% set maxchars = 20 %}
+
+{% macro render_dir_entry(e) %}
+    <div>
+        <a href="{{ url_for('.index', item_name=e.meta['name']) }}"
+           name="{{ entry_anchor('dir', e) }}"
+           {# TODO .moin-dir-item class is not styled yet #}
+           class="moin-dir-item"
+           title="{{ e.relname }}">
+           {{ e.relname|truncate(maxchars, true, '..') }}
+        </a>
+        {% if e in files %}
+            <a href="#{{ entry_anchor('file', e) }}"
+               title="{{ _("This item itself also matches your filter.") }}">↓
+            </a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_file_entry(e) %}
     <div>
         <span class="moin-select-item">&nbsp;</span>
         {% set mimetype = "application/x.moin.download" %}
         <a href="{{ url_for('.download_item', item_name=e.meta['name'], mimetype=mimetype) }}" class="moin-download-link">
         </a>
         <a href="{{ url_for('.show_item', item_name=e.meta['name']) }}"
+           name="{{ entry_anchor('file', e) }}"
            {# TODO .moin-itemtype-* classes are not styled yet #}
            class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
            title="{{ e.relname }}">
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
-        {% if e.hassubitems %}
-            <a href="{{ url_for('frontend.index', item_name=e.meta['name']) }}"
-               title="{{ _("More") }}"
-               class="moin-more-index">&nbsp;
-        </a>
+        {% if e in dirs %}
+            <a href="#{{ entry_anchor('dir', e) }}"
+               title="{{ _("This item also has subitems that match your filter.") }}">↑
+            </a>
         {% endif %}
     </div>
 {% endmacro %}
@@ -119,7 +141,7 @@
         </div>
     </div>
     <div class="moin-index-separator"></div>
-    {% if index %}
+    {% if files or dirs %}
     <div id="moin-initials">
         {% if not startswith %}
             <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
@@ -134,12 +156,24 @@
             {% endif %}
         {% endfor %}
     </div>
-    <div class="moin-item-index">
-        {% for e in index %}
-            {{ render_entry(e) }}
-        {% endfor %}
-    </div>
-    <div class="moin-clr"></div>
+    {% if dirs %}
+        <div class="moin-item-index">
+            <p>{{ _("These items have subitems that match your filter:") }}</p>
+            {% for e in dirs %}
+                {{ render_dir_entry(e) }}
+            {% endfor %}
+        </div>
+        <div class="moin-clr"></div>
+        <hr />
+    {% endif %}
+    {% if files %}
+        <div class="moin-item-index">
+            {% for e in files %}
+                {{ render_file_entry(e) }}
+            {% endfor %}
+        </div>
+        <div class="moin-clr"></div>
+    {% endif %}
     {% endif %}
     <div id="popup">
         <div id="popup-for-action" class="popup-container">

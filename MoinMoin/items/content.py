@@ -24,6 +24,7 @@ import tempfile
 from StringIO import StringIO
 from array import array
 from collections import namedtuple
+from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -60,6 +61,10 @@ from MoinMoin.util.iri import Iri
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
+from MoinMoin.constants.contenttypes import (
+    GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
+    GROUP_DRAWING, GROUP_OTHER,
+    )
 from MoinMoin.constants.keys import (
     NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
     )
@@ -70,33 +75,50 @@ ROWS_DATA = 20
 
 
 class RegistryContent(RegistryBase):
-    class Entry(namedtuple('Entry', 'factory content_type priority')):
+    class Entry(namedtuple('Entry', 'factory content_type default_contenttype_params display_name ingroup_order priority')):
         def __call__(self, content_type, *args, **kw):
             if self.content_type.issupertype(Type(content_type)):
                 return self.factory(content_type, *args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority != other.priority:
-                    return self.priority < other.priority
                 if self.content_type != other.content_type:
                     return other.content_type.issupertype(self.content_type)
+                if self.priority != other.priority:
+                    return self.priority < other.priority
                 return False
             return NotImplemented
 
-    def register(self, factory, content_type, priority=RegistryBase.PRIORITY_MIDDLE):
+    def __init__(self, group_names):
+        super(RegistryContent, self).__init__()
+        self.group_names = group_names
+        self.groups = dict([(g, []) for g in group_names])
+
+    def register(self, e, group):
         """
-        Register a factory
-
-        :param factory: Factory to register. Callable, must return an object.
+        Register a contenttype entry and optionally add it to a specific group.
         """
-        return self._register(self.Entry(factory, content_type, priority))
+        # If group is specified and contenttype is not a wildcard one
+        if group and e.content_type.type and e.content_type.subtype:
+            if group not in self.groups:
+                raise ValueError('Unknown group name: {0}'.format(group))
+            self.groups[group].append(e)
+            self.groups[group].sort(key=attrgetter('ingroup_order'))
+        return self._register(e)
 
 
-content_registry = RegistryContent()
+content_registry = RegistryContent([
+    GROUP_MARKUP_TEXT,
+    GROUP_OTHER_TEXT,
+    GROUP_IMAGE,
+    GROUP_AUDIO,
+    GROUP_VIDEO,
+    GROUP_DRAWING,
+    GROUP_OTHER
+])
 
 def register(cls):
-    content_registry.register(cls._factory, Type(cls.contenttype))
+    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype), cls.default_contenttype_params, cls.display_name, cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
     return cls
 
 
@@ -113,6 +135,13 @@ class Content(object):
     Base for content classes defining some helpers, agnostic about content
     data.
     """
+    # placeholder values for registry entry properties
+    contenttype = None
+    default_contenttype_params = {}
+    display_name = None
+    group = GROUP_OTHER
+    ingroup_order = 0
+
     @classmethod
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
@@ -241,6 +270,7 @@ class Content(object):
 class NonExistentContent(Content):
     """Dummy Content to use with NonExistent."""
     contenttype = 'application/x-nonexistent'
+    group = None
 
     def do_get(self, force_attachment=False, mimetype=None):
         abort(404)
@@ -341,6 +371,15 @@ There is no help, you're doomed!
                          add_etags=True, etag=hash, conditional=True)
 
 
+@register
+class OctetStream(Binary):
+    """
+    Fallback Content for uploaded file of unknown contenttype.
+    """
+    contenttype = 'application/octet-stream'
+    display_name = 'binary file'
+
+
 class RenderableBinary(Binary):
     """ Base class for some binary stuff that renders with a object tag. """
 
@@ -423,6 +462,7 @@ class ApplicationXTar(TarMixin, Application):
     Tar items
     """
     contenttype = 'application/x-tar'
+    display_name = 'TAR'
 
 
 @register
@@ -431,6 +471,7 @@ class ApplicationXGTar(ApplicationXTar):
     Compressed tar items
     """
     contenttype = 'application/x-gtar'
+    display_name = 'TGZ'
 
 
 class ZipMixin(object):
@@ -466,24 +507,70 @@ class ApplicationZip(ZipMixin, Application):
     Zip items
     """
     contenttype = 'application/zip'
+    display_name = 'ZIP'
 
 
 @register
 class PDF(Application):
     """ PDF """
     contenttype = 'application/pdf'
+    display_name = 'PDF'
 
 
 @register
 class Video(Binary):
     """ Base class for video/* """
     contenttype = 'video/*'
+    group = GROUP_VIDEO
+
+
+@register
+class OGGVideo(Video):
+    contenttype = 'video/ogg'
+    display_name = 'OGG'
+
+
+@register
+class WebMVideo(Video):
+    contenttype = 'video/webm'
+    display_name = 'WebM'
+
+
+@register
+class MP4(Video):
+    contenttype = 'video/mp4'
+    display_name = 'MP4'
 
 
 @register
 class Audio(Binary):
     """ Base class for audio/* """
     contenttype = 'audio/*'
+    group = GROUP_AUDIO
+
+
+@register
+class WAV(Audio):
+    contenttype = 'audio/wave'
+    display_name = 'WAV'
+
+
+@register
+class OGGAudio(Audio):
+    contenttype = 'audio/ogg'
+    display_name = 'OGG'
+
+
+@register
+class MP3(Audio):
+    contenttype = 'audio/mpeg'
+    display_name = 'MP3'
+
+
+@register
+class WebMAudio(Audio):
+    contenttype = 'audio/webm'
+    display_name = 'WebM'
 
 
 @register
@@ -494,12 +581,14 @@ class Image(Binary):
 
 class RenderableImage(RenderableBinary):
     """ Base class for renderable Image mimetypes """
+    group = GROUP_IMAGE
 
 
 @register
 class SvgImage(RenderableImage):
     """ SVG images use <object> tag mechanism from RenderableBinary base class """
     contenttype = 'image/svg+xml'
+    display_name = 'SVG'
 
 
 class RenderableBitmapImage(RenderableImage):
@@ -665,24 +754,29 @@ class TransformableBitmapImage(RenderableBitmapImage):
 class PNG(TransformableBitmapImage):
     """ PNG image. """
     contenttype = 'image/png'
+    display_name = 'PNG'
 
 
 @register
 class JPEG(TransformableBitmapImage):
     """ JPEG image. """
     contenttype = 'image/jpeg'
+    display_name = 'JPEG'
 
 
 @register
 class GIF(TransformableBitmapImage):
     """ GIF image. """
     contenttype = 'image/gif'
+    display_name = 'GIF'
 
 
 @register
 class Text(Binary):
     """ Base class for text/* """
     contenttype = 'text/*'
+    default_contenttype_params = dict(charset='utf-8')
+    group = GROUP_OTHER_TEXT
 
     class ModifyForm(Binary.ModifyForm):
         template = 'modify_text.html'
@@ -771,40 +865,46 @@ class MarkupItem(Text):
     some kind of item with markup
     (internal links and transcluded items)
     """
+    group = GROUP_MARKUP_TEXT
 
 
 @register
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
     contenttype = 'text/x.moin.wiki'
+    display_name = 'Wiki (MoinMoin)'
 
 
 @register
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
     contenttype = 'text/x.moin.creole'
+    display_name = 'Wiki (Creole)'
 
 
 @register
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
     contenttype = 'text/x-mediawiki'
+    display_name = 'Wiki (MediaWiki)'
 
 
 @register
 class ReST(MarkupItem):
     """ ReStructured Text markup """
     contenttype = 'text/x-rst'
+    display_name = 'ReST'
 
 
 @register
 class Markdown(MarkupItem):
     """ Markdown markup """
     contenttype = 'text/x-markdown'
+    display_name = 'Markdown'
 
 
 @register
-class HTML(Text):
+class HTML(MarkupItem):
     """
     HTML markup
 
@@ -815,6 +915,7 @@ class HTML(Text):
     Note: If raw revision data is accessed, unsafe stuff might be present!
     """
     contenttype = 'text/html'
+    display_name = 'HTML'
 
     class ModifyForm(Text.ModifyForm):
         template = "modify_text_html.html"
@@ -824,6 +925,7 @@ class HTML(Text):
 class DocBook(MarkupItem):
     """ DocBook Document """
     contenttype = 'application/docbook+xml'
+    display_name = 'DocBook'
 
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
@@ -869,10 +971,42 @@ class DocBook(MarkupItem):
                          add_etags=False, etag=None, conditional=True)
 
 
+@register
+class PlainText(Text):
+    contenttype = 'text/plain'
+    display_name = 'plain text'
+
+
+@register
+class Diff(Text):
+    contenttype = 'text/x-diff'
+    display_name = 'diff/patch'
+
+
+@register
+class PythonCode(Text):
+    contenttype = 'text/x-python'
+    display_name = 'python code'
+
+
+@register
+class CSV(Text):
+    contenttype = 'text/csv'
+    display_name = 'csv'
+
+
+@register
+class IRCLog(Text):
+    contenttype = 'text/x-irclog'
+    display_name = 'IRC log'
+
+
 class Draw(TarMixin, Image):
     """
     Base class for *Draw that use special Java/Javascript applets to modify and store data in a tar file.
     """
+    group = GROUP_DRAWING
+
     class ModifyForm(Binary.ModifyForm):
         # Set the workaround flag respected in modify.html
         is_draw = True
@@ -887,6 +1021,7 @@ class TWikiDraw(Draw):
     drawings by TWikiDraw applet. It creates three files which are stored as tar file.
     """
     contenttype = 'application/x-twikidraw'
+    display_name = 'TDRAW'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_twikidraw.html"
@@ -950,6 +1085,7 @@ class AnyWikiDraw(Draw):
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
     contenttype = 'application/x-anywikidraw'
+    display_name = 'ADRAW'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
@@ -1017,6 +1153,7 @@ class AnyWikiDraw(Draw):
 class SvgDraw(Draw):
     """ drawings by svg-edit. It creates two files (svg, png) which are stored as tar file. """
     contenttype = 'application/x-svgdraw'
+    display_name = 'SVGDRAW'
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_svg-edit.html"
