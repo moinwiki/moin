@@ -70,7 +70,7 @@ class Blog(Default):
             terms.append(Term(TAGS, tag))
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
-        blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
+        blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]  # XXX BROKEN - meta[NAME] is a list of names now
         return render_template('blog/main.html',
                                item_name=self.name,
                                blog_item=self,

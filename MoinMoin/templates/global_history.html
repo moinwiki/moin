@@ -28,13 +28,13 @@
                                 <span class="moin-history-{{ meta.action|lower }}"></span>
                             </td>
                             <td class="moin-history-links">
-                                <a href="{{ url_for('frontend.history', item_name=meta.name, bookmark=bookmark_time) }}">HIST</a>
+                                <a href="{{ url_for('frontend.history', item_name=meta.name[0], bookmark=bookmark_time) }}">HIST</a>
                                 {% if bookmark_time -%}
-                                    <a href="{{ url_for('frontend.diff', item_name=meta.name, bookmark=bookmark_time) }}">DIFF</a>
+                                    <a href="{{ url_for('frontend.diff', item_name=meta.name[0], bookmark=bookmark_time) }}">DIFF</a>
                                 {%- endif %}
                             </td>
                             <td class="moin-history-time">{{ meta.mtime|timeformat }}</td>
-                            <td class="moin-history-item"><a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=meta.name) }}" title="{{ meta.contenttype }}">{{ meta.name }}</a></td>
+                            <td class="moin-history-item"><a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=meta.name[0]) }}" title="{{ meta.contenttype }}">{{ meta.name|join(' | ') }}</a></td>
                         </tr>
                     {% endfor %}
                     </table>
