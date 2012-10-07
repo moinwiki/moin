@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008-2009 MoinMoin:ThomasWaldmann
+# Copyright: 2012 MoinMoin:TarashishMishra
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -79,10 +80,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    import smtplib, socket
-    from email.Message import Message
-    from email.Charset import Charset, QP
-    from email.Utils import formatdate, make_msgid
+    
 
     cfg = app.cfg
     mail_from = mail_from or cfg.mail_from
@@ -93,98 +91,124 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     if not to and not cc and not bcc:
         return (1, _("No recipients, nothing to do"))
 
-    subject = subject.encode(config.charset)
+    
 
     # Create a text/plain body using CRLF (see RFC2822)
     text = text.replace(u'\n', u'\r\n')
-    text = text.encode(config.charset)
+    
 
-    # Create a message using config.charset and quoted printable
-    # encoding, which should be supported better by mail clients.
-    # TODO: check if its really works better for major mail clients
-    msg = Message()
-    charset = Charset(config.charset)
-    charset.header_encoding = QP
-    charset.body_encoding = QP
-    msg.set_charset(charset)
-
-    # work around a bug in python 2.4.3 and above:
-    msg.set_payload('=')
-    if msg.as_string().endswith('='):
-        text = charset.body_encode(text)
-
-    msg.set_payload(text)
-
-    address = encodeAddress(mail_from, charset)
-    msg['From'] = address
-    if to:
-        msg['To'] = ','.join(to)
-    if cc:
-        msg['CC'] = ','.join(cc)
-    msg['Date'] = formatdate()
-    msg['Message-ID'] = make_msgid()
-    msg['Subject'] = Header(subject, charset)
-    # See RFC 3834 section 5:
-    msg['Auto-Submitted'] = 'auto-generated'
-
-    if cfg.mail_sendmail:
-        if bcc:
-            # Set the BCC.  This will be stripped later by sendmail.
-            msg['BCC'] = ','.join(bcc)
-        # Set Return-Path so that it isn't set (generally incorrectly) for us.
-        msg['Return-Path'] = address
 
     # Send the message
-    if not cfg.mail_sendmail:
+    if app.on_gae:
+        from google.appengine.api import mail
         try:
-            logging.debug("trying to send mail (smtp) via smtp server '{0}'".format(cfg.mail_smarthost))
-            host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
-            server = smtplib.SMTP(host, int(port))
-            try:
-                #server.set_debuglevel(1)
-                if cfg.mail_username is not None and cfg.mail_password is not None:
-                    try: # try to do tls
-                        server.ehlo()
-                        if server.has_extn('starttls'):
-                            server.starttls()
-                            server.ehlo()
-                            logging.debug("tls connection to smtp server established")
-                    except:
-                        logging.debug("could not establish a tls connection to smtp server, continuing without tls")
-                    logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
-                    server.login(cfg.mail_username, cfg.mail_password)
-                server.sendmail(mail_from, (to or []) + (cc or []) + (bcc or []), msg.as_string())
-            finally:
-                try:
-                    server.quit()
-                except AttributeError:
-                    # in case the connection failed, SMTP has no "sock" attribute
-                    pass
-        except smtplib.SMTPException as e:
-            logging.exception("smtp mail failed with an exception.")
-            return (0, str(e))
-        except (os.error, socket.error) as e:
-            logging.exception("smtp mail failed with an exception.")
-            return (0, _("Connection to mailserver '%(server)s' failed: %(reason)s",
-                server=cfg.mail_smarthost,
-                reason=str(e)
-            ))
-    else:
-        try:
-            logging.debug("trying to send mail (sendmail)")
-            sendmailp = os.popen(cfg.mail_sendmail, "w")
-            # msg contains everything we need, so this is a simple write
-            sendmailp.write(msg.as_string())
-            sendmail_status = sendmailp.close()
-            if sendmail_status:
-                logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
-                return (0, str(sendmail_status))
+            logging.debug("trying to send mail (mail.EmailMessage.send() on gae)")
+            message = mail.EmailMessage(sender=mail_from,
+                                        subject=subject,
+                                        to=to,
+                                        body=text)
+            if cc:
+                message.cc = cc
+            if bcc:
+                message.bcc = bcc
+            message.send()
         except:
-            logging.exception("sendmail failed with an exception.")
+            logging.exception("gae's mail.sendmail failed with an exception.")
             return (0, _("Mail not sent"))
+        return (1, _("Mail sent successfully"))
+    else:
+        import smtplib, socket
+        from email.Message import Message
+        from email.Charset import Charset, QP
+        from email.Utils import formatdate, make_msgid
 
-    logging.debug("Mail sent successfully")
-    return (1, _("Mail sent successfully"))
+        subject = subject.encode(config.charset)
+        text = text.encode(config.charset)
+        # Create a message using config.charset and quoted printable
+        # encoding, which should be supported better by mail clients.
+        # TODO: check if its really works better for major mail clients
+        msg = Message()
+        charset = Charset(config.charset)
+        charset.header_encoding = QP
+        charset.body_encoding = QP
+        msg.set_charset(charset)
+
+        # work around a bug in python 2.4.3 and above:
+        msg.set_payload('=')
+        if msg.as_string().endswith('='):
+            text = charset.body_encode(text)
+
+        msg.set_payload(text)
+
+        address = encodeAddress(mail_from, charset)
+        msg['From'] = address
+        if to:
+            msg['To'] = ','.join(to)
+        if cc:
+            msg['CC'] = ','.join(cc)
+        msg['Date'] = formatdate()
+        msg['Message-ID'] = make_msgid()
+        msg['Subject'] = Header(subject, charset)
+        # See RFC 3834 section 5:
+        msg['Auto-Submitted'] = 'auto-generated'
+
+        if cfg.mail_sendmail:
+            if bcc:
+                # Set the BCC.  This will be stripped later by sendmail.
+                msg['BCC'] = ','.join(bcc)
+            # Set Return-Path so that it isn't set (generally incorrectly) for us.
+            msg['Return-Path'] = address
+            
+        if not cfg.mail_sendmail:
+            try:
+                logging.debug("trying to send mail (smtp) via smtp server '{0}'".format(cfg.mail_smarthost))
+                host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
+                server = smtplib.SMTP(host, int(port))
+                try:
+                    #server.set_debuglevel(1)
+                    if cfg.mail_username is not None and cfg.mail_password is not None:
+                        try: # try to do tls
+                            server.ehlo()
+                            if server.has_extn('starttls'):
+                                server.starttls()
+                                server.ehlo()
+                                logging.debug("tls connection to smtp server established")
+                        except:
+                            logging.debug("could not establish a tls connection to smtp server, continuing without tls")
+                        logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
+                        server.login(cfg.mail_username, cfg.mail_password)
+                    server.sendmail(mail_from, (to or []) + (cc or []) + (bcc or []), msg.as_string())
+                finally:
+                    try:
+                        server.quit()
+                    except AttributeError:
+                        # in case the connection failed, SMTP has no "sock" attribute
+                        pass
+            except smtplib.SMTPException as e:
+                logging.exception("smtp mail failed with an exception.")
+                return (0, str(e))
+            except (os.error, socket.error) as e:
+                logging.exception("smtp mail failed with an exception.")
+                return (0, _("Connection to mailserver '%(server)s' failed: %(reason)s",
+                    server=cfg.mail_smarthost,
+                    reason=str(e)
+                ))
+        else:
+            try:
+                logging.debug("trying to send mail (sendmail)")
+                sendmailp = os.popen(cfg.mail_sendmail, "w")
+                # msg contains everything we need, so this is a simple write
+                sendmailp.write(msg.as_string())
+                sendmail_status = sendmailp.close()
+                if sendmail_status:
+                    logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
+                    return (0, str(sendmail_status))
+            except:
+                logging.exception("sendmail failed with an exception.")
+                return (0, _("Mail not sent"))
+
+        logging.debug("Mail sent successfully")
+        return (1, _("Mail sent successfully"))
 
 
 def encodeSpamSafeEmail(email_address, obfuscation_text=''):
