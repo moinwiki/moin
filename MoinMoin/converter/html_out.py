@@ -379,7 +379,10 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
-        return mark_item_as_transclusion(new_elem, href)
+        if obj_type == "object" and href.scheme:
+            # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
+            return mark_item_as_transclusion(new_elem, href)
+        return new_elem
 
     def visit_moinpage_p(self, elem):
         return self.new_copy(html.p, elem)
