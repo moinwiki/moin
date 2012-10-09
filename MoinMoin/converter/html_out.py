@@ -85,6 +85,7 @@ class Attributes(object):
     visit_style = Attribute('style')
     visit_title = Attribute('title')
     visit_id = Attribute('id')
+    visit_type = Attribute('type') # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -349,6 +350,7 @@ class Converter(object):
             return "object"
 
     def visit_moinpage_object(self, elem):
+        # TODO: maybe IE8 would display transcluded external pages if we could do <object... type="text/html" ...>
         href = elem.get(xlink.href, None)
         attrib = {}
         mimetype = Type(_type=elem.get(moin_page.type_, 'application/x-nonexistent'))
