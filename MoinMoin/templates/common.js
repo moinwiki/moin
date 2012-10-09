@@ -155,11 +155,11 @@ function initTransclusionOverlays() {
             if ($(elem).parent()[0].tagName === 'A') {
                 elem = $(elem).parent()[0];
             }
-            // wrap element, add UL and LR overlay siblings, and replace old elem with wrapped elem
-            $(wrapper).append($(elem).clone(true));
+            // insert wrapper after elem, append (move) elem, append overlays
+            $(elem).after(wrapper);
+            $(wrapper).append(elem);
             $(wrapper).append(overlayUL);
             $(wrapper).append(overlayLR);
-            $(elem).replaceWith(wrapper);
         }
     });
     // if an element was wrapped above, then make the Transclusions buttons visible

@@ -7,11 +7,6 @@
     {% set title = _("Global Index") %}
 {% endif %}
 
-{% block head_scripts %}
-{{ super() }}
-    <script src="{{ url_for('frontend.template', filename='index_action.js') }}"></script>
-{% endblock %}
-
 {% block action_bars_inner %}
     <ul>
         {% if index %}
@@ -215,6 +210,12 @@
     {{ forms.render_file_uploader(submit_url) }}
     </div>
     <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
-    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     <div id="lightbox">&nbsp;</div>
+{% endblock %}
+
+{% block body_scripts %}
+{{ super() }}
+    <script src="{{ url_for('frontend.template', filename='index_action.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
+    {{ forms.file_uploader_scripts() }}
 {% endblock %}
