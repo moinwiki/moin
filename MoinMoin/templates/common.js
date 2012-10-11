@@ -511,6 +511,7 @@ $(function () {
         MESSAGEOLD = ' {{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }} ',
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
+        modifyForm,
         lineno,
         message,
         caretLineno;
@@ -564,7 +565,7 @@ $(function () {
                 textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
                 setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
                 setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
-            } else{
+            } else {
                 // IE8 workaround to position the caret and scroll textarea
                 setSelection(textArea, scrolledText.length);
             }
@@ -696,13 +697,18 @@ $(function () {
     } else {
         // provide reduced functionality for obsolete browsers that do not support local storage: IE6, IE7, etc.
         if (document.getElementById('moin-edit-on-doubleclick')) {
-            moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
             modifyButton = $('.moin-modify-button')[0];
             if (modifyButton) {
-                // add doubleclick event handler when user doubleclicks within the content area
+                // this is a "show" page, add doubleclick event handler to content node
                 $('#moin-content').dblclick(function (e) {
                     document.location = modifyButton.href;
                 });
+            }
+        } else {
+            modifyForm = $('#moin-modify')[0];
+            if (modifyForm) {
+                // user is editing with obsolete browser, give warning about missing features
+                moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
             }
         }
     }
