@@ -14,7 +14,7 @@
 
 {% block action_bars_inner %}
     <ul>
-        {% if index %}
+        {% if dirs or files %}
         <li class="action-bar">
         <div class="moin-select-all">
             <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">{{ _("Select All") }}</span>
@@ -28,7 +28,7 @@
             </div>
             <ul>
                 <li id="moin-create-newitem">{{ _("New item") }}</li>
-                {% if index %}
+                {% if dirs or files %}
                 <li id="moin-download-trigger">{{ _("Download") }}</li>
                 <li class="moin-action-tab"
                     id="moin-delete-trigger"
