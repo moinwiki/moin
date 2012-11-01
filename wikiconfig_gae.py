@@ -10,6 +10,7 @@ import os
 from MoinMoin.config.default import DefaultConfig
 from MoinMoin.storage import create_simple_mapping
 from MoinMoin.util.interwiki import InterWikiMap
+from MoinMoin.auth.gae import GAEAuthMoin
 
 
 class Config(DefaultConfig):
@@ -71,7 +72,7 @@ class Config(DefaultConfig):
         mod = getattr(pkg, mod_name)
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
         serve_files.update([(xs.name, xs.base_dir)])
-
+    auth = [GAEAuthMoin(), ]
 
 MOINCFG = Config # Flask only likes uppercase stuff
 # Flask settings - see the flask documentation about their meaning
