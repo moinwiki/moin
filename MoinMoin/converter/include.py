@@ -20,7 +20,6 @@ import re, types
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from flask import request
 from flask import current_app as app
 from flask import g as flaskg
 
@@ -30,43 +29,9 @@ from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath
-from MoinMoin.util.tree import html, moin_page, xinclude, xlink
+from MoinMoin.util.tree import moin_page, xinclude, xlink
 
-from MoinMoin.converter.html_out import Attributes
-
-
-def convert_getlink_to_showlink(href):
-    """
-    If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
-    """
-    if href.startswith('/'):
-        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
-    return href
-
-def mark_item_as_transclusion(elem, href):
-    """
-    Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
-    a link to the transcluded item.
-
-    On the client side, a Javascript function will wrap the element (or a parent element)
-    in a span or div and 2 overlay siblings will be created.
-    """
-    href = unicode(href)
-    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
-    # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name not in ('object', 'img'):
-        # XXX see issue #167: for wikis not running at root, only object and img elements have complete path
-        # if wiki is not running at server root, prefix href with wiki root
-        wiki_root = request.url_root[len(request.host_url):-1]
-        if wiki_root:
-            href = '/' + wiki_root + href
-    href = convert_getlink_to_showlink(href)
-    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
-    elem.attrib[html.data_href] = href
-    classes = elem.attrib.get(html.class_, '').split()
-    classes.append('moin-transclusion')
-    elem.attrib[html.class_] = ' '.join(classes)
-    return elem
+from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
 
 
 class XPointer(list):

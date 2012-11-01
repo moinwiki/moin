@@ -93,7 +93,9 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Jinja2>=2.6', # template engine
         'pygments>=1.4', # src code / text file highlighting
         'Werkzeug>=0.8.1', # wsgi toolkit
-        'pytest>=2.1', # pytest is needed by unit tests
+        'pytest>=2.1, <2.3', # pytest is needed by unit tests
+                             # note: currently 2.3.x is not compatible with our test code,
+                             # likely due to the fixtures changes.
         'pytest-pep8', # coding style checker
         'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs

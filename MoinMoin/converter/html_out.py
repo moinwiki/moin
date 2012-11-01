@@ -14,6 +14,7 @@ from __future__ import absolute_import, division
 
 import re
 
+from flask import request
 from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
@@ -22,6 +23,40 @@ from MoinMoin.util.tree import html, moin_page, xlink, xml, Name
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+def convert_getlink_to_showlink(href):
+    """
+    If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
+    """
+    if href.startswith('/'):
+        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
+    return href
+
+def mark_item_as_transclusion(elem, href):
+    """
+    Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
+    a link to the transcluded item.
+
+    On the client side, a Javascript function will wrap the element (or a parent element)
+    in a span or div and 2 overlay siblings will be created.
+    """
+    href = unicode(href)
+    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
+    # or "http://Some.Org/SomeThing" for external link
+    if elem.tag.name not in ('object', 'img'):
+        # XXX see issue #167: for wikis not running at root, only object and img elements have complete path
+        # if wiki is not running at server root, prefix href with wiki root
+        wiki_root = request.url_root[len(request.host_url):-1]
+        if wiki_root:
+            href = '/' + wiki_root + href
+    href = convert_getlink_to_showlink(href)
+    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
+    elem.attrib[html.data_href] = href
+    classes = elem.attrib.get(html.class_, '').split()
+    classes.append('moin-transclusion')
+    elem.attrib[html.class_] = ' '.join(classes)
+    return elem
 
 
 class ElementException(RuntimeError):
@@ -50,6 +85,7 @@ class Attributes(object):
     visit_style = Attribute('style')
     visit_title = Attribute('title')
     visit_id = Attribute('id')
+    visit_type = Attribute('type') # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -314,6 +350,7 @@ class Converter(object):
             return "object"
 
     def visit_moinpage_object(self, elem):
+        # TODO: maybe IE8 would display transcluded external pages if we could do <object... type="text/html" ...>
         href = elem.get(xlink.href, None)
         attrib = {}
         mimetype = Type(_type=elem.get(moin_page.type_, 'application/x-nonexistent'))
@@ -344,6 +381,9 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
+        if obj_type == "object" and href.scheme:
+            # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
+            return mark_item_as_transclusion(new_elem, href)
         return new_elem
 
     def visit_moinpage_p(self, elem):
