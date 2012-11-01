@@ -51,12 +51,14 @@
                     <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">{{ _('Settings') }}</a>
                 {%- endif %}
             {%- endif %}
-            {% if user.auth_method in cfg.auth_can_logout %}
-                <span class="sep"> | </span>
-                <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
-                    {{ _('Logout') }}
-                </a>
+            {% set logout_url = theme_supp.logout_url() %}
+            {% if logout_url %}
+                    <span class="sep"> | </span>
+                    <a href="{{ logout_url }}" class="moin-logout" rel="nofollow">
+                        {{ _('Logout') }}
+                    </a>
             {% endif %}
+                
         {% else %}
             {% set login_url = theme_supp.login_url() %}
             {% if login_url %}

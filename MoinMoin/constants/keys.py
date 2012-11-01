@@ -88,6 +88,7 @@ CSS_URL = "css_url"
 EDIT_ROWS = "edit_rows"
 RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
+GAE_USER_ID = "gae_user_id"
 
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
