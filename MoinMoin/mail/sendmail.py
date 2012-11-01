@@ -80,8 +80,6 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    
-
     cfg = app.cfg
     mail_from = mail_from or cfg.mail_from
 
@@ -91,12 +89,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     if not to and not cc and not bcc:
         return (1, _("No recipients, nothing to do"))
 
-    
-
     # Create a text/plain body using CRLF (see RFC2822)
     text = text.replace(u'\n', u'\r\n')
-    
-
 
     # Send the message
     if app.on_gae:
@@ -158,7 +152,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
                 msg['BCC'] = ','.join(bcc)
             # Set Return-Path so that it isn't set (generally incorrectly) for us.
             msg['Return-Path'] = address
-            
+
         if not cfg.mail_sendmail:
             try:
                 logging.debug("trying to send mail (smtp) via smtp server '{0}'".format(cfg.mail_smarthost))
