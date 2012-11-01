@@ -276,7 +276,7 @@ class ThemeSupport(object):
         """
         url = None
         if self.cfg.auth_login_inputs == ['special_no_input']:
-            url = url_for('frontend.login', login=1, login_submit=1)
+            url = url_for('frontend.login', login_submit=1)
         if self.cfg.auth_have_login:
             url = url or url_for('frontend.login')
         return url
