@@ -1533,17 +1533,14 @@ div.moin-item-wrapper > div > p:last-child
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child
     margin-top 1em
 
-.moin-permalink
+// headings with mouseover permalinks
+a.moin-permalink
     display none
     cursor pointer
-    font-size 80%
-    margin-left 3px
-
-a.moin-permalink
+    margin-left .1em
     color nonexistent_link_color
-
-a:hover.moin-permalink
-    color nonexistent_hover_color
+    &:hover.moin-permalink
+        color nonexistent_hover_color
 
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
