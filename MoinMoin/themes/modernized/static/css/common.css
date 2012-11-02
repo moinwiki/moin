@@ -507,9 +507,8 @@ a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;col
 .moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#eef1f6;color:#1f9ae0}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
-.moin-permalink{display:none;cursor:pointer;font-size:80%;margin-left:3px}
-a.moin-permalink{color:#939393}
-a:hover.moin-permalink{color:#1f62ad}
+a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
+a.moin-permalink:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 @media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-page,#moin-content-data{margin:0;padding:0}

@@ -385,9 +385,9 @@ h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #ccc;pad
 h4{font-size:1em;margin:1em 0;border-bottom:2px solid #ccc;padding-bottom:2px}
 h5{font-size:.8333333333333334em;margin:1.2em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
 h6{font-size:.6944444444444444em;margin:1.44em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
-a.permalink{display:none;cursor:pointer;margin-left:.1em;color:#616161;}
-a.permalink:hover{color:#000}
-h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink,h6:hover .permalink{display:inline;text-decoration:none}
+a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#808080;}
+a.moin-permalink:hover.moin-permalink{color:#ff2727}
+h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 hr{background-color:#000;border:0;margin:.9em 0;height:1px;}
 hr.moin-hr1{height:2px}
 hr.moin-hr2{height:3px}
