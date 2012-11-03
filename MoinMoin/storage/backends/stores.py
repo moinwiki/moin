@@ -147,10 +147,15 @@ class MutableBackend(Backend, MutableBackendBase):
             dataid = meta[DATAID]
             # we will just asume stuff is correct if you pass it with a data id
             if dataid not in self.data_store:
-                # XXX issue: if we do not store if we already have the dataid in the store,
-                # XXX deserialization does not work as the fpos does not advance to the next record,
-                # XXX because we do not read from the source file. Remove the check?
                 self.data_store[dataid] = data
+            else:
+                # this is reading the data to avoid this issue:
+                # if we do not store if we already have the dataid in the store,
+                # deserialization does not work as the fpos does not advance to the next record,
+                # because we do not read from the source file. Remove the check?
+                while data.read(64*1024):
+                    pass
+
         # if something goes wrong below, the data shall be purged by a garbage collection
         metaid = self._store_meta(meta)
         return metaid

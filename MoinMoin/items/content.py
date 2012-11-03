@@ -263,7 +263,7 @@ class Content(object):
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        return [rev.meta[NAME] for rev in revs]
+        return [rev.name for rev in revs]
 
 
 @register

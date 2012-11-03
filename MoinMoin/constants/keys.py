@@ -12,6 +12,7 @@ MoinMoin - meta data key / index field name related constants
 # metadata keys
 NAME = "name"
 NAME_OLD = "name_old"
+NAMESPACE = "namespace"
 
 # if an item is reverted, we store the revision number we used for reverting there:
 REVERTED_TO = "reverted_to"
@@ -69,7 +70,7 @@ CURRENT = "current"
 # stuff from user profiles / for whoosh index
 EMAIL = "email"
 OPENID = "openid"
-ALIASNAME = "aliasname"
+DISPLAY_NAME = "display_name"
 THEME_NAME = "theme_name"
 LOCALE = "locale"
 TIMEZONE = "timezone"
@@ -89,9 +90,12 @@ EDIT_ROWS = "edit_rows"
 RESULTS_PER_PAGE = "results_per_page"
 DISABLED = "disabled"
 
+# in which backend is some revision stored?
+BACKENDNAME = "backendname"
+
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
-    NAME, DISABLED, ITEMID, ALIASNAME, ENC_PASSWORD, EMAIL, OPENID,
+    NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
     EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
     CSS_URL,
