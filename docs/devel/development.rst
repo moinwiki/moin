@@ -2,47 +2,141 @@
 Development
 ===========
 
-Project Organisation
-====================
-We mainly use IRC and the wiki for communication, documentation and planning.
+Useful Resources
+================
 
-IRC channels on chat.freenode.net:
+IRC channels on chat.freenode.net (quick communication and discussion):
 
-* #moin-dev (core development topics)
-* #moin (user support, extensions)
+* #moin-dev  (core development topics)
+* #moin  (user support, extensions)
 
 Wikis:
 
-* http://moinmo.in/
+* http://moinmo.in/  (production wiki, using moin 1.9)
+* http://test.moinmo.in/  (test wiki, using moin 2)
 
-Documentation:
+Documentation (installation, configuration, user docs, api reference):
 
 * http://readthedocs.org/docs/moin-20/en/latest/
 
-Issue tracker:
+Issue tracker (bugs, proposals, todo):
 
 * http://bitbucket.org/thomaswaldmann/moin-2.0/issues
 
-Code Repositories:
+Code Repositories (using Mercurial DVCS):
 
-* http://hg.moinmo.in/moin/2.0 - main repository
-* http://bitbucket.org/thomaswaldmann/moin-2.0 - bitbucket mirror for your
-  convenience, simplifying forking and contributing
+* http://hg.moinmo.in/moin/2.0  (main repository)
+* http://bitbucket.org/thomaswaldmann/moin-2.0  (bitbucket mirror for your
+  convenience, simplifying forking and contributing)
 
-We use Mercurial DVCS for distributed version control.
+Code review (get feedback about code changes):
 
-If you are not using Mercurial, you can still submit patches.
-In that case, open an issue in the issue tracker and attach the patch there.
+* http://codereview.appspot.com/
 
-Code review:
+Pastebin (temporary stuff - do not use for code reviews, do not use from issue
+tracker or for any long-term needed stuff):
 
-Please use http://codereview.appspot.com/ for getting feedback on moin-related
-code, especially if you want to contribute or publish that code.
+* http://rn0.ru/
 
-If you are using a local mercurial repository/workdir, you can very easily
-upload your uncommitted workdir state to codereview using their "upload.py".
 
-Then just ask on the IRC channel for review and provide the codereview URL.
+Typical development workflow
+============================
+
+This is the typical workflow for non-trivial changes and developers that likely
+want to contribute more than one change:
+
+* create your own development environment (only once):
+
+  - create a google account (if you don't have one already, it's free), so you
+    can use codereview.appspot.com
+  - create a bitbucket account (if you don't have one already, it's free)
+  - clone ("fork") the main repository on bitbucket, so you have your own bb
+    repo to publish your work
+  - clone your own bb repo to your local development machine
+  - do a development install from your local repo - read the moin2 install docs
+    for detailled instructions.
+  - join #moin-dev IRC channel and stay there whenever possible
+
+* find some stuff to work on:
+
+  - look at the issue tracker to find some stuff you can solve
+  - in case you want to work on some (non-trivial) new issue or idea that is
+    not on the issue tracker yet, first create an issue there with a detailled
+    description of it
+  - discuss with / get feedback from other developers on the #moin-dev IRC
+    channel
+
+* work on the stuff:
+
+  - to avoid double work, add a comment on the issue tracker that you are
+    working on that issue
+  - work in your local repo on your local development machine (make sure you
+    work in the right branch)
+  - concentrate on one issue / one topic, create a clean set of changes (that
+    means not doing more than needed to fix the issue, but also it means fixing
+    the issue completely and everywhere)
+  - write good, clean, easy-to-understand code.
+  - obey PEP-8
+  - do not fix or change unrelated stuff while working, but rather create new
+    issues on the tracker, so it's not forgotten
+  - regularly run the unit tests ("make test"), the amount of failing tests
+    shall not increase due to your changes
+  - if you fix something that had no test, first try to write a (correct, but
+    still failing) test for it, then fix the code and see the test not failing
+    any more
+  - if you implement new functionality, write tests for it first, then
+    implement it
+  - do an own review of your changes. Use hg diff, hg status - read everything
+    you changed - slowly, looking for stuff that can be improved. Fix
+    everything you find that way before requesting feedback from others.
+  - get feedback from other developers about your changes:
+   
+    + put them on codereview (just run python upload.py in your local repo -
+      if it is not first upload, reuse the same ID to update the already
+      existing codereview)
+    + post the codereview URL to #moin-dev IRC channel asking for review
+    + if you want to get feedback on non-code stuff, either use the issue
+      tracker or a pastebin (only use pastebins for temporary stuff)
+  - repeat until everybody is happy with it
+  - do some final testing - practically and using the unit tests
+  - commit your changes to your local repo, use a meaningful commit comment
+
+* publish your stuff and request it being merged:
+
+  - push the changeset to your public bitbucket repo
+  - create a pull request to request that your changes get pulled into the
+    main repository
+  - optionally, tell about it on the IRC channel
+  - if you fixed an issue from the issue tracker, make sure the issue gets
+    closed after your fix has been merged.
+
+
+Alternate contribution workflows
+================================
+If the above workflow looks like overkill (e.g. for simple changes) or you
+can't work with the tools we usually use, you can also do it like this:
+
+* find an existing issue on the issue tracker about the issue you were fixing
+  (or create a new one), make sure to give (or update) all the details, like:
+
+  - precise version number / changeset hashes of the original code your patch
+    is based on
+  - precise description of the issue, how to reproduce it, tracebacks, ...
+  - why your fix is correct / how you tested it
+* create a patch using the diff tool, attach patch.txt to the issue:
+
+    diff -urN originalcodetree/ modifiedcodetree/ > patch.txt
+
+* if you fixed an issue from the issue tracker, make sure the issue gets
+  closed after your fix has been committed to the main repo.
+
+For trivial fixes (like typos), you can also try just grabbing a developer
+on IRC, telling filename, line number and get it fixed by him.
+
+Note: if developers find that the required changes are not that simple or are
+potentially causing other issues, codereview or other parts of the full
+workflow might be needed.
+
 
 MoinMoin architecture
 =====================

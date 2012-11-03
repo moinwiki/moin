@@ -901,21 +901,21 @@ for n in 1 2 3 4 5 6
         border-bottom heading_underline_thickness solid border_color
         padding-bottom heading_underline_thickness
 
-// special style for heading with mouseover permalinks
-a.permalink
+// headings with mouseover permalinks
+a.moin-permalink
     display none
     cursor pointer
     margin-left 0.1em
-    color footer_color
-    &:hover
-        color font_color
+    color nonexistent_link_color
+    &:hover.moin-permalink
+        color nonexistent_hover_color
 
-h1:hover .permalink,
-h2:hover .permalink,
-h3:hover .permalink,
-h4:hover .permalink,
-h5:hover .permalink,
-h6:hover .permalink
+h1:hover .moin-permalink,
+h2:hover .moin-permalink,
+h3:hover .moin-permalink,
+h4:hover .moin-permalink,
+h5:hover .moin-permalink,
+h6:hover .moin-permalink
     display inline
     text-decoration none
 
