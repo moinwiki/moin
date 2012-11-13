@@ -21,7 +21,7 @@ handlers:
   static_dir: support/xstatic/pkg/jquery_file_upload/data
 
 - url: /%2Bserve/svgedit_moin
-  static_dir: support/xstatic/pkg/jsvgedit_moin/data
+  static_dir: support/xstatic/pkg/svgedit_moin/data
 
 - url: /%2Bserve/svgweb
   static_dir: support/xstatic/pkg/svgweb/data
