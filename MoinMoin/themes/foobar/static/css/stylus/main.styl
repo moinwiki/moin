@@ -268,7 +268,9 @@ input.blank
                 color font_color
     button,
     input[type="submit"]
-        margin-left 48%
+        clear both
+        display table
+        margin auto
 
 #moin-modify, form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     dd
@@ -565,6 +567,9 @@ a.moin-conflict:before
     list-style none
     span
         display none
+
+.moin-tab-titles a.moin-current-tab
+    color link_color
 
 #moin-usersetting-title
     li a

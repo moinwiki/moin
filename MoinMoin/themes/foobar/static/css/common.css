@@ -218,7 +218,7 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-form dd input{width:70%}
 .moin-form dt{clear:both;float:left;width:30%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{margin-left:48%}
+.moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 #moin-modify dd,form[name="delete_item"] dd,form[name="rename_item"] dd,form[name="destroy_item"] dd{margin-left:.9em;width:100%;float:none;}
 #moin-modify dd input,form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:96%}
 #moin-modify dt,form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{float:none;text-align:left;width:auto}
@@ -285,6 +285,7 @@ form.upload_file{display:block}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-tab-titles{margin:-.5em;list-style:none;}
 .moin-tab-titles span{display:none}
+.moin-tab-titles a.moin-current-tab{color:#1e90ff}
 #moin-usersetting-title li a{font-size:.84em;color:#696969}
 #moin-global-history,#moin-page-history{font-size:.75em}
 #moin-page-history table{border:1px solid #ccc;border-radius:5px;}
