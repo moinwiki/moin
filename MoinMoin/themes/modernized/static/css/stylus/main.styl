@@ -403,7 +403,9 @@ input.blank
                 color font_color
     button,
     input[type="submit"]
-        margin-left 48%
+        clear both
+        display table
+        margin auto
 
 form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     dd
@@ -440,7 +442,7 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
         width 61%
         margin-top 1.3em
 
-#moin-usersettings
+.moin-tabs .moin-tab-titles
     a
         color link_color
 
@@ -473,16 +475,19 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     background-color table_row_color
     text-decoration none
 
-.moin-tab-titles a.current
+.moin-tab-titles a.moin-current-tab
     background table_row_color
     padding-top 8px
     margin-top -4px
 
-.moin-tab-titles .change-indicator
+.moin-tab-titles .moin-change-indicator
     font-weight bold
     color hover_color
 
-.moin-tab-title a
+.moin-current-form h2
+    display none // bold tab at top of user setting page makes h2 redundant
+
+.moin-settings-head a
     color font_color
     text-decoration none
 
