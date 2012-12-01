@@ -91,6 +91,8 @@ def message_markup(message):
 @register
 class Ticket(Contentful):
     itemtype = ITEMTYPE_TICKET
+    display_name = L_('Ticket')
+    description = L_('Ticket item')
     modify_template = 'ticket.html'
 
     def do_show(self, revid):

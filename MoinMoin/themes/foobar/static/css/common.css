@@ -218,7 +218,7 @@ input.blank{border-color:#ccc;border-width:2px}
 .moin-form dd input{width:70%}
 .moin-form dt{clear:both;float:left;width:30%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{margin-left:48%}
+.moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 #moin-modify dd,form[name="delete_item"] dd,form[name="rename_item"] dd,form[name="destroy_item"] dd{margin-left:.9em;width:100%;float:none;}
 #moin-modify dd input,form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:96%}
 #moin-modify dt,form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{float:none;text-align:left;width:auto}
@@ -285,6 +285,7 @@ form.upload_file{display:block}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-tab-titles{margin:-.5em;list-style:none;}
 .moin-tab-titles span{display:none}
+.moin-tab-titles a.moin-current-tab{color:#1e90ff}
 #moin-usersetting-title li a{font-size:.84em;color:#696969}
 #moin-global-history,#moin-page-history{font-size:.75em}
 #moin-page-history table{border:1px solid #ccc;border-radius:5px;}
@@ -385,9 +386,9 @@ h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #ccc;pad
 h4{font-size:1em;margin:1em 0;border-bottom:2px solid #ccc;padding-bottom:2px}
 h5{font-size:.8333333333333334em;margin:1.2em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
 h6{font-size:.6944444444444444em;margin:1.44em 0;border-bottom:1px solid #ccc;padding-bottom:1px}
-a.permalink{display:none;cursor:pointer;margin-left:.1em;color:#616161;}
-a.permalink:hover{color:#000}
-h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink,h6:hover .permalink{display:inline;text-decoration:none}
+a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#808080;}
+a.moin-permalink:hover.moin-permalink{color:#ff2727}
+h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 hr{background-color:#000;border:0;margin:.9em 0;height:1px;}
 hr.moin-hr1{height:2px}
 hr.moin-hr2{height:3px}

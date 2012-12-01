@@ -14,12 +14,13 @@ from flask import g as flaskg
 from flask import current_app as app
 
 from whoosh.query import Term, And, Prefix, DateRange
+from whoosh.sorting import FunctionFacet
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import OptionalText, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, ITEMTYPE, PTIME, TAGS
+from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
 
 
@@ -39,6 +40,9 @@ class BlogEntryMetaForm(BaseMetaForm):
 @register
 class Blog(Default):
     itemtype = ITEMTYPE_BLOG
+    display_name = L_('Blog')
+    description = L_('Blog item')
+    order = 0
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogMetaForm
@@ -60,13 +64,23 @@ class Blog(Default):
                  Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),
                  # Only sub items of this item
                  Prefix(NAME_EXACT, prefix),
-                 # Filter out those items that do not have a PTIME meta or PTIME is in the future.
-                 DateRange(PTIME, start=None, end=datetime.utcfromtimestamp(current_timestamp)),
                 ]
         if tag:
             terms.append(Term(TAGS, tag))
         query = And(terms)
-        revs = flaskg.storage.search(query, sortedby=[PTIME], reverse=True, limit=None)
+
+        def ptime_sort_key(searcher, docnum):
+            """
+            Compute the publication time key for blog entries sorting.
+
+            If PTIME is not defined, we use MTIME.
+            """
+            fields = searcher.stored_fields(docnum)
+            ptime = fields.get(PTIME, fields[MTIME])
+            return ptime
+        ptime_sort_facet = FunctionFacet(ptime_sort_key)
+
+        revs = flaskg.storage.search(query, sortedby=ptime_sort_facet, reverse=True, limit=None)
         blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]
         return render_template('blog/main.html',
                                item_name=self.name,
@@ -78,6 +92,9 @@ class Blog(Default):
 @register
 class BlogEntry(Default):
     itemtype = ITEMTYPE_BLOG_ENTRY
+    display_name = L_('Blog entry')
+    description = L_('Blog entry item')
+    order = 0
 
     class _ModifyForm(Default._ModifyForm):
         meta_form = BlogEntryMetaForm

@@ -115,12 +115,8 @@ if pygments:
 
     from . import default_registry
     from MoinMoin.util.mime import Type, type_moin_document
-    # Pygments type detection is rather expensive, therefore we want to register
-    # after all normal parsers but before the compatibility parsers and wildcard
-    default_registry.register(Converter._factory, Type(type='text'), type_moin_document,
-                              default_registry.PRIORITY_MIDDLE + 1)
-    default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document,
-                              default_registry.PRIORITY_MIDDLE + 1)
+    default_registry.register(Converter._factory, Type(type='text'), type_moin_document)
+    default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document)
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash

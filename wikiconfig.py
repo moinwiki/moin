@@ -61,7 +61,9 @@ class Config(DefaultConfig):
     )
     # see https://bitbucket.org/thomaswaldmann/xstatic for infos about xstatic:
     from xstatic.main import XStatic
+    # names below must be package names
     mod_names = ['jquery', 'jquery_file_upload',
+                 'json_js',
                  'ckeditor',
                  'svgweb',
                  'svgedit_moin', 'twikidraw_moin', 'anywikidraw',

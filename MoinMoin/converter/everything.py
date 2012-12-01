@@ -34,7 +34,5 @@ class Converter(object):
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
-default_registry.register(Converter._factory, Type('application/octet-stream'), type_moin_document,
-                          default_registry.PRIORITY_MIDDLE + 3)
-default_registry.register(Converter._factory, Type(type=None, subtype=None), type_moin_document,
-                          default_registry.PRIORITY_MIDDLE + 3)
+default_registry.register(Converter._factory, Type('application/octet-stream'), type_moin_document)
+default_registry.register(Converter._factory, Type(type=None, subtype=None), type_moin_document)

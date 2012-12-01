@@ -12,6 +12,14 @@ try:
 except ImportError:
     pytest.skip('selenium needs to be installed for this test')
 
+import config
+import urllib
+
+try:
+    f = urllib.urlopen(config.BASE_URL)
+except IOError:
+    pytest.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
+
 import driver_register
 
 
