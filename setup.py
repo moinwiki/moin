@@ -96,7 +96,8 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pytest>=2.1, <2.3', # pytest is needed by unit tests
                              # note: currently 2.3.x is not compatible with our test code,
                              # likely due to the fixtures changes.
-        'pytest-pep8', # coding style checker
+        'pytest-pep8<1.0.3', # coding style checker
+                             # note: pytest-pep8 1.0.3 needs pytest 2.3
         'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
@@ -108,7 +109,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-svgweb>=2011.2.3.2',
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
-        'XStatic-svg-edit-moin>=2011.07.07.2',
+        'XStatic-svg-edit-moin>=2012.11.15.1',
     ],
     # optional features and their list of requirements
     extras_require={

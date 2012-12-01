@@ -271,7 +271,7 @@ input.blank{border-color:#4e7da9;border-width:2px}
 .moin-form dd input{width:75%}
 .moin-form dt{clear:both;float:left;width:25%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{margin-left:48%}
+.moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
 #moin-modify dd{width:100%;}
@@ -282,14 +282,15 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 .moin-textcha{padding-top:.2em}
 #options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
-#moin-usersettings a{color:#00008b}
+.moin-tabs .moin-tab-titles a{color:#00008b}
 .moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
 .moin-tab-titles li{display:inline-block;*display:inline;zoom:1;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
 .moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#00008b;border-top-left-radius:7px;border-top-right-radius:7px}
 .moin-tab-titles a:hover{background-color:#d8dfe9;text-decoration:none}
-.moin-tab-titles a.current{background:#d8dfe9;padding-top:8px;margin-top:-4px}
-.moin-tab-titles .change-indicator{font-weight:bold;color:#1f9ae0}
-.moin-tab-title a{color:#000;text-decoration:none}
+.moin-tab-titles a.moin-current-tab{background:#d8dfe9;padding-top:8px;margin-top:-4px}
+.moin-tab-titles .moin-change-indicator{font-weight:bold;color:#1f9ae0}
+.moin-current-form h2{display:none}
+.moin-settings-head a{color:#000;text-decoration:none}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
