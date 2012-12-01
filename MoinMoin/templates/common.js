@@ -352,90 +352,66 @@ function linkSubitem(subitem_name, fullname) {
 }
 
 
-
-// Executed on page load.  If this is the user "Settings" page, make the long 6-form page
-// appear as a shorter page with a row of tabs near the top.  User clicks a tab to select target form.
-function initMoinTabs() {
+// User Settings page enhancements - make long multi-form page appear as a shorter page
+// with a row of tabs at the top or side that may be clicked to select a form.
+$(function () {
     "use strict";
-    // find all .moin-tabs elements and initialize them
-    $('.moin-tabs').each(function () {
-        var tabs = $(this),
-            titles = $(document.createElement('ul')),
-            lastLocationHash;
-        titles.addClass('moin-tab-titles');
+    // do nothing if this is not a User Settings page
+    if ($('#moin-usersettings').length === 0) { return; }
 
-        // switching between tabs based on the current location hash
-        function updateFromLocationHash() {
-            if (location.hash !== undefined && location.hash !== '' && tabs.children(location.hash).length) {
-                if (location.hash !== lastLocationHash) {
-                    lastLocationHash = location.hash;
-                    tabs.children('.moin-tab-body').hide();
-                    tabs.children(location.hash).show();
-                    titles.children('li').children('a').removeClass('current');
-                    titles.children('li').children('a[href="' + location.hash + '"]').addClass('current');
-                }
-            } else {
-                $(titles.children('li').children('a')[0]).click();
-            }
-        }
-
-        // move all tab titles to an <ul> at the beginning of .moin-tabs
-        tabs.children('.moin-tab-title').each(function () {
+    // create a UL that will be displayed as row of tabs or column of buttons
+    $(function () {
+        var tabs = $('#moin-usersettings'),
+            titles = $('<ul class="moin-tab-titles">');
+        // for each form on page, create a corresponding LI
+        $('.moin-tab-body').each(function () {
             var li = $(document.createElement('li')),
-                a = $(this).children('a');
-            a.click(function () {
-                location.hash = this.hash;
-                updateFromLocationHash();
+                // copy a-tag defined in heading
+                aTagClone = $(this).find('a').clone();
+            li.append(aTagClone);
+            titles.append(li);
+            // add click handler to show this form and hide all others
+            aTagClone.click(function (ev) {
+                var tab = this.hash;
+                $('.moin-current-tab').removeClass('moin-current-tab');
+                $(ev.target).addClass('moin-current-tab');
+                tabs.children('.moin-tab-body').hide().removeClass('moin-current-form');
+                tabs.children(tab).show().addClass('moin-current-form');
                 return false;
             });
-            li.append(a);
-            titles.append(li);
-            $(this).remove();
         });
-        tabs.prepend(titles);
+        // if this is foobar (or similar sidebar theme) remove buttons that work when javascript is disabled
+        $('.moin-tabs ul').remove();
+        // add tabs/buttons with click handlers to top/side per theme template
+        $('.moin-tabs').prepend(titles);
+        // click a tab to show first form and hide all other forms
+        $(titles.children('li').children('a')[0]).click();
 
-        updateFromLocationHash();
-        setInterval(updateFromLocationHash, 40); // there is no event for that
-    });
-}
-$(document).ready(initMoinTabs);
-
-
-
-// Executed on page load.  Useful only if this is the user "Settings" page.
-// Saves initial values of user "Settings" forms on client side.
-// Detects unsaved changes and sets visual indicator.
-// Processes form Submit and displays status messages and updated data.
-function initMoinUsersettings() {
-    "use strict";
-    // save initial values of each form
-    $('#moin-usersettings form').each(function () {
-        $(this).data('initialForm', $(this).serialize());
+        // save initial values of each form; used in changeHandler to detect changes to a form
+        $('#moin-usersettings form').each(function () {
+            $(this).data('initialForm', $(this).serialize());
+        });
     });
 
-    // check if any changes were made, add indicator if user changes tabs without saving form
+    // add/remove "*" indicator if user changes/saves form
     function changeHandler(ev) {
         var form = $(ev.currentTarget),
-            title = $('.moin-tab-titles a.current', form.parentsUntil('.moin-tabs').parent()),
-            e;
+            title = $('.moin-tab-titles a.moin-current-tab', form.parentsUntil('.moin-tabs').parent());
         if (form.data('initialForm') === form.serialize()) {
             // current values are identicaly to initial ones, remove all change indicators (if any)
-            $('.change-indicator', title).remove();
+            $('.moin-change-indicator', title).remove();
         } else {
             // the values differ
-            if (!$('.change-indicator', title).length) {
+            if (!$('.moin-change-indicator', title).length) {
                 // only add a change indicator if there none
-                e = $(document.createElement('span'));
-                e.addClass('change-indicator');
-                e.text('*');
-                title.append(e);
+                title.append($('<span class="moin-change-indicator">*</span>'));
             }
         }
     }
-    // attach above function to all forms on page
+    // attach above function to all forms as a change handler
     $('#moin-usersettings form').change(changeHandler);
 
-    // executed when user clicks submit button on one of the tabbed forms
+    // executed when user clicks submit button on a user settings form
     function submitHandler(ev) {
         var form = $(ev.target),
             button = $('button', form),
@@ -448,7 +424,7 @@ function initMoinUsersettings() {
         button.attr('disabled', true);
 
         // remove change indicators from the current tab as we are now saving it
-        $('.moin-tab-titles a.current .change-indicator',
+        $('.moin-tab-titles a.moin-current-tab .moin-change-indicator',
                 form.parentsUntil('.moin-tabs').parent()).remove();
 
         // animate the submit button to indicating a running request
@@ -491,10 +467,17 @@ function initMoinUsersettings() {
         }, 'json');
         return false;
     }
-    // attach above function to all form submit buttons
+    // attach above function as a submit handler to each user setting form
     $('#moin-usersettings form').submit(submitHandler);
-}
-$(document).ready(initMoinUsersettings);
+
+    // warn user if he tries to leave page when there are unsaved changes (Opera 12.10 does not support onbeforeunload)
+    window.onbeforeunload = function () {
+        var discardMessage = ' {{ _("Your changes will be discarded if you leave this page without saving.") }} ';
+        if ($('.moin-change-indicator').length > 0) {
+            return discardMessage;
+        }
+    };
+});  // end of User Settings page enhancements
 
 
 // This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
