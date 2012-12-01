@@ -85,6 +85,7 @@ class Attributes(object):
     visit_style = Attribute('style')
     visit_title = Attribute('title')
     visit_id = Attribute('id')
+    visit_type = Attribute('type') # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -349,6 +350,7 @@ class Converter(object):
             return "object"
 
     def visit_moinpage_object(self, elem):
+        # TODO: maybe IE8 would display transcluded external pages if we could do <object... type="text/html" ...>
         href = elem.get(xlink.href, None)
         attrib = {}
         mimetype = Type(_type=elem.get(moin_page.type_, 'application/x-nonexistent'))
@@ -379,7 +381,10 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
-        return mark_item_as_transclusion(new_elem, href)
+        if obj_type == "object" and href.scheme:
+            # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
+            return mark_item_as_transclusion(new_elem, href)
+        return new_elem
 
     def visit_moinpage_p(self, elem):
         return self.new_copy(html.p, elem)

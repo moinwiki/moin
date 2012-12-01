@@ -22,6 +22,7 @@ import itertools
 import json
 from StringIO import StringIO
 from collections import namedtuple
+from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -53,7 +54,6 @@ from MoinMoin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
 from MoinMoin.constants.contenttypes import charset
-from MoinMoin.constants.itemtypes import ITEMTYPES
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -63,31 +63,36 @@ ROWS_META = 10
 
 
 class RegistryItem(RegistryBase):
-    class Entry(namedtuple('Entry', 'factory itemtype priority')):
+    class Entry(namedtuple('Entry', 'factory itemtype display_name description order')):
         def __call__(self, itemtype, *args, **kw):
             if self.itemtype == itemtype:
                 return self.factory(*args, **kw)
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority != other.priority:
-                    return self.priority < other.priority
                 return self.itemtype < other.itemtype
             return NotImplemented
 
-    def register(self, factory, itemtype, priority=RegistryBase.PRIORITY_MIDDLE):
+    def __init__(self):
+        super(RegistryItem, self).__init__()
+        self.shown_entries = []
+
+    def register(self, e, shown):
         """
         Register a factory
 
         :param factory: Factory to register. Callable, must return an object.
         """
-        return self._register(self.Entry(factory, itemtype, priority))
+        if shown:
+            self.shown_entries.append(e)
+            self.shown_entries.sort(key=attrgetter('order'))
+        return self._register(e)
 
 
 item_registry = RegistryItem()
 
 def register(cls):
-    item_registry.register(cls._factory, cls.itemtype)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order), cls.shown)
     return cls
 
 
@@ -197,6 +202,13 @@ MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
+    # placeholder values for registry entry properties
+    itemtype = ''
+    display_name = u''
+    description = u''
+    shown = True
+    order = 0
+
     @classmethod
     def _factory(cls, *args, **kw):
         return cls(*args, **kw)
@@ -575,6 +587,9 @@ class Default(Contentful):
     A "conventional" wiki item.
     """
     itemtype = u'default'
+    display_name = L_('Default')
+    description = L_('Wiki item')
+    order = -10
 
     def _do_modify_show_templates(self):
         # call this if the item is still empty
@@ -664,6 +679,8 @@ class Userprofile(Item):
     itemtype implementation of userprofile.
     """
     itemtype = u'userprofile'
+    display_name = L_('User profile')
+    description = L_('User profile item (not implemented yet!)')
 
 
 @register
@@ -673,6 +690,7 @@ class NonExistent(Item):
     undetermined itemtype)
     """
     itemtype = u'nonexistent'
+    shown = False
 
     def _convert(self, doc):
         abort(404)
@@ -696,7 +714,7 @@ class NonExistent(Item):
     def _select_itemtype(self):
         return render_template('modify_select_itemtype.html',
                                item_name=self.name,
-                               itemtypes=ITEMTYPES,
+                               itemtypes=item_registry.shown_entries,
                               )
 
 

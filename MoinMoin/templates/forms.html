@@ -20,7 +20,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro render_button(text) %}
-  <button>{{ text }}</button>
+  <button type="submit">{{ text }}</button>
 {% endmacro %}
 
 {% macro render_textcha(gen, form) %}
@@ -207,7 +207,7 @@ Helpers for using flatland with jinja2 to create html forms.
   </dd>
 {% endmacro %}
 
-{% macro render_file_uploader(submit_url) %}
+{% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
     <div id="file_upload">
         <div class="upload-form">
         <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
@@ -230,6 +230,8 @@ Helpers for using flatland with jinja2 to create html forms.
             </tr>
         </table>
     </div>
+{% endmacro %}
+{% macro file_uploader_scripts() %}
     <link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>

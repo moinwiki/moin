@@ -271,7 +271,7 @@ input.blank{border-color:#4e7da9;border-width:2px}
 .moin-form dd input{width:75%}
 .moin-form dt{clear:both;float:left;width:25%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{margin-left:48%}
+.moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
 #moin-modify dd{width:100%;}
@@ -282,14 +282,15 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 .moin-textcha{padding-top:.2em}
 #options dd{float:none;width:38%;display:table-cell;padding:1.2em}
 #options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
-#moin-usersettings a{color:#00008b}
+.moin-tabs .moin-tab-titles a{color:#00008b}
 .moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
-.moin-tab-titles li{display:inline-block;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
+.moin-tab-titles li{display:inline-block;*display:inline;zoom:1;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
 .moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#00008b;border-top-left-radius:7px;border-top-right-radius:7px}
 .moin-tab-titles a:hover{background-color:#d8dfe9;text-decoration:none}
-.moin-tab-titles a.current{background:#d8dfe9;padding-top:8px;margin-top:-4px}
-.moin-tab-titles .change-indicator{font-weight:bold;color:#1f9ae0}
-.moin-tab-title a{color:#000;text-decoration:none}
+.moin-tab-titles a.moin-current-tab{background:#d8dfe9;padding-top:8px;margin-top:-4px}
+.moin-tab-titles .moin-change-indicator{font-weight:bold;color:#1f9ae0}
+.moin-current-form h2{display:none}
+.moin-settings-head a{color:#000;text-decoration:none}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
@@ -366,7 +367,7 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-item-index div.selected-item .moin-select-item{background-image:url("../img/moin-checkbox-on.png")}
 .moin-align-right{text-align:right;float:right}
 .moin-align-right ul{margin:0;padding:0}
-.moin-align-right ul li.action-bar{list-style-type:none;display:inline-block}
+.moin-align-right ul li.action-bar{list-style-type:none;display:inline-block;*display:inline;zoom:1}
 .moin-contenttypes-wrapper{position:relative;margin:0;color:#00008b;background:#eef1f6;border:1px solid #4e7da9;min-width:12em;text-align:left}
 .moin-contenttypes-wrapper div{cursor:pointer;margin:.1em;padding:.5em 1.2em .5em .5em;height:1em}
 div.ct-shown{background:#d8dfe9 url("../img/moin-movedown.png") no-repeat center right;color:#000}
@@ -470,7 +471,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-navibar li:hover{background:#d8dfe9}
 #moin-pageline{clear:both;margin:4px 10px;padding:0;width:auto;height:1px;border-bottom:1px solid #fff;border-top:1px solid #fff;background:#fff}
 .moin-itemviews{clear:both;display:block;margin:0 0 -6px 0;padding:2px 8px;background:#708090;font-size:.8em;border-radius:9px;color:#fff}
-.moin-itemviews li{display:inline-block;padding:0;margin:4px 6px;line-height:1em}
+.moin-itemviews li{display:inline-block;*display:inline;zoom:1;padding:0;margin:4px 6px;line-height:1em}
 .moin-itemviews a,.moin-itemviews a:visited{color:#cfcfcf;}
 .moin-itemviews a:hover,.moin-itemviews a:visited:hover{color:#fff}
 .moin-itemviews a:hover{text-decoration:underline}
@@ -494,10 +495,10 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373;}
 #moin-pageinfo a,#moin-wikilicense a,#moin-credits a,#moin-version a,#moin-timings a{color:#737373}
 #moin-pageinfo{margin-top:20px}
-#moin-timings li{display:inline-block;margin:0 20px 0 0}
+#moin-timings li{display:inline-block;*display:inline;zoom:1;margin:0 20px 0 0}
 #moin-credits span{display:inline-block;margin:0 5px}
 #moin-creditlogos{float:right;list-style:none;margin:5px 10px}
-#moin-creditlogos li{display:inline-block;margin:10px 0 10px 10px}
+#moin-creditlogos li{display:inline-block;*display:inline;zoom:1;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
 div.moin-item-wrapper{width:100%}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
@@ -507,9 +508,8 @@ a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;col
 .moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#eef1f6;color:#1f9ae0}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
-.moin-permalink{display:none;cursor:pointer;font-size:80%;margin-left:3px}
-a.moin-permalink{color:#939393}
-a:hover.moin-permalink{color:#1f62ad}
+a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
+a.moin-permalink:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 @media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-page,#moin-content-data{margin:0;padding:0}

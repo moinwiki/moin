@@ -24,7 +24,7 @@ function moinFlashMessage(classes, message) {
 function selected_link() {
     "use strict";
     var selected = window.location.pathname,
-        list = document.getElementsByClassName('panel'),
+        list = $('.panel'),
         i,
         j,
         nav_links,
@@ -155,11 +155,11 @@ function initTransclusionOverlays() {
             if ($(elem).parent()[0].tagName === 'A') {
                 elem = $(elem).parent()[0];
             }
-            // wrap element, add UL and LR overlay siblings, and replace old elem with wrapped elem
-            $(wrapper).append($(elem).clone(true));
+            // insert wrapper after elem, append (move) elem, append overlays
+            $(elem).after(wrapper);
+            $(wrapper).append(elem);
             $(wrapper).append(overlayUL);
             $(wrapper).append(overlayLR);
-            $(elem).replaceWith(wrapper);
         }
     });
     // if an element was wrapped above, then make the Transclusions buttons visible
@@ -352,90 +352,66 @@ function linkSubitem(subitem_name, fullname) {
 }
 
 
-
-// Executed on page load.  If this is the user "Settings" page, make the long 6-form page
-// appear as a shorter page with a row of tabs near the top.  User clicks a tab to select target form.
-function initMoinTabs() {
+// User Settings page enhancements - make long multi-form page appear as a shorter page
+// with a row of tabs at the top or side that may be clicked to select a form.
+$(function () {
     "use strict";
-    // find all .moin-tabs elements and initialize them
-    $('.moin-tabs').each(function () {
-        var tabs = $(this),
-            titles = $(document.createElement('ul')),
-            lastLocationHash;
-        titles.addClass('moin-tab-titles');
+    // do nothing if this is not a User Settings page
+    if ($('#moin-usersettings').length === 0) { return; }
 
-        // switching between tabs based on the current location hash
-        function updateFromLocationHash() {
-            if (location.hash !== undefined && location.hash !== '' && tabs.children(location.hash).length) {
-                if (location.hash !== lastLocationHash) {
-                    lastLocationHash = location.hash;
-                    tabs.children('.moin-tab-body').hide();
-                    tabs.children(location.hash).show();
-                    titles.children('li').children('a').removeClass('current');
-                    titles.children('li').children('a[href="' + location.hash + '"]').addClass('current');
-                }
-            } else {
-                $(titles.children('li').children('a')[0]).click();
-            }
-        }
-
-        // move all tab titles to an <ul> at the beginning of .moin-tabs
-        tabs.children('.moin-tab-title').each(function () {
+    // create a UL that will be displayed as row of tabs or column of buttons
+    $(function () {
+        var tabs = $('#moin-usersettings'),
+            titles = $('<ul class="moin-tab-titles">');
+        // for each form on page, create a corresponding LI
+        $('.moin-tab-body').each(function () {
             var li = $(document.createElement('li')),
-                a = $(this).children('a');
-            a.click(function () {
-                location.hash = this.hash;
-                updateFromLocationHash();
+                // copy a-tag defined in heading
+                aTagClone = $(this).find('a').clone();
+            li.append(aTagClone);
+            titles.append(li);
+            // add click handler to show this form and hide all others
+            aTagClone.click(function (ev) {
+                var tab = this.hash;
+                $('.moin-current-tab').removeClass('moin-current-tab');
+                $(ev.target).addClass('moin-current-tab');
+                tabs.children('.moin-tab-body').hide().removeClass('moin-current-form');
+                tabs.children(tab).show().addClass('moin-current-form');
                 return false;
             });
-            li.append(a);
-            titles.append(li);
-            $(this).remove();
         });
-        tabs.prepend(titles);
+        // if this is foobar (or similar sidebar theme) remove buttons that work when javascript is disabled
+        $('.moin-tabs ul').remove();
+        // add tabs/buttons with click handlers to top/side per theme template
+        $('.moin-tabs').prepend(titles);
+        // click a tab to show first form and hide all other forms
+        $(titles.children('li').children('a')[0]).click();
 
-        updateFromLocationHash();
-        setInterval(updateFromLocationHash, 40); // there is no event for that
-    });
-}
-$(document).ready(initMoinTabs);
-
-
-
-// Executed on page load.  Useful only if this is the user "Settings" page.
-// Saves initial values of user "Settings" forms on client side.
-// Detects unsaved changes and sets visual indicator.
-// Processes form Submit and displays status messages and updated data.
-function initMoinUsersettings() {
-    "use strict";
-    // save initial values of each form
-    $('#moin-usersettings form').each(function () {
-        $(this).data('initialForm', $(this).serialize());
+        // save initial values of each form; used in changeHandler to detect changes to a form
+        $('#moin-usersettings form').each(function () {
+            $(this).data('initialForm', $(this).serialize());
+        });
     });
 
-    // check if any changes were made, add indicator if user changes tabs without saving form
+    // add/remove "*" indicator if user changes/saves form
     function changeHandler(ev) {
         var form = $(ev.currentTarget),
-            title = $('.moin-tab-titles a.current', form.parentsUntil('.moin-tabs').parent()),
-            e;
+            title = $('.moin-tab-titles a.moin-current-tab', form.parentsUntil('.moin-tabs').parent());
         if (form.data('initialForm') === form.serialize()) {
             // current values are identicaly to initial ones, remove all change indicators (if any)
-            $('.change-indicator', title).remove();
+            $('.moin-change-indicator', title).remove();
         } else {
             // the values differ
-            if (!$('.change-indicator', title).length) {
+            if (!$('.moin-change-indicator', title).length) {
                 // only add a change indicator if there none
-                e = $(document.createElement('span'));
-                e.addClass('change-indicator');
-                e.text('*');
-                title.append(e);
+                title.append($('<span class="moin-change-indicator">*</span>'));
             }
         }
     }
-    // attach above function to all forms on page
+    // attach above function to all forms as a change handler
     $('#moin-usersettings form').change(changeHandler);
 
-    // executed when user clicks submit button on one of the tabbed forms
+    // executed when user clicks submit button on a user settings form
     function submitHandler(ev) {
         var form = $(ev.target),
             button = $('button', form),
@@ -448,7 +424,7 @@ function initMoinUsersettings() {
         button.attr('disabled', true);
 
         // remove change indicators from the current tab as we are now saving it
-        $('.moin-tab-titles a.current .change-indicator',
+        $('.moin-tab-titles a.moin-current-tab .moin-change-indicator',
                 form.parentsUntil('.moin-tabs').parent()).remove();
 
         // animate the submit button to indicating a running request
@@ -491,27 +467,49 @@ function initMoinUsersettings() {
         }, 'json');
         return false;
     }
-    // attach above function to all form submit buttons
+    // attach above function as a submit handler to each user setting form
     $('#moin-usersettings form').submit(submitHandler);
-}
-$(document).ready(initMoinUsersettings);
+
+    // warn user if he tries to leave page when there are unsaved changes (Opera 12.10 does not support onbeforeunload)
+    window.onbeforeunload = function () {
+        var discardMessage = ' {{ _("Your changes will be discarded if you leave this page without saving.") }} ';
+        if ($('.moin-change-indicator').length > 0) {
+            return discardMessage;
+        }
+    };
+});  // end of User Settings page enhancements
 
 
 // This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
 $(function () {
     // NOTE: if browser does not support sessionStorage, then auto-scroll is not available
-    //       sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+
+    //       (sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+).
+    //       IE8 does not scroll page after edit (cannot determine caret position within textarea).
     "use strict";
 
     var TOPID = 'moin-content',
         LINENOATTR = "data-lineno",
         MESSAGEMISSED = ' {{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }} ',
         MESSAGEOBSOLETE = ' {{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }} ',
+        MESSAGEOLD = ' {{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }} ',
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
+        modifyForm,
         lineno,
         message,
         caretLineno;
+
+    // IE8 workaround for missing setSelectionRange
+    function setSelection(textArea, charStart) {
+        // scroll IE8 textarea, target line will be near bottom of textarea
+        var range = textArea.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', charStart);
+        range.moveStart('character', charStart);
+        range.select();
+        //warn user that features are missing with IE8
+        moinFlashMessage(MOINFLASHWARNING, MESSAGEOLD);
+    }
 
     // called after +modify page loads -- scrolls the textarea after a doubleclick
     function scrollTextarea(jumpLine) {
@@ -522,7 +520,7 @@ $(function () {
             scrollAmount,
             textAreaClone;
 
-        if (textArea && textArea.setSelectionRange) {
+        if (textArea && (textArea.setSelectionRange || textArea.createTextRange)) {
             window.scrollTo(0, 0);
             // get data from textarea, split into array of lines, truncate based on jumpLine, make into a string
             textLines = $(textArea).val();
@@ -542,12 +540,18 @@ $(function () {
             textAreaClone.rows = 1;
             scrollAmount = textAreaClone.scrollHeight - 100; // get total height of clone - 100 pixels
             textAreaClone.parentNode.removeChild(textAreaClone);
-            // position the caret, highlight the position of the caret for a second or so
+            // position the caret
             textArea.focus();
             if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
-            textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+            if (textArea.setSelectionRange) {
+                // html5 compliant browsers, highlight the position of the caret for a second or so
+                textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
+                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
+                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+            } else {
+                // IE8 workaround to position the caret and scroll textarea
+                setSelection(textArea, scrolledText.length);
+            }
         }
     }
 
@@ -616,6 +620,7 @@ $(function () {
         if (textArea.selectionStart) {
             caretPoint = textArea.selectionStart;
         } else {
+            // IE7, IE8 or
             // IE9 - user has clicked ouside of textarea and textarea focus and caret position has been lost
             return 0;
         }
@@ -630,7 +635,7 @@ $(function () {
     }
 
     // doubleclick processing starts here
-    if (Storage !== "undefined") {
+    if (window.sessionStorage) {
         // Start of processing for "show" pages
         if (document.getElementById('moin-edit-on-doubleclick')) {
             // this is a "show" page and the edit on doubleclick option is set for this user
@@ -668,20 +673,25 @@ $(function () {
                 $("#f_submit").click(function () {
                     caretLineno = getCaretLineno(document.getElementById('f_content_form_data_text'));
                     // save lineno for use in "show" page load
-                    sessionStorage.moinCaretLineNo = caretLineno;
+                    if (caretLineno > 0) { sessionStorage.moinCaretLineNo = caretLineno; }
                 });
             }
         }
     } else {
         // provide reduced functionality for obsolete browsers that do not support local storage: IE6, IE7, etc.
         if (document.getElementById('moin-edit-on-doubleclick')) {
-            moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
             modifyButton = $('.moin-modify-button')[0];
             if (modifyButton) {
-                // add doubleclick event handler when user doubleclicks within the content area
+                // this is a "show" page, add doubleclick event handler to content node
                 $('#moin-content').dblclick(function (e) {
                     document.location = modifyButton.href;
                 });
+            }
+        } else {
+            modifyForm = $('#moin-modify')[0];
+            if (modifyForm) {
+                // user is editing with obsolete browser, give warning about missing features
+                moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
             }
         }
     }

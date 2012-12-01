@@ -82,10 +82,10 @@ class RegistryContent(RegistryBase):
 
         def __lt__(self, other):
             if isinstance(other, self.__class__):
-                if self.priority != other.priority:
-                    return self.priority < other.priority
                 if self.content_type != other.content_type:
                     return other.content_type.issupertype(self.content_type)
+                if self.priority != other.priority:
+                    return self.priority < other.priority
                 return False
             return NotImplemented
 
@@ -94,15 +94,12 @@ class RegistryContent(RegistryBase):
         self.group_names = group_names
         self.groups = dict([(g, []) for g in group_names])
 
-    def register(self, factory, contenttype, default_contenttype_params, display_name, group, ingroup_order, priority=RegistryBase.PRIORITY_MIDDLE):
+    def register(self, e, group):
         """
-        Register a factory
-
-        :param factory: Factory to register. Callable, must return an object.
+        Register a contenttype entry and optionally add it to a specific group.
         """
-        e = self.Entry(factory, contenttype, default_contenttype_params, display_name, ingroup_order, priority)
         # If group is specified and contenttype is not a wildcard one
-        if group and contenttype.type and contenttype.subtype:
+        if group and e.content_type.type and e.content_type.subtype:
             if group not in self.groups:
                 raise ValueError('Unknown group name: {0}'.format(group))
             self.groups[group].append(e)
@@ -121,7 +118,7 @@ content_registry = RegistryContent([
 ])
 
 def register(cls):
-    content_registry.register(cls._factory, Type(cls.contenttype), cls.default_contenttype_params, cls.display_name, cls.group, cls.ingroup_order)
+    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype), cls.default_contenttype_params, cls.display_name, cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
     return cls
 
 

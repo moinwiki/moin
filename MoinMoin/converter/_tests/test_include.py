@@ -122,7 +122,7 @@ class TestInclude(object):
 
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{logo}}')
         rendered = Item.create(u'page1').content._render_data()
-        assert '<img alt="logo" class="moin-transclusion"' in rendered
+        assert '<div class="moin-transclusion" data-href="/logo"><img alt="logo"' in rendered
 
         # <p /> is not valid html5; should be <p></p>. to be valid.  Even better, there should be no empty p's.
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u'{{logo}}{{logo}}')

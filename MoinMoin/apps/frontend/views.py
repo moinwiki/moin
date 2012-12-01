@@ -52,7 +52,6 @@ from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
 from MoinMoin.constants.keys import *
-from MoinMoin.constants.itemtypes import ITEMTYPES
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm, ValidSearch
@@ -1327,12 +1326,6 @@ class UserSettingsNavigationForm(Form):
 
 
 class UserSettingsOptionsForm(Form):
-    # TODO: if the checkbox in the form is checked, we get key: u'1' in the
-    # form data and all is fine. if it is not checked, the key is not present
-    # in the form data and flatland assigns None to the attribute (not False).
-    # If moin detects the None, it thinks this has not been set and uses its
-    # builtin defaults (for some True, for some others False). Makes
-    # edit_on_doubleclick malfunctioning (because its default is True).
     name = 'usersettings_options'
     mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
     edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))

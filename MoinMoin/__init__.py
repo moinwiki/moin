@@ -13,7 +13,7 @@ project = "MoinMoin"
 
 import sys
 if sys.hexversion < 0x2060000:
-    sys.exit("{0} requires Python 2.6 or greater.\n".format(project))
+    sys.exit("%s requires Python 2.6 or greater.\n" % project)
 
 
 from MoinMoin.util.version import Version
