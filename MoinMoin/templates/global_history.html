@@ -46,7 +46,7 @@
             <div class="moin-history-container-header">
                 <span>
                     <h2>{{ bookmark_time|datetimeformat }}</h2>
-                    <a href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+                    <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
                </span>
             </div>
         </div>
