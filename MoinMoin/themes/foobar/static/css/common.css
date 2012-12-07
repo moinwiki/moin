@@ -174,7 +174,7 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .moin-diff-removed{background-color:#fff5ee;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;padding:.5em;}
 .moin-diff-removed span{background-color:#f1eeb9}
 body{color:#000;background-color:#d6d5d0;font-family:Helvetica,Arial,sans-serif;background-image:url("../img/base.png")}
-div p{margin:.2em .4em;font-size:1em;line-height:1.3em}
+p{margin:.2em .4em;font-size:1em;line-height:1.3em}
 #moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.13333333333333%;padding:.5%}
 #moin-main-box{background-color:#f4f4f4;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #9d9d9b;overflow:hidden}
