@@ -23,18 +23,20 @@
     </p>
     {% endif %}
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
-        <div>
-            {{ forms.render(medium_search_form['q']) }}
-            {{ forms.render(medium_search_form['submit']) }}
-            {{ forms.render(medium_search_form['history']) }}
-            {{ forms.render_errors(medium_search_form) }}
-        </div>
+        <p>
+        {{ forms.render(medium_search_form['q']) }}
+        {{ forms.render(medium_search_form['submit']) }}
+        </p>
+        <p>
+        {{ forms.render(medium_search_form['history']) }}
+        {{ forms.render_errors(medium_search_form) }}
+        </p>
     {{ gen.form.close() }}
     {% if results is defined %}
-        <div>
+        {% if name_suggestions or content_suggestions %}
             <p>{{ _("name term suggestions: %(termlist)s", termlist=name_suggestions) }}</p>
             <p>{{ _("content term suggestions: %(termlist)s", termlist=content_suggestions) }}</p>
-        </div>
+        {% endif %}
         {% if results %}
             <div class="searchresults">
                 <table>

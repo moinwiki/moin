@@ -350,7 +350,7 @@ a.moin-nonexistent:active{color:#ff2727}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
 .searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{color:#51d443;margin-left:15px;margin-top:0}
+.searchresults .searchhitinfobar{margin-left:15px;margin-top:0}
 .searchresults .foundtext{margin-left:15px;margin-top:0}
 p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
 p.searchhint{background-color:#f4f4f4;border:1px solid #9d9d9b;padding:2px}

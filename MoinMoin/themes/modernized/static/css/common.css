@@ -295,7 +295,7 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
 .searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{color:#939393;margin-left:15px;margin-top:0}
+.searchresults .searchhitinfobar{margin-left:15px;margin-top:0}
 .searchresults .foundtext{margin-left:15px;margin-top:0}
 p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
 p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
@@ -450,7 +450,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-searchform div{margin:-6px 5px 0 0}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
 #moin-long-searchform div{margin:0}
-#moin-search-query{width:80%}
+#moin-search-query{width:50%}
 #moin-logo{float:left;margin:2px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
 #moin-logo a{color:#fff;text-decoration:none}
