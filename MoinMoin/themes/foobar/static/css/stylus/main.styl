@@ -666,9 +666,6 @@ a.moin-conflict:before
 .moin-history-copy:before
     content url('../img/moin-new.png')
 
-.moin-integer
-    width 2%
-
 .moin-inline-label
     display inline
 
@@ -978,6 +975,9 @@ table.zebra
         form
             input
                 width 100%
+    tbody tr:nth-child(odd),
+    > tr:nth-child(odd)
+        background-color table_row_color
 
 pre
     font-family monospace
@@ -1158,6 +1158,10 @@ sup
     font-size 1.17em
 .moin-small
     font-size .83em
+.moin-integer
+    text-align right
+    padding-right 1em
+    width 2%
 
 /* fix tests -- currently checking <big> and <small> */
 @media print
