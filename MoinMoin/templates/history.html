@@ -24,7 +24,7 @@
                     <th>{{ _("Name") }}</th>
                     <th>{{ _("Rev.") }}</th>
                     <th>{{ _("Timestamp") }}</th>
-                    <th>{{ _("Size") }}</th>
+                    <th class="moin-integer">{{ _("Size") }}</th>
                     <th><input type="submit" value="Diff" /></th>
                     <th>{{ _("Editor") }}</th>
                     <th>{{ _("Content-Type") }}</th>
@@ -36,7 +36,7 @@
                 {% for doc in history %}
                 <tr>
                     <td class="moin-wordbreak">{{ doc.name }}</td>
-                    <td class="moin-integer monospaced">{{ doc.revid | shorten_id }}</td>
+                    <td>{{ doc.revid | shorten_id }}</td>
                     <td>{{ doc.mtime|datetimeformat }}</td>
                     <td class="moin-integer">{{ doc.size }}</td>
                     <td>

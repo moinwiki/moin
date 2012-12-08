@@ -28,7 +28,11 @@
 <thead>
     <tr>
         {% for heading in headings %}
-        <th>{{ heading }}</th>
+            {% if rows and rows[0][loop.index0] is number %}
+                <th class="moin-integer">{{ heading }}</th>
+            {% else %}
+                <th>{{ heading }}</th>
+            {% endif %}
         {% endfor %}
     </tr>
 </thead>

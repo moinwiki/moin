@@ -147,6 +147,7 @@ input, select { vertical-align: middle; }
 .center { text-align: center; }
 .right { text-align: right; }
 .justify { text-align: justify; }
+.monospaced { font-family: monospace; }
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em;vertical-align:middle}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em;vertical-align:middle}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em;vertical-align:middle}
@@ -312,7 +313,6 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .moin-history-trash:before{content:url("../img/moin-deleted.png")}
 .moin-history-rename:before{content:url("../img/moin-renamed.png")}
 .moin-history-copy:before{content:url("../img/moin-new.png")}
-.moin-integer{width:2%}
 .moin-inline-label{display:inline}
 .moin-history-links{width:5%;}
 .moin-history-links a{display:block}
@@ -406,6 +406,7 @@ table.zebra tfoot{background-color:#d6d5d0}
 table.zebra tbody tr,table.zebra > tr{background-color:#d9d9d9}
 table.zebra th,table.zebra td{border:none}
 table.zebra td form input{width:100%}
+table.zebra tbody tr:nth-child(odd),table.zebra > tr:nth-child(odd){background-color:#e8e8e8}
 pre{font-family:monospace;white-space:pre-wrap;word-wrap:break-word;border:1px solid #ccc;background-color:#d6d5d0;margin:.5em;padding:5px;clear:both;}
 pre.comment{background-color:#2d2d2d;color:#fff;margin:0;padding:0;border:0;}
 pre.comment:before{content:url("../img/attention.png")}
@@ -442,5 +443,6 @@ sub{vertical-align:sub}
 sup{vertical-align:super}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
+.moin-integer{text-align:right;padding-right:1em;width:2%}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-search{display:none}
 }
