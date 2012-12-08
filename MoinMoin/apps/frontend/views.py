@@ -787,7 +787,7 @@ def mychanges():
     :returns: a page with all the items which link or transclude item_name
     """
     my_changes = _mychanges(flaskg.user.itemid)
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
                            item_names=my_changes
@@ -818,7 +818,7 @@ def backrefs(item_name):
     :returns: a page with all the items which link or transclude item_name
     """
     refs_here = _backrefs(item_name)
-    return render_template('item_link_list.html',
+    return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
@@ -926,7 +926,7 @@ def wanted_items():
     referred = linked | transcluded
     wanteds = referred - existing
     title_name = _(u'Wanted Items')
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            headline=_(u'Wanted Items'),
                            title_name=title_name,
                            item_names=wanteds)
@@ -942,7 +942,7 @@ def orphaned_items():
     referred = linked | transcluded
     orphans = existing - referred
     title_name = _('Orphaned Items')
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
                            headline=_(u'Orphaned Items'),
                            item_names=orphans)
@@ -1663,7 +1663,7 @@ def similar_names(item_name):
             rank = matches[name]
             if rank == wanted_rank:
                 item_names.append(name)
-    return render_template("item_link_list.html",
+    return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
                            item_name=item_name, # XXX no item
                            item_names=item_names)
@@ -1888,7 +1888,7 @@ def tagged_items(tag):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
     revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
     item_names = [rev.meta[NAME] for rev in revs]
-    return render_template("item_link_list.html",
+    return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)
