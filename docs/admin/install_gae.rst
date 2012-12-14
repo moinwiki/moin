@@ -31,3 +31,6 @@ the toplevel directory (== your workdir).
 If that works, deploy the files using appcfg.py.
 
 Usage of dev_appserver and appcfg is documented in the GAE SDK documentation.
+
+Known limitations: the GAE storage limits the revision size to 1MB.
+
