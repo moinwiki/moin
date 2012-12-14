@@ -85,7 +85,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Markdown>=2.1.1', # Markdown markup processing
         'Flask>=0.8', # micro framework
         'Flask-Babel>=0.7', # i18n support
-        'Flask-Cache>=0.3.4', # caching support
+        'Flask-Cache>=0.3.4, <0.8', # caching support (we currently need <0.8 due to issue #293)
         'Flask-Script>=0.3.3', # scripting support
         'Flask-Themes>=0.1.3.1', # theme support
         'emeraldtree>=0.9.1', # xml processing
