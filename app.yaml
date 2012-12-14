@@ -52,3 +52,10 @@ handlers:
 # We must include jinja2 in the support directory, so we can use the same
 # support tgz for both GAE and standalone local installations (both do not use
 # setup.py). Thus, we do not use the jinja2 GAE could provide.
+
+libraries:
+- name: markupsafe
+  version: latest
+- name: PIL
+  version: latest
+
