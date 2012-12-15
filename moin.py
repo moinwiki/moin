@@ -26,7 +26,6 @@ if gae:
     application = create_app(create_index=create_index)
     application.on_gae = True  # GAE specific code can check this
 
-
 elif __name__ == '__main__':
     from MoinMoin.script import main
     main()

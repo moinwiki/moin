@@ -5,6 +5,7 @@
 # Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2012 MoinMoin:TarashishMishra
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -20,7 +21,6 @@
 import os, re, base64
 import tarfile
 import zipfile
-import tempfile
 from StringIO import StringIO
 from array import array
 from collections import namedtuple
@@ -426,34 +426,41 @@ class TarMixin(object):
             raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
         if isinstance(name, unicode):
             name = name.encode('utf-8')
-        temp_fname = os.path.join(tempfile.gettempdir(), 'TarContainer_' +
-                                  cache_key(usage='TarContainer', name=self.name))
-        tf = tarfile.TarFile(temp_fname, mode='a')
-        ti = tarfile.TarInfo(name)
-        if isinstance(content, str):
-            if content_length is None:
-                content_length = len(content)
-            content = StringIO(content) # we need a file obj
-        elif not hasattr(content, 'read'):
+        # cache is used to store data temporarily without touching filesystem.
+        # tempfile stdlib module can not be used on GAE due to that restriction.
+        tar_storage_key = cache_key(usage='tar_storage', name=self.name)
+        cache_contents = app.cache.get(tar_storage_key)
+        if cache_contents is None:
+            cache_contents = {}
+        if hasattr(content, 'read'):
+            content.seek(0)
+            content = content.read()
+        elif not isinstance(content, str):
             logging.error("unsupported content object: {0!r}".format(content))
             raise StorageError("unsupported content object: {0!r}".format(content))
-        assert content_length >= 0  # we don't want -1 interpreted as 4G-1
-        ti.size = content_length
-        tf.addfile(ti, content)
-        tf_members = set(tf.getnames())
-        tf.close()
-        if tf_members - expected_members:
+        cache_contents[name] = content
+        if set(cache_contents) - expected_members:
             msg = "found unexpected members in container item {0!r}".format(self.name)
             logging.error(msg)
-            os.remove(temp_fname)
             raise StorageError(msg)
-        if tf_members == expected_members:
-            # everything we expected has been added to the tar file, save the container as revision
+        if set(cache_contents) == expected_members:
+            # everything we expected has been added to cache_contents, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
-            data = open(temp_fname, 'rb')
-            self.item._save(meta, data, name=self.name, action=u'SAVE', comment='')
-            data.close()
-            os.remove(temp_fname)
+            tarbuffer = StringIO()
+            tf = tarfile.TarFile(fileobj=tarbuffer, mode='w')
+            for name in cache_contents:
+                content = cache_contents[name]
+                content_length = len(content)
+                assert content_length >= 0  # we don't want -1 interpreted as 4G-1
+                ti = tarfile.TarInfo(name)
+                ti.size = content_length
+                tf.addfile(ti, StringIO(content))
+            tf.close()
+            self.item._save(meta, tarbuffer, name=self.name, action=u'SAVE', comment='')
+            tarbuffer.close()
+            app.cache.delete(tar_storage_key)
+        else:
+            app.cache.set(tar_storage_key, cache_contents)
 
 
 @register
