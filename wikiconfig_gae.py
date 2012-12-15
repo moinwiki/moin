@@ -85,7 +85,6 @@ SECRET_KEY = 'you need to change this so it is really secret'
 #LOGGER_NAME = 'MoinMoin'
 #config for flask-cache:
 CACHE_TYPE = 'gaememcached'
-#CACHE_DIR = '/path/to/flask-cache-dir'
 
 # DEVELOPERS! Do not add your configuration items here - you could accidentally
 # commit them! Instead, create a wikiconfig_local.py file containing this:
