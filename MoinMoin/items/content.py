@@ -426,8 +426,8 @@ class TarMixin(object):
             raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
         if isinstance(name, unicode):
             name = name.encode('utf-8')
-        # cache is used to store data temporarily without touching filesystem.
-        # tempfile stdlib module can not be used on GAE due to that restriction.
+        # The cache is used to store data temporarily. We can't use the tempfile
+        # stdlib module as it touches the filesystem and that is not possible on GAE.
         tar_storage_key = cache_key(usage='tar_storage', name=self.name)
         cache_contents = app.cache.get(tar_storage_key)
         if cache_contents is None:
