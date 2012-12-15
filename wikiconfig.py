@@ -85,7 +85,7 @@ SECRET_KEY = 'you need to change this so it is really secret'
 #USE_X_SENDFILE = False
 #LOGGER_NAME = 'MoinMoin'
 #config for flask-cache:
-#CACHE_TYPE = 'filesystem'
+CACHE_TYPE = 'simple'
 #CACHE_DIR = '/path/to/flask-cache-dir'
 
 # DEVELOPERS! Do not add your configuration items here - you could accidentally
