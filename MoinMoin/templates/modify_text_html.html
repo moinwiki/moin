@@ -6,5 +6,5 @@
 {% endmacro %}
 
 {% macro data_editor(form, item_name) %}
-{{ gen.textarea(form['data_text'], class='ckeditor', lang=lang, dir=direction, rows=form.rows|string, cols=form.cols|string) }}
+{{ gen.textarea(form['data_text'], class='ckeditor', rows=form.rows|string, cols=form.cols|string) }}
 {% endmacro %}
