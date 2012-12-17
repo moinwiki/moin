@@ -274,7 +274,7 @@ input.blank{border-color:#4e7da9;border-width:2px}
 .moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
-#moin-modify dd{width:100%;}
+#moin-modify dd{width:100%;float:none;}
 #moin-modify dd input{width:99%}
 #moin-modify dt{width:auto;text-align:left}
 #moin-modify textarea{width:99.5%}
