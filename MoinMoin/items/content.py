@@ -1011,7 +1011,7 @@ class Draw(TarMixin, Image):
         # Set the workaround flag respected in modify.html
         is_draw = True
 
-    def handle_post():
+    def handle_post(self):
         raise NotImplementedError
 
 
