@@ -46,7 +46,7 @@ class TestEncoding(object):
         """ error: access error like a dict """
         test = 'value'
         err = error.Error(test)
-        assert '%(message)s' % err == test
+        assert '%(message)s' % dict(message=err) == test
 
 class TestCompositeError(object):
 
