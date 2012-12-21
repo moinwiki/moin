@@ -30,9 +30,11 @@ class TestEncoding(object):
 
     def testCreateWithObject(self):
         """ error: create with any object """
-        class Foo:
+
+        class Foo(object):
             def __unicode__(self):
                 return u'טעות'
+
             def __str__(self):
                 return 'טעות'
 
