@@ -43,11 +43,14 @@
             </ul>
         </li>
         {% endif %}
+        {% set subitems = theme_supp.subitem_index(item_name) %}
+        {% if subitems %}
         <li>
             {% block subitem_navigation %}
-            {{ utils.render_subitem_navigation(item_name, False) }}
+            {{ utils.render_subitem_navigation(item_name, False, subitems=subitems) }}
             {% endblock %}
         </li>
+        {% endif %}
     </ul>
 {% endblock %}
 
