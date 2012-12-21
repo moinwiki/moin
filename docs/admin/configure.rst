@@ -253,10 +253,9 @@ Please note that using the gravatar service has some privacy issues:
 
 * to register your image for your email at gravatar.com, you need to give them
   your email address, which is the same as you use in your wiki user profile.
-* we try to avoid exposing the referrer URL to gravatar.com, but this only
-  works if your browser correctly implements rel="noreferrer". If it does not,
-  your wiki item URLs will be exposed, so they will roughly know which people
-  read or work on which wiki items.
+* when the wiki displays an avatar image on some item / view, the URL will be
+  exposed as referrer to the avatar service provider, so they will roughly
+  know which people read or work on which wiki items / views.
 
 XStatic Packages
 ----------------
