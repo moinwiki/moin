@@ -223,7 +223,7 @@ class ThemeSupport(object):
         # Add sister pages (see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide )
         for sistername, sisterurl in self.cfg.sistersites:
             if is_local_wiki(sistername):
-                items.append(('sisterwiki current', sisterurl, sistername))
+                items.append(('sisterwiki current', sisterurl, sistername, ''))
             else:
                 cid = cache_key(usage="SisterSites", sistername=sistername)
                 sisteritems = app.cache.get(cid)
