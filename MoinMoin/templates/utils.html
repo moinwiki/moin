@@ -23,7 +23,7 @@
 {% endmacro %}
 
 
-{% macro table(headings, rows) %}
+{% macro table(headings, rows, itemname_cols=[], url_cols=[]) %}
 <table class="zebra">
 <thead>
     <tr>
@@ -42,6 +42,10 @@
         {% for col in row %}
             {% if col is number %}
                 <td class="moin-integer">{{ col }}</td>
+            {% elif loop.index in itemname_cols %}
+                <td><a href="{{ url_for('frontend.show_item', item_name=col) }}">{{ col }}</a></td>
+            {% elif loop.index in url_cols %}
+                <td><a href="{{ col }}">{{ col }}</a></td>
             {%- else -%}
                 <td>{{ col }}</td>
             {% endif %}
@@ -74,8 +78,10 @@
     </ul>
 {% endmacro %}
 
-{% macro render_subitem_navigation(itemname, newtab) %}
-    {% set subitems = theme_supp.subitem_index(itemname) %}
+{% macro render_subitem_navigation(itemname, newtab, subitems=None) %}
+    {% if not subitems %}
+        {% set subitems = theme_supp.subitem_index(itemname) %}
+    {% endif %}
     {% if caller %}
         {% set mycaller = caller %}
     {% endif %}
