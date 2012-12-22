@@ -2,5 +2,5 @@
 {% extends theme("layout.html") %}
 {% block content %}
 <h1>{{ _("Item sizes (latest revision)") }}</h1>
-{{ utils.table(headings, rows) }}
+{{ utils.table(headings, rows, itemname_cols=[2]) }}
 {% endblock %}
