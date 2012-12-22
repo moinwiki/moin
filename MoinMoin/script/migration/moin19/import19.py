@@ -228,7 +228,8 @@ class PageRevision(object):
                                      # if we have an entry there
                    }
             try:
-                previous_meta = PageRevision(item, revno-1)._fs_meta
+                revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno-1))
+                previous_meta = PageRevision(item, revno-1, revpath).meta
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
                 # (non-deleted) revision revno-1:
