@@ -249,7 +249,7 @@ class Converter(ConverterMacro):
     # Matches the possibly escaped end of a nowiki block
 
     def block_nowiki_lines(self, iter_content, marker_len):
-        "Unescaping generator for the lines in a nowiki block"
+        """Unescaping generator for the lines in a nowiki block"""
 
         for line in iter_content:
             match = self.nowiki_end_re.match(line)

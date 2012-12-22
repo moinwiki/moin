@@ -161,7 +161,7 @@ class Converter(ConverterMacro):
     """
 
     def block_table_lines(self, iter_content):
-        "Unescaping generator for the lines in a table block"
+        """Unescaping generator for the lines in a table block"""
         for line in iter_content:
             match = self.table_end_re.match(line)
             if match:

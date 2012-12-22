@@ -21,10 +21,10 @@ from werkzeug.utils import unescape
 
 
 class Moinwiki(object):
-    '''
+    """
     Moinwiki syntax elements
     It's dummy
-    '''
+    """
     h = u'='
     a_open = u'[['
     a_separator = u'|'
