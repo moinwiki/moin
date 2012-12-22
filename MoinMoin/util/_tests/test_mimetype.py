@@ -38,7 +38,6 @@ class TestMimeType(object):
         for test_format, test_mimetype in test:
             result = MimeType_obj.parse_format(test_format)
             assert result == test_mimetype
-        result = MimeType_obj.parse_format(test_format)
 
     def test_mime_type(self):
         test = [
