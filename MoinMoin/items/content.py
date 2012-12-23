@@ -232,15 +232,25 @@ class Content(object):
         return doc
 
     def _render_data(self):
-        from MoinMoin.converter import default_registry as reg
-        # TODO: Real output format
-        doc = self.internal_representation()
-        doc = self._expand_document(doc)
-        flaskg.clock.start('conv_dom_html')
-        html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
-        doc = html_conv(doc)
-        flaskg.clock.stop('conv_dom_html')
-        rendered_data = conv_serialize(doc, {html.namespace: ''})
+        try:
+            from MoinMoin.converter import default_registry as reg
+            # TODO: Real output format
+            doc = self.internal_representation()
+            doc = self._expand_document(doc)
+            flaskg.clock.start('conv_dom_html')
+            html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
+            doc = html_conv(doc)
+            flaskg.clock.stop('conv_dom_html')
+            rendered_data = conv_serialize(doc, {html.namespace: ''})
+        except Exception:
+            # we really want to make sure that invalid data or a malfunctioning
+            # converter does not crash the item view (otherwise a user might
+            # not be able to fix it from the UI).
+            logging.exception("An exception happened in _render_data:")
+            import time
+            rendered_data = render_template('crash.html',
+                                            server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                                            url=request.url)
         return rendered_data
 
     def _render_data_xml(self):
