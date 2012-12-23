@@ -359,6 +359,7 @@ def show_item(item_name, rev):
     return item.do_show(rev)
 
 
+@frontend.route('/<itemname:item_name>/')  # note: unwanted trailing slash
 @frontend.route('/+show/<itemname:item_name>')
 def redirect_show_item(item_name):
     return redirect(url_for_item(item_name))
