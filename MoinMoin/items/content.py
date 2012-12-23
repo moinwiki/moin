@@ -358,6 +358,9 @@ There is no help, you're doomed!
             mt = MimeType(filename=filename)
             content_length = None
             file_to_send = self.get_member(member)
+            # force attachment download, so it uses attachment_filename
+            # otherwise it will use the itemname from the URL for saving
+            force_attachment = True
         else: # content = item revision
             rev = self.rev
             filename = rev.item.name
