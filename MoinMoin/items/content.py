@@ -1028,17 +1028,41 @@ class Draw(TarMixin, Image):
         raise NotImplementedError
 
 
-@register
-class TWikiDraw(Draw):
+class DrawPNGMap(Draw):
     """
-    drawings by TWikiDraw applet. It creates three files which are stored as tar file.
+    Base class for drawings that have a png with click map
     """
-    contenttype = 'application/x-twikidraw'
-    display_name = 'TDRAW'
+    def _read_map(self):
+        mapfile = self.get_member('drawing.map')
+        try:
+            image_map = mapfile.read()
+            mapfile.close()
+        except (IOError, OSError):
+            image_map = ''
+        return image_map
 
-    class ModifyForm(Draw.ModifyForm):
-        template = "modify_twikidraw.html"
-        help = ""
+    def _transform_map(self, image_map, title):
+        raise NotImplementedError
+
+    def _render_data(self):
+        # TODO: this could be a converter -> dom, then transcluding this kind
+        # of items and also rendering them with the code in base class could work
+        png_url = url_for('frontend.get_item', item_name=self.name, member='drawing.png', rev=self.rev.revid)
+        title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
+        image_map = self._read_map()
+        if image_map:
+            mapid, image_map = self._transform_map(image_map, title)
+            title = _('Clickable drawing: %(filename)s', filename=self.name)
+            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+        else:
+            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
+
+
+class DrawAWDTWDBase(DrawPNGMap):
+    """
+    Shared code between TWikiDraw and AnyWikiDraw
+    """
+    _expected_members = set()
 
     def handle_post(self):
         # called from modify UI/POST
@@ -1046,10 +1070,9 @@ class TWikiDraw(Draw):
         filename = request.form['filename']
         basepath, basename = os.path.split(filename)
         basename, ext = os.path.splitext(basename)
-
         filecontent = file_upload.stream
         content_length = None
-        if ext == '.draw': # TWikiDraw POSTs this first
+        if ext in ['.svg', '.draw', ]:  # handle AWD (svg) and TWD (draw)
             filecontent = filecontent.read() # read file completely into memory
             filecontent = filecontent.replace("\r", "")
         elif ext == '.map':
@@ -1060,45 +1083,42 @@ class TWikiDraw(Draw):
             # XXX gives -1 for wsgiref, gives 0 for werkzeug :(
             # If this is fixed, we could use the file obj, without reading it into memory completely:
             filecontent = filecontent.read()
-
         self.put_member('drawing' + ext, filecontent, content_length,
-                        expected_members=set(['drawing.draw', 'drawing.map', 'drawing.png']))
-
-    def _render_data(self):
-        # TODO: this could be a converter -> dom, then transcluding this kind
-        # of items and also rendering them with the code in base class could work
-        item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.draw', rev=self.rev.revid)
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
-        title = _('Edit drawing %(filename)s (opens in new window)', filename=item_name)
-
-        mapfile = self.get_member('drawing.map')
-        try:
-            image_map = mapfile.read()
-            mapfile.close()
-        except (IOError, OSError):
-            image_map = ''
-        if image_map:
-            # we have a image map. inline it and add a map ref to the img tag
-            mapid = 'ImageMapOf' + item_name
-            image_map = image_map.replace('%MAPNAME%', mapid)
-            # add alt and title tags to areas
-            image_map = re.sub(r'href\s*=\s*"((?!%TWIKIDRAW%).+?)"', r'href="\1" alt="\1" title="\1"', image_map)
-            image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format((drawing_url, title, title)))
-            title = _('Clickable drawing: %(filename)s', filename=item_name)
-
-            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
-        else:
-            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
+                        expected_members=self._expected_members)
 
 
 @register
-class AnyWikiDraw(Draw):
+class TWikiDraw(DrawAWDTWDBase):
+    """
+    drawings by TWikiDraw applet. It creates three files which are stored as tar file.
+    """
+    contenttype = 'application/x-twikidraw'
+    display_name = 'TDRAW'
+    _expected_members = set(['drawing.draw', 'drawing.map', 'drawing.png'])
+
+    class ModifyForm(Draw.ModifyForm):
+        template = "modify_twikidraw.html"
+        help = ""
+
+    def _transform_map(self, image_map, title):
+        mapid = 'ImageMapOf' + self.name  # TODO: make it unique
+        image_map = image_map.replace('%MAPNAME%', mapid)
+        # add alt and title tags to areas
+        image_map = re.sub(r'href\s*=\s*"((?!%TWIKIDRAW%).+?)"',
+                           r'href="\1" alt="\1" title="\1"', image_map)
+        drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.draw', rev=self.rev.revid)
+        image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format(drawing_url, title, title))
+        return mapid, image_map
+
+
+@register
+class AnyWikiDraw(DrawAWDTWDBase):
     """
     drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
     """
     contenttype = 'application/x-anywikidraw'
     display_name = 'ADRAW'
+    _expected_members = set(['drawing.svg', 'drawing.map', 'drawing.png'])
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
@@ -1111,55 +1131,14 @@ class AnyWikiDraw(Draw):
                 drawing_exists = False
             self.drawing_exists = drawing_exists
 
-    def handle_post(self):
-        # called from modify UI/POST
-        file_upload = request.files.get('filepath')
-        filename = request.form['filename']
-        basepath, basename = os.path.split(filename)
-        basename, ext = os.path.splitext(basename)
-        filecontent = file_upload.stream
-        content_length = None
-        if ext == '.svg':
-            filecontent = filecontent.read() # read file completely into memory
-            filecontent = filecontent.replace("\r", "")
-        elif ext == '.map':
-            filecontent = filecontent.read() # read file completely into memory
-            filecontent = filecontent.strip()
-        elif ext == '.png':
-            #content_length = file_upload.content_length
-            # XXX gives -1 for wsgiref, gives 0 for werkzeug :(
-            # If this is fixed, we could use the file obj, without reading it into memory completely:
-            filecontent = filecontent.read()
-        self.put_member('drawing' + ext, filecontent, content_length,
-                        expected_members=set(['drawing.svg', 'drawing.map', 'drawing.png']))
-
-    def _render_data(self):
-        # TODO: this could be a converter -> dom, then transcluding this kind
-        # of items and also rendering them with the code in base class could work
-        item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
-        title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
-
-        mapfile = self.get_member('drawing.map')
-        try:
-            image_map = mapfile.read()
-            mapfile.close()
-        except (IOError, OSError):
-            image_map = ''
-        if image_map:
-            # ToDo mapid must become uniq
-            # we have a image map. inline it and add a map ref to the img tag
-            # we have also to set a unique ID
-            mapid = 'ImageMapOf' + self.name
-            image_map = image_map.replace(u'id="drawing.svg"', '')
-            image_map = image_map.replace(u'name="drawing.svg"', u'name="{0}"'.format(mapid))
-            # unxml, because 4.01 concrete will not validate />
-            image_map = image_map.replace(u'/>', u'>')
-            title = _('Clickable drawing: %(filename)s', filename=self.name)
-            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
-        else:
-            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
+    def _transform_map(self, image_map, title):
+        #drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
+        mapid = 'ImageMapOf' + self.name  # TODO: make it unique
+        image_map = image_map.replace(u'id="drawing.svg"', '')
+        image_map = image_map.replace(u'name="drawing.svg"', u'name="{0}"'.format(mapid))
+        # unxml, because 4.01 concrete will not validate />
+        image_map = image_map.replace(u'/>', u'>')
+        return mapid, image_map
 
 
 @register
@@ -1176,7 +1155,6 @@ class SvgDraw(Draw):
         # called from modify UI/POST
         png_upload = request.values.get('png_data')
         svg_upload = request.values.get('filepath')
-        filename = request.form['filename']
         png_content = png_upload.decode('base_64')
         png_content = base64.urlsafe_b64decode(png_content.split(',')[1])
         svg_content = svg_upload.decode('base_64')
@@ -1189,7 +1167,6 @@ class SvgDraw(Draw):
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
-        item_name = self.name
-        drawing_url = url_for('frontend.get_item', item_name=item_name, member='drawing.svg', rev=self.rev.revid)
-        png_url = url_for('frontend.get_item', item_name=item_name, member='drawing.png', rev=self.rev.revid)
+        drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
+        png_url = url_for('frontend.get_item', item_name=self.name, member='drawing.png', rev=self.rev.revid)
         return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
