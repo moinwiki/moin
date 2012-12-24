@@ -1,11 +1,13 @@
-<h1>{{ _("Boom!") }}</h1>
+<h1>{{ _("Oops!") }}</h1>
 <p>
-    {{ _("An error happened while rendering the data.") }}
+    {{ _("An error happened while processing your request.") }}
 </p>
 <p>
-    {{ _("More details are in the server log. Time and URL are helpful for locating the corresponding log entries:") }}
+    {{ _("More details have been logged. The following data is helpful for locating the corresponding log entries:") }}
 </p>
 <dl>
+    <dt>{{ _("Error ID") }}</dt>
+    <dd>{{ error_id }}</dd>
     <dt>{{ _("Server time") }}</dt>
     <dd>{{ server_time }}</dd>
     <dt>{{ _("URL") }}</dt>

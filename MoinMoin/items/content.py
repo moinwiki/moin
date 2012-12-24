@@ -246,11 +246,13 @@ class Content(object):
             # we really want to make sure that invalid data or a malfunctioning
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
-            logging.exception("An exception happened in _render_data:")
-            import time
+            import time, uuid
+            error_id = uuid.uuid4()
+            logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
             rendered_data = render_template('crash.html',
                                             server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
-                                            url=request.url)
+                                            url=request.url,
+                                            error_id=error_id)
         return rendered_data
 
     def _render_data_xml(self):
