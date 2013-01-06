@@ -1,6 +1,6 @@
 {% extends theme("layout.html") %}
 {% block content %}
-<h1>{{ _("WikiConfig Help") }}</h1>
+<h1>{{ _("Wiki Configuration Help") }}</h1>
 {% for heading, desc, opts in groups %}
     <h2>{{ heading }}</h2>
     {% if desc %}
@@ -9,7 +9,7 @@
     <table class="zebra">
     <thead>
     <tr>
-        <th>{{ _('Variable name') }}</th>
+        <th>{{ _('Variable Name') }}</th>
         <th>{{ _('Default') }}</th>
         <th>{{ _('Description') }}</th>
     </tr>
