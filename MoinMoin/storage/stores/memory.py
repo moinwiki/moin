@@ -12,9 +12,7 @@ Note: likely this is mostly useful for unit tests.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
-
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase, StringIO
 
 
 class _Store(MutableStoreBase):

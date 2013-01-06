@@ -16,6 +16,7 @@ import io
 from abc import abstractmethod
 from collections import Mapping, MutableMapping
 
+from MoinMoin.util.StringIOClosing import StringIO
 
 class StoreBase(Mapping):
     """

@@ -18,11 +18,10 @@ Note: only ONE process can open a kyoto cabinet in OWRITER (writable) mode.
 from __future__ import absolute_import, division
 
 import os, errno
-from StringIO import StringIO
 
 from kyotocabinet import *
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase, StringIO
 
 
 class _Store(MutableStoreBase):

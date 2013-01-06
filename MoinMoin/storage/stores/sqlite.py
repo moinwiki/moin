@@ -14,11 +14,10 @@ Optionally, you can use zlib/"gzip" compression.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
 import zlib
 from sqlite3 import *
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase, StringIO
 
 
 class _Store(MutableStoreBase):
