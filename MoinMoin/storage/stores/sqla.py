@@ -10,12 +10,10 @@ Stores k/v pairs into any database supported by sqlalchemy.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
-
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Binary
 from sqlalchemy.pool import StaticPool
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase, StringIO
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024 # 1MB binary data
