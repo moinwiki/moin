@@ -54,7 +54,7 @@ def render_template(template, **context):
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
     if e.code == 403:
-        title = L_('Access denied')
+        title = L_('Access Denied')
         description = L_('You are not allowed to access this resource.')
     else:
         # if we have no special code, we just return the HTTPException instance
