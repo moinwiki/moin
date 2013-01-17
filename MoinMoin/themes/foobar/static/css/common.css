@@ -416,7 +416,7 @@ input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .moin-subitem-navigation{overflow:hidden;word-wrap:break-word;}
 .moin-subitem-navigation ul{display:block;}
 .moin-subitem-navigation ul li{padding:.4em !important}
-.moin-subitem-navigation ul a{display:initial !important;color:#1e90ff;}
+.moin-subitem-navigation ul a{display:inline !important;color:#1e90ff;}
 .moin-subitem-navigation ul a:hover{text-decoration:underline}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation li ul{display:none;border-left:1px dotted #ccc;padding-left:5% !important}
