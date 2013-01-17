@@ -289,7 +289,7 @@ class DefaultExpression(object):
 #
 options_no_group_name = {
   # ==========================================================================
-  'datastruct': ('Datastruct settings', None, (
+  'datastruct': ('Datastruct', None, (
     #('dicts', lambda cfg: datastruct.ConfigDicts({}),
     ('dicts', lambda cfg: datastruct.WikiDicts(),
      "function f(cfg) that returns a backend which is used to access dicts definitions."),
@@ -298,7 +298,7 @@ options_no_group_name = {
      "function f(cfg) that returns a backend which is used to access groups definitions."),
   )),
   # ==========================================================================
-  'auth': ('Authentication / Authorization / Security settings', None, (
+  'auth': ('Authentication / Authorization / Security', None, (
     ('auth', DefaultExpression('[MoinAuth()]'),
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
@@ -313,7 +313,7 @@ options_no_group_name = {
      'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
   )),
   # ==========================================================================
-  'spam_leech_dos': ('Anti-Spam/Leech/DOS',
+  'spam_leech_dos': ('Anti-Spam / Leech / DOS',
   'These settings help limiting ressource usage and avoiding abuse.',
   (
     ('textchas', None,
@@ -322,7 +322,7 @@ options_no_group_name = {
      "Time [s] for a !TextCha to expire."),
   )),
   # ==========================================================================
-  'style': ('Style / Theme / UI related',
+  'style': ('Style / Theme / UI',
   'These settings control how the wiki user interface will look like.',
   (
     ('sitename', u'Untitled Wiki',
@@ -394,17 +394,17 @@ options_no_group_name = {
     ('template_dirs', [], "list of directories with templates that will override theme and base templates."),
   )),
   # ==========================================================================
-  'editor': ('Editor related', None, (
+  'editor': ('Editor', None, (
     ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
     #('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
     ('edit_ticketing', True, None),
   )),
   # ==========================================================================
-  'paging': ('Paging related', None, (
+  'paging': ('Paging', None, (
     ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
   )),
   # ==========================================================================
-  'data': ('Data storage', None, (
+  'data': ('Data Storage', None, (
     ('data_dir', './data/', "Path to the data directory."),
     ('plugin_dirs', [], "Plugin directories."),
 
@@ -422,7 +422,7 @@ options_no_group_name = {
     ('destroy_index', False, "Destroy (empty) the index after using it."),
   )),
   # ==========================================================================
-  'items': ('Special item names', None, (
+  'items': ('Special Item Names', None, (
     ('item_root', u'Home', "Name of the root item (aka 'front page'). [Unicode]"),
 
     # the following regexes should match the complete name when used in free text
@@ -435,7 +435,7 @@ options_no_group_name = {
      'Item names exactly matching this regex are regarded as items containing group definitions [Unicode]'),
   )),
   # ==========================================================================
-  'user': ('User Preferences related', None, (
+  'user': ('User Preferences', None, (
     ('user_defaults',
       dict(
         name=u'anonymous',
@@ -524,7 +524,7 @@ options_no_group_name = {
 #
 #
 options = {
-    'acl': ('Access control lists',
+    'acl': ('Access Control Lists',
     'ACLs control who may do what.',
     (
       ('functions', u'',
@@ -544,7 +544,7 @@ options = {
       ('user_homepage', 'User/', 'All user homepages are stored below this namespace.'),
     )),
 
-    'user': ('Users / User settings', None, (
+    'user': ('User', None, (
       ('email_unique', True,
        "if True, check email addresses for uniqueness and don't accept duplicates."),
       ('email_verification', False,
@@ -555,7 +555,7 @@ options = {
       ('use_gravatar', False, "if True, gravatar.com will be used to find User's avatar")
     )),
 
-    'mail': ('Mail settings',
+    'mail': ('Mail',
         'These settings control outgoing and incoming email from and to the wiki.',
     (
       ('from', None, "Used as From: address for generated mail. [Unicode]"),
