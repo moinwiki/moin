@@ -63,7 +63,7 @@ from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
 from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
-    GROUP_DRAWING, GROUP_OTHER,
+    GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT,
     )
 from MoinMoin.constants.keys import (
     NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
@@ -281,7 +281,7 @@ class Content(object):
 @register
 class NonExistentContent(Content):
     """Dummy Content to use with NonExistent."""
-    contenttype = 'application/x-nonexistent'
+    contenttype = CONTENTTYPE_NONEXISTENT
     group = None
 
     def do_get(self, force_attachment=False, mimetype=None):
