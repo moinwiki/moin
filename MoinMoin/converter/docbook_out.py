@@ -17,6 +17,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.util.tree import html, moin_page, xlink, docbook, xml
+from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 
 
 class Converter(object):
@@ -353,7 +354,7 @@ class Converter(object):
         """
         href = element.get(xlink.href, None)
         attrib = {}
-        mimetype = Type(_type=element.get(moin_page.type_, 'application/x-nonexistent'))
+        mimetype = Type(_type=element.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
         if href:
             attrib[docbook.fileref] = href
             if Type('image/').issupertype(mimetype):
