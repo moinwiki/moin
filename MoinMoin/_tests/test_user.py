@@ -78,105 +78,19 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
         assert theUser.valid
 
-    def test_auth_with_ssha_stored_password(self):
+    def test_login(self):
         """
-        Create user with {SSHA} password and check that user can login.
-        """
-        # Create test user
-        name = u'Test User'
-        # pass = 12345
-        # salt = salt
-        password = '{SSHA}x4YEGdfI4i0qROaY3NTHCmwSJY5zYWx0'
-        self.createUser(name, password, True)
-
-        # Try to "login"
-        theuser = user.User(name=name, password='12345')
-        assert theuser.valid
-
-    def test_auth_with_apr1_stored_password(self):
-        """
-        Create user with {APR1} password and check that user can login.
+        Create user with some password and check that user can login.
         """
         # Create test user
         name = u'Test User'
-        # generated with "htpasswd -nbm blaze 12345"
-        password = '{APR1}$apr1$NG3VoiU5$PSpHT6tV0ZMKkSZ71E3qg.' # 12345
-        self.createUser(name, password, True)
+        password = '12345'
+        salt = 'salt'
+        pw_hash = ''
+        self.createUser(name, pw_hash, True)
 
         # Try to "login"
-        theuser = user.User(name=name, password='12345')
-        assert theuser.valid
-
-    def test_auth_with_md5_stored_password(self):
-        """
-        Create user with {MD5} password and check that user can login.
-        """
-        # Create test user
-        name = u'Test User'
-        password = '{MD5}$1$salt$etVYf53ma13QCiRbQOuRk/' # 12345
-        self.createUser(name, password, True)
-
-        # Try to "login"
-        theuser = user.User(name=name, password='12345')
-        assert theuser.valid
-
-    def test_auth_with_des_stored_password(self):
-        """
-        Create user with {DES} password and check that user can login.
-        """
-        # Create test user
-        name = u'Test User'
-        # generated with "htpasswd -nbd blaze 12345"
-        password = '{DES}gArsfn7O5Yqfo' # 12345
-        self.createUser(name, password, True)
-
-        try:
-            import crypt
-            # Try to "login"
-            theuser = user.User(name=name, password='12345')
-            assert theuser.valid
-        except ImportError:
-            pytest.skip("Platform does not provide crypt module!")
-
-    def test_auth_with_ssha256_stored_password(self):
-        """
-        Create user with {SSHA256} password and check that user can login.
-        """
-        # Create test user
-        name = u'Test User'
-        # generated with online sha256 tool
-        # pass: 12345
-        # salt: salt
-        # base64 encoded
-        password = '{SSHA256}r4ONZUfEyn9MUkcyDQkQ5MBNpdIerM24MasxFpuQBaFzYWx0'
-
-        self.createUser(name, password, True)
-
-        # Try to "login"
-        theuser = user.User(name=name, password='12345')
-        assert theuser.valid
-
-    def test_regression_user_password_started_with_sha(self):
-        # This is regression test for bug in function 'user.create_user'.
-        #
-        # This function does not encode passwords which start with '{SHA}'
-        # It treats them as already encoded SHA hashes.
-        #
-        # If user during registration specifies password starting with '{SHA}'
-        # this password will not get encoded and user object will get saved with empty enc_password
-        # field.
-        #
-        # Such situation leads to "KeyError: 'enc_password'" during
-        # user authentication.
-
-        # Any Password begins with the {SHA} symbols led to
-        # "KeyError: 'enc_password'" error during user authentication.
-        user_name = u'moin'
-        user_password = u'{SHA}LKM56'
-        user.create_user(user_name, user_password, u'moin@moinmo.in', u'')
-
-        # Try to "login"
-        theuser = user.User(name=user_name, password=user_password)
+        theuser = user.User(name=name, password=password)
         assert theuser.valid
 
     def testSubscriptionSubscribedPage(self):
@@ -201,72 +115,6 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
         assert not theUser.is_subscribed_to([testPagename]) # list(!) of pages to check
-
-    def test_upgrade_password_from_ssha_to_ssha256(self):
-        """
-        Create user with {SSHA} password and check that logging in
-        upgrades to {SSHA256}.
-        """
-        name = u'/no such user/'
-        # pass = 'MoinMoin', salt = '12345'
-        password = '{SSHA}xkDIIx1I7A4gC98Vt/+UelIkTDYxMjM0NQ=='
-        self.createUser(name, password, True)
-
-        theuser = user.User(name=name, password='MoinMoin')
-        assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_upgrade_password_from_sha_to_ssha256(self):
-        """
-        Create user with {SHA} password and check that logging in
-        upgrades to {SSHA256}.
-        """
-        name = u'/no such user/'
-        password = '{SHA}jLIjfQZ5yojbZGTqxg2pY0VROWQ=' # 12345
-        self.createUser(name, password, True)
-
-        theuser = user.User(name=name, password='12345')
-        assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_upgrade_password_from_apr1_to_ssha256(self):
-        """
-        Create user with {APR1} password and check that logging in
-        upgrades to {SSHA256}.
-        """
-        # Create test user
-        name = u'Test User'
-        # generated with "htpasswd -nbm blaze 12345"
-        password = '{APR1}$apr1$NG3VoiU5$PSpHT6tV0ZMKkSZ71E3qg.' # 12345
-        self.createUser(name, password, True)
-
-        theuser = user.User(name=name, password='12345')
-        assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_upgrade_password_from_md5_to_ssha256(self):
-        """
-        Create user with {MD5} password and check that logging in
-        upgrades to {SSHA}.
-        """
-        # Create test user
-        name = u'Test User'
-        password = '{MD5}$1$salt$etVYf53ma13QCiRbQOuRk/' # 12345
-        self.createUser(name, password, True)
-
-        theuser = user.User(name=name, password='12345')
-        assert theuser.enc_password[:9] == '{SSHA256}'
-
-    def test_upgrade_password_from_des_to_ssha256(self):
-        """
-        Create user with {DES} password and check that logging in
-        upgrades to {SSHA}.
-        """
-        # Create test user
-        name = u'Test User'
-        # generated with "htpasswd -nbd blaze 12345"
-        password = '{DES}gArsfn7O5Yqfo' # 12345
-        self.createUser(name, password, True)
-
-        theuser = user.User(name=name, password='12345')
-        assert theuser.enc_password[:9] == '{SSHA256}'
 
     # Bookmarks -------------------------------------------------------
 
