@@ -630,8 +630,7 @@ checks, it e.g. won't forbid using a dictionary word as password.
 
 Password storage
 ----------------
-Moin never stores passwords in clear text, but always as cryptographic hash
-with a random salt. Currently ssha256 is the default.
+Moin never stores passwords in clear text.
 
 
 Authorization
