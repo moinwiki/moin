@@ -14,10 +14,11 @@ import os
 import errno
 import shutil
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import (BytesMutableStoreBase, FileMutableStoreBase,
+               BytesMutableStoreMixin, FileMutableStoreMixin)
 
 
-class _Store(MutableStoreBase):
+class FileStore(FileMutableStoreBase):
     """
     A simple filesystem-based store.
 
@@ -54,23 +55,6 @@ class _Store(MutableStoreBase):
     def __delitem__(self, key):
         os.remove(self._mkpath(key))
 
-
-class BytesStore(_Store, BytesMutableStoreBase):
-    def __getitem__(self, key):
-        try:
-            with open(self._mkpath(key), 'rb') as f:
-                return f.read() # better use get_file() and read smaller blocks for big files
-        except IOError as e:
-            if e.errno == errno.ENOENT:
-                raise KeyError(key)
-            raise
-
-    def __setitem__(self, key, value):
-        with open(self._mkpath(key), "wb") as f:
-            f.write(value)
-
-
-class FileStore(_Store, FileMutableStoreBase):
     def __getitem__(self, key):
         try:
             return open(self._mkpath(key), 'rb')
@@ -83,3 +67,7 @@ class FileStore(_Store, FileMutableStoreBase):
         with open(self._mkpath(key), "wb") as f:
             blocksize = 64 * 1024
             shutil.copyfileobj(stream, f, blocksize)
+
+
+class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
+    """filesystem BytesStore"""

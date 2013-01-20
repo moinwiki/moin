@@ -15,7 +15,7 @@ import time
 import urllib
 from httplib import HTTPConnection
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase, StringIO
+from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
 
 
 class _Store(MutableStoreBase):
