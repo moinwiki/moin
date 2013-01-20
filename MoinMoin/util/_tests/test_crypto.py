@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:ThomasWaldmann
+# Copyright: 2011-2013 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -53,6 +53,10 @@ class TestToken(object):
         result = crypto.valid_token(test_key, test_token)
         assert not result
 
+
+class TestCacheKey(object):
+    """ tests for cache key generation """
+
     def test_cache_key(self):
         """ The key must be different for different <kw> """
         test_kw1 = {'MoinMoin': 'value1'}
@@ -60,5 +64,6 @@ class TestToken(object):
         test_kw2 = {'Moin2': 'value2'}
         result2 = crypto.cache_key(**test_kw2)
         assert result1 != result2, ("Expected different keys for different <kw> but got the same")
+
 
 coverage_modules = ['MoinMoin.util.crypto']

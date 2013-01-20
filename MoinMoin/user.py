@@ -1,5 +1,5 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2003-2012 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:ChristopherDenter
@@ -33,14 +33,16 @@ from flask import session, request, url_for
 
 from whoosh.query import Term, And, Or
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 from MoinMoin import wikiutil
 from MoinMoin.config import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
-from MoinMoin.util.crypto import crypt_password, upgrade_password, valid_password, \
-                                 generate_token, valid_token, make_uuid
+from MoinMoin.util.crypto import generate_token, valid_token, make_uuid
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
@@ -67,11 +69,7 @@ space between words. Group page name is not allowed.""", name=username)
         if pw_error:
             return _("Password not acceptable: %(msg)s", msg=pw_error)
 
-    try:
-        theuser.set_password(password, is_encrypted)
-    except UnicodeError as err:
-        # Should never happen
-        return "Can't encode password: %(msg)s" % dict(msg=str(err))
+    theuser.set_password(password, is_encrypted)
 
     # try to get the email, for new users it is required
     if validate and not email:
@@ -422,20 +420,21 @@ class User(object):
         if not pw_hash or not password:
             return False, False
 
-        # check the password against the password hash
-        if not valid_password(password, pw_hash):
-            return False, False
+        pwd_context = self._cfg.cache.pwd_context
+        password_correct = False
+        recomputed_hash = None
+        try:
+            password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
+        except (ValueError, TypeError) as err:
+            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (self.id, str(err)))
+        else:
+            if recomputed_hash is not None:
+                data[ENC_PASSWORD] = recomputed_hash
+        return password_correct, bool(recomputed_hash)
 
-        new_pw_hash = upgrade_password(password, pw_hash)
-        if not new_pw_hash:
-            return True, False
-
-        data[ENC_PASSWORD] = new_pw_hash
-        return True, True
-
-    def set_password(self, password, is_encrypted=False):
+    def set_password(self, password, is_encrypted=False, salt=None):
         if not is_encrypted:
-            password = crypt_password(password)
+            password = self._cfg.cache.pwd_context.encrypt(password, salt=salt)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         session['user.session_token'] = self.generate_session_token(False)

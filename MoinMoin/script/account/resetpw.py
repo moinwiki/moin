@@ -1,4 +1,4 @@
-# Copyright: 2006 MoinMoin:ThomasWaldmann
+# Copyright: 2006-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2011 MoinMoin:ReimarBauer
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -14,7 +14,6 @@ from flask.ext.script import Command, Option
 
 from MoinMoin import user
 from MoinMoin.app import before_wiki
-from MoinMoin.util import crypto
 
 
 class Set_Password(Command):
@@ -45,6 +44,10 @@ class Set_Password(Command):
             print 'This user "{0!r}" does not exists!'.format(u.name)
             return
 
-        u.enc_password = crypto.crypt_password(password)
-        u.save()
-        print 'Password set.'
+        try:
+            u.enc_password = app.cfg.cache.pwd_context.encrypt(password)
+        except (TypeError, ValueError) as err:
+            print "Error: Password could not get processed, aborting."
+        else:
+            u.save()
+            print 'Password set.'

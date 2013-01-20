@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2005-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
@@ -150,6 +150,12 @@ class ConfigFunctionality(object):
             except (KeyError, ValueError):
                 raise error.ConfigurationError("You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
                     secret_min_length, secret_key_name))
+
+        from passlib.context import CryptContext
+        try:
+            self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
+        except ValueError as err:
+            raise error.ConfigurationError("passlib_crypt_context configuration is invalid [{0}].".format(err))
 
     def _config_check(self):
         """ Check namespace and warn about unknown names
@@ -311,6 +317,22 @@ options_no_group_name = {
 
     ('password_checker', DefaultExpression('_default_password_checker'),
      'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
+
+    ('passlib_crypt_context', dict(
+        # schemes we want to support (or deprecated schemes for which we still have
+        # hashes in our storage).
+        # note about bcrypt: it needs additional code (that is not pure python and
+        # thus either needs compiling or installing platform-specific binaries)
+        schemes=["sha512_crypt", ],
+        # default scheme for creating new pw hashes (if not given, passlib uses first from schemes)
+        #default="sha512_crypt",
+        # deprecated schemes get auto-upgraded to the default scheme at login
+        # time or when setting a password (including doing a moin account pwreset).
+        #deprecated=["auto"],
+        # vary rounds parameter randomly when creating new hashes...
+        #all__vary_rounds=0.1,
+     ),
+     "passlib CryptContext arguments, see passlib docs"),
   )),
   # ==========================================================================
   'spam_leech_dos': ('Anti-Spam / Leech / DOS',
@@ -448,6 +470,7 @@ options_no_group_name = {
         scroll_page_after_edit=True,
         show_comments=False,
         want_trivial=False,
+        enc_password=u'',  # empty value == invalid hash
         disabled=False,
         bookmarks={},
         quicklinks=[],
