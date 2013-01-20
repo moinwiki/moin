@@ -23,7 +23,7 @@ class Set_Password(Command):
                help='Set password for the user with user name NAME.'),
         Option('--uid', '-u', required=False, dest='uid', type=unicode,
                help='Set password for the user with user id UID.'),
-        Option('--password', '-p', required=True, dest='password', type=unicode,
+        Option('--password', '-p', required=False, dest='password', type=unicode,
                help='New password for this account.'),
     )
 
@@ -45,9 +45,12 @@ class Set_Password(Command):
             return
 
         try:
-            u.enc_password = app.cfg.cache.pwd_context.encrypt(password)
+            u.set_password(password)
         except (TypeError, ValueError) as err:
             print "Error: Password could not get processed, aborting."
         else:
             u.save()
-            print 'Password set.'
+            if password:
+                print 'Password set.'
+            else:
+                print 'Password invalidated.'

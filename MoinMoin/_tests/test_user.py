@@ -79,6 +79,29 @@ class TestUser(object):
         theUser = user.User(name=name, password=password)
         assert theUser.valid
 
+    def testInvalidatePassword(self):
+        """ user: test invalidation of password """
+        # Create test user
+        name = u'__Non Existent User Name__'
+        password = name
+        self.createUser(name, password)
+
+        # Try to "login"
+        theUser = user.User(name=name, password=password)
+        assert theUser.valid
+
+        # invalidate the stored password (hash)
+        theUser.set_password("") # emptry str or None means "invalidate"
+        theUser.save()
+
+        # Try to "login" with previous password
+        theUser = user.User(name=name, password=password)
+        assert not theUser.valid
+
+        # Try to "login" with empty password
+        theUser = user.User(name=name, password="")
+        assert not theUser.valid
+
     def testPasswordHash(self):
         """
         Create user, set a specific pw hash and check that user can login
