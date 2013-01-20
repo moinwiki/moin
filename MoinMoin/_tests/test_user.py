@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
 # Copyright: 2009 by ReimarBauer
+# Copyright: 2013 by ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -38,9 +39,7 @@ class TestSimple(object):
         assert u.exists()
 
 
-class TestLoginWithPassword(object):
-    """user: login tests"""
-
+class TestUser(object):
     def setup_method(self, method):
         # Save original user
         self.saved_user = flaskg.user
@@ -55,6 +54,8 @@ class TestLoginWithPassword(object):
         """
         # Restore original user
         flaskg.user = self.saved_user
+
+    # Passwords / Login -----------------------------------------------
 
     def testAsciiPassword(self):
         """ user: login with ascii password """
@@ -78,20 +79,26 @@ class TestLoginWithPassword(object):
         theUser = user.User(name=name, password=password)
         assert theUser.valid
 
-    def test_login(self):
+    def testPasswordHash(self):
         """
-        Create user with some password and check that user can login.
+        Create user, set a specific pw hash and check that user can login
+        with the correct password and can not log in with a wrong password.
         """
         # Create test user
         name = u'Test User'
-        password = '12345'
-        salt = 'salt'
-        pw_hash = ''
+        # sha512_crypt passlib hash for '12345':
+        pw_hash = '$6$rounds=1001$y9ObPHKb8cvRCs5G$39IW1i5w6LqXPRi4xqAu3OKv1UOpVKNkwk7zPnidsKZWqi1CrQBpl2wuq36J/s6yTxjCnmaGzv/2.dAmM8fDY/'
         self.createUser(name, pw_hash, True)
 
-        # Try to "login"
-        theuser = user.User(name=name, password=password)
+        # Try to "login" with correct password
+        theuser = user.User(name=name, password='12345')
         assert theuser.valid
+
+        # Try to "login" with a wrong password
+        theuser = user.User(name=name, password='wrong')
+        assert not theuser.valid
+
+    # Subscriptions ---------------------------------------------------
 
     def testSubscriptionSubscribedPage(self):
         """ user: tests is_subscribed_to  """

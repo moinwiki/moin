@@ -101,6 +101,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
+        'passlib>=1.6.0', # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.8.2',

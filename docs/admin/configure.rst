@@ -630,7 +630,28 @@ checks, it e.g. won't forbid using a dictionary word as password.
 
 Password storage
 ----------------
-Moin never stores passwords in clear text.
+Moin never stores wiki user passwords in clear text, but uses strong
+cryptographic hashes provided by the "passlib" library, see there for details:
+
+    http://packages.python.org/passlib/.
+
+The passlib docs recommend 3 hashing schemes that have good security:
+sha512_crypt, pbkdf2_sha512 and bcrypt (bcrypt has additional binary/compiled
+package requirements, please refer to the passlib docs in case you want to use
+it).
+
+By default, we use sha512_crypt hashes with default parameters as provided
+by passlib (this is same algorithm as moin >= 1.9.7 used by default).
+
+In case you experience slow logins or feel that you might need to tweak the
+hash generation for other reasons, please read the passlib docs. moin allows
+you to configure passlib's CryptContext params within the wiki config, the
+default is this:
+
+::
+    passlib_crypt_context = dict(
+        schemes=["sha512_crypt", ],
+    )
 
 
 Authorization
