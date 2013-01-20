@@ -440,6 +440,7 @@ class Item(object):
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
+                                             return_rev=True,
                                              )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
