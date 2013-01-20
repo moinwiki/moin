@@ -115,6 +115,22 @@ class BytesMutableStoreBase(MutableStoreBase):
         """
 
 
+class BytesMutableStoreMixin(object):
+    """
+    mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
+
+    class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
+        # that's all, nothing more needed
+    """
+    def __getitem__(self, key):
+        with super(BytesMutableStoreMixin, self).__getitem__(key) as stream:
+            return stream.read()
+
+    def __setitem__(self, key, value):
+        with StringIO(value) as stream:
+            super(BytesMutableStoreMixin, self).__setitem__(key, stream)
+
+
 class FileMutableStoreBase(MutableStoreBase):
     @abstractmethod
     def __setitem__(self, key, stream):
@@ -125,3 +141,18 @@ class FileMutableStoreBase(MutableStoreBase):
               closing that file later. caller must not rely on some specific
               file pointer position after we return.
         """
+
+class FileMutableStoreMixin(object):
+    """
+    mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
+
+    class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase)
+        # that's all, nothing more needed
+    """
+    def __getitem__(self, key):
+        value = super(FileMutableStoreMixin, self).__getitem__(key)
+        return StringIO(value)
+
+    def __setitem__(self, key, stream):
+        value = stream.read()
+        super(FileMutableStoreMixin, self).__setitem__(key, value)
