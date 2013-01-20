@@ -34,20 +34,20 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("save", serialization.Serialize())
     manager.add_command("load", serialization.Deserialize())
     from MoinMoin.script.account.create import Create_User
-    manager.add_command("account_create", Create_User())
+    manager.add_command("account-create", Create_User())
     from MoinMoin.script.account.disable import Disable_User
-    manager.add_command("account_disable", Disable_User())
+    manager.add_command("account-disable", Disable_User())
     from MoinMoin.script.account.resetpw import Set_Password
-    manager.add_command("account_password", Set_Password())
+    manager.add_command("account-password", Set_Password())
     from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
-    manager.add_command("maint_reduce_revisions", Reduce_Revisions())
+    manager.add_command("maint-reduce-revisions", Reduce_Revisions())
     from MoinMoin.script.maint.set_meta import Set_Meta
-    manager.add_command("maint_set_meta", Set_Meta())
+    manager.add_command("maint-set-meta", Set_Meta())
     from MoinMoin.script.maint import modify_item
     manager.add_command("item-get", modify_item.GetItem())
     manager.add_command("item-put", modify_item.PutItem())
     from MoinMoin.script.maint.modified_systemitems import Modified_SystemItems
-    manager.add_command("maint_modified_systemitems", Modified_SystemItems())
+    manager.add_command("maint-modified-systemitems", Modified_SystemItems())
     from MoinMoin.script.migration.moin19.import19 import ImportMoin19
     manager.add_command("import19", ImportMoin19())
 
