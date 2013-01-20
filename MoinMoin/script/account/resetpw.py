@@ -12,8 +12,32 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask.ext.script import Command, Option
 
+from MoinMoin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL
 from MoinMoin import user
 from MoinMoin.app import before_wiki
+
+
+class Fault(Exception):
+    """something went wrong"""
+
+class NoSuchUser(Fault):
+    """raised if no such user exists"""
+
+class MailFailed(Fault):
+    """raised if e-mail sending failed"""
+
+
+def set_password(uid, password, notify=False):
+    u = user.User(uid)
+    if u and u.exists():
+        u.set_password(password)
+        u.save()
+        if notify and not u.disabled and u.email:
+            mailok, msg = u.mail_password_recovery()
+            if not mailok:
+                raise MailFailed(msg)
+    else:
+        raise NoSuchUser('User does not exist (name: %r id: %r)!' % (u.name, u.id))
 
 
 class Set_Password(Command):
@@ -25,10 +49,16 @@ class Set_Password(Command):
                help='Set password for the user with user id UID.'),
         Option('--password', '-p', required=False, dest='password', type=unicode,
                help='New password for this account.'),
+        Option('--all-users', '-a', required=False, dest='all_users', action='store_true', default=False,
+            help='Reset password for ALL users.'),
+        Option('--notify', '-N', required=False, dest='notify', action='store_true', default=False,
+            help='Notify user(s), send them an E-Mail with a password reset link.'),
+        Option('--verbose', '-v', required=False, dest='verbose', action='store_true', default=False,
+            help='Verbose operation'),
     )
 
-    def run(self, name, uid, password):
-        flags_given = name or uid
+    def run(self, name, uid, password, all_users, notify, verbose):
+        flags_given = name or uid or all_users
         if not flags_given:
             print 'incorrect number of arguments'
             import sys
@@ -36,21 +66,23 @@ class Set_Password(Command):
 
         before_wiki()
         if uid:
-            u = user.User(uid)
+            query = {ITEMID: uid}
         elif name:
-            u = user.User(auth_username=name)
+            query = {NAME_EXACT: name}
+        elif all_users:
+            query = {}
 
-        if not u.exists():
-            print 'This user "{0!r}" does not exists!'.format(u.name)
-            return
-
-        try:
-            u.set_password(password)
-        except (TypeError, ValueError) as err:
-            print "Error: Password could not get processed, aborting."
-        else:
-            u.save()
-            if password:
-                print 'Password set.'
+        # sorting the list so we have some specific, reproducable order
+        uids_metas = sorted([(rev.meta[ITEMID], rev.meta) for rev in user.search_users(**query)])
+        total = len(uids_metas)
+        for nr, (uid, meta) in enumerate(uids_metas, start=1):
+            name = meta[NAME]
+            email = meta[EMAIL]
+            try:
+                set_password(uid, password, notify=notify)
+            except Fault, err:
+                status = "FAILURE: [%s]" % str(err)
             else:
-                print 'Password invalidated.'
+                status = "SUCCESS"
+            if verbose:
+                print "uid %s, name %s, email %s (%05d / %05d) %s" % (uid, name, email, nr, total, status)
