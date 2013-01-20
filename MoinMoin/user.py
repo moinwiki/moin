@@ -433,7 +433,23 @@ class User(object):
         return password_correct, bool(recomputed_hash)
 
     def set_password(self, password, is_encrypted=False, salt=None):
-        if not is_encrypted:
+        """
+        Set or update the password (hash) stored for this user.
+
+        :param password: the new password (or pw hash)
+                         giving an empty string or None as password will invalidate the stored
+                         password hash (meaning that it will not match against any given password)
+        :param is_encrypted: if False (default), the password is given as plaintext and will be
+                             "encrypted" (hashed) before getting stored.
+                             if True, the already "encrypted" password hash is given in param
+                             password and will be stored "as is" - this is mainly useful for tests.
+        :param salt: if None (default), passlib will generate and use a random salt.
+                     Otherwise, the given salt will be used - this is mainly useful for tests.
+        """
+        if not password:
+            # invalidate the pw hash
+            password = ''
+        elif not is_encrypted:
             password = self._cfg.cache.pwd_context.encrypt(password, salt=salt)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
