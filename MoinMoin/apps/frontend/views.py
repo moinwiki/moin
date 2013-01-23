@@ -1,5 +1,5 @@
 # Copyright: 2012 MoinMoin:CheerXiao
-# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:FlorianKrupicka
@@ -1188,16 +1188,17 @@ class ValidPasswordRecovery(Validator):
     """Validator for a valid password recovery form
     """
     passwords_mismatch_msg = L_('The passwords do not match.')
-    password_encoding_problem_msg = L_('New password is unacceptable, encoding trouble.')
+    password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
+        password = element['password1'].value
         try:
-            crypto.crypt_password(element['password1'].value)
-        except UnicodeError:
-            return self.note_error(element, state, 'password_encoding_problem_msg')
+            app.cfg.cache.pwd_context.encrypt(password)
+        except (ValueError, TypeError) as err:
+            return self.note_error(element, state, 'password_problem_msg')
 
         return True
 
@@ -1322,7 +1323,7 @@ class ValidChangePass(Validator):
     """
     passwords_mismatch_msg = L_('The passwords do not match.')
     current_password_wrong_msg = L_('The current password was wrong.')
-    password_encoding_problem_msg = L_('New password is unacceptable, encoding trouble.')
+    password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
         if not (element['password_current'].valid and element['password1'].valid and element['password2'].valid):
@@ -1334,10 +1335,11 @@ class ValidChangePass(Validator):
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
+        password = element['password1'].value
         try:
-            crypto.crypt_password(element['password1'].value)
-        except UnicodeError:
-            return self.note_error(element, state, 'password_encoding_problem_msg')
+            app.cfg.cache.pwd_context.encrypt(password)
+        except (ValueError, TypeError) as err:
+            return self.note_error(element, state, 'password_problem_msg')
         return True
 
 

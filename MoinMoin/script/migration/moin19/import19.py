@@ -536,7 +536,7 @@ class UserRevision(object):
                 'editor_default', # not used any more
                 'editor_ui', # not used any more
                 'external_target', # ancient, not used any more
-                'passwd', # ancient, not used any more (use enc_passwd)
+                'passwd', # ancient, not used any more (use enc_password)
                 'show_emoticons', # ancient, not used any more
                 'show_fancy_diff', # kind of diff display now depends on mimetype
                 'show_fancy_links', # not used any more (now link rendering depends on theme)
@@ -567,6 +567,17 @@ class UserRevision(object):
         for key in empty_kill:
             if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:
                 del metadata[key]
+
+        # moin2 only supports passlib generated hashes, drop everything else
+        # (users need to do pw recovery in case they are affected)
+        pw = metadata.get('enc_password')
+        if pw is not None:
+            if pw.startswith('{PASSLIB}'):
+                # take it, but strip the prefix as moin2 does not use that any more
+                metadata['enc_password'] = pw[len('{PASSLIB}'):]
+            else:
+                # drop old, unsupported (and also more or less unsafe) hashing scheme
+                del metadata['enc_password']
 
         # TODO quicklinks and subscribed_items - check for non-interwiki elements and convert them to interwiki
 

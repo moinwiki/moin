@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright: 2011 by MoinMoin:ThomasWaldmann
+# Copyright: 2011-2013 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -29,49 +29,6 @@ class TestRandom(object):
         assert result == expected, ('Expected length "%(expected)s" but got "%(result)s"') % locals()
 
 
-class TestEncodePassword(object):
-    """crypto: encode passwords tests"""
-
-    def testAscii(self):
-        """user: encode ascii password"""
-        # u'MoinMoin' and 'MoinMoin' should be encoded to same result
-        expected = "{SSHA256}n0JB8FCTQCpQeg0bmdgvTGwPKvxm8fVNjSRD+JGNs50xMjM0NQ=="
-
-        result = crypto.crypt_password("MoinMoin", salt='12345')
-        assert result == expected
-        result = crypto.crypt_password(u"MoinMoin", salt='12345')
-        assert result == expected
-
-    def testUnicode(self):
-        """ user: encode unicode password """
-        result = crypto.crypt_password(u'סיסמה סודית בהחלט', salt='12345') # Hebrew
-        expected = "{SSHA256}pdYvYv+4Vph259sv/HAm7zpZTv4sBKX9ITOX/m00HMsxMjM0NQ=="
-        assert result == expected
-
-    def testupgradepassword(self):
-        """ return new password hash with better hash """
-        result = crypto.upgrade_password(u'MoinMoin', "junk_hash")
-        assert result.startswith('{SSHA256}')
-
-    def testvalidpassword(self):
-        """ validate user password """
-        hash_val = crypto.crypt_password(u"MoinMoin", salt='12345')
-        result = crypto.valid_password(u'MoinMoin', hash_val)
-        assert result
-        with pytest.raises(ValueError):
-            invalid_result = crypto.valid_password("MoinMoin", '{junk_value}')
-
-    def testvalidpassword2(self):
-        """ validate user password """
-        hash_val = crypto.crypt_password(u"MoinMoin")
-        result = crypto.valid_password('MoinMoin', hash_val)
-        assert result
-        result = crypto.valid_password('WrongPassword', hash_val)
-        assert not result
-        with pytest.raises(ValueError):
-            invalid_result = crypto.valid_password("MoinMoin", '{junk_value}')
-
-
 class TestToken(object):
     """ tests for the generated tokens """
 
@@ -96,6 +53,10 @@ class TestToken(object):
         result = crypto.valid_token(test_key, test_token)
         assert not result
 
+
+class TestCacheKey(object):
+    """ tests for cache key generation """
+
     def test_cache_key(self):
         """ The key must be different for different <kw> """
         test_kw1 = {'MoinMoin': 'value1'}
@@ -103,5 +64,6 @@ class TestToken(object):
         test_kw2 = {'Moin2': 'value2'}
         result2 = crypto.cache_key(**test_kw2)
         assert result1 != result2, ("Expected different keys for different <kw> but got the same")
+
 
 coverage_modules = ['MoinMoin.util.crypto']

@@ -19,9 +19,9 @@ Upgrading
 
 From moin < 1.9
 ===============
-If you run an older moin version than 1.9, please first upgrade to moin 1.9.x
-before upgrading to moin2. 
-You may want to run 1.9.x for a while to be sure everything is working as expected.
+If you run an older moin version than 1.9, please first upgrade to a recent
+moin 1.9.x version (preferably >= 1.9.7) before upgrading to moin2.
+You may want to run that for a while to be sure everything is working as expected.
 
 Note: Both moin 1.9.x and moin2 are WSGI applications.
 Upgrading to 1.9 first also makes sense concerning the WSGI / server side.
@@ -29,6 +29,14 @@ Upgrading to 1.9 first also makes sense concerning the WSGI / server side.
 
 From moin 1.9.x
 ===============
+
+If you want to keep your user's password hashes and migrate them to moin2,
+make sure you use moin >= 1.9.7 WITH enabled passlib support and that all
+password hashes stored in user profiles are {PASSLIB} hashes. Other hashes
+will get removed in the migration process and users will need to do password
+recovery via email (or with admin help, if that does not work).
+
+
 Backup
 ------
 Have a backup of everything, so you can go back in case it doesn't do what
@@ -55,6 +63,8 @@ Example configuration::
     interwikiname = u'...' # critical, make sure it is same as in 1.9!
     sitename = u'...' # same as in 1.9
     item_root = u'...' # see page_front_page in 1.9
+
+    # if you had a custom passlib_crypt_context in 1.9, put it here
 
     # configure backend and ACLs to use in future
     # TODO
