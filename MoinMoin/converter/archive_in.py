@@ -37,13 +37,14 @@ class ArchiveConverter(TableMixin):
         return cls()
 
     def process_name(self, member_name):
+        name = unicode(member_name, 'utf-8')
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query=u'do=get&member={0}'.format(member_name)),
+            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query=u'do=get&member={0}'.format(name)),
         }
-        return moin_page.a(attrib=attrib, children=[member_name, ])
+        return moin_page.a(attrib=attrib, children=[name, ])
 
     def process_datetime(self, dt):
-        return dt.isoformat()
+        return unicode(dt.isoformat(' '))
 
     def process_size(self, size):
         return unicode(size)
@@ -56,7 +57,7 @@ class ArchiveConverter(TableMixin):
                          self.process_datetime(dt),
                          self.process_name(name),
                         ) for size, dt, name in contents]
-            table = self.build_dom_table(contents, head=[_("Size"), _("Date"), _("Name")], cls='zebra')
+            table = self.build_dom_table(contents, head=[_("Size"), _("Timestamp"), _("Name")], cls='zebra')
             body = moin_page.body(children=(table, ))
             return moin_page.page(children=(body, ))
         except ArchiveException as err:
@@ -87,11 +88,13 @@ class TarConverter(ArchiveConverter):
             rows = []
             tf = tarfile.open(fileobj=fileobj, mode='r')
             for tinfo in tf.getmembers():
-                rows.append((
-                    tinfo.size,
-                    datetime.utcfromtimestamp(tinfo.mtime),
-                    tinfo.name,
-                ))
+                if tinfo.isfile():
+                    # display only normal files, not directories
+                    rows.append((
+                        tinfo.size,
+                        datetime.utcfromtimestamp(tinfo.mtime),
+                        tinfo.name,
+                    ))
             return rows
         except tarfile.TarError as err:
             raise ArchiveException(str(err))
@@ -106,11 +109,13 @@ class ZipConverter(ArchiveConverter):
             rows = []
             zf = zipfile.ZipFile(fileobj, mode='r')
             for zinfo in zf.filelist:
-                rows.append((
-                    zinfo.file_size,
-                    datetime(*zinfo.date_time), # y,m,d,h,m,s
-                    zinfo.filename,
-                ))
+                if not (zinfo.file_size == 0 and zinfo.filename.endswith('/')):
+                    # display only normal files, not directories
+                    rows.append((
+                        zinfo.file_size,
+                        datetime(*zinfo.date_time), # y,m,d,h,m,s
+                        zinfo.filename,
+                    ))
             return rows
         except (RuntimeError, zipfile.BadZipfile) as err:
             # RuntimeError is raised by zipfile stdlib module in case of
