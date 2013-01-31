@@ -6,7 +6,9 @@ MoinMoin - MIME helpers
 """
 
 
-class Type(object):
+from collections import namedtuple
+
+class Type(namedtuple('Type', 'type subtype parameters')):
     """
     :ivar type: Type part
     :type type: unicode
@@ -18,7 +20,7 @@ class Type(object):
 
     __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~""")
 
-    def __init__(self, _type=None, type=None, subtype=None, parameters=None):
+    def __new__(cls, _type=None, type=None, subtype=None, parameters=None):
         """
         :param _type: Type object or string representation
         :keyword type: Type part
@@ -26,36 +28,28 @@ class Type(object):
         :keyword parameters: Parameters part
         """
         if isinstance(_type, Type):
-            self.type = _type.type
-            self.subtype = _type.subtype
-            self.parameters = _type.parameters.copy()
-
+            new_type, new_subtype, new_parameters = _type.type, _type.subtype, _type.parameters.copy()
+        elif _type:
+            new_type, new_subtype, new_parameters = cls._parse(_type)
         else:
-            self.type = self.subtype = None
-            self.parameters = {}
-
-            if _type:
-                self._parse(_type)
+            new_type = new_subtype = None
+            new_parameters = {}
 
         if type is not None:
-            self.type = type
+            new_type = type
         if subtype is not None:
-            self.subtype = subtype
+            new_subtype = subtype
         if parameters is not None:
-            self.parameters.update(parameters)
+            new_parameters.update(parameters)
+
+        return super(Type, cls).__new__(cls, new_type, new_subtype, new_parameters)
 
     def __eq__(self, other):
         if isinstance(other, basestring):
             return self.__eq__(self.__class__(other))
 
         if isinstance(other, Type):
-            if self.type != other.type:
-                return False
-            if self.subtype != other.subtype:
-                return False
-            if self.parameters != other.parameters:
-                return False
-            return True
+            return super(Type, self).__eq__(other)
 
         return NotImplemented
 
@@ -64,14 +58,6 @@ class Type(object):
         if ret is NotImplemented:
             return ret
         return not ret
-
-    def __repr__(self):
-        return '<{0} object: type: {1!r}; subtype: {2!r}; parameters: {3!r}>'.format(
-                self.__class__.__name__,
-                self.type,
-                self.subtype,
-                self.parameters,
-                )
 
     def __unicode__(self):
         ret = [u'{0}/{1}'.format(self.type or '*', self.subtype or '*')]
@@ -92,20 +78,24 @@ class Type(object):
                 return False
         return True
 
-    def _parse(self, type):
+    @classmethod
+    def _parse(cls, type):
         parts = type.split(';')
 
         type, subtype = parts[0].strip().lower().split('/', 1)
 
-        self.type = type != '*' and type or None
-        self.subtype = subtype != '*' and subtype or None
+        type = type != '*' and type or None
+        subtype = subtype != '*' and subtype or None
+        parameters = {}
 
         for param in parts[1:]:
             key, value = param.strip().split('=', 1)
             # remove quotes
             if value[0] == '"' and value[-1] == '"':
                 value = value[1:-1]
-            self.parameters[key.lower()] = value
+            parameters[key.lower()] = value
+
+        return type, subtype, parameters
 
     def issupertype(self, other):
         """
