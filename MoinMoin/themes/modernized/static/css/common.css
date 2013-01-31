@@ -186,7 +186,7 @@ html{color:#000;font-family:Helvetica,Arial,sans-serif}
 p{margin:1em 0;font-size:1em;line-height:1.3em}
 sub{vertical-align:sub}
 sup{vertical-align:super}
-ins{background-color:#fff;text-decoration:underline}
+ins{background-color:inherit;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
 .moin-integer{text-align:right;padding-right:1em;width:2%}
