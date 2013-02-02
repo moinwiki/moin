@@ -112,7 +112,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
         :param map: the :class:`Map`.
         """
-        regex = '[^/].*?[^/]'
+        regex = '[^/]+?(/[^/]+?)*'
         weight = 200
 
     app.url_map.converters['itemname'] = ItemNameConverter
