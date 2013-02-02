@@ -85,6 +85,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     from email.Utils import formatdate, make_msgid
 
     cfg = app.cfg
+    if not cfg.mail_enabled:
+        return (0, _("Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."))
     mail_from = mail_from or cfg.mail_from
 
     logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
