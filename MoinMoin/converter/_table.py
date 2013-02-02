@@ -17,7 +17,7 @@ class TableMixin(object):
     """
     Mixin to support building a DOM table.
     """
-    def add_numeric_class (self, cell, table_cell):
+    def add_numeric_class(self, cell, table_cell):
         """
         Add numeric class attribute if cell is numeric.
         """
