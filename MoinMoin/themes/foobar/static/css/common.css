@@ -441,6 +441,7 @@ table.navigation{float:right;margin:2px}
 .moin-permalink{display:none}
 sub{vertical-align:sub}
 sup{vertical-align:super}
+ins{background-color:inherit;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
 .moin-integer{text-align:right;padding-right:1em;width:2%}

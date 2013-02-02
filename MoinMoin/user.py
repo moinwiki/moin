@@ -426,7 +426,7 @@ class User(object):
         try:
             password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
-            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (self.id, str(err)))
+            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (self.name, str(err)))
         else:
             if recomputed_hash is not None:
                 data[ENC_PASSWORD] = recomputed_hash

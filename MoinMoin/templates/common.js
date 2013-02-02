@@ -45,41 +45,6 @@ function selected_link() {
 $(document).ready(selected_link);
 
 
-// Insert Zero-Width-Space characters into long text strings of textNode elements.  Executed on page load.
-// Firefox does not support CSS with {word-wrap: break-word;} within tables.
-// As a result, Firefox may display tables with long urls or page names as very wide tables.
-// This function alters table cells by inserting a zero-width-space into long text strings after every 5 characters.
-// The moin-wordbreak class is intended for use on TD elements, but may be used on TABLE, TR, THEAD, TBODY, or TFOOT.
-function moinFirefoxWordBreak() {
-    "use strict";
-    // TODO:  Test for browser version when/if a future Firefox supports break-word within tables.
-    if (!$.browser.mozilla) {
-        return;
-    }
-    var child, words, parents, i, j;
-    // Only textNodes are of interest, but there is no way to select them directly.
-    // Select all elements with the moin-wordbreak class and add all selectable descendants of those elements.
-    // Then search for children that are textNodes; TDs or THs and elements descended from them are likely parents of textNodes.
-    parents = $(".moin-wordbreak").add(".moin-wordbreak *");
-    for (i = 0; i < parents.length; i += 1) {
-        child = parents[i].firstChild;
-        while (child) {
-            if (child.nodeType === 3) {
-                words = child.textContent.split(" ");
-                for (j = 0; j < words.length; j += 1) {
-                    // \u200B denotes a zero-width-space character (for easy testing, replace with a visible character like Q)
-                    words[j] = words[j].replace(/(.{5})/g, "$1\u200B");
-                }
-                child.textContent = words.join(" ");
-            }
-            child = child.nextSibling;
-        }
-    }
-}
-$(moinFirefoxWordBreak);
-
-
-
 // toggleComments is executed when user clicks a Comments button and conditionally on dom ready.
 var pageComments = null; // will hold list of elements with class "comment"
 function toggleComments() {
