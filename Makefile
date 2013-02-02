@@ -65,6 +65,14 @@ supporttgz:
 	@# create the support archive:
 	@tar czf moin2-support.tgz support
 
+# Run local appengine development server 
+gaeserver:
+	../google_appengine/dev_appserver.py .
+
+# Upload app to appengine
+gaeupload:
+	../google_appengine/appcfg.py update .
+
 clean: clean-devwiki clean-pyc clean-orig clean-rej
 	-rm -rf build
 
