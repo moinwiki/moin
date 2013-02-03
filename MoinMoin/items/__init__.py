@@ -504,21 +504,23 @@ class Item(object):
         added_dir_relnames = set()
 
         for rev in subitems:
-            fullname = rev.meta[NAME]  # XXX BROKEN, this is a list of names now
-            relname = fullname[prefixlen:]
-            if '/' in relname:
-                # Find the *direct* subitem that is the ancestor of current
-                # (indirect) subitem. e.g. suppose when the index root is
-                # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
-                # 'foo/bar' will be found.
-                direct_relname = relname.partition('/')[0]
-                if direct_relname not in added_dir_relnames:
-                    added_dir_relnames.add(direct_relname)
-                    direct_fullname = prefix + direct_relname
-                    direct_rev = get_storage_revision(direct_fullname)
-                    dirs.append(IndexEntry(direct_relname, direct_rev.meta))
-            else:
-                files.append(IndexEntry(relname, rev.meta))
+            fullnames = rev.meta[NAME]
+            for fullname in fullnames:
+                if fullname.startswith(prefix):
+                    relname = fullname[prefixlen:]
+                    if '/' in relname:
+                        # Find the *direct* subitem that is the ancestor of current
+                        # (indirect) subitem. e.g. suppose when the index root is
+                        # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
+                        # 'foo/bar' will be found.
+                        direct_relname = relname.partition('/')[0]
+                        if direct_relname not in added_dir_relnames:
+                            added_dir_relnames.add(direct_relname)
+                            direct_fullname = prefix + direct_relname
+                            direct_rev = get_storage_revision(direct_fullname)
+                            dirs.append(IndexEntry(direct_relname, direct_rev.meta))
+                    else:
+                        files.append(IndexEntry(relname, rev.meta))
 
         return dirs, files
 
