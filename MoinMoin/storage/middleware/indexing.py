@@ -156,8 +156,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             return self.data.tell(*args, **kw)
 
     if not item_name:
-        # only used for logging, below
-        item_name = unicode(meta[NAME])
+        names = meta.get(NAME)
+        if names:
+            item_name = names[0]
+        else:
+            item_name = u'anonymous'
 
     rev = PseudoRev(meta, data)
     try:
