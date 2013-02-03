@@ -415,7 +415,7 @@ class Item(object):
             name = self.name
         oldname = meta.get(NAME)
         if oldname:
-            if type(oldname) is not types.ListType:
+            if not isinstance(oldname, list):
                 oldname = [oldname]
             if delete or name not in oldname: # this is a delete or rename
                 meta[NAME_OLD] = oldname[:]
