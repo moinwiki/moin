@@ -1681,7 +1681,8 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
+    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+                  if rev.name is not None]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word
