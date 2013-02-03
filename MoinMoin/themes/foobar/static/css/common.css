@@ -325,8 +325,8 @@ a:link{color:#1e90ff}
 a:visited{color:#5f9ea0}
 a:hover{color:#007cef;text-decoration:underline}
 a:active{color:#51d443;text-decoration:underline}
-a.moin-nonexistent:link{color:#808080}
-a.moin-nonexistent:visited{color:#808080}
+a.moin-nonexistent:link,a.moin-nonexistent:visited{color:#808080;}
+a.moin-nonexistent:link img,a.moin-nonexistent:visited img,a.moin-nonexistent:link object,a.moin-nonexistent:visited object{background:#808080;border:3px dashed #616161}
 a.moin-nonexistent:hover{color:#ff2727}
 a.moin-nonexistent:active{color:#ff2727}
 .current-link{color:#f82a2a !important}

@@ -708,10 +708,13 @@ a
     &:active
         color active_color
         text-decoration underline
-    &.moin-nonexistent:link
-        color nonexistent_link_color
+    &.moin-nonexistent:link,
     &.moin-nonexistent:visited
         color nonexistent_link_color
+        img,
+        object
+            background nonexistent_link_color
+            border 3px dashed footer_color
     &.moin-nonexistent:hover
         color nonexistent_hover_color
     &.moin-nonexistent:active
