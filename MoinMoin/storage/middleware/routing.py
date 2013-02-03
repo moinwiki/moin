@@ -106,10 +106,13 @@ class Backend(MutableBackendBase):
             # is fully qualified and determine the namespace from it:
             fq_names = meta[NAME]
             assert isinstance(fq_names, list)
-            backend_name, item_names, namespace = self._get_backend(fq_names)
-            # side effect: update the metadata with namespace and short item name (no ns)
-            meta[NAMESPACE] = namespace
-            meta[NAME] = item_names
+            if fq_names:
+                backend_name, item_names, namespace = self._get_backend(fq_names)
+                # side effect: update the metadata with namespace and short item name (no ns)
+                meta[NAMESPACE] = namespace
+                meta[NAME] = item_names
+            else:
+                raise ValueError('can not determine namespace: empty NAME list, no NAMESPACE metadata present')
         else:
             if namespace:
                 namespace += u':' # needed for _get_backend
