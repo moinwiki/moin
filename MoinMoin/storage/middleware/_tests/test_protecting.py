@@ -63,7 +63,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         revids = []
         for item_name, acl, content in items:
             item = self.imw[item_name]
-            r = item.store_revision(dict(name=[item_name, ], acl=acl),  # need contenttype=u'text/plain' in dict?
+            r = item.store_revision(dict(name=[item_name, ], acl=acl, contenttype=u'text/plain'),
                                     StringIO(content), return_rev=True)
             revids.append(r.revid)
         return revids

@@ -107,7 +107,6 @@ class TestUser(object):
         Create user, set a specific pw hash and check that user can login
         with the correct password and can not log in with a wrong password.
         """
-
         # Create test user
         name = u'Test User'
         # sha512_crypt passlib hash for '12345':
