@@ -25,7 +25,7 @@ class TestSimple(object):
         email = u"foo@example.org"
         # nonexisting user
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name, ]
         assert not u.valid
         assert not u.exists()
         # create a user
@@ -33,7 +33,7 @@ class TestSimple(object):
         assert ret is None, "create_user returned: {0}".format(ret)
         # existing user
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name, ]
         assert u.email == email
         assert u.valid
         assert u.exists()
@@ -107,6 +107,7 @@ class TestUser(object):
         Create user, set a specific pw hash and check that user can login
         with the correct password and can not log in with a wrong password.
         """
+
         # Create test user
         name = u'Test User'
         # sha512_crypt passlib hash for '12345':

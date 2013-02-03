@@ -19,6 +19,7 @@
 
 import time
 import itertools
+import types
 import json
 from StringIO import StringIO
 from collections import namedtuple
@@ -110,7 +111,7 @@ class DummyRev(dict):
         self.data = StringIO('')
         self.revid = None
         if self.item:
-            self.meta[NAME] = self.item.name
+            self.meta[NAME] = [self.item.name]
 
 
 class DummyItem(object):
@@ -277,7 +278,6 @@ class Item(object):
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
-            NAME,
             ITEMID, REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
@@ -313,31 +313,27 @@ class Item(object):
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, name, comment, action):
-        self._save(self.meta, self.content.data, name=name, action=action, comment=comment)
+    def _rename(self, name, comment, action, delete=False):
+        self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
         old_prefixlen = len(self.subitems_prefix)
-        new_prefix = name + '/'
+        new_prefix = name + '/'  # XXX BROKEN for name==None
         for child in self.get_subitem_revs():
-            child_oldname = child.meta[NAME]
+            child_oldname = child.meta[NAME]  # XXX BROKEN - this is a list of names now
             child_newname = new_prefix + child_oldname[old_prefixlen:]
             item = Item.create(child_oldname)
-            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment)
+            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
-        rename this item to item <name>
+        rename this item to item <name> (replace current name by another name in the NAME list)
         """
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
         """
-        delete this item
+        delete this item (remove current name from NAME list)
         """
-        trash_prefix = u'Trash/' # XXX move to config
-        now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
-        # make trash name unique by including timestamp:
-        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
-        return self._rename(trashname, comment, action=u'TRASH')
+        return self._rename(None, comment, action=u'TRASH', delete=True)
 
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
@@ -392,7 +388,8 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+              overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
         try:
@@ -411,9 +408,20 @@ class Item(object):
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if type(oldname) is not types.ListType:
+                oldname = [oldname]
+            if delete or name not in oldname: # this is a delete or rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                if not delete:
+                    oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
@@ -490,7 +498,7 @@ class Item(object):
         added_dir_relnames = set()
 
         for rev in subitems:
-            fullname = rev.meta[NAME]
+            fullname = rev.meta[NAME]  # XXX BROKEN, this is a list of names now
             relname = fullname[prefixlen:]
             if '/' in relname:
                 # Find the *direct* subitem that is the ancestor of current
@@ -563,7 +571,7 @@ class Item(object):
 
     def name_initial(self, subitems):
         prefixlen = len(self.subitems_prefix)
-        initials = [(item.meta[NAME][prefixlen]) for item in subitems]
+        initials = [(item.meta[NAME][prefixlen]) for item in subitems]  # XXX BROKEN - this is a list of names now
         return initials
 
     delete_template = 'delete.html'

@@ -44,7 +44,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         assert u'ExampleUser' in flaskg.groups[u'SomeGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'AnotherGroup'])
 
-        item = update_item(u'SomeGroup', {NAME: u'AnotherGroup', USERGROUP: ["ExampleUser"]}, DATA)
+        item = update_item(u'SomeGroup', {NAME: [u'AnotherGroup', ], USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
 
