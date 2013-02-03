@@ -760,10 +760,7 @@ def index(item_name):
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
 
-    initials = item.name_initial(item.get_subitem_revs())
-    initials = [initial.upper() for initial in initials]
-    initials = list(set(initials))
-    initials = sorted(initials)
+    initials = item.name_initial(item.get_subitem_revs(), uppercase=True)
 
     dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
