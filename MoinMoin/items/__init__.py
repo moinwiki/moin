@@ -17,9 +17,6 @@
     Each class in this module corresponds to an itemtype.
 """
 
-import time
-import itertools
-import types
 import json
 from StringIO import StringIO
 from collections import namedtuple
@@ -41,7 +38,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type

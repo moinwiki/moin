@@ -56,8 +56,6 @@ import shutil
 import itertools
 import time
 import datetime
-import types
-from StringIO import StringIO
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -67,7 +65,6 @@ from flask import g as flaskg
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
-from whoosh.index import EmptyIndexError
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
@@ -91,7 +88,6 @@ from MoinMoin.constants.keys import ITEMTYPE
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
-from MoinMoin.util.crypto import make_uuid
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
