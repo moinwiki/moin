@@ -96,6 +96,39 @@ WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 
+def get_names(meta):
+    """
+    Get the (list of) names from meta data and deal with misc. bad things that
+    can happen then (while not all code is fixed to do it correctly).
+
+    TODO make sure meta[NAME] is always a list of unicode
+
+    :param meta: a metadata dictionary that might have a NAME key
+    :return: list of names
+    """
+    msg = "NAME is not a list but %r - fix this! Workaround enabled."
+    names = meta.get(NAME)
+    if names is None:
+        logging.warning(msg % names)
+        names = []
+    elif isinstance(names, str):
+        logging.warning(msg % names)
+        names = [names.decode('utf-8'), ]
+    elif isinstance(names, unicode):
+        logging.warning(msg % names)
+        names = [names, ]
+    elif isinstance(names, tuple):
+        logging.warning(msg % names)
+        names = list(names)
+    elif not isinstance(names, list):
+        raise TypeError("NAME is not a list but %r - fix this!" % names)
+    if not names:
+        # we currently never return an empty list, some code
+        # might not be able to deal with it:
+        names = [u'DoesNotExist', ]
+    return names
+
+
 def backend_to_index(meta, content, schema, wikiname, backend_name):
     """
     Convert backend metadata/data to a whoosh document.
@@ -156,11 +189,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             return self.data.tell(*args, **kw)
 
     if not item_name:
-        names = meta.get(NAME)
-        if names:
-            item_name = names[0]
-        else:
-            item_name = u'anonymous'
+        item_name = get_names(meta)[0]
 
     rev = PseudoRev(meta, data)
     try:
@@ -817,22 +846,7 @@ class Item(object):
 
     @property
     def names(self):
-        names = self._current.get(NAME)
-        if isinstance(names, tuple):
-            names = list(names)
-        elif not isinstance(names, list):
-            #raise TypeError # for debugging the issues
-            # TODO make sure meta[NAME] is always there, so this never happens
-            # TODO make sure meta[NAME] is always a list of unicode
-            logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
-            if names is None:
-                names = u'DoesNotExist'
-            elif isinstance(names, str):
-                names = unicode(names)
-            names = [names, ]
-            logging.warning("DOC: %r - Workaround returns names = %r" % (self._current, names))
-        assert isinstance(names, list)
-        return names
+        return get_names(self._current)
 
     @property
     def mtime(self):
@@ -1067,21 +1081,7 @@ class Revision(object):
 
     @property
     def names(self):
-        names = self.meta.get(NAME)
-        if isinstance(names, tuple):
-            names = list(names)
-        elif not isinstance(names, list):
-            #raise TypeError # for debugging the issues
-            # TODO make sure meta[NAME] is always there, so this never happens
-            # TODO make sure meta[NAME] is always a list of unicode
-            logging.warning("NAME is not a list but %r - fix this! Workaround enabled." % names)
-            if names is None:
-                names = u'DoesNotExist'
-            elif isinstance(names, str):
-                names = unicode(names)
-            names = [names, ]
-            logging.warning("DOC: %r - Workaround returns names = %r" % (self.meta, names))
-        return names
+        return get_names(self.meta)
 
     @property
     def name(self):
