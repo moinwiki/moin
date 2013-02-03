@@ -577,10 +577,24 @@ class Item(object):
 
     index_template = 'index.html'
 
-    def name_initial(self, subitems):
-        prefixlen = len(self.subitems_prefix)
-        initials = [(item.meta[NAME][prefixlen]) for item in subitems]  # XXX BROKEN - this is a list of names now
-        return initials
+    def name_initial(self, subitems, uppercase=False, lowercase=False):
+        """
+        return a sorted list of first characters of subitem names,
+        optionally all uppercased or lowercased.
+        """
+        prefix = self.subitems_prefix
+        prefixlen = len(prefix)
+        initials = set()
+        for item in subitems:
+            for name in item.meta[NAME]:
+                if name.startswith(prefix):
+                    initial = name[prefixlen]
+                    if uppercase:
+                        initial = initial.upper()
+                    elif lowercase:
+                        initial = initial.lower()
+                    initials.add(initial)
+        return sorted(list(initials))
 
     delete_template = 'delete.html'
     destroy_template = 'destroy.html'
