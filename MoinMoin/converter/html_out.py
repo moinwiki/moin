@@ -397,6 +397,19 @@ class Converter(object):
                 attribs = elem.attrib.copy()
                 if moin_page.page_href in attribs:
                     del attribs[moin_page.page_href]
+                if attribs and len(item) == 1:
+
+                    if item[0].tag.name in ('object', 'a'):
+                        # png, jpg, gif are objects here, will be changed to img when they are processed
+                        # transclusion is a single inline element "My pet {{bird.jpg}} flys." or "[[SomePage|{{Logo.png}}]]"
+                        return self.new_copy(html.span, item, attribs)
+
+                    elif item[0].tag.name == 'p':
+                        # transclusion is a single p-tag that can be coerced to inline  "Yes, we have {{no}} bananas."
+                        new_span = html.span(children=item[0][:])
+                        return self.new_copy(html.span, new_span, attribs)
+
+                # transclusion is a block element
                 return self.new_copy(html.div, item, attribs)
 
         raise RuntimeError('page:page need to contain exactly one page:body tag, got {0!r}'.format(elem[:]))
