@@ -456,11 +456,7 @@ class IndexingMiddleware(object):
                     itemid = searcher.stored_fields(docnum_remove)[ITEMID]
             if docnum_remove is not None:
                 # we are removing a revid that is in latest revs index
-                try:
-                    latest_backends_revids = self._find_latest_backends_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
-                except AttributeError:
-                    # workaround for bug #200 AttributeError: 'FieldCache' object has no attribute 'code'
-                    latest_backends_revids = []
+                latest_backends_revids = self._find_latest_backends_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
                 if latest_backends_revids:
                     # we have a latest revision, just update the document in the index:
                     assert len(latest_backends_revids) == 1 # this item must have only one latest revision
