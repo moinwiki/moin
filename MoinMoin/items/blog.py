@@ -20,7 +20,7 @@ from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import OptionalText, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
+from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
 
 
@@ -81,7 +81,7 @@ class Blog(Default):
         ptime_sort_facet = FunctionFacet(ptime_sort_key)
 
         revs = flaskg.storage.search(query, sortedby=ptime_sort_facet, reverse=True, limit=None)
-        blog_entry_items = [Item.create(rev.meta[NAME], rev_id=rev.revid) for rev in revs]  # XXX BROKEN - meta[NAME] is a list of names now
+        blog_entry_items = [Item.create(rev.name, rev_id=rev.revid) for rev in revs]
         return render_template('blog/main.html',
                                item_name=self.name,
                                blog_item=self,
