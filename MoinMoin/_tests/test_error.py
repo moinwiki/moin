@@ -30,9 +30,11 @@ class TestEncoding(object):
 
     def testCreateWithObject(self):
         """ error: create with any object """
-        class Foo:
+
+        class Foo(object):
             def __unicode__(self):
                 return u'טעות'
+
             def __str__(self):
                 return 'טעות'
 
@@ -44,7 +46,7 @@ class TestEncoding(object):
         """ error: access error like a dict """
         test = 'value'
         err = error.Error(test)
-        assert '%(message)s' % err == test
+        assert '%(message)s' % dict(message=err) == test
 
 class TestCompositeError(object):
 

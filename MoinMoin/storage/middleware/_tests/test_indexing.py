@@ -53,7 +53,8 @@ class TestIndexingMiddleware(object):
         item_name = u'foo'
         data = 'bar'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name, ]), StringIO(data))
+        rev = item.store_revision(dict(name=[item_name, ]), StringIO(data),
+                                  return_rev=True)
         revid = rev.revid
         # check if we have the revision now:
         item = self.imw[item_name]
@@ -69,7 +70,8 @@ class TestIndexingMiddleware(object):
         data = 'bar'
         newdata = 'baz'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name, ], comment=u'spam'), StringIO(data))
+        rev = item.store_revision(dict(name=[item_name, ], comment=u'spam'), StringIO(data),
+                                  return_rev=True)
         revid = rev.revid
         # clear revision:
         item.store_revision(dict(name=[item_name, ], revid=revid, comment=u'no spam'), StringIO(newdata), overwrite=True)
@@ -87,13 +89,13 @@ class TestIndexingMiddleware(object):
         item_name = u'foo'
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                  StringIO('bar'), trusted=True)
+                                  StringIO('bar'), trusted=True, return_rev=True)
         revid0 = rev.revid
         rev = item.store_revision(dict(name=[item_name, ], mtime=2),
-                                  StringIO('baz'), trusted=True)
+                                  StringIO('baz'), trusted=True, return_rev=True)
         revid1 = rev.revid
         rev = item.store_revision(dict(name=[item_name, ], mtime=3),
-                                  StringIO('...'), trusted=True)
+                                  StringIO('...'), trusted=True, return_rev=True)
         revid2 = rev.revid
         print "revids:", revid0, revid1, revid2
         # destroy a non-current revision:
@@ -129,10 +131,10 @@ class TestIndexingMiddleware(object):
         item_name = u'foo'
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                  StringIO('bar'), trusted=True)
+                                  StringIO('bar'), trusted=True, return_rev=True)
         revids.append(rev.revid)
         rev = item.store_revision(dict(name=[item_name, ], mtime=2),
-                                  StringIO('baz'), trusted=True)
+                                  StringIO('baz'), trusted=True, return_rev=True)
         revids.append(rev.revid)
         # destroy item:
         item.destroy_all_revisions()
@@ -160,7 +162,8 @@ class TestIndexingMiddleware(object):
         item_name = u'bar'
         item = self.imw[item_name]
         item.store_revision(dict(name=[item_name, ]), StringIO('1st'))
-        expected_rev = item.store_revision(dict(name=[item_name, ]), StringIO('2nd'))
+        expected_rev = item.store_revision(dict(name=[item_name, ]), StringIO('2nd'),
+                                           return_rev=True)
         revs = list(self.imw.documents(name=item_name))
         assert len(revs) == 1  # there is only 1 latest revision
         assert expected_rev.revid == revs[0].revid  # it is really the latest one
@@ -169,7 +172,7 @@ class TestIndexingMiddleware(object):
         item_name = u'foo'
         data = 'bar'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name, ]), StringIO(data))
+        rev = item.store_revision(dict(name=[item_name, ]), StringIO(data), return_rev=True)
         print repr(rev.meta)
         assert rev.name == item_name
         assert rev.meta[SIZE] == len(data)
@@ -181,9 +184,9 @@ class TestIndexingMiddleware(object):
     def test_documents(self):
         item_name = u'foo'
         item = self.imw[item_name]
-        rev1 = item.store_revision(dict(name=[item_name, ]), StringIO('x'))
-        rev2 = item.store_revision(dict(name=[item_name, ]), StringIO('xx'))
-        rev3 = item.store_revision(dict(name=[item_name, ]), StringIO('xxx'))
+        rev1 = item.store_revision(dict(name=[item_name, ]), StringIO('x'), return_rev=True)
+        rev2 = item.store_revision(dict(name=[item_name, ]), StringIO('xx'), return_rev=True)
+        rev3 = item.store_revision(dict(name=[item_name, ]), StringIO('xxx'), return_rev=True)
         rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
         assert rev.revid == rev2.revid
@@ -197,14 +200,15 @@ class TestIndexingMiddleware(object):
         item_name = u'foo'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                StringIO('does not count, different name'), trusted=True)
+                                StringIO('does not count, different name'),
+                                trusted=True, return_rev=True)
         expected_latest_revids.append(r.revid)
         item_name = u'bar'
         item = self.imw[item_name]
         item.store_revision(dict(name=[item_name, ], mtime=1),
                             StringIO('1st'), trusted=True)
         r = item.store_revision(dict(name=[item_name, ], mtime=2),
-                                StringIO('2nd'), trusted=True)
+                                StringIO('2nd'), trusted=True, return_rev=True)
         expected_latest_revids.append(r.revid)
 
         # now we remember the index contents built that way:
@@ -246,24 +250,28 @@ class TestIndexingMiddleware(object):
         item_name = u'updated'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                StringIO('updated 1st'), trusted=True)
+                                StringIO('updated 1st'),
+                                trusted=True, return_rev=True)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
         item_name = u'destroyed'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                StringIO('destroyed 1st'), trusted=True)
+                                StringIO('destroyed 1st'),
+                                trusted=True, return_rev=True)
         destroy_revid = r.revid
         # we destroy this item below, so we don't add it to expected_all_revids
         # we destroy this item below, so we don't add it to expected_latest_revids
         item_name = u'stayssame'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                StringIO('stayssame 1st'), trusted=True)
+                                StringIO('stayssame 1st'),
+                                trusted=True, return_rev=True)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
         r = item.store_revision(dict(name=[item_name, ], mtime=2),
-                                StringIO('stayssame 2nd'), trusted=True)
+                                StringIO('stayssame 2nd'),
+                                trusted=True, return_rev=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
 
@@ -279,14 +287,16 @@ class TestIndexingMiddleware(object):
         item_name = u'updated'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=2),
-                                StringIO('updated 2nd'), trusted=True)
+                                StringIO('updated 2nd'), trusted=True,
+                                return_rev=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)
         item_name = u'added'
         item = self.imw[item_name]
         r = item.store_revision(dict(name=[item_name, ], mtime=1),
-                                StringIO('added 1st'), trusted=True)
+                                StringIO('added 1st'),
+                                trusted=True, return_rev=True)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)
@@ -337,7 +347,7 @@ class TestIndexingMiddleware(object):
         data = 'some test content'
         item = self.imw[item_name]
         data_file = StringIO(data)
-        with item.store_revision(meta, data_file) as rev:
+        with item.store_revision(meta, data_file, return_rev=True) as rev:
             assert rev.data.read() == data
             revid = rev.revid
         with pytest.raises(ValueError):
@@ -355,7 +365,7 @@ class TestIndexingMiddleware(object):
         data = 'some test content\n'
         item = self.imw[item_name]
         data_file = StringIO(data)
-        with item.store_revision(meta, data_file) as rev:
+        with item.store_revision(meta, data_file, return_rev=True) as rev:
             expected_revid = rev.revid
         doc = self.imw._document(content=u'test')
         assert doc is not None
@@ -365,10 +375,12 @@ class TestIndexingMiddleware(object):
     def test_namespaces(self):
         item_name_n = u'normal'
         item = self.imw[item_name_n]
-        rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain'), StringIO(str(item_name_n)))
+        rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain'),
+                                    StringIO(str(item_name_n)), return_rev=True)
         item_name_u = u'userprofiles:userprofile'
         item = self.imw[item_name_u]
-        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain'), StringIO(str(item_name_u)))
+        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain'),
+                                    StringIO(str(item_name_u)), return_rev=True)
         item = self.imw[item_name_n]
         rev_n = item.get_revision(rev_n.revid)
         assert rev_n.meta[NAMESPACE] == u''
@@ -393,7 +405,8 @@ class TestProtectedIndexingMiddleware(object):
     def test_documents(self):
         item_name = u'public'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=[item_name, ], acl=u'joe:read'), StringIO('public content'))
+        r = item.store_revision(dict(name=[item_name, ], acl=u'joe:read'),
+                                StringIO('public content'), return_rev=True)
         revid_public = r.revid
         revids = [rev.revid for rev in self.imw.documents()
                   if rev.name != u'joe'] # the user profile is a revision in the backend
@@ -402,7 +415,8 @@ class TestProtectedIndexingMiddleware(object):
     def test_getitem(self):
         item_name = u'public'
         item = self.imw[item_name]
-        r = item.store_revision(dict(name=[item_name, ], acl=u'joe:read'), StringIO('public content'))
+        r = item.store_revision(dict(name=[item_name, ], acl=u'joe:read'),
+                                StringIO('public content'), return_rev=True)
         revid_public = r.revid
         # now testing:
         item_name = u'public'

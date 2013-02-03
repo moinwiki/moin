@@ -54,7 +54,10 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset
+from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.itemtypes import (
+    ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
+    )
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -102,8 +105,8 @@ class DummyRev(dict):
     def __init__(self, item, itemtype=None, contenttype=None):
         self.item = item
         self.meta = {
-            ITEMTYPE: itemtype or u'nonexistent',
-            CONTENTTYPE: contenttype or u'application/x-nonexistent'
+            ITEMTYPE: itemtype or ITEMTYPE_NONEXISTENT,
+            CONTENTTYPE: contenttype or CONTENTTYPE_NONEXISTENT
         }
         self.data = StringIO('')
         self.revid = None
@@ -445,6 +448,7 @@ class Item(object):
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
+                                             return_rev=True,
                                              )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
@@ -594,7 +598,7 @@ class Default(Contentful):
     """
     A "conventional" wiki item.
     """
-    itemtype = u'default'
+    itemtype = ITEMTYPE_DEFAULT
     display_name = L_('Default')
     description = L_('Wiki item')
     order = -10
@@ -686,7 +690,7 @@ class Userprofile(Item):
     Currently userprofile is implemented as a contenttype. This is a stub of an
     itemtype implementation of userprofile.
     """
-    itemtype = u'userprofile'
+    itemtype = ITEMTYPE_USERPROFILE
     display_name = L_('User profile')
     description = L_('User profile item (not implemented yet!)')
 
@@ -697,7 +701,7 @@ class NonExistent(Item):
     A dummy Item for nonexistent items (when modifying, a nonexistent item with
     undetermined itemtype)
     """
-    itemtype = u'nonexistent'
+    itemtype = ITEMTYPE_NONEXISTENT
     shown = False
 
     def _convert(self, doc):

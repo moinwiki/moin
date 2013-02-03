@@ -50,7 +50,7 @@ def userbrowser():
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      )
                      for rev in revs]
-    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"User Browser"))
+    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
@@ -161,7 +161,7 @@ def wikiconfig():
 
     found.sort()
     return render_template('admin/wikiconfig.html',
-                           title_name=_(u"Wiki Configuration"),
+                           title_name=_(u"Show Wiki Configuration"),
                            found=found, settings=settings)
 
 
@@ -207,7 +207,7 @@ def highlighterhelp():
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
     return render_template('user/highlighterhelp.html',
-                           title_name=_(u"Highlighter Help"),
+                           title_name=_(u"Highlighters"),
                            headings=headings,
                            rows=rows)
 
@@ -220,7 +220,7 @@ def interwikihelp():
                ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('user/interwikihelp.html',
-                           title_name=_(u"Interwiki Help"),
+                           title_name=_(u"Interwiki Names"),
                            headings=headings,
                            rows=rows)
 
@@ -235,6 +235,6 @@ def itemsize():
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
-                           title_name=_(u"Item Size"),
+                           title_name=_(u"Item Sizes"),
                            headings=headings,
                            rows=rows)

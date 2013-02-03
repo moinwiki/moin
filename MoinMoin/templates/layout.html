@@ -39,7 +39,7 @@
         {% if user.valid -%}
             {% set avatar = user.avatar(20) %}
             {% if avatar %}
-                <img id="moin-avatar" rel="noreferrer" src="{{ avatar }}" />
+                <img id="moin-avatar" src="{{ avatar }}" />
             {%- endif %}
             {% if user.name -%}
                 {% set wiki_href, display_name, title, exists = theme_supp.userhome() %}

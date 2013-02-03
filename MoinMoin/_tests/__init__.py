@@ -57,7 +57,7 @@ def update_item(name, meta, data):
         meta[NAME] = [name, ]
     if CONTENTTYPE not in meta:
         meta[CONTENTTYPE] = u'application/octet-stream'
-    rev = item.store_revision(meta, StringIO(data))
+    rev = item.store_revision(meta, StringIO(data), return_rev=True)
     return rev
 
 def create_random_string_list(length=14, count=10):

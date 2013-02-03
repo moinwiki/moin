@@ -1,5 +1,5 @@
 # Copyright: 2012 MoinMoin:CheerXiao
-# Copyright: 2003-2010 MoinMoin:ThomasWaldmann
+# Copyright: 2003-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:AkashSinha
 # Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:FlorianKrupicka
@@ -359,6 +359,7 @@ def show_item(item_name, rev):
     return item.do_show(rev)
 
 
+@frontend.route('/<itemname:item_name>/')  # note: unwanted trailing slash
 @frontend.route('/+show/<itemname:item_name>')
 def redirect_show_item(item_name):
     return redirect(url_for_item(item_name))
@@ -787,7 +788,7 @@ def mychanges():
     :returns: a page with all the items which link or transclude item_name
     """
     my_changes = _mychanges(flaskg.user.itemid)
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
                            item_names=my_changes
@@ -818,7 +819,7 @@ def backrefs(item_name):
     :returns: a page with all the items which link or transclude item_name
     """
     refs_here = _backrefs(item_name)
-    return render_template('item_link_list.html',
+    return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
@@ -926,7 +927,7 @@ def wanted_items():
     referred = linked | transcluded
     wanteds = referred - existing
     title_name = _(u'Wanted Items')
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            headline=_(u'Wanted Items'),
                            title_name=title_name,
                            item_names=wanteds)
@@ -942,7 +943,7 @@ def orphaned_items():
     referred = linked | transcluded
     orphans = existing - referred
     title_name = _('Orphaned Items')
-    return render_template('item_link_list.html',
+    return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
                            headline=_(u'Orphaned Items'),
                            item_names=orphans)
@@ -1187,16 +1188,17 @@ class ValidPasswordRecovery(Validator):
     """Validator for a valid password recovery form
     """
     passwords_mismatch_msg = L_('The passwords do not match.')
-    password_encoding_problem_msg = L_('New password is unacceptable, encoding trouble.')
+    password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
+        password = element['password1'].value
         try:
-            crypto.crypt_password(element['password1'].value)
-        except UnicodeError:
-            return self.note_error(element, state, 'password_encoding_problem_msg')
+            app.cfg.cache.pwd_context.encrypt(password)
+        except (ValueError, TypeError) as err:
+            return self.note_error(element, state, 'password_problem_msg')
 
         return True
 
@@ -1321,7 +1323,7 @@ class ValidChangePass(Validator):
     """
     passwords_mismatch_msg = L_('The passwords do not match.')
     current_password_wrong_msg = L_('The current password was wrong.')
-    password_encoding_problem_msg = L_('New password is unacceptable, encoding trouble.')
+    password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
         if not (element['password_current'].valid and element['password1'].valid and element['password2'].valid):
@@ -1333,10 +1335,11 @@ class ValidChangePass(Validator):
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
+        password = element['password1'].value
         try:
-            crypto.crypt_password(element['password1'].value)
-        except UnicodeError:
-            return self.note_error(element, state, 'password_encoding_problem_msg')
+            app.cfg.cache.pwd_context.encrypt(password)
+        except (ValueError, TypeError) as err:
+            return self.note_error(element, state, 'password_problem_msg')
         return True
 
 
@@ -1663,7 +1666,7 @@ def similar_names(item_name):
             rank = matches[name]
             if rank == wanted_rank:
                 item_names.append(name)
-    return render_template("item_link_list.html",
+    return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
                            item_name=item_name, # XXX no item
                            item_names=item_names)
@@ -1888,7 +1891,7 @@ def tagged_items(tag):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
     revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
     item_names = [rev.name for rev in revs]
-    return render_template("item_link_list.html",
+    return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
                            item_names=item_names)

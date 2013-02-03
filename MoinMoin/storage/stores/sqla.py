@@ -10,18 +10,17 @@ Stores k/v pairs into any database supported by sqlalchemy.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
-
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Binary
 from sqlalchemy.pool import StaticPool
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import (BytesMutableStoreBase, FileMutableStoreBase,
+               BytesMutableStoreMixin, FileMutableStoreMixin)
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024 # 1MB binary data
 
 
-class _Store(MutableStoreBase):
+class BytesStore(BytesMutableStoreBase):
     """
     A simple dict-based in-memory store. No persistence!
     """
@@ -89,8 +88,6 @@ class _Store(MutableStoreBase):
     def __delitem__(self, key):
         self.table.delete().where(self.table.c.key == key).execute()
 
-
-class BytesStore(_Store, BytesMutableStoreBase):
     def __getitem__(self, key):
         value = select([self.table.c.value], self.table.c.key == key).execute().fetchone()
         if value is not None:
@@ -102,13 +99,5 @@ class BytesStore(_Store, BytesMutableStoreBase):
         self.table.insert().execute(key=key, value=value)
 
 
-class FileStore(_Store, FileMutableStoreBase):
-    def __getitem__(self, key):
-        value = select([self.table.c.value], self.table.c.key == key).execute().fetchone()
-        if value is not None:
-            return StringIO(value[0])
-        else:
-            raise KeyError(key)
-
-    def __setitem__(self, key, stream):
-        self.table.insert().execute(key=key, value=stream.read())
+class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
+    """sqlalchemy FileStore"""

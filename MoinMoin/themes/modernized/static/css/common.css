@@ -94,6 +94,7 @@ input, select { vertical-align: middle; }
 .center { text-align: center; }
 .right { text-align: right; }
 .justify { text-align: justify; }
+.monospaced { font-family: monospace; }
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em;vertical-align:middle}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em;vertical-align:middle}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em;vertical-align:middle}
@@ -182,13 +183,13 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .vi { color: #19177C } /* Name.Variable.Instance */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
 html{color:#000;font-family:Helvetica,Arial,sans-serif}
-div,p{margin:1em 0;font-size:1em;line-height:1.3em}
+p{margin:1em 0;font-size:1em;line-height:1.3em}
 sub{vertical-align:sub}
 sup{vertical-align:super}
-ins{background-color:#fff;text-decoration:underline}
+ins{background-color:inherit;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
-.moin-integer{text-align:right;padding-right:1em}
+.moin-integer{text-align:right;padding-right:1em;width:2%}
 .moin-inline-label{display:inline}
 h1{font-size:2em;margin:.67em 0;border-bottom:5px solid #4e7da9;padding-bottom:5px}
 h2{font-size:1.5em;margin:.75em 0;padding-bottom:4px}
@@ -229,7 +230,6 @@ hr{height:1px;background-color:#4e7da9;border:0;margin:.9em 0}
 pre{border:1px solid #4e7da9;background-color:#dfdfdf;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre-wrap}
 pre.comment{background-color:#708090;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
-.monospaced{font-family:monospace}
 table{margin:1%;border-collapse:collapse}
 th,td{padding:.3em .4em;vertical-align:middle;text-align:left}
 th{border:1px solid #4e7da9;background-color:#708090;text-align:center;color:#d8dfe9}
@@ -274,7 +274,7 @@ input.blank{border-color:#4e7da9;border-width:2px}
 .moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
-#moin-modify dd{width:100%;}
+#moin-modify dd{width:100%;float:none;}
 #moin-modify dd input{width:99%}
 #moin-modify dt{width:auto;text-align:left}
 #moin-modify textarea{width:99.5%}
@@ -295,7 +295,7 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
 .searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{color:#939393;margin-left:15px;margin-top:0}
+.searchresults .searchhitinfobar{margin-left:15px;margin-top:0}
 .searchresults .foundtext{margin-left:15px;margin-top:0}
 p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
 p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
@@ -331,7 +331,6 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-history-trash:before{content:url("../img/moin-deleted.png")}
 .moin-history-rename:before{content:url("../img/moin-renamed.png")}
 .moin-history-copy:before{content:url("../img/moin-new.png")}
-.moin-integer{width:2%}
 .moin-history-links{width:5%}
 .moin-history-links a{display:block;margin-bottom:4px}
 .moin-history-editortext,.moin-history-links span,.moin-history-comment span{color:#000;display:block;margin-bottom:5px}
@@ -450,7 +449,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-searchform div{margin:-6px 5px 0 0}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
 #moin-long-searchform div{margin:0}
-#moin-search-query{width:80%}
+#moin-search-query{width:50%}
 #moin-logo{float:left;margin:2px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
 #moin-logo a{color:#fff;text-decoration:none}

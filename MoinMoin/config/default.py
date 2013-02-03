@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2005-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
@@ -155,6 +155,12 @@ class ConfigFunctionality(object):
                 raise error.ConfigurationError("You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
                     secret_min_length, secret_key_name))
 
+        from passlib.context import CryptContext
+        try:
+            self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
+        except ValueError as err:
+            raise error.ConfigurationError("passlib_crypt_context configuration is invalid [{0}].".format(err))
+
     def _config_check(self):
         """ Check namespace and warn about unknown names
 
@@ -293,7 +299,7 @@ class DefaultExpression(object):
 #
 options_no_group_name = {
   # ==========================================================================
-  'datastruct': ('Datastruct settings', None, (
+  'datastruct': ('Datastruct', None, (
     #('dicts', lambda cfg: datastruct.ConfigDicts({}),
     ('dicts', lambda cfg: datastruct.WikiDicts(),
      "function f(cfg) that returns a backend which is used to access dicts definitions."),
@@ -302,7 +308,7 @@ options_no_group_name = {
      "function f(cfg) that returns a backend which is used to access groups definitions."),
   )),
   # ==========================================================================
-  'auth': ('Authentication / Authorization / Security settings', None, (
+  'auth': ('Authentication / Authorization / Security', None, (
     ('auth', DefaultExpression('[MoinAuth()]'),
      "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
     ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
@@ -315,9 +321,25 @@ options_no_group_name = {
 
     ('password_checker', DefaultExpression('_default_password_checker'),
      'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
+
+    ('passlib_crypt_context', dict(
+        # schemes we want to support (or deprecated schemes for which we still have
+        # hashes in our storage).
+        # note about bcrypt: it needs additional code (that is not pure python and
+        # thus either needs compiling or installing platform-specific binaries)
+        schemes=["sha512_crypt", ],
+        # default scheme for creating new pw hashes (if not given, passlib uses first from schemes)
+        #default="sha512_crypt",
+        # deprecated schemes get auto-upgraded to the default scheme at login
+        # time or when setting a password (including doing a moin account pwreset).
+        #deprecated=["auto"],
+        # vary rounds parameter randomly when creating new hashes...
+        #all__vary_rounds=0.1,
+     ),
+     "passlib CryptContext arguments, see passlib docs"),
   )),
   # ==========================================================================
-  'spam_leech_dos': ('Anti-Spam/Leech/DOS',
+  'spam_leech_dos': ('Anti-Spam / Leech / DOS',
   'These settings help limiting ressource usage and avoiding abuse.',
   (
     ('textchas', None,
@@ -326,7 +348,7 @@ options_no_group_name = {
      "Time [s] for a !TextCha to expire."),
   )),
   # ==========================================================================
-  'style': ('Style / Theme / UI related',
+  'style': ('Style / Theme / UI',
   'These settings control how the wiki user interface will look like.',
   (
     ('sitename', u'Untitled Wiki',
@@ -398,17 +420,17 @@ options_no_group_name = {
     ('template_dirs', [], "list of directories with templates that will override theme and base templates."),
   )),
   # ==========================================================================
-  'editor': ('Editor related', None, (
+  'editor': ('Editor', None, (
     ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
     #('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
     ('edit_ticketing', True, None),
   )),
   # ==========================================================================
-  'paging': ('Paging related', None, (
+  'paging': ('Paging', None, (
     ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
   )),
   # ==========================================================================
-  'data': ('Data storage', None, (
+  'data': ('Data Storage', None, (
     ('data_dir', './data/', "Path to the data directory."),
     ('plugin_dirs', [], "Plugin directories."),
 
@@ -429,7 +451,7 @@ options_no_group_name = {
     ('destroy_index', False, "Destroy (empty) the index after using it."),
   )),
   # ==========================================================================
-  'items': ('Special item names', None, (
+  'items': ('Special Item Names', None, (
     ('item_root', u'Home', "Name of the root item (aka 'front page'). [Unicode]"),
 
     # the following regexes should match the complete name when used in free text
@@ -442,7 +464,7 @@ options_no_group_name = {
      'Item names exactly matching this regex are regarded as items containing group definitions [Unicode]'),
   )),
   # ==========================================================================
-  'user': ('User Preferences related', None, (
+  'user': ('User Preferences', None, (
     ('user_defaults',
       dict(
         name=[],
@@ -455,6 +477,7 @@ options_no_group_name = {
         scroll_page_after_edit=True,
         show_comments=False,
         want_trivial=False,
+        enc_password=u'',  # empty value == invalid hash
         disabled=False,
         bookmarks={},
         quicklinks=[],
@@ -531,7 +554,7 @@ options_no_group_name = {
 #
 #
 options = {
-    'acl': ('Access control lists',
+    'acl': ('Access Control Lists',
     'ACLs control who may do what.',
     (
       ('functions', u'',
@@ -551,7 +574,7 @@ options = {
       ('user_homepage', 'User/', 'All user homepages are stored below this namespace.'),
     )),
 
-    'user': ('Users / User settings', None, (
+    'user': ('User', None, (
       ('email_unique', True,
        "if True, check email addresses for uniqueness and don't accept duplicates."),
       ('email_verification', False,
@@ -562,7 +585,7 @@ options = {
       ('use_gravatar', False, "if True, gravatar.com will be used to find User's avatar")
     )),
 
-    'mail': ('Mail settings',
+    'mail': ('Mail',
         'These settings control outgoing and incoming email from and to the wiki.',
     (
       ('from', None, "Used as From: address for generated mail. [Unicode]"),

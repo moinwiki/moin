@@ -167,7 +167,7 @@ class Converter(ConverterMacro):
     """
 
     def block_nowiki_lines(self, iter_content):
-        "Unescaping generator for the lines in a nowiki block"
+        """Unescaping generator for the lines in a nowiki block"""
 
         for line in iter_content:
             match = self.nowiki_end_re.match(line)
@@ -178,7 +178,7 @@ class Converter(ConverterMacro):
             yield line
 
     def block_nowiki_repl(self, iter_content, stack, nowiki):
-        "Handles a complete nowiki block"
+        """Handles a complete nowiki block"""
 
         stack.clear()
 

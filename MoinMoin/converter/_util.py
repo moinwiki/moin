@@ -155,8 +155,9 @@ class _Stack(object):
         if elem:
             self.top_append(elem)
 
-    def top_check(self, *names):
+    def top_check(self, *names, **kwargs):
         """
-        Checks if the name of the top of the stack matches the parameters.
+        Check if the top of the stack name and attrib matches the parameters.
         """
-        return self._list[-1].name in names
+        attrib = kwargs.get('attrib', {})
+        return self._list[-1].name in names and set(attrib.items()).issubset(self._list[-1].elem.attrib.items())

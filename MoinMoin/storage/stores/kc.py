@@ -18,14 +18,14 @@ Note: only ONE process can open a kyoto cabinet in OWRITER (writable) mode.
 from __future__ import absolute_import, division
 
 import os, errno
-from StringIO import StringIO
 
 from kyotocabinet import *
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import (BytesMutableStoreBase, FileMutableStoreBase,
+               BytesMutableStoreMixin, FileMutableStoreMixin)
 
 
-class _Store(MutableStoreBase):
+class BytesStore(BytesMutableStoreBase):
     """
     Kyoto cabinet based store.
     """
@@ -82,8 +82,6 @@ class _Store(MutableStoreBase):
     def __delitem__(self, key):
         self._db.remove(key)
 
-
-class BytesStore(_Store, BytesMutableStoreBase):
     def __getitem__(self, key):
         value = self._db.get(key)
         if value is None:
@@ -95,13 +93,5 @@ class BytesStore(_Store, BytesMutableStoreBase):
             raise KeyError("set error: " + str(self._db.error()))
 
 
-class FileStore(_Store, FileMutableStoreBase):
-    def __getitem__(self, key):
-        value = self._db.get(key)
-        if value is None:
-            raise KeyError("get error: " + str(self._db.error()))
-        return StringIO(value)
-
-    def __setitem__(self, key, stream):
-        if not self._db.set(key, stream.read()):
-            raise KeyError("set error: " + str(self._db.error()))
+class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
+    """Kyoto Cabinet FileStore"""

@@ -33,7 +33,7 @@ def backend_from_uri(uri):
     """
     backend_name_uri = uri.split(':', 1)
     if len(backend_name_uri) != 2:
-        raise ValueError("malformed backend uri: {0}".format(backend_uri))
+        raise ValueError("malformed backend uri: {0}".format(uri))
     backend_name, backend_uri = backend_name_uri
     module = __import__(BACKENDS_PACKAGE + '.' + backend_name, globals(), locals(), ['MutableBackend', ])
     return module.MutableBackend.from_uri(backend_uri)

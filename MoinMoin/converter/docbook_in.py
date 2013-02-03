@@ -232,7 +232,6 @@ class Converter(object):
         # XXX: Error handling could probably be better.
         except NameSpaceError as detail:
             return self.error(str(detail))
-        return result
 
     def error(self, message):
         """

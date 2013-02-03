@@ -14,7 +14,8 @@ import pytest
 
 class TestHTTPAuthMoin(object):
     """ Test: HTTPAuthMoin """
-    class Auth:
+
+    class Auth(object):
         def __init__(self):
             self.username = 'ValidUser'
             self.password = 'test_pass'

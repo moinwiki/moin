@@ -936,6 +936,7 @@ class Item(object):
                        contenttype_current=None,
                        contenttype_guessed=None,
                        acl_parent=None,
+                       return_rev=False,
                        ):
         """
         Store a revision into the backend, write metadata and data to it.
@@ -947,7 +948,8 @@ class Item(object):
         :type meta: dict
         :type data: open file (file must be closed by caller)
         :param overwrite: if True, allow overwriting of existing revs.
-        :returns: a Revision instance of the just created revision
+        :param return_rev: if True, return a Revision instance of the just created revision
+        :returns: a Revision instance or None
         """
         if remote_addr is None:
             try:
@@ -1010,7 +1012,8 @@ class Item(object):
         self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
             self._current = self.indexer._document(revid=revid)
-        return Revision(self, revid)
+        if return_rev:
+            return Revision(self, revid)
 
     def store_all_revisions(self, meta, data):
         """

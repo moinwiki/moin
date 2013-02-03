@@ -12,12 +12,11 @@ Note: likely this is mostly useful for unit tests.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
+from . import (BytesMutableStoreBase, FileMutableStoreBase,
+               BytesMutableStoreMixin, FileMutableStoreMixin)
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
 
-
-class _Store(MutableStoreBase):
+class BytesStore(BytesMutableStoreBase):
     """
     A simple dict-based in-memory store. No persistence!
     """
@@ -48,8 +47,6 @@ class _Store(MutableStoreBase):
     def __delitem__(self, key):
         del self._st[key]
 
-
-class BytesStore(_Store, BytesMutableStoreBase):
     def __getitem__(self, key):
         return self._st[key]
 
@@ -57,9 +54,5 @@ class BytesStore(_Store, BytesMutableStoreBase):
         self._st[key] = value
 
 
-class FileStore(_Store, FileMutableStoreBase):
-    def __getitem__(self, key):
-        return StringIO(self._st[key])
-
-    def __setitem__(self, key, stream):
-        self._st[key] = stream.read()
+class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
+    """memory FileStore"""

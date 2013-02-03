@@ -77,7 +77,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
-        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.1',
+        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.2',
     ],
     install_requires=[
         'blinker>=1.1', # event signalling (e.g. for change notification trigger)
@@ -88,7 +88,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Flask-Cache>=0.3.4', # caching support
         'Flask-Script>=0.3.3', # scripting support
         'Flask-Themes>=0.1.3.1', # theme support
-        'emeraldtree>=0.9.1', # xml processing
+        'emeraldtree>=0.9.2', # xml processing
         'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
         'Jinja2>=2.6', # template engine
         'pygments>=1.4', # src code / text file highlighting
@@ -101,6 +101,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'whoosh>=2.4.0', # needed for indexed search
         'sphinx>=1.1', # needed to build the docs
         'pdfminer', # pdf -> text/plain conversion
+        'passlib>=1.6.0', # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2', # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.8.2',
