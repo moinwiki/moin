@@ -315,13 +315,19 @@ class Item(object):
 
     def _rename(self, name, comment, action, delete=False):
         self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
-        old_prefixlen = len(self.subitems_prefix)
-        new_prefix = name + '/'  # XXX BROKEN for name==None
+        old_prefix = self.subitems_prefix
+        old_prefixlen = len(old_prefix)
+        if not delete:
+            new_prefix = name + '/'
         for child in self.get_subitem_revs():
-            child_oldname = child.meta[NAME]  # XXX BROKEN - this is a list of names now
-            child_newname = new_prefix + child_oldname[old_prefixlen:]
-            item = Item.create(child_oldname)
-            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
+            for child_oldname in child.meta[NAME]:
+                if child_oldname.startswith(old_prefix):
+                    if delete:
+                        child_newname = None
+                    else:  # rename
+                        child_newname = new_prefix + child_oldname[old_prefixlen:]
+                    item = Item.create(child_oldname)
+                    item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
