@@ -178,7 +178,7 @@ def init_backends(app):
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
-    app.router = routing.Backend(app.cfg.namespace_mapping)
+    app.router = routing.Backend(app.cfg.namespace_mapping, app.cfg.backend_mapping)
     if app.cfg.create_storage:
         app.router.create()
     app.router.open()

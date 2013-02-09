@@ -105,9 +105,9 @@ class ThemeSupport(object):
         breadcrumbs = []
         trail = user.get_trail()
         for interwiki_item_name in trail:
-            wiki_name, item_name = split_interwiki(interwiki_item_name)
+            wiki_name, namespace, item_name = split_interwiki(interwiki_item_name)
             err = not is_known_wiki(wiki_name)
-            href = url_for_item(item_name, wiki_name=wiki_name)
+            href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
             if is_local_wiki(wiki_name):
                 exists = self.storage.has_item(item_name)
                 wiki_name = ''  # means "this wiki" for the theme code
@@ -132,16 +132,13 @@ class ThemeSupport(object):
         Assemble arguments used to build user homepage link
 
         :rtype: tuple
-        :returns: arguments of user homepage link in tuple (wiki_href, aliasname, title, exists)
+        :returns: arguments of user homepage link in tuple (wiki_href, display_name, title, exists)
         """
         user = self.user
-        name = user.name
-        aliasname = user.aliasname
-        if not aliasname:
-            aliasname = name
-
+        name = user.name0
+        display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
-        title = u"{0} @ {1}".format(aliasname, wikiname)
+        title = u"{0} @ {1}".format(display_name, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -149,7 +146,7 @@ class ThemeSupport(object):
             # We cannot check if wiki pages exists in remote wikis
             exists = True
         wiki_href = url_for_item(itemname, wiki_name=wikiname)
-        return wiki_href, aliasname, title, exists
+        return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):
         """
@@ -194,10 +191,10 @@ class ThemeSupport(object):
         if target.startswith("wiki:"):
             target = target[5:]
 
-        wiki_name, item_name = split_interwiki(target)
+        wiki_name, namespace, item_name = split_interwiki(target)
         if wiki_name == 'Self':
             wiki_name = ''
-        href = url_for_item(item_name, wiki_name=wiki_name)
+        href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
         if not title:
             title = item_name
         return href, title, wiki_name
@@ -305,16 +302,14 @@ def get_editor_info(meta, external=False):
     userid = meta.get(USERID)
     if userid:
         u = user.User(userid)
-        name = u.name
+        name = u.name0
         text = name
-        aliasname = u.aliasname
-        if not aliasname:
-            aliasname = name
+        display_name = u.display_name or name
         if title:
             # we already have some address info
-            title = u"{0} @ {1}".format(aliasname, title)
+            title = u"{0} @ {1}".format(display_name, title)
         else:
-            title = aliasname
+            title = display_name
         if u.mailto_author and u.email:
             email = u.email
             css = 'editor mail'
@@ -423,7 +418,7 @@ def setup_jinja_env():
                             'storage': flaskg.storage,
                             'clock': flaskg.clock,
                             'cfg': app.cfg,
-                            'item_name': 'handlers need to give it',
+                            'item_name': u'handlers need to give it',
                             'url_for_item': url_for_item,
                             'get_editor_info': lambda meta: get_editor_info(meta),
                             'utctimestamp': lambda dt: utctimestamp(dt),
