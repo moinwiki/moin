@@ -81,6 +81,10 @@ class TestConverter(object):
                 '<page><body><p>Text <emphasis>Emphasis</emphasis></p><p>Text</p></body></page>'),
             ("Text''''''Text''''",
                 '<page><body><p>TextText</p></body></page>'),
+            ("''italic '''strongitalic ''''' normal",
+                '<page><body><p><emphasis>italic <strong>strongitalic </strong></emphasis> normal</p></body></page>'),
+            ("'''strong '''''italic '''strongitalic''''' normal",
+                '<page><body><p><strong>strong </strong><emphasis>italic <strong>strongitalic</strong></emphasis> normal</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -119,6 +123,10 @@ class TestConverter(object):
                 '<page><body><p><span font-size="120%">larger</span></p></body></page>'),
             ("--(strike through)--",
                 '<page><body><p><span text-decoration="line-through">strike through</span></p></body></page>'),
+            ("normal ~+big __underline__ big+~ normal",
+                '<page><body><p>normal <span font-size="120%">big <span text-decoration="underline">underline</span> big</span> normal</p></body></page>'),
+            ("/* normal __underline__ normal */",
+                '<page><body><p><span class="comment">normal <span text-decoration="underline">underline</span> normal</span></p></body></page>'),
             (u'&quot;',
                 '<page><body><p>"</p></body></page>'),
             (u'&#34;',

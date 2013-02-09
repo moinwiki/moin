@@ -249,7 +249,7 @@ class Converter(ConverterMacro):
     # Matches the possibly escaped end of a nowiki block
 
     def block_nowiki_lines(self, iter_content, marker_len):
-        "Unescaping generator for the lines in a nowiki block"
+        """Unescaping generator for the lines in a nowiki block"""
 
         for line in iter_content:
             match = self.nowiki_end_re.match(line)
@@ -533,10 +533,11 @@ class Converter(ConverterMacro):
                 else:
                     stack.push(moin_page.strong())
             elif stack.top_check('strong'):
-                if stack.top_check('strong'):
+                stack.pop()
+                if stack.top_check('emphasis'):
                     stack.pop()
                 else:
-                    stack.push(moin_page.strong())
+                    stack.push(moin_page.emphasis())
             else:
                 if len(emphstrong_follow) == 3:
                     stack.push(moin_page.emphasis())
@@ -654,11 +655,11 @@ class Converter(ConverterMacro):
     """
 
     def inline_underline_repl(self, stack, underline):
-        if not stack.top_check('span'):
-            attrib = {moin_page.text_decoration: 'underline'}
-            stack.push(moin_page.span(attrib=attrib))
-        else:
+        attrib = {moin_page.text_decoration: 'underline'}
+        if stack.top_check('span', attrib=attrib):
             stack.pop()
+        else:
+            stack.push(moin_page.span(attrib=attrib))
 
     inline_link = r"""
         (?P<link>

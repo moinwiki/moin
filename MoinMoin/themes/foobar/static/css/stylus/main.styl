@@ -53,7 +53,7 @@ body
     font-family font_family
     background-image url(../img/base.png)
 
-div p
+p
     margin .2em .4em
     font-size 1em
     line-height 1.3em
@@ -666,9 +666,6 @@ a.moin-conflict:before
 .moin-history-copy:before
     content url('../img/moin-new.png')
 
-.moin-integer
-    width 2%
-
 .moin-inline-label
     display inline
 
@@ -711,10 +708,13 @@ a
     &:active
         color active_color
         text-decoration underline
-    &.moin-nonexistent:link
-        color nonexistent_link_color
+    &.moin-nonexistent:link,
     &.moin-nonexistent:visited
         color nonexistent_link_color
+        img,
+        object
+            background nonexistent_link_color
+            border 3px dashed footer_color
     &.moin-nonexistent:hover
         color nonexistent_hover_color
     &.moin-nonexistent:active
@@ -814,7 +814,6 @@ a
         margin-left 2%
 
 .searchresults .searchhitinfobar
-    color active_color
     margin-left 15px
     margin-top 0
 
@@ -979,6 +978,9 @@ table.zebra
         form
             input
                 width 100%
+    tbody tr:nth-child(odd),
+    > tr:nth-child(odd)
+        background-color table_row_color
 
 pre
     font-family monospace
@@ -1021,7 +1023,7 @@ input#f_comment
         li
             padding .4em !important
         a
-            display initial !important
+            display inline !important
             color link_color
             &:hover
                 text-decoration underline
@@ -1155,10 +1157,17 @@ sub
     vertical-align sub
 sup
     vertical-align super
+ins
+    background-color inherit // needed for "/* __My Comment__ */"
+    text-decoration underline
 .moin-big
     font-size 1.17em
 .moin-small
     font-size .83em
+.moin-integer
+    text-align right
+    padding-right 1em
+    width 2%
 
 /* fix tests -- currently checking <big> and <small> */
 @media print

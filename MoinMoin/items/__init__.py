@@ -32,7 +32,7 @@ from flatland import Form
 
 from jinja2 import Markup
 
-from whoosh.query import Term, And, Prefix
+from whoosh.query import Term, Prefix, And, Or, Not
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -53,7 +53,10 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset
+from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.itemtypes import (
+    ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
+    )
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -101,8 +104,8 @@ class DummyRev(dict):
     def __init__(self, item, itemtype=None, contenttype=None):
         self.item = item
         self.meta = {
-            ITEMTYPE: itemtype or u'nonexistent',
-            CONTENTTYPE: contenttype or u'application/x-nonexistent'
+            ITEMTYPE: itemtype or ITEMTYPE_NONEXISTENT,
+            CONTENTTYPE: contenttype or CONTENTTYPE_NONEXISTENT
         }
         self.data = StringIO('')
         self.revid = None
@@ -195,6 +198,20 @@ class BaseModifyForm(BaseChangeForm):
         TextCha(form).amend_form()
         return form
 
+
+UNKNOWN_ITEM_GROUP = "unknown items"
+
+def _build_contenttype_query(groups):
+    """
+    Build a Whoosh query from a list of contenttype groups.
+    """
+    queries = []
+    for g in groups:
+        for e in content_registry.groups[g]:
+            ct_unicode = unicode(e.content_type)
+            queries.append(Term(CONTENTTYPE, ct_unicode))
+            queries.append(Prefix(CONTENTTYPE, ct_unicode + u';'))
+    return Or(queries)
 
 IndexEntry = namedtuple('IndexEntry', 'relname meta')
 
@@ -437,6 +454,7 @@ class Item(object):
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
+                                             return_rev=True,
                                              )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
@@ -504,49 +522,29 @@ class Item(object):
 
         return dirs, files
 
-    @timed()
-    def filter_index(self, index, startswith=None, selected_groups=None):
-        """
-        Filter a list of IndexEntry.
+    def build_index_query(self, startswith=None, selected_groups=None):
+        prefix = self.subitems_prefix
+        if startswith:
+            query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
+        else:
+            query = Prefix(NAME_EXACT, prefix)
 
-        :param startswith: if set, only items whose names start with startswith
-                           are selected.
-        :param selected_groups: if set, only items whose contentypes belong to
-                                the selected contenttype_groups are selected.
-        """
-        if startswith is not None:
-            index = [e for e in index
-                     if e.relname.startswith((startswith, startswith.swapcase()))]
+        if selected_groups:
+            selected_groups = set(selected_groups)
+            has_unknown = UNKNOWN_ITEM_GROUP in selected_groups
+            if has_unknown:
+                selected_groups.remove(UNKNOWN_ITEM_GROUP)
+            ct_query = _build_contenttype_query(selected_groups)
+            if has_unknown:
+                ct_query |= Not(_build_contenttype_query(content_registry.groups))
+            query &= ct_query
 
-        def build_contenttypes(groups):
-            contenttypes = []
-            for g in groups:
-                entries = content_registry.groups.get(g, []) # .get is a temporary workaround for "unknown items" group
-                contenttypes.extend([e.content_type for e in entries])
-            return contenttypes
-
-        def contenttype_match(tested, cts):
-            for ct in cts:
-                if ct.issupertype(tested):
-                    return True
-            return False
-
-        if selected_groups is not None:
-            selected_contenttypes = build_contenttypes(selected_groups)
-            filtered_index = [e for e in index if contenttype_match(Type(e.meta[CONTENTTYPE]), selected_contenttypes)]
-
-            unknown_item_group = "unknown items"
-            if unknown_item_group in selected_groups:
-                all_contenttypes = build_contenttypes(content_registry.group_names)
-                filtered_index.extend([e for e in index
-                                       if not contenttype_match(Type(e.meta[CONTENTTYPE]), all_contenttypes)])
-
-            index = filtered_index
-        return index
+        return query
 
     def get_index(self, startswith=None, selected_groups=None):
-        dirs, files = self.make_flat_index(self.get_subitem_revs())
-        return dirs, self.filter_index(files, startswith, selected_groups)
+        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups)
+        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
+        return self.make_flat_index(revs)
 
     def get_mixed_index(self):
         dirs, files = self.make_flat_index(self.get_subitem_revs())
@@ -586,7 +584,7 @@ class Default(Contentful):
     """
     A "conventional" wiki item.
     """
-    itemtype = u'default'
+    itemtype = ITEMTYPE_DEFAULT
     display_name = L_('Default')
     description = L_('Wiki item')
     order = -10
@@ -678,7 +676,7 @@ class Userprofile(Item):
     Currently userprofile is implemented as a contenttype. This is a stub of an
     itemtype implementation of userprofile.
     """
-    itemtype = u'userprofile'
+    itemtype = ITEMTYPE_USERPROFILE
     display_name = L_('User profile')
     description = L_('User profile item (not implemented yet!)')
 
@@ -689,7 +687,7 @@ class NonExistent(Item):
     A dummy Item for nonexistent items (when modifying, a nonexistent item with
     undetermined itemtype)
     """
-    itemtype = u'nonexistent'
+    itemtype = ITEMTYPE_NONEXISTENT
     shown = False
 
     def _convert(self, doc):

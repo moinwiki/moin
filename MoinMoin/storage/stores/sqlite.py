@@ -14,14 +14,14 @@ Optionally, you can use zlib/"gzip" compression.
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
 import zlib
 from sqlite3 import *
 
-from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
+from . import (BytesMutableStoreBase, FileMutableStoreBase,
+               BytesMutableStoreMixin, FileMutableStoreMixin)
 
 
-class _Store(MutableStoreBase):
+class BytesStore(BytesMutableStoreBase):
     """
     A simple sqlite3 based store.
     """
@@ -98,8 +98,6 @@ class _Store(MutableStoreBase):
             value = zlib.decompress(value)
         return value
 
-
-class BytesStore(_Store, BytesMutableStoreBase):
     def __getitem__(self, key):
         rows = list(self.conn.execute("select value from {0} where key=?".format(self.table_name), (key, )))
         if not rows:
@@ -113,16 +111,5 @@ class BytesStore(_Store, BytesMutableStoreBase):
             self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
 
 
-class FileStore(_Store, FileMutableStoreBase):
-    def __getitem__(self, key):
-        rows = list(self.conn.execute("select value from {0} where key=?".format(self.table_name), (key, )))
-        if not rows:
-            raise KeyError(key)
-        value = str(rows[0]['value'])
-        return StringIO(self._decompress(value))
-
-    def __setitem__(self, key, stream):
-        value = stream.read()
-        value = self._compress(value)
-        with self.conn:
-            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
+class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
+    """sqlite FileStore"""
