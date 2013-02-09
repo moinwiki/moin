@@ -685,7 +685,7 @@ class User(object):
 
     def is_current_user(self):
         """ Check if this user object is the user doing the current request """
-        return flaskg.user.name == self.name
+        return flaskg.user.itemid == self.itemid
 
     # Sessions ---------------------------------------------------
 
