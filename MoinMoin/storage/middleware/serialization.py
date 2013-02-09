@@ -66,6 +66,10 @@ def deserialize(src, backend):
         meta_str = src.read(meta_size)
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
+        name = meta.get('name')
+        if isinstance(name, unicode):
+            # if we encounter single names, make a list of names:
+            meta['name'] = [name, ]
         data_size = meta[u'size']
         curr_pos = src.tell()
         limited = LimitedStream(src, data_size)
