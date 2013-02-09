@@ -748,6 +748,22 @@ class NonExistent(Item):
                                itemtypes=item_registry.shown_entries,
                               )
 
+    def rename(self, name, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def delete(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def revert(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def destroy(self, comment=u'', destroy_item=False):
+        # pointless for non-existing items
+        pass
+
 
 from ..util.pysupport import load_package_modules
 load_package_modules(__name__, __path__)
