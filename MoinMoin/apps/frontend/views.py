@@ -526,7 +526,7 @@ def revert_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = RevertItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -552,7 +552,7 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
         TextCha(form).amend_form()
         form['target'] = item.name
@@ -580,7 +580,7 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -679,7 +679,7 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -1070,7 +1070,7 @@ def register():
         template = 'register.html'
         FormClass = RegistrationForm
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = FormClass.from_defaults()
         if isOpenID:
             oid = request.values.get('openid_openid')
@@ -1160,7 +1160,7 @@ def lostpass():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = PasswordLostForm.from_defaults()
     elif request.method == 'POST':
         form = PasswordLostForm.from_flat(request.form)
@@ -1223,7 +1223,7 @@ def recoverpass():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = PasswordRecoveryForm.from_defaults()
         form.update(request.values)
     elif request.method == 'POST':
@@ -1290,7 +1290,7 @@ def login():
     if flaskg._login_multistage_name == 'openid':
         return Response(flaskg._login_multistage, mimetype='text/html')
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
         for authmethod in app.cfg.auth:
             hint = authmethod.login_hint()

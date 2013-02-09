@@ -622,7 +622,7 @@ class Default(Contentful):
 
     def do_modify(self):
         method = request.method
-        if method == 'GET':
+        if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
