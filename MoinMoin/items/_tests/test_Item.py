@@ -102,7 +102,7 @@ class TestItem(object):
 
         # test Item.make_flat_index
         # TODO: test Item.get_subitem_revs
-        dirs, files = baseitem.make_flat_index(baseitem.get_subitem_revs())
+        dirs, files = baseitem.get_index()
         assert dirs == build_index(basename, [u'cd', u'ij'])
         assert files == build_index(basename, [u'ab', u'gh', u'ij', u'mn'])
 
@@ -116,17 +116,16 @@ class TestItem(object):
             (u'mn', False),
         ])
 
-        # test Item.filter_index
         # check filtered index when startswith param is passed
-        filtered_files = baseitem.filter_index(files, startswith=u'a')
-        assert filtered_files == build_index(basename, [u'ab'])
+        dirs, files = baseitem.get_index(startswith=u'a')
+        assert dirs == []
+        assert files == build_index(basename, [u'ab'])
 
         # check filtered index when contenttype_groups is passed
-        ctgroups = ["image items"]
-        filtered_files = baseitem.filter_index(files, selected_groups=ctgroups)
-        assert filtered_files == build_index(basename, [u'mn'])
-
-        # If we ask for text/plain type, should Foo/cd be returned?
+        ctgroups = ["other text items"]
+        dirs, files = baseitem.get_index(selected_groups=ctgroups)
+        assert dirs == build_index(basename, [u'cd', u'ij'])
+        assert files == build_index(basename, [u'ab', u'gh', u'ij'])
 
     def test_meta_filter(self):
         name = u'Test_item'
