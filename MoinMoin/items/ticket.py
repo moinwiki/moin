@@ -103,7 +103,7 @@ class Ticket(Contentful):
             return self.do_modify()
 
     def do_modify(self):
-        if request.method == 'GET':
+        if request.method in ['GET', 'HEAD']:
             form = TicketForm.from_item(self)
         elif request.method == 'POST':
             form = TicketForm.from_request(request)
