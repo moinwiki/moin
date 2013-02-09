@@ -47,7 +47,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden, MultiSelect
+from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
@@ -1379,7 +1379,7 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = List.using(label=L_('Name')).of(RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use")))
+        name = Names.using(label=L_('Names')).with_properties(placeholder=L_("The login names you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
         #timezones_keys = sorted(Locale('en').time_zones.keys())
@@ -1450,10 +1450,13 @@ def usersettings():
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False
-                        if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
-                            # duplicate name
-                            response['flash'].append((_("This username is already in use."), "error"))
-                            success = False
+                        if set(form['name'].value) != set(flaskg.user.name):
+                            new_names = set(form['name'].value) - set(flaskg.user.name)
+                            for name in new_names:
+                                if user.search_users(name_exact=name):
+                                    # duplicate name
+                                    response['flash'].append((_("The username %(name)r is already in use.", name=name), "error"))
+                                    success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
                             user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
