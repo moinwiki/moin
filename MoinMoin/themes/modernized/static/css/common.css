@@ -203,7 +203,8 @@ a:link{color:#00008b}
 a:visited{color:#008b8b}
 a:hover{color:#1f9ae0}
 a:active{color:#51d443}
-a.moin-nonexistent:visited,a.moin-nonexistent{color:#939393}
+a.moin-nonexistent:visited,a.moin-nonexistent{color:#939393;}
+a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited object,a.moin-nonexistent object{background:#939393;border:3px dashed #737373}
 ol,ul{margin-left:3em}
 ol ol,ul ul,ol ul,ul ol{margin-left:2em}
 li p{margin:.25em 0}
