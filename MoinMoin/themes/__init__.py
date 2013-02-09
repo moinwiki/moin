@@ -54,7 +54,7 @@ def render_template(template, **context):
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
     if e.code == 403:
-        title = L_('Access denied')
+        title = L_('Access Denied')
         description = L_('You are not allowed to access this resource.')
     else:
         # if we have no special code, we just return the HTTPException instance
@@ -223,7 +223,7 @@ class ThemeSupport(object):
         # Add sister pages (see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide )
         for sistername, sisterurl in self.cfg.sistersites:
             if is_local_wiki(sistername):
-                items.append(('sisterwiki current', sisterurl, sistername))
+                items.append(('sisterwiki current', sisterurl, sistername, ''))
             else:
                 cid = cache_key(usage="SisterSites", sistername=sistername)
                 sisteritems = app.cache.get(cid)

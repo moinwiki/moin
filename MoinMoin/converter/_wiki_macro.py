@@ -150,7 +150,7 @@ class ConverterMacro(object):
             type = Type(name)
         else:
             type = Type(type='x-moin', subtype='format', parameters={'name': name})
-        logging.debug("parser type: %r" % type)
+        logging.debug("parser type: %r" % (type, ))
 
         elem = moin_page.part(attrib={moin_page.content_type: type})
 

@@ -253,10 +253,9 @@ Please note that using the gravatar service has some privacy issues:
 
 * to register your image for your email at gravatar.com, you need to give them
   your email address, which is the same as you use in your wiki user profile.
-* we try to avoid exposing the referrer URL to gravatar.com, but this only
-  works if your browser correctly implements rel="noreferrer". If it does not,
-  your wiki item URLs will be exposed, so they will roughly know which people
-  read or work on which wiki items.
+* when the wiki displays an avatar image on some item / view, the URL will be
+  exposed as referrer to the avatar service provider, so they will roughly
+  know which people read or work on which wiki items / views.
 
 XStatic Packages
 ----------------
@@ -631,8 +630,28 @@ checks, it e.g. won't forbid using a dictionary word as password.
 
 Password storage
 ----------------
-Moin never stores passwords in clear text, but always as cryptographic hash
-with a random salt. Currently ssha256 is the default.
+Moin never stores wiki user passwords in clear text, but uses strong
+cryptographic hashes provided by the "passlib" library, see there for details:
+
+    http://packages.python.org/passlib/.
+
+The passlib docs recommend 3 hashing schemes that have good security:
+sha512_crypt, pbkdf2_sha512 and bcrypt (bcrypt has additional binary/compiled
+package requirements, please refer to the passlib docs in case you want to use
+it).
+
+By default, we use sha512_crypt hashes with default parameters as provided
+by passlib (this is same algorithm as moin >= 1.9.7 used by default).
+
+In case you experience slow logins or feel that you might need to tweak the
+hash generation for other reasons, please read the passlib docs. moin allows
+you to configure passlib's CryptContext params within the wiki config, the
+default is this:
+
+::
+    passlib_crypt_context = dict(
+        schemes=["sha512_crypt", ],
+    )
 
 
 Authorization

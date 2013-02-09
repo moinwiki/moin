@@ -101,8 +101,22 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.stop('create_app load config')
     clock.start('create_app register')
     # register converters
-    from werkzeug.routing import PathConverter
-    app.url_map.converters['itemname'] = PathConverter
+    from werkzeug.routing import BaseConverter
+
+    class ItemNameConverter(BaseConverter):
+        """Like the default :class:`UnicodeConverter`, but it also matches
+        slashes (except at the beginning AND end).
+        This is useful for wikis and similar applications::
+
+            Rule('/<itemname:wikipage>')
+            Rule('/<itemname:wikipage>/edit')
+
+        :param map: the :class:`Map`.
+        """
+        regex = '[^/]+?(/[^/]+?)*'
+        weight = 200
+
+    app.url_map.converters['itemname'] = ItemNameConverter
     # register modules, before/after request functions
     from MoinMoin.apps.frontend import frontend
     frontend.before_request(before_wiki)

@@ -103,7 +103,7 @@ class TestTextChaValid(object):
         cfg.secrets.pop('security/textcha')
         flaskg.user.profile[LOCALE] = None
 
-    class Element:
+    class Element(object):
         def __init__(self):
             self.parent = None
             self.value = 'Good Answer'

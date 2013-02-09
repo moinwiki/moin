@@ -15,8 +15,6 @@ import time
 import urllib
 from httplib import HTTPConnection
 
-from StringIO import StringIO
-
 from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
 
 

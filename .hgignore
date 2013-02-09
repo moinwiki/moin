@@ -22,6 +22,8 @@
 ^.settings
 ^MANIFEST$
 .DS_Store
+^\.cache/
+^\.idea/
 .sqlite$
 .orig$
 .rej$

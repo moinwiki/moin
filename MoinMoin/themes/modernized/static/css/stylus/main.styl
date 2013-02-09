@@ -33,7 +33,7 @@ html
     color font_color
     font-family Helvetica, Arial, sans-serif
 
-div, p
+p
     margin 1em 0
     font-size 1em
     line-height 1.3em
@@ -45,7 +45,7 @@ sup
     vertical-align super
 
 ins
-    background-color page_color
+    background-color inherit // needed for "/* __My Comment__ */"
     text-decoration underline
 
 .moin-big
@@ -57,6 +57,7 @@ ins
 .moin-integer
     text-align right
     padding-right 1em
+    width 2%
 
 .moin-inline-label
     display inline
@@ -112,6 +113,10 @@ a:active
 a.moin-nonexistent:visited,
 a.moin-nonexistent
     color nonexistent_link_color
+    img,
+    object
+        background nonexistent_link_color
+        border 3px dashed footer_color
 
 ol, ul
     margin-left 3em
@@ -211,9 +216,6 @@ pre.comment
 
 pre.comment:before
     content url(../img/attention.png)
-
-.monospaced
-    font-family monospace
 
 table
     margin 1%
@@ -417,6 +419,7 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
 #moin-modify
     dd
         width 100%
+        float none
         input
             width 99%
     dt
@@ -506,7 +509,6 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     margin-left 2%
 
 .searchresults .searchhitinfobar
-    color nonexistent_link_color
     margin-left 15px
     margin-top 0
 
@@ -661,9 +663,6 @@ p.searchhint
 
 .moin-history-copy:before
     content url('../img/moin-new.png')
-
-.moin-integer
-    width 2%
 
 .moin-history-links
     width 5%
@@ -1235,7 +1234,7 @@ a.moin-nonexistent:hover
     margin 0
 
 #moin-search-query
-    width 80%
+    width 50%
 
 #moin-logo
     float left

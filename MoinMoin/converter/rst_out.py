@@ -192,7 +192,7 @@ class Table(object):
                 line = [u'+']
                 for col in range(len(cols)):
                     if self.table[row][col][1] > 1:
-                        line.append(' '*cols[col])
+                        line.append(u' '*cols[col])
                     elif row == self.header_count - 1:
                         line.append(u'='*cols[col])
                     else:

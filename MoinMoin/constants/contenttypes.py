@@ -17,6 +17,7 @@ parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html'
 
 CONTENTTYPE_USER = u'application/x.moin.userprofile'
 CONTENTTYPE_DEFAULT = u'application/octet-stream'
+CONTENTTYPE_NONEXISTENT = u'application/x-nonexistent'
 
 
 GROUP_MARKUP_TEXT = 'markup text items'

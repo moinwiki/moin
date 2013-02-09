@@ -25,3 +25,12 @@ class Config(DefaultConfig):
     interwikiname = u'MoinTest'
     interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/')
     interwiki_map[interwikiname] = 'http://localhost:8080/'
+
+    passlib_crypt_context = dict(
+        schemes=["sha512_crypt", ],
+        # for the tests, we don't want to have varying rounds
+        sha512_crypt__vary_rounds=0,
+        # for the tests, we want to have a rather low rounds count,
+        # so the tests run quickly (do NOT use low counts in production!)
+        sha512_crypt__default_rounds=1001,
+    )
