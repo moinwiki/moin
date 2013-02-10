@@ -15,6 +15,7 @@
 ^instance/
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
+^MoinMoin/_tests/wiki/index/
 ^docs/_build/
 .coverage
 ^.project

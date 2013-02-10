@@ -56,14 +56,15 @@ import shutil
 import itertools
 import time
 import datetime
-from StringIO import StringIO
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
-from whoosh.index import EmptyIndexError
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
                            PseudoFieldPlugin
@@ -74,12 +75,12 @@ from whoosh.sorting import FieldFacet
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.config import WIKINAME, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
+from MoinMoin.config import WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, \
                             LANGUAGE, USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, \
                             CONTENT, EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID, \
                             ITEMID, REVID, CURRENT, PARENTID, \
                             PTIME, \
-                            LATEST_REVS, ALL_REVS, \
+                            LATEST_REVS, ALL_REVS, BACKENDNAME, \
                             CONTENTTYPE_USER
 from MoinMoin.constants import keys
 from MoinMoin.constants.keys import ITEMTYPE
@@ -87,7 +88,6 @@ from MoinMoin.constants.keys import ITEMTYPE
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
-from MoinMoin.util.crypto import make_uuid
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
@@ -97,7 +97,40 @@ WHOOSH_GAE = 'DatastoreStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 
-def backend_to_index(meta, content, schema, wikiname):
+def get_names(meta):
+    """
+    Get the (list of) names from meta data and deal with misc. bad things that
+    can happen then (while not all code is fixed to do it correctly).
+
+    TODO make sure meta[NAME] is always a list of unicode
+
+    :param meta: a metadata dictionary that might have a NAME key
+    :return: list of names
+    """
+    msg = "NAME is not a list but %r - fix this! Workaround enabled."
+    names = meta.get(NAME)
+    if names is None:
+        logging.warning(msg % names)
+        names = []
+    elif isinstance(names, str):
+        logging.warning(msg % names)
+        names = [names.decode('utf-8'), ]
+    elif isinstance(names, unicode):
+        logging.warning(msg % names)
+        names = [names, ]
+    elif isinstance(names, tuple):
+        logging.warning(msg % names)
+        names = list(names)
+    elif not isinstance(names, list):
+        raise TypeError("NAME is not a list but %r - fix this!" % names)
+    if not names:
+        # we currently never return an empty list, some code
+        # might not be able to deal with it:
+        names = [u'DoesNotExist', ]
+    return names
+
+
+def backend_to_index(meta, content, schema, wikiname, backend_name):
     """
     Convert backend metadata/data to a whoosh document.
 
@@ -117,6 +150,7 @@ def backend_to_index(meta, content, schema, wikiname):
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content
+    doc[BACKENDNAME] = backend_name
     return doc
 
 
@@ -125,7 +159,7 @@ from MoinMoin.util.tree import moin_page
 from MoinMoin.converter import default_registry
 from MoinMoin.util.iri import Iri
 
-def convert_to_indexable(meta, data, is_new=False):
+def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     Convert revision data to a indexable content.
 
@@ -147,13 +181,16 @@ def convert_to_indexable(meta, data, is_new=False):
             class PseudoItem(object):
                 def __init__(self, name):
                     self.name = name
-            self.item = PseudoItem(meta.get(NAME))
+            self.item = PseudoItem(item_name)
         def read(self, *args, **kw):
             return self.data.read(*args, **kw)
         def seek(self, *args, **kw):
             return self.data.seek(*args, **kw)
         def tell(self, *args, **kw):
             return self.data.tell(*args, **kw)
+
+    if not item_name:
+        item_name = get_names(meta)[0]
 
     rev = PseudoRev(meta, data)
     try:
@@ -185,7 +222,7 @@ def convert_to_indexable(meta, data, is_new=False):
             # transclusions.
             if is_new:
                 # we only can modify new, uncommitted revisions, not stored revs
-                i = Iri(scheme='wiki', authority='', path='/' + meta[NAME])
+                i = Iri(scheme='wiki', authority='', path='/' + item_name)
                 doc.set(moin_page.page_href, unicode(i))
                 refs_conv(doc)
                 # side effect: we update some metadata:
@@ -197,7 +234,7 @@ def convert_to_indexable(meta, data, is_new=False):
         # no way
         raise TypeError("No converter for {0} --> {1}".format(input_contenttype, output_contenttype))
     except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(meta[NAME], meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
+        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
         doc = u'ERROR [{0!s}]'.format(e)
         return doc
 
@@ -226,6 +263,8 @@ class IndexingMiddleware(object):
             REVID: ID(unique=True, stored=True),
             # parent revision id
             PARENTID: ID(stored=True),
+            # backend name (which backend is this rev stored in?)
+            BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
             # publish time from metadata (converted to UTC datetime)
@@ -405,7 +444,7 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, async=True):
+    def index_revision(self, meta, content, backend_name, async=False): # True
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -413,14 +452,14 @@ class IndexingMiddleware(object):
         :param content: preprocessed (filtered) indexable content
         :param async: if True, use the AsyncWriter, otherwise use normal writer
         """
-        doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname)
+        doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname, backend_name)
         if async:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.update_document(**doc) # update, because store_revision() may give us an existing revid
-        doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname)
+        doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
         if async:
             writer = AsyncWriter(self.ix[LATEST_REVS])
         else:
@@ -450,20 +489,20 @@ class IndexingMiddleware(object):
                     itemid = searcher.stored_fields(docnum_remove)[ITEMID]
             if docnum_remove is not None:
                 # we are removing a revid that is in latest revs index
-                latest_names_revids = self._find_latest_names_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
-                if latest_names_revids:
+                latest_backends_revids = self._find_latest_backends_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
+                if latest_backends_revids:
                     # we have a latest revision, just update the document in the index:
-                    assert len(latest_names_revids) == 1 # this item must have only one latest revision
-                    latest_name_revid = latest_names_revids[0]
+                    assert len(latest_backends_revids) == 1 # this item must have only one latest revision
+                    latest_backend_revid = latest_backends_revids[0]
                     # we must fetch from backend because schema for LATEST_REVS is different than for ALL_REVS
                     # (and we can't be sure we have all fields stored, too)
-                    meta, _ = self.backend.retrieve(*latest_name_revid)
+                    meta, _ = self.backend.retrieve(*latest_backend_revid)
                     # we only use meta (not data), because we do not want to transform data->content again (this
                     # is potentially expensive) as we already have the transformed content stored in ALL_REVS index:
                     with self.ix[ALL_REVS].searcher() as searcher:
-                        doc = searcher.document(revid=latest_name_revid[1])
+                        doc = searcher.document(revid=latest_backend_revid[1])
                         content = doc[CONTENT]
-                    doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname)
+                    doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name=latest_backend_revid[0])
                     writer.update_document(**doc)
                 else:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
@@ -477,11 +516,11 @@ class IndexingMiddleware(object):
               documents in the index.
         """
         with index.writer(procs=procs, limitmb=limitmb) as writer:
-            for mountpoint, revid in revids:
+            for backend_name, revid in revids:
                 if mode in ['add', 'update', ]:
-                    meta, data = self.backend.retrieve(mountpoint, revid)
+                    meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
-                    doc = backend_to_index(meta, content, schema, wikiname)
+                    doc = backend_to_index(meta, content, schema, wikiname, backend_name)
                 if mode == 'update':
                     writer.update_document(**doc)
                 elif mode == 'add':
@@ -491,13 +530,13 @@ class IndexingMiddleware(object):
                 else:
                     raise ValueError("mode must be 'update', 'add' or 'delete', not '{0}'".format(mode))
 
-    def _find_latest_names_revids(self, index, query=None):
+    def _find_latest_backends_revids(self, index, query=None):
         """
-        find the latest revids using the all-revs index
+        find the latest revision identifiers using the all-revs index
 
         :param index: an up-to-date and open ALL_REVS index
         :param query: query to search only specific revisions (optional, default: all items/revisions)
-        :returns: a list of tuples (name, latest revid)
+        :returns: a list of tuples (backend name, latest revid)
         """
         if query is None:
             query = Every()
@@ -505,10 +544,10 @@ class IndexingMiddleware(object):
             result = searcher.search(query, groupedby=ITEMID, sortedby=FieldFacet(MTIME, reverse=True))
             by_item = result.groups(ITEMID)
             # values in v list are in same relative order as in results, so latest MTIME is first:
-            latest_names_revids = [(searcher.stored_fields(v[0])[NAME],
-                                    searcher.stored_fields(v[0])[REVID])
-                                   for v in by_item.values()]
-        return latest_names_revids
+            latest_backends_revids = [(searcher.stored_fields(v[0])[BACKENDNAME],
+                                      searcher.stored_fields(v[0])[REVID])
+                                      for v in by_item.values()]
+        return latest_backends_revids
 
     def rebuild(self, tmp=False, procs=1, limitmb=256):
         """
@@ -525,13 +564,13 @@ class IndexingMiddleware(object):
             # build an index of all we have (so we know what we have)
             all_revids = self.backend # the backend is an iterator over all revids
             self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, 'add', procs, limitmb)
-            latest_names_revids = self._find_latest_names_revids(index)
+            latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
             index.close()
         # now build the index of the latest revisions:
         index = storage.open_index(LATEST_REVS)
         try:
-            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_names_revids, 'add', procs, limitmb)
+            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add', procs, limitmb)
         finally:
             index.close()
 
@@ -551,24 +590,24 @@ class IndexingMiddleware(object):
         storage = self.get_storage(tmp)
         index_all = storage.open_index(ALL_REVS)
         try:
-            # NOTE: self.backend iterator gives (mountpoint, revid) tuples, which is NOT
+            # NOTE: self.backend iterator gives (backend_name, revid) tuples, which is NOT
             # the same as (name, revid), thus we do the set operations just on the revids.
             # first update ALL_REVS index:
-            revids_mountpoints = dict((revid, mountpoint) for mountpoint, revid in self.backend)
-            backend_revids = set(revids_mountpoints)
+            revids_backends = dict((revid, backend_name) for backend_name, revid in self.backend)
+            backend_revids = set(revids_backends)
             with index_all.searcher() as searcher:
-                ix_revids_names = dict((doc[REVID], doc[NAME]) for doc in searcher.all_stored_fields())
-            revids_mountpoints.update(ix_revids_names) # this is needed for stuff that was deleted from storage
-            ix_revids = set(ix_revids_names)
+                ix_revids_backends = dict((doc[REVID], doc[BACKENDNAME]) for doc in searcher.all_stored_fields())
+            revids_backends.update(ix_revids_backends) # this is needed for stuff that was deleted from storage
+            ix_revids = set(ix_revids_backends)
             add_revids = backend_revids - ix_revids
             del_revids = ix_revids - backend_revids
             changed = add_revids or del_revids
-            add_revids = [(revids_mountpoints[revid], revid) for revid in add_revids]
-            del_revids = [(revids_mountpoints[revid], revid) for revid in del_revids]
+            add_revids = [(revids_backends[revid], revid) for revid in add_revids]
+            del_revids = [(revids_backends[revid], revid) for revid in del_revids]
             self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, add_revids, 'add')
             self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, del_revids, 'delete')
 
-            backend_latest_names_revids = set(self._find_latest_names_revids(index_all))
+            backend_latest_backends_revids = set(self._find_latest_backends_revids(index_all))
         finally:
             index_all.close()
         index_latest = storage.open_index(LATEST_REVS)
@@ -576,9 +615,9 @@ class IndexingMiddleware(object):
             # now update LATEST_REVS index:
             with index_latest.searcher() as searcher:
                 ix_revids = set(doc[REVID] for doc in searcher.all_stored_fields())
-            backend_latest_revids = set(revid for name, revid in backend_latest_names_revids)
+            backend_latest_revids = set(revid for name, revid in backend_latest_backends_revids)
             upd_revids = backend_latest_revids - ix_revids
-            upd_revids = [(revids_mountpoints[revid], revid) for revid in upd_revids]
+            upd_revids = [(revids_backends[revid], revid) for revid in upd_revids]
             self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, 'update')
             self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, del_revids, 'delete')
         finally:
@@ -773,9 +812,20 @@ class Item(object):
         """
         self.indexer = indexer
         self.backend = self.indexer.backend
+        self._name = query.get('name_exact')
         if latest_doc is None:
             # we need to call the method without acl check to avoid endless recursion:
-            latest_doc = self.indexer._document(**query) or {}
+            latest_doc = self.indexer._document(**query)
+            if latest_doc is None:
+                # no such item, create a dummy doc that has a NAME entry to
+                # avoid issues in the name(s) property code. if this was a
+                # lookup for some specific item (using a name_exact query), we
+                # put that name into the NAME list, otherwise it'll be empty:
+                if self._name is not None:
+                    names = [self._name, ]
+                else:
+                    names = []
+                latest_doc = {NAME: names}
         self._current = latest_doc
 
     def _get_itemid(self):
@@ -789,10 +839,48 @@ class Item(object):
         return self._current.get(ACL)
 
     @property
+    def namespace(self):
+        return self._current.get(NAMESPACE)
+
+    @property
     def ptime(self):
         dt = self._current.get(PTIME)
         if dt is not None:
             return utctimestamp(dt)
+
+    @property
+    def names(self):
+        return get_names(self._current)
+
+    @property
+    def parentnames(self):
+        """
+        compute list of parent names (same order as in names, but no dupes)
+
+        :return: parent names (list of unicode)
+        """
+        parent_names = []
+        for name in self.names:
+            parentname_tail = name.rsplit('/', 1)
+            if len(parentname_tail) == 2:
+                parent_name = parentname_tail[0]
+                if parent_name not in parent_names:
+                    parent_names.append(parent_name)
+        return parent_names
+
+    @property
+    def parentids(self):
+        """
+        compute list of parent itemids
+
+        :return: parent itemids (set)
+        """
+        parent_ids = set()
+        for parent_name in self.parentnames:
+            rev = self.indexer._document(idx_name=LATEST_REVS, name_exact=parent_name)
+            if rev:
+                parent_ids.add(rev[ITEMID])
+        return parent_ids
 
     @property
     def mtime(self):
@@ -802,7 +890,50 @@ class Item(object):
 
     @property
     def name(self):
-        return self._current.get(NAME, 'DoesNotExist')
+        if self._name and self._name in self.names:
+            name = self._name
+        else:
+            try:
+                name = self.names[0]
+            except IndexError:
+                # empty name list, no name:
+                name = None
+        assert name is None or isinstance(name, unicode)
+        return name
+
+    def _fqname(self, name):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        ns = self.namespace
+        name = name or u''
+        if ns:
+            fqn = ns + u':' + name
+        else:
+            fqn = name
+        assert isinstance(fqn, unicode)
+        return fqn
+
+    @property
+    def fqname(self):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        return self._fqname(self.name)
+
+    @property
+    def fqnames(self):
+        """
+        return the fully qualified names including the namespace: NS:NAME
+        """
+        return [self._fqname(name) for name in self.names]
+
+    @property
+    def fqparentnames(self):
+        """
+        return the fully qualified parent names including the namespace: NS:NAME
+        """
+        return [self._fqname(name) for name in self.parentnames]
 
     @classmethod
     def create(cls, indexer, **query):
@@ -855,7 +986,7 @@ class Item(object):
         """
         preprocess a revision before it gets stored and put into index.
         """
-        content = convert_to_indexable(meta, data, is_new=True)
+        content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
     def store_revision(self, meta, data, overwrite=False,
@@ -898,11 +1029,12 @@ class Item(object):
         if wikiname is None:
             wikiname = app.cfg.interwikiname
         state = {'trusted': trusted,
-                 keys.NAME: name,
+                 keys.NAME: [name],
                  keys.ACTION: action,
                  keys.ADDRESS: remote_addr,
                  keys.USERID: userid,
                  keys.WIKINAME: wikiname,
+                 keys.NAMESPACE: None,
                  keys.ITEMID: self.itemid, # real itemid or None
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
@@ -927,7 +1059,7 @@ class Item(object):
         # just update the meta dict with the validated stuff:
         meta.update(dict(m.value.items()))
         # we do not want None / empty values:
-        meta = dict([(k, v) for k, v in meta.items() if v not in [None, []]])
+        meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]]) # XXX do not kick out empty lists before fixing NAME processing
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
@@ -938,9 +1070,9 @@ class Item(object):
                 raise ValueError('need overwrite=True to overwrite existing revisions')
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
-        revid = backend.store(meta, data)
+        backend_name, revid = backend.store(meta, data)
         meta[REVID] = revid
-        self.indexer.index_revision(meta, content)
+        self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
             self._current = self.indexer._document(revid=revid)
         if return_rev:
@@ -959,7 +1091,7 @@ class Item(object):
         Destroy revision <revid>.
         """
         rev = Revision(self, revid)
-        self.backend.remove(rev.name, revid)
+        self.backend.remove(rev.backend_name, revid)
         self.indexer.remove_revision(revid)
 
     def destroy_all_revisions(self):
@@ -974,7 +1106,7 @@ class Revision(object):
     """
     An existing revision (exists in the backend).
     """
-    def __init__(self, item, revid, doc=None):
+    def __init__(self, item, revid, doc=None, name=None):
         is_current = revid == CURRENT
         if doc is None:
             if is_current:
@@ -990,18 +1122,40 @@ class Revision(object):
         self.item = item
         self.revid = revid
         self.backend = item.backend
+        self.backend_name = doc[BACKENDNAME]
         self._doc = doc
         self.meta = Meta(self, self._doc)
         self._data = None
+        if name and name in self.names:
+            self._name = name
+        else:
+            self._name = None
         # Note: this does not immediately raise a KeyError for non-existing revs any more
         # If you access data or meta, it will, though.
 
     @property
+    def names(self):
+        return get_names(self.meta)
+
+    @property
     def name(self):
-        return self.meta.get(NAME, 'DoesNotExist')
+        name = self._name
+        if name is None:
+            try:
+                name = self.names[0]
+            except IndexError:
+                # empty name list, no name:
+                name = None
+        return name
+
+    def set_context(self, context):
+        for name in self.names:
+            if name.startswith(context):
+                self._name = name
+                return
 
     def _load(self):
-        meta, data = self.backend.retrieve(self._doc[NAME], self.revid) # raises KeyError if rev does not exist
+        meta, data = self.backend.retrieve(self.backend_name, self.revid) # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)
         self._data = data
         return meta, data
