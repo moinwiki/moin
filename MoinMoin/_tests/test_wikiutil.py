@@ -11,7 +11,8 @@ import pytest
 
 from flask import current_app as app
 
-from MoinMoin import config, wikiutil
+from MoinMoin.constants.chartypes import CHARS_SPACES
+from MoinMoin import wikiutil
 from MoinMoin._tests import wikiconfig
 
 from werkzeug import MultiDict
@@ -112,7 +113,7 @@ class TestNormalizePagename(object):
             (u'a     b     c', u'a b c'),
             (u'a   b  /  c    d  /  e   f', u'a b/c d/e f'),
             # All 30 unicode spaces
-            (config.chars_spaces, u''),
+            (CHARS_SPACES, u''),
             )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
@@ -166,11 +167,11 @@ def testParentItemName():
     assert result == expected
 
 def testdrawing2fname():
-    # with extension not in config.drawing_extensions
+    # with extension not in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname('Moin_drawing.txt')
     expected = 'Moin_drawing.txt.tdraw'
     assert result == expected
-    # with extension in config.drawing_extensions
+    # with extension in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')
     expected = 'Moindir.Moin_drawing.jpg'
     assert result == expected

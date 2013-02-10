@@ -26,9 +26,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.apps.feed import feed
-from MoinMoin.config import (NAME, NAME_EXACT, WIKINAME, ACL, ACTION, ADDRESS,
-                            HOSTNAME, USERID, COMMENT, MTIME, REVID, ALL_REVS,
-                            PARENTID, LATEST_REVS)
+from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
 from MoinMoin.themes import get_editor_info, render_template
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key

@@ -12,8 +12,6 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.config import ACL
-
 from ..protecting import ProtectingMiddleware, AccessDenied
 
 from .test_indexing import TestIndexingMiddleware

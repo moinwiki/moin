@@ -95,7 +95,7 @@ from flask import g as flaskg
 
 from whoosh.query import Term, And, Wildcard
 
-from MoinMoin.config import NAME, NAME_EXACT, WIKINAME
+from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME
 from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath

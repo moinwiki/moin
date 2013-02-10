@@ -30,11 +30,9 @@ logging = log.getLogger(__name__)
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
-from MoinMoin.config import ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, \
-                            ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
-                            IS_SYSITEM, SYSITEM_VERSION, \
-                            TAGS, SIZE, HASH_ALGORITHM, \
-                            ITEMID, REVID, DATAID, CONTENTTYPE_USER
+from MoinMoin.constants.keys import (ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, ACTION, ADDRESS, HOSTNAME,
+                                     USERID, MTIME, EXTRA, COMMENT, TAGS, SIZE, HASH_ALGORITHM, ITEMID, REVID)
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 UID_OLD = 'old_user_id' # dynamic field *_id, so we don't have to change schema
 

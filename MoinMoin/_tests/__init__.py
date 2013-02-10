@@ -15,8 +15,9 @@ from StringIO import StringIO
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin import config, security, user
-from MoinMoin.config import NAME, CONTENTTYPE
+from MoinMoin import security, user
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.keys import NAME, CONTENTTYPE
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import random_string
 from MoinMoin.storage.error import ItemAlreadyExistsError
@@ -49,7 +50,7 @@ def become_trusted(username=u"TrustedUser"):
 def update_item(name, meta, data):
     """ creates or updates an item  """
     if isinstance(data, unicode):
-        data = data.encode(config.charset)
+        data = data.encode(CHARSET)
     item = flaskg.storage[name]
 
     meta = meta.copy()

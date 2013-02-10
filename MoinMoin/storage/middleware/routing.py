@@ -11,7 +11,7 @@ Routes requests to different backends depending on the namespace.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.config import NAME, BACKENDNAME, NAMESPACE
+from MoinMoin.constants.keys import NAME, BACKENDNAME, NAMESPACE
 
 from MoinMoin.storage.backends import BackendBase, MutableBackendBase
 

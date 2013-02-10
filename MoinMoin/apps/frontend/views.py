@@ -50,8 +50,9 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
-from MoinMoin import config, user, util
+from MoinMoin import user, util
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm, ValidSearch
@@ -1721,11 +1722,9 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
     :returns: start, end, matches dict
     """
     if start_re is None:
-        start_re = re.compile(u'([{0}][{1}]+)'.format(config.chars_upper,
-                                                     config.chars_lower))
+        start_re = re.compile(u'([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
     if end_re is None:
-        end_re = re.compile(u'([{0}][{1}]+)$'.format(config.chars_upper,
-                                                    config.chars_lower))
+        end_re = re.compile(u'([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.

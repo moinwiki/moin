@@ -16,7 +16,7 @@ import shutil
 
 from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace
 from MoinMoin._tests import wikiconfig
-from MoinMoin.config import CURRENT
+from MoinMoin.constants.keys import CURRENT
 from MoinMoin.app import before_wiki
 
 from flask import current_app as app

@@ -37,7 +37,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil
-from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail

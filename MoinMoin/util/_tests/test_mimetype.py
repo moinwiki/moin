@@ -14,7 +14,7 @@ class TestMimeType(object):
 
     def test_parse_format(self):
         MimeType_obj = mimetype.MimeType(filename='test_file.jpg')
-        # format in config.parser_text_mimetype
+        # format in PARSER_TEXT_MIMETYPE
         test = [
         #test_format, test_mimetype
         ('html', ('text', 'html')),
@@ -27,7 +27,7 @@ class TestMimeType(object):
             result = MimeType_obj.parse_format(test_format)
             assert result == test_mimetype
 
-        # format not in config.parser_text_mimetype
+        # format not in PARSER_TEXT_MIMETYPE
         test = [
         # test_format, test_mimetype
         ('wiki', ('text', 'x.moin.wiki')),
