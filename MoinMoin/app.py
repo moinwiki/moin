@@ -178,7 +178,7 @@ def init_backends(app):
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
-    app.router = routing.Backend(app.cfg.namespace_mapping)
+    app.router = routing.Backend(app.cfg.namespace_mapping, app.cfg.backend_mapping)
     if app.cfg.create_storage:
         app.router.create()
     app.router.open()
@@ -225,7 +225,7 @@ def setup_user():
 
     # if we still have no user obj, create a dummy:
     if not userobj:
-        userobj = user.User(auth_method='invalid')
+        userobj = user.User(name=u'anonymous', auth_method='invalid')
     # if we have a valid user we store it in the session
     if userobj.valid:
         session['user.itemid'] = userobj.itemid
