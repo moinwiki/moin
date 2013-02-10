@@ -42,7 +42,7 @@ class Converter(object):
 
         type = Type(type)
         if not (type.type == 'x-moin' and type.subtype == 'macro'):
-            logging.debug("not a macro, skipping: %r" % type)
+            logging.debug("not a macro, skipping: %r" % (type, ))
             return
 
         name = type.parameters['name']

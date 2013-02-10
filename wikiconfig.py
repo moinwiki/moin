@@ -30,18 +30,19 @@ class Config(DefaultConfig):
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
-    namespace_mapping, acl_mapping = create_simple_mapping(
-                            uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
-                            # XXX we use rather relaxed ACLs for the development wiki:
-                            content_acl=dict(before=u'',
-                                             default=u'All:read,write,create,destroy,admin',
-                                             after=u'',
-                                             hierarchic=False, ),
-                            user_profile_acl=dict(before=u'',
-                                                  default=u'All:read,write,create,destroy,admin',
-                                                  after=u'',
-                                                  hierarchic=False, ),
-                            )
+    # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
+    namespace_mapping, backend_mapping, acl_mapping = \
+        create_simple_mapping(uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
+                              # XXX we use rather relaxed ACLs for the development wiki:
+                              content_acl=dict(before=u'',
+                                               default=u'All:read,write,create,destroy,admin',
+                                               after=u'',
+                                               hierarchic=False, ),
+                              user_profile_acl=dict(before=u'',
+                                                    default=u'All:read,write,create,destroy,admin',
+                                                    after=u'',
+                                                    hierarchic=False, ),
+                             )
 
     #item_root = u'Home' # front page
 
