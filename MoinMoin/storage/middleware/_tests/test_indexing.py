@@ -390,6 +390,15 @@ class TestIndexingMiddleware(object):
         assert rev_u.meta[NAMESPACE] == u'userprofiles'
         assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
 
+    def test_parentnames(self):
+        item_name = u'child'
+        item = self.imw[item_name]
+        item.store_revision(dict(name=[u'child', u'p1/a', u'p2/b', u'p2/c', u'p3/p4/d', ],
+                                 contenttype=u'text/plain'),
+                            StringIO(''))
+        item = self.imw[item_name]
+        assert item.parentnames == [u'p1', u'p2', u'p3/p4', ]  # one p2 duplicate removed
+
 class TestProtectedIndexingMiddleware(object):
     reinit_storage = True # cleanup after each test method
 

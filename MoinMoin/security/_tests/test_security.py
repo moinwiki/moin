@@ -15,7 +15,7 @@ from flask import current_app as app
 from MoinMoin.security import AccessControlList, ACLStringIterator
 
 from MoinMoin.user import User
-from MoinMoin.config import ACL
+from MoinMoin.config import NAME, ACL
 from MoinMoin.datastruct import ConfigGroups
 
 from MoinMoin._tests import update_item
@@ -456,5 +456,84 @@ class TestItemHierachicalAcls(object):
             for right in mayNot:
                 yield _not_have_right, u, right, itemname
 
+
+class TestItemHierachicalAclsMultiItemNames(object):
+    """ security: real-life access control list on items testing
+    """
+    # parent / child item names
+    p1 = [u'p1', ]
+    c1 = [u'p1/c1', ]
+    p2 = [u'p2', ]
+    c2 = [u'p2/c2', ]
+    c12 = [u'p1/c12', u'p2/c12', ]
+    items = [
+        # itemnames, acl, content
+        (p1, u'Editor:', p1),  # deny access (due to hierarchic acl mode also effective for children)
+        (c1, None, c1),  # no own acl -> inherit from parent
+        (p2, None, p2),  # default acl effective (also for children)
+        (c2, None, c2),  # no own acl -> inherit from parent
+        (c12, None, c12),  # no own acl -> inherit from parents
+        ]
+
+    from MoinMoin._tests import wikiconfig
+
+    class Config(wikiconfig.Config):
+        content_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
+
+    def setup_method(self, method):
+        become_trusted(username=u'WikiAdmin')
+        for item_names, item_acl, item_content in self.items:
+            meta = {NAME: item_names}
+            if item_acl is not None:
+                meta.update({ACL: item_acl})
+            update_item(item_names[0], meta, item_content)
+
+    def testItemACLs(self):
+        """ security: test item acls """
+        tests = [
+            # itemname, username, expected_rights
+            (self.p1, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.p2, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c1, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c2, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c12, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.p1, u'Editor', []),  # by p1 acl
+            (self.c1, u'Editor', []),  # by p1 acl
+            (self.p1, u'SomeOne', ['read']),  # by after acl
+            (self.c1, u'SomeOne', ['read']),  # by after acl
+            (self.p2, u'Editor', ['read', 'write']),  # by default acl
+            (self.c2, u'Editor', ['read', 'write']),  # by default acl
+            (self.p2, u'SomeOne', ['read']),  # by after acl
+            (self.c2, u'SomeOne', ['read']),  # by after acl
+            (self.c12, u'SomeOne', ['read']),  # by after acl
+            # now check the rather special stuff:
+            (self.c12, u'Editor', ['read', 'write']),  # disallowed via p1, but allowed via p2 via default acl
+        ]
+
+        for itemnames, username, may in tests:
+            u = User(auth_username=username)
+            u.valid = True
+            itemname = itemnames[0]
+
+            def _have_right(u, right, itemname):
+                can_access = getattr(u.may, right)(itemname)
+                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+
+            # User should have these rights...
+            for right in may:
+                yield _have_right, u, right, itemname
+
+            def _not_have_right(u, right, itemname):
+                can_access = getattr(u.may, right)(itemname)
+                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+
+            # User should NOT have these rights:
+            mayNot = [right for right in app.cfg.acl_rights_contents
+                      if right not in may]
+            for right in mayNot:
+                yield _not_have_right, u, right, itemname
+
+
+# XXX TODO add tests for a user having multiple usernames (one resulting in more permissions than other)
 
 coverage_modules = ['MoinMoin.security']

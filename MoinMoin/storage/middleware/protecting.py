@@ -71,13 +71,13 @@ class ProtectingMiddleware(object):
         lru_cache_decorator = lru_cache(EVAL_CACHE)
         self.eval_acl = lru_cache_decorator(self._eval_acl)
         lru_cache_decorator = lru_cache(LOOKUP_CACHE)
-        self.get_acl = lru_cache_decorator(self._get_acl)
+        self.get_acls = lru_cache_decorator(self._get_acls)
 
     def _clear_acl_cache(self):
         # if we have modified the backend somehow so ACL lookup is influenced,
         # this functions need to get called, so it clears the ACL cache.
         # ACL lookups afterwards will fetch fresh info from the lower layers.
-        self.get_acl.cache_clear()
+        self.get_acls.cache_clear()
 
     def _get_configured_acls(self, itemname):
         """
@@ -93,25 +93,40 @@ class ProtectingMiddleware(object):
         else:
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(itemname))
 
-    def _get_acl(self, fqname):
+    def _get_acls(self, itemid=None, fqname=None):
         """
-        return the effective item_acl for item fqname (= its own acl, or,
-        if hierarchic acl mode is enabled, of some parent item) - without
-        before/default/after acls. return None if no acl was found.
+        return a list of (alternatively valid) effective acls for the item
+        identified via itemid or fqname.
+        this can be a list just containing the item's own acl (as only alternative),
+        or a list with None, indicating no acl was found (in non-hierarchic mode).
+        if hierarchic acl mode is enabled, a list of all valid parent acls will
+        be returned.
+        All lists are without considering before/default/after acls.
         """
-        item = self[fqname]
+
+        if itemid is not None:
+            item = self.get_item(itemid=itemid)
+        elif fqname is not None:
+            # itemid might be None for new, not yet stored items,
+            # but we have fqname then
+            item = self.get_item(name_exact=fqname)
+        else:
+            raise ValueError("need itemid or fqname")
         acl = item.acl
+        fqname = item.fqname
         if acl is not None:
-            return acl
+            return [acl, ]
         acl_cfg = self._get_configured_acls(fqname)
         if acl_cfg['hierarchic']:
             # check parent(s), recursively
-            parent_tail = fqname.rsplit('/', 1)
-            if len(parent_tail) == 2:
-                parent, _ = parent_tail
-                acl = self.get_acl(parent)
-                if acl is not None:
-                    return acl
+            parentids = item.parentids
+            if parentids:
+                acl_list = []
+                for parentid in parentids:
+                    pacls = self.get_acls(parentid, None)
+                    acl_list.extend(pacls)
+                return acl_list
+        return [None, ]
 
     def _parse_acl(self, acl, default=''):
         return AccessControlList([acl, ], default=default, valid=self.valid_rights)
@@ -167,12 +182,17 @@ class ProtectingMiddleware(object):
         item = self.indexer.existing_item(**query)
         return ProtectedItem(self, item)
 
-    def may(self, itemname, capability, username=None):
+    def may(self, itemname, capability, usernames=None):
+        if usernames is not None and isinstance(usernames, (str, unicode)):
+            # we got a single username (maybe str), make a list of unicode:
+            if isinstance(usernames, str):
+                usernames = usernames.decode('utf-8')
+            usernames = [usernames, ]
         if isinstance(itemname, list):
             # if we get a list of names, just use first one to fetch item
             itemname = itemname[0]
         item = self[itemname]
-        allowed = item.allows(capability, user_name=username)
+        allowed = item.allows(capability, user_names=usernames)
         return allowed
 
 
@@ -190,6 +210,18 @@ class ProtectedItem(object):
         return self.item.itemid
 
     @property
+    def fqname(self):
+        return self.item.fqname
+
+    @property
+    def parentids(self):
+        return self.item.parentids
+
+    @property
+    def parentnames(self):
+        return self.item.parentnames
+
+    @property
     def name(self):
         return self.item.name
 
@@ -200,39 +232,41 @@ class ProtectedItem(object):
     def __nonzero__(self):
         return bool(self.item)
 
-    def full_acl(self):
+    def full_acls(self):
         """
-        return the full acl for this item, including before/default/after acl.
+        iterator over all alternatively possible full acls for this item,
+        including before/default/after acl.
         """
         fqname = self.item.fqname
+        itemid = self.item.itemid
         acl_cfg = self.protector._get_configured_acls(fqname)
         before_acl = acl_cfg['before']
-        item_acl = self.protector.get_acl(fqname)
-        if item_acl is None:
-            item_acl = acl_cfg['default']
         after_acl = acl_cfg['after']
-        acl = u' '.join([before_acl, item_acl, after_acl])
-        return acl
+        for item_acl in self.protector.get_acls(itemid, fqname):
+            if item_acl is None:
+                item_acl = acl_cfg['default']
+            yield u' '.join([before_acl, item_acl, after_acl])
 
-    def allows(self, right, user_name=None):
-        """ Check if username may have <right> access on this item.
+    def allows(self, right, user_names=None):
+        """ Check if usernames may have <right> access on this item.
 
         :param right: the right to check
-        :param user_name: user name to use for permissions check (default is to
-                          use the user name doing the current request)
+        :param user_names: user names to use for permissions check (default is to
+                          use the user names doing the current request)
         :rtype: bool
         :returns: True if you have permission or False
         """
-        if user_name is None:
-            user_name = self.protector.user.name0
-
+        if user_names is None:
+            user_names = self.protector.user.name
+        # must be a non-empty list of user names
+        assert isinstance(user_names, list)
+        assert user_names
         acl_cfg = self.protector._get_configured_acls(self.item.fqname)
-        full_acl = self.full_acl()
-
-        allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
-        if allowed is not None:
-            return pchecker(right, allowed, self.item)
-
+        for user_name in user_names:
+            for full_acl in self.full_acls():
+                allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
+                if allowed is True and pchecker(right, allowed, self.item):
+                    return True
         return False
 
     def require(self, *capabilities):
