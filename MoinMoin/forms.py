@@ -22,7 +22,6 @@ from flask import g as flaskg
 from MoinMoin.constants.forms import *
 from MoinMoin.constants.keys import ITEMID, NAME
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
 from MoinMoin.util.forms import FileStorage
 
 

@@ -18,14 +18,8 @@ from flask import g as flaskg
 from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
                                      LATEST_REVS, ALL_REVS, NAMESPACE)
 
-from ..indexing import IndexingMiddleware
-
 from MoinMoin.auth import GivenAuth
 from MoinMoin._tests import wikiconfig
-from MoinMoin.storage.backends.stores import MutableBackend
-from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
-from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
-from MoinMoin.storage import create_simple_mapping
 
 
 def dumper(indexer, idx_name):

@@ -21,7 +21,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.i18n import _
 

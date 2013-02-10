@@ -21,11 +21,10 @@ import time
 import mimetypes
 import json
 from datetime import datetime
-from itertools import chain
 from collections import namedtuple
 from functools import wraps, partial
 
-from flask import request, url_for, flash, Response, make_response, redirect, session, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
 from flask.ext.babel import format_date
@@ -45,7 +44,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
+from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
@@ -55,9 +54,8 @@ from MoinMoin.constants.keys import *
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
-from MoinMoin.search import SearchForm, ValidSearch
-from MoinMoin.security.textcha import TextCha, TextChaizedForm, TextChaValid
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
+from MoinMoin.search import SearchForm
+from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_displayed, item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
 

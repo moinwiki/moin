@@ -8,16 +8,12 @@
 
 from StringIO import StringIO
 
-import pytest
-
 from flask import url_for
 from flask import g as flaskg
 from werkzeug import ImmutableMultiDict, FileStorage
 
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
-from MoinMoin.util import crypto
-from MoinMoin._tests import wikiconfig
 
 
 class TestFrontend(object):

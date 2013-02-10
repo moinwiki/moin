@@ -10,7 +10,7 @@ from flask import request
 
 from MoinMoin.user import create_user
 from MoinMoin.auth.http import HTTPAuthMoin
-import pytest
+
 
 class TestHTTPAuthMoin(object):
     """ Test: HTTPAuthMoin """

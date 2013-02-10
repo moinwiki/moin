@@ -6,7 +6,7 @@
 MoinMoin - MoinMoin.util.diff_html Tests
 """
 
-import pytest
+
 from MoinMoin.util import diff_html
 
 def test_indent():

@@ -6,8 +6,6 @@
 """
 
 
-import py
-
 from MoinMoin.security.ticket import createTicket, checkTicket
 
 

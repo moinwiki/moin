@@ -9,7 +9,6 @@
 
 import pytest
 
-from flask import g as flaskg
 from flask import Markup
 
 from werkzeug import escape

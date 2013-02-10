@@ -9,7 +9,6 @@
 
 import sys, os, shutil, time, errno
 from stat import S_ISDIR, ST_MODE, S_IMODE
-import warnings
 
 from MoinMoin import log
 logging = log.getLogger(__name__)

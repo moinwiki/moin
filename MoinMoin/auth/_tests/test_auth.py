@@ -5,10 +5,7 @@
 Test for auth.__init__
 """
 
-from flask import current_app as app
 from flask import g as flaskg
-
-import pytest
 
 from MoinMoin._tests import wikiconfig
 from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url

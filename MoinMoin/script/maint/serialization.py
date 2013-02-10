@@ -8,7 +8,6 @@ MoinMoin - backend serialization / deserialization
 import sys
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin.storage.middleware.serialization import serialize, deserialize

@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.converter._args_wiki
 """
 
 
-import pytest
-
 from MoinMoin.converter._args_wiki import *
 
 def test():

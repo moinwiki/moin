@@ -5,7 +5,6 @@
 Test for macro.GetText
 """
 
-import pytest
 from MoinMoin.converter._args import Arguments
 from MoinMoin.macro.GetText import *
 

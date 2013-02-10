@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.util.tree
 """
 
 
-import pytest
-
 from MoinMoin.util.tree import *
 
 def test_Name():

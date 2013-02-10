@@ -14,7 +14,7 @@ from __future__ import absolute_import, division
 from flask import g as flaskg
 
 from MoinMoin.util.interwiki import is_known_wiki, url_for_item
-from MoinMoin.util.iri import Iri, IriPath
+from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 from MoinMoin.wikiutil import AbsItemName

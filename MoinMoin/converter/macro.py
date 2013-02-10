@@ -22,7 +22,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.converter._args import Arguments
 from MoinMoin.util import iri
 from MoinMoin.util.mime import type_moin_document, Type
-from MoinMoin.util.tree import html, moin_page
+from MoinMoin.util.tree import moin_page
 from MoinMoin.util.plugins import PluginMissingError
 
 

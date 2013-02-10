@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.converter.creole_in
 """
 
 
-import pytest
-
 import re
 
 from MoinMoin.util.tree import moin_page, xlink

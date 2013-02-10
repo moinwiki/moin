@@ -7,8 +7,6 @@ MoinMoin - create a user account
 """
 
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin import user

@@ -9,13 +9,9 @@
 """
 
 
-import pytest
-
-from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin import user
-from MoinMoin.util import crypto
 
 
 class TestSimple(object):
