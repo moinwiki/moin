@@ -61,6 +61,9 @@ def deserialize(src, backend):
         meta_str = src.read(meta_size)
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
+        if 'itemtype' not in meta:
+            # temporary hack to upgrade serialized item files:
+            meta['itemtype'] = u'default'
         data_size = meta[u'size']
         curr_pos = src.tell()
         limited = LimitedStream(src, data_size)
