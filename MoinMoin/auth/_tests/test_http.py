@@ -34,11 +34,11 @@ class TestHTTPAuthMoin(object):
         httpauthmoin_obj = HTTPAuthMoin()
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert test_user.valid
-        assert test_user.name == u'ValidUser'
+        assert test_user.name == [u'ValidUser', ]
         assert bool_val
 
         # when auth_method is not 'http'
         flaskg.user.auth_method = 'invalid'
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert not test_user.valid
-        assert test_user.name == u'anonymous'
+        assert test_user.name0 == u'anonymous'

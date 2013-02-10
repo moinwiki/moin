@@ -26,14 +26,17 @@ class TestFrontend(object):
             viewopts = {}
         if params is None:
             params = {}
-        print 'GET %s' % url_for(viewname, **viewopts)
+
         with self.app.test_client() as c:
-            rv = c.get(url_for(viewname, **viewopts), data=params)
-            assert rv.status == status
-            assert rv.headers['Content-Type'] in content_types
-            for item in data:
-                assert item in rv.data
-            return rv
+            for method in ['HEAD', 'GET']:
+                print '%s %s' % (method, url_for(viewname, **viewopts))
+                rv = c.open(url_for(viewname, **viewopts), method=method, data=params)
+                assert rv.status == status
+                assert rv.headers['Content-Type'] in content_types
+                if method == 'GET':
+                    for item in data:
+                        assert item in rv.data
+        return rv
 
     def _test_view_post(self, viewname, status='302 FOUND', content_types=('text/html; charset=utf-8', ), data=('<html>', '</html>'), form=None, viewopts=None):
         if viewopts is None:

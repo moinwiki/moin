@@ -26,7 +26,7 @@ If you want a backup of MoinMoin and your data, then backup the following:
 To create a dump of all data stored in moinmoin (wiki items, user profiles), run the
 following command::
 
- moin save --file backup.moin
+ moin save --all-backends --file backup.moin
 
 Please note that this file contains sensitive data like user profiles, wiki
 contents, so store your backups in a safe place that no unauthorized
