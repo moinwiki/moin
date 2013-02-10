@@ -45,8 +45,13 @@ def serialize_rev(meta, data):
             yield block
 
 def serialize_iter(backend):
-    for mountpoint, revid in backend:
-        meta, data = backend.retrieve(mountpoint, revid)
+    for revid in backend:
+        if isinstance(revid, tuple):
+            # router middleware gives tuples and wants both values for retrieve:
+            meta, data = backend.retrieve(*revid)
+        else:
+            # lower level backends have simple revids
+            meta, data = backend.retrieve(revid)
         for data in serialize_rev(meta, data):
             yield data
     for data in serialize_rev(None, None):
@@ -61,6 +66,10 @@ def deserialize(src, backend):
         meta_str = src.read(meta_size)
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
+        name = meta.get('name')
+        if isinstance(name, unicode):
+            # if we encounter single names, make a list of names:
+            meta['name'] = [name, ]
         if 'itemtype' not in meta:
             # temporary hack to upgrade serialized item files:
             meta['itemtype'] = u'default'

@@ -37,9 +37,10 @@ def build_mixed_index(basename, spec):
     return [(MixedIndexEntry(relname, Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
 
+
 class TestItem(object):
 
-    def testNonExistent(self):
+    def _testNonExistent(self):
         item = Item.create(u'DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
@@ -130,30 +131,51 @@ class TestItem(object):
     def test_meta_filter(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name'], 'address': u'1.2.3.4'}
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
         # keys like NAME, ITEMID, REVID, DATAID are filtered
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         assert result == expected
 
     def test_meta_dict_to_text(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, 'name': 'test_name'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         item = Item.create(name)
         result = Item.meta_dict_to_text(item, meta)
-        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
+        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "name": [\n    "test_name"\n  ], \n  "test_key": "test_val"\n}'
         assert result == expected
 
     def test_meta_text_to_dict(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": "test_name" \n}'
+        text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": ["test_name"] \n}'
         item = Item.create(name)
         result = Item.meta_text_to_dict(item, text)
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u"test_name"]}
         assert result == expected
+
+    def test_item_can_have_several_names(self):
+        content = u"This is page content"
+
+        update_item(u'Page',
+                    {NAME: [u'Page',
+                            u'Another name',
+                            ],
+                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+
+        item1 = Item.create(u'Page')
+        assert item1.name == u'Page'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.content.data == content
+
+        item2 = Item.create(u'Another name')
+        assert item2.name == u'Another name'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.content.data == content
+
+        assert item1.rev.revid == item2.rev.revid
 
     def test_rename(self):
         name = u'Test_Item'
@@ -177,9 +199,42 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(new_name)
         assert item.name == u'Test_new_Item'
-        assert item.meta['name_old'] == u'Test_Item'
+        assert item.meta['name_old'] == [u'Test_Item']
         assert item.meta['comment'] == u'renamed'
         assert item.content.data == u'test_data'
+
+    def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
+        content = u"This is page content"
+
+        update_item(u'Page',
+                    {NAME: [u'First',
+                            u'Second',
+                            u'Third',
+                            ],
+                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+
+        item = Item.create(u'Second')
+        item.rename(u'New name', comment=u'renamed')
+
+        item1 = Item.create(u'First')
+        assert item1.name == u'First'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.content.data == content
+
+        item2 = Item.create(u'New name')
+        assert item2.name == u'New name'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.content.data == content
+
+        item3 = Item.create(u'Third')
+        assert item3.name == u'Third'
+        assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item3.content.data == content
+
+        assert item1.rev.revid == item2.rev.revid == item3.rev.revid
+
+        item4 = Item.create(u'Second')
+        assert item4.meta[CONTENTTYPE] == 'application/x-nonexistent'
 
     def test_rename_recursion(self):
         update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
@@ -203,21 +258,50 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(u'Renamed_Page')
         assert item.name == u'Renamed_Page'
-        assert item.meta['name_old'] == u'Page'
+        assert item.meta['name_old'] == [u'Page']
         assert item.meta['comment'] == u'renamed'
         assert item.content.data == u'Page 1'
 
         item = Item.create(u'Renamed_Page/Child')
         assert item.name == u'Renamed_Page/Child'
-        assert item.meta['name_old'] == u'Page/Child'
+        assert item.meta['name_old'] == [u'Page/Child']
         assert item.meta['comment'] == u'renamed'
         assert item.content.data == u'this is child'
 
         item = Item.create(u'Renamed_Page/Child/Another')
         assert item.name == u'Renamed_Page/Child/Another'
-        assert item.meta['name_old'] == u'Page/Child/Another'
+        assert item.meta['name_old'] == [u'Page/Child/Another']
         assert item.meta['comment'] == u'renamed'
         assert item.content.data == u'another child'
+
+    def test_rename_recursion_with_multiple_names_and_children(self):
+        update_item(u'Foo',
+                    {CONTENTTYPE: u'text/x.moin.wiki',
+                         NAME: [u'Other', u'Page', u'Foo']},
+                    u'Parent')
+        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
+        update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
+        update_item(u'Another',
+                    {CONTENTTYPE: u'text/x.moin.wiki',
+                     NAME: [u'Another', u'Page/Second']
+                         },
+                    u'Both')
+        update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Second')
+        update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
+
+        item = Item.create(u'Page')
+
+        item.rename(u'Renamed', comment=u'renamed')
+
+        assert Item.create(u'Page/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Child').content.data == u'Child of Page'
+        assert Item.create(u'Page/Second').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Second').content.data == u'Both'
+        assert Item.create(u'Another').content.data == u'Both'
+        assert Item.create(u'Page/Second/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Renamed/Second/Child').content.data == u'Child of Second'
+        assert Item.create(u'Other/Child2').content.data == u'Child of Other'
+        assert Item.create(u'Another/Child').content.data == u'Child of Another'
 
     def test_delete(self):
         name = u'Test_Item2'
