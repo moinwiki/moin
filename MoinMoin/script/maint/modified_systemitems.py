@@ -12,7 +12,7 @@
 from flask import current_app as app
 from flask.ext.script import Command
 
-from MoinMoin.config import IS_SYSITEM, SYSITEM_VERSION
+from MoinMoin.constants.keys import IS_SYSITEM, SYSITEM_VERSION
 
 class Modified_SystemItems(Command):
     description = 'This command can be used to list system items that has been edited in this wiki.'

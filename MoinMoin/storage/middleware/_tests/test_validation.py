@@ -13,7 +13,7 @@ import pytest
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from MoinMoin.constants import keys
-from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid
 

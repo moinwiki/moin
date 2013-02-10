@@ -15,12 +15,11 @@ from flask import url_for
 
 import os.path
 
-from MoinMoin.config import CURRENT
+from MoinMoin.constants.keys import CURRENT
+from MoinMoin.constants.contenttypes import CHARSET
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin import config
 
 
 def is_local_wiki(wiki_name):
@@ -176,8 +175,8 @@ def join_wiki(wikiurl, wikitail, namespace):
     :rtype: string
     :returns: generated URL of the page in the other wiki
     """
-    wikitail = url_quote(wikitail, charset=config.charset, safe='/')
-    namespace = url_quote(namespace, charset=config.charset, safe='/')
+    wikitail = url_quote(wikitail, charset=CHARSET, safe='/')
+    namespace = url_quote(namespace, charset=CHARSET, safe='/')
     if not('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl):
         if namespace:
             namespace = u':{0}:'.format(namespace)

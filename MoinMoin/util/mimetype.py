@@ -10,7 +10,7 @@ from __future__ import absolute_import, division
 
 import mimetypes
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import PARSER_TEXT_MIMETYPE
 
 # prevents unexpected results on Windows
 # see http://bugs.python.org/issue10551
@@ -129,7 +129,7 @@ class MimeType(object):
             type "wiki" instead of "text/x.moin.wiki".
         """
         format = format.lower()
-        if format in config.parser_text_mimetype:
+        if format in PARSER_TEXT_MIMETYPE:
             mimetype = 'text', format
         else:
             mapping = {

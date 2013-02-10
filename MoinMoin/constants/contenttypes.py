@@ -8,10 +8,10 @@ MoinMoin - contenttype related constants
 # Charset - we support only 'utf-8'. While older encodings might work,
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!
-charset = 'utf-8'
+CHARSET = 'utf-8'
 
 # Parser to use mimetype text
-parser_text_mimetype = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html', 'css',
+PARSER_TEXT_MIMETYPE = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html', 'css',
                        'xml', 'python', 'perl', 'php', 'ruby', 'javascript',
                        'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole', )
 
@@ -27,3 +27,5 @@ GROUP_AUDIO = 'audio items'
 GROUP_VIDEO = 'video items'
 GROUP_DRAWING = 'drawing items'
 GROUP_OTHER = 'other items'
+
+DRAWING_EXTENSIONS = ['.tdraw', '.adraw', '.svg', '.png', '.jpg', '.jpeg', '.gif', ]

@@ -20,7 +20,8 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin import config, error
+from MoinMoin import error
+from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
@@ -559,9 +560,9 @@ options = {
     (
       ('functions', u'',
        'Access Control List for functions.'),
-      ('rights_contents', config.ACL_RIGHTS_CONTENTS,
+      ('rights_contents', ACL_RIGHTS_CONTENTS,
        'Valid tokens for right sides of content ACL entries.'),
-      ('rights_functions', config.ACL_RIGHTS_FUNCTIONS,
+      ('rights_functions', ACL_RIGHTS_FUNCTIONS,
        'Valid tokens for right sides of function ACL entries.'),
     )),
 

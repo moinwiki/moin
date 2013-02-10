@@ -16,7 +16,9 @@ import re
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config, wikiutil
+from MoinMoin import wikiutil
+from MoinMoin.constants.misc import URI_SCHEMES
+from MoinMoin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
@@ -74,8 +76,8 @@ class ConverterFormat19(Converter):
           $  # ... or end of line
          )
     """ % {
-        'u': config.chars_upper,
-        'l': config.chars_lower,
+        'u': CHARS_UPPER,
+        'l': CHARS_LOWER,
         'child': re.escape(wikiutil.CHILD_PREFIX),
         'parent': re.escape(wikiutil.PARENT_PREFIX),
     }
@@ -143,7 +145,7 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)

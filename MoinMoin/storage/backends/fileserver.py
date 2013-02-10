@@ -22,7 +22,7 @@ import stat
 from StringIO import StringIO
 from werkzeug import url_quote, url_unquote
 
-from MoinMoin.config import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
+from MoinMoin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase
 
 from MoinMoin.util.mimetype import MimeType

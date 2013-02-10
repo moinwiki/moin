@@ -23,7 +23,7 @@ from __future__ import absolute_import, division
 
 import json
 
-from MoinMoin.config import REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
 from MoinMoin.util.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase

@@ -19,7 +19,7 @@ from flask.ext.script import Command, Option
 
 from whoosh.query import Every
 
-from MoinMoin.config import NAME, NAME_EXACT
+from MoinMoin.constants.keys import NAME, NAME_EXACT
 from MoinMoin.script import fatal
 
 

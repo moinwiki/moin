@@ -10,7 +10,7 @@
 from email.Charset import Charset, QP
 from email.Header import Header
 from MoinMoin.mail import sendmail
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
 
 
 class TestdecodeSpamSafeEmail(object):
@@ -77,14 +77,14 @@ class TestEncodeAddress(object):
     name-addr   =   [display-name] angle-addr
     angle-addr  =   [CFWS] "<" addr-spec ">" [CFWS] / obs-angle-addr
     """
-    charset = Charset(config.charset)
+    charset = Charset(CHARSET)
     charset.header_encoding = QP
     charset.body_encoding = QP
 
     def testSimpleAddress(self):
         """ mail.sendmail: encode simple address: local@domain """
         address = u'local@domain'
-        expected = address.encode(config.charset)
+        expected = address.encode(CHARSET)
         assert sendmail.encodeAddress(address, self.charset) == expected
 
     def testComposite(self):

@@ -15,7 +15,7 @@ from flask import g as flaskg
 
 from MoinMoin.apps.misc import misc
 
-from MoinMoin.config import NAME, MTIME
+from MoinMoin.constants.keys import MTIME
 from MoinMoin.themes import render_template
 from MoinMoin import wikiutil
 

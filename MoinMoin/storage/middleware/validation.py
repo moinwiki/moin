@@ -29,7 +29,7 @@ import time
 from flatland import Dict, List, Unset, Boolean, Integer, String
 
 from MoinMoin.constants import keys
-from MoinMoin.config import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid, UUID_LEN
 from MoinMoin.util.mime import Type

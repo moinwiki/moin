@@ -10,7 +10,8 @@ from __future__ import absolute_import, division
 
 import sys
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
+
 
 class Error(Exception):
     """ Base class for moin moin errors
@@ -20,11 +21,11 @@ class Error(Exception):
 
     Standard errors work safely only with strings using ascii or
     unicode. This class can be used safely with both strings using
-    config.charset and unicode.
+    CHARSET and unicode.
 
     You can init this class with either unicode or string using
-    config.charset encoding. On output, the class will convert the string
-    to unicode or the unicode to string, using config.charset.
+    CHARSET encoding. On output, the class will convert the string
+    to unicode or the unicode to string, using CHARSET.
 
     When you want to render an error, use unicode() or str() as needed.
     """
@@ -33,21 +34,21 @@ class Error(Exception):
         """ Initialize an error, decode if needed
 
         :param message: unicode, str or object that support __unicode__
-            and __str__. __str__ should use config.charset.
+            and __str__. __str__ should use CHARSET.
         """
         self.message = message
 
     def __unicode__(self):
         """ Return unicode error message """
         if isinstance(self.message, str):
-            return unicode(self.message, config.charset)
+            return unicode(self.message, CHARSET)
         else:
             return unicode(self.message)
 
     def __str__(self):
         """ Return encoded message """
         if isinstance(self.message, unicode):
-            return self.message.encode(config.charset)
+            return self.message.encode(CHARSET)
         else:
             return str(self.message)
 

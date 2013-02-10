@@ -15,8 +15,8 @@ import pytest
 
 from flask import g as flaskg
 
-from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
-                            LATEST_REVS, ALL_REVS, NAMESPACE
+from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
+                                     LATEST_REVS, ALL_REVS, NAMESPACE)
 
 from ..indexing import IndexingMiddleware
 

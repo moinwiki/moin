@@ -18,7 +18,8 @@ from werkzeug import url_encode
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink, xinclude
 from MoinMoin.util.interwiki import is_known_wiki
@@ -694,7 +695,7 @@ class Converter(ConverterMacro):
             )?
             \]\]
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
             link_text=None, link_args=None,
@@ -718,7 +719,7 @@ class Converter(ConverterMacro):
                 link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
         if link_args:
             link_args = parse_arguments(link_args) # XXX needs different parsing
-            query = url_encode(link_args.keyword, charset=config.charset, encode_keys=True)
+            query = url_encode(link_args.keyword, charset=CHARSET, encode_keys=True)
         else:
             query = None
         if link_item is not None:
@@ -833,7 +834,7 @@ class Converter(ConverterMacro):
         else:
             args = {}
         if object_item is not None:
-            query = url_encode(args, charset=config.charset, encode_keys=True)
+            query = url_encode(args, charset=CHARSET, encode_keys=True)
             att = 'attachment:' # moin 1.9 needed this for an attached file
             if object_item.startswith(att):
                 object_item = '/' + object_item[len(att):] # now we have a subitem

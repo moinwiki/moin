@@ -21,8 +21,8 @@ from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.config import NAME, ITEMID, SIZE, EMAIL
-from MoinMoin.config import SUPERUSER
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL
+from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
 
 @admin.route('/superuser')

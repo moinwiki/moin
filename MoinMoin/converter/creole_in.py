@@ -27,7 +27,7 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import config
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 
@@ -436,7 +436,7 @@ class Converter(ConverterMacro):
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""

@@ -21,9 +21,9 @@ logging = log.getLogger(__name__)
 
 from whoosh.util import lru_cache
 
-from MoinMoin.config import ACL, CREATE, READ, PUBREAD, WRITE, DESTROY, ADMIN, \
-                            PTIME, ACL_RIGHTS_CONTENTS, \
-                            ALL_REVS, LATEST_REVS
+from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, DESTROY, ACL_RIGHTS_CONTENTS)
+from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS
+
 from MoinMoin.security import AccessControlList
 
 # max sizes of some lru caches:

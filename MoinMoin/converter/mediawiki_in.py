@@ -19,7 +19,8 @@ from werkzeug import url_encode
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
@@ -591,7 +592,7 @@ class Converter(ConverterMacro):
             \s*
             \]
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def parse_args(self, input):
         """
@@ -635,7 +636,7 @@ class Converter(ConverterMacro):
         parsed_args = self.parse_args(link_args[1:])
         query = None
         if parsed_args.keyword:
-            query = url_encode(parsed_args.keyword, charset=config.charset, encode_keys=True)
+            query = url_encode(parsed_args.keyword, charset=CHARSET, encode_keys=True)
         # Take the last of positional parameters as link_text(caption)
         if parsed_args.positional:
             link_text = parsed_args.positional.pop()
@@ -654,7 +655,7 @@ class Converter(ConverterMacro):
                     if 'do' not in args:
                         # by default, we want the item's get url for transclusion of raw data:
                         args['do'] = 'get'
-                    query = url_encode(args, charset=config.charset, encode_keys=True)
+                    query = url_encode(args, charset=CHARSET, encode_keys=True)
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:

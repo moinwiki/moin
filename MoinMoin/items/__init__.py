@@ -51,7 +51,7 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
     )
@@ -456,7 +456,7 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = data.encode(CHARSET) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)

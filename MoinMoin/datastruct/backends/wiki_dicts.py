@@ -11,7 +11,7 @@
 
 from flask import g as flaskg
 
-from MoinMoin.config import CURRENT, SOMEDICT
+from MoinMoin.constants.keys import CURRENT, SOMEDICT
 from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 

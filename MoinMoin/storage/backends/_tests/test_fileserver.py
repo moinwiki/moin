@@ -13,7 +13,7 @@ import tempfile
 
 import pytest
 
-from MoinMoin.config import NAME, MTIME, REVID, ITEMID, HASH_ALGORITHM
+from MoinMoin.constants.keys import NAME, MTIME, REVID, ITEMID, HASH_ALGORITHM
 from ..fileserver import Backend
 from . import BackendTestBase
 

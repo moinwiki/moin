@@ -15,7 +15,7 @@ from flask import current_app as app
 from MoinMoin.security import AccessControlList, ACLStringIterator
 
 from MoinMoin.user import User
-from MoinMoin.config import NAME, ACL
+from MoinMoin.constants.keys import NAME, ACL
 from MoinMoin.datastruct import ConfigGroups
 
 from MoinMoin._tests import update_item

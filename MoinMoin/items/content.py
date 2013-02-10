@@ -48,7 +48,7 @@ except ImportError:
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil, config
+from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_
 from MoinMoin.themes import render_template
 from MoinMoin.storage.error import StorageError
@@ -63,11 +63,9 @@ from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
 from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
-    GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT,
+    GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
     )
-from MoinMoin.constants.keys import (
-    NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
-    )
+from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
 
 
 COLS = 80
@@ -826,11 +824,11 @@ class Text(Binary):
 
     def data_internal_to_storage(self, text):
         """ convert data from memory format to storage format """
-        return text.replace(u'\n', u'\r\n').encode(config.charset)
+        return text.replace(u'\n', u'\r\n').encode(CHARSET)
 
     def data_storage_to_internal(self, data):
         """ convert data from storage format to memory format """
-        return data.decode(config.charset).replace(u'\r\n', u'\n')
+        return data.decode(CHARSET).replace(u'\r\n', u'\n')
 
     def _get_data_diff_html(self, oldrev, newrev, template):
         from MoinMoin.util.diff_html import diff

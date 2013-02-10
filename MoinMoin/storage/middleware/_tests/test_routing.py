@@ -12,7 +12,7 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.config import NAME, NAMESPACE, REVID
+from MoinMoin.constants.keys import NAME, NAMESPACE
 
 from ..routing import Backend as RoutingBackend
 

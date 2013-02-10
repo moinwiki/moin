@@ -12,14 +12,14 @@ from flask import request
 from flask import g as flaskg
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.config import uri_schemes
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type
 from MoinMoin.util.tree import html, moin_page
 
 def allowed_uri_scheme(uri):
     parsed = Iri(uri)
-    return not parsed.scheme or parsed.scheme in uri_schemes
+    return not parsed.scheme or parsed.scheme in URI_SCHEMES
 
 def decode_data(data, contenttype=None):
     """
