@@ -35,7 +35,7 @@
             <tbody>
                 {% for doc in history %}
                 <tr>
-                    <td class="moin-wordbreak">{{ doc.name }}</td>
+                    <td class="moin-wordbreak">{{ doc.name|join(' | ') }}</td>
                     <td>{{ doc.revid | shorten_id }}</td>
                     <td>{{ doc.mtime|datetimeformat }}</td>
                     <td class="moin-integer">{{ doc.size }}</td>
@@ -48,15 +48,15 @@
                     <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
                     <td class="moin-wordbreak">{{ doc.contenttype }}</td>
                     <td class="moin-wordbreak">{{ doc.comment }}</td>
-                    <td><a href="{{ url_for('frontend.show_item', item_name=doc.name, rev=doc.revid) }}">{{ _('show') }}</a></td>
-                    <td><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name, rev=doc.revid) }}">{{ _('meta') }}</a></td>
-                    <td><a href="{{ url_for('frontend.download_item', item_name=doc.name, rev=doc.revid) }}">{{ _('download') }}</a></td>
-                    <td><a href="{{ url_for('frontend.highlight_item', item_name=doc.name, rev=doc.revid) }}">{{ _('highlight') }}</a></td>
+                    <td><a href="{{ url_for('frontend.show_item', item_name=doc.name[0], rev=doc.revid) }}">{{ _('show') }}</a></td>
+                    <td><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name[0], rev=doc.revid) }}">{{ _('meta') }}</a></td>
+                    <td><a href="{{ url_for('frontend.download_item', item_name=doc.name[0], rev=doc.revid) }}">{{ _('download') }}</a></td>
+                    <td><a href="{{ url_for('frontend.highlight_item', item_name=doc.name[0], rev=doc.revid) }}">{{ _('highlight') }}</a></td>
                     {% if user.may.write(item_name) -%}
-                    <td><a href="{{ url_for('frontend.revert_item', item_name=doc.name, rev=doc.revid) }}">{{ _('revert') }}</a></td>
+                    <td><a href="{{ url_for('frontend.revert_item', item_name=doc.name[0], rev=doc.revid) }}">{{ _('revert') }}</a></td>
                     {%- endif %}
                     {% if user.may.destroy(item_name) -%}
-                    <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name, rev=doc.revid) }}">{{ _('destroy') }}</a></td>
+                    <td><a href="{{ url_for('frontend.destroy_item', item_name=doc.name[0], rev=doc.revid) }}">{{ _('destroy') }}</a></td>
                     {%- endif %}
                 </tr>
                 {% endfor %}
