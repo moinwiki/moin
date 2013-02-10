@@ -7,7 +7,6 @@ MoinMoin - basic tests for feeds
 
 from flask import url_for
 
-from MoinMoin.items import Item
 from MoinMoin.constants.keys import COMMENT
 from MoinMoin._tests import update_item, wikiconfig
 

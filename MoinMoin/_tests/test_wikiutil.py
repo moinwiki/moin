@@ -13,7 +13,6 @@ from flask import current_app as app
 
 from MoinMoin.constants.chartypes import CHARS_SPACES
 from MoinMoin import wikiutil
-from MoinMoin._tests import wikiconfig
 
 from werkzeug import MultiDict
 

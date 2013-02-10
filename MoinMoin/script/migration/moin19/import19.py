@@ -14,7 +14,6 @@ TODO
 """
 
 
-import sys
 import os
 import re
 import codecs
@@ -39,7 +38,6 @@ UID_OLD = 'old_user_id' # dynamic field *_id, so we don't have to change schema
 from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.crypto import make_uuid
-from MoinMoin.storage.middleware.serialization import serialize_rev
 from MoinMoin import security
 
 

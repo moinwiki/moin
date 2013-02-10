@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.converter.default_registry
 """
 
 
-import pytest
-
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 from MoinMoin.converter import default_registry
 from MoinMoin.converter.text_in import Converter as TextInConverter

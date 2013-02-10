@@ -6,7 +6,6 @@ Test for i18n
 """
 
 from MoinMoin.i18n import get_locale, get_timezone
-import pytest
 
 from MoinMoin.i18n import _, L_, N_
 

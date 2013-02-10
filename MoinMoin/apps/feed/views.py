@@ -14,7 +14,6 @@ from datetime import datetime
 from flask import request, Response
 from flask import current_app as app
 from flask import g as flaskg
-from flask import url_for
 
 from werkzeug.contrib.atom import AtomFeed
 from jinja2 import Markup

@@ -17,7 +17,6 @@ from MoinMoin.apps.misc import misc
 
 from MoinMoin.constants.keys import MTIME
 from MoinMoin.themes import render_template
-from MoinMoin import wikiutil
 
 SITEMAP_HAS_SYSTEM_ITEMS = True
 

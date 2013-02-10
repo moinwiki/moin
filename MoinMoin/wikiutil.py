@@ -14,8 +14,6 @@
 from __future__ import absolute_import, division
 
 import os
-import re
-import time
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -30,7 +28,6 @@ from MoinMoin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, IT
 from MoinMoin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util import pysupport
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 

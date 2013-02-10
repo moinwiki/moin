@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.converter.include
 """
 
 
-import pytest
-
 from MoinMoin.converter.include import *
 from MoinMoin.items import Item
 from MoinMoin.constants.keys import CONTENTTYPE

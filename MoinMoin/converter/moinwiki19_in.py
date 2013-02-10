@@ -21,7 +21,7 @@ from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink
 
 from .moinwiki_in import Converter
 

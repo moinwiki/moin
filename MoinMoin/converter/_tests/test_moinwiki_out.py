@@ -7,7 +7,6 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki_out
 """
 
 
-import pytest
 import re
 
 from MoinMoin.converter.moinwiki_out import *

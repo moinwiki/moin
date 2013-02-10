@@ -31,8 +31,6 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import session, request, url_for
 
-from whoosh.query import Term, And, Or
-
 from MoinMoin import log
 logging = log.getLogger(__name__)
 

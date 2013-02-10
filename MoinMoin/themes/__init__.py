@@ -11,7 +11,6 @@
 import urllib
 
 from json import dumps
-from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg

@@ -11,6 +11,7 @@ import re
 import StringIO
 
 import pytest
+
 try:
     from lxml import etree
 except:

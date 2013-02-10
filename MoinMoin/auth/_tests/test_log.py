@@ -10,7 +10,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.auth.log import AuthLog
 from flask import g as flaskg
-import pytest
+
 
 class TestAuthLog(object):
     """ Test: TestAuthLog """
