@@ -6,12 +6,19 @@
 called from this module.
 """
 
+
 import os
 import sys
 
-support_path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support'))
-if support_path not in sys.path:
-    sys.path.insert(0, support_path)
+
+def add_support_to_path():
+    support_path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support'))
+    if support_path not in sys.path:
+        sys.path.insert(0, support_path)
+
+
+add_support_to_path()
+
 server_sw = os.environ.get('SERVER_SOFTWARE', '')
 gae = server_sw.startswith('Development') or server_sw.startswith('Google')
 

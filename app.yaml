@@ -46,6 +46,10 @@ handlers:
 - url: /static
   static_dir: MoinMoin/static
 
+- url: /%2Bcli/index
+  script: cli_index.app
+  login: admin
+
 - url: /.*
   script: moin.application
 
@@ -58,4 +62,3 @@ libraries:
   version: latest
 - name: PIL
   version: latest
-
