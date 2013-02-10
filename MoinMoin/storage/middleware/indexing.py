@@ -849,6 +849,36 @@ class Item(object):
         return get_names(self._current)
 
     @property
+    def parentnames(self):
+        """
+        compute list of parent names (same order as in names, but no dupes)
+
+        :return: parent names (list of unicode)
+        """
+        parent_names = []
+        for name in self.names:
+            parentname_tail = name.rsplit('/', 1)
+            if len(parentname_tail) == 2:
+                parent_name = parentname_tail[0]
+                if parent_name not in parent_names:
+                    parent_names.append(parent_name)
+        return parent_names
+
+    @property
+    def parentids(self):
+        """
+        compute list of parent itemids
+
+        :return: parent itemids (set)
+        """
+        parent_ids = set()
+        for parent_name in self.parentnames:
+            rev = self.indexer._document(idx_name=LATEST_REVS, name_exact=parent_name)
+            if rev:
+                parent_ids.add(rev[ITEMID])
+        return parent_ids
+
+    @property
     def mtime(self):
         dt = self._current.get(MTIME)
         if dt is not None:
@@ -867,19 +897,39 @@ class Item(object):
         assert name is None or isinstance(name, unicode)
         return name
 
-    @property
-    def fqname(self):
+    def _fqname(self, name):
         """
         return the fully qualified name including the namespace: NS:NAME
         """
         ns = self.namespace
-        name = self.name or u''
+        name = name or u''
         if ns:
             fqn = ns + u':' + name
         else:
             fqn = name
         assert isinstance(fqn, unicode)
         return fqn
+
+    @property
+    def fqname(self):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        return self._fqname(self.name)
+
+    @property
+    def fqnames(self):
+        """
+        return the fully qualified names including the namespace: NS:NAME
+        """
+        return [self._fqname(name) for name in self.names]
+
+    @property
+    def fqparentnames(self):
+        """
+        return the fully qualified parent names including the namespace: NS:NAME
+        """
+        return [self._fqname(name) for name in self.parentnames]
 
     @classmethod
     def create(cls, indexer, **query):

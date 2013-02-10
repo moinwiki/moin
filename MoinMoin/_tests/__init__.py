@@ -34,7 +34,7 @@ def become_valid(username=u"ValidUser"):
         easier to use become_trusted().
     """
     flaskg.user.profile[NAME] = [username, ]
-    flaskg.user.may.name = username # currently just one/first name, see security.Permissions class
+    flaskg.user.may.names = [username, ]  # see security.DefaultSecurityPolicy class
     flaskg.user.valid = 1
 
 
