@@ -522,6 +522,9 @@ class UserRevision(object):
         # rename last_saved to MTIME, int MTIME should be enough:
         metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
 
+        # rename aliasname to display_name:
+        metadata['display_name'] = metadata.get('aliasname')
+
         # rename subscribed_pages to subscribed_items
         metadata['subscribed_items'] = metadata.get('subscribed_pages', [])
 
@@ -530,7 +533,8 @@ class UserRevision(object):
                                  for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:
-        kill = ['real_language', # crap (use 'language')
+        kill = ['aliasname', # renamed to display_name
+                'real_language', # crap (use 'language')
                 'wikiname_add_spaces', # crap magic (you get it like it is)
                 'recoverpass_key', # user can recover again if needed
                 'editor_default', # not used any more
@@ -562,7 +566,7 @@ class UserRevision(object):
 
         # finally, remove some empty values (that have empty defaults anyway or
         # make no sense when empty):
-        empty_kill = ['aliasname', 'bookmarks', 'enc_password',
+        empty_kill = ['aliasname', 'display_name', 'bookmarks', 'enc_password',
                       'language', 'css_url', 'email', ] # XXX check subscribed_items, quicklinks
         for key in empty_kill:
             if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:

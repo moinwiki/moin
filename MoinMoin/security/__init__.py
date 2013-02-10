@@ -64,7 +64,7 @@ class DefaultSecurityPolicy(object):
             return super(MySecPol, self).read(itemname)
     """
     def __init__(self, user):
-        self.name = user.name
+        self.name = user.name0 # XXX currently we just use first name
 
     def read(self, itemname):
         """read permission is special as we have 2 kinds of read capabilities:

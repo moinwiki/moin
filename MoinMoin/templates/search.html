@@ -44,7 +44,7 @@
                         {% if result['wikiname'] == cfg.interwikiname %}
                             <tr>
                                 <td class="moin-wordbreak">{{ result.pos + 1 }}
-                                <a href="{{ url_for_item(item_name=result['name'], wiki_name='Self', rev=result['revid']) }}"><b>{{ result['name'] }}</b></a>
+                                <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', rev=result['revid']) }}"><b>{{ result['name'] | join(' | ')}}</b></a>
                                 </td>
                             </tr>
                             {% if result['summary'] %}
