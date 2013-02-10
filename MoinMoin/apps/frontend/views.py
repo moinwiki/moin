@@ -31,7 +31,7 @@ from flask import g as flaskg
 from flask.ext.babel import format_date
 from flask.ext.themes import get_themes_list
 
-from flatland import Form, Enum
+from flatland import Form, Enum, List
 from flatland.validation import Validator
 
 from jinja2 import Markup
@@ -47,7 +47,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Tags, Natural, Submit, Hidden, MultiSelect
+from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import config, user, util
@@ -351,7 +351,7 @@ def indexable(item_name, rev):
         rev = item[rev]
     except KeyError:
         abort(404, item_name)
-    content = convert_to_indexable(rev.meta, rev.data)
+    content = convert_to_indexable(rev.meta, rev.data, item_name)
     return Response(content, 200, mimetype='text/plain')
 
 
@@ -490,7 +490,7 @@ def revert_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = RevertItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -516,7 +516,7 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
         TextCha(form).amend_form()
         form['target'] = item.name
@@ -544,7 +544,7 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -643,7 +643,7 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
     elif request.method == 'POST':
@@ -724,10 +724,7 @@ def index(item_name):
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
 
-    initials = item.name_initial(item.get_subitem_revs())
-    initials = [initial.upper() for initial in initials]
-    initials = list(set(initials))
-    initials = sorted(initials)
+    initials = item.name_initial(item.get_subitem_revs(), uppercase=True)
 
     dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
@@ -770,7 +767,7 @@ def _mychanges(userid):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
     revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.meta[NAME] for rev in revs]
+    return [rev.name for rev in revs]
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
@@ -801,7 +798,7 @@ def _backrefs(item_name):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return [rev.meta[NAME] for rev in revs]
+    return [rev.name for rev in revs]
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -874,7 +871,7 @@ def _compute_item_sets():
     existing = set()
     revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     for rev in revs:
-        existing.add(rev.meta[NAME])
+        existing.add(rev.name)
         linked.update(rev.meta.get(ITEMLINKS, []))
         transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
     return existing, linked, transcluded
@@ -1034,7 +1031,7 @@ def register():
         template = 'register.html'
         FormClass = RegistrationForm
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = FormClass.from_defaults()
         if isOpenID:
             oid = request.values.get('openid_openid')
@@ -1124,7 +1121,7 @@ def lostpass():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = PasswordLostForm.from_defaults()
     elif request.method == 'POST':
         form = PasswordLostForm.from_flat(request.form)
@@ -1187,7 +1184,7 @@ def recoverpass():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = PasswordRecoveryForm.from_defaults()
         form.update(request.values)
     elif request.method == 'POST':
@@ -1254,7 +1251,7 @@ def login():
     if flaskg._login_multistage_name == 'openid':
         return Response(flaskg._login_multistage, mimetype='text/html')
 
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
         for authmethod in app.cfg.auth:
             hint = authmethod.login_hint()
@@ -1346,8 +1343,8 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal' # "name" is duplicate
-        name = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
-        aliasname = OptionalText.using(label=L_('Alias-Name')).with_properties(placeholder=L_("Your alias name (informational)"))
+        name = Names.using(label=L_('Names')).with_properties(placeholder=L_("The login names you want to use"))
+        display_name = OptionalText.using(label=L_('Display-Name')).with_properties(placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
@@ -1417,10 +1414,13 @@ def usersettings():
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False
-                        if form['name'].value != flaskg.user.name and user.search_users(name_exact=form['name'].value):
-                            # duplicate name
-                            response['flash'].append((_("This username is already in use."), "error"))
-                            success = False
+                        if set(form['name'].value) != set(flaskg.user.name):
+                            new_names = set(form['name'].value) - set(flaskg.user.name)
+                            for name in new_names:
+                                if user.search_users(name_exact=name):
+                                    # duplicate name
+                                    response['flash'].append((_("The username %(name)r is already in use.", name=name), "error"))
+                                    success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
                             user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
@@ -1645,7 +1645,8 @@ def findMatches(item_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.meta[NAME] for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
+    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+                  if rev.name is not None]
     if item_name in item_names:
         item_names.remove(item_name)
     # Get matches using wiki way, start and end of word
@@ -1820,7 +1821,7 @@ def global_tags():
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.name, rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -1854,7 +1855,7 @@ def tagged_items(tag):
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
     revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-    item_names = [rev.meta[NAME] for rev in revs]
+    item_names = [rev.name for rev in revs]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,

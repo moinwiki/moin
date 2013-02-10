@@ -17,8 +17,6 @@
     Each class in this module corresponds to an itemtype.
 """
 
-import time
-import itertools
 import json
 from StringIO import StringIO
 from collections import namedtuple
@@ -40,7 +38,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
+from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type
@@ -110,7 +108,7 @@ class DummyRev(dict):
         self.data = StringIO('')
         self.revid = None
         if self.item:
-            self.meta[NAME] = self.item.name
+            self.meta[NAME] = [self.item.name]
 
 
 class DummyItem(object):
@@ -291,7 +289,6 @@ class Item(object):
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
-            NAME,
             ITEMID, REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
@@ -327,31 +324,33 @@ class Item(object):
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, name, comment, action):
-        self._save(self.meta, self.content.data, name=name, action=action, comment=comment)
-        old_prefixlen = len(self.subitems_prefix)
-        new_prefix = name + '/'
+    def _rename(self, name, comment, action, delete=False):
+        self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
+        old_prefix = self.subitems_prefix
+        old_prefixlen = len(old_prefix)
+        if not delete:
+            new_prefix = name + '/'
         for child in self.get_subitem_revs():
-            child_oldname = child.meta[NAME]
-            child_newname = new_prefix + child_oldname[old_prefixlen:]
-            item = Item.create(child_oldname)
-            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment)
+            for child_oldname in child.meta[NAME]:
+                if child_oldname.startswith(old_prefix):
+                    if delete:
+                        child_newname = None
+                    else:  # rename
+                        child_newname = new_prefix + child_oldname[old_prefixlen:]
+                    item = Item.create(child_oldname)
+                    item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
-        rename this item to item <name>
+        rename this item to item <name> (replace current name by another name in the NAME list)
         """
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
         """
-        delete this item
+        delete this item (remove current name from NAME list)
         """
-        trash_prefix = u'Trash/' # XXX move to config
-        now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
-        # make trash name unique by including timestamp:
-        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
-        return self._rename(trashname, comment, action=u'TRASH')
+        return self._rename(None, comment, action=u'TRASH', delete=True)
 
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
@@ -406,7 +405,8 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+              overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
         try:
@@ -425,9 +425,20 @@ class Item(object):
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if not isinstance(oldname, list):
+                oldname = [oldname]
+            if delete or name not in oldname: # this is a delete or rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                if not delete:
+                    oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
@@ -504,21 +515,23 @@ class Item(object):
         added_dir_relnames = set()
 
         for rev in subitems:
-            fullname = rev.meta[NAME]
-            relname = fullname[prefixlen:]
-            if '/' in relname:
-                # Find the *direct* subitem that is the ancestor of current
-                # (indirect) subitem. e.g. suppose when the index root is
-                # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
-                # 'foo/bar' will be found.
-                direct_relname = relname.partition('/')[0]
-                if direct_relname not in added_dir_relnames:
-                    added_dir_relnames.add(direct_relname)
-                    direct_fullname = prefix + direct_relname
-                    direct_rev = get_storage_revision(direct_fullname)
-                    dirs.append(IndexEntry(direct_relname, direct_rev.meta))
-            else:
-                files.append(IndexEntry(relname, rev.meta))
+            fullnames = rev.meta[NAME]
+            for fullname in fullnames:
+                if fullname.startswith(prefix):
+                    relname = fullname[prefixlen:]
+                    if '/' in relname:
+                        # Find the *direct* subitem that is the ancestor of current
+                        # (indirect) subitem. e.g. suppose when the index root is
+                        # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
+                        # 'foo/bar' will be found.
+                        direct_relname = relname.partition('/')[0]
+                        if direct_relname not in added_dir_relnames:
+                            added_dir_relnames.add(direct_relname)
+                            direct_fullname = prefix + direct_relname
+                            direct_rev = get_storage_revision(direct_fullname)
+                            dirs.append(IndexEntry(direct_relname, direct_rev.meta))
+                    else:
+                        files.append(IndexEntry(relname, rev.meta))
 
         return dirs, files
 
@@ -555,10 +568,24 @@ class Item(object):
 
     index_template = 'index.html'
 
-    def name_initial(self, subitems):
-        prefixlen = len(self.subitems_prefix)
-        initials = [(item.meta[NAME][prefixlen]) for item in subitems]
-        return initials
+    def name_initial(self, subitems, uppercase=False, lowercase=False):
+        """
+        return a sorted list of first characters of subitem names,
+        optionally all uppercased or lowercased.
+        """
+        prefix = self.subitems_prefix
+        prefixlen = len(prefix)
+        initials = set()
+        for item in subitems:
+            for name in item.meta[NAME]:
+                if name.startswith(prefix):
+                    initial = name[prefixlen]
+                    if uppercase:
+                        initial = initial.upper()
+                    elif lowercase:
+                        initial = initial.lower()
+                    initials.add(initial)
+        return sorted(list(initials))
 
     delete_template = 'delete.html'
     destroy_template = 'destroy.html'
@@ -622,7 +649,7 @@ class Default(Contentful):
 
     def do_modify(self):
         method = request.method
-        if method == 'GET':
+        if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
@@ -714,6 +741,22 @@ class NonExistent(Item):
                                item_name=self.name,
                                itemtypes=item_registry.shown_entries,
                               )
+
+    def rename(self, name, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def delete(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def revert(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def destroy(self, comment=u'', destroy_item=False):
+        # pointless for non-existing items
+        pass
 
 
 from ..util.pysupport import load_package_modules

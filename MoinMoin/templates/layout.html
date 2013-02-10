@@ -42,9 +42,9 @@
                 <img id="moin-avatar" src="{{ avatar }}" />
             {%- endif %}
             {% if user.name -%}
-                {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                {% set wiki_href, display_name, title, exists = theme_supp.userhome() %}
                 <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
-                    {{ aliasname }}
+                    {{ display_name }}
                 </a>
                 {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
                     <span class="sep"> | </span>
