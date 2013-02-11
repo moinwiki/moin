@@ -19,6 +19,7 @@ from flask import abort
 from MoinMoin.constants import rights
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
+from MoinMoin.util.pysupport import AutoNe
 
 
 def require_permission(permission):
@@ -94,7 +95,7 @@ class DefaultSecurityPolicy(object):
         raise AttributeError(attr)
 
 
-class AccessControlList(object):
+class AccessControlList(AutoNe):
     """
     Access Control List - controls who may do what.
 
@@ -278,9 +279,6 @@ class AccessControlList(object):
 
     def __eq__(self, other):
         return self.acl_lines == other.acl_lines
-
-    def __ne__(self, other):
-        return self.acl_lines != other.acl_lines
 
 
 class ACLStringIterator(object):
