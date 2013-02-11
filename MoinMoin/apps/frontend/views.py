@@ -226,7 +226,7 @@ def _compute_item_transclusions(item_name):
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         # The search process should be as fast as possible so use
         # the indexer low-level documents instead of high-level Revisions.
-        doc = searcher.document(name_exact=item_name)
+        doc = searcher.document(**{NAME_EXACT: item_name})
         if not doc:
             return set()
         transcluded_names = set(doc[ITEMTRANSCLUSIONS])
@@ -1474,14 +1474,14 @@ def usersettings():
                         if set(form['name'].value) != set(flaskg.user.name):
                             new_names = set(form['name'].value) - set(flaskg.user.name)
                             for name in new_names:
-                                if user.search_users(name_exact=name):
+                                if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
                                     response['flash'].append((_("The username %(name)r is already in use.", name=name),
                                                               "error"))
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
-                            user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
+                            user.search_users(**{EMAIL: form['email'].value}) and app.cfg.user_email_unique):
                             # duplicate email
                             response['flash'].append((_('This email is already in use'), 'error'))
                             success = False

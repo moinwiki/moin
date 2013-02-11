@@ -29,8 +29,7 @@ logging = log.getLogger(__name__)
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
-from MoinMoin.constants.keys import (ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, ACTION, ADDRESS, HOSTNAME,
-                                     USERID, MTIME, EXTRA, COMMENT, TAGS, SIZE, HASH_ALGORITHM, ITEMID, REVID)
+from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
@@ -502,19 +501,19 @@ class UserRevision(object):
     def _process_usermeta(self, metadata):
         # stuff we want to have stored as boolean:
         bool_defaults = [  # taken from cfg.checkbox_defaults
-            ('show_comments', 'False'),
-            ('edit_on_doubleclick', 'True'),
-            ('scroll_page_after_edit', 'True'),
-            ('want_trivial', 'False'),
-            ('mailto_author', 'False'),
-            ('disabled', 'False'),
+            (SHOW_COMMENTS, 'False'),
+            (EDIT_ON_DOUBLECLICK, 'True'),
+            (SCROLL_PAGE_AFTER_EDIT, 'True'),
+            (WANT_TRIVIAL, 'False'),
+            (MAILTO_AUTHOR, 'False'),
+            (DISABLED, 'False'),
         ]
         for key, default in bool_defaults:
             metadata[key] = metadata.get(key, default) in ['True', 'true', '1']
 
         # stuff we want to have stored as integer:
         int_defaults = [
-            ('edit_rows', '0'),
+            (EDIT_ROWS, '0'),
         ]
         for key, default in int_defaults:
             metadata[key] = int(metadata.get(key, default))
@@ -523,14 +522,14 @@ class UserRevision(object):
         metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
 
         # rename aliasname to display_name:
-        metadata['display_name'] = metadata.get('aliasname')
+        metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
         # rename subscribed_pages to subscribed_items
-        metadata['subscribed_items'] = metadata.get('subscribed_pages', [])
+        metadata[SUBSCRIBED_ITEMS] = metadata.get('subscribed_pages', [])
 
         # convert bookmarks from usecs (and str) to secs (int)
-        metadata['bookmarks'] = [(interwiki, int(long(bookmark) / 1000000))
-                                 for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
+        metadata[BOOKMARKS] = [(interwiki, int(long(bookmark) / 1000000))
+                               for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:
         kill = ['aliasname',  # renamed to display_name
@@ -566,22 +565,22 @@ class UserRevision(object):
 
         # finally, remove some empty values (that have empty defaults anyway or
         # make no sense when empty):
-        empty_kill = ['aliasname', 'display_name', 'bookmarks', 'enc_password',
-                      'language', 'css_url', 'email', ]  # XXX check subscribed_items, quicklinks
+        empty_kill = ['aliasname', DISPLAY_NAME, BOOKMARKS, ENC_PASSWORD,
+                      'language', CSS_URL, EMAIL, ]  # XXX check subscribed_items, quicklinks
         for key in empty_kill:
             if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:
                 del metadata[key]
 
         # moin2 only supports passlib generated hashes, drop everything else
         # (users need to do pw recovery in case they are affected)
-        pw = metadata.get('enc_password')
+        pw = metadata.get(ENC_PASSWORD)
         if pw is not None:
             if pw.startswith('{PASSLIB}'):
                 # take it, but strip the prefix as moin2 does not use that any more
-                metadata['enc_password'] = pw[len('{PASSLIB}'):]
+                metadata[ENC_PASSWORD] = pw[len('{PASSLIB}'):]
             else:
                 # drop old, unsupported (and also more or less unsafe) hashing scheme
-                del metadata['enc_password']
+                del metadata[ENC_PASSWORD]
 
         # TODO quicklinks and subscribed_items - check for non-interwiki elements and convert them to interwiki
 

@@ -12,7 +12,7 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, COMMENT
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
 
 
 def build_index(basename, relnames):
@@ -125,7 +125,7 @@ class TestItem(object):
     def test_meta_filter(self):
         name = u'Test_item'
         contenttype = u'text/plain;charset=utf-8'
-        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name'], 'address': u'1.2.3.4'}
+        meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name'], ADDRESS: u'1.2.3.4'}
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
         # keys like NAME, ITEMID, REVID, DATAID are filtered
@@ -182,7 +182,7 @@ class TestItem(object):
         # item and its contents before renaming
         item = Item.create(name)
         assert item.name == u'Test_Item'
-        assert item.meta['comment'] == u'saved it'
+        assert item.meta[COMMENT] == u'saved it'
         new_name = u'Test_new_Item'
         item.rename(new_name, comment=u'renamed')
         # item at original name and its contents after renaming
@@ -193,8 +193,8 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(new_name)
         assert item.name == u'Test_new_Item'
-        assert item.meta['name_old'] == [u'Test_Item']
-        assert item.meta['comment'] == u'renamed'
+        assert item.meta[NAME_OLD] == [u'Test_Item']
+        assert item.meta[COMMENT] == u'renamed'
         assert item.content.data == u'test_data'
 
     def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
@@ -252,20 +252,20 @@ class TestItem(object):
         # item at new name and its contents after renaming
         item = Item.create(u'Renamed_Page')
         assert item.name == u'Renamed_Page'
-        assert item.meta['name_old'] == [u'Page']
-        assert item.meta['comment'] == u'renamed'
+        assert item.meta[NAME_OLD] == [u'Page']
+        assert item.meta[COMMENT] == u'renamed'
         assert item.content.data == u'Page 1'
 
         item = Item.create(u'Renamed_Page/Child')
         assert item.name == u'Renamed_Page/Child'
-        assert item.meta['name_old'] == [u'Page/Child']
-        assert item.meta['comment'] == u'renamed'
+        assert item.meta[NAME_OLD] == [u'Page/Child']
+        assert item.meta[COMMENT] == u'renamed'
         assert item.content.data == u'this is child'
 
         item = Item.create(u'Renamed_Page/Child/Another')
         assert item.name == u'Renamed_Page/Child/Another'
-        assert item.meta['name_old'] == [u'Page/Child/Another']
-        assert item.meta['comment'] == u'renamed'
+        assert item.meta[NAME_OLD] == [u'Page/Child/Another']
+        assert item.meta[COMMENT] == u'renamed'
         assert item.content.data == u'another child'
 
     def test_rename_recursion_with_multiple_names_and_children(self):
@@ -308,7 +308,7 @@ class TestItem(object):
         # item and its contents before deleting
         item = Item.create(name)
         assert item.name == u'Test_Item2'
-        assert item.meta['comment'] == u'saved it'
+        assert item.meta[COMMENT] == u'saved it'
         item.delete(u'deleted')
         # item and its contents after deletion
         item = Item.create(name)
@@ -327,7 +327,7 @@ class TestItem(object):
         item = Item.create(name)
         item.revert(u'revert')
         item = Item.create(name)
-        assert item.meta['action'] == u'REVERT'
+        assert item.meta[ACTION] == u'REVERT'
 
     def test_modify(self):
         name = u'Test_Item'
