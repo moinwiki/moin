@@ -32,6 +32,7 @@ from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 class NameSpaceError(Exception):
     pass
 
+
 class Converter(object):
     """
     Converter application/docbook+xml -> x.moin.document
@@ -43,7 +44,7 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = set([# Info elements
+    ignored_tags = set([  # Info elements
                        'abstract', 'artpagenums', 'annotation',
                        'artpagenums', 'author', 'authorgroup',
                        'authorinitials', 'bibliocoverage', 'biblioid',
@@ -383,15 +384,15 @@ class Converter(object):
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name in self.media_tags:
-                    #XXX: Check the spec to be sure that object tag have only one child.
-                    #TODO: Better way to do it
+                    # XXX: Check the spec to be sure that object tag have only one child.
+                    # TODO: Better way to do it
                     prefered_format, data_tag, mimetype = self.media_tags[child.tag.name]
                     object_element = child
                     for grand_child in child:
                         if isinstance(grand_child, ET.Element):
                             object_data.append(grand_child)
                 if child.tag.name == 'caption':
-                    caption = self.do_children(child, depth+1)[0]
+                    caption = self.do_children(child, depth + 1)[0]
                 if child.tag.name == 'textobject':
                     text_object = child
         return self.visit_data_element(object_element, depth, object_data,
@@ -410,7 +411,7 @@ class Converter(object):
             if not text_object:
                 return
             else:
-                children = self.do_children(child, depth+1)[0]
+                children = self.do_children(child, depth + 1)[0]
                 return self.new(moin_page.p, attrib={},
                                 children=children)
         # We try to determine the best object to show
@@ -430,7 +431,7 @@ class Converter(object):
         # If we could not find any suitable object, we return
         # the text replacement.
         if not object_to_show:
-            children = self.do_children(child, depth+1)[0]
+            children = self.do_children(child, depth + 1)[0]
             return self.new(moin_page.p, attrib={},
                             children=children)
 
@@ -488,9 +489,9 @@ class Converter(object):
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name == "attribution":
-                    source = self.do_children(child, depth+1)
+                    source = self.do_children(child, depth + 1)
                 else:
-                    children.extend(self.do_children(child, depth+1))
+                    children.extend(self.do_children(child, depth + 1))
             else:
                 children.append(child)
         attrib = {}
@@ -555,7 +556,7 @@ class Converter(object):
             #XXX: Improve error
             raise SyntaxError("para child missing for formalpara element")
 
-        children = self.do_children(para_element, depth+1)[0]
+        children = self.do_children(para_element, depth + 1)[0]
         attrib = {}
         attrib[html('title')] = title_element[0]
         return self.new(moin_page.p, attrib=attrib, children=children)
@@ -980,7 +981,7 @@ class Converter(object):
         href = element.get(docbook.url)
         # Since it is an element of DocBook v.4,
         # The namespace does not always work, so we will try to retrive the attribute whatever
-        if not(href):
+        if not href:
             for key, value in element.attrib.iteritems():
                 if key.name == 'url' and allowed_uri_scheme(value):
                     href = value

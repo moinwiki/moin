@@ -10,7 +10,7 @@ from __future__ import absolute_import, division
 
 import mimetypes
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import PARSER_TEXT_MIMETYPE
 
 # prevents unexpected results on Windows
 # see http://bugs.python.org/issue10551
@@ -74,7 +74,7 @@ MIMETYPES_sanitize_mapping = {
     ('application', 'javascript'): ('text', 'javascript'),
 }
 
-MIMETYPES_spoil_mapping = {} # inverse mapping of above
+MIMETYPES_spoil_mapping = {}  # inverse mapping of above
 for _key, _value in MIMETYPES_sanitize_mapping.items():
     MIMETYPES_spoil_mapping[_value] = _key
 
@@ -83,9 +83,9 @@ class MimeType(object):
     """ represents a mimetype like text/plain """
 
     def __init__(self, mimestr=None, filename=None):
-        self.major = self.minor = None # sanitized mime type and subtype
-        self.params = {} # parameters like "charset" or others
-        self.charset = None # this stays None until we know for sure!
+        self.major = self.minor = None  # sanitized mime type and subtype
+        self.params = {}  # parameters like "charset" or others
+        self.charset = None  # this stays None until we know for sure!
         self.raw_mimestr = mimestr
         self.filename = filename
         if mimestr:
@@ -108,14 +108,14 @@ class MimeType(object):
         mimetype, parameters = parameters[0], parameters[1:]
         mimetype = mimetype.split('/')
         if len(mimetype) >= 2:
-            major, minor = mimetype[:2] # we just ignore more than 2 parts
+            major, minor = mimetype[:2]  # we just ignore more than 2 parts
         else:
             major, minor = self.parse_format(mimetype[0])
         self.major = major.lower()
         self.minor = minor.lower()
         for param in parameters:
             key, value = param.split('=')
-            if value[0] == '"' and value[-1] == '"': # remove quotes
+            if value[0] == '"' and value[-1] == '"':  # remove quotes
                 value = value[1:-1]
             self.params[key.lower()] = value
         if 'charset' in self.params:
@@ -129,7 +129,7 @@ class MimeType(object):
             type "wiki" instead of "text/x.moin.wiki".
         """
         format = format.lower()
-        if format in config.parser_text_mimetype:
+        if format in PARSER_TEXT_MIMETYPE:
             mimetype = 'text', format
         else:
             mapping = {

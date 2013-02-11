@@ -177,20 +177,24 @@ class LoginReturn(object):
         self.multistage = multistage
         self.redirect_to = redirect_to
 
+
 class ContinueLogin(LoginReturn):
     """ ContinueLogin - helper for auth method login that just continues """
     def __init__(self, user_obj, message=None):
         LoginReturn.__init__(self, user_obj, True, message=message)
+
 
 class CancelLogin(LoginReturn):
     """ CancelLogin - cancel login showing a message """
     def __init__(self, message):
         LoginReturn.__init__(self, None, False, message=message)
 
+
 class MultistageFormLogin(LoginReturn):
     """ MultistageFormLogin - require user to fill in another form """
     def __init__(self, multistage):
         LoginReturn.__init__(self, None, False, multistage=multistage)
+
 
 class MultistageRedirectLogin(LoginReturn):
     """ MultistageRedirectLogin - redirect user to another site before continuing login """
@@ -202,21 +206,27 @@ class BaseAuth(object):
     name = None
     login_inputs = []
     logout_possible = False
+
     def __init__(self, trusted=False, **kw):
         self.trusted = trusted
         if kw:
             raise TypeError("got unexpected arguments %r" % kw)
+
     def login(self, user_obj, **kw):
         return ContinueLogin(user_obj)
+
     def request(self, user_obj, **kw):
         return user_obj, True
+
     def logout(self, user_obj, **kw):
         if self.name and user_obj and user_obj.auth_method == self.name:
             logging.debug("{0}: logout - invalidating user {1!r}".format(self.name, user_obj.name))
             user_obj.valid = False
         return user_obj, True
+
     def login_hint(self):
         return None
+
 
 class MoinAuth(BaseAuth):
     """ handle login from moin login form """
@@ -267,7 +277,7 @@ class GivenAuth(BaseAuth):
         Alternatively you can directly give a fixed user name (user_name)
         that will be considered as authenticated.
     """
-    name = 'given' # was 'http' in 1.8.x and before
+    name = 'given'  # was 'http' in 1.8.x and before
 
     def __init__(self,
                  env_var=None,  # environment variable we want to read (default: REMOTE_USER)
@@ -352,7 +362,7 @@ class GivenAuth(BaseAuth):
             u.create_or_update()
         if u and u.valid:
             logging.debug("returning valid user {0!r}".format(u))
-            return u, True # True to get other methods called, too
+            return u, True  # True to get other methods called, too
         else:
             logging.debug("returning {0!r}".format(user_obj))
             return user_obj, True
@@ -407,6 +417,7 @@ def handle_login(userobj, **kw):
 
     return userobj
 
+
 def handle_logout(userobj):
     """ Logout the passed user from every configured authentication method. """
     if userobj is None:
@@ -419,6 +430,7 @@ def handle_logout(userobj):
             break
     return userobj
 
+
 def handle_request(userobj):
     """ Handle the per-request callbacks of the configured authentication methods. """
     for authmethod in app.cfg.auth:
@@ -426,6 +438,7 @@ def handle_request(userobj):
         if not cont:
             break
     return userobj
+
 
 def setup_from_session():
     userobj = None

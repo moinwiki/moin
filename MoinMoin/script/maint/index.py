@@ -7,14 +7,12 @@ MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.config import LATEST_REVS, ALL_REVS
-from MoinMoin.storage.middleware.indexing import ALL_REVS, LATEST_REVS
+from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
 
 
 class IndexCreate(Command):

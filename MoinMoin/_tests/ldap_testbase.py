@@ -39,7 +39,11 @@
 SLAPD_EXECUTABLE = 'slapd'  # filename of LDAP server executable - if it is not
                             # in your PATH, you have to give full path/filename.
 
-import os, shutil, tempfile, time, base64
+import os
+import shutil
+import tempfile
+import time
+import base64
 from StringIO import StringIO
 import signal
 import subprocess
@@ -80,7 +84,7 @@ class Slapd(object):
     def __init__(self,
                  config=None,  # config filename for -f
                  executable=SLAPD_EXECUTABLE,
-                 debug_flags='', # None,  # for -d stats,acl,args,trace,sync,config
+                 debug_flags='',  # None,  # for -d stats,acl,args,trace,sync,config
                  proto='ldap', ip='127.0.0.1', port=3890,  # use -h proto://ip:port
                  service_name=''  # defaults to -n executable:port, use None to not use -n
                 ):
@@ -90,7 +94,7 @@ class Slapd(object):
         self.proto = proto
         self.ip = ip
         self.port = port
-        self.url = '{0}://{1}:{2}'.format(proto, ip, port) # can be used for ldap.initialize() call
+        self.url = '{0}://{1}:{2}'.format(proto, ip, port)  # can be used for ldap.initialize() call
         if service_name == '':
             self.service_name = '{0}:{1}'.format(executable, port)
         else:
@@ -109,7 +113,7 @@ class Slapd(object):
         started = None
         if timeout:
             lo = ldap.initialize(self.url)
-            ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3) # ldap v2 is outdated
+            ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
             started = False
             wait_until = time.time() + timeout
             while time.time() < wait_until:
@@ -200,14 +204,14 @@ class LdapEnvironment(object):
 
     def start_slapd(self):
         """ start a slapd and optionally wait until it talks with us """
-        self.slapd = Slapd(config=self.slapd_conf, port=3890+self.instance)
+        self.slapd = Slapd(config=self.slapd_conf, port=3890 + self.instance)
         started = self.slapd.start(timeout=self.timeout)
         return started
 
     def load_directory(self, ldif_content):
         """ load the directory with the ldif_content (str) """
         lo = ldap.initialize(self.slapd.url)
-        ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3) # ldap v2 is outdated
+        ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
         lo.simple_bind_s(self.rootdn, self.rootpw)
 
         class LDIFLoader(ldif.LDIFParser):

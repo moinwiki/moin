@@ -20,8 +20,8 @@ from __future__ import absolute_import, division
 
 # exclude some directories from py.test test discovery, pathes relative to this file
 collect_ignore = ['static',  # same
-                  '../wiki', # no tests there
-                  '../instance', # tw likes to use this for wiki data (non-revisioned)
+                  '../wiki',  # no tests there
+                  '../instance',  # tw likes to use this for wiki data (non-revisioned)
                  ]
 import atexit
 import os
@@ -32,8 +32,7 @@ import pytest
 import py
 import MoinMoin.log
 
-""" Logging for tests to avoid useless output like timing information on stderr on test failures
-"""
+# Logging for tests to avoid useless output like timing information on stderr on test failures
 Moindir = py.path.local(__file__).dirname
 config_file = Moindir + '/_tests/test_logging.conf'
 MoinMoin.log.load_config(config_file)
@@ -44,14 +43,16 @@ from MoinMoin.storage import create_simple_mapping
 
 
 def init_test_app(given_config):
-    namespace_mapping, acl_mapping = create_simple_mapping("stores:memory:", given_config.content_acl)
+    namespace_mapping, backend_mapping, acl_mapping = \
+        create_simple_mapping("stores:memory:", given_config.content_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
+        backend_mapping=backend_mapping,
         acl_mapping=acl_mapping,
-        create_storage=True, # create a fresh storage at each app start
-        destroy_storage=True, # kill all storage contents at app shutdown
-        create_index=True, # create a fresh index at each app start
-        destroy_index=True, # kill index contents at app shutdown
+        create_storage=True,  # create a fresh storage at each app start
+        destroy_storage=True,  # kill all storage contents at app shutdown
+        create_index=True,  # create a fresh index at each app start
+        destroy_index=True,  # kill index contents at app shutdown
     )
     app = create_app_ext(flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
                          moin_config_class=given_config,
@@ -60,6 +61,7 @@ def init_test_app(given_config):
     ctx.push()
     before_wiki()
     return app, ctx
+
 
 def deinit_test_app(app, ctx):
     teardown_wiki('')
@@ -71,6 +73,7 @@ def deinit_test_app(app, ctx):
 prev_app = None
 prev_ctx = None
 prev_cfg = None
+
 
 class MoinTestFunction(pytest.collect.Function):
     def setup(self):
@@ -107,9 +110,11 @@ class MoinTestFunction(pytest.collect.Function):
 def pytest_pycollect_makemodule(path, parent):
     return Module(path, parent=parent)
 
+
 def pytest_pycollect_makeitem(__multicall__, collector, name, obj):
     if collector.funcnamefilter(name) and inspect.isfunction(obj):
         return MoinTestFunction(name, parent=collector)
+
 
 def pytest_pyfunc_call(pyfuncitem):
     """hook to intercept generators and run them as a single test items"""
@@ -118,8 +123,10 @@ def pytest_pyfunc_call(pyfuncitem):
             kwarg = item[1:]
             item[0](*kwarg)
 
+
 def pytest_report_header(config):
     return "The tests here are implemented only for pytest-2"
+
 
 class Module(pytest.collect.Module):
     def run(self, *args, **kwargs):

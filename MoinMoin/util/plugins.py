@@ -11,7 +11,8 @@
 """
 
 
-import os, sys
+import os
+import sys
 import imp
 import hashlib
 
@@ -23,8 +24,10 @@ from MoinMoin.util.mimetype import MimeType
 class PluginError(Exception):
     """ Base class for plugin errors """
 
+
 class PluginMissingError(PluginError):
     """ Raised when a plugin is not found """
+
 
 class PluginAttributeError(PluginError):
     """ Raised when plugin does not contain an attribtue """

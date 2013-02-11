@@ -76,7 +76,7 @@ def generate_token(key=None, stamp=None):
     return unicode(key), token
 
 
-def valid_token(key, token, timeout=2*60*60):
+def valid_token(key, token, timeout=2 * 60 * 60):
     """
     check if token is valid with respect to the secret key,
     the token must not be older than timeout seconds.

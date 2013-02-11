@@ -18,9 +18,10 @@ from werkzeug import url_encode
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.i18n import _
 
@@ -694,7 +695,7 @@ class Converter(ConverterMacro):
             )?
             \]\]
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
             link_text=None, link_args=None,
@@ -717,14 +718,14 @@ class Converter(ConverterMacro):
                 # assume local language uses ":" inside of words, set link_item and continue
                 link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
         if link_args:
-            link_args = parse_arguments(link_args) # XXX needs different parsing
-            query = url_encode(link_args.keyword, charset=config.charset, encode_keys=True)
+            link_args = parse_arguments(link_args)  # XXX needs different parsing
+            query = url_encode(link_args.keyword, charset=CHARSET, encode_keys=True)
         else:
             query = None
         if link_item is not None:
-            att = 'attachment:' # moin 1.9 needed this for an attached file
+            att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
-                link_item = '/' + link_item[len(att):] # now we have a subitem
+                link_item = '/' + link_item[len(att):]  # now we have a subitem
             if '#' in link_item:
                 path, fragment = link_item.rsplit('#', 1)
             else:
@@ -829,14 +830,14 @@ class Converter(ConverterMacro):
                            object_text=None, object_args=None):
         """Handles objects included in the page."""
         if object_args:
-            args = parse_arguments(object_args).keyword # XXX needs different parsing
+            args = parse_arguments(object_args).keyword  # XXX needs different parsing
         else:
             args = {}
         if object_item is not None:
-            query = url_encode(args, charset=config.charset, encode_keys=True)
-            att = 'attachment:' # moin 1.9 needed this for an attached file
+            query = url_encode(args, charset=CHARSET, encode_keys=True)
+            att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_item.startswith(att):
-                object_item = '/' + object_item[len(att):] # now we have a subitem
+                object_item = '/' + object_item[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
             text = object_item
 
@@ -949,7 +950,8 @@ class Converter(ConverterMacro):
                     cell_markup = cell_markup.split('<')[1]
                     msg1 = _('Error:')
                     msg2 = _('is invalid within')
-                    cell_text = '[ {0} "{1}" {2} <{3}>&nbsp;]<<BR>>{4}'.format(msg1, error, msg2, cell_markup, cell_text)
+                    cell_text = '[ {0} "{1}" {2} <{3}>&nbsp;]<<BR>>{4}'.format(
+                        msg1, error, msg2, cell_markup, cell_text)
                     if no_errors:
                         add_attr_to_style(element.attrib, 'background-color: pink; color: black;')
                     no_errors = False

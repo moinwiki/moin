@@ -8,8 +8,6 @@ MoinMoin - set a user password
 """
 
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL
@@ -20,8 +18,10 @@ from MoinMoin.app import before_wiki
 class Fault(Exception):
     """something went wrong"""
 
+
 class NoSuchUser(Fault):
     """raised if no such user exists"""
+
 
 class MailFailed(Fault):
     """raised if e-mail sending failed"""

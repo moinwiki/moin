@@ -19,7 +19,8 @@ from werkzeug import url_encode
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
@@ -335,7 +336,7 @@ class Converter(ConverterMacro):
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(':')
-                list_definition_text=splited_text.pop(0)
+                list_definition_text = splited_text.pop(0)
                 text = ':'.join(splited_text)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
@@ -482,7 +483,8 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_footnote_repl(self, stack, footnote, footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None):
+    def inline_footnote_repl(self, stack, footnote,
+                             footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None):
         #stack.top_check('emphasis'):
         if footnote_begin is not None:
             stack.push(moin_page.note(attrib={moin_page.note_class: 'footnote'}))
@@ -591,7 +593,7 @@ class Converter(ConverterMacro):
             \s*
             \]
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def parse_args(self, input):
         """
@@ -635,7 +637,7 @@ class Converter(ConverterMacro):
         parsed_args = self.parse_args(link_args[1:])
         query = None
         if parsed_args.keyword:
-            query = url_encode(parsed_args.keyword, charset=config.charset, encode_keys=True)
+            query = url_encode(parsed_args.keyword, charset=CHARSET, encode_keys=True)
         # Take the last of positional parameters as link_text(caption)
         if parsed_args.positional:
             link_text = parsed_args.positional.pop()
@@ -654,7 +656,7 @@ class Converter(ConverterMacro):
                     if 'do' not in args:
                         # by default, we want the item's get url for transclusion of raw data:
                         args['do'] = 'get'
-                    query = url_encode(args, charset=config.charset, encode_keys=True)
+                    query = url_encode(args, charset=CHARSET, encode_keys=True)
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:
@@ -923,7 +925,8 @@ class Converter(ConverterMacro):
                                     close_tag = self.Preprocessor_tag()
                                     while tag_name != close_tag.tag_name:
                                         close_tag = tags.pop()
-                                        tmp_line = '<{0}>{1}{2}</{3}>'.format(close_tag.tag, ''.join(close_tag.text), tmp_line, close_tag.tag_name)
+                                        tmp_line = '<{0}>{1}{2}</{3}>'.format(
+                                            close_tag.tag, ''.join(close_tag.text), tmp_line, close_tag.tag_name)
                                         if not len(tags):
                                             post_line.append(tmp_line)
                                         else:

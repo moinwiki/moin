@@ -7,8 +7,6 @@ MoinMoin - create a user account
 """
 
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin import user
@@ -20,8 +18,8 @@ class Create_User(Command):
     option_list = (
         Option('--name', '-n', required=True, dest='name', type=unicode,
                help="Set the wiki user name to NAME."),
-        Option('--alias', '-a', required=False, dest="aliasname", type=unicode,
-               help="Set the wiki user alias name to ALIAS (e.g. the real name if NAME is cryptic)."),
+        Option('--display_name', '-d', required=False, dest="display_name", type=unicode,
+               help="Set the wiki user's display name to DISPLAY_NAME (e.g. in case the NAME is cryptic)."),
         Option('--email', '-e', required=True, dest='email', type=unicode,
                help="Set the user's email address to EMAIL."),
         Option('--openid', '-o', required=False, dest='openid', type=unicode,
@@ -30,7 +28,7 @@ class Create_User(Command):
                help="Set the user's password to PASSWORD."),
     )
 
-    def run(self, name, aliasname, email, openid, password):
+    def run(self, name, display_name, email, openid, password):
         before_wiki()
         msg = user.create_user(username=name,
                                password=password,

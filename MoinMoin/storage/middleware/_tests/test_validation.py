@@ -8,12 +8,10 @@ MoinMoin - validation tests
 
 from __future__ import absolute_import, division
 
-import pytest
-
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from MoinMoin.constants import keys
-from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid
 
@@ -31,7 +29,8 @@ class TestValidation(object):
         meta = {
             keys.REVID: make_uuid(),
             keys.PARENTID: make_uuid(),
-            keys.NAME: u"a",
+            keys.NAME: [u"a", ],
+            keys.NAMESPACE: u"",
             keys.ACL: u"All:read",
             keys.TAGS: [u"foo", u"bar"],
         }
@@ -45,6 +44,7 @@ class TestValidation(object):
                  keys.HASH_ALGORITHM: u'b9064b9a5efd8c6cef2d38a8169a0e1cbfdb41ba',
                  keys.SIZE: 0,
                  keys.WIKINAME: u'ThisWiki',
+                 keys.NAMESPACE: u'',
                  'rev_parent': rev,
                  'acl_parent': u"All:read",
                  'contenttype_current': u'text/x.moin.wiki;charset=utf-8',
@@ -64,7 +64,8 @@ class TestValidation(object):
         meta = {
             keys.ITEMID: make_uuid(),
             keys.REVID: make_uuid(),
-            keys.NAME: u"user name",
+            keys.NAME: [u"user name", ],
+            keys.NAMESPACE: u"userprofiles",
             keys.EMAIL: u"foo@example.org",
         }
 
@@ -74,6 +75,7 @@ class TestValidation(object):
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
                  keys.WIKINAME: u'ThisWiki',
+                 keys.NAMESPACE: u'',
                 }
 
         m = UserMetaSchema(meta)

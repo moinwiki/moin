@@ -25,18 +25,18 @@ def main():
             space.append(str)
 
     chars_upper = u''.join(uppercase)
-    chars_lower = u''.join(lowercase+digits)
+    chars_lower = u''.join(lowercase + digits)
     chars_digits = u''.join(digits)
     chars_spaces = u''.join(space)
 
     print """
-chars_upper = u"%(chars_upper)s"
+CHARS_UPPER = u"%(chars_upper)s"
 
-chars_lower = u"%(chars_lower)s"
+CHARS_LOWER = u"%(chars_lower)s"
 
-chars_digits = u"%(chars_digits)s"
+CHARS_DIGITS = u"%(chars_digits)s"
 
-chars_spaces = u"%(chars_spaces)s"
+CHARS_SPACES = u"%(chars_spaces)s"
 
 
 """ % locals()

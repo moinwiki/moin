@@ -5,7 +5,10 @@
     @copyright: 2008 MoinMoin:FlorianKrupicka
     @license: GNU GPL, see COPYING for details.
 """
-import time, itertools, sys, os
+import time
+import itertools
+import sys
+import os
 
 from werkzeug.test import Client
 

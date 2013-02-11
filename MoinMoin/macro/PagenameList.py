@@ -14,6 +14,7 @@ from flask import g as flaskg
 
 from MoinMoin.macro._base import MacroPageLinkListBase
 
+
 class Macro(MacroPageLinkListBase):
     def macro(self, content, arguments, page_url, alternative):
         # needle=u'', regex=False

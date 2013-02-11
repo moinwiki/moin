@@ -13,6 +13,7 @@ from emeraldtree import ElementTree as ET
 
 WORDBREAK_LEN = 30
 
+
 class TableMixin(object):
     """
     Mixin to support building a DOM table.

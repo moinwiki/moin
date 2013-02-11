@@ -65,7 +65,7 @@ class Table(object):
         self.j = 0
         self.table.append(row)
         if self.i > 0:
-            if len(self.table[-2]) > (self.j):
+            if len(self.table[-2]) > self.j:
                 self.add_cell(self.table[-2][self.j][0],
                                 self.table[-2][self.j][1] - 1, Cell(''))
         return row
@@ -92,8 +92,8 @@ class Table(object):
         if cs < 1 or rs < 1:
             return
         self.table[-1].append((cs, rs, cell))
-        for i in range(cs-1):
-            self.table[-1].append((cs-i-1, rs, Cell('')))
+        for i in range(cs - 1):
+            self.table[-1].append((cs - i - 1, rs, Cell('')))
         self.j += cs
         if self.i > 0:
             if len(self.table[-2]) > self.j:
@@ -166,7 +166,7 @@ class Table(object):
             line = [u'+']
             row = self.table[0]
             for col in range(len(cols)):
-                line.append(u'-'*cols[col])
+                line.append(u'-' * cols[col])
                 if self.table[0][col][0] > 1:
                     line.append(u'-')
                 else:
@@ -192,11 +192,11 @@ class Table(object):
                 line = [u'+']
                 for col in range(len(cols)):
                     if self.table[row][col][1] > 1:
-                        line.append(u' '*cols[col])
+                        line.append(u' ' * cols[col])
                     elif row == self.header_count - 1:
-                        line.append(u'='*cols[col])
+                        line.append(u'=' * cols[col])
                     else:
-                        line.append(u'-'*cols[col])
+                        line.append(u'-' * cols[col])
                     if self.table[row][col][0] > 1:
                         if row + 1 < len(rows)\
                                 and self.table[row + 1][col][0] > 1\
@@ -334,7 +334,8 @@ class Converter(object):
                         childrens_output.append(u'\n\n')
                 elif self.status[-1] == "list":
                     child =\
-                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
+                            (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                     if self.last_closed == "p":
                         childrens_output.append(u'\n'
                                 + u' '
@@ -346,7 +347,8 @@ class Converter(object):
                         childrens_output.append(u'\n')
                 elif self.status[-2] == "list":
                     child =\
-                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
+                            (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                 childrens_output.append(child)
                 self.last_closed = 'text'
         self.delete_newlines = delete_newlines
@@ -408,7 +410,8 @@ class Converter(object):
                 if i:
                     self.output[-1] = self.output[-1][:i]
             """
-        return u"::\n\n  {0}{1}\n\n".format(u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
+        return u"::\n\n  {0}{1}\n\n".format(u' ' *
+                    (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
 
     def open_moinpage_code(self, elem):
         ret = u"{0}{1}{2}".format(ReST.monospace, u''.join(elem.itertext()), ReST.monospace)
@@ -510,8 +513,7 @@ class Converter(object):
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
-            args =[s for s in re.findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$)',
-                                            href[1]) if s[:3] != u'do=']
+            args = [s for s in re.findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$)', href[1]) if s[:3] != u'do=']
         href = href[0]
         alt = elem.get(moin_page.alt, u'')
         if not alt:
@@ -520,7 +522,8 @@ class Converter(object):
             ret = u'|{0}|'.format(alt)
         args_text = u''
         if args:
-            args_text = u"\n  {0}".format(u'\n  '.join(u':{0}: {1}'.format(arg.split(u'=')[0], arg.split(u'=')[1]) for arg in args))
+            args_text = u"\n  {0}".format(u'\n  '.join(u':{0}: {1}'.format(
+                arg.split(u'=')[0], arg.split(u'=')[1]) for arg in args))
         self.objects.append(u".. {0} image:: {1}{2}".format(ret, href, args_text))
         return ret
 
@@ -586,7 +589,8 @@ class Converter(object):
         if len(type) == 2:
             if type[0] == u"x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
+                    alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], u','.join(
+                            [u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
                 else:
                     alt = u"<<{0}()>>".format(type[1].split(u'=')[1])
 
@@ -656,7 +660,8 @@ class Converter(object):
         table = repr(self.tablec)
         if self.status[-1] == "list":
             table =\
-                re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' '*(len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
+                re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
+                        (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
             return table + ReST.p
         return table + ReST.linebreak
 

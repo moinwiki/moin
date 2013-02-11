@@ -11,7 +11,7 @@ from flask import url_for
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
-from MoinMoin.config import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
+from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
 from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from MoinMoin.items.blog import Blog, BlogEntry
 

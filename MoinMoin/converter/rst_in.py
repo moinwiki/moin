@@ -235,10 +235,10 @@ class NodeVisitor(object):
         new_element = moin_page.table_cell()
         if 'morerows' in node.attributes:
             new_element.set(moin_page.number_rows_spanned,
-                            repr(int(node['morerows'])+1))
+                            repr(int(node['morerows']) + 1))
         if 'morecols' in node.attributes:
             new_element.set(moin_page.number_cols_spanned,
-                            repr(int(node['morecols'])+1))
+                            repr(int(node['morecols']) + 1))
         self.open_moin_page_node(new_element)
 
     def depart_entry(self, node):
@@ -400,7 +400,9 @@ class NodeVisitor(object):
             for name, value in named_args:
                 args.append(moin_page.argument(attrib={moin_page.name: name}, children=[value]))
             arguments = moin_page.arguments(children=args)
-            self.open_moin_page_node(moin_page.part(children=[arguments], attrib={moin_page.content_type: "x-moin/format;name={0}".format(parser.split(' ')[0])}))
+            self.open_moin_page_node(moin_page.part(children=[arguments],
+                                                    attrib={moin_page.content_type:
+                                                                "x-moin/format;name={0}".format(parser.split(' ')[0])}))
         else:
             self.open_moin_page_node(moin_page.blockcode())
 
@@ -430,7 +432,7 @@ class NodeVisitor(object):
 
     def visit_reference(self, node):
         refuri = node.get('refuri', u'')
-        if refuri.startswith(u'<<') and refuri.endswith(u'>>'): # moin macro
+        if refuri.startswith(u'<<') and refuri.endswith(u'>>'):  # moin macro
             macro_name = refuri[2:-2].split(u'(')[0]
             if macro_name == u"TableOfContents":
                 arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
@@ -624,8 +626,8 @@ class Writer(writers.Writer):
     visitor_attributes = []
 
     def translate(self):
-        self.visitor = visitor = NodeVisitor(self.document)
-        self.document.walkabout(visitor)
+        self.visitor = visitor = NodeVisitor()
+        walkabout(self.document, visitor)
         self.output = visitor.tree()
 
 
@@ -761,12 +763,21 @@ class Converter(object):
             try:
                 docutils_tree = core.publish_doctree(source=input)
             except utils.SystemMessage as inst:
-                string_numb = re.match(re.compile(r'<string>\:([0-9]*)\:\s*\(.*?\)\s*(.*)', re.X | re.U | re.M | re.S), str(inst))
+                string_numb = re.match(re.compile(r'<string>\:([0-9]*)\:\s*\(.*?\)\s*(.*)',
+                                                  re.X | re.U | re.M | re.S), str(inst))
                 if string_numb:
                     str_num = string_numb.group(1)
                     input = input.split('\n')
                     if str_num:
-                        input = ['.. error::\n ::\n\n  Parse error on line number {0}:\n\n  {1}\n\n  Go back and try fix that.\n\n'.format(str_num, string_numb.group(2).replace('\n', '\n  '))]
+                        input = [('.. error::\n'
+                                  ' ::\n'
+                                  '\n'
+                                  '  Parse error on line number {0}:\n'
+                                  '\n'
+                                  '  {1}\n'
+                                  '\n'
+                                  '  Go back and try fix that.\n'
+                                  '\n').format(str_num, string_numb.group(2).replace('\n', '\n  '))]
                         continue
                 else:
                     input = ['.. error::\n ::\n\n  {0}\n\n'.format(str(inst).replace('\n', '\n  '))]

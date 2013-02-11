@@ -19,7 +19,8 @@ from whoosh.query import Term
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
-from MoinMoin.forms import Form, OptionalText, OptionalMultilineText, Submit, SmallNatural, Tags, Reference, BackReference
+from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, Submit, SmallNatural, Tags,
+                            Reference, BackReference)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
@@ -36,6 +37,7 @@ Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
 OptionalTicketReference = Reference.to(TICKET_QUERY).using(optional=True)
 OptionalUserReference = Reference.to(USER_QUERY).using(optional=True).with_properties(empty_label='(Nobody)')
 
+
 class TicketMetaForm(Form):
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     effort = Rating.using(label=L_("Effort"))
@@ -47,6 +49,7 @@ class TicketMetaForm(Form):
     superseded_by = OptionalTicketReference.using(label=L_("Superseded By"))
     depends_on = OptionalTicketReference.using(label=L_("Depends On"))
 
+
 class TicketBackRefForm(Form):
     supersedes = BackReference.using(label=L_("Supersedes"))
     required_by = BackReference.using(label=L_("Required By"))
@@ -57,6 +60,7 @@ class TicketBackRefForm(Form):
         self['supersedes'].set(Term('superseded_by', id_))
         self['required_by'].set(Term('depends_on', id_))
         self['subscribers'].set(Term('subscribed_items', id_))
+
 
 class TicketForm(BaseModifyForm):
     meta = TicketMetaForm
@@ -103,7 +107,7 @@ class Ticket(Contentful):
             return self.do_modify()
 
     def do_modify(self):
-        if request.method == 'GET':
+        if request.method in ['GET', 'HEAD']:
             form = TicketForm.from_item(self)
         elif request.method == 'POST':
             form = TicketForm.from_request(request)

@@ -29,7 +29,7 @@ import time
 from flatland import Dict, List, Unset, Boolean, Integer, String
 
 from MoinMoin.constants import keys
-from MoinMoin.config import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid, UUID_LEN
 from MoinMoin.util.mime import Type
@@ -102,7 +102,7 @@ def name_validator(element, state):
         return False
     if v != v.strip():
         return False
-    if v.startswith(u'+'): # used for views, like /+meta/<itemname>
+    if v.startswith(u'+'):  # used for views, like /+meta/<itemname>
         return False
     if v.endswith(u'/'):
         return False
@@ -129,6 +129,15 @@ def wikiname_validator(element, state):
     """
     if element.raw is Unset:
         element.set(state[keys.WIKINAME])
+    return name_validator(element, state)
+
+
+def namespace_validator(element, state):
+    """
+    a namespace (part of a wiki site)
+    """
+    if element.raw is Unset:
+        element.set(state[keys.NAMESPACE])
     return name_validator(element, state)
 
 
@@ -216,7 +225,7 @@ def acl_validator(element, state):
         if element.value is None:
             return False
         return True
-    else: # untrusted
+    else:  # untrusted
         v = element.value
         if not isinstance(v, unicode):
             return False
@@ -309,8 +318,9 @@ common_meta = (
     String.named(keys.REVID).validated_by(revid_validator),
     String.named(keys.PARENTID).validated_by(uuid_validator).using(optional=True),
     String.named(keys.WIKINAME).using(strip=False).validated_by(wikiname_validator),
-    String.named(keys.NAME).using(strip=False).validated_by(name_validator),
-    String.named(keys.NAME_OLD).using(strip=False).validated_by(name_validator).using(optional=True),
+    String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),
+    List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)),
+    List.named(keys.NAME_OLD).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
     Integer.named(keys.MTIME).validated_by(mtime_validator),
     String.named(keys.ACTION).validated_by(action_validator),
     String.named(keys.ACL).validated_by(acl_validator),
@@ -328,7 +338,8 @@ ContentMetaSchema = DuckDict.named('ContentMetaSchema').of(
     String.named(keys.DATAID).validated_by(uuid_validator).using(optional=True),
     # markup items may have this:
     List.named(keys.ITEMLINKS).of(String.named('itemlink').validated_by(wikiname_validator)).using(optional=True),
-    List.named(keys.ITEMTRANSCLUSIONS).of(String.named('itemtransclusion').validated_by(wikiname_validator)).using(optional=True),
+    List.named(keys.ITEMTRANSCLUSIONS).of(String.named('itemtransclusion').validated_by(wikiname_validator)).using(
+        optional=True),
     # TODO: CONTENT validation? can we do it here?
     *common_meta
 )

@@ -64,7 +64,7 @@ class Converter(object):
     ($|(?=\s))  # we require either ending of line or some space after a smiley
 """ % {'smiley': u'|'.join([re.escape(s) for s in smileys])}
 
-    smiley_re = re.compile(smiley_rule, re.UNICODE|re.VERBOSE)
+    smiley_re = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
     tags_to_ignore = set(['code', 'blockcode', ])

@@ -10,7 +10,8 @@
 
 
 import time
-import hmac, hashlib
+import hmac
+import hashlib
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -62,5 +63,6 @@ def checkTicket(ticket, **kw):
         logging.debug("checkTicket: too old ticket, timestamp {0!r}".format(timestamp))
         return False
     ourticket = createTicket(timestamp_str, **kw)
-    logging.debug("checkTicket: returning {0!r}, got {1!r}, expected {2!r}".format(ticket == ourticket, ticket, ourticket))
+    logging.debug("checkTicket: returning {0!r}, got {1!r}, expected {2!r}".format(
+        ticket == ourticket, ticket, ourticket))
     return ticket == ourticket

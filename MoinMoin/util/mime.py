@@ -7,8 +7,10 @@ MoinMoin - MIME helpers
 
 
 from collections import namedtuple
+from MoinMoin.util.pysupport import AutoNe
 
-class Type(namedtuple('Type', 'type subtype parameters')):
+
+class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
     """
     :ivar type: Type part
     :type type: unicode
@@ -18,7 +20,8 @@ class Type(namedtuple('Type', 'type subtype parameters')):
     :type parameters: dict
     """
 
-    __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~""")
+    __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"""
+                                    r"""^_`abcdefghijklmnopqrstuvwxyz{|}~""")
 
     def __new__(cls, _type=None, type=None, subtype=None, parameters=None):
         """
@@ -52,12 +55,6 @@ class Type(namedtuple('Type', 'type subtype parameters')):
             return super(Type, self).__eq__(other)
 
         return NotImplemented
-
-    def __ne__(self, other):
-        ret = self.__eq__(other)
-        if ret is NotImplemented:
-            return ret
-        return not ret
 
     def __unicode__(self):
         ret = [u'{0}/{1}'.format(self.type or '*', self.subtype or '*')]

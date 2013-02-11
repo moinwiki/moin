@@ -31,13 +31,11 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import session, request, url_for
 
-from whoosh.query import Term, And, Or
-
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil
-from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail
@@ -61,7 +59,8 @@ space between words. Group page name is not allowed.""", name=username)
     if validate and search_users(name_exact=username):
         return _("This user name already belongs to somebody else.")
 
-    theuser.profile[NAME] = unicode(username)
+    # XXX currently we just support creating with 1 name:
+    theuser.profile[NAME] = [unicode(username), ]
 
     pw_checker = app.cfg.password_checker
     if validate and pw_checker:
@@ -112,6 +111,10 @@ def update_user_query(**q):
 
 def search_users(**q):
     """ Searches for a users with given query keys/values """
+    # Since item name is a list, it's possible a list have been passed as parameter.
+    # No problem, since user always have just one name (TODO: validate single name for user)
+    if q.get('name_exact') and isinstance(q.get('name_exact'), list):
+        q['name_exact'] = q['name_exact'][0]
     q = update_user_query(**q)
     backend = get_user_backend()
     docs = backend.documents(**q)
@@ -133,7 +136,7 @@ def get_editor(userid, addr, hostname):
         if userdata.mailto_author and userdata.email:
             return ('email', userdata.email)
         elif userdata.name:
-            interwiki = getInterwikiHome(userdata.name)
+            interwiki = getInterwikiHome(userdata.name0)
             if interwiki:
                 result = ('interwiki', interwiki)
     return result
@@ -155,9 +158,9 @@ def normalizeName(name):
     :rtype: unicode
     :returns: user name that can be used in acl lines
     """
-    username_allowedchars = "'@.-_" # ' for names like O'Brian or email addresses.
-                                    # "," and ":" must not be allowed (ACL delimiters).
-                                    # We also allow _ in usernames for nicer URLs.
+    username_allowedchars = "'@.-_"  # ' for names like O'Brian or email addresses.
+                                     # "," and ":" must not be allowed (ACL delimiters).
+                                     # We also allow _ in usernames for nicer URLs.
     # Strip non alpha numeric characters (except username_allowedchars), keep white space
     name = ''.join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
 
@@ -201,7 +204,7 @@ class UserProfile(object):
             return self._meta[name]
         except KeyError:
             v = self._defaults[name]
-            if isinstance(v, (list, dict, set)): # mutable
+            if isinstance(v, (list, dict, set)):  # mutable
                 self._meta[name] = v
             return v
 
@@ -276,6 +279,7 @@ class User(object):
         self.auth_method = kw.get('auth_method', 'internal')
         self.auth_attribs = kw.get('auth_attribs', ())
 
+        # XXX currently we just support creating with 1 name:
         _name = name or auth_username
 
         itemid = uid
@@ -292,7 +296,7 @@ class User(object):
         else:
             self.profile[ITEMID] = make_uuid()
             if _name:
-                self.profile[NAME] = _name
+                self.profile[NAME] = [_name, ]
             if password is not None:
                 self.set_password(password)
 
@@ -301,7 +305,7 @@ class User(object):
 
     def __repr__(self):
         # In rare cases we might not have these profile settings when the __repr__ is called.
-        name = getattr(self, NAME, None)
+        name = getattr(self, NAME, [])
         itemid = getattr(self, ITEMID, None)
 
         return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
@@ -319,6 +323,15 @@ class User(object):
                 raise AttributeError(name)
         else:
             raise AttributeError(name)
+
+    @property
+    def name0(self):
+        try:
+            names = self.name
+            assert isinstance(names, list)
+            return names[0]
+        except IndexError:
+            return u'anonymous'
 
     @property
     def language(self):
@@ -363,8 +376,8 @@ class User(object):
 
         :param changed: bool, set this to True if you updated the user profile values
         """
-        if not self.valid and not self.disabled or changed: # do we need to save/update?
-            self.save() # yes, create/update user profile
+        if not self.valid and not self.disabled or changed:  # do we need to save/update?
+            self.save()  # yes, create/update user profile
 
     def exists(self):
         """ Do we have a user profile for this user?
@@ -426,7 +439,8 @@ class User(object):
         try:
             password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
-            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (self.name, str(err)))
+            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (
+                self.name, str(err)))
         else:
             if recomputed_hash is not None:
                 data[ENC_PASSWORD] = recomputed_hash
@@ -466,13 +480,13 @@ class User(object):
             self.valid = True
 
         if not exists:
-            pass # XXX UserCreatedEvent
+            pass  # XXX UserCreatedEvent
         else:
-            pass # XXX UserChangedEvent
+            pass  # XXX UserChangedEvent
 
     def getText(self, text):
         """ translate a text to the language of this user """
-        return text # FIXME, was: self._request.getText(text, lang=self.language)
+        return text  # FIXME, was: self._request.getText(text, lang=self.language)
 
     # Bookmarks --------------------------------------------------------------
 
@@ -651,9 +665,9 @@ class User(object):
         item_name = getInterwikiName(item_name)
         trail_in_session = session.get('trail', [])
         trail = trail_in_session[:]
-        trail = [i for i in trail if i != item_name] # avoid dupes
-        trail.append(item_name) # append current item name at end
-        trail = trail[-self._cfg.trail_size:] # limit trail length
+        trail = [i for i in trail if i != item_name]  # avoid dupes
+        trail.append(item_name)  # append current item name at end
+        trail = trail[-self._cfg.trail_size:]  # limit trail length
         if trail != trail_in_session:
             session['trail'] = trail
 
@@ -669,7 +683,7 @@ class User(object):
 
     def is_current_user(self):
         """ Check if this user object is the user doing the current request """
-        return flaskg.user.name == self.name
+        return flaskg.user.itemid == self.itemid
 
     # Sessions ---------------------------------------------------
 
@@ -739,7 +753,7 @@ Please use the link below to change your password to a known value:
 If you didn't forget your password, please ignore this email.
 
 """, link=url_for('frontend.recoverpass',
-                        username=self.name, token=token, _external=True))
+                        username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Your wiki password recovery link',
                     sitename=self._cfg.sitename or "Wiki")
@@ -760,7 +774,7 @@ Please use the link below to verify your email address:
 If you didn't create this account, please ignore this email.
 
 """, link=url_for('frontend.verifyemail',
-                        username=self.name, token=token, _external=True))
+                        username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")

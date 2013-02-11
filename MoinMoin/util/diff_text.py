@@ -8,6 +8,7 @@
 
 import difflib
 
+
 def diff(oldlines, newlines, **kw):
     """
     Find changes between oldlines and newlines.
@@ -54,12 +55,12 @@ def diff(oldlines, newlines, **kw):
             lcount_new = lcount_new + 1
         elif marker in ['-', '+']:
             if (count == i) and count > 3:
-                lines[:i-3] = []
+                lines[:i - 3] = []
                 i = 4
                 count = 0
             elif count > 6:
                 # remove lines and insert new hunk indicator
-                lines[i-count+3:i-3] = ['@@ -{0:d}, +{1:d} @@\n'.format(lcount_old, lcount_new)]
+                lines[i - count + 3:i - 3] = ['@@ -{0:d}, +{1:d} @@\n'.format(lcount_old, lcount_new)]
                 i = i - count + 8
                 count = 0
             else:
@@ -70,10 +71,10 @@ def diff(oldlines, newlines, **kw):
             else:
                 lcount_new = lcount_new + 1
         elif marker == '?':
-            lines[i:i+1] = []
+            lines[i:i + 1] = []
 
     # remove unchanged lines a the end
     if count > 3:
-        lines[-count+3:] = []
+        lines[-count + 3:] = []
 
     return lines

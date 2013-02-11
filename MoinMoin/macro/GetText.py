@@ -15,6 +15,7 @@ get very confusing).
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.macro._base import MacroInlineBase
 
+
 class Macro(MacroInlineBase):
     """ Return a translation of args, or args as is """
     def macro(self, content, arguments, page_url, alternative):

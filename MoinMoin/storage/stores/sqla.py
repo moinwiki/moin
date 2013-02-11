@@ -17,7 +17,7 @@ from . import (BytesMutableStoreBase, FileMutableStoreBase,
                BytesMutableStoreMixin, FileMutableStoreMixin)
 
 KEY_LEN = 128
-VALUE_LEN = 1024 * 1024 # 1MB binary data
+VALUE_LEN = 1024 * 1024  # 1MB binary data
 
 
 class BytesStore(BytesMutableStoreBase):
@@ -32,8 +32,8 @@ class BytesStore(BytesMutableStoreBase):
         :param cls: Class to create
         :param uri: The database uri that we pass on to SQLAlchemy.
         """
-        params = uri.split("::") # using "::" to support windows pathnames that
-                                 # may include ":" after the drive letter.
+        params = uri.split("::")  # using "::" to support windows pathnames that
+                                  # may include ":" after the drive letter.
         return cls(*params)
 
     def __init__(self, db_uri=None, table_name='store', verbose=False):

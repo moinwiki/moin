@@ -34,6 +34,7 @@ def convert_getlink_to_showlink(href):
         return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
     return href
 
+
 def mark_item_as_transclusion(elem, href):
     """
     Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
@@ -86,7 +87,7 @@ class Attributes(object):
     visit_style = Attribute('style')
     visit_title = Attribute('title')
     visit_id = Attribute('id')
-    visit_type = Attribute('type') # IE8 needs <object... type="image/svg+xml" ...> to display svg images
+    visit_type = Attribute('type')  # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -371,7 +372,7 @@ class Converter(object):
 
         if obj_type == "img":
             # Images have alt text
-            alt = ''.join(unicode(e) for e in elem) # XXX handle non-text e
+            alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
@@ -401,7 +402,8 @@ class Converter(object):
 
                     if item[0].tag.name in ('object', 'a'):
                         # png, jpg, gif are objects here, will be changed to img when they are processed
-                        # transclusion is a single inline element "My pet {{bird.jpg}} flys." or "[[SomePage|{{Logo.png}}]]"
+                        # transclusion is a single inline element "My pet {{bird.jpg}} flys." or
+                        # "[[SomePage|{{Logo.png}}]]"
                         return self.new_copy(html.span, item, attribs)
 
                     elif item[0].tag.name == 'p':
@@ -725,11 +727,15 @@ class ConverterPage(Converter):
         prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
 
         elem_ref = ET.XML("""
-<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote"><html:a html:href="#note-{2}">{3}</html:a></html:sup>
+<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote">
+<html:a html:href="#note-{2}">{3}</html:a>
+</html:sup>
 """.format(html, prefixed_id, prefixed_id, id))
 
         elem_note = ET.XML("""
-<html:p xmlns:html="{0}" html:id="note-{1}"><html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup></html:p>
+<html:p xmlns:html="{0}" html:id="note-{1}">
+<html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup>
+</html:p>
 """.format(html, prefixed_id, prefixed_id, id))
 
         elem_note.extend(body)

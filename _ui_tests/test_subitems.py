@@ -2,6 +2,7 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """Functional test: create subitem"""
+
 import config
 import utils
 

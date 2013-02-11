@@ -11,7 +11,6 @@
 import urllib
 
 from json import dumps
-from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -23,7 +22,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
-from MoinMoin.config import USERID, ADDRESS, HOSTNAME
+from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from MoinMoin.util.crypto import cache_key
@@ -42,7 +41,8 @@ def get_current_theme():
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning("Theme {0!r} was not found; using default of {1!r} instead.".format(theme_name, app.cfg.theme_default))
+        logging.warning("Theme {0!r} was not found; using default of {1!r} instead.".format(
+            theme_name, app.cfg.theme_default))
         theme_name = app.cfg.theme_default
         return get_theme(theme_name)
 
@@ -50,6 +50,7 @@ def get_current_theme():
 @timed()
 def render_template(template, **context):
     return render_theme_template(get_current_theme(), template, **context)
+
 
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
@@ -73,11 +74,11 @@ class ThemeSupport(object):
         self.cfg = cfg
         self.user = flaskg.user
         self.storage = flaskg.storage
-        self.ui_lang = 'en' # XXX
-        self.ui_dir = 'ltr' # XXX
-        self.content_lang = flaskg.content_lang # XXX
-        self.content_dir = 'ltr' # XXX
-        self.meta_items = [] # list of (name, content) for html head <meta>
+        self.ui_lang = 'en'  # XXX
+        self.ui_dir = 'ltr'  # XXX
+        self.content_lang = flaskg.content_lang  # XXX
+        self.content_dir = 'ltr'  # XXX
+        self.meta_items = []  # list of (name, content) for html head <meta>
 
     def location_breadcrumbs(self, item_name):
         """
@@ -105,9 +106,9 @@ class ThemeSupport(object):
         breadcrumbs = []
         trail = user.get_trail()
         for interwiki_item_name in trail:
-            wiki_name, item_name = split_interwiki(interwiki_item_name)
+            wiki_name, namespace, item_name = split_interwiki(interwiki_item_name)
             err = not is_known_wiki(wiki_name)
-            href = url_for_item(item_name, wiki_name=wiki_name)
+            href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
             if is_local_wiki(wiki_name):
                 exists = self.storage.has_item(item_name)
                 wiki_name = ''  # means "this wiki" for the theme code
@@ -132,16 +133,13 @@ class ThemeSupport(object):
         Assemble arguments used to build user homepage link
 
         :rtype: tuple
-        :returns: arguments of user homepage link in tuple (wiki_href, aliasname, title, exists)
+        :returns: arguments of user homepage link in tuple (wiki_href, display_name, title, exists)
         """
         user = self.user
-        name = user.name
-        aliasname = user.aliasname
-        if not aliasname:
-            aliasname = name
-
+        name = user.name0
+        display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
-        title = u"{0} @ {1}".format(aliasname, wikiname)
+        title = u"{0} @ {1}".format(display_name, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -149,7 +147,7 @@ class ThemeSupport(object):
             # We cannot check if wiki pages exists in remote wikis
             exists = True
         wiki_href = url_for_item(itemname, wiki_name=wikiname)
-        return wiki_href, aliasname, title, exists
+        return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):
         """
@@ -194,10 +192,10 @@ class ThemeSupport(object):
         if target.startswith("wiki:"):
             target = target[5:]
 
-        wiki_name, item_name = split_interwiki(target)
+        wiki_name, namespace, item_name = split_interwiki(target)
         if wiki_name == 'Self':
             wiki_name = ''
-        href = url_for_item(item_name, wiki_name=wiki_name)
+        href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name)
         if not title:
             title = item_name
         return href, title, wiki_name
@@ -239,12 +237,12 @@ class ThemeSupport(object):
                                 item_url, item_name = line.split(' ', 1)
                                 sisteritems[item_name.decode('utf-8')] = item_url
                             except:
-                                pass # ignore invalid lines
+                                pass  # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)
                         logging.info("Site: {0!r} Status: Updated. Pages: {1}".format(sistername, len(sisteritems)))
                     except IOError as err:
-                        (title, code, msg, headers) = err.args # code e.g. 304
+                        (title, code, msg, headers) = err.args  # code e.g. 304
                         logging.warning("Site: {0!r} Status: Not updated.".format(sistername))
                         logging.exception("exception was:")
                 if current in sisteritems:
@@ -305,16 +303,14 @@ def get_editor_info(meta, external=False):
     userid = meta.get(USERID)
     if userid:
         u = user.User(userid)
-        name = u.name
+        name = u.name0
         text = name
-        aliasname = u.aliasname
-        if not aliasname:
-            aliasname = name
+        display_name = u.display_name or name
         if title:
             # we already have some address info
-            title = u"{0} @ {1}".format(aliasname, title)
+            title = u"{0} @ {1}".format(display_name, title)
         else:
-            title = aliasname
+            title = display_name
         if u.mailto_author and u.email:
             email = u.email
             css = 'editor mail'
@@ -332,6 +328,7 @@ def get_editor_info(meta, external=False):
     if email:
         result['email'] = email
     return result
+
 
 def shorten_item_name(name, length=25):
     """
@@ -354,6 +351,7 @@ def shorten_item_name(name, length=25):
             half, left = divmod(length - 3, 2)
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
+
 
 def shorten_id(name, length=7):
     """
@@ -379,6 +377,7 @@ MIMETYPE_TO_CLASS = {
     'application/x-anywikidraw': 'drawing',
     'application/x-svgdraw': 'drawing',
 }
+
 
 def contenttype_to_class(contenttype):
     """
@@ -423,7 +422,7 @@ def setup_jinja_env():
                             'storage': flaskg.storage,
                             'clock': flaskg.clock,
                             'cfg': app.cfg,
-                            'item_name': 'handlers need to give it',
+                            'item_name': u'handlers need to give it',
                             'url_for_item': url_for_item,
                             'get_editor_info': lambda meta: get_editor_info(meta),
                             'utctimestamp': lambda dt: utctimestamp(dt),
