@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2010 MoinMoin:ThomasWaldmann
 # Copyright: 2010 MoinMoin:MicheleOrru
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -116,8 +115,8 @@ class TestInterWiki(object):
 
                  (('http://example.org/', u'SomePage', u'ns1'), 'http://example.org/:ns1:SomePage'),
                  (('http://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE', u'SomePage', u'ns1'), 'http://example.org/?page=SomePage&action=show&namespace=ns1'),
-                 (('http://example.org/', u'Aktuelle\xc4nderungen', u'ns1ççç'), 'http://example.org/:ns1%C3%83%C2%A7%C3%83%C2%A7%C3%83%C2%A7:Aktuelle%C3%84nderungen'),
-                 (('http://example.org/$NAMESPACE/$PAGE/show', u'Aktuelle\xc4nderungen', u'nsç1'), 'http://example.org/ns%C3%83%C2%A71/Aktuelle%C3%84nderungen/show'),
+                 (('http://example.org/', u'Aktuelle\xc4nderungen', u'ns1\xc4'), 'http://example.org/:ns1%C3%84:Aktuelle%C3%84nderungen'),
+                 (('http://example.org/$NAMESPACE/$PAGE/show', u'Aktuelle\xc4nderungen', u'ns\xc41'), 'http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show'),
                 ]
         for (baseurl, pagename, namespace), url in tests:
             assert join_wiki(baseurl, pagename, namespace) == url
