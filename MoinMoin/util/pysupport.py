@@ -140,3 +140,14 @@ def makeThreadSafe(function, lock=None):
             lock.release()
 
     return decorated
+
+
+class AutoNe(object):
+    """
+    Implement __ne__ in terms of __eq__. This is a mixin class.
+    """
+    def __ne__(self, other):
+        ret = self.__eq__(other)
+        if ret is NotImplemented:
+            return ret
+        return not ret

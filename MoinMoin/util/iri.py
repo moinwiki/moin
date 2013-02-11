@@ -10,6 +10,7 @@ Implements the generic IRI form as defined in RFC 3987.
 
 import codecs
 import re
+from MoinMoin.util.pysupport import AutoNe
 
 
 def _iriquote_replace(exc):
@@ -25,7 +26,7 @@ def _iriquote_replace(exc):
 codecs.register_error('iriquote', _iriquote_replace)
 
 
-class Iri(object):
+class Iri(AutoNe):
     __slots__ = '_scheme', '_authority', '_path', '_query', '_fragment'
 
     overall_rules = r"""
@@ -159,12 +160,6 @@ class Iri(object):
             return True
 
         return NotImplemented
-
-    def __ne__(self, other):
-        ret = self.__eq__(other)
-        if ret is NotImplemented:
-            return ret
-        return not ret
 
     def __repr__(self):
         return '{0}(scheme={1!r}, authority={2!r}, path={3!r}, query={4!r}, fragment={5!r})'.format(
@@ -415,7 +410,7 @@ class _Value(unicode):
         return self._quote(self, url=True)
 
 
-class IriAuthority(object):
+class IriAuthority(AutoNe):
     authority_rules = r"""
     ^
     (
@@ -465,12 +460,6 @@ class IriAuthority(object):
                     self._host == other._host and \
                     self.port == other.port
         return NotImplemented
-
-    def __ne__(self, other):
-        ret = self.__eq__(other)
-        if ret is NotImplemented:
-            return ret
-        return not ret
 
     def __nonzero__(self):
         if self._userinfo or self._host or self.port:
@@ -588,7 +577,7 @@ class IriAuthorityHost(_Value):
     pass
 
 
-class IriPath(object):
+class IriPath(AutoNe):
     __slots__ = '_list'
 
     def __init__(self, iri_path=None, _quoted=True):
@@ -609,12 +598,6 @@ class IriPath(object):
         if isinstance(other, IriPath):
             return self._list == other._list
         return NotImplemented
-
-    def __ne__(self, other):
-        ret = self.__eq__(other)
-        if ret is NotImplemented:
-            return ret
-        return not ret
 
     def __getitem__(self, key):
         ret = self._list[key]
