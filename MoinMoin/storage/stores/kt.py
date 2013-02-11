@@ -142,7 +142,7 @@ class FileStore(_Store, FileMutableStoreBase):
         response = self.client.getresponse()
         if response.status != 200:
             return None
-        return response # XXX can we do that?
+        return response  # XXX can we do that?
 
     def set(self, key, value, xt=None):
         if isinstance(key, unicode):
@@ -152,7 +152,7 @@ class FileStore(_Store, FileMutableStoreBase):
         if xt is not None:
             xt = int(time.time()) + xt
             headers["X-Kt-Xt"] = str(xt)
-        value = value.read() # XXX reads value file into memory
+        value = value.read()  # XXX reads value file into memory
         self.client.request("PUT", key, value, headers)
         response = self.client.getresponse()
         body = response.read()

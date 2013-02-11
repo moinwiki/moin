@@ -336,7 +336,7 @@ class Converter(ConverterMacro):
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(':')
-                list_definition_text=splited_text.pop(0)
+                list_definition_text = splited_text.pop(0)
                 text = ':'.join(splited_text)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
@@ -483,7 +483,8 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_footnote_repl(self, stack, footnote, footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None):
+    def inline_footnote_repl(self, stack, footnote,
+                             footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None):
         #stack.top_check('emphasis'):
         if footnote_begin is not None:
             stack.push(moin_page.note(attrib={moin_page.note_class: 'footnote'}))
@@ -924,7 +925,8 @@ class Converter(ConverterMacro):
                                     close_tag = self.Preprocessor_tag()
                                     while tag_name != close_tag.tag_name:
                                         close_tag = tags.pop()
-                                        tmp_line = '<{0}>{1}{2}</{3}>'.format(close_tag.tag, ''.join(close_tag.text), tmp_line, close_tag.tag_name)
+                                        tmp_line = '<{0}>{1}{2}</{3}>'.format(
+                                            close_tag.tag, ''.join(close_tag.text), tmp_line, close_tag.tag_name)
                                         if not len(tags):
                                             post_line.append(tmp_line)
                                         else:

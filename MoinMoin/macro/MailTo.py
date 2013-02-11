@@ -12,6 +12,7 @@ from flask import g as flaskg
 from MoinMoin.util.tree import moin_page, xlink
 from MoinMoin.macro._base import MacroInlineBase
 
+
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         # TODO new arg parsing is not compatible, splits at blanks

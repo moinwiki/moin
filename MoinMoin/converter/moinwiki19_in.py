@@ -44,7 +44,7 @@ class ConverterFormat19(Converter):
           )
           \:
           (?P<freelink_interwiki_page>
-           (?=\S*[%(u)s%(l)s0..9]\S* )  # make sure there is something non-blank with at least one alphanum letter following
+           (?=\S*[%(u)s%(l)s0..9]\S* )  # make sure there is something non-blank with at >= 1 alphanum letter following
            [^\s"\'}\]|:,.\)?!]+  # we take all until we hit some blank or punctuation char ...
           )
           |

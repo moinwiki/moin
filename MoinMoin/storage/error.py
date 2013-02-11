@@ -16,25 +16,30 @@ class StorageError(CompositeError):
     General class for exceptions on the storage layer.
     """
 
+
 class BackendError(StorageError):
     """
     Raised if the backend couldn't commit the action.
     """
+
 
 class NoSuchItemError(BackendError):
     """
     Raised if the requested item does not exist.
     """
 
+
 class ItemAlreadyExistsError(BackendError):
     """
     Raised if the Item you are trying to create already exists.
     """
 
+
 class NoSuchRevisionError(BackendError):
     """
     Raised if the requested revision of an item does not exist.
     """
+
 
 class RevisionAlreadyExistsError(BackendError):
     """

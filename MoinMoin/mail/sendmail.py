@@ -8,7 +8,8 @@
 """
 
 
-import os, re
+import os
+import re
 from email.Header import Header
 
 from MoinMoin import log
@@ -79,14 +80,16 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    import smtplib, socket
+    import smtplib
+    import socket
     from email.Message import Message
     from email.Charset import Charset, QP
     from email.Utils import formatdate, make_msgid
 
     cfg = app.cfg
     if not cfg.mail_enabled:
-        return (0, _("Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."))
+        return (0, _("Contact administrator: cannot send password recovery e-mail "
+                     "because mail configuration is incomplete."))
     mail_from = mail_from or cfg.mail_from
 
     logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
@@ -145,7 +148,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
             try:
                 #server.set_debuglevel(1)
                 if cfg.mail_username is not None and cfg.mail_password is not None:
-                    try: # try to do tls
+                    try:  # try to do TLS
                         server.ehlo()
                         if server.has_extn('starttls'):
                             server.starttls()
@@ -212,6 +215,7 @@ def encodeSpamSafeEmail(email_address, obfuscation_text=''):
         address = address.replace(' AT ', ' AT {0} '.format(obfuscation_text.upper()))
 
     return address
+
 
 def decodeSpamSafeEmail(address):
     """ Decode obfuscated email address to standard email address

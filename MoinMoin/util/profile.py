@@ -38,7 +38,9 @@ Based on code by Oliver Graf
 """
 
 
-import os, time, gc
+import os
+import time
+import gc
 
 
 class Profiler:
@@ -62,9 +64,9 @@ class Profiler:
         self.requestsPerSample = requestsPerSample
         self.collect = collect
         self.pid = os.getpid()
-        self.count = 0 # count between somples
-        self.requests = 0 # requests added
-        self.data = {'collect': 'NA'} # Sample data
+        self.count = 0  # count between somples
+        self.requests = 0  # requests added
+        self.data = {'collect': 'NA'}  # Sample data
 
     def addRequest(self):
         """ Add a request to the profile

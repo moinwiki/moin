@@ -158,9 +158,9 @@ def normalizeName(name):
     :rtype: unicode
     :returns: user name that can be used in acl lines
     """
-    username_allowedchars = "'@.-_" # ' for names like O'Brian or email addresses.
-                                    # "," and ":" must not be allowed (ACL delimiters).
-                                    # We also allow _ in usernames for nicer URLs.
+    username_allowedchars = "'@.-_"  # ' for names like O'Brian or email addresses.
+                                     # "," and ":" must not be allowed (ACL delimiters).
+                                     # We also allow _ in usernames for nicer URLs.
     # Strip non alpha numeric characters (except username_allowedchars), keep white space
     name = ''.join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
 
@@ -204,7 +204,7 @@ class UserProfile(object):
             return self._meta[name]
         except KeyError:
             v = self._defaults[name]
-            if isinstance(v, (list, dict, set)): # mutable
+            if isinstance(v, (list, dict, set)):  # mutable
                 self._meta[name] = v
             return v
 
@@ -376,8 +376,8 @@ class User(object):
 
         :param changed: bool, set this to True if you updated the user profile values
         """
-        if not self.valid and not self.disabled or changed: # do we need to save/update?
-            self.save() # yes, create/update user profile
+        if not self.valid and not self.disabled or changed:  # do we need to save/update?
+            self.save()  # yes, create/update user profile
 
     def exists(self):
         """ Do we have a user profile for this user?
@@ -439,7 +439,8 @@ class User(object):
         try:
             password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
-            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (self.name, str(err)))
+            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (
+                self.name, str(err)))
         else:
             if recomputed_hash is not None:
                 data[ENC_PASSWORD] = recomputed_hash
@@ -479,13 +480,13 @@ class User(object):
             self.valid = True
 
         if not exists:
-            pass # XXX UserCreatedEvent
+            pass  # XXX UserCreatedEvent
         else:
-            pass # XXX UserChangedEvent
+            pass  # XXX UserChangedEvent
 
     def getText(self, text):
         """ translate a text to the language of this user """
-        return text # FIXME, was: self._request.getText(text, lang=self.language)
+        return text  # FIXME, was: self._request.getText(text, lang=self.language)
 
     # Bookmarks --------------------------------------------------------------
 
@@ -664,9 +665,9 @@ class User(object):
         item_name = getInterwikiName(item_name)
         trail_in_session = session.get('trail', [])
         trail = trail_in_session[:]
-        trail = [i for i in trail if i != item_name] # avoid dupes
-        trail.append(item_name) # append current item name at end
-        trail = trail[-self._cfg.trail_size:] # limit trail length
+        trail = [i for i in trail if i != item_name]  # avoid dupes
+        trail.append(item_name)  # append current item name at end
+        trail = trail[-self._cfg.trail_size:]  # limit trail length
         if trail != trail_in_session:
             session['trail'] = trail
 

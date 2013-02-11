@@ -80,7 +80,7 @@ class Backend(MutableBackendBase):
         # Note: yields enough information so we can retrieve the revision from
         #       the right backend later (this is more than just the revid).
         for backend_name, backend in self.backends.items():
-            for revid in backend: # TODO maybe directly yield the backend?
+            for revid in backend:  # TODO maybe directly yield the backend?
                 yield (backend_name, revid)
 
     def retrieve(self, backend_name, revid):
@@ -115,7 +115,7 @@ class Backend(MutableBackendBase):
                 raise ValueError('can not determine namespace: empty NAME list, no NAMESPACE metadata present')
         else:
             if namespace:
-                namespace += u':' # needed for _get_backend
+                namespace += u':'  # needed for _get_backend
             backend_name, _, _ = self._get_backend([namespace])
         backend = self.backends[backend_name]
 

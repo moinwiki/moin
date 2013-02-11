@@ -15,6 +15,7 @@ logging = log.getLogger(__name__)
 
 from flask import g as flaskg
 
+
 class Clock(object):
     """
     Helper class for measuring the time needed to run code.
@@ -41,7 +42,7 @@ class Clock(object):
     def stop(self, timer):
         if timer in self.timers:
             value = time.time() - self.timers[timer].pop()
-            logging.info('timer {0}({1}): {2:.2f}ms'.format(timer, len(self.timers[timer]), value*1000))
+            logging.info('timer {0}({1}): {2:.2f}ms'.format(timer, len(self.timers[timer]), value * 1000))
             if not self.timers[timer]:
                 del self.timers[timer]
             return value
@@ -54,6 +55,7 @@ class Clock(object):
 def add_timing(f, name=None):
     if name is None:
         name = f.__name__
+
     @wraps(f)
     def wrapper(*args, **kw):
         flaskg.clock.start(name)
@@ -61,6 +63,7 @@ def add_timing(f, name=None):
         flaskg.clock.stop(name)
         return retval
     return wrapper
+
 
 def timed(name=None):
     return partial(add_timing, name=name)

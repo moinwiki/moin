@@ -18,8 +18,10 @@ from MoinMoin.app import before_wiki
 class Fault(Exception):
     """something went wrong"""
 
+
 class NoSuchUser(Fault):
     """raised if no such user exists"""
+
 
 class MailFailed(Fault):
     """raised if e-mail sending failed"""

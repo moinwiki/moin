@@ -102,7 +102,7 @@ def name_validator(element, state):
         return False
     if v != v.strip():
         return False
-    if v.startswith(u'+'): # used for views, like /+meta/<itemname>
+    if v.startswith(u'+'):  # used for views, like /+meta/<itemname>
         return False
     if v.endswith(u'/'):
         return False
@@ -225,7 +225,7 @@ def acl_validator(element, state):
         if element.value is None:
             return False
         return True
-    else: # untrusted
+    else:  # untrusted
         v = element.value
         if not isinstance(v, unicode):
             return False
@@ -338,7 +338,8 @@ ContentMetaSchema = DuckDict.named('ContentMetaSchema').of(
     String.named(keys.DATAID).validated_by(uuid_validator).using(optional=True),
     # markup items may have this:
     List.named(keys.ITEMLINKS).of(String.named('itemlink').validated_by(wikiname_validator)).using(optional=True),
-    List.named(keys.ITEMTRANSCLUSIONS).of(String.named('itemtransclusion').validated_by(wikiname_validator)).using(optional=True),
+    List.named(keys.ITEMTRANSCLUSIONS).of(String.named('itemtransclusion').validated_by(wikiname_validator)).using(
+        optional=True),
     # TODO: CONTENT validation? can we do it here?
     *common_meta
 )

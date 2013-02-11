@@ -20,6 +20,7 @@ from MoinMoin.themes import render_template
 
 SITEMAP_HAS_SYSTEM_ITEMS = True
 
+
 @misc.route('/sitemap')
 def sitemap():
     """
@@ -33,7 +34,7 @@ def sitemap():
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
         name = rev.name
         mtime = rev.meta[MTIME]
-        if False: # was: wikiutil.isSystemItem(name)   XXX add back later, when we have that in the index
+        if False:  # was: wikiutil.isSystemItem(name)   XXX add back later, when we have that in the index
             if not SITEMAP_HAS_SYSTEM_ITEMS:
                 continue
             # system items are rather boring

@@ -8,6 +8,7 @@ MoinMoin - MIME helpers
 
 from collections import namedtuple
 
+
 class Type(namedtuple('Type', 'type subtype parameters')):
     """
     :ivar type: Type part
@@ -18,7 +19,8 @@ class Type(namedtuple('Type', 'type subtype parameters')):
     :type parameters: dict
     """
 
-    __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~""")
+    __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"""
+                                    r"""^_`abcdefghijklmnopqrstuvwxyz{|}~""")
 
     def __new__(cls, _type=None, type=None, subtype=None, parameters=None):
         """

@@ -114,22 +114,28 @@ class ConfigFunctionality(object):
         self.mail_enabled = self.mail_enabled and True or False
 
         if self.namespace_mapping is None:
-            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping. "
-                                           "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError(
+                "No storage configuration specified! You need to define a namespace_mapping. "
+                "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.backend_mapping is None:
-            raise error.ConfigurationError("No storage configuration specified! You need to define a backend_mapping. " +
-                                           "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError(
+                "No storage configuration specified! You need to define a backend_mapping. " +
+                "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.acl_mapping is None:
-            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping. "
-                                           "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError(
+                "No acl configuration specified! You need to define a acl_mapping. "
+                "For further reference, please see HelpOnStorageConfiguration.")
 
         if self.secrets is None:  # admin did not setup a real secret
-            raise error.ConfigurationError("No secret configured! You need to set secrets = 'somelongsecretstring' in your wiki config.")
+            raise error.ConfigurationError(
+                "No secret configured! You need to set secrets = 'somelongsecretstring' in your wiki config.")
 
         if self.interwikiname is None:  # admin did not setup a real interwikiname
-            raise error.ConfigurationError("No interwikiname configured! You need to set interwikiname = u'YourUniqueStableInterwikiName' in your wiki config.")
+            raise error.ConfigurationError(
+                "No interwikiname configured! "
+                "You need to set interwikiname = u'YourUniqueStableInterwikiName' in your wiki config.")
 
         secret_key_names = ['security/ticket', ]
         if self.textchas:
@@ -138,8 +144,9 @@ class ConfigFunctionality(object):
         secret_min_length = 10
         if isinstance(self.secrets, str):
             if len(self.secrets) < secret_min_length:
-                raise error.ConfigurationError("The secrets = '...' wiki config setting is a way too short string (minimum length is {0} chars)!".format(
-                    secret_min_length))
+                raise error.ConfigurationError(
+                    "The secrets = '...' wiki config setting is a way too short string "
+                    "(minimum length is {0} chars)!".format(secret_min_length))
             # for lazy people: set all required secrets to same value
             secrets = {}
             for key in secret_key_names:
@@ -153,7 +160,8 @@ class ConfigFunctionality(object):
                 if len(secret) < secret_min_length:
                     raise ValueError
             except (KeyError, ValueError):
-                raise error.ConfigurationError("You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
+                raise error.ConfigurationError(
+                    "You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
                     secret_min_length, secret_key_name))
 
         from passlib.context import CryptContext
@@ -174,7 +182,7 @@ class ConfigFunctionality(object):
         unknown = ['"{0}"'.format(name) for name in dir(self)
                   if not name.startswith('_') and
                   name not in DefaultConfig.__dict__ and
-                  not isinstance(getattr(self, name), (type(sys), type(DefaultConfig)))]
+                  not isinstance(getattr(self, name), (type(re), type(DefaultConfig)))]
         if unknown:
             msg = """
 Unknown configuration options: {0}.
@@ -276,9 +284,9 @@ def _default_password_checker(cfg, username, password):
        username_lower in password_lower or password_lower in username_lower:
         return _("Password is too easy to guess (password contains name or name contains password).")
 
-    keyboards = (ur"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./", # US kbd
-                 ur"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-", # german kbd
-                ) # add more keyboards!
+    keyboards = (ur"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
+                 ur"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
+                )  # TODO add more keyboards!
     for kbd in keyboards:
         rev_kbd = kbd[::-1]
         if password in kbd or password in rev_kbd or \
@@ -490,11 +498,11 @@ options_no_group_name = {
             # XXX PageCopiedEvent.__name__
             # XXX PageRevertedEvent.__name__
         ],
-        theme_name=None, # None -> use cfg.theme_default
+        theme_name=None,  # None -> use cfg.theme_default
         edit_rows=0,
         results_per_page=0,
-        locale=None, # None -> do browser language detection, otherwise just use this locale
-        timezone=None, # None -> use cfg.timezone_default
+        locale=None,  # None -> do browser language detection, otherwise just use this locale
+        timezone=None,  # None -> use cfg.timezone_default
       ),
      'Default attributes of the user object'),
   )),
@@ -526,8 +534,8 @@ options_no_group_name = {
     ('refresh', None,
      "refresh = (minimum_delay_s, targets_allowed) enables use of `#refresh 5 PageName` processing instruction, targets_allowed must be either `'internal'` or `'external'`"),
 
-    ('siteid', 'MoinMoin', None), # XXX just default to some existing module name to
-                                  # make plugin loader etc. work for now
+    ('siteid', 'MoinMoin', None),  # XXX just default to some existing module name to
+                                   # make plugin loader etc. work for now
   )),
 }
 
@@ -596,6 +604,7 @@ options = {
       ('sendmail', None, "sendmail command to use for sending mail (None = don't use sendmail)"),
     )),
 }
+
 
 def _add_options_to_defconfig(opts, addgroup=True):
     for groupname in opts:

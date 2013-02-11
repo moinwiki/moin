@@ -88,9 +88,10 @@ def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=
                 # just want e.g. +show/42/FooBar to append it to the other wiki's
                 # base URL.
                 i = local_url.index('/%2B')
-                path = local_url[i+1:]
+                path = local_url[i + 1:]
                 url = wiki_base_url + path
     return url
+
 
 def _split_namespace(namespaces, url):
     """
@@ -119,6 +120,7 @@ def _split_namespace(namespaces, url):
         length = len(namespace) + 1
         url = url[length:]
     return namespace, url
+
 
 def split_interwiki(wikiurl):
     """ Split a interwiki name, into wikiname and pagename, e.g:
@@ -162,6 +164,7 @@ def split_interwiki(wikiurl):
             item_name = u':{0}'.format(item_name)
         return u'Self', namespace, item_name
 
+
 def join_wiki(wikiurl, wikitail, namespace):
     """
     Add a (url_quoted) page name to an interwiki url.
@@ -188,6 +191,7 @@ def join_wiki(wikiurl, wikitail, namespace):
     if '$NAMESPACE' in wikiurl:
         wikiurl = wikiurl.replace('$NAMESPACE', namespace)
     return wikiurl
+
 
 def getInterwikiName(item_name):
     """

@@ -25,7 +25,7 @@ def main():
             space.append(str)
 
     chars_upper = u''.join(uppercase)
-    chars_lower = u''.join(lowercase+digits)
+    chars_lower = u''.join(lowercase + digits)
     chars_digits = u''.join(digits)
     chars_spaces = u''.join(space)
 

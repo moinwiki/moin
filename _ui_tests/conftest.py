@@ -12,6 +12,7 @@ import sys
 sys.path.append(os.path.dirname(__file__))
 import driver_register
 
+
 def pytest_runtest_makereport(item, call):
     """
     Entry point for event which occurs after each test has run

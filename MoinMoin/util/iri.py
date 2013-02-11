@@ -231,8 +231,10 @@ class Iri(object):
 
     def __del_scheme(self):
         self._scheme = None
+
     def __get_scheme(self):
         return self._scheme
+
     def __set_scheme(self, value):
         self._scheme = unicode(value).lower()
     scheme = property(__get_scheme, __set_scheme, __del_scheme,
@@ -240,8 +242,10 @@ class Iri(object):
 
     def __del_authority(self):
         self._authority = None
+
     def __get_authority(self):
         return self._authority
+
     def __set_authority(self, value):
         if value.__class__ is not IriAuthority:
             value = IriAuthority(value, False)
@@ -251,8 +255,10 @@ class Iri(object):
 
     def __del_path(self):
         self._path = None
+
     def __get_path(self):
         return self._path
+
     def __set_path(self, value):
         if value.__class__ is not IriPath:
             value = IriPath(value, False)
@@ -262,8 +268,10 @@ class Iri(object):
 
     def __del_query(self):
         self._query = None
+
     def __get_query(self):
         return self._query
+
     def __set_query(self, value):
         self._query = IriQuery(value, False)
     query = property(__get_query, __set_query, __del_query,
@@ -271,8 +279,10 @@ class Iri(object):
 
     def __del_fragment(self):
         self._fragment = None
+
     def __get_fragment(self):
         return self._fragment
+
     def __set_fragment(self, value):
         self._fragment = IriFragment(value, False)
     fragment = property(__get_fragment, __set_fragment, __del_fragment,
@@ -283,8 +293,12 @@ class _Value(unicode):
     __slots__ = '_quoted'
 
     # Rules for quoting parts of the IRI.
-    quote_rules_iri = u"""((?:%[0-9a-fA-F]{2})+)|([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)"""
-    quote_rules_uri = u"""((?:%[0-9a-fA-F]{2})+)|([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|]+)"""
+    quote_rules_iri = (u"""((?:%[0-9a-fA-F]{2})+)|"""
+                       u"""([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+                       u"""\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)""")
+    quote_rules_uri = (u"""((?:%[0-9a-fA-F]{2})+)|"""
+                       u"""([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+                       u"""]+)""")
     quote_filter = frozenset()
 
     _quote_re_iri = re.compile(quote_rules_iri)
@@ -547,16 +561,20 @@ class IriAuthority(object):
 
     def __del_userinfo(self):
         self._userinfo = None
+
     def __get_userinfo(self):
         return self._userinfo
+
     def __set_userinfo(self, value):
         self._userinfo = IriAuthorityUserinfo(value, False)
     userinfo = property(__get_userinfo, __set_userinfo, __del_userinfo)
 
     def __del_host(self):
         self._host = None
+
     def __get_host(self):
         return self._host
+
     def __set_host(self, value):
         self._host = IriAuthorityHost(value, False)
     host = property(__get_host, __set_host, __del_host)
@@ -692,11 +710,14 @@ class IriPath(object):
         """
         return u'/'.join((i.urlquoted for i in self._list))
 
+
 class IriPathSegment(_Value):
     quote_filter = frozenset('@:/')
 
+
 class IriQuery(_Value):
     quote_filter = frozenset('@:/?')
+
 
 class IriFragment(_Value):
     quote_filter = frozenset('@:/?')

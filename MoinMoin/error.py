@@ -95,14 +95,17 @@ class CompositeError(Error):
                 break
         return all
 
+
 class FatalError(CompositeError):
     """ Base class for fatal error we can't handle
 
     Do not use this class but its more specific sub classes.
     """
 
+
 class ConfigurationError(FatalError):
     """ Raise when fatal misconfiguration is found """
+
 
 class InternalError(FatalError):
     """ Raise when internal fatal error is found """

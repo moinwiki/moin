@@ -11,6 +11,7 @@ from MoinMoin.forms import Search, InlineCheckbox, Submit
 from flatland import Form, String, Boolean
 from flatland.validation import Validator
 
+
 class ValidSearch(Validator):
     """Validator for a valid search form
     """
@@ -23,6 +24,7 @@ class ValidSearch(Validator):
         if len(element['q'].value) < 2:
             return self.note_error(element, state, 'too_short_query_msg')
         return True
+
 
 class SearchForm(Form):
     q = Search

@@ -14,6 +14,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.auth import BaseAuth, ContinueLogin
 
+
 class AuthLog(BaseAuth):
     """ just log the call, do nothing else """
     name = "log"

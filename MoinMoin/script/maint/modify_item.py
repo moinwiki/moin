@@ -54,7 +54,7 @@ class PutItem(Command):
             meta = mf.read()
         meta = meta.decode('utf-8')
         meta = json.loads(meta)
-        to_kill = [SIZE, HASH_ALGORITHM, # gets re-computed automatically
+        to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
                    DATAID,
                   ]
         for key in to_kill:

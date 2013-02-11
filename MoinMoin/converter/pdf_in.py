@@ -20,7 +20,8 @@ from pdfminer.layout import LAParams
 
 
 LAPARAMS = LAParams(
-    # value is specified not as an actual length, but as a proportion of the length to the size of each character in question.
+    # value is specified not as an actual length, but as a proportion of the length to the
+    # size of each character in question.
     # two text chunks whose distance is closer than the char_margin is considered
     # continuous and get grouped into one.
     char_margin=0.3,

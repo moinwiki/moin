@@ -91,8 +91,10 @@ class RegistryItem(RegistryBase):
 
 item_registry = RegistryItem()
 
+
 def register(cls):
-    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order), cls.shown)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order),
+                           cls.shown)
     return cls
 
 
@@ -114,8 +116,10 @@ class DummyItem(object):
     """ if we have no stored Item, we use this dummy """
     def __init__(self, name):
         self.name = name
+
     def list_revisions(self):
-        return [] # same as an empty Item
+        return []  # same as an empty Item
+
     def destroy_all_revisions(self):
         return True
 
@@ -140,12 +144,12 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
     :itemtype and :contenttype are used when creating a DummyRev, where
     metadata is not available from the storage.
     """
-    if 1: # try:
+    if 1:  # try:
         if item is None:
             item = flaskg.storage[name]
         else:
             name = item.name
-    if not item: # except NoSuchItemError:
+    if not item:  # except NoSuchItemError:
         logging.debug("No such item: {0!r}".format(name))
         item = DummyItem(name)
         rev = DummyRev(item, itemtype, contenttype)
@@ -154,11 +158,11 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
         logging.debug("Got item: {0!r}".format(name))
         try:
             rev = item.get_revision(rev_id)
-        except KeyError: # NoSuchRevisionError:
+        except KeyError:  # NoSuchRevisionError:
             try:
-                rev = item.get_revision(CURRENT) # fall back to current revision
+                rev = item.get_revision(CURRENT)  # fall back to current revision
                 # XXX add some message about invalid revision
-            except KeyError: # NoSuchRevisionError:
+            except KeyError:  # NoSuchRevisionError:
                 logging.debug("Item {0!r} has no revisions.".format(name))
                 rev = DummyRev(item, itemtype, contenttype)
                 logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
@@ -198,6 +202,7 @@ class BaseModifyForm(BaseChangeForm):
 
 UNKNOWN_ITEM_GROUP = "unknown items"
 
+
 def _build_contenttype_query(groups):
     """
     Build a Whoosh query from a list of contenttype groups.
@@ -213,6 +218,7 @@ def _build_contenttype_query(groups):
 IndexEntry = namedtuple('IndexEntry', 'relname meta')
 
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
+
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
@@ -247,7 +253,7 @@ class Item(object):
         property.
         """
         rev = get_storage_revision(name, itemtype, contenttype, rev_id, item)
-        contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
+        contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
@@ -284,7 +290,7 @@ class Item(object):
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
-        kill_keys = [# shall not get copied from old rev to new rev
+        kill_keys = [  # shall not get copied from old rev to new rev
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
@@ -337,7 +343,8 @@ class Item(object):
                     else:  # rename
                         child_newname = new_prefix + child_oldname[old_prefixlen:]
                     item = Item.create(child_oldname)
-                    item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
+                    item._save(item.meta, item.content.data,
+                               name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
@@ -412,12 +419,12 @@ class Item(object):
             currentrev = storage_item.get_revision(CURRENT)
             rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
-        except KeyError: # XXX was: NoSuchRevisionError:
+        except KeyError:  # XXX was: NoSuchRevisionError:
             currentrev = None
             rev_id = None
             contenttype_current = None
 
-        meta = dict(meta) # we may get a read-only dict-like, copy it
+        meta = dict(meta)  # we may get a read-only dict-like, copy it
 
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
@@ -427,7 +434,7 @@ class Item(object):
         if oldname:
             if not isinstance(oldname, list):
                 oldname = [oldname]
-            if delete or name not in oldname: # this is a delete or rename
+            if delete or name not in oldname:  # this is a delete or rename
                 meta[NAME_OLD] = oldname[:]
                 try:
                     oldname.remove(self.name)
@@ -455,7 +462,7 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(CHARSET) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)
@@ -633,8 +640,8 @@ class Default(Contentful):
 
     def do_show(self, revid):
         show_revision = revid != CURRENT
-        show_navigation = False # TODO
-        first_rev = last_rev = None # TODO
+        show_navigation = False  # TODO
+        first_rev = last_rev = None  # TODO
         return render_template(self.show_template,
                                item=self, item_name=self.name,
                                rev=self.rev,

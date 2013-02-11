@@ -58,5 +58,5 @@ class Macro(MacroInlineBase):
             result.append(moin_page.a(attrib={xlink.href: link}, children=[name]))
             result.append(", ")
 
-        del result[-1] # kill last comma
+        del result[-1]  # kill last comma
         return result

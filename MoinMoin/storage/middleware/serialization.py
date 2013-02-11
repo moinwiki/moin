@@ -44,6 +44,7 @@ def serialize_rev(meta, data):
                 break
             yield block
 
+
 def serialize_iter(backend):
     for revid in backend:
         if isinstance(revid, tuple):
@@ -56,6 +57,7 @@ def serialize_iter(backend):
             yield data
     for data in serialize_rev(None, None):
         yield data
+
 
 def deserialize(src, backend):
     while True:

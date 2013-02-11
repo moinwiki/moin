@@ -35,8 +35,8 @@ class BytesStore(BytesMutableStoreBase):
                     db_name::table_name::compression_level
                     where table_name and compression level are optional
         """
-        params = uri.split("::") # using "::" to support windows pathnames that
-                                 # may include ":" after the drive letter.
+        params = uri.split("::")  # using "::" to support windows pathnames that
+                                  # may include ":" after the drive letter.
         if len(params) == 3:
             params[2] = int(params[2])
         return cls(*params)
@@ -69,7 +69,7 @@ class BytesStore(BytesMutableStoreBase):
 
     def open(self):
         self.conn = connect(self.db_name)
-        self.conn.row_factory = Row # make column access by ['colname'] possible
+        self.conn.row_factory = Row  # make column access by ['colname'] possible
 
     def close(self):
         pass

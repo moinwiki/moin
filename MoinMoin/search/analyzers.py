@@ -32,7 +32,7 @@ class MimeTokenizer(Tokenizer):
         :param positions: Whether to record token positions in the token.
         """
         assert isinstance(value, unicode), "{0!r} is not unicode".format(value)
-        if u'/' not in value: # Add '/' if user forgot do this
+        if u'/' not in value:  # Add '/' if user forgot do this
             value += u'/'
         pos = start_pos
         tk = Token()

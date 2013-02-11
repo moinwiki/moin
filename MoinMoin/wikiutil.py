@@ -39,6 +39,7 @@ PARENT_PREFIX_LEN = len(PARENT_PREFIX)
 CHILD_PREFIX = "/"
 CHILD_PREFIX_LEN = len(CHILD_PREFIX)
 
+
 #############################################################################
 ### Data validation / cleanup
 #############################################################################
@@ -157,6 +158,7 @@ def AbsItemName(context, itemname):
             itemname = itemname[CHILD_PREFIX_LEN:]
     return itemname
 
+
 def RelItemName(context, itemname):
     """
     Return the relative item name for some context.
@@ -176,7 +178,7 @@ def RelItemName(context, itemname):
     else:
         # some kind of sister/aunt
         context_frags = context.split('/')   # A, B, C, D, E
-        itemname_frags = itemname.split('/') # A, B, C, F
+        itemname_frags = itemname.split('/')  # A, B, C, F
         # first throw away common parents:
         common = 0
         for cf, pf in zip(context_frags, itemname_frags):
@@ -184,8 +186,8 @@ def RelItemName(context, itemname):
                 common += 1
             else:
                 break
-        context_frags = context_frags[common:] # D, E
-        itemname_frags = itemname_frags[common:] # F
+        context_frags = context_frags[common:]  # D, E
+        itemname_frags = itemname_frags[common:]  # F
         go_up = len(context_frags)
         return PARENT_PREFIX * go_up + '/'.join(itemname_frags)
 
@@ -229,10 +231,10 @@ def getUnicodeIndexGroup(name):
     :returns: group letter or None
     """
     c = name[0]
-    if u'\uAC00' <= c <= u'\uD7AF': # Hangul Syllables
+    if u'\uAC00' <= c <= u'\uD7AF':  # Hangul Syllables
         return unichr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
     else:
-        return c.upper() # we put lower and upper case words into the same index group
+        return c.upper()  # we put lower and upper case words into the same index group
 
 
 def is_URL(arg, schemes=URI_SCHEMES):
@@ -255,6 +257,7 @@ def containsConflictMarker(text):
     """ Returns true if there is a conflict marker in the text. """
     return "/!\\ '''Edit conflict" in text
 
+
 def anchor_name_from_text(text):
     """
     Generate an anchor name from the given text.
@@ -269,6 +272,7 @@ def anchor_name_from_text(text):
     if not res[:1].isalpha():
         return 'A{0}'.format(res)
     return res
+
 
 def split_anchor(pagename):
     """

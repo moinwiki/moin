@@ -50,6 +50,7 @@ def create_mapping(uri, namespaces, backends, acls):
     acl_mapping = sorted(acl_mapping, key=lambda x: len(x[0]), reverse=True)
     return namespace_mapping, dict(backend_mapping), acl_mapping
 
+
 def create_simple_mapping(uri='stores:fs:instance',
                           content_acl=None, user_profile_acl=None):
     """

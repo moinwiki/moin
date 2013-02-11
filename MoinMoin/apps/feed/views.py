@@ -31,6 +31,7 @@ from MoinMoin.items import Item
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.interwiki import url_for_item
 
+
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
 def atom(item_name):
@@ -75,7 +76,8 @@ def atom(item_name):
                     content = hl_item.content._render_data_diff_atom(previous_rev, this_rev)
                 else:
                     # full html rendering for new items
-                    content = render_template('atom.html', get='first_revision', rev=this_rev, content=Markup(hl_item.content._render_data()), revision=this_revid)
+                    content = render_template('atom.html', get='first_revision', rev=this_rev,
+                                              content=Markup(hl_item.content._render_data()), revision=this_revid)
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
@@ -86,7 +88,8 @@ def atom(item_name):
             if rev_comment:
                 # Trim down extremely long revision comment
                 if len(rev_comment) > 80:
-                    content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:], content=Markup(content))
+                    content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:],
+                                              content=Markup(content))
                     rev_comment = u"{0}...".format(rev_comment[:79])
                 feed_title = u"{0} - {1}".format(author.get(NAME, ''), rev_comment)
             else:

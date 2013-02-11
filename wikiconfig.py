@@ -25,7 +25,7 @@ class Config(DefaultConfig):
     #          intermap.txt
     # If that's not true, feel free to adjust the pathes.
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
-    data_dir = os.path.join(instance_dir, 'data') # Note: this used to have a trailing / in the past
+    data_dir = os.path.join(instance_dir, 'data')  # Note: this used to have a trailing / in the past
     index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
 
     # This provides a simple default setup for your backend configuration.
@@ -76,7 +76,7 @@ class Config(DefaultConfig):
         serve_files.update([(xs.name, xs.base_dir)])
 
 
-MOINCFG = Config # Flask only likes uppercase stuff
+MOINCFG = Config  # Flask only likes uppercase stuff
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
 #DEBUG = False # use True for development only, not for public sites!

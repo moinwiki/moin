@@ -10,6 +10,7 @@
 
 import re
 
+
 class Version(tuple):
     """
     Version objects store versions like 1.2.3a4 in a structured

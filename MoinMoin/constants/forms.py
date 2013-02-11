@@ -7,7 +7,7 @@ MoinMoin - Flatland form related constants
 
 # Widget types
 
-WIDGET_TEXT = u'text' # single-line text
+WIDGET_TEXT = u'text'  # single-line text
 WIDGET_MULTILINE_TEXT = u'multiline_text'
 WIDGET_URL = u'url'
 WIDGET_EMAIL = u'email'

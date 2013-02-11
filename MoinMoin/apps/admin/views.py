@@ -24,10 +24,12 @@ from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
 
+
 @admin.route('/superuser')
 @require_permission(SUPERUSER)
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
+
 
 @admin.route('/user')
 def index_user():
@@ -41,7 +43,7 @@ def userbrowser():
     User Account Browser
     """
     groups = flaskg.groups
-    revs = user.search_users() # all users
+    revs = user.search_users()  # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
                           email=rev.meta[EMAIL],
@@ -118,6 +120,7 @@ def sysitems_upgrade():
 
 
 from MoinMoin.config import default as defaultconfig
+
 
 @admin.route('/wikiconfig', methods=['GET', ])
 @require_permission(SUPERUSER)

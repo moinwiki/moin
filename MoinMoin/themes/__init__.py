@@ -41,7 +41,8 @@ def get_current_theme():
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning("Theme {0!r} was not found; using default of {1!r} instead.".format(theme_name, app.cfg.theme_default))
+        logging.warning("Theme {0!r} was not found; using default of {1!r} instead.".format(
+            theme_name, app.cfg.theme_default))
         theme_name = app.cfg.theme_default
         return get_theme(theme_name)
 
@@ -49,6 +50,7 @@ def get_current_theme():
 @timed()
 def render_template(template, **context):
     return render_theme_template(get_current_theme(), template, **context)
+
 
 def themed_error(e):
     item_name = request.view_args.get('item_name', u'')
@@ -72,11 +74,11 @@ class ThemeSupport(object):
         self.cfg = cfg
         self.user = flaskg.user
         self.storage = flaskg.storage
-        self.ui_lang = 'en' # XXX
-        self.ui_dir = 'ltr' # XXX
-        self.content_lang = flaskg.content_lang # XXX
-        self.content_dir = 'ltr' # XXX
-        self.meta_items = [] # list of (name, content) for html head <meta>
+        self.ui_lang = 'en'  # XXX
+        self.ui_dir = 'ltr'  # XXX
+        self.content_lang = flaskg.content_lang  # XXX
+        self.content_dir = 'ltr'  # XXX
+        self.meta_items = []  # list of (name, content) for html head <meta>
 
     def location_breadcrumbs(self, item_name):
         """
@@ -235,12 +237,12 @@ class ThemeSupport(object):
                                 item_url, item_name = line.split(' ', 1)
                                 sisteritems[item_name.decode('utf-8')] = item_url
                             except:
-                                pass # ignore invalid lines
+                                pass  # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)
                         logging.info("Site: {0!r} Status: Updated. Pages: {1}".format(sistername, len(sisteritems)))
                     except IOError as err:
-                        (title, code, msg, headers) = err.args # code e.g. 304
+                        (title, code, msg, headers) = err.args  # code e.g. 304
                         logging.warning("Site: {0!r} Status: Not updated.".format(sistername))
                         logging.exception("exception was:")
                 if current in sisteritems:
@@ -327,6 +329,7 @@ def get_editor_info(meta, external=False):
         result['email'] = email
     return result
 
+
 def shorten_item_name(name, length=25):
     """
     Shorten item names
@@ -348,6 +351,7 @@ def shorten_item_name(name, length=25):
             half, left = divmod(length - 3, 2)
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
+
 
 def shorten_id(name, length=7):
     """
@@ -373,6 +377,7 @@ MIMETYPE_TO_CLASS = {
     'application/x-anywikidraw': 'drawing',
     'application/x-svgdraw': 'drawing',
 }
+
 
 def contenttype_to_class(contenttype):
     """

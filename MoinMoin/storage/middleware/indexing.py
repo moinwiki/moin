@@ -154,6 +154,7 @@ from MoinMoin.util.tree import moin_page
 from MoinMoin.converter import default_registry
 from MoinMoin.util.iri import Iri
 
+
 def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     Convert revision data to a indexable content.
@@ -173,14 +174,18 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             self.meta = meta
             self.data = data
             self.revid = meta.get(REVID)
+
             class PseudoItem(object):
                 def __init__(self, name):
                     self.name = name
             self.item = PseudoItem(item_name)
+
         def read(self, *args, **kw):
             return self.data.read(*args, **kw)
+
         def seek(self, *args, **kw):
             return self.data.seek(*args, **kw)
+
         def tell(self, *args, **kw):
             return self.data.tell(*args, **kw)
 
@@ -228,8 +233,9 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             return doc
         # no way
         raise TypeError("No converter for {0} --> {1}".format(input_contenttype, output_contenttype))
-    except Exception as e: # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
+    except Exception as e:  # catch all exceptions, we don't want to break an indexing run
+        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(
+                          item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
         doc = u'ERROR [{0!s}]'.format(e)
         return doc
 
@@ -436,7 +442,7 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async=False): # True
+    def index_revision(self, meta, content, backend_name, async=False):  # True
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -450,7 +456,7 @@ class IndexingMiddleware(object):
         else:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
-            writer.update_document(**doc) # update, because store_revision() may give us an existing revid
+            writer.update_document(**doc)  # update, because store_revision() may give us an existing revid
         doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
         if async:
             writer = AsyncWriter(self.ix[LATEST_REVS])
@@ -484,7 +490,7 @@ class IndexingMiddleware(object):
                 latest_backends_revids = self._find_latest_backends_revids(self.ix[ALL_REVS], Term(ITEMID, itemid))
                 if latest_backends_revids:
                     # we have a latest revision, just update the document in the index:
-                    assert len(latest_backends_revids) == 1 # this item must have only one latest revision
+                    assert len(latest_backends_revids) == 1  # this item must have only one latest revision
                     latest_backend_revid = latest_backends_revids[0]
                     # we must fetch from backend because schema for LATEST_REVS is different than for ALL_REVS
                     # (and we can't be sure we have all fields stored, too)
@@ -494,7 +500,8 @@ class IndexingMiddleware(object):
                     with self.ix[ALL_REVS].searcher() as searcher:
                         doc = searcher.document(revid=latest_backend_revid[1])
                         content = doc[CONTENT]
-                    doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name=latest_backend_revid[0])
+                    doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname,
+                                           backend_name=latest_backend_revid[0])
                     writer.update_document(**doc)
                 else:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
@@ -554,7 +561,7 @@ class IndexingMiddleware(object):
         index = storage.open_index(ALL_REVS)
         try:
             # build an index of all we have (so we know what we have)
-            all_revids = self.backend # the backend is an iterator over all revids
+            all_revids = self.backend  # the backend is an iterator over all revids
             self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, 'add', procs, limitmb)
             latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
@@ -562,7 +569,8 @@ class IndexingMiddleware(object):
         # now build the index of the latest revisions:
         index = storage.open_index(LATEST_REVS)
         try:
-            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add', procs, limitmb)
+            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add',
+                               procs, limitmb)
         finally:
             index.close()
 
@@ -589,7 +597,7 @@ class IndexingMiddleware(object):
             backend_revids = set(revids_backends)
             with index_all.searcher() as searcher:
                 ix_revids_backends = dict((doc[REVID], doc[BACKENDNAME]) for doc in searcher.all_stored_fields())
-            revids_backends.update(ix_revids_backends) # this is needed for stuff that was deleted from storage
+            revids_backends.update(ix_revids_backends)  # this is needed for stuff that was deleted from storage
             ix_revids = set(ix_revids_backends)
             add_revids = backend_revids - ix_revids
             del_revids = ix_revids - backend_revids
@@ -667,6 +675,7 @@ class IndexingMiddleware(object):
         else:
             raise ValueError("default_fields list must at least contain one field name")
         qp.add_plugin(RegexPlugin())
+
         def userid_pseudo_field_factory(fieldname):
             """generate a translator function, that searches for the userid
                in the given fieldname when provided with the username
@@ -685,7 +694,7 @@ class IndexingMiddleware(object):
             # username:JoeDoe searches for revisions modified by JoeDoe
             username=userid_pseudo_field_factory(keys.USERID),
             # assigned:JoeDoe searches for tickets assigned to JoeDoe
-            assigned=userid_pseudo_field_factory('assigned_to'), # XXX should be keys.ASSIGNED_TO
+            assigned=userid_pseudo_field_factory('assigned_to'),  # XXX should be keys.ASSIGNED_TO
         )))
         return qp
 
@@ -822,6 +831,7 @@ class Item(object):
 
     def _get_itemid(self):
         return self._current.get(ITEMID)
+
     def _set_itemid(self, value):
         self._current[ITEMID] = value
     itemid = property(_get_itemid, _set_itemid)
@@ -982,8 +992,8 @@ class Item(object):
         return meta, data, content
 
     def store_revision(self, meta, data, overwrite=False,
-                       trusted=False, # True for loading a serialized representation or other trusted sources
-                       name=None, # TODO name we decoded from URL path
+                       trusted=False,  # True for loading a serialized representation or other trusted sources
+                       name=None,  # TODO name we decoded from URL path
                        action=u'SAVE',
                        remote_addr=None,
                        userid=None,
@@ -1027,7 +1037,7 @@ class Item(object):
                  keys.USERID: userid,
                  keys.WIKINAME: wikiname,
                  keys.NAMESPACE: None,
-                 keys.ITEMID: self.itemid, # real itemid or None
+                 keys.ITEMID: self.itemid,  # real itemid or None
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
@@ -1051,7 +1061,8 @@ class Item(object):
         # just update the meta dict with the validated stuff:
         meta.update(dict(m.value.items()))
         # we do not want None / empty values:
-        meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]]) # XXX do not kick out empty lists before fixing NAME processing
+        # XXX do not kick out empty lists before fixing NAME processing:
+        meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
@@ -1147,7 +1158,7 @@ class Revision(object):
                 return
 
     def _load(self):
-        meta, data = self.backend.retrieve(self.backend_name, self.revid) # raises KeyError if rev does not exist
+        meta, data = self.backend.retrieve(self.backend_name, self.revid)  # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)
         self._data = data
         return meta, data
@@ -1173,6 +1184,7 @@ class Revision(object):
 
 
 from collections import Mapping
+
 
 class Meta(Mapping):
     def __init__(self, revision, doc, meta=None):
@@ -1215,7 +1227,7 @@ class Meta(Mapping):
         return cmp(self[MTIME], other[MTIME])
 
     def __len__(self):
-        return 0 # XXX
+        return 0  # XXX
 
     def __repr__(self):
         return "Meta _doc: {0!r} _meta: {1!r}".format(self._doc, self._meta)

@@ -3,9 +3,11 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """Functions to facilitate functional testing"""
-import pytest
 
 import random
+import urllib
+
+import pytest
 
 try:
     from selenium import webdriver
@@ -13,7 +15,6 @@ except ImportError:
     pytest.skip('selenium needs to be installed for this test')
 
 import config
-import urllib
 
 try:
     f = urllib.urlopen(config.BASE_URL)
@@ -31,7 +32,7 @@ def create_browser():
     profile = webdriver.FirefoxProfile()
     profile.set_preference("intl.accept_languages", "en")
     driver = webdriver.Firefox(firefox_profile=profile)
-    driver_register.register_driver(driver) # register with
+    driver_register.register_driver(driver)  # register with
     # driver_register, which is needed so that printscreen on test
     # failure works
     driver.implicitly_wait(20)
@@ -42,7 +43,7 @@ def generate_random_word(length):
     """
     generates a random string containing numbers, of length 'length'
     """
-    word = unicode(random.randint(10**(length-1), 10**length))
+    word = unicode(random.randint(10 ** (length - 1), 10 ** length))
     return word
 
 

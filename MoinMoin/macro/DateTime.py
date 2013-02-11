@@ -13,10 +13,11 @@ from flask.ext.babel import format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase
 
+
 class Macro(MacroDateTimeBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments is None:
-            tm = time.time() # always UTC
+            tm = time.time()  # always UTC
         else:
             stamp = arguments[0]
             tm = self.parse_time(stamp)

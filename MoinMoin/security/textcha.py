@@ -41,8 +41,9 @@ from flatland.validation import Validator
 
 from MoinMoin.i18n import _, L_, N_
 
-SHA1_LEN = 40 # length of hexdigest
-TIMESTAMP_LEN = 10 # length of timestamp
+SHA1_LEN = 40  # length of hexdigest
+TIMESTAMP_LEN = 10  # length of timestamp
+
 
 class TextCha(object):
     """ Text CAPTCHA support """
@@ -112,12 +113,13 @@ class TextCha(object):
 
             try:
                 self.answer_regex = self.textchas[self.question]
-                self.answer_re = re.compile(self.answer_regex, re.U|re.I)
+                self.answer_re = re.compile(self.answer_regex, re.U | re.I)
             except KeyError:
                 # this question does not exist, thus there is no answer
                 self.answer_regex = ur"[Invalid question]"
                 self.answer_re = None
-                logging.warning(u"TextCha: Non-existing question '{0}' for {1}. May be invalid or user may be trying to cheat.".format(self.question, self.user_info))
+                logging.warning(u"TextCha: Non-existing question '{0}' for {1}. "
+                                u"May be invalid or user may be trying to cheat.".format(self.question, self.user_info))
             except re.error:
                 logging.error(u"TextCha: Invalid regex in answer for question '{0}'".format(self.question))
                 self.init_qa()
@@ -137,7 +139,7 @@ class TextCha(object):
                     # ...
                 }
         """
-        return not not self.textchas # we don't want to return the dict
+        return not not self.textchas  # we don't want to return the dict
 
     def amend_form(self):
         """ Amend the form by doing the following:
@@ -147,10 +149,12 @@ class TextCha(object):
         """
         if self.is_enabled():
             if self.question:
-                self.form['textcha_question'].set("{0} {1}{2}".format(self.question, int(self.timestamp), self.signature))
+                self.form['textcha_question'].set("{0} {1}{2}".format(
+                    self.question, int(self.timestamp), self.signature))
         else:
             self.form['textcha_question'].optional = True
             self.form['textcha'].optional = True
+
 
 class TextChaValid(Validator):
     """Validator for TextChas
@@ -171,6 +175,7 @@ class TextChaValid(Validator):
                 return self.note_error(element, state, 'textcha_incorrect_msg')
 
         return True
+
 
 class TextChaizedForm(Form):
     """a form providing TextCha support"""

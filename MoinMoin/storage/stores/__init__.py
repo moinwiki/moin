@@ -18,6 +18,7 @@ from collections import Mapping, MutableMapping
 
 from MoinMoin.util.StringIOClosing import StringIO
 
+
 class StoreBase(Mapping):
     """
     A simple read-only key/value store.
@@ -141,6 +142,7 @@ class FileMutableStoreBase(MutableStoreBase):
               closing that file later. caller must not rely on some specific
               file pointer position after we return.
         """
+
 
 class FileMutableStoreMixin(object):
     """

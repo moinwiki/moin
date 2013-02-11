@@ -46,7 +46,8 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox, InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect
+from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
+                            InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -74,6 +75,7 @@ def dispatch():
 def show_root():
     item_name = app.cfg.item_root
     return redirect(url_for_item(item_name))
+
 
 @frontend.route('/robots.txt')
 def robots():
@@ -163,7 +165,7 @@ def lookup():
     # TAGS might be there multiple times, thus we need multi:
     lookup_form = LookupForm.from_flat(request.values.items(multi=True))
     valid = lookup_form.validate()
-    lookup_form['submit'].set_default() # XXX from_flat() kills all values
+    lookup_form['submit'].set_default()  # XXX from_flat() kills all values
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
@@ -233,12 +235,13 @@ def _compute_item_transclusions(item_name):
             transcluded_names.update(transclusions)
         return transcluded_names
 
+
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
-    search_form['submit'].set_default() # XXX from_flat() kills all values
+    search_form['submit'].set_default()  # XXX from_flat() kills all values
     query = search_form['q'].value
     if valid:
         history = bool(request.values.get('history'))
@@ -247,7 +250,7 @@ def search(item_name):
         q = qp.parse(query)
 
         _filter = None
-        if item_name: # Only search this item and subitems
+        if item_name:  # Only search this item and subitems
             prefix_name = item_name + u'/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
 
@@ -283,8 +286,10 @@ def search(item_name):
             key_terms_is_fast = False
             if key_terms_is_fast:
                 flaskg.clock.start('search suggestions')
-                name_suggestions = u', '.join([word for word, score in results.key_terms(NAME, docs=20, numterms=10)])
-                content_suggestions = u', '.join([word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)])
+                name_suggestions = u', '.join([word
+                                               for word, score in results.key_terms(NAME, docs=20, numterms=10)])
+                content_suggestions = u', '.join([word
+                                                  for word, score in results.key_terms(CONTENT, docs=20, numterms=10)])
                 flaskg.clock.stop('search suggestions')
             else:
                 name_suggestions = u''
@@ -401,7 +406,7 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     show_revision = request.view_args['rev'] != CURRENT
-    show_navigation = False # TODO
+    show_navigation = False  # TODO
     first_rev = None
     last_rev = None
     if show_navigation:
@@ -420,6 +425,7 @@ def show_item_meta(item):
                            show_navigation=show_navigation,
                           )
 
+
 @frontend.route('/+content/+<rev>/<itemname:item_name>')
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
@@ -428,7 +434,7 @@ def content_item(item_name, rev):
     search_form = SearchForm.from_flat(request.values)
     if search_form.validate():
         return _search(search_form, item_name)
-    search_form['submit'].set_default() # XXX from_flat() kills all values
+    search_form['submit'].set_default()  # XXX from_flat() kills all values
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
@@ -442,14 +448,17 @@ def content_item(item_name, rev):
                            data_rendered=Markup(item.content._render_data()),
                            )
 
+
 @presenter('get')
 def get_item(item):
     return item.content.do_get()
+
 
 @presenter('download')
 def download_item(item):
     mimetype = request.values.get("mimetype")
     return item.content.do_get(force_attachment=True, mimetype=mimetype)
+
 
 @frontend.route('/+convert/<itemname:item_name>')
 def convert_item(item_name):
@@ -502,14 +511,18 @@ def modify_item(item_name):
 class TargetChangeForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
+
 class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
+
 
 class DeleteItemForm(BaseChangeForm):
     name = 'delete_item'
 
+
 class DestroyItemForm(BaseChangeForm):
     name = 'destroy_item'
+
 
 class RenameItemForm(TargetChangeForm):
     name = 'rename_item'
@@ -597,6 +610,7 @@ def delete_item(item_name):
                            form=form,
                           )
 
+
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+ajaxdelete', defaults=dict(item_name=''), methods=['POST'])
 def ajaxdelete(item_name):
@@ -621,6 +635,7 @@ def ajaxdelete(item_name):
                 response["status"].append(False)
 
     return jsonify(response)
+
 
 @frontend.route('/+ajaxdestroy/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+ajaxdestroy', defaults=dict(item_name=''), methods=['POST'])
@@ -665,7 +680,7 @@ def ajaxmodify(item_name):
 def destroy_item(item_name, rev):
     if rev is None:
         # no revision given
-        _rev = CURRENT # for item creation
+        _rev = CURRENT  # for item creation
         destroy_item = True
     else:
         _rev = rev
@@ -705,7 +720,7 @@ def jfu_server(item_name):
     """
     data_file = request.files.get('data_file')
     subitem_name = data_file.filename
-    contenttype = data_file.content_type # guess by browser, based on file name
+    contenttype = data_file.content_type  # guess by browser, based on file name
     data = data_file.stream
     if item_name:
         subitem_prefix = item_name + u'/'
@@ -732,17 +747,20 @@ for g in contenttype_groups:
     contenttype_group_descriptions[g] = ', '.join([e.display_name for e in content_registry.groups[g]])
 contenttype_groups.append('unknown items')
 
-ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(descriptions=contenttype_group_descriptions)).using(optional=True)
+ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(
+                                  descriptions=contenttype_group_descriptions)).using(optional=True)
+
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
     submit = Submit.using(default=L_('Filter'))
 
+
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
     try:
-        item = Item.create(item_name) # when item_name='', it gives toplevel index
+        item = Item.create(item_name)  # when item_name='', it gives toplevel index
     except AccessDenied:
         abort(403)
 
@@ -752,7 +770,7 @@ def index(item_name):
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
-    form['submit'].set_default() # XXX from_flat() kills all values
+    form['submit'].set_default()  # XXX from_flat() kills all values
     if not form['contenttype']:
         form['contenttype'].set(contenttype_groups)
 
@@ -856,7 +874,7 @@ def history(item_name):
     history = [dict((k, v) for k, v in rev.meta.iteritems() if k != CONTENT) for rev in revs]
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
-                           item_name=item_name, # XXX no item here
+                           item_name=item_name,  # XXX no item here
                            history_page=history_page,
                            bookmark_time=bookmark_time,
                           )
@@ -896,6 +914,7 @@ def global_history():
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
                           )
+
 
 def _compute_item_sets():
     """
@@ -999,8 +1018,8 @@ class ValidRegistration(Validator):
             return False
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
-
         return True
+
 
 class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
@@ -1023,6 +1042,7 @@ class OpenIDForm(RegistrationForm):
     name = 'openid'
 
     openid = YourOpenID
+
 
 def _using_moin_auth():
     """Check if MoinAuth is being used for authentication.
@@ -1096,7 +1116,8 @@ def register():
                     if is_ok:
                         flash(_('Account verification required, please see the email we sent to your address.'), "info")
                     else:
-                        flash(_('An error occurred while sending the verification email: "%(message)s" Please contact an administrator to activate your account.',
+                        flash(_('An error occurred while sending the verification email: "%(message)s" '
+                                'Please contact an administrator to activate your account.',
                             message=msg), "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
@@ -1180,6 +1201,7 @@ def lostpass():
                            form=form,
                           )
 
+
 class ValidPasswordRecovery(Validator):
     """Validator for a valid password recovery form
     """
@@ -1198,14 +1220,18 @@ class ValidPasswordRecovery(Validator):
 
         return True
 
+
 class PasswordRecoveryForm(Form):
     """a simple password recovery form"""
     name = 'recoverpass'
 
     username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
-    token = RequiredText.using(label=L_('Recovery token')).with_properties(placeholder=L_("The recovery token that has been sent to you"))
-    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
-    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    token = RequiredText.using(label=L_('Recovery token')).with_properties(
+        placeholder=L_("The recovery token that has been sent to you"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(
+        placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
+        placeholder=L_("Repeat the same password"))
     submit = Submit.using(default=L_('Change password'))
 
     validators = [ValidPasswordRecovery()]
@@ -1343,10 +1369,14 @@ class UserSettingsPasswordForm(Form):
     name = 'usersettings_password'
     validators = [ValidChangePass()]
 
-    password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(placeholder=L_("Your current login password"))
-    password1 = RequiredPassword.using(label=L_('New password')).with_properties(placeholder=L_("The login password you want to use"))
-    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(placeholder=L_("Repeat the same password"))
+    password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(
+        placeholder=L_("Your current login password"))
+    password1 = RequiredPassword.using(label=L_('New password')).with_properties(
+        placeholder=L_("The login password you want to use"))
+    password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
+        placeholder=L_("Repeat the same password"))
     submit = Submit.using(default=L_('Change password'))
+
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
@@ -1377,9 +1407,10 @@ def usersettings():
 
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
-        name = 'usersettings_personal' # "name" is duplicate
+        name = 'usersettings_personal'  # "name" is duplicate
         name = Names.using(label=L_('Names')).with_properties(placeholder=L_("The login names you want to use"))
-        display_name = OptionalText.using(label=L_('Display-Name')).with_properties(placeholder=L_("Your display name (informational)"))
+        display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
+            placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
         #timezones_keys = sorted(Locale('en').time_zones.keys())
         timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
@@ -1396,10 +1427,14 @@ def usersettings():
         themes_available = sorted([(unicode(t.identifier), t.name) for t in get_themes_list()],
                                   key=lambda x: x[1])
         themes_keys = [t[0] for t in themes_available]
-        theme_name = Select.using(label=L_('Theme name')).with_properties(labels=dict(themes_available)).valued(*themes_keys)
-        css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(placeholder=L_("Give the URL of your custom CSS (optional)"))
-        edit_rows = Natural.using(label=L_('Editor size')).with_properties(placeholder=L_("Editor textarea height (0=auto)"))
-        results_per_page = Natural.using(label=L_('History results per page')).with_properties(placeholder=L_("Number of results per page (0=no paging)"))
+        theme_name = Select.using(label=L_('Theme name')).with_properties(
+            labels=dict(themes_available)).valued(*themes_keys)
+        css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
+            placeholder=L_("Give the URL of your custom CSS (optional)"))
+        edit_rows = Natural.using(label=L_('Editor size')).with_properties(
+            placeholder=L_("Editor textarea height (0=auto)"))
+        results_per_page = Natural.using(label=L_('History results per page')).with_properties(
+            placeholder=L_("Number of results per page (0=no paging)"))
         submit = Submit.using(default=L_('Save'))
 
     form_classes = dict(
@@ -1445,7 +1480,8 @@ def usersettings():
                     response['flash'].append((_("Your password has been changed."), "info"))
                 else:
                     if part == 'personal':
-                        if form['openid'].value and form['openid'].value != flaskg.user.openid and user.search_users(openid=form['openid'].value):
+                        if (form['openid'].value and form['openid'].value != flaskg.user.openid and
+                            user.search_users(openid=form['openid'].value)):
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False
@@ -1454,7 +1490,8 @@ def usersettings():
                             for name in new_names:
                                 if user.search_users(name_exact=name):
                                     # duplicate name
-                                    response['flash'].append((_("The username %(name)r is already in use.", name=name), "error"))
+                                    response['flash'].append((_("The username %(name)r is already in use.", name=name),
+                                                              "error"))
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
@@ -1468,21 +1505,26 @@ def usersettings():
                         d.pop('submit')
                         for k, v in d.items():
                             flaskg.user.profile[k] = v
-                        if part == 'notification' and app.cfg.user_email_verification and form['email'].value != user_old_email:
+                        if (part == 'notification' and app.cfg.user_email_verification and
+                            form['email'].value != user_old_email):
                             # disable account
                             flaskg.user.profile[DISABLED] = True
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
                                 flaskg.user.logout_session()
-                                response['flash'].append((_('Your account has been disabled because you changed your email address. Please see the email we sent to your address to reactivate it.'), "info"))
+                                response['flash'].append((_('Your account has been disabled because you changed your '
+                                                            'email address. Please see the email we sent to your '
+                                                            'address to reactivate it.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
                                 # sending the verification email didn't work. reset email change and alert the user.
                                 flaskg.user.profile[DISABLED] = False
                                 flaskg.user.profile[EMAIL] = user_old_email
                                 flaskg.user.save()
-                                response['flash'].append((_('Your email address was not changed because sending the verification email failed. Please try again later.'), "error"))
+                                response['flash'].append((_('Your email address was not changed because sending the '
+                                                            'verification email failed. Please try again later.'),
+                                                          "error"))
                         else:
                             flaskg.user.save()
 
@@ -1667,7 +1709,7 @@ def similar_names(item_name):
                 item_names.append(name)
     return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
-                           item_name=item_name, # XXX no item
+                           item_name=item_name,  # XXX no item
                            item_names=item_names)
 
 
@@ -1798,9 +1840,9 @@ def sitemap(item_name):
     if not flaskg.storage[item_name]:
         abort(404, item_name)
     sitemap = NestedItemListBuilder().recurse_build([item_name])
-    del sitemap[0] # don't show current item name as sole toplevel list item
+    del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
-                           item_name=item_name, # XXX no item
+                           item_name=item_name,  # XXX no item
                            sitemap=sitemap,
                           )
 
@@ -1809,7 +1851,7 @@ class NestedItemListBuilder(object):
     def __init__(self):
         self.children = set()
         self.numnodes = 0
-        self.maxnodes = 35 # approx. max count of nodes, not strict
+        self.maxnodes = 35  # approx. max count of nodes, not strict
 
     def recurse_build(self, names):
         result = []
@@ -1868,10 +1910,11 @@ def global_tags():
             scale = weight_max / 2
         else:
             scale = weight_max / (count_max - count_min)
+
         def cls(count):
             # return the css class for this tag
             weight = scale * (count - count_min)
-            return "weight{0}".format(int(weight)) # weight0, ..., weight9
+            return "weight{0}".format(int(weight))  # weight0, ..., weight9
         tags = [(cls(count), tag) for tag, count in tags_counts]
     else:
         tags = []

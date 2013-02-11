@@ -15,6 +15,7 @@ from MoinMoin.storage.middleware.serialization import serialize, deserialize
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+
 def open_file(filename, mode):
     if filename is None:
         # Guess the IO stream from the mode:
@@ -27,13 +28,15 @@ def open_file(filename, mode):
 
         # On Windows force the stream to be in binary mode if it's needed.
         if sys.platform == "win32" and "b" in mode:
-            import os, msvcrt
+            import os
+            import msvcrt
             msvcrt.setmode(stream.fileno(), os.O_BINARY)
 
         f = stream
     else:
         f = open(filename, mode)
     return f
+
 
 class Serialize(Command):
     description = 'Serialize the backend into a file.'

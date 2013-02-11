@@ -25,6 +25,7 @@ from emeraldtree import ElementTree as ET
 from markdown import Markdown
 import markdown.util as md_util
 
+
 def postproc_text(markdown, text):
     """
     Removes HTML or XML character references and entities from a text string.
@@ -58,9 +59,10 @@ def postproc_text(markdown, text):
                 text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
-        return text # leave as is
+        return text  # leave as is
 
     return re.sub("&#?\w+;", fixup, text)
+
 
 class Converter(object):
     # {{{ html conversion
@@ -72,7 +74,7 @@ class Converter(object):
     list_tags = set(['ul', 'dir', 'ol'])
 
     # HTML tags which can be convert without attributes in a different DOM tag
-    simple_tags = {# Emphasis
+    simple_tags = {  # Emphasis
                    'em': moin_page.emphasis, 'i': moin_page.emphasis,
                    # Strong
                    'b': moin_page.strong, 'strong': moin_page.strong,

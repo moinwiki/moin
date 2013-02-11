@@ -6,7 +6,8 @@
 MoinMoin - Supporting functions for Python magic
 """
 
-import os, sys
+import os
+import sys
 import re
 import imp
 
