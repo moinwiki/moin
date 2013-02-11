@@ -281,24 +281,15 @@ def search(item_name):
             flaskg.clock.start('search')
             results = searcher.search(q, filter=_filter, limit=100)
             flaskg.clock.stop('search')
-            # XXX if found that calling key_terms like you see below is 1000..10000x
-            # slower than the search itself, so we better don't do that right now.
-            key_terms_is_fast = False
-            if key_terms_is_fast:
-                flaskg.clock.start('search suggestions')
-                name_suggestions = u', '.join([word
-                                               for word, score in results.key_terms(NAME, docs=20, numterms=10)])
-                content_suggestions = u', '.join([word
-                                                  for word, score in results.key_terms(CONTENT, docs=20, numterms=10)])
-                flaskg.clock.stop('search suggestions')
-            else:
-                name_suggestions = u''
-                content_suggestions = u''
+            flaskg.clock.start('search suggestions')
+            name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
+            content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
+            flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
             html = render_template('search.html',
                                    results=results,
-                                   name_suggestions=name_suggestions,
-                                   content_suggestions=content_suggestions,
+                                   name_suggestions=u', '.join(name_suggestions),
+                                   content_suggestions=u', '.join(content_suggestions),
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
