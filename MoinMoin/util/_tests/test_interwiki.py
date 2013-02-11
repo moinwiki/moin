@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright: 2010 MoinMoin:ThomasWaldmann
 # Copyright: 2010 MoinMoin:MicheleOrru
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
