@@ -12,10 +12,12 @@ from MoinMoin.i18n import _, L_, N_
 class BracketError(Exception):
     pass
 
+
 class BracketUnexpectedCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
         BracketError.__init__(self, "Unexpected closing bracket {0}".format(bracket))
+
 
 class BracketMissingCloseError(BracketError):
     def __init__(self, bracket):
@@ -116,8 +118,8 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     quoted = None       # we're inside quotes, indicates quote character used
     skipquote = 0       # next quote is a quoted quote
     noquote = False     # no quotes expected because word didn't start with one
-    seplimit_reached = False # number of separators exhausted
-    separator_count = 0 # number of separators encountered
+    seplimit_reached = False  # number of separators exhausted
+    separator_count = 0  # number of separators encountered
     SPACE = [' ', '\t', ]
     nextitemsep = [separator]   # used for skipping trailing space
     SPACE = [' ', '\t', ]
@@ -162,7 +164,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         char = args[idx]
         next = None
         if idx + 1 < max:
-            next = args[idx+1]
+            next = args[idx + 1]
         if skipquote:
             skipquote -= 1
         if not separator is None and not quoted and char in SPACE:
@@ -202,7 +204,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
             quoted = char
         elif char == quoted and not skipquote:
             if next == quoted:
-                skipquote = 2 # will be decremented right away
+                skipquote = 2  # will be decremented right away
             else:
                 quoted = None
         elif not quoted and char in opening:

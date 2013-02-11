@@ -14,7 +14,6 @@ TODO
 """
 
 
-import sys
 import os
 import re
 import codecs
@@ -30,18 +29,15 @@ logging = log.getLogger(__name__)
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
-from MoinMoin.config import ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, \
-                            ACTION, ADDRESS, HOSTNAME, USERID, MTIME, EXTRA, COMMENT, \
-                            IS_SYSITEM, SYSITEM_VERSION, \
-                            TAGS, SIZE, HASH_ALGORITHM, \
-                            ITEMID, REVID, DATAID, CONTENTTYPE_USER
+from MoinMoin.constants.keys import (ACL, CONTENTTYPE, NAME, NAME_OLD, REVERTED_TO, ACTION, ADDRESS, HOSTNAME,
+                                     USERID, MTIME, EXTRA, COMMENT, TAGS, SIZE, HASH_ALGORITHM, ITEMID, REVID)
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
-UID_OLD = 'old_user_id' # dynamic field *_id, so we don't have to change schema
+UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
 
 from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.crypto import make_uuid
-from MoinMoin.storage.middleware.serialization import serialize_rev
 from MoinMoin import security
 
 
@@ -77,9 +73,9 @@ class ImportMoin19(Command):
 
     def run(self, data_dir=None):
         indexer = app.storage
-        backend = indexer.backend # backend without indexing
+        backend = indexer.backend  # backend without indexing
         print "Users..."
-        for rev in UserBackend(os.path.join(data_dir, 'user')): # assumes user/ below data_dir
+        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
             backend.store(rev.meta, rev.data)
 
         print "Pages/Attachments..."
@@ -90,7 +86,8 @@ class ImportMoin19(Command):
         indexer.rebuild()
 
         print "Fix userids..."
-        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID]) for rev in indexer.documents(contenttype=CONTENTTYPE_USER)])
+        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID])
+                           for rev in indexer.documents(contenttype=CONTENTTYPE_USER)])
         for mountpoint, revid in backend:
             meta, data = backend.retrieve(mountpoint, revid)
             if USERID in meta:
@@ -102,7 +99,7 @@ class ImportMoin19(Command):
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
-                meta.pop(UID_OLD, None) # not needed any more
+                meta.pop(UID_OLD, None)  # not needed any more
                 backend.store(meta, data)
 
         print "Rebuilding the index..."
@@ -171,11 +168,11 @@ class PageItem(object):
             self.current = int(f.read().strip())
         editlogpath = os.path.join(self.path, 'edit-log')
         self.editlog = EditLog(editlogpath)
-        self.acl = None # TODO
+        self.acl = None  # TODO
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
-            PageRevision(self, self.current, revpath) # will raise exception if killing is requested
+            PageRevision(self, self.current, revpath)  # will raise exception if killing is requested
 
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
@@ -200,7 +197,8 @@ class PageItem(object):
         for fname in fnames:
             attachname = fname.decode('utf-8')
             try:
-                yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname), self.editlog, self.acl)
+                yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
+                                         self.editlog, self.acl)
             except Exception as err:
                 logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
@@ -223,13 +221,13 @@ class PageRevision(object):
                 raise KillRequested('deleted_mode wants killing/ignoring')
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
             # we prepare some values for the case we don't find a better value in edit-log:
-            meta = {MTIME: -1, # fake, will get 0 in the end
-                    NAME: item_name, # will get overwritten with name from edit-log
-                                     # if we have an entry there
+            meta = {MTIME: -1,  # fake, will get 0 in the end
+                    NAME: item_name,  # will get overwritten with name from edit-log
+                                      # if we have an entry there
                    }
             try:
-                revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno-1))
-                previous_meta = PageRevision(item, revno-1, revpath).meta
+                revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
+                previous_meta = PageRevision(item, revno - 1, revpath).meta
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
                 # (non-deleted) revision revno-1:
@@ -237,24 +235,25 @@ class PageRevision(object):
                     if key in previous_meta:
                         meta[key] = previous_meta[key]
             except NoSuchRevisionError:
-                pass # should not happen
-            meta[MTIME] += 1 # it is now either 0 or prev rev mtime + 1
+                pass  # should not happen
+            meta[MTIME] += 1  # it is now either 0 or prev rev mtime + 1
             data = u''
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
                 if 0 <= revno <= item._fs_current:
-                    editlog_data = { # make something up
+                    editlog_data = {  # make something up
                         ACTION: u'SAVE/DELETE',
                     }
                 else:
-                    raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(item.name, revno))
+                    raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(
+                                              item.name, revno))
         else:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
                 if 1 <= revno <= item.current:
-                    editlog_data = { # make something up
+                    editlog_data = {  # make something up
                         NAME: item.name,
                         MTIME: int(os.path.getmtime(path)),
                         ACTION: u'SAVE',
@@ -329,7 +328,7 @@ class AttachmentRevision(object):
         try:
             meta = editlog.find_attach(attach_name)
         except KeyError:
-            meta = { # make something up
+            meta = {  # make something up
                 MTIME: int(os.path.getmtime(attpath)),
                 ACTION: u'SAVE',
             }
@@ -361,14 +360,14 @@ class EditLog(LogFile):
         keys = (MTIME, '__rev', ACTION, NAME, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT)
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
-        result[MTIME] = int(long(result[MTIME] or 0) / 1000000) # convert usecs to secs
-        result['__rev'] = int(result['__rev']) - 1 # old storage is 1-based, we want 0-based
+        result[MTIME] = int(long(result[MTIME] or 0) / 1000000)  # convert usecs to secs
+        result['__rev'] = int(result['__rev']) - 1  # old storage is 1-based, we want 0-based
         result[NAME] = unquoteWikiname(result[NAME])
         action = result[ACTION]
         extra = result[EXTRA]
         if extra:
             if action.startswith('ATT'):
-                result[NAME] += u'/' + extra # append filename to pagename
+                result[NAME] += u'/' + extra  # append filename to pagename
                 # keep EXTRA for find_attach
             elif action == 'SAVE/RENAME':
                 if extra:
@@ -395,7 +394,7 @@ class EditLog(LogFile):
             self.to_begin()
             raise KeyError
         del meta['__rev']
-        meta = dict([(k, v) for k, v in meta.items() if v]) # remove keys with empty values
+        meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         if meta.get(ACTION) == u'SAVENEW':
             # replace SAVENEW with just SAVE
             meta[ACTION] = u'SAVE'
@@ -403,7 +402,7 @@ class EditLog(LogFile):
 
     def find_attach(self, attachname):
         """ Find metadata for some attachment name in the edit-log. """
-        for meta in self.reverse(): # use reverse iteration to get the latest upload's data
+        for meta in self.reverse():  # use reverse iteration to get the latest upload's data
             if (meta['__rev'] == 99999998 and  # 99999999-1 because of 0-based
                 meta[ACTION] == 'ATTNEW' and
                 meta[EXTRA] == attachname):
@@ -412,9 +411,9 @@ class EditLog(LogFile):
             self.to_end()
             raise KeyError
         del meta['__rev']
-        del meta[EXTRA] # we have full name in NAME
+        del meta[EXTRA]  # we have full name in NAME
         meta[ACTION] = u'SAVE'
-        meta = dict([(k, v) for k, v in meta.items() if v]) # remove keys with empty values
+        meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         return meta
 
 
@@ -429,7 +428,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
             result.append("{0}{1}:{2}".format(
                           modifier,
                           u','.join(entries),
-                          u','.join(rights) # iterator has removed invalid rights
+                          u','.join(rights)  # iterator has removed invalid rights
                          ))
     result = u' '.join(result)
     logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
@@ -447,6 +446,7 @@ def _decode_list(line):
     items = [item.strip() for item in line.split('\t')]
     items = [item for item in items if item]
     return tuple(items)
+
 
 def _decode_dict(line):
     """
@@ -501,7 +501,7 @@ class UserRevision(object):
 
     def _process_usermeta(self, metadata):
         # stuff we want to have stored as boolean:
-        bool_defaults = [ # taken from cfg.checkbox_defaults
+        bool_defaults = [  # taken from cfg.checkbox_defaults
             ('show_comments', 'False'),
             ('edit_on_doubleclick', 'True'),
             ('scroll_page_after_edit', 'True'),
@@ -522,39 +522,43 @@ class UserRevision(object):
         # rename last_saved to MTIME, int MTIME should be enough:
         metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
 
+        # rename aliasname to display_name:
+        metadata['display_name'] = metadata.get('aliasname')
+
         # rename subscribed_pages to subscribed_items
         metadata['subscribed_items'] = metadata.get('subscribed_pages', [])
 
         # convert bookmarks from usecs (and str) to secs (int)
-        metadata['bookmarks'] = [(interwiki, int(long(bookmark)/1000000))
+        metadata['bookmarks'] = [(interwiki, int(long(bookmark) / 1000000))
                                  for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:
-        kill = ['real_language', # crap (use 'language')
-                'wikiname_add_spaces', # crap magic (you get it like it is)
-                'recoverpass_key', # user can recover again if needed
-                'editor_default', # not used any more
-                'editor_ui', # not used any more
-                'external_target', # ancient, not used any more
-                'passwd', # ancient, not used any more (use enc_password)
-                'show_emoticons', # ancient, not used any more
-                'show_fancy_diff', # kind of diff display now depends on mimetype
-                'show_fancy_links', # not used any more (now link rendering depends on theme)
-                'show_toolbar', # not used any more
-                'show_topbottom', # crap
-                'show_nonexist_qm', # crap, can be done by css
-                'show_page_trail', # theme decides whether to show trail
-                'remember_last_visit', # we show trail, user can click there
-                'remember_me', # don't keep sessions open for a long time
-                'subscribed_pages', # renamed to subscribed_items
-                'edit_cols', # not used any more
-                'jid', # no jabber support
-                'tz_offset', # we have real timezone now
-                'date_fmt', # not used any more
-                'datetime_fmt', # not used any more
-                'last_saved', # renamed to MTIME
-                'email_subscribed_events', # XXX no support yet
-                'jabber_subscribed_events', # XXX no support yet
+        kill = ['aliasname',  # renamed to display_name
+                'real_language',  # crap (use 'language')
+                'wikiname_add_spaces',  # crap magic (you get it like it is)
+                'recoverpass_key',  # user can recover again if needed
+                'editor_default',  # not used any more
+                'editor_ui',  # not used any more
+                'external_target',  # ancient, not used any more
+                'passwd',  # ancient, not used any more (use enc_password)
+                'show_emoticons',  # ancient, not used any more
+                'show_fancy_diff',  # kind of diff display now depends on mimetype
+                'show_fancy_links',  # not used any more (now link rendering depends on theme)
+                'show_toolbar',  # not used any more
+                'show_topbottom',  # crap
+                'show_nonexist_qm',  # crap, can be done by css
+                'show_page_trail',  # theme decides whether to show trail
+                'remember_last_visit',  # we show trail, user can click there
+                'remember_me',  # don't keep sessions open for a long time
+                'subscribed_pages',  # renamed to subscribed_items
+                'edit_cols',  # not used any more
+                'jid',  # no jabber support
+                'tz_offset',  # we have real timezone now
+                'date_fmt',  # not used any more
+                'datetime_fmt',  # not used any more
+                'last_saved',  # renamed to MTIME
+                'email_subscribed_events',  # XXX no support yet
+                'jabber_subscribed_events',  # XXX no support yet
                ]
         for key in kill:
             if key in metadata:
@@ -562,8 +566,8 @@ class UserRevision(object):
 
         # finally, remove some empty values (that have empty defaults anyway or
         # make no sense when empty):
-        empty_kill = ['aliasname', 'bookmarks', 'enc_password',
-                      'language', 'css_url', 'email', ] # XXX check subscribed_items, quicklinks
+        empty_kill = ['aliasname', 'display_name', 'bookmarks', 'enc_password',
+                      'language', 'css_url', 'email', ]  # XXX check subscribed_items, quicklinks
         for key in empty_kill:
             if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:
                 del metadata[key]

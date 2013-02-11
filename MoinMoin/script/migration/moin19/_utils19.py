@@ -7,7 +7,7 @@ MoinMoin - helpers for 1.9 migration
 
 import re
 
-from MoinMoin.config import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
+from MoinMoin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
 
 CHARSET = 'utf-8'
 

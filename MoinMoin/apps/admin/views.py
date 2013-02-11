@@ -20,15 +20,16 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.config import NAME, ITEMID, SIZE, EMAIL
-from MoinMoin.config import SUPERUSER
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL
+from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
+
 
 @admin.route('/superuser')
 @require_permission(SUPERUSER)
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
+
 
 @admin.route('/user')
 def index_user():
@@ -42,7 +43,7 @@ def userbrowser():
     User Account Browser
     """
     groups = flaskg.groups
-    revs = user.search_users() # all users
+    revs = user.search_users()  # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
                           email=rev.meta[EMAIL],
@@ -100,7 +101,7 @@ def mail_recovery_token():
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
 @require_permission(SUPERUSER)
 def sysitems_upgrade():
-    from MoinMoin.storage.backends import upgrade_sysitems
+    from MoinMoin.storage.backends import upgrade_sysitems  # XXX broken import, either fix or kill this
     from MoinMoin.storage.error import BackendError
     if request.method == 'GET':
         action = 'syspages_upgrade'
@@ -119,6 +120,7 @@ def sysitems_upgrade():
 
 
 from MoinMoin.config import default as defaultconfig
+
 
 @admin.route('/wikiconfig', methods=['GET', ])
 @require_permission(SUPERUSER)
@@ -231,7 +233,7 @@ def itemsize():
     headings = [_('Size'),
                 _('Item name'),
                ]
-    rows = [(rev.meta[SIZE], rev.meta[NAME])
+    rows = [(rev.meta[SIZE], rev.name)
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',

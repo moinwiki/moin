@@ -9,12 +9,14 @@ printscreen when a test fails
 
 driver = None
 
+
 def register_driver(driver_):
     """
     set the driver global variable to driver_
     """
     global driver
     driver = driver_
+
 
 def get_driver():
     """

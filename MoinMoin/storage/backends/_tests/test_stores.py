@@ -11,8 +11,6 @@ Note: theoretically, it should be enough to test with one kind of store,
 
 from __future__ import absolute_import, division
 
-import pytest
-
 from ..stores import MutableBackend
 from . import MutableBackendTestBase
 

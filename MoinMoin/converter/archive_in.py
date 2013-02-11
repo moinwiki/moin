@@ -27,6 +27,7 @@ class ArchiveException(Exception):
     exception class used in case of trouble with opening/listing an archive
     """
 
+
 class ArchiveConverter(TableMixin):
     """
     Base class for archive converters, convert an archive to a DOM table
@@ -39,7 +40,8 @@ class ArchiveConverter(TableMixin):
     def process_name(self, member_name):
         name = unicode(member_name, 'utf-8')
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+self.item_name, query=u'do=get&member={0}'.format(name)),
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + self.item_name,
+                            query=u'do=get&member={0}'.format(name)),
         }
         return moin_page.a(attrib=attrib, children=[name, ])
 
@@ -113,7 +115,7 @@ class ZipConverter(ArchiveConverter):
                     # display only normal files, not directories
                     rows.append((
                         zinfo.file_size,
-                        datetime(*zinfo.date_time), # y,m,d,h,m,s
+                        datetime(*zinfo.date_time),  # y,m,d,h,m,s
                         zinfo.filename,
                     ))
             return rows

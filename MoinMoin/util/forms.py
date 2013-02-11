@@ -13,12 +13,14 @@ from flatland.schema.util import find_i18n_function
 
 from MoinMoin.i18n import _, L_, N_
 
+
 def label_filter(tagname, attributes, contents, context, bind):
     """Provide a translated, generated fallback for field labels."""
     if bind is not None and not contents:
         contents = _(bind.label)
     return contents
 label_filter.tags = set(['label'])
+
 
 def button_filter(tagname, attributes, contents, context, bind):
     """Show translated text in clickable buttons and submits."""
@@ -33,13 +35,15 @@ def button_filter(tagname, attributes, contents, context, bind):
     return contents
 button_filter.tags = set(['input', 'button'])
 
+
 def required_filter(tagname, attributes, contents, context, bind):
-    if (bind is not None and not bind.optional):
+    if bind is not None and not bind.optional:
         attributes[u'class'] = u'required'
         if tagname == 'input':
             attributes[u'required'] = u'required'
     return contents
 required_filter.tags = set(['input', 'label'])
+
 
 def autofocus_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
@@ -49,6 +53,7 @@ def autofocus_filter(tagname, attributes, contents, context, bind):
     return contents
 autofocus_filter.tags = set(['input', 'textarea', ])
 
+
 def placeholder_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         placeholder = bind.properties.get('placeholder')
@@ -56,6 +61,7 @@ def placeholder_filter(tagname, attributes, contents, context, bind):
             attributes[u'placeholder'] = placeholder
     return contents
 placeholder_filter.tags = set(['input', 'textarea', ])
+
 
 def error_filter_factory(class_='moin-error'):
     """Returns an HTML generation filter annotating field CSS class on error.

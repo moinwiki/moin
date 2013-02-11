@@ -15,11 +15,11 @@ from flask import g as flaskg
 
 from MoinMoin.apps.misc import misc
 
-from MoinMoin.config import NAME, MTIME
+from MoinMoin.constants.keys import MTIME
 from MoinMoin.themes import render_template
-from MoinMoin import wikiutil
 
 SITEMAP_HAS_SYSTEM_ITEMS = True
+
 
 @misc.route('/sitemap')
 def sitemap():
@@ -32,9 +32,9 @@ def sitemap():
 
     sitemap = []
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
-        name = rev.meta[NAME]
+        name = rev.name
         mtime = rev.meta[MTIME]
-        if False: # was: wikiutil.isSystemItem(name)   XXX add back later, when we have that in the index
+        if False:  # was: wikiutil.isSystemItem(name)   XXX add back later, when we have that in the index
             if not SITEMAP_HAS_SYSTEM_ITEMS:
                 continue
             # system items are rather boring
@@ -66,6 +66,6 @@ def urls_names():
     See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
     """
     # XXX we currently also get deleted items, fix this
-    item_names = sorted([rev.meta[NAME] for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)])
+    item_names = sorted([rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)])
     content = render_template('misc/urls_names.txt', item_names=item_names)
     return Response(content, mimetype='text/plain')

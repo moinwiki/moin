@@ -14,7 +14,7 @@
     "Can't contact LDAP server" - more recent debian installations have tls
     support in libldap2 (see dependency on gnutls) and also in python-ldap.
 
-    TODO: allow more configuration (alias name, ...) by using callables as parameters
+    TODO: allow more configuration (display name, ...) by using callables as parameters
 """
 
 from MoinMoin import log
@@ -60,32 +60,32 @@ class LDAPAuth(BaseAuth):
         bind_pw='',
         base_dn='',  # base DN we use for searching
                      #base_dn = 'ou=SOMEUNIT,dc=example,dc=org'
-        scope=ldap.SCOPE_SUBTREE, # scope of the search we do (2 == ldap.SCOPE_SUBTREE)
-        referrals=0, # LDAP REFERRALS (0 needed for AD)
+        scope=ldap.SCOPE_SUBTREE,  # scope of the search we do (2 == ldap.SCOPE_SUBTREE)
+        referrals=0,  # LDAP REFERRALS (0 needed for AD)
         search_filter='(uid=%(username)s)',  # ldap filter used for searching:
                                              #search_filter = '(sAMAccountName=%(username)s)' # (AD)
                                              #search_filter = '(uid=%(username)s)' # (OpenLDAP)
                                              # you can also do more complex filtering like:
                                              # "(&(cn=%(username)s)(memberOf=CN=WikiUsers,OU=Groups,DC=example,DC=org))"
         # some attribute names we use to extract information from LDAP:
-        givenname_attribute=None, # ('givenName') ldap attribute we get the first name from
-        surname_attribute=None, # ('sn') ldap attribute we get the family name from
-        aliasname_attribute=None, # ('displayName') ldap attribute we get the aliasname from
-        email_attribute=None, # ('mail') ldap attribute we get the email address from
-        email_callback=None, # called to make up email address
-        name_callback=None, # called to use a Wiki name different from the login name
-        coding='utf-8', # coding used for ldap queries and result values
-        timeout=10, # how long we wait for the ldap server [s]
-        start_tls=0, # 0 = No, 1 = Try, 2 = Required
+        givenname_attribute=None,  # ('givenName') ldap attribute we get the first name from
+        surname_attribute=None,  # ('sn') ldap attribute we get the family name from
+        displayname_attribute=None,  # ('displayName') ldap attribute we get the display_name from
+        email_attribute=None,  # ('mail') ldap attribute we get the email address from
+        email_callback=None,  # called to make up email address
+        name_callback=None,  # called to use a Wiki name different from the login name
+        coding='utf-8',  # coding used for ldap queries and result values
+        timeout=10,  # how long we wait for the ldap server [s]
+        start_tls=0,  # 0 = No, 1 = Try, 2 = Required
         tls_cacertdir=None,
         tls_cacertfile=None,
         tls_certfile=None,
         tls_keyfile=None,
-        tls_require_cert=0, # 0 == ldap.OPT_X_TLS_NEVER (needed for self-signed certs)
-        bind_once=False, # set to True to only do one bind - useful if configured to bind as the user on the first attempt
-        autocreate=False, # set to True if you want to autocreate user profiles
-        name='ldap', # use e.g. 'ldap_pdc' and 'ldap_bdc' (or 'ldap1' and 'ldap2') if you auth against 2 ldap servers
-        report_invalid_credentials=True, # whether to emit "invalid username or password" msg at login time or not
+        tls_require_cert=0,  # 0 == ldap.OPT_X_TLS_NEVER (needed for self-signed certs)
+        bind_once=False,  # set to True to only do one bind - useful if configured to bind as the user on first attempt
+        autocreate=False,  # set to True if you want to autocreate user profiles
+        name='ldap',  # use e.g. 'ldap_pdc' and 'ldap_bdc' (or 'ldap1' and 'ldap2') if you auth against 2 ldap servers
+        report_invalid_credentials=True,  # whether to emit "invalid username or password" msg at login time or not
         **kw
         ):
         super(LDAPAuth, self).__init__(**kw)
@@ -99,7 +99,7 @@ class LDAPAuth(BaseAuth):
 
         self.givenname_attribute = givenname_attribute
         self.surname_attribute = surname_attribute
-        self.aliasname_attribute = aliasname_attribute
+        self.displayname_attribute = displayname_attribute
         self.email_attribute = email_attribute
         self.email_callback = email_callback
         self.name_callback = name_callback
@@ -133,9 +133,10 @@ class LDAPAuth(BaseAuth):
             try:
                 u = None
                 dn = None
+                server = self.server_uri
                 coding = self.coding
                 logging.debug("Setting misc. ldap options...")
-                ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3) # ldap v2 is outdated
+                ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
                 ldap.set_option(ldap.OPT_REFERRALS, self.referrals)
                 ldap.set_option(ldap.OPT_NETWORK_TIMEOUT, self.timeout)
 
@@ -152,7 +153,6 @@ class LDAPAuth(BaseAuth):
                         if value is not None:
                             ldap.set_option(option, value)
 
-                server = self.server_uri
                 logging.debug("Trying to initialize {0!r}.".format(server))
                 l = ldap.initialize(server)
                 logging.debug("Connected to LDAP server {0!r}.".format(server))
@@ -177,7 +177,7 @@ class LDAPAuth(BaseAuth):
                 logging.debug("Searching {0!r}".format(filterstr))
                 attrs = [getattr(self, attr) for attr in [
                                          'email_attribute',
-                                         'aliasname_attribute',
+                                         'displayname_attribute',
                                          'surname_attribute',
                                          'givenname_attribute',
                                          ] if getattr(self, attr) is not None]
@@ -193,7 +193,8 @@ class LDAPAuth(BaseAuth):
                 result_length = len(lusers)
                 if result_length != 1:
                     if result_length > 1:
-                        logging.warning("Search found more than one ({0}) matches for {1!r}.".format(result_length, filterstr))
+                        logging.warning("Search found more than one ({0}) matches for {1!r}.".format(
+                            result_length, filterstr))
                     if result_length == 0:
                         logging.debug("Search found no matches for {0!r}.".format(filterstr, ))
                     if self.report_invalid_credentials:
@@ -215,36 +216,40 @@ class LDAPAuth(BaseAuth):
                 else:
                     email = self.email_callback(ldap_dict)
 
-                aliasname = ''
+                display_name = ''
                 try:
-                    aliasname = ldap_dict[self.aliasname_attribute][0]
+                    display_name = ldap_dict[self.displayname_attribute][0]
                 except (KeyError, IndexError):
                     pass
-                if not aliasname:
+                if not display_name:
                     sn = ldap_dict.get(self.surname_attribute, [''])[0]
                     gn = ldap_dict.get(self.givenname_attribute, [''])[0]
                     if sn and gn:
-                        aliasname = "{0}, {1}".format(sn, gn)
+                        display_name = "{0}, {1}".format(sn, gn)
                     elif sn:
-                        aliasname = sn
-                aliasname = aliasname.decode(coding)
+                        display_name = sn
+                display_name = display_name.decode(coding)
 
                 if self.name_callback:
                     username = self.name_callback(ldap_dict)
 
                 if email:
-                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'email', 'mailto_author', ),
+                    u = user.User(auth_username=username, auth_method=self.name,
+                                  auth_attribs=('name', 'password', 'email', 'mailto_author', ),
                                   trusted=self.trusted)
                     u.email = email
                 else:
-                    u = user.User(auth_username=username, auth_method=self.name, auth_attribs=('name', 'password', 'mailto_author', ),
+                    u = user.User(auth_username=username, auth_method=self.name,
+                                  auth_attribs=('name', 'password', 'mailto_author', ),
                                   trusted=self.trusted)
                 u.name = username
-                u.aliasname = aliasname
-                logging.debug("creating user object with name {0!r} email {1!r} alias {2!r}".format(username, email, aliasname))
+                u.display_name = display_name
+                logging.debug("creating user object with name {0!r} email {1!r} display name {2!r}".format(
+                    username, email, display_name))
 
             except ldap.INVALID_CREDENTIALS as err:
-                logging.debug("invalid credentials (wrong password?) for dn {0!r} (username: {1!r})".format(dn, username))
+                logging.debug("invalid credentials (wrong password?) for dn {0!r} (username: {1!r})".format(
+                    dn, username))
                 return CancelLogin(_("Invalid username or password."))
 
             if u and self.autocreate:

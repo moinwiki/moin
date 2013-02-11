@@ -9,7 +9,6 @@ MoinMoin - MoinMoin.util.thread_monitor Tests
 import shutil, tempfile
 import os
 
-import pytest
 from MoinMoin.util.thread_monitor import Monitor
 
 class TestMonitor(object):

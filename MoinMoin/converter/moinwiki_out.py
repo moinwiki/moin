@@ -29,8 +29,8 @@ class Moinwiki(object):
     a_open = u'[['
     a_separator = u'|'
     a_close = u']]'
-    verbatim_open = u'{' # * 3
-    verbatim_close = u'}'# * 3
+    verbatim_open = u'{'  # * 3
+    verbatim_close = u'}'  # * 3
     monospace = u'`'
     strong = u"'''"
     emphasis = u"''"
@@ -182,7 +182,7 @@ class Converter(object):
         args = u''
         if len(href) > 1:
             # With normal
-            args = u','.join([u'&'+s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$|)', href[1])])
+            args = u','.join([u'&' + s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$|)', href[1])])
         href = href[0].split(u'wiki.local:')[-1]
         args = u','.join(s for s in [args, params] if s)
 
@@ -204,7 +204,8 @@ class Converter(object):
         for s in findall(r'}+', text):
             if max_subpage_lvl <= len(s):
                 max_subpage_lvl = len(s) + 1
-        ret = u'{0}\n{1}\n{2}\n'.format(Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
+        ret = u'{0}\n{1}\n{2}\n'.format(
+            Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
         return ret
 
     def open_moinpage_code(self, elem):
@@ -268,7 +269,8 @@ class Converter(object):
         if self.list_item_labels[-1] == u'' or self.list_item_labels[-1] == Moinwiki.definition_list_marker:
             self.list_item_labels[-1] = Moinwiki.definition_list_marker
             self.list_item_label = self.list_item_labels[-1] + u' '
-            ret = u' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))# self.list_level
+            ret = u' ' * (len(u''.join(self.list_item_labels[:-1])) +
+                          len(self.list_item_labels[:-1]))  # self.list_level
             if self.last_closed:
                 ret = u'\n{0}'.format(ret)
         childrens_output = self.open_children(elem)
@@ -278,7 +280,8 @@ class Converter(object):
         ret = u''
         if self.last_closed:
             ret = u'\n'
-        ret += u' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1])) + self.list_item_label
+        ret += u' ' * (len(u''.join(self.list_item_labels[:-1])) +
+                       len(self.list_item_labels[:-1])) + self.list_item_label
         return ret + self.open_children(elem)
 
     def open_moinpage_note(self, elem):
@@ -300,7 +303,7 @@ class Converter(object):
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
-            args =u' '.join([s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$)', href[1]) if s[:3] != u'do='])
+            args = u' '.join([s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$)', href[1]) if s[:3] != u'do='])
         href = href[0].split(u'wiki.local:')[-1]
         # TODO: add '|' to Moinwiki class and rewrite this using % formatting
         ret = Moinwiki.object_open
@@ -354,7 +357,10 @@ class Converter(object):
             for s in findall(r'}+', childrens_output):
                 if max_subpage_lvl <= len(s):
                     max_subpage_lvl = len(s) + 1
-            return u'{0}{1}{2}{3}\n'.format(Moinwiki.verbatim_open * max_subpage_lvl, ret, childrens_output, Moinwiki.verbatim_close * max_subpage_lvl)
+            return u'{0}{1}{2}{3}\n'.format(
+                Moinwiki.verbatim_open * max_subpage_lvl,
+                ret, childrens_output,
+                Moinwiki.verbatim_close * max_subpage_lvl)
 
         self.status.append('text')
         childrens_output = self.open_children(elem)
@@ -377,7 +383,9 @@ class Converter(object):
         if len(type) == 2:
             if type[0] == "x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    return u"<<{0}({1})>>\n".format(type[1].split(u'=')[1], u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
+                    return u"<<{0}({1})>>\n".format(
+                        type[1].split(u'=')[1],
+                        u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
                 else:
                     return u"<<{0}()>>\n".format(type[1].split(u'=')[1])
             elif type[0] == "x-moin/format":
@@ -406,7 +414,7 @@ class Converter(object):
         if hr_class:
             try:
                 height = int(hr_class.split(hr_class_prefix)[1]) - 1
-                if (0 <= height <= 5):
+                if 0 <= height <= 5:
                     hr_ending = (u'-' * height) + hr_ending
             except:
                 raise ElementException('page:separator has invalid class {0}'.format(hr_class))
@@ -502,7 +510,7 @@ class Converter(object):
         if table_cellstyle:
             attrib.append(u'style="{0}"'.format(table_cellstyle))
         if number_rows_spanned:
-            attrib.append(u'|'+unicode(number_rows_spanned))
+            attrib.append(u'|' + unicode(number_rows_spanned))
 
         attrib = u' '.join(attrib)
 

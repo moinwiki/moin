@@ -10,6 +10,7 @@ from flask import g as flaskg
 
 from MoinMoin.macro._base import MacroInlineBase
 
+
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         try:

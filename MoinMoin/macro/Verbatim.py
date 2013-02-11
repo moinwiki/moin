@@ -8,6 +8,7 @@ Outputs the text verbatimly.
 
 from MoinMoin.macro._base import MacroInlineBase
 
+
 class Macro(MacroInlineBase):
     def macro(self, text=u''):
         return text

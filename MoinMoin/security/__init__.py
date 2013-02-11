@@ -19,6 +19,7 @@ from flask import abort
 from MoinMoin.constants import rights
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
+from MoinMoin.util.pysupport import AutoNe
 
 
 def require_permission(permission):
@@ -64,7 +65,7 @@ class DefaultSecurityPolicy(object):
             return super(MySecPol, self).read(itemname)
     """
     def __init__(self, user):
-        self.name = user.name
+        self.names = user.name
 
     def read(self, itemname):
         """read permission is special as we have 2 kinds of read capabilities:
@@ -72,9 +73,9 @@ class DefaultSecurityPolicy(object):
            * READ - gives permission to read, unconditionally
            * PUBREAD - gives permission to read, when published
         """
-        return (flaskg.storage.may(itemname, rights.READ, username=self.name)
+        return (flaskg.storage.may(itemname, rights.READ, usernames=self.names)
                 or
-                flaskg.storage.may(itemname, rights.PUBREAD, username=self.name))
+                flaskg.storage.may(itemname, rights.PUBREAD, usernames=self.names))
 
     def __getattr__(self, attr):
         """ Shortcut to handle all known ACL rights.
@@ -87,14 +88,20 @@ class DefaultSecurityPolicy(object):
         :returns: checking function for that right
         """
         if attr in app.cfg.acl_rights_contents:
-            return lambda itemname: flaskg.storage.may(itemname, attr, username=self.name)
+            return lambda itemname: flaskg.storage.may(itemname, attr, usernames=self.names)
         if attr in app.cfg.acl_rights_functions:
-            may = app.cfg.cache.acl_functions.may
-            return lambda: may(self.name, attr)
+            def multiuser_may():
+                # TODO: if "may" would accept multiple names, we could get rid of this
+                may = app.cfg.cache.acl_functions.may
+                for name in self.names:
+                    if may(name, attr):
+                        return True
+                return False
+            return multiuser_may
         raise AttributeError(attr)
 
 
-class AccessControlList(object):
+class AccessControlList(AutoNe):
     """
     Access Control List - controls who may do what.
 
@@ -168,7 +175,7 @@ class AccessControlList(object):
         useful in the wiki configuration though.
     """
 
-    special_users = ["All", "Known", "Trusted"] # order is important
+    special_users = ["All", "Known", "Trusted"]  # order is important
 
     def __init__(self, lines=[], default='', valid=None):
         """ Initialize an ACL, starting from <nothing>.
@@ -178,7 +185,7 @@ class AccessControlList(object):
         self.default = default
         assert isinstance(lines, (list, tuple))
         if lines:
-            self.acl = [] # [ ('User', {"read": 0, ...}), ... ]
+            self.acl = []  # [ ('User', {"read": 0, ...}), ... ]
             self.acl_lines = []
             for line in lines:
                 self._addLine(line)
@@ -236,7 +243,7 @@ class AccessControlList(object):
         allowed = None
         for entry, rightsdict in self.acl:
             if entry in self.special_users:
-                handler = getattr(self, "_special_"+entry, None)
+                handler = getattr(self, "_special_" + entry, None)
                 allowed = handler(name, dowhat, rightsdict)
             elif entry in groups:
                 this_group = groups[entry]
@@ -247,12 +254,13 @@ class AccessControlList(object):
                         if special in this_group:
                             handler = getattr(self, "_special_" + special, None)
                             allowed = handler(name, dowhat, rightsdict)
-                            break # order of self.special_users is important
-            elif entry == name:
+                            break  # order of self.special_users is important
+            elif entry == name:  # XXX TODO maybe change this to "entry in names"
+                                 # to check users with multiple names in one go
                 allowed = rightsdict.get(dowhat)
             if allowed is not None:
                 return allowed
-        return allowed # should be None
+        return allowed  # should be None
 
     def _special_All(self, name, dowhat, rightsdict):
         return rightsdict.get(dowhat)
@@ -262,7 +270,7 @@ class AccessControlList(object):
             that means that there is a valid user account present.
             works for subscription emails.
         """
-        if user.search_users(name_exact=name): # is a user with this name known?
+        if user.search_users(name_exact=name):  # is a user with this name known?
             return rightsdict.get(dowhat)
         return None
 
@@ -278,9 +286,6 @@ class AccessControlList(object):
 
     def __eq__(self, other):
         return self.acl_lines == other.acl_lines
-
-    def __ne__(self, other):
-        return self.acl_lines != other.acl_lines
 
 
 class ACLStringIterator(object):

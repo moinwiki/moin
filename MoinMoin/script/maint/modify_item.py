@@ -9,10 +9,9 @@ import shutil
 import json
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
-from MoinMoin.config import NAME, CURRENT, REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM
 
 
 class GetItem(Command):
@@ -55,8 +54,7 @@ class PutItem(Command):
             meta = mf.read()
         meta = meta.decode('utf-8')
         meta = json.loads(meta)
-        name = meta[NAME]
-        to_kill = [SIZE, HASH_ALGORITHM, # gets re-computed automatically
+        to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
                    DATAID,
                   ]
         for key in to_kill:
@@ -64,6 +62,7 @@ class PutItem(Command):
         if not overwrite:
             # if we remove the REVID, it will create a new one and store under the new one
             meta.pop(REVID, None)
-        item = app.storage[name]
+        query = {ITEMID: meta[ITEMID]}
+        item = app.storage.get_item(**query)
         with open(data_file, 'rb') as df:
             item.store_revision(meta, df, overwrite=overwrite)

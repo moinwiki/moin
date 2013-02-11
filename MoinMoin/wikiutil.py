@@ -14,8 +14,6 @@
 from __future__ import absolute_import, division
 
 import os
-import re
-import time
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -24,11 +22,12 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import request
 
-from MoinMoin import config
-from MoinMoin.config import CURRENT, IS_SYSITEM
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.keys import CURRENT, IS_SYSITEM
+from MoinMoin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
+from MoinMoin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util import pysupport
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
@@ -39,6 +38,7 @@ PARENT_PREFIX = "../"
 PARENT_PREFIX_LEN = len(PARENT_PREFIX)
 CHILD_PREFIX = "/"
 CHILD_PREFIX_LEN = len(CHILD_PREFIX)
+
 
 #############################################################################
 ### Data validation / cleanup
@@ -62,8 +62,8 @@ def clean_input(text, max_len=201):
         if isinstance(text, str):
             # the translate() below can ONLY process unicode, thus, if we get
             # str, we try to decode it using the usual coding:
-            text = text.decode(config.charset)
-        return text.translate(config.clean_input_translation_map)
+            text = text.decode(CHARSET)
+        return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
 
 
 # TODO: use similar code in a flatland validator
@@ -81,7 +81,7 @@ def normalize_pagename(name, cfg):
     :returns: decoded and sanitized page name
     """
     # Strip invalid characters
-    name = config.page_invalid_chars_regex.sub(u'', name)
+    name = ITEM_INVALID_CHARS_REGEX.sub(u'', name)
 
     # Split to pages and normalize each one
     pages = name.split(u'/')
@@ -158,6 +158,7 @@ def AbsItemName(context, itemname):
             itemname = itemname[CHILD_PREFIX_LEN:]
     return itemname
 
+
 def RelItemName(context, itemname):
     """
     Return the relative item name for some context.
@@ -177,7 +178,7 @@ def RelItemName(context, itemname):
     else:
         # some kind of sister/aunt
         context_frags = context.split('/')   # A, B, C, D, E
-        itemname_frags = itemname.split('/') # A, B, C, F
+        itemname_frags = itemname.split('/')  # A, B, C, F
         # first throw away common parents:
         common = 0
         for cf, pf in zip(context_frags, itemname_frags):
@@ -185,8 +186,8 @@ def RelItemName(context, itemname):
                 common += 1
             else:
                 break
-        context_frags = context_frags[common:] # D, E
-        itemname_frags = itemname_frags[common:] # F
+        context_frags = context_frags[common:]  # D, E
+        itemname_frags = itemname_frags[common:]  # F
         go_up = len(context_frags)
         return PARENT_PREFIX * go_up + '/'.join(itemname_frags)
 
@@ -211,14 +212,10 @@ def ParentItemName(itemname):
 #############################################################################
 
 def drawing2fname(drawing):
-    config.drawing_extensions = ['.tdraw', '.adraw',
-                                 '.svg',
-                                 '.png', '.jpg', '.jpeg', '.gif',
-                                ]
     fname, ext = os.path.splitext(drawing)
     # note: do not just check for empty extension or stuff like drawing:foo.bar
     # will fail, instead of being expanded to foo.bar.tdraw
-    if ext not in config.drawing_extensions:
+    if ext not in DRAWING_EXTENSIONS:
         # for backwards compatibility, twikidraw is the default:
         drawing += '.tdraw'
     return drawing
@@ -234,19 +231,19 @@ def getUnicodeIndexGroup(name):
     :returns: group letter or None
     """
     c = name[0]
-    if u'\uAC00' <= c <= u'\uD7AF': # Hangul Syllables
+    if u'\uAC00' <= c <= u'\uD7AF':  # Hangul Syllables
         return unichr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
     else:
-        return c.upper() # we put lower and upper case words into the same index group
+        return c.upper()  # we put lower and upper case words into the same index group
 
 
-def is_URL(arg, schemes=config.uri_schemes):
+def is_URL(arg, schemes=URI_SCHEMES):
     """ Return True if arg is a URL (with a scheme given in the schemes list).
 
         Note: there are not that many requirements for generic URLs, basically
         the only mandatory requirement is the ':' between scheme and rest.
         Scheme itself could be anything, also the rest (but we only support some
-        schemes, as given in config.uri_schemes, so it is a bit less ambiguous).
+        schemes, as given in URI_SCHEMES, so it is a bit less ambiguous).
     """
     if ':' not in arg:
         return False
@@ -259,6 +256,7 @@ def is_URL(arg, schemes=config.uri_schemes):
 def containsConflictMarker(text):
     """ Returns true if there is a conflict marker in the text. """
     return "/!\\ '''Edit conflict" in text
+
 
 def anchor_name_from_text(text):
     """
@@ -274,6 +272,7 @@ def anchor_name_from_text(text):
     if not res[:1].isalpha():
         return 'A{0}'.format(res)
     return res
+
 
 def split_anchor(pagename):
     """
@@ -313,7 +312,7 @@ def get_hostname(addr):
     if app.cfg.log_reverse_dns_lookups:
         import socket
         try:
-            return unicode(socket.gethostbyaddr(addr)[0], config.charset)
+            return unicode(socket.gethostbyaddr(addr)[0], CHARSET)
         except (socket.error, UnicodeError):
             pass
 

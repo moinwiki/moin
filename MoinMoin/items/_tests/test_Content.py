@@ -9,7 +9,6 @@
 
 import pytest
 
-from flask import g as flaskg
 from flask import Markup
 
 from werkzeug import escape
@@ -19,7 +18,7 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.constants.keys import CONTENTTYPE
 
 
 class TestContent(object):

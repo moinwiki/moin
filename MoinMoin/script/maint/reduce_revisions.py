@@ -16,7 +16,7 @@ from flask.ext.script import Command, Option
 
 from whoosh.query import Every
 
-from MoinMoin.config import NAME, NAME_EXACT, REVID
+from MoinMoin.constants.keys import NAME, NAME_EXACT, REVID
 
 
 class Reduce_Revisions(Command):

@@ -9,13 +9,9 @@
 """
 
 
-import pytest
-
-from flask import current_app as app
 from flask import g as flaskg
 
 from MoinMoin import user
-from MoinMoin.util import crypto
 
 
 class TestSimple(object):
@@ -25,7 +21,7 @@ class TestSimple(object):
         email = u"foo@example.org"
         # nonexisting user
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name, ]
         assert not u.valid
         assert not u.exists()
         # create a user
@@ -33,7 +29,7 @@ class TestSimple(object):
         assert ret is None, "create_user returned: {0}".format(ret)
         # existing user
         u = user.User(name=name, password=password)
-        assert u.name == name
+        assert u.name == [name, ]
         assert u.email == email
         assert u.valid
         assert u.exists()

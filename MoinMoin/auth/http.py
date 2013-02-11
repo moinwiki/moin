@@ -22,7 +22,7 @@ logging = log.getLogger(__name__)
 
 from flask import request
 
-from MoinMoin import config, user
+from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.auth import BaseAuth, GivenAuth
 
@@ -48,7 +48,8 @@ class HTTPAuthMoin(BaseAuth):
 
         auth = request.authorization
         if auth and auth.username and auth.password is not None:
-            logging.debug("http basic auth, received username: {0!r} password: {1!r}".format(auth.username, auth.password))
+            logging.debug("http basic auth, received username: {0!r} password: {1!r}".format(
+                auth.username, auth.password))
             u = user.User(name=auth.username.decode(self.coding),
                           password=auth.password.decode(self.coding),
                           auth_method=self.name, auth_attribs=[], trusted=self.trusted)
@@ -66,7 +67,7 @@ class HTTPAuthMoin(BaseAuth):
             u.create_or_update()
         if u and u.valid:
             logging.debug("returning valid user {0!r}".format(u))
-            return u, True # True to get other methods called, too
+            return u, True  # True to get other methods called, too
         else:
             logging.debug("returning {0!r}".format(user_obj))
             return user_obj, True

@@ -10,7 +10,8 @@ Stores k/v pairs into a MongoDB server using pymongo.
 
 from __future__ import absolute_import, division
 
-import pymongo, gridfs
+import pymongo
+import gridfs
 
 from . import MutableStoreBase, BytesMutableStoreBase, FileMutableStoreBase
 
@@ -21,7 +22,7 @@ class _Store(MutableStoreBase):
     """
     @classmethod
     def from_uri(cls, uri):
-        params = uri.split('::') # moin_uri -> mongodb_uri::collection_name
+        params = uri.split('::')  # moin_uri -> mongodb_uri::collection_name
         return cls(*params)
 
     def __init__(self, uri='mongodb://127.0.0.1/moin_db', collection_name='moin_coll'):

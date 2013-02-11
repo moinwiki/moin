@@ -12,7 +12,8 @@ Execute this script from the root directory of the moin2 repository or
 from anywhere within the contrib path.
 """
 
-import sys, os
+import sys
+import os
 import warnings
 warnings.simplefilter("once")
 

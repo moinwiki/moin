@@ -8,8 +8,6 @@ Test for security.textcha
 from flask import current_app as app
 from flask import g as flaskg
 
-import pytest
-
 from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
 from MoinMoin.constants.keys import LOCALE
 

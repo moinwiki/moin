@@ -13,6 +13,7 @@ from werkzeug import escape
 
 from MoinMoin.i18n import _, L_, N_
 
+
 def indent(line):
     eol = ''
     while line and line[0] == '\n':
@@ -52,7 +53,7 @@ def diff(old, new):
         if lastmatch == match[0:2]:
             lastmatch = (match[0] + match[2], match[1] + match[2])
             continue
-        llineno, rlineno = lastmatch[0]+1, lastmatch[1]+1
+        llineno, rlineno = lastmatch[0] + 1, lastmatch[1] + 1
         leftpane = u''
         rightpane = u''
         linecount = max(match[0] - lastmatch[0], match[1] - lastmatch[1])

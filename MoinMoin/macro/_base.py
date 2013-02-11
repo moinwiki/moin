@@ -9,6 +9,7 @@ MoinMoin - Macro base class
 from MoinMoin.util import iri
 from MoinMoin.util.tree import moin_page, xlink
 
+
 class MacroBase(object):
     """
     Macro base class.
@@ -22,6 +23,7 @@ class MacroBase(object):
 
     def __call__(self, content, arguments, page_url, alternative, context_block):
         raise NotImplementedError
+
 
 class MacroBlockBase(MacroBase):
     """
@@ -38,6 +40,7 @@ class MacroBlockBase(MacroBase):
     def macro(self, content, arguments, page_url, alternative):
         raise NotImplementedError
 
+
 class MacroInlineBase(MacroBase):
     """
     Macro base class for inline element macros.
@@ -50,6 +53,7 @@ class MacroInlineBase(MacroBase):
             return moin_page.p(children=(ret, ))
         return ret
 
+
 class MacroInlineOnlyBase(MacroBase):
     """
     Macro base class for strict inline element macros.
@@ -60,6 +64,7 @@ class MacroInlineOnlyBase(MacroBase):
     def __call__(self, content, arguments, page_url, alternative, context_block):
         if not context_block:
             return self.macro(content, arguments, page_url, alternative)
+
 
 class MacroPageLinkListBase(MacroBlockBase):
     def create_pagelink_list(self, pagenames, ordered=False):
@@ -74,6 +79,7 @@ class MacroPageLinkListBase(MacroBlockBase):
             page_list.append(item)
         return page_list
 
+
 class MacroNumberPageLinkListBase(MacroBlockBase):
     def create_number_pagelink_list(self, num_pagenames, ordered=False):
         """ creates an ET with a list of pagelinks from a list of pagenames """
@@ -87,6 +93,7 @@ class MacroNumberPageLinkListBase(MacroBlockBase):
             item = moin_page.list_item(children=[item_body])
             num_page_list.append(item)
         return num_page_list
+
 
 class MacroDefinitionListBase(MacroBlockBase):
     def create_definition_list(self, items):

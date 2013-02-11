@@ -17,8 +17,6 @@
     Each class in this module corresponds to an itemtype.
 """
 
-import time
-import itertools
 import json
 from StringIO import StringIO
 from collections import namedtuple
@@ -32,7 +30,7 @@ from flatland import Form
 
 from jinja2 import Markup
 
-from whoosh.query import Term, And, Prefix
+from whoosh.query import Term, Prefix, And, Or, Not
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -40,7 +38,6 @@ logging = log.getLogger(__name__)
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError, StorageError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type
@@ -53,7 +50,7 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
     )
-from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
     )
@@ -94,8 +91,10 @@ class RegistryItem(RegistryBase):
 
 item_registry = RegistryItem()
 
+
 def register(cls):
-    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order), cls.shown)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order),
+                           cls.shown)
     return cls
 
 
@@ -110,15 +109,17 @@ class DummyRev(dict):
         self.data = StringIO('')
         self.revid = None
         if self.item:
-            self.meta[NAME] = self.item.name
+            self.meta[NAME] = [self.item.name]
 
 
 class DummyItem(object):
     """ if we have no stored Item, we use this dummy """
     def __init__(self, name):
         self.name = name
+
     def list_revisions(self):
-        return [] # same as an empty Item
+        return []  # same as an empty Item
+
     def destroy_all_revisions(self):
         return True
 
@@ -143,12 +144,12 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
     :itemtype and :contenttype are used when creating a DummyRev, where
     metadata is not available from the storage.
     """
-    if 1: # try:
+    if 1:  # try:
         if item is None:
             item = flaskg.storage[name]
         else:
             name = item.name
-    if not item: # except NoSuchItemError:
+    if not item:  # except NoSuchItemError:
         logging.debug("No such item: {0!r}".format(name))
         item = DummyItem(name)
         rev = DummyRev(item, itemtype, contenttype)
@@ -157,11 +158,11 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
         logging.debug("Got item: {0!r}".format(name))
         try:
             rev = item.get_revision(rev_id)
-        except KeyError: # NoSuchRevisionError:
+        except KeyError:  # NoSuchRevisionError:
             try:
-                rev = item.get_revision(CURRENT) # fall back to current revision
+                rev = item.get_revision(CURRENT)  # fall back to current revision
                 # XXX add some message about invalid revision
-            except KeyError: # NoSuchRevisionError:
+            except KeyError:  # NoSuchRevisionError:
                 logging.debug("Item {0!r} has no revisions.".format(name))
                 rev = DummyRev(item, itemtype, contenttype)
                 logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
@@ -199,9 +200,25 @@ class BaseModifyForm(BaseChangeForm):
         return form
 
 
+UNKNOWN_ITEM_GROUP = "unknown items"
+
+
+def _build_contenttype_query(groups):
+    """
+    Build a Whoosh query from a list of contenttype groups.
+    """
+    queries = []
+    for g in groups:
+        for e in content_registry.groups[g]:
+            ct_unicode = unicode(e.content_type)
+            queries.append(Term(CONTENTTYPE, ct_unicode))
+            queries.append(Prefix(CONTENTTYPE, ct_unicode + u';'))
+    return Or(queries)
+
 IndexEntry = namedtuple('IndexEntry', 'relname meta')
 
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
+
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
@@ -236,7 +253,7 @@ class Item(object):
         property.
         """
         rev = get_storage_revision(name, itemtype, contenttype, rev_id, item)
-        contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
+        contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
@@ -273,11 +290,10 @@ class Item(object):
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
-        kill_keys = [# shall not get copied from old rev to new rev
+        kill_keys = [  # shall not get copied from old rev to new rev
             SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
-            NAME,
             ITEMID, REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
@@ -313,31 +329,34 @@ class Item(object):
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, name, comment, action):
-        self._save(self.meta, self.content.data, name=name, action=action, comment=comment)
-        old_prefixlen = len(self.subitems_prefix)
-        new_prefix = name + '/'
+    def _rename(self, name, comment, action, delete=False):
+        self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
+        old_prefix = self.subitems_prefix
+        old_prefixlen = len(old_prefix)
+        if not delete:
+            new_prefix = name + '/'
         for child in self.get_subitem_revs():
-            child_oldname = child.meta[NAME]
-            child_newname = new_prefix + child_oldname[old_prefixlen:]
-            item = Item.create(child_oldname)
-            item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment)
+            for child_oldname in child.meta[NAME]:
+                if child_oldname.startswith(old_prefix):
+                    if delete:
+                        child_newname = None
+                    else:  # rename
+                        child_newname = new_prefix + child_oldname[old_prefixlen:]
+                    item = Item.create(child_oldname)
+                    item._save(item.meta, item.content.data,
+                               name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
-        rename this item to item <name>
+        rename this item to item <name> (replace current name by another name in the NAME list)
         """
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
         """
-        delete this item
+        delete this item (remove current name from NAME list)
         """
-        trash_prefix = u'Trash/' # XXX move to config
-        now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
-        # make trash name unique by including timestamp:
-        trashname = u'{0}{1} ({2} UTC)'.format(trash_prefix, self.name, now)
-        return self._rename(trashname, comment, action=u'TRASH')
+        return self._rename(None, comment, action=u'TRASH', delete=True)
 
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
@@ -392,28 +411,40 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'', overwrite=False):
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+              overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
         try:
             currentrev = storage_item.get_revision(CURRENT)
             rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
-        except KeyError: # XXX was: NoSuchRevisionError:
+        except KeyError:  # XXX was: NoSuchRevisionError:
             currentrev = None
             rev_id = None
             contenttype_current = None
 
-        meta = dict(meta) # we may get a read-only dict-like, copy it
+        meta = dict(meta)  # we may get a read-only dict-like, copy it
 
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
         if name is None:
             name = self.name
         oldname = meta.get(NAME)
-        if oldname and oldname != name:
-            meta[NAME_OLD] = oldname
-        meta[NAME] = name
+        if oldname:
+            if not isinstance(oldname, list):
+                oldname = [oldname]
+            if delete or name not in oldname:  # this is a delete or rename
+                meta[NAME_OLD] = oldname[:]
+                try:
+                    oldname.remove(self.name)
+                except ValueError:
+                    pass
+                if not delete:
+                    oldname.append(name)
+                meta[NAME] = oldname
+        else:
+            meta[NAME] = [name]
 
         if comment:
             meta[COMMENT] = unicode(comment)
@@ -431,7 +462,7 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)
@@ -490,67 +521,49 @@ class Item(object):
         added_dir_relnames = set()
 
         for rev in subitems:
-            fullname = rev.meta[NAME]
-            relname = fullname[prefixlen:]
-            if '/' in relname:
-                # Find the *direct* subitem that is the ancestor of current
-                # (indirect) subitem. e.g. suppose when the index root is
-                # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
-                # 'foo/bar' will be found.
-                direct_relname = relname.partition('/')[0]
-                if direct_relname not in added_dir_relnames:
-                    added_dir_relnames.add(direct_relname)
-                    direct_fullname = prefix + direct_relname
-                    direct_rev = get_storage_revision(direct_fullname)
-                    dirs.append(IndexEntry(direct_relname, direct_rev.meta))
-            else:
-                files.append(IndexEntry(relname, rev.meta))
+            fullnames = rev.meta[NAME]
+            for fullname in fullnames:
+                if fullname.startswith(prefix):
+                    relname = fullname[prefixlen:]
+                    if '/' in relname:
+                        # Find the *direct* subitem that is the ancestor of current
+                        # (indirect) subitem. e.g. suppose when the index root is
+                        # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
+                        # 'foo/bar' will be found.
+                        direct_relname = relname.partition('/')[0]
+                        if direct_relname not in added_dir_relnames:
+                            added_dir_relnames.add(direct_relname)
+                            direct_fullname = prefix + direct_relname
+                            direct_rev = get_storage_revision(direct_fullname)
+                            dirs.append(IndexEntry(direct_relname, direct_rev.meta))
+                    else:
+                        files.append(IndexEntry(relname, rev.meta))
 
         return dirs, files
 
-    @timed()
-    def filter_index(self, index, startswith=None, selected_groups=None):
-        """
-        Filter a list of IndexEntry.
+    def build_index_query(self, startswith=None, selected_groups=None):
+        prefix = self.subitems_prefix
+        if startswith:
+            query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
+        else:
+            query = Prefix(NAME_EXACT, prefix)
 
-        :param startswith: if set, only items whose names start with startswith
-                           are selected.
-        :param selected_groups: if set, only items whose contentypes belong to
-                                the selected contenttype_groups are selected.
-        """
-        if startswith is not None:
-            index = [e for e in index
-                     if e.relname.startswith((startswith, startswith.swapcase()))]
+        if selected_groups:
+            selected_groups = set(selected_groups)
+            has_unknown = UNKNOWN_ITEM_GROUP in selected_groups
+            if has_unknown:
+                selected_groups.remove(UNKNOWN_ITEM_GROUP)
+            ct_query = _build_contenttype_query(selected_groups)
+            if has_unknown:
+                ct_query |= Not(_build_contenttype_query(content_registry.groups))
+            query &= ct_query
 
-        def build_contenttypes(groups):
-            contenttypes = []
-            for g in groups:
-                entries = content_registry.groups.get(g, []) # .get is a temporary workaround for "unknown items" group
-                contenttypes.extend([e.content_type for e in entries])
-            return contenttypes
-
-        def contenttype_match(tested, cts):
-            for ct in cts:
-                if ct.issupertype(tested):
-                    return True
-            return False
-
-        if selected_groups is not None:
-            selected_contenttypes = build_contenttypes(selected_groups)
-            filtered_index = [e for e in index if contenttype_match(Type(e.meta[CONTENTTYPE]), selected_contenttypes)]
-
-            unknown_item_group = "unknown items"
-            if unknown_item_group in selected_groups:
-                all_contenttypes = build_contenttypes(content_registry.group_names)
-                filtered_index.extend([e for e in index
-                                       if not contenttype_match(Type(e.meta[CONTENTTYPE]), all_contenttypes)])
-
-            index = filtered_index
-        return index
+        return query
 
     def get_index(self, startswith=None, selected_groups=None):
-        dirs, files = self.make_flat_index(self.get_subitem_revs())
-        return dirs, self.filter_index(files, startswith, selected_groups)
+        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups)
+        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
+        return self.make_flat_index(revs)
 
     def get_mixed_index(self):
         dirs, files = self.make_flat_index(self.get_subitem_revs())
@@ -561,10 +574,24 @@ class Item(object):
 
     index_template = 'index.html'
 
-    def name_initial(self, subitems):
-        prefixlen = len(self.subitems_prefix)
-        initials = [(item.meta[NAME][prefixlen]) for item in subitems]
-        return initials
+    def name_initial(self, subitems, uppercase=False, lowercase=False):
+        """
+        return a sorted list of first characters of subitem names,
+        optionally all uppercased or lowercased.
+        """
+        prefix = self.subitems_prefix
+        prefixlen = len(prefix)
+        initials = set()
+        for item in subitems:
+            for name in item.meta[NAME]:
+                if name.startswith(prefix):
+                    initial = name[prefixlen]
+                    if uppercase:
+                        initial = initial.upper()
+                    elif lowercase:
+                        initial = initial.lower()
+                    initials.add(initial)
+        return sorted(list(initials))
 
     delete_template = 'delete.html'
     destroy_template = 'destroy.html'
@@ -613,8 +640,8 @@ class Default(Contentful):
 
     def do_show(self, revid):
         show_revision = revid != CURRENT
-        show_navigation = False # TODO
-        first_rev = last_rev = None # TODO
+        show_navigation = False  # TODO
+        first_rev = last_rev = None  # TODO
         return render_template(self.show_template,
                                item=self, item_name=self.name,
                                rev=self.rev,
@@ -628,7 +655,7 @@ class Default(Contentful):
 
     def do_modify(self):
         method = request.method
-        if method == 'GET':
+        if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
                                        item_name=self.name,
@@ -720,6 +747,22 @@ class NonExistent(Item):
                                item_name=self.name,
                                itemtypes=item_registry.shown_entries,
                               )
+
+    def rename(self, name, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def delete(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def revert(self, comment=u''):
+        # pointless for non-existing items
+        pass
+
+    def destroy(self, comment=u'', destroy_item=False):
+        # pointless for non-existing items
+        pass
 
 
 from ..util.pysupport import load_package_modules

@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.util.mime
 """
 
 
-import pytest
-
 from MoinMoin.util.mime import *
 
 def test_Type_init_1():

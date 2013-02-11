@@ -6,11 +6,9 @@ MoinMoin - Tests for MoinMoin.converter.include
 """
 
 
-import pytest
-
 from MoinMoin.converter.include import *
 from MoinMoin.items import Item
-from MoinMoin.config import CONTENTTYPE
+from MoinMoin.constants.keys import CONTENTTYPE
 from MoinMoin._tests import wikiconfig, update_item
 
 class TestInclude(object):

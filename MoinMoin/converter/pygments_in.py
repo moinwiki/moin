@@ -97,7 +97,8 @@ if pygments:
             """
             if lexer is None and contenttype is not None:
                 ct = Type(contenttype)
-                mimetype = '{0}/{1}'.format(ct.type, ct.subtype) # pygments can't process parameters (like e.g. ...;charset=utf-8)
+                # pygments can't process parameters (like e.g. ...;charset=utf-8):
+                mimetype = '{0}/{1}'.format(ct.type, ct.subtype)
                 try:
                     lexer = pygments.lexers.get_lexer_for_mimetype(mimetype)
                 except pygments.util.ClassNotFound:
@@ -121,7 +122,7 @@ if pygments:
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
     class Converter(object):
-        def __init__(self, lexer=None, mimetype=None):
+        def __init__(self, lexer=None, contenttype=None):
             pass
 
         def __call__(self, content, arguments=None):

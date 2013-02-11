@@ -17,7 +17,7 @@ from flask import g as flaskg
 
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
-from MoinMoin.config import NAME, USERGROUP
+from MoinMoin.constants.keys import NAME, USERGROUP
 from MoinMoin.security import AccessControlList
 from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item
@@ -44,7 +44,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         assert u'ExampleUser' in flaskg.groups[u'SomeGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'AnotherGroup'])
 
-        item = update_item(u'SomeGroup', {NAME: u'AnotherGroup', USERGROUP: ["ExampleUser"]}, DATA)
+        item = update_item(u'SomeGroup', {NAME: [u'AnotherGroup', ], USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
 

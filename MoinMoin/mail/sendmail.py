@@ -8,7 +8,8 @@
 """
 
 
-import os, re
+import os
+import re
 from email.Header import Header
 
 from MoinMoin import log
@@ -16,7 +17,7 @@ logging = log.getLogger(__name__)
 
 from flask import current_app as app
 
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.i18n import _, L_, N_
 
 _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
@@ -45,7 +46,7 @@ def encodeAddress(address, charset):
         try:
             str(phrase)  # is it pure ascii?
         except UnicodeEncodeError:
-            phrase = phrase.encode(config.charset)
+            phrase = phrase.encode(CHARSET)
             phrase = Header(phrase, charset)
         blanks = match.group('blanks')
         addr = match.group('addr')
@@ -79,14 +80,16 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    import smtplib, socket
+    import smtplib
+    import socket
     from email.Message import Message
     from email.Charset import Charset, QP
     from email.Utils import formatdate, make_msgid
 
     cfg = app.cfg
     if not cfg.mail_enabled:
-        return (0, _("Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."))
+        return (0, _("Contact administrator: cannot send password recovery e-mail "
+                     "because mail configuration is incomplete."))
     mail_from = mail_from or cfg.mail_from
 
     logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
@@ -95,17 +98,17 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     if not to and not cc and not bcc:
         return (1, _("No recipients, nothing to do"))
 
-    subject = subject.encode(config.charset)
+    subject = subject.encode(CHARSET)
 
     # Create a text/plain body using CRLF (see RFC2822)
     text = text.replace(u'\n', u'\r\n')
-    text = text.encode(config.charset)
+    text = text.encode(CHARSET)
 
-    # Create a message using config.charset and quoted printable
+    # Create a message using CHARSET and quoted printable
     # encoding, which should be supported better by mail clients.
     # TODO: check if its really works better for major mail clients
     msg = Message()
-    charset = Charset(config.charset)
+    charset = Charset(CHARSET)
     charset.header_encoding = QP
     charset.body_encoding = QP
     msg.set_charset(charset)
@@ -145,7 +148,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
             try:
                 #server.set_debuglevel(1)
                 if cfg.mail_username is not None and cfg.mail_password is not None:
-                    try: # try to do tls
+                    try:  # try to do TLS
                         server.ehlo()
                         if server.has_extn('starttls'):
                             server.starttls()
@@ -212,6 +215,7 @@ def encodeSpamSafeEmail(email_address, obfuscation_text=''):
         address = address.replace(' AT ', ' AT {0} '.format(obfuscation_text.upper()))
 
     return address
+
 
 def decodeSpamSafeEmail(address):
     """ Decode obfuscated email address to standard email address
