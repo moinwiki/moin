@@ -480,7 +480,7 @@ class Converter(object):
         # of <dt><dd>
         for child in element:
             # We need one dt tag, and one dd tag, a have a pair
-            if (child.tag.name == 'dt' or child.tag.name == 'dd'):
+            if child.tag.name == 'dt' or child.tag.name == 'dd':
                 number_pair = number_pair + 1
 
             # The following code is similar to do_children method
@@ -494,7 +494,7 @@ class Converter(object):
             else:
                 pair.append(r)
 
-            if (number_pair == 2):
+            if number_pair == 2:
                 # We have two elements of the pair
                 # So we can put it into a <list-item> element
                 list_item_element = ET.Element(moin_page.list_item,

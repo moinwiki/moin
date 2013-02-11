@@ -37,7 +37,7 @@ button_filter.tags = set(['input', 'button'])
 
 
 def required_filter(tagname, attributes, contents, context, bind):
-    if (bind is not None and not bind.optional):
+    if bind is not None and not bind.optional:
         attributes[u'class'] = u'required'
         if tagname == 'input':
             attributes[u'required'] = u'required'

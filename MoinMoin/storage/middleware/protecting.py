@@ -55,7 +55,7 @@ class ProtectingMiddleware(object):
     def __init__(self, indexer, user, acl_mapping):
         """
         :param indexer: indexing middleware instance
-        :param user_name: the user's name (used for checking permissions)
+        :param user: a User instance (used for checking permissions)
         :param acl_mapping: list of (name_prefix, acls) tuples, longest prefix first, '' last
                             acls = dict with before, default, after, hierarchic entries
         """

@@ -49,7 +49,7 @@ class Set_Meta(Command):
 
         if query:
             qp = app.storage.query_parser([NAME_EXACT, ])
-            q = qp.parse(query_text)
+            q = qp.parse(query)
         else:
             q = Every()
 

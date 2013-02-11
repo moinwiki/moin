@@ -335,7 +335,7 @@ class Converter(object):
                     if child.tag.name == 'note-body':
                         body = self.do_children(child)
         # We process note only with note-body child
-        if not(body):
+        if not body:
             return
 
         body = self.new(docbook.simpara, attrib={}, children=body)
@@ -441,7 +441,7 @@ class Converter(object):
         for item in element:
             if item.tag.uri == moin_page and item.tag.name == 'body':
                 c = self.do_children(item)
-                if not(c):
+                if not c:
                     self.section_children = sorted(self.section_children.items(),
                                                    reverse=True)
                     section = None

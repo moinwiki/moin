@@ -65,7 +65,7 @@ class Table(object):
         self.j = 0
         self.table.append(row)
         if self.i > 0:
-            if len(self.table[-2]) > (self.j):
+            if len(self.table[-2]) > self.j:
                 self.add_cell(self.table[-2][self.j][0],
                                 self.table[-2][self.j][1] - 1, Cell(''))
         return row

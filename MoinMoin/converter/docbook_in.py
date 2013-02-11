@@ -981,7 +981,7 @@ class Converter(object):
         href = element.get(docbook.url)
         # Since it is an element of DocBook v.4,
         # The namespace does not always work, so we will try to retrive the attribute whatever
-        if not(href):
+        if not href:
             for key, value in element.attrib.iteritems():
                 if key.name == 'url' and allowed_uri_scheme(value):
                     href = value

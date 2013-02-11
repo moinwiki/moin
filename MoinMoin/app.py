@@ -109,8 +109,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
             Rule('/<itemname:wikipage>')
             Rule('/<itemname:wikipage>/edit')
-
-        :param map: the :class:`Map`.
         """
         regex = '[^/]+?(/[^/]+?)*'
         weight = 200

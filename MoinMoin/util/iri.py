@@ -322,7 +322,8 @@ class _Value(unicode):
         """
         Quote all illegal characters.
 
-        :param rules: List of unicode ranges
+        :param input: the string to quote
+        :param url: True for URI, False for IRI
         :param requote: Input string is already quoted
         :returns: Quoted string
         """

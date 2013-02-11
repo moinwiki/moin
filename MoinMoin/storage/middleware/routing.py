@@ -45,7 +45,7 @@ class Backend(MutableBackendBase):
         }
 
         :type namespaces: list of tuples of namespace specifier -> backend names
-        :param mapping: [(namespace, backend_name), ...]
+        :param namespaces: [(namespace, backend_name), ...]
         :type backends: dict backend names -> backends
         :param backends: {backend_name: backend, ...}
         """
@@ -66,7 +66,7 @@ class Backend(MutableBackendBase):
         find the backend it belongs to, the itemname without namespace
         spec and the namespace of the backend.
 
-        :param fq_name: fully-qualified itemnames
+        :param fq_names: fully-qualified itemnames
         :returns: tuple of (backend name, local item name, namespace)
         """
         fq_name = fq_names[0]
@@ -74,7 +74,7 @@ class Backend(MutableBackendBase):
             if fq_name.startswith(namespace):
                 item_names = [fq_name[len(namespace):] for fq_name in fq_names]
                 return backend_name, item_names, namespace.rstrip(':')
-        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(itemname, self.namespaces))
+        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(fq_name, self.namespaces))
 
     def __iter__(self):
         # Note: yields enough information so we can retrieve the revision from
