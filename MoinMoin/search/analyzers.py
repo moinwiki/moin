@@ -71,7 +71,7 @@ class AclTokenizer(Tokenizer):
 
     def __init__(self, acl_rights_contents):
         """
-        :param cfg: wiki config
+        :param acl_rights_contents: ACL for contents
         """
         self._acl_rights_contents = acl_rights_contents
 

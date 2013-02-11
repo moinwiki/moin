@@ -71,6 +71,8 @@ def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=
                 item_name = u'{0}:{1}'.format(namespace, item_name)
             if wiki_name:
                 url = u'{0}:{1}'.format(wiki_name, item_name)
+            else:
+                url = item_name
             url = u'/{0}'.format(url)
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
@@ -197,7 +199,7 @@ def getInterwikiName(item_name):
     """
     Get the (fully qualified) interwiki name of a local item name.
 
-    :param item_ame: item name (unicode)
+    :param item_name: item name (unicode)
     :rtype: unicode
     :returns: wiki_name:item_name
     """

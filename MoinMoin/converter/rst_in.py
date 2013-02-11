@@ -626,8 +626,8 @@ class Writer(writers.Writer):
     visitor_attributes = []
 
     def translate(self):
-        self.visitor = visitor = NodeVisitor(self.document)
-        self.document.walkabout(visitor)
+        self.visitor = visitor = NodeVisitor()
+        walkabout(self.document, visitor)
         self.output = visitor.tree()
 
 

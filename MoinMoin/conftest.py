@@ -32,8 +32,7 @@ import pytest
 import py
 import MoinMoin.log
 
-""" Logging for tests to avoid useless output like timing information on stderr on test failures
-"""
+# Logging for tests to avoid useless output like timing information on stderr on test failures
 Moindir = py.path.local(__file__).dirname
 config_file = Moindir + '/_tests/test_logging.conf'
 MoinMoin.log.load_config(config_file)

@@ -122,7 +122,7 @@ if pygments:
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
     class Converter(object):
-        def __init__(self, lexer=None, mimetype=None):
+        def __init__(self, lexer=None, contenttype=None):
             pass
 
         def __call__(self, content, arguments=None):

@@ -430,11 +430,6 @@ def show_item_meta(item):
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
-    # first check whether we have a valid search query:
-    search_form = SearchForm.from_flat(request.values)
-    if search_form.validate():
-        return _search(search_form, item_name)
-    search_form['submit'].set_default()  # XXX from_flat() kills all values
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
@@ -1131,16 +1126,16 @@ def register():
 
 @frontend.route('/+verifyemail', methods=['GET'])
 def verifyemail():
-    u = None
+    u = token = None
     if 'username' in request.values and 'token' in request.values:
         u = user.User(auth_username=request.values['username'])
         token = request.values['token']
-    if u and u.disabled and u.validate_recovery_token(token):
+    if u and u.disabled and token and u.validate_recovery_token(token):
         u.profile[DISABLED] = False
         u.save()
         flash(_("Your account has been activated, you can log in now."), "info")
     else:
-        flash(_('Your token is invalid!'), "error")
+        flash(_('Your username and/or token is invalid!'), "error")
     return redirect(url_for('.show_root'))
 
 

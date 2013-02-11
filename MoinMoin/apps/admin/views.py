@@ -101,7 +101,7 @@ def mail_recovery_token():
 @admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
 @require_permission(SUPERUSER)
 def sysitems_upgrade():
-    from MoinMoin.storage.backends import upgrade_sysitems
+    from MoinMoin.storage.backends import upgrade_sysitems  # XXX broken import, either fix or kill this
     from MoinMoin.storage.error import BackendError
     if request.method == 'GET':
         action = 'syspages_upgrade'

@@ -44,7 +44,7 @@ class MoinShell(Command):
                 Option('--no-ipython',
                        action="store_true",
                        dest='no_ipython',
-                       default=not(self.use_ipython)), )
+                       default=not self.use_ipython), )
 
     def get_context(self):
         """
