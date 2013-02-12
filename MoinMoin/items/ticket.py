@@ -107,6 +107,8 @@ class Ticket(Contentful):
             return self.do_modify()
 
     def do_modify(self):
+        is_new = isinstance(self.content, NonExistentContent)
+
         if request.method in ['GET', 'HEAD']:
             form = TicketForm.from_item(self)
         elif request.method == 'POST':
@@ -119,10 +121,7 @@ class Ticket(Contentful):
                     CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
                 })
 
-                if isinstance(self.content, NonExistentContent):
-                    data = u''
-                else:
-                    data = self.content.data_storage_to_internal(self.content.data)
+                data = u'' if is_new else self.content.data_storage_to_internal(self.content.data)
                 message = form['message'].value
                 if message:
                     data += message_markup(message)
@@ -133,13 +132,11 @@ class Ticket(Contentful):
                     abort(403)
                 else:
                     return redirect(url_for('.show_item', item_name=self.name))
-        if isinstance(self.content, NonExistentContent):
-            is_new = True
+        if is_new:
             # XXX suppress the "foo doesn't exist. Create it?" dummy content
             data_rendered = None
             form.submit_label = L_('Submit ticket')
         else:
-            is_new = False
             data_rendered = Markup(self.content._render_data())
 
         return render_template(self.modify_template,
