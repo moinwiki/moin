@@ -19,10 +19,6 @@ Helpers for using flatland with jinja2 to create html forms.
   <input type="hidden" name="{{ name }}" value="{{ value }}" />
 {% endmacro %}
 
-{% macro render_button(text) %}
-  <button type="submit">{{ text }}</button>
-{% endmacro %}
-
 {% macro render_submit(form) %}
   {{ gen.input(type='submit', value=form.submit_label, class='button', **kwargs) }}
 {% endmacro %}
