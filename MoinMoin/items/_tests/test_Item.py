@@ -13,6 +13,8 @@ from werkzeug import escape
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
+from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
 
 def build_index(basename, relnames):
@@ -39,8 +41,8 @@ class TestItem(object):
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
         assert meta == {
-                ITEMTYPE: u'nonexistent',
-                CONTENTTYPE: u'application/x-nonexistent',
+                ITEMTYPE: ITEMTYPE_NONEXISTENT,
+                CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
                 NAME: u'DoesNotExist',
                 }
         assert data == ''
@@ -189,7 +191,7 @@ class TestItem(object):
         item = Item.create(name)
         assert item.name == u'Test_Item'
         # this should be a fresh, new item, NOT the stuff we renamed:
-        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         # item at new name and its contents after renaming
         item = Item.create(new_name)
         assert item.name == u'Test_new_Item'
@@ -228,7 +230,7 @@ class TestItem(object):
         assert item1.rev.revid == item2.rev.revid == item3.rev.revid
 
         item4 = Item.create(u'Second')
-        assert item4.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item4.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
     def test_rename_recursion(self):
         update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
@@ -241,13 +243,13 @@ class TestItem(object):
         # items at original name and its contents after renaming
         item = Item.create(u'Page')
         assert item.name == u'Page'
-        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         item = Item.create(u'Page/Child')
         assert item.name == u'Page/Child'
-        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         item = Item.create(u'Page/Child/Another')
         assert item.name == u'Page/Child/Another'
-        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
         # item at new name and its contents after renaming
         item = Item.create(u'Renamed_Page')
@@ -287,12 +289,12 @@ class TestItem(object):
 
         item.rename(u'Renamed', comment=u'renamed')
 
-        assert Item.create(u'Page/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Page/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         assert Item.create(u'Renamed/Child').content.data == u'Child of Page'
-        assert Item.create(u'Page/Second').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Page/Second').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         assert Item.create(u'Renamed/Second').content.data == u'Both'
         assert Item.create(u'Another').content.data == u'Both'
-        assert Item.create(u'Page/Second/Child').meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert Item.create(u'Page/Second/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         assert Item.create(u'Renamed/Second/Child').content.data == u'Child of Second'
         assert Item.create(u'Other/Child2').content.data == u'Child of Other'
         assert Item.create(u'Another/Child').content.data == u'Child of Another'
@@ -314,7 +316,7 @@ class TestItem(object):
         item = Item.create(name)
         assert item.name == u'Test_Item2'
         # this should be a fresh, new item, NOT the stuff we deleted:
-        assert item.meta[CONTENTTYPE] == 'application/x-nonexistent'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
     def test_revert(self):
         name = u'Test_Item'
