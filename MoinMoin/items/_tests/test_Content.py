@@ -19,6 +19,7 @@ from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from MoinMoin.constants.keys import CONTENTTYPE, TAGS
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 class TestContent(object):
@@ -73,14 +74,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.content.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         tf_names = set(item.content.list_members())
         assert tf_names == members
         assert item.content.get_member('example1.txt').read() == filecontent
@@ -90,7 +91,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -107,7 +108,7 @@ class TestZipMixin(object):
 
     def test_put_member(self):
         item_name = u'Zip_file'
-        item = Item.create(item_name, itemtype=u'default', contenttype='application/zip')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/zip')
         filecontent = 'test_contents'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
@@ -174,7 +175,7 @@ class TestText(object):
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
-        item = Item.create(item_name, u'default', u'text/plain')
+        item = Item.create(item_name, ITEMTYPE_DEFAULT, u'text/plain')
         test_text = u'This \n is \n a \n Test'
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item.content, test_text)

@@ -52,6 +52,7 @@ from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
@@ -466,7 +467,7 @@ def convert_item(item_name):
     item_name_converted = item_name + 'converted'
     try:
         # TODO implement Content.create and use it here
-        converted_item = Item.create(item_name_converted, itemtype=u'default', contenttype=contenttype)
+        converted_item = Item.create(item_name_converted, itemtype=ITEMTYPE_DEFAULT, contenttype=contenttype)
     except AccessDenied:
         abort(403)
     return converted_item.content._convert(item.content.internal_representation())
@@ -481,7 +482,7 @@ def modify_item(item_name):
     After successful POST, redirects to the page.
     """
     # XXX drawing applets don't send itemtype
-    itemtype = request.values.get('itemtype', u'default')
+    itemtype = request.values.get('itemtype', ITEMTYPE_DEFAULT)
     contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, itemtype=itemtype, contenttype=contenttype)
