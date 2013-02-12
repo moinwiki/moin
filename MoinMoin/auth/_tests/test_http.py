@@ -10,6 +10,7 @@ from flask import request
 
 from MoinMoin.user import create_user
 from MoinMoin.auth.http import HTTPAuthMoin
+from MoinMoin.constants.misc import ANON
 
 
 class TestHTTPAuthMoin(object):
@@ -41,4 +42,4 @@ class TestHTTPAuthMoin(object):
         flaskg.user.auth_method = 'invalid'
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert not test_user.valid
-        assert test_user.name0 == u'anonymous'
+        assert test_user.name0 == ANON

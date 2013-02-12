@@ -37,6 +37,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import wikiutil
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
@@ -287,7 +288,7 @@ class User(object):
             users = search_users(**{NAME_EXACT: auth_username})
             if users:
                 itemid = users[0].meta[ITEMID]
-        if not itemid and _name and _name != 'anonymous':
+        if not itemid and _name and _name != ANON:
             users = search_users(**{NAME_EXACT: _name})
             if users:
                 itemid = users[0].meta[ITEMID]
@@ -331,7 +332,7 @@ class User(object):
             assert isinstance(names, list)
             return names[0]
         except IndexError:
-            return u'anonymous'
+            return ANON
 
     @property
     def language(self):
