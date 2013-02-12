@@ -148,8 +148,6 @@ DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME,
 
 File = FileStorage.with_properties(widget=WIDGET_FILE)
 
-Submit = String.using(default=L_('OK'), optional=True).with_properties(widget=WIDGET_SUBMIT, class_=CLASS_BUTTON)
-
 Hidden = String.using(optional=True).with_properties(widget=WIDGET_HIDDEN)
 
 # optional=True is needed to get rid of the "required field" indicator on the UI (usually an asterisk)

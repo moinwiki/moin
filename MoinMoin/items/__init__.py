@@ -44,7 +44,7 @@ from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
@@ -172,7 +172,7 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
 
 class BaseChangeForm(TextChaizedForm):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
-    submit = Submit
+    submit_label = L_('OK')
 
 
 class BaseMetaForm(Form):

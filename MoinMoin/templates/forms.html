@@ -23,6 +23,10 @@ Helpers for using flatland with jinja2 to create html forms.
   <button type="submit">{{ text }}</button>
 {% endmacro %}
 
+{% macro render_submit(form) %}
+  {{ gen.input(type='submit', value=form.submit_label, class='button', **kwargs) }}
+{% endmacro %}
+
 {% macro render_textcha(gen, form) %}
     {% if form.textcha_question.value %}
     <dt class="moin-textcha">
@@ -52,7 +56,6 @@ Helpers for using flatland with jinja2 to create html forms.
       'small_natural': small_natural,
       'datetime': datetime,
       'search': search,
-      'submit': raw_input,
       'hidden': raw_input,
       'select': select,
       'multi_select': multi_select,
