@@ -25,6 +25,7 @@ from io import BytesIO
 from werkzeug.wsgi import LimitedStream
 
 from MoinMoin.constants.keys import NAME, ITEMTYPE, SIZE
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 def serialize(backend, dst):
@@ -76,7 +77,7 @@ def deserialize(src, backend):
             meta[NAME] = [name, ]
         if ITEMTYPE not in meta:
             # temporary hack to upgrade serialized item files:
-            meta[ITEMTYPE] = u'default'
+            meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         data_size = meta[SIZE]
         curr_pos = src.tell()
         limited = LimitedStream(src, data_size)

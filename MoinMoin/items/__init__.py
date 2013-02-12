@@ -261,7 +261,7 @@ class Item(object):
         # content_registry.get yet, have to patch it later.
         content = Content.create(contenttype)
 
-        itemtype = rev.meta.get(ITEMTYPE) or itemtype or u'default'
+        itemtype = rev.meta.get(ITEMTYPE) or itemtype or ITEMTYPE_DEFAULT
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
         item = item_registry.get(itemtype, name, rev=rev, content=content)
