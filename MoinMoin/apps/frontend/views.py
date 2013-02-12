@@ -47,7 +47,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect)
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -137,7 +137,7 @@ class LookupForm(Form):
     refs = OptionalText.using(label='refs')
     tags = Tags.using(optional=True).using(label='tags')
     history = InlineCheckbox.using(label=L_('search also in non-current revisions'))
-    submit = Submit.using(default=L_('Lookup'))
+    submit_label = L_('Lookup')
 
 
 @frontend.route('/+lookup', methods=['GET', 'POST'])
@@ -165,7 +165,6 @@ def lookup():
     # TAGS might be there multiple times, thus we need multi:
     lookup_form = LookupForm.from_flat(request.values.items(multi=True))
     valid = lookup_form.validate()
-    lookup_form['submit'].set_default()  # XXX from_flat() kills all values
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
@@ -241,7 +240,6 @@ def _compute_item_transclusions(item_name):
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
-    search_form['submit'].set_default()  # XXX from_flat() kills all values
     query = search_form['q'].value
     if valid:
         history = bool(request.values.get('history'))
@@ -739,7 +737,7 @@ ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).wi
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
-    submit = Submit.using(default=L_('Filter'))
+    submit_label = L_('Filter')
 
 
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
@@ -756,7 +754,6 @@ def index(item_name):
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
-    form['submit'].set_default()  # XXX from_flat() kills all values
     if not form['contenttype']:
         form['contenttype'].set(contenttype_groups)
 
@@ -1016,7 +1013,7 @@ class RegistrationForm(TextChaizedForm):
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
     openid = YourOpenID.using(optional=True)
-    submit = Submit.using(default=L_('Register'))
+    submit_label = L_('Register')
 
     validators = [ValidRegistration()]
 
@@ -1150,7 +1147,7 @@ class PasswordLostForm(Form):
 
     username = OptionalText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
     email = YourEmail.using(optional=True)
-    submit = Submit.using(default=L_('Recover password'))
+    submit_label = L_('Recover password')
 
     validators = [ValidLostPassword()]
 
@@ -1218,7 +1215,7 @@ class PasswordRecoveryForm(Form):
         placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
         placeholder=L_("Repeat the same password"))
-    submit = Submit.using(default=L_('Change password'))
+    submit_label = L_('Change password')
 
     validators = [ValidPasswordRecovery()]
 
@@ -1284,7 +1281,10 @@ class LoginForm(Form):
     username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
     openid = YourOpenID.using(optional=True)
-    submit = Submit.using(default=L_('Log in'))
+    # This field results in a login_submit field in the POST form, which is in
+    # turn looked for by setup_user() in app.py as marker for login requests.
+    submit = Hidden.using(default='1')
+    submit_label = L_('Log in')
 
     validators = [ValidLogin()]
 
@@ -1361,19 +1361,21 @@ class UserSettingsPasswordForm(Form):
         placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
         placeholder=L_("Repeat the same password"))
-    submit = Submit.using(default=L_('Change password'))
+    submit_label = L_('Change password')
 
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
     email = YourEmail
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 class UserSettingsNavigationForm(Form):
     name = 'usersettings_navigation'
+    # XXX Flatland insists a form having at least one element
+    dummy = Hidden
     # TODO: find a good way to handle quicklinks here
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 class UserSettingsOptionsForm(Form):
@@ -1383,7 +1385,7 @@ class UserSettingsOptionsForm(Form):
     scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))
     show_comments = Checkbox.using(label=L_('Show comment sections'))
     disabled = Checkbox.using(label=L_('Disable this account forever'))
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1406,7 +1408,7 @@ def usersettings():
                                    key=lambda x: x[1])
         locales_keys = [l[0] for l in locales_available]
         locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
-        submit = Submit.using(default=L_('Save'))
+        submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
@@ -1421,7 +1423,7 @@ def usersettings():
             placeholder=L_("Editor textarea height (0=auto)"))
         results_per_page = Natural.using(label=L_('History results per page')).with_properties(
             placeholder=L_("Number of results per page (0=no paging)"))
-        submit = Submit.using(default=L_('Save'))
+        submit_label = L_('Save')
 
     form_classes = dict(
         personal=UserSettingsPersonalForm,
@@ -1488,7 +1490,6 @@ def usersettings():
                     if success:
                         user_old_email = flaskg.user.email
                         d = dict(form.value)
-                        d.pop('submit')
                         for k, v in d.items():
                             flaskg.user.profile[k] = v
                         if (part == 'notification' and app.cfg.user_email_verification and

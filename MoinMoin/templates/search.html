@@ -25,7 +25,7 @@
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
         {{ forms.render(medium_search_form['q']) }}
-        {{ forms.render(medium_search_form['submit']) }}
+        {{ forms.render_submit(medium_search_form) }}
         </p>
         <p>
         {{ forms.render(medium_search_form['history']) }}

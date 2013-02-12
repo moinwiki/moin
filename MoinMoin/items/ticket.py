@@ -19,7 +19,7 @@ from whoosh.query import Term
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
-from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, Submit, SmallNatural, Tags,
+from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
                             Reference, BackReference)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT
@@ -66,7 +66,7 @@ class TicketForm(BaseModifyForm):
     meta = TicketMetaForm
     backrefs = TicketBackRefForm
     message = OptionalMultilineText.using(label=L_("Message")).with_properties(rows=8, cols=80)
-    submit = Submit.using(default=L_("Update ticket"))
+    submit_label = L_("Update ticket")
 
     def _load(self, item):
         meta = item.prepare_meta_for_modify(item.meta)
@@ -137,7 +137,7 @@ class Ticket(Contentful):
             is_new = True
             # XXX suppress the "foo doesn't exist. Create it?" dummy content
             data_rendered = None
-            form['submit'] = L_('Submit ticket')
+            form.submit_label = L_('Submit ticket')
         else:
             is_new = False
             data_rendered = Markup(self.content._render_data())

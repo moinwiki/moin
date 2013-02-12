@@ -17,6 +17,7 @@
   {% endif %}
 </dl>
 {{ forms.render(form['submit']) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endif %}
 
@@ -29,6 +30,7 @@
   {{ forms.render(form['openid']) }}
 </dl>
 {{ forms.render(form['submit']) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endif %}
 
