@@ -24,6 +24,7 @@ WIDGET_SUBMIT = u'submit'
 WIDGET_HIDDEN = u'hidden'
 
 WIDGET_SELECT = u'select'
+WIDGET_SELECT_SUBMIT = u'select_submit'
 WIDGET_MULTI_SELECT = u'multi_select'
 
 WIDGET_READONLY_STRING_LIST = u'readonly_string_list'
