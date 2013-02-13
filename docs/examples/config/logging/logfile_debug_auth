@@ -1,0 +1,47 @@
+# This is a sample auth/session debug logging configuration.
+# If one encounters problem, one usually want to have lots of information -
+# but only from SOME parts of moin not from every part.
+# Thus we configure the root logger to use INFO loglevel and
+# some specific loggers to use DEBUG logging.
+
+[DEFAULT]
+# Logfile to create.
+# Make sure the running moin process has create/write rights there.
+logfile=/tmp/moin.log
+
+[loggers]
+keys=root,moin_auth,moin_session
+
+[handlers]
+keys=logfile
+
+[formatters]
+keys=logfile
+
+[logger_root]
+level=INFO
+handlers=logfile
+
+[logger_moin_auth]
+level=DEBUG
+handlers=logfile
+propagate=0
+qualname=MoinMoin.auth
+
+[logger_moin_session]
+level=DEBUG
+handlers=logfile
+propagate=0
+qualname=MoinMoin.session
+
+[handler_logfile]
+class=FileHandler
+formatter=logfile
+level=DEBUG
+args=('%(logfile)s', 'at')
+
+[formatter_logfile]
+format=%(asctime)s %(name)s %(levelname)s %(message)s
+datefmt=
+class=logging.Formatter
+
