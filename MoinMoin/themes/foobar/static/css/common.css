@@ -275,7 +275,7 @@ input[value="X"]:hover{background:#f4f4f4}
 #file_upload{margin-top:2em}
 form.upload_file{background-color:#d6d5d0;border:1px solid #ccc;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #9d9d9b;}
 form.upload_file:hover{box-shadow:0 0 5px #000}
-form.upload_file input{border:300px solid transparent;cursor:pointer;opacity:0;position:absolute}
+form.upload_file input{cursor:pointer;height:100%;margin:0;opacity:0;position:absolute}
 form.upload_file button{display:none}
 form.upload_file{display:block}
 .file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
