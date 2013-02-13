@@ -54,6 +54,7 @@ Helpers for using flatland with jinja2 to create html forms.
       'search': search,
       'hidden': raw_input,
       'select': select,
+      'select_submit': select_submit,
       'multi_select': multi_select,
       'readonly_string_list': readonly_string_list,
       'readonly_item_link_list': readonly_item_link_list,
@@ -162,6 +163,13 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.select.close() }}
     {{ render_errors(field) }}
   </dd>
+{% endmacro %}
+
+{% macro select_submit(field) %}
+  {% set labels = field.properties.get('labels', {}) %}
+  {% for value in field.valid_values %}
+    {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value)) }}
+  {% endfor %}
 {% endmacro %}
 
 {% macro multi_select(field) %}
