@@ -393,8 +393,7 @@ div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat cente
 #file_upload{margin-top:2em}
 form.upload_file{background-color:#708090;border:1px solid #4e7da9;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
 form.upload_file:hover{color:#fff}
-form.upload_file input{-moz-transform:translate(-800px,0) scale(10);border:300px solid transparent;cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
-form.upload_file input{height:auto}
+form.upload_file input{cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
 form.upload_file button{display:none}
 form.upload_file{display:block}
 .file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
