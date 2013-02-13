@@ -75,6 +75,15 @@ InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 
+# SelectSubmit is like Select in that it is rendered as a group of controls
+# with different (predefined) `value`s for the same `name`. But the controls are
+# submit buttons instead of radio buttons.
+#
+# This is used to present the user several "OK" buttons with slightly different
+# semantics, like "Update" and "Update and Close" on a ticket page, or
+# "Save as Draft" and "Publish" when editing a blog entry.
+SelectSubmit = Enum.with_properties(widget=WIDGET_SELECT_SUBMIT)
+
 
 # Need a better name to capture the behavior
 class MyJoinedString(JoinedString):
