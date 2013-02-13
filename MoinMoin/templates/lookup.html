@@ -23,7 +23,7 @@
                 {{ forms.render(lookup_form[e]) }}
             {% endfor %}
         </dl>
-        {{ gen.input(lookup_form['submit'], type='submit') }}
+        {{ forms.render_submit(lookup_form) }}
     {{ gen.form.close() }}
     {% else %}
     {% if not results %}

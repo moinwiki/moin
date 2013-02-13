@@ -7,6 +7,8 @@ MoinMoin - misc. constants not fitting elsewhere
 
 import re
 
+ANON = u'anonymous'
+
 # Invalid characters - invisible characters that should not be in page
 # names. Prevent user confusion and wiki abuse, e.g u'\u202aFrontPage'.
 ITEM_INVALID_CHARS_REGEX = re.compile(

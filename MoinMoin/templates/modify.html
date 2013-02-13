@@ -39,11 +39,11 @@
     {{ forms.render_errors(form) }}
     {#
        Workaround:
-       For *Draw content, hide form['submit'] and form['comment'], since *Draw
+       For *Draw content, hide submit button and form['comment'], since *Draw
        POSTs originate from their respective applets.
     #}
     {% if not form['content_form'].is_draw %}
-        {{ forms.render(form['submit']) }}
+        {{ forms.render_submit(form) }}
         <dl>
             {{ forms.render_textcha(gen, form) }}
             {{ forms.render(form['comment']) }}

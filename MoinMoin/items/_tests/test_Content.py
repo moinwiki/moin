@@ -18,7 +18,8 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.constants.keys import CONTENTTYPE
+from MoinMoin.constants.keys import CONTENTTYPE, TAGS
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 class TestContent(object):
@@ -39,21 +40,21 @@ class TestContent(object):
         item_name1 = u'Template_Item1'
         item1 = Item.create(item_name1)
         contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
+        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item1._save(meta)
         item1 = Item.create(item_name1)
 
         item_name2 = u'Template_Item2'
         item2 = Item.create(item_name2)
         contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
+        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item2._save(meta)
         item2 = Item.create(item_name2)
 
         item_name3 = u'Template_Item3'
         item3 = Item.create(item_name3)
         contenttype2 = u'image/png'
-        meta = {CONTENTTYPE: contenttype2, 'tags': ['template']}
+        meta = {CONTENTTYPE: contenttype2, TAGS: ['template']}
         item3._save(meta)
         item3 = Item.create(item_name3)
         # two items of same content type
@@ -73,14 +74,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.content.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         tf_names = set(item.content.list_members())
         assert tf_names == members
         assert item.content.get_member('example1.txt').read() == filecontent
@@ -90,7 +91,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -107,7 +108,7 @@ class TestZipMixin(object):
 
     def test_put_member(self):
         item_name = u'Zip_file'
-        item = Item.create(item_name, itemtype=u'default', contenttype='application/zip')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/zip')
         filecontent = 'test_contents'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
@@ -174,7 +175,7 @@ class TestText(object):
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
-        item = Item.create(item_name, u'default', u'text/plain')
+        item = Item.create(item_name, ITEMTYPE_DEFAULT, u'text/plain')
         test_text = u'This \n is \n a \n Test'
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item.content, test_text)

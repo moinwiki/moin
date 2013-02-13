@@ -75,6 +75,15 @@ InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 
+# SelectSubmit is like Select in that it is rendered as a group of controls
+# with different (predefined) `value`s for the same `name`. But the controls are
+# submit buttons instead of radio buttons.
+#
+# This is used to present the user several "OK" buttons with slightly different
+# semantics, like "Update" and "Update and Close" on a ticket page, or
+# "Save as Draft" and "Publish" when editing a blog entry.
+SelectSubmit = Enum.with_properties(widget=WIDGET_SELECT_SUBMIT)
+
 
 # Need a better name to capture the behavior
 class MyJoinedString(JoinedString):
@@ -147,8 +156,6 @@ DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME,
             .validated_by(Converted(incorrect=L_("Please use the following format: YYYY-MM-DD HH:MM:SS"))))
 
 File = FileStorage.with_properties(widget=WIDGET_FILE)
-
-Submit = String.using(default=L_('OK'), optional=True).with_properties(widget=WIDGET_SUBMIT, class_=CLASS_BUTTON)
 
 Hidden = String.using(optional=True).with_properties(widget=WIDGET_HIDDEN)
 

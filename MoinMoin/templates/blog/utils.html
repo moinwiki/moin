@@ -61,7 +61,7 @@
     {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
         <div>
             {{ forms.render(form['q']) }}
-            {{ gen.button(form['submit'], type='submit', id='moin-search-submit') }}
+            {{ forms.render_submit(form, id='moin-search-submit') }}
             {{ forms.render_errors(form) }}
             <br />
             <input type="checkbox" id="moin-blog-search-this"

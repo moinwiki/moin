@@ -14,16 +14,18 @@ from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
+from MoinMoin.constants.keys import NAME, CONTENTTYPE
+
 from MoinMoin.storage.backends.stores import MutableBackend
 from MoinMoin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, ''),
-    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, '2nd'),
-    (u'Subdir', {'name': [u'Subdir', ], 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Foo', {'name': [u'Subdir/Foo', ], 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Bar', {'name': [u'Subdir/Bar', ], 'contenttype': u'text/plain'}, ''),
+    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain'}, ''),
+    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain'}, '2nd'),
+    (u'Subdir', {NAME: [u'Subdir', ], CONTENTTYPE: u'text/plain'}, ''),
+    (u'Subdir/Foo', {NAME: [u'Subdir/Foo', ], CONTENTTYPE: u'text/plain'}, ''),
+    (u'Subdir/Bar', {NAME: [u'Subdir/Bar', ], CONTENTTYPE: u'text/plain'}, ''),
 ]
 
 
@@ -71,7 +73,7 @@ def make_middleware(request):
 def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:
-        item = source[u'name']
+        item = source[name]
         item.store_revision(dict(meta, mtime=i), StringIO(data))
         i += 1
 

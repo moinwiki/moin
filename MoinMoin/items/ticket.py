@@ -19,7 +19,7 @@ from whoosh.query import Term
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
-from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, Submit, SmallNatural, Tags,
+from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
                             Reference, BackReference)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT
@@ -66,7 +66,7 @@ class TicketForm(BaseModifyForm):
     meta = TicketMetaForm
     backrefs = TicketBackRefForm
     message = OptionalMultilineText.using(label=L_("Message")).with_properties(rows=8, cols=80)
-    submit = Submit.using(default=L_("Update ticket"))
+    submit_label = L_("Update ticket")
 
     def _load(self, item):
         meta = item.prepare_meta_for_modify(item.meta)
@@ -107,6 +107,8 @@ class Ticket(Contentful):
             return self.do_modify()
 
     def do_modify(self):
+        is_new = isinstance(self.content, NonExistentContent)
+
         if request.method in ['GET', 'HEAD']:
             form = TicketForm.from_item(self)
         elif request.method == 'POST':
@@ -119,10 +121,7 @@ class Ticket(Contentful):
                     CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
                 })
 
-                if isinstance(self.content, NonExistentContent):
-                    data = u''
-                else:
-                    data = self.content.data_storage_to_internal(self.content.data)
+                data = u'' if is_new else self.content.data_storage_to_internal(self.content.data)
                 message = form['message'].value
                 if message:
                     data += message_markup(message)
@@ -133,13 +132,11 @@ class Ticket(Contentful):
                     abort(403)
                 else:
                     return redirect(url_for('.show_item', item_name=self.name))
-        if isinstance(self.content, NonExistentContent):
-            is_new = True
+        if is_new:
             # XXX suppress the "foo doesn't exist. Create it?" dummy content
             data_rendered = None
-            form['submit'] = L_('Submit ticket')
+            form.submit_label = L_('Submit ticket')
         else:
-            is_new = False
             data_rendered = Markup(self.content._render_data())
 
         return render_template(self.modify_template,

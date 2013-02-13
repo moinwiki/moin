@@ -47,11 +47,12 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Submit, Hidden, MultiSelect)
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
@@ -137,7 +138,7 @@ class LookupForm(Form):
     refs = OptionalText.using(label='refs')
     tags = Tags.using(optional=True).using(label='tags')
     history = InlineCheckbox.using(label=L_('search also in non-current revisions'))
-    submit = Submit.using(default=L_('Lookup'))
+    submit_label = L_('Lookup')
 
 
 @frontend.route('/+lookup', methods=['GET', 'POST'])
@@ -165,7 +166,6 @@ def lookup():
     # TAGS might be there multiple times, thus we need multi:
     lookup_form = LookupForm.from_flat(request.values.items(multi=True))
     valid = lookup_form.validate()
-    lookup_form['submit'].set_default()  # XXX from_flat() kills all values
     if valid:
         history = bool(request.values.get('history'))
         idx_name = ALL_REVS if history else LATEST_REVS
@@ -226,7 +226,7 @@ def _compute_item_transclusions(item_name):
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         # The search process should be as fast as possible so use
         # the indexer low-level documents instead of high-level Revisions.
-        doc = searcher.document(name_exact=item_name)
+        doc = searcher.document(**{NAME_EXACT: item_name})
         if not doc:
             return set()
         transcluded_names = set(doc[ITEMTRANSCLUSIONS])
@@ -241,7 +241,6 @@ def _compute_item_transclusions(item_name):
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     valid = search_form.validate()
-    search_form['submit'].set_default()  # XXX from_flat() kills all values
     query = search_form['q'].value
     if valid:
         history = bool(request.values.get('history'))
@@ -281,24 +280,15 @@ def search(item_name):
             flaskg.clock.start('search')
             results = searcher.search(q, filter=_filter, limit=100)
             flaskg.clock.stop('search')
-            # XXX if found that calling key_terms like you see below is 1000..10000x
-            # slower than the search itself, so we better don't do that right now.
-            key_terms_is_fast = False
-            if key_terms_is_fast:
-                flaskg.clock.start('search suggestions')
-                name_suggestions = u', '.join([word
-                                               for word, score in results.key_terms(NAME, docs=20, numterms=10)])
-                content_suggestions = u', '.join([word
-                                                  for word, score in results.key_terms(CONTENT, docs=20, numterms=10)])
-                flaskg.clock.stop('search suggestions')
-            else:
-                name_suggestions = u''
-                content_suggestions = u''
+            flaskg.clock.start('search suggestions')
+            name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
+            content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
+            flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
             html = render_template('search.html',
                                    results=results,
-                                   name_suggestions=name_suggestions,
-                                   content_suggestions=content_suggestions,
+                                   name_suggestions=u', '.join(name_suggestions),
+                                   content_suggestions=u', '.join(content_suggestions),
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
@@ -477,7 +467,7 @@ def convert_item(item_name):
     item_name_converted = item_name + 'converted'
     try:
         # TODO implement Content.create and use it here
-        converted_item = Item.create(item_name_converted, itemtype=u'default', contenttype=contenttype)
+        converted_item = Item.create(item_name_converted, itemtype=ITEMTYPE_DEFAULT, contenttype=contenttype)
     except AccessDenied:
         abort(403)
     return converted_item.content._convert(item.content.internal_representation())
@@ -492,7 +482,7 @@ def modify_item(item_name):
     After successful POST, redirects to the page.
     """
     # XXX drawing applets don't send itemtype
-    itemtype = request.values.get('itemtype', u'default')
+    itemtype = request.values.get('itemtype', ITEMTYPE_DEFAULT)
     contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, itemtype=itemtype, contenttype=contenttype)
@@ -748,7 +738,7 @@ ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).wi
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
-    submit = Submit.using(default=L_('Filter'))
+    submit_label = L_('Filter')
 
 
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
@@ -765,7 +755,6 @@ def index(item_name):
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
-    form['submit'].set_default()  # XXX from_flat() kills all values
     if not form['contenttype']:
         form['contenttype'].set(contenttype_groups)
 
@@ -1025,7 +1014,7 @@ class RegistrationForm(TextChaizedForm):
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
     openid = YourOpenID.using(optional=True)
-    submit = Submit.using(default=L_('Register'))
+    submit_label = L_('Register')
 
     validators = [ValidRegistration()]
 
@@ -1159,7 +1148,7 @@ class PasswordLostForm(Form):
 
     username = OptionalText.using(label=L_('Name')).with_properties(placeholder=L_("Your login name"))
     email = YourEmail.using(optional=True)
-    submit = Submit.using(default=L_('Recover password'))
+    submit_label = L_('Recover password')
 
     validators = [ValidLostPassword()]
 
@@ -1227,7 +1216,7 @@ class PasswordRecoveryForm(Form):
         placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
         placeholder=L_("Repeat the same password"))
-    submit = Submit.using(default=L_('Change password'))
+    submit_label = L_('Change password')
 
     validators = [ValidPasswordRecovery()]
 
@@ -1293,7 +1282,10 @@ class LoginForm(Form):
     username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
     openid = YourOpenID.using(optional=True)
-    submit = Submit.using(default=L_('Log in'))
+    # This field results in a login_submit field in the POST form, which is in
+    # turn looked for by setup_user() in app.py as marker for login requests.
+    submit = Hidden.using(default='1')
+    submit_label = L_('Log in')
 
     validators = [ValidLogin()]
 
@@ -1370,19 +1362,21 @@ class UserSettingsPasswordForm(Form):
         placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.using(label=L_('New password (repeat)')).with_properties(
         placeholder=L_("Repeat the same password"))
-    submit = Submit.using(default=L_('Change password'))
+    submit_label = L_('Change password')
 
 
 class UserSettingsNotificationForm(Form):
     name = 'usersettings_notification'
     email = YourEmail
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 class UserSettingsNavigationForm(Form):
     name = 'usersettings_navigation'
+    # XXX Flatland insists a form having at least one element
+    dummy = Hidden
     # TODO: find a good way to handle quicklinks here
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 class UserSettingsOptionsForm(Form):
@@ -1392,7 +1386,7 @@ class UserSettingsOptionsForm(Form):
     scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))
     show_comments = Checkbox.using(label=L_('Show comment sections'))
     disabled = Checkbox.using(label=L_('Disable this account forever'))
-    submit = Submit.using(default=L_('Save'))
+    submit_label = L_('Save')
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1415,7 +1409,7 @@ def usersettings():
                                    key=lambda x: x[1])
         locales_keys = [l[0] for l in locales_available]
         locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
-        submit = Submit.using(default=L_('Save'))
+        submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
@@ -1430,7 +1424,7 @@ def usersettings():
             placeholder=L_("Editor textarea height (0=auto)"))
         results_per_page = Natural.using(label=L_('History results per page')).with_properties(
             placeholder=L_("Number of results per page (0=no paging)"))
-        submit = Submit.using(default=L_('Save'))
+        submit_label = L_('Save')
 
     form_classes = dict(
         personal=UserSettingsPersonalForm,
@@ -1483,21 +1477,20 @@ def usersettings():
                         if set(form['name'].value) != set(flaskg.user.name):
                             new_names = set(form['name'].value) - set(flaskg.user.name)
                             for name in new_names:
-                                if user.search_users(name_exact=name):
+                                if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
                                     response['flash'].append((_("The username %(name)r is already in use.", name=name),
                                                               "error"))
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
-                            user.search_users(email=form['email'].value) and app.cfg.user_email_unique):
+                            user.search_users(**{EMAIL: form['email'].value}) and app.cfg.user_email_unique):
                             # duplicate email
                             response['flash'].append((_('This email is already in use'), 'error'))
                             success = False
                     if success:
                         user_old_email = flaskg.user.email
                         d = dict(form.value)
-                        d.pop('submit')
                         for k, v in d.items():
                             flaskg.user.profile[k] = v
                         if (part == 'notification' and app.cfg.user_email_verification and
