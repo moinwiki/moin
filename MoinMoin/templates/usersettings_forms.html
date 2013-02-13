@@ -11,7 +11,7 @@
     {{ forms.render(form['locale']) }}
 </dl>
 {{ forms.render_hidden('part', 'personal') }}
-{{ forms.render_button(_("Save")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 
@@ -25,7 +25,7 @@
     {{ forms.render(form['password2']) }}
 </dl>
 {{ forms.render_hidden('part', 'password') }}
-{{ forms.render_button(_("Change password")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 
@@ -39,7 +39,7 @@
     {{ forms.render(form['email']) }}
 </dl>
 {{ forms.render_hidden('part', 'notification') }}
-{{ forms.render_button(_("Save")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 
@@ -53,7 +53,7 @@
     {{ forms.render(form['results_per_page']) }}
 </dl>
 {{ forms.render_hidden('part', 'ui') }}
-{{ forms.render_button(_("Save")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 
@@ -64,7 +64,7 @@
     {# TODO: find a good way to handle quicklinks #}
 </dl>
 {{ forms.render_hidden('part', 'navigation') }}
-{{ forms.render_button(_("Save")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 
@@ -79,7 +79,7 @@
     {{ forms.render(form['disabled']) }}
 </dl>
 {{ forms.render_hidden('part', 'options') }}
-{{ forms.render_button(_("Save")) }}
+{{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endmacro %}
 

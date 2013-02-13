@@ -28,6 +28,7 @@ from jinja2 import ChoiceLoader, FileSystemLoader
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import i18n_init
 from MoinMoin.i18n import _, L_, N_
 
@@ -223,7 +224,7 @@ def setup_user():
 
     # if we still have no user obj, create a dummy:
     if not userobj:
-        userobj = user.User(name=u'anonymous', auth_method='invalid')
+        userobj = user.User(name=ANON, auth_method='invalid')
     # if we have a valid user we store it in the session
     if userobj.valid:
         session['user.itemid'] = userobj.itemid

@@ -203,6 +203,12 @@ class TestAcl(object):
 
     TO DO: test unknown user?
     """
+    def testhasACL(self):
+        acl = AccessControlList(valid=app.cfg.acl_rights_contents)
+        assert not acl.has_acl()
+        acl = AccessControlList(["All:read", ], valid=app.cfg.acl_rights_contents)
+        assert acl.has_acl()
+
     def testApplyACLByUser(self):
         """ security: applying acl by user name"""
         # This acl string...
@@ -329,6 +335,7 @@ class TestItemAcls(object):
     from MoinMoin._tests import wikiconfig
     class Config(wikiconfig.Config):
         content_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+        acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')
@@ -378,6 +385,14 @@ class TestItemAcls(object):
             for right in mayNot:
                 yield _not_have_right, u, right, itemname
 
+        # check function rights
+        u = User(auth_username='SuperUser')
+        assert u.may.superuser()
+        u = User(auth_username='NoTextchaUser')
+        assert u.may.notextcha()
+        u = User(auth_username='SomeGuy')
+        assert not u.may.superuser()
+        assert not u.may.notextcha()
 
 class TestItemHierachicalAcls(object):
     """ security: real-life access control list on items testing

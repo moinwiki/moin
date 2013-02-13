@@ -19,8 +19,8 @@ Helpers for using flatland with jinja2 to create html forms.
   <input type="hidden" name="{{ name }}" value="{{ value }}" />
 {% endmacro %}
 
-{% macro render_button(text) %}
-  <button type="submit">{{ text }}</button>
+{% macro render_submit(form) %}
+  {{ gen.input(type='submit', value=form.submit_label, class='button', **kwargs) }}
 {% endmacro %}
 
 {% macro render_textcha(gen, form) %}
@@ -52,9 +52,9 @@ Helpers for using flatland with jinja2 to create html forms.
       'small_natural': small_natural,
       'datetime': datetime,
       'search': search,
-      'submit': raw_input,
       'hidden': raw_input,
       'select': select,
+      'select_submit': select_submit,
       'multi_select': multi_select,
       'readonly_string_list': readonly_string_list,
       'readonly_item_link_list': readonly_item_link_list,
@@ -163,6 +163,13 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.select.close() }}
     {{ render_errors(field) }}
   </dd>
+{% endmacro %}
+
+{% macro select_submit(field) %}
+  {% set labels = field.properties.get('labels', {}) %}
+  {% for value in field.valid_values %}
+    {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value)) }}
+  {% endfor %}
 {% endmacro %}
 
 {% macro multi_select(field) %}

@@ -770,7 +770,7 @@ class IndexingMiddleware(object):
         """
         Return item with <name> (may be a new or existing item).
         """
-        return Item(self, name_exact=name)
+        return Item(self, **{NAME_EXACT: name})
 
     def get_item(self, **query):
         """
@@ -813,7 +813,7 @@ class Item(object):
         """
         self.indexer = indexer
         self.backend = self.indexer.backend
-        self._name = query.get('name_exact')
+        self._name = query.get(NAME_EXACT)
         if latest_doc is None:
             # we need to call the method without acl check to avoid endless recursion:
             latest_doc = self.indexer._document(**query)
@@ -879,7 +879,7 @@ class Item(object):
         """
         parent_ids = set()
         for parent_name in self.parentnames:
-            rev = self.indexer._document(idx_name=LATEST_REVS, name_exact=parent_name)
+            rev = self.indexer._document(idx_name=LATEST_REVS, **{NAME_EXACT: parent_name})
             if rev:
                 parent_ids.add(rev[ITEMID])
         return parent_ids

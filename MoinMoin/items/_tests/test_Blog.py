@@ -12,6 +12,7 @@ from flask import url_for
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
+from MoinMoin.constants.misc import ANON
 from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from MoinMoin.items.blog import Blog, BlogEntry
 
@@ -122,10 +123,10 @@ class TestBlog(TestView):
             item._save(self.entry_meta, entry['data'], comment=self.comment)
         # publish the first three entries with specific ACLs
         # we are an "anonymous" user
-        self._publish_entry(self.entries[0], ptime=1000, acl=u"anonymous:read")
-        self._publish_entry(self.entries[1], ptime=3000, acl=u"anonymous:read")
+        self._publish_entry(self.entries[0], ptime=1000, acl=u"%s:read" % ANON)
+        self._publish_entry(self.entries[1], ptime=3000, acl=u"%s:read" % ANON)
         # specify no rights on the 3rd entry
-        self._publish_entry(self.entries[2], ptime=2000, acl=u"anonymous:")
+        self._publish_entry(self.entries[2], ptime=2000, acl=u"%s:" % ANON)
         # the blog is not empty and the 3rd entry is not displayed
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[2]['data'], ]
         ordered_data = [self.data,

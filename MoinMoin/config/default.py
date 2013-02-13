@@ -22,6 +22,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import error
 from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
+from MoinMoin.constants.keys import *
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
@@ -77,10 +78,10 @@ class ConfigFunctionality(object):
 
         plugins._loadPluginModule(self)
 
-        if self.user_defaults['timezone'] is None:
-            self.user_defaults['timezone'] = self.timezone_default
-        if self.user_defaults['theme_name'] is None:
-            self.user_defaults['theme_name'] = self.theme_default
+        if self.user_defaults[TIMEZONE] is None:
+            self.user_defaults[TIMEZONE] = self.timezone_default
+        if self.user_defaults[THEME_NAME] is None:
+            self.user_defaults[THEME_NAME] = self.theme_default
         # Note: do not assign user_defaults['locale'] = locale_default
         # to give browser language detection a chance.
         try:
@@ -475,35 +476,35 @@ options_no_group_name = {
   # ==========================================================================
   'user': ('User Preferences', None, (
     ('user_defaults',
-      dict(
-        name=[],
-        display_name=None,
-        email=None,
-        openid=None,
-        css_url=None,
-        mailto_author=False,
-        edit_on_doubleclick=True,
-        scroll_page_after_edit=True,
-        show_comments=False,
-        want_trivial=False,
-        enc_password=u'',  # empty value == invalid hash
-        disabled=False,
-        bookmarks={},
-        quicklinks=[],
-        subscribed_items=[],
-        email_subscribed_events=[
+     {
+        NAME: [],
+        DISPLAY_NAME: None,
+        EMAIL: None,
+        OPENID: None,
+        CSS_URL: None,
+        MAILTO_AUTHOR: False,
+        EDIT_ON_DOUBLECLICK: True,
+        SCROLL_PAGE_AFTER_EDIT: True,
+        SHOW_COMMENTS: False,
+        WANT_TRIVIAL: False,
+        ENC_PASSWORD: u'',  # empty value == invalid hash
+        DISABLED: False,
+        BOOKMARKS: {},
+        QUICKLINKS: [],
+        SUBSCRIBED_ITEMS: [],
+        EMAIL_SUBSCRIBED_EVENTS: [
             # XXX PageChangedEvent.__name__
             # XXX PageRenamedEvent.__name__
             # XXX PageDeletedEvent.__name__
             # XXX PageCopiedEvent.__name__
             # XXX PageRevertedEvent.__name__
         ],
-        theme_name=None,  # None -> use cfg.theme_default
-        edit_rows=0,
-        results_per_page=0,
-        locale=None,  # None -> do browser language detection, otherwise just use this locale
-        timezone=None,  # None -> use cfg.timezone_default
-      ),
+        THEME_NAME: None,  # None -> use cfg.theme_default
+        EDIT_ROWS: 0,
+        RESULTS_PER_PAGE: 0,
+        LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
+        TIMEZONE: None,  # None -> use cfg.timezone_default
+     },
      'Default attributes of the user object'),
   )),
   # ==========================================================================

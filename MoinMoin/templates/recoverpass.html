@@ -11,6 +11,6 @@
     {{ forms.render(form['password1']) }}
     {{ forms.render(form['password2']) }}
   </dl>
-  {{ forms.render(form['submit']) }}
+  {{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 {% endblock %}

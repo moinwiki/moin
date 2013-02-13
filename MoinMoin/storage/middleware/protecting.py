@@ -22,7 +22,7 @@ logging = log.getLogger(__name__)
 from whoosh.util import lru_cache
 
 from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, DESTROY, ACL_RIGHTS_CONTENTS)
-from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS
+from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
 
 from MoinMoin.security import AccessControlList
 
@@ -105,13 +105,14 @@ class ProtectingMiddleware(object):
         """
 
         if itemid is not None:
-            item = self.get_item(itemid=itemid)
+            q = {ITEMID: itemid}
         elif fqname is not None:
             # itemid might be None for new, not yet stored items,
             # but we have fqname then
-            item = self.get_item(name_exact=fqname)
+            q = {NAME_EXACT: fqname}
         else:
             raise ValueError("need itemid or fqname")
+        item = self.get_item(**q)
         acl = item.acl
         fqname = item.fqname
         if acl is not None:

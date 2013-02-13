@@ -37,6 +37,7 @@ logging = log.getLogger(__name__)
 from MoinMoin import wikiutil
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
@@ -56,7 +57,7 @@ Name may contain any Unicode alpha numeric character, with optional one
 space between words. Group page name is not allowed.""", name=username)
 
     # Name required to be unique. Check if name belong to another user.
-    if validate and search_users(name_exact=username):
+    if validate and search_users(**{NAME_EXACT: username}):
         return _("This user name already belongs to somebody else.")
 
     # XXX currently we just support creating with 1 name:
@@ -113,8 +114,8 @@ def search_users(**q):
     """ Searches for a users with given query keys/values """
     # Since item name is a list, it's possible a list have been passed as parameter.
     # No problem, since user always have just one name (TODO: validate single name for user)
-    if q.get('name_exact') and isinstance(q.get('name_exact'), list):
-        q['name_exact'] = q['name_exact'][0]
+    if q.get(NAME_EXACT) and isinstance(q.get(NAME_EXACT), list):
+        q[NAME_EXACT] = q[NAME_EXACT][0]
     q = update_user_query(**q)
     backend = get_user_backend()
     docs = backend.documents(**q)
@@ -284,11 +285,11 @@ class User(object):
 
         itemid = uid
         if not itemid and auth_username:
-            users = search_users(name_exact=auth_username)
+            users = search_users(**{NAME_EXACT: auth_username})
             if users:
                 itemid = users[0].meta[ITEMID]
-        if not itemid and _name and _name != 'anonymous':
-            users = search_users(name_exact=_name)
+        if not itemid and _name and _name != ANON:
+            users = search_users(**{NAME_EXACT: _name})
             if users:
                 itemid = users[0].meta[ITEMID]
         if itemid:
@@ -331,7 +332,7 @@ class User(object):
             assert isinstance(names, list)
             return names[0]
         except IndexError:
-            return u'anonymous'
+            return ANON
 
     @property
     def language(self):

@@ -11,7 +11,7 @@
     {{ forms.render(form['username']) }}
     {{ forms.render(form['email']) }}
   </dl>
-  {{ forms.render(form['submit']) }}
+  {{ forms.render_submit(form) }}
 {{ gen.form.close() }}
 </div>
 {% endblock %}

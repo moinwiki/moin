@@ -8,6 +8,7 @@ Test for auth.__init__
 from flask import g as flaskg
 
 from MoinMoin._tests import wikiconfig
+from MoinMoin.constants.misc import ANON
 from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
 from MoinMoin.user import create_user
 
@@ -57,7 +58,7 @@ def test_handle_login():
     test_user1 = handle_login(flaskg.user, login_username='test_user', login_password='test_password', stage='moin')
     test_login_message = [u'Invalid username or password.']
     assert flaskg._login_messages == test_login_message
-    assert test_user1.name0 == u'anonymous'
+    assert test_user1.name0 == ANON
     assert not test_user1.valid
     # pop the message
     flaskg._login_messages.pop()
