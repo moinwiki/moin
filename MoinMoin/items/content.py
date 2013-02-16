@@ -309,6 +309,10 @@ class Binary(Content):
     data = property(fget=get_data)
 
     class ModifyForm(Form):
+        """
+        The content part of the ModifyForm of an Item subclass. See also the
+        doc of Item._ModifyForm.
+        """
         template = 'modify_binary.html'
         help = """\
 There is no help, you're doomed!

@@ -186,8 +186,18 @@ class BaseMetaForm(Form):
 
 
 class BaseModifyForm(BaseChangeForm):
+    """
+    This class is abstract and only defines two factory methods; see
+    Item._ModifyForm for the implementation.
+    """
     @classmethod
     def from_item(cls, item):
+        """
+        Construct an instance from :item.
+
+        This class method is not supposed to be overriden; subclasses should
+        overrride the _load method instead.
+        """
         form = cls.from_defaults()
         TextCha(form).amend_form()
         form._load(item)
@@ -195,6 +205,13 @@ class BaseModifyForm(BaseChangeForm):
 
     @classmethod
     def from_request(cls, request):
+        """
+        Construct an instance from :request.
+
+        Since the mapping from HTTP form (unlike from an Item instance) to
+        Flatland Form is straightforward, there should be rarely any need to
+        override this class method.
+        """
         form = cls.from_flat(request.form.items() + request.files.items())
         TextCha(form).amend_form()
         return form
@@ -378,12 +395,23 @@ class Item(object):
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
     class _ModifyForm(BaseModifyForm):
-        """Base class for ModifyForm of Item subclasses."""
+        """
+        ModifyForm (the form used on +modify view), sans the content part.
+        Combined dynamically with the ModifyForm of the Content subclass in
+        Contentful.ModifyForm.
+
+        Subclasses of Contentful should generally override this instead of
+        ModifyForm.
+        """
         meta_form = BaseMetaForm
         extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
+            """
+            Load metadata and data from :item into :self. Used by
+            BaseModifyForm.from_item.
+            """
             meta = item.prepare_meta_for_modify(item.meta)
             # Default value of `policy` argument of Flatland.Dict.set's is
             # 'strict', which causes KeyError to be thrown when meta contains
@@ -396,6 +424,15 @@ class Item(object):
             self['content_form']._load(item.content)
 
         def _dump(self, item):
+            """
+            Dump useful data out of :self. :item contains the old item and
+            should not be the primary data source; but it can be useful in case
+            the data in :self is not sufficient.
+
+            :returns: a tuple (meta, data, contenttype_guessed, comment),
+                      suitable as arguments of the same names to pass to
+                      item.modify
+            """
             meta = self['meta_form'].value.copy()
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
