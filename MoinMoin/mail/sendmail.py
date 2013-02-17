@@ -96,7 +96,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     logging.debug("send mail, to: {0!r}".format(to))
 
     if not to and not cc and not bcc:
-        return (1, _("No recipients, nothing to do"))
+        return 1, _("No recipients, nothing to do")
 
     subject = subject.encode(CHARSET)
 
@@ -167,7 +167,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
                     pass
         except smtplib.SMTPException as e:
             logging.exception("smtp mail failed with an exception.")
-            return (0, str(e))
+            return 0, str(e)
         except (os.error, socket.error) as e:
             logging.exception("smtp mail failed with an exception.")
             return (0, _("Connection to mailserver '%(server)s' failed: %(reason)s",
@@ -183,13 +183,13 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
             sendmail_status = sendmailp.close()
             if sendmail_status:
                 logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
-                return (0, str(sendmail_status))
+                return 0, str(sendmail_status)
         except:
             logging.exception("sendmail failed with an exception.")
-            return (0, _("Mail not sent"))
+            return 0, _("Mail not sent")
 
     logging.debug("Mail sent successfully")
-    return (1, _("Mail sent successfully"))
+    return 1, _("Mail sent successfully")
 
 
 def encodeSpamSafeEmail(email_address, obfuscation_text=''):

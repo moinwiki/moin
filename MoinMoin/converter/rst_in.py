@@ -619,7 +619,7 @@ def walkabout(node, visitor):
 
 class Writer(writers.Writer):
 
-    supported = ('moin-x-document')
+    supported = ('moin-x-document', )
     config_section = 'MoinMoin writer'
     config_section_dependencies = ('writers', )
     output = None
