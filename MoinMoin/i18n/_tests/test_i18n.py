@@ -9,12 +9,14 @@ from MoinMoin.i18n import get_locale, get_timezone
 
 from MoinMoin.i18n import _, L_, N_
 
+
 def test_user_attributes():
     test_locale = get_locale()
     assert test_locale == 'en'
 
     test_timezone = get_timezone()
     assert test_timezone == 'UTC'
+
 
 def test_text():
     # test for gettext

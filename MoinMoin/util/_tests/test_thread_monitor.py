@@ -6,10 +6,12 @@
 MoinMoin - MoinMoin.util.thread_monitor Tests
 """
 
-import shutil, tempfile
+import shutil
+import tempfile
 import os
 
 from MoinMoin.util.thread_monitor import Monitor
+
 
 class TestMonitor(object):
     """ Tests: Monitor """

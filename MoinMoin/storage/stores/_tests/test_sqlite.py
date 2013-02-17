@@ -11,15 +11,22 @@ import pytest
 
 from ..sqlite import BytesStore, FileStore
 
+
 def bytes_compressed(path):
     return BytesStore(path, 'test_table', compression_level=1)
+
+
 def bytes_uncompressed(path):
     return BytesStore(path, 'test_table', compression_level=0)
 
+
 def file_compressed(path):
     return FileStore(path, 'test_table', compression_level=1)
+
+
 def file_uncompressed(path):
     return FileStore(path, 'test_table', compression_level=0)
+
 
 all_setups = pytest.mark.multi(Store=[
     bytes_uncompressed,
@@ -39,12 +46,14 @@ def test_create(tmpdir, Store):
     assert dbfile.check()
     return store
 
+
 @all_setups
 def test_destroy(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
     store = test_create(tmpdir, Store)
     store.destroy()
     # XXX: check for dropped table
+
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_from_uri(tmpdir, Store):

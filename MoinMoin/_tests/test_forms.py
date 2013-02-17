@@ -10,6 +10,7 @@ from calendar import timegm
 
 from MoinMoin.forms import DateTimeUNIX
 
+
 def test_datetimeunix():
     dt = datetime.datetime(2012, 12, 21, 23, 45, 59)
     timestamp = timegm(dt.timetuple())

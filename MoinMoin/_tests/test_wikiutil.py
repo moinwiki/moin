@@ -1,5 +1,5 @@
 # Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
-# Copyright: 2007 by MoinMoin:ThomasWaldmann
+# Copyright: 2007-2013 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -19,10 +19,10 @@ from werkzeug import MultiDict
 
 class TestCleanInput(object):
     def testCleanInput(self):
-        tests = [(u"", u""), # empty
-                 (u"aaa\r\n\tbbb", u"aaa   bbb"), # ws chars -> blanks
-                 (u"aaa\x00\x01bbb", u"aaabbb"), # strip weird chars
-                 (u"a"*500, u""), # too long
+        tests = [(u"", u""),  # empty
+                 (u"aaa\r\n\tbbb", u"aaa   bbb"),  # ws chars -> blanks
+                 (u"aaa\x00\x01bbb", u"aaabbb"),  # strip weird chars
+                 (u"a" * 500, u""),  # too long
                 ]
         for instr, outstr in tests:
             assert wikiutil.clean_input(instr) == outstr
@@ -56,13 +56,14 @@ class TestRelativeTools(object):
         (('MainPage', '/SubPage1'), 'MainPage/SubPage1'),
         (('MainPage', '/SubPage1/SubPage2'), 'MainPage/SubPage1/SubPage2'),
         (('MainPage/SubPage1', '/SubPage2/SubPage3'), 'MainPage/SubPage1/SubPage2/SubPage3'),
-        (('', '/OtherMainPage'), 'OtherMainPage'), # strange
+        (('', '/OtherMainPage'), 'OtherMainPage'),  # strange
         # PARENT_PREFIX
         (('MainPage/SubPage', '../SisterPage'), 'MainPage/SisterPage'),
         (('MainPage/SubPage1/SubPage2', '../SisterPage'), 'MainPage/SubPage1/SisterPage'),
         (('MainPage/SubPage1/SubPage2', '../../SisterPage'), 'MainPage/SisterPage'),
-        (('MainPage', '../SisterPage'), 'SisterPage'), # strange
+        (('MainPage', '../SisterPage'), 'SisterPage'),  # strange
     ]
+
     def test_abs_pagename(self):
         for (current_page, relative_page), absolute_page in self.tests:
             yield self._check_abs_pagename, current_page, relative_page, absolute_page
@@ -135,6 +136,7 @@ class TestNormalizePagename(object):
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
 
+
 class TestGroupItems(object):
 
     def testNormalizeGroupName(self):
@@ -165,6 +167,7 @@ def testParentItemName():
     expected = u'some/parent'
     assert result == expected
 
+
 def testdrawing2fname():
     # with extension not in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname('Moin_drawing.txt')
@@ -175,6 +178,7 @@ def testdrawing2fname():
     expected = 'Moindir.Moin_drawing.jpg'
     assert result == expected
 
+
 def testgetUnicodeIndexGroup():
     result = wikiutil.getUnicodeIndexGroup(['moin-2', 'MoinMoin'])
     expected = 'MOIN-2'
@@ -182,6 +186,7 @@ def testgetUnicodeIndexGroup():
     # empty char
     with pytest.raises(IndexError):
         result = wikiutil.getUnicodeIndexGroup('')
+
 
 def testis_URL():
     sample_schemes = ['http', 'https', 'ftp', 'ssh']
@@ -196,6 +201,7 @@ def testis_URL():
     result = wikiutil.is_URL('invalid_scheme:MoinMoin')
     assert not result
 
+
 def testcontainsConflictMarker():
     # text with conflict marker
     result = wikiutil.containsConflictMarker("/!\\ '''Edit conflict - Conflict marker is present")
@@ -204,6 +210,7 @@ def testcontainsConflictMarker():
     #text without conflict marker
     result = wikiutil.containsConflictMarker('No conflict marker')
     assert not result
+
 
 def testsplit_anchor():
     """
@@ -221,6 +228,7 @@ def testsplit_anchor():
     result = wikiutil.split_anchor('#MoinMoin#')
     expected = ['#MoinMoin', '']
     assert result == expected
+
 
 def testfile_headers():
     test_headers = [
@@ -241,5 +249,6 @@ def testfile_headers():
     result = wikiutil.file_headers(None, 'text/plain')
     expected = [('Content-Type', 'text/plain')]
     assert result == expected
+
 
 coverage_modules = ['MoinMoin.wikiutil']

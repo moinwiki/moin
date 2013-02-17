@@ -33,11 +33,11 @@ class TestToken(object):
 
     def test_validtoken(self):
         """ validate the token """
-        test_key, test_token = crypto.generate_token(key='MoinMoin') # having some key value
+        test_key, test_token = crypto.generate_token(key='MoinMoin')  # having some key value
         result = crypto.valid_token(test_key, test_token)
         assert result
 
-        test_key, test_token = crypto.generate_token() # key value is none
+        test_key, test_token = crypto.generate_token()  # key value is none
         result = crypto.valid_token(test_key, test_token)
         assert result
 

@@ -8,6 +8,7 @@
 
 from MoinMoin import util
 
+
 class TestUtil(object):
 
     def testRangeList(self):

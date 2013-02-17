@@ -201,7 +201,7 @@ class TestFrontend(object):
 
     def test_favicon(self):
         rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
-        assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
+        assert rv.data.startswith('\x00\x00')  # "reserved word, should always be 0"
 
     def test_global_tags(self):
         self._test_view('frontend.global_tags')
@@ -236,28 +236,28 @@ class TestUsersettings(object):
         flaskg.user = user.User(name=u'moin', password=u'Xiwejr622')
         form = self.fillPasswordChangeForm(u'Xiwejr622', u'Woodoo645', u'Woodoo645')
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_user_unicode_password_change(self):
         name = u'moin'
-        password = u'__שם משתמש לא קיים__' # Hebrew
+        password = u'__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, u'Woodoo645', u'Woodoo645')
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_user_password_change_to_unicode_pw(self):
         name = u'moin'
         password = u'Xiwejr622'
-        new_password = u'__שם משתמש לא קיים__' # Hebrew
+        new_password = u'__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, new_password, new_password)
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_fail_user_password_change_pw_mismatch(self):
         self.createUser(u'moin', u'Xiwejr622')

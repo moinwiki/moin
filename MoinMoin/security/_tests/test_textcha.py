@@ -85,6 +85,7 @@ class TestTextCha(object):
         assert textcha_obj.form['textcha_question'].optional
         assert textcha_obj.form['textcha'].optional
 
+
 class TestTextChaValid(object):
     """ Test: class TextChaValid """
     def setup_method(self, method):

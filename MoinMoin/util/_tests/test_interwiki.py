@@ -9,17 +9,18 @@
 
 from __future__ import absolute_import, division
 
-import pytest
 import tempfile
 import os.path
 import shutil
+
+import pytest
+from flask import current_app as app
 
 from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace
 from MoinMoin._tests import wikiconfig
 from MoinMoin.constants.keys import CURRENT
 from MoinMoin.app import before_wiki
 
-from flask import current_app as app
 
 class TestInterWiki(object):
     class Config(wikiconfig.Config):
@@ -120,6 +121,7 @@ class TestInterWiki(object):
                 ]
         for (baseurl, pagename, namespace), url in tests:
             assert join_wiki(baseurl, pagename, namespace) == url
+
 
 class TestInterWikiMapBackend(object):
     """

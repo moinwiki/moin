@@ -8,6 +8,7 @@ MoinMoin - Tests for MoinMoin.converter._args_wiki
 
 from MoinMoin.converter._args_wiki import *
 
+
 def test():
     yield (do,
         ur'both positional both=foo keyword=bar',
@@ -24,10 +25,12 @@ def test():
         [u'a b\tc\nd'],
         {u'k': u'a b\tc\nd'})
 
+
 def test_parse():
     a = parse(ur''''a b\tc\nd',k="a b\tc\nd"''')
     assert a.positional == [u'a b\tc\nd']
     assert a.keyword == {u'k': u'a b\tc\nd'}
+
 
 def do(wiki, positional, keyword):
     a = parse(wiki)

@@ -7,6 +7,7 @@
 
 from flask import url_for
 
+
 class TestServe(object):
     def test_index(self):
         with self.app.test_client() as c:

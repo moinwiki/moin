@@ -11,6 +11,7 @@ from MoinMoin.items import Item
 from MoinMoin.constants.keys import CONTENTTYPE
 from MoinMoin._tests import wikiconfig, update_item
 
+
 class TestInclude(object):
     class Config(wikiconfig.Config):
         """
@@ -131,12 +132,14 @@ class TestInclude(object):
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki'}, u"")
         rendered = Item.create(u'page1').content._render_data()
         assert '<p>text <span class="moin-transclusion" data-href="/page2"></span> text</p>' in rendered
+
     def test_InlineIncludeCreole(self):
         # transclude single paragraph as inline using creole parser
         update_item(u'creole', {CONTENTTYPE: u'text/x.moin.creole;charset=utf-8'}, u'creole item')
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.creole;charset=utf-8'}, u'before {{creole}} after')
         rendered = Item.create(u'page1').content._render_data()
         assert '<p>before <span class="moin-transclusion" data-href="/creole">creole item</span> after</p>' in rendered
+
     def test_InlineIncludeWithinMarkup(self):
         # transclude single line item within italic and bold markup
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki'}, u"Normal ''italic '''bold {{page2}} bold''' italic'' normal")

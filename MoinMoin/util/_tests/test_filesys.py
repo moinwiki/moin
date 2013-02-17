@@ -5,8 +5,11 @@
     MoinMoin - MoinMoin.util.filesys Tests
 """
 
-import sys, os, time
-import shutil, tempfile
+import sys
+import os
+import time
+import shutil
+import tempfile
 
 import pytest
 
@@ -14,6 +17,7 @@ from MoinMoin.util import filesys
 
 win32_only = pytest.mark.skipif("sys.platform != 'win32'")
 win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
+
 
 class TestFuid(object):
     """ test filesys.fuid (a better mtime() alternative for up-to-date checking) """
@@ -52,7 +56,7 @@ class TestFuid(object):
         self.makefile(self.fname, "foofoo")
         uid2 = filesys.fuid(self.fname)
 
-        assert uid2 != uid1 # we changed size and maybe mtime
+        assert uid2 != uid1  # we changed size and maybe mtime
 
     @win32_incompatible
     def testUpdateFileMovingFromTemp(self):
@@ -66,7 +70,7 @@ class TestFuid(object):
         os.rename(self.tmpname, self.fname)
         uid2 = filesys.fuid(self.fname)
 
-        assert uid2 != uid1 # we didn't change size, but inode and maybe mtime
+        assert uid2 != uid1  # we didn't change size, but inode and maybe mtime
 
     @win32_only
     def testStale(self):
@@ -75,7 +79,7 @@ class TestFuid(object):
         self.makefile(self.fname, "foo")
         uid1 = filesys.fuid(self.fname)
 
-        time.sleep(2) # thanks for waiting :)
+        time.sleep(2)  # thanks for waiting :)
         uid2 = filesys.fuid(self.fname, max_staleness=1)
         assert uid2 != uid1  # should be considered stale if platform has no inode support
 
@@ -166,5 +170,6 @@ class TestCopy(object):
         self.test_dest_dir = tempfile.mkdtemp('', 'temp_dir')
         with pytest.raises(OSError):
             filesys.copytree(self.test_dir, self.test_dest_dir)
+
 
 coverage_modules = ['MoinMoin.util.filesys']

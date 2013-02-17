@@ -13,6 +13,7 @@ from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct.backends import wiki_dicts
 from MoinMoin.constants.keys import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
+
 DATA = "This is a dict item."
 
 
@@ -39,5 +40,6 @@ class TestWikiDictsBackend(DictsBackendTest):
         result = wiki_dicts.WikiDicts._retrieve_items(wikidict_obj, u'SomeOtherTestDict')
         expected = {u'Two': u'2', u'One': u'1'}
         assert result == expected
+
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_dicts']

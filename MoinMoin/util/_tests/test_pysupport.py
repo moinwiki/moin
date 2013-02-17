@@ -7,7 +7,8 @@
 """
 
 
-import os, errno
+import os
+import errno
 
 import pytest
 
@@ -132,6 +133,7 @@ class Parser:
             except OSError as err:
                 if err.errno != errno.ENOENT:
                     raise
+
 
 coverage_modules = ['MoinMoin.util.pysupport']
 pytest.main("-x test_pysupport.py")
