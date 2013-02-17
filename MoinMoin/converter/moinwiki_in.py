@@ -888,7 +888,7 @@ class Converter(ConverterMacro):
         def add_attr_to_style(attrib, attr):
             attr = attr.strip().decode('unicode-escape')
             if not attr.endswith(';'):
-                attr = attr + ';'
+                attr += ';'
             if attrib.get(moin_page('style'), ""):
                 attrib[moin_page('style')] = attrib.get(moin_page('style'), "") + " " + attr
             else:

@@ -249,7 +249,7 @@ class Converter(object):
         a given element.
         """
         new_children = []
-        depth = depth + 1
+        depth += 1
         for child in element:
             if isinstance(child, ET.Element):
                 r = self.visit(child, depth)
@@ -744,8 +744,8 @@ class Converter(object):
         """
         self.is_section = True
         if depth > self.section_depth:
-            self.section_depth = self.section_depth + 1
-            self.heading_level = self.heading_level + 1
+            self.section_depth += 1
+            self.heading_level += 1
         elif depth < self.section_depth:
             self.heading_level = self.heading_level - (self.section_depth - depth)
             self.section_depth = depth
@@ -789,7 +789,7 @@ class Converter(object):
                             attrib={}, children=[label_tag, body_tag])
                     item_tag = (item_tag, )
                     new.extend(item_tag)
-                    counter = counter + 1
+                    counter += 1
                 else:
                     r = self.visit(child)
                     if r is None:

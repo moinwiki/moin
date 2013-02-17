@@ -385,7 +385,7 @@ class Converter(object):
         if not title:
             #TODO: Translation
             title = "Table {0}".format(self.table_counter)
-        self.table_counter = self.table_counter + 1
+        self.table_counter += 1
         caption = ET.Element(docbook('caption'), attrib={}, children=[title])
         children = [caption]
         children.extend(self.do_children(element))

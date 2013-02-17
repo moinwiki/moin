@@ -182,7 +182,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
                 continue
             idx -= 1
             if len(cur) and cur[-1]:
-                cur[-1] = cur[-1] + spaces
+                cur[-1] += spaces
         elif not quoted and char == name_value_separator:
             if multikey or len(cur) == 1:
                 cur.append(None)
