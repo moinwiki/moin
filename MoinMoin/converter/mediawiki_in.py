@@ -879,7 +879,7 @@ class Converter(ConverterMacro):
 
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
-            match = re.match(r"(.*?)(\<.*\>.*)|(.*)", line)
+            match = re.match(r"(.*?)(<.*>.*)|(.*)", line)
             if match:
                 pre_text = match.group(1) or match.group(3)
                 # text may be None
