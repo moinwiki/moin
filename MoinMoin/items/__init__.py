@@ -49,11 +49,11 @@ from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
-    )
+)
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
-    )
+)
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -318,7 +318,7 @@ class Item(object):
             MTIME,
             ACTION,
             ADDRESS, HOSTNAME, USERID,
-            ]
+        ]
         for key in kill_keys:
             meta.pop(key, None)
         return meta

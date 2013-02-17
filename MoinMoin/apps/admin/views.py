@@ -49,8 +49,7 @@ def userbrowser():
                           email=rev.meta[EMAIL],
                           disabled=False,  # TODO: add to index
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
-                     )
-                     for rev in revs]
+                     ) for rev in revs]
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
 
 
@@ -200,11 +199,12 @@ def wikiconfighelp():
 def highlighterhelp():
     """display a table with list of available Pygments lexers"""
     import pygments.lexers
-    headings = [_('Lexer description'),
-                _('Lexer names'),
-                _('File patterns'),
-                _('Mimetypes'),
-               ]
+    headings = [
+        _('Lexer description'),
+        _('Lexer names'),
+        _('File patterns'),
+        _('Mimetypes'),
+    ]
     lexers = pygments.lexers.get_all_lexers()
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
@@ -217,9 +217,10 @@ def highlighterhelp():
 @admin.route('/interwikihelp', methods=['GET', ])
 def interwikihelp():
     """display a table with list of known interwiki names / urls"""
-    headings = [_('InterWiki name'),
-                _('URL'),
-               ]
+    headings = [
+        _('InterWiki name'),
+        _('URL'),
+    ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('user/interwikihelp.html',
                            title_name=_(u"Interwiki Names"),
@@ -230,9 +231,10 @@ def interwikihelp():
 @admin.route('/itemsize', methods=['GET', ])
 def itemsize():
     """display a table with item sizes"""
-    headings = [_('Size'),
-                _('Item name'),
-               ]
+    headings = [
+        _('Size'),
+        _('Item name'),
+    ]
     rows = [(rev.meta[SIZE], rev.name)
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)

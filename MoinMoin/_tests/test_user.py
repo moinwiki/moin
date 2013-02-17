@@ -288,7 +288,7 @@ class TestIsValidName(object):
             u' User Name',
             u'User Name ',
             u'User   Name',
-            )
+        )
         for test in cases:
             assert not user.isValidName(test)
 
@@ -299,7 +299,7 @@ class TestIsValidName(object):
             u'ניר סופר',  # Hebrew
             u'CamelCase',  # Good old camel case
             u'가각간갇갈 갉갊감 갬갯걀갼'  # Hangul (gibberish)
-            )
+        )
         for test in cases:
             assert user.isValidName(test)
 

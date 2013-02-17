@@ -151,7 +151,7 @@ class TestTwoLdapServers(object):
             started = ldap_env.start_slapd()
             if not started:
                 pytest.skip("Failed to start {0} process, please see your syslog / log files"
-                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
+                            " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             ldap_env.load_directory(ldif_content=self.ldif_content)
             self.ldap_envs.append(ldap_env)
 
@@ -191,7 +191,7 @@ class TestLdapFailover(object):
             started = ldap_env.start_slapd()
             if not started:
                 pytest.skip("Failed to start {0} process, please see your syslog / log files"
-                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
+                            " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             ldap_env.load_directory(ldif_content=self.ldif_content)
             self.ldap_envs.append(ldap_env)
 
@@ -201,13 +201,13 @@ class TestLdapFailover(object):
         server_uri = 'ldap://127.0.0.1:3891'
         base_dn = 'ou=testing,dc=example,dc=org'
         ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
-                             name="ldap1", autocreate=True,
-                             timeout=1)
+                              name="ldap1", autocreate=True,
+                              timeout=1)
         # short timeout, faster testing
         server_uri = 'ldap://127.0.0.1:3892'
         ldap_auth2 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
-                             name="ldap2", autocreate=True,
-                             timeout=1)
+                              name="ldap2", autocreate=True,
+                              timeout=1)
 
         auth = [ldap_auth1, ldap_auth2]
 

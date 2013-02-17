@@ -224,7 +224,7 @@ class TestAcl(object):
             "CamelCase,extended name:read,write  "
             "BadGuy:  "
             "All:read  "
-            ]
+        ]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
         # Should apply these rights:
@@ -250,7 +250,7 @@ class TestAcl(object):
             # with ACL modifiers
             ('MinusGuy', ()),
             ('PlusGuy', ('read', )),
-            )
+        )
 
         # Check rights
         for user, may in users:
@@ -287,7 +287,7 @@ class TestGroupACL(object):
         acl_rights = [
             "PGroup,AllGroup:read,write,admin "
             "AGroup:read "
-            ]
+        ]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
         # Should apply these rights:
@@ -296,7 +296,7 @@ class TestGroupACL(object):
             ('Antony', ('read', 'write', 'admin', )),  # in PGroup
             ('Beatrice', ('read', 'write', 'admin', )),  # in PGroup
             ('Charles', ('read', )),  # virtually in AGroup
-            )
+        )
 
         # Check rights
         for user, may in users:
@@ -492,7 +492,7 @@ class TestItemHierachicalAclsMultiItemNames(object):
         (p2, None, p2),  # default acl effective (also for children)
         (c2, None, c2),  # no own acl -> inherit from parent
         (c12, None, c12),  # no own acl -> inherit from parents
-        ]
+    ]
 
     from MoinMoin._tests import wikiconfig
 

@@ -64,8 +64,7 @@ from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
 from whoosh.writing import AsyncWriter
-from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, \
-                           PseudoFieldPlugin
+from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet

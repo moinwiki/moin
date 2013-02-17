@@ -16,54 +16,54 @@ class TestParamParsing(object):
         abcd = [u'a', u'b', u'c', u'd']
         abcd_dict = {u'a': u'1', u'b': u'2', u'c': u'3', u'd': u'4'}
         tests = [
-                  # regular and quoting tests
-                  (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
-                  (u'a,b,c,d',                (abcd, {}, [])),
-                  (u' a , b , c , d ',        (abcd, {}, [])),
-                  (u'   a   ',                ([u'a'], {}, [])),
-                  (u'"  a  "',                ([u'  a  '], {}, [])),
-                  (u'a,b,c,d, "a,b,c,d"',     (abcd + [u'a,b,c,d'], {}, [])),
-                  (u'quote " :), b',          ([u'quote " :)', u'b'], {}, [])),
-                  (u'"quote "" :)", b',       ([u'quote " :)', u'b'], {}, [])),
-                  (u'=7',                     ([], {u'': u'7'}, [])),
-                  (u',,',                     ([None, None, None], {}, [])),
-                  (u',"",',                   ([None, u'', None], {}, [])),
-                  (u',"", ""',                ([None, u'', u''], {}, [])),
-                  (u'  ""  ,"", ""',          ([u'', u'', u''], {}, [])),
-                  # some name=value test
-                  (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
-                  (u'd=d,e="a,b,c,d"',        ([], {u'd': u'd',
-                                                    u'e': u'a,b,c,d'}, [])),
-                  (u'd = d,e = "a,b,c,d"',    ([], {u'd': u'd',
-                                                    u'e': u'a,b,c,d'}, [])),
-                  (u'd = d, e = "a,b,c,d"',   ([], {u'd': u'd',
-                                                    u'e': u'a,b,c,d'}, [])),
-                  (u'd = , e = "a,b,c,d"',    ([], {u'd': None,
-                                                    u'e': u'a,b,c,d'}, [])),
-                  (u'd = "", e = "a,b,c,d"',  ([], {u'd': u'',
-                                                    u'e': u'a,b,c,d'}, [])),
-                  (u'd = "", e = ',           ([], {u'd': u'', u'e': None},
-                                               [])),
-                  (u'd=""',                   ([], {u'd': u''}, [])),
-                  (u'd = "", e = ""',         ([], {u'd': u'', u'e': u''},
-                                               [])),
-                  # no, None as key isn't accepted
-                  (u' = "",  e = ""',         ([], {u'': u'', u'e': u''},
-                                               [])),
-                  # can quote both name and value:
-                  (u'd = d," e "= "a,b,c,d"', ([], {u'd': u'd',
-                                                    u' e ': u'a,b,c,d'}, [])),
-                  # trailing args
-                  (u'1,2,a=b,3,4',            ([u'1', u'2'], {u'a': u'b'},
-                                               [u'3', u'4'])),
-                  # can quote quotes:
-                  (u'd = """d"',              ([], {u'd': u'"d'}, [])),
-                  (u'd = """d"""',            ([], {u'd': u'"d"'}, [])),
-                  (u'd = "d"" ", e=7',        ([], {u'd': u'd" ', u'e': u'7'},
-                                               [])),
-                  (u'd = "d""", e=8',         ([], {u'd': u'd"', u'e': u'8'},
-                                               [])),
-                ]
+            # regular and quoting tests
+            (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
+            (u'a,b,c,d',                (abcd, {}, [])),
+            (u' a , b , c , d ',        (abcd, {}, [])),
+            (u'   a   ',                ([u'a'], {}, [])),
+            (u'"  a  "',                ([u'  a  '], {}, [])),
+            (u'a,b,c,d, "a,b,c,d"',     (abcd + [u'a,b,c,d'], {}, [])),
+            (u'quote " :), b',          ([u'quote " :)', u'b'], {}, [])),
+            (u'"quote "" :)", b',       ([u'quote " :)', u'b'], {}, [])),
+            (u'=7',                     ([], {u'': u'7'}, [])),
+            (u',,',                     ([None, None, None], {}, [])),
+            (u',"",',                   ([None, u'', None], {}, [])),
+            (u',"", ""',                ([None, u'', u''], {}, [])),
+            (u'  ""  ,"", ""',          ([u'', u'', u''], {}, [])),
+            # some name=value test
+            (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
+            (u'd=d,e="a,b,c,d"',        ([], {u'd': u'd',
+                                              u'e': u'a,b,c,d'}, [])),
+            (u'd = d,e = "a,b,c,d"',    ([], {u'd': u'd',
+                                              u'e': u'a,b,c,d'}, [])),
+            (u'd = d, e = "a,b,c,d"',   ([], {u'd': u'd',
+                                              u'e': u'a,b,c,d'}, [])),
+            (u'd = , e = "a,b,c,d"',    ([], {u'd': None,
+                                              u'e': u'a,b,c,d'}, [])),
+            (u'd = "", e = "a,b,c,d"',  ([], {u'd': u'',
+                                              u'e': u'a,b,c,d'}, [])),
+            (u'd = "", e = ',           ([], {u'd': u'', u'e': None},
+                                         [])),
+            (u'd=""',                   ([], {u'd': u''}, [])),
+            (u'd = "", e = ""',         ([], {u'd': u'', u'e': u''},
+                                         [])),
+            # no, None as key isn't accepted
+            (u' = "",  e = ""',         ([], {u'': u'', u'e': u''},
+                                         [])),
+            # can quote both name and value:
+            (u'd = d," e "= "a,b,c,d"', ([], {u'd': u'd',
+                                              u' e ': u'a,b,c,d'}, [])),
+            # trailing args
+            (u'1,2,a=b,3,4',            ([u'1', u'2'], {u'a': u'b'},
+                                         [u'3', u'4'])),
+            # can quote quotes:
+            (u'd = """d"',              ([], {u'd': u'"d'}, [])),
+            (u'd = """d"""',            ([], {u'd': u'"d"'}, [])),
+            (u'd = "d"" ", e=7',        ([], {u'd': u'd" ', u'e': u'7'},
+                                         [])),
+            (u'd = "d""", e=8',         ([], {u'd': u'd"', u'e': u'8'},
+                                         [])),
+        ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args)
             assert expected == result
@@ -78,12 +78,12 @@ class TestParamParsing(object):
 
     def testLimited(self):
         tests = [
-                  # regular and quoting tests
-                  (u'd = 4,c=3,b=2,a= 1 ',    ([], {u'd': u'4',
-                                                    u'c': u'3,b=2,a= 1'}, [])),
-                  (u'a,b,c,d',                ([u'a', u'b,c,d'], {}, [])),
-                  (u'a=b,b,c,d',              ([], {u'a': u'b'}, [u'b,c,d'])),
-                ]
+            # regular and quoting tests
+            (u'd = 4,c=3,b=2,a= 1 ',    ([], {u'd': u'4',
+                                              u'c': u'3,b=2,a= 1'}, [])),
+            (u'a,b,c,d',                ([u'a', u'b,c,d'], {}, [])),
+            (u'a=b,b,c,d',              ([], {u'a': u'b'}, [u'b,c,d'])),
+        ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, seplimit=1)
             assert expected == result
@@ -98,11 +98,11 @@ class TestParamParsing(object):
 
     def testDoubleNameValueSeparator(self):
         tests = [
-                  # regular and quoting tests
-                  (u'd==4,=3 ',    ([], {u'd': u'=4', u'': u'3'}, [])),
-                  (u'===a,b,c,d',  ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
-                  (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
-                ]
+            # regular and quoting tests
+            (u'd==4,=3 ',    ([], {u'd': u'=4', u'': u'3'}, [])),
+            (u'===a,b,c,d',  ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
+            (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
+        ]
 
         def _check(a, e):
             r = paramparser.parse_quoted_separated(a)
@@ -114,21 +114,21 @@ class TestParamParsing(object):
     def testNoNameValue(self):
         abcd = [u'a', u'b', u'c', u'd']
         tests = [
-                  # regular and quoting tests
-                  (u'd = 4,c=3,b=2,a= 1 ',    [u'd = 4', u'c=3',
-                                               u'b=2', u'a= 1']),
-                  (u'a,b,c,d',                abcd),
-                  (u' a , b , c , d ',        abcd),
-                  (u'   a   ',                [u'a']),
-                  (u'"  a  "',                [u'  a  ']),
-                  (u'a,b,c,d, "a,b,c,d"',     abcd + [u'a,b,c,d']),
-                  (u'quote " :), b',          [u'quote " :)', u'b']),
-                  (u'"quote "" :)", b',       [u'quote " :)', u'b']),
-                  (u'"unended quote',         [u'"unended quote']),
-                  (u'"',                      [u'"']),
-                  (u'd=d,e="a,b,c,d"',        [u'd=d', u'e="a', u'b',
-                                               u'c', u'd"']),
-                ]
+            # regular and quoting tests
+            (u'd = 4,c=3,b=2,a= 1 ',    [u'd = 4', u'c=3',
+                                         u'b=2', u'a= 1']),
+            (u'a,b,c,d',                abcd),
+            (u' a , b , c , d ',        abcd),
+            (u'   a   ',                [u'a']),
+            (u'"  a  "',                [u'  a  ']),
+            (u'a,b,c,d, "a,b,c,d"',     abcd + [u'a,b,c,d']),
+            (u'quote " :), b',          [u'quote " :)', u'b']),
+            (u'"quote "" :)", b',       [u'quote " :)', u'b']),
+            (u'"unended quote',         [u'"unended quote']),
+            (u'"',                      [u'"']),
+            (u'd=d,e="a,b,c,d"',        [u'd=d', u'e="a', u'b',
+                                         u'c', u'd"']),
+        ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, name_value=False)
             assert expected == result
@@ -313,9 +313,9 @@ class TestParamParsing(object):
 
         def _check(args, sep, kwsep, err):
             pytest.raises(err,
-                           paramparser.parse_quoted_separated_ext,
-                           args, sep, kwsep,
-                           brackets=(u'<>', u'()'))
+                          paramparser.parse_quoted_separated_ext,
+                          args, sep, kwsep,
+                          brackets=(u'<>', u'()'))
 
         for test in tests:
             yield [_check] + list(test)
@@ -564,16 +564,16 @@ class TestExtensionInvoking(object):
         ief(self._test_invoke_int_None, u'i=')
         ief(self._test_invoke_int_None, u'')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_int_None, u'x')
+                      self._test_invoke_int_None, u'x')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_int_None, u'""')
+                      self._test_invoke_int_None, u'""')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_int_None, u'i=""')
+                      self._test_invoke_int_None, u'i=""')
         pytest.raises(ValueError, ief,
-                       _test_invoke_int_fixed, u'a=7', [7, 8])
+                      _test_invoke_int_fixed, u'a=7', [7, 8])
         ief(_test_invoke_int_fixed, u'i=1', [7, 8])
         pytest.raises(ValueError, ief,
-                       _test_invoke_int_fixed, u'i=""', [7, 8])
+                      _test_invoke_int_fixed, u'i=""', [7, 8])
         ief(_test_invoke_int_fixed, u'i=', [7, 8])
 
         for choicefn in (self._test_invoke_choice, self._test_invoke_choicet):
@@ -582,20 +582,20 @@ class TestExtensionInvoking(object):
             ief(choicefn, u'choice=', [7])
             ief(choicefn, u'choice="a"', [7])
             pytest.raises(ValueError, ief,
-                           choicefn, u'x', [7])
+                          choicefn, u'x', [7])
             pytest.raises(ValueError, ief,
-                           choicefn, u'choice=x', [7])
+                          choicefn, u'choice=x', [7])
 
         ief(self._test_invoke_float_None, u'i=1.4')
         ief(self._test_invoke_float_None, u'i=')
         ief(self._test_invoke_float_None, u'')
         ief(self._test_invoke_float_None, u'1.4')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_float_None, u'x')
+                      self._test_invoke_float_None, u'x')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_float_None, u'""')
+                      self._test_invoke_float_None, u'""')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_float_None, u'i=""')
+                      self._test_invoke_float_None, u'i=""')
         ief(self._test_trailing, u'a=7, a')
         ief(self._test_trailing, u'7, a')
         ief(self._test_arbitrary_kw, u'test=x, \xc3=test',
@@ -609,15 +609,15 @@ class TestExtensionInvoking(object):
         ief(self._test_arbitrary_kw, u'7 \xc3=test, test= x ',
             [{u'7 \xc3': 'test', 'test': u'x'}])
         pytest.raises(ValueError, ief,
-                       self._test_invoke_float_required, u'')
+                      self._test_invoke_float_required, u'')
         ief(self._test_invoke_float_required, u'1.4')
         ief(self._test_invoke_float_required, u'i=1.4')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_choice_required, u'')
+                      self._test_invoke_choice_required, u'')
         ief(self._test_invoke_choice_required, u'a')
         ief(self._test_invoke_choice_required, u'i=a')
         pytest.raises(ValueError, ief,
-                       self._test_invoke_float_required, u',')
+                      self._test_invoke_float_required, u',')
 
     def testConstructors(self):
         ief = paramparser.invoke_extension_function

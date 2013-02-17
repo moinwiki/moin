@@ -107,10 +107,10 @@ class TestConverter(Base):
         data = [
             # Basic Links
             ('<page:page><page:body><page:a xlink:href="uri:test">Test</page:a></page:body></page:page>',
-              '/div/a[text()="Test"][@href="uri:test"]'),
+                '/div/a[text()="Test"][@href="uri:test"]'),
             # Links with xml:base
             ('<page xml:base="http://base.tld/"><body><p><a xlink:href="page.html">Test</a></p></body></page>',
-              '/div/p/a[@href="http://base.tld/page.html"][text()="Test"]'),
+                '/div/p/a[@href="http://base.tld/page.html"][text()="Test"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -182,7 +182,7 @@ class TestConverter(Base):
             ('<page><body><object xlink:href="href.png" page:type="image/png"/></body></page>',
                 '/div/img[@src="href.png"]'),
             ('<page xml:base="http://base.tld/"><body><object xlink:href="href.png" page:type="image/png"/></body></page>',
-              '/div/img[@src="http://base.tld/href.png"]'),
+                '/div/img[@src="http://base.tld/href.png"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -204,9 +204,9 @@ class TestConverter(Base):
     def test_style(self):
         data = [
             ('<page><body><p style="font-size: 1em">Text</p></body></page>',
-              '/div/p[@style="font-size: 1em"][text()="Text"]'),
+                '/div/p[@style="font-size: 1em"][text()="Text"]'),
             ('<page><body><p style="color: black; font-size: 1em">Text</p></body></page>',
-              '/div/p[@style="color: black; font-size: 1em"][text()="Text"]'),
+                '/div/p[@style="color: black; font-size: 1em"][text()="Text"]'),
         ]
         for i in data:
             yield (self.do, ) + i

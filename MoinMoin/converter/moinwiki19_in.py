@@ -83,8 +83,8 @@ class ConverterFormat19(Converter):
     }
 
     def inline_freelink_repl(self, stack, freelink, freelink_bang=None,
-            freelink_interwiki_page=None, freelink_interwiki_ref=None,
-            freelink_page=None, freelink_email=None):
+                             freelink_interwiki_page=None, freelink_interwiki_ref=None,
+                             freelink_page=None, freelink_email=None):
         if freelink_bang:
             stack.top_append(freelink)
             return
@@ -110,8 +110,8 @@ class ConverterFormat19(Converter):
                 return
 
             link = Iri(scheme='wiki',
-                    authority=freelink_interwiki_ref,
-                    path='/' + freelink_interwiki_page)
+                       authority=freelink_interwiki_ref,
+                       path='/' + freelink_interwiki_page)
             text = freelink_interwiki_page
 
         attrib[xlink.href] = link

@@ -62,8 +62,7 @@ class Iri(AutoNe):
 
     _overall_re = re.compile(overall_rules, re.X)
 
-    def __init__(self, _iri=None, _quoted=True,
-            scheme=None, authority=None, path=None, query=None, fragment=None):
+    def __init__(self, _iri=None, _quoted=True, scheme=None, authority=None, path=None, query=None, fragment=None):
         """
         @param _iri A full IRI in unicode
         @param scheme Scheme part of the IRI, overrides the same part of the IRI.
@@ -163,13 +162,13 @@ class Iri(AutoNe):
 
     def __repr__(self):
         return '{0}(scheme={1!r}, authority={2!r}, path={3!r}, query={4!r}, fragment={5!r})'.format(
-                self.__class__.__name__,
-                self.scheme,
-                self._authority,
-                self._path,
-                self._query,
-                self._fragment,
-                )
+            self.__class__.__name__,
+            self.scheme,
+            self._authority,
+            self._path,
+            self._query,
+            self._fragment,
+        )
 
     def __unicode__(self):
         ret = []
@@ -216,8 +215,7 @@ class Iri(AutoNe):
                     else:
                         new_path = self.path + new_path
 
-            return Iri(scheme=new_scheme, authority=new_authority, path=new_path,
-                    query=new_query, fragment=other.fragment)
+            return Iri(scheme=new_scheme, authority=new_authority, path=new_path, query=new_query, fragment=other.fragment)
 
         if isinstance(other, basestring):
             return self + Iri(other)
@@ -232,8 +230,7 @@ class Iri(AutoNe):
 
     def __set_scheme(self, value):
         self._scheme = unicode(value).lower()
-    scheme = property(__get_scheme, __set_scheme, __del_scheme,
-            """Scheme part of the IRI.""")
+    scheme = property(__get_scheme, __set_scheme, __del_scheme, """Scheme part of the IRI.""")
 
     def __del_authority(self):
         self._authority = None
@@ -245,8 +242,7 @@ class Iri(AutoNe):
         if value.__class__ is not IriAuthority:
             value = IriAuthority(value, False)
         self._authority = value
-    authority = property(__get_authority, __set_authority, __del_authority,
-            """Authority part of the IRI.""")
+    authority = property(__get_authority, __set_authority, __del_authority, """Authority part of the IRI.""")
 
     def __del_path(self):
         self._path = None
@@ -258,8 +254,7 @@ class Iri(AutoNe):
         if value.__class__ is not IriPath:
             value = IriPath(value, False)
         self._path = value
-    path = property(__get_path, __set_path, __del_path,
-            """Path part of the IRI.""")
+    path = property(__get_path, __set_path, __del_path, """Path part of the IRI.""")
 
     def __del_query(self):
         self._query = None
@@ -269,8 +264,7 @@ class Iri(AutoNe):
 
     def __set_query(self, value):
         self._query = IriQuery(value, False)
-    query = property(__get_query, __set_query, __del_query,
-            """Query part of the IRI.""")
+    query = property(__get_query, __set_query, __del_query, """Query part of the IRI.""")
 
     def __del_fragment(self):
         self._fragment = None
@@ -280,8 +274,7 @@ class Iri(AutoNe):
 
     def __set_fragment(self, value):
         self._fragment = IriFragment(value, False)
-    fragment = property(__get_fragment, __set_fragment, __del_fragment,
-            """Fragment part of the IRI.""")
+    fragment = property(__get_fragment, __set_fragment, __del_fragment, """Fragment part of the IRI.""")
 
 
 class _Value(unicode):
@@ -434,8 +427,7 @@ class IriAuthority(AutoNe):
 
     _authority_re = re.compile(authority_rules, re.X)
 
-    def __init__(self, iri_authority=None, _quoted=True,
-            userinfo=None, host=None, port=None):
+    def __init__(self, iri_authority=None, _quoted=True, userinfo=None, host=None, port=None):
         self._userinfo = self._host = self.port = None
 
         if iri_authority:
@@ -458,8 +450,8 @@ class IriAuthority(AutoNe):
             return unicode(self) == other
         if isinstance(other, IriAuthority):
             return self._userinfo == other._userinfo and \
-                    self._host == other._host and \
-                    self.port == other.port
+                self._host == other._host and \
+                self.port == other.port
         return NotImplemented
 
     def __nonzero__(self):
@@ -469,11 +461,11 @@ class IriAuthority(AutoNe):
 
     def __repr__(self):
         return '{0}(userinfo={1!r}, host={2!r}, port={3!r})'.format(
-                self.__class__.__name__,
-                self._userinfo,
-                self._host,
-                self.port,
-                )
+            self.__class__.__name__,
+            self._userinfo,
+            self._host,
+            self.port,
+        )
 
     def __unicode__(self):
         return self.__get(self._userinfo, self._host)
@@ -630,9 +622,9 @@ class IriPath(AutoNe):
 
     def __repr__(self):
         return '{0}({1!r})'.format(
-                self.__class__.__name__,
-                unicode(self),
-                )
+            self.__class__.__name__,
+            unicode(self),
+        )
 
     def _remove_dots(self, segments):
         if not segments or segments[0] != '':

@@ -614,8 +614,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             if isinstance(default.argtype, (tuple, list)):
                 # treat choice specially and return None if no choice
                 # is given in the value
-                return get_choice(value, name, list(default.argtype),
-                       default_none=True)
+                return get_choice(value, name, list(default.argtype), default_none=True)
             else:
                 return _convert_arg(value, default.argtype, name)
         return value

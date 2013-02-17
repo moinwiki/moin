@@ -261,7 +261,7 @@ class Converter(object):
             if self.parent_section != 0:
                 section_tag = 'sect{0}'.format(self.parent_section)
                 section = ET.Element(docbook(section_tag), attrib={},
-                          children=self.section_children[self.current_section])
+                                     children=self.section_children[self.current_section])
                 self.section_children[self.parent_section].append(section)
                 self.current_section = int(depth)
 
@@ -515,5 +515,4 @@ class Converter(object):
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
-default_registry.register(Converter._factory, type_moin_document,
-    Type('application/docbook+xml'))
+default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))

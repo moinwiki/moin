@@ -66,8 +66,7 @@ class Table(object):
         self.table.append(row)
         if self.i > 0:
             if len(self.table[-2]) > self.j:
-                self.add_cell(self.table[-2][self.j][0],
-                                self.table[-2][self.j][1] - 1, Cell(''))
+                self.add_cell(self.table[-2][self.j][0], self.table[-2][self.j][1] - 1, Cell(''))
         return row
 
     def end_row(self):
@@ -97,8 +96,7 @@ class Table(object):
         self.j += cs
         if self.i > 0:
             if len(self.table[-2]) > self.j:
-                self.add_cell(self.table[-2][self.j][0],
-                                self.table[-2][self.j][1] - 1, Cell(''))
+                self.add_cell(self.table[-2][self.j][0], self.table[-2][self.j][1] - 1, Cell(''))
         return
 
     def height(self):
@@ -233,7 +231,7 @@ class ReST(object):
         (u'ordered', u'upper-roman'): u'I.',
         (u'unordered', None): u'*',
         (None, None): u' ',
-        }
+    }
 
 
 class Converter(object):
@@ -245,29 +243,31 @@ class Converter(object):
 
     supported_tag = {
         'moinpage': (
-                'a',
-                'blockcode',
-                'break_line',
-                'code',
-                'div',
-                'emphasis',
-                'h',
-                'list',
-                'list_item',
-                'list_item_label',
-                'list_item_body',
-                'p',
-                'page',
-                'separator',
-                'span',
-                'strong',
-                'object',
-                'table',
-                'table_header',
-                'teble_footer',
-                'table_body',
-                'table_row',
-                'table_cell')}
+            'a',
+            'blockcode',
+            'break_line',
+            'code',
+            'div',
+            'emphasis',
+            'h',
+            'list',
+            'list_item',
+            'list_item_label',
+            'list_item_body',
+            'p',
+            'page',
+            'separator',
+            'span',
+            'strong',
+            'object',
+            'table',
+            'table_header',
+            'teble_footer',
+            'table_body',
+            'table_row',
+            'table_cell',
+        )
+    }
 
     @classmethod
     def factory(cls, input, output, **kw):
@@ -334,13 +334,13 @@ class Converter(object):
                         childrens_output.append(u'\n\n')
                 elif self.status[-1] == "list":
                     child =\
-                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
-                            (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                        re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(
+                            u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                     if self.last_closed == "p":
-                        childrens_output.append(u'\n'
-                                + u' '
-                                * (len(''.join(self.list_item_labels))
-                                   + len(self.list_item_labels)))
+                        childrens_output.append(
+                            u'\n' + u' '
+                            * (len(''.join(self.list_item_labels)) +
+                               len(self.list_item_labels)))
                 elif self.status[-1] == "text":
                     if self.last_closed == "p":
                         childrens_output.append(self.define_references())
@@ -348,7 +348,7 @@ class Converter(object):
                 elif self.status[-2] == "list":
                     child =\
                         re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
-                            (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                               (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                 childrens_output.append(child)
                 self.last_closed = 'text'
         self.delete_newlines = delete_newlines
@@ -396,8 +396,7 @@ class Converter(object):
         text = u''.join(elem.itertext())
         max_subpage_lvl = 3
         text = text.replace(u'\n', u'\n  '
-                                  + u' ' * (len(u''.join(self.list_item_labels))
-                                         + len(self.list_item_labels)))
+                            + u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)))
 
         if self.list_level >= 0:
             self.delete_newlines = True
@@ -410,8 +409,8 @@ class Converter(object):
                 if i:
                     self.output[-1] = self.output[-1][:i]
             """
-        return u"::\n\n  {0}{1}\n\n".format(u' ' *
-                    (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
+        return u"::\n\n  {0}{1}\n\n".format(
+            u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
 
     def open_moinpage_code(self, elem):
         ret = u"{0}{1}{2}".format(ReST.monospace, u''.join(elem.itertext()), ReST.monospace)
@@ -446,8 +445,7 @@ class Converter(object):
         return ReST.linebreak
 
     def open_moinpage_list(self, elem):
-        label_type = (elem.get(moin_page.item_label_generate, None),
-                        elem.get(moin_page.list_style_type, None))
+        label_type = elem.get(moin_page.item_label_generate, None), elem.get(moin_page.list_style_type, None)
         self.list_item_labels.append(
             ReST.list_type.get(label_type, u' '))
         self.list_level += 1
@@ -488,7 +486,7 @@ class Converter(object):
         if self.last_closed:
             ret = u'\n'
         ret += (u' ' * (len(u''.join(self.list_item_labels[:-1]))
-                       + len(self.list_item_labels[:-1]))
+                        + len(self.list_item_labels[:-1]))
                 + self.list_item_label)
         if self.list_item_labels[-1] in [u'1.', u'i.', u'I.', u'a.', u'A.']:
             self.list_item_labels[-1] = u'#.'
@@ -540,13 +538,13 @@ class Converter(object):
                 ret = self.open_children(elem) + ReST.p + set
         elif self.status[-1] == 'table':
             self.status.append('p')
-            if self.last_closed and self.last_closed != 'table_cell'\
-                                and self.last_closed != 'table_row'\
-                                and self.last_closed != 'table_header'\
-                                and self.last_closed != 'table_footer'\
-                                and self.last_closed != 'table_body'\
-                                and self.last_closed != 'line_break':
-          #                      and self.last_closed != 'p':
+            if self.last_closed and self.last_closed != 'table_cell' \
+                and self.last_closed != 'table_row' \
+                and self.last_closed != 'table_header' \
+                and self.last_closed != 'table_footer' \
+                and self.last_closed != 'table_body' \
+                and self.last_closed != 'line_break':
+                # and self.last_closed != 'p':
                 ret = ReST.linebreak + self.open_children(elem)
             elif self.last_closed == 'p' or self.last_closed == 'line_break':
                 ret = self.open_children(elem)
@@ -556,17 +554,17 @@ class Converter(object):
             self.status.append('p')
             if self.last_closed and self.last_closed == 'list_item_label':
                 ret = self.open_children(elem)
-            elif self.last_closed and self.last_closed != 'list_item'\
-                                and self.last_closed != 'list_item_header'\
-                                and self.last_closed != 'list_item_footer'\
-                                and self.last_closed != 'p':
+            elif self.last_closed and self.last_closed != 'list_item' \
+                and self.last_closed != 'list_item_header' \
+                and self.last_closed != 'list_item_footer' \
+                and self.last_closed != 'p':
                 ret = (ReST.linebreak + u' '
                                         * (len(u''.join(self.list_item_labels))
                                            + len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':
                 #return ReST.p +\
                 ret = (u"\n" + u' ' * (len(u''.join(self.list_item_labels))
-                                    + len(self.list_item_labels)) + self.open_children(elem))
+                                       + len(self.list_item_labels)) + self.open_children(elem))
             else:
                 ret = self.open_children(elem)
             if not self.delete_newlines:
@@ -590,7 +588,7 @@ class Converter(object):
             if type[0] == u"x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
                     alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], u','.join(
-                            [u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
+                        [u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
                 else:
                     alt = u"<<{0}()>>".format(type[1].split(u'=')[1])
 
@@ -660,8 +658,8 @@ class Converter(object):
         table = repr(self.tablec)
         if self.status[-1] == "list":
             table =\
-                re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(u' ' *
-                        (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
+                re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(
+                    u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
             return table + ReST.p
         return table + ReST.linebreak
 
@@ -689,11 +687,9 @@ class Converter(object):
 
     def open_moinpage_table_row(self, elem):
         self.table_rowclass = elem.attrib.get('class', u'')
-        self.table_rowclass = u' '.join([s for s in [self.table_rowsclass,
-                                                    self.table_rowclass] if s])
+        self.table_rowclass = u' '.join([s for s in [self.table_rowsclass, self.table_rowclass] if s])
         self.table_rowstyle = elem.attrib.get('style', u'')
-        self.table_rowstyle = u' '.join([s for s in [self.table_rowsstyle,
-                                                    self.table_rowstyle] if s])
+        self.table_rowstyle = u' '.join([s for s in [self.table_rowsstyle, self.table_rowstyle] if s])
         self.table.append([])
         self.tablec.add_row()
         ret = self.open_children(elem)
@@ -705,10 +701,8 @@ class Converter(object):
     def open_moinpage_table_cell(self, elem):
         table_cellclass = elem.attrib.get('class', u'')
         table_cellstyle = elem.attrib.get('style', u'')
-        number_cols_spanned\
-                = int(elem.get(moin_page.number_cols_spanned, 1))
-        number_rows_spanned\
-                = int(elem.get(moin_page.number_rows_spanned, 1))
+        number_cols_spanned = int(elem.get(moin_page.number_cols_spanned, 1))
+        number_rows_spanned = int(elem.get(moin_page.number_rows_spanned, 1))
 
         attrib = []
 
@@ -735,9 +729,7 @@ class Converter(object):
 
         attrib = ' '.join(attrib)
         """
-        self.table[-1].append((number_cols_spanned,
-                                number_rows_spanned,
-                                [self.open_children(elem)]))
+        self.table[-1].append((number_cols_spanned, number_rows_spanned, [self.open_children(elem)]))
         cell = self.table[-1][-1]
         self.tablec.add_cell(cell[0], cell[1], Cell(u''.join(cell[2])))
         return u''
@@ -755,12 +747,10 @@ class Converter(object):
         """
         ret = u''
         self.all_used_references.extend(self.used_references)
-        definitions = [u" " * (len(u''.join(self.list_item_labels))
-                                    + len(self.list_item_labels))
-                                  + u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
-        definitions.extend(u" " * (len(u''.join(self.list_item_labels))
-                                     + len(self.list_item_labels))
-                                  + link for link in self.objects)
+        definitions = [u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels))
+                       + u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
+        definitions.extend(u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels))
+                           + link for link in self.objects)
         definition_block = u"\n\n".join(definitions)
 
         if definitions:

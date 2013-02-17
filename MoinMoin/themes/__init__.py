@@ -410,22 +410,22 @@ def setup_jinja_env():
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
     app.jinja_env.globals.update({
-                            # please note that flask-babel/jinja2.ext installs:
-                            # _, gettext, ngettext
-                            'isinstance': isinstance,
-                            'list': list,
-                            'Type': Type,
-                            # please note that flask-themes installs:
-                            # theme, theme_static
-                            'theme_supp': ThemeSupport(app.cfg),
-                            'user': flaskg.user,
-                            'storage': flaskg.storage,
-                            'clock': flaskg.clock,
-                            'cfg': app.cfg,
-                            'item_name': u'handlers need to give it',
-                            'url_for_item': url_for_item,
-                            'get_editor_info': lambda meta: get_editor_info(meta),
-                            'utctimestamp': lambda dt: utctimestamp(dt),
-                            'gen': make_generator(),
-                            'search_form': SearchForm.from_defaults(),
-                            })
+        # please note that flask-babel/jinja2.ext installs:
+        # _, gettext, ngettext
+        'isinstance': isinstance,
+        'list': list,
+        'Type': Type,
+        # please note that flask-themes installs:
+        # theme, theme_static
+        'theme_supp': ThemeSupport(app.cfg),
+        'user': flaskg.user,
+        'storage': flaskg.storage,
+        'clock': flaskg.clock,
+        'cfg': app.cfg,
+        'item_name': u'handlers need to give it',
+        'url_for_item': url_for_item,
+        'get_editor_info': lambda meta: get_editor_info(meta),
+        'utctimestamp': lambda dt: utctimestamp(dt),
+        'gen': make_generator(),
+        'search_form': SearchForm.from_defaults(),
+    })

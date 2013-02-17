@@ -19,11 +19,12 @@ from werkzeug import MultiDict
 
 class TestCleanInput(object):
     def testCleanInput(self):
-        tests = [(u"", u""),  # empty
-                 (u"aaa\r\n\tbbb", u"aaa   bbb"),  # ws chars -> blanks
-                 (u"aaa\x00\x01bbb", u"aaabbb"),  # strip weird chars
-                 (u"a" * 500, u""),  # too long
-                ]
+        tests = [
+            (u"", u""),  # empty
+            (u"aaa\r\n\tbbb", u"aaa   bbb"),  # ws chars -> blanks
+            (u"aaa\x00\x01bbb", u"aaabbb"),  # strip weird chars
+            (u"a" * 500, u""),  # too long
+        ]
         for instr, outstr in tests:
             assert wikiutil.clean_input(instr) == outstr
 
@@ -99,7 +100,7 @@ class TestNormalizePagename(object):
             (u'a/', u'a'),
             (u'a/////b/////c', u'a/b/c'),
             (u'a b/////c d/////e f', u'a b/c d/e f'),
-            )
+        )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
@@ -114,7 +115,7 @@ class TestNormalizePagename(object):
             (u'a   b  /  c    d  /  e   f', u'a b/c d/e f'),
             # All 30 unicode spaces
             (CHARS_SPACES, u''),
-            )
+        )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
@@ -131,7 +132,7 @@ class TestNormalizePagename(object):
             (u'a  ', u'a'),
             (u'a  b  c', u'a b c'),
             (u'a  b  /  c  d  /  e  f', u'a b/c d/e f'),
-            )
+        )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
@@ -149,7 +150,7 @@ class TestGroupItems(object):
             (u'Name,:Group', u'NameGroup'),
             # remove than normalize spaces
             (u'Name ! @ # $ % ^ & * ( ) + Group', u'Name Group'),
-            )
+        )
         for test, expected in cases:
             # validate we are testing valid group names
             if wikiutil.isGroupItem(test):
@@ -232,13 +233,13 @@ def testsplit_anchor():
 
 def testfile_headers():
     test_headers = [
-                #test_file, content_type
-                ('imagefile.gif', 'image/gif'),
-                ('testfile.txt', 'text/plain'),
-                ('pdffile.pdf', 'application/pdf'),
-                ('docfile.doc', 'application/msword'),
-                (None, 'application/octet-stream')
-                ]
+        # test_file, content_type
+        ('imagefile.gif', 'image/gif'),
+        ('testfile.txt', 'text/plain'),
+        ('pdffile.pdf', 'application/pdf'),
+        ('docfile.doc', 'application/msword'),
+        (None, 'application/octet-stream'),
+    ]
 
     for test_file, content_type in test_headers:
         result = wikiutil.file_headers(test_file, None, 10)

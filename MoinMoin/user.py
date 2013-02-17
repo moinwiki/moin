@@ -753,8 +753,7 @@ Please use the link below to change your password to a known value:
 
 If you didn't forget your password, please ignore this email.
 
-""", link=url_for('frontend.recoverpass',
-                        username=self.name0, token=token, _external=True))
+""", link=url_for('frontend.recoverpass', username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Your wiki password recovery link',
                     sitename=self._cfg.sitename or "Wiki")
@@ -774,8 +773,7 @@ Please use the link below to verify your email address:
 
 If you didn't create this account, please ignore this email.
 
-""", link=url_for('frontend.verifyemail',
-                        username=self.name0, token=token, _external=True))
+""", link=url_for('frontend.verifyemail', username=self.name0, token=token, _external=True))
 
         subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")

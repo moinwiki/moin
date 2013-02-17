@@ -18,13 +18,13 @@ class GetItem(Command):
     description = 'Get an item revision from the wiki.'
     option_list = (
         Option('--name', '-n', dest='name', type=unicode, required=True,
-            help='Name of the item to get.'),
+               help='Name of the item to get.'),
         Option('--revid', '-r', dest='revid', type=unicode, required=False, default=CURRENT,
-            help='Revision ID of the revision to get (default: current rev).'),
+               help='Revision ID of the revision to get (default: current rev).'),
         Option('--meta', '-m', dest='meta_file', type=unicode, required=True,
-            help='Filename of file to create for the metadata.'),
+               help='Filename of file to create for the metadata.'),
         Option('--data', '-d', dest='data_file', type=unicode, required=True,
-            help='Filename of file to create for the data.'),
+               help='Filename of file to create for the data.'),
     )
 
     def run(self, name, meta_file, data_file, revid):
@@ -42,11 +42,11 @@ class PutItem(Command):
     description = 'Put an item revision into the wiki.'
     option_list = (
         Option('--meta', '-m', dest='meta_file', type=unicode, required=True,
-            help='Filename of file to read as metadata.'),
+               help='Filename of file to read as metadata.'),
         Option('--data', '-d', dest='data_file', type=unicode, required=True,
-            help='Filename of file to read as data.'),
+               help='Filename of file to read as data.'),
         Option('--overwrite', '-o', action='store_true', dest='overwrite', default=False,
-            help='If given, overwrite existing revisions, if requested.'),
+               help='If given, overwrite existing revisions, if requested.'),
     )
 
     def run(self, meta_file, data_file, overwrite):

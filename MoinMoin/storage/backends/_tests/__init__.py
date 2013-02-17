@@ -113,10 +113,10 @@ class MutableBackendTestBase(BackendTestBase):
 
     def test_iter(self):
         mds = [  # (metadata items, data str)
-                (dict(name='one'), 'ONE'),
-                (dict(name='two'), 'TWO'),
-                (dict(name='three'), 'THREE'),
-              ]
+            (dict(name='one'), 'ONE'),
+            (dict(name='two'), 'TWO'),
+            (dict(name='three'), 'THREE'),
+        ]
         expected_result = set()
         for m, d in mds:
             k = self.be.store(m, StringIO(d))
