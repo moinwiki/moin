@@ -20,8 +20,7 @@ from werkzeug._internal import _log
 
 class BaseRequestHandler(werkzeug.serving.BaseRequestHandler):
     def log(self, type, message, *args):
-        _log(type, "{0} {1}\n".format(self.address_string(),
-                                message % args))
+        _log(type, "{0} {1}\n".format(self.address_string(), message % args))
 
 werkzeug.serving.BaseRequestHandler = BaseRequestHandler
 werkzeug.serving.WSGIRequestHandler = BaseRequestHandler

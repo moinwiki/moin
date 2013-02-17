@@ -33,7 +33,7 @@ class Converter(object):
     # Namespace of our input data
     html_namespace = {
         html.namespace: 'xhtml',
-        }
+    }
 
     # HTML tags which can be converted directly to the moin_page namespace
     symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote'])
@@ -43,16 +43,16 @@ class Converter(object):
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
-                   'em': moin_page.emphasis, 'i': moin_page.emphasis,
-                   # Strong
-                   'b': moin_page.strong, 'strong': moin_page.strong,
-                   # Code and Blockcode
-                   'pre': moin_page.blockcode, 'tt': moin_page.code,
-                   'samp': moin_page.code,
-                   # Lists
-                   'dt': moin_page.list_item_label, 'dd': moin_page.list_item_body,
-                   # TODO : Some tags related to tables can be also simplify
-                  }
+        'em': moin_page.emphasis, 'i': moin_page.emphasis,
+        # Strong
+        'b': moin_page.strong, 'strong': moin_page.strong,
+        # Code and Blockcode
+        'pre': moin_page.blockcode, 'tt': moin_page.code,
+        'samp': moin_page.code,
+        # Lists
+        'dt': moin_page.list_item_label, 'dd': moin_page.list_item_body,
+        # TODO : Some tags related to tables can be also simplify
+    }
 
     # HTML Tag which does not have equivalence in the DOM Tree
     # But we keep the information using <span element>
@@ -65,7 +65,7 @@ class Converter(object):
                         'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
                         'optgroup', 'option', 'param', 'script', 'select', 'style',
                         'textarea', 'title', 'var',
-                       ])
+    ])
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion

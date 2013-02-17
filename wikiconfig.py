@@ -31,18 +31,18 @@ class Config(DefaultConfig):
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
     # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
-    namespace_mapping, backend_mapping, acl_mapping = \
-        create_simple_mapping(uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
-                              # XXX we use rather relaxed ACLs for the development wiki:
-                              content_acl=dict(before=u'',
-                                               default=u'All:read,write,create,destroy,admin',
-                                               after=u'',
-                                               hierarchic=False, ),
-                              user_profile_acl=dict(before=u'',
-                                                    default=u'All:read,write,create,destroy,admin',
-                                                    after=u'',
-                                                    hierarchic=False, ),
-                             )
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
+        uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
+        # XXX we use rather relaxed ACLs for the development wiki:
+        content_acl=dict(before=u'',
+                         default=u'All:read,write,create,destroy,admin',
+                         after=u'',
+                         hierarchic=False, ),
+        user_profile_acl=dict(before=u'',
+                              default=u'All:read,write,create,destroy,admin',
+                              after=u'',
+                              hierarchic=False, ),
+    )
 
     #item_root = u'Home' # front page
 
@@ -63,12 +63,13 @@ class Config(DefaultConfig):
     # see https://bitbucket.org/thomaswaldmann/xstatic for infos about xstatic:
     from xstatic.main import XStatic
     # names below must be package names
-    mod_names = ['jquery', 'jquery_file_upload',
-                 'json_js',
-                 'ckeditor',
-                 'svgweb',
-                 'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
-                ]
+    mod_names = [
+        'jquery', 'jquery_file_upload',
+        'json_js',
+        'ckeditor',
+        'svgweb',
+        'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
+    ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)

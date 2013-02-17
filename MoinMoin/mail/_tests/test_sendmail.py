@@ -35,7 +35,7 @@ class TestdecodeSpamSafeEmail(object):
          'FirstnameLastname@example.net'),
         ('first.last@example.com', 'first.last@example.com'),
         ('first . last @ example . com', 'first.last@example.com'),
-        )
+    )
 
     def testDecodeSpamSafeMail(self):
         """mail.sendmail: decoding spam safe mail"""
@@ -56,7 +56,7 @@ class TestencodeSpamSafeEmail(object):
          'firstname DOT lastname AT example DOT net'),
         ('F.Lastname@example.net',
          'f DOT lastname AT example DOT net'),
-        )
+    )
 
     def testEncodeSpamSafeMail(self):
         """mail.sendmail: encoding mail address to spam safe mail"""

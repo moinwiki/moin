@@ -289,7 +289,7 @@ class GivenAuth(BaseAuth):
                  remove_blanks=False,  # Joe Doe -> JoeDoe
                  coding='utf-8',  # for decoding REMOTE_USER correctly
                  **kw
-                ):
+    ):
         super(GivenAuth, self).__init__(**kw)
         self.env_var = env_var
         self.user_name = user_name
@@ -381,7 +381,7 @@ def handle_login(userobj, **kw):
               'openid': kw.get('login_openid'),
               'multistage': (stage and True) or None,
               'attended': True
-             }
+    }
     # add the other parameters from the form
     for param in kw.keys():
         params[param] = kw.get(param)

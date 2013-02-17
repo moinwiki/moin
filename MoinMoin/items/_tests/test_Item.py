@@ -42,10 +42,10 @@ class TestItem(object):
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
         assert meta == {
-                ITEMTYPE: ITEMTYPE_NONEXISTENT,
-                CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
-                NAME: u'DoesNotExist',
-                }
+            ITEMTYPE: ITEMTYPE_NONEXISTENT,
+            CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
+            NAME: u'DoesNotExist',
+        }
         assert data == ''
 
     def testCRUD(self):
@@ -272,17 +272,16 @@ class TestItem(object):
         assert item.content.data == u'another child'
 
     def test_rename_recursion_with_multiple_names_and_children(self):
-        update_item(u'Foo',
-                    {CONTENTTYPE: u'text/x.moin.wiki',
-                         NAME: [u'Other', u'Page', u'Foo']},
-                    u'Parent')
+        update_item(u'Foo', {
+            CONTENTTYPE: u'text/x.moin.wiki',
+            NAME: [u'Other', u'Page', u'Foo'],
+        }, u'Parent')
         update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
         update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
-        update_item(u'Another',
-                    {CONTENTTYPE: u'text/x.moin.wiki',
-                     NAME: [u'Another', u'Page/Second']
-                         },
-                    u'Both')
+        update_item(u'Another', {
+            CONTENTTYPE: u'text/x.moin.wiki',
+            NAME: [u'Another', u'Page/Second'],
+        }, u'Both')
         update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Second')
         update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
 

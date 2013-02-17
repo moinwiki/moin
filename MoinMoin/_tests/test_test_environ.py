@@ -35,10 +35,10 @@ class TestStorageEnvironWithoutConfig(object):
 
 
 CONTENT_ACL = dict(
-        before="+All:write",  # need to write to sys pages
-        default="All:read,write,admin,create,destroy",
-        after="Me:create",
-        hierarchic=False,
+    before="+All:write",  # need to write to sys pages
+    default="All:read,write,admin,create,destroy",
+    after="Me:create",
+    hierarchic=False,
 )
 
 

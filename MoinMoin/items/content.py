@@ -66,7 +66,7 @@ from MoinMoin.forms import File
 from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
-    )
+)
 from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
 
 
@@ -200,8 +200,7 @@ class Content(object):
             input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
-            smiley_conv = reg.get(type_moin_document, type_moin_document,
-                    icon='smiley')
+            smiley_conv = reg.get(type_moin_document, type_moin_document, icon='smiley')
 
             # We can process the conversion
             links = Iri(scheme='wiki', authority='', path='/' + self.name)
@@ -964,9 +963,9 @@ class DocBook(MarkupItem):
 
         # We determine the different namespaces of the output form
         output_namespaces = {
-             docbook.namespace: '',
-             xlink.namespace: 'xlink',
-         }
+            docbook.namespace: '',
+            xlink.namespace: 'xlink',
+        }
 
         # We convert the result into a StringIO object
         # With the appropriate namespace

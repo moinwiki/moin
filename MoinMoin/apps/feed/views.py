@@ -101,7 +101,7 @@ def atom(item_name):
                      author=author,
                      url=url_for_item(name, rev=this_revid, _external=True),
                      updated=datetime.fromtimestamp(rev.meta[MTIME]),
-                    )
+            )
         content = feed.to_string()
         # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
         content = content.split("\n")

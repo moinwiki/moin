@@ -47,9 +47,8 @@ class ConverterBase(object):
         # because it is also called in subclasses
         return self.traverse_tree(*args, **kw)
 
-    def traverse_tree(self, elem, page=None,
-            __tag_page_href=moin_page.page_href, __tag_link=_tag_xlink_href,
-            __tag_include=_tag_xinclude_href):
+    def traverse_tree(self, elem, page=None, __tag_page_href=moin_page.page_href,
+                      __tag_link=_tag_xlink_href, __tag_include=_tag_xinclude_href):
         """
         Traverses the tree and handles each element appropriately
         """

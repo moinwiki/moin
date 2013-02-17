@@ -99,11 +99,11 @@ class MyJoinedString(JoinedString):
     def u(self):
         return self.separator.join(child.u for child in self)
 
-Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True,
-                                                            separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
+    label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
-Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Names'), optional=True,
-                                                            separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
+    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

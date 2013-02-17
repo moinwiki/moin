@@ -99,7 +99,7 @@ class OpenIDAuth(BaseAuth):
                                                            _external=True,
                                                            openid_openid=identity,
                                                            openid_submit='1'
-                                                          ))
+                    ))
 
             # not trusted
             return ContinueLogin(None, _('This OpenID provider is not trusted.'))
