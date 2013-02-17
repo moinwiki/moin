@@ -49,10 +49,10 @@ def diff(oldlines, newlines, **kw):
     while i < len(lines):
         marker = lines[i][0]
         if marker == ' ':
-            count = count + 1
-            i = i + 1
-            lcount_old = lcount_old + 1
-            lcount_new = lcount_new + 1
+            count += 1
+            i += 1
+            lcount_old += 1
+            lcount_new += 1
         elif marker in ['-', '+']:
             if (count == i) and count > 3:
                 lines[:i - 3] = []
@@ -67,9 +67,9 @@ def diff(oldlines, newlines, **kw):
                 count = 0
                 i += 1
             if marker == '-':
-                lcount_old = lcount_old + 1
+                lcount_old += 1
             else:
-                lcount_new = lcount_new + 1
+                lcount_new += 1
         elif marker == '?':
             lines[i:i + 1] = []
 

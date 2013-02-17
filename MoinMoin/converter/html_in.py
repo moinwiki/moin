@@ -481,7 +481,7 @@ class Converter(object):
         for child in element:
             # We need one dt tag, and one dd tag, a have a pair
             if child.tag.name == 'dt' or child.tag.name == 'dd':
-                number_pair = number_pair + 1
+                number_pair += 1
 
             # The following code is similar to do_children method
             if isinstance(child, ET.Element):

@@ -72,11 +72,11 @@ def rangelist(numbers):
     pattern = ','
     for i in range(len(numbers) - 1):
         if pattern[-1] == ',':
-            pattern = pattern + str(numbers[i])
+            pattern += str(numbers[i])
             if numbers[i] + 1 == numbers[i + 1]:
-                pattern = pattern + '-'
+                pattern += '-'
             else:
-                pattern = pattern + ','
+                pattern += ','
         elif numbers[i] + 1 != numbers[i + 1]:
             pattern = pattern + str(numbers[i]) + ','
 

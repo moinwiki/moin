@@ -386,7 +386,7 @@ class Converter(object):
                 return u"`{0}`__".format(text)
             else:
                 while text in [t for (t, h) in self.all_used_references]:
-                    text = text + u"~"
+                    text += u"~"
         self.used_references.append((text, href))
         self.all_used_references.append((text, href))
         #self.objects.append("\n\n.. _%s: %s\n\n" % (text, href))

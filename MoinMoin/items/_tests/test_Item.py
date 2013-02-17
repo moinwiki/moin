@@ -66,7 +66,7 @@ class TestItem(object):
         assert saved_data == data
 
         data = rev1_data = data * 10000
-        comment = comment + u' again'
+        comment += u' again'
         # save rev 1
         item._save(meta, data, comment=comment)
         # check save result
