@@ -39,7 +39,7 @@ def encodeAddress(address, charset):
     :returns: encoded address
     """
     assert isinstance(address, unicode)
-    composite = re.compile(r'(?P<phrase>.*?)(?P<blanks>\s*)\<(?P<addr>.*)\>', re.UNICODE)
+    composite = re.compile(r'(?P<phrase>.*?)(?P<blanks>\s*)<(?P<addr>.*)>', re.UNICODE)
     match = composite.match(address)
     if match:
         phrase = match.group('phrase')

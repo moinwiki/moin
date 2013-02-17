@@ -763,7 +763,7 @@ class Converter(object):
             try:
                 docutils_tree = core.publish_doctree(source=input)
             except utils.SystemMessage as inst:
-                string_numb = re.match(re.compile(r'<string>\:([0-9]*)\:\s*\(.*?\)\s*(.*)',
+                string_numb = re.match(re.compile(r'<string>:([0-9]*):\s*\(.*?\)\s*(.*)',
                                                   re.X | re.U | re.M | re.S), str(inst))
                 if string_numb:
                     str_num = string_numb.group(1)
