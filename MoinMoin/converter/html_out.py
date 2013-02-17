@@ -622,7 +622,7 @@ class ConverterPage(Converter):
                                          html.onclick_:
                                             "$('.moin-table-of-contents ol').toggle();return false;",
                                      },
-                                     children=[('[+]'), ])
+                                     children=['[+]', ])
                 elem_h = html.div(attrib={html.class_: 'moin-table-of-contents-heading'},
                                   children=[_('Contents'), headtogglelink])
                 elem.append(elem_h)

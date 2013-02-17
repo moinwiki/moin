@@ -529,7 +529,7 @@ class UnitArgument(IEFArgument):
                 return ret
         if self._defaultunit is not None:
             try:
-                return (self._type(s), self._defaultunit)
+                return self._type(s), self._defaultunit
             except ValueError:
                 pass
         units = ', '.join(self._units)

@@ -135,7 +135,7 @@ def get_editor(userid, addr, hostname):
     if userid:
         userdata = User(userid)
         if userdata.mailto_author and userdata.email:
-            return ('email', userdata.email)
+            return 'email', userdata.email
         elif userdata.name:
             interwiki = getInterwikiHome(userdata.name0)
             if interwiki:

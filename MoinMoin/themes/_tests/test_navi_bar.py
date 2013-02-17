@@ -52,7 +52,7 @@ class TestNaviBar(object):
     def test_parent_item(self):
         test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')
         expected = 'moin/moin-2.0'
-        assert test_result == expected, ('Expected "%(expected)s" but got "%(test_result)s"') % locals()
+        assert test_result == expected, 'Expected "%(expected)s" but got "%(test_result)s"' % locals()
 
 
 def test_shorten_item_name():
