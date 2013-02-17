@@ -6,8 +6,10 @@
 """
 
 
-from MoinMoin.util.version import Version
 import pytest
+
+from MoinMoin.util.version import Version
+
 
 class TestVersion(object):
     def test_Version(self):

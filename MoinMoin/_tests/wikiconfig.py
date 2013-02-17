@@ -1,4 +1,5 @@
 # Copyright: 2000-2004 by Juergen Hermann <jh@web.de>
+# Copyright: 2011-2013 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -13,10 +14,14 @@ work without setting them (like data_dir).
 
 import os
 from os.path import abspath, dirname, join
+
 from MoinMoin.config.default import DefaultConfig
 
 
 class Config(DefaultConfig):
+    """
+    default configuration for the unit tests
+    """
     _here = abspath(dirname(__file__))
     _root = abspath(join(_here, '..', '..'))
     data_dir = join(_here, 'wiki', 'data')  # needed for plugins package TODO

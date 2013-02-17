@@ -8,6 +8,7 @@
 
 from MoinMoin.util import diff3
 
+
 class TestDiff3:
 
     def testTextMerge(self):

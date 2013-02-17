@@ -11,6 +11,7 @@ import pytest
 pytest.importorskip('MoinMoin.storage.stores.sqla')
 from ..sqla import BytesStore, FileStore
 
+
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_create(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
@@ -21,12 +22,14 @@ def test_create(tmpdir, Store):
     assert dbfile.check()
     return store
 
+
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_destroy(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
     store = test_create(tmpdir, Store)
     store.destroy()
     # XXX: check for dropped table
+
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_from_uri(tmpdir, Store):

@@ -8,8 +8,10 @@ Test for macro.DateTime
 import time
 from datetime import datetime
 
-from MoinMoin.macro.DateTime import *
 import pytest
+
+from MoinMoin.macro.DateTime import *
+
 
 def test_Macro():
     """Test: DateTime.Macro """

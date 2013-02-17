@@ -64,6 +64,7 @@ class TestContent(object):
         result2 = item1.content.get_templates(contenttype2)
         assert result2 == [item_name3]
 
+
 class TestTarItems(object):
     """
     tests for the container items
@@ -103,6 +104,7 @@ class TestTarItems(object):
         item = Item.create(item_name, contenttype=u'application/x-tar')
         assert item.content.get_member('example1.txt').read() == filecontent
 
+
 class TestZipMixin(object):
     """ Test for zip-like items """
 
@@ -114,6 +116,7 @@ class TestZipMixin(object):
         members = set(['example1.txt', 'example2.txt'])
         with pytest.raises(NotImplementedError):
             item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
+
 
 class TestTransformableBitmapImage(object):
 
@@ -170,6 +173,7 @@ class TestTransformableBitmapImage(object):
             assert result == expected
         except ImportError:
             pass
+
 
 class TestText(object):
 
@@ -253,5 +257,6 @@ class TestText(object):
         result = Text._render_data_highlight(item2.content)
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.content.data == ''
+
 
 coverage_modules = ['MoinMoin.items.content']

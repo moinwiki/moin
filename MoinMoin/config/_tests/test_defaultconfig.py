@@ -10,22 +10,24 @@ import pytest
 
 from flask import current_app as app
 
+
 class TestPasswordChecker(object):
     username = u"SomeUser"
     tests_builtin = [
-        (u'', False), # empty
-        (u'1966', False), # too short
-        (u'asdfghjk', False), # keyboard sequence
-        (u'QwertZuiop', False), # german keyboard sequence, with uppercase
-        (u'mnbvcx', False), # reverse keyboard sequence
-        (u'12345678', False), # keyboard sequence, too easy
-        (u'aaaaaaaa', False), # not enough different chars
-        (u'BBBaaaddd', False), # not enough different chars
-        (username, False), # username == password
-        (username[1:-1], False), # password in username
-        (u"XXX{0}XXX".format(username), False), # username in password
-        (u'Moin-2007', True), # this should be OK
+        (u'', False),  # empty
+        (u'1966', False),  # too short
+        (u'asdfghjk', False),  # keyboard sequence
+        (u'QwertZuiop', False),  # german keyboard sequence, with uppercase
+        (u'mnbvcx', False),  # reverse keyboard sequence
+        (u'12345678', False),  # keyboard sequence, too easy
+        (u'aaaaaaaa', False),  # not enough different chars
+        (u'BBBaaaddd', False),  # not enough different chars
+        (username, False),  # username == password
+        (username[1:-1], False),  # password in username
+        (u"XXX{0}XXX".format(username), False),  # username in password
+        (u'Moin-2007', True),  # this should be OK
     ]
+
     def testBuiltinPasswordChecker(self):
         pw_checker = app.cfg.password_checker
         if not pw_checker:
@@ -35,5 +37,6 @@ class TestPasswordChecker(object):
                 pw_error = pw_checker(self.username, pw)
                 print "{0!r}: {1}".format(pw, pw_error)
                 assert result == (pw_error is None)
+
 
 coverage_modules = ['MoinMoin.config.default']

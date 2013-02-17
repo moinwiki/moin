@@ -50,7 +50,10 @@ import subprocess
 import hashlib
 
 try:
-    import ldap, ldif, ldap.modlist  # needs python-ldap
+    # needs python-ldap
+    import ldap
+    import ldap.modlist
+    import ldif
 except ImportError:
     ldap = None
 

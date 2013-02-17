@@ -23,6 +23,7 @@ del msg
 
 import ldap
 
+
 class TestLDAPServer(LDAPTstBase):
     basedn = BASEDN
     rootdn = ROOTDN
@@ -35,12 +36,13 @@ class TestLDAPServer(LDAPTstBase):
         server_uri = self.ldap_env.slapd.url
         base_dn = self.ldap_env.basedn
         lo = ldap.initialize(server_uri)
-        ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3) # ldap v2 is outdated
+        ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
         lo.simple_bind_s('', '')
         lusers = lo.search_st(base_dn, ldap.SCOPE_SUBTREE, '(uid=*)')
         uids = [ldap_dict['uid'][0] for dn, ldap_dict in lusers]
         assert 'usera' in uids
         assert 'userb' in uids
+
 
 class TestMoinLDAPLogin(LDAPTstBase):
     basedn = BASEDN
@@ -132,6 +134,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
         u2 = handle_login(None, username='usera', password='wrong')
         assert u2 is None
 
+
 class TestTwoLdapServers(object):
     basedn = BASEDN
     rootdn = ROOTDN
@@ -164,7 +167,7 @@ class TestTwoLdapServers(object):
             server_uri = ldap_env.slapd.url
             base_dn = ldap_env.basedn
             lo = ldap.initialize(server_uri)
-            ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3) # ldap v2 is outdated
+            ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
             lo.simple_bind_s('', '')
             lusers = lo.search_st(base_dn, ldap.SCOPE_SUBTREE, '(uid=*)')
             uids = [ldap_dict['uid'][0] for dn, ldap_dict in lusers]
@@ -214,7 +217,7 @@ class TestLdapFailover(object):
             try:
                 ldap_env.stop_slapd()
             except:
-                pass # one will fail, because it is already stopped
+                pass  # one will fail, because it is already stopped
             ldap_env.destroy_env()
 
     def testMoinLDAPFailOver(self):

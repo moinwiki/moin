@@ -24,6 +24,7 @@ def build_index(basename, relnames):
     return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
 
+
 def build_mixed_index(basename, spec):
     """
     Build a list of MixedIndexEntry by hand, useful as a test helper.
@@ -352,5 +353,6 @@ class TestItem(object):
             item.meta['test_key']
         assert item.meta['another_test_key'] == another_meta['another_test_key']
         assert item.content.data == another_data
+
 
 coverage_modules = ['MoinMoin.items']

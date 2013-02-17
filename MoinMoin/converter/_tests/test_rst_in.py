@@ -153,4 +153,5 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         out = self.conv(input, 'text/x-rst;charset=utf-8', **args)
         assert self.serialize(out) == output
 
+
 coverage_modules = ['MoinMoin.converter.rst_in']

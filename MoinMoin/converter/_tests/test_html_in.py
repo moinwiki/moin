@@ -21,6 +21,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 from MoinMoin.converter.html_in import *
 
+
 class Base(object):
     namespaces = {
         moin_page.namespace: '',
@@ -48,6 +49,7 @@ class Base(object):
         logging.debug("After the HTML_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
         assert (tree.xpath(path, namespaces=self.namespaces_xpath))
+
 
 class TestConverter(Base):
     def setup_class(self):

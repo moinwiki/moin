@@ -25,6 +25,7 @@ from MoinMoin.converter.html_in import Converter as HTML_IN
 from MoinMoin.converter.html_out import Converter as HTML_OUT
 from MoinMoin.util.tree import html, moin_page, xlink
 
+
 class Base(object):
 
     namespaces = {
@@ -50,6 +51,7 @@ class Base(object):
         logging.debug("After the roundtrip : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
         assert (tree.xpath(path))
+
 
 class TestConverter(Base):
     def setup_class(self):

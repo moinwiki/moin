@@ -14,6 +14,7 @@ from MoinMoin.constants.keys import NAME, CONTENTTYPE
 
 from MoinMoin._tests import wikiconfig
 
+
 class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
         self.class_level_value = 123
@@ -34,11 +35,12 @@ class TestStorageEnvironWithoutConfig(object):
 
 
 CONTENT_ACL = dict(
-        before="+All:write", # need to write to sys pages
+        before="+All:write",  # need to write to sys pages
         default="All:read,write,admin,create,destroy",
         after="Me:create",
         hierarchic=False,
 )
+
 
 class TestStorageEnvironWithConfig(object):
 

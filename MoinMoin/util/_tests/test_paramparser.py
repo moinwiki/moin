@@ -22,7 +22,7 @@ class TestParamParsing(object):
                   (u' a , b , c , d ',        (abcd, {}, [])),
                   (u'   a   ',                ([u'a'], {}, [])),
                   (u'"  a  "',                ([u'  a  '], {}, [])),
-                  (u'a,b,c,d, "a,b,c,d"',     (abcd+[u'a,b,c,d'], {}, [])),
+                  (u'a,b,c,d, "a,b,c,d"',     (abcd + [u'a,b,c,d'], {}, [])),
                   (u'quote " :), b',          ([u'quote " :)', u'b'], {}, [])),
                   (u'"quote "" :)", b',       ([u'quote " :)', u'b'], {}, [])),
                   (u'=7',                     ([], {u'': u'7'}, [])),
@@ -320,6 +320,7 @@ class TestParamParsing(object):
         for test in tests:
             yield [_check] + list(test)
 
+
 class TestArgGetters(object):
     def testGetBoolean(self):
         tests = [
@@ -360,7 +361,7 @@ class TestArgGetters(object):
         pytest.raises(ValueError, paramparser.get_bool, u'')
         pytest.raises(ValueError, paramparser.get_bool, u'42')
         pytest.raises(ValueError, paramparser.get_bool, u'wrong')
-        pytest.raises(ValueError, paramparser.get_bool, u'"True"') # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_bool, u'"True"')  # must not be quoted!
 
     def testGetInt(self):
         tests = [
@@ -394,7 +395,7 @@ class TestArgGetters(object):
         pytest.raises(ValueError, paramparser.get_int, u'')
         pytest.raises(ValueError, paramparser.get_int, u'23.42')
         pytest.raises(ValueError, paramparser.get_int, u'wrong')
-        pytest.raises(ValueError, paramparser.get_int, u'"4711"') # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_int, u'"4711"')  # must not be quoted!
 
     def testGetFloat(self):
         tests = [
@@ -429,7 +430,7 @@ class TestArgGetters(object):
         # any value not convertable to int raises ValueError
         pytest.raises(ValueError, paramparser.get_float, u'')
         pytest.raises(ValueError, paramparser.get_float, u'wrong')
-        pytest.raises(ValueError, paramparser.get_float, u'"47.11"') # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_float, u'"47.11"')  # must not be quoted!
 
     def testGetComplex(self):
         tests = [
@@ -444,10 +445,10 @@ class TestArgGetters(object):
             (u'-23.42', None, None, -23.42),
             (u'-23.42E3', None, None, -23.42E3),
             (u'23.42E-3', None, None, 23.42E-3),
-            (u'23.42E-3+3.04j', None, None, 23.42E-3+3.04j),
+            (u'23.42E-3+3.04j', None, None, 23.42E-3 + 3.04j),
             (u'3.04j', None, None, 3.04j),
             (u'-3.04j', None, None, -3.04j),
-            (u'23.42E-3+3.04i', None, None, 23.42E-3+3.04j),
+            (u'23.42E-3+3.04i', None, None, 23.42E-3 + 3.04j),
             (u'3.04i', None, None, 3.04j),
             (u'-3.04i', None, None, -3.04j),
             (u'-3', None, None, -3L),
@@ -476,7 +477,7 @@ class TestArgGetters(object):
         pytest.raises(ValueError, paramparser.get_complex, u'3Ij')
         pytest.raises(ValueError, paramparser.get_complex, u'3i-3i')
         pytest.raises(ValueError, paramparser.get_complex, u'wrong')
-        pytest.raises(ValueError, paramparser.get_complex, u'"47.11"') # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_complex, u'"47.11"')  # must not be quoted!
 
     def testGetUnicode(self):
         tests = [

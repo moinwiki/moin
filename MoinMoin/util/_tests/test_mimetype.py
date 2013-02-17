@@ -9,6 +9,7 @@ MoinMoin - MoinMoin.util.mimetype Tests
 
 from MoinMoin.util import mimetype
 
+
 class TestMimeType(object):
     """ Test: util.mimetype """
 

@@ -9,6 +9,7 @@
 
 from email.Charset import Charset, QP
 from email.Header import Header
+
 from MoinMoin.mail import sendmail
 from MoinMoin.constants.contenttypes import CHARSET
 
@@ -41,6 +42,7 @@ class TestdecodeSpamSafeEmail(object):
         for coded, expected in self._tests:
             assert sendmail.decodeSpamSafeEmail(coded) == expected
 
+
 class TestencodeSpamSafeEmail(object):
     """mail.sendmail: testing spam safe mail"""
 
@@ -66,6 +68,7 @@ class TestencodeSpamSafeEmail(object):
         for coded, expected in self._tests:
             expected = expected.replace(' AT ', ' AT SYCTE ')
             assert sendmail.encodeSpamSafeEmail(coded, 'SYCTE') == expected
+
 
 class TestEncodeAddress(object):
     """ Address encoding tests
@@ -126,5 +129,6 @@ class TestEncodeAddress(object):
         address = u'Phrase <blah'
         expected = str(address)
         assert sendmail.encodeAddress(address, self.charset) == expected
+
 
 coverage_modules = ['MoinMoin.mail.sendmail']
