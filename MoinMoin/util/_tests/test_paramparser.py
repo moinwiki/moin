@@ -17,52 +17,40 @@ class TestParamParsing(object):
         abcd_dict = {u'a': u'1', u'b': u'2', u'c': u'3', u'd': u'4'}
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
-            (u'a,b,c,d',                (abcd, {}, [])),
-            (u' a , b , c , d ',        (abcd, {}, [])),
-            (u'   a   ',                ([u'a'], {}, [])),
-            (u'"  a  "',                ([u'  a  '], {}, [])),
-            (u'a,b,c,d, "a,b,c,d"',     (abcd + [u'a,b,c,d'], {}, [])),
-            (u'quote " :), b',          ([u'quote " :)', u'b'], {}, [])),
-            (u'"quote "" :)", b',       ([u'quote " :)', u'b'], {}, [])),
-            (u'=7',                     ([], {u'': u'7'}, [])),
-            (u',,',                     ([None, None, None], {}, [])),
-            (u',"",',                   ([None, u'', None], {}, [])),
-            (u',"", ""',                ([None, u'', u''], {}, [])),
-            (u'  ""  ,"", ""',          ([u'', u'', u''], {}, [])),
+            (u'd = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
+            (u'a,b,c,d', (abcd, {}, [])),
+            (u' a , b , c , d ', (abcd, {}, [])),
+            (u'   a   ', ([u'a'], {}, [])),
+            (u'"  a  "', ([u'  a  '], {}, [])),
+            (u'a,b,c,d, "a,b,c,d"', (abcd + [u'a,b,c,d'], {}, [])),
+            (u'quote " :), b', ([u'quote " :)', u'b'], {}, [])),
+            (u'"quote "" :)", b', ([u'quote " :)', u'b'], {}, [])),
+            (u'=7', ([], {u'': u'7'}, [])),
+            (u',,', ([None, None, None], {}, [])),
+            (u',"",', ([None, u'', None], {}, [])),
+            (u',"", ""', ([None, u'', u''], {}, [])),
+            (u'  ""  ,"", ""', ([u'', u'', u''], {}, [])),
             # some name=value test
-            (u'd = 4,c=3,b=2,a= 1 ',    ([], abcd_dict, [])),
-            (u'd=d,e="a,b,c,d"',        ([], {u'd': u'd',
-                                              u'e': u'a,b,c,d'}, [])),
-            (u'd = d,e = "a,b,c,d"',    ([], {u'd': u'd',
-                                              u'e': u'a,b,c,d'}, [])),
-            (u'd = d, e = "a,b,c,d"',   ([], {u'd': u'd',
-                                              u'e': u'a,b,c,d'}, [])),
-            (u'd = , e = "a,b,c,d"',    ([], {u'd': None,
-                                              u'e': u'a,b,c,d'}, [])),
-            (u'd = "", e = "a,b,c,d"',  ([], {u'd': u'',
-                                              u'e': u'a,b,c,d'}, [])),
-            (u'd = "", e = ',           ([], {u'd': u'', u'e': None},
-                                         [])),
-            (u'd=""',                   ([], {u'd': u''}, [])),
-            (u'd = "", e = ""',         ([], {u'd': u'', u'e': u''},
-                                         [])),
+            (u'd = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
+            (u'd=d,e="a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
+            (u'd = d,e = "a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
+            (u'd = d, e = "a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
+            (u'd = , e = "a,b,c,d"', ([], {u'd': None, u'e': u'a,b,c,d'}, [])),
+            (u'd = "", e = "a,b,c,d"', ([], {u'd': u'', u'e': u'a,b,c,d'}, [])),
+            (u'd = "", e = ', ([], {u'd': u'', u'e': None}, [])),
+            (u'd=""', ([], {u'd': u''}, [])),
+            (u'd = "", e = ""', ([], {u'd': u'', u'e': u''}, [])),
             # no, None as key isn't accepted
-            (u' = "",  e = ""',         ([], {u'': u'', u'e': u''},
-                                         [])),
+            (u' = "",  e = ""', ([], {u'': u'', u'e': u''}, [])),
             # can quote both name and value:
-            (u'd = d," e "= "a,b,c,d"', ([], {u'd': u'd',
-                                              u' e ': u'a,b,c,d'}, [])),
+            (u'd = d," e "= "a,b,c,d"', ([], {u'd': u'd', u' e ': u'a,b,c,d'}, [])),
             # trailing args
-            (u'1,2,a=b,3,4',            ([u'1', u'2'], {u'a': u'b'},
-                                         [u'3', u'4'])),
+            (u'1,2,a=b,3,4', ([u'1', u'2'], {u'a': u'b'}, [u'3', u'4'])),
             # can quote quotes:
-            (u'd = """d"',              ([], {u'd': u'"d'}, [])),
-            (u'd = """d"""',            ([], {u'd': u'"d"'}, [])),
-            (u'd = "d"" ", e=7',        ([], {u'd': u'd" ', u'e': u'7'},
-                                         [])),
-            (u'd = "d""", e=8',         ([], {u'd': u'd"', u'e': u'8'},
-                                         [])),
+            (u'd = """d"', ([], {u'd': u'"d'}, [])),
+            (u'd = """d"""', ([], {u'd': u'"d"'}, [])),
+            (u'd = "d"" ", e=7', ([], {u'd': u'd" ', u'e': u'7'}, [])),
+            (u'd = "d""", e=8', ([], {u'd': u'd"', u'e': u'8'}, [])),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args)
@@ -79,10 +67,9 @@ class TestParamParsing(object):
     def testLimited(self):
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ',    ([], {u'd': u'4',
-                                              u'c': u'3,b=2,a= 1'}, [])),
-            (u'a,b,c,d',                ([u'a', u'b,c,d'], {}, [])),
-            (u'a=b,b,c,d',              ([], {u'a': u'b'}, [u'b,c,d'])),
+            (u'd = 4,c=3,b=2,a= 1 ', ([], {u'd': u'4', u'c': u'3,b=2,a= 1'}, [])),
+            (u'a,b,c,d', ([u'a', u'b,c,d'], {}, [])),
+            (u'a=b,b,c,d', ([], {u'a': u'b'}, [u'b,c,d'])),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, seplimit=1)
@@ -99,8 +86,8 @@ class TestParamParsing(object):
     def testDoubleNameValueSeparator(self):
         tests = [
             # regular and quoting tests
-            (u'd==4,=3 ',    ([], {u'd': u'=4', u'': u'3'}, [])),
-            (u'===a,b,c,d',  ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
+            (u'd==4,=3 ', ([], {u'd': u'=4', u'': u'3'}, [])),
+            (u'===a,b,c,d', ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
             (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
         ]
 
@@ -115,19 +102,17 @@ class TestParamParsing(object):
         abcd = [u'a', u'b', u'c', u'd']
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ',    [u'd = 4', u'c=3',
-                                         u'b=2', u'a= 1']),
-            (u'a,b,c,d',                abcd),
-            (u' a , b , c , d ',        abcd),
-            (u'   a   ',                [u'a']),
-            (u'"  a  "',                [u'  a  ']),
-            (u'a,b,c,d, "a,b,c,d"',     abcd + [u'a,b,c,d']),
-            (u'quote " :), b',          [u'quote " :)', u'b']),
-            (u'"quote "" :)", b',       [u'quote " :)', u'b']),
-            (u'"unended quote',         [u'"unended quote']),
-            (u'"',                      [u'"']),
-            (u'd=d,e="a,b,c,d"',        [u'd=d', u'e="a', u'b',
-                                         u'c', u'd"']),
+            (u'd = 4,c=3,b=2,a= 1 ', [u'd = 4', u'c=3', u'b=2', u'a= 1']),
+            (u'a,b,c,d', abcd),
+            (u' a , b , c , d ', abcd),
+            (u'   a   ', [u'a']),
+            (u'"  a  "', [u'  a  ']),
+            (u'a,b,c,d, "a,b,c,d"', abcd + [u'a,b,c,d']),
+            (u'quote " :), b', [u'quote " :)', u'b']),
+            (u'"quote "" :)", b', [u'quote " :)', u'b']),
+            (u'"unended quote', [u'"unended quote']),
+            (u'"', [u'"']),
+            (u'd=d,e="a,b,c,d"', [u'd=d', u'e="a', u'b', u'c', u'd"']),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, name_value=False)
@@ -279,7 +264,6 @@ class TestParamParsing(object):
             (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
             (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
             (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
-
             (u'-a:b:d', None, u':', [(M, u'a', u'b', u'd')]),
             (u'"-a:b:d"', None, u':', [(u'-a:b:d')]),
             (u'-"a:b:d"', None, u':', [(M, u'a:b:d')]),
