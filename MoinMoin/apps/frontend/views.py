@@ -30,7 +30,7 @@ from flask import g as flaskg
 from flask.ext.babel import format_date
 from flask.ext.themes import get_themes_list
 
-from flatland import Form, Enum, List
+from flatland import Form, List
 from flatland.validation import Validator
 
 from jinja2 import Markup
@@ -47,7 +47,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect)
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -726,14 +726,13 @@ def jfu_server(item_name):
         abort(403)
 
 
-contenttype_groups = content_registry.group_names[:]
-contenttype_group_descriptions = {}
-for g in contenttype_groups:
-    contenttype_group_descriptions[g] = ', '.join([e.display_name for e in content_registry.groups[g]])
-contenttype_groups.append('unknown items')
+def contenttype_selects_gen():
+    for g in content_registry.group_names:
+        description = u', '.join([e.display_name for e in content_registry.groups[g]])
+        yield g, None, description
+    yield u'unknown items', None, u'Items of contenttype unknown to MoinMoin'
 
-ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(
-                                  descriptions=contenttype_group_descriptions)).using(optional=True)
+ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
 
 
 class IndexForm(Form):
@@ -756,7 +755,7 @@ def index(item_name):
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
     if not form['contenttype']:
-        form['contenttype'].set(contenttype_groups)
+        form['contenttype'].set(ContenttypeGroup.member_schema.valid_values)
 
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
@@ -1401,23 +1400,18 @@ def usersettings():
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
-        #timezones_keys = sorted(Locale('en').time_zones.keys())
-        timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
-        timezone = Select.using(label=L_('Timezone')).valued(*timezones_keys)
-        supported_locales = [Locale('en')] + app.babel_instance.list_translations()
-        locales_available = sorted([(unicode(l), l.display_name) for l in supported_locales],
-                                   key=lambda x: x[1])
-        locales_keys = [l[0] for l in locales_available]
-        locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
+        #_timezones_keys = sorted(Locale('en').time_zones.keys())
+        _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
+        timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
+        _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
+        locale = Select.using(label=L_('Locale')).out_of(
+            ((unicode(l), l.display_name) for l in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
-        themes_available = sorted([(unicode(t.identifier), t.name) for t in get_themes_list()],
-                                  key=lambda x: x[1])
-        themes_keys = [t[0] for t in themes_available]
-        theme_name = Select.using(label=L_('Theme name')).with_properties(
-            labels=dict(themes_available)).valued(*themes_keys)
+        theme_name = Select.using(label=L_('Theme name')).out_of(
+            ((unicode(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
         edit_rows = Natural.using(label=L_('Editor size')).with_properties(
