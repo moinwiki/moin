@@ -1,0 +1,8 @@
+{% extends theme("blog/layout.html") %}
+{% import theme("blog/utils.html") as blog_utils %}
+
+{% block blog_content %}
+    {% if blog_entry_item %}
+        {{ blog_utils.show_blog_entry(blog_entry_item) }}
+    {% endif %}
+{% endblock %}
