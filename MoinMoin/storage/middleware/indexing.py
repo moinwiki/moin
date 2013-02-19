@@ -322,10 +322,10 @@ class IndexingMiddleware(object):
             'difficulty': NUMERIC(stored=True),
             'severity': NUMERIC(stored=True),
             'priority': NUMERIC(stored=True),
-            'status': ID(stored=True),
             'assigned_to': ID(stored=True),
             'superseded_by': ID(stored=True),
             'depends_on': ID(stored=True),
+            'closed': BOOLEAN(stored=True),
         }
         latest_revs_fields.update(**ticket_fields)
 
