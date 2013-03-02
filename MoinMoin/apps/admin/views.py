@@ -97,27 +97,6 @@ def mail_recovery_token():
     return redirect(url_for('.userbrowser'))
 
 
-@admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
-@require_permission(SUPERUSER)
-def sysitems_upgrade():
-    from MoinMoin.storage.backends import upgrade_sysitems  # XXX broken import, either fix or kill this
-    from MoinMoin.storage.error import BackendError
-    if request.method == 'GET':
-        action = 'syspages_upgrade'
-        label = 'Upgrade System Pages'
-        return render_template('admin/sysitems_upgrade.html',
-                               title_name=_(u"System items upgrade"))
-    if request.method == 'POST':
-        xmlfile = request.files.get('xmlfile')
-        try:
-            upgrade_sysitems(xmlfile)
-        except BackendError as e:
-            flash(_('System items upgrade failed due to the following error: %(error)s.', error=e), 'error')
-        else:
-            flash(_('System items have been upgraded successfully!'))
-        return redirect(url_for('.index'))
-
-
 from MoinMoin.config import default as defaultconfig
 
 
