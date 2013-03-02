@@ -13,10 +13,8 @@ import StringIO
 import re
 
 import pytest
-try:
-    from lxml import etree
-except:
-    pytest.skip("lxml module required to run test for html_in_out converter.")
+
+etree = pytest.importorskip('lxml.etree')
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
