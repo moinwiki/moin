@@ -51,6 +51,9 @@ class Backend(MutableBackendBase):
         """
         self.namespaces = namespaces
         self.backends = backends
+        for namespace, backend_name in namespaces:
+            assert isinstance(namespace, unicode)
+            assert backend_name in backends
 
     def open(self):
         for backend in self.backends.values():

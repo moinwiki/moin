@@ -77,6 +77,7 @@ from MoinMoin.constants.keys import (WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIM
                                      EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID,
                                      ITEMID, REVID, CURRENT, PARENTID, PTIME, LATEST_REVS, ALL_REVS, BACKENDNAME)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin.constants import keys
 from MoinMoin.constants.keys import ITEMTYPE
 
@@ -253,6 +254,8 @@ class IndexingMiddleware(object):
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
+            # namespace, so we can have different namespaces within a wiki, always check this!
+            NAMESPACE: ID(stored=True),
             # tokenized NAME from metadata - use this for manual searching from UI
             NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
             # unmodified NAME from metadata - use this for precise lookup by the code.

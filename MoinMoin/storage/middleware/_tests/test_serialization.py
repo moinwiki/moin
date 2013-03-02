@@ -15,6 +15,7 @@ from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
 from MoinMoin.constants.keys import NAME, CONTENTTYPE
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 
 from MoinMoin.storage.backends.stores import MutableBackend
 from MoinMoin.storage.stores.memory import BytesStore, FileStore
@@ -56,7 +57,7 @@ def make_middleware(request):
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
-    namespaces = [('', u'backend')]
+    namespaces = [(NAMESPACE_DEFAULT, u'backend')]
     backends = {u'backend': _backend}
     backend = RoutingBackend(namespaces, backends)
     backend.create()

@@ -36,6 +36,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin import wikiutil
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import _, L_, N_
@@ -101,6 +102,7 @@ def get_user_backend():
 
 def update_user_query(**q):
     USER_QUERY_STDARGS = {
+        NAMESPACE: NAMESPACE_USERPROFILES,
         CONTENTTYPE: CONTENTTYPE_USER,
         WIKINAME: app.cfg.interwikiname,  # XXX for now, search only users of THIS wiki
                                           # maybe add option to not index wiki users
@@ -244,6 +246,7 @@ class UserProfile(object):
               force=True because these changes are not detected!
         """
         if self._changed or force:
+            self[NAMESPACE] = NAMESPACE_USERPROFILES
             self[CONTENTTYPE] = CONTENTTYPE_USER
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)

@@ -22,9 +22,11 @@ We use a layered approach like this::
 """
 
 
-CONTENT, USERPROFILES = u'content', u'userprofiles'
-
 BACKENDS_PACKAGE = 'MoinMoin.storage.backends'
+
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+
+BACKEND_DEFAULT, BACKEND_USERPROFILES = u'default', u'userprofiles'
 
 
 def backend_from_uri(uri):
@@ -82,15 +84,15 @@ def create_simple_mapping(uri='stores:fs:instance',
     if not user_profile_acl:
         user_profile_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
     namespaces = {
-        u'': CONTENT,
-        u'userprofiles:': USERPROFILES,
+        NAMESPACE_DEFAULT: BACKEND_DEFAULT,
+        NAMESPACE_USERPROFILES + ':': BACKEND_USERPROFILES,
     }
     backends = {
-        CONTENT: None,
-        USERPROFILES: None,
+        BACKEND_DEFAULT: None,
+        BACKEND_USERPROFILES: None,
     }
     acls = {
-        'userprofiles:': user_profile_acl,
-        '': content_acl,
+        NAMESPACE_USERPROFILES + ':': user_profile_acl,
+        NAMESPACE_DEFAULT: content_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

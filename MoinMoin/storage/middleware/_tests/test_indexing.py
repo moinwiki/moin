@@ -17,6 +17,7 @@ from flask import g as flaskg
 
 from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
                                      LATEST_REVS, ALL_REVS, NAMESPACE)
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 
 from MoinMoin.auth import GivenAuth
 from MoinMoin._tests import wikiconfig
@@ -371,7 +372,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name_n]
         rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain'),
                                     StringIO(str(item_name_n)), return_rev=True)
-        item_name_u = u'userprofiles:userprofile'
+        item_name_u = u'%s:userprofile' % NAMESPACE_USERPROFILES
         item = self.imw[item_name_u]
         rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain'),
                                     StringIO(str(item_name_u)), return_rev=True)
@@ -381,7 +382,7 @@ class TestIndexingMiddleware(object):
         assert rev_n.meta[NAME] == [item_name_n, ]
         item = self.imw[item_name_u]
         rev_u = item.get_revision(rev_u.revid)
-        assert rev_u.meta[NAMESPACE] == u'userprofiles'
+        assert rev_u.meta[NAMESPACE] == NAMESPACE_USERPROFILES
         assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
 
     def test_parentnames(self):
