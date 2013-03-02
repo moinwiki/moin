@@ -91,6 +91,10 @@ from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
+VALIDATION_HANDLING_STRICT = 'strict'
+VALIDATION_HANDLING_WARN = 'warn'
+VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
+
 
 def get_names(meta):
     """
@@ -1051,12 +1055,12 @@ class Item(object):
             Schema = ContentMetaSchema
         m = Schema(meta)
         valid = m.validate(state)
-        # TODO: currently we just log validation results. in the end we should
-        # reject invalid stuff in some comfortable way.
         if not valid:
             logging.warning("metadata validation failed, see below")
             for e in m.children:
                 logging.warning("{0}, {1}".format(e.valid, e))
+            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+                raise ValueError('metadata validation failed and strict handling requested, see the log for details')
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
