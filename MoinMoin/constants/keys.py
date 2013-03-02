@@ -20,11 +20,6 @@ REVERTED_TO = "reverted_to"
 # some metadata key constants:
 ACL = "acl"
 
-# This says: I am a system item
-IS_SYSITEM = "is_syspage"
-# This says: original sysitem as contained in release: <release>
-SYSITEM_VERSION = "syspage_version"
-
 # keys for storing group and dict information
 # group of user names, e.g. for ACLs:
 USERGROUP = "usergroup"
