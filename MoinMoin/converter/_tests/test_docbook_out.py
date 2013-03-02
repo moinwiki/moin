@@ -11,10 +11,7 @@ import StringIO
 
 import pytest
 
-try:
-    from lxml import etree
-except:
-    pytest.skip("lxml module required to run test for docbook_out converter.")
+etree = pytest.importorskip('lxml.etree')
 
 from emeraldtree.tree import *
 
