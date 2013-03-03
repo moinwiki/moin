@@ -138,6 +138,9 @@ def namespace_validator(element, state):
     """
     if element.raw is Unset:
         element.set(state[keys.NAMESPACE])
+    v = element.value
+    if v is None:
+        return True  # the routing middleware can extract namespace from the name
     return name_validator(element, state)
 
 
@@ -319,7 +322,7 @@ common_meta = (
     String.named(keys.PARENTID).validated_by(uuid_validator).using(optional=True),
     String.named(keys.WIKINAME).using(strip=False).validated_by(wikiname_validator),
     String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),
-    List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)),
+    List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
     List.named(keys.NAME_OLD).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
     Integer.named(keys.MTIME).validated_by(mtime_validator),
     String.named(keys.ACTION).validated_by(action_validator),

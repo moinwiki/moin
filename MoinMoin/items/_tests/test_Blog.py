@@ -33,7 +33,7 @@ class TestBlog(TestView):
     NO_ENTRIES_MSG = u"There are no entries"
 
     name = u'NewBlogItem'
-    contenttype = u'text/x.moin.wiki'
+    contenttype = u'text/x.moin.wiki;charset=utf-8'
     data = u"This is the header item of this blog"
     meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_BLOG}
     comment = u'saved it'
@@ -138,7 +138,7 @@ class TestBlog(TestView):
 
 class TestBlogEntry(TestView):
     blog_name = u'NewBlogItem'
-    contenttype = u'text/x.moin.wiki'
+    contenttype = u'text/x.moin.wiki;charset=utf-8'
     blog_data = u"This is the header item of this blog"
     blog_meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_BLOG}
     comment = u'saved it'

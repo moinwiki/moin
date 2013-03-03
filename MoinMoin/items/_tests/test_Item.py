@@ -160,16 +160,16 @@ class TestItem(object):
                     {NAME: [u'Page',
                             u'Another name',
                             ],
-                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+                     CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, content)
 
         item1 = Item.create(u'Page')
         assert item1.name == u'Page'
-        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item1.content.data == content
 
         item2 = Item.create(u'Another name')
         assert item2.name == u'Another name'
-        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content
 
         assert item1.rev.revid == item2.rev.revid
@@ -208,24 +208,24 @@ class TestItem(object):
                             u'Second',
                             u'Third',
                             ],
-                     CONTENTTYPE: u'text/x.moin.wiki'}, content)
+                     CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, content)
 
         item = Item.create(u'Second')
         item.rename(u'New name', comment=u'renamed')
 
         item1 = Item.create(u'First')
         assert item1.name == u'First'
-        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item1.content.data == content
 
         item2 = Item.create(u'New name')
         assert item2.name == u'New name'
-        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content
 
         item3 = Item.create(u'Third')
         assert item3.name == u'Third'
-        assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki'
+        assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item3.content.data == content
 
         assert item1.rev.revid == item2.rev.revid == item3.rev.revid
@@ -234,9 +234,9 @@ class TestItem(object):
         assert item4.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
     def test_rename_recursion(self):
-        update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Page 1')
-        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'this is child')
-        update_item(u'Page/Child/Another', {CONTENTTYPE: u'text/x.moin.wiki'}, u'another child')
+        update_item(u'Page', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'Page 1')
+        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'this is child')
+        update_item(u'Page/Child/Another', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'another child')
 
         item = Item.create(u'Page')
         item.rename(u'Renamed_Page', comment=u'renamed')
@@ -273,17 +273,17 @@ class TestItem(object):
 
     def test_rename_recursion_with_multiple_names_and_children(self):
         update_item(u'Foo', {
-            CONTENTTYPE: u'text/x.moin.wiki',
+            CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8',
             NAME: [u'Other', u'Page', u'Foo'],
         }, u'Parent')
-        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
-        update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
+        update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'Child of Page')
+        update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'Child of Other')
         update_item(u'Another', {
-            CONTENTTYPE: u'text/x.moin.wiki',
+            CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8',
             NAME: [u'Another', u'Page/Second'],
         }, u'Both')
-        update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Second')
-        update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
+        update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'Child of Second')
+        update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'Child of Another')
 
         item = Item.create(u'Page')
 

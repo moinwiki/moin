@@ -73,7 +73,7 @@ class TestMimeType(object):
 
         # major == 'text'
         result2 = MimeType_obj.content_type(major='text', minor='plain', charset="utf-16", params=None)
-        expected = 'text/plain; charset="utf-16"'
+        expected = 'text/plain;charset="utf-16"'
         assert result2 == expected
 
         # when all the parameters passed are None

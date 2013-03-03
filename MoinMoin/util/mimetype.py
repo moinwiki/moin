@@ -170,7 +170,7 @@ class MimeType(object):
         mimestr = "{0}/{1}".format(major, minor)
         params = ['{0}="{1}"'.format(key.lower(), value) for key, value in params.items()]
         params.insert(0, mimestr)
-        return "; ".join(params)
+        return ";".join(params)
 
     def mime_type(self):
         """ return a string major/minor only, no params """
