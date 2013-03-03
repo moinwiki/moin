@@ -58,7 +58,7 @@ class ArchiveConverter(TableMixin):
             contents = [(self.process_size(size),
                          self.process_datetime(dt),
                          self.process_name(name),
-                        ) for size, dt, name in contents]
+            ) for size, dt, name in contents]
             table = self.build_dom_table(contents, head=[_("Size"), _("Timestamp"), _("Name")], cls='zebra')
             body = moin_page.body(children=(table, ))
             return moin_page.page(children=(body, ))

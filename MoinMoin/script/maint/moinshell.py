@@ -39,12 +39,7 @@ class MoinShell(Command):
         self.make_context = make_context
 
     def get_options(self):
-
-        return (
-                Option('--no-ipython',
-                       action="store_true",
-                       dest='no_ipython',
-                       default=not self.use_ipython), )
+        return (Option('--no-ipython', action="store_true", dest='no_ipython', default=not self.use_ipython), )
 
     def get_context(self):
         """

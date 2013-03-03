@@ -50,7 +50,10 @@ import subprocess
 import hashlib
 
 try:
-    import ldap, ldif, ldap.modlist  # needs python-ldap
+    # needs python-ldap
+    import ldap
+    import ldap.modlist
+    import ldif
 except ImportError:
     ldap = None
 
@@ -81,13 +84,14 @@ def check_environ():
 
 class Slapd(object):
     """ Manage a slapd process for testing purposes """
-    def __init__(self,
-                 config=None,  # config filename for -f
-                 executable=SLAPD_EXECUTABLE,
-                 debug_flags='',  # None,  # for -d stats,acl,args,trace,sync,config
-                 proto='ldap', ip='127.0.0.1', port=3890,  # use -h proto://ip:port
-                 service_name=''  # defaults to -n executable:port, use None to not use -n
-                ):
+    def __init__(
+        self,
+        config=None,  # config filename for -f
+        executable=SLAPD_EXECUTABLE,
+        debug_flags='',  # None,  # for -d stats,acl,args,trace,sync,config
+        proto='ldap', ip='127.0.0.1', port=3890,  # use -h proto://ip:port
+        service_name='',  # defaults to -n executable:port, use None to not use -n
+    ):
         self.executable = executable
         self.config = config
         self.debug_flags = debug_flags
@@ -150,14 +154,15 @@ class LdapEnvironment(object):
 #set_tas_spins 0
 """
 
-    def __init__(self,
-                 basedn,
-                 rootdn, rootpw,
-                 instance=0,  # use different values when running multiple LdapEnvironments
-                 schema_dir='/etc/ldap/schema',  # directory with schemas
-                 coding='utf-8',  # coding used for config files
-                 timeout=10,  # how long to wait for slapd starting [s]
-                ):
+    def __init__(
+        self,
+        basedn,
+        rootdn, rootpw,
+        instance=0,  # use different values when running multiple LdapEnvironments
+        schema_dir='/etc/ldap/schema',  # directory with schemas
+        coding='utf-8',  # coding used for config files
+        timeout=10,  # how long to wait for slapd starting [s]
+    ):
         self.basedn = basedn
         self.rootdn = rootdn
         self.rootpw = rootpw
@@ -232,7 +237,7 @@ class LdapEnvironment(object):
 try:
     import pytest
 
-    class LDAPTstBase:
+    class LDAPTstBase(object):
         """ Test base class for pytest based tests which need a LDAP server to talk to.
 
             Inherit your test class from this base class to test LDAP stuff.
@@ -252,7 +257,7 @@ try:
             started = self.ldap_env.start_slapd()
             if not started:
                 pytest.skip("Failed to start {0} process, please see your syslog / log files"
-                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
+                            " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             self.ldap_env.load_directory(ldif_content=self.ldif_content)
 
         def teardown_class(self):

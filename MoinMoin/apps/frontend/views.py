@@ -30,7 +30,7 @@ from flask import g as flaskg
 from flask.ext.babel import format_date
 from flask.ext.themes import get_themes_list
 
-from flatland import Form, Enum, List
+from flatland import Form, List
 from flatland.validation import Validator
 
 from jinja2 import Markup
@@ -47,7 +47,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect)
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -206,7 +206,7 @@ def lookup():
                                            title_name=title_name,
                                            lookup_form=lookup_form,
                                            results=results,
-                                          )
+                    )
                     flaskg.clock.stop('lookup render')
                     if not num_results:
                         status = 404
@@ -214,7 +214,7 @@ def lookup():
     html = render_template('lookup.html',
                            title_name=title_name,
                            lookup_form=lookup_form,
-                          )
+    )
     return Response(html, status)
 
 
@@ -292,14 +292,14 @@ def search(item_name):
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
-                                  )
+            )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
                                item_name=item_name,
-                              )
+        )
     return html
 
 
@@ -367,7 +367,7 @@ def show_dom(item):
         status = 200
     content = render_template('dom.xml',
                               data_xml=Markup(item.content._render_data_xml()),
-                             )
+    )
     return Response(content, status, mimetype='text/xml')
 
 
@@ -390,7 +390,7 @@ def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
                            data_text=Markup(item.content._render_data_highlight()),
-                          )
+    )
 
 
 @presenter('meta', add_trail=True)
@@ -413,7 +413,7 @@ def show_item_meta(item):
                            meta_rendered=Markup(item._render_meta()),
                            show_revision=show_revision,
                            show_navigation=show_navigation,
-                          )
+    )
 
 
 @frontend.route('/+content/+<rev>/<itemname:item_name>')
@@ -536,7 +536,7 @@ def revert_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_id=rev,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+rename/<itemname:item_name>', methods=['GET', 'POST'])
@@ -564,7 +564,7 @@ def rename_item(item_name):
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+delete/<itemname:item_name>', methods=['GET', 'POST'])
@@ -593,7 +593,7 @@ def delete_item(item_name):
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
@@ -695,7 +695,7 @@ def destroy_item(item_name, rev):
                            item=item, item_name=item_name,
                            rev_id=rev,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
@@ -721,19 +721,18 @@ def jfu_server(item_name):
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
                        contenttype=contenttype_to_class(contenttype),
-                      )
+        )
     except AccessDenied:
         abort(403)
 
 
-contenttype_groups = content_registry.group_names[:]
-contenttype_group_descriptions = {}
-for g in contenttype_groups:
-    contenttype_group_descriptions[g] = ', '.join([e.display_name for e in content_registry.groups[g]])
-contenttype_groups.append('unknown items')
+def contenttype_selects_gen():
+    for g in content_registry.group_names:
+        description = u', '.join([e.display_name for e in content_registry.groups[g]])
+        yield g, None, description
+    yield u'unknown items', None, u'Items of contenttype unknown to MoinMoin'
 
-ContenttypeGroup = MultiSelect.of(Enum.using(valid_values=contenttype_groups).with_properties(
-                                  descriptions=contenttype_group_descriptions)).using(optional=True)
+ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
 
 
 class IndexForm(Form):
@@ -756,7 +755,7 @@ def index(item_name):
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
     if not form['contenttype']:
-        form['contenttype'].set(contenttype_groups)
+        form['contenttype'].set(ContenttypeGroup.member_schema.valid_values)
 
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
@@ -775,7 +774,7 @@ def index(item_name):
                            initials=initials,
                            startswith=startswith,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+mychanges')
@@ -790,7 +789,7 @@ def mychanges():
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
                            item_names=my_changes
-                          )
+    )
 
 
 def _mychanges(userid):
@@ -821,7 +820,7 @@ def backrefs(item_name):
                            item_name=item_name,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
-                          )
+    )
 
 
 def _backrefs(item_name):
@@ -861,7 +860,7 @@ def history(item_name):
                            item_name=item_name,  # XXX no item here
                            history_page=history_page,
                            bookmark_time=bookmark_time,
-                          )
+    )
 
 
 @frontend.route('/+history')
@@ -897,7 +896,7 @@ def global_history():
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
-                          )
+    )
 
 
 def _compute_item_sets():
@@ -980,7 +979,7 @@ def subscribe_item(item_name):
         # Try to unsubscribe
         if not u.unsubscribe(item_name):
             msg = _("Can't remove regular expression subscription!") + u' ' + \
-                  _("Edit the subscription regular expressions in your settings."), "error"
+                _("Edit the subscription regular expressions in your settings."), "error"
     else:
         # Try to subscribe
         if not u.subscribe(item_name):
@@ -1102,7 +1101,7 @@ def register():
                     else:
                         flash(_('An error occurred while sending the verification email: "%(message)s" '
                                 'Please contact an administrator to activate your account.',
-                            message=msg), "error")
+                                message=msg), "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
                 return redirect(url_for('.show_root'))
@@ -1110,7 +1109,7 @@ def register():
     return render_template(template,
                            title_name=title_name,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+verifyemail', methods=['GET'])
@@ -1183,7 +1182,7 @@ def lostpass():
     return render_template('lostpass.html',
                            title_name=title_name,
                            form=form,
-                          )
+    )
 
 
 class ValidPasswordRecovery(Validator):
@@ -1244,7 +1243,7 @@ def recoverpass():
     return render_template('recoverpass.html',
                            title_name=title_name,
                            form=form,
-                          )
+    )
 
 
 class ValidLogin(Validator):
@@ -1317,7 +1316,7 @@ def login():
                            title_name=title_name,
                            login_inputs=app.cfg.auth_login_inputs,
                            form=form,
-                          )
+    )
 
 
 @frontend.route('/+logout')
@@ -1401,23 +1400,18 @@ def usersettings():
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
-        #timezones_keys = sorted(Locale('en').time_zones.keys())
-        timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
-        timezone = Select.using(label=L_('Timezone')).valued(*timezones_keys)
-        supported_locales = [Locale('en')] + app.babel_instance.list_translations()
-        locales_available = sorted([(unicode(l), l.display_name) for l in supported_locales],
-                                   key=lambda x: x[1])
-        locales_keys = [l[0] for l in locales_available]
-        locale = Select.using(label=L_('Locale')).with_properties(labels=dict(locales_available)).valued(*locales_keys)
+        #_timezones_keys = sorted(Locale('en').time_zones.keys())
+        _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
+        timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
+        _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
+        locale = Select.using(label=L_('Locale')).out_of(
+            ((unicode(l), l.display_name) for l in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
-        themes_available = sorted([(unicode(t.identifier), t.name) for t in get_themes_list()],
-                                  key=lambda x: x[1])
-        themes_keys = [t[0] for t in themes_available]
-        theme_name = Select.using(label=L_('Theme name')).with_properties(
-            labels=dict(themes_available)).valued(*themes_keys)
+        theme_name = Select.using(label=L_('Theme name')).out_of(
+            ((unicode(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
         edit_rows = Natural.using(label=L_('Editor size')).with_properties(
@@ -1531,7 +1525,7 @@ def usersettings():
                 response['form'] = render_template('usersettings_ajax.html',
                                                    part=part,
                                                    form=form,
-                                                  )
+                )
                 return jsonify(**response)
             else:
                 # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
@@ -1550,7 +1544,7 @@ def usersettings():
     return render_template('usersettings.html',
                            title_name=title_name,
                            form_objs=forms,
-                          )
+    )
 
 
 @frontend.route('/+bookmark')
@@ -1661,7 +1655,7 @@ def _diff(item, revid1, revid2):
                            last_rev_id=rev_ids[-1],
                            oldrev=oldrev,
                            newrev=newrev,
-                          )
+    )
 
 
 def _diff_raw(item, revid1, revid2):
@@ -1832,7 +1826,7 @@ def sitemap(item_name):
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
                            sitemap=sitemap,
-                          )
+    )
 
 
 class NestedItemListBuilder(object):

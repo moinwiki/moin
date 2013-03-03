@@ -23,7 +23,7 @@ from flask import g as flaskg
 from flask import request
 
 from MoinMoin.constants.contenttypes import CHARSET
-from MoinMoin.constants.keys import CURRENT, IS_SYSITEM
+from MoinMoin.constants.keys import CURRENT
 from MoinMoin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
 from MoinMoin.constants.contenttypes import DRAWING_EXTENSIONS
 
@@ -112,20 +112,6 @@ def normalize_pagename(name, cfg):
 #############################################################################
 ### Item types / Item names
 #############################################################################
-
-def isSystemItem(itemname):
-    """ Is this a system page?
-
-    :param itemname: the item name
-    :rtype: bool
-    :returns: True if page is a system item
-    """
-    try:
-        item = flaskg.storage[itemname]
-        return item[CURRENT][IS_SYSITEM]
-    except (NoSuchItemError, NoSuchRevisionError, KeyError):
-        return False
-
 
 def isGroupItem(itemname):
     """ Is this a name of group item?

@@ -261,8 +261,8 @@ class Converter(ConverterMacro):
             yield line
 
     def block_nowiki_repl(self, iter_content, stack, nowiki, nowiki_marker,
-            nowiki_interpret=None, nowiki_name=None, nowiki_args=None,
-            nowiki_args_old=None):
+                          nowiki_interpret=None, nowiki_name=None, nowiki_args=None,
+                          nowiki_args_old=None):
         stack.clear()
 
         nowiki_marker_len = len(nowiki_marker)
@@ -406,11 +406,11 @@ class Converter(ConverterMacro):
             yield match.group('text')
 
     def indent_repl(self, iter_content, stack, line,
-            indent, text, list_begin=None, list_definition=None,
-            list_definition_text=None, list_numbers=None,
-            list_alpha=None, list_roman=None, list_bullet=None,
-            list_start_number=None, list_start_roman=None, list_start_alpha=None,
-            list_none=None):
+                    indent, text, list_begin=None, list_definition=None,
+                    list_definition_text=None, list_numbers=None,
+                    list_alpha=None, list_roman=None, list_bullet=None,
+                    list_start_number=None, list_start_roman=None, list_start_alpha=None,
+                    list_none=None):
 
         level = len(indent)
 
@@ -698,14 +698,14 @@ class Converter(ConverterMacro):
     """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-            link_text=None, link_args=None,
-            link_interwiki_site=None, link_interwiki_item=None):
+                         link_text=None, link_args=None,
+                         link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
                 link = Iri(scheme='wiki',
-                        authority=link_interwiki_site,
-                        path='/' + link_interwiki_item)
+                           authority=link_interwiki_site,
+                           path='/' + link_interwiki_item)
                 element = moin_page.a(attrib={xlink.href: link})
                 stack.push(element)
                 if link_text:
@@ -783,8 +783,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None,
-            nowiki_text_backtick=None):
+    def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None, nowiki_text_backtick=None):
         text = None
         if nowiki_text is not None:
             text = nowiki_text
@@ -888,7 +887,7 @@ class Converter(ConverterMacro):
         def add_attr_to_style(attrib, attr):
             attr = attr.strip().decode('unicode-escape')
             if not attr.endswith(';'):
-                attr = attr + ';'
+                attr += ';'
             if attrib.get(moin_page('style'), ""):
                 attrib[moin_page('style')] = attrib.get(moin_page('style'), "") + " " + attr
             else:

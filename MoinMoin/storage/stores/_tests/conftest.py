@@ -33,15 +33,12 @@ except Exception:
 constructors = {
     'memory': lambda store, _: store(),
     'fs': lambda store, tmpdir: store(str(tmpdir.join('store'))),
-    'sqlite': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')),
-                                          'test_table', compression_level=0),
-    'sqlite:compressed': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')),
-                                          'test_table', compression_level=1),
+    'sqlite': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=0),
+    'sqlite:compressed': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1),
     'kc': lambda store, tmpdir: store(str(tmpdir.join('store.kch'))),
     'kt': lambda store, _: store(),
     'mongodb': lambda store, _: store(),
-    'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')),
-                                        'test_table'),
+    'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
 }
 
 

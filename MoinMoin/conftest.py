@@ -19,10 +19,11 @@ use a Config class to define the required configuration within the test class.
 from __future__ import absolute_import, division
 
 # exclude some directories from py.test test discovery, pathes relative to this file
-collect_ignore = ['static',  # same
-                  '../wiki',  # no tests there
-                  '../instance',  # tw likes to use this for wiki data (non-revisioned)
-                 ]
+collect_ignore = [
+    'static',  # same
+    '../wiki',  # no tests there
+    '../instance',  # tw likes to use this for wiki data (non-revisioned)
+]
 import atexit
 import os
 import sys

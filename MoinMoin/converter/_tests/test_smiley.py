@@ -34,8 +34,8 @@ test_data = {
     '2 at once': (
         '<page><body><p>:-) :-(</p></body></page>',
         '/page/body/p'
-            '[span[1][@class="moin-text-icon moin-smile"]]'
-            '[span[2][@class="moin-text-icon moin-sad"]]'),
+        '[span[1][@class="moin-text-icon moin-smile"]]'
+        '[span[2][@class="moin-text-icon moin-sad"]]'),
     'strong': (
         '<page><body><p><strong>:-)</strong></p></body></page>',
         '/page/body/p/strong/span[@class="moin-text-icon moin-smile"]'),

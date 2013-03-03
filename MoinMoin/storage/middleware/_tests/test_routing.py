@@ -47,6 +47,7 @@ def pytest_funcarg__router(request):
 
     return router
 
+
 def test_store_get_del(router):
     default_name = u'foo'
     default_backend_name, default_revid = router.store(dict(name=[default_name, ]), StringIO(''))
@@ -70,8 +71,9 @@ def test_store_readonly_fails(router):
     with pytest.raises(TypeError):
         router.store(dict(name=[u'ro:testing', ]), StringIO(''))
 
+
 def test_del_readonly_fails(router):
-    ro_be_name, ro_id = next(iter(router)) # we have only readonly items
+    ro_be_name, ro_id = next(iter(router))  # we have only readonly items
     print ro_be_name, ro_id
     with pytest.raises(TypeError):
         router.remove(ro_be_name, ro_id)

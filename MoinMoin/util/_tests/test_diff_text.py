@@ -8,6 +8,7 @@
 
 from MoinMoin.util import diff_text
 
+
 class TestDiffText(object):
 
     def testDiff(self):
@@ -63,7 +64,7 @@ BBB 003
 - AAA 013
 - AAA 014"""
 
-        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
 coverage_modules = ['MoinMoin.util.diff_text']

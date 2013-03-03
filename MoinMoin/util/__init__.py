@@ -72,11 +72,11 @@ def rangelist(numbers):
     pattern = ','
     for i in range(len(numbers) - 1):
         if pattern[-1] == ',':
-            pattern = pattern + str(numbers[i])
+            pattern += str(numbers[i])
             if numbers[i] + 1 == numbers[i + 1]:
-                pattern = pattern + '-'
+                pattern += '-'
             else:
-                pattern = pattern + ','
+                pattern += ','
         elif numbers[i] + 1 != numbers[i + 1]:
             pattern = pattern + str(numbers[i]) + ','
 
@@ -117,4 +117,4 @@ def getPageContent(results, offset, results_per_page):
     else:
         previous_offset = -1
     next_offset = count
-    return (selected_result, next_offset, previous_offset)
+    return selected_result, next_offset, previous_offset

@@ -15,6 +15,7 @@ from flask import current_app as app
 from MoinMoin.converter.link import *
 from MoinMoin.util.iri import Iri
 
+
 class TestConverterExternOutput(object):
     def setup_class(self):
         self.conv = ConverterExternOutput()

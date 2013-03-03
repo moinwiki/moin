@@ -7,10 +7,13 @@ MoinMoin - MoinMoin.util.send_file Tests
 """
 
 import os
-import tempfile, shutil
+import tempfile
+import shutil
+
+import pytest
 
 from MoinMoin.util import send_file
-import pytest
+
 
 class TestFuid(object):
     """ test for send_file """

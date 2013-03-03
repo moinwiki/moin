@@ -234,8 +234,5 @@ Could not import plugin package "%(path)s" because of ImportError:
 
 Make sure your data directory path is correct, check permissions, and
 that the data/plugin directory has an __init__.py file.
-""" % {
-    'path': pdir,
-    'err': str(err),
-}
+""" % dict(path=pdir, err=str(err))
         raise error.ConfigurationError(msg)

@@ -52,25 +52,25 @@ class TestFrontend(object):
         self._test_view_post('frontend.ajaxdelete', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
-            ), viewopts=dict(item_name='DoesntExist'))
+        ), viewopts=dict(item_name='DoesntExist'))
 
     def test_ajaxdelete_no_item_name_route(self):
         self._test_view_post('frontend.ajaxdelete', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
-            ))
+        ))
 
     def test_ajaxdestroy_item_name_route(self):
         self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
-            ), viewopts=dict(item_name='DoesntExist'))
+        ), viewopts=dict(item_name='DoesntExist'))
 
     def test_ajaxdestroy_no_item_name_route(self):
         self._test_view_post('frontend.ajaxdestroy', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
             comment='Test',
             itemnames='["DoesntExist"]',
-            ))
+        ))
 
     def test_ajaxmodify(self):
         self._test_view_post('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -78,7 +78,7 @@ class TestFrontend(object):
     def test_jfu_server(self):
         self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
             data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain'),
-            ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
+        ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
 
     def test_show_item(self):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -201,7 +201,7 @@ class TestFrontend(object):
 
     def test_favicon(self):
         rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
-        assert rv.data.startswith('\x00\x00') # "reserved word, should always be 0"
+        assert rv.data.startswith('\x00\x00')  # "reserved word, should always be 0"
 
     def test_global_tags(self):
         self._test_view('frontend.global_tags')
@@ -236,28 +236,28 @@ class TestUsersettings(object):
         flaskg.user = user.User(name=u'moin', password=u'Xiwejr622')
         form = self.fillPasswordChangeForm(u'Xiwejr622', u'Woodoo645', u'Woodoo645')
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_user_unicode_password_change(self):
         name = u'moin'
-        password = u'__שם משתמש לא קיים__' # Hebrew
+        password = u'__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, u'Woodoo645', u'Woodoo645')
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_user_password_change_to_unicode_pw(self):
         name = u'moin'
         password = u'Xiwejr622'
-        new_password = u'__שם משתמש לא קיים__' # Hebrew
+        new_password = u'__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, new_password, new_password)
         valid = form.validate()
-        assert valid # form data is valid
+        assert valid  # form data is valid
 
     def test_fail_user_password_change_pw_mismatch(self):
         self.createUser(u'moin', u'Xiwejr622')
@@ -281,14 +281,12 @@ class TestUsersettings(object):
         """ helper to fill UserSettingsPasswordForm form
         """
         FormClass = views.UserSettingsPasswordForm
-        request_form = ImmutableMultiDict(
-           [
-              ('usersettings_password_password_current', current_password),
-              ('usersettings_password_password1', password1),
-              ('usersettings_password_password2', password2),
-              ('usersettings_password_submit', u'Save')
-           ]
-        )
+        request_form = ImmutableMultiDict([
+            ('usersettings_password_password_current', current_password),
+            ('usersettings_password_password1', password1),
+            ('usersettings_password_password2', password2),
+            ('usersettings_password_submit', u'Save')
+        ])
         form = FormClass.from_flat(request_form)
         return form
 

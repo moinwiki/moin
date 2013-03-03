@@ -20,7 +20,7 @@ from whoosh.query import Term
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
-                            Reference, BackReference)
+                            Reference, BackReference, SelectSubmit)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
@@ -66,7 +66,6 @@ class TicketForm(BaseModifyForm):
     meta = TicketMetaForm
     backrefs = TicketBackRefForm
     message = OptionalMultilineText.using(label=L_("Message")).with_properties(rows=8, cols=80)
-    submit_label = L_("Update ticket")
 
     def _load(self, item):
         meta = item.prepare_meta_for_modify(item.meta)
@@ -74,6 +73,48 @@ class TicketForm(BaseModifyForm):
         # XXX need a more explicit way to test for item creation/modification
         if ITEMID in item.meta:
             self['backrefs']._load(item)
+
+
+class TicketSubmitForm(TicketForm):
+    submit_label = L_("Submit ticket")
+
+    def _dump(self, item):
+        # initial metadata for Ticket-itemtyped item
+        meta = {
+            ITEMTYPE: item.itemtype,
+            # XXX support other markups
+            CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
+            'closed': False,
+        }
+        return meta, message_markup(self['message'].value)
+
+
+class TicketUpdateForm(TicketForm):
+    submit = SelectSubmit.valued('update', 'update_negate_status')
+
+    def _load(self, item):
+        super(TicketUpdateForm, self)._load(item)
+        self['submit'].properties['labels'] = {
+            'update': L_('Update ticket'),
+            'update_negate_status':
+                L_('Update & reopen ticket') if item.meta.get('closed') else
+                L_('Update & close ticket')
+        }
+
+    def _dump(self, item):
+        # Since the metadata form for tickets is an incomplete one, we load the
+        # original meta and update it with those from the metadata editor
+        meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
+        meta.update(self['meta'].value)
+        if self['submit'].value == 'update_negate_status':
+            meta['closed'] = not meta.get('closed')
+
+        data = item.content.data_storage_to_internal(item.content.data)
+        message = self['message'].value
+        if message:
+            data += message_markup(message)
+
+        return meta, data
 
 
 # XXX Ideally we should generate DOM instead of moin wiki source. But
@@ -108,39 +149,29 @@ class Ticket(Contentful):
 
     def do_modify(self):
         is_new = isinstance(self.content, NonExistentContent)
+        closed = self.meta.get('closed')
+
+        Form = TicketSubmitForm if is_new else TicketUpdateForm
 
         if request.method in ['GET', 'HEAD']:
-            form = TicketForm.from_item(self)
+            form = Form.from_item(self)
         elif request.method == 'POST':
-            form = TicketForm.from_request(request)
+            form = Form.from_request(request)
             if form.validate():
-                meta = form['meta'].value
-                meta.update({
-                    ITEMTYPE: self.itemtype,
-                    # XXX support other markups
-                    CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
-                })
-
-                data = u'' if is_new else self.content.data_storage_to_internal(self.content.data)
-                message = form['message'].value
-                if message:
-                    data += message_markup(message)
-
+                meta, data = form._dump(self)
                 try:
                     self.modify(meta, data)
                 except AccessDenied:
                     abort(403)
                 else:
                     return redirect(url_for('.show_item', item_name=self.name))
-        if is_new:
-            # XXX suppress the "foo doesn't exist. Create it?" dummy content
-            data_rendered = None
-            form.submit_label = L_('Submit ticket')
-        else:
-            data_rendered = Markup(self.content._render_data())
+
+        # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
+        data_rendered = None if is_new else Markup(self.content._render_data())
 
         return render_template(self.modify_template,
                                is_new=is_new,
+                               closed=closed,
                                item_name=self.name,
                                data_rendered=data_rendered,
                                form=form,

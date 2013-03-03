@@ -182,7 +182,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
                 continue
             idx -= 1
             if len(cur) and cur[-1]:
-                cur[-1] = cur[-1] + spaces
+                cur[-1] += spaces
         elif not quoted and char == name_value_separator:
             if multikey or len(cur) == 1:
                 cur.append(None)
@@ -529,7 +529,7 @@ class UnitArgument(IEFArgument):
                 return ret
         if self._defaultunit is not None:
             try:
-                return (self._type(s), self._defaultunit)
+                return self._type(s), self._defaultunit
             except ValueError:
                 pass
         units = ', '.join(self._units)
@@ -614,8 +614,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             if isinstance(default.argtype, (tuple, list)):
                 # treat choice specially and return None if no choice
                 # is given in the value
-                return get_choice(value, name, list(default.argtype),
-                       default_none=True)
+                return get_choice(value, name, list(default.argtype), default_none=True)
             else:
                 return _convert_arg(value, default.argtype, name)
         return value

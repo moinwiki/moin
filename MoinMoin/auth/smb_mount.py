@@ -23,7 +23,8 @@ class SMBMount(BaseAuth):
 
         See man mount.cifs for details.
     """
-    def __init__(self,
+    def __init__(
+        self,
         server,  # mount.cifs //server/share
         share,  # mount.cifs //server/share
         mountpoint_fn,  # function of username to determine the mountpoint, e.g.:
@@ -36,7 +37,7 @@ class SMBMount(BaseAuth):
         coding='utf-8',  # encoding used for username/password/cmdline (try 'iso8859-1' if default does not work)
         log='/dev/null',  # logfile for mount.cifs output
         **kw
-        ):
+    ):
         super(SMBMount, self).__init__(**kw)
         self.server = server
         self.share = share

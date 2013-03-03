@@ -41,7 +41,8 @@ class LDAPAuth(BaseAuth):
     logout_possible = True
     name = 'ldap'
 
-    def __init__(self,
+    def __init__(
+        self,
         server_uri='ldap://localhost',  # ldap / active directory server URI
                                         # use ldaps://server:636 url for ldaps,
                                         # use  ldap://server for ldap without tls (and set start_tls to 0),
@@ -87,7 +88,7 @@ class LDAPAuth(BaseAuth):
         name='ldap',  # use e.g. 'ldap_pdc' and 'ldap_bdc' (or 'ldap1' and 'ldap2') if you auth against 2 ldap servers
         report_invalid_credentials=True,  # whether to emit "invalid username or password" msg at login time or not
         **kw
-        ):
+    ):
         super(LDAPAuth, self).__init__(**kw)
         self.server_uri = server_uri
         self.bind_dn = bind_dn
@@ -176,11 +177,11 @@ class LDAPAuth(BaseAuth):
                 filterstr = self.search_filter % locals()
                 logging.debug("Searching {0!r}".format(filterstr))
                 attrs = [getattr(self, attr) for attr in [
-                                         'email_attribute',
-                                         'displayname_attribute',
-                                         'surname_attribute',
-                                         'givenname_attribute',
-                                         ] if getattr(self, attr) is not None]
+                    'email_attribute',
+                    'displayname_attribute',
+                    'surname_attribute',
+                    'givenname_attribute',
+                ] if getattr(self, attr) is not None]
                 lusers = l.search_st(self.base_dn, self.scope, filterstr.encode(coding),
                                      attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:

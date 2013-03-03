@@ -9,17 +9,18 @@
 
 from __future__ import absolute_import, division
 
-import pytest
 import tempfile
 import os.path
 import shutil
+
+import pytest
+from flask import current_app as app
 
 from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace
 from MoinMoin._tests import wikiconfig
 from MoinMoin.constants.keys import CURRENT
 from MoinMoin.app import before_wiki
 
-from flask import current_app as app
 
 class TestInterWiki(object):
     class Config(wikiconfig.Config):
@@ -27,7 +28,7 @@ class TestInterWiki(object):
                          'MoinMoin': 'http://moinmo.in/',
                          'OtherWiki': 'http://otherwiki.com/',
                          'OtherWiki:ns1': 'http://otherwiki.com/ns1/',
-                         'OtherWiki:ns1:ns2': 'http://otherwiki.com/ns1/ns2/'
+                         'OtherWiki:ns1:ns2': 'http://otherwiki.com/ns1/ns2/',
         }
 
     def test_url_for_item(self):
@@ -121,6 +122,7 @@ class TestInterWiki(object):
         for (baseurl, pagename, namespace), url in tests:
             assert join_wiki(baseurl, pagename, namespace) == url
 
+
 class TestInterWikiMapBackend(object):
     """
     tests for interwiki map
@@ -169,8 +171,7 @@ class TestInterWikiMapBackend(object):
              '#       space     space\n'
              'foo bar\r\n'
              'ham spam # this is a valid description')
-        assert InterWikiMap.from_string(s).iwmap == dict(foo='bar',
-                                                                  ham='spam')
+        assert InterWikiMap.from_string(s).iwmap == dict(foo='bar', ham='spam')
         # test for valid strings
         s = ('link1 http://link1.com/\r\n'
              'link2 http://link2.in/\r\n')
