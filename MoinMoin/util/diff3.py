@@ -135,7 +135,7 @@ def tripple_match(old, other, new, other_match, new_match):
             match_len = match(old, other, other_match[0], other_match[1],
                               difference)
             if match_len == difference:
-                return (new_match[0], other_match[1] + difference, new_match[1])
+                return new_match[0], other_match[1] + difference, new_match[1]
             else:
                 other_match = find_match(old, other,
                                          other_match[0] + match_len,
@@ -155,7 +155,7 @@ def tripple_match(old, other, new, other_match, new_match):
         # both conflicts change same number of lines
         # or no match till the end
         else:
-            return (new_match[0], other_match[1], new_match[1])
+            return new_match[0], other_match[1], new_match[1]
 
 
 def match(list1, list2, nr1, nr2, maxcount=3):
@@ -217,7 +217,7 @@ def find_match(list1, list2, nr1, nr2, mincount=3):
     elif hit2:
         return hit2
     else:
-        return (len1, len2)
+        return len1, len2
 
 
 def main():

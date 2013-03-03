@@ -31,7 +31,7 @@ def dumper(indexer, idx_name):
 
 
 class TestIndexingMiddleware(object):
-    reinit_storage = True # cleanup after each test method
+    reinit_storage = True  # cleanup after each test method
 
     def setup_method(self, method):
         self.imw = flaskg.unprotected_storage
@@ -41,7 +41,7 @@ class TestIndexingMiddleware(object):
 
     def test_nonexisting_item(self):
         item = self.imw[u'foo']
-        assert not item # does not exist
+        assert not item  # does not exist
 
     def test_store_revision(self):
         item_name = u'foo'
@@ -52,7 +52,7 @@ class TestIndexingMiddleware(object):
         revid = rev.revid
         # check if we have the revision now:
         item = self.imw[item_name]
-        assert item # does exist
+        assert item  # does exist
         rev = item.get_revision(revid)
         assert rev.name == item_name
         assert rev.data.read() == data
@@ -76,8 +76,8 @@ class TestIndexingMiddleware(object):
         assert rev.meta[COMMENT] == u'no spam'
         assert rev.data.read() == newdata
         revids = [rev.revid for rev in item.iter_revs()]
-        assert len(revids) == 1 # we still have the revision, cleared
-        assert revid in revids # it is still same revid
+        assert len(revids) == 1  # we still have the revision, cleared
+        assert revid in revids  # it is still same revid
 
     def test_destroy_revision(self):
         item_name = u'foo'
@@ -134,7 +134,7 @@ class TestIndexingMiddleware(object):
         item.destroy_all_revisions()
         # check if the item was destroyed:
         item = self.imw[item_name]
-        assert not item # does not exist
+        assert not item  # does not exist
 
     def test_all_revisions(self):
         item_name = u'foo'
@@ -393,8 +393,9 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         assert item.parentnames == [u'p1', u'p2', u'p3/p4', ]  # one p2 duplicate removed
 
+
 class TestProtectedIndexingMiddleware(object):
-    reinit_storage = True # cleanup after each test method
+    reinit_storage = True  # cleanup after each test method
 
     class Config(wikiconfig.Config):
         auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
@@ -412,7 +413,7 @@ class TestProtectedIndexingMiddleware(object):
                                 StringIO('public content'), return_rev=True)
         revid_public = r.revid
         revids = [rev.revid for rev in self.imw.documents()
-                  if rev.name != u'joe'] # the user profile is a revision in the backend
+                  if rev.name != u'joe']  # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):

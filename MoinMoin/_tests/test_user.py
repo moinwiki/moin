@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
 # Copyright: 2009 by ReimarBauer
-# Copyright: 2013 by ThomasWaldmann
+# Copyright: 2011-2013 by ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -67,7 +67,7 @@ class TestUser(object):
     def testUnicodePassword(self):
         """ user: login with non-ascii password """
         # Create test user
-        name = u'__שם משתמש לא קיים__' # Hebrew
+        name = u'__שם משתמש לא קיים__'  # Hebrew
         password = name
         self.createUser(name, password)
 
@@ -87,7 +87,7 @@ class TestUser(object):
         assert theUser.valid
 
         # invalidate the stored password (hash)
-        theUser.set_password("") # emptry str or None means "invalidate"
+        theUser.set_password("")  # emptry str or None means "invalidate"
         theUser.save()
 
         # Try to "login" with previous password
@@ -128,7 +128,7 @@ class TestUser(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert theUser.is_subscribed_to([pagename]) # list(!) of pages to check
+        assert theUser.is_subscribed_to([pagename])  # list(!) of pages to check
 
     def testSubscriptionSubPage(self):
         """ user: tests is_subscribed_to on a subpage """
@@ -140,7 +140,7 @@ class TestUser(object):
         # Login - this should replace the old password in the user file
         theUser = user.User(name=name, password=password)
         theUser.subscribe(pagename)
-        assert not theUser.is_subscribed_to([testPagename]) # list(!) of pages to check
+        assert not theUser.is_subscribed_to([testPagename])  # list(!) of pages to check
 
     # Bookmarks -------------------------------------------------------
 
@@ -288,18 +288,18 @@ class TestIsValidName(object):
             u' User Name',
             u'User Name ',
             u'User   Name',
-            )
+        )
         for test in cases:
             assert not user.isValidName(test)
 
     def testValid(self):
         """ user: isValidName: accept names in any language, with spaces """
         cases = (
-            u'Jürgen Hermann', # German
-            u'ניר סופר', # Hebrew
-            u'CamelCase', # Good old camel case
-            u'가각간갇갈 갉갊감 갬갯걀갼' # Hangul (gibberish)
-            )
+            u'Jürgen Hermann',  # German
+            u'ניר סופר',  # Hebrew
+            u'CamelCase',  # Good old camel case
+            u'가각간갇갈 갉갊감 갬갯걀갼'  # Hangul (gibberish)
+        )
         for test in cases:
             assert user.isValidName(test)
 

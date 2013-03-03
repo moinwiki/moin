@@ -16,10 +16,12 @@ class TestTextCha(object):
     """ Test: class TextCha """
     def setup_method(self, method):
         cfg = app.cfg
-        cfg.textchas = {'test_user_locale':
-                            {'Good Question': 'Good Answer',
-                            'What is the question?': 'Test_Answer'}
-                       }
+        cfg.textchas = {
+            'test_user_locale': {
+                'Good Question': 'Good Answer',
+                'What is the question?': 'Test_Answer',
+            }
+        }
         cfg.secrets['security/textcha'] = "test_secret"
         flaskg.user.profile[LOCALE] = 'test_user_locale'
 
@@ -38,8 +40,10 @@ class TestTextCha(object):
 
         # test for textcha
         test_textchas = textcha_obj.textchas
-        expected_textchas = {'Good Question': 'Good Answer',
-                             'What is the question?': 'Test_Answer'}
+        expected_textchas = {
+            'Good Question': 'Good Answer',
+            'What is the question?': 'Test_Answer',
+        }
         assert test_textchas == expected_textchas
         # test for the question
         test_question = textcha_obj.question
@@ -85,13 +89,14 @@ class TestTextCha(object):
         assert textcha_obj.form['textcha_question'].optional
         assert textcha_obj.form['textcha'].optional
 
+
 class TestTextChaValid(object):
     """ Test: class TextChaValid """
     def setup_method(self, method):
         cfg = app.cfg
-        cfg.textchas = {'test_user_locale':
-                            {'Good Question': 'Good Answer'}
-                       }
+        cfg.textchas = {
+            'test_user_locale': {'Good Question': 'Good Answer'}
+        }
         cfg.secrets['security/textcha'] = "test_secret"
         flaskg.user.profile[LOCALE] = 'test_user_locale'
 

@@ -9,6 +9,7 @@ MoinMoin - MoinMoin.util.diff_html Tests
 
 from MoinMoin.util import diff_html
 
+
 def test_indent():
     # input text
     test_input = """ \n
@@ -29,6 +30,7 @@ AAA 005
 """
     result = diff_html.indent(test_input)
     assert result == expected
+
 
 def test_diff():
     test_input1 = """ \n

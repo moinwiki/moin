@@ -10,6 +10,7 @@ from flask import url_for
 from MoinMoin.constants.keys import COMMENT
 from MoinMoin._tests import update_item, wikiconfig
 
+
 class TestFeeds(object):
     class Config(wikiconfig.Config):
         """

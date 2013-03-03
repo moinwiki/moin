@@ -12,8 +12,9 @@
 import re
 import datetime
 import json
+from operator import itemgetter
 
-from flatland import (Element, Form, String, Integer, Boolean, Enum, Dict, JoinedString, List, Array,
+from flatland import (Element, Form, String, Integer, Boolean, Enum as BaseEnum, Dict, JoinedString, List, Array,
                       DateTime as _DateTime)
 from flatland.util import class_cloner, Unspecified
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
@@ -25,6 +26,32 @@ from MoinMoin.constants.forms import *
 from MoinMoin.constants.keys import ITEMID, NAME
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
+
+
+class Enum(BaseEnum):
+    """
+    An Enum with a convenience class method out_of.
+    """
+    @classmethod
+    def out_of(cls, choice_specs, sort_by=None):
+        """
+        A convenience class method to build Enum with extra data attached to
+        each valid value.
+
+        :param choice_specs: An iterable of tuples. The elements are collected
+                             into the choice_specs property; the tuples' first
+                             elements become the valid values of the Enum. e.g.
+                             for choice_specs = [(v1, ...), (v2, ...), ... ],
+                             the valid values are v1, v2, ...
+
+        :param sort_by: If not None, sort choice_specs by the sort_by'th
+                        element.
+        """
+        if sort_by is not None:
+            choice_specs = sorted(choice_specs, key=itemgetter(sort_by))
+        else:
+            choice_specs = list(choice_specs)
+        return cls.valued(*[e[0] for e in choice_specs]).with_properties(choice_specs=choice_specs)
 
 
 Text = String.with_properties(widget=WIDGET_TEXT)
@@ -99,11 +126,11 @@ class MyJoinedString(JoinedString):
     def u(self):
         return self.separator.join(child.u for child in self)
 
-Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Tags'), optional=True,
-                                                            separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
+    label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
-Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(label=L_('Names'), optional=True,
-                                                            separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
+    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

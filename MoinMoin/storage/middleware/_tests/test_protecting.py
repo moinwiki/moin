@@ -26,12 +26,14 @@ acl_mapping = [
     ('', dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)),
 ]
 
+
 class FakeUser(object):
     """
     fake user object, just to give user.name
     """
     def __init__(self, name):
         self.name = [name, ]
+
     @property
     def name0(self):
         return self.name[0]

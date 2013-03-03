@@ -47,8 +47,7 @@ def create_app(config=None, create_index=False, create_storage=False):
 
 
 def create_app_ext(flask_config_file=None, flask_config_dict=None,
-                   moin_config_class=None, warn_default=True, **kwargs
-                  ):
+                   moin_config_class=None, warn_default=True, **kwargs):
     """
     Factory for moin wsgi apps
 

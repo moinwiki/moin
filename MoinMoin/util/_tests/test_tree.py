@@ -8,6 +8,7 @@ MoinMoin - Tests for MoinMoin.util.tree
 
 from MoinMoin.util.tree import *
 
+
 def test_Name():
     uri = 'uri:a'
 
@@ -20,6 +21,7 @@ def test_Name():
     element = name()
     assert isinstance(element, ET.Element)
     assert element.tag == name
+
 
 def test_Namespace():
     uri = 'uri:a'
@@ -58,8 +60,10 @@ def test_Namespace():
     assert name.name == 'class_'
     assert name.uri == uri
 
+
 def test_html():
     assert isinstance(html, Namespace)
+
 
 def test_moin_page():
     assert isinstance(moin_page, Namespace)

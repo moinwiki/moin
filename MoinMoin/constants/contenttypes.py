@@ -11,9 +11,11 @@ MoinMoin - contenttype related constants
 CHARSET = 'utf-8'
 
 # Parser to use mimetype text
-PARSER_TEXT_MIMETYPE = ('plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html', 'css',
-                       'xml', 'python', 'perl', 'php', 'ruby', 'javascript',
-                       'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole', )
+PARSER_TEXT_MIMETYPE = [
+    'plain', 'csv', 'rst', 'docbook', 'latex', 'tex', 'html', 'css',
+    'xml', 'python', 'perl', 'php', 'ruby', 'javascript',
+    'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole',
+]
 
 CONTENTTYPE_USER = u'application/x.moin.userprofile'
 CONTENTTYPE_DEFAULT = u'application/octet-stream'

@@ -5,6 +5,7 @@
 Test for macro.GetVal
 """
 
+import pytest
 from flask import g as flaskg
 
 from MoinMoin.macro.GetVal import *
@@ -12,8 +13,9 @@ from MoinMoin.constants.keys import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.conftest import init_test_app, deinit_test_app
 from MoinMoin._tests import wikiconfig
-import pytest
+
 DATA = "This is a dict item."
+
 
 class TestMacro(object):
     """ Test: GetVal.Macro """

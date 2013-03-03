@@ -46,6 +46,7 @@ class TestEncoding(object):
         err = error.Error(test)
         assert '%(message)s' % dict(message=err) == test
 
+
 class TestCompositeError(object):
 
     def setup_method(self, method):
@@ -71,5 +72,6 @@ class TestCompositeError(object):
         result = error.CompositeError.exceptions(self.CompositeError_obj)
         expected = ['This is a fatal Error']
         assert result == expected
+
 
 coverage_modules = ['MoinMoin.error']

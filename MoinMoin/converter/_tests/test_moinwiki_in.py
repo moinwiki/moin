@@ -91,7 +91,7 @@ class TestConverter(object):
 
     def test_heading(self):
         data = [
-            (u'=Not_a_Heading=', # this is for better moin 1.x compatibility
+            (u'=Not_a_Heading=',  # this is for better moin 1.x compatibility
                 '<page><body><p>=Not_a_Heading=</p></body></page>'),
             (u'= Heading 1 =',
                 '<page><body><h outline-level="1">Heading 1</h></body></page>'),
@@ -257,20 +257,20 @@ class TestConverter(object):
                 '<page><body><p /></body></page>'),
             # XXX: Is <page> correct?
             (u'{{{#!\nwiki\n}}}',
-               '<page><body><page><body><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body><p>wiki</p></body></page></body></page>'),
             (u'{{{#!(style="background-color: red")\nwiki\n}}}',
-               '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
             (u'{{{#!wiki\nwiki\n}}}',
-               '<page><body><page><body><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body><p>wiki</p></body></page></body></page>'),
             (u'{{{#!wiki(style="background-color: red")\nwiki\n}}}',
-               '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
             # TODO: Backward compatibility
             (u'{{{#!wiki red/solid\nwiki\n}}}',
-               '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),
             (u'{{{#!text/plain\ntext\n}}}',
-               u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
+                u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
             (u'{{{#!text/x.moin.creole\ntext\n}}}',
-               u'<page><body><part content-type="text/x.moin.creole"><body>text</body></part></body></page>'),
+                u'<page><body><part content-type="text/x.moin.creole"><body>text</body></part></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -284,6 +284,7 @@ class TestConverter(object):
         ]
         for i in data:
             yield (self.do, ) + i
+
     def test_interwiki(self):
         data = [
             (u'[[MoinMoin:RecentChanges]]',
@@ -308,7 +309,7 @@ class TestConverter(object):
                 '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
             (u'[[mailto:foo@bar.baz|write me]]',
                 '<page><body><p><a xlink:href="mailto:foo@bar.baz">write me</a></p></body></page>'),
-            (u'[[mailto:foo.bar_baz@bar.baz]]', # . and _ are special characters commonly allowed by email systems
+            (u'[[mailto:foo.bar_baz@bar.baz]]',  # . and _ are special characters commonly allowed by email systems
                 '<page><body><p><a xlink:href="mailto:foo.bar_baz@bar.baz">mailto:foo.bar_baz@bar.baz</a></p></body></page>'),
         ]
         for i in data:

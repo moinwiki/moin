@@ -8,7 +8,8 @@
 
 from MoinMoin.util import diff3
 
-class TestDiff3:
+
+class TestDiff3(object):
 
     def testTextMerge(self):
         """ util.diff3.text_merge: test correct merging """
@@ -79,7 +80,7 @@ AAA 013
 AAA 014
 >>>>>>>>>>>>>>>>>>>>>>>>>
 """
-        assert result == expected, ('Expected "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
 coverage_modules = ['MoinMoin.util.diff3']

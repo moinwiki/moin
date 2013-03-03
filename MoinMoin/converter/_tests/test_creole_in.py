@@ -221,15 +221,15 @@ class TestConverter(object):
                 '<page><body><p><code>nowiki</code> <code>nowiki</code></p></body></page>'),
             # XXX: Is <page> correct?
             (u'{{{\n#!\nwiki\n}}}',
-               '<page><body><page><body><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body><p>wiki</p></body></page></body></page>'),
             (u'{{{\n#!(style="background-color: red")\nwiki\n}}}',
-               '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
             (u'{{{\n#!creole\nwiki\n}}}',
-               '<page><body><page><body><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body><p>wiki</p></body></page></body></page>'),
             (u'{{{\n#!creole(style="background-color: red")\nwiki\n}}}',
-               '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
+                '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
             (u'{{{\n#!text/plain\ntext\n}}}',
-               u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
+                u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

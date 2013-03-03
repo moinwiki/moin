@@ -58,7 +58,7 @@ class Moinwiki(object):
         (u'ordered', u'upper-roman'): u'I.',
         (u'unordered', None): u'*',
         (None, None): u'::',
-        }
+    }
 
     def __init__(self):
         pass
@@ -73,29 +73,31 @@ class Converter(object):
 
     supported_tag = {
         'moinpage': (
-                'a',
-                'blockcode',
-                'break_line',
-                'code',
-                'div',
-                'emphasis',
-                'h',
-                'list',
-                'list_item',
-                'list_item_label',
-                'list_item_body',
-                'p',
-                'page',
-                'separator',
-                'span',
-                'strong',
-                'object',
-                'table',
-                'table_header',
-                'teble_footer',
-                'table_body',
-                'table_row',
-                'table_cell')}
+            'a',
+            'blockcode',
+            'break_line',
+            'code',
+            'div',
+            'emphasis',
+            'h',
+            'list',
+            'list_item',
+            'list_item_label',
+            'list_item_body',
+            'p',
+            'page',
+            'separator',
+            'span',
+            'strong',
+            'object',
+            'table',
+            'table_header',
+            'teble_footer',
+            'table_body',
+            'table_row',
+            'table_cell',
+        )
+    }
 
     @classmethod
     def factory(cls, input, output, **kw):
@@ -240,8 +242,7 @@ class Converter(object):
         return Moinwiki.linebreak
 
     def open_moinpage_list(self, elem):
-        label_type = (elem.get(moin_page.item_label_generate, None),
-                        elem.get(moin_page.list_style_type, None))
+        label_type = elem.get(moin_page.item_label_generate, None), elem.get(moin_page.list_style_type, None)
         self.list_item_labels.append(
             Moinwiki.list_type.get(label_type, u''))
         self.list_level += 1
@@ -327,16 +328,14 @@ class Converter(object):
             else:
                 ret = self.open_children(elem) + Moinwiki.p
         elif self.status[-2] == 'table':
-            if self.last_closed and self.last_closed != 'table_cell'\
-                                and self.last_closed != 'table_row':
+            if self.last_closed and self.last_closed != 'table_cell' and self.last_closed != 'table_row':
                 ret = Moinwiki.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
         elif self.status[-2] == 'list':
-            if self.last_closed and self.last_closed != 'list_item'\
-                                and self.last_closed != 'list_item_header'\
-                                and self.last_closed != 'list_item_footer'\
-                                and self.last_closed != 'list_item_label':
+            if self.last_closed and (
+                self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
+                self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
                 ret = Moinwiki.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
@@ -430,11 +429,10 @@ class Converter(object):
         if text_decoration == u'underline':
             return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
         if font_size:
-            return u"{0}{1}{2}".format(Moinwiki.larger_open if font_size == u"120%"
-                                           else Moinwiki.smaller_open,
-                                       self.open_children(elem),
-                                       Moinwiki.larger_close if font_size == u"120%"
-                                           else Moinwiki.smaller_close)
+            return u"{0}{1}{2}".format(
+                Moinwiki.larger_open if font_size == u"120%" else Moinwiki.smaller_open,
+                self.open_children(elem),
+                Moinwiki.larger_close if font_size == u"120%" else Moinwiki.smaller_close)
         if baseline_shift == u'super':
             return u'^{0}^'.format(u''.join(elem.itertext()))
         if baseline_shift == u'sub':

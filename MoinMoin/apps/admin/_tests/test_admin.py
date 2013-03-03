@@ -7,6 +7,7 @@
 
 from flask import url_for
 
+
 class TestAdmin(object):
     def _test_view_get(self, url, status='200 OK', data=('<html>', '</html>')):
         with self.app.test_client() as c:

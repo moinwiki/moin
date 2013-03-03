@@ -126,8 +126,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name,
-            macro_args=None, macro_text=None):
+    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
         stack.clear()
 
@@ -363,8 +362,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name,
-            macro_args=None, macro_text=None):
+    def inline_macro_repl(self, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
 
         if macro_args:

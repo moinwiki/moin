@@ -32,7 +32,7 @@ class TestConverterFormat19(_Base):
                 '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
             (u'foo@bar.baz',
                 '<page><body><p><a xlink:href="mailto:foo@bar.baz">foo@bar.baz</a></p></body></page>'),
-            (u'foo@bar', # 1.9 requires domain
+            (u'foo@bar',  # 1.9 requires domain
                 '<page><body><p>foo@bar</p></body></page>'),
         ]
         for i in data:

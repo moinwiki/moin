@@ -18,14 +18,14 @@ class TestRandom(object):
         length = 8
         result1 = crypto.random_string(length)
         result2 = crypto.random_string(length)
-        assert result1 != result2, ('Expected different random strings, but got "%(result1)s" and "%(result2)s"') % locals()
+        assert result1 != result2, 'Expected different random strings, but got "%(result1)s" and "%(result2)s"' % locals()
 
         result_string = crypto.random_string(length)
         assert isinstance(result_string, str), ('Expected an string value, but got ' + str(type(result_string)))
 
         result = len(crypto.random_string(length))
         expected = length
-        assert result == expected, ('Expected length "%(expected)s" but got "%(result)s"') % locals()
+        assert result == expected, 'Expected length "%(expected)s" but got "%(result)s"' % locals()
 
 
 class TestToken(object):
@@ -33,11 +33,11 @@ class TestToken(object):
 
     def test_validtoken(self):
         """ validate the token """
-        test_key, test_token = crypto.generate_token(key='MoinMoin') # having some key value
+        test_key, test_token = crypto.generate_token(key='MoinMoin')  # having some key value
         result = crypto.valid_token(test_key, test_token)
         assert result
 
-        test_key, test_token = crypto.generate_token() # key value is none
+        test_key, test_token = crypto.generate_token()  # key value is none
         result = crypto.valid_token(test_key, test_token)
         assert result
 
@@ -62,7 +62,7 @@ class TestCacheKey(object):
         result1 = crypto.cache_key(**test_kw1)
         test_kw2 = {'Moin2': 'value2'}
         result2 = crypto.cache_key(**test_kw2)
-        assert result1 != result2, ("Expected different keys for different <kw> but got the same")
+        assert result1 != result2, "Expected different keys for different <kw> but got the same"
 
 
 coverage_modules = ['MoinMoin.util.crypto']

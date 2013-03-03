@@ -197,8 +197,7 @@ class Converter(object):
         # Unknown element are just copied
         return self.new_copy(elem.tag, elem)
 
-    def visit_moinpage_a(self, elem,
-            _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
+    def visit_moinpage_a(self, elem, _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
         attrib = {}
         href = elem.get(_tag_xlink_href)
         if href:
@@ -617,12 +616,10 @@ class ConverterPage(Converter):
                 headings = list(headings)
                 maxlevel = max(h[1] for h in headings)
                 headtogglelink = html.a(attrib={
-                                         html.class_: 'moin-showhide',
-                                         html.href_: '#',
-                                         html.onclick_:
-                                            "$('.moin-table-of-contents ol').toggle();return false;",
-                                     },
-                                     children=[('[+]'), ])
+                    html.class_: 'moin-showhide',
+                    html.href_: '#',
+                    html.onclick_: "$('.moin-table-of-contents ol').toggle();return false;",
+                }, children=['[+]', ])
                 elem_h = html.div(attrib={html.class_: 'moin-table-of-contents-heading'},
                                   children=[_('Contents'), headtogglelink])
                 elem.append(elem_h)
@@ -655,20 +652,16 @@ class ConverterPage(Converter):
                         stack.pop()
                         stack_push(html.li({html.id_: 'li{0}'.format(id)}))
                     togglelink = html.a(attrib={
-                                         html.href_: "#",
-                                         html.onclick_:
-                                            "$('#li{0} ol').toggle();return false;".format(id),
-                                         html.class_: 'moin-showhide',
-                                     },
-                                     children=["[+]", ])
-                    elem_a = html.a(attrib={html.href: '#' + id},
-                                    children=[text, ])
+                        html.href_: "#",
+                        html.onclick_: "$('#li{0} ol').toggle();return false;".format(id),
+                        html.class_: 'moin-showhide',
+                    }, children=["[+]", ])
+                    elem_a = html.a(attrib={html.href: '#' + id}, children=[text, ])
                     stack_top_append(elem_a)
                     old_toggle = togglelink
         return ret
 
-    def visit(self, elem,
-            _tag_moin_page_page_href=moin_page.page_href):
+    def visit(self, elem, _tag_moin_page_page_href=moin_page.page_href):
         # TODO: Is this correct, or is <page> better?
         if elem.get(_tag_moin_page_page_href):
             self._special_stack.append(SpecialPage())
@@ -683,8 +676,7 @@ class ConverterPage(Converter):
         else:
             return super(ConverterPage, self).visit(elem)
 
-    def visit_moinpage_h(self, elem,
-            _tag_html_id=html.id):
+    def visit_moinpage_h(self, elem, _tag_html_id=html.id):
         elem = super(ConverterPage, self).visit_moinpage_h(elem)
 
         id = elem.get(_tag_html_id)

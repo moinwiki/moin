@@ -24,6 +24,7 @@ def build_index(basename, relnames):
     return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
 
+
 def build_mixed_index(basename, spec):
     """
     Build a list of MixedIndexEntry by hand, useful as a test helper.
@@ -41,10 +42,10 @@ class TestItem(object):
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
         assert meta == {
-                ITEMTYPE: ITEMTYPE_NONEXISTENT,
-                CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
-                NAME: u'DoesNotExist',
-                }
+            ITEMTYPE: ITEMTYPE_NONEXISTENT,
+            CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
+            NAME: u'DoesNotExist',
+        }
         assert data == ''
 
     def testCRUD(self):
@@ -65,7 +66,7 @@ class TestItem(object):
         assert saved_data == data
 
         data = rev1_data = data * 10000
-        comment = comment + u' again'
+        comment += u' again'
         # save rev 1
         item._save(meta, data, comment=comment)
         # check save result
@@ -271,17 +272,16 @@ class TestItem(object):
         assert item.content.data == u'another child'
 
     def test_rename_recursion_with_multiple_names_and_children(self):
-        update_item(u'Foo',
-                    {CONTENTTYPE: u'text/x.moin.wiki',
-                         NAME: [u'Other', u'Page', u'Foo']},
-                    u'Parent')
+        update_item(u'Foo', {
+            CONTENTTYPE: u'text/x.moin.wiki',
+            NAME: [u'Other', u'Page', u'Foo'],
+        }, u'Parent')
         update_item(u'Page/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Page')
         update_item(u'Other/Child2', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Other')
-        update_item(u'Another',
-                    {CONTENTTYPE: u'text/x.moin.wiki',
-                     NAME: [u'Another', u'Page/Second']
-                         },
-                    u'Both')
+        update_item(u'Another', {
+            CONTENTTYPE: u'text/x.moin.wiki',
+            NAME: [u'Another', u'Page/Second'],
+        }, u'Both')
         update_item(u'Page/Second/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Second')
         update_item(u'Another/Child', {CONTENTTYPE: u'text/x.moin.wiki'}, u'Child of Another')
 
@@ -352,5 +352,6 @@ class TestItem(object):
             item.meta['test_key']
         assert item.meta['another_test_key'] == another_meta['another_test_key']
         assert item.content.data == another_data
+
 
 coverage_modules = ['MoinMoin.items']

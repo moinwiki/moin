@@ -32,13 +32,14 @@ class Version(tuple):
     Also, we inherit all the comparison logic from tuple base class.
     """
     VERSION_RE = re.compile(
-        r"""(?P<major>\d+)
-            \.
-            (?P<minor>\d+)
-            \.
-            (?P<release>\d+)
-            (?P<additional>[abc]\d+)?""",
-            re.VERBOSE)
+        r"""
+        (?P<major>\d+)
+        \.
+        (?P<minor>\d+)
+        \.
+        (?P<release>\d+)
+        (?P<additional>[abc]\d+)?""",
+        re.VERBOSE)
 
     @classmethod
     def parse_version(cls, version):

@@ -285,11 +285,10 @@ class Converter(ConverterMacro):
             yield match.group('text')
 
     def indent_repl(self, iter_content, stack, line,
-            indent, text, list_begin=None, list_definition=None,
-            list_definition_text=None, list_numbers=None,
-            list_bullet=None,
-            list_none=None):
-
+                    indent, text, list_begin=None, list_definition=None,
+                    list_definition_text=None, list_numbers=None,
+                    list_bullet=None,
+                    list_none=None):
         level = len(indent)
         list_type = 'unordered', 'none'
         if list_begin:
@@ -629,7 +628,7 @@ class Converter(ConverterMacro):
         return ret
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-                            link_args=u'', external_link_url=None, alt_text=u''):
+                         link_args=u'', external_link_url=None, alt_text=u''):
         """Handle all kinds of links."""
         link_text = ''
         link_args_list = []
@@ -723,8 +722,8 @@ class Converter(ConverterMacro):
     """
 
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None,
-            nowiki_text_pre=None, pre_args='',
-            nowiki_text_code=None, nowiki_text_tt=None):
+                           nowiki_text_pre=None, pre_args='',
+                           nowiki_text_code=None, nowiki_text_tt=None):
         text = None
 
         if nowiki_text is not None:
@@ -767,8 +766,8 @@ class Converter(ConverterMacro):
         block_comment,
         block_head,
         block_separator,
-       # block_macro,
-       # block_nowiki,
+        # block_macro,
+        # block_nowiki,
         block_text,
     )
     block_re = re.compile('|'.join(block), re.X | re.U | re.M)
@@ -779,13 +778,13 @@ class Converter(ConverterMacro):
         inline_link,
         inline_breakline,
         inline_blockquote,
-        #inline_macro,
+        # inline_macro,
         inline_nowiki,
-        #inline_object,
+        # inline_object,
         inline_emphstrong,
         inline_comment,
         inline_footnote,
-        #inline_size,
+        # inline_size,
         inline_strike,
         inline_subscript,
         inline_superscript,
@@ -833,18 +832,18 @@ class Converter(ConverterMacro):
             's',
             'sub',
             'sup',
-            ]
+        ]
 
         nowiki_tags = [
             'pre',
             'code',
             'tt',
             'nowiki',
-            ]
+        ]
 
         block_tags = [
             'blockquote',
-            ]
+        ]
 
         def __init__(self):
             self.opened_tags = []
@@ -879,7 +878,7 @@ class Converter(ConverterMacro):
 
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
-            match = re.match(r"(.*?)(\<.*\>.*)|(.*)", line)
+            match = re.match(r"(.*?)(<.*>.*)|(.*)", line)
             if match:
                 pre_text = match.group(1) or match.group(3)
                 # text may be None

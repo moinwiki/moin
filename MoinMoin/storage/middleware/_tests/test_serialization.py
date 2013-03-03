@@ -38,13 +38,16 @@ scenarios = [
 def pytest_generate_tests(metafunc):
     metafunc.addcall(id='Simple->Simple', param=('Simple', 'Simple'))
 
+
 def pytest_funcarg__source(request):
     # scenario
     return make_middleware(request)
 
+
 def pytest_funcarg__target(request):
     # scenario
     return make_middleware(request)
+
 
 def make_middleware(request):
     tmpdir = request.getfuncargvalue('tmpdir')
@@ -61,7 +64,7 @@ def make_middleware(request):
     request.addfinalizer(backend.destroy)
     request.addfinalizer(backend.close)
 
-    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir/'foo'), ), {}),
+    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir / 'foo'), ), {}),
                             backend=backend)
     mw.create()
     mw.open()

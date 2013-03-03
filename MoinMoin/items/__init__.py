@@ -46,14 +46,14 @@ from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
-    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
+    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
-    )
+)
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
-    )
+)
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -308,7 +308,6 @@ class Item(object):
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
         kill_keys = [  # shall not get copied from old rev to new rev
-            SYSITEM_VERSION,
             NAME_OLD,
             # are automatically implanted when saving
             ITEMID, REVID, DATAID,
@@ -318,7 +317,7 @@ class Item(object):
             MTIME,
             ACTION,
             ADDRESS, HOSTNAME, USERID,
-            ]
+        ]
         for key in kill_keys:
             meta.pop(key, None)
         return meta

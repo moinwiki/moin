@@ -12,6 +12,7 @@ from MoinMoin.constants.misc import ANON
 from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
 from MoinMoin.user import create_user
 
+
 class TestConfiguredGivenAuth(object):
     """ Test: configured GivenAuth """
     class Config(wikiconfig.Config):
@@ -52,6 +53,7 @@ class TestGivenAuth(object):
         assert test_user.valid
         assert test_user.name == [u'Test_User', ]
 
+
 def test_handle_login():
     # no messages in the beginning
     assert not flaskg._login_messages
@@ -73,8 +75,10 @@ def test_handle_login():
     assert test_user2.name == [u'Test_User', ]
     assert test_user2.valid
 
+
 def test_get_multistage_continuation_url():
-    test_url = get_multistage_continuation_url('test_auth_name', extra_fields={'password': 'test_pass', 'test_key': 'test_value'})
+    test_url = get_multistage_continuation_url('test_auth_name',
+                                               extra_fields={'password': 'test_pass', 'test_key': 'test_value'})
     assert 'test_key=test_value' in test_url
     assert 'password=test_pass' in test_url
     assert 'stage=test_auth_name' in test_url
