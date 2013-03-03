@@ -74,7 +74,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.constants.keys import (WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, LANGUAGE,
                                      USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, CONTENT,
-                                     EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, EMAIL, OPENID,
+                                     EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, DISABLED, EMAIL, OPENID,
                                      ITEMID, REVID, CURRENT, PARENTID, PTIME, LATEST_REVS, ALL_REVS, BACKENDNAME)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
@@ -320,6 +320,7 @@ class IndexingMiddleware(object):
             # killing other users from index when update_document() is called!
             EMAIL: ID(stored=True),
             OPENID: ID(stored=True),
+            DISABLED: BOOLEAN(stored=True),
         }
         latest_revs_fields.update(**userprofile_fields)
 
