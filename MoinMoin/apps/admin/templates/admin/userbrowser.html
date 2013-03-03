@@ -18,7 +18,7 @@
             {% endif %}
         </td>
         <td>
-            <form action="{{ url_for('admin.userprofile', user_name=u.name) }}" method="GET">
+            <form action="{{ url_for('admin.userprofile', user_name=u.name[0]) }}" method="POST">
                 <input type="hidden" name="key" value="disabled" />
                 <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
                 <input type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />

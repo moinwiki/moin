@@ -20,7 +20,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
 
@@ -47,7 +47,7 @@ def userbrowser():
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
                           email=rev.meta[EMAIL],
-                          disabled=False,  # TODO: add to index
+                          disabled=rev.meta[DISABLED],
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      ) for rev in revs]
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
@@ -70,9 +70,9 @@ def userprofile(user_name):
         ok = False
         if hasattr(u, key):
             ok = True
-            oldval = getattr(u, key)
+            oldval = u.profile[key]
             if isinstance(oldval, bool):
-                val = bool(val)
+                val = bool(int(val))
             elif isinstance(oldval, int):
                 val = int(val)
             elif isinstance(oldval, unicode):
@@ -80,7 +80,7 @@ def userprofile(user_name):
             else:
                 ok = False
         if ok:
-            setattr(u, key, val)
+            u.profile[key] = val
             u.save()
             flash(u'{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
