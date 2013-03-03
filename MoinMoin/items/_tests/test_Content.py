@@ -39,14 +39,14 @@ class TestContent(object):
     def test_get_templates(self):
         item_name1 = u'Template_Item1'
         item1 = Item.create(item_name1)
-        contenttype1 = u'text/plain'
+        contenttype1 = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item1._save(meta)
         item1 = Item.create(item_name1)
 
         item_name2 = u'Template_Item2'
         item2 = Item.create(item_name2)
-        contenttype1 = u'text/plain'
+        contenttype1 = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item2._save(meta)
         item2 = Item.create(item_name2)
@@ -179,7 +179,7 @@ class TestText(object):
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
-        item = Item.create(item_name, ITEMTYPE_DEFAULT, u'text/plain')
+        item = Item.create(item_name, ITEMTYPE_DEFAULT, u'text/plain;charset=utf-8')
         test_text = u'This \n is \n a \n Test'
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item.content, test_text)
@@ -230,7 +230,7 @@ class TestText(object):
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
         item = Item.create(item_name)
-        contenttype = u'text/plain'
+        contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Item.create(item_name)
@@ -246,7 +246,7 @@ class TestText(object):
     def test__render_data_highlight(self):
         item_name = u'Text_Item'
         item = Item.create(item_name)
-        contenttype = u'text/plain'
+        contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Item.create(item_name)

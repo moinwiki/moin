@@ -77,7 +77,7 @@ class TestFrontend(object):
 
     def test_jfu_server(self):
         self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
-            data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain'),
+            data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
         ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
 
     def test_show_item(self):

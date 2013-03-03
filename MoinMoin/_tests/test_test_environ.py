@@ -30,7 +30,7 @@ class TestStorageEnvironWithoutConfig(object):
         itemname = u"this item shouldn't exist yet"
         assert not storage.has_item(itemname)
         item = storage[itemname]
-        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: u'text/plain'}, StringIO(''))
+        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: u'text/plain;charset=utf-8'}, StringIO(''))
         assert storage.has_item(itemname)
 
 
