@@ -29,3 +29,19 @@ For dependency information, please see setup.py.
 If you use easy_install or pip or our ``quickinstall`` script, then
 dependencies are usually automatically dealt with.
 
+
+Clients
+=======
+On the client side, you need:
+
+* a decent web browser that supports W3C standards HTML 5 and CSS 2.1 as well
+  as JavaScript:
+
+  - any current version of Firefox, Chrome, Opera, Safari, Internet Explorer
+    (IE9 or IE10) should work.
+  - usage of older Internet Explorer versions is not recommended and not
+    supported because they are known for causing issues.
+    For Windows 7 (or 8) Microsoft provides IE9 or IE10.
+* Java browser plugin (optional, needed if you want to use TWikiDraw or
+  AnyWikiDraw drawing applets).
+
