@@ -59,7 +59,6 @@
 
 {% macro header_search(blog_name, form) %}
     {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
-        <div>
             {{ forms.render(form['q']) }}
             {{ forms.render_submit(form, id='moin-search-submit') }}
             {{ forms.render_errors(form) }}
@@ -67,6 +66,5 @@
             <input type="checkbox" id="moin-blog-search-this"
             onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', item_name=blog_name) }}' : '{{ url_for('frontend.search') }}' );" />
             {{ _("only this blog") }}
-        </div>
     {{ gen.form.close() }}
 {% endmacro %}

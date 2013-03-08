@@ -7,6 +7,12 @@
     {% set supertags = blog_item.meta['supertags'] %}
 {% endif %}
 
+{% if blog_name %}
+    {% macro header_search(form) %}
+        {{ blog_utils.header_search(blog_name, form) }}
+    {% endmacro %}
+{% endif %}
+
 {% block theme_stylesheets %}
     {{ super() }}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/blog.css') }}" />

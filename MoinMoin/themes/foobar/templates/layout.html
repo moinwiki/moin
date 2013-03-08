@@ -11,7 +11,6 @@
 {% set footer_items = '' %}
 {% set credits = snippets.credits() %}
 
-
 {% block layout %}
 
 <div id="moin-global-tray">
@@ -103,15 +102,11 @@
 <div id="moin-main-container">
 <div id="moin-main-box">
 <div id="moin-header">
+
     {% if search_form %}
-    <div id="moin-search">
-    {{ gen.form.open(search_form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
-        {{ gen.input(search_form['q'], type='search', id='moin-search-query', size='40') }}
-        {{ forms.render_submit(search_form, id='moin-search-submit') }}
-        {{ forms.render_errors(search_form) }}
-    {{ gen.form.close() }}
-    </div>
+        {{ header_search(search_form) }}
     {% endif %}
+
     <div id="moin-breadcrumbs-location">
         {% if cfg.show_interwiki -%}
         <span id="moin-interwiki">
