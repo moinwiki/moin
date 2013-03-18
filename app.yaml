@@ -1,0 +1,64 @@
+application: moin2-test
+version: dev
+runtime: python27
+api_version: 1
+threadsafe: true
+
+env_variables:
+  MOINCFG: ../wikiconfig_gae.py
+
+handlers:
+- url: /%2Bserve/anywikidraw
+  static_dir: support/xstatic/pkg/anywikidraw/data
+
+- url: /%2Bserve/ckeditor
+  static_dir: support/xstatic/pkg/ckeditor/data
+
+- url: /%2Bserve/jquery
+  static_dir: support/xstatic/pkg/jquery/data
+
+- url: /%2Bserve/jquery_file_upload
+  static_dir: support/xstatic/pkg/jquery_file_upload/data
+
+- url: /%2Bserve/svgedit_moin
+  static_dir: support/xstatic/pkg/svgedit_moin/data
+
+- url: /%2Bserve/svgweb
+  static_dir: support/xstatic/pkg/svgweb/data
+
+- url: /%2Bserve/twikidraw_moin
+  static_dir: support/xstatic/pkg/twikidraw_moin/data
+
+- url: /_themes/foobar
+  static_dir: MoinMoin/themes/foobar/static
+
+- url: /_themes/modernized
+  static_dir: MoinMoin/themes/modernized/static
+
+- url: /favicon.ico
+  static_files: MoinMoin/static/logos/favicon.ico
+  upload: MoinMoin/static/logos/favicon.ico
+
+- url: /robots.txt
+  static_files: MoinMoin/static/robots.txt
+  upload: MoinMoin/static/robots.txt
+
+- url: /static
+  static_dir: MoinMoin/static
+
+- url: /%2Bcli/index
+  script: cli_index.app
+  login: admin
+
+- url: /.*
+  script: moin.application
+
+# We must include jinja2 in the support directory, so we can use the same
+# support tgz for both GAE and standalone local installations (both do not use
+# setup.py). Thus, we do not use the jinja2 GAE could provide.
+
+libraries:
+- name: markupsafe
+  version: latest
+- name: PIL
+  version: latest
