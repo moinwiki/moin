@@ -180,6 +180,9 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
                     except AttributeError:
                         # in case the connection failed, SMTP has no "sock" attribute
                         pass
+            except UnicodeError, e:
+                logging.exception("unicode error [%r -> %r]" % (mail_from, to, ))
+                return (0, str(e))
             except smtplib.SMTPException as e:
                 logging.exception("smtp mail failed with an exception.")
                 return (0, str(e))
