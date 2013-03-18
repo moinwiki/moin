@@ -1,4 +1,4 @@
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -61,10 +61,11 @@ from __future__ import absolute_import, division
 # See http://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default, if you want anything else,
 # you will have to configure logging.
-logging_defaults = {
-    'loglevel': 'INFO',
-}
 logging_config = """\
+[DEFAULT]
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=INFO
+
 [loggers]
 keys=root
 
@@ -120,7 +121,15 @@ def load_config(conf_fname=None):
     if conf_fname:
         try:
             conf_fname = os.path.abspath(conf_fname)
-            logging.config.fileConfig(conf_fname)
+            # we open the conf file here to be able to give a reasonable
+            # error message in case of failure (if we give the filename to
+            # fileConfig(), it silently ignores unreadable files and gives
+            # unhelpful error msgs like "No section: 'formatters'"):
+            f = open(conf_fname)
+            try:
+                logging.config.fileConfig(f)
+            finally:
+                f.close()
             configured = True
             l = getLogger(__name__)
             l.info('using logging configuration read from "{0}"'.format(conf_fname))
@@ -130,14 +139,22 @@ def load_config(conf_fname=None):
     if not configured:
         # load builtin fallback logging config
         from StringIO import StringIO
-        config_file = StringIO(logging_config)
-        logging.config.fileConfig(config_file, logging_defaults)
+        f = StringIO(logging_config)
+        try:
+            logging.config.fileConfig(f)
+        finally:
+            f.close()
         configured = True
         l = getLogger(__name__)
         if err_msg:
             l.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
-        l.warning('using logging configuration read from built-in fallback in MoinMoin.log module!')
+        l.info('using logging configuration read from built-in fallback in MoinMoin.log module!')
         warnings.showwarning = _log_warning
+
+    import MoinMoin
+    code_path = os.path.dirname(MoinMoin.__file__)
+    from MoinMoin import project, version
+    l.info('Running {0} {1} code from {2}'.format(project, str(version), code_path))
 
 
 def getLogger(name):
