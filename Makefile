@@ -31,39 +31,15 @@ pylint:
 
 # Automate creation of the support archive from a virtualenv site-packages directory
 support:
-	@# do NOT name it "site-packages", but "support":
-	@cp -a env/lib/python2.7/site-packages support
-	@# remove compiled code files:
-	@find support -name "*.pyc" -exec rm {} \;
-	@find support -name "*.pyo" -exec rm {} \;
-	@# documentation generation support not needed on GAE:
-	@rm -rf support/sphinx
-	@# package installers not needed/supported on GAE:
-	@rm -rf support/distribute support/pip
-	@# test support and suites not needed in production:
-	@rm -rf support/_pytest support/pytest*.py support/py.test*
-	@rm -rf support/py support/execnet support/pep8.py support/selenium
-	@rm -rf support/flask/testsuite support/werkzeug/testsuite
-	@# misc. egg and path stuff, not needed:
-	@rm -rf support/*.egg support/*.egg-info support/*.egg-link support/*.pth
-	@# we need to add a __init__.py to the namespace packages:
-	@touch support/flaskext/__init__.py support/xstatic/__init__.py support/xstatic/pkg/__init__.py
+	@python contrib/mksupport/mksupport.py --support
 
 # Create Dist archive with support
 supportdist:
-	@python setup.py sdist
-	@find dist -name 'moin-*.tar.gz' -exec tar -xzf {} -C dist/ \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp -r support/ {} \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp moin.py {} \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp app.yaml {} \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec cp wikiconfig_gae.py {} \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec sh -c "rm -rf {}/moin.egg-info {}/PKG-INFO {}/MANIFEST.in {}/setup.* {}/quickinstall* {}/Makefile" \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec bash -c 'tar czf dist/`basename {}`_with_support.tar.gz -C dist/ `basename {}`' \;
-	@find dist -mindepth 1 -maxdepth 1 -name "moin-*" -type d -exec rm -rf {} \;
+	@python contrib/mksupport/mksupport.py --supportdist
 
 supporttgz:
 	@# create the support archive:
-	@tar czf moin2-support.tgz support
+	@python contrib/mksupport/mksupport.py --supporttgz
 
 # Run local appengine development server 
 gaeserver:
