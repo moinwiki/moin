@@ -8,7 +8,7 @@
 
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct.backends.config_lazy_groups import ConfigLazyGroups
-from MoinMoin.datastruct import ConfigGroups, CompositeGroups, GroupDoesNotExistError
+from MoinMoin.datastruct import ConfigGroups, CompositeGroups
 from MoinMoin._tests import wikiconfig
 
 

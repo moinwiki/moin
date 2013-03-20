@@ -7,8 +7,6 @@ MoinMoin - disable a user account
 """
 
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin import user
@@ -42,12 +40,12 @@ class Disable_User(Command):
             return
 
         print " {0:<20} {1:!r<25} {2:<35}".format(u.itemid, u.name, u.email),
-        if not u.disabled: # only disable once
+        if not u.disabled:  # only disable once
             u.disabled = 1
             u.name = u"{0}-{1}".format(u.name, u.id)
             if u.email:
                 u.email = u"{0}-{1}".format(u.email, u.id)
-            u.subscribed_items = [] # avoid using email
+            u.subscribed_items = []  # avoid using email
             u.save()
             print "- disabled."
         else:

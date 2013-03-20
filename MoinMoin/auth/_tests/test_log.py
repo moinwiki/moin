@@ -8,9 +8,11 @@ Test for auth.log
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.auth.log import AuthLog
 from flask import g as flaskg
-import pytest
+
+from MoinMoin.auth.log import AuthLog
+from MoinMoin.constants.misc import ANON
+
 
 class TestAuthLog(object):
     """ Test: TestAuthLog """
@@ -19,13 +21,13 @@ class TestAuthLog(object):
         result = authlog_obj.login(flaskg.user)
         assert result.continue_flag
         test_user_obj = result.user_obj
-        assert test_user_obj.name0 == u'anonymous'
+        assert test_user_obj.name0 == ANON
 
     def test_request(self):
         authlog_obj = AuthLog()
         result = authlog_obj.request(flaskg.user)
         test_user, bool_value = result
-        assert test_user.name0 == u'anonymous'
+        assert test_user.name0 == ANON
         assert not test_user.valid
         assert bool_value
 
@@ -33,6 +35,6 @@ class TestAuthLog(object):
         authlog_obj = AuthLog()
         result = authlog_obj.logout(flaskg.user)
         test_user, bool_value = result
-        assert test_user.name0 == u'anonymous'
+        assert test_user.name0 == ANON
         assert not test_user.valid
         assert bool_value

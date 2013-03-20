@@ -7,12 +7,16 @@
 """
 
 
-import sys, os, shutil, time, errno
+import sys
+import os
+import shutil
+import time
+import errno
 from stat import S_ISDIR, ST_MODE, S_IMODE
-import warnings
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
 
 #############################################################################
 ### Misc Helpers
@@ -31,6 +35,7 @@ def chmod(name, mode, catchexception=True):
 from werkzeug.posixemulation import *
 
 rename_overwrite = rename
+
 
 def rename_no_overwrite(oldname, newname, delete_old=False):
     """ Multiplatform rename
@@ -67,7 +72,9 @@ def rename_no_overwrite(oldname, newname, delete_old=False):
 
 def touch(name):
     if sys.platform == 'win32':
-        import win32file, win32con, pywintypes
+        import win32file
+        import win32con
+        import pywintypes
 
         access = win32file.GENERIC_WRITE
         share = (win32file.FILE_SHARE_DELETE |
@@ -105,7 +112,8 @@ def access_denied_decorator(fn):
                     if retry > max_retries:
                         raise
                     if err.errno == errno.EACCES:
-                        logging.warning('{0}({1!r}, {2!r}) -> access denied. retrying...'.format(fn.__name__, args, kwargs))
+                        logging.warning('{0}({1!r}, {2!r}) -> access denied. retrying...'.format(
+                            fn.__name__, args, kwargs))
                         time.sleep(0.01)
                         continue
                     raise
@@ -192,7 +200,7 @@ def copystat(src, dst):
             st = os.stat(src)
             mode = S_IMODE(st[ST_MODE])
             if hasattr(os, 'chmod'):
-                os.chmod(dst, mode) # KEEP THIS ONE!
+                os.chmod(dst, mode)  # KEEP THIS ONE!
     else:
         shutil.copystat(src, dst)
 

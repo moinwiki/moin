@@ -13,6 +13,7 @@ from MoinMoin._tests import wikiconfig
 from MoinMoin.themes import ThemeSupport
 from MoinMoin import themes
 
+
 class TestNaviBar(object):
     class Config(wikiconfig.Config):
         interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
@@ -51,7 +52,8 @@ class TestNaviBar(object):
     def test_parent_item(self):
         test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')
         expected = 'moin/moin-2.0'
-        assert test_result == expected, ('Expected "%(expected)s" but got "%(test_result)s"') % locals()
+        assert test_result == expected, 'Expected "%(expected)s" but got "%(test_result)s"' % locals()
+
 
 def test_shorten_item_name():
     test_result1 = themes.shorten_item_name(u'MoinMoin/some/value', 0)
@@ -60,6 +62,7 @@ def test_shorten_item_name():
     assert test_result2 == 'value'
     test_result3 = themes.shorten_item_name(u'MoinMoin/some/value')
     assert test_result3 == u'MoinMoin/some/value'
+
 
 def test_contenttype_to_class():
     test_result = themes.contenttype_to_class(u'MoinMoin/some/value')

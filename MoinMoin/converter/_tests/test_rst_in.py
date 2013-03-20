@@ -7,7 +7,6 @@ MoinMoin - Tests for MoinMoin.converter.rst_in
 """
 
 
-import pytest
 import re
 
 from MoinMoin.converter.rst_in import *
@@ -50,7 +49,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             (u'1. a\n2. b\n\nA. c\n\na. A\n\n   3. B\n\n   4. C\n\n', '<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>a</p></list-item-body></list-item><list-item><list-item-body><p>b</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="upper-alpha"><list-item><list-item-body><p>c</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="lower-alpha"><list-item><list-item-body><p>A</p><list item-label-generate="ordered"><list-item><list-item-body><p>B</p></list-item-body></list-item><list-item><list-item-body><p>C</p></list-item-body></list-item></list></list-item-body></list-item></list></body></page>'),
             (u'* A\n\n   - B\n\n      + C\n\n   - D\n\n* E', '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>A</p><list><list-item><list-item-body><list item-label-generate="unordered"><list-item><list-item-body><p>B</p><list><list-item><list-item-body><list item-label-generate="unordered"><list-item><list-item-body><p>C</p></list-item-body></list-item></list></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>D</p></list-item-body></list-item></list></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>E</p></list-item-body></list-item></list></body></page>'),
             (u'what\n      def\n\nhow\n      to', '<page><body><list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list></body></page>')
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -63,7 +62,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
    :scale: 50
    :alt: alternate text""", '<page><body><object alt="images/biohazard.png" height="100" scale="50" width="200" xlink:href="images/biohazard.png" /></body></page>'),
             (u'abc |a| cba\n\n.. |a| image:: test.png', '<page><body><p>abc <object alt="test.png" xlink:href="test.png" /> cba</p></body></page>'),
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -71,7 +70,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         data = [
             (u'Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n', '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>'),
             (u'================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============', '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>')
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -79,7 +78,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         data = [
             (u'Abra [1]_\n\n.. [1] arba', '<page><body><p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p></body></page>'),
             (u'Abra [#]_\n\n.. [#] arba', '<page><body><p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p></body></page>'),
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -87,7 +86,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         data = [
             (u'Abra test_ arba\n\n.. _test: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>'),
             (u'Abra test__ arba\n\n.. __: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>')
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -100,7 +99,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             (u'.. contents::\n  :depth: 1\n', '<page><body><table-of-content outline-level="1" /></body></page>'),
             (u'.. parser:: python test=test\n  import test\n  test.s = 11', '<page><body><part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part></body></page>'),
             (u'.. include:: RecentChanges', '<page><body><part content-type="x-moin/macro;name=Include"><arguments><argument>RecentChanges</argument></arguments>&lt;&lt;Include(RecentChanges)&gt;&gt;</part></body></page>'),
-            ]
+        ]
         for i in data:
             yield (self.do, ) + i
 
@@ -153,5 +152,6 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     def do(self, input, output, args={}, skip=None):
         out = self.conv(input, 'text/x-rst;charset=utf-8', **args)
         assert self.serialize(out) == output
+
 
 coverage_modules = ['MoinMoin.converter.rst_in']

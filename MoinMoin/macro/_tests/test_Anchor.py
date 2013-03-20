@@ -6,7 +6,9 @@ Test for macro.Anchor
 """
 
 import pytest
+
 from MoinMoin.macro.Anchor import *
+
 
 def test_Macro():
     macro_obj = Macro()

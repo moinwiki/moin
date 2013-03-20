@@ -32,10 +32,12 @@ class BlogMetaForm(BaseMetaForm):
     supertags = (Tags.using(label=L_('Supertags (Categories)'))
                  .with_properties(placeholder=L_("Ordered comma separated list of tags")))
 
+
 class BlogEntryMetaForm(BaseMetaForm):
     summary = (OptionalText.using(label=L_("Title"))
                .with_properties(placeholder=L_("One-line title of the blog entry")))
     ptime = DateTime.using(label=L_('Publication time (UTC)'), optional=True)
+
 
 @register
 class Blog(Default):
@@ -88,6 +90,7 @@ class Blog(Default):
                                blog_entry_items=blog_entry_items,
                                tag=tag,
                               )
+
 
 @register
 class BlogEntry(Default):

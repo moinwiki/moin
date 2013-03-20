@@ -8,10 +8,11 @@ Test for macro.Date
 import time
 from datetime import datetime
 
+import pytest
 from flask.ext.babel import format_date, format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase, Macro
-import pytest
+
 
 class TestMacroDateTimeBase(object):
     def test_parse_time(self):
@@ -26,6 +27,7 @@ class TestMacroDateTimeBase(object):
         with pytest.raises(ValueError):
             # things after next 10,000 years can't be predicted
             MacroDateTimeBase_obj.parse_time('12011-08-07T11:11:11')
+
 
 class TestMacro(object):
     def test_macro(self):

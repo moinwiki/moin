@@ -11,6 +11,7 @@ import pytest
 
 from MoinMoin.util.iri import *
 
+
 def test_Iri_init_1():
     u = Iri(scheme='wiki', path='/StartSeite', query='action=raw')
     assert u.scheme == 'wiki'
@@ -18,6 +19,7 @@ def test_Iri_init_1():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment is None
+
 
 def test_Iri_init_2():
     i = 'wiki://MoinMoin/StartSeite?action=raw#body'
@@ -28,11 +30,13 @@ def test_Iri_init_2():
     assert u.query == 'action=false'
     assert u.fragment == 'body'
 
+
 def test_Iri_init_3():
     i = Iri(scheme='wiki', path='/StartSeite', query='action=raw')
     u = Iri(i)
     assert i is not u
     assert i == u
+
 
 def test_Iri_parser():
     i = 'http://moinmo.in/StartSeite?action=raw#body'
@@ -179,6 +183,7 @@ def test_Iri_parser():
     assert u.fragment == 'body'
     assert unicode(u) == i
 
+
 def test_Iri_2():
     i = 'wiki://MoinMoin/StartSeite?action=raw#body'
     u = Iri(i)
@@ -198,6 +203,7 @@ def test_Iri_2():
     assert u.fragment == 'body'
     assert unicode(u) == i
 
+
 def test_Iri_3():
     i = 'wiki.local:StartSeite?action=raw#body'
     u = Iri(i)
@@ -207,6 +213,7 @@ def test_Iri_3():
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
     assert unicode(u) == i
+
 
 def test_Iri_add_1():
     base = Iri('wiki://moinmo.in/Some/Page?action=raw#body')
@@ -274,8 +281,10 @@ def test_Iri_add_1():
     assert u.query == 'action=raw'
     assert u.fragment == 'head'
 
+
 def test_Iri_quote_1():
-    u = Iri(scheme=u'wiki', authority=u'authority_ä%?#', path=u'/path_ä%?#', query=u'query_ä%?#', fragment=u'fragment_ä%?#')
+    u = Iri(scheme=u'wiki', authority=u'authority_ä%?#',
+            path=u'/path_ä%?#', query=u'query_ä%?#', fragment=u'fragment_ä%?#')
     assert u.scheme == u'wiki'
     assert u.authority == u'authority_ä%?#'
     authority = u'authority_ä%25%3F%23'
@@ -299,6 +308,7 @@ def test_Iri_quote_1():
     assert u.fragment.urlquoted == u'fragment_%C3%A4%25?%23'
     assert unicode(u) == u'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
 
+
 def test_Iri_quote_2():
     authority = u'authority_ä%25%3F%23'
     path = u'/path_ä%25%3F%23'
@@ -308,12 +318,14 @@ def test_Iri_quote_2():
     u = Iri(i)
     assert unicode(u) == i
 
+
 def test_Iri_quote_3():
     i = u'wiki:///path_%92%92'
     u = Iri(i)
     assert u.path.fullquoted == u'/path_%92%92'
     assert u.path.quoted == u'/path_%92%92'
     assert unicode(u) == i
+
 
 def test_IriAuthority_parser_1():
     i = 'moinmo.in'
@@ -323,6 +335,7 @@ def test_IriAuthority_parser_1():
     assert u.port is None
     assert unicode(u) == i
 
+
 def test_IriAuthority_parser_2():
     i = '@moinmo.in:'
     u = IriAuthority(i)
@@ -330,6 +343,7 @@ def test_IriAuthority_parser_2():
     assert u.host == 'moinmo.in'
     assert u.port == 0
     assert unicode(u) == i
+
 
 def test_IriAuthority_parser_3():
     i = 'test:test@moinmo.in:1234'
@@ -339,6 +353,7 @@ def test_IriAuthority_parser_3():
     assert u.port == 1234
     assert unicode(u) == i
 
+
 def test_IriPath_1():
     i = '/'
     u = IriPath(i)
@@ -346,6 +361,7 @@ def test_IriPath_1():
     assert u[0] == ''
     assert u[1] == ''
     assert unicode(u) == i
+
 
 def test_IriPath_2():
     i = '/.'
@@ -362,6 +378,7 @@ def test_IriPath_2():
     assert u[1] == ''
     assert unicode(u) == '/'
 
+
 def test_IriPath_3():
     i = '/..'
     u = IriPath(i)
@@ -376,6 +393,7 @@ def test_IriPath_3():
     assert u[0] == ''
     assert u[1] == ''
     assert unicode(u) == '/'
+
 
 def test_IriPath_4():
     i = '/test'
@@ -406,6 +424,7 @@ def test_IriPath_4():
     assert u[0] == ''
     assert u[1] == ''
     assert unicode(u) == '/'
+
 
 def test_IriPath_5():
     i = '/test/test1/../../test2'

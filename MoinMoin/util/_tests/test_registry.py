@@ -10,18 +10,23 @@ import pytest
 
 from MoinMoin.util.registry import *
 
+
 def factory_all(arg):
     return 1
+
 
 def factory_all2(arg):
     return 3
 
+
 def factory_none(arg):
     pass
+
 
 def factory_special(arg):
     if arg == 'a':
         return 2
+
 
 def test_Registry_get():
     r = Registry()
@@ -37,6 +42,7 @@ def test_Registry_get():
     r.register(factory_all2, r.PRIORITY_FIRST)
     assert r.get(None) == 3
     assert r.get('a') == 3
+
 
 def test_Registry_lifecycle():
     r = Registry()

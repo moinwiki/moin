@@ -23,6 +23,7 @@ from werkzeug import get_current_url
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+
 class ProfilerMiddleware(object):
     """ Abstract base class for profiling middlewares.
 
@@ -62,6 +63,7 @@ class ProfilerMiddleware(object):
         """ Override in subclasses to clean up when server/script shuts down. """
         pass
 
+
 class CProfileMiddleware(ProfilerMiddleware):
     """ A profiler based on the the cProfile module from the standard lib. """
     def __init__(self, app, filename):
@@ -74,6 +76,7 @@ class CProfileMiddleware(ProfilerMiddleware):
     def shutdown(self):
         self._profile.dump_stats(self._filename)
 
+
 class HotshotMiddleware(ProfilerMiddleware):
     """ A profiler based on the more recent hotshot module from the stdlib. """
     def __init__(self, app, *args, **kwargs):
@@ -84,6 +87,7 @@ class HotshotMiddleware(ProfilerMiddleware):
 
     def shutdown(self):
         self._profile.close()
+
 
 class PycallgraphMiddleware(ProfilerMiddleware):
     """ A call graphing middleware utilizing the pycallgraph 3rd party

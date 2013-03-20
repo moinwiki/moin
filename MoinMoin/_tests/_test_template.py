@@ -45,6 +45,7 @@ class TestComplexStuff(object):
     )
 
     from MoinMoin._tests import wikiconfig
+
     class Config(wikiconfig.Config):
         foo = 'bar'  # we want to have this non-default setting
 

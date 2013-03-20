@@ -12,10 +12,12 @@ from MoinMoin.i18n import _, L_, N_
 class BracketError(Exception):
     pass
 
+
 class BracketUnexpectedCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
         BracketError.__init__(self, "Unexpected closing bracket {0}".format(bracket))
+
 
 class BracketMissingCloseError(BracketError):
     def __init__(self, bracket):
@@ -116,8 +118,8 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     quoted = None       # we're inside quotes, indicates quote character used
     skipquote = 0       # next quote is a quoted quote
     noquote = False     # no quotes expected because word didn't start with one
-    seplimit_reached = False # number of separators exhausted
-    separator_count = 0 # number of separators encountered
+    seplimit_reached = False  # number of separators exhausted
+    separator_count = 0  # number of separators encountered
     SPACE = [' ', '\t', ]
     nextitemsep = [separator]   # used for skipping trailing space
     SPACE = [' ', '\t', ]
@@ -162,7 +164,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         char = args[idx]
         next = None
         if idx + 1 < max:
-            next = args[idx+1]
+            next = args[idx + 1]
         if skipquote:
             skipquote -= 1
         if not separator is None and not quoted and char in SPACE:
@@ -180,7 +182,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
                 continue
             idx -= 1
             if len(cur) and cur[-1]:
-                cur[-1] = cur[-1] + spaces
+                cur[-1] += spaces
         elif not quoted and char == name_value_separator:
             if multikey or len(cur) == 1:
                 cur.append(None)
@@ -202,7 +204,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
             quoted = char
         elif char == quoted and not skipquote:
             if next == quoted:
-                skipquote = 2 # will be decremented right away
+                skipquote = 2  # will be decremented right away
             else:
                 quoted = None
         elif not quoted and char in opening:
@@ -527,7 +529,7 @@ class UnitArgument(IEFArgument):
                 return ret
         if self._defaultunit is not None:
             try:
-                return (self._type(s), self._defaultunit)
+                return self._type(s), self._defaultunit
             except ValueError:
                 pass
         units = ', '.join(self._units)
@@ -612,8 +614,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             if isinstance(default.argtype, (tuple, list)):
                 # treat choice specially and return None if no choice
                 # is given in the value
-                return get_choice(value, name, list(default.argtype),
-                       default_none=True)
+                return get_choice(value, name, list(default.argtype), default_none=True)
             else:
                 return _convert_arg(value, default.argtype, name)
         return value

@@ -11,7 +11,7 @@ Routes requests to different backends depending on the namespace.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.config import NAME, BACKENDNAME, NAMESPACE
+from MoinMoin.constants.keys import NAME, BACKENDNAME, NAMESPACE
 
 from MoinMoin.storage.backends import BackendBase, MutableBackendBase
 
@@ -45,12 +45,15 @@ class Backend(MutableBackendBase):
         }
 
         :type namespaces: list of tuples of namespace specifier -> backend names
-        :param mapping: [(namespace, backend_name), ...]
+        :param namespaces: [(namespace, backend_name), ...]
         :type backends: dict backend names -> backends
         :param backends: {backend_name: backend, ...}
         """
         self.namespaces = namespaces
         self.backends = backends
+        for namespace, backend_name in namespaces:
+            assert isinstance(namespace, unicode)
+            assert backend_name in backends
 
     def open(self):
         for backend in self.backends.values():
@@ -66,7 +69,7 @@ class Backend(MutableBackendBase):
         find the backend it belongs to, the itemname without namespace
         spec and the namespace of the backend.
 
-        :param fq_name: fully-qualified itemnames
+        :param fq_names: fully-qualified itemnames
         :returns: tuple of (backend name, local item name, namespace)
         """
         fq_name = fq_names[0]
@@ -74,13 +77,13 @@ class Backend(MutableBackendBase):
             if fq_name.startswith(namespace):
                 item_names = [fq_name[len(namespace):] for fq_name in fq_names]
                 return backend_name, item_names, namespace.rstrip(':')
-        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(itemname, self.namespaces))
+        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(fq_name, self.namespaces))
 
     def __iter__(self):
         # Note: yields enough information so we can retrieve the revision from
         #       the right backend later (this is more than just the revid).
         for backend_name, backend in self.backends.items():
-            for revid in backend: # TODO maybe directly yield the backend?
+            for revid in backend:  # TODO maybe directly yield the backend?
                 yield (backend_name, revid)
 
     def retrieve(self, backend_name, revid):
@@ -115,7 +118,7 @@ class Backend(MutableBackendBase):
                 raise ValueError('can not determine namespace: empty NAME list, no NAMESPACE metadata present')
         else:
             if namespace:
-                namespace += u':' # needed for _get_backend
+                namespace += u':'  # needed for _get_backend
             backend_name, _, _ = self._get_backend([namespace])
         backend = self.backends[backend_name]
 

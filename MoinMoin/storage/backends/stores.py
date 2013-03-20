@@ -23,7 +23,7 @@ from __future__ import absolute_import, division
 
 import json
 
-from MoinMoin.config import REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
 from MoinMoin.util.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
@@ -136,12 +136,14 @@ class MutableBackend(Backend, MutableBackendBase):
             size_expected = meta.get(SIZE)
             size_real = tfw.size
             if size_expected is not None and size_expected != size_real:
-                raise ValueError("computed data size ({0}) does not match data size declared in metadata ({1})".format(size_real, size_expected))
+                raise ValueError("computed data size ({0}) does not match data size declared in metadata ({1})".format(
+                                 size_real, size_expected))
             meta[SIZE] = size_real
             hash_expected = meta.get(HASH_ALGORITHM)
             hash_real = tfw.hash.hexdigest()
             if hash_expected is not None and hash_expected != hash_real:
-                raise ValueError("computed data hash ({0}) does not match data hash declared in metadata ({1})".format(hash_real, hash_expected))
+                raise ValueError("computed data hash ({0}) does not match data hash declared in metadata ({1})".format(
+                                 hash_real, hash_expected))
             meta[HASH_ALGORITHM] = hash_real
         else:
             dataid = meta[DATAID]
@@ -153,7 +155,7 @@ class MutableBackend(Backend, MutableBackendBase):
                 # if we do not store if we already have the dataid in the store,
                 # deserialization does not work as the fpos does not advance to the next record,
                 # because we do not read from the source file. Remove the check?
-                while data.read(64*1024):
+                while data.read(64 * 1024):
                     pass
 
         # if something goes wrong below, the data shall be purged by a garbage collection

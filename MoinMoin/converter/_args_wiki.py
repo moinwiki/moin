@@ -32,6 +32,7 @@ _parse_rules = r'''
 '''
 _parse_re = re.compile(_parse_rules, re.X)
 
+
 def parse(input):
     """
     Parse <input> for positional and keyword arguments, with value quoting and
@@ -56,6 +57,7 @@ def parse(input):
 
 _unparse_rules = r'''^[-\w]+$'''
 _unparse_re = re.compile(_unparse_rules, re.X)
+
 
 def unparse(args):
     """

@@ -15,7 +15,7 @@ from flask import current_app as app
 from MoinMoin.security import AccessControlList, ACLStringIterator
 
 from MoinMoin.user import User
-from MoinMoin.config import NAME, ACL
+from MoinMoin.constants.keys import NAME, ACL
 from MoinMoin.datastruct import ConfigGroups
 
 from MoinMoin._tests import update_item
@@ -203,6 +203,12 @@ class TestAcl(object):
 
     TO DO: test unknown user?
     """
+    def testhasACL(self):
+        acl = AccessControlList(valid=app.cfg.acl_rights_contents)
+        assert not acl.has_acl()
+        acl = AccessControlList(["All:read", ], valid=app.cfg.acl_rights_contents)
+        assert acl.has_acl()
+
     def testApplyACLByUser(self):
         """ security: applying acl by user name"""
         # This acl string...
@@ -218,7 +224,7 @@ class TestAcl(object):
             "CamelCase,extended name:read,write  "
             "BadGuy:  "
             "All:read  "
-            ]
+        ]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
         # Should apply these rights:
@@ -244,7 +250,7 @@ class TestAcl(object):
             # with ACL modifiers
             ('MinusGuy', ()),
             ('PlusGuy', ('read', )),
-            )
+        )
 
         # Check rights
         for user, may in users:
@@ -261,6 +267,7 @@ class TestAcl(object):
 class TestGroupACL(object):
 
     from MoinMoin._tests import wikiconfig
+
     class Config(wikiconfig.Config):
         def groups(cfg):
             groups = {
@@ -270,7 +277,7 @@ class TestGroupACL(object):
                 # the group NAME, but not in the group members. This makes
                 # sure that a bug that erroneously checked "in groupname" (instead
                 # of "in groupmembers") does not reappear.
-                u'AllGroup': frozenset([]), # note: intended misnomer
+                u'AllGroup': frozenset([]),  # note: intended misnomer
             }
             return ConfigGroups(groups)
 
@@ -280,7 +287,7 @@ class TestGroupACL(object):
         acl_rights = [
             "PGroup,AllGroup:read,write,admin "
             "AGroup:read "
-            ]
+        ]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
         # Should apply these rights:
@@ -289,7 +296,7 @@ class TestGroupACL(object):
             ('Antony', ('read', 'write', 'admin', )),  # in PGroup
             ('Beatrice', ('read', 'write', 'admin', )),  # in PGroup
             ('Charles', ('read', )),  # virtually in AGroup
-            )
+        )
 
         # Check rights
         for user, may in users:
@@ -327,8 +334,10 @@ class TestItemAcls(object):
     ]
 
     from MoinMoin._tests import wikiconfig
+
     class Config(wikiconfig.Config):
         content_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+        acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')
@@ -343,17 +352,17 @@ class TestItemAcls(object):
         tests = [
             # itemname, username, expected_rights
             (self.mainitem_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.mainitem_name, u'AnyUser', ['read']), # by after acl
-            (self.mainitem_name, u'JaneDoe', ['read', 'write']), # by item acl
-            (self.mainitem_name, u'JoeDoe', []), # by item acl
+            (self.mainitem_name, u'AnyUser', ['read']),  # by after acl
+            (self.mainitem_name, u'JaneDoe', ['read', 'write']),  # by item acl
+            (self.mainitem_name, u'JoeDoe', []),  # by item acl
             (self.subitem1_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem1_name, u'AnyUser', ['read', 'write']), # by default acl
-            (self.subitem1_name, u'JoeDoe', ['read', 'write']), # by default acl
-            (self.subitem1_name, u'JaneDoe', ['read', 'write']), # by default acl
+            (self.subitem1_name, u'AnyUser', ['read', 'write']),  # by default acl
+            (self.subitem1_name, u'JoeDoe', ['read', 'write']),  # by default acl
+            (self.subitem1_name, u'JaneDoe', ['read', 'write']),  # by default acl
             (self.subitem2_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem2_name, u'AnyUser', ['read']), # by after acl
-            (self.subitem2_name, u'JoeDoe', ['read']), # by after acl
-            (self.subitem2_name, u'JaneDoe', ['read']), # by after acl
+            (self.subitem2_name, u'AnyUser', ['read']),  # by after acl
+            (self.subitem2_name, u'JoeDoe', ['read']),  # by after acl
+            (self.subitem2_name, u'JaneDoe', ['read']),  # by after acl
         ]
 
         for itemname, username, may in tests:
@@ -377,6 +386,15 @@ class TestItemAcls(object):
                       if right not in may]
             for right in mayNot:
                 yield _not_have_right, u, right, itemname
+
+        # check function rights
+        u = User(auth_username='SuperUser')
+        assert u.may.superuser()
+        u = User(auth_username='NoTextchaUser')
+        assert u.may.notextcha()
+        u = User(auth_username='SomeGuy')
+        assert not u.may.superuser()
+        assert not u.may.notextcha()
 
 
 class TestItemHierachicalAcls(object):
@@ -403,6 +421,7 @@ class TestItemHierachicalAcls(object):
     ]
 
     from MoinMoin._tests import wikiconfig
+
     class Config(wikiconfig.Config):
         content_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
 
@@ -419,19 +438,19 @@ class TestItemHierachicalAcls(object):
         tests = [
             # itemname, username, expected_rights
             (self.mainitem_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.mainitem_name, u'AnyUser', ['read']), # by after acl
-            (self.mainitem_name, u'JaneDoe', ['read', 'write']), # by item acl
-            (self.mainitem_name, u'JoeDoe', []), # by item acl
+            (self.mainitem_name, u'AnyUser', ['read']),  # by after acl
+            (self.mainitem_name, u'JaneDoe', ['read', 'write']),  # by item acl
+            (self.mainitem_name, u'JoeDoe', []),  # by item acl
             (self.subitem1_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem1_name, u'AnyUser', ['read']), # by after acl
-            (self.subitem1_name, u'JoeDoe', []), # by inherited acl from main item
-            (self.subitem1_name, u'JaneDoe', ['read', 'write']), # by inherited acl from main item
+            (self.subitem1_name, u'AnyUser', ['read']),  # by after acl
+            (self.subitem1_name, u'JoeDoe', []),  # by inherited acl from main item
+            (self.subitem1_name, u'JaneDoe', ['read', 'write']),  # by inherited acl from main item
             (self.subitem2_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem2_name, u'AnyUser', ['read']), # by after acl
-            (self.subitem2_name, u'JoeDoe', ['read']), # by after acl
-            (self.subitem2_name, u'JaneDoe', ['read']), # by after acl
-            (self.subitem_4boss, u'AnyUser', ['read']), # by after acl
-            (self.subitem_4boss, u'JoeDoe', ['read', 'write']), # by item acl
+            (self.subitem2_name, u'AnyUser', ['read']),  # by after acl
+            (self.subitem2_name, u'JoeDoe', ['read']),  # by after acl
+            (self.subitem2_name, u'JaneDoe', ['read']),  # by after acl
+            (self.subitem_4boss, u'AnyUser', ['read']),  # by after acl
+            (self.subitem_4boss, u'JoeDoe', ['read', 'write']),  # by item acl
         ]
 
         for itemname, username, may in tests:
@@ -473,7 +492,7 @@ class TestItemHierachicalAclsMultiItemNames(object):
         (p2, None, p2),  # default acl effective (also for children)
         (c2, None, c2),  # no own acl -> inherit from parent
         (c12, None, c12),  # no own acl -> inherit from parents
-        ]
+    ]
 
     from MoinMoin._tests import wikiconfig
 

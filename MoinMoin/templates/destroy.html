@@ -13,7 +13,7 @@
         {{ forms.render(form['comment']) }}
         {{ forms.render_textcha(gen, form) }}
       </dl>
-      {{ forms.render(form['submit']) }}
+      {{ forms.render_submit(form) }}
     {{ gen.form.close() }}
     </div>
 {% else %}
@@ -25,7 +25,7 @@
         {{ forms.render(form['comment']) }}
         {{ forms.render_textcha(gen, form) }}
       </dl>
-      {{ forms.render(form['submit']) }}
+      {{ forms.render_submit(form) }}
     {{ gen.form.close() }}
     </div>
 {% endif %}

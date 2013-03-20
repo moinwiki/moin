@@ -36,7 +36,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
 section { display: block; }
 nav ul { list-style: none; }
 blockquote, q { quotes: none; }
-blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: none; }
 a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
 ins { background-color: #ff9; color: #000; text-decoration: none; }
 mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
@@ -272,7 +272,7 @@ input.blank{border-color:#4e7da9;border-width:2px}
 .moin-form dd input{width:75%}
 .moin-form dt{clear:both;float:left;width:25%;text-align:right;margin-top:.3em;padding-right:1%;}
 .moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{clear:both;display:table;margin:auto}
+.moin-form button,.moin-form input[type="submit"]{clear:both;display:block;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
 #moin-modify dd{width:100%;float:none;}
@@ -393,8 +393,7 @@ div.ct-hide{background:transparent url("../img/moin-moveup.png") no-repeat cente
 #file_upload{margin-top:2em}
 form.upload_file{background-color:#708090;border:1px solid #4e7da9;color:#cfcfcf;cursor:pointer;direction:ltr;font-weight:bold;height:2.5em;line-height:2.5em;overflow:hidden;position:relative;text-align:center;width:15em;box-shadow:0 0 5px #708090}
 form.upload_file:hover{color:#fff}
-form.upload_file input{-moz-transform:translate(-800px,0) scale(10);border:300px solid transparent;cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
-form.upload_file input{height:auto}
+form.upload_file input{cursor:pointer;height:100%;margin:0;opacity:0;position:absolute;right:0;top:0}
 form.upload_file button{display:none}
 form.upload_file{display:block}
 .file_upload_template .file_upload_start{visibility:hidden;border-width:0;padding:0}
@@ -412,7 +411,7 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 .popup-body input[type="text"]{width:300px}
 .popup-body input.blank{border-color:#4e7da9;border-width:2px}
 .popup-container{margin:0}
-#lightbox{background:#fff;opacity:.7;filter:alpha;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
+#lightbox{background:#fff;opacity:.7;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
 ul.moin-tags{list-style:none}
 ul.moin-tags li{display:inline}
 ul.moin-tags li.weight0{font-size:50%}
@@ -502,10 +501,10 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .moin-item-wrapper{position:relative;display:inline-block}
 div.moin-item-wrapper{width:100%}
 .moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
-a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;filter:alpha;padding:1px;border-color:#00f;border-style:double}
+a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;padding:1px;border-color:#00f;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
 .moin-item-overlay-lr{bottom:-4px;right:-4px;border-width:0 3px 3px 0}
-.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;filter:alpha;background-color:#eef1f6;color:#1f9ae0}
+.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;background-color:#eef1f6;color:#1f9ae0}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div >  p:first-child ~ p:last-child{margin-top:1em}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}

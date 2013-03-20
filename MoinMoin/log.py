@@ -109,8 +109,8 @@ def _log_warning(message, category, filename, lineno, file=None, line=None):
     # for warnings, we just want to use the logging system, not stderr or other files
     msg = "{0}:{1}: {2}: {3}".format(filename, lineno, category.__name__, message)
     logger = getLogger(__name__)
-    logger.warning(msg) # Note: the warning will look like coming from here,
-                        # but msg contains info about where it really comes from
+    logger.warning(msg)  # Note: the warning will look like coming from here,
+                         # but msg contains info about where it really comes from
 
 
 def load_config(conf_fname=None):
@@ -134,7 +134,7 @@ def load_config(conf_fname=None):
             l = getLogger(__name__)
             l.info('using logging configuration read from "{0}"'.format(conf_fname))
             warnings.showwarning = _log_warning
-        except Exception as err: # XXX be more precise
+        except Exception as err:  # XXX be more precise
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
@@ -153,8 +153,7 @@ def load_config(conf_fname=None):
 
     import MoinMoin
     code_path = os.path.dirname(MoinMoin.__file__)
-    from MoinMoin import project, version
-    l.info('Running {0} {1} code from {2}'.format(project, str(version), code_path))
+    l.info('Running {0} {1} code from {2}'.format(MoinMoin.project, str(MoinMoin.version), code_path))
 
 
 def getLogger(name):
@@ -168,6 +167,6 @@ def getLogger(name):
         load_config()
     logger = logging.getLogger(name)
     for levelnumber, levelname in logging._levelNames.items():
-        if isinstance(levelnumber, int): # that list has also the reverse mapping...
+        if isinstance(levelnumber, int):  # that list has also the reverse mapping...
             setattr(logger, levelname, levelnumber)
     return logger

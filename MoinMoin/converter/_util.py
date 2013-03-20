@@ -12,14 +12,16 @@ from flask import request
 from flask import g as flaskg
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.config import uri_schemes
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type
 from MoinMoin.util.tree import html, moin_page
 
+
 def allowed_uri_scheme(uri):
     parsed = Iri(uri)
-    return not parsed.scheme or parsed.scheme in uri_schemes
+    return not parsed.scheme or parsed.scheme in URI_SCHEMES
+
 
 def decode_data(data, contenttype=None):
     """
@@ -42,7 +44,8 @@ def decode_data(data, contenttype=None):
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
     if not isinstance(data, unicode):
-        raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, but we got {0!r}".format(data))
+        raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, "
+                        "but we got {0!r}".format(data))
     return data
 
 
@@ -119,7 +122,8 @@ class _Stack(object):
         """
         if request.user_agent and flaskg.user.edit_on_doubleclick:
             # this is not py.test and user has option to edit on doubleclick
-            # TODO: move the 2 lines above and 2 related import statements outside of the converters (needed for standalone converter)
+            # TODO: move the 2 lines above and 2 related import statements outside of the converters
+            # (this is needed for a standalone converter)
             if self.last_lineno != self.iter_content.lineno:
                 # avoid adding same lineno to parent and multiple children or grand-children
                 elem.attrib[html.data_lineno] = self.iter_content.lineno

@@ -8,6 +8,7 @@ MoinMoin - Tests for MoinMoin.macro._base
 import pytest
 from MoinMoin.macro._base import *
 
+
 class TestMacroBase(object):
     """ Test for Macro base and related classes """
 

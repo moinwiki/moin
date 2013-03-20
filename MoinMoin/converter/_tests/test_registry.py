@@ -6,8 +6,6 @@ MoinMoin - Tests for MoinMoin.converter.default_registry
 """
 
 
-import pytest
-
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
 from MoinMoin.converter import default_registry
 from MoinMoin.converter.text_in import Converter as TextInConverter
@@ -45,7 +43,7 @@ class TestRegistry(object):
                 (type_moin_document, Type('application/x-xhtml-moin-page'), HtmlOutConverterPage),
                 (type_moin_document, type_moin_wiki, MoinwikiOutConverter),
                 (type_moin_document, Type('x-moin/format;name=wiki'), MoinwikiOutConverter),
-            ]:
+        ]:
             conv = default_registry.get(type_input, type_output)
             assert isinstance(conv, ExpectedClass)
 
@@ -55,7 +53,7 @@ class TestRegistry(object):
                 (dict(includes='expandall'), IncludeConverter),
                 (dict(links='extern'), LinkConverterExternOutput),
                 (dict(items='refs'), LinkConverterItemRefs),
-            ]:
+        ]:
             conv = default_registry.get(type_moin_document, type_moin_document, **kwargs)
             assert isinstance(conv, ExpectedClass)
 

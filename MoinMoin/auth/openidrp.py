@@ -20,7 +20,7 @@ from flask import session, request, url_for
 from flask import current_app as app
 from MoinMoin.auth import BaseAuth, get_multistage_continuation_url
 from MoinMoin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, MultistageRedirectLogin
-from MoinMoin.config import ITEMID
+from MoinMoin.constants.keys import ITEMID
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 
@@ -99,7 +99,7 @@ class OpenIDAuth(BaseAuth):
                                                            _external=True,
                                                            openid_openid=identity,
                                                            openid_submit='1'
-                                                          ))
+                    ))
 
             # not trusted
             return ContinueLogin(None, _('This OpenID provider is not trusted.'))

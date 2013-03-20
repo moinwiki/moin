@@ -7,7 +7,8 @@
 """
 
 
-import os, errno
+import os
+import errno
 
 import pytest
 
@@ -26,13 +27,11 @@ class TestImportNameFromMoin(object):
 
     def testNonExistingModule(self):
         """ pysupport: import nonexistent module raises ImportError """
-        pytest.raises(ImportError, pysupport.importName,
-                       'MoinMoin.util.nonexistent', 'importName')
+        pytest.raises(ImportError, pysupport.importName, 'MoinMoin.util.nonexistent', 'importName')
 
     def testNonExistingAttribute(self):
         """ pysupport: import nonexistent attritbue raises AttributeError """
-        pytest.raises(AttributeError, pysupport.importName,
-                       'MoinMoin.util.pysupport', 'nonexistent')
+        pytest.raises(AttributeError, pysupport.importName, 'MoinMoin.util.pysupport', 'nonexistent')
 
     def testExisting(self):
         """ pysupport: import name from existing module """
@@ -72,10 +71,7 @@ class TestImportNonExisting(TestImportNameFromPlugin):
         """ pysupport: import nonexistent wiki plugin fail """
         if self.pluginExists():
             pytest.skip('plugin exists: {0}'.format(self.plugin))
-        pytest.raises(plugins.PluginMissingError,
-                       plugins.importWikiPlugin,
-                           app.cfg, 'parser',
-                           self.plugin, 'Parser')
+        pytest.raises(plugins.PluginMissingError, plugins.importWikiPlugin, app.cfg, 'parser', self.plugin, 'Parser')
 
 
 class TestImportExisting(TestImportNameFromPlugin):
@@ -96,8 +92,7 @@ class TestImportExisting(TestImportNameFromPlugin):
             self.createTestPlugin()
             # clear the plugin cache...
             app.cfg._site_plugin_lists = {}
-            parser = plugins.importWikiPlugin(app.cfg, 'parser',
-                                               self.plugin, 'Parser')
+            parser = plugins.importWikiPlugin(app.cfg, 'parser', self.plugin, 'Parser')
             assert getattr(parser, '__name__', None) == 'Parser'
             assert parser.key == self.key
         finally:
@@ -132,6 +127,7 @@ class Parser:
             except OSError as err:
                 if err.errno != errno.ENOENT:
                     raise
+
 
 coverage_modules = ['MoinMoin.util.pysupport']
 pytest.main("-x test_pysupport.py")

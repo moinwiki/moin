@@ -16,6 +16,7 @@ from MoinMoin.util import iri
 from MoinMoin.util.mime import Type
 from MoinMoin.util.tree import moin_page, xinclude
 
+
 class ConverterMacro(object):
     def _BR_repl(self, args, text, context_block):
         if context_block:
@@ -42,8 +43,8 @@ class ConverterMacro(object):
             return text
 
         pagename = args[0]
-        heading = None # TODO
-        level = None # TODO
+        heading = None  # TODO
+        level = None  # TODO
         sort = 'sort' in args and args['sort']
         if sort and sort not in ('ascending', 'descending'):
             raise RuntimeError

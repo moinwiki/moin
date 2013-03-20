@@ -6,10 +6,11 @@ MoinMoin - MoinMoin search package
 """
 
 from MoinMoin.i18n import L_
-from MoinMoin.forms import Search, InlineCheckbox, Submit
+from MoinMoin.forms import Search, InlineCheckbox
 
 from flatland import Form, String, Boolean
 from flatland.validation import Validator
+
 
 class ValidSearch(Validator):
     """Validator for a valid search form
@@ -24,9 +25,10 @@ class ValidSearch(Validator):
             return self.note_error(element, state, 'too_short_query_msg')
         return True
 
+
 class SearchForm(Form):
     q = Search
     history = InlineCheckbox.using(label=L_('search all revisions'))
-    submit = Submit.using(default=L_('Search'))
+    submit_label = L_('Search')
 
     validators = [ValidSearch()]

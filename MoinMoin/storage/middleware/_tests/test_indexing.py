@@ -15,17 +15,12 @@ import pytest
 
 from flask import g as flaskg
 
-from MoinMoin.config import NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT, \
-                            LATEST_REVS, ALL_REVS, NAMESPACE
-
-from ..indexing import IndexingMiddleware
+from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
+                                     LATEST_REVS, ALL_REVS, NAMESPACE)
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 
 from MoinMoin.auth import GivenAuth
 from MoinMoin._tests import wikiconfig
-from MoinMoin.storage.backends.stores import MutableBackend
-from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
-from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
-from MoinMoin.storage import create_simple_mapping
 
 
 def dumper(indexer, idx_name):
@@ -37,7 +32,7 @@ def dumper(indexer, idx_name):
 
 
 class TestIndexingMiddleware(object):
-    reinit_storage = True # cleanup after each test method
+    reinit_storage = True  # cleanup after each test method
 
     def setup_method(self, method):
         self.imw = flaskg.unprotected_storage
@@ -47,7 +42,7 @@ class TestIndexingMiddleware(object):
 
     def test_nonexisting_item(self):
         item = self.imw[u'foo']
-        assert not item # does not exist
+        assert not item  # does not exist
 
     def test_store_revision(self):
         item_name = u'foo'
@@ -58,7 +53,7 @@ class TestIndexingMiddleware(object):
         revid = rev.revid
         # check if we have the revision now:
         item = self.imw[item_name]
-        assert item # does exist
+        assert item  # does exist
         rev = item.get_revision(revid)
         assert rev.name == item_name
         assert rev.data.read() == data
@@ -82,8 +77,8 @@ class TestIndexingMiddleware(object):
         assert rev.meta[COMMENT] == u'no spam'
         assert rev.data.read() == newdata
         revids = [rev.revid for rev in item.iter_revs()]
-        assert len(revids) == 1 # we still have the revision, cleared
-        assert revid in revids # it is still same revid
+        assert len(revids) == 1  # we still have the revision, cleared
+        assert revid in revids  # it is still same revid
 
     def test_destroy_revision(self):
         item_name = u'foo'
@@ -140,7 +135,7 @@ class TestIndexingMiddleware(object):
         item.destroy_all_revisions()
         # check if the item was destroyed:
         item = self.imw[item_name]
-        assert not item # does not exist
+        assert not item  # does not exist
 
     def test_all_revisions(self):
         item_name = u'foo'
@@ -361,7 +356,7 @@ class TestIndexingMiddleware(object):
         # TODO: this is a very simple check that assumes that data is put 1:1
         # into index' CONTENT field.
         item_name = u'foo'
-        meta = dict(name=[item_name, ], contenttype=u'text/plain')
+        meta = dict(name=[item_name, ], contenttype=u'text/plain;charset=utf-8')
         data = 'some test content\n'
         item = self.imw[item_name]
         data_file = StringIO(data)
@@ -375,11 +370,11 @@ class TestIndexingMiddleware(object):
     def test_namespaces(self):
         item_name_n = u'normal'
         item = self.imw[item_name_n]
-        rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain'),
+        rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_n)), return_rev=True)
-        item_name_u = u'userprofiles:userprofile'
+        item_name_u = u'%s:userprofile' % NAMESPACE_USERPROFILES
         item = self.imw[item_name_u]
-        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain'),
+        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_u)), return_rev=True)
         item = self.imw[item_name_n]
         rev_n = item.get_revision(rev_n.revid)
@@ -387,20 +382,21 @@ class TestIndexingMiddleware(object):
         assert rev_n.meta[NAME] == [item_name_n, ]
         item = self.imw[item_name_u]
         rev_u = item.get_revision(rev_u.revid)
-        assert rev_u.meta[NAMESPACE] == u'userprofiles'
+        assert rev_u.meta[NAMESPACE] == NAMESPACE_USERPROFILES
         assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
 
     def test_parentnames(self):
         item_name = u'child'
         item = self.imw[item_name]
         item.store_revision(dict(name=[u'child', u'p1/a', u'p2/b', u'p2/c', u'p3/p4/d', ],
-                                 contenttype=u'text/plain'),
+                                 contenttype=u'text/plain;charset=utf-8'),
                             StringIO(''))
         item = self.imw[item_name]
         assert item.parentnames == [u'p1', u'p2', u'p3/p4', ]  # one p2 duplicate removed
 
+
 class TestProtectedIndexingMiddleware(object):
-    reinit_storage = True # cleanup after each test method
+    reinit_storage = True  # cleanup after each test method
 
     class Config(wikiconfig.Config):
         auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
@@ -418,7 +414,7 @@ class TestProtectedIndexingMiddleware(object):
                                 StringIO('public content'), return_rev=True)
         revid_public = r.revid
         revids = [rev.revid for rev in self.imw.documents()
-                  if rev.name != u'joe'] # the user profile is a revision in the backend
+                  if rev.name != u'joe']  # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):

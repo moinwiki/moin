@@ -10,10 +10,10 @@ adapted to the TZ settings of the user viewing the content.
 import time
 from datetime import datetime
 
-from flask import g as flaskg
 from flask.ext.babel import format_date
 
 from MoinMoin.macro._base import MacroInlineBase
+
 
 class MacroDateTimeBase(MacroInlineBase):
     def parse_time(self, args):
@@ -24,14 +24,14 @@ class MacroDateTimeBase(MacroInlineBase):
         :returns: UNIX timestamp (UTC)
         """
         if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
-              args[10] == 'T' and args[13] == ':' and args[16] == ':'):
+            args[10] == 'T' and args[13] == ':' and args[16] == ':'):
             # we ignore any time zone offsets here, assume UTC,
             # and accept (and ignore) any trailing stuff
             try:
                 year, month, day = int(args[0:4]), int(args[5:7]), int(args[8:10])
                 hour, minute, second = int(args[11:13]), int(args[14:16]), int(args[17:19])
-                tz = args[19:] # +HHMM, -HHMM or Z or nothing (then we assume Z)
-                tzoffset = 0 # we assume UTC no matter if there is a Z
+                tz = args[19:]  # +HHMM, -HHMM or Z or nothing (then we assume Z)
+                tzoffset = 0  # we assume UTC no matter if there is a Z
                 if tz:
                     sign = tz[0]
                     if sign in '+-':
@@ -47,7 +47,7 @@ class MacroDateTimeBase(MacroInlineBase):
             try:
                 tm = time.mktime(tm) - time.timezone - tzoffset
             except (OverflowError, ValueError):
-                tm = 0 # incorrect, but we avoid an ugly backtrace
+                tm = 0  # incorrect, but we avoid an ugly backtrace
         else:
             # try raw seconds since epoch in UTC
             try:
@@ -56,10 +56,11 @@ class MacroDateTimeBase(MacroInlineBase):
                 raise ValueError("Bad timestamp {0!r}: {1}".format(args, err))
         return tm
 
+
 class Macro(MacroDateTimeBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments is None:
-            tm = time.time() # always UTC
+            tm = time.time()  # always UTC
         else:
             # XXX looks like args are split at ':' -> <Arguments([u'2010-12-31T23', u'59', u'00'], {})>
             stamp = arguments[0]

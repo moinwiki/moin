@@ -23,7 +23,7 @@ from StringIO import StringIO
 class Monitor(object):
     def __init__(self):
         self.enabled = False
-        assert hasattr(sys, "_current_frames") # make sure we have py >= 2.5
+        assert hasattr(sys, "_current_frames")  # make sure we have py >= 2.5
 
     def activate_hook(self):
         """ Activates the thread monitor hook. Note that this might interfere

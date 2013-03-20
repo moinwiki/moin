@@ -128,7 +128,7 @@ class TestConverter(object):
             yield (self.do, ) + i
 
     def test_page(self):
-        pytest.skip("please help fixing moin wiki round trip tests") # XXX TODO
+        pytest.skip("please help fixing moin wiki round trip tests")  # XXX TODO
         data = [
             (u"""
 This page aims to introduce the most important elements of MoinMoin``'s syntax at a glance, showing first the markup verbatim and then how it is rendered by the wiki engine. Additionally, you'll find links to the relative help pages. Please note that some of the features depend on your configuration.

@@ -6,33 +6,34 @@
 MoinMoin - MoinMoin.util.mimetype Tests
 """
 
-import pytest
+
 from MoinMoin.util import mimetype
+
 
 class TestMimeType(object):
     """ Test: util.mimetype """
 
     def test_parse_format(self):
         MimeType_obj = mimetype.MimeType(filename='test_file.jpg')
-        # format in config.parser_text_mimetype
+        # format in PARSER_TEXT_MIMETYPE
         test = [
-        #test_format, test_mimetype
-        ('html', ('text', 'html')),
-        ('css', ('text', 'css')),
-        ('python', ('text', 'python')),
-        ('latex', ('text', 'latex'))
+            #test_format, test_mimetype
+            ('html', ('text', 'html')),
+            ('css', ('text', 'css')),
+            ('python', ('text', 'python')),
+            ('latex', ('text', 'latex')),
         ]
 
         for test_format, test_mimetype in test:
             result = MimeType_obj.parse_format(test_format)
             assert result == test_mimetype
 
-        # format not in config.parser_text_mimetype
+        # format not in PARSER_TEXT_MIMETYPE
         test = [
-        # test_format, test_mimetype
-        ('wiki', ('text', 'x.moin.wiki')),
-        ('irc', ('text', 'irssi')),
-        ('test_random', ('text', 'x-test_random'))
+            # test_format, test_mimetype
+            ('wiki', ('text', 'x.moin.wiki')),
+            ('irc', ('text', 'irssi')),
+            ('test_random', ('text', 'x-test_random')),
         ]
 
         for test_format, test_mimetype in test:
@@ -41,14 +42,14 @@ class TestMimeType(object):
 
     def test_mime_type(self):
         test = [
-        # test_extension, test_major/minor
-        ('.mpeg', 'video/mpeg'),
-        ('.pdf', 'application/pdf'),
-        ('.txt', 'text/plain'),
-        ('.jpeg', 'image/jpeg'),
-        ('.png', 'image/png'),
-        ('.svg', 'image/svg+xml'),
-        ('', 'application/octet-stream')
+            # test_extension, test_major/minor
+            ('.mpeg', 'video/mpeg'),
+            ('.pdf', 'application/pdf'),
+            ('.txt', 'text/plain'),
+            ('.jpeg', 'image/jpeg'),
+            ('.png', 'image/png'),
+            ('.svg', 'image/svg+xml'),
+            ('', 'application/octet-stream'),
         ]
 
         # when mimestr is None
@@ -72,7 +73,7 @@ class TestMimeType(object):
 
         # major == 'text'
         result2 = MimeType_obj.content_type(major='text', minor='plain', charset="utf-16", params=None)
-        expected = 'text/plain; charset="utf-16"'
+        expected = 'text/plain;charset="utf-16"'
         assert result2 == expected
 
         # when all the parameters passed are None

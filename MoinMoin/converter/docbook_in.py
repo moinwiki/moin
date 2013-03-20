@@ -32,6 +32,7 @@ from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 class NameSpaceError(Exception):
     pass
 
+
 class Converter(object):
     """
     Converter application/docbook+xml -> x.moin.document
@@ -43,7 +44,7 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = set([# Info elements
+    ignored_tags = set([  # Info elements
                        'abstract', 'artpagenums', 'annotation',
                        'artpagenums', 'author', 'authorgroup',
                        'authorinitials', 'bibliocoverage', 'biblioid',
@@ -135,7 +136,7 @@ class Converter(object):
                       'simplesect', 'subtitle', 'synopsis',
                       'synopfragment', 'task', 'taskprerequisites',
                       'taskrelated', 'tasksummary', 'title',
-                     ])
+    ])
 
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
@@ -144,18 +145,23 @@ class Converter(object):
 
     # DocBook can handle three kind of media: audio, image, video. Here
     # is an helper dictionary to process such of element.
-    media_tags = {'audioobject': (['wav', 'mp3', 'ogg'],
-                                 'audiodata',
-                                 'audio/',
-                                 ),
-                  'imageobject': (['gif', 'png', 'jpg', 'png'],
-                                 'imagedata',
-                                 'image/',
-                                 ),
-                  'videoobject': (['ogg', 'avi', 'mp4'],
-                                 'videodata',
-                                 'video/',
-                                 )}
+    media_tags = {
+        'audioobject': (
+            ['wav', 'mp3', 'ogg'],
+            'audiodata',
+            'audio/',
+        ),
+        'imageobject': (
+            ['gif', 'png', 'jpg', 'png'],
+            'imagedata',
+            'image/',
+        ),
+        'videoobject': (
+            ['ogg', 'avi', 'mp4'],
+            'videodata',
+            'video/',
+        )
+    }
 
     # DocBook tags which can be convert directly to a DOM Tree element
     simple_tags = {'code': moin_page.code,
@@ -248,7 +254,7 @@ class Converter(object):
         a given element.
         """
         new_children = []
-        depth = depth + 1
+        depth += 1
         for child in element:
             if isinstance(child, ET.Element):
                 r = self.visit(child, depth)
@@ -287,8 +293,7 @@ class Converter(object):
         """
         result = {}
         for key, value in element.attrib.iteritems():
-            if key.uri == xml \
-              and key.name in ['id', 'base', 'lang']:
+            if key.uri == xml and key.name in ['id', 'base', 'lang']:
                 result[key] = value
         if result:
             # We clear standard_attribute, if ancestror attribute
@@ -383,22 +388,20 @@ class Converter(object):
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name in self.media_tags:
-                    #XXX: Check the spec to be sure that object tag have only one child.
-                    #TODO: Better way to do it
+                    # XXX: Check the spec to be sure that object tag have only one child.
+                    # TODO: Better way to do it
                     prefered_format, data_tag, mimetype = self.media_tags[child.tag.name]
                     object_element = child
                     for grand_child in child:
                         if isinstance(grand_child, ET.Element):
                             object_data.append(grand_child)
                 if child.tag.name == 'caption':
-                    caption = self.do_children(child, depth+1)[0]
+                    caption = self.do_children(child, depth + 1)[0]
                 if child.tag.name == 'textobject':
                     text_object = child
-        return self.visit_data_element(object_element, depth, object_data,
-            text_object, caption)
+        return self.visit_data_element(object_element, depth, object_data, text_object, caption)
 
-    def visit_data_element(self, element, depth, object_data,
-                           text_object, caption):
+    def visit_data_element(self, element, depth, object_data, text_object, caption):
         """
         We will try to return an object element based on the
         object_data. If it is not possible, we return a paragraph
@@ -410,7 +413,7 @@ class Converter(object):
             if not text_object:
                 return
             else:
-                children = self.do_children(child, depth+1)[0]
+                children = self.do_children(child, depth + 1)[0]
                 return self.new(moin_page.p, attrib={},
                                 children=children)
         # We try to determine the best object to show
@@ -430,7 +433,7 @@ class Converter(object):
         # If we could not find any suitable object, we return
         # the text replacement.
         if not object_to_show:
-            children = self.do_children(child, depth+1)[0]
+            children = self.do_children(child, depth + 1)[0]
             return self.new(moin_page.p, attrib={},
                             children=children)
 
@@ -488,9 +491,9 @@ class Converter(object):
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name == "attribution":
-                    source = self.do_children(child, depth+1)
+                    source = self.do_children(child, depth + 1)
                 else:
-                    children.extend(self.do_children(child, depth+1))
+                    children.extend(self.do_children(child, depth + 1))
             else:
                 children.append(child)
         attrib = {}
@@ -555,7 +558,7 @@ class Converter(object):
             #XXX: Improve error
             raise SyntaxError("para child missing for formalpara element")
 
-        children = self.do_children(para_element, depth+1)[0]
+        children = self.do_children(para_element, depth + 1)[0]
         attrib = {}
         attrib[html('title')] = title_element[0]
         return self.new(moin_page.p, attrib=attrib, children=children)
@@ -743,8 +746,8 @@ class Converter(object):
         """
         self.is_section = True
         if depth > self.section_depth:
-            self.section_depth = self.section_depth + 1
-            self.heading_level = self.heading_level + 1
+            self.section_depth += 1
+            self.heading_level += 1
         elif depth < self.section_depth:
             self.heading_level = self.heading_level - (self.section_depth - depth)
             self.section_depth = depth
@@ -781,14 +784,14 @@ class Converter(object):
             if isinstance(child, ET.Element):
                 if child.tag.name == 'seg':
                     label_tag = ET.Element(moin_page('list-item-label'),
-                            attrib={}, children=labels[counter % len(labels)])
+                                           attrib={}, children=labels[counter % len(labels)])
                     body_tag = ET.Element(moin_page('list-item-body'),
-                            attrib={}, children=self.visit(child, depth))
+                                          attrib={}, children=self.visit(child, depth))
                     item_tag = ET.Element(moin_page('list-item'),
-                            attrib={}, children=[label_tag, body_tag])
+                                          attrib={}, children=[label_tag, body_tag])
                     item_tag = (item_tag, )
                     new.extend(item_tag)
-                    counter = counter + 1
+                    counter += 1
                 else:
                     r = self.visit(child)
                     if r is None:
@@ -824,8 +827,7 @@ class Converter(object):
                     labels.extend(r)
                 else:
                     if child.tag.name == 'seglistitem':
-                        r = self.visit_docbook_seglistitem(child,
-                            labels, depth)
+                        r = self.visit_docbook_seglistitem(child, labels, depth)
                     else:
                         r = self.visit(child)
                     if r is None:
@@ -924,8 +926,7 @@ class Converter(object):
         attrib = {}
         children = []
         if class_attribute:
-            attrib[html('class')] = ''.join(['db-tag-',
-                                        class_attribute])
+            attrib[html('class')] = ''.join(['db-tag-', class_attribute])
         else:
             attrib[html('class')] = 'db-tag'
         if namespace_attribute:
@@ -943,7 +944,7 @@ class Converter(object):
         trademark_entities = {'copyright': '&copy;',
                               'registred': '&reg;',
                               'trade': '&trade;',
-                             }
+        }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
         if trademark_class in trademark_entities:
@@ -980,7 +981,7 @@ class Converter(object):
         href = element.get(docbook.url)
         # Since it is an element of DocBook v.4,
         # The namespace does not always work, so we will try to retrive the attribute whatever
-        if not(href):
+        if not href:
             for key, value in element.attrib.iteritems():
                 if key.name == 'url' and allowed_uri_scheme(value):
                     href = value
@@ -1145,8 +1146,7 @@ class Converter(object):
         children.append(self.visit(element, depth))
         # We show the table of content only if it is not empty
         if self.is_section:
-            children.insert(0, self.new(moin_page('table-of-content'),
-                                    attrib={}, children={}))
+            children.insert(0, self.new(moin_page('table-of-content'), attrib={}, children={}))
         body = self.new(moin_page.body, attrib={}, children=children)
         return self.new(moin_page.page, attrib=attrib, children=[body])
 

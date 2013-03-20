@@ -15,12 +15,11 @@ from flask import url_for
 
 import os.path
 
-from MoinMoin.config import CURRENT
+from MoinMoin.constants.keys import CURRENT
+from MoinMoin.constants.contenttypes import CHARSET
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin import config
 
 
 def is_local_wiki(wiki_name):
@@ -72,6 +71,8 @@ def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=
                 item_name = u'{0}:{1}'.format(namespace, item_name)
             if wiki_name:
                 url = u'{0}:{1}'.format(wiki_name, item_name)
+            else:
+                url = item_name
             url = u'/{0}'.format(url)
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
@@ -89,9 +90,10 @@ def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=
                 # just want e.g. +show/42/FooBar to append it to the other wiki's
                 # base URL.
                 i = local_url.index('/%2B')
-                path = local_url[i+1:]
+                path = local_url[i + 1:]
                 url = wiki_base_url + path
     return url
+
 
 def _split_namespace(namespaces, url):
     """
@@ -120,6 +122,7 @@ def _split_namespace(namespaces, url):
         length = len(namespace) + 1
         url = url[length:]
     return namespace, url
+
 
 def split_interwiki(wikiurl):
     """ Split a interwiki name, into wikiname and pagename, e.g:
@@ -163,6 +166,7 @@ def split_interwiki(wikiurl):
             item_name = u':{0}'.format(item_name)
         return u'Self', namespace, item_name
 
+
 def join_wiki(wikiurl, wikitail, namespace):
     """
     Add a (url_quoted) page name to an interwiki url.
@@ -176,8 +180,8 @@ def join_wiki(wikiurl, wikitail, namespace):
     :rtype: string
     :returns: generated URL of the page in the other wiki
     """
-    wikitail = url_quote(wikitail, charset=config.charset, safe='/')
-    namespace = url_quote(namespace, charset=config.charset, safe='/')
+    wikitail = url_quote(wikitail, charset=CHARSET, safe='/')
+    namespace = url_quote(namespace, charset=CHARSET, safe='/')
     if not('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl):
         if namespace:
             namespace = u':{0}:'.format(namespace)
@@ -190,11 +194,12 @@ def join_wiki(wikiurl, wikitail, namespace):
         wikiurl = wikiurl.replace('$NAMESPACE', namespace)
     return wikiurl
 
+
 def getInterwikiName(item_name):
     """
     Get the (fully qualified) interwiki name of a local item name.
 
-    :param item_ame: item name (unicode)
+    :param item_name: item name (unicode)
     :rtype: unicode
     :returns: wiki_name:item_name
     """

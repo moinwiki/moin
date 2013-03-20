@@ -3,7 +3,8 @@
 # Copyright: 2001-2012 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import sys, os
+import sys
+import os
 
 from MoinMoin import project, version
 
@@ -62,47 +63,50 @@ Topic :: Text Processing :: Markup""".splitlines(),
     #             'MoinMoin.apps.misc.templates': 'MoinMoin/apps/misc/templates',
     #            },
 
-    package_data={'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
-                  'MoinMoin.static': ['*', ],
-                  'MoinMoin.themes.modernized': ['*', ],
-                  'MoinMoin.themes.foobar': ['*', ],
-                  'MoinMoin.templates': ['*.html', '*.xml', ],
-                  'MoinMoin.apps.admin.templates': ['*.html', ],
-                  'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
-                 },
+    package_data={
+        'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
+        'MoinMoin.static': ['*', ],
+        'MoinMoin.themes.modernized': ['*', ],
+        'MoinMoin.themes.foobar': ['*', ],
+        'MoinMoin.templates': ['*.html', '*.xml', ],
+        'MoinMoin.apps.admin.templates': ['*.html', ],
+        'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
+    },
     include_package_data=True,
     zip_safe=False,
     dependency_links=[
-        #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
+        # 'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
+        # 'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
         'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
         'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.2',
     ],
     install_requires=[
-        'blinker>=1.1', # event signalling (e.g. for change notification trigger)
-        'docutils>=0.8.1', # reST markup processing
-        'Markdown>=2.1.1', # Markdown markup processing
-        'Flask>=0.8', # micro framework
-        'Flask-Babel>=0.7', # i18n support
-        'Flask-Cache>=0.3.4, <0.8', # caching support (we currently need <0.8 due to issue #293)
-        'Flask-Script>=0.3.3', # scripting support
-        'Flask-Themes>=0.1.3.1', # theme support
-        'emeraldtree>=0.9.2', # xml processing
-        'flatland==dev', # repo checkout at revision 269:6c5d262d7eff works
-        'Jinja2>=2.6', # template engine
-        'pygments>=1.4', # src code / text file highlighting
-        'Werkzeug>=0.8.1', # wsgi toolkit
-        'pytest>=2.1, <2.3', # pytest is needed by unit tests
-                             # note: currently 2.3.x is not compatible with our test code,
-                             # likely due to the fixtures changes.
-        'pytest-pep8<1.0.3', # coding style checker
-                             # note: pytest-pep8 1.0.3 needs pytest 2.3
-        'whoosh>=2.5.0', # needed for indexed search
-        'sphinx>=1.1', # needed to build the docs
-        'pdfminer', # pdf -> text/plain conversion
-        'passlib>=1.6.0', # strong password hashing (1.6 needed for consteq)
-        'XStatic>=0.0.2', # support for static file pypi packages
+        'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
+        'docutils>=0.8.1',  # reST markup processing
+        'Markdown>=2.1.1',  # Markdown markup processing
+        'Flask>=0.8',  # micro framework
+        'Flask-Babel>=0.7',  # i18n support
+        'Flask-Cache>=0.3.4',  # caching support
+        'Flask-Script>=0.3.3',  # scripting support
+        'Flask-Themes>=0.1.3.1',  # theme support
+        'emeraldtree>=0.9.2',  # xml processing
+        'flatland==dev',  # repo checkout at revision 269:6c5d262d7eff works
+        'Jinja2>=2.6',  # template engine
+        'pygments>=1.4',  # src code / text file highlighting
+        'Werkzeug>=0.8.1',  # wsgi toolkit
+        'pytest>=2.1, <2.3',  # pytest is needed by unit tests
+                              # note: currently 2.3.x is not compatible with our test code,
+                              # likely due to the fixtures changes.
+        'pytest-pep8<1.0.3',  # coding style checker
+                              # note: pytest-pep8 1.0.3 needs pytest 2.3
+        # 'whoosh>=2.4.0',  # needed for indexed search
+        'whoosh>=2.5.0',  # needed for indexed search
+        'sphinx>=1.1',  # needed to build the docs
+        'pdfminer',  # pdf -> text/plain conversion
+        'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
+        'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
@@ -115,14 +119,14 @@ Topic :: Text Processing :: Markup""".splitlines(),
     # optional features and their list of requirements
     extras_require={
         #'featurename': ["req1", "req2", ],
-        'pil': ["PIL"], # used by image get for scaling/rotating/etc.
-                        # PIL is a binary dependency and some features of it
-                        # require special libs/header to be installed before
-                        # it can be compiled successfully
-        'ldap': ["python-ldap>=2.0.0"], # used by ldap auth
-        'openid': ["python-openid>=2.2.4"], # used by openid rp auth
-        'sqla': ["sqlalchemy>=0.7.1"], # used by sqla store
-        'mongodb': ["pymongo"], # used by mongodb store
+        'pil': ["PIL"],  # used by image get for scaling/rotating/etc.
+                         # PIL is a binary dependency and some features of it
+                         # require special libs/header to be installed before
+                         # it can be compiled successfully
+        'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
+        'openid': ["python-openid>=2.2.4"],  # used by openid rp auth
+        'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        'mongodb': ["pymongo"],  # used by mongodb store
     },
     entry_points=dict(
         console_scripts=['moin = MoinMoin.script:main'],

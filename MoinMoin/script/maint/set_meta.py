@@ -19,7 +19,7 @@ from flask.ext.script import Command, Option
 
 from whoosh.query import Every
 
-from MoinMoin.config import NAME, NAME_EXACT
+from MoinMoin.constants.keys import NAME, NAME_EXACT
 from MoinMoin.script import fatal
 
 
@@ -49,7 +49,7 @@ class Set_Meta(Command):
 
         if query:
             qp = app.storage.query_parser([NAME_EXACT, ])
-            q = qp.parse(query_text)
+            q = qp.parse(query)
         else:
             q = Every()
 

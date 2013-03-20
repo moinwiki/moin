@@ -261,7 +261,7 @@ class Converter(object):
             if self.parent_section != 0:
                 section_tag = 'sect{0}'.format(self.parent_section)
                 section = ET.Element(docbook(section_tag), attrib={},
-                          children=self.section_children[self.current_section])
+                                     children=self.section_children[self.current_section])
                 self.section_children[self.parent_section].append(section)
                 self.current_section = int(depth)
 
@@ -335,7 +335,7 @@ class Converter(object):
                     if child.tag.name == 'note-body':
                         body = self.do_children(child)
         # We process note only with note-body child
-        if not(body):
+        if not body:
             return
 
         body = self.new(docbook.simpara, attrib={}, children=body)
@@ -385,7 +385,7 @@ class Converter(object):
         if not title:
             #TODO: Translation
             title = "Table {0}".format(self.table_counter)
-        self.table_counter = self.table_counter + 1
+        self.table_counter += 1
         caption = ET.Element(docbook('caption'), attrib={}, children=[title])
         children = [caption]
         children.extend(self.do_children(element))
@@ -441,7 +441,7 @@ class Converter(object):
         for item in element:
             if item.tag.uri == moin_page and item.tag.name == 'body':
                 c = self.do_children(item)
-                if not(c):
+                if not c:
                     self.section_children = sorted(self.section_children.items(),
                                                    reverse=True)
                     section = None
@@ -515,5 +515,4 @@ class Converter(object):
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
-default_registry.register(Converter._factory, type_moin_document,
-    Type('application/docbook+xml'))
+default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))

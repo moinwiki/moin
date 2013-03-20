@@ -13,7 +13,6 @@ from flask import g as flaskg
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import ConfigGroups, CompositeGroups, GroupDoesNotExistError
 from MoinMoin._tests import wikiconfig
-from MoinMoin import security
 
 
 class TestCompositeGroupsBackend(GroupsBackendTest):

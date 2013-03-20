@@ -9,7 +9,6 @@
 
 import pytest
 
-from flask import g as flaskg
 from flask import Markup
 
 from werkzeug import escape
@@ -19,7 +18,8 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.config import CONTENTTYPE, ADDRESS, COMMENT, HOSTNAME, USERID, ACTION
+from MoinMoin.constants.keys import CONTENTTYPE, TAGS
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 class TestContent(object):
@@ -32,29 +32,29 @@ class TestContent(object):
                 (u'text/plain;charset=utf-8', Text),
                 (u'image/tiff', Image),
                 (u'image/png', TransformableBitmapImage),
-            ]:
+        ]:
             content = Content.create(contenttype)
             assert isinstance(content, ExpectedClass)
 
     def test_get_templates(self):
         item_name1 = u'Template_Item1'
         item1 = Item.create(item_name1)
-        contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
+        contenttype1 = u'text/plain;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item1._save(meta)
         item1 = Item.create(item_name1)
 
         item_name2 = u'Template_Item2'
         item2 = Item.create(item_name2)
-        contenttype1 = u'text/plain'
-        meta = {CONTENTTYPE: contenttype1, 'tags': ['template']}
+        contenttype1 = u'text/plain;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
         item2._save(meta)
         item2 = Item.create(item_name2)
 
         item_name3 = u'Template_Item3'
         item3 = Item.create(item_name3)
         contenttype2 = u'image/png'
-        meta = {CONTENTTYPE: contenttype2, 'tags': ['template']}
+        meta = {CONTENTTYPE: contenttype2, TAGS: ['template']}
         item3._save(meta)
         item3 = Item.create(item_name3)
         # two items of same content type
@@ -63,6 +63,7 @@ class TestContent(object):
         # third of different content type
         result2 = item1.content.get_templates(contenttype2)
         assert result2 == [item_name3]
+
 
 class TestTarItems(object):
     """
@@ -74,14 +75,14 @@ class TestTarItems(object):
         creates a container and tests the content saved to the container
         """
         item_name = u'ContainerItem1'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.content.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         tf_names = set(item.content.list_members())
         assert tf_names == members
         assert item.content.get_member('example1.txt').read() == filecontent
@@ -91,7 +92,7 @@ class TestTarItems(object):
         creates two revisions of a container item
         """
         item_name = u'ContainerItem2'
-        item = Item.create(item_name, itemtype=u'default', contenttype=u'application/x-tar')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
         members = set(['example1.txt'])
@@ -103,17 +104,19 @@ class TestTarItems(object):
         item = Item.create(item_name, contenttype=u'application/x-tar')
         assert item.content.get_member('example1.txt').read() == filecontent
 
+
 class TestZipMixin(object):
     """ Test for zip-like items """
 
     def test_put_member(self):
         item_name = u'Zip_file'
-        item = Item.create(item_name, itemtype=u'default', contenttype='application/zip')
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/zip')
         filecontent = 'test_contents'
         content_length = len(filecontent)
         members = set(['example1.txt', 'example2.txt'])
         with pytest.raises(NotImplementedError):
             item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
+
 
 class TestTransformableBitmapImage(object):
 
@@ -146,8 +149,8 @@ class TestTransformableBitmapImage(object):
             # The assert statement works with both older and newer versions of Werkzeug
             # Probably not an intentional change on the werkzeug side, see issue:
             # https://github.com/mitsuhiko/werkzeug/issues/146
-            assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or \
-                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev')
+            assert (str(result).startswith('<img src="/+diffraw/image_Item?rev') or
+                    str(result).startswith('<img src="/%2Bdiffraw/image_Item?rev'))
         except ImportError:
             # no PIL
             pass
@@ -171,11 +174,12 @@ class TestTransformableBitmapImage(object):
         except ImportError:
             pass
 
+
 class TestText(object):
 
     def test_data_conversion(self):
         item_name = u'Text_Item'
-        item = Item.create(item_name, u'default', u'text/plain')
+        item = Item.create(item_name, ITEMTYPE_DEFAULT, u'text/plain;charset=utf-8')
         test_text = u'This \n is \n a \n Test'
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item.content, test_text)
@@ -226,7 +230,7 @@ class TestText(object):
     def test__render_data_diff_text(self):
         item_name = u'Text_Item'
         item = Item.create(item_name)
-        contenttype = u'text/plain'
+        contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Item.create(item_name)
@@ -242,7 +246,7 @@ class TestText(object):
     def test__render_data_highlight(self):
         item_name = u'Text_Item'
         item = Item.create(item_name)
-        contenttype = u'text/plain'
+        contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Item.create(item_name)
@@ -253,5 +257,6 @@ class TestText(object):
         result = Text._render_data_highlight(item2.content)
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.content.data == ''
+
 
 coverage_modules = ['MoinMoin.items.content']

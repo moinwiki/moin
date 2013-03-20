@@ -11,6 +11,7 @@ from __future__ import absolute_import, division
 
 import pytest
 
+
 def test_getitem_raises(store):
     with pytest.raises(KeyError):
         store['doesnotexist']
@@ -23,6 +24,7 @@ def test_setitem_getitem_delitem(store):
     del store[k]
     with pytest.raises(KeyError):
         store[k]
+
 
 def test_setitem_getitem_delitem_binary(store):
     k, v = 'key', '\000\001\002'

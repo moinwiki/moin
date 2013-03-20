@@ -10,11 +10,13 @@ default_markers = ('<<<<<<<<<<<<<<<<<<<<<<<<<\n',
                    '=========================\n',
                    '>>>>>>>>>>>>>>>>>>>>>>>>>\n')
 
+
 def text_merge(old, other, new, allow_conflicts=1, *markers):
     """ do line by line diff3 merge with three strings """
     result = merge(old.splitlines(1), other.splitlines(1), new.splitlines(1),
                    allow_conflicts, *markers)
     return ''.join(result)
+
 
 def merge(old, other, new, allow_conflicts=1, *markers):
     """ do line by line diff3 merge
@@ -36,7 +38,7 @@ def merge(old, other, new, allow_conflicts=1, *markers):
             other_nr += 1
             new_nr += 1
         else:
-            if allow_conflicts == 2: # experimental addition to the algorithm
+            if allow_conflicts == 2:  # experimental addition to the algorithm
                 if other[other_nr] == new[new_nr]:
                     result.append(new[new_nr])
                     other_nr += 1
@@ -101,11 +103,11 @@ def merge(old, other, new, allow_conflicts=1, *markers):
         result.extend(other[other_nr:])
     # new deleted lines
     elif (new_nr == new_len and (old_len - old_nr == other_len - other_nr) and
-          match(old, other, old_nr, other_nr, old_len-old_nr) == old_len - old_nr):
+          match(old, other, old_nr, other_nr, old_len - old_nr) == old_len - old_nr):
         pass
     # other deleted lines
-    elif (other_nr == other_len and (old_len - old_nr == new_len-new_nr) and
-          match(old, new, old_nr, new_nr, old_len-old_nr) == old_len - old_nr):
+    elif (other_nr == other_len and (old_len - old_nr == new_len - new_nr) and
+          match(old, new, old_nr, new_nr, old_len - old_nr) == old_len - old_nr):
         pass
     # conflict
     else:
@@ -121,6 +123,7 @@ def merge(old, other, new, allow_conflicts=1, *markers):
             result.append(marker3)
     return result
 
+
 def tripple_match(old, other, new, other_match, new_match):
     """find next matching pattern unchanged in both other and new
        return the position in all three lists
@@ -132,7 +135,7 @@ def tripple_match(old, other, new, other_match, new_match):
             match_len = match(old, other, other_match[0], other_match[1],
                               difference)
             if match_len == difference:
-                return (new_match[0], other_match[1]+difference, new_match[1])
+                return new_match[0], other_match[1] + difference, new_match[1]
             else:
                 other_match = find_match(old, other,
                                          other_match[0] + match_len,
@@ -152,7 +155,8 @@ def tripple_match(old, other, new, other_match, new_match):
         # both conflicts change same number of lines
         # or no match till the end
         else:
-            return (new_match[0], other_match[1], new_match[1])
+            return new_match[0], other_match[1], new_match[1]
+
 
 def match(list1, list2, nr1, nr2, maxcount=3):
     """ return the number matching items after the given positions
@@ -168,6 +172,7 @@ def match(list1, list2, nr1, nr2, maxcount=3):
         if i >= maxcount and maxcount > 0:
             break
     return i
+
 
 def find_match(list1, list2, nr1, nr2, mincount=3):
     """searches next matching pattern with lenght mincount
@@ -212,7 +217,8 @@ def find_match(list1, list2, nr1, nr2, mincount=3):
     elif hit2:
         return hit2
     else:
-        return (len1, len2)
+        return len1, len2
+
 
 def main():
 

@@ -7,6 +7,7 @@ Test for macro.Verbatim
 
 from MoinMoin.macro.Verbatim import *
 
+
 def test_Macro():
     macro_obj = Macro()
     result = macro_obj.macro(u'test_text')

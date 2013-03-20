@@ -9,8 +9,9 @@
 
 from email.Charset import Charset, QP
 from email.Header import Header
+
 from MoinMoin.mail import sendmail
-from MoinMoin import config
+from MoinMoin.constants.contenttypes import CHARSET
 
 
 class TestdecodeSpamSafeEmail(object):
@@ -34,12 +35,13 @@ class TestdecodeSpamSafeEmail(object):
          'FirstnameLastname@example.net'),
         ('first.last@example.com', 'first.last@example.com'),
         ('first . last @ example . com', 'first.last@example.com'),
-        )
+    )
 
     def testDecodeSpamSafeMail(self):
         """mail.sendmail: decoding spam safe mail"""
         for coded, expected in self._tests:
             assert sendmail.decodeSpamSafeEmail(coded) == expected
+
 
 class TestencodeSpamSafeEmail(object):
     """mail.sendmail: testing spam safe mail"""
@@ -54,7 +56,7 @@ class TestencodeSpamSafeEmail(object):
          'firstname DOT lastname AT example DOT net'),
         ('F.Lastname@example.net',
          'f DOT lastname AT example DOT net'),
-        )
+    )
 
     def testEncodeSpamSafeMail(self):
         """mail.sendmail: encoding mail address to spam safe mail"""
@@ -67,6 +69,7 @@ class TestencodeSpamSafeEmail(object):
             expected = expected.replace(' AT ', ' AT SYCTE ')
             assert sendmail.encodeSpamSafeEmail(coded, 'SYCTE') == expected
 
+
 class TestEncodeAddress(object):
     """ Address encoding tests
 
@@ -77,14 +80,14 @@ class TestEncodeAddress(object):
     name-addr   =   [display-name] angle-addr
     angle-addr  =   [CFWS] "<" addr-spec ">" [CFWS] / obs-angle-addr
     """
-    charset = Charset(config.charset)
+    charset = Charset(CHARSET)
     charset.header_encoding = QP
     charset.body_encoding = QP
 
     def testSimpleAddress(self):
         """ mail.sendmail: encode simple address: local@domain """
         address = u'local@domain'
-        expected = address.encode(config.charset)
+        expected = address.encode(CHARSET)
         assert sendmail.encodeAddress(address, self.charset) == expected
 
     def testComposite(self):
@@ -126,5 +129,6 @@ class TestEncodeAddress(object):
         address = u'Phrase <blah'
         expected = str(address)
         assert sendmail.encodeAddress(address, self.charset) == expected
+
 
 coverage_modules = ['MoinMoin.mail.sendmail']

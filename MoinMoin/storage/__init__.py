@@ -22,9 +22,11 @@ We use a layered approach like this::
 """
 
 
-CONTENT, USERPROFILES = u'content', u'userprofiles'
-
 BACKENDS_PACKAGE = 'MoinMoin.storage.backends'
+
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+
+BACKEND_DEFAULT, BACKEND_USERPROFILES = u'default', u'userprofiles'
 
 
 def backend_from_uri(uri):
@@ -42,13 +44,14 @@ def backend_from_uri(uri):
 def create_mapping(uri, namespaces, backends, acls):
     namespace_mapping = namespaces.items()
     acl_mapping = acls.items()
-    backend_mapping = [(backend_name,
-                        backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s")))
-                        for backend_name in backends]
+    backend_mapping = [
+        (backend_name, backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s")))
+        for backend_name in backends]
     # we need the longest mountpoints first, shortest last (-> '' is very last)
     namespace_mapping = sorted(namespace_mapping, key=lambda x: len(x[0]), reverse=True)
     acl_mapping = sorted(acl_mapping, key=lambda x: len(x[0]), reverse=True)
     return namespace_mapping, dict(backend_mapping), acl_mapping
+
 
 def create_simple_mapping(uri='stores:fs:instance',
                           content_acl=None, user_profile_acl=None):
@@ -81,15 +84,15 @@ def create_simple_mapping(uri='stores:fs:instance',
     if not user_profile_acl:
         user_profile_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
     namespaces = {
-        u'': CONTENT,
-        u'userprofiles:': USERPROFILES,
+        NAMESPACE_DEFAULT: BACKEND_DEFAULT,
+        NAMESPACE_USERPROFILES + ':': BACKEND_USERPROFILES,
     }
     backends = {
-        CONTENT: None,
-        USERPROFILES: None,
+        BACKEND_DEFAULT: None,
+        BACKEND_USERPROFILES: None,
     }
     acls = {
-        'userprofiles:': user_profile_acl,
-        '': content_acl,
+        NAMESPACE_USERPROFILES + ':': user_profile_acl,
+        NAMESPACE_DEFAULT: content_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

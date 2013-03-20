@@ -22,7 +22,7 @@ import stat
 from StringIO import StringIO
 from werkzeug import url_quote, url_unquote
 
-from MoinMoin.config import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
+from MoinMoin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase
 
 from MoinMoin.util.mimetype import MimeType
@@ -76,7 +76,7 @@ class Backend(BackendBase):
         st = os.stat(path)
         root = self.path
         assert path.startswith(root)
-        relpath = path[len(root)+1:]
+        relpath = path[len(root) + 1:]
         # we always want to give NAME_SEP-separated names (not backslash):
         if os.sep == NAME_SEP:
             itemname = relpath
@@ -104,10 +104,10 @@ class Backend(BackendBase):
             raise
         meta = {}
         meta[NAME] = itemname
-        meta[MTIME] = int(st.st_mtime) # use int, not float
+        meta[MTIME] = int(st.st_mtime)  # use int, not float
         meta[REVID] = unicode(self._encode('%s.%d' % (meta[NAME], meta[MTIME])))
         meta[ITEMID] = meta[REVID]
-        meta[HASH_ALGORITHM] = u'' # XXX crap, but sendfile needs it for etag
+        meta[HASH_ALGORITHM] = u''  # XXX crap, but sendfile needs it for etag
         if stat.S_ISDIR(st.st_mode):
             # directory
             # we create a virtual wiki page listing links to subitems:
@@ -116,7 +116,7 @@ class Backend(BackendBase):
         elif stat.S_ISREG(st.st_mode):
             # normal file
             ct = unicode(MimeType(filename=itemname).content_type())
-            size = int(st.st_size) # use int instead of long
+            size = int(st.st_size)  # use int instead of long
         else:
             # symlink, device file, etc.
             ct = u'application/octet-stream'
@@ -169,7 +169,7 @@ class Backend(BackendBase):
         # update() method can efficiently update the index).
         for dirpath, dirnames, filenames in os.walk(self.path):
             key, mtime = self._mkkey(dirpath)
-            if 1: # key:
+            if 1:  # key:
                 yield self._encode('%s.%d' % (key, mtime))
             for filename in filenames:
                 yield self._encode('%s.%d' % self._mkkey(os.path.join(dirpath, filename)))

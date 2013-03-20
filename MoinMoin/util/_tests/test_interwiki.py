@@ -9,17 +9,18 @@
 
 from __future__ import absolute_import, division
 
-import pytest
 import tempfile
 import os.path
 import shutil
 
+import pytest
+from flask import current_app as app
+
 from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace
 from MoinMoin._tests import wikiconfig
-from MoinMoin.config import CURRENT
+from MoinMoin.constants.keys import CURRENT
 from MoinMoin.app import before_wiki
 
-from flask import current_app as app
 
 class TestInterWiki(object):
     class Config(wikiconfig.Config):
@@ -27,7 +28,7 @@ class TestInterWiki(object):
                          'MoinMoin': 'http://moinmo.in/',
                          'OtherWiki': 'http://otherwiki.com/',
                          'OtherWiki:ns1': 'http://otherwiki.com/ns1/',
-                         'OtherWiki:ns1:ns2': 'http://otherwiki.com/ns1/ns2/'
+                         'OtherWiki:ns1:ns2': 'http://otherwiki.com/ns1/ns2/',
         }
 
     def test_url_for_item(self):
@@ -115,11 +116,12 @@ class TestInterWiki(object):
 
                  (('http://example.org/', u'SomePage', u'ns1'), 'http://example.org/:ns1:SomePage'),
                  (('http://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE', u'SomePage', u'ns1'), 'http://example.org/?page=SomePage&action=show&namespace=ns1'),
-                 (('http://example.org/', u'Aktuelle\xc4nderungen', u'ns1ççç'), 'http://example.org/:ns1%C3%83%C2%A7%C3%83%C2%A7%C3%83%C2%A7:Aktuelle%C3%84nderungen'),
-                 (('http://example.org/$NAMESPACE/$PAGE/show', u'Aktuelle\xc4nderungen', u'nsç1'), 'http://example.org/ns%C3%83%C2%A71/Aktuelle%C3%84nderungen/show'),
+                 (('http://example.org/', u'Aktuelle\xc4nderungen', u'ns1\xc4'), 'http://example.org/:ns1%C3%84:Aktuelle%C3%84nderungen'),
+                 (('http://example.org/$NAMESPACE/$PAGE/show', u'Aktuelle\xc4nderungen', u'ns\xc41'), 'http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show'),
                 ]
         for (baseurl, pagename, namespace), url in tests:
             assert join_wiki(baseurl, pagename, namespace) == url
+
 
 class TestInterWikiMapBackend(object):
     """
@@ -169,8 +171,7 @@ class TestInterWikiMapBackend(object):
              '#       space     space\n'
              'foo bar\r\n'
              'ham spam # this is a valid description')
-        assert InterWikiMap.from_string(s).iwmap == dict(foo='bar',
-                                                                  ham='spam')
+        assert InterWikiMap.from_string(s).iwmap == dict(foo='bar', ham='spam')
         # test for valid strings
         s = ('link1 http://link1.com/\r\n'
              'link2 http://link2.in/\r\n')
