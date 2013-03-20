@@ -96,9 +96,8 @@ class TicketUpdateForm(TicketForm):
         super(TicketUpdateForm, self)._load(item)
         self['submit'].properties['labels'] = {
             'update': L_('Update ticket'),
-            'update_negate_status':
-                L_('Update & reopen ticket') if item.meta.get('closed') else
-                L_('Update & close ticket')
+            'update_negate_status': (L_('Update & reopen ticket') if item.meta.get('closed')
+                                     else L_('Update & close ticket'))
         }
 
     def _dump(self, item):
