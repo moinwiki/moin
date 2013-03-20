@@ -11,7 +11,8 @@ from flask import url_for
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
-from MoinMoin.config import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
+from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
+from MoinMoin.constants.misc import ANON
 from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from MoinMoin.items.blog import Blog, BlogEntry
 
@@ -32,7 +33,7 @@ class TestBlog(TestView):
     NO_ENTRIES_MSG = u"There are no entries"
 
     name = u'NewBlogItem'
-    contenttype = u'text/x.moin.wiki'
+    contenttype = u'text/x.moin.wiki;charset=utf-8'
     data = u"This is the header item of this blog"
     meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_BLOG}
     comment = u'saved it'
@@ -122,10 +123,10 @@ class TestBlog(TestView):
             item._save(self.entry_meta, entry['data'], comment=self.comment)
         # publish the first three entries with specific ACLs
         # we are an "anonymous" user
-        self._publish_entry(self.entries[0], ptime=1000, acl=u"anonymous:read")
-        self._publish_entry(self.entries[1], ptime=3000, acl=u"anonymous:read")
+        self._publish_entry(self.entries[0], ptime=1000, acl=u"%s:read" % ANON)
+        self._publish_entry(self.entries[1], ptime=3000, acl=u"%s:read" % ANON)
         # specify no rights on the 3rd entry
-        self._publish_entry(self.entries[2], ptime=2000, acl=u"anonymous:")
+        self._publish_entry(self.entries[2], ptime=2000, acl=u"%s:" % ANON)
         # the blog is not empty and the 3rd entry is not displayed
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[2]['data'], ]
         ordered_data = [self.data,
@@ -137,7 +138,7 @@ class TestBlog(TestView):
 
 class TestBlogEntry(TestView):
     blog_name = u'NewBlogItem'
-    contenttype = u'text/x.moin.wiki'
+    contenttype = u'text/x.moin.wiki;charset=utf-8'
     blog_data = u"This is the header item of this blog"
     blog_meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_BLOG}
     comment = u'saved it'

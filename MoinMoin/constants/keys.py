@@ -20,11 +20,6 @@ REVERTED_TO = "reverted_to"
 # some metadata key constants:
 ACL = "acl"
 
-# This says: I am a system item
-IS_SYSITEM = "is_syspage"
-# This says: original sysitem as contained in release: <release>
-SYSITEM_VERSION = "syspage_version"
-
 # keys for storing group and dict information
 # group of user names, e.g. for ACLs:
 USERGROUP = "usergroup"
@@ -53,7 +48,7 @@ SUMMARY = "summary"
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
 # some backends may use this also for other purposes.
 HASH_ALGORITHM = 'sha1'
-HASH_LEN = 40 # length of hex str representation of hash value
+HASH_LEN = 40  # length of hex str representation of hash value
 
 # some field names for whoosh index schema / documents in index:
 NAME_EXACT = "name_exact"
@@ -88,6 +83,8 @@ MAILTO_AUTHOR = "mailto_author"
 CSS_URL = "css_url"
 EDIT_ROWS = "edit_rows"
 RESULTS_PER_PAGE = "results_per_page"
+WANT_TRIVIAL = "want_trivial"
+EMAIL_SUBSCRIBED_EVENTS = "email_subscribed_events"
 DISABLED = "disabled"
 GAE_USER_ID = "gae_user_id"
 

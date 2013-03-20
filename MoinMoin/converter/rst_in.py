@@ -147,7 +147,7 @@ class NodeVisitor(object):
 
     def visit_bullet_list(self, node):
         self.open_moin_page_node(moin_page.list(
-                        attrib={moin_page.item_label_generate: u'unordered'}))
+            attrib={moin_page.item_label_generate: u'unordered'}))
 
     def depart_bullet_list(self, node):
         self.close_moin_page_node()
@@ -233,23 +233,25 @@ class NodeVisitor(object):
         new_element = moin_page.table_cell()
         if 'morerows' in node.attributes:
             new_element.set(moin_page.number_rows_spanned,
-                            repr(int(node['morerows'])+1))
+                            repr(int(node['morerows']) + 1))
         if 'morecols' in node.attributes:
             new_element.set(moin_page.number_cols_spanned,
-                            repr(int(node['morecols'])+1))
+                            repr(int(node['morecols']) + 1))
         self.open_moin_page_node(new_element)
 
     def depart_entry(self, node):
         self.close_moin_page_node()
 
     def visit_enumerated_list(self, node):
-        enum_style = {'arabic': None,
-                'loweralpha': u'lower-alpha',
-                'upperalpha': u'upper-alpha',
-                'lowerroman': u'lower-roman',
-                'upperroman': u'upper-roman'}
+        enum_style = {
+            'arabic': None,
+            'loweralpha': u'lower-alpha',
+            'upperalpha': u'upper-alpha',
+            'lowerroman': u'lower-roman',
+            'upperroman': u'upper-roman',
+        }
         new_node = moin_page.list(
-                attrib={moin_page.item_label_generate: u'ordered'})
+            attrib={moin_page.item_label_generate: u'ordered'})
         type = enum_style.get(node['enumtype'], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
@@ -307,7 +309,7 @@ class NodeVisitor(object):
 
     def visit_footnote_reference(self, node):
         self.open_moin_page_node(moin_page.note(
-                            attrib={moin_page.note_class: u'footnote'}))
+            attrib={moin_page.note_class: u'footnote'}))
         new_footnote = moin_page.note_body()
         self.open_moin_page_node(new_footnote)
         self.footnotes[node.children[-1]] = new_footnote
@@ -398,7 +400,9 @@ class NodeVisitor(object):
             for name, value in named_args:
                 args.append(moin_page.argument(attrib={moin_page.name: name}, children=[value]))
             arguments = moin_page.arguments(children=args)
-            self.open_moin_page_node(moin_page.part(children=[arguments], attrib={moin_page.content_type: "x-moin/format;name={0}".format(parser.split(' ')[0])}))
+            self.open_moin_page_node(moin_page.part(
+                children=[arguments],
+                attrib={moin_page.content_type: "x-moin/format;name={0}".format(parser.split(' ')[0])}))
         else:
             self.open_moin_page_node(moin_page.blockcode())
 
@@ -428,7 +432,7 @@ class NodeVisitor(object):
 
     def visit_reference(self, node):
         refuri = node.get('refuri', u'')
-        if refuri.startswith(u'<<') and refuri.endswith(u'>>'): # moin macro
+        if refuri.startswith(u'<<') and refuri.endswith(u'>>'):  # moin macro
             macro_name = refuri[2:-2].split(u'(')[0]
             if macro_name == u"TableOfContents":
                 arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
@@ -440,9 +444,7 @@ class NodeVisitor(object):
             arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
             self.open_moin_page_node(
                 moin_page.part(
-                    attrib={
-                        moin_page.content_type:
-                            "x-moin/macro;name={0}".format(macro_name)}))
+                    attrib={moin_page.content_type: "x-moin/macro;name={0}".format(macro_name)}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
                 for i in arguments:
@@ -615,15 +617,15 @@ def walkabout(node, visitor):
 
 class Writer(writers.Writer):
 
-    supported = ('moin-x-document')
+    supported = ('moin-x-document', )
     config_section = 'MoinMoin writer'
     config_section_dependencies = ('writers', )
     output = None
     visitor_attributes = []
 
     def translate(self):
-        self.visitor = visitor = NodeVisitor(self.document)
-        self.document.walkabout(visitor)
+        self.visitor = visitor = NodeVisitor()
+        walkabout(self.document, visitor)
         self.output = visitor.tree()
 
 
@@ -695,8 +697,7 @@ class MoinDirectives(object):
     # reference hack (`<<SomeMacro>>`_). This however simply adds a node to the
     # document tree which is a reference, but through a much better user
     # interface.
-    def macro(self, name, arguments, options, content, lineno,
-                content_offset, block_text, state, state_machine):
+    def macro(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         # content contains macro to be called
         if len(content):
             # Allow either with or without brackets
@@ -714,8 +715,7 @@ class MoinDirectives(object):
     macro.required_arguments = 1
     macro.optional_arguments = 0
 
-    def table_of_content(self, name, arguments, options, content, lineno,
-                            content_offset, block_text, state, state_machine):
+    def table_of_content(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         text = ''
         for i in content:
             m = re.search(r':(\w+): (\w+)', i)
@@ -732,8 +732,7 @@ class MoinDirectives(object):
     table_of_content.required_arguments = 1
     table_of_content.optional_arguments = 0
 
-    def parser(self, name, arguments, options, content, lineo,
-                content_offset, block_text, state, state_machine):
+    def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
         block = literal_block()
         block['parser'] = content[0]
         block.children = [nodes.Text(u"\n".join(content[1:]))]
@@ -759,12 +758,21 @@ class Converter(object):
             try:
                 docutils_tree = core.publish_doctree(source=input)
             except utils.SystemMessage as inst:
-                string_numb = re.match(re.compile(r'<string>\:([0-9]*)\:\s*\(.*?\)\s*(.*)', re.X | re.U | re.M | re.S), str(inst))
+                string_numb = re.match(re.compile(r'<string>:([0-9]*):\s*\(.*?\)\s*(.*)',
+                                                  re.X | re.U | re.M | re.S), str(inst))
                 if string_numb:
                     str_num = string_numb.group(1)
                     input = input.split('\n')
                     if str_num:
-                        input = ['.. error::\n ::\n\n  Parse error on line number {0}:\n\n  {1}\n\n  Go back and try fix that.\n\n'.format(str_num, string_numb.group(2).replace('\n', '\n  '))]
+                        input = [('.. error::\n'
+                                  ' ::\n'
+                                  '\n'
+                                  '  Parse error on line number {0}:\n'
+                                  '\n'
+                                  '  {1}\n'
+                                  '\n'
+                                  '  Go back and try fix that.\n'
+                                  '\n').format(str_num, string_numb.group(2).replace('\n', '\n  '))]
                         continue
                 else:
                     input = ['.. error::\n ::\n\n  {0}\n\n'.format(str(inst).replace('\n', '\n  '))]

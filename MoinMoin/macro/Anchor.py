@@ -9,6 +9,7 @@ MoinMoin - Anchor Macro to put an anchor at the place where it is used.
 from MoinMoin.util.tree import moin_page
 from MoinMoin.macro._base import MacroInlineBase
 
+
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         if not arguments:

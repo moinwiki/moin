@@ -17,7 +17,7 @@ from flask import g as flaskg
 
 from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
-from MoinMoin.config import NAME, USERGROUP
+from MoinMoin.constants.keys import NAME, USERGROUP
 from MoinMoin.security import AccessControlList
 from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item
@@ -105,5 +105,6 @@ class TestWikiGroupBackend(GroupsBackendTest):
 
         assert not has_rights_before, 'AnotherUser has no read rights because in the beginning he is not a member of a group item NewGroup'
         assert has_rights_after, 'AnotherUser must have read rights because after appenditem he is member of NewGroup'
+
 
 coverage_modules = ['MoinMoin.datastruct.backends.wiki_groups']

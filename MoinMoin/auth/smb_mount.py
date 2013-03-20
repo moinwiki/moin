@@ -16,26 +16,28 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.auth import BaseAuth, CancelLogin, ContinueLogin
 
+
 class SMBMount(BaseAuth):
     """ auth plugin for (un)mounting an smb share,
         this is a wrapper around mount.cifs -o <options> //server/share mountpoint
 
         See man mount.cifs for details.
     """
-    def __init__(self,
-        server, # mount.cifs //server/share
-        share, # mount.cifs //server/share
-        mountpoint_fn, # function of username to determine the mountpoint, e.g.:
-                       # lambda username: u'/mnt/wiki/%s' % username
-        dir_user, # username to get the uid that is used for mount.cifs -o uid=... (e.g. 'www-data')
-        domain, # mount.cifs -o domain=...
-        dir_mode='0700', # mount.cifs -o dir_mode=...
-        file_mode='0600', # mount.cifs -o file_mode=...
-        iocharset='utf-8', # mount.cifs -o iocharset=... (try 'iso8859-1' if default does not work)
-        coding='utf-8', # encoding used for username/password/cmdline (try 'iso8859-1' if default does not work)
-        log='/dev/null', # logfile for mount.cifs output
+    def __init__(
+        self,
+        server,  # mount.cifs //server/share
+        share,  # mount.cifs //server/share
+        mountpoint_fn,  # function of username to determine the mountpoint, e.g.:
+                        # lambda username: u'/mnt/wiki/%s' % username
+        dir_user,  # username to get the uid that is used for mount.cifs -o uid=... (e.g. 'www-data')
+        domain,  # mount.cifs -o domain=...
+        dir_mode='0700',  # mount.cifs -o dir_mode=...
+        file_mode='0600',  # mount.cifs -o file_mode=...
+        iocharset='utf-8',  # mount.cifs -o iocharset=... (try 'iso8859-1' if default does not work)
+        coding='utf-8',  # encoding used for username/password/cmdline (try 'iso8859-1' if default does not work)
+        log='/dev/null',  # logfile for mount.cifs output
         **kw
-        ):
+    ):
         super(SMBMount, self).__init__(**kw)
         self.server = server
         self.share = share
@@ -51,13 +53,16 @@ class SMBMount(BaseAuth):
     def do_smb(self, username, password, login):
         logging.debug("login={0} logout={1}: got name={2!r}".format(login, not login, username))
 
-        import os, pwd, subprocess
+        import os
+        import pwd
+        import subprocess
         web_username = self.dir_user
-        web_uid = pwd.getpwnam(web_username)[2] # XXX better just use current uid?
+        web_uid = pwd.getpwnam(web_username)[2]  # XXX better just use current uid?
 
         mountpoint = self.mountpoint_fn(username)
         if login:
-            cmd = u"sudo mount -t cifs -o user=%(user)s,domain=%(domain)s,uid=%(uid)d,dir_mode=%(dir_mode)s,file_mode=%(file_mode)s,iocharset=%(iocharset)s //%(server)s/%(share)s %(mountpoint)s >>%(log)s 2>&1"
+            cmd = (u"sudo mount -t cifs -o user=%(user)s,domain=%(domain)s,uid=%(uid)d,dir_mode=%(dir_mode)s,file_mode="
+                   u"%(file_mode)s,iocharset=%(iocharset)s //%(server)s/%(share)s %(mountpoint)s >>%(log)s 2>&1")
         else:
             cmd = u"sudo umount %(mountpoint)s >>%(log)s 2>&1"
 
@@ -77,7 +82,7 @@ class SMBMount(BaseAuth):
         if login:
             try:
                 if not os.path.exists(mountpoint):
-                    os.makedirs(mountpoint) # the dir containing the mountpoint must be writeable for us!
+                    os.makedirs(mountpoint)  # the dir containing the mountpoint must be writeable for us!
             except OSError:
                 pass
             env['PASSWD'] = password.encode(self.coding)

@@ -22,12 +22,14 @@ def test_create(Store):
 
     return store
 
+
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_destroy(Store):
     store = test_create(Store)
     store.close()
     store.destroy()
     assert store._st is None
+
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_from_uri(Store):

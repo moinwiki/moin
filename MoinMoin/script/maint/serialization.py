@@ -8,13 +8,13 @@ MoinMoin - backend serialization / deserialization
 import sys
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin.storage.middleware.serialization import serialize, deserialize
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
 
 def open_file(filename, mode):
     if filename is None:
@@ -28,13 +28,15 @@ def open_file(filename, mode):
 
         # On Windows force the stream to be in binary mode if it's needed.
         if sys.platform == "win32" and "b" in mode:
-            import os, msvcrt
+            import os
+            import msvcrt
             msvcrt.setmode(stream.fileno(), os.O_BINARY)
 
         f = stream
     else:
         f = open(filename, mode)
     return f
+
 
 class Serialize(Command):
     description = 'Serialize the backend into a file.'

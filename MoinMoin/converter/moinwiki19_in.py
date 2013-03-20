@@ -16,10 +16,12 @@ import re
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import config, wikiutil
+from MoinMoin import wikiutil
+from MoinMoin.constants.misc import URI_SCHEMES
+from MoinMoin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink
 
 from .moinwiki_in import Converter
 
@@ -42,7 +44,7 @@ class ConverterFormat19(Converter):
           )
           \:
           (?P<freelink_interwiki_page>
-           (?=\S*[%(u)s%(l)s0..9]\S* )  # make sure there is something non-blank with at least one alphanum letter following
+           (?=\S*[%(u)s%(l)s0..9]\S* )  # make sure there is something non-blank with at >= 1 alphanum letter following
            [^\s"\'}\]|:,.\)?!]+  # we take all until we hit some blank or punctuation char ...
           )
           |
@@ -74,15 +76,15 @@ class ConverterFormat19(Converter):
           $  # ... or end of line
          )
     """ % {
-        'u': config.chars_upper,
-        'l': config.chars_lower,
+        'u': CHARS_UPPER,
+        'l': CHARS_LOWER,
         'child': re.escape(wikiutil.CHILD_PREFIX),
         'parent': re.escape(wikiutil.PARENT_PREFIX),
     }
 
     def inline_freelink_repl(self, stack, freelink, freelink_bang=None,
-            freelink_interwiki_page=None, freelink_interwiki_ref=None,
-            freelink_page=None, freelink_email=None):
+                             freelink_interwiki_page=None, freelink_interwiki_ref=None,
+                             freelink_page=None, freelink_email=None):
         if freelink_bang:
             stack.top_append(freelink)
             return
@@ -108,8 +110,8 @@ class ConverterFormat19(Converter):
                 return
 
             link = Iri(scheme='wiki',
-                    authority=freelink_interwiki_ref,
-                    path='/' + freelink_interwiki_page)
+                       authority=freelink_interwiki_ref,
+                       path='/' + freelink_interwiki_page)
             text = freelink_interwiki_page
 
         attrib[xlink.href] = link
@@ -143,7 +145,7 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)

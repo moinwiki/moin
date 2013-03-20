@@ -32,27 +32,27 @@ def add_serialization_commands(manager):
 
 def add_create_user_commands(manager):
     from MoinMoin.script.account.create import Create_User
-    manager.add_command("account_create", Create_User())
+    manager.add_command("account-create", Create_User())
 
 
 def add_disable_user_commands(manager):
     from MoinMoin.script.account.disable import Disable_User
-    manager.add_command("account_disable", Disable_User())
+    manager.add_command("account-disable", Disable_User())
 
 
 def add_set_password_commands(manager):
     from MoinMoin.script.account.resetpw import Set_Password
-    manager.add_command("account_password", Set_Password())
+    manager.add_command("account-password", Set_Password())
 
 
 def add_reduce_revisions_commands(manager):
     from MoinMoin.script.maint.reduce_revisions import Reduce_Revisions
-    manager.add_command("maint_reduce_revisions", Reduce_Revisions())
+    manager.add_command("maint-reduce-revisions", Reduce_Revisions())
 
 
 def add_set_meta_commands(manager):
     from MoinMoin.script.maint.set_meta import Set_Meta
-    manager.add_command("maint_set_meta", Set_Meta())
+    manager.add_command("maint-set-meta", Set_Meta())
 
 
 def add_modify_item_commands(manager):
@@ -74,6 +74,7 @@ def add_import_moin19_commands(manager):
 def add_moin_shell_commands(manager):
     from MoinMoin.script.maint.moinshell import MoinShell
     manager.add_command("shell", MoinShell())
+
 
 def main(default_command='moin', wiki_config=None):
     """

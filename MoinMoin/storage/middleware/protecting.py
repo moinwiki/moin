@@ -19,11 +19,11 @@ import time
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from whoosh.util import lru_cache
+from whoosh.util.cache import lru_cache
 
-from MoinMoin.config import ACL, CREATE, READ, PUBREAD, WRITE, DESTROY, ADMIN, \
-                            PTIME, ACL_RIGHTS_CONTENTS, \
-                            ALL_REVS, LATEST_REVS
+from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, DESTROY, ACL_RIGHTS_CONTENTS)
+from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
+
 from MoinMoin.security import AccessControlList
 
 # max sizes of some lru caches:
@@ -55,7 +55,7 @@ class ProtectingMiddleware(object):
     def __init__(self, indexer, user, acl_mapping):
         """
         :param indexer: indexing middleware instance
-        :param user_name: the user's name (used for checking permissions)
+        :param user: a User instance (used for checking permissions)
         :param acl_mapping: list of (name_prefix, acls) tuples, longest prefix first, '' last
                             acls = dict with before, default, after, hierarchic entries
         """
@@ -105,13 +105,14 @@ class ProtectingMiddleware(object):
         """
 
         if itemid is not None:
-            item = self.get_item(itemid=itemid)
+            q = {ITEMID: itemid}
         elif fqname is not None:
             # itemid might be None for new, not yet stored items,
             # but we have fqname then
-            item = self.get_item(name_exact=fqname)
+            q = {NAME_EXACT: fqname}
         else:
             raise ValueError("need itemid or fqname")
+        item = self.get_item(**q)
         acl = item.acl
         fqname = item.fqname
         if acl is not None:

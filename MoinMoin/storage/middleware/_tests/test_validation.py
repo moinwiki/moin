@@ -8,12 +8,10 @@ MoinMoin - validation tests
 
 from __future__ import absolute_import, division
 
-import pytest
-
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from MoinMoin.constants import keys
-from MoinMoin.config import CONTENTTYPE_USER
+from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid
 
@@ -37,8 +35,8 @@ class TestValidation(object):
             keys.TAGS: [u"foo", u"bar"],
         }
 
-        state = {'trusted': False, # True for loading a serialized representation or other trusted sources
-                 keys.NAME: u'somename', # name we decoded from URL path
+        state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
+                 keys.NAME: u'somename',  # name we decoded from URL path
                  keys.ACTION: u'SAVE',
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
@@ -71,8 +69,8 @@ class TestValidation(object):
             keys.EMAIL: u"foo@example.org",
         }
 
-        state = {'trusted': False, # True for loading a serialized representation or other trusted sources
-                 keys.NAME: u'somename', # name we decoded from URL path
+        state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
+                 keys.NAME: u'somename',  # name we decoded from URL path
                  keys.ACTION: u'SAVE',
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',

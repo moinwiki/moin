@@ -17,7 +17,8 @@ Note: only ONE process can open a kyoto cabinet in OWRITER (writable) mode.
 
 from __future__ import absolute_import, division
 
-import os, errno
+import os
+import errno
 
 from kyotocabinet import *
 
@@ -33,7 +34,7 @@ class BytesStore(BytesMutableStoreBase):
     def from_uri(cls, uri):
         return cls(uri)
 
-    def __init__(self, path, mode=DB.OWRITER|DB.OAUTOTRAN, db_opts=DB.GCONCURRENT):
+    def __init__(self, path, mode=DB.OWRITER | DB.OAUTOTRAN, db_opts=DB.GCONCURRENT):
         """
         Store params for .open(). Please refer to kyotocabinet-python-legacy docs for more information.
 
@@ -56,7 +57,7 @@ class BytesStore(BytesMutableStoreBase):
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        self.open(mode=self.mode|DB.OCREATE)
+        self.open(mode=self.mode | DB.OCREATE)
         self.close()
 
     def destroy(self):

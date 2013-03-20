@@ -2,14 +2,12 @@
 
 import code
 
-from flask import Flask, _request_ctx_stack
 from flask import current_app as app
 from flask import g as flaskg
 from flask.ext.script import Command, Option
 
-from MoinMoin import user
 from MoinMoin.app import before_wiki
-from MoinMoin.util.clock import Clock
+
 
 class MoinShell(Command):
     """
@@ -41,12 +39,7 @@ class MoinShell(Command):
         self.make_context = make_context
 
     def get_options(self):
-
-        return (
-                Option('--no-ipython',
-                       action="store_true",
-                       dest='no_ipython',
-                       default=not(self.use_ipython)), )
+        return (Option('--no-ipython', action="store_true", dest='no_ipython', default=not self.use_ipython), )
 
     def get_context(self):
         """

@@ -123,6 +123,7 @@
         };
 
         this.buildMultiDownloadRow = function (files, handler) {
+            var rows = $('<tbody style="display:none;"/>');
             $.each(files, function (index, file) {
                 rows.append(handler.buildDownloadRow(file, handler).show());
             });

@@ -14,7 +14,7 @@ from __future__ import absolute_import, division
 from flask import g as flaskg
 
 from MoinMoin.util.interwiki import is_known_wiki, url_for_item
-from MoinMoin.util.iri import Iri, IriPath
+from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 from MoinMoin.wikiutil import AbsItemName
@@ -47,13 +47,12 @@ class ConverterBase(object):
         # because it is also called in subclasses
         return self.traverse_tree(*args, **kw)
 
-    def traverse_tree(self, elem, page=None,
-            __tag_page_href=moin_page.page_href, __tag_link=_tag_xlink_href,
-            __tag_include=_tag_xinclude_href):
+    def traverse_tree(self, elem, page=None, __tag_page_href=moin_page.page_href,
+                      __tag_link=_tag_xlink_href, __tag_include=_tag_xinclude_href):
         """
         Traverses the tree and handles each element appropriately
         """
-        new_page_href=elem.get(__tag_page_href)
+        new_page_href = elem.get(__tag_page_href)
         if new_page_href:
             page = Iri(new_page_href)
 
@@ -129,10 +128,10 @@ class ConverterExternOutput(ConverterBase):
                     k, v = kv, ''
                 if k == 'do':
                     do = v
-                    continue # we remove do=xxx from qs
+                    continue  # we remove do=xxx from qs
                 if k == 'rev':
                     rev = v
-                    continue # we remove rev=n from qs
+                    continue  # we remove rev=n from qs
                 result.append(u'{0}={1}'.format(k, v))
         if result:
             query = separator.join(result)

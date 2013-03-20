@@ -9,7 +9,7 @@ We use a simple custom format here:
 
 4 bytes length of meta (m)
 m bytes metadata (json serialization, utf-8 encoded)
-        (the metadata contains the data length d in meta['size'])
+        (the metadata contains the data length d in meta[SIZE])
 d bytes binary data
 ... (repeat for all meta/data)
 4 bytes 00 (== length of next meta -> there is none, this is the end)
@@ -23,6 +23,9 @@ import json
 from io import BytesIO
 
 from werkzeug.wsgi import LimitedStream
+
+from MoinMoin.constants.keys import NAME, ITEMTYPE, SIZE
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 def serialize(backend, dst):
@@ -44,6 +47,7 @@ def serialize_rev(meta, data):
                 break
             yield block
 
+
 def serialize_iter(backend):
     for revid in backend:
         if isinstance(revid, tuple):
@@ -57,6 +61,7 @@ def serialize_iter(backend):
     for data in serialize_rev(None, None):
         yield data
 
+
 def deserialize(src, backend):
     while True:
         meta_size_bytes = src.read(4)
@@ -66,14 +71,14 @@ def deserialize(src, backend):
         meta_str = src.read(meta_size)
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
-        name = meta.get('name')
+        name = meta.get(NAME)
         if isinstance(name, unicode):
             # if we encounter single names, make a list of names:
-            meta['name'] = [name, ]
-        if 'itemtype' not in meta:
+            meta[NAME] = [name, ]
+        if ITEMTYPE not in meta:
             # temporary hack to upgrade serialized item files:
-            meta['itemtype'] = u'default'
-        data_size = meta[u'size']
+            meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        data_size = meta[SIZE]
         curr_pos = src.tell()
         limited = LimitedStream(src, data_size)
         backend.store(meta, limited)

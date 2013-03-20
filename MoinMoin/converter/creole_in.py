@@ -27,7 +27,7 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import config
+from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink, xinclude
 
@@ -126,8 +126,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name,
-            macro_args=None, macro_text=None):
+    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
         stack.clear()
 
@@ -330,9 +329,9 @@ class Converter(ConverterMacro):
         """Handle all kinds of links."""
 
         if link_page is not None:
-            att = 'attachment:' # moin 1.9 needed this for an attached file
+            att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_page.startswith(att):
-                link_page = '/' + link_page[len(att):] # now we have a subitem
+                link_page = '/' + link_page[len(att):]  # now we have a subitem
             target = unicode(Iri(scheme='wiki.local', path=link_page))
             text = link_page
         else:
@@ -363,8 +362,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name,
-            macro_args=None, macro_text=None):
+    def inline_macro_repl(self, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
 
         if macro_args:
@@ -406,9 +404,9 @@ class Converter(ConverterMacro):
         """Handles objects included in the page."""
 
         if object_page is not None:
-            att = 'attachment:' # moin 1.9 needed this for an attached file
+            att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_page.startswith(att):
-                object_page = '/' + object_page[len(att):] # now we have a subitem
+                object_page = '/' + object_page[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_page)
             text = object_page
 
@@ -436,7 +434,7 @@ class Converter(ConverterMacro):
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """ % dict(uri_schemes='|'.join(config.uri_schemes))
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""

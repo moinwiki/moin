@@ -7,14 +7,12 @@ MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.config import LATEST_REVS, ALL_REVS
-from MoinMoin.storage.middleware.indexing import ALL_REVS, LATEST_REVS
+from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
 
 
 class IndexCreate(Command):
@@ -22,7 +20,7 @@ class IndexCreate(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
     ]
 
     def run(self, tmp):
@@ -34,7 +32,7 @@ class IndexDestroy(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
     ]
 
     def run(self, tmp):
@@ -46,11 +44,11 @@ class IndexBuild(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
         Option('--procs', '-p', required=False, dest='procs', type=int, default=1,
-            help='Number of processors the writer will use.'),
+               help='Number of processors the writer will use.'),
         Option('--limitmb', '-l', required=False, dest='limitmb', type=int, default=10,
-            help='Maximum memory (in megabytes) each index-writer will use for the indexing pool.'),
+               help='Maximum memory (in megabytes) each index-writer will use for the indexing pool.'),
     ]
 
     def run(self, tmp, procs, limitmb):
@@ -62,7 +60,7 @@ class IndexUpdate(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
     ]
 
     def run(self, tmp):
@@ -84,7 +82,7 @@ class IndexOptimize(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
     ]
 
     def run(self, tmp):
@@ -96,7 +94,7 @@ class IndexDump(Command):
 
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
-            help='use the temporary location.'),
+               help='use the temporary location.'),
     ]
 
     def run(self, tmp):

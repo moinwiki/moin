@@ -22,7 +22,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.converter._args import Arguments
 from MoinMoin.util import iri
 from MoinMoin.util.mime import type_moin_document, Type
-from MoinMoin.util.tree import html, moin_page
+from MoinMoin.util.tree import moin_page
 from MoinMoin.util.plugins import PluginMissingError
 
 
@@ -87,9 +87,7 @@ class Converter(object):
             # some standard text.
             logging.exception("Macro {0} raised an exception:".format(name))
             elem_error.append(_('<<%(macro_name)s: execution failed [%(error_msg)s] (see also the log)>>',
-                    macro_name=name,
-                    error_msg=unicode(e),
-                ))
+                              macro_name=name, error_msg=unicode(e), ))
 
         if len(elem_body):
             elem.append(elem_body)

@@ -36,6 +36,7 @@ g_charToEntity = {
     '"': '&quot;'
 }
 
+
 def TranslateCDATA(text):
     """
         Convert a string to a CDATA-encoded one
@@ -45,6 +46,7 @@ def TranslateCDATA(text):
     new_string, num_subst = re.subn(g_cdataCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
     new_string, num_subst = re.subn(g_xmlIllegalCharPattern, lambda m: '&#x%02X;' % ord(m.group()), new_string)
     return new_string
+
 
 def TranslateText(text):
     """
@@ -68,23 +70,25 @@ def rangelist(numbers):
     numbers = sorted(numbers[:])
     numbers.append(999999)
     pattern = ','
-    for i in range(len(numbers)-1):
+    for i in range(len(numbers) - 1):
         if pattern[-1] == ',':
-            pattern = pattern + str(numbers[i])
-            if numbers[i] + 1 == numbers[i+1]:
-                pattern = pattern + '-'
+            pattern += str(numbers[i])
+            if numbers[i] + 1 == numbers[i + 1]:
+                pattern += '-'
             else:
-                pattern = pattern + ','
-        elif numbers[i] + 1 != numbers[i+1]:
+                pattern += ','
+        elif numbers[i] + 1 != numbers[i + 1]:
             pattern = pattern + str(numbers[i]) + ','
 
     if pattern[-1] in ',-':
         return pattern[1:-1]
     return pattern[1:]
 
+
 def getPageContent(results, offset, results_per_page):
     """ Selects the content to show on a single page
-        :param results: the whole result, from which results for one page will be selected (generally a generator but could be a list also),
+        :param results: the whole result, from which results for one page will be selected (generally a generator
+               but could be a list also),
         :param offset: after skipping how many results, the selection of results for that page will be done (int),
         :param results_per_page: number of results to be shown on a single page (int)
 
@@ -113,4 +117,4 @@ def getPageContent(results, offset, results_per_page):
     else:
         previous_offset = -1
     next_offset = count
-    return (selected_result, next_offset, previous_offset)
+    return selected_result, next_offset, previous_offset

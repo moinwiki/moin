@@ -34,6 +34,7 @@ def convert_getlink_to_showlink(href):
         return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
     return href
 
+
 def mark_item_as_transclusion(elem, href):
     """
     Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
@@ -86,7 +87,7 @@ class Attributes(object):
     visit_style = Attribute('style')
     visit_title = Attribute('title')
     visit_id = Attribute('id')
-    visit_type = Attribute('type') # IE8 needs <object... type="image/svg+xml" ...> to display svg images
+    visit_type = Attribute('type')  # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -196,8 +197,7 @@ class Converter(object):
         # Unknown element are just copied
         return self.new_copy(elem.tag, elem)
 
-    def visit_moinpage_a(self, elem,
-            _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
+    def visit_moinpage_a(self, elem, _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
         attrib = {}
         href = elem.get(_tag_xlink_href)
         if href:
@@ -371,7 +371,7 @@ class Converter(object):
 
         if obj_type == "img":
             # Images have alt text
-            alt = ''.join(unicode(e) for e in elem) # XXX handle non-text e
+            alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
             if alt:
                 attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
@@ -401,7 +401,8 @@ class Converter(object):
 
                     if item[0].tag.name in ('object', 'a'):
                         # png, jpg, gif are objects here, will be changed to img when they are processed
-                        # transclusion is a single inline element "My pet {{bird.jpg}} flys." or "[[SomePage|{{Logo.png}}]]"
+                        # transclusion is a single inline element "My pet {{bird.jpg}} flys." or
+                        # "[[SomePage|{{Logo.png}}]]"
                         return self.new_copy(html.span, item, attribs)
 
                     elif item[0].tag.name == 'p':
@@ -615,12 +616,10 @@ class ConverterPage(Converter):
                 headings = list(headings)
                 maxlevel = max(h[1] for h in headings)
                 headtogglelink = html.a(attrib={
-                                         html.class_: 'moin-showhide',
-                                         html.href_: '#',
-                                         html.onclick_:
-                                            "$('.moin-table-of-contents ol').toggle();return false;",
-                                     },
-                                     children=[('[+]'), ])
+                    html.class_: 'moin-showhide',
+                    html.href_: '#',
+                    html.onclick_: "$('.moin-table-of-contents ol').toggle();return false;",
+                }, children=['[+]', ])
                 elem_h = html.div(attrib={html.class_: 'moin-table-of-contents-heading'},
                                   children=[_('Contents'), headtogglelink])
                 elem.append(elem_h)
@@ -653,20 +652,16 @@ class ConverterPage(Converter):
                         stack.pop()
                         stack_push(html.li({html.id_: 'li{0}'.format(id)}))
                     togglelink = html.a(attrib={
-                                         html.href_: "#",
-                                         html.onclick_:
-                                            "$('#li{0} ol').toggle();return false;".format(id),
-                                         html.class_: 'moin-showhide',
-                                     },
-                                     children=["[+]", ])
-                    elem_a = html.a(attrib={html.href: '#' + id},
-                                    children=[text, ])
+                        html.href_: "#",
+                        html.onclick_: "$('#li{0} ol').toggle();return false;".format(id),
+                        html.class_: 'moin-showhide',
+                    }, children=["[+]", ])
+                    elem_a = html.a(attrib={html.href: '#' + id}, children=[text, ])
                     stack_top_append(elem_a)
                     old_toggle = togglelink
         return ret
 
-    def visit(self, elem,
-            _tag_moin_page_page_href=moin_page.page_href):
+    def visit(self, elem, _tag_moin_page_page_href=moin_page.page_href):
         # TODO: Is this correct, or is <page> better?
         if elem.get(_tag_moin_page_page_href):
             self._special_stack.append(SpecialPage())
@@ -681,8 +676,7 @@ class ConverterPage(Converter):
         else:
             return super(ConverterPage, self).visit(elem)
 
-    def visit_moinpage_h(self, elem,
-            _tag_html_id=html.id):
+    def visit_moinpage_h(self, elem, _tag_html_id=html.id):
         elem = super(ConverterPage, self).visit_moinpage_h(elem)
 
         id = elem.get(_tag_html_id)
@@ -725,11 +719,15 @@ class ConverterPage(Converter):
         prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
 
         elem_ref = ET.XML("""
-<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote"><html:a html:href="#note-{2}">{3}</html:a></html:sup>
+<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote">
+<html:a html:href="#note-{2}">{3}</html:a>
+</html:sup>
 """.format(html, prefixed_id, prefixed_id, id))
 
         elem_note = ET.XML("""
-<html:p xmlns:html="{0}" html:id="note-{1}"><html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup></html:p>
+<html:p xmlns:html="{0}" html:id="note-{1}">
+<html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup>
+</html:p>
 """.format(html, prefixed_id, prefixed_id, id))
 
         elem_note.extend(body)

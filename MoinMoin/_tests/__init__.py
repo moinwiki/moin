@@ -8,22 +8,20 @@
 """
 
 
-import os, shutil
-import socket, errno
+import socket
 from StringIO import StringIO
 
-from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin import config, security, user
-from MoinMoin.config import NAME, CONTENTTYPE
+from MoinMoin.constants.contenttypes import CHARSET
+from MoinMoin.constants.keys import NAME, CONTENTTYPE
 from MoinMoin.items import Item
 from MoinMoin.util.crypto import random_string
-from MoinMoin.storage.error import ItemAlreadyExistsError
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you
 # need more privs...
+
 
 def become_valid(username=u"ValidUser"):
     """ modify flaskg.user to make the user valid.
@@ -49,7 +47,7 @@ def become_trusted(username=u"TrustedUser"):
 def update_item(name, meta, data):
     """ creates or updates an item  """
     if isinstance(data, unicode):
-        data = data.encode(config.charset)
+        data = data.encode(CHARSET)
     item = flaskg.storage[name]
 
     meta = meta.copy()
@@ -60,10 +58,12 @@ def update_item(name, meta, data):
     rev = item.store_revision(meta, StringIO(data), return_rev=True)
     return rev
 
+
 def create_random_string_list(length=14, count=10):
     """ creates a list of random strings """
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     return [u"{0}".format(random_string(length, chars)) for counter in range(count)]
+
 
 def nuke_item(name):
     """ complete destroys an item """

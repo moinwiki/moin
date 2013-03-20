@@ -14,7 +14,8 @@ logging = log.getLogger(__name__)
 
 from ._util import decode_data
 
-RX_STRIPXML = re.compile(u"<[^>]*?>", re.U|re.DOTALL|re.MULTILINE)
+RX_STRIPXML = re.compile(u"<[^>]*?>", re.U | re.DOTALL | re.MULTILINE)
+
 
 def strip_xml(text):
     text = RX_STRIPXML.sub(u" ", text)

@@ -14,16 +14,19 @@ from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
+from MoinMoin.constants.keys import NAME, CONTENTTYPE
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
+
 from MoinMoin.storage.backends.stores import MutableBackend
 from MoinMoin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, ''),
-    (u'Foo', {'name': [u'Foo', ], 'contenttype': u'text/plain'}, '2nd'),
-    (u'Subdir', {'name': [u'Subdir', ], 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Foo', {'name': [u'Subdir/Foo', ], 'contenttype': u'text/plain'}, ''),
-    (u'Subdir/Bar', {'name': [u'Subdir/Bar', ], 'contenttype': u'text/plain'}, ''),
+    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
+    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, '2nd'),
+    (u'Subdir', {NAME: [u'Subdir', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
+    (u'Subdir/Foo', {NAME: [u'Subdir/Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
+    (u'Subdir/Bar', {NAME: [u'Subdir/Bar', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
 ]
 
 
@@ -36,13 +39,16 @@ scenarios = [
 def pytest_generate_tests(metafunc):
     metafunc.addcall(id='Simple->Simple', param=('Simple', 'Simple'))
 
+
 def pytest_funcarg__source(request):
     # scenario
     return make_middleware(request)
 
+
 def pytest_funcarg__target(request):
     # scenario
     return make_middleware(request)
+
 
 def make_middleware(request):
     tmpdir = request.getfuncargvalue('tmpdir')
@@ -51,7 +57,7 @@ def make_middleware(request):
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
-    namespaces = [('', u'backend')]
+    namespaces = [(NAMESPACE_DEFAULT, u'backend')]
     backends = {u'backend': _backend}
     backend = RoutingBackend(namespaces, backends)
     backend.create()
@@ -59,7 +65,7 @@ def make_middleware(request):
     request.addfinalizer(backend.destroy)
     request.addfinalizer(backend.close)
 
-    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir/'foo'), ), {}),
+    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir / 'foo'), ), {}),
                             backend=backend)
     mw.create()
     mw.open()
@@ -71,7 +77,7 @@ def make_middleware(request):
 def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:
-        item = source[u'name']
+        item = source[name]
         item.store_revision(dict(meta, mtime=i), StringIO(data))
         i += 1
 

@@ -32,7 +32,7 @@ class MimeTokenizer(Tokenizer):
         :param positions: Whether to record token positions in the token.
         """
         assert isinstance(value, unicode), "{0!r} is not unicode".format(value)
-        if u'/' not in value: # Add '/' if user forgot do this
+        if u'/' not in value:  # Add '/' if user forgot do this
             value += u'/'
         pos = start_pos
         tk = Token()
@@ -71,7 +71,7 @@ class AclTokenizer(Tokenizer):
 
     def __init__(self, acl_rights_contents):
         """
-        :param cfg: wiki config
+        :param acl_rights_contents: ACL for contents
         """
         self._acl_rights_contents = acl_rights_contents
 

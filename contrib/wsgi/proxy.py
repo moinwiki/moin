@@ -8,6 +8,7 @@
     @license: GNU GPL, see COPYING for details.
 """
 
+
 class ProxyTrust(object):
     """
     Middleware that rewrites the remote address according to trusted

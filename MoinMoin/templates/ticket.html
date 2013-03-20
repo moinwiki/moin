@@ -13,7 +13,13 @@
 {% endblock %}
 
 {% block content %}
-<h1>{{ title }}</h1>
+<h1>
+    {{ title }}
+    {% if closed %}
+        {# TODO style .moin-ticket-closed #}
+        <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
+    {% endif %}
+</h1>
 <div class="moin-form" id="moin-ticket-form">
     {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
 
@@ -49,7 +55,13 @@
         {{ forms.render(form['meta'][e]) }}
     {% endfor %}
     </dl>
-    {{ forms.render(form['submit']) }}
+
+    {# see comments concerning the submit button within TicketForm in items/ticket.py #}
+    {% if is_new %}
+        {{ forms.render_submit(form) }}
+    {% else %}
+        {{ forms.render(form['submit']) }}
+    {% endif %}
 
     <h2>Back references</h2>
     <dl>

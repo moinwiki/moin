@@ -31,7 +31,8 @@ class Converter(object):
         item_name = rev.item.name
         attrib = {
             moin_page.type_: unicode(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/'+item_name, query='do=get&rev={0}'.format(rev.revid)),
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
+                            query='do=get&rev={0}'.format(rev.revid)),
         }
         obj = moin_page.object_(attrib=attrib, children=[u'Your Browser does not support HTML5 audio/video element.', ])
         body = moin_page.body(children=(obj, ))

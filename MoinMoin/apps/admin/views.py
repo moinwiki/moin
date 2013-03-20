@@ -20,15 +20,16 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.config import NAME, ITEMID, SIZE, EMAIL
-from MoinMoin.config import SUPERUSER
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED
+from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
+
 
 @admin.route('/superuser')
 @require_permission(SUPERUSER)
 def index():
     return render_template('admin/index.html', title_name=_(u"Admin"))
+
 
 @admin.route('/user')
 def index_user():
@@ -42,14 +43,13 @@ def userbrowser():
     User Account Browser
     """
     groups = flaskg.groups
-    revs = user.search_users() # all users
+    revs = user.search_users()  # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
                           email=rev.meta[EMAIL],
-                          disabled=False,  # TODO: add to index
+                          disabled=rev.meta[DISABLED],
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
-                     )
-                     for rev in revs]
+                     ) for rev in revs]
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
 
 
@@ -70,9 +70,9 @@ def userprofile(user_name):
         ok = False
         if hasattr(u, key):
             ok = True
-            oldval = getattr(u, key)
+            oldval = u.profile[key]
             if isinstance(oldval, bool):
-                val = bool(val)
+                val = bool(int(val))
             elif isinstance(oldval, int):
                 val = int(val)
             elif isinstance(oldval, unicode):
@@ -80,7 +80,7 @@ def userprofile(user_name):
             else:
                 ok = False
         if ok:
-            setattr(u, key, val)
+            u.profile[key] = val
             u.save()
             flash(u'{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
         else:
@@ -97,28 +97,8 @@ def mail_recovery_token():
     return redirect(url_for('.userbrowser'))
 
 
-@admin.route('/sysitems_upgrade', methods=['GET', 'POST', ])
-@require_permission(SUPERUSER)
-def sysitems_upgrade():
-    from MoinMoin.storage.backends import upgrade_sysitems
-    from MoinMoin.storage.error import BackendError
-    if request.method == 'GET':
-        action = 'syspages_upgrade'
-        label = 'Upgrade System Pages'
-        return render_template('admin/sysitems_upgrade.html',
-                               title_name=_(u"System items upgrade"))
-    if request.method == 'POST':
-        xmlfile = request.files.get('xmlfile')
-        try:
-            upgrade_sysitems(xmlfile)
-        except BackendError as e:
-            flash(_('System items upgrade failed due to the following error: %(error)s.', error=e), 'error')
-        else:
-            flash(_('System items have been upgraded successfully!'))
-        return redirect(url_for('.index'))
-
-
 from MoinMoin.config import default as defaultconfig
+
 
 @admin.route('/wikiconfig', methods=['GET', ])
 @require_permission(SUPERUSER)
@@ -198,11 +178,12 @@ def wikiconfighelp():
 def highlighterhelp():
     """display a table with list of available Pygments lexers"""
     import pygments.lexers
-    headings = [_('Lexer description'),
-                _('Lexer names'),
-                _('File patterns'),
-                _('Mimetypes'),
-               ]
+    headings = [
+        _('Lexer description'),
+        _('Lexer names'),
+        _('File patterns'),
+        _('Mimetypes'),
+    ]
     lexers = pygments.lexers.get_all_lexers()
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
@@ -215,9 +196,10 @@ def highlighterhelp():
 @admin.route('/interwikihelp', methods=['GET', ])
 def interwikihelp():
     """display a table with list of known interwiki names / urls"""
-    headings = [_('InterWiki name'),
-                _('URL'),
-               ]
+    headings = [
+        _('InterWiki name'),
+        _('URL'),
+    ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('user/interwikihelp.html',
                            title_name=_(u"Interwiki Names"),
@@ -228,9 +210,10 @@ def interwikihelp():
 @admin.route('/itemsize', methods=['GET', ])
 def itemsize():
     """display a table with item sizes"""
-    headings = [_('Size'),
-                _('Item name'),
-               ]
+    headings = [
+        _('Size'),
+        _('Item name'),
+    ]
     rows = [(rev.meta[SIZE], rev.name)
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)

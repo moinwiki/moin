@@ -38,23 +38,22 @@ logging = log.getLogger(__name__)
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Submit
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
-    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, SYSITEM_VERSION, ITEMTYPE,
+    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
-    )
-from MoinMoin.constants.contenttypes import charset, CONTENTTYPE_NONEXISTENT
+)
+from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
-    )
+)
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -92,8 +91,10 @@ class RegistryItem(RegistryBase):
 
 item_registry = RegistryItem()
 
+
 def register(cls):
-    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order), cls.shown)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order),
+                           cls.shown)
     return cls
 
 
@@ -115,8 +116,10 @@ class DummyItem(object):
     """ if we have no stored Item, we use this dummy """
     def __init__(self, name):
         self.name = name
+
     def list_revisions(self):
-        return [] # same as an empty Item
+        return []  # same as an empty Item
+
     def destroy_all_revisions(self):
         return True
 
@@ -141,12 +144,12 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
     :itemtype and :contenttype are used when creating a DummyRev, where
     metadata is not available from the storage.
     """
-    if 1: # try:
+    if 1:  # try:
         if item is None:
             item = flaskg.storage[name]
         else:
             name = item.name
-    if not item: # except NoSuchItemError:
+    if not item:  # except NoSuchItemError:
         logging.debug("No such item: {0!r}".format(name))
         item = DummyItem(name)
         rev = DummyRev(item, itemtype, contenttype)
@@ -155,11 +158,11 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
         logging.debug("Got item: {0!r}".format(name))
         try:
             rev = item.get_revision(rev_id)
-        except KeyError: # NoSuchRevisionError:
+        except KeyError:  # NoSuchRevisionError:
             try:
-                rev = item.get_revision(CURRENT) # fall back to current revision
+                rev = item.get_revision(CURRENT)  # fall back to current revision
                 # XXX add some message about invalid revision
-            except KeyError: # NoSuchRevisionError:
+            except KeyError:  # NoSuchRevisionError:
                 logging.debug("Item {0!r} has no revisions.".format(name))
                 rev = DummyRev(item, itemtype, contenttype)
                 logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
@@ -169,7 +172,7 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
 
 class BaseChangeForm(TextChaizedForm):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
-    submit = Submit
+    submit_label = L_('OK')
 
 
 class BaseMetaForm(Form):
@@ -183,8 +186,18 @@ class BaseMetaForm(Form):
 
 
 class BaseModifyForm(BaseChangeForm):
+    """
+    This class is abstract and only defines two factory methods; see
+    Item._ModifyForm for the implementation.
+    """
     @classmethod
     def from_item(cls, item):
+        """
+        Construct an instance from :item.
+
+        This class method is not supposed to be overriden; subclasses should
+        overrride the _load method instead.
+        """
         form = cls.from_defaults()
         TextCha(form).amend_form()
         form._load(item)
@@ -192,12 +205,20 @@ class BaseModifyForm(BaseChangeForm):
 
     @classmethod
     def from_request(cls, request):
+        """
+        Construct an instance from :request.
+
+        Since the mapping from HTTP form (unlike from an Item instance) to
+        Flatland Form is straightforward, there should be rarely any need to
+        override this class method.
+        """
         form = cls.from_flat(request.form.items() + request.files.items())
         TextCha(form).amend_form()
         return form
 
 
 UNKNOWN_ITEM_GROUP = "unknown items"
+
 
 def _build_contenttype_query(groups):
     """
@@ -214,6 +235,7 @@ def _build_contenttype_query(groups):
 IndexEntry = namedtuple('IndexEntry', 'relname meta')
 
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
+
 
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
@@ -248,7 +270,7 @@ class Item(object):
         property.
         """
         rev = get_storage_revision(name, itemtype, contenttype, rev_id, item)
-        contenttype = rev.meta.get(CONTENTTYPE) or contenttype # use contenttype in case our metadata does not provide CONTENTTYPE
+        contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
@@ -256,7 +278,7 @@ class Item(object):
         # content_registry.get yet, have to patch it later.
         content = Content.create(contenttype)
 
-        itemtype = rev.meta.get(ITEMTYPE) or itemtype or u'default'
+        itemtype = rev.meta.get(ITEMTYPE) or itemtype or ITEMTYPE_DEFAULT
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
         item = item_registry.get(itemtype, name, rev=rev, content=content)
@@ -285,8 +307,7 @@ class Item(object):
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
-        kill_keys = [# shall not get copied from old rev to new rev
-            SYSITEM_VERSION,
+        kill_keys = [  # shall not get copied from old rev to new rev
             NAME_OLD,
             # are automatically implanted when saving
             ITEMID, REVID, DATAID,
@@ -296,7 +317,7 @@ class Item(object):
             MTIME,
             ACTION,
             ADDRESS, HOSTNAME, USERID,
-            ]
+        ]
         for key in kill_keys:
             meta.pop(key, None)
         return meta
@@ -338,7 +359,8 @@ class Item(object):
                     else:  # rename
                         child_newname = new_prefix + child_oldname[old_prefixlen:]
                     item = Item.create(child_oldname)
-                    item._save(item.meta, item.content.data, name=child_newname, action=action, comment=comment, delete=delete)
+                    item._save(item.meta, item.content.data,
+                               name=child_newname, action=action, comment=comment, delete=delete)
 
     def rename(self, name, comment=u''):
         """
@@ -372,12 +394,23 @@ class Item(object):
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
     class _ModifyForm(BaseModifyForm):
-        """Base class for ModifyForm of Item subclasses."""
+        """
+        ModifyForm (the form used on +modify view), sans the content part.
+        Combined dynamically with the ModifyForm of the Content subclass in
+        Contentful.ModifyForm.
+
+        Subclasses of Contentful should generally override this instead of
+        ModifyForm.
+        """
         meta_form = BaseMetaForm
         extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
+            """
+            Load metadata and data from :item into :self. Used by
+            BaseModifyForm.from_item.
+            """
             meta = item.prepare_meta_for_modify(item.meta)
             # Default value of `policy` argument of Flatland.Dict.set's is
             # 'strict', which causes KeyError to be thrown when meta contains
@@ -390,6 +423,15 @@ class Item(object):
             self['content_form']._load(item.content)
 
         def _dump(self, item):
+            """
+            Dump useful data out of :self. :item contains the old item and
+            should not be the primary data source; but it can be useful in case
+            the data in :self is not sufficient.
+
+            :returns: a tuple (meta, data, contenttype_guessed, comment),
+                      suitable as arguments of the same names to pass to
+                      item.modify
+            """
             meta = self['meta_form'].value.copy()
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
@@ -413,12 +455,12 @@ class Item(object):
             currentrev = storage_item.get_revision(CURRENT)
             rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
-        except KeyError: # XXX was: NoSuchRevisionError:
+        except KeyError:  # XXX was: NoSuchRevisionError:
             currentrev = None
             rev_id = None
             contenttype_current = None
 
-        meta = dict(meta) # we may get a read-only dict-like, copy it
+        meta = dict(meta)  # we may get a read-only dict-like, copy it
 
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
@@ -428,7 +470,7 @@ class Item(object):
         if oldname:
             if not isinstance(oldname, list):
                 oldname = [oldname]
-            if delete or name not in oldname: # this is a delete or rename
+            if delete or name not in oldname:  # this is a delete or rename
                 meta[NAME_OLD] = oldname[:]
                 try:
                     oldname.remove(self.name)
@@ -456,7 +498,7 @@ class Item(object):
                 data = ''
 
         if isinstance(data, unicode):
-            data = data.encode(charset) # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, str):
             data = StringIO(data)
@@ -634,8 +676,8 @@ class Default(Contentful):
 
     def do_show(self, revid):
         show_revision = revid != CURRENT
-        show_navigation = False # TODO
-        first_rev = last_rev = None # TODO
+        show_navigation = False  # TODO
+        first_rev = last_rev = None  # TODO
         return render_template(self.show_template,
                                item=self, item_name=self.name,
                                rev=self.rev,

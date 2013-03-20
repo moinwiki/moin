@@ -26,4 +26,5 @@ class TestConfigDictsBackend(DictsBackendTest):
         for result in test_keyiterator:
             assert result in expected
 
+
 coverage_modules = ['MoinMoin.datastruct.backends.config_dicts']

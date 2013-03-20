@@ -18,7 +18,9 @@
     Each class in this module corresponds to a contenttype value.
 """
 
-import os, re, base64
+import os
+import re
+import base64
 import tarfile
 import zipfile
 from StringIO import StringIO
@@ -43,12 +45,12 @@ try:
     from PIL import Image as PILImage
     from PIL.ImageChops import difference as PILdiff
 except ImportError:
-    PIL = None
+    PIL = PILImage = PILdiff = None
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin import wikiutil, config
+from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_
 from MoinMoin.themes import render_template
 from MoinMoin.storage.error import StorageError
@@ -63,11 +65,9 @@ from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
 from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
-    GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT,
-    )
-from MoinMoin.constants.keys import (
-    NAME, NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
-    )
+    GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
+)
+from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
 
 
 COLS = 80
@@ -75,7 +75,8 @@ ROWS_DATA = 20
 
 
 class RegistryContent(RegistryBase):
-    class Entry(namedtuple('Entry', 'factory content_type default_contenttype_params display_name ingroup_order priority')):
+    class Entry(namedtuple('Entry',
+                           'factory content_type default_contenttype_params display_name ingroup_order priority')):
         def __call__(self, content_type, *args, **kw):
             if self.content_type.issupertype(Type(content_type)):
                 return self.factory(content_type, *args, **kw)
@@ -116,8 +117,11 @@ content_registry = RegistryContent([
     GROUP_OTHER
 ])
 
+
 def register(cls):
-    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype), cls.default_contenttype_params, cls.display_name, cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
+    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype),
+                                                    cls.default_contenttype_params, cls.display_name,
+                                                    cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
     return cls
 
 
@@ -170,7 +174,7 @@ class Content(object):
         return self.item.name
 
     def get_data(self):
-        return '' # TODO create a better method for binary stuff
+        return ''  # TODO create a better method for binary stuff
     data = property(fget=get_data)
 
     @timed('conv_in_dom')
@@ -196,8 +200,7 @@ class Content(object):
             input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
-            smiley_conv = reg.get(type_moin_document, type_moin_document,
-                    icon='smiley')
+            smiley_conv = reg.get(type_moin_document, type_moin_document, icon='smiley')
 
             # We can process the conversion
             links = Iri(scheme='wiki', authority='', path='/' + self.name)
@@ -245,7 +248,8 @@ class Content(object):
             # we really want to make sure that invalid data or a malfunctioning
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
-            import time, uuid
+            import time
+            import uuid
             error_id = uuid.uuid4()
             logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
             rendered_data = render_template('crash.html',
@@ -304,6 +308,10 @@ class Binary(Content):
     data = property(fget=get_data)
 
     class ModifyForm(Form):
+        """
+        The content part of the ModifyForm of an Item subclass. See also the
+        doc of Item._ModifyForm.
+        """
         template = 'modify_binary.html'
         help = """\
 There is no help, you're doomed!
@@ -318,7 +326,7 @@ There is no help, you're doomed!
             if data_file:
                 data = data_file.stream
                 # this is likely a guess by the browser, based on the filename
-                contenttype_guessed = data_file.content_type # comes from form multipart data
+                contenttype_guessed = data_file.content_type  # comes from form multipart data
                 return data, contenttype_guessed
             else:
                 return None, None
@@ -344,7 +352,7 @@ There is no help, you're doomed!
 
     def do_get(self, force_attachment=False, mimetype=None):
         hash = self.rev.meta.get(HASH_ALGORITHM)
-        if is_resource_modified(request.environ, hash): # use hash as etag
+        if is_resource_modified(request.environ, hash):  # use hash as etag
             return self._do_get_modified(hash, force_attachment=force_attachment, mimetype=mimetype)
         else:
             return Response(status=304)
@@ -354,7 +362,7 @@ There is no help, you're doomed!
         return self._do_get(hash, member, force_attachment=force_attachment, mimetype=mimetype)
 
     def _do_get(self, hash, member=None, force_attachment=False, mimetype=None):
-        if member: # content = file contained within a archive item revision
+        if member:  # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
             content_length = None
@@ -362,7 +370,7 @@ There is no help, you're doomed!
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
             force_attachment = True
-        else: # content = item revision
+        else:  # content = item revision
             rev = self.rev
             filename = rev.item.name
             try:
@@ -381,7 +389,7 @@ There is no help, you're doomed!
         return send_file(file=file_to_send,
                          mimetype=content_type,
                          as_attachment=as_attachment, attachment_filename=filename,
-                         cache_timeout=10, # wiki data can change rapidly
+                         cache_timeout=10,  # wiki data can change rapidly
                          add_etags=True, etag=hash, conditional=True)
 
 
@@ -645,12 +653,12 @@ class TransformableBitmapImage(RenderableBitmapImage):
         try:
             # if we have EXIF data, we can transpose (e.g. rotate left),
             # so the rendered image is correctly oriented:
-            transpose_op = transpose_op or 1 # or self.exif['Orientation']
+            transpose_op = transpose_op or 1  # or self.exif['Orientation']
         except KeyError:
-            transpose_op = 1 # no change
+            transpose_op = 1  # no change
 
         if size is not None:
-            image = image.copy() # create copy first as thumbnail works in-place
+            image = image.copy()  # create copy first as thumbnail works in-place
             image.thumbnail(size, PILImage.ANTIALIAS)
 
         transpose_func = {
@@ -735,7 +743,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:
-                abort(404) # TODO render user friendly error image
+                abort(404)  # TODO render user friendly error image
 
             content_type = newrev.meta[CONTENTTYPE]
             if content_type == 'image/jpeg':
@@ -761,7 +769,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 app.cache.set(cid, (headers, data))
             except (IOError, ValueError) as err:
                 logging.exception("error during PILdiff: {0}".format(err.message))
-                abort(404) # TODO render user friendly error image
+                abort(404)  # TODO render user friendly error image
         else:
             # XXX TODO check ACL behaviour
             headers, data = c
@@ -833,11 +841,11 @@ class Text(Binary):
 
     def data_internal_to_storage(self, text):
         """ convert data from memory format to storage format """
-        return text.replace(u'\n', u'\r\n').encode(config.charset)
+        return text.replace(u'\n', u'\r\n').encode(CHARSET)
 
     def data_storage_to_internal(self, data):
         """ convert data from storage format to memory format """
-        return data.decode(config.charset).replace(u'\r\n', u'\n')
+        return data.decode(CHARSET).replace(u'\r\n', u'\n')
 
     def _get_data_diff_html(self, oldrev, newrev, template):
         from MoinMoin.util.diff_html import diff
@@ -962,9 +970,9 @@ class DocBook(MarkupItem):
 
         # We determine the different namespaces of the output form
         output_namespaces = {
-             docbook.namespace: '',
-             xlink.namespace: 'xlink',
-         }
+            docbook.namespace: '',
+            xlink.namespace: 'xlink',
+        }
 
         # We convert the result into a StringIO object
         # With the appropriate namespace
@@ -988,7 +996,7 @@ class DocBook(MarkupItem):
         return send_file(file=file_to_send,
                          mimetype=content_type,
                          as_attachment=as_attachment, attachment_filename=None,
-                         cache_timeout=10, # wiki data can change rapidly
+                         cache_timeout=10,  # wiki data can change rapidly
                          add_etags=False, etag=None, conditional=True)
 
 
@@ -1081,10 +1089,10 @@ class DrawAWDTWDBase(DrawPNGMap):
         filecontent = file_upload.stream
         content_length = None
         if ext in ['.svg', '.draw', ]:  # handle AWD (svg) and TWD (draw)
-            filecontent = filecontent.read() # read file completely into memory
+            filecontent = filecontent.read()  # read file completely into memory
             filecontent = filecontent.replace("\r", "")
         elif ext == '.map':
-            filecontent = filecontent.read() # read file completely into memory
+            filecontent = filecontent.read()  # read file completely into memory
             filecontent = filecontent.strip()
         elif ext == '.png':
             #content_length = file_upload.content_length
@@ -1131,11 +1139,12 @@ class AnyWikiDraw(DrawAWDTWDBase):
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
         help = ""
+
         def _load(self, item):
             super(AnyWikiDraw.ModifyForm, self)._load(item)
             try:
                 drawing_exists = 'drawing.svg' in item.list_members()
-            except tarfile.TarError: # item doesn't exist yet
+            except tarfile.TarError:  # item doesn't exist yet
                 drawing_exists = False
             self.drawing_exists = drawing_exists
 

@@ -35,6 +35,7 @@ def test_destroy(Store):
     store = Store()
     store.destroy()
 
+
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_from_uri(Store):
     store = Store.from_uri("localhost")

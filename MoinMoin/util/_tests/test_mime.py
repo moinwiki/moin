@@ -6,15 +6,15 @@ MoinMoin - Tests for MoinMoin.util.mime
 """
 
 
-import pytest
-
 from MoinMoin.util.mime import *
+
 
 def test_Type_init_1():
     t = Type(type='foo', subtype='bar', parameters={'foo': 'bar'})
     assert t.type == 'foo'
     assert t.subtype == 'bar'
     assert t.parameters == {'foo': 'bar'}
+
 
 def test_Type_init_2():
     i = 'text/plain;encoding=utf-8'
@@ -23,12 +23,14 @@ def test_Type_init_2():
     assert t.subtype == 'bar'
     assert t.parameters == {'encoding': 'utf-8', 'foo': 'bar'}
 
+
 def test_Type_init_3():
     i = Type(type='foo', subtype='bar')
     t = Type(i)
     assert i is not t
     assert i == t
     assert i.parameters is not t.parameters
+
 
 def test_Type_text():
     i = '*/*'
@@ -63,6 +65,7 @@ def test_Type_text():
     t = Type(i)
     assert t.parameters == {'encoding': 'utf-8', 'foo': '['}
     assert unicode(t) == i
+
 
 def test_Type_compare():
     t1 = Type(type='text', subtype='plain')

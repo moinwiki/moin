@@ -12,7 +12,8 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.config import SIZE, HASH_ALGORITHM
+from MoinMoin.constants.keys import SIZE, HASH_ALGORITHM
+
 
 class BackendTestBase(object):
     def setup_method(self, method):
@@ -111,11 +112,11 @@ class MutableBackendTestBase(BackendTestBase):
             metaid = self.be.store(meta, StringIO(data))
 
     def test_iter(self):
-        mds = [# (metadata items, data str)
-                (dict(name='one'), 'ONE'),
-                (dict(name='two'), 'TWO'),
-                (dict(name='three'), 'THREE'),
-              ]
+        mds = [  # (metadata items, data str)
+            (dict(name='one'), 'ONE'),
+            (dict(name='two'), 'TWO'),
+            (dict(name='three'), 'THREE'),
+        ]
         expected_result = set()
         for m, d in mds:
             k = self.be.store(m, StringIO(d))
