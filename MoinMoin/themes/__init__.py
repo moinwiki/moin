@@ -210,8 +210,12 @@ class ThemeSupport(object):
         """
         current = item_name
         # Process config navi_bar
-        items = [(cls, url_for(endpoint, **args), link_text, title)
-                 for cls, endpoint, args, link_text, title in self.cfg.navi_bar]
+        items = []
+        for cls, endpoint, args, link_text, title in self.cfg.navi_bar:
+            if endpoint == "frontend.show_root":
+                endpoint = "frontend.show_item"
+                args['item_name'] = app.cfg.item_root
+            items.append((cls, url_for(endpoint, **args), link_text, title))
 
         # Add user links to wiki links.
         for text in self.user.quicklinks:
