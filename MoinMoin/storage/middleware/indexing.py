@@ -89,6 +89,7 @@ from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
 WHOOSH_FILESTORAGE = 'FileStorage'
+WHOOSH_GAE = 'DatastoreStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 VALIDATION_HANDLING_STRICT = 'strict'
@@ -380,6 +381,9 @@ class IndexingMiddleware(object):
                 params[0] += '.temp'
             from whoosh.filedb.filestore import FileStorage
             cls = FileStorage
+        elif kind == WHOOSH_GAE:
+            from whoosh.filedb.gae import DatastoreStorage
+            cls = DatastoreStorage
         else:
             raise ValueError("index_storage = {0!r} is not supported!".format(kind))
         return kind, cls, params, kw

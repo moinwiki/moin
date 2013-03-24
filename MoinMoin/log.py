@@ -1,4 +1,4 @@
-# Copyright: 2008 MoinMoin:ThomasWaldmann
+# Copyright: 2008-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -153,7 +153,7 @@ def load_config(conf_fname=None):
 
     import MoinMoin
     code_path = os.path.dirname(MoinMoin.__file__)
-    l.info('Running %s %s code from %s' % (MoinMoin.project, MoinMoin.version, code_path))
+    l.info('Running {0} {1} code from {2}'.format(MoinMoin.project, str(MoinMoin.version), code_path))
 
 
 def getLogger(name):
