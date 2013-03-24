@@ -86,6 +86,7 @@ RESULTS_PER_PAGE = "results_per_page"
 WANT_TRIVIAL = "want_trivial"
 EMAIL_SUBSCRIBED_EVENTS = "email_subscribed_events"
 DISABLED = "disabled"
+GAE_USER_ID = "gae_user_id"
 
 # in which backend is some revision stored?
 BACKENDNAME = "backendname"
