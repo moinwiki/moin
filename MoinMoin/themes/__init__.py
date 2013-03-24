@@ -278,9 +278,21 @@ class ThemeSupport(object):
         """
         url = None
         if self.cfg.auth_login_inputs == ['special_no_input']:
-            url = url_for('frontend.login', login=1)
+            url = url_for('frontend.login', login_submit=1)
         if self.cfg.auth_have_login:
             url = url or url_for('frontend.login')
+        return url
+
+    def logout_url(self):
+        """
+        Return URL usable for user logout
+
+        :rtype: unicode (or None, if no logout url is supported)
+        :returns: url for user logout
+        """
+        url = None
+        if flaskg.user and flaskg.user.auth_method in self.cfg.auth_can_logout:
+            url = url_for('frontend.logout', logout_submit=1)
         return url
 
 
