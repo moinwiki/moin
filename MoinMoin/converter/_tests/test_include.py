@@ -190,6 +190,9 @@ class TestInclude(object):
         assert '<p></p>' not in rendered
 
     def test_IncludeAsLinkAlternate(self):
+        # the 3rd parameter, u'',  should be a binary string defining a png image, but it is not needed for this simple test
+        update_item(u'logo.png', {CONTENTTYPE: u'image/png'}, u'')
+        update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u"Single Line")
         # image as link alternate
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u"text [[page2|{{logo.png}}]] text")
         rendered = Item.create(u'page1').content._render_data()
