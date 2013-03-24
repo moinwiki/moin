@@ -61,11 +61,6 @@ def add_modify_item_commands(manager):
     manager.add_command("item-put", modify_item.PutItem())
 
 
-def add_modified_system_items_commands(manager):
-    from MoinMoin.script.maint.modified_systemitems import Modified_SystemItems
-    manager.add_command("maint_modified_systemitems", Modified_SystemItems())
-
-
 def add_import_moin19_commands(manager):
     from MoinMoin.script.migration.moin19.import19 import ImportMoin19
     manager.add_command("import19", ImportMoin19())
@@ -95,7 +90,6 @@ def main(default_command='moin', wiki_config=None):
     add_reduce_revisions_commands(manager)
     add_set_meta_commands(manager)
     add_modify_item_commands(manager)
-    add_modified_system_items_commands(manager)
     add_import_moin19_commands(manager)
     add_moin_shell_commands(manager)
 
