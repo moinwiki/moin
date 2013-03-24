@@ -182,12 +182,9 @@ class Content(object):
         """
         Return the internal representation of a document using a DOM Tree
         """
-        hash_name = HASH_ALGORITHM
-        hash_hexdigest = self.rev.meta.get(hash_name)
-        if hash_hexdigest:
-            cid = cache_key(usage="internal_representation",
-                            hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest)
+        revid = self.rev.revid
+        if revid:
+            cid = cache_key(usage="internal_representation", revid=revid)
             doc = app.cache.get(cid)
         else:
             # likely a non-existing item
@@ -695,11 +692,8 @@ class TransformableBitmapImage(RenderableBitmapImage):
             transpose = 1
         if width or height or transpose != 1:
             # resize requested, XXX check ACL behaviour! XXX
-            hash_name = HASH_ALGORITHM
-            hash_hexdigest = self.rev.meta[hash_name]
             cid = cache_key(usage="ImageTransform",
-                            hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest,
+                            revid=self.rev.revid,
                             width=width, height=height, transpose=transpose)
             c = app.cache.get(cid)
             if c is None:
@@ -735,11 +729,9 @@ class TransformableBitmapImage(RenderableBitmapImage):
         return Markup(u'<img src="{0}" />'.format(escape(url)))
 
     def _render_data_diff_raw(self, oldrev, newrev):
-        hash_name = HASH_ALGORITHM
         cid = cache_key(usage="ImageDiff",
-                        hash_name=hash_name,
-                        hash_old=oldrev.meta[hash_name],
-                        hash_new=newrev.meta[hash_name])
+                        revid_old=oldrev.revid,
+                        revid_new=newrev.revid)
         c = app.cache.get(cid)
         if c is None:
             if PIL is None:
