@@ -31,6 +31,7 @@ from ._logfile19 import LogFile
 
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
 
@@ -221,7 +222,7 @@ class PageRevision(object):
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
             # we prepare some values for the case we don't find a better value in edit-log:
             meta = {MTIME: -1,  # fake, will get 0 in the end
-                    NAME: item_name,  # will get overwritten with name from edit-log
+                    NAME: [item_name],  # will get overwritten with name from edit-log
                                       # if we have an entry there
                    }
             try:
@@ -253,7 +254,7 @@ class PageRevision(object):
             except KeyError:
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
-                        NAME: item.name,
+                        NAME: [item.name],
                         MTIME: int(os.path.getmtime(path)),
                         ACTION: u'SAVE',
                     }
@@ -268,6 +269,7 @@ class PageRevision(object):
         meta[SIZE] = size
         meta[ITEMID] = itemid
         meta[REVID] = make_uuid()
+        meta[NAMESPACE] = NAMESPACE_DEFAULT
         self.meta = {}
         for k, v in meta.iteritems():
             if isinstance(v, list):
@@ -331,7 +333,7 @@ class AttachmentRevision(object):
                 MTIME: int(os.path.getmtime(attpath)),
                 ACTION: u'SAVE',
             }
-        meta[NAME] = u'{0}/{1}'.format(item_name, attach_name)
+        meta[NAME] = [u'{0}/{1}'.format(item_name, attach_name)]
         if acl is not None:
             meta[ACL] = acl
         meta[CONTENTTYPE] = unicode(MimeType(filename=attach_name).content_type())
@@ -361,7 +363,7 @@ class EditLog(LogFile):
         # do some conversions/cleanups/fallbacks:
         result[MTIME] = int(long(result[MTIME] or 0) / 1000000)  # convert usecs to secs
         result['__rev'] = int(result['__rev']) - 1  # old storage is 1-based, we want 0-based
-        result[NAME] = unquoteWikiname(result[NAME])
+        result[NAME] = [unquoteWikiname(result[NAME])]
         action = result[ACTION]
         extra = result[EXTRA]
         if extra:
@@ -517,6 +519,9 @@ class UserRevision(object):
         ]
         for key, default in int_defaults:
             metadata[key] = int(metadata.get(key, default))
+
+        metadata[NAMESPACE] = NAMESPACE_USERPROFILES
+        metadata[NAME] = [metadata[NAME]]
 
         # rename last_saved to MTIME, int MTIME should be enough:
         metadata[MTIME] = int(float(metadata.get('last_saved', '0')))
