@@ -18,7 +18,6 @@ Works with docutils version 0.5 (2008-06-25) or higher.
 from __future__ import absolute_import, division
 
 import re
-import pytest
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -32,7 +31,6 @@ from MoinMoin.util.tree import html, moin_page, xlink
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 #### TODO: try block (do not crash if we don't have docutils)
-pytest.importorskip('docutils')
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block

@@ -29,6 +29,26 @@ interwiki:
 pylint:
 	@pylint --disable-msg=W0142,W0511,W0612,W0613,C0103,C0111,C0302,C0321,C0322 --disable-msg-cat=R MoinMoin
 
+# Automate creation of the support archive from a virtualenv site-packages directory
+support:
+	@python contrib/mksupport/mksupport.py --support
+
+# Create Dist archive with support
+supportdist:
+	@python contrib/mksupport/mksupport.py --supportdist
+
+supporttgz:
+	@# create the support archive:
+	@python contrib/mksupport/mksupport.py --supporttgz
+
+# Run local appengine development server 
+gaeserver:
+	../google_appengine/dev_appserver.py .
+
+# Upload app to appengine
+gaeupload:
+	../google_appengine/appcfg.py update .
+
 clean: clean-devwiki clean-pyc clean-orig clean-rej
 	-rm -rf build
 

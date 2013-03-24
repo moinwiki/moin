@@ -166,9 +166,10 @@ class ConfigFunctionality(object):
                     secret_min_length, secret_key_name))
 
         from passlib.context import CryptContext
+        from passlib.exc import PasslibConfigWarning
         try:
             self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
-        except ValueError as err:
+        except (ValueError, TypeError, KeyError, PasslibConfigWarning) as err:
             raise error.ConfigurationError("passlib_crypt_context configuration is invalid [{0}].".format(err))
 
     def _config_check(self):
