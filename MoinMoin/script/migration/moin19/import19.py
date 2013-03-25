@@ -223,7 +223,7 @@ class PageRevision(object):
             # we prepare some values for the case we don't find a better value in edit-log:
             meta = {MTIME: -1,  # fake, will get 0 in the end
                     NAME: [item_name],  # will get overwritten with name from edit-log
-                                      # if we have an entry there
+                                        # if we have an entry there
                    }
             try:
                 revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
