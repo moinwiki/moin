@@ -232,9 +232,9 @@ def _build_contenttype_query(groups):
             queries.append(Prefix(CONTENTTYPE, ct_unicode + u';'))
     return Or(queries)
 
-IndexEntry = namedtuple('IndexEntry', 'relname meta')
+IndexEntry = namedtuple('IndexEntry', 'relname fullname meta')
 
-MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
+MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname fullname meta hassubitems')
 
 
 class NameNotUniqueError(ValueError):
@@ -579,9 +579,9 @@ class Item(object):
                             added_dir_relnames.add(direct_relname)
                             direct_fullname = prefix + direct_relname
                             direct_rev = get_storage_revision(direct_fullname)
-                            dirs.append(IndexEntry(direct_relname, direct_rev.meta))
+                            dirs.append(IndexEntry(direct_relname, direct_fullname, direct_rev.meta))
                     else:
-                        files.append(IndexEntry(relname, rev.meta))
+                        files.append(IndexEntry(relname, fullname, rev.meta))
 
         return dirs, files
 
