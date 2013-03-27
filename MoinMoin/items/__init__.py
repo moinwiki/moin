@@ -237,6 +237,12 @@ IndexEntry = namedtuple('IndexEntry', 'relname meta')
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname meta hassubitems')
 
 
+class NameNotUniqueError(ValueError):
+    """
+    An item with the same name exists.
+    """
+
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     # placeholder values for registry entry properties
@@ -366,6 +372,8 @@ class Item(object):
         """
         rename this item to item <name> (replace current name by another name in the NAME list)
         """
+        if flaskg.storage[name]:
+            raise NameNotUniqueError(L_("An item named %s already exists." % name))
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
