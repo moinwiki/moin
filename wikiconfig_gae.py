@@ -31,8 +31,8 @@ class Config(DefaultConfig):
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
-    namespace_mapping, acl_mapping = create_simple_mapping(
-                            uri='stores:gae:/%(nsname)s/%(kind)s',
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
+                            uri='stores:gae:/%(backend)s/%(kind)s',
                             # XXX we use rather relaxed ACLs for the development wiki:
                             content_acl=dict(before=u'',
                                              default=u'All:read,write,create,destroy,admin',
