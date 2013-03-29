@@ -42,7 +42,7 @@ class _Store(MutableStoreBase):
         return cls(uri)
 
     def __init__(self, path):
-        logging.info('%s(%r)', self.__class__.__name__, path)
+        logging.debug('%s(%r)', self.__class__.__name__, path)
         self._root_key = ndb.Key(_MoinDirectory, path)
         self._query = _MoinValue.query(ancestor=self._root_key)
 
