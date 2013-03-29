@@ -48,7 +48,7 @@ from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
                             InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
@@ -523,8 +523,11 @@ def rename_item(item_name):
         if form.validate():
             target = form['target'].value
             comment = form['comment'].value
-            item.rename(target, comment)
-            return redirect(url_for_item(target))
+            try:
+                item.rename(target, comment)
+                return redirect(url_for_item(target))
+            except NameNotUniqueError as e:
+                flash(str(e), "error")
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
                            form=form,
