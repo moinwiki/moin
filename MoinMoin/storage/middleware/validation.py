@@ -104,7 +104,9 @@ def name_validator(element, state):
         return False
     if v.startswith(u'+'):  # used for views, like /+meta/<itemname>
         return False
-    if v.endswith(u'/'):
+    if v.startswith(u'/') or v.endswith(u'/'):
+        return False
+    if u'//' in v:  # empty ancestor name is invalid
         return False
     return True
 
