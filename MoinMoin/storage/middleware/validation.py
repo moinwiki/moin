@@ -373,3 +373,26 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     #TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
 )
+
+
+def validate_data(meta, data):
+    """
+    validate the data contents, if possible
+
+    :param meta: metadata dict
+    :param data: data file
+    :return: validation ok [bool]
+    """
+    ct = Type(meta[keys.CONTENTTYPE])
+    if ct.type != 'text':
+        return True  # we can't validate non-text mimetypes, so assume it is ok
+    coding = ct.parameters['charset'].lower()
+    if coding not in ['ascii', 'utf-8', ]:
+        return True  # checking 8bit encodings this way is pointless, decoding never raises
+    text_bytes = data.read()
+    data.seek(0)  # rewind, so it can be read again
+    try:
+        text_bytes.decode(coding)
+        return True
+    except UnicodeDecodeError:
+        return False
