@@ -84,7 +84,7 @@ from MoinMoin.constants.keys import ITEMTYPE
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
-from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
+from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
@@ -1060,8 +1060,13 @@ class Item(object):
             logging.warning("metadata validation failed, see below")
             for e in m.children:
                 logging.warning("{0}, {1}".format(e.valid, e))
+            logging.warning("data validation skipped as we have no valid metadata")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError('metadata validation failed and strict handling requested, see the log for details')
+        elif not validate_data(meta, data):  # need valid metadata to validate data
+            logging.warning("data validation failed")
+            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+                raise ValueError('data validation failed and strict handling requested, see the log for details')
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
