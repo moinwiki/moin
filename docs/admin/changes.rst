@@ -1,6 +1,6 @@
 :tocdepth: 2
 
-.. _changes::
+.. _changes:
 
 Changes in MoinMoin
 ===================

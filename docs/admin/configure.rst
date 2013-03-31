@@ -47,7 +47,7 @@ config.
 Why use Python for configuration?
 ---------------------------------
 At first, you might wonder why we use Python code for configuration. One of the 
-reasons is that it is a powerful language. Moinmoin itself is developed in Python 
+reasons is that it is a powerful language. MoinMoin itself is developed in Python
 and using something else would usually mean much more work when developing new 
 functionality.
 
@@ -68,7 +68,7 @@ A wikiconfig.py looks like this::
  MOINCFG = Config  # Flask only likes uppercase characters
  SOMETHING_FLASKY = 'foobar'
 
-Let's go through this line-by-line::
+Let's go through this line-by-line:
 
 0. this declares the encoding of the config file; make sure your editor uses
    the same encoding (character set), especially if you intend to use non-ASCII
@@ -649,6 +649,7 @@ you to configure passlib's CryptContext params within the wiki config, the
 default is this:
 
 ::
+
     passlib_crypt_context = dict(
         schemes=["sha512_crypt", ],
     )
@@ -791,7 +792,7 @@ Notes:
 * As a consequence of the left-to-right and first-match-counts processing,
   you must order ACL entries so that the more specific ones (like for
   "SuperMan") are left of the less specific ones.
-  Usually, you want this order::
+  Usually, you want this order:
 
   1) usernames
   2) special groups
@@ -1324,7 +1325,7 @@ well for the built-in server (it will show up on the console) or for Apache2 and
 Logging is very configurable and flexible due to the use of the `logging`
 module of the Python standard library.
 
-The configuration file format is described there::
+The configuration file format is described there:
 
 http://www.python.org/doc/current/library/logging.html#configuring-logging
 
