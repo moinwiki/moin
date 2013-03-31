@@ -123,6 +123,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                          # PIL is a binary dependency and some features of it
                          # require special libs/header to be installed before
                          # it can be compiled successfully
+        'pillow': ["pillow"],  # alternative to PIL
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
         'openid': ["python-openid>=2.2.4"],  # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
