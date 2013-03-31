@@ -34,11 +34,11 @@ class Config(DefaultConfig):
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
         # XXX we use rather relaxed ACLs for the development wiki:
-        content_acl=dict(before=u'',
+        default_acl=dict(before=u'',
                          default=u'All:read,write,create,destroy,admin',
                          after=u'',
                          hierarchic=False, ),
-        user_profile_acl=dict(before=u'',
+        userprofiles_acl=dict(before=u'',
                               default=u'All:read,write,create,destroy,admin',
                               after=u'',
                               hierarchic=False, ),
