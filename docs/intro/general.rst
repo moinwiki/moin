@@ -70,7 +70,7 @@ because we use Python, you may even *like* to read and modify moin's code.
 
 Who is using MoinMoin?
 ----------------------
-This shows some of the better-known users of MoinMoin::
+This shows some of the better-known users of MoinMoin:
 
 Web Sites
 ~~~~~~~~~~~~~~

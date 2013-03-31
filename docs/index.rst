@@ -13,6 +13,7 @@ Introducing MoinMoin
 
    intro/general
    intro/features
+   intro/license
 
 Using MoinMoin
 ==============
@@ -21,7 +22,6 @@ Using MoinMoin
    :maxdepth: 2
 
    user/accounts
-   user/searching
    user/markups
    user/search
 
