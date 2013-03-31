@@ -167,7 +167,7 @@ Notes
 =====
 moin uses indexed search. Keep in mind that this has some special properties:
 
- * By using an index, the search is rather usually fast 
+ * By using an index, the search is usually rather fast
  * Because it is only using an index, it can only find what was put there
  * If you use wildcards or regexes, it will still use the index, but in a different, slower way
 
