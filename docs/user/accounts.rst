@@ -58,9 +58,9 @@ Personal settings include wiki language and locale, username, alias and OpenID.
 Name
  Your username, as it will appear on the wiki and in the history pages of wiki items which you edit.
 
-Alias-Name
- The alias name can be used to override your username, so you will still log in using your username
- but your alias name will be displayed to other users and in your history page.
+Display-Name
+ The display name can be used to override your username, so you will still log in using your username
+ but your display name will be displayed to other users and in your history page.
 
 OpenID
  If you have an OpenID which you would like to associate with your account, enter it here.
@@ -157,10 +157,6 @@ Special Features for Users with Accounts
 Your User Page
 --------------
 
-.. warning::
- **MOINTODO** User pages are currently broken as they have no handler for their content type. Because
- of this, they use the binary content type and cannot be viewed (they must be downloaded).
-
 You user page is a wiki space in which you may share information about yourself with other users of
 that wiki. It can be accessed by clicking the button with your username on it at the top of the
 screen, and is edited like a normal wiki item.
@@ -168,11 +164,8 @@ screen, and is edited like a normal wiki item.
 "My Changes"
 ------------
 
-To view your modifications to a wiki, navigate to the URL ``/+mychanges``. This will show a list of
-modifications you have made to wiki items.
-
-.. warning::
- **MOINTODO** There is currently no button to get to +mychanges. This should be fixed.
+To view your modifications to a wiki, click on ``User`` in the navigation area, then on ``My Changes``.
+ his will show a list of modifications you have made to wiki items.
 
  **MOINTODO** +mychanges only links to the item which you edit, not the specific revision. If you edit
  and item several times, it just inserts several identical links to that item. This behaviour should be

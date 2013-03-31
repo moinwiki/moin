@@ -19,7 +19,7 @@ If you want a backup of MoinMoin and your data, then backup the following:
 * your data
 * moin configuration, e.g. wikiconfig.py
 * logging configuration, e.g. logging.conf
-* moin script, e.g. moin.wsgi
+* moin deployment script, e.g. moin.wsgi
 * web server configuration, e.g. apache virtualhost config
 * optional: moin code + dependencies; you should at least know which version you ran, so you can reinstall that version when you need to restore
 
@@ -38,8 +38,8 @@ Selective Restore
 To restore all software and configuration files to their original
 place, create an empty wiki first::
 
- moin moin -s -i  # -s = create new storage
-                  # -i = create new index
+ moin index-create -s -i  # -s = create new storage
+                          # -i = create new index
 
 To load the backup file into your empty wiki, run::
 
