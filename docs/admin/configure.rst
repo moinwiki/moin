@@ -1042,13 +1042,14 @@ Call it as follows::
 
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri=...,
-        content_acl=dict(before=...,
+        default_acl=dict(before=...,
                          default=...,
                          after=...,
                          hierarchic=..., ),
-        user_profile_acl=dict(before=...,
+        userprofiles_acl=dict(before=...,
                               default=...,
-                              after=..., ),
+                              after=...,
+                              hierarchiv=False, ),
     )
 
 The `uri` depends on the kind of storage backend and stores you want to use, 
@@ -1074,7 +1075,7 @@ In this case, the mapping created will look like this:
 | userprofiles   | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
 
-`content_acl` and `user_profile_acl` are dictionaries specifying the ACLs for
+`default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
 this part of the namespace (normal content, user profiles).
 See the docs about ACLs.
 
@@ -1122,10 +1123,10 @@ Configuration::
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
-        content_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
+        default_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                          default=u'All:read,write,create',
                          after=u'', ),
-        user_profile_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
+        userprofiles_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                               default=u'',
                               after=u'', ),
     )
