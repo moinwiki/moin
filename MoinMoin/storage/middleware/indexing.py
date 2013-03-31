@@ -1063,10 +1063,6 @@ class Item(object):
             logging.warning("data validation skipped as we have no valid metadata")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError('metadata validation failed and strict handling requested, see the log for details')
-        elif not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning("data validation failed")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError('data validation failed and strict handling requested, see the log for details')
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
@@ -1075,6 +1071,11 @@ class Item(object):
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+
+        if valid and not validate_data(meta, data):  # need valid metadata to validate data
+            logging.warning("data validation failed")
+            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+                raise ValueError('data validation failed and strict handling requested, see the log for details')
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
