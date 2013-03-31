@@ -153,6 +153,14 @@ converter Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`markdown_in` Module
+-------------------------
+
+.. automodule:: MoinMoin.converter.markdown_in
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`mediawiki_in` Module
 --------------------------
 

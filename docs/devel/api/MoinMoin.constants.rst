@@ -25,6 +25,22 @@ constants Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`forms` Module
+-------------------
+
+.. automodule:: MoinMoin.constants.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`itemtypes` Module
+-----------------------
+
+.. automodule:: MoinMoin.constants.itemtypes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`keys` Module
 ------------------
 
@@ -37,6 +53,14 @@ constants Package
 ------------------
 
 .. automodule:: MoinMoin.constants.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`namespaces` Module
+------------------------
+
+.. automodule:: MoinMoin.constants.namespaces
     :members:
     :undoc-members:
     :show-inheritance:
