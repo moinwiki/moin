@@ -1,6 +1,8 @@
-:orphan:
-
 .. _license:
+
+=======
+License
+=======
 
 .. literalinclude:: ../../LICENSE.txt
 

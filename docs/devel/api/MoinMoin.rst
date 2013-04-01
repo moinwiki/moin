@@ -41,6 +41,14 @@ MoinMoin Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`forms` Module
+-------------------
+
+.. automodule:: MoinMoin.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`log` Module
 -----------------
 

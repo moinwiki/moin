@@ -481,6 +481,7 @@ options_no_group_name = {
             SHOW_COMMENTS: False,
             WANT_TRIVIAL: False,
             ENC_PASSWORD: u'',  # empty value == invalid hash
+            SESSION_KEY: u'',  # empty value == invalid key
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],

@@ -9,6 +9,14 @@ util Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`StringIOClosing` Module
+-----------------------------
+
+.. automodule:: MoinMoin.util.StringIOClosing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`SubProcess` Module
 ------------------------
 
@@ -85,22 +93,6 @@ util Package
 -----------------
 
 .. automodule:: MoinMoin.util.iri
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`lock` Module
-------------------
-
-.. automodule:: MoinMoin.util.lock
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`md5crypt` Module
-----------------------
-
-.. automodule:: MoinMoin.util.md5crypt
     :members:
     :undoc-members:
     :show-inheritance:

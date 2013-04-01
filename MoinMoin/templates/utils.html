@@ -63,15 +63,15 @@
                 {# call our parent's caller with all the data we have if they exist, used to implement
                     transclude/link actions in the modify view #}
                 {% if parentcaller %}
-                    {{ parentcaller(e.meta['name'], e.relname, e.meta['contenttype'], e.hassubitems) }}
+                    {{ parentcaller(e.fullname, e.relname, e.meta['contenttype'], e.hassubitems) }}
                 {% endif %}
-                <a href="{{ url_for('frontend.show_item', item_name=e.meta['name']) }}"
+                <a href="{{ url_for('frontend.show_item', item_name=e.fullname) }}"
                     title="{{ e.relname }}" class="subitem-link"
                     {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
                 {% if e.hassubitems %}
                     <button class="expander" title="{{ _('Expand Subitem') }}"
                         onclick="toggleSubtree(this)"></button>
-                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.meta['name']), newtab, parentcaller) }}
+                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.fullname), newtab, parentcaller) }}
                 {% endif %}
             </li>
         {% endfor %}

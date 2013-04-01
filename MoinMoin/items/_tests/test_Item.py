@@ -21,7 +21,7 @@ def build_index(basename, relnames):
     """
     Build a list of IndexEntry by hand, useful as a test helper.
     """
-    return [(IndexEntry(relname, Item.create('/'.join((basename, relname))).meta))
+    return [(IndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
 
 
@@ -31,7 +31,7 @@ def build_mixed_index(basename, spec):
 
     :spec is a list of (relname, hassubitem) tuples.
     """
-    return [(MixedIndexEntry(relname, Item.create('/'.join((basename, relname))).meta, hassubitem))
+    return [(MixedIndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
 
 

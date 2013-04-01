@@ -41,6 +41,14 @@ stores Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`mongodb` Module
+---------------------
+
+.. automodule:: MoinMoin.storage.stores.mongodb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`sqla` Module
 ------------------
 
