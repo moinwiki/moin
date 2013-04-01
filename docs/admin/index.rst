@@ -182,3 +182,7 @@ Now you should have a shared index for all wikis.
 **Note:** Do not build indexes for multiple wikis in parallel. This is not
 supported.
 
+
+Index operations using web interface
+====================================
+When there is no shell access available to perform index operations you can use the web interface available at /%2Bcli/index. You can perform all the index operations documented in `moin index script reference`_ by entering the corresponding ``moin index-*`` commands in the web interface. You must have GAE admin privileges to be able to use the web interface if you are running moin on Google AppEngine.
