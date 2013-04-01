@@ -47,7 +47,7 @@ config.
 Why use Python for configuration?
 ---------------------------------
 At first, you might wonder why we use Python code for configuration. One of the 
-reasons is that it is a powerful language. Moinmoin itself is developed in Python 
+reasons is that it is a powerful language. MoinMoin itself is developed in Python
 and using something else would usually mean much more work when developing new 
 functionality.
 
@@ -68,7 +68,7 @@ A wikiconfig.py looks like this::
  MOINCFG = Config  # Flask only likes uppercase characters
  SOMETHING_FLASKY = 'foobar'
 
-Let's go through this line-by-line::
+Let's go through this line-by-line:
 
 0. this declares the encoding of the config file; make sure your editor uses
    the same encoding (character set), especially if you intend to use non-ASCII
@@ -276,6 +276,9 @@ For MoinMoin we require the following XStatic Packages in setup.py:
 * `jquery_file_upload <http://pypi.python.org/pypi/XStatic-jQuery-File-Upload>`_
   loaded in the template file of index view. It allows to upload many files at once.
 
+* `JSON-js <http://pypi.python.org/pypi/XStatic-JSON-js>`_
+  JSON encoders/decoders in JavaScript.
+
 * `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
   used in template file modify_text_html. A WYSIWYG editor similar to word processing 
   desktop editing applications.
@@ -294,16 +297,13 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   a Java applet loaded from template file of modify_anywikidraw. It can be used for 
   editing drawings and diagrams on items.
 
-* `jquery_multi_download <http://pypi.python.org/pypi/XStatic-multiDownload>`_
-  used in the template of index view for multiple parallel downloads.
-
 
 These packages are imported in wikiconfig by::
 
     from xstatic.main import XStatic
     mod_names = ['jquery', 'jquery_file_upload', 'ckeditor',
                  'svgweb', 'svgedit_moin', 'twikidraw_moin',
-                 'anywikidraw', 'jquery_multi_download', ]
+                 'anywikidraw', ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)
@@ -649,6 +649,7 @@ you to configure passlib's CryptContext params within the wiki config, the
 default is this:
 
 ::
+
     passlib_crypt_context = dict(
         schemes=["sha512_crypt", ],
     )
@@ -791,7 +792,7 @@ Notes:
 * As a consequence of the left-to-right and first-match-counts processing,
   you must order ACL entries so that the more specific ones (like for
   "SuperMan") are left of the less specific ones.
-  Usually, you want this order::
+  Usually, you want this order:
 
   1) usernames
   2) special groups
@@ -1015,9 +1016,8 @@ MoinMoin supports storage backends as different ways of storing wiki items.
 
 Setup of storage is rather complex and layered, involving:
 
-* a router middleware that dispatches parts of the namespace to the respective
-  backend
-* ACL checking middlewares that make sure nobody accesses something he/she is not
+* Routing middleware that dispatches by namespace to the respective backend
+* ACL checking middleware that makes sure nobody accesses something he/she is not
   authorized to access
 * Indexing mixin that indexes some data automatically on commit, so items can
   be selected / retrieved faster.
@@ -1027,54 +1027,55 @@ create_simple_mapping
 ---------------------
 This is a helper function to make storage setup easier. It helps you to:
 
-* create a simple setup that uses 3 storage backends internally for these
-  parts of the namespace:
+* create a simple setup that uses 2 storage backends internally for these
+  namespaces:
 
-  - content
+  - default
   - userprofiles
-* configure ACLs protecting these parts of the namespace
-* setup a router middleware that dispatches to these parts of the namespace
+* configure ACLs protecting these namespaces
+* setup a router middleware that dispatches to these backends
 * setup a indexing mixin that maintains an index
 
 Call it as follows::
 
     from MoinMoin.storage import create_simple_mapping
 
-    namespace_mapping, acl_mapping = create_simple_mapping(
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri=...,
-        content_acl=dict(before=...,
+        default_acl=dict(before=...,
                          default=...,
                          after=...,
                          hierarchic=..., ),
-        user_profile_acl=dict(before=...,
+        userprofiles_acl=dict(before=...,
                               default=...,
-                              after=..., ),
+                              after=...,
+                              hierarchiv=False, ),
     )
 
 The `uri` depends on the kind of storage backend and stores you want to use, 
 see below. Usually it is a URL-like string in the form of::
 
-    stores:fs:/srv/mywiki/%(nsname)s/%(kind)s
-    
+    stores:fs:/srv/mywiki/%(backend)s/%(kind)s
+
 `stores` is the name of the backend, followed by a colon, followed by a store
-specification. `fs` is the name of the store, followed by a specification
+specification. `fs` is the type of the store, followed by a specification
 that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 
-`%(nsname)s` placeholder will be replaced 'content' or 'userprofiles' for
+`%(backend)s` placeholder will be replaced by 'default' or 'userprofiles' for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
 In this case, the mapping created will look like this:
 
 +----------------+-----------------------------+
-| Namespace part | Filesystem path for storage |
+| Namespace      | Filesystem path for storage |
 +----------------+-----------------------------+
-| /              | /srv/mywiki/content/        |
+| default        | /srv/mywiki/default/        |
 +----------------+-----------------------------+
-| /UserProfiles/ | /srv/mywiki/userprofiles/   |
+| userprofiles   | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
 
-`content_acl` and `user_profile_acl` are dictionaries specifying the ACLs for
+`default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
 this part of the namespace (normal content, user profiles).
 See the docs about ACLs.
 
@@ -1091,8 +1092,7 @@ routing middleware
 ------------------
 Features:
 
-* dispatches storage access to different backends depending on the item name
-* in POSIX terms, it is something like fstab/mount
+* dispatches storage access to different backends depending on the namespace
 * if you use create_simple_mapping, the router middleware will be set up
   automatically by moin.
 
@@ -1123,10 +1123,10 @@ Configuration::
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
-        content_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
+        default_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                          default=u'All:read,write,create',
                          after=u'', ),
-        user_profile_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
+        userprofiles_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
                               default=u'',
                               after=u'', ),
     )
@@ -1220,6 +1220,15 @@ Features:
 
    add kt store configuration example
 
+mongodb store
+-------------
+Features:
+
+* uses mongodb for storage
+
+.. todo:
+
+   add mongodb store configuration example
 
 memory store
 --------------
@@ -1324,7 +1333,7 @@ well for the built-in server (it will show up on the console) or for Apache2 and
 Logging is very configurable and flexible due to the use of the `logging`
 module of the Python standard library.
 
-The configuration file format is described there::
+The configuration file format is described there:
 
 http://www.python.org/doc/current/library/logging.html#configuring-logging
 
@@ -1339,7 +1348,7 @@ from your adaptor script, e.g. moin.wsgi::
     log.load_config('wiki/config/logging/logfile')
 
 You have to fix that path to use a logging configuration matching your
-needs.
+needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!

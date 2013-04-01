@@ -455,7 +455,7 @@ def setup_from_session():
                                 auth_method=auth_method,
                                 auth_attribs=auth_attribs,
                                 trusted=trusted)
-            if userobj.valid and not userobj.validate_session(session_token):
+            if not userobj.validate_session(session_token):
                 logging.debug("session token doesn't validate")
                 # Destroy current session since it's no longer valid.
                 userobj.logout_session(False)

@@ -26,7 +26,7 @@ class Config(DefaultConfig):
     _root = abspath(join(_here, '..', '..'))
     data_dir = join(_here, 'wiki', 'data')  # needed for plugins package TODO
     index_storage = 'FileStorage', (join(_here, 'wiki', 'index'), ), {}
-    content_acl = None
+    default_acl = None
     item_root = 'FrontPage'
     interwikiname = u'MoinTest'
     interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/')
