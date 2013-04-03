@@ -20,7 +20,7 @@ def add_support_to_path():
             import jinja2
             import whoosh
         except ImportError:
-            raise Exception("No support directory found. You need a directory containing all the dependencies to run moin at {0}".format(support_path))
+            raise Exception("No support directory found. You need a directory containing all the dependencies to run moin at {0}.".format(support_path))
 
 add_support_to_path()
 
