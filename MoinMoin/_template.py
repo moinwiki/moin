@@ -1,4 +1,4 @@
-# Copyright: 2012 MoinMoin:YourNameHere
+# Copyright: 2013 MoinMoin:YourNameHere
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
