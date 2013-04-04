@@ -133,10 +133,12 @@ to build an index::
  moin index-build
 
 
-Installing PIL
-~~~~~~~~~~~~~~
+Installing PIL / pillow
+~~~~~~~~~~~~~~~~~~~~~~~
 For some image processing functions that MoinMoin uses like resizing and rotating,
-you need PIL, which is the Python Imaging Library.
+you need PIL, which is the Python Imaging Library (sometimes also referred to as
+python-imaging). Instead of PIL, you can also use pillow, which is a compatible
+fork of PIL (with more active maintenance and it also has been ported to Python 3).
 
 Windows users who want to install PIL should skip the remainder of this section and read
 Troubleshooting -- PIL Installation Under Windows below.
@@ -151,7 +153,12 @@ So, if you want jpeg support, make sure you have the jpeg libs/headers::
 
 Now activate your virtual environment and install PIL into it::
 
- pip install pil # for Linux or other POSIX OSes
+ pip install pil  # for Linux (or other POSIX OSes)
+
+Alternatively, if you prefer to use pillow::
+
+ pip install pillow  # for Linux (or other POSIX OSes)
+
 
 Troubleshooting
 ---------------
@@ -202,8 +209,8 @@ Now install each package into your virtual env manually:
 
 Repeat these steps until you don't see fatal errors.
 
-PIL Installation Under Windows
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PIL/pillow Installation Under Windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PIL version 1.1.7 does not install correctly via "pip install pil" on Windows.
 Some users have had success using "pip install pillow", a fork of PIL fixing
 a packaging issue. Other users have resorted to installing PIL 1.1.6 in the

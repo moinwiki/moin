@@ -336,7 +336,7 @@ class TestItemAcls(object):
     from MoinMoin._tests import wikiconfig
 
     class Config(wikiconfig.Config):
-        content_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+        default_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
         acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
 
     def setup_method(self, method):
@@ -423,7 +423,7 @@ class TestItemHierachicalAcls(object):
     from MoinMoin._tests import wikiconfig
 
     class Config(wikiconfig.Config):
-        content_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+        default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')
@@ -497,7 +497,7 @@ class TestItemHierachicalAclsMultiItemNames(object):
     from MoinMoin._tests import wikiconfig
 
     class Config(wikiconfig.Config):
-        content_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
+        default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
 
     def setup_method(self, method):
         become_trusted(username=u'WikiAdmin')

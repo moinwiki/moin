@@ -34,7 +34,7 @@ class TestStorageEnvironWithoutConfig(object):
         assert storage.has_item(itemname)
 
 
-CONTENT_ACL = dict(
+DEFAULT_ACL = dict(
     before="+All:write",  # need to write to sys pages
     default="All:read,write,admin,create,destroy",
     after="Me:create",
@@ -45,8 +45,8 @@ CONTENT_ACL = dict(
 class TestStorageEnvironWithConfig(object):
 
     class Config(wikiconfig.Config):
-        content_acl = CONTENT_ACL
+        default_acl = DEFAULT_ACL
 
     def test_config(self):
         assert isinstance(app.cfg, wikiconfig.Config)
-        assert app.cfg.content_acl == CONTENT_ACL
+        assert app.cfg.default_acl == DEFAULT_ACL
