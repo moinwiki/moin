@@ -154,7 +154,7 @@ moin2 is a WSGI application and uses:
 * EmeraldTree for xml and tree processing
 * blinker for signalling
 * pygments for syntax highlighting
-* for stores: filesystem, sqlite3, sqlalchemy, kyoto cabinet/tycoon, memory
+* for stores: filesystem, sqlite3, sqlalchemy, kyoto cabinet/tycoon, mongodb, memory
 * jquery javascript lib
 * CKeditor, the GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools
@@ -228,7 +228,7 @@ data, see `MoinMoin.storage.backends`.
 
 Above that, there is miscellaneous functionality in `MoinMoin.storage.middleware` for:
 
-* routing by name to some specific backend, like fstab / mount
+* routing by namespace to some specific backend
 * indexing metadata and data + comfortable and fast index-based access,
   selection and search
 * protecting items by ACLs (Access Control Lists)

@@ -54,7 +54,7 @@ def create_mapping(uri, namespaces, backends, acls):
 
 
 def create_simple_mapping(uri='stores:fs:instance',
-                          content_acl=None, user_profile_acl=None):
+                          default_acl=None, userprofiles_acl=None):
     """
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
@@ -79,10 +79,10 @@ def create_simple_mapping(uri='stores:fs:instance',
                  to below /path/to/store/.
     """
     # if no acls are given, use something mostly harmless:
-    if not content_acl:
-        content_acl = dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)
-    if not user_profile_acl:
-        user_profile_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
+    if not default_acl:
+        default_acl = dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)
+    if not userprofiles_acl:
+        userprofiles_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES + ':': BACKEND_USERPROFILES,
@@ -92,7 +92,7 @@ def create_simple_mapping(uri='stores:fs:instance',
         BACKEND_USERPROFILES: None,
     }
     acls = {
-        NAMESPACE_USERPROFILES + ':': user_profile_acl,
-        NAMESPACE_DEFAULT: content_acl,
+        NAMESPACE_USERPROFILES + ':': userprofiles_acl,
+        NAMESPACE_DEFAULT: default_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

@@ -718,7 +718,18 @@ class User(object):
             return self.generate_session_token()
 
     def validate_session(self, token):
-        """ Check if the session token is valid. """
+        """ Check if the session token is valid.
+
+        Invalid session tokens happen for these cases:
+        a) there are multiple sessions (different machines, different browsers)
+           open for same user. the user then changes the password in one of
+           these, which creates a new session key in the profile also, which
+           invalidates all sessions everywhere else for this user.
+        b) the user profile is gone (e.g. due to erasing the storage), then
+           a invalid session key will be read from the profile (from cfg.user_defaults)
+           that will never validate against the session key read from the
+           session.
+        """
         # Ignore timeout, it's already handled by session cookie and session key should never timeout.
         return valid_token(self.profile[SESSION_KEY], token, None)
 

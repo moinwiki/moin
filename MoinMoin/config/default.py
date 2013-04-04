@@ -451,6 +451,8 @@ options_no_group_name = {
         ('create_index', False, "Create (initialize) the index before trying to use them."),
         ('destroy_storage', False, "Destroy (empty) the storage backends after using them."),
         ('destroy_index', False, "Destroy (empty) the index after using it."),
+
+        ('mimetypes_to_index_as_empty', [], "List of mimetypes which are indexed as though they were empty."),
     )),
     # ==========================================================================
     'items': ('Special Item Names', None, (
@@ -479,6 +481,7 @@ options_no_group_name = {
             SHOW_COMMENTS: False,
             WANT_TRIVIAL: False,
             ENC_PASSWORD: u'',  # empty value == invalid hash
+            SESSION_KEY: u'',  # empty value == invalid key
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],

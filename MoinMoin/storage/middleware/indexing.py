@@ -84,7 +84,7 @@ from MoinMoin.constants.keys import ITEMTYPE
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from MoinMoin.themes import utctimestamp
-from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
+from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 
 
@@ -192,6 +192,10 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
         def tell(self, *args, **kw):
             return self.data.tell(*args, **kw)
+
+    if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
+        logging.info("not indexing content of %r as requested by configuration".format(meta[NAME]))
+        return u''
 
     if not item_name:
         item_name = get_names(meta)[0]
@@ -1060,6 +1064,7 @@ class Item(object):
             logging.warning("metadata validation failed, see below")
             for e in m.children:
                 logging.warning("{0}, {1}".format(e.valid, e))
+            logging.warning("data validation skipped as we have no valid metadata")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError('metadata validation failed and strict handling requested, see the log for details')
 
@@ -1070,6 +1075,11 @@ class Item(object):
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+
+        if valid and not validate_data(meta, data):  # need valid metadata to validate data
+            logging.warning("data validation failed")
+            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+                raise ValueError('data validation failed and strict handling requested, see the log for details')
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]

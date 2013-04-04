@@ -31,6 +31,7 @@ from ._logfile19 import LogFile
 
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
@@ -270,6 +271,7 @@ class PageRevision(object):
         meta[ITEMID] = itemid
         meta[REVID] = make_uuid()
         meta[NAMESPACE] = NAMESPACE_DEFAULT
+        meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         self.meta = {}
         for k, v in meta.iteritems():
             if isinstance(v, list):
@@ -345,6 +347,7 @@ class AttachmentRevision(object):
         meta[SIZE] = size
         meta[ITEMID] = make_uuid()
         meta[REVID] = make_uuid()
+        meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         self.meta = meta
 
 

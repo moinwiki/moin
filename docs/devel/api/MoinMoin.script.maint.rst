@@ -17,14 +17,6 @@ maint Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`modified_systemitems` Module
-----------------------------------
-
-.. automodule:: MoinMoin.script.maint.modified_systemitems
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`modify_item` Module
 -------------------------
 

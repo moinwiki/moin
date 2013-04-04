@@ -45,7 +45,7 @@ from MoinMoin.storage import create_simple_mapping
 
 def init_test_app(given_config):
     namespace_mapping, backend_mapping, acl_mapping = \
-        create_simple_mapping("stores:memory:", given_config.content_acl)
+        create_simple_mapping("stores:memory:", given_config.default_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
         backend_mapping=backend_mapping,
