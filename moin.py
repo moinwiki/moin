@@ -15,7 +15,12 @@ def add_support_to_path():
     support_path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support'))
     if support_path not in sys.path:
         sys.path.insert(0, support_path)
-
+        try:
+            import flask
+            import jinja2
+            import whoosh
+        except ImportError:
+            raise Exception("No support directory found. You need a directory containing all the dependencies to run moin at {0}.".format(support_path))
 
 add_support_to_path()
 
