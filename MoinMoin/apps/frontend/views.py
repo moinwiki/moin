@@ -348,9 +348,10 @@ def show_item(item_name, rev):
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
+        result = item.do_show(rev)
     except AccessDenied:
         abort(403)
-    return item.do_show(rev)
+    return result
 
 
 @frontend.route('/<itemname:item_name>/')  # note: unwanted trailing slash
