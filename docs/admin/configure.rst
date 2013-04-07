@@ -621,12 +621,34 @@ To help users choose reasonable passwords, moin has a simple builtin
 password checker that is enabled by default and does some sanity checks, 
 so users don't choose easily crackable passwords.
 
-If your site has rather low security requirements, you can disable the checker by::
+It **does** check:
 
-    password_checker = None # no password checking
+* length of password (default minimum: 8)
+* amount of different characters in password (default minimum: 5)
+* password does not contain user name
+* user name does not contain password
+* password is not a keyboard sequence (like "ASDFghjkl" or "987654321"),
+  currently we have only US and DE keyboard data built-in.
 
-Note that the builtin password checker only does a few very fundamental
-checks, it e.g. won't forbid using a dictionary word as password.
+It **does not** check:
+
+* whether the password is in a well-known dictionary or password list
+* whether a password cracker can break it
+
+If you are not satisfied with the default values, you can easily customize the
+checker::
+
+    from MoinMoin.config.default import DefaultConfig, _default_password_checker
+    password_checker = lambda cfg, name, pw: _default_password_checker(
+                           cfg, name, pw, min_length=10, min_different=6)
+
+You could also completely replace it with your own implementation.
+
+If your site has rather low security requirements, you can disable the checker
+by::
+
+    password_checker = None  # no password checking
+
 
 Password storage
 ----------------

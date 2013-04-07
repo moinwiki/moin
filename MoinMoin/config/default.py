@@ -261,7 +261,8 @@ class DefaultConfig(ConfigFunctionality):
     # the options dictionary.
 
 
-def _default_password_checker(cfg, username, password):
+def _default_password_checker(cfg, username, password,
+                              min_length=8, min_different=5):
     """ Check if a password is secure enough.
         We use a built-in check to get rid of the worst passwords.
 
@@ -274,10 +275,12 @@ def _default_password_checker(cfg, username, password):
                  some unicode object with an error msg, if the password is problematic.
     """
     # in any case, do a very simple built-in check to avoid the worst passwords
-    if len(password) < 6:
-        return _("Password is too short.")
-    if len(set(password)) < 4:
-        return _("Password has not enough different characters.")
+    if len(password) < min_length:
+        return _("For a password a minimum length of %(min_length)d characters is required.",
+                 min_length=min_length)
+    if len(set(password)) < min_different:
+        return _("For a password a minimum of %(min_different)d different characters is required.",
+                 min_different=min_different)
 
     username_lower = username.lower()
     password_lower = password.lower()
@@ -329,7 +332,7 @@ options_no_group_name = {
          [],
          "Exclude unwanted endpoints (list of strings)"),
         ('password_checker', DefaultExpression('_default_password_checker'),
-         'checks whether a password is acceptable (default check is length >= 6, at least 4 different chars, no keyboard sequence, not username used somehow (you can switch this off by using `None`)'),
+         'does simple checks whether a password is acceptable (you can switch this off by using `None` or enhance it by using a custom checker)'),
 
         ('passlib_crypt_context', dict(
             # schemes we want to support (or deprecated schemes for which we still have
