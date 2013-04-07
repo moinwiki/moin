@@ -6,8 +6,8 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.recoverpass')) }}
   {{ forms.render_errors(form) }}
   <dl>
-    {{ forms.render(form['username']) }}
     {{ forms.render(form['token']) }}
+    {{ forms.render(form['username']) }}
     {{ forms.render(form['password1']) }}
     {{ forms.render(form['password2']) }}
   </dl>

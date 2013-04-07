@@ -473,6 +473,12 @@ class User(object):
         # Invalidate all other browser sessions except this one.
         session['user.session_token'] = self.generate_session_token(False)
 
+    def has_invalidated_password(self):
+        """
+        Check if the password hash of this user is invalid.
+        """
+        return self.profile[ENC_PASSWORD] == ''
+
     def save(self, force=False):
         """
         Save user account data to user account file on disk.
@@ -752,13 +758,21 @@ class User(object):
         self.save()
         return True
 
-    def mail_password_recovery(self, cleartext_passwd=None):
+    def mail_password_recovery(self, cleartext_passwd=None, subject=None, text=None):
         """ Mail a user who forgot his password a message enabling
             him to login again.
         """
+        if not self.email:
+            return False, "user has no E-Mail address in his profile."
+
         token = self.generate_recovery_token()
 
-        text = _("""\
+        if subject is None:
+            subject = _('[%(sitename)s] Your wiki password recovery link', sitename='%(sitename)s')
+        subject = subject % dict(sitename=self._cfg.sitename or "Wiki")
+
+        if text is None:
+            text = _("""\
 Somebody has requested to email you a password recovery link.
 
 Please use the link below to change your password to a known value:
@@ -766,11 +780,9 @@ Please use the link below to change your password to a known value:
 %(link)s
 
 If you didn't forget your password, please ignore this email.
+""", link='%(link)s')
+        text = text % dict(link=url_for('frontend.recoverpass', username=self.name0, token=token, _external=True))
 
-""", link=url_for('frontend.recoverpass', username=self.name0, token=token, _external=True))
-
-        subject = _('[%(sitename)s] Your wiki password recovery link',
-                    sitename=self._cfg.sitename or "Wiki")
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 

@@ -8,6 +8,9 @@ MoinMoin - set a user password
 """
 
 
+import sys
+
+from flask import current_app as app
 from flask.ext.script import Command, Option
 
 from MoinMoin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL
@@ -23,17 +26,25 @@ class NoSuchUser(Fault):
     """raised if no such user exists"""
 
 
+class UserHasNoEMail(Fault):
+    """raised if user has no e-mail address in his profile"""
+
+
 class MailFailed(Fault):
     """raised if e-mail sending failed"""
 
 
-def set_password(uid, password, notify=False):
+def set_password(uid, password, notify=False, skip_invalid=False, subject=None, text=None):
     u = user.User(uid)
     if u and u.exists():
+        if skip_invalid and u.has_invalidated_password():
+            return
         u.set_password(password)
         u.save()
-        if notify and not u.disabled and u.email:
-            mailok, msg = u.mail_password_recovery()
+        if not u.email:
+            raise UserHasNoEMail('User profile does not have an E-Mail address (name: %r id: %r)!' % (u.name, u.id))
+        if notify and not u.disabled:
+            mailok, msg = u.mail_password_recovery(subject=subject, text=text)
             if not mailok:
                 raise MailFailed(msg)
     else:
@@ -55,14 +66,29 @@ class Set_Password(Command):
                help='Notify user(s), send them an E-Mail with a password reset link.'),
         Option('--verbose', '-v', required=False, dest='verbose', action='store_true', default=False,
                help='Verbose operation'),
+        Option('--subject', required=False, dest='subject', type=unicode,
+               help='Subject text for the password reset notification E-Mail.'),
+        Option('--text', required=False, dest='text', type=unicode,
+               help='Template text for the password reset notification E-Mail. Default: use the builtin standard template'),
+        Option('--text-from-file', required=False, dest='text_file', type=unicode,
+               help='Read full template for the password reset notification E-Mail from the given file, overrides --text. Default: None'),
+        Option('--skip-invalid', required=False, dest='skip_invalid', action='store_true',
+               help='If a user\'s password hash is already invalid (pw is already reset), skip this user.'),
     )
 
-    def run(self, name, uid, password, all_users, notify, verbose):
+    def run(self, name, uid, password, all_users, notify, verbose, subject, text, text_file, skip_invalid):
         flags_given = name or uid or all_users
         if not flags_given:
             print 'incorrect number of arguments'
-            import sys
-            sys.exit()
+            sys.exit(1)
+
+        if notify and not app.cfg.mail_enabled:
+            print "This wiki is not enabled for mail processing. The --notify option requires this. Aborting..."
+            sys.exit(1)
+
+        if text_file:
+            with open(text_file) as f:
+                text = f.read().decode('utf-8')
 
         before_wiki()
         if uid:
@@ -79,8 +105,9 @@ class Set_Password(Command):
             name = meta[NAME]
             email = meta[EMAIL]
             try:
-                set_password(uid, password, notify=notify)
-            except Fault, err:
+                set_password(uid, password, notify=notify, skip_invalid=skip_invalid,
+                             subject=subject, text=text)
+            except Fault as err:
                 status = "FAILURE: [%s]" % str(err)
             else:
                 status = "SUCCESS"
