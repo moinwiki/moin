@@ -20,10 +20,12 @@ from flatland.util import class_cloner, Unspecified
 from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
 
+from whoosh.query import Term, Or, Not, And
+
 from flask import g as flaskg
 
 from MoinMoin.constants.forms import *
-from MoinMoin.constants.keys import ITEMID, NAME
+from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
 
@@ -71,12 +73,36 @@ class ValidJSON(Validator):
     """Validator for JSON
     """
     invalid_json_msg = L_('Invalid JSON.')
+    invalid_name_msg = ""
+
+    def validname(self, meta, name, itemid):
+        names = meta.get(NAME)
+        if names is None:
+            self.invalid_name_msg = L_("No name field in the JSON meta.")
+            return False
+        if len(names) != len(set(names)):
+            self.invalid_name_msg = L_("The names in the JSON name list must be unique.")
+            return False
+        query = Or([Term(NAME, x) for x in names])
+        if itemid is not None:
+            query = And([query, Not(Term(ITEMID, itemid))])
+        duplicate_names = set()
+        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+            results = searcher.search(query)
+            for result in results:
+                duplicate_names |= set([x for x in result[NAME] if x in names])
+        if duplicate_names:
+            self.invalid_name_msg = L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names))
+            return False
+        return True
 
     def validate(self, element, state):
         try:
-            json.loads(element.value)
+            meta = json.loads(element.value)
         except:  # catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
+        if not self.validname(meta, state[NAME], state[ITEMID]):
+            return self.note_error(element, state, 'invalid_name_msg')
         return True
 
 JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
