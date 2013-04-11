@@ -228,92 +228,18 @@ function toggleSubtree(item) {
 
 
 
-// guessContentType is a helper function for the transcludeSubitem and linkSubItem functions defined below.
-function guessContentType() {
-    "use strict";
-    // Used in the modify_text template to guess the data content type client-side
-    // This approach has the advantage of reacting to content type changes for the
-    // link/transclude code without having to re-fetch the page
-    var match,
-        meta_text = $("#f_meta_text").val(),
-        ctype_regex = /["']contenttype["']\s*:\s*["']([\w-_+.]+\/[\w-_+.]+)(;|["'])/;
-    if (meta_text) {
-        match = ctype_regex.exec(meta_text);
-        if (match) {return match[1]; }
-    }
-    // text/plain is the default value
-    return "text/plain";
-}
-
-// Executed when user clicks transclude-action button defined in modify_text.html.
+// Executed when user clicks insert-name button defined in modify.html.
 // When a page with subitems is modified, a subitems sidebar is present. User may
-// position caret in textarea and click button to insert transclusion into textarea.
-function transcludeSubitem(subitem_name, fullname) {
+// position caret in textarea and click button to insert name into textarea.
+function InsertName(fullname) {
     "use strict";
-    function moinwiki(subitem_name, fullname) {
-        // note: keep the many plusses, to avoid jinja2 templating kicking in
-        // when seeing two curly opening / closing braces
-        return "{" + "{" + fullname.replace("{" + "{", "\\" + "}" + "}") + "}" + "} ";
-    }
-    function mediawiki(subitem_name, fullname) {
-        // note: keep the many plusses, to avoid jinja2 templating kicking in
-        // when seeing two curly opening / closing braces
-        return "{" + "{:" + fullname.replace("}" + "}", "\\" + "}" + "}") + "}" + "} ";
-    }
-    function rst(subitem_name, fullname) {
-        return "\n.. include:: " + subitem_name + "\n";
-    }
-    function docbook(subitem_name, fullname) {
-        return ""; //XXX: the docbook converter currently doesn't handle transclusion with <ref> tags
-    }
-    var transclude_formats = {
-            "text/x.moin.wiki" : moinwiki,
-            "text/x.moin.creole" : moinwiki,
-            "text/x-mediawiki" : mediawiki,
-            "text/x-rst" : rst,
-            "application/docbook+xml" : docbook,
-            "text/plain" : function (x) {return x + " "; }
-        },
-        ctype = guessContentType(),
-        input_element = $("#f_content_form_data_text"),
-        ctype_format = transclude_formats[ctype];
-    if (!ctype_format) {
-        ctype_format = transclude_formats["text/plain"];
-    }
-    input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
-    input_element.focus();
-}
-
-// Executed when user clicks link-action button defined in modify_text.html.
-// When a page with subitems is modified, a subitems sidebar is present. User may
-// position caret in textarea and click button to insert link into textarea.
-function linkSubitem(subitem_name, fullname) {
-    "use strict";
-    function moinwiki(subitem_name, fullname) {
-        return "[[" + fullname.replace("]", "\\]") + "|" + subitem_name.replace("]", "\\]") + "]] ";
-    }
-    function rst(subitem_name, fullname) {
-        return "`" + subitem_name.replace(">", "\\>").replace("`", "\\`") + " <" + fullname.replace(">", "\\>") + ">`_ ";
-    }
-    function docbook(subitem_name, fullname) {
-        return '<ulink url="/' + fullname.replace('"', '\\"') + '">' + subitem_name + "</ulink>";
-    }
-    var link_formats = {
-            "text/x.moin.wiki" : moinwiki,
-            "text/x.moin.creole" : moinwiki,
-            "text/x-mediawiki" : moinwiki,
-            "text/x-rst" : rst,
-            "application/docbook+xml" : docbook,
-            "text/plain" : function (x) {return x + " "; }
-        },
-        ctype = guessContentType(),
-        input_element = $("#f_content_form_data_text"),
-        ctype_format = link_formats[ctype];
-    if (!ctype_format) {
-        ctype_format = link_formats["text/plain"];
-    }
-    input_element.val(input_element.val() + ctype_format(subitem_name, fullname));
-    input_element.focus();
+    var textArea, scrollTop, endPos, startPos;
+    textArea = document.getElementById('f_content_form_data_text');
+    startPos = textArea.selectionStart;
+    endPos = textArea.selectionEnd;
+    textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
+    textArea.focus();
+    textArea.setSelectionRange(startPos+fullname.length,startPos+fullname.length);
 }
 
 
