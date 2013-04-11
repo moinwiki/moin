@@ -727,7 +727,8 @@ class Default(Contentful):
                     # break them
                     return "OK"
             form = self.ModifyForm.from_request(request)
-            if form.validate():
+            state = dict(name=self.name, itemid=self.meta.get(ITEMID))
+            if form.validate(state):
                 meta, data, contenttype_guessed, comment = form._dump(self)
                 contenttype_qs = request.values.get('contenttype')
                 try:
