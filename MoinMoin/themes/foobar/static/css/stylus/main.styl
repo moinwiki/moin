@@ -38,14 +38,15 @@ dir = left  // 'left' means left-to-right (ltr), 'right' means right-to-left (rt
 
 scale = 1  // we have the whole screen width as base
 global_tray_width = 100% / 6 * scale
+local_panel_width = 100% / 6 * scale
 global_padding_width = 0.5% * scale
-main_container_width = 99.8% - global_tray_width - (4 * global_padding_width)
+local_padding_width = 0.5% * scale
+
+main_container_width = 99.3% - global_tray_width - (4 * global_padding_width)
 
 scale = 100% / main_container_width  // we have the main container width as base
-local_panel_width = 100% / 6 * scale
-local_padding_width = 0.5% * scale
-content_width_with_panel = 99.8% - local_panel_width - (4 * local_padding_width)
-content_width_no_panel = 99.8% - (2 * local_padding_width)
+content_width_with_panel = 99.3% - local_panel_width - (4 * local_padding_width)
+content_width_no_panel = 99.3% - (2 * local_padding_width)
 
 body
     color font_color
