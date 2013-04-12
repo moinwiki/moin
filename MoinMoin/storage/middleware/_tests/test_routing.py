@@ -63,8 +63,8 @@ def test_store_get_del(router):
     assert other_name.split(':')[1] == other_meta[NAME][0]
 
     # delete revs:
-    router.remove(default_backend_name, default_revid)
-    router.remove(other_backend_name, other_revid)
+    router.remove(default_backend_name, default_revid, destroy_data=True)
+    router.remove(other_backend_name, other_revid, destroy_data=True)
 
 
 def test_store_readonly_fails(router):

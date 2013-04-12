@@ -132,8 +132,8 @@ class Backend(MutableBackendBase):
         meta[BACKENDNAME] = backend_name
         return backend_name, revid
 
-    def remove(self, backend_name, revid):
+    def remove(self, backend_name, revid, destroy_data):
         backend = self.backends[backend_name]
         if not isinstance(backend, MutableBackendBase):
             raise TypeError('backend {0} is readonly'.format(backend_name))
-        backend.remove(revid)
+        backend.remove(revid, destroy_data)

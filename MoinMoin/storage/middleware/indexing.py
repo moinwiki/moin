@@ -75,7 +75,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.constants.keys import (WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, LANGUAGE,
                                      USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, CONTENT,
                                      EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, DISABLED, EMAIL, OPENID,
-                                     ITEMID, REVID, CURRENT, PARENTID, PTIME, LATEST_REVS, ALL_REVS, BACKENDNAME)
+                                     ITEMID, REVID, CURRENT, PARENTID, PTIME, LATEST_REVS, ALL_REVS, BACKENDNAME, DATAID)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin.constants import keys
@@ -301,6 +301,8 @@ class IndexingMiddleware(object):
             COMMENT: TEXT(stored=True),
             # SUMMARY from metadata
             SUMMARY: TEXT(stored=True),
+            # DATAID from metadata
+            DATAID: ID(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True),
         }
@@ -1111,7 +1113,10 @@ class Item(object):
         Destroy revision <revid>.
         """
         rev = Revision(self, revid)
-        self.backend.remove(rev.backend_name, revid)
+        query = {DATAID: rev.meta[DATAID]}
+        with flaskg.storage.indexer.ix[ALL_REVS].searcher() as searcher:
+            refcount = len(list(searcher.document_numbers(**query)))
+        self.backend.remove(rev.backend_name, revid, destroy_data=refcount == 1)
         self.indexer.remove_revision(revid)
 
     def destroy_all_revisions(self):

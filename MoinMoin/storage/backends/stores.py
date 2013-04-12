@@ -168,8 +168,9 @@ class MutableBackend(Backend, MutableBackendBase):
     def _del_data(self, dataid):
         del self.data_store[dataid]
 
-    def remove(self, metaid):
+    def remove(self, metaid, destroy_data):
         meta = self._get_meta(metaid)
         dataid = meta[DATAID]
         self._del_meta(metaid)
-        self._del_data(dataid)
+        if destroy_data:
+            self._del_data(dataid)

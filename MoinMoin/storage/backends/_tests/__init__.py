@@ -62,7 +62,7 @@ class MutableBackendTestBase(BackendTestBase):
         assert m == meta
         assert d.read() == data
         d.close()
-        self.be.remove(metaid)
+        self.be.remove(metaid, destroy_data=True)
         with pytest.raises(KeyError):
             self.be.retrieve(metaid)
 
