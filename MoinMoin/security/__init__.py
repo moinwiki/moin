@@ -152,7 +152,7 @@ class AccessControlList(AutoNe):
 
             +SomeUser:read -OtherUser:write
 
-        The acl line above will grant SomeUser read right, and OtherUser
+        The acl line above will grant SomeUser read right, and deny OtherUser
         write right, but will NOT block automatically all other rights
         for these users. For example, if SomeUser asks to write, the
         above acl line does not define if he can or can not write. He
