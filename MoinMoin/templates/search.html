@@ -56,7 +56,7 @@
                             {% endif %}
                             <tr>
                                 <td>
-                                    <p class="info searchhitinfobar">{{ _("Revision: %(revid)s Last Change: %(mtime)s", revid=result['revid'], mtime=result['mtime']|datetimeformat) }}</p>
+                                    <p class="info searchhitinfobar">{{ _("Revision: %(revid)s Last Change: %(mtime)s", revid=result['revid']|shorten_id, mtime=result['mtime']|datetimeformat) }}</p>
                                 </td>
                             </tr>
                             <tr>
