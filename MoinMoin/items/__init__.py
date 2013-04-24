@@ -455,7 +455,7 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=u'',
+    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
@@ -490,7 +490,7 @@ class Item(object):
         else:
             meta[NAME] = [name]
 
-        if comment:
+        if comment is not None:
             meta[COMMENT] = unicode(comment)
 
         if not overwrite and REVID in meta:
