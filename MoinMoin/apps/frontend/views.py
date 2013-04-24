@@ -1492,7 +1492,7 @@ def usersettings():
                             for name in new_names:
                                 if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
-                                    response['flash'].append((_("The username %(name)r is already in use.", name=name),
+                                    response['flash'].append((_("The username '%(name)s' is already in use.", name=name),
                                                               "error"))
                                     success = False
                     if part == 'notification':
