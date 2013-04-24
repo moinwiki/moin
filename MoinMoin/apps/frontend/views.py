@@ -57,6 +57,7 @@ from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item
 from MoinMoin.search import SearchForm
+from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_displayed, item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
@@ -141,6 +142,10 @@ class LookupForm(Form):
     submit_label = L_('Lookup')
 
 
+def analyze(analyzer, text):
+    return [token.text for token in analyzer(text, mode='index')]
+
+
 @frontend.route('/+lookup', methods=['GET', 'POST'])
 def lookup():
     """
@@ -188,27 +193,37 @@ def lookup():
                     term = Term(key, value)
                 terms.append(term)
         if terms:
+            LookupEntry = namedtuple('LookupEntry', 'name revid wikiname')
+            name = lookup_form[NAME].value
+            name_exact = lookup_form[NAME_EXACT].value or u''
             terms.append(Term(WIKINAME, app.cfg.interwikiname))
             q = And(terms)
             with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
                 flaskg.clock.start('lookup')
                 results = searcher.search(q, limit=100)
                 flaskg.clock.stop('lookup')
-                num_results = results.scored_length()
-                if num_results == 1:
-                    result = results[0]
-                    rev = result[REVID] if history else CURRENT
-                    url = url_for('.show_item', item_name=result[NAME], rev=rev)
+                lookup_results = []
+                for result in results:
+                    analyzer = item_name_analyzer()
+                    lookup_results += [LookupEntry(n, result[REVID], result[WIKINAME])
+                                       for n in result[NAME]
+                                       if not name or name.lower() in analyze(analyzer, n)
+                                       if n.startswith(name_exact)]
+
+                if len(lookup_results) == 1:
+                    result = lookup_results[0]
+                    rev = result.revid if history else CURRENT
+                    url = url_for('.show_item', item_name=result.name, rev=rev)
                     return redirect(url)
                 else:
                     flaskg.clock.start('lookup render')
                     html = render_template('lookup.html',
                                            title_name=title_name,
                                            lookup_form=lookup_form,
-                                           results=results,
+                                           results=lookup_results,
                     )
                     flaskg.clock.stop('lookup render')
-                    if not num_results:
+                    if not lookup_results:
                         status = 404
                     return Response(html, status)
     html = render_template('lookup.html',
