@@ -86,6 +86,7 @@ class TicketSubmitForm(TicketForm):
             CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
             'closed': False,
         }
+        meta.update(self['meta'].value)
         return meta, message_markup(self['message'].value)
 
 
