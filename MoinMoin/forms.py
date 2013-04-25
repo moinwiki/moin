@@ -246,7 +246,7 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
     @classmethod
     def _get_choice_specs(cls):
         revs = flaskg.storage.search(cls._query, **cls._query_args)
-        choices = [(rev.meta[ITEMID], rev.meta[NAME]) for rev in revs]
+        choices = [(rev.meta[ITEMID], rev.meta[NAME][0]) for rev in revs]
         if cls.optional:
             choices.append((u'', cls.properties['empty_label']))
         return choices

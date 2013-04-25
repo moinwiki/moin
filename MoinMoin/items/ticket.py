@@ -130,7 +130,7 @@ def message_markup(message):
 
 %(message)s
 }}}}}}
-''' % dict(author=flaskg.user.name, timestamp=time.time(), message=message)
+''' % dict(author=flaskg.user.name[0], timestamp=time.time(), message=message)
 
 
 @register
