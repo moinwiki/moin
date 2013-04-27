@@ -338,9 +338,7 @@ class Converter(object):
         Return value is an str, one of the following:
             image, video, audio, object
         """
-        if Type('image/').issupertype(mimetype) and not Type('image/svg+xml').issupertype(mimetype):
-            # Firefox fails completely to show svg in img tags (displays: nothing).
-            # Firefox displays them with on object tag (but sometimes displays scrollbars without need).
+        if Type('image/').issupertype(mimetype):
             return "img"
         elif Type('video/').issupertype(mimetype):
             return "video"
