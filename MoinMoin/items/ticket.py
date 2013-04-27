@@ -86,6 +86,7 @@ class TicketSubmitForm(TicketForm):
             CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8',
             'closed': False,
         }
+        meta.update(self['meta'].value)
         return meta, message_markup(self['message'].value)
 
 
@@ -129,7 +130,7 @@ def message_markup(message):
 
 %(message)s
 }}}}}}
-''' % dict(author=flaskg.user.name, timestamp=time.time(), message=message)
+''' % dict(author=flaskg.user.name[0], timestamp=time.time(), message=message)
 
 
 @register

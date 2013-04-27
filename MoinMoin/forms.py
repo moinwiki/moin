@@ -244,9 +244,9 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
         return cls
 
     @classmethod
-    def _get_choices(cls):
+    def _get_choice_specs(cls):
         revs = flaskg.storage.search(cls._query, **cls._query_args)
-        choices = [(rev.meta[ITEMID], rev.meta[NAME]) for rev in revs]
+        choices = [(rev.meta[ITEMID], rev.meta[NAME][0]) for rev in revs]
         if cls.optional:
             choices.append((u'', cls.properties['empty_label']))
         return choices
@@ -256,9 +256,9 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
         # NOTE There is a slight chance of two instances of the same Reference
         # subclass having different set of choices when the storage changes
         # between their initialization.
-        choices = self._get_choices()
-        self.properties['labels'] = dict(choices)
-        self.valid_values = [id_ for id_, name in choices]
+        choice_specs = self._get_choice_specs()
+        self.properties['choice_specs'] = choice_specs
+        self.valid_values = [id_ for id_, name in choice_specs]
 
 
 class BackReference(ReadonlyItemLinkList):
