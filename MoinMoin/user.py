@@ -29,7 +29,7 @@ from babel import parse_locale
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import session, request, url_for
+from flask import session, request, url_for, render_template
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -770,18 +770,9 @@ class User(object):
         if subject is None:
             subject = _('[%(sitename)s] Your wiki password recovery link', sitename='%(sitename)s')
         subject = subject % dict(sitename=self._cfg.sitename or "Wiki")
-
         if text is None:
-            text = _("""\
-Somebody has requested to email you a password recovery link.
-
-Please use the link below to change your password to a known value:
-
-%(link)s
-
-If you didn't forget your password, please ignore this email.
-""", link='%(link)s')
-        text = text % dict(link=url_for('frontend.recoverpass', username=self.name0, token=token, _external=True))
+            link = url_for('frontend.recoverpass', username=self.name0, token=token, _external=True)
+            text = render_template('mail/password_recovery.txt', link=link)
 
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
@@ -790,16 +781,8 @@ If you didn't forget your password, please ignore this email.
         """ Mail a user a link to verify his email address. """
         token = self.generate_recovery_token()
 
-        text = _("""\
-Somebody has created an account with this email address.
-
-Please use the link below to verify your email address:
-
-%(link)s
-
-If you didn't create this account, please ignore this email.
-
-""", link=url_for('frontend.verifyemail', username=self.name0, token=token, _external=True))
+        link = url_for('frontend.verifyemail', username=self.name0, token=token, _external=True)
+        text = render_template('mail/account_verification.txt', link=link)
 
         subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")
