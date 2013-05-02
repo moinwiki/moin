@@ -327,14 +327,14 @@ class IndexingMiddleware(object):
 
         # XXX This is a highly adhoc way to support indexing of ticket items.
         ticket_fields = {
-            'effort': NUMERIC(stored=True),
-            'difficulty': NUMERIC(stored=True),
-            'severity': NUMERIC(stored=True),
-            'priority': NUMERIC(stored=True),
-            'assigned_to': ID(stored=True),
-            'superseded_by': ID(stored=True),
-            'depends_on': ID(stored=True),
-            'closed': BOOLEAN(stored=True),
+            EFFORT: NUMERIC(stored=True),
+            DIFFICULTY: NUMERIC(stored=True),
+            SEVERITY: NUMERIC(stored=True),
+            PRIORITY: NUMERIC(stored=True),
+            ASSIGNED_TO: ID(stored=True),
+            SUPERSEDED_BY: ID(stored=True),
+            DEPENDS_ON: ID(stored=True),
+            CLOSED: BOOLEAN(stored=True),
         }
         latest_revs_fields.update(**ticket_fields)
 
@@ -702,7 +702,7 @@ class IndexingMiddleware(object):
             # username:JoeDoe searches for revisions modified by JoeDoe
             username=userid_pseudo_field_factory(USERID),
             # assigned:JoeDoe searches for tickets assigned to JoeDoe
-            assigned=userid_pseudo_field_factory('assigned_to'),  # XXX should be ASSIGNED_TO
+            assigned=userid_pseudo_field_factory(ASSIGNED_TO),
         )))
         return qp
 
