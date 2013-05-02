@@ -22,7 +22,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
                             Reference, BackReference, SelectSubmit)
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT, SUPERSEDED_BY, DEPENDS_ON, SUBSCRIBED_ITEMS
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm
 from MoinMoin.items.content import NonExistentContent
@@ -57,9 +57,9 @@ class TicketBackRefForm(Form):
 
     def _load(self, item):
         id_ = item.meta[ITEMID]
-        self['supersedes'].set(Term('superseded_by', id_))
-        self['required_by'].set(Term('depends_on', id_))
-        self['subscribers'].set(Term('subscribed_items', id_))
+        self['supersedes'].set(Term(SUPERSEDED_BY, id_))
+        self['required_by'].set(Term(DEPENDS_ON, id_))
+        self['subscribers'].set(Term(SUBSCRIBED_ITEMS, id_))
 
 
 class TicketForm(BaseModifyForm):
