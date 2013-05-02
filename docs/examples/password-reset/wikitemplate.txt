@@ -1,0 +1,59 @@
+Note: some stuff that needs editing is marked with XXX.
+
+= (XXX give date) YYYY-MM-DD Password Reset =
+
+The wiki administrator has invalidated the passwords for all user accounts on this wiki.
+
+You need to do a password recovery to set a ''new and changed'' password for your account.
+
+== Reason(s) for the password invalidation ==
+
+ * (XXX give reason)
+ * (XXX give reason)
+
+== What you need to do ==
+=== Read important information ===
+Please visit these URLs for more information:
+ * http://moinmo.in/HowToHandleSecurityBreach ('''generic advice, MUST READ!''')
+ * http://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (about the specific incident, if you want more information) (XXX fix url)
+
+=== Enter a new password ===
+You should have received an E-Mail (including a link to reset your password). Just read and follow it.
+
+==== Invalid token? ====
+The token has a limited lifetime.
+
+If it says "Token is invalid", you just need to get a new password recovery token, see below.
+
+==== You didn't get the E-Mail? ====
+If you didn't see that E-Mail yet, please check your spam folder (or other folders where mails from the wiki could be).
+
+If you can't find the E-Mail we sent to you, you can alternatively just use the normal password recovery function of the wiki, see below.
+
+==== Getting a new password recovery token ====
+ * go to the login page
+ * click the "Forgot your password?" link
+ * now:
+  * ''either'' enter your wiki username (recommended, if you still remember it or you can find out easily)
+  * ''or'' your E-Mail address (same as in your wiki user profile - you might need multiple tries if you are not sure about this)
+ * check your E-Mail, you should have one now with a password recovery link
+ * click on the link, define a new password
+
+==== Need help? ====
+If that didn't work, you will need help by a wiki administrator, please contact:
+
+(XXX give name and E-Mail address of wiki administrator here XXX)
+
+In your E-Mail, please give:
+ * the wiki address (URL)
+ * your wiki user name
+ * the E-Mail address that you used in your wiki userprofile
+ * if that E-Mail address is not working any more, please tell so
+
+== Questions? ==
+If you have any questions that are not answered by reading this page or the pages linked from here, ask the wiki administrator.
+
+E-Mails asking questions that ''are'' answered on these pages will be ignored.
+
+Instead of answering individually via E-Mail, frequently asked questions might might also get answered on this page or the pages linked from here.
+
