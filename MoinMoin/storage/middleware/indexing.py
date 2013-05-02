@@ -72,14 +72,9 @@ from whoosh.sorting import FieldFacet
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.constants.keys import (WIKINAME, NAMESPACE, NAME, NAME_EXACT, MTIME, CONTENTTYPE, TAGS, LANGUAGE,
-                                     USERID, ADDRESS, HOSTNAME, SIZE, ACTION, COMMENT, SUMMARY, CONTENT,
-                                     EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, ACL, DISABLED, EMAIL, OPENID,
-                                     ITEMID, REVID, CURRENT, PARENTID, PTIME, LATEST_REVS, ALL_REVS, BACKENDNAME, DATAID)
+from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
-from MoinMoin.constants import keys
-from MoinMoin.constants.keys import ITEMTYPE
 
 from MoinMoin import user
 from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
@@ -705,9 +700,9 @@ class IndexingMiddleware(object):
             return userid_pseudo_field
         qp.add_plugin(PseudoFieldPlugin(dict(
             # username:JoeDoe searches for revisions modified by JoeDoe
-            username=userid_pseudo_field_factory(keys.USERID),
+            username=userid_pseudo_field_factory(USERID),
             # assigned:JoeDoe searches for tickets assigned to JoeDoe
-            assigned=userid_pseudo_field_factory('assigned_to'),  # XXX should be keys.ASSIGNED_TO
+            assigned=userid_pseudo_field_factory('assigned_to'),  # XXX should be ASSIGNED_TO
         )))
         return qp
 
@@ -1044,18 +1039,18 @@ class Item(object):
         if wikiname is None:
             wikiname = app.cfg.interwikiname
         state = {'trusted': trusted,
-                 keys.NAME: [name],
-                 keys.ACTION: action,
-                 keys.ADDRESS: remote_addr,
-                 keys.USERID: userid,
-                 keys.WIKINAME: wikiname,
-                 keys.NAMESPACE: None,
-                 keys.ITEMID: self.itemid,  # real itemid or None
+                 NAME: [name],
+                 ACTION: action,
+                 ADDRESS: remote_addr,
+                 USERID: userid,
+                 WIKINAME: wikiname,
+                 NAMESPACE: None,
+                 ITEMID: self.itemid,  # real itemid or None
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
                 }
-        ct = meta.get(keys.CONTENTTYPE)
+        ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema
         else:
