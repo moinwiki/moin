@@ -822,7 +822,7 @@ def _mychanges(userid):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
     revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.name for rev in revs]
+    return set([rev.name for rev in revs])
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
