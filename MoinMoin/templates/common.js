@@ -253,7 +253,8 @@ $(function () {
     // create a UL that will be displayed as row of tabs or column of buttons
     $(function () {
         var tabs = $('#moin-usersettings'),
-            titles = $('<ul class="moin-tab-titles">');
+            titles = $('<ul class="moin-tab-titles">'),
+            hashTag = window.location.hash;
         // for each form on page, create a corresponding LI
         $('.moin-tab-body').each(function () {
             var li = $(document.createElement('li')),
@@ -264,6 +265,7 @@ $(function () {
             // add click handler to show this form and hide all others
             aTagClone.click(function (ev) {
                 var tab = this.hash;
+                window.location.hash = tab;
                 $('.moin-current-tab').removeClass('moin-current-tab');
                 $(ev.target).addClass('moin-current-tab');
                 tabs.children('.moin-tab-body').hide().removeClass('moin-current-form');
@@ -275,8 +277,17 @@ $(function () {
         $('.moin-tabs ul').remove();
         // add tabs/buttons with click handlers to top/side per theme template
         $('.moin-tabs').prepend(titles);
-        // click a tab to show first form and hide all other forms
-        $(titles.children('li').children('a')[0]).click();
+
+        // check for the hashtag and switch tab
+        if (hashTag !== '') {
+            var tab = $('.moin-tab-titles li a[href="'+ hashTag +'"]');
+            if (tab.length !== 0) {
+                $(tab)[0].click();
+            }
+        } else {
+            // click a tab to show first form and hide all other forms
+            $(titles.children('li').children('a')[0]).click();
+        }
 
         // save initial values of each form; used in changeHandler to detect changes to a form
         $('#moin-usersettings form').each(function () {
