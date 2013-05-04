@@ -9,8 +9,6 @@ Features:
 - generate password recovery tokens
 - verify password recovery tokens
 - generate random strings of given length (for salting)
-
-Code is tested on Python 2.6/2.7.
 """
 
 from __future__ import absolute_import, division
