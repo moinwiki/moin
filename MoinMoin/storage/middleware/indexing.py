@@ -134,7 +134,7 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     :param wikiname: interwikiname of this wiki
     :returns: document to put into whoosh index
     """
-    doc = dict([(str(key), value)
+    doc = dict([(key, value)
                 for key, value in meta.items()
                 if key in schema])
     for key in [MTIME, PTIME]:

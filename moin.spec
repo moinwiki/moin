@@ -33,7 +33,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArchitectures: noarch
 BuildRequires:  python-devel
-Requires:       python >= 2.6
+Requires:       python >= 2.7
 
 %description
 
@@ -66,4 +66,6 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jun 21 2010 Thomas Waldmann
 - Raised requirement to Python 2.6 (for MoinMoin 2.0.0alpha).
+* Sat May 4 2013 Thomas Waldmann
+- Raised requirement to Python 2.7 (for MoinMoin 2.0.0alpha).
 

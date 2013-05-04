@@ -17,14 +17,14 @@ fi
 
 # find the right python version
 if [ -z "$PYTHON" ]; then
-    for PYTHON in python{2.7,2.6,2,}; do
+    for PYTHON in python{2.7,2,}; do
         hash $PYTHON 2>&- && break
     done
 fi
 
 # find the right virtualenv version
 if [ -z "$VIRTUALENV" ]; then
-    for VIRTUALENV in virtualenv{2.7,2.6,2,}; do
+    for VIRTUALENV in virtualenv{2.7,2,}; do
         hash $VIRTUALENV 2>&- && break
     done
 fi

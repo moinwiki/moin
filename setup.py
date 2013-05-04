@@ -8,9 +8,9 @@ import os
 
 from MoinMoin import project, version
 
-if sys.hexversion < 0x2060000:
-    # we require 2.6.x or 2.7.x, python 3.x does not work yet.
-    sys.stderr.write("%s %s requires Python 2.6 or greater.\n" % (project, str(version)))
+if sys.hexversion < 0x2070000:
+    # we require 2.7.x, python 3.x does not work yet.
+    sys.stderr.write("%s %s requires Python 2.7.x.\n" % (project, str(version)))
     sys.exit(1)
 
 with open('README.txt') as f:
@@ -44,7 +44,6 @@ License :: OSI Approved :: GNU General Public License (GPL)
 Natural Language :: English
 Operating System :: OS Independent
 Programming Language :: Python
-Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
 Topic :: Internet :: WWW/HTTP :: WSGI
 Topic :: Internet :: WWW/HTTP :: WSGI :: Application

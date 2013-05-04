@@ -5,90 +5,86 @@
 MoinMoin - meta data key / index field name related constants
 """
 
-# IMPORTANT: until we require a python >= 2.6.5, we need to keep the keys as
-#            str (not unicode), because of "Issue #4978: Passing keyword
-#            arguments as unicode strings is now allowed." (from 2.6.5 chglog)
-
 # metadata keys
-NAME = "name"
-NAME_OLD = "name_old"
-NAMESPACE = "namespace"
+NAME = u"name"
+NAME_OLD = u"name_old"
+NAMESPACE = u"namespace"
 
 # if an item is reverted, we store the revision number we used for reverting there:
-REVERTED_TO = "reverted_to"
+REVERTED_TO = u"reverted_to"
 
 # some metadata key constants:
-ACL = "acl"
+ACL = u"acl"
 
 # keys for storing group and dict information
 # group of user names, e.g. for ACLs:
-USERGROUP = "usergroup"
+USERGROUP = u"usergroup"
 # needs more precise name / use case:
-SOMEDICT = "somedict"
+SOMEDICT = u"somedict"
 
-CONTENTTYPE = "contenttype"
-ITEMTYPE = "itemtype"
-SIZE = "size"
-LANGUAGE = "language"
-EXTERNALLINKS = "externallinks"
-ITEMLINKS = "itemlinks"
-ITEMTRANSCLUSIONS = "itemtransclusions"
-TAGS = "tags"
+CONTENTTYPE = u"contenttype"
+ITEMTYPE = u"itemtype"
+SIZE = u"size"
+LANGUAGE = u"language"
+EXTERNALLINKS = u"externallinks"
+ITEMLINKS = u"itemlinks"
+ITEMTRANSCLUSIONS = u"itemtransclusions"
+TAGS = u"tags"
 
-ACTION = "action"
-ADDRESS = "address"
-HOSTNAME = "hostname"
-USERID = "userid"
-MTIME = "mtime"
-EXTRA = "extra"
-COMMENT = "comment"
-SUMMARY = "summary"
+ACTION = u"action"
+ADDRESS = u"address"
+HOSTNAME = u"hostname"
+USERID = u"userid"
+MTIME = u"mtime"
+EXTRA = u"extra"
+COMMENT = u"comment"
+SUMMARY = u"summary"
 
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
 # some backends may use this also for other purposes.
-HASH_ALGORITHM = 'sha1'
+HASH_ALGORITHM = u"sha1"
 HASH_LEN = 40  # length of hex str representation of hash value
 
 # some field names for whoosh index schema / documents in index:
-NAME_EXACT = "name_exact"
-ITEMID = "itemid"
-REVID = "revid"
-PARENTID = "parentid"
-DATAID = "dataid"
-WIKINAME = "wikiname"
-CONTENT = "content"
+NAME_EXACT = u"name_exact"
+ITEMID = u"itemid"
+REVID = u"revid"
+PARENTID = u"parentid"
+DATAID = u"dataid"
+WIKINAME = u"wikiname"
+CONTENT = u"content"
 
 # magic REVID for current revision:
-CURRENT = "current"
+CURRENT = u"current"
 
 # stuff from user profiles / for whoosh index
-EMAIL = "email"
-OPENID = "openid"
-DISPLAY_NAME = "display_name"
-THEME_NAME = "theme_name"
-LOCALE = "locale"
-TIMEZONE = "timezone"
-ENC_PASSWORD = "enc_password"
-SUBSCRIBED_ITEMS = "subscribed_items"
-BOOKMARKS = "bookmarks"
-QUICKLINKS = "quicklinks"
-SESSION_KEY = "session_key"
-SESSION_TOKEN = "session_token"
-RECOVERPASS_KEY = "recoverpass_key"
-EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
-SCROLL_PAGE_AFTER_EDIT = "scroll_page_after_edit"
-SHOW_COMMENTS = "show_comments"
-MAILTO_AUTHOR = "mailto_author"
-CSS_URL = "css_url"
-EDIT_ROWS = "edit_rows"
-RESULTS_PER_PAGE = "results_per_page"
-WANT_TRIVIAL = "want_trivial"
-EMAIL_SUBSCRIBED_EVENTS = "email_subscribed_events"
-DISABLED = "disabled"
+EMAIL = u"email"
+OPENID = u"openid"
+DISPLAY_NAME = u"display_name"
+THEME_NAME = u"theme_name"
+LOCALE = u"locale"
+TIMEZONE = u"timezone"
+ENC_PASSWORD = u"enc_password"
+SUBSCRIBED_ITEMS = u"subscribed_items"
+BOOKMARKS = u"bookmarks"
+QUICKLINKS = u"quicklinks"
+SESSION_KEY = u"session_key"
+SESSION_TOKEN = u"session_token"
+RECOVERPASS_KEY = u"recoverpass_key"
+EDIT_ON_DOUBLECLICK = u"edit_on_doubleclick"
+SCROLL_PAGE_AFTER_EDIT = u"scroll_page_after_edit"
+SHOW_COMMENTS = u"show_comments"
+MAILTO_AUTHOR = u"mailto_author"
+CSS_URL = u"css_url"
+EDIT_ROWS = u"edit_rows"
+RESULTS_PER_PAGE = u"results_per_page"
+WANT_TRIVIAL = u"want_trivial"
+EMAIL_SUBSCRIBED_EVENTS = u"email_subscribed_events"
+DISABLED = u"disabled"
 
 # in which backend is some revision stored?
-BACKENDNAME = "backendname"
+BACKENDNAME = u"backendname"
 
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
@@ -99,20 +95,20 @@ USEROBJ_ATTRS = [
 ]
 
 # keys for blog homepages
-LOGO = "logo"
-SUPERTAGS = "supertags"
+LOGO = u"logo"
+SUPERTAGS = u"supertags"
 # keys for blog entries
-PTIME = "ptime"
+PTIME = u"ptime"
 
 # keys for tickets
-EFFORT = "effort"
-DIFFICULTY = "difficulty"
-SEVERITY = "severity"
-PRIORITY = "priority"
-ASSIGNED_TO = "assigned_to"
-SUPERSEDED_BY = "superseded_by"
-DEPENDS_ON = "depends_on"
-CLOSED = "closed"
+EFFORT = u"effort"
+DIFFICULTY = u"difficulty"
+SEVERITY = u"severity"
+PRIORITY = u"priority"
+ASSIGNED_TO = u"assigned_to"
+SUPERSEDED_BY = u"superseded_by"
+DEPENDS_ON = u"depends_on"
+CLOSED = u"closed"
 
 # index names
 LATEST_REVS = 'latest_revs'

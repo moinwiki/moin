@@ -27,7 +27,7 @@ class Converter(TableMixin):
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        # as of py 2.6.5 (and in the year 2010), the csv module seems to still
+        # as of py 2.7.x (and in the year 2013), the csv module seems to still
         # have troubles with unicode, thus we encode to utf-8 ...
         content = [line.encode('utf-8') for line in content]
         dialect = csv.Sniffer().sniff(content[0])

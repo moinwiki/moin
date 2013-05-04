@@ -2,10 +2,10 @@
 Requirements
 ============
 
-MoinMoin requires Python >= 2.6 and < 3.0.
+MoinMoin requires Python 2.7.x.
 We usually test using CPython and this is what we recommend.
 
-You can also try PyPy: PyPy >= 1.6 seems to work with moin.
+You can also try PyPy, it seems to work.
 
 Servers
 =======

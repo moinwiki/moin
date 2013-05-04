@@ -15,7 +15,6 @@ from MoinMoin._tests.ldap_testdata import *
 from MoinMoin._tests import wikiconfig
 from MoinMoin.auth import handle_login
 
-# first check if we have python 2.4, python-ldap and slapd:
 msg = check_environ()
 if msg:
     pytest.skip(msg)
