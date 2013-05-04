@@ -1,0 +1,6 @@
+{% import "utils.html" as utils %}
+{% extends theme("layout.html") %}
+{% block content %}
+<h1>{{ _("InterWiki Names") }}</h1>
+{{ utils.table(headings, rows, url_cols=[2]) }}
+{% endblock %}
