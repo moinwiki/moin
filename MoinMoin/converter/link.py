@@ -169,6 +169,7 @@ class ConverterExternOutput(ConverterBase):
             path = self.absolute_path(path, page.path)
             item_name = unicode(path)
             if not flaskg.storage.has_item(item_name):
+                # XXX these index accesses slow down the link converter quite a bit
                 elem.set(moin_page.class_, 'moin-nonexistent')
         else:
             item_name = unicode(page.path[1:])
