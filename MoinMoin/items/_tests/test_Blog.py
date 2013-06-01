@@ -92,7 +92,7 @@ class TestBlog(TestView):
         # is not defined, we use MTIME as publication time (which is usually in the past).
         self._publish_entry(self.entries[0], ptime=2000)
         self._publish_entry(self.entries[1], ptime=1000)
-        time_in_future = utctimestamp(datetime(2999, 1, 1))
+        time_in_future = utctimestamp(datetime(2029, 1, 1))
         self._publish_entry(self.entries[2], ptime=time_in_future)
         # the blog is not empty
         exclude_data_tokens = [self.NO_ENTRIES_MSG, ]
