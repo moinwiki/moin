@@ -7,6 +7,7 @@
 
 import re
 
+from datetime import datetime
 from flask import url_for
 
 from MoinMoin._tests import become_trusted, update_item
@@ -15,6 +16,7 @@ from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
 from MoinMoin.constants.misc import ANON
 from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from MoinMoin.items.blog import Blog, BlogEntry
+from MoinMoin.themes import utctimestamp
 
 
 class TestView(object):
@@ -69,25 +71,39 @@ class TestBlog(TestView):
     def test_do_show_entries(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # store some unpublished entries
+        # store entries without PTIME
         for entry in self.entries:
             item = Item.create(entry['name'], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(self.entry_meta, entry['data'], comment=self.comment)
-        # still empty blog
-        data_tokens = [self.data, self.NO_ENTRIES_MSG, ]
-        self._test_view(self.name, data_tokens=data_tokens)
-        # publish the first three entries, ptime value is a UNIX timestamp
-        self._publish_entry(self.entries[0], ptime=1000)
-        self._publish_entry(self.entries[1], ptime=3000)
-        self._publish_entry(self.entries[2], ptime=2000)
-        # the blog is not empty and the 4th entry is not published
-        exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[3]['data'], ]
-        # blog entries are published in reverse order relative to their PTIMEs
+        # the blog is not empty
+        exclude_data_tokens = [self.NO_ENTRIES_MSG, ]
+        # all stored blog entries are listed on the blog index page
+        data_tokens = [self.data, ] + [entry['data'] for entry in self.entries]
+        self._test_view(self.name, data_tokens=data_tokens, exclude_data_tokens=exclude_data_tokens)
+
+    def test_do_show_sorted_entries(self):
+        item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
+        item._save(self.meta, self.data, comment=self.comment)
+        # store entries
+        for entry in self.entries:
+            item = Item.create(entry['name'], itemtype=ITEMTYPE_BLOG_ENTRY)
+            item._save(self.entry_meta, entry['data'], comment=self.comment)
+        # Add PTIME to some of the entries, ptime value is a UNIX timestamp. If PTIME
+        # is not defined, we use MTIME as publication time (which is usually in the past).
+        self._publish_entry(self.entries[0], ptime=2000)
+        self._publish_entry(self.entries[1], ptime=1000)
+        time_in_future = utctimestamp(datetime(2999, 1, 1))
+        self._publish_entry(self.entries[2], ptime=time_in_future)
+        # the blog is not empty
+        exclude_data_tokens = [self.NO_ENTRIES_MSG, ]
+        # blog entries are listed in reverse order relative to their PTIME/MTIMEs,
+        # entries published in the future are also listed here
         ordered_data = [self.data,
-                        self.entries[1]['data'],
                         self.entries[2]['data'],
-                        self.entries[0]['data'], ]
-        regex = re.compile(r'{0}.*{1}.*{2}.*{3}'.format(*ordered_data), re.DOTALL)
+                        self.entries[3]['data'],
+                        self.entries[0]['data'],
+                        self.entries[1]['data'], ]
+        regex = re.compile(r'{0}.*{1}.*{2}.*{3}.*{4}'.format(*ordered_data), re.DOTALL)
         self._test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
     def test_filter_by_tag(self):
