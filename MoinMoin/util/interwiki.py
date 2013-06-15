@@ -89,7 +89,7 @@ def url_for_item(item_name, wiki_name=u'', namespace=u'', rev=CURRENT, endpoint=
                 # we know that everything left of the + belongs to script url, but we
                 # just want e.g. +show/42/FooBar to append it to the other wiki's
                 # base URL.
-                i = local_url.index('/%2B')
+                i = local_url.index('/+')
                 path = local_url[i + 1:]
                 url = wiki_base_url + path
     return url

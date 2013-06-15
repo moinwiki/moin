@@ -39,25 +39,25 @@ class TestInterWiki(object):
                  # Method signature to understand the tuple parameters
                  # (item_name, wiki_name='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False):
                  (('SomePage', '', '', CURRENT, 'frontend.show_item', True), 'http://localhost:8080/SomePage'),
-                 (('SomePage', '', '', CURRENT, 'frontend.modify_item', False), '/%2Bmodify/SomePage'),
+                 (('SomePage', '', '', CURRENT, 'frontend.modify_item', False), '/+modify/SomePage'),
                  # FIXME if you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='http://moinmo.in/', ),
-                 # the above line make it fails, it returns http://localhost/%2Bmodify/SomePage
-                 # (('SomePage', '', '', CURRENT, 'frontend.modify_item', True), 'http://localhost:8080/%2Bmodify/SomePage'),
-                 (('SomePage', '', '', revid, 'frontend.show_item', False), '/%2Bshow/%2B{0}/SomePage'.format(revid)),
-                 (('SomePage', '', '', revid, 'frontend.show_item_meta', False), '/%2Bmeta/%2B{0}/SomePage'.format(revid)),
+                 # the above line make it fails, it returns http://localhost/+modify/SomePage
+                 # (('SomePage', '', '', CURRENT, 'frontend.modify_item', True), 'http://localhost:8080/+modify/SomePage'),
+                 (('SomePage', '', '', revid, 'frontend.show_item', False), '/+show/+{0}/SomePage'.format(revid)),
+                 (('SomePage', '', '', revid, 'frontend.show_item_meta', False), '/+meta/+{0}/SomePage'.format(revid)),
                  # Valid namespaces
                  (('SomePage', '', 'ns1', CURRENT, 'frontend.show_item', False), '/:ns1:SomePage'),
                  (('SomePage', '', 'ns1:ns2', CURRENT, 'frontend.show_item', True), 'http://localhost:8080/:ns1:ns2:SomePage'),
-                 (('SomePage', '', 'ns1', CURRENT, 'frontend.modify_item', False), '/%2Bmodify/:ns1:SomePage'),
-                 (('SomePage', '', 'ns1:ns2', CURRENT, 'frontend.show_item_meta', True), 'http://localhost:8080/%2Bmeta/:ns1:ns2:SomePage'),
-                 (('SomePage', '', 'ns1', revid, 'frontend.show_item', False), '/%2Bshow/%2B{0}/:ns1:SomePage'.format(revid)),
-                 (('SomePage', '', 'ns1:ns2', revid, 'frontend.show_item_meta', False), '/%2Bmeta/%2B{0}/:ns1:ns2:SomePage'.format(revid)),
+                 (('SomePage', '', 'ns1', CURRENT, 'frontend.modify_item', False), '/+modify/:ns1:SomePage'),
+                 (('SomePage', '', 'ns1:ns2', CURRENT, 'frontend.show_item_meta', True), 'http://localhost:8080/+meta/:ns1:ns2:SomePage'),
+                 (('SomePage', '', 'ns1', revid, 'frontend.show_item', False), '/+show/+{0}/:ns1:SomePage'.format(revid)),
+                 (('SomePage', '', 'ns1:ns2', revid, 'frontend.show_item_meta', False), '/+meta/+{0}/:ns1:ns2:SomePage'.format(revid)),
 
                  (('SomePage', 'MoinMoin', 'ns1', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/:ns1:SomePage'),
                  (('SomePage', 'MoinMoin', '', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/SomePage'),
                  # FIXME will exist a map for this case? maybe there should be a placeholder for it.
                  # we need that for wiki farms with common search index and search in non-current revisions.
-                 (('SomePage', 'MoinMoin', '', revid, 'frontend.show_item', False), 'http://moinmo.in/%2Bshow/%2B{0}/SomePage'.format(revid)),
+                 (('SomePage', 'MoinMoin', '', revid, 'frontend.show_item', False), 'http://moinmo.in/+show/+{0}/SomePage'.format(revid)),
                  (('SomePage', 'non-existent', '', CURRENT, 'frontend.show_item', False), '/non-existent:SomePage'),
                  (('SomePage', 'non-existent', 'ns1', CURRENT, 'frontend.show_item', False), '/non-existent:ns1:SomePage'),
                 ]
