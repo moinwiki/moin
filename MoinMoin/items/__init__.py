@@ -524,7 +524,6 @@ class Item(object):
     def subitems_prefix(self):
         return self.name + u'/' if self.name else u''
 
-    @timed()
     def get_subitem_revs(self):
         """
         Create a list of subitems of this item.
@@ -539,7 +538,6 @@ class Item(object):
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
-    @timed()
     def make_flat_index(self, subitems):
         """
         Create two IndexEntry lists - ``dirs`` and ``files`` - from a list of
