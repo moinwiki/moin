@@ -1,0 +1,67 @@
+Hinweis: einige Stellen, die man editieren muss, sind mit XXX markiert.
+
+= (XXX Datum angeben) YYYY-MM-DD Passworte zurückgesetzt =
+
+Der Wiki-Administrator hat für alle Benutzerkonten dieses Wikis die Passwörter invalidiert (auf ungültig gesetzt).
+
+Sie müssen eine Passwort-Rücksetzung ausführen, um ein ''neues und anderes'' Passwort für Ihr Konto zu setzen.
+
+== Gründe für die Passwort-Invalidierung ==
+
+ * (XXX Grund angeben)
+ * (XXX Grund angeben)
+
+== Was Sie tun müssen ==
+=== Lesen Sie wichtige Informationen ===
+Bitte besuchen Sie diese URLs für weitere Informationen:
+ * http://moinmo.in/HowToHandleSecurityBreach/de (allgemeine Hinweise, unbedingt lesen!)
+ * http://moinmo.in/SecurityFixes/CVE-YYYY-NNNN (über den spezifischen Vorfall, wenn Sie mehr Informationen möchten) (XXX URL korrigieren)
+
+=== Ein neues Passwort setzen ===
+Sie sollten eine E-Mail (inklusive eines Links, um Ihr Passwort zurückzusetzen) erhalten haben. Lesen und befolgen Sie sie.
+
+=== Problembehandlung ===
+==== Ungültiges Token? ====
+Das Token hat eine begrenzte Gültigkeitsdauer.
+
+Wenn es "Token ist ungültig" sagt, müssen Sie einfach ein neues Token anfordern, siehe unten.
+
+==== Sie haben eine unerwartete E-Mail über ein unbekanntes Benutzerkonto erhalten? ====
+Wenn Sie eine E-Mail erhalten haben, die Sie auffordert, das Passwort ''für ein Ihnen unbekanntes Benutzerkonto'' zurückzusetzen:
+ignorieren Sie sie einfach, setzen Sie das Passwort ''nicht'' zurück
+
+Wahrscheinlich hat jemand (z.B. ein Spammer) Ihre E-Mail-Adresse missbraucht, als er ein Benutzerkonto angelegt hat.
+Das passiert oft, Sie können das auch in Ihrem E-Mail-Spam-Ordner sehen.
+
+==== Sie haben die E-Mail nicht erhalten? ====
+Wenn Sie die E-Mail noch nicht gesehen haben, prüfen Sie bitte Ihren Spam-Ordner (oder auch andere Ordner, wo E-Mails vom Wiki sein könnten).
+
+Wenn Sie die von uns an Sie gesandte E-Mail nicht finden können, können Sie alternativ auch die normale Passwort-Rücksetz-Funktion des Wikis benutzen, siehe unten.
+
+==== Ein neues Passwort-Rücksetz-Token erhalten ====
+ * gehen Sie zur Anmelde-Seite des Wiki
+ * klicken Sie auf den "Password vergessen?"-Link
+ * Dann:
+  * ''entweder'' Ihren Wiki-Benutzernamen eingeben (empfehlenswert, wenn Sie ihn wissen oder einfach herausfinden können)
+  * ''oder'' Ihre E-Mail-Addresse (die gleiche wie in Ihrem Wiki-Benutzerprofil - möglicherweise brauchen Sie mehrere Versuche, wenn Sie sich hier nicht sicher sind)
+ * prüfen Sie Ihren E-Mail-Eingang, Sie sollten nun eine E-Mail mit einem Passwort-Rücksetz-Link haben
+ * klicken Sie auf den Link, definieren Sie ein neues Passwort
+
+==== Brauchen Sie Hilfe? ====
+Wenn das nicht funktioniert hat, brauchen Sie vermutlich Hilfe durch einen Wiki-Administrator, bitte kontaktieren Sie:
+
+(XXX hier Name und E-Mail des Wiki-Administrators angeben XXX)
+
+In Ihrer E-Mail, geben Sie bitte Folgendes an:
+ * die Wiki-Adresse (URL)
+ * Ihren Wiki-Benutzernamen
+ * die E-Mail-Adresse, die Sie in Ihrem Wiki-Benutzerprofil verwendet haben
+ * falls diese E-Mail-Adresse nicht mehr funktioniert, teilen Sie uns das bitte mit
+
+== Fragen? ==
+Wenn Sie Fragen haben, die nicht bereits auf dieser oder den verlinkten Seiten beantwortet werden, fragen Sie den Wiki-Administrator.
+
+E-Mails mit Fragen, die dort bereits beantwortet sind, werden ignoriert.
+
+Anstelle Fragen individuell über E-Mail zu beantworten, können oft gestellte Fragen auch auf dieser Seite oder den verlinkten Seiten beantwortet werden.
+
