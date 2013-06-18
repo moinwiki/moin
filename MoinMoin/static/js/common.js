@@ -53,10 +53,10 @@ function toggleComments() {
     var buttons = $('.moin-toggle-comments-button > a');
     if (pageComments.is(':hidden')) {
         pageComments.show();
-        {{ "buttons.attr('title', '%s');" % _("Hide comments") }}
+        buttons.attr('title',_("Hide comments"));
     } else {
         pageComments.hide();
-        {{ "buttons.attr('title', '%s');" % _("Show comments") }}
+        buttons.attr('title', _("Show comments"));
     }
 }
 
@@ -87,10 +87,10 @@ function toggleTransclusionOverlays() {
         buttons = $('.moin-transclusions-button > a');
         if (overlays.is(':visible')) {
             overlays.hide();
-            {{ "buttons.attr('title', '%s');" % _("Show transclusions") }}
+            buttons.attr('title', _("Show transclusions"));
         } else {
             overlays.show();
-            {{ "buttons.attr('title', '%s');" % _("Hide transclusions") }}
+            buttons.attr('title', _("Hide transclusions"));
         }
     }
 }
@@ -374,7 +374,7 @@ $(function () {
 
     // warn user if he tries to leave page when there are unsaved changes (Opera 12.10 does not support onbeforeunload)
     window.onbeforeunload = function () {
-        var discardMessage = ' {{ _("Your changes will be discarded if you leave this page without saving.") }} ';
+        var discardMessage = _("Your changes will be discarded if you leave this page without saving.");
         if ($('.moin-change-indicator').length > 0) {
             return discardMessage;
         }
@@ -391,9 +391,9 @@ $(function () {
 
     var TOPID = 'moin-content',
         LINENOATTR = "data-lineno",
-        MESSAGEMISSED = ' {{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }} ',
-        MESSAGEOBSOLETE = ' {{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }} ',
-        MESSAGEOLD = ' {{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }} ',
+        MESSAGEMISSED = _("You missed! Double-click on text or to the right of text to auto-scroll text editor."),
+        MESSAGEOBSOLETE = _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."),
+        MESSAGEOLD = _("Your browser is old. Upgrade to gain auto-scroll page after edit feature."),
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
         modifyForm,
