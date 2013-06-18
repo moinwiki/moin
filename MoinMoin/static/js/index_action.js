@@ -4,8 +4,8 @@
  * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
  */
 
-/*jslint browser: true, */
-/*global $:false */
+/*jslint browser: true, nomen: true*/
+/*global $:true, _:true */
 
 // This anonymous function is executed once after a global index page loads.
 $("document").ready(function () {
