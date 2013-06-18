@@ -125,7 +125,6 @@ def register(cls):
     return cls
 
 
-@timed()
 def conv_serialize(doc, namespaces, method='polyglot'):
     out = array('u')
     doc.write(out.fromunicode, namespaces=namespaces, method=method)

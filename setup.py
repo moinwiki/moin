@@ -74,27 +74,28 @@ Topic :: Text Processing :: Markup""".splitlines(),
     include_package_data=True,
     zip_safe=False,
     dependency_links=[
-        # 'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.7dev',
-        # 'https://bitbucket.org/thomaswaldmann/whoosh/get/2.4x.tar.gz#egg=Whoosh-2.4.99dev',
+        #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.9.2-dev',
+        #'https://github.com/mitsuhiko/flask/tarball/master#egg=Flask-0.11-dev',
         'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
-        # fixed flask-themes, 0.1.3 does not work for flask 0.8.x, thus we use a faked 0.1.3.1:
-        'https://bitbucket.org/thomaswaldmann/flask-themes/get/24dcc703953f.tar.gz#egg=Flask-Themes-0.1.3.1',
-        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.2',
+        # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
+        'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
+        # use a pre-release emeraldtree (port to 2.6/2.7/3.3):
+        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.3dev',
     ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1',  # reST markup processing
         'Markdown>=2.1.1',  # Markdown markup processing
-        'Flask>=0.8',  # micro framework
+        'Flask>=0.10',  # micro framework
         'Flask-Babel>=0.7',  # i18n support
         'Flask-Cache>=0.3.4',  # caching support
         'Flask-Script>=0.3.3',  # scripting support
-        'Flask-Themes>=0.1.3.1',  # theme support
-        'emeraldtree>=0.9.2',  # xml processing
+        'Flask-Themes>=0.2.0',  # theme support
+        'emeraldtree>=0.9.3dev',  # xml processing
         'flatland==dev',  # repo checkout at revision 269:6c5d262d7eff works
-        'Jinja2>=2.6',  # template engine
+        'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=0.8.1',  # wsgi toolkit
+        'Werkzeug>=0.9',  # wsgi toolkit
         'pytest>=2.1, <2.3',  # pytest is needed by unit tests
                               # note: currently 2.3.x is not compatible with our test code,
                               # likely due to the fixtures changes.
