@@ -1,11 +1,8 @@
 //
 // MoinMoin2 commonly used JavaScript functions
 //
-/*jslint browser: true, */
-/*global $:false */
-
-// This file is a Jinja2 template and is not jslint friendly in its raw state.
-// To run jslint, use your browser debugging tools to view, copy and paste this file to jslint.
+/*jslint browser: true, nomen: true*/
+/*global $:true, _:true*/
 
 
 // Utility function to add a message to moin flash area.
@@ -53,7 +50,7 @@ function toggleComments() {
     var buttons = $('.moin-toggle-comments-button > a');
     if (pageComments.is(':hidden')) {
         pageComments.show();
-        buttons.attr('title',_("Hide comments"));
+        buttons.attr('title', _("Hide comments"));
     } else {
         pageComments.hide();
         buttons.attr('title', _("Show comments"));
@@ -63,7 +60,6 @@ function toggleComments() {
 // Comments initialization is executed once after document ready.
 function initToggleComments() {
     "use strict";
-    var titles;
     pageComments = $('.comment');
     if (pageComments.length > 0) {
         // There are comments, so show itemview Comments button
@@ -98,7 +94,7 @@ function toggleTransclusionOverlays() {
 // Transclusion initialization is executed once after document ready.
 function initTransclusionOverlays() {
     "use strict";
-    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, titles,
+    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions,
         rightArrow = '\u2192';
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
@@ -169,7 +165,7 @@ function QuicklinksExpander() {
         return getLinks().slice(QUICKLINKS_MAX);
     }
     function hideShowHideableLinks(action) {
-        getHideableLinks().each(function (i) {
+        getHideableLinks().each(function () {
             if (action === "hide") {
                 $(this).hide();
             } else {
@@ -203,12 +199,12 @@ function QuicklinksExpander() {
         newThis = this;
         // When the user mouses over the icon link,
         // Show the hidden links
-        this.expandIcon.mouseenter(function (e) {
+        this.expandIcon.mouseenter(function () {
             newThis.showLinks();
             newThis.expandIcon.hide();
             newThis.closeIcon.show();
         });
-        this.closeIcon.mouseenter(function (e) {
+        this.closeIcon.mouseenter(function () {
             newThis.hideLinks();
             newThis.expandIcon.show();
             newThis.closeIcon.hide();
@@ -233,13 +229,13 @@ function toggleSubtree(item) {
 // position caret in textarea and click button to insert name into textarea.
 function InsertName(fullname) {
     "use strict";
-    var textArea, scrollTop, endPos, startPos;
+    var textArea, endPos, startPos;
     textArea = document.getElementById('f_content_form_data_text');
     startPos = textArea.selectionStart;
     endPos = textArea.selectionEnd;
     textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
     textArea.focus();
-    textArea.setSelectionRange(startPos+fullname.length,startPos+fullname.length);
+    textArea.setSelectionRange(startPos + fullname.length, startPos + fullname.length);
 }
 
 
@@ -254,7 +250,8 @@ $(function () {
     $(function () {
         var tabs = $('#moin-usersettings'),
             titles = $('<ul class="moin-tab-titles">'),
-            hashTag = window.location.hash;
+            hashTag = window.location.hash,
+            tab;
         // for each form on page, create a corresponding LI
         $('.moin-tab-body').each(function () {
             var li = $(document.createElement('li')),
@@ -280,7 +277,7 @@ $(function () {
 
         // check for the hashtag and switch tab
         if (hashTag !== '') {
-            var tab = $('.moin-tab-titles li a[href="'+ hashTag +'"]');
+            tab = $('.moin-tab-titles li a[href="' + hashTag + '"]');
             if (tab.length !== 0) {
                 $(tab)[0].click();
             }
@@ -398,7 +395,6 @@ $(function () {
         modifyButton,
         modifyForm,
         lineno,
-        message,
         caretLineno;
 
     // IE8 workaround for missing setSelectionRange
@@ -585,7 +581,7 @@ $(function () {
             modifyButton = $('.moin-modify-button')[0];
             if (modifyButton) {
                 // this is a "show" page, add doubleclick event handler to content node
-                $('#moin-content').dblclick(function (e) {
+                $('#moin-content').dblclick(function () {
                     document.location = modifyButton.href;
                 });
             }
