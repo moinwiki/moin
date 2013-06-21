@@ -1,0 +1,24 @@
+{% extends "ticket/base.html" %}
+
+{% block title_text %}
+    {{ _("Ticket: '%(item_name)s'", item_name=item_name) }}
+{% endblock %}
+
+{% block form_controls %}
+    <h2>Add comment</h2>
+    <dl>
+    {{ forms.render(form['message']) }}
+    </dl>
+
+    <h2>Edit metadata</h2>
+    <dl>
+    {{ forms.render_errors(form) }}
+    {{ render_meta() }}
+    </dl>
+
+    {{ forms.render(form['submit']) }}
+
+    <h2>Back references</h2>
+    <dl>
+    {{ render_backref() }}
+{% endblock %}
