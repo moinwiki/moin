@@ -1,0 +1,19 @@
+{% extends theme("show.html") %}
+
+{% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
+
+{% block rev_navigation %}
+    {{ rev_navigation(view='frontend.show_item_meta') }}
+{% endblock %}
+
+{% block content_data %}
+<h1>
+    {{ title }}
+    {% if show_revision %}({{ _("Revision") }} {{ rev.revid | shorten_id }}){% endif %}
+</h1>
+{% if meta_rendered %}
+<div id="moin-content-meta">
+    {{ meta_rendered }}
+</div>
+{% endif %}
+{% endblock %}
