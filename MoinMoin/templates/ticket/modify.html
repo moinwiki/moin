@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block form_controls %}
-    <h2>Add comment</h2>
+    <h2>{{ _("Add comment") }}</h2>
     <dl>
     {{ forms.render(form['message']) }}
     </dl>
 
-    <h2>Edit metadata</h2>
+    <h2>{{ _("Edit metadata") }}</h2>
     <dl>
     {{ forms.render_errors(form) }}
     {{ render_meta() }}
@@ -18,7 +18,7 @@
 
     {{ forms.render(form['submit']) }}
 
-    <h2>Back references</h2>
+    <h2>{{ _("Back references") }}</h2>
     <dl>
     {{ render_backref() }}
 {% endblock %}

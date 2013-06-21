@@ -5,13 +5,13 @@
 {% endblock %}
 
 {% block form_controls %}
-    <h2>Describe the ticket</h2>
+    <h2>{{ _("Describe the ticket") }}</h2>
 
     <dl>
     {{ forms.render(form['message']) }}
     </dl>
 
-    <h2>Provide metadata</h2>
+    <h2>{{ _("Provide metadata") }}</h2>
     <dl>
     {{ forms.render_errors(form) }}
     {{ render_meta() }}
