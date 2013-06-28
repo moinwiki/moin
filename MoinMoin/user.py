@@ -46,9 +46,20 @@ from MoinMoin.util.crypto import generate_token, valid_token, make_uuid
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
-def create_user(username, password, email, openid=None, validate=True, is_encrypted=False, is_disabled=False):
-    """ create a user """
-    # Create user profile
+def create_user(username, password, email, validate=True, is_encrypted=False, **meta):
+    """
+    Create a new user
+
+    :param username: unique user name
+    :param password: user's password - see also is_encrypted param
+    :param email: unique email address
+    :param validate: if True (default) will validate username, password, email
+                        and the uniqueness of the user created
+    :param is_encrypted: if False (default) defines that the password is in
+                        plaintext, when True - password was already encrypted
+    :param meta: a dictionary of key-value pairs that represent user metadata and
+                    will be stored into user profile metadata
+    """
     theuser = User(auth_method="new-user")
 
     # Don't allow creating users with invalid names
@@ -85,14 +96,15 @@ space between words. Group page name is not allowed.""", name=username)
     theuser.profile[EMAIL] = email
 
     # Openid should be unique
+    openid = meta.get(OPENID)
     if validate and openid and search_users(openid=openid):
         return _('This OpenID already belongs to somebody else.')
 
-    theuser.profile[OPENID] = openid
+    theuser.profile[DISABLED] = meta.get("is_disabled", False)
 
-    theuser.profile[DISABLED] = is_disabled
-
-    # save data
+    # TODO requires validation (preferably using flatland)
+    for key, value in meta.items():
+        theuser.profile[key] = value
     theuser.save()
 
 
