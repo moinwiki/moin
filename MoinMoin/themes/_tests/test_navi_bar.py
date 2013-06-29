@@ -26,9 +26,9 @@ class TestNaviBar(object):
             #(navilink, (href, text, interwiki)),
             ('ItemName', ('/ItemName', 'ItemName', '')),
             ('[[ItemName|LinkText]]', ('/ItemName', 'LinkText', '')),
-            ('MoinMoin:ItemName', ('http://moinmo.in/ItemName', 'ItemName', 'MoinMoin')),
-            ('[[MoinMoin:ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
-            ('[[wiki:MoinMoin:ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
+            ('MoinMoin/ItemName', ('http://moinmo.in/ItemName', 'ItemName', 'MoinMoin')),
+            ('[[MoinMoin/ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
+            ('[[wiki:MoinMoin/ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
             ('http://example.org/', ('http://example.org/', 'http://example.org/', '')),
             ('[[http://example.org/|LinkText]]', ('http://example.org/', 'LinkText', '')),
         ]
