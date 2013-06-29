@@ -113,3 +113,8 @@ CLOSED = u"closed"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
+
+# Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
+FIELDS = [
+    ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS,
+]
