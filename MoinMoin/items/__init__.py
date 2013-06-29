@@ -41,14 +41,15 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type
-from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
+    UFIELDS_TYPELIST
 )
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
@@ -109,13 +110,17 @@ class DummyRev(dict):
         self.data = StringIO('')
         self.revid = None
         if self.item:
-            self.meta[NAME] = [self.item.name]
+            self.meta[NAMESPACE] = item.fqname.namespace
+            if item.fqname.field in UFIELDS_TYPELIST:
+                self.meta[item.fqname.field] = [item.fqname.value]
+            else:
+                self.meta[item.fqname.field] = item.fqname.value
 
 
 class DummyItem(object):
     """ if we have no stored Item, we use this dummy """
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, fqname):
+        self.fqname = fqname
 
     def list_revisions(self):
         return []  # same as an empty Item
@@ -124,7 +129,7 @@ class DummyItem(object):
         return True
 
 
-def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
     """
     Get a storage Revision.
 
@@ -144,18 +149,21 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
     :itemtype and :contenttype are used when creating a DummyRev, where
     metadata is not available from the storage.
     """
+    query = {fqname.field: fqname.value, NAMESPACE: fqname.namespace}
+    rev_id = fqname.value if fqname.field == REVID else rev_id
     if 1:  # try:
         if item is None:
-            item = flaskg.storage[name]
+            item = flaskg.storage.get_item(**query)
         else:
-            name = item.name
+            if item.fqname:
+                fqname = item.fqname
     if not item:  # except NoSuchItemError:
-        logging.debug("No such item: {0!r}".format(name))
-        item = DummyItem(name)
+        logging.debug("No such item: {0!r}".format(fqname))
+        item = DummyItem(fqname)
         rev = DummyRev(item, itemtype, contenttype)
-        logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
+        logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(fqname, contenttype))
     else:
-        logging.debug("Got item: {0!r}".format(name))
+        logging.debug("Got item: {0!r}".format(fqname))
         try:
             rev = item.get_revision(rev_id)
         except KeyError:  # NoSuchRevisionError:
@@ -163,10 +171,10 @@ def get_storage_revision(name, itemtype=None, contenttype=None, rev_id=CURRENT, 
                 rev = item.get_revision(CURRENT)  # fall back to current revision
                 # XXX add some message about invalid revision
             except KeyError:  # NoSuchRevisionError:
-                logging.debug("Item {0!r} has no revisions.".format(name))
+                logging.debug("Item {0!r} has no revisions.".format(fqname))
                 rev = DummyRev(item, itemtype, contenttype)
-                logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(name, contenttype))
-        logging.debug("Got item {0!r}, revision: {1!r}".format(name, rev_id))
+                logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(fqname, contenttype))
+        logging.debug("Got item {0!r}, revision: {1!r}".format(fqname, rev_id))
     return rev
 
 
@@ -275,7 +283,8 @@ class Item(object):
         previously created Content instance is assigned to its content
         property.
         """
-        rev = get_storage_revision(name, itemtype, contenttype, rev_id, item)
+        fqname = split_fqname(name)
+        rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
         #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
@@ -287,21 +296,33 @@ class Item(object):
         itemtype = rev.meta.get(ITEMTYPE) or itemtype or ITEMTYPE_DEFAULT
         logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
 
-        item = item_registry.get(itemtype, name, rev=rev, content=content)
+        item = item_registry.get(itemtype, fqname, rev=rev, content=content)
         logging.debug("Item class {0!r} handles {1!r}".format(item.__class__, itemtype))
 
         content.item = item
-
         return item
 
-    def __init__(self, name, rev=None, content=None):
-        self.name = name
+    def __init__(self, fqname, rev=None, content=None):
+        self.fqname = fqname
         self.rev = rev
         self.content = content
 
     def get_meta(self):
         return self.rev.meta
     meta = property(fget=get_meta)
+
+    @property
+    def name(self):
+        """
+        returns the page name if known else extract name from meta.
+        """
+        if self.fqname.field == NAME_EXACT:
+            return self.fqname.value
+        else:
+            try:
+                return self.meta.get(NAME)[0]
+            except: #except AnyError
+                return u''
 
     # XXX Backward compatibility, remove soon
     @property
@@ -316,7 +337,7 @@ class Item(object):
         kill_keys = [  # shall not get copied from old rev to new rev
             NAME_OLD,
             # are automatically implanted when saving
-            ITEMID, REVID, DATAID,
+            REVID, DATAID,
             HASH_ALGORITHM,
             SIZE,
             COMMENT,
@@ -458,7 +479,8 @@ class Item(object):
     def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
         backend = flaskg.storage
-        storage_item = backend[self.name]
+        query = {self.fqname.field: self.fqname.value, NAMESPACE: self.fqname.namespace}
+        storage_item = backend.get_item(**query)
         try:
             currentrev = storage_item.get_revision(CURRENT)
             rev_id = currentrev.revid
@@ -469,26 +491,26 @@ class Item(object):
             contenttype_current = None
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
-
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
-        if name is None:
-            name = self.name
-        oldname = meta.get(NAME)
-        if oldname:
-            if not isinstance(oldname, list):
-                oldname = [oldname]
-            if delete or name not in oldname:  # this is a delete or rename
-                meta[NAME_OLD] = oldname[:]
-                try:
-                    oldname.remove(self.name)
-                except ValueError:
-                    pass
-                if not delete:
-                    oldname.append(name)
-                meta[NAME] = oldname
-        else:
-            meta[NAME] = [name]
+        if self.fqname.field == NAME_EXACT:
+            if name is None:
+                name = self.fqname.value
+            oldname = meta.get(NAME)
+            if oldname:
+                if not isinstance(oldname, list):
+                    oldname = [oldname]
+                if delete or name not in oldname:  # this is a delete or rename
+                    meta[NAME_OLD] = oldname[:]
+                    try:
+                        oldname.remove(self.name)
+                    except ValueError:
+                        pass
+                    if not delete:
+                        oldname.append(name)
+                    meta[NAME] = oldname
+            else:
+                meta[NAME] = [name]
 
         if comment is not None:
             meta[COMMENT] = unicode(comment)
@@ -510,7 +532,6 @@ class Item(object):
 
         if isinstance(data, str):
             data = StringIO(data)
-
         newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,
@@ -576,7 +597,8 @@ class Item(object):
                         if direct_relname not in added_dir_relnames:
                             added_dir_relnames.add(direct_relname)
                             direct_fullname = prefix + direct_relname
-                            direct_rev = get_storage_revision(direct_fullname)
+                            fqname = split_fqname(direct_fullname)
+                            direct_rev = get_storage_revision(fqname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname, direct_rev.meta))
                     else:
                         files.append(IndexEntry(relname, fullname, rev.meta))
@@ -669,7 +691,7 @@ class Default(Contentful):
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_select_template.html',
-                               item_name=self.name,
+                               item_name=self.fqname.fullname,
                                itemtype=self.itemtype,
                                rev=self.rev,
                                contenttype=self.contenttype,
@@ -685,7 +707,7 @@ class Default(Contentful):
         show_navigation = False  # TODO
         first_rev = last_rev = None  # TODO
         return render_template(self.show_template,
-                               item=self, item_name=self.name,
+                               item=self, item_name=self.fqname.fullname,
                                rev=self.rev,
                                contenttype=self.contenttype,
                                first_rev_id=first_rev,
@@ -700,7 +722,7 @@ class Default(Contentful):
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
-                                       item_name=self.name,
+                                       item_name=self.fqname.fullname,
                                        itemtype=self.itemtype,
                                        group_names=content_registry.group_names,
                                        groups=content_registry.groups,
@@ -734,9 +756,9 @@ class Default(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
-                    return redirect(url_for_item(self.name))
+                    return redirect(url_for_item(**self.fqname.split))
         return render_template(self.modify_template,
-                               item_name=self.name,
+                               item_name=self.fqname.fullname,
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                form=form,
                                search_form=None,
@@ -775,7 +797,7 @@ class NonExistent(Item):
             content = self._select_itemtype()
         else:
             content = render_template('show_nonexistent.html',
-                                      item_name=self.name,
+                                      item_name=self.fqname.fullname,
                                      )
         return Response(content, 404)
 
@@ -787,7 +809,7 @@ class NonExistent(Item):
 
     def _select_itemtype(self):
         return render_template('modify_select_itemtype.html',
-                               item_name=self.name,
+                               item_name=self.fqname.fullname,
                                itemtypes=item_registry.shown_entries,
                               )
 
