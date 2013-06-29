@@ -352,6 +352,10 @@ class Converter(object):
         # TODO: maybe IE8 would display transcluded external pages if we could do <object... type="text/html" ...>
         href = elem.get(xlink.href, None)
         attrib = {}
+        whitelist = ['width', 'height']
+        for key in elem.attrib:
+            if key.name in whitelist:
+                attrib[key] = elem.attrib[key]
         mimetype = Type(_type=elem.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
         # Get the object type
         obj_type = self.eval_object_type(mimetype, href)
