@@ -832,7 +832,7 @@ class Converter(ConverterMacro):
             args = parse_arguments(object_args).keyword  # XXX needs different parsing
         else:
             args = {}
-            
+
         query_keys = {}
         attrib = {}
         whitelist = ['width', 'height']

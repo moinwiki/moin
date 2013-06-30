@@ -30,7 +30,7 @@ class Converter(object):
 
     def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
-        query_keys = {'do':'get', 'rev':rev.revid}
+        query_keys = {'do': 'get', 'rev': rev.revid}
         attrib = {}
         if arguments:
             query = arguments.keyword.get(xinclude.href).query
@@ -44,7 +44,7 @@ class Converter(object):
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
                             query=query),
         })
-        
+
         obj = moin_page.object_(attrib=attrib, children=[item_name, ])
         body = moin_page.body(children=(obj, ))
         return moin_page.page(children=(body, ))

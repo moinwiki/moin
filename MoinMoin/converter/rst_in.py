@@ -331,12 +331,12 @@ class NodeVisitor(object):
         pass
 
     def visit_image(self, node):
-        whitelist = ['width', 'height', 'align', 'alt',]
+        whitelist = ['width', 'height', 'align', 'alt', ]
         attr = {}
         for key in whitelist:
             if node.get(key):
                 attr[html(key)] = node.get(key)
-        
+
         #there is no 'scale' attribute, hence absent from whitelist, handled separately
         #TODO: Error reporting in case of bad input, currently prints on terminal
         #TODO: mark_item_as_transclusion in html_out conflicts 'align' by adding item-wrapper
