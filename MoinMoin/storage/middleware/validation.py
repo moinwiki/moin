@@ -369,6 +369,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
     List.named(keys.SUBSCRIBED_ITEMS).of(String.named('subscribed_item')).using(optional=True),
+    List.named(keys.SUBSCRIPTION_IDS).of(String.named('subscription_id')).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
     #TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
