@@ -8,6 +8,8 @@
 ^moin.egg-info/
 ^MoinMoin/_tests/wiki/data/cache/
 ^wiki/data/cache/
+^wiki/data/default/data/
+^wiki/data/default/meta/
 ^wiki/data/content/
 ^wiki/data/userprofiles/
 ^wiki/index/
