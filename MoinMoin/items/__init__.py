@@ -394,11 +394,9 @@ class Item(object):
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
 
-    def modify(self, meta, data, comment=u'', contenttype_guessed=None, contenttype_qs=None):
-        if contenttype_qs:
-            # we use querystring param to FORCE content type
-            meta[CONTENTTYPE] = contenttype_qs
-
+    def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
+        meta = dict(meta)  # we may get a read-only dict-like, copy it
+        meta.update(update_meta)
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
     class _ModifyForm(BaseModifyForm):
@@ -730,7 +728,7 @@ class Default(Contentful):
                 meta, data, contenttype_guessed, comment = form._dump(self)
                 contenttype_qs = request.values.get('contenttype')
                 try:
-                    self.modify(meta, data, comment, contenttype_guessed, contenttype_qs)
+                    self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
                 except AccessDenied:
                     abort(403)
                 else:

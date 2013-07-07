@@ -352,6 +352,23 @@ class TestItem(object):
             item.meta['test_key']
         assert item.meta['another_test_key'] == another_meta['another_test_key']
         assert item.content.data == another_data
+        # add/update meta
+        another_meta = {
+            'test_key': 'test_value',
+            'another_test_key': 'another_test_value',
+        }
+        item.modify(another_meta, another_data)
+        item = Item.create(name)
+        update_meta = {
+            'another_test_key': 'updated_test_value',
+            'new_test_key': 'new_test_value',
+        }
+        item.modify(another_meta, another_data, **update_meta)
+        item = Item.create(name)
+        assert item.name == u'Test_Item'
+        assert item.meta['test_key'] == another_meta['test_key']
+        assert item.meta['another_test_key'] == update_meta['another_test_key']
+        assert item.meta['new_test_key'] == update_meta['new_test_key']
 
 
 coverage_modules = ['MoinMoin.items']
