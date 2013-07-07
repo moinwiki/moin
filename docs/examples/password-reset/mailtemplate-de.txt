@@ -1,0 +1,14 @@
+Der Wiki-Administrator hat Ihr Passwort invalidiert und angefordert,
+Ihnen diese E-Mail zu senden, damit Sie ein neues Passwort setzen koennen.
+
+Bitte lesen Sie wichtige Informationen hierzu (sowie Hinweise zur
+Problembeseitigung und Wiki-Administrator-Kontaktinformationen) dort:
+
+(XXX hier die URL angeben XXX)
+
+
+Bitte besuchen Sie nun die unten angezeigte Passwort-Ruecksetz-URL und
+setzen Sie ein neues Passwort.
+
+%(link)s
+
