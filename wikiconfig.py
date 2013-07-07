@@ -66,6 +66,7 @@ class Config(DefaultConfig):
     mod_names = [
         'jquery', 'jquery_file_upload',
         'json_js',
+        'bootstrap',
         'ckeditor',
         'svgweb',
         'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
