@@ -564,7 +564,7 @@ MoinMoin.prototype.enhanceEdit = function () {
             // is option to scroll page after edit set?
             if (document.getElementById('moin-scroll-page-after-edit')) {
                 // add click handler to OK (save) button to capture position of caret in textarea
-                $("#f_submit").click(function () {
+                $("#moin-save-text-button").click(function () {
                     caretLineno = getCaretLineno(document.getElementById('f_content_form_data_text'));
                     // save lineno for use in "show" page load
                     if (caretLineno > 0) { sessionStorage.moinCaretLineNo = caretLineno; }
