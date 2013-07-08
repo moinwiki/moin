@@ -138,7 +138,8 @@ class Ticket(Contentful):
     itemtype = ITEMTYPE_TICKET
     display_name = L_('Ticket')
     description = L_('Ticket item')
-    modify_template = 'ticket.html'
+    submit_template = 'ticket/submit.html'
+    modify_template = 'ticket/modify.html'
 
     def do_show(self, revid):
         if revid != CURRENT:
@@ -169,7 +170,7 @@ class Ticket(Contentful):
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
 
-        return render_template(self.modify_template,
+        return render_template(self.submit_template if is_new else self.modify_template,
                                is_new=is_new,
                                closed=closed,
                                item_name=self.name,
