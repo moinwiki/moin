@@ -1,0 +1,58 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+
+{% macro render_meta() %}
+    {% for e in [
+        'summary',
+        'effort',
+        'difficulty',
+        'severity',
+        'priority',
+        'tags',
+        'assigned_to',
+        'superseded_by',
+        'depends_on',
+        ] %}
+        {{ forms.render(form['meta'][e]) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_backref() %}
+    {% for e in [
+        'supersedes',
+        'required_by',
+        'subscribers',
+        ] %}
+        {{ forms.render(form['backrefs'][e]) }}
+    {% endfor %}
+{% endmacro %}
+
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+{% endblock %}
+
+{% block content %}
+<h1>
+    {% block title_text %}
+    {% endblock %}
+    {% if closed %}
+        {# TODO style .moin-ticket-closed #}
+        <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
+    {% endif %}
+</h1>
+<div class="moin-form" id="moin-ticket-form">
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+
+    {% if data_rendered %}
+        <div id="moin-content-data">
+            {{ data_rendered }}
+        </div>
+    {% endif %}
+
+    {% block form_controls %}
+    {% endblock %}
+
+    {{ gen.form.close() }}
+</div>
+{% endblock %}
