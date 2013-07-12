@@ -156,12 +156,77 @@
     {% endfor %}
 {% endblock %}
 
+{% block item_actions %}
+    <li class="nav-header">Item Actions</li>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.rename_item' and user.may.write(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-tag"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.delete_item' and user.may.write(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-remove"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {% endif %}
+
+            {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-trash"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.similar_names' and user.may.write(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-search"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.download_item' and user.may.write(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-download-alt"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.copy_item' and user.may.write(item_name) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-comment"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
 {% block local_panel %}
         
         <!-- user, site, item actions -->
         {{ self.user_actions() }}
 
         {{ self.site_actions() }}
+
+        {{ self.item_actions() }}
 
         {% if rev %}
         <li class="nav-header">Metadata</li>
