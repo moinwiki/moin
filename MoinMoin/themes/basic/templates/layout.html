@@ -64,5 +64,44 @@
             </div> <!-- navbar-container-->
     	</div> <!-- navbar-inverse-->
 
+        <div class="row-fluid">
+            <div class="span2">
+                <div class="well sidebar-nav left-sidebar">
+                    <ul class="nav nav-list">
+                        {% set navibar_items = theme_supp.navibar(item_name) %}
+                        {% set quicklinks = 'false' %}
+                        {% if navibar_items %}
+
+                        <li class="nav-header">Site Navigation</li>
+                        {% for cls, url, text, title in navibar_items %}
+                            {% if class == 'userlink' %}
+                                {% set quicklinks = 'true' %}
+                            {% endif %}
+                            <li class="{{ cls }}">
+                                <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                            </li>
+                        {% endfor %}
+
+                        {% endif %}
+                        
+                        <li class="nav-header">Quick Links</li>
+                            {% if quicklinks == 'true' %}
+                                {% for cls, url, text, title in navibar_items %}
+                                {% if cls == 'userlink' %}
+                                    <li class="{{ cls }}">
+                                        <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                                    </li>
+                                {% endif %}
+                                {% endfor %}
+
+                            {% else %}
+                                <li> Empty </li>
+                            {% endif %}
+
+                    </ul>
+                </div><!--/.well -->
+            </div><!--/span-->
+        </div>
+
 	</div>
 {% endblock %}
