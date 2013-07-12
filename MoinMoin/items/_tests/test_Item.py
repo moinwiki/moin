@@ -362,6 +362,7 @@ class TestItem(object):
         update_meta = {
             'another_test_key': 'updated_test_value',
             'new_test_key': 'new_test_value',
+            'none_test_key': None,
         }
         item.modify(another_meta, another_data, **update_meta)
         item = Item.create(name)
@@ -369,6 +370,7 @@ class TestItem(object):
         assert item.meta['test_key'] == another_meta['test_key']
         assert item.meta['another_test_key'] == update_meta['another_test_key']
         assert item.meta['new_test_key'] == update_meta['new_test_key']
+        assert 'none_test_key' not in item.meta
 
 
 coverage_modules = ['MoinMoin.items']
