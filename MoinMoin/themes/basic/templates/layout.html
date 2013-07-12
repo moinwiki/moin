@@ -139,6 +139,17 @@
                         {% endblock %}
                     </div>
                 </div><!--/span-->
+
+                <div class="span2">
+                    <div class="well sidebar-nav">
+                    {% if self.local_panel %}
+                        <ul class="nav nav-list">
+                            {{ self.local_panel() }}
+                        </ul>
+                    {% endif %}
+                    </div><!--/.well -->
+                </div><!--/span-->
+
             </div><!--/row-->
 
             </div><!--/span-->
