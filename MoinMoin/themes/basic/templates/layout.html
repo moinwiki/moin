@@ -1,0 +1,68 @@
+{% extends theme("base.html") %}
+
+{% import theme("snippets.html") as snippets %}
+{% set logo = snippets.logo() %}
+
+{% block layout %}
+	<div class="container-fluid">
+        <div class="navbar navbar-inverse">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+
+                    {% if logo %}
+                    <a class="brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                        <img class="logo" src="{{ '/static/logos/moinmoin-small.png' }}"/>
+                    </a>
+                    {% endif %}
+
+					<form class="navbar-search pull-right" action="{{ url_for('frontend.search') }}" method="get">
+                       	<input name='q' type="text" class="search-query" placeholder="Search ...">
+                    </form>
+
+                    <ul class="nav pull-right">
+
+                        {% if user.valid -%}
+                        {% set avatar = user.avatar(20) %}
+                            {% if avatar %}
+                                <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                            {%- endif %}
+                            {% if user.name -%}
+                                {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                                <li>
+                                <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                                    <i class="icon-user icon-white"> </i>
+                                    {{ aliasname }}
+                                </a>
+                                </li>
+                                {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                                    <li>
+                                    <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
+                                        <i class="icon-cog icon-white"> </i>
+                                            {{ _('Settings') }}</a>
+                                    </li>
+                                {%- endif %}
+                            {%- endif %}
+                            {% if user.auth_method in cfg.auth_can_logout %}
+                                <li>
+                                <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                                    <i class="icon-off icon-white"></i>
+                                    {{ _('Logout') }}
+                                </a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            {% set login_url = theme_supp.login_url() %}
+                            {% if login_url %}
+                                <li>
+                                <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                                </li>
+                            {% endif %}
+                        {%- endif %}
+
+                    </ul>
+                </div> <!-- nav-bar-fluid-container -->
+            </div> <!-- navbar-container-->
+    	</div> <!-- navbar-inverse-->
+
+	</div>
+{% endblock %}
