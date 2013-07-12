@@ -125,8 +125,23 @@
                         {% endfor %}
                     {% endif %}
                 </ul>
-            </div><!--/span-->
-        </div> <!--/row-->
 
-	</div>
+                {% block views %}
+
+                {% endblock %}
+
+            <div class="row-fluid">
+                <div class="span10">
+                    {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
+                    <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+                        {% block content %}
+                            {# All content templates should implement this block. #}
+                        {% endblock %}
+                    </div>
+                </div><!--/span-->
+            </div><!--/row-->
+
+            </div><!--/span-->
+        </div> <!--/row-fluid-->
+	</div><!--/container-fluid-->
 {% endblock %}

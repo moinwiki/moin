@@ -1,0 +1,96 @@
+{% extends theme("layout.html") %}
+
+{% block views %}
+{% set exists = storage.has_item(item_name) %}
+
+    <ul class="nav nav-tabs">
+        {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+            {%- if not check_exists or check_exists and exists %}
+
+                {%- if endpoint == 'frontend.show_item' %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-eye-open"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'frontend.modify_item' and user.may.write(item_name) %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                         <span class="icon-pencil"></span>   {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'frontend.history' %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-time"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'frontend.show_item_meta' %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-wrench"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'frontend.highlight_item' %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-picture"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'frontend.backrefs' %}
+                    <li>
+                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-share"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {%- if endpoint == 'special.comments' %}
+                    <li class="moin-toggle-comments-button">
+                        <a href="#" title="{{ title }}">
+                        <span class="icon-comment"></span>
+                            {{ label }}
+                        </a>
+                    </li>
+                {%- endif %}
+
+                {% if endpoint == 'special.transclusions' -%}
+                    <li class="moin-transclusions-button">
+                        <a href="#" title="{{ title }}">
+                        <span class="icon-edit"></span>
+                            {{ label }}</a>
+                    </li>
+                {%- endif %}
+
+            {%- endif %}
+        {% endfor %}
+
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    {% block content_data %}
+        {% if data_rendered %}
+        <div id="moin-content-data">
+            {{ data_rendered }}
+        </div>
+        {% endif %}
+    {% endblock %}
+
+{% endblock %}
