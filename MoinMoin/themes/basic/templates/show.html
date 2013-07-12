@@ -129,10 +129,39 @@
     {% endfor %}
 {% endblock %}
 
+{% block site_actions %}
+    <li class="nav-header">Site Actions</li>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.index' %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-list-alt"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.sitemap' %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-map-marker"></span>
+                        {{ label }}
+                    </a>
+                </li>
+            {%- endif %}
+
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
 {% block local_panel %}
         
         <!-- user, site, item actions -->
         {{ self.user_actions() }}
+
+        {{ self.site_actions() }}
 
         {% if rev %}
         <li class="nav-header">Metadata</li>
