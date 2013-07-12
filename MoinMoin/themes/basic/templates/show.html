@@ -95,9 +95,44 @@
 
 {% endblock %}
 
+{% block user_actions %}
+    <li class="nav-header">User Actions</li>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-star-empty"></span>
+                        {%- if user.is_quicklinked_to([item_name]) %}
+                            {{ _('Remove Link') }}
+                        {%- else %}
+                            {{ _('Add Link') }}
+                        {%- endif %}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                        <span class="icon-envelope"></span>
+                        {%- if user.is_subscribed_to([item_name]) %}
+                            {{ _('Unsubscribe') }}
+                        {%- else %}
+                            {{ _('Subscribe') }}
+                        {%- endif %}
+                    </a>
+                </li>
+            {%- endif %}
+        {%- endif %}
+    {% endfor %}
+{% endblock %}
+
 {% block local_panel %}
         
         <!-- user, site, item actions -->
+        {{ self.user_actions() }}
 
         {% if rev %}
         <li class="nav-header">Metadata</li>
