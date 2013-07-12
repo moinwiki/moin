@@ -101,7 +101,32 @@
                     </ul>
                 </div><!--/.well -->
             </div><!--/span-->
-        </div>
+
+            <div class="span10">
+                <ul class="breadcrumb">
+                    {% set trail_items = theme_supp.path_breadcrumbs() %}
+                    {% if trail_items %}
+                        {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+                          <li>
+                            {%- if wiki_name -%}
+                                <a href="{{ item_href }}"{{ " " }}
+                                   title="{{ wiki_name }}"
+                                   class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+                                   {{ item_name|shorten_item_name }}
+                                </a>
+                            {%- else -%}
+                                <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                                   {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                                   {{ item_name|shorten_item_name }}
+                                </a>
+                            {%- endif %}
+                            <span class="divider">/</span>
+                          </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div><!--/span-->
+        </div> <!--/row-->
 
 	</div>
 {% endblock %}
