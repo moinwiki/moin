@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
+{% set exists = storage.has_item(item_name) %}
 
 {% block views %}
-{% set exists = storage.has_item(item_name) %}
 
     <ul class="nav nav-tabs">
         {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
