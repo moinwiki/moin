@@ -70,20 +70,26 @@ loglevel=INFO
 keys=root
 
 [handlers]
-keys=stderr
+keys=stderr,email
 
 [formatters]
 keys=default
 
 [logger_root]
 level=%(loglevel)s
-handlers=stderr
+handlers=stderr,email
 
 [handler_stderr]
 class=StreamHandler
 level=NOTSET
 formatter=default
 args=(sys.stderr, )
+
+[handler_email]
+class=MoinMoin.log.EmailHandler
+level=ERROR
+formatter=default
+args=()
 
 [formatter_default]
 format=%(asctime)s %(levelname)s %(name)s:%(lineno)d %(message)s
@@ -170,3 +176,69 @@ def getLogger(name):
         if isinstance(levelnumber, int):  # that list has also the reverse mapping...
             setattr(logger, levelname, levelnumber)
     return logger
+
+
+def get_log_level(section_name, conf_fname=None):
+    """ Get from the config the log level of a section
+
+    :param conf_name: configuration filename path
+    :return: handler log level
+    """
+    conf_fname = os.environ.get('MOINLOGGINGCONF', conf_fname)
+    got_config = False
+    if conf_fname:
+        try:
+            conf_fname = os.path.abspath(conf_fname)
+            f = open(conf_fname)
+            got_config = True
+        except IOError as e:
+            logger = getLogger(__name__)
+            logger.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, str(e)))
+    if not got_config:
+        from StringIO import StringIO
+        f = StringIO(logging_config)
+
+    import ConfigParser
+    cp = ConfigParser.ConfigParser()
+    if hasattr(f, 'readline'):
+        cp.readfp(f)
+    else:
+        cp.read(f)
+    f.close()
+    if cp.has_option(section_name, 'level'):
+        return cp.get(section_name, 'level')
+
+
+class EmailHandler(logging.Handler):
+    """ A custom handler class which sends email for each logging event using
+    wiki mail configuration
+    """
+    def __init__(self, toaddrs=[], subject=''):
+        """ Initialize the handler
+
+        @param toaddrs: address or a list of email addresses whom to send email
+        @param subject: email's subject
+        """
+        logging.Handler.__init__(self)
+        if isinstance(toaddrs, basestring):
+            toaddrs = [toaddrs]
+        self.toaddrs = toaddrs
+        self.subject = subject
+
+    def emit(self, record):
+        """ Emit a record.
+
+        Send the record to the specified addresses
+        """
+        from MoinMoin.mail.sendmail import sendmail
+        from flask import current_app as app
+        cfg = app.cfg
+        # the app config is accessible after logging is initialized, so set the
+        # arguments and make the decision to send mail or not here
+        toaddrs = self.toaddrs if self.toaddrs else cfg.admin_emails
+        log_level = get_log_level('handler_email')
+        subject = self.subject if self.subject else '[{0}][{1}] Log message'.format(
+            cfg.sitename, log_level)
+        msg = self.format(record)
+        if app.cfg.email_tracebacks:
+            sendmail(subject, msg, to=toaddrs)
