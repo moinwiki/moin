@@ -537,6 +537,7 @@ class Item(object):
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
+                                             fqname=self.fqname
                                              )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
@@ -747,7 +748,7 @@ class Default(Contentful):
                     # break them
                     return "OK"
             form = self.ModifyForm.from_request(request)
-            state = dict(name=self.name, itemid=self.meta.get(ITEMID))
+            state = dict(fqname=self.fqname, itemid=self.meta.get(ITEMID))
             if form.validate(state):
                 meta, data, contenttype_guessed, comment = form._dump(self)
                 contenttype_qs = request.values.get('contenttype')

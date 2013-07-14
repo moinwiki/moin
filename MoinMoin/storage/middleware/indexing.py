@@ -1010,6 +1010,7 @@ class Item(object):
                        contenttype_guessed=None,
                        acl_parent=None,
                        return_rev=False,
+                       fqname=None
                        ):
         """
         Store a revision into the backend, write metadata and data to it.
@@ -1049,6 +1050,7 @@ class Item(object):
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
+                 FQNAME: fqname,
                 }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
