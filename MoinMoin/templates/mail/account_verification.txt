@@ -1,10 +1,11 @@
 {{ _("""\
-Somebody has created an account with this email address.
+An account with this email address has been created or
+an existing account has been changed to use this email address.
 
 Please use the link below to verify your email address:
 
 %(link)s
 
-If you didn't create this account, please ignore this email.
+Please ignore this email if you didn't initiate this action.
 
 """, link=link) }}
