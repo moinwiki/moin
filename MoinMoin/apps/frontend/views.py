@@ -1137,12 +1137,29 @@ def verifyemail():
     if 'username' in request.values and 'token' in request.values:
         u = user.User(auth_username=request.values['username'])
         token = request.values['token']
-    if u and u.disabled and token and u.validate_recovery_token(token):
-        u.profile[DISABLED] = False
-        u.save()
-        flash(_("Your account has been activated, you can log in now."), "info")
+    success = False
+    if u and token and u.validate_recovery_token(token):
+        unvalidated_email = u.profile[EMAIL_UNVALIDATED]
+        if (app.cfg.user_email_unique and
+            user.search_users(**{EMAIL: unvalidated_email})):
+            msg = _('This email is already in use.')
+        else:
+            if u.disabled:
+                u.profile[DISABLED] = False
+                msg = _('Your account has been activated, you can log in now.')
+            else:
+                msg = _('Your new email address has been confirmed.')
+            u.profile[EMAIL] = unvalidated_email
+            del u.profile[EMAIL_UNVALIDATED]
+            del u.profile[RECOVERPASS_KEY]
+            success = True
     else:
-        flash(_('Your username and/or token is invalid!'), "error")
+        msg = _('Your username and/or token is invalid!')
+    if success:
+        u.save()
+        flash(msg, 'info')
+    else:
+        flash(msg, 'error')
     return redirect(url_for('.show_root'))
 
 
@@ -1508,21 +1525,19 @@ def usersettings():
                             flaskg.user.profile[k] = v
                         if (part == 'notification' and app.cfg.user_email_verification and
                             form['email'].value != user_old_email):
-                            # disable account
-                            flaskg.user.profile[DISABLED] = True
+                            flaskg.user.profile[EMAIL] = user_old_email
+                            flaskg.user.profile[EMAIL_UNVALIDATED] = form['email'].value
                             # send verification mail
                             is_ok, msg = flaskg.user.mail_email_verification()
                             if is_ok:
-                                flaskg.user.logout_session()
-                                response['flash'].append((_('Your account has been disabled because you changed your '
-                                                            'email address. Please see the email we sent to your '
-                                                            'address to reactivate it.'), "info"))
+                                response['flash'].append(
+                                    (_('A confirmation email has been sent to your '
+                                       'newly configured email address.'), "info"))
                                 response['redirect'] = url_for('.show_root')
                             else:
-                                # sending the verification email didn't work. reset email change and alert the user.
-                                flaskg.user.profile[DISABLED] = False
-                                flaskg.user.profile[EMAIL] = user_old_email
-                                flaskg.user.save()
+                                # sending the verification email didn't work.
+                                # delete the unvalidated email and alert the user.
+                                del flaskg.user.profile[EMAIL_UNVALIDATED]
                                 response['flash'].append((_('Your email address was not changed because sending the '
                                                             'verification email failed. Please try again later.'),
                                                           "error"))
