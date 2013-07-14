@@ -291,13 +291,13 @@ class ProtectedItem(object):
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False, return_rev=False, **kw):
+    def store_revision(self, meta, data, overwrite=False, return_rev=False, fqname=None, **kw):
         self.require(WRITE)
         if not self:
             self.require(CREATE)
         if overwrite:
             self.require(DESTROY)
-        rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, **kw)
+        rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, fqname=fqname, **kw)
         self.protector._clear_acl_cache()
         if return_rev:
             return ProtectedRevision(self.protector, rev, p_item=self)
