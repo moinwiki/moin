@@ -503,6 +503,7 @@ options_no_group_name = {
             RESULTS_PER_PAGE: 0,
             LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
             TIMEZONE: None,  # None -> use cfg.timezone_default
+            EMAIL_UNVALIDATED: None,
         }, 'Default attributes of the user object'),
     )),
     # ==========================================================================

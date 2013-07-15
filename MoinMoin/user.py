@@ -92,8 +92,9 @@ space between words. Group page name is not allowed.""", name=username)
     if validate and email and app.cfg.user_email_unique:
         if search_users(email=email):
             return _("This email already belongs to somebody else.")
-
-    theuser.profile[EMAIL] = email
+        theuser.profile[EMAIL_UNVALIDATED] = email
+    else:
+        theuser.profile[EMAIL] = email
 
     # Openid should be unique
     openid = meta.get(OPENID)
@@ -798,5 +799,8 @@ class User(object):
 
         subject = _('[%(sitename)s] Please verify your email address',
                     sitename=self._cfg.sitename or "Wiki")
-        mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
+        email = self.profile[EMAIL_UNVALIDATED]
+        mailok, msg = sendmail.sendmail(subject, text, to=[email], mail_from=self._cfg.mail_from)
         return mailok, msg
+
+        self._mail_email_verification(email=self.email)
