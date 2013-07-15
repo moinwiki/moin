@@ -71,7 +71,7 @@ BOOKMARKS = u"bookmarks"
 QUICKLINKS = u"quicklinks"
 SESSION_KEY = u"session_key"
 SESSION_TOKEN = u"session_token"
-RECOVERPASS_KEY = u"recoverpass_key"
+RECOVERPASS_KEY = u"recoverpass_key"  # TODO: this is used for email confirmation as well, maybe it needs better name
 EDIT_ON_DOUBLECLICK = u"edit_on_doubleclick"
 SCROLL_PAGE_AFTER_EDIT = u"scroll_page_after_edit"
 SHOW_COMMENTS = u"show_comments"
@@ -82,6 +82,7 @@ RESULTS_PER_PAGE = u"results_per_page"
 WANT_TRIVIAL = u"want_trivial"
 EMAIL_SUBSCRIBED_EVENTS = u"email_subscribed_events"
 DISABLED = u"disabled"
+EMAIL_UNVALIDATED = u"email_unvalidated"
 
 # in which backend is some revision stored?
 BACKENDNAME = u"backendname"
