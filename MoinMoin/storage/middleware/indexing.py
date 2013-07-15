@@ -322,6 +322,8 @@ class IndexingMiddleware(object):
             EMAIL: ID(stored=True),
             OPENID: ID(stored=True),
             DISABLED: BOOLEAN(stored=True),
+            LOCALE: ID(stored=True),
+            SUBSCRIPTION_IDS: ID(),
         }
         latest_revs_fields.update(**userprofile_fields)
 

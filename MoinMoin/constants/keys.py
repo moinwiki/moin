@@ -22,6 +22,7 @@ USERGROUP = u"usergroup"
 # needs more precise name / use case:
 SOMEDICT = u"somedict"
 
+# TODO review plural constants
 CONTENTTYPE = u"contenttype"
 ITEMTYPE = u"itemtype"
 SIZE = u"size"
@@ -67,6 +68,7 @@ LOCALE = u"locale"
 TIMEZONE = u"timezone"
 ENC_PASSWORD = u"enc_password"
 SUBSCRIBED_ITEMS = u"subscribed_items"
+SUBSCRIPTION_IDS = u"subscription_ids"
 BOOKMARKS = u"bookmarks"
 QUICKLINKS = u"quicklinks"
 SESSION_KEY = u"session_key"
@@ -91,8 +93,8 @@ USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
     NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
-    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
-    CSS_URL,
+    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, SUBSCRIPTION_IDS,
+    QUICKLINKS, CSS_URL,
 ]
 
 # keys for blog homepages

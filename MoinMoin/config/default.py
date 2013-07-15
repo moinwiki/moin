@@ -490,6 +490,7 @@ options_no_group_name = {
             BOOKMARKS: {},
             QUICKLINKS: [],
             SUBSCRIBED_ITEMS: [],
+            SUBSCRIPTION_IDS: [],
             EMAIL_SUBSCRIBED_EVENTS: [
                 # XXX PageChangedEvent.__name__
                 # XXX PageRenamedEvent.__name__
