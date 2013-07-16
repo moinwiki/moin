@@ -314,15 +314,27 @@ class Item(object):
     @property
     def name(self):
         """
-        returns the page name if known else extract name from meta.
+        returns the first name from the list of names.
         """
+        try:
+            return self.names[0]
+        except IndexError:
+            return u''
+
+    @property
+    def names(self):
+        """
+        returns a list of 0..n names of the item
+        If we are dealing with a specific name (e.g field being NAME_EXACT),
+        move it to position 0 of the list, so the upper layer can use names[0]
+        if they want that particular name and names for the whole list.
+        TODO make the entire code to be able to use names instead of name
+        """
+        names = self.meta.get(NAME, [])
         if self.fqname.field == NAME_EXACT:
-            return self.fqname.value
-        else:
-            try:
-                return self.meta.get(NAME)[0]
-            except: #except AnyError
-                return u''
+            names.remove(self.fqname.value)
+            names.insert(0, self.fqname.value)
+        return names
 
     # XXX Backward compatibility, remove soon
     @property
@@ -333,7 +345,6 @@ class Item(object):
         return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
 
     def meta_filter(self, meta):
-        """ kill metadata entries that we set automatically when saving """
         kill_keys = [  # shall not get copied from old rev to new rev
             NAME_OLD,
             # are automatically implanted when saving
