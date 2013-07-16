@@ -425,7 +425,7 @@ def setup_jinja_env():
         'storage': flaskg.storage,
         'clock': flaskg.clock,
         'cfg': app.cfg,
-        'item_name': u'handlers need to give it',
+        'item_name': u'@NONAMEGIVEN',
         'url_for_item': url_for_item,
         'get_editor_info': lambda meta: get_editor_info(meta),
         'utctimestamp': lambda dt: utctimestamp(dt),

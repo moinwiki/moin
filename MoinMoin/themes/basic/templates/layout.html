@@ -3,6 +3,12 @@
 {% import theme("snippets.html") as snippets %}
 {% set logo = snippets.logo() %}
 
+{% if item_name in ['@NONAMEGIVEN',''] %}
+{% set index = url_for(request.endpoint) %}
+{% else %}
+{% set index = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
+{% endif %}
+
 {% block layout %}
 	<div class="container-fluid">
         <div class="navbar navbar-inverse">
@@ -77,8 +83,12 @@
                             {% if class == 'userlink' %}
                                 {% set quicklinks = 'true' %}
                             {% endif %}
-                            <li class="{{ cls }}">
-                                <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                            {% if url == index %}
+                                <li class="{{ cls }} active">
+                            {% else %}
+                                <li class="{{ cls }}">
+                            {% endif %}
+                            <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
                             </li>
                         {% endfor %}
 
