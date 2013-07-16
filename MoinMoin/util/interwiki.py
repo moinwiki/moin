@@ -154,6 +154,15 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
     def __unicode__(self):
         return self.fullname
 
+    @property
+    def query(self):
+        """
+        returns a dict that can be used as a whoosh query
+        to lookup index documents matching this CompositeName
+        """
+        field = NAME_EXACT if not self.field else self.field
+        return {NAMESPACE: self.namespace, field: self.value}
+
 
 def split_fqname(url):
     """
