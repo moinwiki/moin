@@ -80,9 +80,7 @@
 
                         <li class="nav-header">Site Navigation</li>
                         {% for cls, url, text, title in navibar_items %}
-                            {% if class == 'userlink' %}
-                                {% set quicklinks = 'true' %}
-                            {% endif %}
+                            {% if cls != 'userlink' %}
                             {% if url == index %}
                                 <li class="{{ cls }} active">
                             {% else %}
@@ -90,23 +88,19 @@
                             {% endif %}
                             <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
                             </li>
+                            {% endif %}
                         {% endfor %}
 
                         {% endif %}
                         
                         <li class="nav-header">Quick Links</li>
-                            {% if quicklinks == 'true' %}
-                                {% for cls, url, text, title in navibar_items %}
-                                {% if cls == 'userlink' %}
-                                    <li class="{{ cls }}">
-                                        <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
-                                    </li>
-                                {% endif %}
-                                {% endfor %}
-
-                            {% else %}
-                                <li> Empty </li>
-                            {% endif %}
+                        {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
+                            <li class="{{ cls }}">
+                                <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                            </li>
+                        {% else %}
+                            <li> Empty </li>
+                        {% endfor %}
 
                     </ul>
                 </div><!--/.well -->
