@@ -124,7 +124,9 @@
                                    {{ item_name|shorten_item_name }}
                                 </a>
                             {%- endif %}
-                            <span class="divider">/</span>
+                            {% if loop.last is sameas false %}
+                                <span class="divider">/</span>
+                            {% endif %}
                           </li>
                         {% endfor %}
                     {% endif %}
