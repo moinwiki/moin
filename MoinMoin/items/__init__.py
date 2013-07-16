@@ -103,18 +103,22 @@ class DummyRev(dict):
     """ if we have no stored Revision, we use this dummy """
     def __init__(self, item, itemtype=None, contenttype=None):
         self.item = item
+        fqname = item.fqname
         self.meta = {
             ITEMTYPE: itemtype or ITEMTYPE_NONEXISTENT,
             CONTENTTYPE: contenttype or CONTENTTYPE_NONEXISTENT
         }
         self.data = StringIO('')
         self.revid = None
-        if self.item:
-            self.meta[NAMESPACE] = item.fqname.namespace
-            if item.fqname.field in UFIELDS_TYPELIST:
-                self.meta[item.fqname.field] = [item.fqname.value]
+        if item:
+            self.meta[NAMESPACE] = fqname.namespace
+            if fqname.field in UFIELDS_TYPELIST:
+                if fqname.field == NAME_EXACT:
+                    self.meta[NAME] = [fqname.value]
+                else:
+                    self.meta[fqname.field] = [fqname.value]
             else:
-                self.meta[item.fqname.field] = item.fqname.value
+                self.meta[fqname.field] = fqname.value
 
 
 class DummyItem(object):
@@ -345,6 +349,7 @@ class Item(object):
         return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
 
     def meta_filter(self, meta):
+        """ kill metadata entries that we set automatically when saving """
         kill_keys = [  # shall not get copied from old rev to new rev
             NAME_OLD,
             # are automatically implanted when saving
