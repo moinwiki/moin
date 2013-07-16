@@ -385,7 +385,7 @@ class Item(object):
 
     def _rename(self, name, comment, action, delete=False):
         self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
-        old_prefix = self.subitems_prefix
+        old_prefix = self.subitem_prefixes[0]
         old_prefixlen = len(old_prefix)
         if not delete:
             new_prefix = name + '/'
@@ -548,14 +548,25 @@ class Item(object):
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
-                                             fqname=self.fqname
                                              )
         item_modified.send(app._get_current_object(), item_name=name)
         return newrev.revid, newrev.meta[SIZE]
 
     @property
-    def subitems_prefix(self):
-        return self.name + u'/' if self.name else u''
+    def subitem_prefixes(self):
+        """
+        Return the possible prefixes for subitems.
+        """
+        names = self.names[0:1] if self.fqname.field == NAME_EXACT else self.names
+        return [name + u'/' for name in names]
+
+    def get_prefix_match(self, name, prefixes):
+        """
+        returns the prefix match found.
+        """
+        for prefix in prefixes:
+            if name.startswith(prefix):
+                return prefix
 
     def get_subitem_revs(self):
         """
@@ -563,11 +574,11 @@ class Item(object):
 
         Subitems are in the form of storage Revisions.
         """
-        query = Term(WIKINAME, app.cfg.interwikiname)
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, self.fqname.namespace)])
         # trick: an item of empty name can be considered as "virtual root item"
         # that has all wiki items as sub items
-        if self.name:
-            query = And([query, Prefix(NAME_EXACT, self.subitems_prefix)])
+        if self.names:
+            query = And([query, Or([Prefix(NAME_EXACT, prefix) for prefix in self.subitem_prefixes])])
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
@@ -587,38 +598,37 @@ class Item(object):
         When both a subitem itself and some of its subitems are in the subitems
         list, it appears in both ``files`` and ``dirs``.
         """
-        prefix = self.subitems_prefix
-        prefixlen = len(prefix)
+        prefixes = self.subitem_prefixes
         # IndexEntry instances of "file" subitems
         files = []
         # IndexEntry instances of "directory" subitems
         dirs = []
-        added_dir_relnames = set()
+        added_fullnames = set()
 
         for rev in subitems:
             fullnames = rev.meta[NAME]
             for fullname in fullnames:
-                if fullname.startswith(prefix):
-                    relname = fullname[prefixlen:]
+                prefix = self.get_prefix_match(fullname, prefixes)
+                if not prefix is None:
+                    relname = fullname[len(prefix):]
                     if '/' in relname:
                         # Find the *direct* subitem that is the ancestor of current
                         # (indirect) subitem. e.g. suppose when the index root is
                         # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                         # 'foo/bar' will be found.
                         direct_relname = relname.partition('/')[0]
-                        if direct_relname not in added_dir_relnames:
-                            added_dir_relnames.add(direct_relname)
+                        if fullname not in added_fullnames:
+                            added_fullnames.add(fullname)
                             direct_fullname = prefix + direct_relname
                             fqname = split_fqname(direct_fullname)
                             direct_rev = get_storage_revision(fqname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname, direct_rev.meta))
                     else:
                         files.append(IndexEntry(relname, fullname, rev.meta))
-
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None):
-        prefix = self.subitems_prefix
+        prefix = self.subitem_prefixes[0]
         if startswith:
             query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
         else:
@@ -643,8 +653,8 @@ class Item(object):
 
     def get_mixed_index(self):
         dirs, files = self.make_flat_index(self.get_subitem_revs())
-        dirs_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
-        index_dict = dict([(e.relname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
+        dirs_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
+        index_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
         index_dict.update(dirs_dict)
         return sorted(index_dict.values())
 
@@ -655,12 +665,13 @@ class Item(object):
         return a sorted list of first characters of subitem names,
         optionally all uppercased or lowercased.
         """
-        prefix = self.subitems_prefix
-        prefixlen = len(prefix)
+        prefixes = self.subitem_prefixes
         initials = set()
         for item in subitems:
             for name in item.meta[NAME]:
-                if name.startswith(prefix):
+                prefix = self.get_prefix_match(name, prefixes)
+                prefixlen = len(prefix)
+                if prefix:
                     initial = name[prefixlen]
                     if uppercase:
                         initial = initial.upper()
