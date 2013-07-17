@@ -318,6 +318,48 @@ def hash_validator(element, state):
     except ValueError:
         return False
 
+
+def subscription_validator(element, state):
+    """
+    a subscription
+    """
+    try:
+        keyword, value = element.value.split(":", 1)
+    except ValueError:
+        element.add_error("Subscription must contain colon delimiters.")
+        return False
+
+    if keyword in (keys.ITEMID, ):
+        value_element = String(value)
+        valid = uuid_validator(value_element, state)
+    elif keyword in (keys.NAME, keys.TAGS, keys.NAMERE, keys.NAMEPREFIX, ):
+        try:
+            namespace, value = value.split(":", 1)
+        except ValueError:
+            element.add_error("Subscription must contain 2 colon delimiters.")
+            return False
+        namespace_element = String(namespace)
+        if not namespace_validator(namespace_element, state):
+            element.add_error("Not a valid namespace value.")
+            return False
+    else:
+        element.add_error(
+            "Subscription must start with one of the keywords: "
+            "'itemid', 'name', 'tags', 'namere' or 'nameprefix'.")
+        return False
+
+    value_element = String(value)
+    if keyword == keys.TAGS:
+        valid = tag_validator(value_element, state)
+    elif keyword == keys.NAME:
+        valid = name_validator(value_element, state)
+    elif keyword in (keys.NAMERE, keys.NAMEPREFIX):
+        valid = True
+    if not valid:
+        element.add_error("The value is not valid.")
+    return valid
+
+
 common_meta = (
     String.named(keys.ITEMID).validated_by(itemid_validator),
     String.named(keys.REVID).validated_by(revid_validator),
@@ -368,8 +410,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.SCROLL_PAGE_AFTER_EDIT).using(optional=True),
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
-    List.named(keys.SUBSCRIBED_ITEMS).of(String.named('subscribed_item')).using(optional=True),
-    List.named(keys.SUBSCRIPTION_IDS).of(String.named('subscription_id')).using(optional=True),
+    List.named(keys.SUBSCRIPTIONS).of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
     #TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
