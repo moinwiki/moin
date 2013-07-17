@@ -137,6 +137,8 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc = dict([(key, value)
                 for key, value in meta.items()
                 if key in schema])
+    if SUBSCRIPTION_IDS in schema and SUBSCRIPTIONS in meta:
+        doc[SUBSCRIPTION_IDS], doc[SUBSCRIPTION_PATTERNS] = backend_subscriptions_to_index(meta[SUBSCRIPTIONS])
     for key in [MTIME, PTIME]:
         if key in doc:
             # we have UNIX UTC timestamp (int), whoosh wants datetime
@@ -146,6 +148,25 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc[CONTENT] = content
     doc[BACKENDNAME] = backend_name
     return doc
+
+
+def backend_subscriptions_to_index(subscriptions):
+    """ Split subscriptions list to subscription_ids and subscription_patterns lists
+    which match the fields of the whoosh schema
+
+    :param subscriptions: user subscriptions meta
+    :return: tuple containing a list of subscription_ids and a list of
+             subscription_patterns
+    """
+    subscription_ids = []
+    subscription_patterns = []
+    for subscription in subscriptions:
+        keyword = subscription.split(':')[0]
+        if keyword in (ITEMID, NAME, TAGS, ):
+            subscription_ids.append(subscription)
+        elif keyword in (NAMERE, NAMEPREFIX, ):
+            subscription_patterns.append(subscription)
+    return subscription_ids, subscription_patterns
 
 
 from MoinMoin.util.mime import Type, type_moin_document
@@ -324,6 +345,7 @@ class IndexingMiddleware(object):
             DISABLED: BOOLEAN(stored=True),
             LOCALE: ID(stored=True),
             SUBSCRIPTION_IDS: ID(),
+            SUBSCRIPTION_PATTERNS: ID(),
         }
         latest_revs_fields.update(**userprofile_fields)
 
