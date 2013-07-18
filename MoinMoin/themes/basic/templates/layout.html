@@ -118,7 +118,7 @@
                                    {{ item_name|shorten_item_name }}
                                 </a>
                             {%- endif %}
-                            {% if loop.last is sameas false %}
+                            {% if not loop.last %}
                                 <span class="divider">/</span>
                             {% endif %}
                           </li>
