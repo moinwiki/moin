@@ -4,9 +4,9 @@
 {% set logo = snippets.logo() %}
 
 {% if item_name in ['@NONAMEGIVEN',''] %}
-{% set index = url_for(request.endpoint) %}
+{% set current_url = url_for(request.endpoint) %}
 {% else %}
-{% set index = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
+{% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
 {% endif %}
 
 {% block layout %}
@@ -81,11 +81,7 @@
                         <li class="nav-header">Site Navigation</li>
                         {% for cls, url, text, title in navibar_items %}
                             {% if cls != 'userlink' %}
-                            {% if url == index %}
-                                <li class="{{ cls }} active">
-                            {% else %}
-                                <li class="{{ cls }}">
-                            {% endif %}
+                            <li class="{{ cls }}{% if url == current_url %} active{% endif %}">
                             <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
                             </li>
                             {% endif %}
