@@ -79,23 +79,21 @@
                         {% if navibar_items %}
 
                         <li class="nav-header">Site Navigation</li>
-                        {% for cls, url, text, title in navibar_items %}
-                            {% if cls != 'userlink' %}
+                        {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
                             <li class="{{ cls }}{% if url == current_url %} active{% endif %}">
                             <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
                             </li>
-                            {% endif %}
                         {% endfor %}
 
                         {% endif %}
                         
-                        <li class="nav-header">Quick Links</li>
                         {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
+                            {% if loop.first %}
+                                <li class="nav-header">Quick Links</li>
+                            {% endif %}
                             <li class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
                             </li>
-                        {% else %}
-                            <li> Empty </li>
                         {% endfor %}
 
                     </ul>
