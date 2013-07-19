@@ -74,7 +74,7 @@
                 {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
                     {% if not loop.last -%}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                            {{ segment_name|shorten_item_name }}
+                            {{ segment_name|shorten_fqname }}
                         </a>
                         <span class="sep">/</span>
                     {% else %}
@@ -82,7 +82,7 @@
                             {{ title_name }}
                         {% else %}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                            {{ segment_name|shorten_item_name }}
+                            {{ segment_name|shorten_fqname }}
                         </a>
                         {%- endif %}
                     {%- endif %}
@@ -95,17 +95,17 @@
     {% set trail_items = theme_supp.path_breadcrumbs() %}
     {% if trail_items %}
         <div id="moin-pagetrail">
-        {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+        {% for wiki_name, fqname, item_href, exists, err in trail_items %}
             {%- if wiki_name -%}
                 <a href="{{ item_href }}"{{ " " }}
                    title="{{ wiki_name }}"
                    class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
-                   {{ item_name|shorten_item_name }}
+                   {{ fqname|shorten_fqname }}
                 </a>
             {%- else -%}
-                <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
                    {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                   {{ item_name|shorten_item_name }}
+                   {{ fqname|shorten_fqname }}
                 </a>
             {%- endif %}
             {% if not loop.last %}<span class="sep"> &raquo; </span>{% endif %}

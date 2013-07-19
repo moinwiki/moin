@@ -49,7 +49,7 @@ from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
                             InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum, validate_name,
                             NameNotValidError)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
@@ -359,14 +359,24 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    flaskg.user.add_trail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
+        flaskg.user.add_trail(item_name)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
+    except FieldNotUniqueError:
+        fqname = split_fqname(item_name)
+        revs = flaskg.storage.documents(**fqname.query)
+        fq_names = []
+        for rev in revs:
+            fq_names.extend(rev.fqnames)
+        return render_template("link_list_no_item_panel.html",
+                               headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
+                               item_name=fqname.fullname,
+                               fq_names=fq_names)
     return result
 
 

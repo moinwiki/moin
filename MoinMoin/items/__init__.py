@@ -49,7 +49,7 @@ from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
-    UFIELDS_TYPELIST
+    UFIELDS_TYPELIST, UFIELDS
 )
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
@@ -153,11 +153,10 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
     :itemtype and :contenttype are used when creating a DummyRev, where
     metadata is not available from the storage.
     """
-    query = {fqname.field: fqname.value, NAMESPACE: fqname.namespace}
     rev_id = fqname.value if fqname.field == REVID else rev_id
     if 1:  # try:
         if item is None:
-            item = flaskg.storage.get_item(**query)
+            item = flaskg.storage.get_item(**fqname.query)
         else:
             if item.fqname:
                 fqname = item.fqname
@@ -255,6 +254,13 @@ class NameNotUniqueError(ValueError):
     """
 
 
+class FieldNotUniqueError(ValueError):
+    """
+    The Field is not a UFIELD(unique Field).
+    Non unique fields can refer to more than one item.
+    """
+
+
 class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     # placeholder values for registry entry properties
@@ -288,6 +294,8 @@ class Item(object):
         property.
         """
         fqname = split_fqname(name)
+        if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
+            raise FieldNotUniqueError("field {0} is not in UFIELDS".format(fqname.field))
         rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
@@ -495,8 +503,7 @@ class Item(object):
     def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
         backend = flaskg.storage
-        query = {self.fqname.field: self.fqname.value, NAMESPACE: self.fqname.namespace}
-        storage_item = backend.get_item(**query)
+        storage_item = backend.get_item(**self.fqname.query)
         try:
             currentrev = storage_item.get_revision(CURRENT)
             rev_id = currentrev.revid
