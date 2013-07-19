@@ -22,9 +22,9 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
-from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME
+from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
 from MoinMoin.search import SearchForm
-from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
+from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.clock import timed
@@ -79,18 +79,31 @@ class ThemeSupport(object):
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
 
-    def location_breadcrumbs(self, item_name):
+    def location_breadcrumbs(self, fqname):
         """
         Assemble the location using breadcrumbs (was: title)
 
         :rtype: list
-        :returns: location breadcrumbs items in tuple (segment_name, item_name, exists)
+        :returns: location breadcrumbs items in tuple (segment_name, fq_name, exists)
         """
         breadcrumbs = []
         current_item = ''
+        if not isinstance(fqname, CompositeName):
+            fqname = split_fqname(fqname)
+        if fqname.field != NAME_EXACT:
+            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
+        namespace = fqname.namespace
+        fq_current = CompositeName(u'', NAME_EXACT, namespace)
+        fq_segment = CompositeName(u'', NAME_EXACT, namespace or '~')
+        breadcrumbs.append((CompositeName(fq_segment, fq_current, False)))
+        item_name = fqname.value
+        if not item_name:
+            return breadcrumbs
         for segment in item_name.split('/'):
             current_item += segment
-            breadcrumbs.append((segment, current_item, self.storage.has_item(current_item)))
+            fq_current = CompositeName(namespace, NAME_EXACT, current_item)
+            fq_segment = CompositeName(namespace, NAME_EXACT, segment)
+            breadcrumbs.append((fq_segment, fq_current, bool(self.storage.get_item(**fq_current.query))))
             current_item += '/'
         return breadcrumbs
 
@@ -106,14 +119,16 @@ class ThemeSupport(object):
         trail = user.get_trail()
         for interwiki_item_name in trail:
             wiki_name, namespace, field, item_name = split_interwiki(interwiki_item_name)
+            fqname = CompositeName(namespace, field, item_name)
             err = not is_known_wiki(wiki_name)
-            href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name, field=field)
+            href = url_for_item(wiki_name=wiki_name, **fqname.split)
             if is_local_wiki(wiki_name):
-                exists = self.storage.has_item(item_name)
+                exists = bool(self.storage.get_item(**fqname.query))
                 wiki_name = ''  # means "this wiki" for the theme code
             else:
                 exists = True  # we can't detect existance of remote items
-            breadcrumbs.append((wiki_name, item_name, href, exists, err))
+            if item_name:
+                breadcrumbs.append((wiki_name, fqname, href, exists, err))
         return breadcrumbs
 
     def subitem_index(self, item_name):
@@ -333,6 +348,28 @@ def get_editor_info(meta, external=False):
     return result
 
 
+def shorten_fqname(fqname, length=25):
+    """
+    Shorten fqname
+
+    Shorten a given long fqname so that it looks good depending upon whether
+    the field is a UUID or not.
+
+    :param fqname: fqname, namedtuple
+    :param length maximum length for shortened fqnames in case the field
+    is not a UUID.
+    :rtype: unicode
+    :returns: shortened fqname.
+    """
+    name = fqname.value
+    if len(name) > length:
+        if fqname.field in [REVID, ITEMID]:
+            name = shorten_id(name)
+        else:
+            name = shorten_item_name(name, length)
+    return name
+
+
 def shorten_item_name(name, length=25):
     """
     Shorten item names
@@ -405,6 +442,7 @@ def utctimestamp(dt):
 
 
 def setup_jinja_env():
+    app.jinja_env.filters['shorten_fqname'] = shorten_fqname
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class

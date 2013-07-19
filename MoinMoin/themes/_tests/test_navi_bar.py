@@ -42,12 +42,12 @@ class TestNaviBar(object):
         test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
         test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
 
-        assert test_segment_name_1 == 'some'
-        assert test_item_name_1 == 'some'
-        assert test_segment_name_2 == 'place'
-        assert test_item_name_2 == 'some/place'
-        assert test_segment_name_3 == 'test_item'
-        assert test_item_name_3 == 'some/place/test_item'
+        assert test_segment_name_1.value == 'some'
+        assert test_item_name_1.value == 'some'
+        assert test_segment_name_2.value == 'place'
+        assert test_item_name_2.value == 'some/place'
+        assert test_segment_name_3.value == 'test_item'
+        assert test_item_name_3.value == 'some/place/test_item'
 
     def test_parent_item(self):
         test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')
