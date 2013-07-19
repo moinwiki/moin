@@ -7,6 +7,7 @@
 
 
 from .signals import *
+from flask import got_request_exception
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -22,3 +23,8 @@ def log_item_displayed(app, item_name):
 def log_item_modified(app, item_name):
     wiki_name = app.cfg.interwikiname
     logging.info(u"item {0}:{1} modified".format(wiki_name, item_name))
+
+
+@got_request_exception.connect_via(ANY)
+def log_exception(sender, exception, **extra):
+    logging.exception(exception)

@@ -77,6 +77,11 @@ class Config(DefaultConfig):
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
         serve_files.update([(xs.name, xs.base_dir)])
 
+    # list of admin emails
+    admin_emails = []
+    # send tracebacks to admins
+    email_tracebacks = False
+
 
 MOINCFG = Config  # Flask only likes uppercase stuff
 # Flask settings - see the flask documentation about their meaning
