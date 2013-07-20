@@ -2,18 +2,15 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.notifications Tests
+    MoinMoin - MoinMoin.util.subscriptions Tests
 """
 
 
-from flask import g as flaskg
-
-from whoosh.query import Term
-
 from MoinMoin import user
 from MoinMoin.items import Item
-from MoinMoin.constants.keys import (ITEMID, CONTENTTYPE, LATEST_REVS, NAME, TAGS)
-from MoinMoin.util.subscriptions import get_subscribers, extract_users_info
+from MoinMoin.constants.keys import (ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
+                                     SUBSCRIPTIONS, TAGS)
+from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
 
 
 class TestNotifications(object):
@@ -29,76 +26,50 @@ class TestNotifications(object):
         item._save(meta)
         self.item = Item.create(self.item_name)
 
-    def test_get_subscribers_empty(self):
+    def test_get_subscribers(self):
         users = get_subscribers(self.item)
         assert users == set()
+
         name = u'baz'
         password = u'password'
         email = u'baz@example.org'
-        meta = dict(locale=u'en')
-        user.create_user(username=name, password=password, email=email, **meta)
+        user.create_user(username=name, password=password, email=email, validate=False, locale=u'en')
+        user_ = user.User(name=name, password=password)
         subscribers = get_subscribers(self.item)
         assert subscribers == set()
 
-    def test_get_subscribers_by_itemid(self):
-        name = u'bar'
-        password = u'password'
-        email = u'bar@example.org'
-        subscriptions = ["{0}:{1}".format(ITEMID, self.item.meta[ITEMID])]
-        meta = dict(locale=u'en', subscription_ids=subscriptions)
-        u = user.create_user(username=name, password=password, email=email, **meta)
-        u = user.User(name=name, password=password)
-        subscribers = get_subscribers(self.item)
-        subscribers_names = [subscriber.name for subscriber in subscribers]
-        expected_name = u.profile._meta[NAME][0]
-        assert expected_name in subscribers_names
+        namere = r'.*'
+        nameprefix = u"fo"
+        subscription_lists = [
+            ["{0}:{1}".format(ITEMID, self.item.meta[ITEMID])],
+            ["{0}:{1}:{2}".format(TAGS, self.namespace, self.tagname)],
+            ["{0}:{1}:{2}".format(NAME, self.namespace, self.item_name)],
+            ["{0}:{1}:{2}".format(NAMERE, self.namespace, namere)],
+            ["{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, nameprefix)],
+        ]
+        expected_name = user_.name0
+        for subscriptions in subscription_lists:
+            user_.profile._meta[SUBSCRIPTIONS] = subscriptions
+            user_.save(force=True)
+            subscribers = get_subscribers(self.item)
+            subscribers_names = [subscriber.name for subscriber in subscribers]
+            assert subscribers_names == [expected_name]
 
-    def test_get_subscribers_by_tag(self):
-        name = u'barfoo'
-        password = u'password'
-        email = u'barfoo@examle.org'
-        subscriptions = ["{0}:{1}:{2}".format(TAGS, self.namespace, self.tagname)]
-        meta = dict(locale=u'en', subscription_ids=subscriptions)
-        user.create_user(username=name, password=password, email=email, **meta)
-        u = user.User(name=name, password=password)
-        subscribers = get_subscribers(self.item)
-        subscribers_names = [subscriber.name for subscriber in subscribers]
-        expected_name = u.profile._meta[NAME][0]
-        assert expected_name in subscribers_names
+    def test_get_matched_subscription_patterns(self):
+        patterns = get_matched_subscription_patterns(self.item, [])
+        assert patterns == []
+        non_matching_patterns = [
+            "{0}:{1}:{2}".format(NAMERE, "userprofile", ".*"),
+            "{0}:{1}:{2}".format(NAMERE, self.namespace, "\d+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "bar"),
+        ]
+        patterns = get_matched_subscription_patterns(self.item, non_matching_patterns)
+        assert patterns == []
 
-    def test_get_subscribers_by_name(self):
-        name = u'foobar'
-        password = u'password'
-        email = u"foobar@example.org"
-        subscriptions = ["{0}:{1}:{2}".format(NAME, self.namespace, self.item_name)]
-        meta = dict(locale=u'en', subscription_ids=subscriptions)
-        user.create_user(username=name, password=password, email=email, **meta)
-        u = user.User(name=name, password=password)
-        subscribers = get_subscribers(self.item)
-        subscribers_names = [subscriber.name for subscriber in subscribers]
-        expected_name = u.profile._meta[NAME][0]
-        assert expected_name in subscribers_names
-
-    def test_extract_users_info_empty(self):
-        query = Term(u'namespace', u'userprofiles')
-        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-            results = searcher.search(query)
-            users = extract_users_info(results)
-            assert users == set()
-
-    def test_extract_users_info(self):
-        meta = dict(locale=u'en')
-        user.create_user(username=u'foo', password=u'password',
-                         email=u'foo@example.org', **meta)
-        user.create_user(username=u'bar', password=u'password',
-                         email=u'bar@example.org', **meta)
-        u1 = user.User(name=u"foo", password=u"password")
-        u2 = user.User(name=u"bar", password=u"password")
-        query = Term(u'namespace', u'userprofiles')
-        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-            results = searcher.search(query)
-            users = extract_users_info(results)
-            users_itemids = set([u.name for u in users])
-            expected_users = set([u1, u2])
-            expected_users_names = set([u.name0 for u in expected_users])
-            assert users_itemids == expected_users_names
+        matching_patterns = [
+            "{0}:{1}:{2}".format(NAMERE, self.namespace, "fo+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "fo"),
+        ]
+        patterns = get_matched_subscription_patterns(self.item,
+                                                     non_matching_patterns + matching_patterns)
+        assert patterns == matching_patterns
