@@ -114,6 +114,8 @@ CLOSED = u"closed"
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
 
+# key for composite name
+FQNAME = u'fqname'
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
 FIELDS = [
     NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS

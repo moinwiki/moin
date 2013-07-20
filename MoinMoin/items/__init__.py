@@ -344,7 +344,10 @@ class Item(object):
         """
         names = self.meta.get(NAME, [])
         if self.fqname.field == NAME_EXACT:
-            names.remove(self.fqname.value)
+            try:
+                names.remove(self.fqname.value)
+            except ValueError:
+                pass
             names.insert(0, self.fqname.value)
         return names
 
