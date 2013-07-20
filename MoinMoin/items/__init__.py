@@ -669,6 +669,7 @@ class Default(Contentful):
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_select_template.html',
+                               item=self,
                                item_name=self.name,
                                itemtype=self.itemtype,
                                rev=self.rev,
@@ -700,6 +701,7 @@ class Default(Contentful):
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
+                                       item=self,
                                        item_name=self.name,
                                        itemtype=self.itemtype,
                                        group_names=content_registry.group_names,
@@ -737,6 +739,7 @@ class Default(Contentful):
                     return redirect(url_for_item(self.name))
         return render_template(self.modify_template,
                                item_name=self.name,
+                               item=item,
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                form=form,
                                search_form=None,
@@ -787,6 +790,7 @@ class NonExistent(Item):
 
     def _select_itemtype(self):
         return render_template('modify_select_itemtype.html',
+                               item=self,
                                item_name=self.name,
                                itemtypes=item_registry.shown_entries,
                               )

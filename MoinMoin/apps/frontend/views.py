@@ -834,8 +834,13 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
     refs_here = _backrefs(item_name)
     return render_template('link_list_item_panel.html',
+                           item=item,
                            item_name=item_name,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
@@ -1716,6 +1721,10 @@ def similar_names(item_name):
     """
     list similar item names
     """
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
     start, end, matches = findMatches(item_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
@@ -1732,6 +1741,7 @@ def similar_names(item_name):
                 item_names.append(name)
     return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
+                           item=item,
                            item_name=item_name,  # XXX no item
                            item_names=item_names)
 
