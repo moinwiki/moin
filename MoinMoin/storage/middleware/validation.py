@@ -25,6 +25,7 @@ the data.
 from __future__ import absolute_import, division
 
 import time
+import re
 
 from flatland import Dict, List, Unset, Boolean, Integer, String
 
@@ -345,18 +346,25 @@ def subscription_validator(element, state):
     else:
         element.add_error(
             "Subscription must start with one of the keywords: "
-            "'itemid', 'name', 'tags', 'namere' or 'nameprefix'.")
+            "'{0}', '{1}', '{2}', '{3}' or '{4}'.".format(keys.ITEMID,
+                                                          keys.NAME, keys.TAGS,
+                                                          keys.NAMERE,
+                                                          keys.NAMEPREFIX))
         return False
 
     value_element = String(value)
     if keyword == keys.TAGS:
         valid = tag_validator(value_element, state)
-    elif keyword == keys.NAME:
+    elif keyword in (keys.NAME, keys.NAMEPREFIX, ):
         valid = name_validator(value_element, state)
-    elif keyword in (keys.NAMERE, keys.NAMEPREFIX):
-        valid = True
+    elif keyword == keys.NAMERE:
+        try:
+            re.compile(value, re.U)
+            valid = True
+        except re.error:
+            valid = False
     if not valid:
-        element.add_error("The value is not valid.")
+        element.add_error("Subscription has invalid value.")
     return valid
 
 
