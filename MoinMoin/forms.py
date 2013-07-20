@@ -84,7 +84,7 @@ def validate_name(meta, fqname, itemid):
     """
     names = meta.get(NAME)
     current_namespace = meta.get(NAMESPACE, fqname.namespace)
-    if names is None:
+    if not names:
         return
     if len(names) != len(set(names)):
         raise NameNotValidError(L_("The names in the name list must be unique."))
@@ -132,7 +132,7 @@ class ValidJSON(Validator):
             self.invalid_name_msg = _(e)
             return self.note_error(element, state, 'invalid_name_msg')
         if state[FQNAME].field == ITEMID:
-            if not self.validitemid(meta.get(ITEMID)):
+            if not self.validitemid(meta.get(ITEMID, state[FQNAME].value)):
                 return self.note_error(element, state, 'invalid_itemid_msg')
         return True
 
