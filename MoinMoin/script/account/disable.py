@@ -45,7 +45,7 @@ class Disable_User(Command):
             u.name = u"{0}-{1}".format(u.name, u.id)
             if u.email:
                 u.email = u"{0}-{1}".format(u.email, u.id)
-            u.subscribed_items = []  # avoid using email
+            u.subscriptions = []
             u.save()
             print "- disabled."
         else:

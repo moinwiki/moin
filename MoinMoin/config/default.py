@@ -489,8 +489,7 @@ options_no_group_name = {
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],
-            SUBSCRIBED_ITEMS: [],
-            SUBSCRIPTION_IDS: [],
+            SUBSCRIPTIONS: [],
             EMAIL_SUBSCRIBED_EVENTS: [
                 # XXX PageChangedEvent.__name__
                 # XXX PageRenamedEvent.__name__
