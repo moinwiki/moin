@@ -166,7 +166,7 @@ class TestFrontend(object):
         self._test_view('frontend.quicklink_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!DOCTYPE HTML'])
 
     def test_subscribe_item(self):
-        self._test_view('frontend.subscribe_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.subscribe_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_register(self):
         self._test_view('frontend.register')
