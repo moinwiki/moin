@@ -60,17 +60,19 @@ def get_matched_subscription_patterns(item, subscription_patterns):
     item_namespace = meta[NAMESPACE]
     matched_subscriptions = []
     for subscription in subscription_patterns:
-        keyword, namespace, pattern = subscription.split(":", 2)
-        if item_namespace == namespace:
-            if keyword == NAMEPREFIX:
-                if any(name.startswith(pattern) for name in meta[NAME]):
-                    matched_subscriptions.append(subscription)
-            elif keyword == NAMERE:
-                try:
-                    pattern = re.compile(pattern, re.U)
-                except re.error:
-                    logging.error("Subscription pattern '{0}' has failed compilation.".format(pattern))
-                    continue
-                if any(pattern.search(name) for name in meta[NAME]):
-                    matched_subscriptions.append(subscription)
+        keyword, value = subscription.split(":", 1)
+        if keyword in (NAMEPREFIX, NAMERE, ):
+            namespace, pattern = value.split(":", 1)
+            if item_namespace == namespace:
+                if keyword == NAMEPREFIX:
+                    if any(name.startswith(pattern) for name in meta[NAME]):
+                        matched_subscriptions.append(subscription)
+                elif keyword == NAMERE:
+                    try:
+                        pattern = re.compile(pattern, re.U)
+                    except re.error:
+                        logging.error("Subscription pattern '{0}' has failed compilation.".format(pattern))
+                        continue
+                    if any(pattern.search(name) for name in meta[NAME]):
+                        matched_subscriptions.append(subscription)
     return matched_subscriptions
