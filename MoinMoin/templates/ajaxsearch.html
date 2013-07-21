@@ -12,6 +12,9 @@
     {% endif %}
 
     {% if results is defined %}
+        {% if word_suggestions %}
+            <p>{{ _("input suggestions: %(termlist)s", termlist=word_suggestions) }}</p>
+        {% endif %}
         {% if name_suggestions or content_suggestions %}
             <p>{{ _("name term suggestions: %(termlist)s", termlist=name_suggestions) }}</p>
             <p>{{ _("content term suggestions: %(termlist)s", termlist=content_suggestions) }}</p>

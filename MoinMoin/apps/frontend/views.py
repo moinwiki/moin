@@ -305,9 +305,16 @@ def search(item_name):
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
+            
+            lastword = query.split(' ')[-1]
+            word_suggestions = []
+            if len(lastword) > 2:
+                corrector = searcher.corrector(CONTENT)
+                word_suggestions = corrector.suggest(lastword, limit=3)
             if ajax:
                 html = render_template('ajaxsearch.html',
                                    results=results,
+                                   word_suggestions=u', '.join(word_suggestions),
                                    name_suggestions=u', '.join(name_suggestions),
                                    content_suggestions=u', '.join(content_suggestions),
                 )

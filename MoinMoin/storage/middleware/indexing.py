@@ -299,7 +299,7 @@ class IndexingMiddleware(object):
             # DATAID from metadata
             DATAID: ID(stored=True),
             # data (content), converted to text/plain and tokenized
-            CONTENT: TEXT(stored=True),
+            CONTENT: TEXT(stored=True, spelling=True),
         }
 
         latest_revs_fields = {
