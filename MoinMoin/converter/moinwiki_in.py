@@ -21,7 +21,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 from MoinMoin.util.interwiki import is_known_wiki
 from MoinMoin.i18n import _
 
@@ -832,22 +832,34 @@ class Converter(ConverterMacro):
             args = parse_arguments(object_args).keyword  # XXX needs different parsing
         else:
             args = {}
+
+        query_keys = {}
+        attrib = {}
+        whitelist = ['width', 'height']
+        for attr, value in args.iteritems():
+            if attr.startswith('&'):
+                query_keys[attr[1:]] = value
+            elif attr in whitelist:
+                attrib[html(attr)] = value
+
         if object_item is not None:
-            query = url_encode(args, charset=CHARSET, encode_keys=True)
+            query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_item.startswith(att):
                 object_item = '/' + object_item[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
             text = object_item
 
-            attrib = {xinclude.href: target}
+            attrib[xinclude.href] = target
+
             element = xinclude.include(attrib=attrib)
             stack.top_append(element)
         else:
             target = Iri(object_url)
             text = object_url
 
-            attrib = {xlink.href: target}
+            attrib[xlink.href] = target
+
             if object_text is not None:
                 attrib[moin_page.alt] = object_text
 
