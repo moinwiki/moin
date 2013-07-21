@@ -255,10 +255,15 @@ def _compute_item_transclusions(item_name):
 @frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
+    ajax = True if request.args.get('boolajax') else False
     valid = search_form.validate()
-    query = search_form['q'].value
-    if valid:
+    if ajax:
+        query = request.args.get('q')
+        history = request.args.get('history')
+    else:
+        query = search_form['q'].value
         history = bool(request.values.get('history'))
+    if valid or ajax:
         idx_name = ALL_REVS if history else LATEST_REVS
         qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT], idx_name=idx_name)
         q = qp.parse(query)
@@ -300,14 +305,21 @@ def search(item_name):
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
-            html = render_template('search.html',
+            if ajax:
+                html = render_template('ajaxsearch.html',
+                                   results=results,
+                                   name_suggestions=u', '.join(name_suggestions),
+                                   content_suggestions=u', '.join(content_suggestions),
+                )
+            else:
+                html = render_template('search.html',
                                    results=results,
                                    name_suggestions=u', '.join(name_suggestions),
                                    content_suggestions=u', '.join(content_suggestions),
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
-            )
+                )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
