@@ -1,3 +1,8 @@
+<br/>
+{% if omitted_words %}
+  <p>{{ _("common words in query: %(termlist)s", termlist=omitted_words) }}</p>
+{% endif %}
+<br/> 
 {% if results is defined %}
     <p class="searchstats">
         {% if results %}
