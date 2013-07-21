@@ -11,7 +11,10 @@ Convert image to <object> tag for the DOM Tree.
 from emeraldtree import ElementTree as ET
 
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
+from werkzeug import url_encode, url_decode
+
+from MoinMoin.constants.contenttypes import CHARSET
 
 
 class Converter(object):
@@ -27,11 +30,21 @@ class Converter(object):
 
     def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
-        attrib = {
+        query_keys = {'do': 'get', 'rev': rev.revid}
+        attrib = {}
+        if arguments:
+            query = arguments.keyword.get(xinclude.href).query
+            query_keys.update(url_decode(query))
+            attrib = arguments.keyword
+
+        query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
+
+        attrib.update({
             moin_page.type_: unicode(self.input_type),
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
-                            query='do=get&rev={0}'.format(rev.revid)),
-        }
+                            query=query),
+        })
+
         obj = moin_page.object_(attrib=attrib, children=[item_name, ])
         body = moin_page.body(children=(obj, ))
         return moin_page.page(children=(body, ))
