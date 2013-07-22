@@ -256,13 +256,13 @@ class TestConverter(Base):
     def test_link(self):
         data = [
             # Normal link, with conversion of all the xlink attributes
-            ('<article><para><link xlink:href="uri:test" xlink:title="title">link</link></para></article>',
-                # <page><body><div html:class="article"><p><a xlink:href="uri:test" xlink:title="title">link</a></p></div></body></page>
-                '/page/body/div/p/a[@xlink:href="uri:test"][@xlink:title="title"][text()="link"]'),
+            ('<article><para><link xlink:href="http:test" xlink:title="title">link</link></para></article>',
+                # <page><body><div html:class="article"><p><a xlink:href="http:test" xlink:title="title">link</a></p></div></body></page>
+                '/page/body/div/p/a[@xlink:href="http:test"][@xlink:title="title"][text()="link"]'),
             # Old link from DocBook v.4.X for backward compatibility
-            ('<article><para><ulink url="url:test">link</ulink></para></article>',
-                # <page><body><div html:class="article"><p><a xlink:href="url:test">link</a></p></div></body></page>
-                '/page/body/div/p/a[@xlink:href="url:test"][text()="link"]'),
+            ('<article><para><ulink url="http:test">link</ulink></para></article>',
+                # <page><body><div html:class="article"><p><a xlink:href="http:test">link</a></p></div></body></page>
+                '/page/body/div/p/a[@xlink:href="http:test"][text()="link"]'),
             # Normal link, with linkend attribute
             ('<article><para><link linkend="anchor">link</link></para></article>',
                 # <page><body><div html:class="article"><p><a xlink:href="#anchor">link</a></p></div></body></page>
@@ -273,8 +273,10 @@ class TestConverter(Base):
                 '/page/body/div/p/a[@xlink:href="uri#anchor"][text()="link"]'),
             # Link w/ javascript: scheme
             ('<article><para><ulink url="javascript:alert(\'xss\')">link</ulink></para></article>',
-                # <page><body><div html:class="article"><p><a xlink:href="url:test">link</a></p></div></body></page>
-                '/page/body/div/p/a[@xlink:href=""][text()="link"]'),
+                # the href attribute will default to None because javascript is not an allowed url scheme
+                # we don't care how it gets rendered as long as the javascript doesn't show up
+                # <page><body><div html:class="article"><p><a xlink:href="None">link</a></p></div></body></page>
+                '/page/body/div/p/a[@xlink:href="None"][text()="link"]'),
         ]
         for i in data:
             yield (self.do, ) + i
