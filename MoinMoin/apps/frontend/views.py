@@ -47,15 +47,16 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum, validate_name,
+                            NameNotValidError)
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
-from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.util.interwiki import url_for_item, split_fqname
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -358,14 +359,24 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    flaskg.user.add_trail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
+        flaskg.user.add_trail(item_name)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
+    except FieldNotUniqueError:
+        fqname = split_fqname(item_name)
+        revs = flaskg.storage.documents(**fqname.query)
+        fq_names = []
+        for rev in revs:
+            fq_names.extend(rev.fqnames)
+        return render_template("link_list_no_item_panel.html",
+                               headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
+                               item_name=fqname.fullname,
+                               fq_names=fq_names)
     return result
 
 
@@ -513,8 +524,27 @@ class TargetChangeForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
 
+class ValidRevert(Validator):
+    """
+    Validator for a valid revert form.
+    """
+    invalid_name_msg = ''
+
+    def validate(self, element, state):
+        """
+        Check whether the names present in the previous meta are not taken by some other item.
+        """
+        try:
+            validate_name(state['meta'], state[FQNAME], state['meta'].get(ITEMID))
+            return True
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
+            return self.note_error(element, state, 'invalid_name_msg')
+
+
 class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
+    validators = [ValidRevert()]
 
 
 class DeleteItemForm(BaseChangeForm):
@@ -545,11 +575,12 @@ def revert_item(item_name, rev):
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        if form.validate():
+        state = dict(fqname=item.fqname, meta=dict(item.meta))
+        if form.validate(state):
             item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
-                           item=item, item_name=item_name,
+                           item=item, fqname=item.fqname,
                            rev_id=rev,
                            form=form,
     )
@@ -822,7 +853,7 @@ def _mychanges(userid):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
     revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.name for rev in revs]
+    return set([rev.name for rev in revs])
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')

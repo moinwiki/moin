@@ -23,11 +23,13 @@ from flatland.exc import AdaptationError
 from whoosh.query import Term, Or, Not, And
 
 from flask import g as flaskg
+from flask import current_app as app
 
 from MoinMoin.constants.forms import *
-from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS
+from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
+from MoinMoin.storage.middleware.validation import uuid_validator
 
 
 class Enum(BaseEnum):
@@ -69,40 +71,69 @@ OptionalMultilineText = MultilineText.using(optional=True)
 RequiredMultilineText = MultilineText.validated_by(Present())
 
 
+class NameNotValidError(ValueError):
+    """
+    The name is not valid.
+    """
+
+
+def validate_name(meta, fqname, itemid):
+    """
+    Check whether the names are valid.
+    Will just return, if they are valid, will raise a NameNotValidError if not.
+    """
+    names = meta.get(NAME)
+    current_namespace = meta.get(NAMESPACE, fqname.namespace)
+    if not names:
+        return
+    if len(names) != len(set(names)):
+        raise NameNotValidError(L_("The names in the name list must be unique."))
+    # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
+    invalid_names = [name for name in names if name.startswith(('@', '+'))]
+    if invalid_names:
+        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names)))
+    # Item names must not match with existing namespaces.
+    namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+    invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
+    if invalid_names:
+        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names)))
+    query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
+    # There should be not item existing with the same name.
+    if itemid is not None:
+        query = And([query, Not(Term(ITEMID, itemid))])  # search for items except the current item.
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        results = searcher.search(query)
+        duplicate_names = {name for result in results for name in result[NAME] if name in names}
+        if duplicate_names:
+            raise NameNotValidError(L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names)))
+
+
 class ValidJSON(Validator):
     """Validator for JSON
     """
     invalid_json_msg = L_('Invalid JSON.')
     invalid_name_msg = ""
+    invalid_itemid_msg = L_('Itemid not a proper UUID')
 
-    def validname(self, meta, name, itemid):
-        names = meta.get(NAME)
-        if names is None:
-            self.invalid_name_msg = L_("No name field in the JSON meta.")
+    def validitemid(self, itemid):
+        if not itemid:
+            self.invalid_itemid_msg = L_("No ITEMID field")
             return False
-        if len(names) != len(set(names)):
-            self.invalid_name_msg = L_("The names in the JSON name list must be unique.")
-            return False
-        query = Or([Term(NAME, x) for x in names])
-        if itemid is not None:
-            query = And([query, Not(Term(ITEMID, itemid))])
-        duplicate_names = set()
-        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-            results = searcher.search(query)
-            for result in results:
-                duplicate_names |= set([x for x in result[NAME] if x in names])
-        if duplicate_names:
-            self.invalid_name_msg = L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names))
-            return False
-        return True
+        return uuid_validator(String(itemid), None)
 
     def validate(self, element, state):
         try:
             meta = json.loads(element.value)
         except:  # catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
-        if not self.validname(meta, state[NAME], state[ITEMID]):
+        try:
+            validate_name(meta, state[FQNAME], state[ITEMID])
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
             return self.note_error(element, state, 'invalid_name_msg')
+        if state[FQNAME].field == ITEMID:
+            if not self.validitemid(meta.get(ITEMID, state[FQNAME].value)):
+                return self.note_error(element, state, 'invalid_itemid_msg')
         return True
 
 JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
