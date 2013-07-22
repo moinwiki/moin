@@ -69,4 +69,5 @@
 
 {# Additional Javascript #}
 {% macro scripts() -%}
+<script src="{{ url_for('serve.files', name='bootstrap', filename='bootstrap/js/bootstrap.min.js') }}"></script>
 {%- endmacro %}
