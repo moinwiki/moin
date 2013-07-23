@@ -1,6 +1,6 @@
 {% extends "modify.html" %}
 {% from theme("modify_meta.html") import basic_meta_editor %}
-
+{% from theme("modify_text.html") import basic_data_editor %}
 
 {% block content %}
 <h2>{{ title }}</h2>
@@ -31,7 +31,7 @@
         </ul>    
         <div class="tab-content">
             <div class="tab-pane active" id="editor">
-                {{ data_editor(form['content_form'], item_name, class='input-block-level') }}
+                {{ basic_data_editor(form['content_form'], item_name, class='input-block-level') }}
             </div>
             <div class="tab-pane" id="gmeta">
                 {{ basic_meta_editor(form['meta_form']) }}
