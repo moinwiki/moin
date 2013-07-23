@@ -1,0 +1,35 @@
+{% extends "modify.html" %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<div id="moin-modify" class="moin-form">
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+    {{ forms.render_errors(form) }}
+    {#
+       Workaround:
+       For *Draw content, hide submit button and form['comment'], since *Draw
+       POSTs originate from their respective applets.
+    #}
+    {% if not form['content_form'].is_draw %}
+        {{ forms.render_submit(form, class='btn btn-primary', id='moin-save-text-button') }}
+        <dl>
+            {{ forms.render_textcha(gen, form) }}
+            {{ forms.render(form['comment']) }}
+        </dl>
+    {% endif %}
+    {{ data_editor(form['content_form'], item_name, class='input-block-level') }}
+    {% if form['content_form'].help %}
+        <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+    {% endif %}
+    {{ meta_editor(form['meta_form']) }}
+    <dl>
+        {{ forms.render(form['extra_meta_text'], class='span6') }}
+    </dl>
+    {#
+    {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
+    <br />
+    {{ forms.render_errors(form['meta_text']) }}
+    #}
+    {{ gen.form.close() }}
+</div>
+{% endblock %}

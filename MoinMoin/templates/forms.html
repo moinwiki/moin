@@ -96,7 +96,7 @@ Helpers for using flatland with jinja2 to create html forms.
     {{ gen.label(field) }}
   </dt>
   <dd>
-    {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string) }}
+    {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, **kwargs) }}
     {{ render_errors(field) }}
   </dd>
 {% endmacro %}
