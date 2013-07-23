@@ -25,19 +25,22 @@
             <li class="active"><a href="#editor" data-toggle="tab">Edit</a></li>
             <li><a href="#gmeta" data-toggle="tab">General Meta</a></li>
             <li><a href="#emeta" data-toggle="tab">Extra Meta</a></li>
+            <li><a href="#help" data-toggle="tab">Help</a></li>
         </ul>    
         <div class="tab-content">
             <div class="tab-pane active" id="editor">
                 {{ data_editor(form['content_form'], item_name, class='input-block-level') }}
-                {% if form['content_form'].help %}
-                    <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
-                {% endif %}
             </div>
             <div class="tab-pane" id="gmeta">
                 {{ basic_meta_editor(form['meta_form']) }}
             </div>
             <div class="tab-pane" id="emeta">
                 {{ forms.render(form['extra_meta_text'], class='span6') }}
+            </div>
+            <div class="tab-pane" id="help">
+                {% if form['content_form'].help %}
+                    <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+                {% endif %}
             </div>
         </div>
     </div> <!-- left tabbable -->
