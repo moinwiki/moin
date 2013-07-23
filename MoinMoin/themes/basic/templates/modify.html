@@ -13,10 +13,12 @@
        POSTs originate from their respective applets.
     #}
     {% if not form['content_form'].is_draw %}
+        <div class="pull-right">
         {{ forms.render_submit(form, class='btn btn-primary', id='moin-save-text-button') }}
+        </div>
         <dl>
             {{ forms.render_textcha(gen, form) }}
-            {{ forms.render(form['comment']) }}
+            {{ gen.input(form['comment'], type="text") }}
         </dl>
     {% endif %}
     <hr>
