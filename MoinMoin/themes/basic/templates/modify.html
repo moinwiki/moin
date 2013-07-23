@@ -19,17 +19,20 @@
             {{ forms.render(form['comment']) }}
         </dl>
     {% endif %}
-    {{ data_editor(form['content_form'], item_name, class='input-block-level') }}
-    {% if form['content_form'].help %}
-        <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
-    {% endif %}
-    <div class="tabbable tabs-left">
+    <div class="tabbable tabs-right">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#gmeta" data-toggle="tab">General Meta</a></li>
+            <li class="active"><a href="#editor" data-toggle="tab">Edit</a></li>
+            <li><a href="#gmeta" data-toggle="tab">General Meta</a></li>
             <li><a href="#emeta" data-toggle="tab">Extra Meta</a></li>
-        </ul>
+        </ul>    
         <div class="tab-content">
-            <div class="tab-pane active" id="gmeta">
+            <div class="tab-pane active" id="editor">
+                {{ data_editor(form['content_form'], item_name, class='input-block-level') }}
+                {% if form['content_form'].help %}
+                    <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+                {% endif %}
+            </div>
+            <div class="tab-pane" id="gmeta">
                 {{ basic_meta_editor(form['meta_form']) }}
             </div>
             <div class="tab-pane" id="emeta">
