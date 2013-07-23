@@ -1,0 +1,14 @@
+{% import "forms.html" as forms %}
+
+{% macro basic_meta_editor(form) %}
+    <dl>
+        {% for e in [
+            'itemtype',
+            'contenttype',
+            'summary',
+            'tags',
+            ] %}
+            {{ forms.render(form[e]) }}
+        {% endfor %}
+    </dl>
+{% endmacro %}
