@@ -1,4 +1,6 @@
 {% extends "modify.html" %}
+{% from theme("modify_meta.html") import basic_meta_editor %}
+
 
 {% block content %}
 <h2>{{ title }}</h2>
@@ -21,10 +23,20 @@
     {% if form['content_form'].help %}
         <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
     {% endif %}
-    {{ meta_editor(form['meta_form']) }}
-    <dl>
-        {{ forms.render(form['extra_meta_text'], class='span6') }}
-    </dl>
+    <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#gmeta" data-toggle="tab">General Meta</a></li>
+            <li><a href="#emeta" data-toggle="tab">Extra Meta</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="gmeta">
+                {{ basic_meta_editor(form['meta_form']) }}
+            </div>
+            <div class="tab-pane" id="emeta">
+                {{ forms.render(form['extra_meta_text'], class='span6') }}
+            </div>
+        </div>
+    </div> <!-- left tabbable -->
     {#
     {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
     <br />
