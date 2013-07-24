@@ -12,30 +12,22 @@
        For *Draw content, hide submit button and form['comment'], since *Draw
        POSTs originate from their respective applets.
     #}
-    {% if not form['content_form'].is_draw %}
-        {{ forms.render_submit(form, class='btn btn-primary', id='moin-save-text-button') }}
-        <dl>
-            {{ forms.render_textcha(gen, form) }}
-            {{ gen.input(form['comment'], type="text", class="input-block-level") }}
-        </dl>
-    {% endif %}
     <br/>
     <div class="tabbable tabs-right">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#editor" data-toggle="tab">Edit</a></li>
-            <li><a href="#gmeta" data-toggle="tab">General Meta</a></li>
-            <li><a href="#emeta" data-toggle="tab">Extra Meta</a></li>
+            <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
+            <li><a href="#meta" data-toggle="tab">Edit Meta</a></li>
             <li><a href="#help" data-toggle="tab">Help</a></li>
         </ul>    
         <div class="tab-content">
             <div class="tab-pane active" id="editor">
                 {{ basic_data_editor(form['content_form'], item_name, class='input-block-level') }}
             </div>
-            <div class="tab-pane active" id="gmeta">
+            <div class="tab-pane active" id="meta">
                 {{ basic_meta_editor(form['meta_form']) }}
-            </div>
-            <div class="tab-pane active" id="emeta">
-                {{ forms.render(form['extra_meta_text'], class='span6') }}
+                {% set field = form['extra_meta_text'] %}
+                {{ gen.label(field) }}
+                {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='span6') }}
             </div>
             <div class="tab-pane active" id="help">
                 {% if form['content_form'].help %}
@@ -49,6 +41,12 @@
     <br />
     {{ forms.render_errors(form['meta_text']) }}
     #}
+    {% if not form['content_form'].is_draw %}
+        {{ forms.render_textcha(gen, form) }}
+        {{ gen.input(form['comment'], type="text", class="input-block-level") }}
+        {{ forms.render_submit(form, value='Save', class='btn btn-primary', id='moin-save-text-button') }}
+    {% endif %}
+
     {{ gen.form.close() }}
 </div>
 {% endblock %}
