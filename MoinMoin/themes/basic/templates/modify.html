@@ -31,13 +31,13 @@
             <div class="tab-pane active" id="editor">
                 {{ basic_data_editor(form['content_form'], item_name, class='input-block-level') }}
             </div>
-            <div class="tab-pane" id="gmeta">
+            <div class="tab-pane active" id="gmeta">
                 {{ basic_meta_editor(form['meta_form']) }}
             </div>
-            <div class="tab-pane" id="emeta">
+            <div class="tab-pane active" id="emeta">
                 {{ forms.render(form['extra_meta_text'], class='span6') }}
             </div>
-            <div class="tab-pane" id="help">
+            <div class="tab-pane active" id="help">
                 {% if form['content_form'].help %}
                     <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
                 {% endif %}
