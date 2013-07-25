@@ -1,6 +1,15 @@
-{% extends "modify.html" %}
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
 {% from theme("modify_meta.html") import basic_meta_editor %}
 {% from theme("modify_text.html") import basic_data_editor %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
+
+{% block views %}
+{{ itemviews }}
+{% endblock %}
 
 {% block content %}
 <h2>{{ title }}</h2>
@@ -12,7 +21,6 @@
        For *Draw content, hide submit button and form['comment'], since *Draw
        POSTs originate from their respective applets.
     #}
-    <br/>
     <div class="tabbable tabs-right">
         <ul class="nav nav-tabs">
             <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
