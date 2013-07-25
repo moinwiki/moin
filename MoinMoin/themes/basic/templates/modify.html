@@ -32,10 +32,16 @@
                 {{ basic_data_editor(form['content_form'], item_name, class='input-block-level') }}
             </div>
             <div class="tab-pane active" id="meta">
-                {{ basic_meta_editor(form['meta_form']) }}
-                {% set field = form['extra_meta_text'] %}
-                {{ gen.label(field) }}
-                {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='span6') }}
+                <div class="row-fluid">
+                    <div class="span6">
+                        {{ basic_meta_editor(form['meta_form']) }}
+                    </div>
+                    {% set field = form['extra_meta_text'] %}
+                    <div class="span6">
+                        {{ gen.label(field) }}
+                        {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='span11') }}
+                    </div>
+                </div>
             </div>
             <div class="tab-pane active" id="help">
                 {% if form['content_form'].help %}
