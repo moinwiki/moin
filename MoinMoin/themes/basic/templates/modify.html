@@ -49,6 +49,7 @@
     <br />
     {{ forms.render_errors(form['meta_text']) }}
     #}
+    <br />                
     {% if not form['content_form'].is_draw %}
         {{ forms.render_textcha(gen, form) }}
         {{ gen.input(form['comment'], type="text", class="input-block-level") }}
