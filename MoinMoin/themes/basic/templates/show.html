@@ -152,22 +152,4 @@
 
         {{ self.item_actions() }}
 
-        {% if rev %}
-        <li class="nav-header">Metadata</li>
-                <li>{{ _("Revision:") }} {{rev.revid | shorten_id}}</li>
-                <li>({{ rev.meta['mtime']|datetimeformat }})</li>
-                <li>{{ _("By:") }} {{ utils.editor_info(rev.meta) }}</li>
-                <li>{{ _("Size:") }} {{ rev.meta['size'] }}</li>
-                <li>{{ _("Type:") }} {{ rev.meta['contenttype'] }}</li>
-                {% if rev.meta.tags %}
-                <li>
-                {{ _("Tags:") }}
-                {% for tag in rev.meta.tags -%}
-                <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
-                {%- endfor -%}
-                </li>
-                {% endif %}
-        </li>
-        {% endif %}
-
 {% endblock %}
