@@ -97,7 +97,7 @@
             {%- if endpoint == 'frontend.delete_item' and user.may.write(item_name) %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-remove"></span>
+                        <span class="icon-trash"></span>
                         {{ label }}
                     </a>
                 </li>
@@ -106,7 +106,7 @@
             {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-trash"></span>
+                        <span class="icon-fire"></span>
                         {{ label }}
                     </a>
                 </li>
