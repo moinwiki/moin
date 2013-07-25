@@ -54,7 +54,7 @@
 {% endblock %}
 
 {% block site_actions %}
-    <li class="nav-header">Site Actions</li>
+    <li class="nav-header">Item Navigation</li>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
