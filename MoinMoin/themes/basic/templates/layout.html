@@ -131,7 +131,12 @@
                 {% endblock %}
 
             <div class="row-fluid">
-                <div class="span10">
+                {% set width = "span12" %}
+                {% if self.local_panel %}
+                    {% set width = "span10" %}
+                {% endif %}
+
+                <div class="{{width}}">
                     {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
                     <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
                         {% block content %}
@@ -140,15 +145,15 @@
                     </div>
                 </div><!--/span-->
 
-                <div class="span2">
-                    <div class="well sidebar-nav">
-                    {% if self.local_panel %}
-                        <ul class="nav nav-list">
-                            {{ self.local_panel() }}
-                        </ul>
-                    {% endif %}
-                    </div><!--/.well -->
-                </div><!--/span-->
+                {% if self.local_panel %}
+                    <div class="span2">
+                        <div class="well sidebar-nav">
+                            <ul class="nav nav-list">
+                                {{ self.local_panel() }}
+                            </ul>
+                        </div><!--/.well -->
+                    </div><!--/span-->
+                {% endif %}
 
             </div><!--/row-->
 
