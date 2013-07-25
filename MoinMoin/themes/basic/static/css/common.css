@@ -1,3 +1,6 @@
+html{
+  overflow-y:scroll;
+}
 .sidebar-nav {
   padding: 9px 0;
 }
