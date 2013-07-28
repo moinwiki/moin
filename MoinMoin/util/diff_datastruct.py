@@ -78,3 +78,17 @@ def diff(d1, d2, basekeys=None):
             "Unsupported diff between {0} and {1} data types".format(
                 type(d1), type(d2)))
     return changes
+
+
+def make_text_diff(changes):
+    """ Transform change tuples into text diffs
+
+    :param changes: a list of tuples of the format (<change type>, <basekeys>, <value>)
+                    that represent a diff
+    :return: a generator of text diffs
+    """
+    marker = {INSERT: u"+", DELETE: u"-"}
+    for change_type, keys, value in changes:
+        yield "{0} {1}{2}{3}".format(marker[change_type],
+                                     ".".join(unicode(key) for key in keys),
+                                     ": " if keys else "", unicode(value))
