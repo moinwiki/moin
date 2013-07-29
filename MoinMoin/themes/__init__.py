@@ -211,7 +211,7 @@ class ThemeSupport(object):
             wiki_name = ''
         href = url_for_item(item_name, namespace=namespace, wiki_name=wiki_name, field=field)
         if not title:
-            title = item_name
+            title = shorten_fqname(CompositeName(namespace, field, item_name))
         return href, title, wiki_name
 
     @timed()
