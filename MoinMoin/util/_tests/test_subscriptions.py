@@ -13,7 +13,7 @@ from MoinMoin.constants.keys import (ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREF
 from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
 
 
-class TestNotifications(object):
+class TestSubscriptions(object):
     reinit_storage = True
 
     def setup_method(self, method):
