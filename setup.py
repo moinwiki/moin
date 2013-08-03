@@ -76,7 +76,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     dependency_links=[
         #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.9.2-dev',
         #'https://github.com/mitsuhiko/flask/tarball/master#egg=Flask-0.11-dev',
-        'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
+        #'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
         # use a pre-release emeraldtree (port to 2.6/2.7/3.3):
@@ -101,13 +101,12 @@ Topic :: Text Processing :: Markup""".splitlines(),
                               # likely due to the fixtures changes.
         'pytest-pep8<1.0.3',  # coding style checker
                               # note: pytest-pep8 1.0.3 needs pytest 2.3
-        # 'whoosh>=2.4.0',  # needed for indexed search
         'whoosh>=2.5.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
         'pdfminer',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
-        'XStatic-Bootstrap>=2.1.0.1',
+        'XStatic-Bootstrap>=2.3.2.1',
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
