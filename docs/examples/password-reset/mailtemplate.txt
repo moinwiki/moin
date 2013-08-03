@@ -1,0 +1,13 @@
+The wiki administrator has invalidated your wiki password and requested
+to send this E-Mail to you, so you can set a new one.
+
+Important information about this (including troubleshooting information and
+wiki administrator contact information) is available there, please read it:
+
+(XXX give URL here XXX)
+
+
+Now, please go to the password reset URL below and set a new password.
+
+%(link)s
+

@@ -1,0 +1,11 @@
+{{ _("""\
+An account with this email address has been created or
+an existing account has been changed to use this email address.
+
+Please use the link below to verify your email address:
+
+%(link)s
+
+Please ignore this email if you didn't initiate this action.
+
+""", link=link) }}
