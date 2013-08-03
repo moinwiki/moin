@@ -22,7 +22,7 @@ class TestMacroDateTimeBase(object):
         expected = 1312695491.0
         assert result == expected
         result = format_datetime(datetime.utcfromtimestamp(result))
-        expected = u'Aug 7, 2011 5:38:11 AM'
+        expected = u'Aug 7, 2011, 5:38:11 AM'  # comma after year was added in recent CLDR
         assert result == expected
         with pytest.raises(ValueError):
             # things after next 10,000 years can't be predicted
