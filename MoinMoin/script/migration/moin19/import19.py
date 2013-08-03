@@ -532,8 +532,8 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
-        # rename subscribed_pages to subscribed_items
-        metadata[SUBSCRIBED_ITEMS] = metadata.get('subscribed_pages', [])
+        # transfer subscribed_pages to subscription_patterns
+        metadata[SUBSCRIPTIONS] = migrate_subscriptions(metadata.get('subscribed_pages', []))
 
         # convert bookmarks from usecs (and str) to secs (int)
         metadata[BOOKMARKS] = [(interwiki, int(long(bookmark) / 1000000))
@@ -633,3 +633,19 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
+
+
+def migrate_subscriptions(subscribed_items):
+    """ Transfer subscribed_items meta to subscriptions meta
+
+    :param subscribed_items: a list of moin19-format subscribed_items
+    :return: subscriptions
+    """
+    subscriptions = []
+    for subscribed_item in subscribed_items:
+        # TODO: try to determine if pagename is not a regexp and create
+        # a subscription_id with a NAME keyword
+        # TODO: support interwiki wikiname
+        wikiname, pagename = subscribed_item.split(":", 1)
+        subscriptions.append("{0}::{2}".format(NAMERE, pagename))
+    return subscriptions
