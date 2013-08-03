@@ -33,7 +33,8 @@ class TestAnchorNames(object):
     def test_anchor_name_encoding(self):
         tests = [
             # text, expected output
-            (u'\xf6\xf6ll\xdf\xdf', 'A_APYA9g-ll_AN8A3w-'),
+            # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
+            (u'\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
             (u'level 2', 'level_2'),
             (u'level_2', 'level_2'),
             (u'', 'A'),
