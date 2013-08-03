@@ -745,7 +745,8 @@ class Default(Contentful):
         show_navigation = False  # TODO
         first_rev = last_rev = None  # TODO
         return render_template(self.show_template,
-                               item=self, item_name=self.fqname.fullname,
+                               item=self, item_name=self.name,
+                               fqname=self.fqname,
                                rev=self.rev,
                                contenttype=self.contenttype,
                                first_rev_id=first_rev,
