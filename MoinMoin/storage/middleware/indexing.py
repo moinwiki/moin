@@ -177,6 +177,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             class PseudoItem(object):
                 def __init__(self, fqname):
                     self.fqname = fqname
+                    self.name = fqname.value
             self.item = PseudoItem(fqname)
 
         def read(self, *args, **kw):
