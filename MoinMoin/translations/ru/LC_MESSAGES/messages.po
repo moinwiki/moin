@@ -1255,7 +1255,7 @@ msgstr "Удалить «%(item_name)s»"
 #: MoinMoin/templates/destroy.html:20
 #, fuzzy, python-format
 msgid "DESTROY REVISION '%(item_name)s' (rev %(rev_id)s)"
-msgstr "Вернуть «%(item_name)s» (вер. %(rev_no)d)"
+msgstr "Вернуть «%(item_name)s» (вер. %(rev_id)s)"
 
 #: MoinMoin/templates/diff.html:4
 #, fuzzy, python-format
@@ -1613,7 +1613,7 @@ msgstr "Переименовать «%(item_name)s»"
 #: MoinMoin/templates/revert.html:4
 #, fuzzy, python-format
 msgid "Revert '%(item_name)s' (rev %(rev_id)s)"
-msgstr "Вернуть «%(item_name)s» (вер. %(rev_no)d)"
+msgstr "Вернуть «%(item_name)s» (вер. %(rev_id)s)"
 
 #: MoinMoin/templates/search.html:16
 #, python-format
@@ -1643,7 +1643,7 @@ msgstr ""
 #: MoinMoin/templates/search.html:59
 #, fuzzy, python-format
 msgid "Revision: %(revid)s Last Change: %(mtime)s"
-msgstr "Версия: %(revno)d на момент %(date_time)s"
+msgstr "Версия: %(revid)s на момент %(mtime)s"
 
 #: MoinMoin/templates/search.html:67
 msgid "You don't have read permission for this item."
@@ -1684,7 +1684,7 @@ msgstr ""
 #: MoinMoin/templates/show_nonexistent.html:5
 #, fuzzy, python-format
 msgid "Item '%(name)s' does not exist."
-msgstr "Объект %(item_name)s не существет. Создать его?"
+msgstr "Объект %(name)s не существет. Создать его?"
 
 #: MoinMoin/templates/sitemap.html:3
 #, fuzzy, python-format
