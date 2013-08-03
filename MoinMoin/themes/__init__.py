@@ -98,7 +98,7 @@ class ThemeSupport(object):
         breadcrumbs.append((CompositeName(fq_segment, fq_current, False)))
         item_name = fqname.value
         if not item_name:
-            return breadcrumbs
+            return breadcrumbs if namespace else []
         for segment in item_name.split('/'):
             current_item += segment
             fq_current = CompositeName(namespace, NAME_EXACT, current_item)
