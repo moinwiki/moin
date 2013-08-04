@@ -739,7 +739,7 @@ class Default(Contentful):
                     return redirect(url_for_item(self.name))
         return render_template(self.modify_template,
                                item_name=self.name,
-                               item=item,
+                               item=self,
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                form=form,
                                search_form=None,
