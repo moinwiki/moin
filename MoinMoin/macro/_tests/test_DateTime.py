@@ -26,7 +26,7 @@ def test_Macro():
 
     arguments = ['2011-08-07T11:11:11', 'argument2']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    expected = u'Aug 7, 2011 11:11:11 AM'
+    expected = u'Aug 7, 2011, 11:11:11 AM'  # comma after year was added in recent CLDR
     assert result == expected
 
     arguments = ['incorrect_argument']
