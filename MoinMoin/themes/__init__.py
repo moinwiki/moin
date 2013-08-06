@@ -23,6 +23,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname
 from MoinMoin.util.crypto import cache_key
@@ -228,7 +229,7 @@ class ThemeSupport(object):
         for cls, endpoint, args, link_text, title in self.cfg.navi_bar:
             if endpoint == "frontend.show_root":
                 endpoint = "frontend.show_item"
-                args['item_name'] = app.cfg.item_root
+                args['item_name'] = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
             items.append((cls, url_for(endpoint, **args), link_text, title))
 
         # Add user links to wiki links.

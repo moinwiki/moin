@@ -41,7 +41,7 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.util.mime import Type
-from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname
+from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
@@ -296,6 +296,9 @@ class Item(object):
         fqname = split_fqname(name)
         if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
             raise FieldNotUniqueError("field {0} is not in UFIELDS".format(fqname.field))
+        if not fqname.value and fqname.field == NAME_EXACT:
+            fqname = fqname.get_root_fqname()
+
         rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))

@@ -13,9 +13,11 @@ from flask import Response
 from flask import current_app as app
 from flask import g as flaskg
 
+from whoosh.query import Term, Or, And
+
 from MoinMoin.apps.misc import misc
 
-from MoinMoin.constants.keys import MTIME
+from MoinMoin.constants.keys import MTIME, NAME_EXACT, NAMESPACE
 from MoinMoin.themes import render_template
 
 
@@ -37,11 +39,11 @@ def sitemap():
         priority = "0.5"
         sitemap.append((name, format_timestamp(mtime), changefreq, priority))
     # add an entry for root url
-    root_item = app.cfg.item_root
-    revs = list(flaskg.storage.documents(wikiname=app.cfg.interwikiname, name=root_item))
-    if revs:
-        mtime = revs[0].meta[MTIME]
-        sitemap.append((u'', format_timestamp(mtime), "hourly", "1.0"))
+    root_mapping = app.cfg.root_mapping
+    query = Or([And([Term(NAME_EXACT, root_mapping[namespace]), Term(NAMESPACE, namespace)]) for namespace in root_mapping.keys()])
+    for rev in flaskg.storage.search(q=query):
+        mtime = rev.meta[MTIME]
+        sitemap.append((rev.meta[NAMESPACE], format_timestamp(mtime), "hourly", "1.0"))
     sitemap.sort()
     content = render_template('misc/sitemap.xml', sitemap=sitemap)
     return Response(content, mimetype='text/xml')

@@ -163,6 +163,14 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
         field = NAME_EXACT if not self.field else self.field
         return {NAMESPACE: self.namespace, field: self.value}
 
+    def get_root_fqname(self):
+        """
+        Set value to the item_root of that namespace, and return
+        the new CompisteName.
+        """
+        return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
+
+
 
 def split_fqname(url):
     """
