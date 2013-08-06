@@ -76,7 +76,7 @@ def dispatch():
 
 @frontend.route('/')
 def show_root():
-    item_name = app.cfg.item_root
+    item_name = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
     return redirect(url_for_item(item_name))
 
 

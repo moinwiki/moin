@@ -17,7 +17,7 @@
 
 {% if logo %}
 <div id="moin-logo">
-    <a style="background-image: url({{ '/static/logos/moinmoin.png' }});" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}"></a>
+    <a style="background-image: url({{ '/static/logos/moinmoin.png' }});" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('',cfg.default_root)) }}"></a>
 </div>
 {% endif %}
 
@@ -110,7 +110,7 @@
     <div id="moin-breadcrumbs-location">
         {% if cfg.show_interwiki -%}
         <span id="moin-interwiki">
-            <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}" rel="nofollow">
+            <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping['']) }}" rel="nofollow">
                 {% if cfg.interwikiname %}{{ cfg.interwikiname }}{% else %}Self{% endif %}
             </a>
             <span class="sep">: </span>
