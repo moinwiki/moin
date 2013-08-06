@@ -46,6 +46,10 @@
     <link rel="stylesheet" href="{{ url_for('serve.files', name='bootstrap', filename='css/bootstrap.css') }}" />
     {% endblock %}
 
+    {% block icons_stylesheet %}
+    <link rel="stylesheet" href="{{ url_for('serve.files', name='font_awesome', filename='css/font-awesome.css') }}" />
+    {% endblock %}
+    
     <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
 
     {% block theme_stylesheets %}

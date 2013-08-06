@@ -26,7 +26,9 @@
 
             {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-star-empty"></span>
+                    <span class="icon-stack">
+                        <i class="icon-star-empty"></i>
+                    </span>
                     {%- if user.is_quicklinked_to([item_name]) %}
                         {{ _('Remove Link') }}
                     {%- else %}
@@ -37,7 +39,9 @@
 
             {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-envelope"></span>
+                    <span class="icon-stack">
+                        <i class="icon-envelope"></i>
+                    </span>
                     {%- if user.is_subscribed_to([item_name]) %}
                         {{ _('Unsubscribe') }}
                     {%- else %}
@@ -56,14 +60,18 @@
 
             {%- if endpoint == 'frontend.index' %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                <span class="icon-list-alt"></span>
+                <span class="icon-stack">    
+                    <i class="icon-list-alt"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.sitemap' %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                <span class="icon-map-marker"></span>
+                <span class="icon-stack">
+                    <i class="icon-map-marker"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
@@ -79,42 +87,54 @@
 
             {%- if endpoint == 'frontend.rename_item' and user.may.write(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-tag"></span>
+                <span class="icon-stack">
+                    <i class="icon-tag"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.delete_item' and user.may.write(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-trash"></span>
+                <span class="icon-stack">
+                    <i class="icon-trash"></i>
+                </span>
                     {{ label }}
                 </a>
             {% endif %}
 
             {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-fire"></span>
+                <span class="icon-stack">
+                    <i class="icon-fire"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.similar_names' and user.may.write(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-search"></span>
+                <span class="icon-stack">
+                    <i class="icon-search"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.download_item' and user.may.write(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-download-alt"></span>
+                <span class="icon-stack">
+                    <i class="icon-download-alt"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.copy_item' and user.may.write(item_name) %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-comment"></span>
+                <span class="icon-stack">
+                    <i class="icon-comment"></i>
+                </span>
                     {{ label }}
                 </a>
             {%- endif %}
