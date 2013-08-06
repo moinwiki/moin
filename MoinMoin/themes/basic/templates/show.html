@@ -20,60 +20,52 @@
 {% endblock %}
 
 {% block user_actions %}
-    <li class="nav-header">User Actions</li>
+    <div class="list-group-item">User Actions</div>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
             {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-star-empty"></span>
-                        {%- if user.is_quicklinked_to([item_name]) %}
-                            {{ _('Remove Link') }}
-                        {%- else %}
-                            {{ _('Add Link') }}
-                        {%- endif %}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-star-empty"></span>
+                    {%- if user.is_quicklinked_to([item_name]) %}
+                        {{ _('Remove Link') }}
+                    {%- else %}
+                        {{ _('Add Link') }}
+                    {%- endif %}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-envelope"></span>
-                        {%- if user.is_subscribed_to([item_name]) %}
-                            {{ _('Unsubscribe') }}
-                        {%- else %}
-                            {{ _('Subscribe') }}
-                        {%- endif %}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-envelope"></span>
+                    {%- if user.is_subscribed_to([item_name]) %}
+                        {{ _('Unsubscribe') }}
+                    {%- else %}
+                        {{ _('Subscribe') }}
+                    {%- endif %}
+                </a>
             {%- endif %}
         {%- endif %}
     {% endfor %}
 {% endblock %}
 
 {% block site_actions %}
-    <li class="nav-header">Item Navigation</li>
+    <div class="list-group-item">Item Navigation</div>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
             {%- if endpoint == 'frontend.index' %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-list-alt"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-list-alt"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.sitemap' %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-map-marker"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-map-marker"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
         {% endif %}
@@ -81,62 +73,50 @@
 {% endblock %}
 
 {% block item_actions %}
-    <li class="nav-header">Item Actions</li>
+    <div class="list-group-item">Item Actions</div>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
             {%- if endpoint == 'frontend.rename_item' and user.may.write(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-tag"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-tag"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.delete_item' and user.may.write(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-trash"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-trash"></span>
+                    {{ label }}
+                </a>
             {% endif %}
 
             {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-fire"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-fire"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.similar_names' and user.may.write(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-search"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-search"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.download_item' and user.may.write(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-download-alt"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-download-alt"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
             {%- if endpoint == 'frontend.copy_item' and user.may.write(item_name) %}
-                <li>
-                    <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-comment"></span>
-                        {{ label }}
-                    </a>
-                </li>
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-comment"></span>
+                    {{ label }}
+                </a>
             {%- endif %}
 
         {% endif %}
@@ -146,10 +126,12 @@
 {% block local_panel %}
         
         <!-- user, site, item actions -->
+    <div class="list-group">
         {{ self.user_actions() }}
 
         {{ self.site_actions() }}
 
         {{ self.item_actions() }}
+    </div>
 
 {% endblock %}
