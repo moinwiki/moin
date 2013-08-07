@@ -1,0 +1,30 @@
+{% extends theme("blog/layout.html") %}
+{% import theme("blog/utils.html") as blog_utils %}
+
+{% set no_entries_msg = _("There are no entries in this blog.") %}
+{% if tag %}
+    {% set no_entries_msg = _("There are no entries in the '%(tag)s' blog category.", tag=tag) %}
+{% endif %}
+
+{% block pagepath %}
+    {{ super() }}
+    {% if tag %}
+        <span class="sep">/</span>
+        {{ _("Category:") }}
+        {% if blog_name %}
+            <a href="{{ url_for('frontend.show_item', item_name=blog_name, tag=tag) }}">{{ tag }}</a>
+        {% else %}
+            {{ tag }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block blog_content %}
+    {% if blog_entry_items %}
+        {% for entry_item in blog_entry_items %}
+            {{ blog_utils.show_blog_entry(entry_item) }}
+        {% endfor %}
+    {% else %}
+        {{ no_entries_msg }}
+    {% endif %}
+{% endblock %}

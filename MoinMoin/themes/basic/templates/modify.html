@@ -1,0 +1,61 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+{% from theme("modify_meta.html") import basic_meta_editor %}
+{% from theme("modify_text.html") import basic_data_editor %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
+
+{% block views %}
+{{ itemviews }}
+{% endblock %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<div id="moin-modify" class="moin-form">
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+    {{ forms.render_errors(form) }}
+    {#
+       Workaround:
+       For *Draw content, hide submit button and form['comment'], since *Draw
+       POSTs originate from their respective applets.
+    #}
+    <div class="tabbable tabs-right">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
+            <li><a href="#meta" data-toggle="tab">Edit Meta</a></li>
+            <li><a href="#help" data-toggle="tab">Help</a></li>
+        </ul>    
+        <div class="tab-content">
+            <div class="tab-pane active" id="editor">
+                {{ basic_data_editor(form['content_form'], item_name, class='input-block-level') }}
+            </div>
+            <div class="tab-pane active" id="meta">
+                {{ basic_meta_editor(form['meta_form']) }}
+                {% set field = form['extra_meta_text'] %}
+                {{ gen.label(field) }}
+                {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='span6') }}
+            </div>
+            <div class="tab-pane active" id="help">
+                {% if form['content_form'].help %}
+                    <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+                {% endif %}
+            </div>
+        </div>
+    </div> <!-- left tabbable -->
+    {#
+    {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
+    <br />
+    {{ forms.render_errors(form['meta_text']) }}
+    #}
+    <br />                
+    {% if not form['content_form'].is_draw %}
+        {{ forms.render_textcha(gen, form) }}
+        {{ gen.input(form['comment'], type="text", class="input-block-level") }}
+        {{ forms.render_submit(form, value='Save', class='btn btn-primary', id='moin-save-text-button') }}
+    {% endif %}
+
+    {{ gen.form.close() }}
+</div>
+{% endblock %}
