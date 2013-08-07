@@ -7,9 +7,9 @@
         'summary',
         'tags',
         ] %}
-        <div class="control-group">
+        <div class="form-group">
             {{ gen.label(form[e]) }}
-            {{ gen.textarea(form[e], rows='1', class='span10') }}
+            {{ gen.textarea(form[e], rows='1', class='form-control') }}
         </div>
     {% endfor %}
 {% endmacro %}
