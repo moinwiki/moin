@@ -4219,12 +4219,15 @@ td.visible-print {
   display: inline-block;
 }
 .moin-breadcrumb > li + li:before {
-  content: "»";
+  content: "/\00a0";
   padding: 0 5px;
   color: #cccccc;
 }
 .moin-breadcrumb > .active {
   color: #999999;
+}
+.moin-breadcrumb > li + li:before {
+  content: "»";
 }
 .moin-nav {
   margin-bottom: 0;

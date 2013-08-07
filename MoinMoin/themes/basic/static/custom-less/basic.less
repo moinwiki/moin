@@ -1,0 +1,15 @@
+@import "bootstrap.less";
+
+.moin-breadcrumb {
+  .breadcrumb;
+  > li {
+    &+li:before {
+      content: "»"; // right angular brackets, custom separator
+    }
+  }
+}
+
+.moin-nav {
+  .nav;
+  margin-bottom: 20px;  // override bottom-margin nav-tabs
+}
