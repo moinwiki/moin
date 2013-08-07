@@ -9,99 +9,93 @@
 {% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
 {% endif %}
 
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
+{% endblock %}
+
 {% block layout %}
-	<div class="container-fluid">
+	<div class="container">
         <div class="navbar navbar-inverse">
-            <div class="navbar-inner">
-                <div class="container-fluid">
+            {% if logo %}
+            <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                <img class="img-circle" src="{{ '/static/logos/moinmoin-small.png' }}"/>
+            </a>
+            {% endif %}
 
-                    {% if logo %}
-                    <a class="brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                        <img class="logo" src="{{ '/static/logos/moinmoin-small.png' }}"/>
-                    </a>
-                    {% endif %}
+			<form class="navbar-form pull-right" action="{{ url_for('frontend.search') }}" method="get">
+               	<input name='q' type="text" class="form-control" placeholder="Search ...">
+            </form>
 
-					<form class="navbar-search pull-right" action="{{ url_for('frontend.search') }}" method="get">
-                       	<input name='q' type="text" class="search-query" placeholder="Search ...">
-                    </form>
+            <ul class="nav navbar-nav pull-right">
 
-                    <ul class="nav pull-right">
-
-                        {% if user.valid -%}
-                        {% set avatar = user.avatar(20) %}
-                            {% if avatar %}
-                                <li><img id="moin-avatar" src="{{ avatar }}" /></li>
-                            {%- endif %}
-                            {% if user.name -%}
-                                {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
-                                <li>
-                                <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
-                                    <i class="icon-user icon-white"> </i>
-                                    {{ aliasname }}
-                                </a>
-                                </li>
-                                {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                                    <li>
-                                    <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
-                                        <i class="icon-cog icon-white"> </i>
-                                            {{ _('Settings') }}</a>
-                                    </li>
-                                {%- endif %}
-                            {%- endif %}
-                            {% if user.auth_method in cfg.auth_can_logout %}
-                                <li>
-                                <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
-                                    <i class="icon-off icon-white"></i>
-                                    {{ _('Logout') }}
-                                </a>
-                                </li>
-                            {% endif %}
-                        {% else %}
-                            {% set login_url = theme_supp.login_url() %}
-                            {% if login_url %}
-                                <li>
-                                <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
-                                </li>
-                            {% endif %}
+                {% if user.valid -%}
+                {% set avatar = user.avatar(20) %}
+                    {% if avatar %}
+                        <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                    {%- endif %}
+                    {% if user.name -%}
+                        {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                        <li>
+                        <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                            <i class="icon-user icon-white"> </i>
+                            {{ aliasname }}
+                        </a>
+                        </li>
+                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                            <li>
+                            <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
+                                <i class="icon-cog icon-white"> </i>
+                                    {{ _('Settings') }}</a>
+                            </li>
                         {%- endif %}
+                    {%- endif %}
+                    {% if user.auth_method in cfg.auth_can_logout %}
+                        <li>
+                        <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                            <i class="icon-off icon-white"></i>
+                            {{ _('Logout') }}
+                        </a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% set login_url = theme_supp.login_url() %}
+                    {% if login_url %}
+                        <li>
+                        <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                        </li>
+                    {% endif %}
+                {%- endif %}
 
-                    </ul>
-                </div> <!-- nav-bar-fluid-container -->
-            </div> <!-- navbar-container-->
-    	</div> <!-- navbar-inverse-->
+            </ul>
+        </div> <!-- navbar-inverse-->
 
-        <div class="row-fluid">
-            <div class="span2">
-                <div class="well sidebar-nav left-sidebar">
-                    <ul class="nav nav-list">
-                        {% set navibar_items = theme_supp.navibar(item_name) %}
-                        {% set quicklinks = 'false' %}
-                        {% if navibar_items %}
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="list-group">
+                    {% set navibar_items = theme_supp.navibar(item_name) %}
+                    {% set quicklinks = 'false' %}
+                    {% if navibar_items %}
 
-                        <li class="nav-header">Site Navigation</li>
-                        {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
-                            <li class="{{ cls }}{% if url == current_url %} active{% endif %}">
-                            <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
-                            </li>
-                        {% endfor %}
+                    <div class="list-group-item"> Site Navigation </div>
+                    {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
+                        <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                    {% endfor %}
 
+                    {% endif %}
+                    
+                    {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
+                        {% if loop.first %}
+                            <li class="nav-header">Quick Links</li>
                         {% endif %}
-                        
-                        {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
-                            {% if loop.first %}
-                                <li class="nav-header">Quick Links</li>
-                            {% endif %}
-                            <li class="{{ cls }}">
-                                <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
-                            </li>
-                        {% endfor %}
-
-                    </ul>
-                </div><!--/.well -->
+                            <a class="list-group-item {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}
+                            </a>
+                    {% endfor %}
+                </div>
             </div><!--/span-->
 
-            <div class="span10">
-                <ul class="breadcrumb">
+            <div class="col-lg-10">
+                <ul class="moin-breadcrumb">
                     {% set trail_items = theme_supp.path_breadcrumbs() %}
                     {% if trail_items %}
                         {% for wiki_name, item_name, item_href, exists, err in trail_items %}
@@ -118,9 +112,6 @@
                                    {{ item_name|shorten_item_name }}
                                 </a>
                             {%- endif %}
-                            {% if not loop.last %}
-                                <span class="divider"> >> </span>
-                            {% endif %}
                           </li>
                         {% endfor %}
                     {% endif %}
@@ -130,10 +121,10 @@
 
                 {% endblock %}
 
-            <div class="row-fluid">
-                {% set width = "span12" %}
+            <div class="row">
+                {% set width = "col-lg-12" %}
                 {% if self.local_panel %}
-                    {% set width = "span10" %}
+                    {% set width = "col-lg-10" %}
                 {% endif %}
 
                 <div class="{{width}}">
@@ -146,18 +137,14 @@
                 </div><!--/span-->
 
                 {% if self.local_panel %}
-                    <div class="span2">
-                        <div class="well sidebar-nav">
-                            <ul class="nav nav-list">
-                                {{ self.local_panel() }}
-                            </ul>
-                        </div><!--/.well -->
+                    <div class="col-lg-2">
+                        {{ self.local_panel() }}
                     </div><!--/span-->
                 {% endif %}
 
             </div><!--/row-->
 
             </div><!--/span-->
-        </div> <!--/row-fluid-->
-	</div><!--/container-fluid-->
+        </div> <!--/row-->
+	</div><!--/container-->
 {% endblock %}

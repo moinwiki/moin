@@ -1,13 +1,14 @@
 {% set exists = storage.has_item(item_name) %}
+{% set current_endpoint = request.endpoint %}
 
 {% block views %}
 
-    <ul class="nav nav-tabs">
+    <ul class="moin-nav nav-tabs">
         {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
             {%- if not check_exists or check_exists and exists %}
 
                 {%- if endpoint == 'frontend.show_item' %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-eye-open"></span>
                             {{ label }}
@@ -16,7 +17,7 @@
                 {%- endif %}
 
                 {%- if endpoint == 'frontend.modify_item' and user.may.write(item_name) %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                          <span class="icon-pencil"></span>   {{ label }}
                         </a>
@@ -24,7 +25,7 @@
                 {%- endif %}
 
                 {%- if endpoint == 'frontend.history' %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-time"></span>
                             {{ label }}
@@ -33,7 +34,7 @@
                 {%- endif %}
 
                 {%- if endpoint == 'frontend.show_item_meta' %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-wrench"></span>
                             {{ label }}
@@ -42,7 +43,7 @@
                 {%- endif %}
 
                 {%- if endpoint == 'frontend.highlight_item' %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-picture"></span>
                             {{ label }}
@@ -51,7 +52,7 @@
                 {%- endif %}
 
                 {%- if endpoint == 'frontend.backrefs' %}
-                    <li>
+                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
                         <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-share"></span>
                             {{ label }}
