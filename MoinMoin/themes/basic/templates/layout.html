@@ -86,7 +86,7 @@
                     
                     {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
                         {% if loop.first %}
-                            <li class="nav-header">Quick Links</li>
+                            <div class="list-group-item">Quick Links</div>
                         {% endif %}
                             <a class="list-group-item {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}
                             </a>
