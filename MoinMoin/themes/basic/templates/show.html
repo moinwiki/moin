@@ -8,39 +8,6 @@
 {% endblock %}
 
 {% block content %}
-    {% block location_breadcrumbs %}
-       {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
-        {% set url = url_for('frontend.show_item', item_name=segment_path) %}
-        {% if loop.first -%}
-        <h4>
-            {% if url != current_url %}
-                <small>
-            {% endif %}
-            <a href="{{ url }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                {{ segment_name|shorten_item_name }}
-            </a>
-            {% if url != current_url %}
-               </small>
-            {% endif %}
-        {% else %}
-            <span class="sep">/</span>
-            {% if title_name %}
-                {{ title_name }}
-            {% else %}
-                {% if url != current_url %}
-                    <small>
-                {% endif %}
-                <a href="{{ url }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                    {{ segment_name|shorten_item_name }}
-                </a>
-                {% if url != current_url %}
-                    </small>
-                {% endif %}                
-            {%- endif %}
-        {%- endif %}
-       {% endfor %}
-        </h4>
-    {% endblock %}
 
     {% block content_data %}
         {% if data_rendered %}
