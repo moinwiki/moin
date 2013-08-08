@@ -1,11 +1,6 @@
 html{
   overflow-y:scroll;
 }
-.nav-tabs > li > a:focus {
-  outline: 0px none;
-  border-color: rgba(82, 168, 236, 0.8);
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 4px rgba(82, 168, 236, 0.6);
-}
 .moin-hist-rev {
 	text-align: center;
 }

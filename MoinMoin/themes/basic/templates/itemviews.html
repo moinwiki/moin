@@ -3,7 +3,7 @@
 
 {% block views %}
 
-    <ul class="moin-nav nav-tabs">
+    <ul class="moin-nav nav-tabs moin-shadow">
         {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
             {%- if not check_exists or check_exists and exists %}
 
