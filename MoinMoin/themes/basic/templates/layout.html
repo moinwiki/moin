@@ -115,6 +115,28 @@
                           </li>
                         {% endfor %}
                     {% endif %}
+
+                    <h4 class="moin-location-breadcrumb">
+                    {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
+                    {% set url = url_for('frontend.show_item', item_name=segment_path) %}
+                        {% if not loop.first %}
+                        <small>/</small>
+                        {% endif %}
+                        {% if url != current_url %}
+                            <small>
+                        {% endif %}
+                        {% if title_name %}
+                            {{ title_name }}
+                        {% else %}
+                            <a href="{{ url }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                {{ segment_name|shorten_item_name }}
+                            </a>
+                        {% endif %}
+                        {% if url != current_url %}
+                           </small>
+                        {% endif %}
+                    {% endfor %}
+                    </h4>
                 </ul>
 
                 {% block views %}
