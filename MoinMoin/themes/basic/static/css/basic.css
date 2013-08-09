@@ -4314,3 +4314,9 @@ td.visible-print {
 .moin-location-breadcrumb {
   padding-top: 12px;
 }
+.moin-nonexistent {
+  color: #e7908e;
+}
+.moin-nonexistent:hover {
+  color: #d9534f;
+}
