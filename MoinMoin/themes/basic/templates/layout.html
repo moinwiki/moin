@@ -72,14 +72,14 @@
 
         <div class="row">
             <div class="col-lg-2">
-                <div class="list-group">
+                <div class="moin-sidebar">
                     {% set navibar_items = theme_supp.navibar(item_name) %}
                     {% set quicklinks = 'false' %}
                     {% if navibar_items %}
 
                     <div class="list-group-item"> Site Navigation </div>
                     {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
-                        <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                        <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                     {% endfor %}
 
                     {% endif %}
@@ -88,7 +88,7 @@
                         {% if loop.first %}
                             <div class="list-group-item">Quick Links</div>
                         {% endif %}
-                            <a class="list-group-item {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}
+                            <a class="list-group-item {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}
                             </a>
                     {% endfor %}
                 </div>

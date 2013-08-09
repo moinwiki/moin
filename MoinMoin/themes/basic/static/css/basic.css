@@ -4320,3 +4320,8 @@ td.visible-print {
 .moin-nonexistent:hover {
   color: #d9534f;
 }
+.moin-sidebar {
+  margin-bottom: 20px;
+  padding-left: 0;
+  overflow: hidden;
+}
