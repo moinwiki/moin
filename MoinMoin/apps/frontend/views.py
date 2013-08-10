@@ -102,6 +102,7 @@ Disallow: /+sitemap/
 Disallow: /+similar_names/
 Disallow: /+quicklink/
 Disallow: /+subscribe/
+Disallow: /+refs/
 Disallow: /+forwardrefs/
 Disallow: /+backrefs/
 Disallow: /+wanteds/
@@ -824,6 +825,24 @@ def _mychanges(userid):
              Term(USERID, userid)])
     revs = flaskg.storage.search(q, idx_name=ALL_REVS)
     return [rev.name for rev in revs]
+
+
+@frontend.route('/+refs/<itemname:item_name>')
+def refs(item_name):
+    """
+    Returns the list of all incoming/outgoing links or transclusions of item item_name
+
+    :param item_name: the name of the current item
+    :type item_name: unicode
+    :returns: a page with all incoming/outgoing item links of this item
+    """
+    refs = _forwardrefs(item_name)
+    backrefs = _backrefs(item_name)
+    return render_template('refs.html',
+                           item_name=item_name,
+                           refs=refs,
+                           backrefs=backrefs
+    )
 
 
 @frontend.route('/+forwardrefs/<itemname:item_name>')
