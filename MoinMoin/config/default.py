@@ -407,7 +407,7 @@ options_no_group_name = {
             ('frontend.rename_item', L_('Rename'), L_('Rename this item'), True, ),
             ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
             ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
-            ('frontend.backrefs', L_('Referrers'), L_('What refers here?'), False, ),
+            ('frontend.refs', L_('References'), L_('Show incoming and outgoing references'), False, ),
             ('frontend.sitemap', L_('Site Map'), L_('Local Site Map of this item'), True, ),
             ('frontend.similar_names', L_('Similar'), L_('Items with similar names'), False, ),
         ], 'list of edit bar entries (list of tuples (endpoint, label))'),
