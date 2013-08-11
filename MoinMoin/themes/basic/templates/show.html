@@ -1,0 +1,157 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% import theme("itemviews.html") as itemviews with context %}
+{% set exists = storage.has_item(item_name) %}
+
+{% block views %}
+    {{ itemviews }}
+{% endblock %}
+
+{% block content %}
+
+    {% block content_data %}
+        {% if data_rendered %}
+        <div id="moin-content-data">
+            {{ data_rendered }}
+        </div>
+        {% endif %}
+    {% endblock %}
+
+{% endblock %}
+
+{% block user_actions %}
+    <div class="list-group-item">User Actions</div>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-stack">
+                        <i class="icon-star-empty"></i>
+                    </span>
+                    {%- if user.is_quicklinked_to([item_name]) %}
+                        {{ _('Remove Link') }}
+                    {%- else %}
+                        {{ _('Add Link') }}
+                    {%- endif %}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    <span class="icon-stack">
+                        <i class="icon-envelope"></i>
+                    </span>
+                    {%- if user.is_subscribed_to([item_name]) %}
+                        {{ _('Unsubscribe') }}
+                    {%- else %}
+                        {{ _('Subscribe') }}
+                    {%- endif %}
+                </a>
+            {%- endif %}
+        {%- endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block site_actions %}
+    <div class="list-group-item">Item Navigation</div>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.index' %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">    
+                    <i class="icon-list-alt"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.sitemap' %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-map-marker"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block item_actions %}
+    <div class="list-group-item">Item Actions</div>
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+
+            {%- if endpoint == 'frontend.rename_item' and user.may.write(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-tag"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.delete_item' and user.may.write(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-trash"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {% endif %}
+
+            {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-fire"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.similar_names' and user.may.write(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-search"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.download_item' and user.may.write(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-download-alt"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.copy_item' and user.may.write(item_name) %}
+                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                <span class="icon-stack">
+                    <i class="icon-comment"></i>
+                </span>
+                    {{ label }}
+                </a>
+            {%- endif %}
+
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block local_panel %}
+        
+        <!-- user, site, item actions -->
+    <div class="list-group">
+        {{ self.user_actions() }}
+
+        {{ self.site_actions() }}
+
+        {{ self.item_actions() }}
+    </div>
+
+{% endblock %}

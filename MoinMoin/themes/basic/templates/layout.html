@@ -1,0 +1,172 @@
+{% extends theme("base.html") %}
+
+{% import theme("snippets.html") as snippets %}
+{% set logo = snippets.logo() %}
+
+{% if item_name in ['@NONAMEGIVEN',''] %}
+{% set current_url = url_for(request.endpoint) %}
+{% else %}
+{% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
+{% endif %}
+
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
+{% endblock %}
+
+{% block layout %}
+	<div class="container">
+        <div class="navbar navbar-inverse">
+            {% if logo %}
+            <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                <img class="img-circle" src="{{ '/static/logos/moinmoin-small.png' }}"/>
+            </a>
+            {% endif %}
+
+			<form class="navbar-form pull-right" action="{{ url_for('frontend.search') }}" method="get">
+               	<input name='q' type="text" class="form-control" placeholder="Search ...">
+            </form>
+
+            <ul class="nav navbar-nav pull-right">
+
+                {% if user.valid -%}
+                {% set avatar = user.avatar(20) %}
+                    {% if avatar %}
+                        <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                    {%- endif %}
+                    {% if user.name -%}
+                        {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                        <li>
+                        <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                            <i class="icon-user icon-white"> </i>
+                            {{ aliasname }}
+                        </a>
+                        </li>
+                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                            <li>
+                            <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
+                                <i class="icon-cog icon-white"> </i>
+                                    {{ _('Settings') }}</a>
+                            </li>
+                        {%- endif %}
+                    {%- endif %}
+                    {% if user.auth_method in cfg.auth_can_logout %}
+                        <li>
+                        <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                            <i class="icon-off icon-white"></i>
+                            {{ _('Logout') }}
+                        </a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    {% set login_url = theme_supp.login_url() %}
+                    {% if login_url %}
+                        <li>
+                        <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                        </li>
+                    {% endif %}
+                {%- endif %}
+
+            </ul>
+        </div> <!-- navbar-inverse-->
+
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="moin-sidebar">
+                    {% set navibar_items = theme_supp.navibar(item_name) %}
+                    {% set quicklinks = 'false' %}
+                    {% if navibar_items %}
+
+                    <div class="list-group-item"> Site Navigation </div>
+                    {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
+                        <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
+                    {% endfor %}
+
+                    {% endif %}
+                    
+                    {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
+                        {% if loop.first %}
+                            <div class="list-group-item">Quick Links</div>
+                        {% endif %}
+                            <a class="list-group-item {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}
+                            </a>
+                    {% endfor %}
+                </div>
+            </div><!--/span-->
+
+            <div class="col-lg-10">
+                <ul class="moin-breadcrumb">
+                    {% set trail_items = theme_supp.path_breadcrumbs() %}
+                    {% if trail_items %}
+                        {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+                          <li>
+                            {%- if wiki_name -%}
+                                <a href="{{ item_href }}"{{ " " }}
+                                   title="{{ wiki_name }}"
+                                   class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+                                   {{ item_name|shorten_item_name }}
+                                </a>
+                            {%- else -%}
+                                <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                                   {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                                   {{ item_name|shorten_item_name }}
+                                </a>
+                            {%- endif %}
+                          </li>
+                        {% endfor %}
+                    {% endif %}
+
+                    <h4 class="moin-location-breadcrumb">
+                    {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
+                    {% set url = url_for('frontend.show_item', item_name=segment_path) %}
+                        {% if not loop.first %}
+                        <small>/</small>
+                        {% endif %}
+                        {% if url != current_url %}
+                            <small>
+                        {% endif %}
+                        {% if title_name %}
+                            {{ title_name }}
+                        {% else %}
+                            <a href="{{ url }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                {{ segment_name|shorten_item_name }}
+                            </a>
+                        {% endif %}
+                        {% if url != current_url %}
+                           </small>
+                        {% endif %}
+                    {% endfor %}
+                    </h4>
+                </ul>
+
+                {% block views %}
+
+                {% endblock %}
+
+            <div class="row">
+                {% set width = "col-lg-12" %}
+                {% if self.local_panel %}
+                    {% set width = "col-lg-10" %}
+                {% endif %}
+
+                <div class="{{width}}">
+                    {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
+                    <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+                        {% block content %}
+                            {# All content templates should implement this block. #}
+                        {% endblock %}
+                    </div>
+                </div><!--/span-->
+
+                {% if self.local_panel %}
+                    <div class="col-lg-2">
+                        {{ self.local_panel() }}
+                    </div><!--/span-->
+                {% endif %}
+
+            </div><!--/row-->
+
+            </div><!--/span-->
+        </div> <!--/row-->
+	</div><!--/container-->
+{% endblock %}

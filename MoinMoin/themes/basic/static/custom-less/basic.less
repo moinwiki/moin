@@ -1,0 +1,39 @@
+@import "bootstrap.less";
+
+.moin-breadcrumb {
+  .breadcrumb;
+  > li {
+    &+li:before {
+      content: "»"; // right angular brackets, custom separator
+    }
+  }
+}
+
+.moin-nav {
+  .nav;
+  margin-bottom: 20px;  // override bottom-margin nav-tabs
+}
+
+.moin-shadow {
+  > li {
+    > a {
+      .form-control-focus(); // adds shadow onfocus
+    }
+  }
+}
+
+.moin-location-breadcrumb {
+  padding-top: 12px;
+}
+
+.moin-nonexistent {
+  color: @link-nonexistent-color;
+  &:hover {
+    color: @link-nonexistent-hover-color;
+  }
+}
+
+.moin-sidebar {
+  .list-group;
+  overflow: hidden;
+}
