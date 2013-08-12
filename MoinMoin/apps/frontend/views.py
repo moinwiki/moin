@@ -724,10 +724,11 @@ def destroy_item(item_name, rev):
         item = Item.create(item_name, rev_id=_rev)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.destroy(item_name):
+    fqname = item.fqname
+    if not flaskg.user.may.destroy(fqname):
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404, item_name)
+        abort(404, fqname.fullname)
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -740,9 +741,10 @@ def destroy_item(item_name, rev):
                 item.destroy(comment=comment, destroy_item=destroy_item)
             except AccessDenied:
                 abort(403)
-            return redirect(url_for_item(item_name))
+            return redirect(url_for_item(fqname.fullname))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
+                           fqname=fqname,
                            rev_id=rev,
                            form=form,
     )
