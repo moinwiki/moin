@@ -118,3 +118,10 @@ CLOSED = u"closed"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
+
+# values for ACTION key
+ACTION_SAVE = u"SAVE"
+ACTION_REVERT = u"REVERT"
+ACTION_TRASH = u"TRASH"
+ACTION_COPY = u"COPY"
+ACTION_RENAME = u"RENAME"
