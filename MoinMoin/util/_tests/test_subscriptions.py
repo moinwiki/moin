@@ -5,6 +5,7 @@
     MoinMoin - MoinMoin.util.subscriptions Tests
 """
 
+import pytest
 
 from MoinMoin import user
 from MoinMoin.items import Item
@@ -73,3 +74,42 @@ class TestSubscriptions(object):
         patterns = get_matched_subscription_patterns(self.item,
                                                      non_matching_patterns + matching_patterns)
         assert patterns == matching_patterns
+
+    def test_perf_get_subscribers(self):
+        pytest.skip("usually we do no performance tests")
+        password = u"password"
+        subscriptions = [
+            "{0}:{1}".format(ITEMID, self.item.meta[ITEMID]),
+            "{0}:{1}:{2}".format(NAME, self.namespace, self.item_name),
+            "{0}:{1}:{2}".format(TAGS, self.namespace, self.tagname),
+            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, u"fo"),
+            "{0}:{1}:{2}".format(NAMERE, self.namespace, r"\wo")
+        ]
+        users = set()
+        expected_names = set()
+        for i in xrange(10000):
+            i = unicode(i)
+            user.create_user(username=i, password=password, email="{0}@example.org".format(i),
+                             validate=False, locale=u'en')
+            user_ = user.User(name=i, password=password)
+            users.add(user_)
+            expected_names.add(user_.name0)
+
+        users_sliced = list(users)[:100]
+        expected_names_sliced = {user_.name0 for user_ in users_sliced}
+        tests = [(users_sliced, expected_names_sliced), (users, expected_names)]
+
+        import time
+        for users_, expected_names_ in tests:
+            print "\nTesting {0} subscribers from a total of {1} users".format(
+                len(users_), len(users))
+            for subscription in subscriptions:
+                for user_ in users_:
+                    user_.profile._meta[SUBSCRIPTIONS] = [subscription]
+                    user_.save(force=True)
+                t = time.time()
+                subscribers = get_subscribers(self.item)
+                elapsed_time = time.time() - t
+                print "{0}: {1} s".format(subscription.split(':', 1)[0], elapsed_time)
+                subscribers_names = {subscriber.name for subscriber in subscribers}
+                assert subscribers_names == expected_names_
