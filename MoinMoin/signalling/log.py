@@ -20,7 +20,7 @@ def log_item_displayed(app, item_name):
 
 
 @item_modified.connect_via(ANY)
-def log_item_modified(app, item_name):
+def log_item_modified(app, item_name, **kwargs):
     wiki_name = app.cfg.interwikiname
     logging.info(u"item {0}:{1} modified".format(wiki_name, item_name))
 

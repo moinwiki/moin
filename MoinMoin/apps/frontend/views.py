@@ -737,7 +737,7 @@ def jfu_server(item_name):
         item = Item.create(item_name)
         revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
-                           item_name=item_name)
+                           item_name=item_name, action=ACTION_SAVE)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),

@@ -54,6 +54,7 @@ from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
 )
+from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -393,6 +394,9 @@ class Item(object):
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
+        action = DESTROY_ALL if destroy_item else DESTROY_REV
+        item_modified.send(app._get_current_object(), item_name=self.name, action=action, meta=self.meta,
+                           content=self.content)
 
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -517,7 +521,7 @@ class Item(object):
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
                                              )
-        item_modified.send(app._get_current_object(), item_name=name)
+        item_modified.send(app, item_name=name, action=action)
         return newrev.revid, newrev.meta[SIZE]
 
     @property
