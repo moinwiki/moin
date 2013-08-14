@@ -15,6 +15,8 @@
                'frontend.copy_item' : "icon-comment",
            } %}
 
+{% set user_actions = ['frontend.quicklink_item', 'frontend.subscribe_item', ] %}
+
 {% set item_navigation = ['frontend.index', 'frontend.sitemap', ] %}
 
 {% set item_actions = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
@@ -41,31 +43,27 @@
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
-            {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
+            {%- if endpoint in user_actions and user.valid %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                     <span class="icon-stack">
                         <i class={{icon[endpoint]}}></i>
                     </span>
-                    {%- if user.is_quicklinked_to([item_name]) %}
-                        {{ _('Remove Link') }}
-                    {%- else %}
-                        {{ _('Add Link') }}
-                    {%- endif %}
+                    {%- if endpoint == 'frontend.quicklink_item' %}
+                        {%- if user.is_quicklinked_to([item_name]) %}
+                            {{ _('Remove Link') }}
+                        {%- else %}
+                            {{ _('Add Link') }}
+                        {%- endif %}
+                    {% elif endpoint == 'frontend.subscribe_item' %}
+                        {%- if user.is_subscribed_to([item_name]) %}
+                            {{ _('Unsubscribe') }}
+                        {%- else %}
+                            {{ _('Subscribe') }}
+                        {%- endif %}
+                    {% endif %}
                 </a>
             {%- endif %}
 
-            {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
-                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                    <span class="icon-stack">
-                        <i class={{icon[endpoint]}}></i>
-                    </span>
-                    {%- if user.is_subscribed_to([item_name]) %}
-                        {{ _('Unsubscribe') }}
-                    {%- else %}
-                        {{ _('Subscribe') }}
-                    {%- endif %}
-                </a>
-            {%- endif %}
         {%- endif %}
     {% endfor %}
 {% endblock %}
