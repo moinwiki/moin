@@ -37,3 +37,13 @@
   .list-group;
   overflow: hidden;
 }
+
+.moin-navbar-inverse {
+  .navbar-inverse;
+  background-color: darken(@moin-navbar-inverse-color, 5%);
+  .navbar-nav {
+    > li > a {
+      color: lighten(@moin-navbar-inverse-color, 55%);
+    }
+  }
+}
