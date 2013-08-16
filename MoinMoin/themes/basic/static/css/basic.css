@@ -4325,3 +4325,71 @@ td.visible-print {
   padding-left: 0;
   overflow: hidden;
 }
+.moin-navbar-inverse {
+  background-color: #222222;
+  background-color: #1b436d;
+}
+.moin-navbar-inverse .navbar-brand {
+  color: #999999;
+}
+.moin-navbar-inverse .navbar-brand:hover,
+.moin-navbar-inverse .navbar-brand:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+.moin-navbar-inverse .navbar-text {
+  color: #999999;
+}
+.moin-navbar-inverse .navbar-nav > li > a {
+  color: #999999;
+}
+.moin-navbar-inverse .navbar-nav > li > a:hover,
+.moin-navbar-inverse .navbar-nav > li > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+.moin-navbar-inverse .navbar-nav > .active > a,
+.moin-navbar-inverse .navbar-nav > .active > a:hover,
+.moin-navbar-inverse .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: #080808;
+}
+.moin-navbar-inverse .navbar-nav > .disabled > a,
+.moin-navbar-inverse .navbar-nav > .disabled > a:hover,
+.moin-navbar-inverse .navbar-nav > .disabled > a:focus {
+  color: #444444;
+  background-color: transparent;
+}
+.moin-navbar-inverse .navbar-toggle {
+  border-color: #333333;
+}
+.moin-navbar-inverse .navbar-toggle:hover,
+.moin-navbar-inverse .navbar-toggle:focus {
+  background-color: #333333;
+}
+.moin-navbar-inverse .navbar-toggle .icon-bar {
+  background-color: #ffffff;
+}
+.moin-navbar-inverse .navbar-nav > .open > a,
+.moin-navbar-inverse .navbar-nav > .open > a:hover,
+.moin-navbar-inverse .navbar-nav > .open > a:focus {
+  background-color: #080808;
+  color: #ffffff;
+}
+.moin-navbar-inverse .navbar-nav > .dropdown > a:hover .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+.moin-navbar-inverse .navbar-nav > .dropdown > a .caret {
+  border-top-color: #999999;
+  border-bottom-color: #999999;
+}
+.moin-navbar-inverse .navbar-nav > .open > a .caret,
+.moin-navbar-inverse .navbar-nav > .open > a:hover .caret,
+.moin-navbar-inverse .navbar-nav > .open > a:focus .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+.moin-navbar-inverse .navbar-nav > li > a {
+  color: #c8ddf1;
+}
