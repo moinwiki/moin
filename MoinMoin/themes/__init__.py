@@ -87,6 +87,13 @@ class ThemeSupport(object):
             navtabs.append('frontend.modify_item')
         return navtabs
 
+    def get_local_panel(self, item_name):
+        user_actions = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
+        item_navigation = ['frontend.index', 'frontend.sitemap', ]
+        item_actions = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
+                'frontend.similar_names', 'frontend.download_item', 'frontend.copy_item',] if self.user.may.write(item_name) else []
+        return user_actions, item_navigation, item_actions
+
     def location_breadcrumbs(self, item_name):
         """
         Assemble the location using breadcrumbs (was: title)

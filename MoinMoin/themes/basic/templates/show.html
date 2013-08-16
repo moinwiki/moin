@@ -15,12 +15,7 @@
                'frontend.copy_item' : "icon-comment",
            } %}
 
-{% set user_actions = ['frontend.quicklink_item', 'frontend.subscribe_item', ] %}
-
-{% set item_navigation = ['frontend.index', 'frontend.sitemap', ] %}
-
-{% set item_actions = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
-                       'frontend.similar_names', 'frontend.download_item', 'frontend.copy_item',] %}
+{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
 
 {% block views %}
     {{ itemviews }}
