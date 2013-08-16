@@ -371,7 +371,7 @@ options_no_group_name = {
             ('wikilink', 'admin.index', dict(), L_('Admin'), L_('Administration & Docs')),
         ], 'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
 
-        ('theme_default', u'modernized', "Default theme."),
+        ('theme_default', u'basic', "Default theme."),
 
         ('serve_files', {},
          """
