@@ -79,6 +79,14 @@ class ThemeSupport(object):
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
 
+    def get_action_tabs(self, item_name):
+        navtabs = ['frontend.show_item', 'frontend.history',
+                'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
+                'special.comments', 'special.transclusions',]
+        if self.user.may.write(item_name):
+            navtabs.append('frontend.modify_item')
+        return navtabs
+
     def location_breadcrumbs(self, item_name):
         """
         Assemble the location using breadcrumbs (was: title)
