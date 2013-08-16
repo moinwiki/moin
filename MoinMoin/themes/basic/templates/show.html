@@ -34,11 +34,15 @@
 {% endblock %}
 
 {% block user_actions %}
-    <div class="list-group-item">User Actions</div>
+    {% set user_actions_exist = false %}
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
             {%- if endpoint in user_actions and user.valid %}
+                {% if user_actions_exist == false %}
+                    <div class="list-group-item">User Actions</div>
+                    {% set user_actions_exist = true %}
+                {% endif %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                     <span class="icon-stack">
                         <i class={{icon[endpoint]}}></i>
