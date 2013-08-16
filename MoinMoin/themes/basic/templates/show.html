@@ -86,7 +86,7 @@
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
 
-            {%- if endpoint in item_actions and user.may.write(item_name) %}
+            {%- if endpoint in item_actions %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                 <span class="icon-stack">
                     <i class={{icon[endpoint]}}></i>
