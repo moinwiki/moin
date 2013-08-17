@@ -54,8 +54,8 @@
                     <td class="moin-wordbreak">{{ doc.contenttype }}</td>
                     <td class="moin-wordbreak">{{ doc.comment }}</td>
                     <td>
-            <div class="dropup">
-                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
+            <div class="btn-group dropup">
+                        <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
                 <ul class="dropdown-menu pull-right"> 
 <li><a href="{{ url_for('frontend.show_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('show') }}</a></li>
 <li><a href="{{ url_for('frontend.show_item_meta', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('meta') }}</a></li>
