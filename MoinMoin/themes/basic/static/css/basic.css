@@ -4466,3 +4466,7 @@ div.moin-item-wrapper {
   background-color: #555555;
   color: #428bca;
 }
+.comment {
+  color: #333333;
+  background-color: #e1edf7;
+}
