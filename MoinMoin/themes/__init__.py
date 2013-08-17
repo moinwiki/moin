@@ -79,12 +79,37 @@ class ThemeSupport(object):
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
 
-    def get_action_tabs(self, item_name):
-        navtabs = ['frontend.show_item', 'frontend.history',
-                'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
-                'special.comments', 'special.transclusions',]
+    def get_action_tabs(self, item_name, current_endpoint):
+        navtabs_endpoints = ['frontend.show_item', 'frontend.history',
+                            'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
+                            'special.comments', 'special.transclusions',]
         if self.user.may.write(item_name):
-            navtabs.append('frontend.modify_item')
+            navtabs_endpoints.append('frontend.modify_item')
+
+        icon = self.get_endpoint_iconmap()
+        exists = flaskg.storage.has_item(item_name)
+        navtabs = []
+
+        for endpoint, label, title, check_exists in app.cfg.item_views:
+            if endpoint not in app.cfg.endpoints_excluded:
+                if not check_exists or exists:
+                    if endpoint in navtabs_endpoints:
+
+                        iconcls = icon[endpoint]
+
+                        if endpoint == 'special.comments':
+                            maincls = "moin-toggle-comments-button"
+                            href = "#"
+                        elif endpoint == 'special.transclusions':
+                            maincls = "moin-transclusions-button"
+                            href = "#"
+                        else:
+                            maincls = None
+                            href = url_for(endpoint, item_name=item_name)
+                            if endpoint == current_endpoint:
+                                maincls = "active"
+
+                        navtabs.append((endpoint, href, maincls, iconcls, title, label))
         return navtabs
 
     def get_local_panel(self, item_name):
