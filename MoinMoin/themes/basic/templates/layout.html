@@ -9,6 +9,8 @@
 {% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
 {% endif %}
 
+{% set icon = theme_supp.get_endpoint_iconmap() %}
+
 {% block head %}
     {{ super() }}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
