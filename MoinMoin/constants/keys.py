@@ -39,6 +39,7 @@ MTIME = u"mtime"
 EXTRA = u"extra"
 COMMENT = u"comment"
 SUMMARY = u"summary"
+TRASH = u"trash"
 
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)

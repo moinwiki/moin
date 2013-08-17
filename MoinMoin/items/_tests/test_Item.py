@@ -12,7 +12,7 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS, TRASH, ITEMID
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
@@ -371,6 +371,5 @@ class TestItem(object):
         assert item.meta['another_test_key'] == update_meta['another_test_key']
         assert item.meta['new_test_key'] == update_meta['new_test_key']
         assert 'none_test_key' not in item.meta
-
 
 coverage_modules = ['MoinMoin.items']

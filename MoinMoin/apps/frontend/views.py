@@ -829,6 +829,28 @@ def index(item_name):
     )
 
 
+@frontend.route('/+trash')
+def trash():
+    """
+    Returns the trashed items.
+    """
+    trash = _trashed()
+    return render_template('trash.html',
+                           headline=_(u'Trashed Items'),
+                           title_name=_(u'Trashed Items'),
+                           results=trash)
+
+
+def _trashed():
+    q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
+    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
+    results = []
+    for rev in flaskg.storage.search(q, limit=None):
+        meta = rev.meta
+        results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
+    return results
+
+
 @frontend.route('/+mychanges')
 def mychanges():
     """
