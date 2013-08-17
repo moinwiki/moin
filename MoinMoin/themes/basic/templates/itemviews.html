@@ -3,41 +3,19 @@
 
 {% from theme("layout.html") import icon with context %}
 
-{% set navtabs = theme_supp.get_action_tabs(item_name) %}
+{% set navtabs = theme_supp.get_action_tabs(item_name, current_endpoint) %}
 
 {% block views %}
 
     <ul class="moin-nav nav-tabs moin-shadow">
-        {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-            {%- if not check_exists or check_exists and exists %}
-
-                {%- if endpoint == 'special.comments' %}
-                    <li class="moin-toggle-comments-button">
-                        <a href="#" title="{{ title }}">
-                        <span class={{icon[endpoint]}}></span>
-                            {{ label }}
-                        </a>
-                    </li>
-
-                {% elif endpoint == 'special.transclusions' -%}
-                    <li class="moin-transclusions-button">
-                        <a href="#" title="{{ title }}">
-                        <span class={{icon[endpoint]}}></span>
-                            {{ label }}
-                        </a>
-                    </li>
-
-                {%- elif endpoint in navtabs %}
-                    <li {% if endpoint == current_endpoint %} class="active"{% endif %}>
-                        <a href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class={{icon[endpoint]}}></span>
-                            {{ label }}
-                        </a>
-                    </li>
-                {%- endif %}
-
-            {%- endif %}
-        {% endfor %}
+      {% for endpoint, href, maincls, iconcls, title, label in navtabs %}
+        <li class={% if maincls %} "{{ maincls }}" {% endif %}>
+            <a href="{{ href }}" title="{{ title }}" rel="nofollow">
+              <span class="{{ iconcls }}"></span>
+                {{ label }}
+            </a>
+        </li>
+      {% endfor %}
 
     </ul>
 {% endblock %}
