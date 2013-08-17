@@ -88,10 +88,68 @@ class ThemeSupport(object):
         return navtabs
 
     def get_local_panel(self, item_name):
-        user_actions = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
-        item_navigation = ['frontend.index', 'frontend.sitemap', ]
-        item_actions = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
-                'frontend.similar_names', 'frontend.download_item', 'frontend.copy_item',] if self.user.may.write(item_name) else []
+        user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
+        item_navigation_endpoints = ['frontend.index', 'frontend.sitemap', ]
+        item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
+                'frontend.similar_names', 'frontend.download_item', 
+                'frontend.copy_item', 'special.supplementation'] if self.user.may.write(item_name) else []
+
+        user_actions = []
+        item_navigation = []
+        item_actions = []
+
+        icon = self.get_endpoint_iconmap()
+        exists = flaskg.storage.has_item(item_name)
+
+        for endpoint, label, title, check_exists in app.cfg.item_views:
+            if endpoint not in app.cfg.endpoints_excluded:
+                if not check_exists or exists:
+                    if endpoint in user_actions_endpoints:
+                        print user_actions
+                        if flaskg.user.valid:
+                            href = url_for(endpoint, item_name=item_name)
+                            iconcls = icon[endpoint]
+                            #endpoint = iconcls = label = None
+
+                            if endpoint == 'frontend.quicklink_item':
+                                if not flaskg.user.is_quicklinked_to([item_name]):
+                                    label = _('Add Link')
+                                    user_actions.append((endpoint, href, iconcls, label, title))
+                            elif endpoint == 'frontend.subscribe_item':
+                                if flaskg.user.is_subscribed_to([item_name]):
+                                    label = _('Unsubscribe')
+                                else:
+                                    label = _('Subscribe')
+                                    user_actions.append((endpoint, href, iconcls, label, title))
+
+                    elif endpoint in item_actions_endpoints:
+
+                        iconcls = icon[endpoint]
+
+                        if endpoint == 'special.supplementation':
+                            for sub_item_name in app.cfg.supplementation_item_names:
+                                current_sub = item_name.rsplit('/', 1)[-1]
+                                if current_sub not in app.cfg.supplementation_item_names:
+                                    supp_name = '%s/%s' % (item_name, sub_item_name)
+                                    if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
+                                        href = url_for('frontend.show_item', item_name=supp_name)
+                                        label = _(sub_item_name)
+                                        title = None
+
+                                        item_actions.append((endpoint, href, iconcls, label, title))
+                        else:
+                            href = url_for(endpoint, item_name=item_name)
+                            item_actions.append((endpoint, href, iconcls, label, title))
+
+                    elif endpoint in item_navigation_endpoints:
+
+                        iconcls = icon[endpoint]
+                        href = url_for(endpoint, item_name=item_name)
+
+                        item_navigation.append((endpoint, href, iconcls, label, title))
+
+        print user_actions
+
         return user_actions, item_navigation, item_actions
 
     def get_endpoint_iconmap(self):
