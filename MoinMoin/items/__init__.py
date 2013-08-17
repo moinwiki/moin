@@ -49,7 +49,7 @@ from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
-    UFIELDS_TYPELIST, UFIELDS
+    UFIELDS_TYPELIST, UFIELDS, TRASH,
 )
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
@@ -530,7 +530,6 @@ class Item(object):
                 if not isinstance(oldname, list):
                     oldname = [oldname]
                 if delete or name not in oldname:  # this is a delete or rename
-                    meta[NAME_OLD] = oldname[:]
                     try:
                         oldname.remove(self.name)
                     except ValueError:
@@ -538,11 +537,18 @@ class Item(object):
                     if not delete:
                         oldname.append(name)
                     meta[NAME] = oldname
-            else:
-                meta[NAME] = [name]
 
         if comment is not None:
             meta[COMMENT] = unicode(comment)
+
+        if currentrev:
+            current_names = currentrev.meta.get(NAME, [])
+            new_names = meta.get(NAME, [])
+            deleted_names = set(current_names) - set(new_names)
+            if deleted_names:  # some names have been deleted.
+                meta[NAME_OLD] = current_names
+                if not new_names:  # if no names left, then set the trash flag.
+                    meta[TRASH] = True
 
         if not overwrite and REVID in meta:
             # we usually want to create a new revision, thus we must remove the existing REVID
