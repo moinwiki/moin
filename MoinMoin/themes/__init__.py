@@ -89,6 +89,7 @@ class ThemeSupport(object):
         icon = self.get_endpoint_iconmap()
         exists = flaskg.storage.has_item(item_name)
         navtabs = []
+        spl_active = [('frontend.history', 'frontend.diff'),]
 
         for endpoint, label, title, check_exists in app.cfg.item_views:
             if endpoint not in app.cfg.endpoints_excluded:
@@ -106,7 +107,7 @@ class ThemeSupport(object):
                         else:
                             maincls = None
                             href = url_for(endpoint, item_name=item_name)
-                            if endpoint == current_endpoint:
+                            if endpoint == current_endpoint or (endpoint, current_endpoint) in spl_active:
                                 maincls = "active"
 
                         navtabs.append((endpoint, href, maincls, iconcls, title, label))
