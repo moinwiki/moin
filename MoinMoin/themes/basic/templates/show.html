@@ -13,6 +13,7 @@
                'frontend.similar_names' : "icon-search",
                'frontend.download_item' : "icon-download-alt",
                'frontend.copy_item' : "icon-comment",
+               'special.supplementation' : "icon-comment",
            } %}
 
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
@@ -89,8 +90,22 @@
     <div class="list-group-item">Item Actions</div>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
-
-            {%- if endpoint in item_actions %}
+            {%- if endpoint == 'special.supplementation' %}
+                {%- for sub_item_name in cfg.supplementation_item_names %}
+                    {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
+                    {%- if not current_sub in cfg.supplementation_item_names %}
+                        {%- set supp_name = '%s/%s' % (item_name, sub_item_name) %}
+                        {%- if storage.has_item(supp_name) or user.may.write(supp_name) %}
+                            <a class="list-group-item" href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">
+                                <span class="icon-stack">
+                                    <i class={{icon[endpoint]}}></i>
+                                </span>
+                                {{ _(sub_item_name) }}
+                            </a>
+                        {%- endif %}
+                    {%- endif %}
+                {%- endfor %}
+            {%- elif endpoint in item_actions %}
                 <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                 <span class="icon-stack">
                     <i class={{icon[endpoint]}}></i>
