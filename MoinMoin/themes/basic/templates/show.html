@@ -5,6 +5,17 @@
 
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
 
+{% macro local_panel_main(panelname) %}
+    {% for endpoint, href, iconcls, label, title in panelname %}
+        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
+            <span class="icon-stack">
+                <i class="{{ iconcls }}"></i>
+            </span> 
+            {{ label }}
+        </a>
+    {% endfor %}
+{% endmacro %}
+
 {% block views %}
     {{ itemviews }}
 {% endblock %}
@@ -23,38 +34,17 @@
 
 {% block user_actions %}
     <div class="list-group-item">User Actions</div>
-    {% for endpoint, href, iconcls, label, title in user_actions %}
-        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
-            <span class="icon-stack">
-                <i class="{{ iconcls }}"></i>
-            </span> 
-            {{ label }}
-        </a>
-    {% endfor %}
+    {{ local_panel_main(user_actions) }}
 {% endblock %}
 
 {% block item_navigation %}
     <div class="list-group-item">Item Navigation</div>
-    {% for endpoint, href, iconcls, label, title in item_navigation %}
-        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
-        <span class="icon-stack">    
-            <i class="{{ iconcls }}"></i>
-        </span>
-            {{ label }}
-        </a>
-    {% endfor %}
+    {{ local_panel_main(item_navigation) }}
 {% endblock %}
 
 {% block item_actions %}
     <div class="list-group-item">Item Actions</div>
-    {% for endpoint, href, iconcls, label, title in item_actions %}
-        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
-        <span class="icon-stack">
-            <i class="{{ iconcls }}"></i>
-        </span>
-            {{ label }}
-        </a>
-    {% endfor %}
+    {{ local_panel_main(item_actions) }}
 {% endblock %}
 
 {% block local_panel %}
