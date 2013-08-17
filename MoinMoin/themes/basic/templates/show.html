@@ -22,89 +22,38 @@
 {% endblock %}
 
 {% block user_actions %}
-    {% set user_actions_exist = false %}
-
-    {% if user.valid %}
     <div class="list-group-item">User Actions</div>
-        {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-            {%- if not check_exists or check_exists and exists %}
-
-                {%- if endpoint in user_actions %}
-                    {%- if endpoint == 'frontend.quicklink_item' %}
-                        {%- if not user.is_quicklinked_to([item_name]) %}
-                            <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                            <span class="icon-stack">
-                                <i class={{icon[endpoint]}}></i>
-                            </span> 
-                            {{ _('Add Link') }}
-                            </a>
-                        {%- endif %}
-                    {% elif endpoint == 'frontend.subscribe_item' %}
-                        <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                        <span class="icon-stack">
-                            <i class={{icon[endpoint]}}></i>
-                        </span> 
-                        {%- if user.is_subscribed_to([item_name]) %}
-                            {{ _('Unsubscribe') }}
-                        {%- else %}
-                            {{ _('Subscribe') }}
-                        {%- endif %}
-                        </a>
-                    {% endif %}
-                {%- endif %}
-
-            {%- endif %}
-        {% endfor %}
-    {% endif %}
+    {% for endpoint, href, iconcls, label, title in user_actions %}
+        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
+            <span class="icon-stack">
+                <i class="{{ iconcls }}"></i>
+            </span> 
+            {{ label }}
+        </a>
+    {% endfor %}
 {% endblock %}
 
-{% block site_actions %}
+{% block item_navigation %}
     <div class="list-group-item">Item Navigation</div>
-    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-        {%- if not check_exists or check_exists and exists %}
-
-            {%- if endpoint in item_navigation %}
-                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                <span class="icon-stack">    
-                    <i class={{icon[endpoint]}}></i>
-                </span>
-                    {{ label }}
-                </a>
-            {%- endif %}
-
-        {% endif %}
+    {% for endpoint, href, iconcls, label, title in item_navigation %}
+        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
+        <span class="icon-stack">    
+            <i class="{{ iconcls }}"></i>
+        </span>
+            {{ label }}
+        </a>
     {% endfor %}
 {% endblock %}
 
 {% block item_actions %}
     <div class="list-group-item">Item Actions</div>
-    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-        {%- if not check_exists or check_exists and exists %}
-            {%- if endpoint == 'special.supplementation' %}
-                {%- for sub_item_name in cfg.supplementation_item_names %}
-                    {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
-                    {%- if not current_sub in cfg.supplementation_item_names %}
-                        {%- set supp_name = '%s/%s' % (item_name, sub_item_name) %}
-                        {%- if storage.has_item(supp_name) or user.may.write(supp_name) %}
-                            <a class="list-group-item" href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">
-                                <span class="icon-stack">
-                                    <i class={{icon[endpoint]}}></i>
-                                </span>
-                                {{ _(sub_item_name) }}
-                            </a>
-                        {%- endif %}
-                    {%- endif %}
-                {%- endfor %}
-            {%- elif endpoint in item_actions %}
-                <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
-                <span class="icon-stack">
-                    <i class={{icon[endpoint]}}></i>
-                </span>
-                    {{ label }}
-                </a>
-            {%- endif %}
-
-        {% endif %}
+    {% for endpoint, href, iconcls, label, title in item_actions %}
+        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
+        <span class="icon-stack">
+            <i class="{{ iconcls }}"></i>
+        </span>
+            {{ label }}
+        </a>
     {% endfor %}
 {% endblock %}
 
@@ -114,7 +63,7 @@
     <div class="list-group">
         {{ self.user_actions() }}
 
-        {{ self.site_actions() }}
+        {{ self.item_navigation() }}
 
         {{ self.item_actions() }}
     </div>
