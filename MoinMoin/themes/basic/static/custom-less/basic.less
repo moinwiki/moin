@@ -47,3 +47,39 @@
     }
   }
 }
+
+.moin-quicklink {
+  position: relative;
+  padding: 10px 15px 10px 15px;
+  border: 1px solid @list-group-border;
+  margin-bottom: -1px;
+
+  &:last-child {
+    margin-bottom: 0;
+    .border-bottom-radius(@border-radius-base);
+  }
+
+  // Hover state
+  &:hover,
+  &:focus {
+    background-color: @list-group-hover-bg;
+  }
+}
+
+.moin-quicklink-label {
+  display: block;
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.moin-quicklink-delete {
+  position: absolute;
+  left: 80%;
+  top: 25%;
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
