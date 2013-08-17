@@ -94,6 +94,28 @@ class ThemeSupport(object):
                 'frontend.similar_names', 'frontend.download_item', 'frontend.copy_item',] if self.user.may.write(item_name) else []
         return user_actions, item_navigation, item_actions
 
+    def get_endpoint_iconmap(self):
+        icon = {'frontend.quicklink_item' : "icon-star-empty",
+               'frontend.subscribe_item' : "icon-envelope",
+               'frontend.index' : "icon-list-alt",
+               'frontend.sitemap' : "icon-map-marker",
+               'frontend.rename_item' : "icon-tag",
+               'frontend.delete_item' : "icon-trash",
+               'frontend.destroy_item' : "icon-fire",
+               'frontend.similar_names' : "icon-search",
+               'frontend.download_item' : "icon-download-alt",
+               'frontend.copy_item' : "icon-comment",
+               'special.supplementation' : "icon-comment",
+               'frontend.show_item' : "icon-eye-open",
+               'frontend.modify_item' : "icon-pencil",
+               'frontend.history' : "icon-time",
+               'frontend.show_item_meta' : "icon-wrench",
+               'frontend.highlight_item' : "icon-picture",
+               'frontend.backrefs' : "icon-share",
+               'special.comments' : "icon-comment",
+               'special.transclusions' : "icon-edit",};
+        return icon        
+
     def location_breadcrumbs(self, item_name):
         """
         Assemble the location using breadcrumbs (was: title)

@@ -3,19 +3,6 @@
 {% import theme("itemviews.html") as itemviews with context %}
 {% set exists = storage.has_item(item_name) %}
 
-{% set icon = {'frontend.quicklink_item' : "icon-star-empty",
-               'frontend.subscribe_item' : "icon-envelope",
-               'frontend.index' : "icon-list-alt",
-               'frontend.sitemap' : "icon-map-marker",
-               'frontend.rename_item' : "icon-tag",
-               'frontend.delete_item' : "icon-trash",
-               'frontend.destroy_item' : "icon-fire",
-               'frontend.similar_names' : "icon-search",
-               'frontend.download_item' : "icon-download-alt",
-               'frontend.copy_item' : "icon-comment",
-               'special.supplementation' : "icon-comment",
-           } %}
-
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
 
 {% block views %}

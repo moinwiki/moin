@@ -1,15 +1,7 @@
 {% set exists = storage.has_item(item_name) %}
 {% set current_endpoint = request.endpoint %}
 
-{% set icon = {'frontend.show_item' : "icon-eye-open",
-               'frontend.modify_item' : "icon-pencil",
-               'frontend.history' : "icon-time",
-               'frontend.show_item_meta' : "icon-wrench",
-               'frontend.highlight_item' : "icon-picture",
-               'frontend.backrefs' : "icon-share",
-               'special.comments' : "icon-comment",
-               'special.transclusions' : "icon-edit",
-           } %}
+{% from theme("layout.html") import icon with context %}
 
 {% set navtabs = theme_supp.get_action_tabs(item_name) %}
 
