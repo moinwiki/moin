@@ -105,7 +105,6 @@ class ThemeSupport(object):
             if endpoint not in app.cfg.endpoints_excluded:
                 if not check_exists or exists:
                     if endpoint in user_actions_endpoints:
-                        print user_actions
                         if flaskg.user.valid:
                             href = url_for(endpoint, item_name=item_name)
                             iconcls = icon[endpoint]
@@ -147,8 +146,6 @@ class ThemeSupport(object):
                         href = url_for(endpoint, item_name=item_name)
 
                         item_navigation.append((endpoint, href, iconcls, label, title))
-
-        print user_actions
 
         return user_actions, item_navigation, item_actions
 
