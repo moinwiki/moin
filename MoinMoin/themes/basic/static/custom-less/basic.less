@@ -83,3 +83,53 @@
     text-decoration: none;
   }
 }
+
+// transclusion
+.moin-transclusion {
+    max-width: 100%;
+}
+
+.moin-item-wrapper {
+    position: relative;
+    display: inline-block;
+    > a:hover {
+      color: link_color;
+      text-decoration: none;
+    }
+}
+
+div.moin-item-wrapper {
+    width: 100%; // force bottom border of transcluded headings to extend across entire page
+}
+
+.moin-item-overlay-ul,
+.moin-item-overlay-lr {
+    display: none;
+    position: absolute;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    opacity: .5;
+    padding: 1px;
+    border-color: @link-color;
+    border-style: double;
+}
+
+.moin-item-overlay-ul {
+    top: -4px;
+    left: -4px;
+    border-width: 3px 0 0 3px;
+}
+
+.moin-item-overlay-lr {
+    bottom: -4px;
+    right: -4px;
+    border-width: 0 3px 3px 0;
+}
+
+.moin-item-overlay-ul:hover,
+.moin-item-overlay-lr:hover {
+    opacity: .8;
+    background-color: @gray;
+    color: @link-color;
+}

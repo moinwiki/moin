@@ -131,6 +131,7 @@ function initTransclusionOverlays() {
     wrappers = $('.moin-item-wrapper');
     if (wrappers.length > 0) {
         $('.moin-transclusions-button').css('display', '');
+        $('.moin-transclusions-button').click(toggleTransclusionOverlays);
     }
 }
 $(document).ready(initTransclusionOverlays);
