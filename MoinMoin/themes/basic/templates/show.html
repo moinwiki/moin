@@ -30,24 +30,27 @@
             {%- if not check_exists or check_exists and exists %}
 
                 {%- if endpoint in user_actions %}
-                    <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                    {%- if endpoint == 'frontend.quicklink_item' %}
+                        {%- if not user.is_quicklinked_to([item_name]) %}
+                            <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
+                            <span class="icon-stack">
+                                <i class={{icon[endpoint]}}></i>
+                            </span> 
+                            {{ _('Add Link') }}
+                            </a>
+                        {%- endif %}
+                    {% elif endpoint == 'frontend.subscribe_item' %}
+                        <a class="list-group-item" href="{{ url_for(endpoint, item_name=item_name) }}" title="{{ title }}" rel="nofollow">
                         <span class="icon-stack">
                             <i class={{icon[endpoint]}}></i>
-                        </span>
-                        {%- if endpoint == 'frontend.quicklink_item' %}
-                            {%- if user.is_quicklinked_to([item_name]) %}
-                                {{ _('Remove Link') }}
-                            {%- else %}
-                                {{ _('Add Link') }}
-                            {%- endif %}
-                        {% elif endpoint == 'frontend.subscribe_item' %}
-                            {%- if user.is_subscribed_to([item_name]) %}
-                                {{ _('Unsubscribe') }}
-                            {%- else %}
-                                {{ _('Subscribe') }}
-                            {%- endif %}
-                        {% endif %}
-                    </a>
+                        </span> 
+                        {%- if user.is_subscribed_to([item_name]) %}
+                            {{ _('Unsubscribe') }}
+                        {%- else %}
+                            {{ _('Subscribe') }}
+                        {%- endif %}
+                        </a>
+                    {% endif %}
                 {%- endif %}
 
             {%- endif %}
