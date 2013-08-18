@@ -2,6 +2,8 @@
 
 {% import theme("snippets.html") as snippets %}
 {% set logo = snippets.logo() %}
+{% set footer_logos = snippets.creditlogos() %}
+{% set credits = snippets.credits() %}
 
 {% if item_name in ['@NONAMEGIVEN',''] %}
 {% set current_url = url_for(request.endpoint) %}
@@ -175,5 +177,12 @@
 
             </div><!--/span-->
         </div> <!--/row-->
+
+        {% block footer %}
+        <div class="navbar moin-navbar-inverse"> <!--footer-->
+            {{ credits }}
+            {{ footer_logos }}
+        </div>
+        {% endblock %}
 	</div><!--/container-->
 {% endblock %}

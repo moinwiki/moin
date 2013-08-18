@@ -40,10 +40,16 @@
 
 .moin-navbar-inverse {
   .navbar-inverse;
-  background-color: darken(@moin-navbar-inverse-color, 5%);
+  background-color: @moin-navbar-inverse-bgcolor;
   .navbar-nav {
     > li > a {
-      color: lighten(@moin-navbar-inverse-color, 55%);
+      color: @moin-navbar-inverse-textcolor;
+    }
+  }
+  .navbar-text {
+    color: @moin-navbar-inverse-textcolor;
+    > a {
+      color: @moin-navbar-inverse-textcolor;
     }
   }
 }
