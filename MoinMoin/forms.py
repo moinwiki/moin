@@ -27,6 +27,7 @@ from flask import current_app as app
 
 from MoinMoin.constants.forms import *
 from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
+from MoinMoin.constants.namespaces import NAMESPACES_IDENTIFIER
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
 from MoinMoin.storage.middleware.validation import uuid_validator
@@ -83,17 +84,24 @@ def validate_name(meta, fqname, itemid):
     Will just return, if they are valid, will raise a NameNotValidError if not.
     """
     names = meta.get(NAME)
-    current_namespace = meta.get(NAMESPACE, fqname.namespace)
-    if not names:
-        return
+    current_namespace = meta.get(NAMESPACE)
+
+    if current_namespace is None:
+        raise NameNotValidError(L_("No namespace field in the meta."))
+
+    namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+    if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
+        raise NameNotValidError(L_("%(_namespace)s is not a valid namespace.", _namespace=current_namespace))
+
     if len(names) != len(set(names)):
         raise NameNotValidError(L_("The names in the name list must be unique."))
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
         raise NameNotValidError(L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names)))
+
+    namespaces = namespaces + NAMESPACES_IDENTIFIER  # Also dont allow item names to match with identifier namespaces.
     # Item names must not match with existing namespaces.
-    namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
     invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
     if invalid_names:
         raise NameNotValidError(L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names)))

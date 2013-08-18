@@ -71,6 +71,6 @@ def test_validjson():
              ([u'existingname'], 'ns1/ns2', '', 'existingname', False),
              ]
     for name, namespace, field, value, result in tests:
-        x = JSON(json.dumps({NAME: name}))
+        x = JSON(json.dumps({NAME: name, NAMESPACE: namespace}))
         state = {FQNAME: CompositeName(namespace, field, value), ITEMID: None}
         assert x.validate(state) == result
