@@ -302,6 +302,8 @@ class IndexingMiddleware(object):
             SUMMARY: TEXT(stored=True),
             # DATAID from metadata
             DATAID: ID(stored=True),
+            # TRASH from metadata
+            TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True),
         }

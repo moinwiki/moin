@@ -537,6 +537,11 @@ class Item(object):
                     if not delete:
                         oldname.append(name)
                     meta[NAME] = oldname
+            elif not meta.get(ITEMID):
+                meta[NAME] = [name]
+
+        if not meta.get(NAMESPACE):
+            meta[NAMESPACE] = self.fqname.namespace
 
         if comment is not None:
             meta[COMMENT] = unicode(comment)
