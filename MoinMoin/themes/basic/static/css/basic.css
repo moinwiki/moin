@@ -4393,6 +4393,12 @@ td.visible-print {
 .moin-navbar-inverse .navbar-nav > li > a {
   color: #c8ddf1;
 }
+.moin-navbar-inverse .navbar-text {
+  color: #c8ddf1;
+}
+.moin-navbar-inverse .navbar-text > a {
+  color: #c8ddf1;
+}
 .moin-quicklink {
   position: relative;
   padding: 10px 15px 10px 15px;
