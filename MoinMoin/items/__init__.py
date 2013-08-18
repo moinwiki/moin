@@ -275,7 +275,7 @@ class Item(object):
         return cls(*args, **kw)
 
     @classmethod
-    def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+    def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None, set_root=False):
         """
         Create a highlevel Item by looking up :name or directly wrapping
         :item and extract the Revision designated by :rev_id revision.
@@ -296,7 +296,7 @@ class Item(object):
         fqname = split_fqname(name)
         if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
             raise FieldNotUniqueError("field {0} is not in UFIELDS".format(fqname.field))
-        if not fqname.value and fqname.field == NAME_EXACT:
+        if set_root and not fqname.value and fqname.field == NAME_EXACT:
             fqname = fqname.get_root_fqname()
 
         rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
