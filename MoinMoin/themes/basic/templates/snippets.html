@@ -26,7 +26,7 @@
 
 
 {# Text links in the footer #}
-{% macro credits(start='<p class="navbar-text pull-right">'|safe, end='</p>'|safe, sep='<span>&bull;</span>'|safe) %}
+{% macro credits(start='<div class="nav navbar-nav pull-right"> <li>'|safe, end='</li> </div>'|safe, sep='</li> <li>'|safe) %}
 {{ start }}
 {{ credit('http://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
 {{ sep }}
