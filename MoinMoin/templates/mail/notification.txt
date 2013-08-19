@@ -1,0 +1,30 @@
+{{ _("Dear Wiki user,") }}
+
+{{ _("The '%(page_name)s' item on '%(wiki_name)s' %(change_action)s by %(user_name)s:",
+page_name=page_name, wiki_name=wiki_name, change_action=change_action, user_name=user_name) }}
+{{ diff_url }}
+
+{% if comment -%}
+{{ _("Comment:") }}
+{{ comment }}
+{%- endif %}
+
+{% if content_diff_ -%}
+{{ _("Data changes:") }}
+{%- for line in content_diff_ %}
+{{ line }}
+{%- endfor -%}
+{%- endif %}
+
+{% if meta_diff_ -%}
+{{ _("Metadata changes:") }}
+{%- for line in meta_diff_ %}
+{{ line }}
+{%- endfor -%}
+{%- endif %}
+
+{{ _("You are receiving this because you have subscribed to a wiki item on
+'%(wiki_name)s' for change notifications.", wiki_name=wiki_name) }}
+{{ _("Item link: %(item_url)s", item_url=item_url) }}
+{{ _("To unsubscribe use: %(unsubscribe_url)s",
+unsubscribe_url=unsubscribe_url) }}
