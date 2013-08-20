@@ -1958,13 +1958,18 @@ class NestedItemListBuilder(object):
         return False
 
 
-@frontend.route('/+tags')
-def global_tags():
+@frontend.route('/+tags', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags')
+def global_tags(namespace):
     """
     show a list or tag cloud of all tags in this wiki
     """
     title_name = _(u'All tags in this wiki')
-    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = {WIKINAME: app.cfg.interwikiname}
+    if namespace != NAMESPACE_ALL:
+        query[NAMESPACE] = namespace
+
+    revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
