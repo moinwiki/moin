@@ -20,59 +20,72 @@
 
 {% block layout %}
 	<div class="container">
-        <div class="navbar moin-navbar-inverse">
-            {% if logo %}
-            <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                <img class="img-circle" src="{{ '/static/logos/moinmoin-small.png' }}"/>
-            </a>
-            {% endif %}
-
-			<form class="navbar-form pull-right" action="{{ url_for('frontend.search') }}" method="get">
-               	<input name='q' type="text" class="form-control" placeholder="Search ...">
-            </form>
-
-            <ul class="nav navbar-nav pull-right">
-
-                {% if user.valid -%}
-                {% set avatar = user.avatar(20) %}
-                    {% if avatar %}
-                        <li><img id="moin-avatar" src="{{ avatar }}" /></li>
-                    {%- endif %}
-                    {% if user.name -%}
-                        {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
-                        <li>
-                        <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
-                            <i class="icon-user icon-white"> </i>
-                            {{ aliasname }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="navbar moin-navbar-inverse">
+                    <div class="col-lg-2">
+                        {% if logo %}
+                        <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                            <img class="img-circle" src="{{ '/static/logos/moinmoin-small.png' }}"/>
                         </a>
-                        </li>
-                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                            <li>
-                            <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
-                                <i class="icon-cog icon-white"> </i>
-                                    {{ _('Settings') }}</a>
-                            </li>
-                        {%- endif %}
-                    {%- endif %}
-                    {% if user.auth_method in cfg.auth_can_logout %}
-                        <li>
-                        <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
-                            <i class="icon-off icon-white"></i>
-                            {{ _('Logout') }}
-                        </a>
-                        </li>
-                    {% endif %}
-                {% else %}
-                    {% set login_url = theme_supp.login_url() %}
-                    {% if login_url %}
-                        <li>
-                        <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
-                        </li>
-                    {% endif %}
-                {%- endif %}
+                        {% endif %}
+                    </div> <!-- sub-col-lg2 sitelogo-->
+                    <div class="col-lg-7">
+                        <ul class="nav navbar-nav pull-right">
 
-            </ul>
-        </div> <!-- navbar-inverse-->
+                            {% if user.valid -%}
+                            {% set avatar = user.avatar(20) %}
+                                {% if avatar %}
+                                    <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                                {%- endif %}
+                                {% if user.name -%}
+                                    {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                                    <li>
+                                    <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                                        <i class="icon-user icon-white"> </i>
+                                        {{ aliasname }}
+                                    </a>
+                                    </li>
+                                    {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                                        <li>
+                                        <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
+                                            <i class="icon-cog icon-white"> </i>
+                                                {{ _('Settings') }}</a>
+                                        </li>
+                                    {%- endif %}
+                                {%- endif %}
+                                {% if user.auth_method in cfg.auth_can_logout %}
+                                    <li>
+                                    <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                                        <i class="icon-off icon-white"></i>
+                                        {{ _('Logout') }}
+                                    </a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% set login_url = theme_supp.login_url() %}
+                                {% if login_url %}
+                                    <li>
+                                    <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                                    </li>
+                                {% endif %}
+                            {%- endif %}
+
+                        </ul>
+                    </div> <!-- subcol-lg-7 user login -->
+                    <div class="col-lg-3">
+                        <form class="navbar-form pull-right" action="{{ url_for('frontend.search') }}" method="get">
+                            <div class="input-group">
+                                <input name='q' type="text" class="form-control" placeholder="Search ...">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit">Go!</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div> <!-- subcol-search-->
+                </div> <!-- navbar-inverse-->
+            </div> <!-- col-lg-12 -->
+        </div> <!-- row-topnavbar -->
 
         <div class="row">
             <div class="col-lg-2">
