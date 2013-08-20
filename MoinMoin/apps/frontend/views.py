@@ -1912,9 +1912,10 @@ def sitemap(item_name):
     sitemap view shows item link structure, relative to current item
     """
     # first check if this item exists
-    if not flaskg.storage[item_name]:
+    fq_name = split_fqname(item_name)
+    if not flaskg.storage.get_item(**fq_name.query):
         abort(404, item_name)
-    sitemap = NestedItemListBuilder().recurse_build([item_name])
+    sitemap = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
@@ -1928,34 +1929,34 @@ class NestedItemListBuilder(object):
         self.numnodes = 0
         self.maxnodes = 35  # approx. max count of nodes, not strict
 
-    def recurse_build(self, names):
+    def recurse_build(self, fq_names):
         result = []
         if self.numnodes < self.maxnodes:
-            for name in names:
-                self.children.add(name)
-                result.append(name)
+            for fq_name in fq_names:
+                self.children.add(fq_name)
+                result.append(fq_name)
                 self.numnodes += 1
-                childs = self.childs(name)
+                childs = self.childs(fq_name)
                 if childs:
                     childs = self.recurse_build(childs)
                     result.append(childs)
         return result
 
-    def childs(self, name):
+    def childs(self, fq_name):
         # does not recurse
         try:
-            item = flaskg.storage[name]
+            item = flaskg.storage.get_item(**fq_name.query)
             rev = item[CURRENT]
         except (AccessDenied, KeyError):
             return []
-        itemlinks = rev.meta.get(ITEMLINKS, [])
+        itemlinks = split_fqname_set(rev.meta.get(ITEMLINKS, []))
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):
         if child not in self.children:
             if not flaskg.user.may.read(child):
                 return False
-            if flaskg.storage.has_item(child):
+            if flaskg.storage.get_item(**child.query):
                 self.children.add(child)
                 return True
         return False
