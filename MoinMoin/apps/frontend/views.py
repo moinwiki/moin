@@ -1995,18 +1995,23 @@ def global_tags():
                            tags=tags)
 
 
-@frontend.route('/+tags/<itemname:tag>')
-def tagged_items(tag):
+@frontend.route('/+tags/<itemname:tag>', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags/<itemname:tag>')
+def tagged_items(tag, namespace):
     """
-    show all items' names that have tag <tag>
+    show all items' names that have tag <tag> and belong to namespace <namespace>
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-    item_names = [rev.name for rev in revs]
+    if not namespace == NAMESPACE_ALL:
+        query = And([query, Term(NAMESPACE, namespace), ])
+    revs = flaskg.storage.search(query, limit=None)
+    fq_names = []
+    for rev in revs:
+        fq_names += rev.fqnames
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
-                           item_names=item_names)
+                           fq_names=fq_names)
 
 
 @frontend.route('/+template/<path:filename>')
