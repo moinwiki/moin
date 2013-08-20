@@ -829,20 +829,23 @@ def index(item_name):
     )
 
 
-@frontend.route('/+trash')
-def trash():
+@frontend.route('/+trash', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+trash')
+def trash(namespace):
     """
     Returns the trashed items.
     """
-    trash = _trashed()
+    trash = _trashed(namespace)
     return render_template('trash.html',
                            headline=_(u'Trashed Items'),
                            title_name=_(u'Trashed Items'),
                            results=trash)
 
 
-def _trashed():
+def _trashed(namespace):
     q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
+    if not namespace == NAMESPACE_ALL:
+        q = And([q, Term(NAMESPACE, namespace), ])
     trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
     results = []
     for rev in flaskg.storage.search(q, limit=None):
