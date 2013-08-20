@@ -862,13 +862,13 @@ def mychanges():
     return render_template('link_list_no_item_panel.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
-                           item_names=my_changes
+                           fq_names=my_changes
     )
 
 
 def _mychanges(userid):
     """
-    Returns a list with all names of items which user userid has contributed to.
+    Returns a list with all fqnames of items which user userid has contributed to.
 
     :param userid: user itemid
     :type userid: unicode
@@ -876,8 +876,9 @@ def _mychanges(userid):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return set([rev.name for rev in revs])
+    revs = flaskg.storage.search(q, idx_name=ALL_REVS, limit=None)
+    fq_names = {fq_name for rev in revs for fq_name in rev.fqnames}
+    return fq_names
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
