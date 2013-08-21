@@ -67,6 +67,7 @@ class Config(DefaultConfig):
         'jquery', 'jquery_file_upload',
         'json_js',
         'bootstrap',
+        'font_awesome',
         'ckeditor',
         'svgweb',
         'svgedit_moin', 'twikidraw_moin', 'anywikidraw',

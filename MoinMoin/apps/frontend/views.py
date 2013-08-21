@@ -803,7 +803,7 @@ def mychanges():
     """
     Returns the list of all items the current user has contributed to.
 
-    :returns: a page with all the items which link or transclude item_name
+    :returns: a page with all the items the current user has contributed to
     """
     my_changes = _mychanges(flaskg.user.itemid)
     return render_template('link_list_no_item_panel.html',
