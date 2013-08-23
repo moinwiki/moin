@@ -12,4 +12,6 @@ $(document).ready(function (){
     		return "You have unsaved changes!";
     	}
     }
+    $('div.dropup').removeClass('menu');
+    $('ul.dropdown-menu').removeClass('submenu');
 });
