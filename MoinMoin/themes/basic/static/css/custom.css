@@ -7,3 +7,11 @@ html{
 #moin-button-diff {
 	text-align: center;
 }
+.menu .submenu {
+	display: none;
+	margin-bottom: 0px;
+}
+.menu:hover .submenu {
+	display: block;
+}
+
