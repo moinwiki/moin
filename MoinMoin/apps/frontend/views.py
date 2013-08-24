@@ -361,6 +361,10 @@ def presenter(view, add_trail=False, abort404=True):
 def show_item(item_name, rev):
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
+    fqname = split_fqname(item_name)
+    if not fqname.value and fqname.field == NAME_EXACT:
+        fqname = fqname.get_root_fqname()
+        return redirect(url_for_item(fqname)) 
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
@@ -368,7 +372,6 @@ def show_item(item_name, rev):
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
-        fqname = split_fqname(item_name)
         revs = flaskg.storage.documents(**fqname.query)
         fq_names = []
         for rev in revs:
