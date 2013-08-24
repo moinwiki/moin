@@ -488,7 +488,6 @@ def shorten_content_type(contenttype):
     :rtype: unicode
     :returns: shortened version of contenttype
     """
-    print type(contenttype)
     ctype = contenttype.split(';')[0]
     if ctype in CONTENTTYPE_SHORTEN:
         return CONTENTTYPE_SHORTEN[ctype]
