@@ -5,8 +5,11 @@
 
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
 
-{% macro local_panel_main(panelname) %}
+{% macro local_panel_main(panelname, paneltitle) %}
     {% for endpoint, href, iconcls, label, title in panelname %}
+        {% if loop.first %}
+            <div class="list-group-item">{{ paneltitle }}</div>
+        {% endif %}
         <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
             <span class="icon-stack">
                 <i class="{{ iconcls }}"></i>
@@ -33,18 +36,15 @@
 {% endblock %}
 
 {% block user_actions %}
-    <div class="list-group-item">User Actions</div>
-    {{ local_panel_main(user_actions) }}
+    {{ local_panel_main(user_actions,"User Actions") }}
 {% endblock %}
 
 {% block item_navigation %}
-    <div class="list-group-item">Item Navigation</div>
-    {{ local_panel_main(item_navigation) }}
+    {{ local_panel_main(item_navigation, "Item Navigation") }}
 {% endblock %}
 
 {% block item_actions %}
-    <div class="list-group-item">Item Actions</div>
-    {{ local_panel_main(item_actions) }}
+    {{ local_panel_main(item_actions, "Item Actions") }}
 {% endblock %}
 
 {% block local_panel %}
