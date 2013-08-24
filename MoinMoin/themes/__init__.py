@@ -473,6 +473,26 @@ def shorten_item_name(name, length=25):
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
+CONTENTTYPE_SHORTEN = {
+    'text/x.moin.wiki': 'MoinWiki',
+}
+
+def shorten_content_type(contenttype):
+    """
+    Shorten content-types
+
+    Shortens the content-type to terms that normal users understand.
+
+    :param name: contenttype, unicode
+    :rtype: unicode
+    :returns: shortened version of contenttype
+    """
+    print type(contenttype)
+    ctype = contenttype.split(';')[0]
+    if ctype in CONTENTTYPE_SHORTEN:
+        return CONTENTTYPE_SHORTEN[ctype]
+    else:
+        return "Unknown"
 
 def shorten_id(name, length=7):
     """
@@ -527,6 +547,7 @@ def setup_jinja_env():
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     app.jinja_env.filters['json_dumps'] = dumps
+    app.jinja_env.filters['shorten_ctype'] = shorten_content_type
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
