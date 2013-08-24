@@ -32,7 +32,7 @@
                     <th class="moin-integer">{{ _("Size") }}</th>
                     <th id="moin-button-diff"><button class="btn btn-primary">Diff</button></th>
                     <th>{{ _("Editor") }}</th>
-                    <th>{{ _("Content-Type") }}</th>
+                    <th>{{ _("Type") }}</th>
                     <th>{{ _("Comment") }}</th>
                     <th></th>
                 </tr>
@@ -51,7 +51,7 @@
                         </div>
                     </td>
                     <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
-                    <td class="moin-wordbreak">{{ doc.contenttype }}</td>
+                    <td class="moin-wordbreak" title="{{ doc.contenttype }}">{{ doc.contenttype|shorten_ctype }}</td>
                     <td class="moin-wordbreak">{{ doc.comment }}</td>
                     <td>
             <div class="btn-group dropup menu">
