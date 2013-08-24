@@ -477,6 +477,7 @@ CONTENTTYPE_SHORTEN = {
     'text/x.moin.wiki': 'MoinWiki',
 }
 
+# TODO: Update dictionary with more content-types
 def shorten_content_type(contenttype):
     """
     Shorten content-types
