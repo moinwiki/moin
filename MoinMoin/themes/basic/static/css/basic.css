@@ -4208,6 +4208,12 @@ td.visible-print {
     display: none !important;
   }
 }
+.moin-diff-added {
+  background-color: #ccffcc;
+}
+.moin-diff-removed {
+  background-color: #ffdddd;
+}
 .moin-breadcrumb {
   padding: 8px 15px;
   margin-bottom: 20px;
