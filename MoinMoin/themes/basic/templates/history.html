@@ -30,7 +30,6 @@
                     <th>{{ _("Timestamp") }}</th>
                     <th id="moin-button-diff"><button class="btn btn-sm btn-primary">Diff</button></th>
                     <th>{{ _("Editor") }}</th>
-                    <th>{{ _("Type") }}</th>
                     <th>{{ _("Comment") }}</th>
                     <th></th>
                 </tr>
@@ -39,7 +38,9 @@
                 {% for doc in history %}
                 <tr>
                     <td>{{ doc.name|join(' | ') }}</td>
-                    <td title="{{ _("Size") }}: {{ doc.size }}" >{{ doc.revid | shorten_id }}</td>
+                    <td title="{{ _("Size") }}: {{ doc.size }} &#013;{{ doc.contenttype|shorten_ctype }}: {{ doc.contenttype }}" >
+                        {{ doc.revid | shorten_id }}
+                    </td>
                     <td>{{ doc.mtime|datetimeformat }}</td>
                     <td>
                         <div class="moin-hist-rev">
@@ -48,7 +49,6 @@
                         </div>
                     </td>
                     <td>{{ utils.editor_info(doc) }}</td>
-                    <td title="{{ doc.contenttype }}">{{ doc.contenttype|shorten_ctype }}</td>
                     <td>{{ doc.comment }}</td>
                     <td>
             <div class="btn-group dropup menu">
