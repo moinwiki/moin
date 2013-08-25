@@ -3,13 +3,11 @@ $(document).ready(function (){
     var edit = false;
     $('#meta, #help').removeClass('active');
     $('textarea').autosize();
-    $('textarea').change(function() {
-    	edit = true;
-    })
     window.onbeforeunload = function(e) {
-    	if (edit) {
-    		edit = false;
-    		return "You have unsaved changes!";
+        // checks if the URL is of the form http://host/+modify/page
+        var index = $.inArray("+modify", window.location.pathname.split('/'));
+        if (index == 1) {
+    		return "Data you may have entered will be discarded!";
     	}
     }
     $('div.dropup').removeClass('menu');
