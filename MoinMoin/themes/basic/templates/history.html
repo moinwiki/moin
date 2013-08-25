@@ -56,30 +56,42 @@
                             <span class="caret"></span>
                         </button>
                 <ul class="dropdown-menu pull-right submenu"> 
-<li>
-    <a href="{{ url_for('frontend.show_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('show') }}</a></li>
-<li>
-    <a href="{{ url_for('frontend.show_item_meta', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('meta') }}</a>
-</li>
-<li>
-    <a href="{{ url_for('frontend.download_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('download') }}</a>
-</li>
-<li>
-    <a href="{{ url_for('frontend.highlight_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('highlight') }}</a>
-</li>
-    {% if user.may.write(item_name) -%}
-        <li>
-            <a href="{{ url_for('frontend.revert_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('revert') }}</a>
-        </li>
-    {%- endif %}
-    {% if user.may.destroy(item_name) -%}
-        <li>
-            <a href="{{ url_for('frontend.destroy_item', item_name=doc.name[0], rev=doc.revid) }}" tabindex="-1" href="#">{{ _('destroy') }}
-            </a> 
-        </li>
-    {%- endif %}
-        </tr>
-        {% endfor %}
+                    <li>
+                        <a href="{{ url_for('frontend.show_item', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('show') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('frontend.show_item_meta', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('meta') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('frontend.download_item', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('download') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('frontend.highlight_item', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('highlight') }}
+                        </a>
+                    </li>
+                    {% if user.may.write(item_name) -%}
+                    <li>
+                        <a href="{{ url_for('frontend.revert_item', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('revert') }}
+                        </a>
+                    </li>
+                    {%- endif %}
+                    {% if user.may.destroy(item_name) -%}
+                    <li>
+                        <a href="{{ url_for('frontend.destroy_item', item_name=doc.name[0], rev=doc.revid) }}">
+                            {{ _('destroy') }}
+                        </a> 
+                    </li>
+                    {%- endif %}
+                </tr>
+                {% endfor %}
             </tbody>
             {% if bookmark_time %}
             <tfoot>
@@ -92,6 +104,6 @@
             {% endif %}
         </table>
         </div>
-        </form>
+    </form>
     {% endif %}
 {% endblock %}
