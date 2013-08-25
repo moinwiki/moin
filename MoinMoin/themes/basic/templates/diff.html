@@ -1,4 +1,10 @@
-{% extends theme("show.html") %}
+{% extends theme("layout.html") %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% block views %}
+    {{ itemviews }}
+{% endblock %}
+
 {% block content %}
 {% block headline %}
 <h2>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h2>
