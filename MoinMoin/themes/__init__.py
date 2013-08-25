@@ -82,7 +82,7 @@ class ThemeSupport(object):
     def get_action_tabs(self, item_name, current_endpoint):
         navtabs_endpoints = ['frontend.show_item', 'frontend.history',
                             'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
-                            'special.comments', 'special.transclusions',]
+                            ]
         if self.user.may.write(item_name):
             navtabs_endpoints.append('frontend.modify_item')
 

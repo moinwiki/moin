@@ -23,6 +23,18 @@
 
 {% block content %}
 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="btn-group pull-right" data-toggle="buttons">
+              <label class="btn btn-primary moin-toggle-comments-button">
+                <input type="checkbox"> Comments
+              </label>
+              <label class="btn btn-primary moin-transclusions-button">
+                <input type="checkbox"> Transclusions
+              </label>
+            </div>
+        </div>
+    </div>
     {% block content_data %}
         {% if data_rendered %}
         <div id="moin-content-data">
