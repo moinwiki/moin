@@ -46,8 +46,9 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
+from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
+                            RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
+                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -1492,6 +1493,12 @@ class UserSettingsOptionsForm(Form):
     submit_label = L_('Save')
 
 
+class UserSettingsSubscriptionsForm(Form):
+    name = 'usersettings_subscriptions'
+    subscriptions = Subscriptions
+    submit_label = L_('Save')
+
+
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
 def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
@@ -1531,6 +1538,7 @@ def usersettings():
         ui=UserSettingsUIForm,
         navigation=UserSettingsNavigationForm,
         options=UserSettingsOptionsForm,
+        subscriptions=UserSettingsSubscriptionsForm,
     )
     forms = dict()
 

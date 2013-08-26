@@ -83,6 +83,17 @@
 {{ gen.form.close() }}
 {% endmacro %}
 
+{% macro subscriptions(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<dl>
+    {{ forms.render(form['subscriptions']) }}
+</dl>
+{{ forms.render_hidden('part', 'subscriptions') }}
+{{ forms.render_submit(form) }}
+{{ gen.form.close() }}
+{% endmacro %}
+
 {# javascript functions within common.js are dependent upon the structure, classes and ids defined here #}
 {% macro all_usersettings_forms(form_objs) %}
 <div id="moin-usersettings">
@@ -109,6 +120,10 @@
     <div id="options" class="moin-tab-body moin-form">
         <h2 class="moin-settings-head"><a href="#options">{{ _("Options") }}</a></h2>
         {{ options(form_objs.options) }}
+    </div>
+    <div id="subscriptions" class="moin-tab-body moin-form">
+        <h2 class="moin-settings-head"><a href="#subscriptions">{{ _("Subscriptions") }}</a></h2>
+        {{ subscriptions(form_objs.subscriptions) }}
     </div>
 </div>
 {% endmacro %}
