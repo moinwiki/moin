@@ -31,11 +31,19 @@ class TestSubscriptions(object):
         users = get_subscribers(self.item)
         assert users == set()
 
-        name = u'baz'
+        name1 = u'baz'
         password = u'password'
-        email = u'baz@example.org'
-        user.create_user(username=name, password=password, email=email, validate=False, locale=u'en')
-        user_ = user.User(name=name, password=password)
+        email1 = u'baz@example.org'
+        name2 = u"bar"
+        email2 = u"bar@example.org"
+        name3 = u"barbaz"
+        email3 = u"barbaz@example.org"
+        user.create_user(username=name1, password=password, email=email1, validate=False, locale=u'en')
+        user1 = user.User(name=name1, password=password)
+        user.create_user(username=name2, password=password, email=email2, validate=False)
+        user2 = user.User(name=name2, password=password)
+        user.create_user(username=name3, password=password, email=email3, locale=u"en")
+        user3 = user.User(name=name3, password=password, email1=email3)
         subscribers = get_subscribers(self.item)
         assert subscribers == set()
 
@@ -48,13 +56,15 @@ class TestSubscriptions(object):
             ["{0}:{1}:{2}".format(NAMERE, self.namespace, namere)],
             ["{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, nameprefix)],
         ]
-        expected_name = user_.name0
+        users = [user1, user2, user3]
+        expected_names = {user1.name0, user2.name0}
         for subscriptions in subscription_lists:
-            user_.profile._meta[SUBSCRIPTIONS] = subscriptions
-            user_.save(force=True)
+            for user_ in users:
+                user_.profile._meta[SUBSCRIPTIONS] = subscriptions
+                user_.save(force=True)
             subscribers = get_subscribers(self.item)
-            subscribers_names = [subscriber.name for subscriber in subscribers]
-            assert subscribers_names == [expected_name]
+            subscribers_names = {subscriber.name for subscriber in subscribers}
+            assert subscribers_names == expected_names
 
     def test_get_matched_subscription_patterns(self):
         patterns = get_matched_subscription_patterns(self.item, [])
