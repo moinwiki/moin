@@ -13,9 +13,9 @@ from flask import g as flaskg
 
 from whoosh.query import Term, Or
 
-from MoinMoin.constants.keys import (EMAIL, ITEMID, LATEST_REVS, LOCALE, NAME, NAMERE,
-                                     NAMEPREFIX, NAMESPACE, SUBSCRIPTION_IDS,
-                                     SUBSCRIPTION_PATTERNS, TAGS)
+from MoinMoin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
+                                     LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
+                                     NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -43,8 +43,12 @@ def get_subscribers(item):
         subscription_patterns = searcher.lexicon(SUBSCRIPTION_PATTERNS)
         patterns = get_matched_subscription_patterns(item, subscription_patterns)
         result_iterators.extend(searcher.documents(subscription_patterns=pattern) for pattern in patterns)
-        subscribers = {Subscriber(user[ITEMID], user[NAME][0], user[EMAIL], user[LOCALE])
-                       for user in chain.from_iterable(result_iterators)}
+        subscribers = set()
+        for user in chain.from_iterable(result_iterators):
+            email = user.get(EMAIL)
+            if email:
+                locale = user.get(LOCALE, DEFAULT_LOCALE)
+                subscribers.add(Subscriber(user[ITEMID], user[NAME][0], email, locale))
     return subscribers
 
 
