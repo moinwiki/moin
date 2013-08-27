@@ -96,10 +96,10 @@ class ThemeSupport(object):
         namespace = fqname.namespace
         fq_current = CompositeName(u'', NAME_EXACT, namespace)
         fq_segment = CompositeName(u'', NAME_EXACT, namespace or '~')
-        breadcrumbs.append((CompositeName(fq_segment, fq_current, False)))
+        breadcrumbs.append((fq_segment, fq_current, False))
         item_name = fqname.value
         if not item_name:
-            return breadcrumbs if namespace else []
+            return breadcrumbs
         for segment in item_name.split('/'):
             current_item += segment
             fq_current = CompositeName(namespace, NAME_EXACT, current_item)
