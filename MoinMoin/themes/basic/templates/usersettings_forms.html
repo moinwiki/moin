@@ -49,7 +49,7 @@
             <dt>
                 {{ gen.label(form[e]) }}
             </dt>
-            {{ gen.input(form[e], type="password") }}
+            {{ gen.input(form[e], type="password", class="form-control") }}
         </div>
     {% endfor %}
 {{ forms.render_hidden('part', 'password') }}
@@ -69,7 +69,7 @@
     <dt>
         {{ gen.label(form['email']) }}
     </dt>
-    {{ gen.input(form['email'], type="email") }}
+    {{ gen.input(form['email'], type="email", class="form-control") }}
 </div>
 {{ forms.render_hidden('part', 'notification') }}
 <div class="form-group">
