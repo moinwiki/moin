@@ -69,7 +69,10 @@
     <dt>
         {{ gen.label(form['email']) }}
     </dt>
-    {{ gen.input(form['email'], type="email", class="form-control") }}
+    <div class="input-group">
+        {{ gen.input(form['email'], type="email", class="form-control") }}
+        <span class="input-group-addon"><i class="icon-envelope"></i></span>
+    </div>
 </div>
 {{ forms.render_hidden('part', 'notification') }}
 <div class="form-group">
@@ -149,7 +152,7 @@
 {% macro all_usersettings_forms(form_objs) %}
 <div id="moin-usersettings">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <div class="tab-content">
                 <div id="personal" class="tab-pane active">
                     {{ personal(form_objs.personal) }}
