@@ -71,7 +71,7 @@
         <span id="moin-pagelocation">
             <span class="moin-pagepath">
             {% block pagepath %}
-                {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fq_name) -%}
+                {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
                     {% if not loop.last -%}
                         <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
                             {{ segment_name|shorten_fqname }}
