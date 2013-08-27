@@ -1,0 +1,24 @@
+{% extends theme("layout.html") %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
+
+{% block rev_navigation %}
+    {{ rev_navigation(view='frontend.show_item_meta') }}
+{% endblock %}
+
+{% block views %}
+    {{ itemviews }}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {{ title }}
+    {% if show_revision %}({{ _("Revision") }} {{ rev.revid | shorten_id }}){% endif %}
+</h2>
+{% if meta_rendered %}
+<div id="moin-content-meta">
+    {{ meta_rendered }}
+</div>
+{% endif %}
+{% endblock %}
