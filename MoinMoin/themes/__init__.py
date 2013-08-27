@@ -145,7 +145,7 @@ class ThemeSupport(object):
                                     label = _('Unsubscribe')
                                 else:
                                     label = _('Subscribe')
-                                    user_actions.append((endpoint, href, iconcls, label, title))
+                                user_actions.append((endpoint, href, iconcls, label, title))
 
                     elif endpoint in item_actions_endpoints:
 
