@@ -59,7 +59,7 @@ def encodeAddress(address, charset):
         return str(address)
 
 
-def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
+def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=None):
     """ Create and send a text/plain message
 
     Return a tuple of success or error indicator and message.
@@ -76,6 +76,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     :type bcc: list
     :param mail_from: override default mail_from
     :type mail_from: unicode
+    :param html: html email body text
+    :type html: unicode
 
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
@@ -83,6 +85,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     import smtplib
     import socket
     from email.message import Message
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
     from email.charset import Charset, QP
     from email.utils import formatdate, make_msgid
 
@@ -107,18 +111,28 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None):
     # Create a message using CHARSET and quoted printable
     # encoding, which should be supported better by mail clients.
     # TODO: check if its really works better for major mail clients
-    msg = Message()
+    text_msg = Message()
     charset = Charset(CHARSET)
     charset.header_encoding = QP
     charset.body_encoding = QP
-    msg.set_charset(charset)
+    text_msg.set_charset(charset)
 
     # work around a bug in python 2.4.3 and above:
-    msg.set_payload('=')
-    if msg.as_string().endswith('='):
+    text_msg.set_payload('=')
+    if text_msg.as_string().endswith('='):
         text = charset.body_encode(text)
 
-    msg.set_payload(text)
+    text_msg.set_payload(text)
+
+    if html:
+        msg = MIMEMultipart('alternative')
+        msg.attach(text_msg)
+        html = html.encode(CHARSET)
+        html_msg = MIMEText(html, 'html')
+        html_msg.set_charset(charset)
+        msg.attach(html_msg)
+    else:
+        msg = text_msg
 
     address = encodeAddress(mail_from, charset)
     msg['From'] = address
