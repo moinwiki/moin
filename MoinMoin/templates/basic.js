@@ -5,9 +5,10 @@ $(document).ready(function (){
     $('#password, #notification, #ui, #navigation, #options').removeClass('active');
     $('textarea').autosize();
     window.onbeforeunload = function(e) {
-        // checks if the URL is of the form http://host/+modify/page
-        var index = $.inArray("+modify", window.location.pathname.split('/'));
-        if (index == 1) {
+        // previously checked if the URL is of the form http://host/+modify/page
+        // it is bad way if we rewrite URL's, hence used a div with id -> "checkmodifyview" in the modify view
+        var test = $('#checkmodifyview').length;
+        if (test == 1) {
     		return "Data you may have entered will be discarded!";
     	}
     }
