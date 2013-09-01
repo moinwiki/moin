@@ -4,13 +4,17 @@ $(document).ready(function (){
     $('#meta, #help').removeClass('active');
     $('#password, #notification, #ui, #navigation, #options').removeClass('active');
     $('textarea').autosize();
+    $('#moin-save-text-button').click(function (){
+        edit = true;
+    });
     window.onbeforeunload = function(e) {
         // previously checked if the URL is of the form http://host/+modify/page
         // it is bad way if we rewrite URL's, hence used a div with id -> "checkmodifyview" in the modify view
         var test = $('#checkmodifyview').length;
-        if (test == 1) {
+        if (test == 1 && edit == false) {
     		return "Data you may have entered will be discarded!";
     	}
+        edit = false;
     }
     $('div.dropup').removeClass('menu');
     $('ul.dropdown-menu').removeClass('submenu');
