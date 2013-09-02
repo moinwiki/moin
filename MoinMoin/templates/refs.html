@@ -1,0 +1,15 @@
+{% extends theme("show.html") %}
+{% block content %}
+<h1>{{ _('Outgoing Item References') }}</h1>
+<ul>
+    {% for item_name in refs|sort %}
+    <li><a href="{{ url_for('frontend.show_item', item_name=item_name) }}">{{ item_name }}</a></li>
+    {% endfor %}
+</ul>
+<h1>{{ _('Incoming Item References') }}</h1>
+<ul>
+    {% for item_name in backrefs|sort %}
+    <li><a href="{{ url_for('frontend.show_item', item_name=item_name) }}">{{ item_name }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

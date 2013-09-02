@@ -119,6 +119,12 @@ class TestFrontend(object):
     def test_index(self):
         self._test_view('frontend.index', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
+    def test_refs(self):
+        self._test_view('frontend.refs', status='200 OK', viewopts=dict(item_name='DoesntExist'))
+
+    def test_forwardrefs(self):
+        self._test_view('frontend.forwardrefs', status='200 OK', viewopts=dict(item_name='DoesntExist'))
+
     def test_backrefs(self):
         self._test_view('frontend.backrefs', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 

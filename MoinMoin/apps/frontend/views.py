@@ -103,6 +103,8 @@ Disallow: /+sitemap/
 Disallow: /+similar_names/
 Disallow: /+quicklink/
 Disallow: /+subscribe/
+Disallow: /+refs/
+Disallow: /+forwardrefs/
 Disallow: /+backrefs/
 Disallow: /+wanteds/
 Disallow: /+orphans/
@@ -862,7 +864,7 @@ def mychanges():
     """
     Returns the list of all items the current user has contributed to.
 
-    :returns: a page with all the items which link or transclude item_name
+    :returns: a page with all the items the current user has contributed to
     """
     my_changes = _mychanges(flaskg.user.itemid)
     return render_template('link_list_no_item_panel.html',
@@ -885,6 +887,60 @@ def _mychanges(userid):
     revs = flaskg.storage.search(q, idx_name=ALL_REVS, limit=None)
     fq_names = {fq_name for rev in revs for fq_name in rev.fqnames}
     return fq_names
+
+
+@frontend.route('/+refs/<itemname:item_name>')
+def refs(item_name):
+    """
+    Returns the list of all incoming/outgoing links or transclusions of item item_name
+
+    :param item_name: the name of the current item
+    :type item_name: unicode
+    :returns: a page with all incoming/outgoing item links of this item
+    """
+    refs = _forwardrefs(item_name)
+    backrefs = _backrefs(item_name)
+    return render_template('refs.html',
+                           item_name=item_name,
+                           refs=refs,
+                           backrefs=backrefs
+    )
+
+
+@frontend.route('/+forwardrefs/<itemname:item_name>')
+def forwardrefs(item_name):
+    """
+    Returns the list of all links or transclusions of item item_name
+
+    :param item_name: the name of the current item
+    :type item_name: unicode
+    :returns: a page with all the items linked from this item
+    """
+    refs = _forwardrefs(item_name)
+    return render_template('link_list_item_panel.html',
+                           item_name=item_name,
+                           headline=_(u"Items that are referred by '%(item_name)s'", item_name=item_name),
+                           item_names=refs
+    )
+
+
+def _forwardrefs(item_name):
+    """
+    Returns a list with all names of items that get referenced from item_name
+
+    :param item_name: the name of the current item
+    :type item_name: unicode
+    :returns: the list of all items which are referenced from this item
+    """
+    q = {WIKINAME: app.cfg.interwikiname,
+         NAME_EXACT: item_name,
+        }
+    rev = flaskg.storage.document(**q)
+    if rev is None:
+        refs = []
+    else:
+        refs = rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])
+    return refs
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
