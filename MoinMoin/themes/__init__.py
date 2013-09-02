@@ -298,6 +298,31 @@ class ThemeSupport(object):
             url = url or url_for('frontend.login')
         return url
 
+    def get_fqnames(self, fqname):
+        """
+        Return the list of other fqnames associated with the item.
+        """
+        if fqname.field != NAME_EXACT:
+            return []
+        item = self.storage.get_item(**fqname.query)
+        fqnames = item.fqnames
+        fqnames.remove(fqname)
+        return fqnames or []
+
+    def get_namespaces(self, ns):
+        """
+        Return the list of tuples (composite name, namespace) referring to namespaces other
+        than the current namespace.
+        """
+        ns = u'' if ns.value == '~' else ns.value
+        namespace_root_mapping = []
+        for namespace, _ in app.cfg.namespace_mapping:
+            namespace = namespace.rstrip('/')
+            if namespace != ns:
+                fq_namespace = CompositeName(namespace, NAME_EXACT, u'')
+                namespace_root_mapping.append((namespace or '~', fq_namespace.get_root_fqname()))
+        return namespace_root_mapping
+
 
 def get_editor_info(meta, external=False):
     addr = meta.get(ADDRESS)
