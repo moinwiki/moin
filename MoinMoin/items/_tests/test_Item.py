@@ -12,7 +12,7 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS, TRASH, ITEMID
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
@@ -371,6 +371,38 @@ class TestItem(object):
         assert item.meta['another_test_key'] == update_meta['another_test_key']
         assert item.meta['new_test_key'] == update_meta['new_test_key']
         assert 'none_test_key' not in item.meta
+
+    def test_trash(self):
+        fqname = u'trash_item_test'
+        contenttype = u'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {CONTENTTYPE: contenttype}
+        item = Item.create(fqname)
+        # save rev 0
+        item._save(meta, data)
+        item = Item.create(fqname)
+        assert not item.meta.get(TRASH)
+
+        meta = dict(item.meta)
+        meta[NAME] = []
+        # save new rev with no names.
+        item._save(meta, data)
+        new_fqname = u'@itemid/' + item.meta[ITEMID]
+        item = Item.create(new_fqname)
+        assert item.meta[TRASH]
+
+        new_meta = {NAME: [u'foobar', 'buz'], CONTENTTYPE: contenttype}
+        item._save(new_meta, data)
+        item = Item.create(u'foobar')
+
+        item.delete(u'Deleting foobar.')
+        item = Item.create(u'buz')
+        assert not item.meta.get(TRASH)
+
+        # Also delete the only name left.
+        item.delete(u'Moving item to trash.')
+        item = Item.create(new_fqname)
+        assert item.meta[TRASH]
 
 
 coverage_modules = ['MoinMoin.items']

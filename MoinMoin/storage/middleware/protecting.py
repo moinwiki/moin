@@ -26,6 +26,8 @@ from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
 
 from MoinMoin.security import AccessControlList
 
+from MoinMoin.util.interwiki import split_fqname
+
 # max sizes of some lru caches:
 LOOKUP_CACHE = 100  # ACL lookup for some itemname
 PARSE_CACHE = 100  # ACL string -> ACL object parsing
@@ -79,19 +81,20 @@ class ProtectingMiddleware(object):
         # ACL lookups afterwards will fetch fresh info from the lower layers.
         self.get_acls.cache_clear()
 
-    def _get_configured_acls(self, itemname):
+    def _get_configured_acls(self, fqname):
         """
         for a fully-qualified itemname (namespace:name), get the acl configuration
         for that (part of the) namespace.
 
-        @param itemname: fully qualified itemname
+        @param fqname: fully qualified itemname
         @returns: acl configuration (acl dict from the acl_mapping)
         """
+        itemname = fqname.value if fqname.field == NAME_EXACT else u''
         for prefix, acls in self.acl_mapping:
             if itemname.startswith(prefix):
                 return acls
         else:
-            raise ValueError('No acl_mapping entry found for item {0!r}'.format(itemname))
+            raise ValueError('No acl_mapping entry found for item {0!r}'.format(fqname))
 
     def _get_acls(self, itemid=None, fqname=None):
         """
@@ -109,7 +112,7 @@ class ProtectingMiddleware(object):
         elif fqname is not None:
             # itemid might be None for new, not yet stored items,
             # but we have fqname then
-            q = {NAME_EXACT: fqname}
+            q = fqname.query
         else:
             raise ValueError("need itemid or fqname")
         item = self.get_item(**q)
@@ -183,16 +186,17 @@ class ProtectingMiddleware(object):
         item = self.indexer.existing_item(**query)
         return ProtectedItem(self, item)
 
-    def may(self, itemname, capability, usernames=None):
+    def may(self, fqname, capability, usernames=None):
         if usernames is not None and isinstance(usernames, (str, unicode)):
             # we got a single username (maybe str), make a list of unicode:
             if isinstance(usernames, str):
                 usernames = usernames.decode('utf-8')
             usernames = [usernames, ]
-        if isinstance(itemname, list):
-            # if we get a list of names, just use first one to fetch item
-            itemname = itemname[0]
-        item = self[itemname]
+        # TODO Make sure that fqname must be a CompositeName class instance, not unicode or list.
+        fqname = fqname[0] if isinstance(fqname, list) else fqname
+        if isinstance(fqname, unicode):
+            fqname = split_fqname(fqname)
+        item = self.get_item(**fqname.query)
         allowed = item.allows(capability, user_names=usernames)
         return allowed
 
@@ -225,6 +229,14 @@ class ProtectedItem(object):
     @property
     def name(self):
         return self.item.name
+
+    @property
+    def fqname(self):
+        return self.item.fqname
+
+    @property
+    def fqnames(self):
+        return self.item.fqnames
 
     @property
     def acl(self):
@@ -291,13 +303,13 @@ class ProtectedItem(object):
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False, return_rev=False, **kw):
+    def store_revision(self, meta, data, overwrite=False, return_rev=False, fqname=None, **kw):
         self.require(WRITE)
         if not self:
             self.require(CREATE)
         if overwrite:
             self.require(DESTROY)
-        rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, **kw)
+        rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, fqname=fqname, **kw)
         self.protector._clear_acl_cache()
         if return_rev:
             return ProtectedRevision(self.protector, rev, p_item=self)
@@ -346,6 +358,14 @@ class ProtectedRevision(object):
     @property
     def name(self):
         return self.rev.name
+
+    @property
+    def fqname(self):
+        return self.rev.fqname
+
+    @property
+    def fqnames(self):
+        return self.rev.fqnames
 
     @property
     def meta(self):

@@ -47,15 +47,16 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
+                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum, validate_name,
+                            NameNotValidError)
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
-from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.util.interwiki import url_for_item, split_fqname
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -75,7 +76,7 @@ def dispatch():
 
 @frontend.route('/')
 def show_root():
-    item_name = app.cfg.item_root
+    item_name = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
     return redirect(url_for_item(item_name))
 
 
@@ -360,14 +361,27 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    flaskg.user.add_trail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
+    fqname = split_fqname(item_name)
+    if not fqname.value and fqname.field == NAME_EXACT:
+        fqname = fqname.get_root_fqname()
+        return redirect(url_for_item(fqname)) 
     try:
         item = Item.create(item_name, rev_id=rev)
+        flaskg.user.add_trail(item_name)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
+    except FieldNotUniqueError:
+        revs = flaskg.storage.documents(**fqname.query)
+        fq_names = []
+        for rev in revs:
+            fq_names.extend(rev.fqnames)
+        return render_template("link_list_no_item_panel.html",
+                               headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
+                               item_name=fqname.fullname,
+                               fq_names=fq_names)
     return result
 
 
@@ -515,8 +529,27 @@ class TargetChangeForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
 
+class ValidRevert(Validator):
+    """
+    Validator for a valid revert form.
+    """
+    invalid_name_msg = ''
+
+    def validate(self, element, state):
+        """
+        Check whether the names present in the previous meta are not taken by some other item.
+        """
+        try:
+            validate_name(state['meta'], state[FQNAME], state['meta'].get(ITEMID))
+            return True
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
+            return self.note_error(element, state, 'invalid_name_msg')
+
+
 class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
+    validators = [ValidRevert()]
 
 
 class DeleteItemForm(BaseChangeForm):
@@ -547,11 +580,12 @@ def revert_item(item_name, rev):
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        if form.validate():
+        state = dict(fqname=item.fqname, meta=dict(item.meta))
+        if form.validate(state):
             item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
-                           item=item, item_name=item_name,
+                           item=item, fqname=item.fqname,
                            rev_id=rev,
                            form=form,
     )
@@ -695,10 +729,11 @@ def destroy_item(item_name, rev):
         item = Item.create(item_name, rev_id=_rev)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.destroy(item_name):
+    fqname = item.fqname
+    if not flaskg.user.may.destroy(fqname):
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404, item_name)
+        abort(404, fqname.fullname)
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -711,9 +746,10 @@ def destroy_item(item_name, rev):
                 item.destroy(comment=comment, destroy_item=destroy_item)
             except AccessDenied:
                 abort(403)
-            return redirect(url_for_item(item_name))
+            return redirect(url_for_item(fqname.fullname))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
+                           fqname=fqname,
                            rev_id=rev,
                            form=form,
     )
@@ -798,6 +834,31 @@ def index(item_name):
     )
 
 
+@frontend.route('/+trash', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+trash')
+def trash(namespace):
+    """
+    Returns the trashed items.
+    """
+    trash = _trashed(namespace)
+    return render_template('trash.html',
+                           headline=_(u'Trashed Items'),
+                           title_name=_(u'Trashed Items'),
+                           results=trash)
+
+
+def _trashed(namespace):
+    q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
+    if not namespace == NAMESPACE_ALL:
+        q = And([q, Term(NAMESPACE, namespace), ])
+    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
+    results = []
+    for rev in flaskg.storage.search(q, limit=None):
+        meta = rev.meta
+        results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
+    return results
+
+
 @frontend.route('/+mychanges')
 def mychanges():
     """
@@ -809,13 +870,13 @@ def mychanges():
     return render_template('link_list_no_item_panel.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
-                           item_names=my_changes
+                           fq_names=my_changes
     )
 
 
 def _mychanges(userid):
     """
-    Returns a list with all names of items which user userid has contributed to.
+    Returns a list with all fqnames of items which user userid has contributed to.
 
     :param userid: user itemid
     :type userid: unicode
@@ -823,8 +884,9 @@ def _mychanges(userid):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.name for rev in revs]
+    revs = flaskg.storage.search(q, idx_name=ALL_REVS, limit=None)
+    fq_names = {fq_name for rev in revs for fq_name in rev.fqnames}
+    return fq_names
 
 
 @frontend.route('/+refs/<itemname:item_name>')
@@ -1909,9 +1971,10 @@ def sitemap(item_name):
     sitemap view shows item link structure, relative to current item
     """
     # first check if this item exists
-    if not flaskg.storage[item_name]:
+    fq_name = split_fqname(item_name)
+    if not flaskg.storage.get_item(**fq_name.query):
         abort(404, item_name)
-    sitemap = NestedItemListBuilder().recurse_build([item_name])
+    sitemap = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
@@ -1925,46 +1988,51 @@ class NestedItemListBuilder(object):
         self.numnodes = 0
         self.maxnodes = 35  # approx. max count of nodes, not strict
 
-    def recurse_build(self, names):
+    def recurse_build(self, fq_names):
         result = []
         if self.numnodes < self.maxnodes:
-            for name in names:
-                self.children.add(name)
-                result.append(name)
+            for fq_name in fq_names:
+                self.children.add(fq_name)
+                result.append(fq_name)
                 self.numnodes += 1
-                childs = self.childs(name)
+                childs = self.childs(fq_name)
                 if childs:
                     childs = self.recurse_build(childs)
                     result.append(childs)
         return result
 
-    def childs(self, name):
+    def childs(self, fq_name):
         # does not recurse
         try:
-            item = flaskg.storage[name]
+            item = flaskg.storage.get_item(**fq_name.query)
             rev = item[CURRENT]
         except (AccessDenied, KeyError):
             return []
-        itemlinks = rev.meta.get(ITEMLINKS, [])
+        itemlinks = split_fqname_set(rev.meta.get(ITEMLINKS, []))
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):
         if child not in self.children:
             if not flaskg.user.may.read(child):
                 return False
-            if flaskg.storage.has_item(child):
+            if flaskg.storage.get_item(**child.query):
                 self.children.add(child)
                 return True
         return False
 
 
-@frontend.route('/+tags')
-def global_tags():
+@frontend.route('/+tags', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags')
+def global_tags(namespace):
     """
     show a list or tag cloud of all tags in this wiki
     """
     title_name = _(u'All tags in this wiki')
-    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = {WIKINAME: app.cfg.interwikiname}
+    if namespace != NAMESPACE_ALL:
+        query[NAMESPACE] = namespace
+
+    revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
@@ -1996,18 +2064,23 @@ def global_tags():
                            tags=tags)
 
 
-@frontend.route('/+tags/<itemname:tag>')
-def tagged_items(tag):
+@frontend.route('/+tags/<itemname:tag>', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags/<itemname:tag>')
+def tagged_items(tag, namespace):
     """
-    show all items' names that have tag <tag>
+    show all items' names that have tag <tag> and belong to namespace <namespace>
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-    item_names = [rev.name for rev in revs]
+    if not namespace == NAMESPACE_ALL:
+        query = And([query, Term(NAMESPACE, namespace), ])
+    revs = flaskg.storage.search(query, limit=None)
+    fq_names = []
+    for rev in revs:
+        fq_names += rev.fqnames
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
-                           item_names=item_names)
+                           fq_names=fq_names)
 
 
 @frontend.route('/+template/<path:filename>')
