@@ -590,7 +590,7 @@ class User(object):
         if subscriptions & set(self.subscriptions):
             return True
 
-        if get_matched_subscription_patterns(item, self.subscriptions):
+        if get_matched_subscription_patterns(self.subscriptions, **meta):
             return True
         return False
 

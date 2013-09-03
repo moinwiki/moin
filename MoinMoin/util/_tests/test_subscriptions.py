@@ -28,7 +28,7 @@ class TestSubscriptions(object):
         self.item = Item.create(self.item_name)
 
     def test_get_subscribers(self):
-        users = get_subscribers(self.item)
+        users = get_subscribers(**self.item.meta)
         assert users == set()
 
         name1 = u'baz'
@@ -44,7 +44,7 @@ class TestSubscriptions(object):
         user2 = user.User(name=name2, password=password)
         user.create_user(username=name3, password=password, email=email3, locale=u"en")
         user3 = user.User(name=name3, password=password, email1=email3)
-        subscribers = get_subscribers(self.item)
+        subscribers = get_subscribers(**self.item.meta)
         assert subscribers == set()
 
         namere = r'.*'
@@ -62,27 +62,27 @@ class TestSubscriptions(object):
             for user_ in users:
                 user_.profile._meta[SUBSCRIPTIONS] = subscriptions
                 user_.save(force=True)
-            subscribers = get_subscribers(self.item)
+            subscribers = get_subscribers(**self.item.meta)
             subscribers_names = {subscriber.name for subscriber in subscribers}
             assert subscribers_names == expected_names
 
     def test_get_matched_subscription_patterns(self):
-        patterns = get_matched_subscription_patterns(self.item, [])
+        meta = self.item.meta
+        patterns = get_matched_subscription_patterns([], **meta)
         assert patterns == []
         non_matching_patterns = [
             "{0}:{1}:{2}".format(NAMERE, "userprofile", ".*"),
             "{0}:{1}:{2}".format(NAMERE, self.namespace, "\d+"),
             "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "bar"),
         ]
-        patterns = get_matched_subscription_patterns(self.item, non_matching_patterns)
+        patterns = get_matched_subscription_patterns(non_matching_patterns, **meta)
         assert patterns == []
 
         matching_patterns = [
             "{0}:{1}:{2}".format(NAMERE, self.namespace, "fo+"),
             "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "fo"),
         ]
-        patterns = get_matched_subscription_patterns(self.item,
-                                                     non_matching_patterns + matching_patterns)
+        patterns = get_matched_subscription_patterns(non_matching_patterns + matching_patterns, **meta)
         assert patterns == matching_patterns
 
     def test_perf_get_subscribers(self):
@@ -118,7 +118,7 @@ class TestSubscriptions(object):
                     user_.profile._meta[SUBSCRIPTIONS] = [subscription]
                     user_.save(force=True)
                 t = time.time()
-                subscribers = get_subscribers(self.item)
+                subscribers = get_subscribers(**self.item.meta)
                 elapsed_time = time.time() - t
                 print "{0}: {1} s".format(subscription.split(':', 1)[0], elapsed_time)
                 subscribers_names = {subscriber.name for subscriber in subscribers}
