@@ -1000,11 +1000,14 @@ def history(item_name):
     )
 
 
-@frontend.route('/+history')
-def global_history():
+@frontend.route('/<namespace>/+history')
+@frontend.route('/+history', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
     query = Term(WIKINAME, app.cfg.interwikiname)
+    if namespace != NAMESPACE_ALL:
+        query = And([query, Term(NAMESPACE, namespace)])
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
