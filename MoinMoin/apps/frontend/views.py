@@ -53,6 +53,7 @@ from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.namespaces import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
@@ -366,7 +367,7 @@ def show_item(item_name, rev):
     fqname = split_fqname(item_name)
     if not fqname.value and fqname.field == NAME_EXACT:
         fqname = fqname.get_root_fqname()
-        return redirect(url_for_item(fqname)) 
+        return redirect(url_for_item(fqname))
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
@@ -1012,12 +1013,13 @@ def history(item_name):
 def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
-    query = Term(WIKINAME, app.cfg.interwikiname)
+    terms = Term(WIKINAME, app.cfg.interwikiname)
     if namespace != NAMESPACE_ALL:
-        query = And([query, Term(NAMESPACE, namespace)])
+        terms = And([terms, Term(NAMESPACE, namespace)])
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
-        query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
+        terms = And([terms, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
+    query = And(terms)
     revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
     history = []
@@ -2080,13 +2082,12 @@ def tagged_items(tag, namespace):
     """
     show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    if not namespace == NAMESPACE_ALL:
-        query = And([query, Term(NAMESPACE, namespace), ])
+    terms = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
+    if namespace != NAMESPACE_ALL:
+        terms = And([terms, Term(NAMESPACE, namespace), ])
+    query = And(terms)
     revs = flaskg.storage.search(query, limit=None)
-    fq_names = []
-    for rev in revs:
-        fq_names += rev.fqnames
+    fq_names = [fq_name for rev in revs for fq_name in rev.fqnames]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
