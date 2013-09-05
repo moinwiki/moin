@@ -976,6 +976,7 @@ def _backrefs(item_name):
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
+    fqname = split_fqname(item_name)
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get('bookmark', 0))
@@ -983,7 +984,8 @@ def history(item_name):
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ]
+    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
     if bookmark_time:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
@@ -991,9 +993,14 @@ def history(item_name):
     # it would be better to use search_page (and an appropriate limit, if needed)
     revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
-    history = [dict((k, v) for k, v in rev.meta.iteritems() if k != CONTENT) for rev in revs]
+    history = []
+    for rev in revs:
+        entry = dict(rev.meta)
+        entry[FQNAME] = rev.fqname
+        history.append(entry)
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
+                           fqname=fqname,
                            item_name=item_name,  # XXX no item here
                            history_page=history_page,
                            bookmark_time=bookmark_time,
