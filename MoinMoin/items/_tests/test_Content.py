@@ -8,6 +8,7 @@
 """
 
 import pytest
+from io import BytesIO
 
 from flask import Markup
 
@@ -257,6 +258,28 @@ class TestText(object):
         result = Text._render_data_highlight(item2.content)
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.content.data == ''
+
+    def test__get_diff_text(self):
+        item_name = u'Text_Item'
+        item = Item.create(item_name)
+        contenttypes = dict(texttypes=[u'text/plain;charset=utf-8',
+                                       u'text/x-markdown;charset=utf-8', ],
+                            othertypes=[u'image/png', u'audio/wave',
+                                        u'video/ogg',
+                                        u'application/x-svgdraw',
+                                        u'application/octet-stream', ])
+        for key in contenttypes:
+            for contenttype in contenttypes[key]:
+                meta = {CONTENTTYPE: contenttype}
+                item._save(meta)
+                item_ = Item.create(item_name)
+                oldfile = BytesIO("x")
+                newfile = BytesIO("xx")
+                difflines = item_.content._get_data_diff_text(oldfile, newfile)
+                if key == 'texttypes':
+                    assert difflines == ['- x', '+ xx']
+                else:
+                    assert difflines == []
 
 
 coverage_modules = ['MoinMoin.items.content']
