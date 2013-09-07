@@ -60,6 +60,7 @@ from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, html, xlink, docbook
 from MoinMoin.util.iri import Iri
+from MoinMoin.util.diff_text import diff
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
@@ -269,6 +270,15 @@ class Content(object):
     def _render_data_highlight(self):
         # override this in child classes
         return ''
+
+    def _get_data_diff_text(self, oldfile, newfile):
+        """ Get the text diff of 2 versions of file contents
+
+        :param oldfile: file that contains old content data (bytes)
+        :param newfile: file that contains new content data (bytes)
+        :return: list of diff lines in a unified format without trailing linefeeds
+        """
+        return []
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
@@ -851,6 +861,17 @@ class Text(Binary):
                                newrev=newrev,
                                diffs=diffs,
                                )
+
+    def _get_data_diff_text(self, oldfile, newfile):
+        """ Get the text diff of 2 versions of file contents
+
+        :param oldfile: file that contains old content data (bytes)
+        :param newfile: file that contains new content data (bytes)
+        :return: list of diff lines in a unified format without trailing linefeeds
+        """
+        old_text = self.data_storage_to_internal(oldfile.read())
+        new_text = self.data_storage_to_internal(newfile.read())
+        return diff(old_text.splitlines(), new_text.splitlines())
 
     def _render_data_diff_atom(self, oldrev, newrev):
         """ renders diff in HTML for atom feed """
