@@ -73,6 +73,11 @@ function initToggleComments() {
         if (!document.getElementById('moin-show-comments')) {
             toggleComments();
         }
+        else {
+            var commentButton = $('.moin-toggle-comments-button');
+            commentButton.button('toggle');
+            {{ "commentButton.attr('title', '%s');" % _("Hide comments") }}
+        }
     }
 }
 $(document).ready(initToggleComments);

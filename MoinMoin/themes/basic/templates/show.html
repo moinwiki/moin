@@ -61,3 +61,9 @@
     </div>
 
 {% endblock %}
+
+{% block options_for_javascript %}
+{%- if user.show_comments -%}
+    <br id="moin-show-comments" />
+{%- endif %}
+{% endblock %}
