@@ -115,10 +115,10 @@ class ThemeSupport(object):
 
     def get_local_panel(self, item_name):
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
-        item_navigation_endpoints = ['frontend.index', 'frontend.sitemap', ]
+        item_navigation_endpoints = ['frontend.index', 'frontend.sitemap', 'special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
                 'frontend.similar_names', 'frontend.download_item', 
-                'frontend.copy_item', 'special.supplementation'] if self.user.may.write(item_name) else []
+                'frontend.copy_item',] if self.user.may.write(item_name) else []
 
         user_actions = []
         item_navigation = []
@@ -151,6 +151,13 @@ class ThemeSupport(object):
 
                         iconcls = icon[endpoint]
 
+                        href = url_for(endpoint, item_name=item_name)
+                        item_actions.append((endpoint, href, iconcls, label, title))
+
+                    elif endpoint in item_navigation_endpoints:
+
+                        iconcls = icon[endpoint]
+                        
                         if endpoint == 'special.supplementation':
                             for sub_item_name in app.cfg.supplementation_item_names:
                                 current_sub = item_name.rsplit('/', 1)[-1]
@@ -161,17 +168,10 @@ class ThemeSupport(object):
                                         label = _(sub_item_name)
                                         title = None
 
-                                        item_actions.append((endpoint, href, iconcls, label, title))
+                                        item_navigation.append((endpoint, href, iconcls, label, title))
                         else:
-                            href = url_for(endpoint, item_name=item_name)
-                            item_actions.append((endpoint, href, iconcls, label, title))
-
-                    elif endpoint in item_navigation_endpoints:
-
-                        iconcls = icon[endpoint]
-                        href = url_for(endpoint, item_name=item_name)
-
-                        item_navigation.append((endpoint, href, iconcls, label, title))
+                            href = url_for(endpoint, item_name=item_name)   
+                            item_navigation.append((endpoint, href, iconcls, label, title))
 
         return user_actions, item_navigation, item_actions
 
