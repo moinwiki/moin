@@ -82,7 +82,7 @@ class ThemeSupport(object):
     def get_action_tabs(self, item_name, current_endpoint):
         navtabs_endpoints = ['frontend.show_item', 'frontend.history',
                             'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
-                            'frontend.index', 'frontend.sitemap',
+                            'frontend.index', 'frontend.sitemap','frontend.similar_names',
                             ]
         if self.user.may.write(item_name):
             navtabs_endpoints.append('frontend.modify_item')
@@ -118,7 +118,7 @@ class ThemeSupport(object):
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
-                'frontend.similar_names', 'frontend.download_item', 
+                'frontend.download_item', 
                 'frontend.copy_item',] if self.user.may.write(item_name) else []
 
         user_actions = []
