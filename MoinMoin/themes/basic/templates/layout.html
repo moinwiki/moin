@@ -13,11 +13,8 @@
 {% endif %}
 
 {# Helper macro to generate the local panel #}
-{% macro local_panel_main(panelname, paneltitle) -%}
+{% macro local_panel_main(panelname) -%}
     {% for endpoint, href, iconcls, label, title in panelname %}
-        {% if loop.first %}
-            <div class="list-group-item">{{ _(paneltitle) }}</div>
-        {% endif %}
         <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
             {% if iconcls %}
                 <i class="{{ iconcls }} icon-fixed-width"></i>
@@ -109,12 +106,13 @@
                     {% set quicklinks = 'false' %}
                     {% if navibar_items %}
 
-                    <div class="list-group-item"> Site Navigation </div>
+                    <div class="list-group-item"> {{ _("Site Navigation") }} </div>
                     {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
                         <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                     {% endfor %}
                     
-                    {{ local_panel_main(item_navigation, "Supplementation") }}
+                    <div class="list-group-item"> {{ _("Supplementation") }} </div>
+                    {{ local_panel_main(item_navigation) }}
 
                     {% endif %}
                     
