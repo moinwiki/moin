@@ -50,6 +50,8 @@
         <!-- user, site, item actions -->
     <div class="list-group">
         {{ self.user_actions() }}
+            
+        {{ self.item_navigation() }}
             <button type="button" class="btn btn-default moin-user-action-special moin-toggle-comments-button" data-toggle="button">
                 <span class="pull-left"><i class="icon-comment icon-fixed-width"></i>
                     Comments 
@@ -60,7 +62,6 @@
                     Transclusions
                 </span>
             </button>
-        {{ self.item_navigation() }}
 
         {{ self.item_actions() }}
     </div>
