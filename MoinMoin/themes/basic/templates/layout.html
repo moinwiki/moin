@@ -19,7 +19,9 @@
             <div class="list-group-item">{{ _(paneltitle) }}</div>
         {% endif %}
         <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
-            <i class="{{ iconcls }} icon-fixed-width"></i>
+            {% if iconcls %}
+                <i class="{{ iconcls }} icon-fixed-width"></i>
+            {% endif %}
             {{ label }}
         </a>
     {% endfor %}
@@ -112,7 +114,7 @@
                         <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                     {% endfor %}
                     
-                    {{ local_panel_main(item_navigation, "Item Navigation") }}
+                    {{ local_panel_main(item_navigation, "Supplementation") }}
 
                     {% endif %}
                     
