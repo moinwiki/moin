@@ -20,21 +20,18 @@
 {% endblock %}
 
 {% block user_actions %}
-    {{ local_panel_main(user_actions,"User Actions") }}
-{% endblock %}
-
-{% block item_navigation %}
-    {{ local_panel_main(item_navigation, "Item Navigation") }}
+    {{ local_panel_main(user_actions) }}
 {% endblock %}
 
 {% block item_actions %}
-    {{ local_panel_main(item_actions, "Item Actions") }}
+    {{ local_panel_main(item_actions) }}
 {% endblock %}
 
 {% block local_panel %}
         
         <!-- user, site, item actions -->
     <div class="list-group">
+        <div class="list-group-item"> {{ _("User Actions") }} </div>
         {{ self.user_actions() }}
 
         <div class="list-group-item">View Options</div>
@@ -56,7 +53,8 @@
                 Transclusions
             </span>
         </button>
-
+                    
+        <div class="list-group-item"> {{ _("Item Actions") }} </div>
         {{ self.item_actions() }}
     </div>
 
