@@ -31,8 +31,10 @@
         
         <!-- user, site, item actions -->
     <div class="list-group">
-        <div class="list-group-item"> {{ _("User Actions") }} </div>
-        {{ self.user_actions() }}
+        {% if user_actions %}
+            <div class="list-group-item"> {{ _("User Actions") }} </div>
+            {{ self.user_actions() }}
+        {% endif %}
 
         <div class="list-group-item">View Options</div>
         <button type="button" 
