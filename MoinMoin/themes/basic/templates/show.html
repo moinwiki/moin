@@ -3,19 +3,6 @@
 {% import theme("itemviews.html") as itemviews with context %}
 {% set exists = storage.has_item(item_name) %}
 
-{# Helper macro to generate the local panel #}
-{% macro local_panel_main(panelname, paneltitle) -%}
-    {% for endpoint, href, iconcls, label, title in panelname %}
-        {% if loop.first %}
-            <div class="list-group-item">{{ _(paneltitle) }}</div>
-        {% endif %}
-        <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
-            <i class="{{ iconcls }} icon-fixed-width"></i>
-            {{ label }}
-        </a>
-    {% endfor %}
-{% endmacro %}
-
 {% block views %}
     {{ itemviews }}
 {% endblock %}
