@@ -179,7 +179,7 @@ class ThemeSupport(object):
         icon = {'frontend.quicklink_item' : "icon-star-empty",
                'frontend.subscribe_item' : "icon-envelope",
                'frontend.index' : "icon-list-alt",
-               'frontend.sitemap' : "icon-map-marker",
+               'frontend.sitemap' : "icon-sitemap",
                'frontend.rename_item' : "icon-tag",
                'frontend.delete_item' : "icon-trash",
                'frontend.destroy_item' : "icon-fire",
