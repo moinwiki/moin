@@ -191,7 +191,7 @@ class ThemeSupport(object):
                'frontend.modify_item' : "icon-pencil",
                'frontend.history' : "icon-time",
                'frontend.show_item_meta' : "icon-wrench",
-               'frontend.highlight_item' : "icon-picture",
+               'frontend.highlight_item' : "icon-code",
                'frontend.backrefs' : "icon-share",
                'special.comments' : "icon-comment",
                'special.transclusions' : "icon-edit",};
