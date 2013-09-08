@@ -3,12 +3,11 @@
 {% import theme("itemviews.html") as itemviews with context %}
 {% set exists = storage.has_item(item_name) %}
 
-{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
-
-{% macro local_panel_main(panelname, paneltitle) %}
+{# Helper macro to generate the local panel #}
+{% macro local_panel_main(panelname, paneltitle) -%}
     {% for endpoint, href, iconcls, label, title in panelname %}
         {% if loop.first %}
-            <div class="list-group-item">{{ paneltitle }}</div>
+            <div class="list-group-item">{{ _(paneltitle) }}</div>
         {% endif %}
         <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
             <i class="{{ iconcls }} icon-fixed-width"></i>
@@ -50,8 +49,6 @@
         <!-- user, site, item actions -->
     <div class="list-group">
         {{ self.user_actions() }}
-            
-        {{ self.item_navigation() }}
 
         <div class="list-group-item">View Options</div>
         <button type="button" 

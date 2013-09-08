@@ -4,12 +4,26 @@
 {% set logo = snippets.logo() %}
 {% set footer_logos = snippets.creditlogos() %}
 {% set credits = snippets.credits() %}
+{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
 
 {% if item_name in ['@NONAMEGIVEN',''] %}
 {% set current_url = url_for(request.endpoint) %}
 {% else %}
 {% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
 {% endif %}
+
+{# Helper macro to generate the local panel #}
+{% macro local_panel_main(panelname, paneltitle) -%}
+    {% for endpoint, href, iconcls, label, title in panelname %}
+        {% if loop.first %}
+            <div class="list-group-item">{{ _(paneltitle) }}</div>
+        {% endif %}
+        <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
+            <i class="{{ iconcls }} icon-fixed-width"></i>
+            {{ label }}
+        </a>
+    {% endfor %}
+{% endmacro %}
 
 {% block head %}
     {{ super() }}
@@ -97,6 +111,8 @@
                     {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
                         <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                     {% endfor %}
+                    
+                    {{ local_panel_main(item_navigation, "Item Navigation") }}
 
                     {% endif %}
                     
