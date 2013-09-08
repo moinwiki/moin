@@ -186,7 +186,7 @@ class ThemeSupport(object):
                'frontend.similar_names' : "icon-search",
                'frontend.download_item' : "icon-download-alt",
                'frontend.copy_item' : "icon-comment",
-               'special.supplementation' : "icon-comment",
+               'special.supplementation' : "icon-comments",
                'frontend.show_item' : "icon-eye-open",
                'frontend.modify_item' : "icon-pencil",
                'frontend.history' : "icon-time",
