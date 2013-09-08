@@ -23,18 +23,6 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="btn-group pull-right" data-toggle="buttons">
-              <label class="btn btn-primary moin-toggle-comments-button">
-                <input type="checkbox"> Comments
-              </label>
-              <label class="btn btn-primary moin-transclusions-button">
-                <input type="checkbox"> Transclusions
-              </label>
-            </div>
-        </div>
-    </div>
     {% block content_data %}
         {% if data_rendered %}
         <div id="moin-content-data">
@@ -62,7 +50,16 @@
         <!-- user, site, item actions -->
     <div class="list-group">
         {{ self.user_actions() }}
-
+            <button type="button" class="btn btn-default moin-user-action-special moin-toggle-comments-button" data-toggle="button">
+                <span class="pull-left"><i class="icon-comment icon-fixed-width"></i>
+                    Comments 
+                </span>
+            </button>
+            <button type="button" class="btn btn-default moin-user-action-special moin-transclusions-button" data-toggle="button">
+                <span class="pull-left"><i class="icon-edit icon-fixed-width"></i>
+                    Transclusions
+                </span>
+            </button>
         {{ self.item_navigation() }}
 
         {{ self.item_actions() }}
