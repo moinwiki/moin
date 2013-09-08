@@ -10,7 +10,7 @@
         {% if loop.first %}
             <div class="list-group-item">{{ paneltitle }}</div>
         {% endif %}
-        <a class="list-group-item" href="{{ href }}" title="{{ title }}" rel="nofollow">
+        <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
             <i class="{{ iconcls }} icon-fixed-width"></i>
             {{ label }}
         </a>
