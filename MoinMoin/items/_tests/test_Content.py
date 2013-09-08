@@ -259,7 +259,7 @@ class TestText(object):
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.content.data == ''
 
-    def test__get_diff_text(self):
+    def test__get_data_diff_text(self):
         item_name = u'Text_Item'
         item = Item.create(item_name)
         contenttypes = dict(texttypes=[u'text/plain;charset=utf-8',
