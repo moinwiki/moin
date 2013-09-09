@@ -60,7 +60,8 @@ from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page, html, xlink, docbook
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.diff_text import diff
+from MoinMoin.util.diff_text import diff as text_diff
+from MoinMoin.util.diff_html import diff as html_diff
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.clock import timed
 from MoinMoin.forms import File
@@ -849,18 +850,33 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(CHARSET).replace(u'\r\n', u'\n')
 
-    def _get_data_diff_html(self, oldrev, newrev, template):
-        from MoinMoin.util.diff_html import diff
-        old_text = self.data_storage_to_internal(oldrev.data.read())
-        new_text = self.data_storage_to_internal(newrev.data.read())
-        storage_item = flaskg.storage[self.name]
-        diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in diff(old_text, new_text)]
+    def _render_data_diff_html(self, oldrev, newrev, template):
+        """ Render HTML formatted meta and content diff of 2 revisions
+
+        :param oldrev: old revision object
+        :param newrev: new revision object
+        :param template: name of the template to be rendered
+        :return: HTML data with meta and content diff
+        """
+        diffs = self._get_data_diff_html(oldrev.data, newrev.data)
         return render_template(template,
                                item_name=self.name,
                                oldrev=oldrev,
                                newrev=newrev,
                                diffs=diffs,
                                )
+
+    def _get_data_diff_html(self, oldfile, newfile):
+        """ Get the HTML diff of 2 versions of file contents
+
+        :param oldfile: file that contains old content data (bytes)
+        :param newfile: file that contains new content data (bytes)
+        :return: list of tuples of the format (left lineno, deleted Markup content,
+                 right lineno, added Markup content)
+        """
+        old_text = self.data_storage_to_internal(oldfile.read())
+        new_text = self.data_storage_to_internal(newfile.read())
+        return [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, new_text)]
 
     def _get_data_diff_text(self, oldfile, newfile):
         """ Get the text diff of 2 versions of file contents
@@ -871,14 +887,14 @@ class Text(Binary):
         """
         old_text = self.data_storage_to_internal(oldfile.read())
         new_text = self.data_storage_to_internal(newfile.read())
-        return diff(old_text.splitlines(), new_text.splitlines())
+        return text_diff(old_text.splitlines(), new_text.splitlines())
 
     def _render_data_diff_atom(self, oldrev, newrev):
         """ renders diff in HTML for atom feed """
-        return self._get_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
 
     def _render_data_diff(self, oldrev, newrev):
-        return self._get_data_diff_html(oldrev, newrev, 'diff_text.html')
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html')
 
     def _render_data_diff_text(self, oldrev, newrev):
         from MoinMoin.util import diff_text
