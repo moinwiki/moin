@@ -2,21 +2,29 @@
 
 .moin-flash {
   .alert;
+  &>a {
+    .alert .alert-link;
+  }
 }
 
 .moin-flash-hint {
+  &>a {
+    .alert-success .alert-link;
+  }
   .alert-success;
 }
 
 .moin-flash-info {
+  &>a {
+    .alert-info .alert-link;
+  }
   .alert-info;
 }
 
-.moin-flash-warning {
-  .alert-danger;
-}
-
-.moin-flash-error {
+.moin-flash-warning, .moin-flash-error {
+  &>a {
+    .alert-danger .alert-link;
+  }
   .alert-danger;
 }
 
