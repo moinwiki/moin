@@ -11,6 +11,7 @@ from MoinMoin import user
 from MoinMoin.items import Item
 from MoinMoin.constants.keys import (ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
                                      SUBSCRIPTIONS, TAGS)
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
 
 
@@ -21,7 +22,7 @@ class TestSubscriptions(object):
         # create an item
         self.item_name = u'foo'
         self.tagname = u'XXX'
-        self.namespace = u''
+        self.namespace = NAMESPACE_DEFAULT
         meta = {CONTENTTYPE: u'text/plain;charset=utf-8', TAGS: [self.tagname]}
         item = Item.create(self.item_name)
         item._save(meta)
@@ -71,7 +72,7 @@ class TestSubscriptions(object):
         patterns = get_matched_subscription_patterns([], **meta)
         assert patterns == []
         non_matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, "userprofile", ".*"),
+            "{0}:{1}:{2}".format(NAMERE, NAMESPACE_USERPROFILES, ".*"),
             "{0}:{1}:{2}".format(NAMERE, self.namespace, "\d+"),
             "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "bar"),
         ]
