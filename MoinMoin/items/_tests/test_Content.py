@@ -281,5 +281,17 @@ class TestText(object):
                 else:
                     assert difflines == []
 
+    def test__get_data_diff_html(self):
+        item_name = u"Test_Item"
+        item = Item.create(item_name)
+        contenttype = u'text/plain;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item_ = Item.create(item_name)
+        oldfile = BytesIO("")
+        newfile = BytesIO("x")
+        difflines = item_.content._get_data_diff_html(oldfile, newfile)
+        assert difflines == [(1, Markup(u''), 1, Markup(u'<span>x</span>'))]
+
 
 coverage_modules = ['MoinMoin.items.content']
