@@ -55,9 +55,11 @@
                 Transclusions
             </span>
         </button>
-                    
-        <div class="list-group-item"> {{ _("Item Actions") }} </div>
-        {{ self.item_actions() }}
+         
+        {% if item_actions %}           
+            <div class="list-group-item"> {{ _("Item Actions") }} </div>
+            {{ self.item_actions() }}
+        {% endif %}
     </div>
 
 {% endblock %}
