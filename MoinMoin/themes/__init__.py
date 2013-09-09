@@ -98,7 +98,8 @@ class ThemeSupport(object):
                     if endpoint in navtabs_endpoints:
 
                         iconcls = icon[endpoint]
-
+                        linkcls = None
+                        
                         if endpoint == 'special.comments':
                             maincls = "moin-toggle-comments-button"
                             href = "#"
@@ -109,12 +110,12 @@ class ThemeSupport(object):
                             maincls = None
                             # special case for modify item link, this depends on the double click to edit JS
                             if endpoint == 'frontend.modify_item':
-                                maincls = "moin-modify-button"
+                                linkcls = "moin-modify-button"
                             href = url_for(endpoint, item_name=item_name)
                             if endpoint == current_endpoint or (endpoint, current_endpoint) in spl_active:
-                                maincls = maincls + " active" if maincls else "active" 
+                                maincls = "active"
 
-                        navtabs.append((endpoint, href, maincls, iconcls, title, label))
+                        navtabs.append((endpoint, href, maincls, iconcls, linkcls, title, label))
         return navtabs
 
     def get_local_panel(self, item_name):
