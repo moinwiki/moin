@@ -107,9 +107,12 @@ class ThemeSupport(object):
                             href = "#"
                         else:
                             maincls = None
+                            # special case for modify item link, this depends on the double click to edit JS
+                            if endpoint == 'frontend.modify_item':
+                                maincls = "moin-modify-button"
                             href = url_for(endpoint, item_name=item_name)
                             if endpoint == current_endpoint or (endpoint, current_endpoint) in spl_active:
-                                maincls = "active"
+                                maincls = maincls + " active" if maincls else "active" 
 
                         navtabs.append((endpoint, href, maincls, iconcls, title, label))
         return navtabs
