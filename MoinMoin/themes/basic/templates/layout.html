@@ -100,6 +100,17 @@
         </div> <!-- row-topnavbar -->
 
         <div class="row">
+            <div class="col-lg-12">
+                    {% for category, msg in get_flashed_messages(with_categories=true) %}
+                    <div class="moin-flash moin-flash-{{ category }}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{ msg }}
+                    </div>
+                    {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-lg-2">
                 <div class="moin-sidebar">
                     {% set navibar_items = theme_supp.navibar(item_name) %}
