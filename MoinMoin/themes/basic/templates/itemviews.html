@@ -6,9 +6,9 @@
 {% block views %}
 
     <ul class="moin-nav nav-tabs moin-shadow">
-      {% for endpoint, href, maincls, iconcls, title, label in navtabs %}
-        <li {% if maincls %}class="{{ maincls }}" {% endif %}>
-            <a href="{{ href }}" title="{{ title }}" rel="nofollow">
+      {% for endpoint, href, maincls, iconcls, linkcls, title, label in navtabs %}
+        <li {% if maincls %}class="{{ maincls }}"{% endif %}>
+            <a {% if linkcls %}class="{{ linkcls }}"{% endif %} href="{{ href }}" title="{{ title }}" rel="nofollow">
               <span class="{{ iconcls }}"></span>
                 {{ label }}
             </a>
