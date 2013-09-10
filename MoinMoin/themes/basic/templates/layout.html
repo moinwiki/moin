@@ -221,10 +221,14 @@
         </div> <!--/row-->
 
         {% block footer %}
-        <div class="navbar"> <!--footer-->
-            {{ credits }}
-            {{ footer_logos }}
-        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="navbar"> <!--footer-->
+                    {{ credits }}
+                    {{ footer_logos }}
+                </div>
+            </div>
+        </div> <!--/row for footer-->
         {% endblock %}
 	</div><!--/container-->
 {% endblock %}
