@@ -125,8 +125,10 @@
                         <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                     {% endfor %}
                     
+                    {% if item_navigation %}
                     <div class="list-group-item"> {{ _("Supplementation") }} </div>
                     {{ local_panel_main(item_navigation) }}
+                    {% endif %}
 
                     {% endif %}
                     
