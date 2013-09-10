@@ -48,7 +48,8 @@ from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, ACTION_SAVE,
+    ACTION_REVERT, ACTION_TRASH, ACTION_RENAME
 )
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
@@ -375,16 +376,16 @@ class Item(object):
         """
         if flaskg.storage[name]:
             raise NameNotUniqueError(L_("An item named %s already exists." % name))
-        return self._rename(name, comment, action=u'RENAME')
+        return self._rename(name, comment, action=ACTION_RENAME)
 
     def delete(self, comment=u''):
         """
         delete this item (remove current name from NAME list)
         """
-        return self._rename(None, comment, action=u'TRASH', delete=True)
+        return self._rename(None, comment, action=ACTION_TRASH, delete=True)
 
     def revert(self, comment=u''):
-        return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
+        return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
         # called from destroy UI/POST
@@ -459,7 +460,7 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=None,
+    def _save(self, meta, data=None, name=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]

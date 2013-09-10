@@ -257,7 +257,7 @@ class PageRevision(object):
                     editlog_data = {  # make something up
                         NAME: [item.name],
                         MTIME: int(os.path.getmtime(path)),
-                        ACTION: u'SAVE',
+                        ACTION: ACTION_SAVE,
                     }
             meta, data = split_body(content)
         meta.update(editlog_data)
@@ -333,7 +333,7 @@ class AttachmentRevision(object):
         except KeyError:
             meta = {  # make something up
                 MTIME: int(os.path.getmtime(attpath)),
-                ACTION: u'SAVE',
+                ACTION: ACTION_SAVE,
             }
         meta[NAME] = [u'{0}/{1}'.format(item_name, attach_name)]
         if acl is not None:
@@ -377,12 +377,12 @@ class EditLog(LogFile):
                 if extra:
                     result[NAME_OLD] = extra
                 del result[EXTRA]
-                result[ACTION] = u'RENAME'
+                result[ACTION] = ACTION_RENAME
             elif action == 'SAVE/REVERT':
                 if extra:
                     result[REVERTED_TO] = int(extra)
                 del result[EXTRA]
-                result[ACTION] = u'REVERT'
+                result[ACTION] = ACTION_REVERT
         userid = result[USERID]
         #TODO
         #if userid:
@@ -401,7 +401,7 @@ class EditLog(LogFile):
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         if meta.get(ACTION) == u'SAVENEW':
             # replace SAVENEW with just SAVE
-            meta[ACTION] = u'SAVE'
+            meta[ACTION] = ACTION_SAVE
         return meta
 
     def find_attach(self, attachname):
@@ -416,7 +416,7 @@ class EditLog(LogFile):
             raise KeyError
         del meta['__rev']
         del meta[EXTRA]  # we have full name in NAME
-        meta[ACTION] = u'SAVE'
+        meta[ACTION] = ACTION_SAVE
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         return meta
 
@@ -479,7 +479,7 @@ class UserRevision(object):
         meta[ITEMID] = make_uuid()
         meta[REVID] = make_uuid()
         meta[SIZE] = 0
-        meta[ACTION] = u'SAVE'
+        meta[ACTION] = ACTION_SAVE
         self.meta = meta
         self.data = StringIO('')
 

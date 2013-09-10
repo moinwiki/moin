@@ -69,7 +69,8 @@ from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
-from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, HASH_ALGORITHM
+from MoinMoin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS,
+                                     HASH_ALGORITHM, ACTION_SAVE)
 
 
 COLS = 80
@@ -483,7 +484,7 @@ class TarMixin(object):
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
             data = open(temp_fname, 'rb')
-            self.item._save(meta, data, name=self.name, action=u'SAVE', comment='')
+            self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
             data.close()
             os.remove(temp_fname)
 
