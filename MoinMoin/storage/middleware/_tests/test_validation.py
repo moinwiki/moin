@@ -37,7 +37,7 @@ class TestValidation(object):
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
                  keys.NAME: u'somename',  # name we decoded from URL path
-                 keys.ACTION: u'SAVE',
+                 keys.ACTION: keys.ACTION_SAVE,
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
                  keys.USERID: make_uuid(),
@@ -84,7 +84,7 @@ class TestValidation(object):
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
                  keys.NAME: u'somename',  # name we decoded from URL path
-                 keys.ACTION: u'SAVE',
+                 keys.ACTION: keys.ACTION_SAVE,
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
                  keys.WIKINAME: u'ThisWiki',

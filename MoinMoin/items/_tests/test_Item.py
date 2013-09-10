@@ -12,7 +12,8 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
+from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
+                                     ACTION, ACTION_REVERT, ADDRESS)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
@@ -329,7 +330,7 @@ class TestItem(object):
         item = Item.create(name)
         item.revert(u'revert')
         item = Item.create(name)
-        assert item.meta[ACTION] == u'REVERT'
+        assert item.meta[ACTION] == ACTION_REVERT
 
     def test_modify(self):
         name = u'Test_Item'

@@ -1026,7 +1026,7 @@ class Item(object):
     def store_revision(self, meta, data, overwrite=False,
                        trusted=False,  # True for loading a serialized representation or other trusted sources
                        name=None,  # TODO name we decoded from URL path
-                       action=u'SAVE',
+                       action=ACTION_SAVE,
                        remote_addr=None,
                        userid=None,
                        wikiname=None,
