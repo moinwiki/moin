@@ -440,6 +440,7 @@ def show_item_meta(item):
             last_rev = rev_ids[-1]
     return render_template('meta.html',
                            item=item, item_name=item.name,
+                           fqname=item.fqname,
                            rev=item.rev,
                            contenttype=item.contenttype,
                            first_rev_id=first_rev,
