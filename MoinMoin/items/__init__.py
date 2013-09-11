@@ -51,6 +51,7 @@ from MoinMoin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
 )
+from MoinMoin.constants.namespaces import NAMESPACE_ALL
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
@@ -678,8 +679,12 @@ class Item(object):
 
         return query
 
-    def get_index(self, startswith=None, selected_groups=None, isglobalindex=False):
+    def get_index(self, startswith=None, selected_groups=None):
+        fqname = self.fqname
+        isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
+        if not fqname.value.startswith(NAMESPACE_ALL+'/') and fqname.value != NAMESPACE_ALL:
+            query = Term(NAMESPACE, fqname.namespace)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return self.make_flat_index(revs, isglobalindex)
 

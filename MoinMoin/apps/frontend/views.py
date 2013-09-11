@@ -822,13 +822,14 @@ def index(item_name):
 
     initials = item.name_initial(item.get_subitem_revs(), uppercase=True)
 
-    dirs, files = item.get_index(startswith, selected_groups, isglobalindex=not item_name)
+    dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
 
     item_names = item_name.split(u'/')
     return render_template(item.index_template,
                            item_names=item_names,
                            item_name=item_name,
+                           fqname=item.fqname,
                            files=files,
                            dirs=dirs,
                            initials=initials,
