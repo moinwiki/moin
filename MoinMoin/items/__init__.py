@@ -611,7 +611,7 @@ class Item(object):
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
-    def make_flat_index(self, subitems):
+    def make_flat_index(self, subitems, isglobalindex=False):
         """
         Create two IndexEntry lists - ``dirs`` and ``files`` - from a list of
         subitems.
@@ -626,8 +626,10 @@ class Item(object):
 
         When both a subitem itself and some of its subitems are in the subitems
         list, it appears in both ``files`` and ``dirs``.
+
+        :param isglobalindex: True if the query is for global indexes.
         """
-        prefixes = self.subitem_prefixes
+        prefixes = [u''] if isglobalindex else self.subitem_prefixes
         # IndexEntry instances of "file" subitems
         files = []
         # IndexEntry instances of "directory" subitems
@@ -656,8 +658,8 @@ class Item(object):
                         files.append(IndexEntry(relname, fullname, rev.meta))
         return dirs, files
 
-    def build_index_query(self, startswith=None, selected_groups=None):
-        prefix = self.subitem_prefixes[0]
+    def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):
+        prefix = u'' if isglobalindex else self.subitem_prefixes[0]
         if startswith:
             query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
         else:
@@ -675,10 +677,10 @@ class Item(object):
 
         return query
 
-    def get_index(self, startswith=None, selected_groups=None):
-        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups)
+    def get_index(self, startswith=None, selected_groups=None, isglobalindex=False):
+        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-        return self.make_flat_index(revs)
+        return self.make_flat_index(revs, isglobalindex)
 
     def get_mixed_index(self):
         dirs, files = self.make_flat_index(self.get_subitem_revs())
