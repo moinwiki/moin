@@ -233,14 +233,15 @@ class TestText(object):
         item = Item.create(item_name)
         contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
+        data1 = "old_data"
+        item._save(meta, data1)
         item1 = Item.create(item_name)
-        data = 'test_data'
+        data2 = 'new_data'
         comment = u'next revision'
-        item1._save(meta, data, comment=comment)
+        item1._save(meta, data2, comment=comment)
         item2 = Item.create(item_name)
         result = Text._render_data_diff_text(item1.content, item1.rev, item2.rev)
-        expected = u'- \n+ test_data'
+        expected = u'- old_data\n+ new_data'
         assert result == expected
         assert item2.content.data == ''
 

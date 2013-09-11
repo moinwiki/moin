@@ -898,10 +898,13 @@ class Text(Binary):
         return self._render_data_diff_html(oldrev, newrev, 'diff_text.html')
 
     def _render_data_diff_text(self, oldrev, newrev):
-        from MoinMoin.util import diff_text
-        oldlines = self.data_storage_to_internal(oldrev.data.read()).split('\n')
-        newlines = self.data_storage_to_internal(newrev.data.read()).split('\n')
-        difflines = diff_text.diff(oldlines, newlines)
+        """ Render text diff of 2 revisions' contents
+
+        :param oldrev: old revision object
+        :param newrev: new revision object
+        :return: text data of a content diff
+        """
+        difflines = self._get_data_diff_text(oldrev.data, newrev.data)
         return '\n'.join(difflines)
 
     _render_data_diff_raw = _render_data_diff
