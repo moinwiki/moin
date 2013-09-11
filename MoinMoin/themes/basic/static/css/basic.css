@@ -4208,6 +4208,9 @@ td.visible-print {
     display: none !important;
   }
 }
+.moin-list-heading {
+  background-color: #dcdcdc;
+}
 .moin-flash {
   padding: 15px 35px 15px 15px;
   margin-bottom: 20px;
