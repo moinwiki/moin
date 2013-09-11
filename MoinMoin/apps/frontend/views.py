@@ -44,7 +44,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, contenttype_to_class
+from MoinMoin.themes import render_template, contenttype_to_class, get_editor_info
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
                             InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum, validate_name,
@@ -634,7 +634,7 @@ def delete_item(item_name):
         item = Item.create(item_name)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.write(item_name):
+    if not flaskg.user.may.write(item.fqname):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -653,6 +653,7 @@ def delete_item(item_name):
             return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
+                           fqname=split_fqname(item_name),
                            form=form,
     )
 
