@@ -960,26 +960,29 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
-    refs_here = _backrefs(item_name)
+    fqname = split_fqname(item_name)
+    refs_here = _backrefs(fqname)
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
+                           fqname=fqname,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
-                           item_names=refs_here
+                           fq_names=refs_here
     )
 
 
-def _backrefs(item_name):
+def _backrefs(fq_name):
     """
-    Returns a list with all names of items which ref item_name
+    Returns a list with all names of items which ref fq_name
 
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
-    :returns: the list of all items which ref item_name
+    :returns: the list of all items which ref fq_name
     """
+    item_name = fq_name.value
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return [rev.name for rev in revs]
+    return [fqname for rev in revs for fqname in rev.fqnames]
 
 
 @frontend.route('/+history/<itemname:item_name>')
