@@ -821,7 +821,7 @@ def index(item_name):
 
     initials = item.name_initial(item.get_subitem_revs(), uppercase=True)
 
-    dirs, files = item.get_index(startswith, selected_groups)
+    dirs, files = item.get_index(startswith, selected_groups, isglobalindex=not item_name)
     # index = sorted(index, key=lambda e: e.relname.lower())
 
     item_names = item_name.split(u'/')
