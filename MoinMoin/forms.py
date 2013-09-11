@@ -78,20 +78,16 @@ class NameNotValidError(ValueError):
     """
 
 
-def validate_name(meta, fqname, itemid):
+def validate_name(meta, itemid):
     """
     Check whether the names are valid.
     Will just return, if they are valid, will raise a NameNotValidError if not.
     """
     names = meta.get(NAME)
     current_namespace = meta.get(NAMESPACE)
-
     if current_namespace is None:
         raise NameNotValidError(L_("No namespace field in the meta."))
-
     namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
-    if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
-        raise NameNotValidError(L_("%(_namespace)s is not a valid namespace.", _namespace=current_namespace))
 
     if len(names) != len(set(names)):
         raise NameNotValidError(L_("The names in the name list must be unique."))
@@ -116,12 +112,30 @@ def validate_name(meta, fqname, itemid):
             raise NameNotValidError(L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names)))
 
 
+class ValidName(Validator):
+    """Validator for Name
+    """
+    invalid_name_msg = ""
+
+    def validate(self, element, state):
+        # Make sure that the other meta is valid before validating the name.
+        # TODO Change/Make sure that the below statement holds good.
+        if not element.parent.parent['extra_meta_text'].valid:
+            return False
+        try:
+            validate_name(state['meta'], state[ITEMID])
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
+            return self.note_error(element, state, 'invalid_name_msg')
+        return True
+
+
 class ValidJSON(Validator):
     """Validator for JSON
     """
     invalid_json_msg = L_('Invalid JSON.')
-    invalid_name_msg = ""
     invalid_itemid_msg = L_('Itemid not a proper UUID')
+    invalid_namespace_msg = ''
 
     def validitemid(self, itemid):
         if not itemid:
@@ -129,16 +143,23 @@ class ValidJSON(Validator):
             return False
         return uuid_validator(String(itemid), None)
 
+    def validnamespace(self, current_namespace):
+        if current_namespace is None:
+            self.invalid_namespace_msg = L_("No namespace field in the meta.")
+            return False
+        namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+        if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
+            self.invalid_namespace_msg = L_("%(_namespace)s is not a valid namespace.", _namespace=current_namespace)
+            return False
+        return True
+
     def validate(self, element, state):
         try:
             meta = json.loads(element.value)
         except:  # catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
-        try:
-            validate_name(meta, state[FQNAME], state[ITEMID])
-        except NameNotValidError as e:
-            self.invalid_name_msg = _(e)
-            return self.note_error(element, state, 'invalid_name_msg')
+        if not self.validnamespace(meta.get(NAMESPACE)):
+            return self.note_error(element, state, 'invalid_namespace_msg')
         if state[FQNAME].field == ITEMID:
             if not self.validitemid(meta.get(ITEMID, state[FQNAME].value)):
                 return self.note_error(element, state, 'invalid_itemid_msg')
@@ -195,7 +216,7 @@ Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
     label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
-    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*')).validated_by(ValidName())
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 
