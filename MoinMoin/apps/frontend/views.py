@@ -423,6 +423,7 @@ def indexable(item_name, rev):
 def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
+                           fqname=item.fqname,
                            data_text=Markup(item.content._render_data_highlight()),
     )
 
