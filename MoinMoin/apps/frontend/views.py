@@ -57,7 +57,7 @@ from MoinMoin.constants.namespaces import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
-from MoinMoin.util.interwiki import url_for_item, split_fqname
+from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -601,7 +601,7 @@ def rename_item(item_name):
         item = Item.create(item_name)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.write(item_name):
+    if not flaskg.user.may.write(item.fqname):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -616,12 +616,14 @@ def rename_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             try:
+                fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                 item.rename(target, comment)
-                return redirect(url_for_item(target))
+                return redirect(url_for_item(fqname))
             except NameNotUniqueError as e:
                 flash(str(e), "error")
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
+                           fqname=item.fqname,
                            form=form,
     )
 

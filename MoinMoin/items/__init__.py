@@ -416,7 +416,8 @@ class Item(object):
                         child_newname = None
                     else:  # rename
                         child_newname = new_prefix + child_oldname[old_prefixlen:]
-                    item = Item.create(child_oldname)
+                    old_fqname = CompositeName(self.fqname.namespace, self.fqname.field, child_oldname)
+                    item = Item.create(old_fqname.fullname)
                     item._save(item.meta, item.content.data,
                                name=child_newname, action=action, comment=comment, delete=delete)
 
@@ -424,8 +425,9 @@ class Item(object):
         """
         rename this item to item <name> (replace current name by another name in the NAME list)
         """
-        if flaskg.storage[name]:
-            raise NameNotUniqueError(L_("An item named %s already exists." % name))
+        fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
+        if flaskg.storage.get_item(**fqname.query):
+            raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
         return self._rename(name, comment, action=u'RENAME')
 
     def delete(self, comment=u''):
