@@ -381,8 +381,9 @@ def show_item(item_name, rev):
             fq_names.extend(rev.fqnames)
         return render_template("link_list_no_item_panel.html",
                                headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
-                               item_name=fqname.fullname,
-                               fq_names=fq_names)
+                               fqname=fqname,
+                               fq_names=fq_names,
+                               )
     return result
 
 

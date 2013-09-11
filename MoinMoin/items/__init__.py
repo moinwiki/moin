@@ -850,7 +850,8 @@ class NonExistent(Item):
             content = self._select_itemtype()
         else:
             content = render_template('show_nonexistent.html',
-                                      item_name=self.fqname.fullname,
+                                      item_name=self.name,
+                                      fqname=self.fqname,
                                      )
         return Response(content, 404)
 
@@ -862,7 +863,8 @@ class NonExistent(Item):
 
     def _select_itemtype(self):
         return render_template('modify_select_itemtype.html',
-                               item_name=self.fqname.fullname,
+                               item_name=self.name,
+                               fqname=self.fqname,
                                itemtypes=item_registry.shown_entries,
                               )
 
