@@ -132,15 +132,17 @@ class ThemeSupport(object):
                 breadcrumbs.append((wiki_name, fqname, href, exists, err))
         return breadcrumbs
 
-    def subitem_index(self, item_name):
+    def subitem_index(self, fqname):
         """
-        Get a list of subitems for the given item_name
+        Get a list of subitems for the given fqname
 
         :rtype: list
         :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
         """
         from MoinMoin.items import Item
-        item = Item.create(item_name)
+        if not isinstance(fqname, CompositeName):
+            fqname = split_fqname(fqname)
+        item = Item.create(fqname.fullname)
         return item.get_mixed_index()
 
     def userhome(self):

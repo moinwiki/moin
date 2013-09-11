@@ -635,11 +635,11 @@ class Item(object):
         # IndexEntry instances of "directory" subitems
         dirs = []
         added_fullnames = set()
-
         for rev in subitems:
             fullnames = rev.meta[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
+                fullname_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, fullname)
                 if not prefix is None:
                     relname = fullname[len(prefix):]
                     if '/' in relname:
@@ -651,11 +651,12 @@ class Item(object):
                         if fullname not in added_fullnames:
                             added_fullnames.add(fullname)
                             direct_fullname = prefix + direct_relname
+                            direct_fullname_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, direct_fullname)
                             fqname = split_fqname(direct_fullname)
                             direct_rev = get_storage_revision(fqname)
-                            dirs.append(IndexEntry(direct_relname, direct_fullname, direct_rev.meta))
+                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
                     else:
-                        files.append(IndexEntry(relname, fullname, rev.meta))
+                        files.append(IndexEntry(relname, fullname_fqname, rev.meta))
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):
