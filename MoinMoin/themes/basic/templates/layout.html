@@ -122,13 +122,13 @@
                             {% set quicklinks = 'false' %}
                             {% if navibar_items %}
 
-                            <div class="list-group-item"> {{ _("Site Navigation") }} </div>
+                            <div class="list-group-item moin-list-heading"> {{ _("Site Navigation") }} </div>
                             {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
                                 <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
                             {% endfor %}
                             
                             {% if item_navigation %}
-                            <div class="list-group-item"> {{ _("Supplementation") }} </div>
+                            <div class="list-group-item moin-list-heading"> {{ _("Supplementation") }} </div>
                             {{ local_panel_main(item_navigation) }}
                             {% endif %}
 
@@ -136,7 +136,7 @@
                             
                             {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
                                 {% if loop.first %}
-                                    <div class="list-group-item">Quick Links</div>
+                                    <div class="list-group-item moin-list-heading">Quick Links</div>
                                 {% endif %}
                                     <div class="moin-quicklink">
                                     <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}

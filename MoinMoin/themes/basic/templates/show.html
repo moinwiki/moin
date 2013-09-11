@@ -32,11 +32,11 @@
         <!-- user, site, item actions -->
     <div class="list-group">
         {% if user_actions %}
-            <div class="list-group-item"> {{ _("User Actions") }} </div>
+            <div class="list-group-item moin-list-heading"> {{ _("User Actions") }} </div>
             {{ self.user_actions() }}
         {% endif %}
 
-        <div class="list-group-item">View Options</div>
+        <div class="list-group-item moin-list-heading">View Options</div>
         <button type="button" 
                 class="btn btn-default moin-user-action-special moin-toggle-comments-button" 
                 data-toggle="button"
@@ -57,7 +57,7 @@
         </button>
          
         {% if item_actions %}           
-            <div class="list-group-item"> {{ _("Item Actions") }} </div>
+            <div class="list-group-item moin-list-heading"> {{ _("Item Actions") }} </div>
             {{ self.item_actions() }}
         {% endif %}
     </div>
