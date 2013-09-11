@@ -44,7 +44,7 @@ from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from MoinMoin.util.registry import RegistryBase
 from MoinMoin.util.clock import timed
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
+from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Names
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
@@ -193,6 +193,7 @@ class BaseMetaForm(Form):
     # value, while an emtpy acl and no acl have different semantics
     #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
+    name = Names
     tags = Tags
 
 
@@ -363,7 +364,8 @@ class Item(object):
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
         kill_keys = [  # shall not get copied from old rev to new rev
-            NAME_OLD,
+            # As we have a special field for NAME we don't want NAME to appear in JSON meta.
+            NAME, NAME_OLD,
             # are automatically implanted when saving
             REVID, DATAID,
             HASH_ALGORITHM,
@@ -798,9 +800,9 @@ class Default(Contentful):
                     # break them
                     return "OK"
             form = self.ModifyForm.from_request(request)
-            state = dict(fqname=self.fqname, itemid=self.meta.get(ITEMID))
+            meta, data, contenttype_guessed, comment = form._dump(self)
+            state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
-                meta, data, contenttype_guessed, comment = form._dump(self)
                 contenttype_qs = request.values.get('contenttype')
                 try:
                     self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
