@@ -134,7 +134,7 @@
                                     {% if not loop.first %}
                                     <small>/</small>
                                     {% endif %}
-                                    {% if url != current_url %}
+                                    {% if url != current_url_showview %}
                                         <small>
                                     {% endif %}
                                     {% if title_name %}
@@ -144,7 +144,7 @@
                                             {{ segment_name|shorten_item_name }}
                                         </a>
                                     {% endif %}
-                                    {% if url != current_url %}
+                                    {% if url != current_url_showview %}
                                        </small>
                                     {% endif %}
                                 {% endfor %}
