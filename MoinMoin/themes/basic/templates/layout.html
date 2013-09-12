@@ -10,6 +10,7 @@
 {% set current_url = url_for(request.endpoint) %}
 {% else %}
 {% set current_url = url_for_item(endpoint = request.endpoint, item_name = item_name) %}
+{% set current_url_showview = url_for_item(endpoint='frontend.show_item', item_name=item_name) %}
 {% endif %}
 
 {# Helper macro to generate the local panel #}
@@ -181,7 +182,11 @@
 
                             <div class="list-group-item moin-list-heading"> {{ _("Site Navigation") }} </div>
                             {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
-                                <a class="list-group-item {{ cls }}{% if url == current_url %} active{% endif %}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}</a>
+                                <a class="list-group-item {{ cls }}
+                                    {% if url in [current_url, current_url_showview] %} active{% endif %}" href="{{ url }}" 
+                                    {% if title %}title="{{ title }}"{% endif %}>
+                                    {{ text|shorten_item_name }}
+                                </a>
                             {% endfor %}
                             
                             {% if item_navigation %}
