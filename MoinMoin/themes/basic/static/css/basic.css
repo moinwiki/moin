@@ -4354,9 +4354,6 @@ td.visible-print {
 .moin-breadcrumb > .active {
   color: #999999;
 }
-.moin-breadcrumb > li + li:before {
-  content: "»";
-}
 .moin-nav {
   margin-bottom: 0;
   padding-left: 0;
@@ -4440,7 +4437,7 @@ td.visible-print {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .moin-location-breadcrumb {
-  padding-top: 12px;
+  display: inline;
 }
 .moin-nonexistent {
   color: #e7908e;
