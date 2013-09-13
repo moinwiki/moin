@@ -44,7 +44,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, contenttype_to_class, get_editor_info
+from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
                             InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum, validate_name,
@@ -840,31 +840,6 @@ def index(item_name):
                            startswith=startswith,
                            form=form,
     )
-
-
-@frontend.route('/+trash', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
-@frontend.route('/<namespace>/+trash')
-def trash(namespace):
-    """
-    Returns the trashed items.
-    """
-    trash = _trashed(namespace)
-    return render_template('trash.html',
-                           headline=_(u'Trashed Items'),
-                           title_name=_(u'Trashed Items'),
-                           results=trash)
-
-
-def _trashed(namespace):
-    q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
-    if not namespace == NAMESPACE_ALL:
-        q = And([q, Term(NAMESPACE, namespace), ])
-    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
-    results = []
-    for rev in flaskg.storage.search(q, limit=None):
-        meta = rev.meta
-        results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
-    return results
 
 
 @frontend.route('/+mychanges')
