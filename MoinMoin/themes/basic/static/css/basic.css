@@ -4520,6 +4520,9 @@ td.visible-print {
 .moin-navbar-inverse .navbar-nav > li > a {
   color: #c8ddf1;
 }
+.moin-navbar-inverse .navbar-nav > li > a.active {
+  color: #ffffff;
+}
 .moin-navbar-inverse .navbar-text {
   color: #c8ddf1;
 }
