@@ -23,7 +23,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname
 from MoinMoin.util.crypto import cache_key
@@ -163,7 +163,7 @@ class ThemeSupport(object):
         else:
             # We cannot check if wiki pages exists in remote wikis
             exists = True
-        wiki_href = url_for_item(itemname, wiki_name=wikiname)
+        wiki_href = url_for_item(itemname, wiki_name=wikiname,namespace=NAMESPACE_USERPROFILES)
         return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):
