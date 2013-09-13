@@ -25,6 +25,18 @@
     {% endfor %}
 {% endmacro %}
 
+{# Helper macro to generate links #}
+{% macro hyperlink(href, title, exists, label, iconcls) -%}
+    <a href="{{ href }}" 
+        {% if not exists %}class="moin-nonexistent"{% endif %}
+        {% if current_url == href %} class="active" {% endif %}
+        rel="nofollow" 
+        {% if title %} title="{{ title }}" {% endif %}>
+        {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
+        {{ label }}
+    </a>
+{% endmacro %}
+
 {% block head %}
     {{ super() }}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
