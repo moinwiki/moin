@@ -4215,6 +4215,7 @@ td.visible-print {
 }
 .moin-list-heading {
   background-color: #eeeeee;
+  font-variant: small-caps;
 }
 .moin-flash {
   padding: 15px 35px 15px 15px;
