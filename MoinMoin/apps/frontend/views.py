@@ -910,7 +910,8 @@ def refs(item_name):
     backrefs = _backrefs(item_name)
     return render_template('refs.html',
                            item_name=item_name,
-                           refs=refs,
+                           fqname=split_fqname(item_name),
+                           refs=split_fqname_list(refs),
                            backrefs=backrefs
     )
 
