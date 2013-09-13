@@ -68,32 +68,26 @@
                                 {% if user.name -%}
                                     {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
                                     <li>
-                                    <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
-                                        <i class="icon-user icon-white"> </i>
-                                        {{ aliasname }}
-                                    </a>
+                                        {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white") }}
                                     </li>
                                     {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
                                         <li>
-                                        <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">
-                                            <i class="icon-cog icon-white"> </i>
-                                                {{ _('Settings') }}</a>
+                                            {{ hyperlink(url_for('frontend.usersettings'), None, True,
+                                                _('Settings'), "icon-cog icon-white") }}
                                         </li>
                                     {%- endif %}
                                 {%- endif %}
                                 {% if user.auth_method in cfg.auth_can_logout %}
                                     <li>
-                                    <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
-                                        <i class="icon-off icon-white"></i>
-                                        {{ _('Logout') }}
-                                    </a>
+                                        {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
+                                                _('Logout'), "icon-off icon-white") }}
                                     </li>
                                 {% endif %}
                             {% else %}
                                 {% set login_url = theme_supp.login_url() %}
                                 {% if login_url %}
                                     <li>
-                                    <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                                        {{ hyperlink(login_url, None, True, _('Login'), None) }}
                                     </li>
                                 {% endif %}
                             {%- endif %}
