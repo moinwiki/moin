@@ -10,7 +10,7 @@
     </tr>
     {% for u in user_accounts %}
     <tr>
-        <td><a href="{{ url_for('frontend.show_item', item_name=u.name[0]) }}">{{ u.name|join(',') }}</a>{{ u.disabled and " (%s)" % _("disabled") or ""}}</td>
+        <td><a href="{{ url_for('frontend.show_item', item_name=u.fqname) }}">{{ u.name|join(',') }}</a>{{ u.disabled and " (%s)" % _("disabled") or ""}}</td>
         <td>{{ u.groups|join(',') }}</td>
         <td>
             {% if u.email %}

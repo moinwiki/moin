@@ -20,9 +20,11 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
+from MoinMoin.util.interwiki import CompositeName
 
 
 @admin.route('/superuser')
@@ -46,6 +48,7 @@ def userbrowser():
     revs = user.search_users()  # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
+                          fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
                           email=rev.meta[EMAIL],
                           disabled=rev.meta[DISABLED],
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
