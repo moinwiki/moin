@@ -144,20 +144,20 @@ class ThemeSupport(object):
                             if endpoint == 'frontend.quicklink_item':
                                 if not flaskg.user.is_quicklinked_to([item_name]):
                                     label = _('Add Link')
-                                    user_actions.append((endpoint, href, iconcls, label, title))
+                                    user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
                                 if flaskg.user.is_subscribed_to([item_name]):
                                     label = _('Unsubscribe')
                                 else:
                                     label = _('Subscribe')
-                                user_actions.append((endpoint, href, iconcls, label, title))
+                                user_actions.append((endpoint, href, iconcls, label, title, True))
 
                     elif endpoint in item_actions_endpoints:
 
                         iconcls = icon[endpoint]
 
                         href = url_for(endpoint, item_name=item_name)
-                        item_actions.append((endpoint, href, iconcls, label, title))
+                        item_actions.append((endpoint, href, iconcls, label, title, True))
 
                     elif endpoint in item_navigation_endpoints:
 
@@ -169,14 +169,15 @@ class ThemeSupport(object):
                                 if current_sub not in app.cfg.supplementation_item_names:
                                     supp_name = '%s/%s' % (item_name, sub_item_name)
                                     if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
+                                        exists = self.storage.has_item(supp_name)
                                         href = url_for('frontend.show_item', item_name=supp_name)
                                         label = _(sub_item_name)
                                         title = None
 
-                                        item_navigation.append((endpoint, href, iconcls, label, title))
+                                        item_navigation.append((endpoint, href, iconcls, label, title, exists))
                         else:
                             href = url_for(endpoint, item_name=item_name)   
-                            item_navigation.append((endpoint, href, iconcls, label, title))
+                            item_navigation.append((endpoint, href, iconcls, label, title, True))
 
         return user_actions, item_navigation, item_actions
 
@@ -191,7 +192,7 @@ class ThemeSupport(object):
                'frontend.similar_names' : "icon-search",
                'frontend.download_item' : "icon-download-alt",
                'frontend.copy_item' : "icon-comment",
-               'special.supplementation' : None,
+               'special.supplementation' : "icon-comments",
                'frontend.show_item' : "icon-eye-open",
                'frontend.modify_item' : "icon-pencil",
                'frontend.history' : "icon-time",
