@@ -1060,17 +1060,24 @@ def global_history(namespace):
 
 def _compute_item_sets():
     """
-    compute sets of existing, linked, transcluded and no-revision item names
+    compute sets of existing, linked, transcluded and no-revision item fqnames
     """
     linked = set()
     transcluded = set()
     existing = set()
     revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     for rev in revs:
-        existing.add(rev.name)
+        existing |= set(rev.fqnames)
         linked.update(rev.meta.get(ITEMLINKS, []))
         transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
-    return existing, linked, transcluded
+    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded))
+
+
+def split_fqname_list(names):
+    """
+    Converts a list of names to a list of fqnames.
+    """
+    return [split_fqname(name) for name in names]
 
 
 @frontend.route('/+wanteds')
@@ -1087,7 +1094,7 @@ def wanted_items():
     return render_template('link_list_no_item_panel.html',
                            headline=_(u'Wanted Items'),
                            title_name=title_name,
-                           item_names=wanteds)
+                           fq_names=wanteds)
 
 
 @frontend.route('/+orphans')
@@ -1103,7 +1110,7 @@ def orphaned_items():
     return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
                            headline=_(u'Orphaned Items'),
-                           item_names=orphans)
+                           fq_names=orphans)
 
 
 @frontend.route('/+quicklink/<itemname:item_name>')
