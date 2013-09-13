@@ -57,7 +57,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="navbar moin-navbar-inverse">
-                            <div class="col-lg-9">
+                            <div class="col-lg-9 moin-sitename">
+                                <ul class="nav navbar-nav pull-left">
+                                {% if cfg.sitename %}
+                                    <li class="navbar-text"> {{ cfg.sitename }} </li>
+                                {% endif %}
+                                </ul>
                         <ul class="nav navbar-nav pull-right">
 
                             {% if user.valid -%}

@@ -4208,6 +4208,9 @@ td.visible-print {
     display: none !important;
   }
 }
+.moin-sitename {
+  padding-left: 0px;
+}
 .moin-logo {
   text-align: center;
   position: relative;
@@ -4455,6 +4458,7 @@ td.visible-print {
   background-color: #222222;
   background-color: #1b436d;
   padding-left: 0px;
+  padding-right: 0px;
 }
 .moin-navbar-inverse .navbar-brand {
   color: #999999;
