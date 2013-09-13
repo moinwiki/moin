@@ -927,8 +927,9 @@ def forwardrefs(item_name):
     refs = _forwardrefs(item_name)
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
+                           fqname=split_fqname(item_name),
                            headline=_(u"Items that are referred by '%(item_name)s'", item_name=item_name),
-                           item_names=refs
+                           fq_names=split_fqname_list(refs),
     )
 
 
@@ -940,15 +941,15 @@ def _forwardrefs(item_name):
     :type item_name: unicode
     :returns: the list of all items which are referenced from this item
     """
-    q = {WIKINAME: app.cfg.interwikiname,
-         NAME_EXACT: item_name,
-        }
+    fqname = split_fqname(item_name)
+    q = fqname.query
+    q[WIKINAME] = app.cfg.interwikiname
     rev = flaskg.storage.document(**q)
     if rev is None:
         refs = []
     else:
         refs = rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])
-    return refs
+    return set(refs)
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
@@ -960,17 +961,16 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
-    fqname = split_fqname(item_name)
-    refs_here = _backrefs(fqname)
+    refs_here = _backrefs(item_name)
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
-                           fqname=fqname,
+                           fqname=split_fqname(item_name),
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
-                           fq_names=refs_here
+                           fq_names=refs_here,
     )
 
 
-def _backrefs(fq_name):
+def _backrefs(item_name):
     """
     Returns a list with all names of items which ref fq_name
 
@@ -978,11 +978,10 @@ def _backrefs(fq_name):
     :type item_name: unicode
     :returns: the list of all items which ref fq_name
     """
-    item_name = fq_name.value
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return [fqname for rev in revs for fqname in rev.fqnames]
+    return set([fqname for rev in revs for fqname in rev.fqnames])
 
 
 @frontend.route('/+history/<itemname:item_name>')
