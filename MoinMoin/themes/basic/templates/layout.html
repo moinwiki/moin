@@ -15,21 +15,23 @@
 
 {# Helper macro to generate the local panel #}
 {% macro local_panel_main(panelname) -%}
-    {% for endpoint, href, iconcls, label, title in panelname %}
-        <a class="list-group-item{% if href == current_url %} active{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
-            {% if iconcls %}
-                <i class="{{ iconcls }} icon-fixed-width"></i>
-            {% endif %}
-            {{ label }}
-        </a>
+    {% for endpoint, href, iconcls, label, title, exists in panelname %}
+        {# iconcls should be defined, defined for all local_panel_items, see themes/__init.py #}
+        {{ hyperlink(href, title, exists, label, iconcls + " icon-fixed-width", "list-group-item") }}
     {% endfor %}
 {% endmacro %}
 
 {# Helper macro to generate links #}
-{% macro hyperlink(href, title, exists, label, iconcls) -%}
+{% macro hyperlink(href, title, exists, label, iconcls, mainclass) -%}
     <a href="{{ href }}" 
-        {% if not exists %}class="moin-nonexistent"{% endif %}
-        {% if current_url == href %} class="active" {% endif %}
+        {% if not exists %} class="moin-nonexistent {% if mainclass %}{{ mainclass }} {% endif %}"
+        {% else %}
+        {% if mainclass %}
+            class="{{ mainclass }}{% if current_url == href %} active{% endif %}" 
+        {% elif current_url == href %}
+            class="active"
+        {% endif %}
+        {% endif %}
         rel="nofollow" 
         {% if title %} title="{{ title }}" {% endif %}>
         {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
@@ -73,26 +75,26 @@
                                 {% if user.name -%}
                                     {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
                                     <li>
-                                        {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white") }}
+                                        {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white", None) }}
                                     </li>
                                     {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
                                         <li>
                                             {{ hyperlink(url_for('frontend.usersettings'), None, True,
-                                                _('Settings'), "icon-cog icon-white") }}
+                                                _('Settings'), "icon-cog icon-white", None) }}
                                         </li>
                                     {%- endif %}
                                 {%- endif %}
                                 {% if user.auth_method in cfg.auth_can_logout %}
                                     <li>
                                         {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
-                                                _('Logout'), "icon-off icon-white") }}
+                                                _('Logout'), "icon-off icon-white", None) }}
                                     </li>
                                 {% endif %}
                             {% else %}
                                 {% set login_url = theme_supp.login_url() %}
                                 {% if login_url %}
                                     <li>
-                                        {{ hyperlink(login_url, None, True, _('Login'), None) }}
+                                        {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
                                     </li>
                                 {% endif %}
                             {%- endif %}
