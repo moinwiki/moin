@@ -169,12 +169,12 @@ class ThemeSupport(object):
                                 if current_sub not in app.cfg.supplementation_item_names:
                                     supp_name = '%s/%s' % (item_name, sub_item_name)
                                     if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
-                                        exists = self.storage.has_item(supp_name)
+                                        subitem_exists = self.storage.has_item(supp_name)
                                         href = url_for('frontend.show_item', item_name=supp_name)
                                         label = _(sub_item_name)
                                         title = None
 
-                                        item_navigation.append((endpoint, href, iconcls, label, title, exists))
+                                        item_navigation.append((endpoint, href, iconcls, label, title, subitem_exists))
                         else:
                             href = url_for(endpoint, item_name=item_name)   
                             item_navigation.append((endpoint, href, iconcls, label, title, True))
