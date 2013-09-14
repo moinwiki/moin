@@ -1,4 +1,8 @@
 @import "bootstrap.less";
+
+// ---- Customising the top navbar breakpoint
+@grid-float-breakpoint: @screen-medium;
+
 .moin-sitename {
   padding-left: 0px;
 }
@@ -117,6 +121,12 @@
     > a {
       color: @moin-navbar-inverse-textcolor;
     }
+  }
+  .navbar-brand {
+    color: @moin-navbar-inverse-textcolor;
+  }
+  .navbar-toggle {
+    margin-top: 0px;
   }
 }
 

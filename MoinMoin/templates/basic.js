@@ -18,4 +18,5 @@ $(document).ready(function (){
     }
     $('div.dropup').removeClass('menu');
     $('ul.dropdown-menu').removeClass('submenu');
+    $('.topnavcollapse').addClass('collapse');
 });

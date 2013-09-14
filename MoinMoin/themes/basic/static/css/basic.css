@@ -475,7 +475,7 @@ dt {
 dd {
   margin-left: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .dl-horizontal dt {
     float: left;
     width: 160px;
@@ -2691,7 +2691,7 @@ button.close {
   border-top-color: #ffffff;
   border-bottom-color: #ffffff;
 }
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 992px) {
   .navbar-brand {
     float: left;
     margin-left: -15px;
@@ -4208,6 +4208,9 @@ td.visible-print {
     display: none !important;
   }
 }
+@media screen and (min-width: 768px) {
+  
+}
 .moin-sitename {
   padding-left: 0px;
 }
@@ -4532,6 +4535,12 @@ td.visible-print {
 }
 .moin-navbar-inverse .navbar-text > a {
   color: #c8ddf1;
+}
+.moin-navbar-inverse .navbar-brand {
+  color: #c8ddf1;
+}
+.moin-navbar-inverse .navbar-toggle {
+  margin-top: 0px;
 }
 .moin-quicklink {
   position: relative;
