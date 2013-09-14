@@ -2,8 +2,9 @@
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
 {% from theme("modify_meta.html") import basic_meta_editor %}
-{% from theme("modify_text.html") import basic_data_editor %}
 {% import theme("itemviews.html") as itemviews with context %}
+{% import theme(form['content_form'].template) as content_template %}
+{% set basic_data_editor = content_template.basic_data_editor %}
 
 {% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
 
