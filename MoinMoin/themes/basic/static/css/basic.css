@@ -4208,12 +4208,6 @@ td.visible-print {
     display: none !important;
   }
 }
-@media screen and (min-width: 768px) {
-  
-}
-.moin-sitename {
-  padding-left: 0px;
-}
 .moin-logo {
   text-align: center;
   position: relative;
@@ -4538,9 +4532,6 @@ td.visible-print {
 }
 .moin-navbar-inverse .navbar-brand {
   color: #c8ddf1;
-}
-.moin-navbar-inverse .navbar-toggle {
-  margin-top: 0px;
 }
 .moin-quicklink {
   position: relative;
