@@ -3,6 +3,19 @@
 // ---- Customising the top navbar breakpoint
 @grid-float-breakpoint: @screen-medium;
 
+h1, h2, h3, h4, h5, h6 {
+  &:hover, &:focus {
+    .moin-permalink {
+      display: inline;
+      text-decoration: none;
+    }
+  }
+}
+
+.moin-permalink {
+  display: none;
+}
+
 .moin-logo {
   .text-center;
   position: relative;

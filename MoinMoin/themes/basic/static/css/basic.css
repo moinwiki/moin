@@ -4208,6 +4208,24 @@ td.visible-print {
     display: none !important;
   }
 }
+h1:hover .moin-permalink,
+h2:hover .moin-permalink,
+h3:hover .moin-permalink,
+h4:hover .moin-permalink,
+h5:hover .moin-permalink,
+h6:hover .moin-permalink,
+h1:focus .moin-permalink,
+h2:focus .moin-permalink,
+h3:focus .moin-permalink,
+h4:focus .moin-permalink,
+h5:focus .moin-permalink,
+h6:focus .moin-permalink {
+  display: inline;
+  text-decoration: none;
+}
+.moin-permalink {
+  display: none;
+}
 .moin-logo {
   text-align: center;
   position: relative;
