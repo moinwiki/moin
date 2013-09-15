@@ -4208,6 +4208,11 @@ td.visible-print {
     display: none !important;
   }
 }
+@media screen and (min-width: 992px) {
+  .moin-pull-right {
+    float: right;
+  }
+}
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
 h3:hover .moin-permalink,
