@@ -85,11 +85,10 @@ class ThemeSupport(object):
             return []
 
         exists = flaskg.storage.has_item(item_name)
-            
+
         navtabs_endpoints = ['frontend.show_item', 'frontend.history',
-                            'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
-                            'frontend.index', 'frontend.sitemap','frontend.similar_names',
-                            ]
+                             'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
+                             'frontend.index', 'frontend.sitemap', 'frontend.similar_names', ]
 
         if self.user.may.write(item_name):
             navtabs_endpoints.append('frontend.modify_item')
@@ -97,7 +96,7 @@ class ThemeSupport(object):
         icon = self.get_endpoint_iconmap()
 
         navtabs = []
-        spl_active = [('frontend.history', 'frontend.diff'),]
+        spl_active = [('frontend.history', 'frontend.diff'), ]
 
         for endpoint, label, title, check_exists in app.cfg.item_views:
             if endpoint not in app.cfg.endpoints_excluded:
@@ -106,7 +105,7 @@ class ThemeSupport(object):
 
                         iconcls = icon[endpoint]
                         linkcls = None
-                        
+
                         if endpoint == 'special.comments':
                             maincls = "moin-toggle-comments-button"
                             href = "#"
@@ -138,8 +137,8 @@ class ThemeSupport(object):
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
-                'frontend.download_item', 
-                'frontend.copy_item',] if self.user.may.write(item_name) else []
+                                  'frontend.download_item',
+                                  'frontend.copy_item', ] if self.user.may.write(item_name) else []
 
         user_actions = []
         item_navigation = []
@@ -177,7 +176,7 @@ class ThemeSupport(object):
                     elif endpoint in item_navigation_endpoints:
 
                         iconcls = icon[endpoint]
-                        
+
                         if endpoint == 'special.supplementation':
                             for sub_item_name in app.cfg.supplementation_item_names:
                                 current_sub = item_name.rsplit('/', 1)[-1]
@@ -191,32 +190,32 @@ class ThemeSupport(object):
 
                                         item_navigation.append((endpoint, href, iconcls, label, title, subitem_exists))
                         else:
-                            href = url_for(endpoint, item_name=item_name)   
+                            href = url_for(endpoint, item_name=item_name)
                             item_navigation.append((endpoint, href, iconcls, label, title, True))
 
         return user_actions, item_navigation, item_actions
 
     def get_endpoint_iconmap(self):
-        icon = {'frontend.quicklink_item' : "icon-star-empty",
-               'frontend.subscribe_item' : "icon-envelope",
-               'frontend.index' : "icon-list-alt",
-               'frontend.sitemap' : "icon-sitemap",
-               'frontend.rename_item' : "icon-tag",
-               'frontend.delete_item' : "icon-trash",
-               'frontend.destroy_item' : "icon-fire",
-               'frontend.similar_names' : "icon-search",
-               'frontend.download_item' : "icon-download-alt",
-               'frontend.copy_item' : "icon-comment",
-               'special.supplementation' : "icon-comments",
-               'frontend.show_item' : "icon-eye-open",
-               'frontend.modify_item' : "icon-pencil",
-               'frontend.history' : "icon-time",
-               'frontend.show_item_meta' : "icon-wrench",
-               'frontend.highlight_item' : "icon-code",
-               'frontend.backrefs' : "icon-share",
-               'special.comments' : "icon-comment",
-               'special.transclusions' : "icon-edit",};
-        return icon        
+        icon = {'frontend.quicklink_item': "icon-star-empty",
+                'frontend.subscribe_item': "icon-envelope",
+                'frontend.index': "icon-list-alt",
+                'frontend.sitemap': "icon-sitemap",
+                'frontend.rename_item': "icon-tag",
+                'frontend.delete_item': "icon-trash",
+                'frontend.destroy_item': "icon-fire",
+                'frontend.similar_names': "icon-search",
+                'frontend.download_item': "icon-download-alt",
+                'frontend.copy_item': "icon-comment",
+                'special.supplementation': "icon-comments",
+                'frontend.show_item': "icon-eye-open",
+                'frontend.modify_item': "icon-pencil",
+                'frontend.history': "icon-time",
+                'frontend.show_item_meta': "icon-wrench",
+                'frontend.highlight_item': "icon-code",
+                'frontend.backrefs': "icon-share",
+                'special.comments': "icon-comment",
+                'special.transclusions': "icon-edit", }
+        return icon
 
     def location_breadcrumbs(self, item_name):
         """
@@ -498,6 +497,7 @@ CONTENTTYPE_SHORTEN = {
     'text/x.moin.wiki': 'MoinWiki',
 }
 
+
 # TODO: Update dictionary with more content-types
 def shorten_content_type(contenttype):
     """
@@ -514,6 +514,7 @@ def shorten_content_type(contenttype):
         return CONTENTTYPE_SHORTEN[ctype]
     else:
         return "Unknown"
+
 
 def shorten_id(name, length=7):
     """
