@@ -132,6 +132,9 @@ class ThemeSupport(object):
 
         exists = flaskg.storage.has_item(item_name)
 
+        if not exists:
+            return [], [], []
+
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
