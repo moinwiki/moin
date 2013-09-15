@@ -69,6 +69,7 @@ class Config(DefaultConfig):
         'bootstrap',
         'font_awesome',
         'ckeditor',
+        'autosize',
         'svgweb',
         'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
     ]

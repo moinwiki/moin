@@ -50,7 +50,7 @@ var pageComments = null; // will hold list of elements with class "comment"
 function toggleComments() {
     "use strict";
     // Toggle visibility of every tag with class "comment"
-    var buttons = $('.moin-toggle-comments-button > a');
+    var buttons = $('.moin-toggle-comments-button > a, .moin-toggle-comments-button');
     if (pageComments.is(':hidden')) {
         pageComments.show();
         {{ "buttons.attr('title', '%s');" % _("Hide comments") }}
@@ -68,9 +68,15 @@ function initToggleComments() {
     if (pageComments.length > 0) {
         // There are comments, so show itemview Comments button
         $('.moin-toggle-comments-button').css('display', '');
+        $('.moin-toggle-comments-button').click(toggleComments);
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
             toggleComments();
+        }
+        else {
+            var commentButton = $('.moin-toggle-comments-button');
+            commentButton.button('toggle');
+            {{ "commentButton.attr('title', '%s');" % _("Hide comments") }}
         }
     }
 }
@@ -84,7 +90,7 @@ function toggleTransclusionOverlays() {
     var overlays = $('.moin-item-overlay-ul, .moin-item-overlay-lr'),
         buttons;
     if (overlays.length > 0) {
-        buttons = $('.moin-transclusions-button > a');
+        buttons = $('.moin-transclusions-button > a, .moin-transclusions-button');
         if (overlays.is(':visible')) {
             overlays.hide();
             {{ "buttons.attr('title', '%s');" % _("Show transclusions") }}
@@ -131,6 +137,7 @@ function initTransclusionOverlays() {
     wrappers = $('.moin-item-wrapper');
     if (wrappers.length > 0) {
         $('.moin-transclusions-button').css('display', '');
+        $('.moin-transclusions-button').click(toggleTransclusionOverlays);
     }
 }
 $(document).ready(initTransclusionOverlays);

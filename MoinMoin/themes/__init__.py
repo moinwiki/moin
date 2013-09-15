@@ -79,6 +79,142 @@ class ThemeSupport(object):
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
 
+    def get_action_tabs(self, item_name, current_endpoint):
+
+        if item_name in ['@NONAMEGIVEN', '']:
+            return []
+
+        exists = flaskg.storage.has_item(item_name)
+            
+        navtabs_endpoints = ['frontend.show_item', 'frontend.history',
+                            'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
+                            'frontend.index', 'frontend.sitemap','frontend.similar_names',
+                            ]
+
+        if self.user.may.write(item_name):
+            navtabs_endpoints.append('frontend.modify_item')
+
+        icon = self.get_endpoint_iconmap()
+
+        navtabs = []
+        spl_active = [('frontend.history', 'frontend.diff'),]
+
+        for endpoint, label, title, check_exists in app.cfg.item_views:
+            if endpoint not in app.cfg.endpoints_excluded:
+                if not check_exists or exists:
+                    if endpoint in navtabs_endpoints:
+
+                        iconcls = icon[endpoint]
+                        linkcls = None
+                        
+                        if endpoint == 'special.comments':
+                            maincls = "moin-toggle-comments-button"
+                            href = "#"
+                        elif endpoint == 'special.transclusions':
+                            maincls = "moin-transclusions-button"
+                            href = "#"
+                        else:
+                            maincls = None
+                            # special case for modify item link, this depends on the double click to edit JS
+                            if endpoint == 'frontend.modify_item':
+                                linkcls = "moin-modify-button"
+                            href = url_for(endpoint, item_name=item_name)
+                            if endpoint == current_endpoint or (endpoint, current_endpoint) in spl_active:
+                                maincls = "active"
+
+                        navtabs.append((endpoint, href, maincls, iconcls, linkcls, title, label))
+        return navtabs
+
+    def get_local_panel(self, item_name):
+
+        if item_name in ['@NONAMEGIVEN', '']:
+            return [], [], []
+
+        exists = flaskg.storage.has_item(item_name)
+
+        user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
+        item_navigation_endpoints = ['special.supplementation']
+        item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
+                'frontend.download_item', 
+                'frontend.copy_item',] if self.user.may.write(item_name) else []
+
+        user_actions = []
+        item_navigation = []
+        item_actions = []
+
+        icon = self.get_endpoint_iconmap()
+
+        for endpoint, label, title, check_exists in app.cfg.item_views:
+            if endpoint not in app.cfg.endpoints_excluded:
+                if not check_exists or exists:
+                    if endpoint in user_actions_endpoints:
+                        if flaskg.user.valid:
+                            href = url_for(endpoint, item_name=item_name)
+                            iconcls = icon[endpoint]
+                            #endpoint = iconcls = label = None
+
+                            if endpoint == 'frontend.quicklink_item':
+                                if not flaskg.user.is_quicklinked_to([item_name]):
+                                    label = _('Add Link')
+                                    user_actions.append((endpoint, href, iconcls, label, title, True))
+                            elif endpoint == 'frontend.subscribe_item':
+                                if flaskg.user.is_subscribed_to([item_name]):
+                                    label = _('Unsubscribe')
+                                else:
+                                    label = _('Subscribe')
+                                user_actions.append((endpoint, href, iconcls, label, title, True))
+
+                    elif endpoint in item_actions_endpoints:
+
+                        iconcls = icon[endpoint]
+
+                        href = url_for(endpoint, item_name=item_name)
+                        item_actions.append((endpoint, href, iconcls, label, title, True))
+
+                    elif endpoint in item_navigation_endpoints:
+
+                        iconcls = icon[endpoint]
+                        
+                        if endpoint == 'special.supplementation':
+                            for sub_item_name in app.cfg.supplementation_item_names:
+                                current_sub = item_name.rsplit('/', 1)[-1]
+                                if current_sub not in app.cfg.supplementation_item_names:
+                                    supp_name = '%s/%s' % (item_name, sub_item_name)
+                                    if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
+                                        subitem_exists = self.storage.has_item(supp_name)
+                                        href = url_for('frontend.show_item', item_name=supp_name)
+                                        label = _(sub_item_name)
+                                        title = None
+
+                                        item_navigation.append((endpoint, href, iconcls, label, title, subitem_exists))
+                        else:
+                            href = url_for(endpoint, item_name=item_name)   
+                            item_navigation.append((endpoint, href, iconcls, label, title, True))
+
+        return user_actions, item_navigation, item_actions
+
+    def get_endpoint_iconmap(self):
+        icon = {'frontend.quicklink_item' : "icon-star-empty",
+               'frontend.subscribe_item' : "icon-envelope",
+               'frontend.index' : "icon-list-alt",
+               'frontend.sitemap' : "icon-sitemap",
+               'frontend.rename_item' : "icon-tag",
+               'frontend.delete_item' : "icon-trash",
+               'frontend.destroy_item' : "icon-fire",
+               'frontend.similar_names' : "icon-search",
+               'frontend.download_item' : "icon-download-alt",
+               'frontend.copy_item' : "icon-comment",
+               'special.supplementation' : "icon-comments",
+               'frontend.show_item' : "icon-eye-open",
+               'frontend.modify_item' : "icon-pencil",
+               'frontend.history' : "icon-time",
+               'frontend.show_item_meta' : "icon-wrench",
+               'frontend.highlight_item' : "icon-code",
+               'frontend.backrefs' : "icon-share",
+               'special.comments' : "icon-comment",
+               'special.transclusions' : "icon-edit",};
+        return icon        
+
     def location_breadcrumbs(self, item_name):
         """
         Assemble the location using breadcrumbs (was: title)
@@ -355,6 +491,26 @@ def shorten_item_name(name, length=25):
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
+CONTENTTYPE_SHORTEN = {
+    'text/x.moin.wiki': 'MoinWiki',
+}
+
+# TODO: Update dictionary with more content-types
+def shorten_content_type(contenttype):
+    """
+    Shorten content-types
+
+    Shortens the content-type to terms that normal users understand.
+
+    :param name: contenttype, unicode
+    :rtype: unicode
+    :returns: shortened version of contenttype
+    """
+    ctype = contenttype.split(';')[0]
+    if ctype in CONTENTTYPE_SHORTEN:
+        return CONTENTTYPE_SHORTEN[ctype]
+    else:
+        return "Unknown"
 
 def shorten_id(name, length=7):
     """
@@ -409,6 +565,7 @@ def setup_jinja_env():
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     app.jinja_env.filters['json_dumps'] = dumps
+    app.jinja_env.filters['shorten_ctype'] = shorten_content_type
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
@@ -425,7 +582,7 @@ def setup_jinja_env():
         'storage': flaskg.storage,
         'clock': flaskg.clock,
         'cfg': app.cfg,
-        'item_name': u'handlers need to give it',
+        'item_name': u'@NONAMEGIVEN',
         'url_for_item': url_for_item,
         'get_editor_info': lambda meta: get_editor_info(meta),
         'utctimestamp': lambda dt: utctimestamp(dt),
