@@ -1,7 +1,6 @@
 {{ _("Dear Wiki user,") }}
 
-{{ _("The '%(page_name)s' item on '%(wiki_name)s' %(change_action)s by %(user_name)s:",
-page_name=page_name, wiki_name=wiki_name, change_action=change_action, user_name=user_name) }}
+{{ notification_sentence }}
 {{ diff_url }}
 
 {% if comment -%}
