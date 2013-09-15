@@ -4,7 +4,7 @@
 {% set navtabs = theme_supp.get_action_tabs(item_name, current_endpoint) %}
 
 {% block views %}
-
+    {% if navtabs %}
     <ul class="moin-nav nav-tabs moin-shadow">
       {% for endpoint, href, maincls, iconcls, linkcls, title, label in navtabs %}
         <li {% if maincls %}class="{{ maincls }}"{% endif %}>
@@ -14,6 +14,6 @@
             </a>
         </li>
       {% endfor %}
-
     </ul>
+    {% endif %}
 {% endblock %}
