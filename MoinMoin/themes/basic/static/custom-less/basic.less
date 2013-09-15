@@ -3,6 +3,12 @@
 // ---- Customising the top navbar breakpoint
 @grid-float-breakpoint: @screen-medium;
 
+@media screen and (min-width: @grid-float-breakpoint) {
+  .moin-pull-right {
+    .pull-right;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   &:hover, &:focus {
     .moin-permalink {

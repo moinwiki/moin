@@ -61,74 +61,74 @@
             <div class="col-lg-10">
                 <div class="row">
                     <div class="col-lg-12">
-                        <nav class="navbar moin-navbar-inverse" role="navigation">
-                            <div class="col-lg-3">
-                                <div class="navbar-header">
-                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".topnavcollapse">
-                                      <span class="sm-only"></span>
-                                      <span class="icon-bar"></span>
-                                      <span class="icon-bar"></span>
-                                      <span class="icon-bar"></span>
-                                    </button>
-                                    {% if cfg.sitename %}
-                                        <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}"> 
-                                            {{ cfg.sitename }} 
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </div> <!-- column-sitename -->
-                            <div class="col-lg-6">
-                                <div class="nav-collapse topnavcollapse">
-                                    <ul class="nav navbar-nav pull-right">
-
-                                        {% if user.valid -%}
-                                        {% set avatar = user.avatar(20) %}
-                                            {% if avatar %}
-                                                <li><img id="moin-avatar" src="{{ avatar }}" /></li>
-                                            {%- endif %}
-                                            {% if user.name -%}
-                                                {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
-                                                <li>
-                                                    {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white", None) }}
-                                                </li>
-                                                {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                                                    <li>
-                                                        {{ hyperlink(url_for('frontend.usersettings'), None, True,
-                                                            _('Settings'), "icon-cog icon-white", None) }}
-                                                    </li>
-                                                {%- endif %}
-                                            {%- endif %}
-                                            {% if user.auth_method in cfg.auth_can_logout %}
-                                                <li>
-                                                    {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
-                                                            _('Logout'), "icon-off icon-white", None) }}
-                                                </li>
-                                            {% endif %}
-                                        {% else %}
-                                            {% set login_url = theme_supp.login_url() %}
-                                            {% if login_url %}
-                                                <li>
-                                                    {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
-                                                </li>
-                                            {% endif %}
-                                        {%- endif %}
-
-                                    </ul>
-                                </div>
-                            </div><!-- column-user-options -->
-
-                            <div class="col-lg-3">
-                                <form class="navbar-form" action="{{ url_for('frontend.search') }}" method="get" role="search">
-                                    <div class="input-group">
-                                        <input name='q' type="text" class="form-control" placeholder="Search ...">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-primary" type="submit">
-                                                <i class="icon-search"></i>
-                                            </button>
-                                        </div>
+                        <nav class="navbar moin-navbar-inverse">
+                            <div class="container">
+                                <div class="col-lg-3">
+                                    <div class="navbar-header">
+                                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#target">
+                                          <span class="sm-only"></span>
+                                          <span class="icon-bar"></span>
+                                          <span class="icon-bar"></span>
+                                          <span class="icon-bar"></span>
+                                        </button>
+                                        {% if cfg.sitename %}
+                                            <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}"> 
+                                                {{ cfg.sitename }} 
+                                            </a>
+                                        {% endif %}
                                     </div>
-                                </form>
-                            </div> <!-- column-3 -->
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="nav-collapse collapse" id="target">
+                                        <ul class="nav navbar-nav moin-pull-right">
+
+                                            {% if user.valid -%}
+                                            {% set avatar = user.avatar(20) %}
+                                                {% if avatar %}
+                                                    <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                                                {%- endif %}
+                                                {% if user.name -%}
+                                                    {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                                                    <li>
+                                                        {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white", None) }}
+                                                    </li>
+                                                    {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                                                        <li>
+                                                            {{ hyperlink(url_for('frontend.usersettings'), None, True,
+                                                                _('Settings'), "icon-cog icon-white", None) }}
+                                                        </li>
+                                                    {%- endif %}
+                                                {%- endif %}
+                                                {% if user.auth_method in cfg.auth_can_logout %}
+                                                    <li>
+                                                        {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
+                                                                _('Logout'), "icon-off icon-white", None) }}
+                                                    </li>
+                                                {% endif %}
+                                            {% else %}
+                                                {% set login_url = theme_supp.login_url() %}
+                                                {% if login_url %}
+                                                    <li>
+                                                        {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
+                                                    </li>
+                                                {% endif %}
+                                            {%- endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <form class="navbar-form" action="{{ url_for('frontend.search') }}" method="get" role="search">
+                                        <div class="input-group">
+                                            <input name='q' type="text" class="form-control" placeholder="Search ...">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="icon-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </nav> <!-- navbar-inverse-->
                     </div> <!-- column-12 -->
                 </div> <!-- row for top-navbar -->
