@@ -833,7 +833,7 @@ class PropertiesMixin(object):
 
     @property
     def namespace(self):
-        return self.meta[NAMESPACE]
+        return self.meta.get(NAMESPACE, u'')
 
     def _fqname(self, name=None):
         """

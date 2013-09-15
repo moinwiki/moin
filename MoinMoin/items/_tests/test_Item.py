@@ -12,7 +12,9 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS, TRASH, ITEMID
+from MoinMoin.util.interwiki import CompositeName
+from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS, TRASH, ITEMID, NAME_EXACT
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
@@ -21,7 +23,7 @@ def build_index(basename, relnames):
     """
     Build a list of IndexEntry by hand, useful as a test helper.
     """
-    return [(IndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta))
+    return [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
 
 
@@ -31,7 +33,7 @@ def build_mixed_index(basename, spec):
 
     :spec is a list of (relname, hassubitem) tuples.
     """
-    return [(MixedIndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta, hassubitem))
+    return [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
 
 
@@ -132,7 +134,7 @@ class TestItem(object):
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
         # keys like NAME, ITEMID, REVID, DATAID are filtered
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
     def test_meta_dict_to_text(self):
@@ -141,7 +143,7 @@ class TestItem(object):
         meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         item = Item.create(name)
         result = Item.meta_dict_to_text(item, meta)
-        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "name": [\n    "test_name"\n  ], \n  "test_key": "test_val"\n}'
+        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
         assert result == expected
 
     def test_meta_text_to_dict(self):
@@ -150,7 +152,7 @@ class TestItem(object):
         text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": ["test_name"] \n}'
         item = Item.create(name)
         result = Item.meta_text_to_dict(item, text)
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u"test_name"]}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
     def test_item_can_have_several_names(self):
