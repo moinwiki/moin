@@ -59,9 +59,10 @@ def test_required_filter():
     content_result = forms.required_filter('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     expected = 'new_content'
     assert content_result == expected
-    attribute_result = test_attributes[u'class']
-    expected = u'required'
-    assert attribute_result == expected
+    # fixing a class for the form element, restricts the HTML we can generate
+    # attribute_result = test_attributes[u'class']
+    # expected = u'required'
+    # assert attribute_result == expected
 
     # tagname == 'input'
     content_result = forms.required_filter('input', test_attributes, 'new_content', 'test_context', test_bind)
