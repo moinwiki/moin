@@ -137,7 +137,7 @@ class TestConverter(Base):
                 '/page/body/div/list[@item-label-generate="ordered"][list-item[1]/list-item-body[text()="Ordered Item 1"]][list-item[2]/list-item-body[text()="Ordered Item 2"]]'),
             # ORDERED LIST with upperalpha numeration --> ordered list with upper-alpha list-style-type
             ('<article><orderedlist numeration="upperalpha"><listitem>Ordered Item 1</listitem><listitem>Ordered Item 2</listitem></orderedlist></article>',
-            # <page><body><div html:class="article"><list item-label-generage="ordered" list-style-type="upper-alpha"><list-item><list-item-body>Ordered Item 1</list-item-body></list-item><list-item><list-item-body>Ordered Item 2</list-item-body></list-item></list></div></body></page>
+             # <page><body><div html:class="article"><list item-label-generage="ordered" list-style-type="upper-alpha"><list-item><list-item-body>Ordered Item 1</list-item-body></list-item><list-item><list-item-body>Ordered Item 2</list-item-body></list-item></list></div></body></page>
                 '/page/body/div/list[@item-label-generate="ordered"][@list-style-type="upper-alpha"][list-item[1]/list-item-body[text()="Ordered Item 1"]][list-item[2]/list-item-body[text()="Ordered Item 2"]]'),
             # ORDERED LIST with loweralpha numeration --> ordered list with lower-alpha list-style-type
             ('<article><orderedlist numeration="loweralpha"><listitem>Ordered Item 1</listitem><listitem>Ordered Item 2</listitem></orderedlist></article>',

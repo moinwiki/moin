@@ -402,7 +402,7 @@ class Item(object):
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
         # get rid of None values
-        update_meta = {key:value for key, value in update_meta.items() if value is not None}
+        update_meta = {key: value for key, value in update_meta.items() if value is not None}
         meta.update(update_meta)
         return self._save(meta, data, contenttype_guessed=contenttype_guessed, comment=comment)
 
