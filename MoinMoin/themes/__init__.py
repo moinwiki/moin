@@ -80,15 +80,22 @@ class ThemeSupport(object):
         self.meta_items = []  # list of (name, content) for html head <meta>
 
     def get_action_tabs(self, item_name, current_endpoint):
+
+        if item_name in ['@NONAMEGIVEN', '']:
+            return []
+
+        exists = flaskg.storage.has_item(item_name)
+            
         navtabs_endpoints = ['frontend.show_item', 'frontend.history',
                             'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
                             'frontend.index', 'frontend.sitemap','frontend.similar_names',
                             ]
+
         if self.user.may.write(item_name):
             navtabs_endpoints.append('frontend.modify_item')
 
         icon = self.get_endpoint_iconmap()
-        exists = flaskg.storage.has_item(item_name)
+
         navtabs = []
         spl_active = [('frontend.history', 'frontend.diff'),]
 
@@ -119,6 +126,12 @@ class ThemeSupport(object):
         return navtabs
 
     def get_local_panel(self, item_name):
+
+        if item_name in ['@NONAMEGIVEN', '']:
+            return [], [], []
+
+        exists = flaskg.storage.has_item(item_name)
+
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
@@ -130,7 +143,6 @@ class ThemeSupport(object):
         item_actions = []
 
         icon = self.get_endpoint_iconmap()
-        exists = flaskg.storage.has_item(item_name)
 
         for endpoint, label, title, check_exists in app.cfg.item_views:
             if endpoint not in app.cfg.endpoints_excluded:
