@@ -13,9 +13,11 @@ from flask import Response
 from flask import current_app as app
 from flask import g as flaskg
 
+from whoosh.query import Term, Or, And
+
 from MoinMoin.apps.misc import misc
 
-from MoinMoin.constants.keys import MTIME
+from MoinMoin.constants.keys import MTIME, NAME_EXACT, NAMESPACE
 from MoinMoin.themes import render_template
 
 
@@ -30,18 +32,18 @@ def sitemap():
 
     sitemap = []
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
-        name = rev.name
+        fqnames = rev.fqnames
         mtime = rev.meta[MTIME]
         # these are the content items:
         changefreq = "daily"
         priority = "0.5"
-        sitemap.append((name, format_timestamp(mtime), changefreq, priority))
-    # add an entry for root url
-    root_item = app.cfg.item_root
-    revs = list(flaskg.storage.documents(wikiname=app.cfg.interwikiname, name=root_item))
-    if revs:
-        mtime = revs[0].meta[MTIME]
-        sitemap.append((u'', format_timestamp(mtime), "hourly", "1.0"))
+        sitemap += [((fqname, format_timestamp(mtime), changefreq, priority)) for fqname in fqnames]
+    # add entries for root urls
+    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root)) for namespace, _ in app.cfg.namespace_mapping]
+    query = Or([And([Term(NAME_EXACT, root), Term(NAMESPACE, namespace)]) for namespace, root in root_mapping])
+    for rev in flaskg.storage.search(q=query):
+        mtime = rev.meta[MTIME]
+        sitemap.append((rev.meta[NAMESPACE], format_timestamp(mtime), "hourly", "1.0"))
     sitemap.sort()
     content = render_template('misc/sitemap.xml', sitemap=sitemap)
     return Response(content, mimetype='text/xml')
@@ -57,6 +59,8 @@ def urls_names():
     See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
     """
     # XXX we currently also get deleted items, fix this
-    item_names = sorted([rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)])
-    content = render_template('misc/urls_names.txt', item_names=item_names)
+    fq_names = []
+    for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
+        fq_names += [fqname for fqname in rev.fqnames]
+    content = render_template('misc/urls_names.txt', fq_names=fq_names)
     return Response(content, mimetype='text/plain')

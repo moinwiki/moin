@@ -5,5 +5,6 @@
     <li><a href="{{ url_for('admin.userbrowser') }}">{{ _("Users") }}</a></li>
     <li><a href="{{ url_for('admin.wikiconfig') }}">{{ _("Show Wiki Configuration") }}</a></li>
     <li><a href="{{ url_for('admin.wikiconfighelp') }}">{{ _("Wiki Configuration Help") }}</a></li>
+    <li><a href="{{ url_for('admin.trash', namespace='all') }}">{{ _("Trash") }}</a></li>
 </ul>
 {% endblock %}

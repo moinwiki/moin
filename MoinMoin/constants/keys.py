@@ -39,6 +39,7 @@ MTIME = u"mtime"
 EXTRA = u"extra"
 COMMENT = u"comment"
 SUMMARY = u"summary"
+TRASH = u"trash"
 
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
@@ -114,3 +115,16 @@ CLOSED = u"closed"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
+
+# key for composite name
+FQNAME = u'fqname'
+# Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
+FIELDS = [
+    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS
+]
+# Fields that can be used as a unique identifier.
+UFIELDS = [
+    NAME_EXACT, ITEMID, REVID,
+]
+# Unique fields that are stored as list.
+UFIELDS_TYPELIST = [NAME_EXACT, ]

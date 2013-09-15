@@ -2,13 +2,13 @@
 {% block content %}
 <h1>{{ _("Item not found, create it now?") }}</h1>
 <p>
-{{ _("Item '%(name)s' does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.", name=item_name) }}
+{{ _("Item '%(fqname)s' does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.", fqname=fqname) }}
 </p>
 <table class="zebra">
     {% for e in itemtypes %}
     <tr>
         <td>
-            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=e.itemtype) }}">{{ e.display_name }}</a> - {{ e.description }}
+            <a href="{{ url_for('frontend.modify_item', item_name=fqname, itemtype=e.itemtype) }}">{{ e.display_name }}</a> - {{ e.description }}
         </td>
     </tr>
     {% endfor %}
