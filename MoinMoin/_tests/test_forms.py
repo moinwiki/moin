@@ -12,7 +12,7 @@ from calendar import timegm
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.forms import DateTimeUNIX, JSON
+from MoinMoin.forms import DateTimeUNIX, JSON, Names
 from MoinMoin.util.interwiki import CompositeName
 from MoinMoin.items import Item
 from MoinMoin._tests import become_trusted
@@ -71,6 +71,9 @@ def test_validjson():
              ([u'existingname'], 'ns1/ns2', '', 'existingname', False),
              ]
     for name, namespace, field, value, result in tests:
-        x = JSON(json.dumps({NAME: name, NAMESPACE: namespace}))
-        state = {FQNAME: CompositeName(namespace, field, value), ITEMID: None}
-        assert x.validate(state) == result
+        meta = {NAME:name, NAMESPACE: namespace}
+        x = JSON(json.dumps(meta))
+        y = Names(name)
+        state = dict(fqname=CompositeName(namespace, field, value), itemid=None, meta=meta)
+        value = x.validate(state) and y.validate(state)
+        assert value == result

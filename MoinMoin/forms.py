@@ -120,8 +120,11 @@ class ValidName(Validator):
     def validate(self, element, state):
         # Make sure that the other meta is valid before validating the name.
         # TODO Change/Make sure that the below statement holds good.
-        if not element.parent.parent['extra_meta_text'].valid:
-            return False
+        try:
+            if not element.parent.parent['extra_meta_text'].valid:
+                return False
+        except AttributeError:
+            pass
         try:
             validate_name(state['meta'], state[ITEMID])
         except NameNotValidError as e:
