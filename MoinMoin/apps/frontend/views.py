@@ -46,8 +46,9 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
+from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
+                            RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
+                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
@@ -361,8 +362,7 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.add_trail(item_name)
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
+    item_displayed.send(app, item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
         result = item.do_show(rev)
@@ -438,8 +438,7 @@ def show_item_meta(item):
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
+    item_displayed.send(app, item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -737,7 +736,7 @@ def jfu_server(item_name):
         item = Item.create(item_name)
         revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
-                           item_name=item_name)
+                           item_name=item_name, action=ACTION_SAVE)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
@@ -890,8 +889,13 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
     refs_here = _backrefs(item_name)
     return render_template('link_list_item_panel.html',
+                           item=item,
                            item_name=item_name,
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
                            item_names=refs_here
@@ -1046,18 +1050,25 @@ def subscribe_item(item_name):
     u = flaskg.user
     cfg = app.cfg
     msg = None
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404)
     if not u.valid:
         msg = _("You must login to use this action: %(action)s.", action="subscribe/unsubscribe"), "error"
     elif not u.may.read(item_name):
         msg = _("You are not allowed to subscribe to an item you may not read."), "error"
-    elif u.is_subscribed_to([item_name]):
+    elif u.is_subscribed_to(item):
         # Try to unsubscribe
-        if not u.unsubscribe(item_name):
-            msg = _("Can't remove regular expression subscription!") + u' ' + \
-                _("Edit the subscription regular expressions in your settings."), "error"
+        if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
+            msg = _(
+                "Can't remove the subscription! You are subscribed to this page in some other way.") + u' ' + _(
+                "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
-        if not u.subscribe(item_name):
+        if not u.subscribe(ITEMID, item.meta[ITEMID]):
             msg = _('You could not get subscribed to this item.'), "error"
     if msg:
         flash(*msg)
@@ -1480,6 +1491,12 @@ class UserSettingsOptionsForm(Form):
     submit_label = L_('Save')
 
 
+class UserSettingsSubscriptionsForm(Form):
+    name = 'usersettings_subscriptions'
+    subscriptions = Subscriptions
+    submit_label = L_('Save')
+
+
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
 def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
@@ -1519,6 +1536,7 @@ def usersettings():
         ui=UserSettingsUIForm,
         navigation=UserSettingsNavigationForm,
         options=UserSettingsOptionsForm,
+        subscriptions=UserSettingsSubscriptionsForm,
     )
     forms = dict()
 
@@ -1765,6 +1783,10 @@ def similar_names(item_name):
     """
     list similar item names
     """
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
     start, end, matches = findMatches(item_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
@@ -1781,6 +1803,7 @@ def similar_names(item_name):
                 item_names.append(name)
     return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
+                           item=item,
                            item_name=item_name,  # XXX no item
                            item_names=item_names)
 

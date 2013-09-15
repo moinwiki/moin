@@ -29,6 +29,9 @@ from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
 
+COLS = 60
+ROWS = 10
+
 
 class Enum(BaseEnum):
     """
@@ -157,6 +160,9 @@ Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
 
 Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
     label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+
+Subscriptions = MyJoinedString.of(String).with_properties(widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
+    label=L_('Subscriptions'), optional=True, separator='\n', separator_regex=re.compile(r'[\r\n]+'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

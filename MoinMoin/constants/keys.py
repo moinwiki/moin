@@ -22,6 +22,7 @@ USERGROUP = u"usergroup"
 # needs more precise name / use case:
 SOMEDICT = u"somedict"
 
+# TODO review plural constants
 CONTENTTYPE = u"contenttype"
 ITEMTYPE = u"itemtype"
 SIZE = u"size"
@@ -66,7 +67,9 @@ THEME_NAME = u"theme_name"
 LOCALE = u"locale"
 TIMEZONE = u"timezone"
 ENC_PASSWORD = u"enc_password"
-SUBSCRIBED_ITEMS = u"subscribed_items"
+SUBSCRIPTIONS = u"subscriptions"
+SUBSCRIPTION_IDS = u"subscription_ids"
+SUBSCRIPTION_PATTERNS = u"subscription_patterns"
 BOOKMARKS = u"bookmarks"
 QUICKLINKS = u"quicklinks"
 SESSION_KEY = u"session_key"
@@ -83,6 +86,8 @@ WANT_TRIVIAL = u"want_trivial"
 EMAIL_SUBSCRIBED_EVENTS = u"email_subscribed_events"
 DISABLED = u"disabled"
 EMAIL_UNVALIDATED = u"email_unvalidated"
+NAMERE = u"namere"
+NAMEPREFIX = u"nameprefix"
 
 # in which backend is some revision stored?
 BACKENDNAME = u"backendname"
@@ -91,8 +96,7 @@ USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
     NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
-    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIBED_ITEMS, QUICKLINKS,
-    CSS_URL,
+    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIPTIONS, QUICKLINKS, CSS_URL,
 ]
 
 # keys for blog homepages
@@ -114,3 +118,13 @@ CLOSED = u"closed"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
+
+# values for ACTION key
+ACTION_SAVE = u"SAVE"
+ACTION_REVERT = u"REVERT"
+ACTION_TRASH = u"TRASH"
+ACTION_COPY = u"COPY"
+ACTION_RENAME = u"RENAME"
+
+# defaul LOCALE key value
+DEFAULT_LOCALE = u"en"
