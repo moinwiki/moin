@@ -362,8 +362,7 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
     flaskg.user.add_trail(item_name)
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
+    item_displayed.send(app, item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
         result = item.do_show(rev)
@@ -439,8 +438,7 @@ def show_item_meta(item):
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
+    item_displayed.send(app, item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
