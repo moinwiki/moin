@@ -377,7 +377,7 @@ class TestIndexingMiddleware(object):
         item_name_u = u'%s/userprofile' % NAMESPACE_USERPROFILES
         fqname_u = split_fqname(item_name_u)
         item = self.imw.get_item(**fqname_u.query)
-        rev_u = item.store_revision(dict(name=[fqname_u.value,], namespace=fqname_u.namespace, contenttype=u'text/plain;charset=utf-8'),
+        rev_u = item.store_revision(dict(name=[fqname_u.value], namespace=fqname_u.namespace, contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_u)), return_rev=True)
         item = self.imw[item_name_n]
         rev_n = item.get_revision(rev_n.revid)

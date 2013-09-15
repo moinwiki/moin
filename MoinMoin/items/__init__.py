@@ -685,7 +685,7 @@ class Item(object):
         fqname = self.fqname
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
-        if not fqname.value.startswith(NAMESPACE_ALL+'/') and fqname.value != NAMESPACE_ALL:
+        if not fqname.value.startswith(NAMESPACE_ALL + '/') and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return self.make_flat_index(revs, isglobalindex)
