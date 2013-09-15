@@ -71,7 +71,7 @@ def test_validjson():
              ([u'existingname'], 'ns1/ns2', '', 'existingname', False),
              ]
     for name, namespace, field, value, result in tests:
-        meta = {NAME:name, NAMESPACE: namespace}
+        meta = {NAME: name, NAMESPACE: namespace}
         x = JSON(json.dumps(meta))
         y = Names(name)
         state = dict(fqname=CompositeName(namespace, field, value), itemid=None, meta=meta)

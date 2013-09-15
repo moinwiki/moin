@@ -163,7 +163,7 @@ class ThemeSupport(object):
         else:
             # We cannot check if wiki pages exists in remote wikis
             exists = True
-        wiki_href = url_for_item(itemname, wiki_name=wikiname,namespace=NAMESPACE_USERPROFILES)
+        wiki_href = url_for_item(itemname, wiki_name=wikiname, namespace=NAMESPACE_USERPROFILES)
         return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):

@@ -171,7 +171,6 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
         return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
 
 
-
 def split_fqname(url):
     """
     Split a fully qualified url into namespace, field and pagename
@@ -229,7 +228,7 @@ def split_interwiki(wikiurl):
             interwiki_mapping.add(interwiki_name.split('/')[0])
         wikiname, item_name = _split_namespace(interwiki_mapping, wikiurl)
         if wikiname:
-            wikiurl = wikiurl[len(wikiname)+1:]
+            wikiurl = wikiurl[len(wikiname) + 1:]
         namespace, field, item_name = split_fqname(wikiurl)
         if not wikiname:
             wikiname = u'Self'

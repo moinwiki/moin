@@ -244,7 +244,7 @@ def _trashed(namespace):
     if not namespace == NAMESPACE_ALL:
         q = And([q, Term(NAMESPACE, namespace), ])
     trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
-    results = [] 
+    results = []
     for rev in flaskg.storage.search(q, limit=None):
         meta = rev.meta
         results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
