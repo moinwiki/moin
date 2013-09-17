@@ -26,6 +26,7 @@
     <ul class="moin-nav nav-tabs moin-shadow">
         <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
         <li><a href="#meta" data-toggle="tab">Edit Meta</a></li>
+        <li><a href="#acl" data-toggle="tab">Edit ACL</a></li>
         <li><a href="#help" data-toggle="tab">Help</a></li>
     </ul>    
     <div class="tab-content">
@@ -42,6 +43,17 @@
                     <div class="form-group">
                         {{ gen.label(field) }}
                         {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='form-control') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane active" id="acl">
+            <div class="row">
+                {% set field = form['meta_form']['acl'] %}
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ gen.label(field) }}
+                        {{ gen.textarea(field, rows='1', class='form-control') }}
                     </div>
                 </div>
             </div>

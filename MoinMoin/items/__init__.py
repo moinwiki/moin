@@ -178,6 +178,7 @@ class BaseChangeForm(TextChaizedForm):
 class BaseMetaForm(Form):
     itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
     contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
+    acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List"))
     # Disabled - Flatland doesn't distinguish emtpy value and nonexistent
     # value, while an emtpy acl and no acl have different semantics
     #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
@@ -424,6 +425,9 @@ class Item(object):
             # 'strict', which causes KeyError to be thrown when meta contains
             # meta keys that are not present in self['meta_form']. Setting
             # policy to 'duck' suppresses this behavior.
+            if not meta.has_key('acl'):
+                meta['acl'] = "None"
+        
             self['meta_form'].set(meta, policy='duck')
             for k in self['meta_form'].field_schema_mapping.keys():
                 meta.pop(k, None)
@@ -469,6 +473,14 @@ class Item(object):
             contenttype_current = None
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
+
+        if meta.has_key('acl'):
+            # we treat this as nothing specified, so fallback to default
+            if meta['acl'] == 'None':
+                meta.pop('acl')
+            # this is treated as a rule which matches nothing
+            elif meta['acl'] == 'Empty':
+                meta['acl'] = ''
 
         # we store the previous (if different) and current item name into revision metadata
         # this is useful for rename history and backends that use item uids internally
