@@ -311,6 +311,7 @@ def search(item_name):
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
+                                   history=history,
             )
             flaskg.clock.stop('search render')
     else:
