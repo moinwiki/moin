@@ -1831,7 +1831,8 @@ def similar_names(item_name):
     """
     list similar item names
     """
-    start, end, matches = findMatches(item_name)
+    fq_name = split_fqname(item_name)
+    start, end, matches = findMatches(fq_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
     # 8 item_name
@@ -1839,40 +1840,42 @@ def similar_names(item_name):
     # 3 "{0}...{1}".format(start, end)
     # 1 "{0}...".format(start)
     # 2 "...{1}".format(end)
-    item_names = []
+    fq_names = []
     for wanted_rank in [8, 4, 3, 1, 2, ]:
-        for name in keys:
-            rank = matches[name]
+        for fqname in keys:
+            rank = matches[fqname]
             if rank == wanted_rank:
-                item_names.append(name)
+                fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
                            item_name=item_name,  # XXX no item
-                           item_names=item_names)
+                           fqname=split_fqname(item_name),
+                           fq_names=fq_names)
 
 
-def findMatches(item_name, s_re=None, e_re=None):
+def findMatches(fq_name, s_re=None, e_re=None):
     """ Find similar item names.
 
-    :param item_name: name to match
+    :param fq_name: fqname to match
     :param s_re: start re for wiki matching
     :param e_re: end re for wiki matching
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)
-                  if rev.name is not None]
-    if item_name in item_names:
-        item_names.remove(item_name)
+
+    fq_names = [fqname for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname) for fqname in rev.fqnames
+                if rev.fqname is not None]
+    if fq_name in fq_names:
+        fq_names.remove(fq_name)
     # Get matches using wiki way, start and end of word
-    start, end, matches = wikiMatches(item_name, item_names, start_re=s_re, end_re=e_re)
+    start, end, matches = wikiMatches(fq_name, fq_names, start_re=s_re, end_re=e_re)
     # Get the best 10 close matches
     close_matches = {}
     found = 0
-    for name in closeMatches(item_name, item_names):
-        if name not in matches:
-            # Skip names already in matches
-            close_matches[name] = 8
+    for fqname in closeMatches(fq_name, fq_names):
+        if fqname not in matches:
+            # Skip fqname already in matches
+            close_matches[fqname] = 8
             found += 1
             # Stop after 10 matches
             if found == 10:
@@ -1882,18 +1885,18 @@ def findMatches(item_name, s_re=None, e_re=None):
     return start, end, matches
 
 
-def wikiMatches(item_name, item_names, start_re=None, end_re=None):
+def wikiMatches(fq_name, fq_names, start_re=None, end_re=None):
     """
-    Get item names that starts or ends with same word as this item name.
+    Get fqnames that starts or ends with same word as this fq_name.
 
     Matches are ranked like this:
-        4 - item is subitem of item_name
+        4 - item is subitem of fq_name
         3 - match both start and end
         2 - match end
         1 - match start
 
-    :param item_name: item name to match
-    :param item_names: list of item names
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
     :param start_re: start word re (compile regex)
     :param end_re: end word re (compile regex)
     :rtype: tuple
@@ -1906,6 +1909,7 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.
+    item_name = fq_name.value
     words = item_name.split()
     match = start_re.match(item_name)
     if match:
@@ -1923,41 +1927,43 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
     subitem = item_name + '/'
 
     # Find any matching item names and rank by type of match
-    for name in item_names:
+    for fqname in fq_names:
+        name = fqname.value
         if name.startswith(subitem):
-            matches[name] = 4
+            matches[fqname] = 4
         else:
             if name.startswith(start):
-                matches[name] = 1
+                matches[fqname] = 1
             if name.endswith(end):
-                matches[name] = matches.get(name, 0) + 2
+                matches[fqname] = matches.get(name, 0) + 2
 
     return start, end, matches
 
 
-def closeMatches(item_name, item_names):
+def closeMatches(fq_name, fq_names):
     """ Get close matches.
 
-    Return all matching item names with rank above cutoff value.
+    Return all matching fqnames with rank above cutoff value.
 
-    :param item_name: item name to match
-    :param item_names: list of item names
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
     :rtype: list
     :returns: list of matching item names, sorted by rank
     """
-    if not item_names:
+    if not fq_names:
         return []
     # Match using case insensitive matching
-    # Make mapping from lower item names to item names.
+    # Make mapping from lower item names to fqnames.
     lower = {}
-    for name in item_names:
+    for fqname in fq_names:
+        name = fqname.value
         key = name.lower()
         if key in lower:
-            lower[key].append(name)
+            lower[key].append(fqname)
         else:
-            lower[key] = [name]
-
+            lower[key] = [fqname]
     # Get all close matches
+    item_name = fq_name.value
     all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
                                             n=len(lower), cutoff=0.6)
 
