@@ -51,7 +51,7 @@
             <div class="col-lg-2 moin-logo">
                 {% if logo %}
                 <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                    <img class="img-circle" src="{{ '/static/logos/moinmoin.png' }}"/>
+                    <img class="img-circle" src="{{ '/static/logos/moinmoin.png' }}" alt="Site Logo"/>
                 </a>
                 {% endif %}
             </div>
@@ -143,14 +143,15 @@
                                        class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
                                        {{ item_name|shorten_item_name }}
                                     </a>
+                                    <i class="icon-double-angle-right icon-fixed-width"></i>
                                 {%- else -%}
                                     <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
                                        {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
                                        {{ item_name|shorten_item_name }}
                                     </a>
+                                    <i class="icon-double-angle-right icon-fixed-width"></i>
                                 {%- endif %}
                               </li>
-                              <i class="icon-double-angle-right icon-fixed-width"></i>
                             {% endif %}
                             {% endfor %}
                         {% endif %}
@@ -277,8 +278,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="navbar"> <!--footer-->
-                    {{ credits }}
                     {{ footer_logos }}
+                    {{ credits }}
                 </div>
             </div>
         </div> <!--/row for footer-->

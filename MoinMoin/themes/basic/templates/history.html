@@ -38,7 +38,7 @@
                 {% for doc in history %}
                 <tr>
                     <td>{{ doc.name|join(' | ') }}</td>
-                    <td title="{{ _("Size") }}: {{ doc.size }} &#013;{{ doc.contenttype|shorten_ctype }}: {{ doc.contenttype }}" >
+                    <td title="{{ _("Size") }}: {{ doc.size }} &#10;{{ doc.contenttype|shorten_ctype }}: {{ doc.contenttype }}" >
                         {{ doc.revid | shorten_id }}
                     </td>
                     <td>{{ doc.mtime|datetimeformat }}</td>
@@ -90,7 +90,10 @@
                         </a> 
                     </li>
                     {%- endif %}
-                </tr>
+                </ul>
+                </div>
+            </td>
+            </tr>
                 {% endfor %}
             </tbody>
             {% if bookmark_time %}

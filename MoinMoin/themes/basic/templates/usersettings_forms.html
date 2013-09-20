@@ -19,14 +19,18 @@
         'locale',
         ] %}
         <div class="form-group">
-            <dt>
-            {{ gen.label(form[e]) }}
-            </dt>
-            {{ gen.select.open(form[e], class="btn") }}
-            {% for value, label in form[e].properties['choice_specs'] %}
-              {{ gen.option(form[e], value=value, contents=label or value) }}
-            {% endfor %}
-            {{ gen.select.close() }}
+            <dl>
+                <dt>
+                    {{ gen.label(form[e]) }}
+                </dt>
+                <dd>
+                    {{ gen.select.open(form[e], class="btn") }}
+                    {% for value, label in form[e].properties['choice_specs'] %}
+                      {{ gen.option(form[e], value=value, contents=label or value) }}
+                    {% endfor %}
+                    {{ gen.select.close() }}
+                </dd>
+            </dl>
         </div>
     {% endfor %}
 {{ forms.render_hidden('part', 'personal') }}
@@ -46,9 +50,7 @@
         'password2',
         ] %}
         <div class="form-group">
-            <dt>
-                {{ gen.label(form[e]) }}
-            </dt>
+            {{ gen.label(form[e]) }}
             {{ gen.input(form[e], type="password", class="form-control") }}
         </div>
     {% endfor %}
@@ -66,9 +68,7 @@
 {% endif %}
 {{ forms.render_errors(form) }}
 <div class="form-group">
-    <dt>
-        {{ gen.label(form['email']) }}
-    </dt>
+    {{ gen.label(form['email']) }}
     <div class="input-group">
         {{ gen.input(form['email'], type="email", class="form-control") }}
         <span class="input-group-addon"><i class="icon-envelope"></i></span>
@@ -85,14 +85,18 @@
 {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
 {{ forms.render_errors(form) }}
     <div class="form-group">
-        <dt>
-        {{ gen.label(form['theme_name']) }}
-        </dt>
-        {{ gen.select.open(form['theme_name'], class="btn") }}
-        {% for value, label in form['theme_name'].properties['choice_specs'] %}
-          {{ gen.option(form['theme_name'], value=value, contents=label or value) }}
-        {% endfor %}
-        {{ gen.select.close() }}
+        <dl>
+            <dt>
+                {{ gen.label(form['theme_name']) }}
+            </dt>
+            <dd>
+                {{ gen.select.open(form['theme_name'], class="btn") }}
+                {% for value, label in form['theme_name'].properties['choice_specs'] %}
+                  {{ gen.option(form['theme_name'], value=value, contents=label or value) }}
+                {% endfor %}
+                {{ gen.select.close() }}
+            </dd>
+        </dl>
     </div>
     {% for e in [
         'css_url',

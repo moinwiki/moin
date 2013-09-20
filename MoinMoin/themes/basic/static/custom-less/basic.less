@@ -87,6 +87,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .moin-breadcrumb {
   .breadcrumb;
+  > li {
+    &+li:before {
+      content: "\0020"; // Unicode space which is non-collapsing
+    }
+  }
 }
 
 .moin-nav {
