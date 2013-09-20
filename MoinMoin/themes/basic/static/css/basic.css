@@ -4378,6 +4378,9 @@ h6:focus .moin-permalink {
 .moin-breadcrumb > .active {
   color: #999999;
 }
+.moin-breadcrumb > li + li:before {
+  content: "\0020";
+}
 .moin-nav {
   margin-bottom: 0;
   padding-left: 0;
