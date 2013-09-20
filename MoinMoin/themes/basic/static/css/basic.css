@@ -4380,6 +4380,7 @@ h6:focus .moin-permalink {
 }
 .moin-breadcrumb > li + li:before {
   content: "\0020";
+  padding: 0px;
 }
 .moin-nav {
   margin-bottom: 0;
