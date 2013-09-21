@@ -839,7 +839,6 @@ def index(item_name):
 
     dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
-
     item_names = item_name.split(u'/')
     return render_template(item.index_template,
                            item_names=item_names,
@@ -1009,12 +1008,13 @@ def history(item_name):
 def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
-    terms = Term(WIKINAME, app.cfg.interwikiname)
+    terms = [Term(WIKINAME, app.cfg.interwikiname)]
+    fqname = split_fqname(namespace)
     if namespace != NAMESPACE_ALL:
-        terms = And([terms, Term(NAMESPACE, namespace)])
+        terms.append(Term(NAMESPACE, namespace))
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
-        terms = And([terms, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
+        terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
     revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
@@ -1041,6 +1041,7 @@ def global_history(namespace):
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
+                           fqname=fqname,
     )
 
 
