@@ -37,11 +37,11 @@
 {% endmacro %}
 
 {% block bootstrap_stylesheet %}
+    <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
 {% endblock %}
 
 {% block head %}
     {{ super() }}
-    <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
     <link media="all" rel="stylesheet" href="{{ theme_static('css/custom.css') }}" />
 {% endblock %}
 
