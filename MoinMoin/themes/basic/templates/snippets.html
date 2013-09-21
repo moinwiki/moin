@@ -37,3 +37,8 @@
 {{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
 {{ end }}
 {% endmacro %}
+
+{# Additional JavaScript #}
+{% macro add_scripts() -%}
+<script src="{{ url_for('frontend.template', filename='basic.js') }}"></script>
+{% endmacro %}

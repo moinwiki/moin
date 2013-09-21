@@ -5,6 +5,7 @@
 {% set footer_logos = snippets.creditlogos() %}
 {% set credits = snippets.credits() %}
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
+{% set basic_scripts = snippets.add_scripts() %}
 
 {% set current_url = request.url %}
 {% set current_path = request.path %}
@@ -283,4 +284,9 @@
         </div> <!--/row for footer-->
         {% endblock %}
 	</div><!--/container-->
+{% endblock %}
+
+{% block body_scripts %}
+    {{ super() }}
+    {{ basic_scripts }}
 {% endblock %}
