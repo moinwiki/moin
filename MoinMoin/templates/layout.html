@@ -82,8 +82,9 @@
                     {% if loop.first %}
                         <ul class="moin-bcs-subitems">
                             {% for namespace, root in theme_supp.get_namespaces(segment_name) -%}
-                            <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
-                           {%- endfor %}
+                                <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
+                            {%- endfor %}
+                                <li><a href="{{ url_for('frontend.global_views') }}">{{ "all" }}</a></li>
                         </ul></li>
                         </ul>
                     {% endif %}

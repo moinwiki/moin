@@ -131,6 +131,16 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
+@frontend.route('/+all')
+def global_views():
+    """
+    Provides a link to all the global views.
+    """
+    return render_template('all.html',
+                           title_name=_(u"Global Views."),
+                          )
+
+
 class LookupForm(Form):
     name = OptionalText.using(label='name')
     name_exact = OptionalText.using(label='name_exact')
