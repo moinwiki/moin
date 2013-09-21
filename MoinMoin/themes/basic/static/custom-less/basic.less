@@ -54,9 +54,12 @@ h1, h2, h3, h4, h5, h6 {
   .alert-info;
 }
 
-.moin-flash-warning, .moin-flash-error {
+.moin-flash-warning, .moin-flash-error, .moin-error {
   &>a {
     .alert-danger .alert-link;
+  }
+  &>li {
+    list-style-type: none;
   }
   .alert-danger;
 }
