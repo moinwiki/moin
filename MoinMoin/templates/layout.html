@@ -97,7 +97,7 @@
                                 {{ segment_name|shorten_fqname }}</a>
                                 <ul class="moin-bcs-subitems">
                                     {% for fq_name in theme_supp.get_fqnames(segment_name) -%}
-                                        <li><a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">{{ fq_name|shorten_fqname(length=7) }}</a></li>
+                                        <li><a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">{{ fq_name|shorten_fqname(length=25) }}</a></li>
                                     {%- endfor %}
                                 </ul>
                             </li>
