@@ -218,20 +218,28 @@ class ThemeSupport(object):
         return href, title, wiki_name
 
     @timed()
-    def navibar(self, item_name):
+    def navibar(self, fqname):
         """
         Assemble the navibar
 
         :rtype: list
         :returns: list of tuples (css_class, url, link_text, title)
         """
+        if not isinstance(fqname, CompositeName):
+            fqname = split_fqname(fqname)
+        item_name = fqname.value
         current = item_name
         # Process config navi_bar
         items = []
         for cls, endpoint, args, link_text, title in self.cfg.navi_bar:
             if endpoint == "frontend.show_root":
                 endpoint = "frontend.show_item"
-                args['item_name'] = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
+                root_fqname = fqname.get_root_fqname()
+                args['item_name'] = root_fqname.fullname
+            elif endpoint in ["frontend.global_history", "frontend.global_tags"]:
+                args['namespace'] = fqname.namespace
+            elif endpoint == "frontend.index":
+                args['item_name'] = fqname.namespace
             items.append((cls, url_for(endpoint, **args), link_text, title))
 
         # Add user links to wiki links.
