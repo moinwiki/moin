@@ -4305,21 +4305,30 @@ h6:focus .moin-permalink {
   color: #2d6987;
 }
 .moin-flash-warning,
-.moin-flash-error {
+.moin-flash-error,
+.moin-error {
   background-color: #f2dede;
   border-color: #eed3d7;
   color: #b94a48;
 }
 .moin-flash-warning > a,
-.moin-flash-error > a {
+.moin-flash-error > a,
+.moin-error > a {
   color: #953b39;
 }
+.moin-flash-warning > li,
+.moin-flash-error > li,
+.moin-error > li {
+  list-style-type: none;
+}
 .moin-flash-warning hr,
-.moin-flash-error hr {
+.moin-flash-error hr,
+.moin-error hr {
   border-top-color: #e6c1c7;
 }
 .moin-flash-warning .alert-link,
-.moin-flash-error .alert-link {
+.moin-flash-error .alert-link,
+.moin-error .alert-link {
   color: #953b39;
 }
 .moin-user-action-special {
