@@ -1,4 +1,4 @@
-{% set exists = storage.get_item(**fqname.query) %}
+{% set exists = fqname and storage.get_item(**fqname.query) %}
 <ul class="moin-itemviews panel">
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
@@ -76,8 +76,7 @@
             <a href="#" onClick="toggleTransclusionOverlays();return false;" title="{{ title }}">{{ label }}</a>
             </li>
         {%- endif %}
-
-            {%- if endpoint == 'special.supplementation' %}
+            {%- if endpoint == 'special.supplementation' and fqname %}
                 {%- for sub_item_name in cfg.supplementation_item_names %}
                     {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
                     {%- if not current_sub in cfg.supplementation_item_names %}
