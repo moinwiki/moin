@@ -642,7 +642,7 @@ class Item(object):
             fullnames = rev.meta[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
-                fullname_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, fullname)
+                fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
                 if not prefix is None:
                     relname = fullname[len(prefix):]
                     if '/' in relname:
@@ -651,11 +651,11 @@ class Item(object):
                         # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                         # 'foo/bar' will be found.
                         direct_relname = relname.partition('/')[0]
-                        if fullname not in added_fullnames:
-                            added_fullnames.add(fullname)
+                        if fullname_fqname not in added_fullnames:
+                            added_fullnames.add(fullname_fqname)
                             direct_fullname = prefix + direct_relname
-                            direct_fullname_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, direct_fullname)
-                            fqname = split_fqname(direct_fullname)
+                            direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
+                            fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
                             direct_rev = get_storage_revision(fqname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
                     else:
