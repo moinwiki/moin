@@ -131,13 +131,14 @@ def favicon():
     return app.send_static_file('logos/favicon.ico')
 
 
-@frontend.route('/+all')
+@frontend.route('/all')
 def global_views():
     """
     Provides a link to all the global views.
     """
     return render_template('all.html',
                            title_name=_(u"Global Views."),
+                           fqname=CompositeName(u'all', NAME_EXACT, u'')
                           )
 
 
@@ -839,16 +840,20 @@ def index(item_name):
 
     dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
+    fqname = item.fqname
+    if fqname.value == NAMESPACE_ALL:
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     item_names = item_name.split(u'/')
     return render_template(item.index_template,
                            item_names=item_names,
                            item_name=item_name,
-                           fqname=item.fqname,
+                           fqname=fqname,
                            files=files,
                            dirs=dirs,
                            initials=initials,
                            startswith=startswith,
                            form=form,
+                           title_name=_(u'Global Index'),
     )
 
 
@@ -1009,9 +1014,10 @@ def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    fqname = split_fqname(namespace)
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
+        fqname = split_fqname(namespace)
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
@@ -2052,9 +2058,10 @@ def global_tags(namespace):
     """
     title_name = _(u'All tags in this wiki')
     query = {WIKINAME: app.cfg.interwikiname}
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     if namespace != NAMESPACE_ALL:
         query[NAMESPACE] = namespace
-
+        fqname = split_fqname(namespace)
     revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
@@ -2084,6 +2091,7 @@ def global_tags(namespace):
     return render_template("global_tags.html",
                            headline=_("All tags in this wiki"),
                            title_name=title_name,
+                           fqname=fqname,
                            tags=tags)
 
 
