@@ -1375,3 +1375,6 @@ needs (use an absolute path).
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
 
+====================
+Namespaces
+====================
