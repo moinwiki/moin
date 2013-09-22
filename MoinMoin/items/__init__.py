@@ -183,8 +183,9 @@ class ACLValidator(Validator):
     acl_fail_msg = L_("The ACL string is invalid")
 
     def validate(self, element, state):
-        return self.note_error(element, state, 'acl_fail_msg')
-
+        return True
+        # return self.note_error(element, state, 'acl_fail_msg')
+        # remove the comment from the code above to see the ACL invalid message.
 
 class BaseMetaForm(Form):
 
