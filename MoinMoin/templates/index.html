@@ -219,3 +219,8 @@
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     {{ forms.file_uploader_scripts() }}
 {% endblock %}
+
+{% block head %}
+    {{ super() }}
+    {{ forms.file_uploader_styles() }}
+{% endblock %}

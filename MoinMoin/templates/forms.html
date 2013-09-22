@@ -104,7 +104,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro _valued_label(field, value, contents=none) %}
   {# XXX Patch <label>'s `for` attribute with value when element referred to is
      checkbox or radio. See: https://bitbucket.org/jek/flatland/issue/9 #}
-  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value), contents=contents, **kwargs) }}
+  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value.replace(' ', '')), contents=contents, **kwargs) }}
 {% endmacro %}
 
 {% macro _checkbox_label(field) %}
@@ -234,8 +234,12 @@ Helpers for using flatland with jinja2 to create html forms.
         </table>
     </div>
 {% endmacro %}
-{% macro file_uploader_scripts() %}
+
+{% macro file_uploader_styles() %}
     <link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
+{% endmacro %}
+
+{% macro file_uploader_scripts() %}
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
 {% endmacro %}
