@@ -23,7 +23,7 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname
 from MoinMoin.util.crypto import cache_key
@@ -235,7 +235,8 @@ class ThemeSupport(object):
             if endpoint == "frontend.show_root":
                 endpoint = "frontend.show_item"
                 root_fqname = fqname.get_root_fqname()
-                args['item_name'] = root_fqname.fullname
+                default_root = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
+                args['item_name'] = root_fqname.fullname if fqname.namespace != NAMESPACE_ALL else default_root
             elif endpoint in ["frontend.global_history", "frontend.global_tags"]:
                 args['namespace'] = fqname.namespace
             elif endpoint == "frontend.index":
