@@ -437,9 +437,9 @@ class Item(object):
             # 'strict', which causes KeyError to be thrown when meta contains
             # meta keys that are not present in self['meta_form']. Setting
             # policy to 'duck' suppresses this behavior.
-            if not meta.has_key('acl'):
+            if 'acl' not in meta:
                 meta['acl'] = "None"
-        
+
             self['meta_form'].set(meta, policy='duck')
             for k in self['meta_form'].field_schema_mapping.keys():
                 meta.pop(k, None)
@@ -486,7 +486,7 @@ class Item(object):
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
 
-        if meta.has_key('acl'):
+        if 'acl' in meta:
             # we treat this as nothing specified, so fallback to default
             if meta['acl'] == 'None':
                 meta.pop('acl')
