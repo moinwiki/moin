@@ -18,6 +18,7 @@
     <div id="checkmodifyview"> </div>
     {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
     {{ forms.render_errors(form) }}
+    {{ forms.render_errors(form['meta_form']['acl']) }}
     {#
        Workaround:
        For *Draw content, hide submit button and form['comment'], since *Draw

@@ -27,6 +27,7 @@ from flask import g as flaskg
 from flask import request, Response, redirect, abort, escape
 
 from flatland import Form
+from flatland.validation import Validator
 
 from jinja2 import Markup
 
@@ -175,10 +176,21 @@ class BaseChangeForm(TextChaizedForm):
     submit_label = L_('OK')
 
 
+class ACLValidator(Validator):
+    """
+    Meta Validator - currently used for validating ACLs only
+    """
+    acl_fail_msg = L_("The ACL string is invalid")
+
+    def validate(self, element, state):
+        return self.note_error(element, state, 'acl_fail_msg')
+
+
 class BaseMetaForm(Form):
+
     itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
     contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
-    acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List"))
+    acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List")).validated_by(ACLValidator())
     # Disabled - Flatland doesn't distinguish emtpy value and nonexistent
     # value, while an emtpy acl and no acl have different semantics
     #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
