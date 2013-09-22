@@ -1,7 +1,6 @@
 # Copyright: 2008 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
-
 """
     MoinMoin - init "logging" system
 
@@ -182,11 +181,11 @@ class EmailHandler(logging.Handler):
     """ A custom handler class which sends email for each logging event using
     wiki mail configuration
     """
-    def __init__(self, toaddrs=[], subject=''):
+    def __init__(self, toaddrs=[], subject=u''):
         """ Initialize the handler
 
         @param toaddrs: address or a list of email addresses whom to send email
-        @param subject: email's subject
+        @param subject: unicode email's subject
         """
         logging.Handler.__init__(self)
         if isinstance(toaddrs, basestring):
@@ -206,7 +205,7 @@ class EmailHandler(logging.Handler):
         # arguments and make the decision to send mail or not here
         toaddrs = self.toaddrs if self.toaddrs else cfg.admin_emails
         log_level = logging.getLevelName(self.level)
-        subject = self.subject if self.subject else '[{0}][{1}] Log message'.format(
+        subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
             cfg.sitename, log_level)
         msg = self.format(record)
         if app.cfg.email_tracebacks:
