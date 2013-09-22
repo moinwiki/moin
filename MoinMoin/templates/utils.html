@@ -69,8 +69,7 @@
                     title="{{ e.relname }}" class="subitem-link"
                     {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
                 {% if e.hassubitems %}
-                    <button class="expander" title="{{ _('Expand Subitem') }}"
-                        onclick="toggleSubtree(this)"></button>
+                    <button class="expander" title="{{ _('Expand Subitem') }}"></button>
                     {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.fullname), newtab, parentcaller) }}
                 {% endif %}
             </li>

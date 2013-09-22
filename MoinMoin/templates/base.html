@@ -49,7 +49,7 @@
     {% block icons_stylesheet %}
     <link rel="stylesheet" href="{{ url_for('serve.files', name='font_awesome', filename='css/font-awesome.css') }}" />
     {% endblock %}
-    
+
     <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
 
     {% block theme_stylesheets %}
@@ -80,8 +80,10 @@
         <script src="{{ url_for('serve.files', name='svgweb', filename='svg.js') }}"></script>
     <![endif]-->
     <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.i18n.min.js') }}"></script>
+    <script src="{{ url_for('frontend.template', filename='dictionary.js') }}"></script>
     <script src="{{ url_for('serve.files', name='bootstrap', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('frontend.template', filename='common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     {{ scripts }}
     <!--[if lt IE 9]>
         {# TODO: use a local copy later #}

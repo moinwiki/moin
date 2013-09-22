@@ -4,8 +4,8 @@
  * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
  */
 
-/*jslint browser: true, */
-/*global $:false */
+/*jslint browser: true, nomen: true*/
+/*global $:true, _:true */
 
 // This anonymous function is executed once after a global index page loads.
 $("document").ready(function () {
@@ -16,9 +16,9 @@ $("document").ready(function () {
         IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
         MESSAGE_VIEW_TIME = 4000, // life expectancy of delete/destroy status messages
         // delete and destroy process started and completed messages
-        {{ "ACTION_LOADING = {'delete': '%s', 'destroy': '%s'}," % (_("Deleting.."), _("Destroying..")) }}
-        {{ "ACTION_DONE = {'delete': '%s', 'destroy': '%s'}," % (_("Items deleted: "), _("Items destroyed: ")) }}
-        {{ "ACTION_FAILED = {'delete': '%s', 'destroy': '%s'};" % (_(", Items not deleted: "), _(", Items not destroyed: ")) }}
+        ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
+        ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
+        ACTION_FAILED = {'delete': _(", Items not deleted: "), 'destroy': _(", Items not destroyed: ")};
 
     // called by click handlers New Item, Delete item, and Destroy item within Actions dropdown menu
     function showpop(action) {
@@ -183,7 +183,7 @@ $("document").ready(function () {
     $("#moin-download-trigger").click(function () {
         if (!($("div.selected-item").length)) {
             // no items selected, show message for 4 seconds
-            {{ "$('.moin-index-message span').text('%s');" % _("Nothing was selected.") }}
+            $('.moin-index-message span').text(_("Nothing was selected."));
             $(".moin-index-message").fadeIn();
             setTimeout(function () {
                 $(".moin-index-message").fadeOut();
@@ -204,7 +204,7 @@ $("document").ready(function () {
     $(".moin-action-tab").click(function () {
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
         if (!($("div.selected-item").length)) {
-            {{ "$('.moin-index-message span').text('%s');" % _("Nothing was selected.") }}
+            $('.moin-index-message span').text(_("Nothing was selected."));
             $(".moin-index-message").fadeIn();
             setTimeout(function () {
                 $(".moin-index-message").fadeOut();

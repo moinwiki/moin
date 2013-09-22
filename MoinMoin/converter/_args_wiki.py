@@ -15,7 +15,7 @@ from ._args import Arguments
 # see parse() docstring for example
 _parse_rules = r'''
 (?:
-    ([-\w]+)
+    ([-&\w]+)
     =
 )?
 (?:
