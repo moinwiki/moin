@@ -19,7 +19,7 @@ class TestImg(object):
         buffer = StringIO()
         elem.write(buffer.write, **options)
         return buffer.getvalue()
-    
+
     def setup_class(self):
         self.converter = ConverterPage()
 
@@ -40,8 +40,8 @@ class TestImg(object):
         ]
 
         output = ('<div xmlns="http://www.w3.org/1999/xhtml"><p data-lineno="1"><span class="moin-transclusion" '
-                'data-href="/imagetest"><img src="/+get/+2882c905b2ab409fbf79cd05637a112d/imagetest">'
-                '</span></p></div>')
+                  'data-href="/imagetest"><img src="/+get/+2882c905b2ab409fbf79cd05637a112d/imagetest">'
+                  '</span></p></div>')
 
         for imagetype in tests:
             self.runTest(tree_xml.format(imagetype), output)
