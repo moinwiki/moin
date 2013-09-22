@@ -20,6 +20,8 @@ from __future__ import absolute_import, division
 import re
 import pytest
 
+from werkzeug import url_encode, url_decode
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -28,6 +30,7 @@ from flask import g as flaskg
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
+from MoinMoin.constants.contenttypes import CHARSET
 
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
@@ -328,22 +331,30 @@ class NodeVisitor(object):
         pass
 
     def visit_image(self, node):
-        new_node = moin_page.object(attrib={xlink.href: node['uri']})
-        # TODO: rewrite this more compact
-        alt = node.get('alt', None)
-        if alt:
-            new_node.set(moin_page.alt, node['uri'])
-        arg = node.get('width', u'')
-        if arg:
-            new_node.set(moin_page.width, arg)
-        arg = node.get('height', u'')
-        if arg:
-            new_node.set(moin_page.height, arg)
+        whitelist = ['width', 'height', 'align', 'alt', ]
+        attr = {}
+        for key in whitelist:
+            if node.get(key):
+                attr[html(key)] = node.get(key)
 
-        # TODO: there is no 'scale' attribute in moinwiki
-        arg = node.get('scale', u'')
-        if arg:
-            new_node.set(moin_page.scale, arg)
+        #there is no 'scale' attribute, hence absent from whitelist, handled separately
+        #TODO: Error reporting in case of bad input, currently prints on terminal
+        #TODO: mark_item_as_transclusion in html_out conflicts 'align' by adding item-wrapper
+
+        if node.get('scale'):
+            scaling_factor = int(node.get('scale')) / 100.0
+            for key in ('width', 'height'):
+                if html(key) in attr:
+                    attr[html(key)] = int(int(attr[html(key)]) * scaling_factor)
+
+        new_node = moin_page.object(attr)
+        url = Iri(node['uri'])
+        if url.scheme is None:
+            url.scheme = u'wiki.local'
+            query_keys = url_decode(url.query or '')
+            query_keys['do'] = 'get'
+            url.query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
+        new_node.set(xlink.href, url)
 
         self.open_moin_page_node(new_node)
 

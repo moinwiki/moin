@@ -1,27 +1,24 @@
 //
 // MoinMoin2 commonly used JavaScript functions
 //
-/*jslint browser: true, */
-/*global $:false */
+/*jslint browser: true, nomen: true, todo: true*/
+/*global $:true, _:true*/
 
-// This file is a Jinja2 template and is not jslint friendly in its raw state.
-// To run jslint, use your browser debugging tools to view, copy and paste this file to jslint.
-
-
+function MoinMoin() {
+    "use strict";
+}
 // Utility function to add a message to moin flash area.
-var MOINFLASHHINT = "moin-flash moin-flash-hint",
-    MOINFLASHINFO = "moin-flash moin-flash-info",
-    MOINFLASHWARNING = "moin-flash moin-flash-warning",
-    MOINFLASHERROR = "moin-flash moin-flash-error";
-function moinFlashMessage(classes, message) {
+MoinMoin.prototype.MOINFLASHINFO = "moin-flash moin-flash-info";
+MoinMoin.prototype.MOINFLASHWARNING = "moin-flash moin-flash-warning";
+MoinMoin.prototype.moinFlashMessage = function (classes, message) {
     "use strict";
     var pTag = '<P class="' + classes + '">' + message + '</p>';
     $(pTag).appendTo($('#moin-flash'));
-}
+};
 
 
 // Highlight currently selected link in side panel. Executed on page load
-function selected_link() {
+MoinMoin.prototype.selected_link = function () {
     "use strict";
     var selected = window.location.pathname,
         list = $('.panel'),
@@ -41,45 +38,43 @@ function selected_link() {
             }
         }
     }
-}
-$(document).ready(selected_link);
+};
 
 
 // toggleComments is executed when user clicks a Comments button and conditionally on dom ready.
-var pageComments = null; // will hold list of elements with class "comment"
-function toggleComments() {
+MoinMoin.prototype.toggleComments = function () {
     "use strict";
     // Toggle visibility of every tag with class "comment"
-    var buttons = $('.moin-toggle-comments-button > a');
+    var pageComments = $('.comment'),   // will hold list of elements with class "comment"
+        buttons = $('.moin-toggle-comments-button > a');
     if (pageComments.is(':hidden')) {
         pageComments.show();
-        {{ "buttons.attr('title', '%s');" % _("Hide comments") }}
+        buttons.attr('title', _("Hide comments"));
     } else {
         pageComments.hide();
-        {{ "buttons.attr('title', '%s');" % _("Show comments") }}
+        buttons.attr('title', _("Show comments"));
     }
-}
+};
 
 // Comments initialization is executed once after document ready.
-function initToggleComments() {
+MoinMoin.prototype.initToggleComments = function () {
     "use strict";
-    var titles;
-    pageComments = $('.comment');
+    var pageComments = $('.comment');
     if (pageComments.length > 0) {
         // There are comments, so show itemview Comments button
         $('.moin-toggle-comments-button').css('display', '');
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
-            toggleComments();
+            this.toggleComments();
         }
     }
-}
-$(document).ready(initToggleComments);
+    $('.moin-toggle-comments-button').click(this.toggleComments);
+};
 
 
 
 // toggleTransclusionOverlays is executed when user clicks a Transclusions button on the Show item page.
-function toggleTransclusionOverlays() {
+MoinMoin.prototype.toggleTransclusionOverlays = function () {
     "use strict";
     var overlays = $('.moin-item-overlay-ul, .moin-item-overlay-lr'),
         buttons;
@@ -87,18 +82,18 @@ function toggleTransclusionOverlays() {
         buttons = $('.moin-transclusions-button > a');
         if (overlays.is(':visible')) {
             overlays.hide();
-            {{ "buttons.attr('title', '%s');" % _("Show transclusions") }}
+            buttons.attr('title', _("Show transclusions"));
         } else {
             overlays.show();
-            {{ "buttons.attr('title', '%s');" % _("Hide transclusions") }}
+            buttons.attr('title', _("Hide transclusions"));
         }
     }
-}
+};
 
 // Transclusion initialization is executed once after document ready.
-function initTransclusionOverlays() {
+MoinMoin.prototype.initTransclusionOverlays = function () {
     "use strict";
-    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, titles,
+    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions,
         rightArrow = '\u2192';
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
@@ -132,14 +127,14 @@ function initTransclusionOverlays() {
     if (wrappers.length > 0) {
         $('.moin-transclusions-button').css('display', '');
     }
-}
-$(document).ready(initTransclusionOverlays);
+    $('.moin-transclusions-button').click(this.toggleTransclusionOverlays);
+};
 
 
 
 // Executed on page load.  If logged in user has less than 6 quicklinks,  do nothing.
 // Else, show the first five links, hide the others, and append a >>> button to show hidden quicklinks on mouseover.
-function QuicklinksExpander() {
+MoinMoin.prototype.QuicklinksExpander = function () {
     "use strict";
     var QUICKLINKS_EXPAND = ">>>",
         QUICKLINKS_COLLAPSE = "<<<",
@@ -169,7 +164,7 @@ function QuicklinksExpander() {
         return getLinks().slice(QUICKLINKS_MAX);
     }
     function hideShowHideableLinks(action) {
-        getHideableLinks().each(function (i) {
+        getHideableLinks().each(function () {
             if (action === "hide") {
                 $(this).hide();
             } else {
@@ -203,96 +198,94 @@ function QuicklinksExpander() {
         newThis = this;
         // When the user mouses over the icon link,
         // Show the hidden links
-        this.expandIcon.mouseenter(function (e) {
+        this.expandIcon.mouseenter(function () {
             newThis.showLinks();
             newThis.expandIcon.hide();
             newThis.closeIcon.show();
         });
-        this.closeIcon.mouseenter(function (e) {
+        this.closeIcon.mouseenter(function () {
             newThis.hideLinks();
             newThis.expandIcon.show();
             newThis.closeIcon.hide();
         });
     }
-}
-$(document).ready(QuicklinksExpander);
+};
 
 
 
 // When a page has subitems, this toggles the subtrees in the Subitems sidebar.
-function toggleSubtree(item) {
+MoinMoin.prototype.toggleSubtree = function (item) {
     "use strict";
     var subtree = $(item).siblings("ul");
     subtree.toggle(200);
-}
+};
 
 
 
 // Executed when user clicks insert-name button defined in modify.html.
 // When a page with subitems is modified, a subitems sidebar is present. User may
 // position caret in textarea and click button to insert name into textarea.
-function InsertName(fullname) {
+MoinMoin.prototype.InsertName = function (fullname) {
     "use strict";
-    var textArea, scrollTop, endPos, startPos;
+    var textArea, endPos, startPos;
     textArea = document.getElementById('f_content_form_data_text');
     startPos = textArea.selectionStart;
     endPos = textArea.selectionEnd;
     textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
     textArea.focus();
-    textArea.setSelectionRange(startPos+fullname.length,startPos+fullname.length);
-}
+    textArea.setSelectionRange(startPos + fullname.length, startPos + fullname.length);
+};
 
 
 // User Settings page enhancements - make long multi-form page appear as a shorter page
 // with a row of tabs at the top or side that may be clicked to select a form.
-$(function () {
+MoinMoin.prototype.enhanceUserSettings = function () {
     "use strict";
     // do nothing if this is not a User Settings page
     if ($('#moin-usersettings').length === 0) { return; }
 
     // create a UL that will be displayed as row of tabs or column of buttons
-    $(function () {
-        var tabs = $('#moin-usersettings'),
-            titles = $('<ul class="moin-tab-titles">'),
-            hashTag = window.location.hash;
-        // for each form on page, create a corresponding LI
-        $('.moin-tab-body').each(function () {
-            var li = $(document.createElement('li')),
-                // copy a-tag defined in heading
-                aTagClone = $(this).find('a').clone();
-            li.append(aTagClone);
-            titles.append(li);
-            // add click handler to show this form and hide all others
-            aTagClone.click(function (ev) {
-                var tab = this.hash;
-                window.location.hash = tab;
-                $('.moin-current-tab').removeClass('moin-current-tab');
-                $(ev.target).addClass('moin-current-tab');
-                tabs.children('.moin-tab-body').hide().removeClass('moin-current-form');
-                tabs.children(tab).show().addClass('moin-current-form');
-                return false;
-            });
+    var tabs = $('#moin-usersettings'),
+        titles = $('<ul class="moin-tab-titles">'),
+        hashTag = window.location.hash,
+        tab;
+    // for each form on page, create a corresponding LI
+    $('.moin-tab-body').each(function () {
+        var li = $(document.createElement('li')),
+        // copy a-tag defined in heading
+            aTagClone = $(this).find('a').clone();
+        li.append(aTagClone);
+        titles.append(li);
+        // add click handler to show this form and hide all others
+        aTagClone.click(function (ev) {
+            var tab = this.hash;
+            window.location.hash = tab;
+            $('.moin-current-tab').removeClass('moin-current-tab');
+            $(ev.target).addClass('moin-current-tab');
+            tabs.children('.moin-tab-body').hide().removeClass('moin-current-form');
+            tabs.children(tab).show().addClass('moin-current-form');
+            return false;
         });
-        // if this is foobar (or similar sidebar theme) remove buttons that work when javascript is disabled
-        $('.moin-tabs ul').remove();
-        // add tabs/buttons with click handlers to top/side per theme template
-        $('.moin-tabs').prepend(titles);
+    });
+    // if this is foobar (or similar sidebar theme) remove buttons that work when javascript is disabled
+    $('.moin-tabs ul').remove();
+    // add tabs/buttons with click handlers to top/side per theme template
+    $('.moin-tabs').prepend(titles);
 
-        // check for the hashtag and switch tab
-        if (hashTag !== '') {
-            var tab = $('.moin-tab-titles li a[href="'+ hashTag +'"]');
-            if (tab.length !== 0) {
-                $(tab)[0].click();
-            }
-        } else {
-            // click a tab to show first form and hide all other forms
-            $(titles.children('li').children('a')[0]).click();
+    // check for the hashtag and switch tab
+    if (hashTag !== '') {
+        tab = $('.moin-tab-titles li a[href="' + hashTag + '"]');
+        if (tab.length !== 0) {
+            $(tab)[0].click();
         }
+    } else {
+        // click a tab to show first form and hide all other forms
+        $(titles.children('li').children('a')[0]).click();
+    }
 
-        // save initial values of each form; used in changeHandler to detect changes to a form
-        $('#moin-usersettings form').each(function () {
-            $(this).data('initialForm', $(this).serialize());
-        });
+    // save initial values of each form; used in changeHandler to detect changes to a form
+    $('#moin-usersettings form').each(function () {
+        $(this).data('initialForm', $(this).serialize());
     });
 
     // add/remove "*" indicator if user changes/saves form
@@ -374,16 +367,16 @@ $(function () {
 
     // warn user if he tries to leave page when there are unsaved changes (Opera 12.10 does not support onbeforeunload)
     window.onbeforeunload = function () {
-        var discardMessage = ' {{ _("Your changes will be discarded if you leave this page without saving.") }} ';
+        var discardMessage = _("Your changes will be discarded if you leave this page without saving.");
         if ($('.moin-change-indicator').length > 0) {
             return discardMessage;
         }
     };
-});  // end of User Settings page enhancements
+};  // end of User Settings page enhancements
 
 
 // This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
-$(function () {
+MoinMoin.prototype.enhanceEdit = function () {
     // NOTE: if browser does not support sessionStorage, then auto-scroll is not available
     //       (sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+).
     //       IE8 does not scroll page after edit (cannot determine caret position within textarea).
@@ -391,14 +384,13 @@ $(function () {
 
     var TOPID = 'moin-content',
         LINENOATTR = "data-lineno",
-        MESSAGEMISSED = ' {{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }} ',
-        MESSAGEOBSOLETE = ' {{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }} ',
-        MESSAGEOLD = ' {{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }} ',
+        MESSAGEMISSED = _("You missed! Double-click on text or to the right of text to auto-scroll text editor."),
+        MESSAGEOBSOLETE = _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."),
+        MESSAGEOLD = _("Your browser is old. Upgrade to gain auto-scroll page after edit feature."),
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
         modifyForm,
         lineno,
-        message,
         caretLineno;
 
     // IE8 workaround for missing setSelectionRange
@@ -410,7 +402,7 @@ $(function () {
         range.moveStart('character', charStart);
         range.select();
         //warn user that features are missing with IE8
-        moinFlashMessage(MOINFLASHWARNING, MESSAGEOLD);
+        this.moinFlashMessage(this.MOINFLASHWARNING, MESSAGEOLD);
     }
 
     // called after +modify page loads -- scrolls the textarea after a doubleclick
@@ -565,7 +557,7 @@ $(function () {
             sessionStorage.removeItem('moinDoubleLineNo');
             if (lineno === '0') {
                 // give user a hint because the double-click was a miss
-                moinFlashMessage(MOINFLASHINFO, MESSAGEMISSED);
+                this.moinFlashMessage(this.MOINFLASHINFO, MESSAGEMISSED);
                 lineno = 1;
             }
             scrollTextarea(lineno - 1);
@@ -585,7 +577,7 @@ $(function () {
             modifyButton = $('.moin-modify-button')[0];
             if (modifyButton) {
                 // this is a "show" page, add doubleclick event handler to content node
-                $('#moin-content').dblclick(function (e) {
+                $('#moin-content').dblclick(function () {
                     document.location = modifyButton.href;
                 });
             }
@@ -593,8 +585,30 @@ $(function () {
             modifyForm = $('#moin-modify')[0];
             if (modifyForm) {
                 // user is editing with obsolete browser, give warning about missing features
-                moinFlashMessage(MOINFLASHWARNING, MESSAGEOBSOLETE);
+                this.moinFlashMessage(this.MOINFLASHWARNING, MESSAGEOBSOLETE);
             }
         }
     }
+};
+
+$(document).ready(function () {
+    "use strict";
+    var moin = new MoinMoin();
+
+    moin.selected_link();
+    moin.initToggleComments();
+    moin.initTransclusionOverlays();
+    moin.QuicklinksExpander();
+
+    $('.moin-insertname-action').click(function () {
+        var fullname = $(this).data('name');
+        moin.InsertName(fullname);
+    });
+
+    $('.expander').click(function() {
+        moin.toggleSubtree(this);
+    });
+
+    moin.enhanceUserSettings();
+    moin.enhanceEdit();
 });
