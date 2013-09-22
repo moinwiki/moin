@@ -120,6 +120,7 @@ Wiki features
 * "What did I contribute to?" functionality
 * Sitemap
 * Macro support
+* Multiple names and Namespaces support
 
 Markup support
 --------------
