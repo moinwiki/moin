@@ -314,7 +314,7 @@ def search(item_name):
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
-            
+
             lastword = query.split(' ')[-1]
             word_suggestions = []
             if len(lastword) > 2:
@@ -322,21 +322,21 @@ def search(item_name):
                 word_suggestions = corrector.suggest(lastword, limit=3)
             if ajax:
                 html = render_template('ajaxsearch.html',
-                                   results=results,
-                                   word_suggestions=u', '.join(word_suggestions),
-                                   name_suggestions=u', '.join(name_suggestions),
-                                   content_suggestions=u', '.join(content_suggestions),
-                                   omitted_words=u', '.join(omitted_words),
+                                        results=results,
+                                        word_suggestions=u', '.join(word_suggestions),
+                                        name_suggestions=u', '.join(name_suggestions),
+                                        content_suggestions=u', '.join(content_suggestions),
+                                        omitted_words=u', '.join(omitted_words),
                 )
             else:
                 html = render_template('search.html',
-                                   results=results,
-                                   name_suggestions=u', '.join(name_suggestions),
-                                   content_suggestions=u', '.join(content_suggestions),
-                                   query=query,
-                                   medium_search_form=search_form,
-                                   item_name=item_name,
-                                   omitted_words=u', '.join(omitted_words),
+                                        results=results,
+                                        name_suggestions=u', '.join(name_suggestions),
+                                        content_suggestions=u', '.join(content_suggestions),
+                                        query=query,
+                                        medium_search_form=search_form,
+                                        item_name=item_name,
+                                        omitted_words=u', '.join(omitted_words),
                 )
             flaskg.clock.stop('search render')
     else:
