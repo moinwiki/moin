@@ -556,7 +556,7 @@ class ValidRevert(Validator):
         Check whether the names present in the previous meta are not taken by some other item.
         """
         try:
-            validate_name(state['meta'], state[FQNAME], state['meta'].get(ITEMID))
+            validate_name(state['meta'], state['meta'].get(ITEMID))
             return True
         except NameNotValidError as e:
             self.invalid_name_msg = _(e)
