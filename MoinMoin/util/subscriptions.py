@@ -44,7 +44,6 @@ def get_subscribers(**meta):
             terms.extend(Term(SUBSCRIPTION_IDS, "{0}:{1}:{2}".format(TAGS, namespace, tag))
                          for tag in tags)
     query = Or(terms)
-    # TODO: check ACL behaviour - is this avoiding the protection layer?
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         result_iterators = [searcher.search(query, limit=None), ]
         subscription_patterns = searcher.lexicon(SUBSCRIPTION_PATTERNS)
@@ -54,8 +53,11 @@ def get_subscribers(**meta):
         for user in chain.from_iterable(result_iterators):
             email = user.get(EMAIL)
             if email:
-                locale = user.get(LOCALE, DEFAULT_LOCALE)
-                subscribers.add(Subscriber(user[ITEMID], user[NAME][0], email, locale))
+                from MoinMoin.user import User
+                u = User(uid=user.get(ITEMID))
+                if u.may.read(name):
+                    locale = user.get(LOCALE, DEFAULT_LOCALE)
+                    subscribers.add(Subscriber(user[ITEMID], user[NAME][0], email, locale))
     return subscribers
 
 

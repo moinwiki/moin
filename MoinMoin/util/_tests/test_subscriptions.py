@@ -9,7 +9,7 @@ import pytest
 
 from MoinMoin import user
 from MoinMoin.items import Item
-from MoinMoin.constants.keys import (ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
+from MoinMoin.constants.keys import (ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
                                      SUBSCRIPTIONS, TAGS)
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
@@ -66,6 +66,13 @@ class TestSubscriptions(object):
             subscribers = get_subscribers(**self.item.meta)
             subscribers_names = {subscriber.name for subscriber in subscribers}
             assert subscribers_names == expected_names
+
+        meta = {CONTENTTYPE: u'text/plain;charset=utf-8',
+                ACL: u"{0}: All:read,write".format(user1.name0)}
+        self.item._save(meta, comment=u"")
+        self.item = Item.create(self.item_name)
+        subscribers = get_subscribers(**self.item.meta)
+        assert {subscriber.name for subscriber in subscribers} == {user2.name0}
 
     def test_get_matched_subscription_patterns(self):
         meta = self.item.meta
