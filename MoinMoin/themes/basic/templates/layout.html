@@ -28,6 +28,8 @@
             class="{{ mainclass }}{% if current_url == href %} active{% endif %}" 
         {% elif current_url == href %}
             class="active"
+        {% elif current_path == href %}
+            class="active"
         {% endif %}
         {% endif %}
         rel="nofollow" 
