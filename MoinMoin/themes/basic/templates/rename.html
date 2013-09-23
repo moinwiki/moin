@@ -14,12 +14,10 @@
 	    	{{ gen.input(form['target'], type="text", class="form-control") }}
 	    </div>
 
-  		<div class="form-group">
-	    	{{ gen.label(form['comment']) }}
-	    	{{ gen.textarea(form['comment'], rows='1', class='form-control') }}
-	    </div>
-	    
-	    {{ forms.render_textcha(gen, form) }}
+	    <div class="form-group">
+        	{{ forms.render_textcha(gen, form) }}
+        	{{ gen.input(form['comment'], type="text", class="form-control") }}
+    	</div>
 
 		<div class="form-group">
 			{{ forms.render_submit(form, class='btn btn-primary') }}
