@@ -150,7 +150,7 @@ class Notification(object):
                                                   item_name=self.item_name))
         diff_url = self.generate_diff_url(domain)
         item_url = urljoin(domain, url_for('frontend.show_item', item_name=self.item_name))
-        if self.comment:
+        if self.comment is not None:
             comment = self.meta["comment"]
         else:
             comment = self.revs[0].meta["comment"]
