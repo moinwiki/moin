@@ -4234,7 +4234,8 @@ h6:focus .moin-permalink {
 .moin-logo {
   text-align: center;
   position: relative;
-  padding-top: 20px;
+  padding-top: 23px;
+  padding-bottom: 23px;
 }
 .moin-list-heading {
   background-color: #eeeeee;
