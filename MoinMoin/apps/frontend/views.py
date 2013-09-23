@@ -2008,6 +2008,7 @@ def sitemap(item_name):
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
                            sitemap=sitemap,
+                           fqname=fq_name,
     )
 
 
@@ -2037,7 +2038,7 @@ class NestedItemListBuilder(object):
             rev = item[CURRENT]
         except (AccessDenied, KeyError):
             return []
-        itemlinks = split_fqname_set(rev.meta.get(ITEMLINKS, []))
+        itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, [])))
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):

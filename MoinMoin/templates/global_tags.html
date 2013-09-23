@@ -6,7 +6,7 @@
 {% if tags %}
 <ul class="moin-tags">
     {% for cls, tag in tags %}
-    <li class="{{ cls }}"><a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a></li>
+    <li class="{{ cls }}"><a href="{{ url_for('frontend.tagged_items', tag=tag, namespace=fqname.namespace) }}">{{ tag }}</a></li>
     {% endfor %}
 </ul>
 {% endif %}
