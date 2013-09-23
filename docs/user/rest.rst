@@ -122,12 +122,15 @@ Images
 **Markup**: ::
 
  .. image:: example.png
+   :height: 100
+   :width: 200
+   :scale: 50%
+   :alt: text
+   :align: right
 
 **Result**:
 
  .. image:: example.png
- 
-**Note** **RSTTODO** everything after an image markup is shown as a comment in moin2.
  
 Blockquotes and Indentations
 ============================
