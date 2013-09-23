@@ -273,6 +273,18 @@ When rendering a template, the template is expanded within an environment of
 values it can use. In addition to this general environment, parameters can
 also be given directly to the render call.
 
+Stylesheets for the Basic theme in MoinMoin are compiled using the source .less files 
+in the ``custom-less`` directory inside Basic theme's ``static`` directory.
+
+For instructions on how to set up server-side compilation of .less files refer to
+the "Server Side Usage - Installation" section at `LESS <http://lesscss.org/#usage>`_
+
+Once installed, we can invoke the less compiler from the command line by using
+the following
+
+    ``cd MoinMoin/themes/basic/static/custom-less``
+    ``lessc basic.less ../css/basic.css``
+
 Testing
 =======
 
