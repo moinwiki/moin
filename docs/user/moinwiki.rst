@@ -170,15 +170,15 @@ Images and Transclusions
 |                                                   | side compression, PIL needs to be     |
 |                                                   | installed.                            |
 +---------------------------------------------------+---------------------------------------+
-| ``{{ http://moinmo.in/ || width=20 }}``           | Resizes the ``object`` which is embe- |
-|                                                   | dded using HTML tags. Also markup     |
+| ``{{ http://moinmo.in/ || width=20 }}``           | Resizes the ``object`` which is       |
+|                                                   | embedded using HTML tags. Also markup |
 |                                                   | involving '&' parameters like ``&w``  |
 |                                                   | doesn't make much sense.              |
 +---------------------------------------------------+---------------------------------------+
 
 **Extra Info**: 
 
-The markup of ``{{ example.jpg || &w=20 }}``, simply adds ``&w`` to the ``src`` URL of the image, the Python Imaging Library (PIL)
+Markup like ``{{ example.jpg || &w=20 }}``, simply adds ``&w`` to the ``src`` URL of the image, the Python Imaging Library (PIL)
 understands that it has to compress the image on the server side and render as shrinked to size ``20``. 
 
 For markup like ``{{ example.jpg || width=20, height=100 }}`` we currently allow only the ``width`` and ``height`` (anything 
