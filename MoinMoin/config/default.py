@@ -395,7 +395,10 @@ options_no_group_name = {
             ('frontend.history', L_('History'), L_('Revision History'), True, ),
             # note: when rendering a non-existing item, you'll be offered to
             # create it (in the content area), so we do not offer "Modify":
-            ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), True, ),
+            # not offering modify while creating an item, leads to bad interface design, since
+            # we lose the consistency of the layout, it becomes difficult to identify where he is.
+            # so we no longer check, if item_exists for the modify item_view.
+            ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), False, ),
             ('special.supplementation', None, None, False, ),
             ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
             ('special.comments', L_('Comments'), L_('Hide comments'), True, ),
