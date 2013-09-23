@@ -155,14 +155,50 @@ class MyJoinedString(JoinedString):
     def u(self):
         return self.separator.join(child.u for child in self)
 
+
+class SubscriptionsJoinedString(JoinedString):
+    """ A JoinedString that offers the list of children as value property and also
+    appends the name of the item to the end of ITEMID subscriptions.
+    """
+    @property
+    def value(self):
+        subscriptions = []
+        for child in self:
+            if child.value.startswith(ITEMID):
+                value = re.sub(r"\(.*\)", "", child.value)
+            else:
+                value = child.value
+            subscriptions.append(value)
+        return subscriptions
+
+    @property
+    def u(self):
+        subscriptions = []
+        for child in self:
+            if child.u.startswith(ITEMID):
+                value = re.sub(r"\(.*\)", "", child.u)
+                item = flaskg.storage.document(**{ITEMID: value.split(":")[1]})
+                try:
+                    name_ = item.meta['name'][0]
+                except IndexError:
+                    name_ = "This item doesn't exist"
+                value = "{0} ({1})".format(value, name_)
+            else:
+                value = child.u
+            subscriptions.append(value)
+        return self.separator.join(subscriptions)
+
+
 Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
     label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
     label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
-Subscriptions = MyJoinedString.of(String).with_properties(widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
-    label=L_('Subscriptions'), optional=True, separator='\n', separator_regex=re.compile(r'[\r\n]+'))
+Subscriptions = SubscriptionsJoinedString.of(String).with_properties(
+    widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
+    label=L_('Subscriptions'), optional=True, separator='\n',
+    separator_regex=re.compile(r'[\r\n]+'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 
