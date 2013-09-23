@@ -388,6 +388,9 @@ class Item(object):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
+        action = DESTROY_ALL if destroy_item else DESTROY_REV
+        item_modified.send(app, item_name=self.name, action=action, meta=self.meta,
+                           content=self.rev.data, comment=comment)
         # called from destroy UI/POST
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
@@ -395,9 +398,6 @@ class Item(object):
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
-        action = DESTROY_ALL if destroy_item else DESTROY_REV
-        item_modified.send(app, item_name=self.name, action=action, meta=self.meta,
-                           content=self.rev.data, comment=comment)
 
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
