@@ -637,7 +637,7 @@ class Item(object):
         files = []
         # IndexEntry instances of "directory" subitems
         dirs = []
-        added_fullnames = set()
+        added_dir_relnames = set()
         for rev in subitems:
             fullnames = rev.meta[NAME]
             for fullname in fullnames:
@@ -651,8 +651,9 @@ class Item(object):
                         # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                         # 'foo/bar' will be found.
                         direct_relname = relname.partition('/')[0]
-                        if fullname_fqname not in added_fullnames:
-                            added_fullnames.add(fullname_fqname)
+                        direct_relname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_relname)
+                        if direct_relname_fqname not in added_dir_relnames:
+                            added_dir_relnames.add(direct_relname_fqname)
                             direct_fullname = prefix + direct_relname
                             direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
                             fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
