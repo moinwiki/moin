@@ -103,6 +103,7 @@ import logging.handlers  # needed for handlers defined there being configurable 
 
 configured = False
 fallback_config = False
+in_email_handler = False
 
 import warnings
 
@@ -198,15 +199,21 @@ class EmailHandler(logging.Handler):
 
         Send the record to the specified addresses
         """
-        from MoinMoin.mail.sendmail import sendmail
-        from flask import current_app as app
-        cfg = app.cfg
         # the app config is accessible after logging is initialized, so set the
         # arguments and make the decision to send mail or not here
-        toaddrs = self.toaddrs if self.toaddrs else cfg.admin_emails
+        from flask import current_app as app
+        if not app.cfg.email_tracebacks:
+            return
+
+        global in_email_handler
+        if in_email_handler:
+            return
+        in_email_handler = True
+        toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
         log_level = logging.getLevelName(self.level)
         subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
-            cfg.sitename, log_level)
+            app.cfg.sitename, log_level)
         msg = self.format(record)
-        if app.cfg.email_tracebacks:
-            sendmail(subject, msg, to=toaddrs)
+        from MoinMoin.mail.sendmail import sendmail
+        sendmail(subject, msg, to=toaddrs)
+        in_email_handler = False
