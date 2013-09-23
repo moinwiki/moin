@@ -280,13 +280,11 @@ at ``MoinMoin/templates/dictionary.js``. This dictionary is loaded when the page
 the translation for any string can be received by passing it as a parameter to the ``_`` function,
 also defined in the same file.
 
-For Example
-
-We add the following to ``i18n_dict`` in ``dictionary.js`` 
+For example, if we add the following to ``i18n_dict`` in ``dictionary.js`` 
     
     ``"somestring"  : "{{  _("somestring") }}",``
 
-Now, the translated version of "somestring" can be accessed in the JavaScript code by
+The translated version of "somestring" can be accessed in the JavaScript code by
 
     ``var a = _("somestring");``
 
