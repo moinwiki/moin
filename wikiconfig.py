@@ -65,11 +65,9 @@ class Config(DefaultConfig):
     # names below must be package names
     mod_names = [
         'jquery', 'jquery_file_upload',
-        'json_js',
         'bootstrap',
         'font_awesome',
         'ckeditor',
-        'svgweb',
         'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
     ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
