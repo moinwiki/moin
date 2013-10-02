@@ -1,0 +1,22 @@
+{% extends theme("show.html") %}
+{% block content %}
+<h1>{{ _("Create new item?") }}</h1>
+<p>
+{# XXX should show itemtype's display name #}
+{{ _("Please select the contenttype of the new %(itemtype)s item.", itemtype=itemtype) }}
+</p>
+<table id="moin-create-table" class="zebra">
+    {% for group in group_names %}
+    <tr>
+        <th>{{ group }}</th>
+    </tr>
+    <tr>
+        <td> |&nbsp;
+        {% for e in groups[group] %}
+            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp;|&nbsp;
+        {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
