@@ -43,9 +43,9 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
             return
         u.set_password(password)
         u.save()
-        if not u.email:
-            raise UserHasNoEMail('User profile does not have an E-Mail address (name: %r id: %r)!' % (u.name, u.id))
         if notify and not u.disabled:
+            if not u.email:
+                raise UserHasNoEMail('Notification was requested, but User profile does not have a validated E-Mail address (name: %r id: %r)!' % (u.name, u.itemid))
             mailok, msg = u.mail_password_recovery(subject=subject, text=text)
             if not mailok:
                 raise MailFailed(msg)
