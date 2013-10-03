@@ -1,0 +1,18 @@
+{% extends theme("show.html") %}
+
+{% set title = _("SiteMap of '%(item_name)s'", item_name=item_name) %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+{% for entry in sitemap recursive %}
+    {% if isinstance(entry, list) %}
+        <ul>
+            {{ loop(entry) }}
+        </ul>
+    {% else %}
+        <li>
+        <a href="{{ url_for('frontend.sitemap', item_name=entry) }}">{{ entry }}</a>
+        </li>
+    {% endif %}
+{% endfor %}
+{% endblock %}

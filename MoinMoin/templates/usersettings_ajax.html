@@ -1,0 +1,15 @@
+{% import "usersettings_forms.html" as user_forms %}
+
+{% if part == 'personal' %}
+    {{ user_forms.personal(form) }}
+{% elif part == 'password' %}
+    {{ user_forms.password(form) }}
+{% elif part == 'notification' %}
+    {{ user_forms.notification(form) }}
+{% elif part == 'ui' %}
+    {{ user_forms.ui(form) }}
+{% elif part == 'navigation' %}
+    {{ user_forms.navigation(form) }}
+{% elif part == 'options' %}
+    {{ user_forms.options(form) }}
+{% endif %}
