@@ -13,7 +13,9 @@ import sys
 from flask import current_app as app
 from flask.ext.script import Command, Option
 
-from MoinMoin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL
+from MoinMoin.constants.keys import (
+    ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED,
+)
 from MoinMoin import user
 from MoinMoin.app import before_wiki
 
@@ -103,7 +105,13 @@ class Set_Password(Command):
         total = len(uids_metas)
         for nr, (uid, meta) in enumerate(uids_metas, start=1):
             name = meta[NAME]
-            email = meta[EMAIL]
+            email = meta.get(EMAIL)
+            if email is None:
+                email = meta.get(EMAIL_UNVALIDATED)
+                if email is None:
+                    raise ValueError("neither EMAIL nor EMAIL_UNVALIDATED key is present in user profile metadata of uid %r name %r" % (uid, name))
+                else:
+                    email += '[email_unvalidated]'
             try:
                 set_password(uid, password, notify=notify, skip_invalid=skip_invalid,
                              subject=subject, text=text)
