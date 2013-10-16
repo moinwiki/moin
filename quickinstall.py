@@ -1,4 +1,12 @@
 #!/usr/bin/python
+# Copyright: 2013 MoinMoin:BastianBlank
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+"""
+create a virtual environment and install moin2 (in development mode) and
+its requirements.
+
+needs: virtualenv, pip
+"""
 
 import argparse
 import logging
@@ -21,12 +29,12 @@ class QuickInstall(object):
         self.do_install()
         self.do_catalog()
 
-        sys.stdout.write('''
+        sys.stdout.write("""
 Succesfully created or updated venv
   {0}
 You can run MoinMoin as
   {0}/bin/moin
-'''.format(self.dir_venv))
+""".format(self.dir_venv))
 
     def do_venv(self):
         virtualenv.create_environment(self.dir_venv)
