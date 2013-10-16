@@ -19,6 +19,7 @@ class QuickInstall(object):
     def __call__(self):
         self.do_venv()
         self.do_install()
+        self.do_catalog()
 
         sys.stdout.write('''
 Succesfully created or updated venv
@@ -39,6 +40,13 @@ You can run MoinMoin as
             os.path.join(os.path.dirname(self.dir_venv), '.pip-download-cache'),
             '--editable',
             self.dir_source
+        ))
+
+    def do_catalog(self):
+        subprocess.check_call((
+            os.path.join(self.dir_venv, 'bin', 'python'),
+            os.path.join(self.dir_source, 'setup.py'),
+            'compile_catalog', '--statistics',
         ))
 
 
