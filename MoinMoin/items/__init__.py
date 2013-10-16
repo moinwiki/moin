@@ -48,12 +48,14 @@ from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, ACTION_SAVE,
+    ACTION_REVERT, ACTION_TRASH, ACTION_RENAME
 )
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
 )
+from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
 
 from .content import content_registry, Content, NonExistentContent, Draw
 
@@ -374,18 +376,21 @@ class Item(object):
         """
         if flaskg.storage[name]:
             raise NameNotUniqueError(L_("An item named %s already exists." % name))
-        return self._rename(name, comment, action=u'RENAME')
+        return self._rename(name, comment, action=ACTION_RENAME)
 
     def delete(self, comment=u''):
         """
         delete this item (remove current name from NAME list)
         """
-        return self._rename(None, comment, action=u'TRASH', delete=True)
+        return self._rename(None, comment, action=ACTION_TRASH, delete=True)
 
     def revert(self, comment=u''):
-        return self._save(self.meta, self.content.data, action=u'REVERT', comment=comment)
+        return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
+        action = DESTROY_ALL if destroy_item else DESTROY_REV
+        item_modified.send(app, item_name=self.name, action=action, meta=self.meta,
+                           content=self.rev.data, comment=comment)
         # called from destroy UI/POST
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
@@ -455,7 +460,7 @@ class Item(object):
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=u'SAVE', contenttype_guessed=None, comment=None,
+    def _save(self, meta, data=None, name=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
         backend = flaskg.storage
         storage_item = backend[self.name]
@@ -517,7 +522,7 @@ class Item(object):
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
                                              )
-        item_modified.send(app._get_current_object(), item_name=name)
+        item_modified.send(app, item_name=name, action=action)
         return newrev.revid, newrev.meta[SIZE]
 
     @property
@@ -669,6 +674,7 @@ class Default(Contentful):
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
         return render_template('modify_select_template.html',
+                               item=self,
                                item_name=self.name,
                                itemtype=self.itemtype,
                                rev=self.rev,
@@ -700,6 +706,7 @@ class Default(Contentful):
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
+                                       item=self,
                                        item_name=self.name,
                                        itemtype=self.itemtype,
                                        group_names=content_registry.group_names,
@@ -737,6 +744,7 @@ class Default(Contentful):
                     return redirect(url_for_item(self.name))
         return render_template(self.modify_template,
                                item_name=self.name,
+                               item=self,
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                form=form,
                                search_form=None,
@@ -787,6 +795,7 @@ class NonExistent(Item):
 
     def _select_itemtype(self):
         return render_template('modify_select_itemtype.html',
+                               item=self,
                                item_name=self.name,
                                itemtypes=item_registry.shown_entries,
                               )
