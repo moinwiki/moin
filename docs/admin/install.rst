@@ -37,18 +37,19 @@ with your normal system installation of Python, run the following command
 from your mercurial moin2 working directory. You should not run this as an
 administrator or root user; use your standard user account::
 
- ./quickinstall  # for Linux or other POSIX OSes
- # or
- quickinstall.bat  # for Windows
+ python quickinstall.py
 
-This will use virtualenv to create a directory `env/` within the current directory,
-create a virtual environment for MoinMoin and then install moin2 including all dependencies into that directory.
-`pip` will automatically fetch all dependencies from PyPI and install them, so this may take a while.
+This will use virtualenv to create a directory `../venv-PROJECT-PYTHON/`
+(PROJECT is same as your current project directory, e.g. moin-2.0, PYTHON is
+the name of your python interpreter, e.g. python), create a virtual environment
+for MoinMoin and then install moin2 including all dependencies into that
+directory.
+
+`pip` will automatically fetch all dependencies from PyPI and install them, so
+this may take a while.
 It will also compile the translations (`*.po` files) to binary `*.mo` files.
 
 Please review the output of the quickinstall script, and check whether there were fatal errors.
-
-If you have a bad network connection that makes the downloads fail, you can try to do the steps in quickinstall manually.
 
 Further, the quickinstall script will create a `moin` script for your
 platform which you can use for starting the built-in server or invoke moin script commands.
@@ -56,21 +57,18 @@ platform which you can use for starting the built-in server or invoke moin scrip
 After you activated the virtual environment, the built-in server script, which is named 
 `moin`, will be in the standard PATH, so you can just run the command `moin` on the command line.
 
-**Note:** in this special mode, it won't copy the MoinMoin code to the env/ directory,
+**Note:** in this special mode, it won't copy the MoinMoin code to the virtualenv directory,
 it will run everything from your work dir, so you can modify code and directly try it out.
 You only need to do this installation procedure once.
 
-Using a different Python or a different virtualenv directory
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using a different Python
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-For example, if you want to use `PyPy` and want to name the virtualenv directory `env-pypy`,
-use::
+If you rather like a different Python, just use it to invoke the quickinstall.py
+script - the same python will then be used for the virtual env also::
 
- # for linux
- DIR=env-pypy
- PYTHON=/opt/pypy/bin/pypy
+ /opt/pypy/bin/pypy quickinstall.py  # for linux
 
-That way, you can test with different versions of Python in different virtualenv directories within your moin2 workdir.
 
 Activating the virtual env
 --------------------------
@@ -80,12 +78,15 @@ anything that executes moin code! Otherwise it won't find the moin command,
 nor the moin code nor the libraries it needs. Also, if you want to install
 additional software into the virtual environment, activate it before running pip!::
 
- source env/bin/activate  # for linux (or other posix OSes)
+ source ../venv-moin-2.0-python/bin/activate  # for linux (or other posix OSes)
  # or
- env\Scripts\activate.bat  # for windows
+ ..\venv-moin-2.0-python\Scripts\activate.bat  # for windows
 
 As you have activated the virtual env now, the moin command should be in your
 path now, so you can invoke it using "moin".
+
+Note: the quickinstall script outputs the correct commands for activating
+the virtual env and for the moin executable file.
 
 Letting moin find the wiki configuration
 ----------------------------------------
@@ -188,6 +189,9 @@ the quickinstall script.
 You may see tracebacks from pip, timeout errors, etc. See the output of the quickinstall script.
 
 If this is the case, try it manually::
+
+ # create a virtual environment:
+ virtualenv env
 
  # enter your virtual environment:
  source env/bin/activate
