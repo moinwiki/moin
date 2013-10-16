@@ -37,7 +37,7 @@ class TestValidation(object):
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
                  keys.NAME: u'somename',  # name we decoded from URL path
-                 keys.ACTION: u'SAVE',
+                 keys.ACTION: keys.ACTION_SAVE,
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
                  keys.USERID: make_uuid(),
@@ -67,11 +67,24 @@ class TestValidation(object):
             keys.NAME: [u"user name", ],
             keys.NAMESPACE: u"userprofiles",
             keys.EMAIL: u"foo@example.org",
+            keys.SUBSCRIPTIONS: [u"{0}:{1}".format(keys.ITEMID, make_uuid()),
+                                 u"{0}::foo".format(keys.NAME),
+                                 u"{0}::bar".format(keys.TAGS),
+                                 u"{0}::".format(keys.NAMERE),
+                                 u"{0}:userprofiles:a".format(keys.NAMEPREFIX),
+                                 ]
+        }
+
+        invalid_meta = {
+            keys.SUBSCRIPTIONS: [u"", u"unknown_tag:123",
+                                 u"{0}:123".format(keys.ITEMID),
+                                 u"{0}:foo".format(keys.NAME),
+                                 ]
         }
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
                  keys.NAME: u'somename',  # name we decoded from URL path
-                 keys.ACTION: u'SAVE',
+                 keys.ACTION: keys.ACTION_SAVE,
                  keys.HOSTNAME: u'localhost',
                  keys.ADDRESS: u'127.0.0.1',
                  keys.WIKINAME: u'ThisWiki',
@@ -86,3 +99,11 @@ class TestValidation(object):
                 print e.valid, e
             print m.valid, m
         assert valid
+
+        m = UserMetaSchema(invalid_meta)
+        valid = m.validate(state)
+        assert not valid
+        for e in m.children:
+            if e.name in (keys.SUBSCRIPTIONS,):
+                for value in e:
+                    assert not value.valid

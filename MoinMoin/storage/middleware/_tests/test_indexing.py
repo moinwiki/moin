@@ -16,7 +16,7 @@ import pytest
 from flask import g as flaskg
 
 from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
-                                     LATEST_REVS, ALL_REVS, NAMESPACE)
+                                     LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 
 from MoinMoin.auth import GivenAuth
@@ -366,6 +366,21 @@ class TestIndexingMiddleware(object):
         assert doc is not None
         assert expected_revid == doc[REVID]
         assert unicode(data) == doc[CONTENT]
+
+    def test_indexing_subscriptions(self):
+        item_name = u"foo"
+        meta = dict(name=[item_name, ], subscriptions=[u"{0}::foo".format(NAME),
+                                                       u"{0}::.*".format(NAMERE)])
+        item = self.imw[item_name]
+        item.store_revision(meta, StringIO(str(item_name)))
+        doc1 = self.imw.document(subscription_ids=u"{0}::foo".format(NAME))
+        doc2 = self.imw.document(subscription_patterns=u"{0}::.*".format(NAMERE))
+        assert doc1 is not None
+        assert doc2 is not None
+        doc3 = self.imw.document(subscription_ids=u"{0}::.*".format(NAMERE))
+        doc4 = self.imw.document(subscription_patterns=u"{0}::foo".format(NAMEPREFIX))
+        assert doc3 is None
+        assert doc4 is None
 
     def test_namespaces(self):
         item_name_n = u'normal'

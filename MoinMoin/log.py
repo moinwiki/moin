@@ -1,7 +1,6 @@
 # Copyright: 2008 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
-
 """
     MoinMoin - init "logging" system
 
@@ -70,20 +69,26 @@ loglevel=INFO
 keys=root
 
 [handlers]
-keys=stderr
+keys=stderr,email
 
 [formatters]
 keys=default
 
 [logger_root]
 level=%(loglevel)s
-handlers=stderr
+handlers=stderr,email
 
 [handler_stderr]
 class=StreamHandler
 level=NOTSET
 formatter=default
 args=(sys.stderr, )
+
+[handler_email]
+class=MoinMoin.log.EmailHandler
+level=ERROR
+formatter=default
+args=()
 
 [formatter_default]
 format=%(asctime)s %(levelname)s %(name)s:%(lineno)d %(message)s
@@ -98,6 +103,7 @@ import logging.handlers  # needed for handlers defined there being configurable 
 
 configured = False
 fallback_config = False
+in_email_handler = False
 
 import warnings
 
@@ -170,3 +176,44 @@ def getLogger(name):
         if isinstance(levelnumber, int):  # that list has also the reverse mapping...
             setattr(logger, levelname, levelnumber)
     return logger
+
+
+class EmailHandler(logging.Handler):
+    """ A custom handler class which sends email for each logging event using
+    wiki mail configuration
+    """
+    def __init__(self, toaddrs=[], subject=u''):
+        """ Initialize the handler
+
+        @param toaddrs: address or a list of email addresses whom to send email
+        @param subject: unicode email's subject
+        """
+        logging.Handler.__init__(self)
+        if isinstance(toaddrs, basestring):
+            toaddrs = [toaddrs]
+        self.toaddrs = toaddrs
+        self.subject = subject
+
+    def emit(self, record):
+        """ Emit a record.
+
+        Send the record to the specified addresses
+        """
+        # the app config is accessible after logging is initialized, so set the
+        # arguments and make the decision to send mail or not here
+        from flask import current_app as app
+        if not app.cfg.email_tracebacks:
+            return
+
+        global in_email_handler
+        if in_email_handler:
+            return
+        in_email_handler = True
+        toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
+        log_level = logging.getLevelName(self.level)
+        subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
+            app.cfg.sitename, log_level)
+        msg = self.format(record)
+        from MoinMoin.mail.sendmail import sendmail
+        sendmail(subject, msg, to=toaddrs)
+        in_email_handler = False

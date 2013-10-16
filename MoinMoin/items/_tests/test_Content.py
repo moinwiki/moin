@@ -8,6 +8,7 @@
 """
 
 import pytest
+from io import BytesIO
 
 from flask import Markup
 
@@ -232,14 +233,15 @@ class TestText(object):
         item = Item.create(item_name)
         contenttype = u'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
-        item._save(meta)
+        data1 = "old_data"
+        item._save(meta, data1)
         item1 = Item.create(item_name)
-        data = 'test_data'
+        data2 = 'new_data'
         comment = u'next revision'
-        item1._save(meta, data, comment=comment)
+        item1._save(meta, data2, comment=comment)
         item2 = Item.create(item_name)
         result = Text._render_data_diff_text(item1.content, item1.rev, item2.rev)
-        expected = u'- \n+ test_data'
+        expected = u'- old_data\n+ new_data'
         assert result == expected
         assert item2.content.data == ''
 
@@ -257,6 +259,40 @@ class TestText(object):
         result = Text._render_data_highlight(item2.content)
         assert u'<pre class="highlight">test_data\n' in result
         assert item2.content.data == ''
+
+    def test__get_data_diff_text(self):
+        item_name = u'Text_Item'
+        item = Item.create(item_name)
+        contenttypes = dict(texttypes=[u'text/plain;charset=utf-8',
+                                       u'text/x-markdown;charset=utf-8', ],
+                            othertypes=[u'image/png', u'audio/wave',
+                                        u'video/ogg',
+                                        u'application/x-svgdraw',
+                                        u'application/octet-stream', ])
+        for key in contenttypes:
+            for contenttype in contenttypes[key]:
+                meta = {CONTENTTYPE: contenttype}
+                item._save(meta)
+                item_ = Item.create(item_name)
+                oldfile = BytesIO("x")
+                newfile = BytesIO("xx")
+                difflines = item_.content._get_data_diff_text(oldfile, newfile)
+                if key == 'texttypes':
+                    assert difflines == ['- x', '+ xx']
+                else:
+                    assert difflines == []
+
+    def test__get_data_diff_html(self):
+        item_name = u"Test_Item"
+        item = Item.create(item_name)
+        contenttype = u'text/plain;charset=utf-8'
+        meta = {CONTENTTYPE: contenttype}
+        item._save(meta)
+        item_ = Item.create(item_name)
+        oldfile = BytesIO("")
+        newfile = BytesIO("x")
+        difflines = item_.content._get_data_diff_html(oldfile, newfile)
+        assert difflines == [(1, Markup(u''), 1, Markup(u'<span>x</span>'))]
 
 
 coverage_modules = ['MoinMoin.items.content']

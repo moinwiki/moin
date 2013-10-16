@@ -24,6 +24,7 @@ Using MoinMoin
    user/accounts
    user/markups
    user/search
+   user/subscriptions
 
 Administrating MoinMoin
 =======================

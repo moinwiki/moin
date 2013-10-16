@@ -12,6 +12,8 @@
 from flask import g as flaskg
 
 from MoinMoin import user
+from MoinMoin.items import Item
+from MoinMoin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TAGS)
 
 
 class TestSimple(object):
@@ -119,28 +121,36 @@ class TestUser(object):
 
     # Subscriptions ---------------------------------------------------
 
-    def testSubscriptionSubscribedPage(self):
-        """ user: tests is_subscribed_to  """
-        pagename = u'HelpMiscellaneous'
-        name = u'__Jürgen Herman__'
-        password = name
-        self.createUser(name, password)
-        # Login - this should replace the old password in the user file
-        theUser = user.User(name=name, password=password)
-        theUser.subscribe(pagename)
-        assert theUser.is_subscribed_to([pagename])  # list(!) of pages to check
+    def test_subscriptions(self):
+        pagename = u"Foo:foo 123"
+        tagname = u"xxx"
+        regexp = r"\d+"
+        item = Item.create(pagename)
+        item._save({NAMESPACE: u"", TAGS: [tagname]})
+        item = Item.create(pagename)
+        meta = item.meta
 
-    def testSubscriptionSubPage(self):
-        """ user: tests is_subscribed_to on a subpage """
-        pagename = u'HelpMiscellaneous'
-        testPagename = u'HelpMiscellaneous/FrequentlyAskedQuestions'
-        name = u'__Jürgen Herman__'
+        name = u'bar'
         password = name
-        self.createUser(name, password)
-        # Login - this should replace the old password in the user file
-        theUser = user.User(name=name, password=password)
-        theUser.subscribe(pagename)
-        assert not theUser.is_subscribed_to([testPagename])  # list(!) of pages to check
+        email = "bar@example.org"
+        user.create_user(name, password, email)
+        the_user = user.User(name=name, password=password)
+        assert not the_user.is_subscribed_to(item)
+        the_user.subscribe(NAME, u"SomeOtherPageName", u"")
+        result = the_user.unsubscribe(NAME, u"OneMorePageName", u"")
+        assert result is False
+
+        subscriptions = [(ITEMID, meta[ITEMID], None),
+                         (NAME, pagename, meta[NAMESPACE]),
+                         (TAGS, tagname, meta[NAMESPACE]),
+                         (NAMEPREFIX, pagename[:4], meta[NAMESPACE]),
+                         (NAMERE, regexp, meta[NAMESPACE])]
+        for subscription in subscriptions:
+            keyword, value, namespace = subscription
+            the_user.subscribe(keyword, value, namespace)
+            assert the_user.is_subscribed_to(item)
+            the_user.unsubscribe(keyword, value, namespace, item)
+            assert not the_user.is_subscribed_to(item)
 
     # Bookmarks -------------------------------------------------------
 
