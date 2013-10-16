@@ -103,7 +103,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                               # note: pytest-pep8 1.0.3 needs pytest 2.3
         'whoosh>=2.5.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
-        'pdfminer',  # pdf -> text/plain conversion
+        'pdfminer>=20110515',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap>=3.0.0.1',
@@ -111,8 +111,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
-        'XStatic-JSON-js',
-        'XStatic-svgweb>=2011.2.3.2',
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2012.11.15.1',
