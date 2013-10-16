@@ -1,5 +1,5 @@
 include README.txt LICENSE.txt
-include quickinstall quickinstall.bat
+include quickinstall.py
 include wikiconfig.py
 include Makefile
 
@@ -24,10 +24,6 @@ global-exclude *.orig
 global-exclude *.rej
 
 prune docs/_build
-prune env
-prune env-pypy
-prune env-py26
-prune env-py27
 
 prune wiki/data/content
 prune wiki/data/userprofiles
