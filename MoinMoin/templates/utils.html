@@ -78,9 +78,9 @@
     </ul>
 {% endmacro %}
 
-{% macro render_subitem_navigation(itemname, newtab, subitems=None) %}
+{% macro render_subitem_navigation(fqname, newtab, subitems=None) %}
     {% if not subitems %}
-        {% set subitems = theme_supp.subitem_index(itemname) %}
+        {% set subitems = theme_supp.subitem_index(fqname) %}
     {% endif %}
     {% if caller %}
         {% set mycaller = caller %}

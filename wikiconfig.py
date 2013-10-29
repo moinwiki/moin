@@ -44,8 +44,6 @@ class Config(DefaultConfig):
                               hierarchic=False, ),
     )
 
-    #item_root = u'Home' # front page
-
     # for display purposes:
     sitename = u'My MoinMoin'
     # it is required that you set this to a unique, stable and non-empty name:

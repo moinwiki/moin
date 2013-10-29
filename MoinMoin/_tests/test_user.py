@@ -195,7 +195,7 @@ class TestUser(object):
         # add quicklink
         theUser.quicklink(u'Test_page_added')
         result_on_addition = theUser.quicklinks
-        expected = [u'MoinTest:Test_page_added']
+        expected = [u'MoinTest/Test_page_added']
         assert result_on_addition == expected
 
         # remove quicklink
@@ -222,7 +222,7 @@ class TestUser(object):
         theUser.add_trail(u'item_added')
         theUser = user.User(name=name, password=password)
         result = theUser.get_trail()
-        expected = [u'MoinTest:item_added']
+        expected = [u'MoinTest/item_added']
         assert result == expected
 
     # Sessions -------------------------------------------------------

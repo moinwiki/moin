@@ -1280,6 +1280,75 @@ Features:
 * might be useful together with SMBMount pseudo-authenticator
 
 
+namespaces
+----------
+Moin has support for multiple namespaces. You can configure them as per your need.
+A sample configuration looks like e.g::
+
+    import os
+
+    from wikiconfig import *
+
+    from MoinMoin.storage import create_mapping
+    from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+
+    class LocalConfig(Config):
+        wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
+        instance_dir = os.path.join(wikiconfig_dir, 'wiki')
+        data_dir = os.path.join(instance_dir, 'data')
+
+        index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
+
+        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)
+        namespaces = {
+            # maps namespace name -> backend name
+            # first, configure the required, standard namespaces:
+            NAMESPACE_DEFAULT: u'default',
+            NAMESPACE_USERPROFILES + '/': u'userprofiles',
+            # then some additional custom namespaces:
+            u'foo/': u'default',
+            u'bar/': u'default',
+            u'baz/': u'default',
+        }
+        backends = {
+            # maps backend name -> storage
+            u'default': None,
+            u'userprofiles': None,
+        }
+        acls = {
+            # maps namespace name -> acl configuration dict for that namespace
+            NAMESPACE_USERPROFILES + '/': dict(before=u'',
+                                               default=u'All:read,write,create,destroy,admin',
+                                               after=u'',
+                                               hierarchic=False, ),
+            NAMESPACE_DEFAULT: dict(before=u'',
+                                    default=u'All:read,write,create,destroy,admin',
+                                    after=u'',
+                                    hierarchic=False, ),
+            u'foo/': dict(before=u'',
+                          default=u'All:read,write,create,destroy,admin',
+                          after=u'',
+                          hierarchic=False, ),
+            u'bar/': dict(before=u'',
+                          default=u'All:read,write,create,destroy,admin',
+                          after=u'',
+                          hierarchic=False, ),
+            u'baz/': dict(before=u'',
+                          default=u'All:read,write,create,destroy,admin',
+                          after=u'',
+                          hierarchic=False, ),
+        }
+        namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls
+
+        # define mapping of namespaces to item_roots (home pages within namespaces).
+        root_mapping = {u'foo': u'fooHome'}
+        # default root, use this value in case a particular namespace key is not present in the above mapping.
+        default_root = u'Home'
+
+    MOINCFG = LocalConfig
+    DEBUG = True
+
+
 .. _mail-configuration:
 
 Mail configuration
@@ -1391,4 +1460,5 @@ needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
+
 

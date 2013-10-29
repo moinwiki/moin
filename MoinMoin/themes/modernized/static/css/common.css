@@ -484,9 +484,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .moin-subitem-navigation a:hover{text-decoration:underline}
 .moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
-.link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none}
-.moin-subitem-navigation .link-action{background:url("../img/moin-link.png") no-repeat center center}
-.moin-subitem-navigation .transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
+.moin-insertname-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none;background:url("../img/moin-link.png") no-repeat center center}
 #moin-footer{clear:both;margin:0 0}
 #moin-footer hr{margin:0;background-color:#4e7da9}
 #moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373;}
@@ -532,4 +530,11 @@ sup,sub{font-size:12pt}
 table.navigation{float:right;margin:2px}
 .navigation td,.navigation a{font-size:10pt;padding:2px}
 #moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation,#moin-pageinfo{display:none}
-}
+}ul.moin-bcs-item ul.moin-bcs-subitems{background-color:#708090}
+ul.moin-bcs-item,ul.moin-bcs-item ul.moin-bcs-subitems{padding:0;margin:0;display:inline-block}
+ul.moin-bcs-item li,ul.moin-bcs-item ul.moin-bcs-subitems li{list-style-type:none;display:block}
+ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
+ul.moin-bcs-item li{position:relative}
+ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
+ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
+

@@ -15,6 +15,8 @@ from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 
 from MoinMoin.util.crypto import make_uuid
 
+from MoinMoin.util.interwiki import CompositeName
+
 
 class TestValidation(object):
     def test_content(self):
@@ -49,6 +51,7 @@ class TestValidation(object):
                  'acl_parent': u"All:read",
                  'contenttype_current': u'text/x.moin.wiki;charset=utf-8',
                  'contenttype_guessed': u'text/plain;charset=utf-8',
+                 keys.FQNAME: CompositeName(u'', u'', u'somename'),
                 }
 
         m = ContentMetaSchema(meta)
@@ -89,6 +92,7 @@ class TestValidation(object):
                  keys.ADDRESS: u'127.0.0.1',
                  keys.WIKINAME: u'ThisWiki',
                  keys.NAMESPACE: u'',
+                 keys.FQNAME: CompositeName(u'', u'', u'somename')
                 }
 
         m = UserMetaSchema(meta)

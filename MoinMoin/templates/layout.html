@@ -24,7 +24,7 @@
 
     {% if logo %}
     <div id="moin-logo">
-        <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">{{ logo }}</a>
+        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
     </div>
     {% endif %}
 
@@ -62,7 +62,7 @@
     <div id="moin-locationline">
         {% if cfg.show_interwiki -%}
         <span id="moin-interwiki">
-            <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}" rel="nofollow">
+            <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping['']) }}" rel="nofollow">
                 {% if cfg.interwikiname %}{{ cfg.interwikiname }}{% else %}Self{% endif %}
             </a>
             <span class="sep">: </span>
@@ -71,22 +71,43 @@
         <span id="moin-pagelocation">
             <span class="moin-pagepath">
             {% block pagepath %}
-                {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
-                    {% if not loop.last -%}
-                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                            {{ segment_name|shorten_item_name }}
-                        </a>
-                        <span class="sep">/</span>
+            {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
+                {% if loop.first %}
+                    <ul class="moin-bcs-item">
+                        <li>
+                            <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>{{ segment_name|shorten_fqname }}</a>
+                            <ul class="moin-bcs-subitems">
+                                {% for namespace, root in theme_supp.get_namespaces(segment_name) -%}
+                                    <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
+                                {%- endfor %}
+                                {% if fqname and fqname.namespace != "all" %}
+                                    <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
+                                {%- endif %}
+                           </ul>
+                        </li>
+                    </ul>
+                    <span class="sep">/</span>
+                {% elif not loop.last %}
+                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>{{ segment_name|shorten_fqname }}</a>
+                    <span class="sep">/</span>
+                {%- endif %}
+                {% if loop.last %}
+                    {% if title_name %}
+                        {{ title_name }}
                     {% else %}
-                        {% if title_name %}
-                            {{ title_name }}
-                        {% else %}
-                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                            {{ segment_name|shorten_item_name }}
-                        </a>
-                        {%- endif %}
-                    {%- endif %}
-                {%- endfor %}
+                        <ul class="moin-bcs-item">
+                            <li><a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                {{ segment_name|shorten_fqname }}</a>
+                                <ul class="moin-bcs-subitems">
+                                    {% for fq_name in theme_supp.get_fqnames(segment_name) -%}
+                                        <li><a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">{{ fq_name|shorten_fqname(length=25) }}</a></li>
+                                    {%- endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                     {%- endif %}
+                {%- endif %}
+            {%- endfor %}
             {% endblock %}
             </span>
         </span>
@@ -95,17 +116,17 @@
     {% set trail_items = theme_supp.path_breadcrumbs() %}
     {% if trail_items %}
         <div id="moin-pagetrail">
-        {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+        {% for wiki_name, fqname, item_href, exists, err in trail_items %}
             {%- if wiki_name -%}
                 <a href="{{ item_href }}"{{ " " }}
                    title="{{ wiki_name }}"
                    class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
-                   {{ item_name|shorten_item_name }}
+                   {{ fqname|shorten_fqname }}
                 </a>
             {%- else -%}
-                <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
                    {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                   {{ item_name|shorten_item_name }}
+                   {{ fqname|shorten_fqname }}
                 </a>
             {%- endif %}
             {% if not loop.last %}<span class="sep"> &raquo; </span>{% endif %}
@@ -113,7 +134,7 @@
         </div>
     {% endif %}
 
-    {% set navibar_items = theme_supp.navibar(item_name) %}
+    {% set navibar_items = theme_supp.navibar(fqname) %}
     {% if navibar_items %}
         <ul id="moin-navibar" class="panel">
         {% for cls, url, text, title in navibar_items %}
