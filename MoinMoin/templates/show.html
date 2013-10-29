@@ -37,7 +37,7 @@
 {% endmacro %}
 
 {% block subitem_navigation %}
-    {{ utils.render_subitem_navigation(item_name, False) }}
+    {{ utils.render_subitem_navigation(fqname or item_name, False) }}
 {% endblock %}
 
 {% block content %}

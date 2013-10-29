@@ -22,6 +22,7 @@ from MoinMoin.forms import OptionalText, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
+from MoinMoin.util.interwiki import split_fqname
 
 
 ITEMTYPE_BLOG = u'blog'
@@ -86,6 +87,7 @@ class Blog(Default):
         blog_entry_items = [Item.create(rev.name, rev_id=rev.revid) for rev in revs]
         return render_template('blog/main.html',
                                item_name=self.name,
+                               fqname=split_fqname(self.name),
                                blog_item=self,
                                blog_entry_items=blog_entry_items,
                                tag=tag,
@@ -122,6 +124,7 @@ class BlogEntry(Default):
             abort(403)
         return render_template('blog/entry.html',
                                item_name=self.name,
+                               fqname=blog_item.fqname,
                                blog_item=blog_item,
                                blog_entry_item=self,
                               )

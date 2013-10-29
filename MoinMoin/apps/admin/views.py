@@ -11,18 +11,20 @@ MoinMoin - admin views
 
 This shows the user interface for wiki admins.
 """
-
+from collections import namedtuple
 from flask import request, url_for, flash, redirect
 from flask import current_app as app
 from flask import g as flaskg
-
+from whoosh.query import Term, And
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
+from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
+from MoinMoin.util.interwiki import CompositeName
 
 
 @admin.route('/superuser')
@@ -46,6 +48,7 @@ def userbrowser():
     revs = user.search_users()  # all users
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
+                          fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
                           email=rev.meta[EMAIL],
                           disabled=rev.meta[DISABLED],
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
@@ -221,3 +224,28 @@ def itemsize():
                            title_name=_(u"Item Sizes"),
                            headings=headings,
                            rows=rows)
+
+
+@admin.route('/trash', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@admin.route('/<namespace>/trash')
+def trash(namespace):
+    """
+    Returns the trashed items.
+    """
+    trash = _trashed(namespace)
+    return render_template('admin/trash.html',
+                           headline=_(u'Trashed Items'),
+                           title_name=_(u'Trashed Items'),
+                           results=trash)
+
+
+def _trashed(namespace):
+    q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
+    if not namespace == NAMESPACE_ALL:
+        q = And([q, Term(NAMESPACE, namespace), ])
+    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
+    results = []
+    for rev in flaskg.storage.search(q, limit=None):
+        meta = rev.meta
+        results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
+    return results

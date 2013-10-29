@@ -19,6 +19,8 @@ from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALG
                                      LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
 
+from MoinMoin.util.interwiki import split_fqname
+
 from MoinMoin.auth import GivenAuth
 from MoinMoin._tests import wikiconfig
 
@@ -387,9 +389,10 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name_n]
         rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_n)), return_rev=True)
-        item_name_u = u'%s:userprofile' % NAMESPACE_USERPROFILES
-        item = self.imw[item_name_u]
-        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain;charset=utf-8'),
+        item_name_u = u'%s/userprofile' % NAMESPACE_USERPROFILES
+        fqname_u = split_fqname(item_name_u)
+        item = self.imw.get_item(**fqname_u.query)
+        rev_u = item.store_revision(dict(name=[fqname_u.value], namespace=fqname_u.namespace, contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_u)), return_rev=True)
         item = self.imw[item_name_n]
         rev_n = item.get_revision(rev_n.revid)
@@ -398,7 +401,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name_u]
         rev_u = item.get_revision(rev_u.revid)
         assert rev_u.meta[NAMESPACE] == NAMESPACE_USERPROFILES
-        assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
+        assert rev_u.meta[NAME] == [item_name_u.split('/')[1]]
 
     def test_parentnames(self):
         item_name = u'child'

@@ -26,9 +26,9 @@ class TestNaviBar(object):
             #(navilink, (href, text, interwiki)),
             ('ItemName', ('/ItemName', 'ItemName', '')),
             ('[[ItemName|LinkText]]', ('/ItemName', 'LinkText', '')),
-            ('MoinMoin:ItemName', ('http://moinmo.in/ItemName', 'ItemName', 'MoinMoin')),
-            ('[[MoinMoin:ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
-            ('[[wiki:MoinMoin:ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
+            ('MoinMoin/ItemName', ('http://moinmo.in/ItemName', 'ItemName', 'MoinMoin')),
+            ('[[MoinMoin/ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
+            ('[[wiki:MoinMoin/ItemName|LinkText]]', ('http://moinmo.in/ItemName', 'LinkText', 'MoinMoin')),
             ('http://example.org/', ('http://example.org/', 'http://example.org/', '')),
             ('[[http://example.org/|LinkText]]', ('http://example.org/', 'LinkText', '')),
         ]
@@ -41,13 +41,16 @@ class TestNaviBar(object):
         test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
         test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
         test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
+        test_segment_name_4, test_item_name_4, test_item_exists_4 = test_result[3]
 
-        assert test_segment_name_1 == 'some'
-        assert test_item_name_1 == 'some'
-        assert test_segment_name_2 == 'place'
-        assert test_item_name_2 == 'some/place'
-        assert test_segment_name_3 == 'test_item'
-        assert test_item_name_3 == 'some/place/test_item'
+        assert test_segment_name_1.value == '~'
+        assert test_item_name_1.value == ''
+        assert test_segment_name_2.value == 'some'
+        assert test_item_name_2.value == 'some'
+        assert test_segment_name_3.value == 'place'
+        assert test_item_name_3.value == 'some/place'
+        assert test_segment_name_4.value == 'test_item'
+        assert test_item_name_4.value == 'some/place/test_item'
 
     def test_parent_item(self):
         test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')

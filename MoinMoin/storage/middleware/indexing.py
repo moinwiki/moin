@@ -81,7 +81,7 @@ from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclToke
 from MoinMoin.themes import utctimestamp
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
-
+from MoinMoin.util.interwiki import split_fqname, CompositeName
 
 WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
@@ -118,9 +118,7 @@ def get_names(meta):
     elif not isinstance(names, list):
         raise TypeError("NAME is not a list but %r - fix this!" % names)
     if not names:
-        # we currently never return an empty list, some code
-        # might not be able to deal with it:
-        names = [u'DoesNotExist', ]
+        names = []
     return names
 
 
@@ -189,6 +187,8 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
                    metadata as a side effect
     :returns: indexable content, text/plain, unicode object
     """
+    fqname = split_fqname(item_name)
+
     class PseudoRev(object):
         def __init__(self, meta, data):
             self.meta = meta
@@ -196,9 +196,10 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             self.revid = meta.get(REVID)
 
             class PseudoItem(object):
-                def __init__(self, name):
-                    self.name = name
-            self.item = PseudoItem(item_name)
+                def __init__(self, fqname):
+                    self.fqname = fqname
+                    self.name = fqname.value
+            self.item = PseudoItem(fqname)
 
         def read(self, *args, **kw):
             return self.data.read(*args, **kw)
@@ -214,7 +215,10 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         return u''
 
     if not item_name:
-        item_name = get_names(meta)[0]
+        try:
+            item_name = get_names(meta)[0]
+        except IndexError:
+            item_name = u'DoesNotExist'
 
     rev = PseudoRev(meta, data)
     try:
@@ -319,6 +323,8 @@ class IndexingMiddleware(object):
             SUMMARY: TEXT(stored=True),
             # DATAID from metadata
             DATAID: ID(stored=True),
+            # TRASH from metadata
+            TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True),
         }
@@ -832,7 +838,98 @@ class IndexingMiddleware(object):
         return Item.existing(self, **query)
 
 
-class Item(object):
+class PropertiesMixin(object):
+    """
+    PropertiesMixin offers methods to find out some additional information from meta.
+    """
+    @property
+    def name(self):
+        if self._name and self._name in self.names:
+            name = self._name
+        else:
+            try:
+                name = self.names[0]
+            except IndexError:
+                # empty name list, no name:
+                name = None
+        assert isinstance(name, unicode) or not name
+        return name
+
+    @property
+    def namespace(self):
+        return self.meta.get(NAMESPACE, u'')
+
+    def _fqname(self, name=None):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        if name is not None:
+            return CompositeName(self.namespace, NAME_EXACT, name)
+        else:
+            return CompositeName(self.namespace, ITEMID, self.meta[ITEMID])
+
+    @property
+    def fqname(self):
+        """
+        return the fully qualified name including the namespace: NS:NAME
+        """
+        return self._fqname(self.name)
+
+    @property
+    def fqnames(self):
+        """
+        return the fully qualified names including the namespace: NS:NAME
+        """
+        if self.names:
+            return [self._fqname(name) for name in self.names]
+        else:
+            return [self.fqname]
+
+    @property
+    def parentnames(self):
+        """
+        compute list of parent names (same order as in names, but no dupes)
+
+        :return: parent names (list of unicode)
+        """
+        parent_names = []
+        for name in self.names:
+            parentname_tail = name.rsplit('/', 1)
+            if len(parentname_tail) == 2:
+                parent_name = parentname_tail[0]
+                if parent_name not in parent_names:
+                    parent_names.append(parent_name)
+        return parent_names
+
+    @property
+    def fqparentnames(self):
+        """
+        return the fully qualified parent names including the namespace: NS:NAME
+        """
+        return [self._fqname(name) for name in self.parentnames]
+
+    @property
+    def acl(self):
+        return self.meta.get(ACL)
+
+    @property
+    def ptime(self):
+        dt = self.meta.get(PTIME)
+        if dt is not None:
+            return utctimestamp(dt)
+
+    @property
+    def names(self):
+        return get_names(self.meta)
+
+    @property
+    def mtime(self):
+        dt = self.meta.get(MTIME)
+        if dt is not None:
+            return utctimestamp(dt)
+
+
+class Item(PropertiesMixin):
     def __init__(self, indexer, latest_doc=None, **query):
         """
         :param indexer: indexer middleware instance
@@ -854,11 +951,10 @@ class Item(object):
                 # avoid issues in the name(s) property code. if this was a
                 # lookup for some specific item (using a name_exact query), we
                 # put that name into the NAME list, otherwise it'll be empty:
-                if self._name is not None:
-                    names = [self._name, ]
-                else:
-                    names = []
-                latest_doc = {NAME: names}
+                latest_doc = {}
+                for field, value in query.items():
+                    latest_doc[field] = [value] if field in UFIELDS_TYPELIST else value
+                latest_doc[NAME] = latest_doc[NAME_EXACT] if NAME_EXACT in query else []
         self._current = latest_doc
 
     def _get_itemid(self):
@@ -869,38 +965,8 @@ class Item(object):
     itemid = property(_get_itemid, _set_itemid)
 
     @property
-    def acl(self):
-        return self._current.get(ACL)
-
-    @property
-    def namespace(self):
-        return self._current.get(NAMESPACE)
-
-    @property
-    def ptime(self):
-        dt = self._current.get(PTIME)
-        if dt is not None:
-            return utctimestamp(dt)
-
-    @property
-    def names(self):
-        return get_names(self._current)
-
-    @property
-    def parentnames(self):
-        """
-        compute list of parent names (same order as in names, but no dupes)
-
-        :return: parent names (list of unicode)
-        """
-        parent_names = []
-        for name in self.names:
-            parentname_tail = name.rsplit('/', 1)
-            if len(parentname_tail) == 2:
-                parent_name = parentname_tail[0]
-                if parent_name not in parent_names:
-                    parent_names.append(parent_name)
-        return parent_names
+    def meta(self):
+        return self._current
 
     @property
     def parentids(self):
@@ -915,59 +981,6 @@ class Item(object):
             if rev:
                 parent_ids.add(rev[ITEMID])
         return parent_ids
-
-    @property
-    def mtime(self):
-        dt = self._current.get(MTIME)
-        if dt is not None:
-            return utctimestamp(dt)
-
-    @property
-    def name(self):
-        if self._name and self._name in self.names:
-            name = self._name
-        else:
-            try:
-                name = self.names[0]
-            except IndexError:
-                # empty name list, no name:
-                name = None
-        assert name is None or isinstance(name, unicode)
-        return name
-
-    def _fqname(self, name):
-        """
-        return the fully qualified name including the namespace: NS:NAME
-        """
-        ns = self.namespace
-        name = name or u''
-        if ns:
-            fqn = ns + u':' + name
-        else:
-            fqn = name
-        assert isinstance(fqn, unicode)
-        return fqn
-
-    @property
-    def fqname(self):
-        """
-        return the fully qualified name including the namespace: NS:NAME
-        """
-        return self._fqname(self.name)
-
-    @property
-    def fqnames(self):
-        """
-        return the fully qualified names including the namespace: NS:NAME
-        """
-        return [self._fqname(name) for name in self.names]
-
-    @property
-    def fqparentnames(self):
-        """
-        return the fully qualified parent names including the namespace: NS:NAME
-        """
-        return [self._fqname(name) for name in self.parentnames]
 
     @classmethod
     def create(cls, indexer, **query):
@@ -1034,6 +1047,7 @@ class Item(object):
                        contenttype_guessed=None,
                        acl_parent=None,
                        return_rev=False,
+                       fqname=None,
                        ):
         """
         Store a revision into the backend, write metadata and data to it.
@@ -1073,6 +1087,7 @@ class Item(object):
                  'contenttype_current': contenttype_current,
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
+                 FQNAME: fqname,
                 }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
@@ -1146,7 +1161,7 @@ class Item(object):
             self.destroy_revision(rev.revid)
 
 
-class Revision(object):
+class Revision(PropertiesMixin):
     """
     An existing revision (exists in the backend).
     """
@@ -1176,21 +1191,6 @@ class Revision(object):
             self._name = None
         # Note: this does not immediately raise a KeyError for non-existing revs any more
         # If you access data or meta, it will, though.
-
-    @property
-    def names(self):
-        return get_names(self.meta)
-
-    @property
-    def name(self):
-        name = self._name
-        if name is None:
-            try:
-                name = self.names[0]
-            except IndexError:
-                # empty name list, no name:
-                name = None
-        return name
 
     def set_context(self, context):
         for name in self.names:

@@ -62,7 +62,8 @@ def itemid_validator(element, state):
     an itemid is a uuid that identifies an item
     """
     if not state['trusted'] or element.raw is Unset:
-        itemid = state.get(keys.ITEMID)
+        fqname = state[keys.FQNAME]
+        itemid = fqname.value if fqname and fqname.field == keys.ITEMID else state.get(keys.ITEMID)
         if itemid is None:
             # this is first revision of an item
             itemid = make_uuid()
