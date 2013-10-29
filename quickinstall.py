@@ -22,7 +22,10 @@ class QuickInstall(object):
         if not venv:
             base, source_name = os.path.split(source)
             venv = os.path.join(base, 'venv-{}-{}'.format(source_name, os.path.basename(sys.executable)))
-        self.dir_venv = venv
+
+        venv_home, venv_lib, venv_inc, venv_bin = virtualenv.path_locations(venv)
+        self.dir_venv = venv_home
+        self.dir_venv_bin = venv_bin
 
     def __call__(self):
         self.do_venv()
@@ -33,15 +36,15 @@ class QuickInstall(object):
 Succesfully created or updated venv
   {0}
 You can run MoinMoin as
-  {0}/bin/moin
-""".format(self.dir_venv))
+  {1}
+""".format(self.dir_venv, os.path.join(self.dir_venv_bin, 'moin')))
 
     def do_venv(self):
         virtualenv.create_environment(self.dir_venv)
 
     def do_install(self):
         subprocess.check_call((
-            os.path.join(self.dir_venv, 'bin', 'pip'),
+            os.path.join(self.dir_venv_bin, 'pip'),
             'install',
             # XXX: move cache to XDG cache dir
             '--download-cache',
@@ -52,7 +55,7 @@ You can run MoinMoin as
 
     def do_catalog(self):
         subprocess.check_call((
-            os.path.join(self.dir_venv, 'bin', 'python'),
+            os.path.join(self.dir_venv_bin, 'python'),
             os.path.join(self.dir_source, 'setup.py'),
             'compile_catalog', '--statistics',
         ))
