@@ -574,14 +574,12 @@ class User(object):
         :rtype: bool
         :returns: if user is subscribed to the item
         """
-        if not self.valid:
+        from MoinMoin.items import NonExistent
+        if not self.valid or isinstance(item, NonExistent):
             return False
 
         meta = item.meta
-        try:
-            item_namespace = meta[NAMESPACE]
-        except KeyError:
-            return False
+        item_namespace = meta[NAMESPACE]
         subscriptions = {"{0}:{1}".format(ITEMID, meta[ITEMID])}
         subscriptions.update("{0}:{1}:{2}".format(NAME, item_namespace, name)
                              for name in meta[NAME])
