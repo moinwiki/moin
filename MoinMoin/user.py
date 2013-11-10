@@ -30,6 +30,7 @@ from babel import parse_locale
 from flask import current_app as app
 from flask import g as flaskg
 from flask import session, request, url_for, render_template
+from jinja2.runtime import Undefined
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -575,16 +576,19 @@ class User(object):
         :returns: if user is subscribed to the item
         """
         from MoinMoin.items import NonExistent
-        if not self.valid or isinstance(item, NonExistent):
+        if not self.valid or isinstance(item, (NonExistent, Undefined)):
             return False
 
         meta = item.meta
         item_namespace = meta[NAMESPACE]
-        subscriptions = {"{0}:{1}".format(ITEMID, meta[ITEMID])}
+        subscriptions = set()
+        itemid = meta.get(ITEMID)
+        if itemid is not None:
+            subscriptions.update(["{0}:{1}".format(ITEMID, itemid)])
         subscriptions.update("{0}:{1}:{2}".format(NAME, item_namespace, name)
-                             for name in meta[NAME])
+                             for name in meta.get(NAME, []))
         subscriptions.update("{0}:{1}:{2}".format(TAGS, item_namespace, tag)
-                             for tag in meta[TAGS])
+                             for tag in meta.get(TAGS, []))
         if subscriptions & set(self.subscriptions):
             return True
 
