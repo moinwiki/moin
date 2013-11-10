@@ -14,14 +14,24 @@ from anywhere within the contrib path.
 
 import sys
 import os
-import warnings
-warnings.simplefilter("once")
+
 
 # file types to be processed
 SELECTED_SUFFIXES = set("py bat cmd html css js styl".split())
 
 # stuff considered DOS/WIN
 WIN_SUFFIXES = set("bat cmd".split())
+
+
+class NoDupsLogger(object):
+    """Suppress duplicate messages."""
+    def __init__(self):
+        self.seen = set()
+
+    def log(self, msg):
+        if msg not in self.seen:
+            print msg
+            self.seen.add(msg)
 
 
 def directories_to_ignore(starting_dir):
@@ -44,6 +54,7 @@ def check_files(filename, suffix):
         line_end = "\r\n"
     else:
         line_end = "\n"
+    logger = NoDupsLogger()
 
     with open(filename, "rb") as f:
         lines = f.readlines()
@@ -52,7 +63,7 @@ def check_files(filename, suffix):
     while lines:
         if not lines[-1].strip():
             del lines[-1]
-            warnings.warn(u"%s was changed to remove empty lines at eof" % filename)
+            logger.log(u"%s was changed to remove empty lines at eof" % filename)
         else:
             break
 
@@ -62,11 +73,14 @@ def check_files(filename, suffix):
             f.write(pep8_line)
             # if line was changed, issue warning once for each type of change
             if suffix in WIN_SUFFIXES and not line.endswith("\r\n"):
-                warnings.warn(u"%s was changed to DOS line endings" % filename)
+                logger.log(u"%s was changed to DOS line endings" % filename)
             elif suffix not in WIN_SUFFIXES and line.endswith("\r\n"):
-                warnings.warn(u"%s was changed to Unix line endings" % filename)
+                logger.log(u"%s was changed to Unix line endings" % filename)
             elif pep8_line != line:
-                warnings.warn(u"%s was changed to remove trailing blanks" % filename)
+                if len(pep8_line) < len(line):
+                    logger.log(u"%s was changed to remove trailing blanks" % filename)
+                else:
+                    logger.log(u"%s was changed to add end of line character at end of file" % filename)
 
 
 def file_picker(starting_dir):
@@ -92,5 +106,5 @@ if __name__ == "__main__":
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
         starting_dir = starting_dir.split(os.sep + 'contrib')[0]
-    warnings.warn(u"%s is starting directory" % starting_dir)
+    NoDupsLogger().log(u"Starting directory is %s" % starting_dir)
     file_picker(starting_dir)
