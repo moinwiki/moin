@@ -3,17 +3,12 @@
 # Copyright: 2001-2012 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import sys
 import os
+import MoinMoin  # validate python version
 
-from MoinMoin import project, version
 
-if sys.hexversion < 0x2070000:
-    # we require 2.7.x, python 3.x does not work yet.
-    sys.stderr.write("%s %s requires Python 2.7.x.\n" % (project, str(version)))
-    sys.exit(1)
-
-with open('README.txt') as f:
+basedir = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(basedir, 'README.txt')) as f:
     long_description = f.read()
 
 from setuptools import setup, find_packages
@@ -21,13 +16,13 @@ from setuptools import setup, find_packages
 
 setup_args = dict(
     name="moin",
-    version=str(version),
+    version=str(MoinMoin.version),
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description=long_description,
     author="Juergen Hermann et al.",
     author_email="moin-user@lists.sourceforge.net",
     # maintainer(_email) not active because distutils/register can't handle author and maintainer at once
-    download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (version, ),
+    download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (MoinMoin.version, ),
     url="http://moinmo.in/",
     license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
