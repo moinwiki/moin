@@ -8,6 +8,7 @@ its requirements.
 needs: virtualenv, pip
 """
 
+import MoinMoin  # validate python version
 import argparse
 import logging
 import os.path
@@ -58,6 +59,8 @@ You can run MoinMoin as
             os.path.join(self.dir_venv_bin, 'python'),
             os.path.join(self.dir_source, 'setup.py'),
             'compile_catalog', '--statistics',
+            # needed in case user runs quickinstall.py with a cwd other than the repo root
+            '--directory', os.path.join(os.path.dirname(__file__), 'MoinMoin', 'translations'),
         ))
 
 
