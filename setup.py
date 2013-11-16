@@ -98,7 +98,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                               # note: pytest-pep8 1.0.3 needs pytest 2.3
         'whoosh>=2.5.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
-        'pdfminer>=20110515',  # pdf -> text/plain conversion
+        'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap>=3.0.0.1',
