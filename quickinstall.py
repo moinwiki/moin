@@ -14,7 +14,15 @@ import logging
 import os.path
 import subprocess
 import sys
-import virtualenv
+try:
+    import virtualenv
+except ImportError:
+    sys.exit("""
+Error: import virtualenv failed, either
+  virtualenv is not installed (see installation docs)
+or
+  the virtual environment must be deactivated before rerunning quickinstall.py
+""")
 
 
 class QuickInstall(object):
