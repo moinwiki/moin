@@ -11,7 +11,7 @@ needs: virtualenv, pip
 import MoinMoin  # validate python version
 import argparse
 import logging
-import os.path
+import os
 import subprocess
 import sys
 try:
@@ -26,27 +26,30 @@ or
 
 
 class QuickInstall(object):
-    def __init__(self, source, venv=None):
+    def __init__(self, source, venv=None, download_cache=None):
         self.dir_source = source
-        if not venv:
+        if venv is None:
             base, source_name = os.path.split(source)
-            venv = os.path.join(base, 'venv-{}-{}'.format(source_name, os.path.basename(sys.executable)))
+            venv = os.path.join(base, '{}-venv'.format(source_name))
+        if download_cache is None:
+            download_cache = '~/.pip-download-cache'
 
         venv_home, venv_lib, venv_inc, venv_bin = virtualenv.path_locations(venv)
         self.dir_venv = venv_home
         self.dir_venv_bin = venv_bin
+        self.download_cache = os.path.normpath(os.path.expanduser(download_cache))
 
     def __call__(self):
         self.do_venv()
         self.do_install()
         self.do_catalog()
+        self.do_helpers()
 
         sys.stdout.write("""
-Succesfully created or updated venv
-  {0}
-You can run MoinMoin as
-  {1}
-""".format(self.dir_venv, os.path.join(self.dir_venv_bin, 'moin')))
+Pip cache location is at {0}
+
+Successfully created or updated venv at {1}
+""".format(self.download_cache, self.dir_venv))
 
     def do_venv(self):
         virtualenv.create_environment(self.dir_venv)
@@ -57,7 +60,7 @@ You can run MoinMoin as
             'install',
             # XXX: move cache to XDG cache dir
             '--download-cache',
-            os.path.join(os.path.dirname(self.dir_venv), '.pip-download-cache'),
+            self.download_cache,
             '--editable',
             self.dir_source
         ))
@@ -71,12 +74,28 @@ You can run MoinMoin as
             '--directory', os.path.join(os.path.dirname(__file__), 'MoinMoin', 'translations'),
         ))
 
+    def do_helpers(self):
+        """Create small helper scripts or symlinks in repo root."""
+        if os.name == 'nt':
+            # windows commands are: activate | deactivate | moin
+            open('activate.bat', 'w').write('call {}\n'.format(os.path.join(self.dir_venv_bin, 'activate.bat')))
+            open('deactivate.bat', 'w').write('call {}\n'.format(os.path.join(self.dir_venv_bin, 'deactivate.bat')))
+            open('moin.bat', 'w').write('call {} %*\n'.format(os.path.join(self.dir_venv_bin, 'moin.exe')))
+        else:
+            # linux commands are: source activate | deactivate | ./moin
+            if os.path.exists('activate'):
+                os.unlink('activate')
+            if os.path.exists('moin'):
+                os.unlink('moin')
+            os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')
+            os.symlink(os.path.join(self.dir_venv_bin, 'moin'), 'moin')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('venv', metavar='VENV', nargs='?', help='location of v(irtual)env')
+    parser.add_argument('--download_cache', dest='download_cache', help='location of pip download cache')
     args = parser.parse_args()
 
-    QuickInstall(os.path.dirname(os.path.realpath(sys.argv[0])), venv=args.venv)()
+    QuickInstall(os.path.dirname(os.path.realpath(sys.argv[0])), venv=args.venv, download_cache=args.download_cache)()
