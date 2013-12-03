@@ -18,10 +18,8 @@ try:
     import virtualenv
 except ImportError:
     sys.exit("""
-Error: import virtualenv failed, either
-  virtualenv is not installed (see installation docs)
-or
-  the virtual environment must be deactivated before rerunning quickinstall.py
+Error: import virtualenv failed, either virtualenv is not installed (see installation docs)
+or the virtual environment must be deactivated before rerunning quickinstall.py
 """)
 
 
@@ -32,7 +30,12 @@ class QuickInstall(object):
             base, source_name = os.path.split(source)
             venv = os.path.join(base, '{}-venv'.format(source_name))
         if download_cache is None:
-            download_cache = '~/.pip-download-cache'
+            # make cache sibling of ~/pip/pip.log or ~/.pip/pip.log
+            if os.name == 'nt':
+                download_cache = '~/pip/pip-download-cache'
+            else:
+                # XXX: move cache to XDG cache dir
+                download_cache = '~/.pip/pip-download-cache'
 
         venv_home, venv_lib, venv_inc, venv_bin = virtualenv.path_locations(venv)
         self.dir_venv = venv_home
@@ -58,7 +61,6 @@ Successfully created or updated venv at {1}
         subprocess.check_call((
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
-            # XXX: move cache to XDG cache dir
             '--download-cache',
             self.download_cache,
             '--editable',
@@ -76,19 +78,26 @@ Successfully created or updated venv at {1}
 
     def do_helpers(self):
         """Create small helper scripts or symlinks in repo root."""
+
+        def create_wrapper(filename, contents):
+            """Create files in the repo root that wrap files in the v-env/bin or v-env\Scripts."""
+            with open(filename, 'w') as f:
+                f.write(contents)
+
         if os.name == 'nt':
             # windows commands are: activate | deactivate | moin
-            open('activate.bat', 'w').write('call {}\n'.format(os.path.join(self.dir_venv_bin, 'activate.bat')))
-            open('deactivate.bat', 'w').write('call {}\n'.format(os.path.join(self.dir_venv_bin, 'deactivate.bat')))
-            open('moin.bat', 'w').write('call {} %*\n'.format(os.path.join(self.dir_venv_bin, 'moin.exe')))
+            create_wrapper('activate.bat', '@call {}\n'.format(os.path.join(self.dir_venv_bin, 'activate.bat')))
+            create_wrapper('deactivate.bat', '@call {}\n'.format(os.path.join(self.dir_venv_bin, 'deactivate.bat')))
+            create_wrapper('moin.bat', '@call {} %*\n'.format(os.path.join(self.dir_venv_bin, 'moin.exe')))
         else:
             # linux commands are: source activate | deactivate | ./moin
             if os.path.exists('activate'):
                 os.unlink('activate')
             if os.path.exists('moin'):
                 os.unlink('moin')
-            os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')
+            os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')  # no need to define deactivate on unix
             os.symlink(os.path.join(self.dir_venv_bin, 'moin'), 'moin')
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
