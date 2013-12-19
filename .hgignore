@@ -13,6 +13,8 @@
 ^wiki/data/content/
 ^wiki/data/userprofiles/
 ^wiki/index/
+^wiki/backup.*\.moin$
+^wiki/deleted-backup\.moin$
 ^instance/
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
@@ -34,3 +36,11 @@
 ^upload.py
 ^build/
 \..*sw[op]$
+^activate.bat$
+^deactivate.bat$
+^moin.bat$
+^m.bat$
+^activate$
+^moin$
+^m$
+^m-.*\.txt$
