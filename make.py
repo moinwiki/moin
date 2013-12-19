@@ -3,13 +3,27 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-m.py
+make.py provides a menu of commands frequently used by moin2 developers and desktop wiki users.
 
-Provides a menu of functions frequently used by moin2 developers and desktop wiki users.
     - duplicates some common moin commands, do "moin --help" for all alternatives
     - adds default file names for selected moin commands (backup, restore, ...)
     - creates log files for functions with large output, extracts success/failure messages
     - displays error messages when user tries to run commands out of sequence
+
+usage (to display a menu of commands):
+    - unix:     ./m
+    - windows:  m
+
+For make.py to work, it needs to know the name of a python executable and the location of a
+virtual env. These needs are met by running "python quickinstall.py" after cloning the moin2
+repository. quickinstall.py creates these files or symlinks in the repo root:
+    - unix: m, activate, moin
+    - windows: m.bat, activate.bat, deactivate.bat, moin.bat
+
+Executing m.bat or ./m will run make.py. The name of the python executable is within the m.bat or ./m
+script.  The location of the virtual env is within the activate and moin symlinks or activate.bat and
+moin.bat scripts. Depending upon the command to be executed, some mix of the python executable, moin,
+or activate will be used to construct a command string to pass to a subprocess call.
 """
 
 import os
@@ -66,7 +80,7 @@ help = r"""
 
 usage: "%s <target>" where <target> is:
 
-quickinstall    create or update virtual environment with required packages
+quickinstall    update virtual environment with required packages
 docs            create local Sphinx html documentation
 extras          install OpenID, Pillow, pymongo, sqlalchemy, ldap, upload.py
 interwiki       refresh contrib\interwiki\intermap.txt (hg version control)
@@ -101,7 +115,7 @@ def search_for_phrase(filename):
         QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
-        # 'error ' to avoid catching .../Modules/errors.o....
+        # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
         PYTEST: ('seconds =', ),
         PEP8: ('seconds =', ),
@@ -162,8 +176,8 @@ def delete_files(pattern):
     print 'Deleted %s files matching "%s".' % (len(matches), pattern)
 
 
-class Menu(object):
-    """Each cmd_ method processes an option on the menu."""
+class Commands(object):
+    """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
         pass
 
@@ -202,12 +216,11 @@ class Menu(object):
             print 'Installing OpenId, Pillow, pymongo, sqlalchemy, upload.py... output messages written to %s.' % EXTRAS
             # easy_install is used for windows because it installs binary packages, pip does not
             command = 'activate.bat & easy_install python-openid & easy_install pillow & easy_install pymongo & easy_install sqlalchemy' + ' & ' + upload
-            # TODO: easy_install python-ldap fails on windows
+            # TODO: "easy_install python-ldap" fails on windows
             # try google: installing python-ldap in a virtualenv on windows
             # or, download from http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-ldap
             #   activate.bat
             #   easy_install <path to downloaded .exe file>
-            #   deactivate.bat
         else:
             print 'Installing OpenId, Pillow, pymongo, sqlalchemy, ldap, upload.py... output messages written to %s.' % EXTRAS
             command = 'source ./activate; pip install python-openid; pip install pillow; pip install pymongo; pip install sqlalchemy; pip install python-ldap' + '; ' + upload
@@ -252,7 +265,7 @@ class Menu(object):
         else:
             command = './moin index-create -s -i'
         print 'Creating a new empty wiki...'
-        make_wiki(command)  # share code with loading sample data or restoring backups
+        make_wiki(command)  # share code with loading sample data and restoring backups
 
     def cmd_sample(self, *args):
         """create wiki and load sample data"""
@@ -325,7 +338,7 @@ class Menu(object):
                 filename = args[0]
                 print 'Creating a wiki backup to %s...' % filename
             else:
-                print 'Creating a wiki backup to %s after rolling 3 prior backups...'
+                print 'Creating a wiki backup to %s after rolling 3 prior backups...' % filename
                 b3 = BACKUP_FILENAME.replace('.', '3.')
                 b2 = BACKUP_FILENAME.replace('.', '2.')
                 b1 = BACKUP_FILENAME.replace('.', '1.')
@@ -334,7 +347,6 @@ class Menu(object):
                 for src, dst in ((b2, b3), (b1, b2), (BACKUP_FILENAME, b1)):
                     if os.path.exists(src):
                         os.rename(src, dst)
-
             if WINDOWS_OS:
                 command = 'moin.bat save --all-backends --file %s' % filename
             else:
@@ -443,7 +455,7 @@ class Menu(object):
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result != 0:
                 print 'Error: backup failed with return code = %s. Complete log is in %s.' % (result, DELWIKI)
-        # destroy wiki even though files are damaged and backup may have failed
+        # destroy wiki even if backup fails
         if os.path.isdir('wiki/data') or os.path.isdir('wiki/index'):
             shutil.rmtree('wiki/data')
             shutil.rmtree('wiki/index')
@@ -454,9 +466,9 @@ class Menu(object):
 
 if __name__ == '__main__':
     # create a set of valid menu choices
-    menu = Menu()
+    commands = Commands()
     choices = set()
-    names = dir(menu)
+    names = dir(commands)
     for name in names:
         if name.startswith('cmd_'):
             choices.add(name)
@@ -470,7 +482,7 @@ if __name__ == '__main__':
             choice = 'cmd_%s' % sys.argv[1]
             choice = choice.replace('-', '_')
             if choice in choices:
-                choice = getattr(menu, choice)
+                choice = getattr(commands, choice)
                 choice(*sys.argv[2:])
             else:
                 print help
