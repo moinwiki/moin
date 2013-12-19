@@ -7,14 +7,7 @@
 ^dlc/
 ^moin.egg-info/
 ^MoinMoin/_tests/wiki/data/cache/
-^wiki/data/cache/
-^wiki/data/default/data/
-^wiki/data/default/meta/
-^wiki/data/content/
-^wiki/data/userprofiles/
-^wiki/index/
-^wiki/backup.*\.moin$
-^wiki/deleted-backup\.moin$
+^wiki/
 ^instance/
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
