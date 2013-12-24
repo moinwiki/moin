@@ -11,7 +11,7 @@
 
 
 {# Image links in the footer #}
-{% macro creditlogos(start=''|safe, end=''|safe, sep=''|safe) %}
+{% macro creditlogos(start='<div class="navbar-header">'|safe, end='</div>'|safe, sep=''|safe) %}
 {{ start }}
 {{ creditlogo('http://moinmo.in/', url_for('static', filename='logos/moinmoin-small.png'),
    'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}

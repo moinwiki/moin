@@ -1,4 +1,5 @@
 @import "bootstrap.less";
+@import "moin-variables.less";
 
 // ---- Customising the top navbar breakpoint
 @grid-float-breakpoint: @screen-medium;
@@ -118,7 +119,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .moin-nonexistent {
-  color: @link-nonexistent-color;
+  color: @link-nonexistent-color !important; 
   &:hover {
     color: @link-nonexistent-hover-color;
   }
@@ -242,4 +243,25 @@ div.moin-item-wrapper {
 .comment {
   color: @text-color;
   background-color: lighten(@link-color, 40%);
+}
+
+// added to stretch across the whole width, which is reduced by navbar.less's navbar-form
+.moin-navbar-form{
+  .navbar-form;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.moin-navbar-header{
+  .navbar-header;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.moin-toggle-comments-button, .moin-transclusions-button{
+  font-weight: normal;
+}
+
+a.wikilink{
+  color: @brand-primary;
 }
