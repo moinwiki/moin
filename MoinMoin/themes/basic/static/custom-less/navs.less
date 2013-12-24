@@ -56,15 +56,15 @@
     }
   }
 
-  // Redeclare pull classes because of specificity
-  // Todo: consider making these utilities !important to avoid this bullshit
-  > .pull-right {
-    float: right;
-  }
-
   // Dividers (basically an hr) within the dropdown
   .nav-divider {
     .nav-divider();
+  }
+
+  // Prevent IE8 from misplacing imgs
+  // See https://github.com/h5bp/html5-boilerplate/issues/984#issuecomment-3985989
+  > li > a > img {
+    max-width: none;
   }
 }
 
