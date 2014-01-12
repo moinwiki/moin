@@ -23,119 +23,174 @@ Issue tracker (bugs, proposals, todo):
 
 * http://bitbucket.org/thomaswaldmann/moin-2.0/issues
 
-Code Repositories (using Mercurial DVCS):
+Code Repositories (using Mercurial DVCS http://mercurial.selenic.com/):
 
 * http://hg.moinmo.in/moin/2.0  (main repository)
 * http://bitbucket.org/thomaswaldmann/moin-2.0  (bitbucket mirror for your
   convenience, simplifying forking and contributing)
 
-Code review (get feedback about code changes):
+Code review (always use this to get feedback about code changes):
 
-* http://codereview.appspot.com/
+* http://code.google.com/p/rietveld/wiki/CodeReviewHelp
+* http://codereview.appspot.com/ (list of current codereview activity)
 
-Pastebin (temporary stuff - do not use for code reviews, do not use from issue
-tracker or for any long-term needed stuff):
+Pastebin (temporary storage - do not use for code review or any long-term need):
 
 * http://rn0.ru/
-
 
 Typical development workflow
 ============================
 
-This is the typical workflow for non-trivial changes and developers that likely
-want to contribute more than one change:
+This is the typical workflow for anyone that wants to contribute to the development of Moin2.
 
-* create your own development environment (only once):
+create your development environment
+-----------------------------------
 
-  - create a google account (if you don't have one already, it's free), so you
-    can use codereview.appspot.com
-  - create a bitbucket account (if you don't have one already, it's free)
-  - clone ("fork") the main repository on bitbucket, so you have your own bb
-    repo to publish your work
-  - clone your own bb repo to your local development machine
-  - do a development install from your local repo - read the moin2 install docs
-    for detailled instructions.
-  - join #moin-dev IRC channel and stay there whenever possible
+* if you do not have a bitbucket account, create one at https://bitbucket.org
+* fork the main repository on bitbucket: https://bitbucket.org/thomaswaldmann/moin-2.0
+* clone the main repository to your local development machine
 
-* find some stuff to work on:
+  - cd to parent directory of your future repo
+  - "hg clone https://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0"
+* ensure you are in default branch "hg update default"
+* create the virtualenv and download packages: "python quickinstall.py"
+* create a wiki instance and load sample data: "m sample"
+* start the built-in server: "m run"
+* point your browser at http://127.0.0.1:8080/ to access your development wiki
+* key ctrl+C to stop the built-in server
 
-  - look at the issue tracker to find some stuff you can solve
-  - in case you want to work on some (non-trivial) new issue or idea that is
-    not on the issue tracker yet, first create an issue there with a detailled
-    description of it
-  - discuss with / get feedback from other developers on the #moin-dev IRC
-    channel
+add more tools, exercise tools
+------------------------------
 
-* work on the stuff:
+* if you do not have a google account, create one at http://codereview.appspot.com
+* download upload.py from http://code.google.com/p/rietveld/wiki/CodeReviewHelp
+  to your repo root, then practice using codereview:
+* make a trivial change to any source file, do "python upload.py"
+* inspect your patch set at http://codereview.appspot.com, add a comment
+* click the "Publish and Mail comments" link, check your email inbox
+* make another trivial change to same source file, do "python upload.py -i nnn"
+  where nnn is ID of existing codereview
+* inspect your patch set again, compare patch set 1 to patch set 2
+* click the "Delete" link to delete patchset 2
+* revert the changes on your local repo "hg revert --all"
+* run the unit tests ("m tests"), note any existing test failures
+* install NodeJS with Linux package manager; Windows users may download from http://nodejs.org/download/
+* install stylus
 
-  - to avoid double work, add a comment on the issue tracker that you are
-    working on that issue
-  - work in your local repo on your local development machine (make sure you
-    work in the right branch)
-  - concentrate on one issue / one topic, create a clean set of changes (that
-    means not doing more than needed to fix the issue, but also it means fixing
-    the issue completely and everywhere)
-  - write good, clean, easy-to-understand code.
-  - obey PEP-8
-  - do not fix or change unrelated stuff while working, but rather create new
-    issues on the tracker, so it's not forgotten
-  - regularly run the unit tests ("make test"), the amount of failing tests
-    shall not increase due to your changes
-  - if you fix something that had no test, first try to write a (correct, but
-    still failing) test for it, then fix the code and see the test not failing
-    any more
-  - if you implement new functionality, write tests for it first, then
-    implement it
-  - do an own review of your changes. Use hg diff, hg status - read everything
-    you changed - slowly, looking for stuff that can be improved. Fix
-    everything you find that way before requesting feedback from others.
-  - get feedback from other developers about your changes:
-   
-    + put them on codereview (just run python upload.py in your local repo -
-      if it is not first upload, reuse the same ID to update the already
-      existing codereview)
-    + post the codereview URL to #moin-dev IRC channel asking for review
-    + if you want to get feedback on non-code stuff, either use the issue
-      tracker or a pastebin (only use pastebins for temporary stuff)
-  - repeat until everybody is happy with it
-  - do some final testing - practically and using the unit tests
-  - commit your changes to your local repo, use a meaningful commit comment
+  - "sudo npm install stylus -g" or windows "npm install stylus -g"
+  - "stylus -V"  # show version number to prove it works
+* run Stylus to regenerate CSS files: "m css", verify nothing changed: "hg diff"
+* run "m coding-std" to see if there are any coding errors
+* run "m api" to see any uncommitted API doc changes
+* use "hg revert --all" to revert any changes from above
+* optional: create local docs "m docs"
+* set options on your favorite editor or IDE
 
-* publish your stuff and request it being merged:
+  - convert tabs to 4 spaces
+  - delete trailing blanks on file save
+  - use unix line endings (use Windows line endings on .bat and .cmd files)
+  - use mono-spaced font for editing
+* if you are new to mercurial, read a tutorial (http://hginit.com/),
+  consider printing a cheatsheet
+* if you want a Python IDE, try http://www.jetbrains.com/pycharm/ Free Community Edition
+* if you want a graphical interface to Mercurial, install SourceTree (best for mac) or TortoiseHG (best for Windows)
+* join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
-  - push the changeset to your public bitbucket repo
-  - create a pull request to request that your changes get pulled into the
-    main repository
-  - optionally, tell about it on the IRC channel
-  - if you fixed an issue from the issue tracker, make sure the issue gets
-    closed after your fix has been merged.
+find a task to work on
+----------------------
 
+* look at the issue tracker to find a task you can solve
+* in case you want to work on some (non-trivial) new issue or idea that is
+  not on the issue tracker, create an issue with a detailed description
+* discuss your chosen task with other developers on the #moin-dev IRC
+  channel
+* to avoid duplicate work, add a comment on the issue tracker that you are
+  working on that issue
+* just before you start to code changes, update your local repo: "hg pull -u"
+
+develop a testing strategy
+--------------------------
+
+* if you fix something that had no test, first try to write a correct,
+  but failing test for it, then fix the code and see a successful test
+* if you implement new functionality, write tests for it first, then
+  implement it
+* make a plan for using a browser to test your changes; which wiki pages are
+  effected, how many browsers must be tested
+* run "m tests" to determine if there are any existing test failures before you make changes
+
+develop a working solution
+--------------------------
+
+* work in your local repo on your local development machine
+  (be sure you work in the right branch)
+* concentrate on one issue / one topic, create a clean set of changes
+  (that means not doing more than needed to fix the issue, but also it
+  means fixing the issue completely and everywhere)
+* write good, clean, easy-to-understand code
+* obey PEP-8
+* do not fix or change code unrelated to your task, if you find
+  unrelated bugs, create new issues on the tracker
+* regularly run the unit tests ("m tests"), the amount of failing tests
+  shall not increase due to your changes
+
+review your working solution
+----------------------------
+
+* use hg diff, hg status - read everything you changed - slowly, look for
+  things that can be improved
+
+  - if you have TortoiseHG or SourceTree, use those graphical tools to review changes
+* look for poor variable names, spelling errors in comments, accidental addition
+  or deletion of blank lines, complex code without comments, missing/extra spaces
+* fix everything you find before requesting feedback from others
+* run tests again "m tests"
+
+get feedback from other developers
+----------------------------------
+
+* add changes to codereview: run "python upload.py" in your local repo
+
+  - to update a codereview, "python upload.py -i nnn" where nnn is ID
+* carefully review your changes again on codereview
+
+  - if you find errors, delete the patchset, fix and upload again
+* if you have questions or want to explain something, add comments and click
+  "Publish+Mail Comments"
+* post the codereview URL to #moin-dev IRC channel asking for review
+* repeat until everybody is happy with your changes
+
+publish your change
+-------------------
+
+* do some final testing - practically and using the unit tests
+* commit your changes to your local repo, use a concise commit comment
+  describing the change
+* pull any changes made by others from the main repo on Bitbucket, then
+  merge and commit
+* push the changeset to your public bitbucket repo
+* create a pull request so your changes will get pulled into the
+  main repository
+* optionally, request a pull on the IRC channel
+* if you fixed an issue from the issue tracker, be sure the issue gets
+  closed after your fix has been pulled into main repo.
+* celebrate, loop back to "find a task to work on"
+
+update your virtualenv
+----------------------
+
+Every week or so, do "m quickinstall" to install new releases of
+dependent packages. If any new packages are installed, do a
+quick check for breakages by running tests, starting the
+build-in server, modify an item, etc.
 
 Alternate contribution workflows
 ================================
-If the above workflow looks like overkill (e.g. for simple changes) or you
-can't work with the tools we usually use, you can also do it like this:
-
-* find an existing issue on the issue tracker about the issue you were fixing
-  (or create a new one), make sure to give (or update) all the details, like:
-
-  - precise version number / changeset hashes of the original code your patch
-    is based on
-  - precise description of the issue, how to reproduce it, tracebacks, ...
-  - why your fix is correct / how you tested it
-* create a patch using the diff tool, attach patch.txt to the issue:
-
-    diff -urN originalcodetree/ modifiedcodetree/ > patch.txt
-
-* if you fixed an issue from the issue tracker, make sure the issue gets
-  closed after your fix has been committed to the main repo.
-
-For trivial fixes (like typos), you can also try just grabbing a developer
-on IRC, telling filename, line number and get it fixed by him.
-
-Note: if developers find that the required changes are not that simple or are
-potentially causing other issues, codereview or other parts of the full
-workflow might be needed.
+If the above workflow looks like overkill (e.g. for simple changes)
+or you can't work with the tools we usually use, then just create or
+update an issue on the issue tracker
+https://bitbucket.org/thomaswaldmann/moin-2.0/issues)
+or join us on IRC #moin-dev.
 
 
 MoinMoin architecture
@@ -158,10 +213,6 @@ moin2 is a WSGI application and uses:
 * jquery javascript lib
 * CKeditor, the GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools
-
-.. todo::
-
-   add some nice gfx
 
 
 How MoinMoin works
@@ -237,7 +288,8 @@ DOM based transformations
 -------------------------
 How does moin know what the HTML rendering of an item looks like?
 
-Each Item has some contenttype that is stored in the metadata, also called the input contenttype.
+Each Item has some contenttype that is stored in the metadata, also called
+the input contenttype.
 We also know what we want as output, also called the output contenttype.
 
 Moin uses converters to transform the input data into the output data in
@@ -260,7 +312,7 @@ This dom tree is then transformed through multiple dom-to-dom converters for exa
 Finally, the dom-tree will reach the output converter, which will transform it
 into the desired output format, such as `text/html`.
 
-This is just one example of a supported transformation. There are quite a few 
+This is just one example of a supported transformation. There are quite a few
 converters in `MoinMoin.converter` supporting different input formats,
 dom-dom transformations and output formats.
 
@@ -284,7 +336,7 @@ Running the tests
 To run the tests, activate your virtual env and invoke py.test from the
 toplevel directory::
 
-    make test  # easiest way (all tests, pep8, skipped info)
+    m tests  # easiest way (all tests, pep8, skipped info)
     py.test --pep8  # run all tests, including pep8 checks
     py.test -rs  # run all tests and outputs information about skipped tests
     py.test -k somekeyword  # run the tests matching somekeyword only
@@ -318,9 +370,7 @@ are located in the `docs/` directory in the source tree.
 
 Creating docs
 -------------
-Sphinx can create all kinds of documentation formats. The most
-popular ones are::
+Sphinx can create all kinds of documentation formats. The most common are
+the local HTML docs that are linked to under the User tab.
 
-    cd docs
-    make html  # create html docs (to browse online or in the filesystem)
-
+    m docs
