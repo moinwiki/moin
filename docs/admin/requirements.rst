@@ -2,15 +2,43 @@
 Requirements
 ============
 
-MoinMoin requires Python 2.7.x.
-We usually test using CPython and this is what we recommend.
+MoinMoin requires Python 2.7.x. A CPython distribution is
+recommended because it will likely be the fastest and most stable.
+Most developers use a CPython distribution for testing.
+Typical linux distributions will either have Python 2.7 installed by
+default or will have a package manager that will install Python 2.7
+as a secondary Python.
+Windows users may download CPython distributions from  http://www.python.org/ or
+http://www.activestate.com/.
 
-You can also try PyPy, it seems to work.
+An alternative implementation of Python, PyPy, is available
+from http://pypy.org/.
+
+The `virtualenv` Python package is also required. The
+installation process for `virtualenv` varies with your OS and
+Python distribution.
+Many linux distributions have a package manager that may do
+the installation. Windows users (and perhaps others) may download
+setuptools from https://pypi.python.org/pypi/setuptools. Once setuptools is installed, do "`easy_install virtualenv`". Current ActiveState
+distributions include virtualenv in the installation bundle.
+If all else fails, try Google.
+
+Mercurial (hg) is required should you wish to contribute
+patches to the moin2 development effort. Even if you do not
+intend to contribute, Mercurial is highly recommended as it
+will make it easy for you to obtain fixes and enhancements
+from the moin2 repositories. Mercurial can be installed
+with most linux package managers or downloaded
+from http://mercurial.selenic.com/. As an alternative,
+most Windows users will prefer to install TortoiseHG
+(includes Mercurial) from
+http://tortoisehg.bitbucket.org/.
+
 
 Servers
 =======
 
-For moin, you can use any server compatible with WSGI:
+For moin2, you can use any server compatible with WSGI:
 
 * the builtin "moin" server is recommended for desktop wikis, testing,
   debugging, development, adhoc-wikis, etc.
@@ -24,24 +52,15 @@ For moin, you can use any server compatible with WSGI:
 Dependencies
 ============
 
-For dependency information, please see setup.py.
-
-If you use easy_install or pip or our ``quickinstall`` script, then
-dependencies are usually automatically dealt with.
-
+Dependent packages will be automatically downloaded and installed during the moin2 installation process. For a list of dependencies, see setup.py.
 
 Clients
 =======
 On the client side, you need:
 
-* a decent web browser that supports W3C standards HTML 5 and CSS 2.1 as well
-  as JavaScript:
+* a web browser that supports W3C standards HTML 5, CSS 2.1, and JavaScript:
 
-  - any current version of Firefox, Chrome, Opera, Safari, Internet Explorer
-    (IE9 or IE10) should work.
-  - usage of older Internet Explorer versions is not recommended and not
-    supported because they are known for causing issues.
-    For Windows 7 (or 8) Microsoft provides IE9 or IE10.
-* Java browser plugin (optional, needed if you want to use TWikiDraw or
-  AnyWikiDraw drawing applets).
+  - any current version of Firefox, Chrome, Opera, Safari, Maxthon, Internet Explorer (IE9 or newer).
+  - use of older Internet Explorer versions is not recommended and not supported.
 
+* a Java browser plugin is required only if you want to use the TWikiDraw or AnyWikiDraw drawing applets.

@@ -4,168 +4,153 @@ Downloading and Installing
 
 Downloading
 ===========
-For moin2, there is currently no packaged download available, so you have to get
-it from the repository.
-You can use one of two repository URLs and either use Mercurial to keep a 
-constantly updated copy of the code or download an archive of the files in tar.gz format:
-
-Using Mercurial to clone one of the repositories::
+The recommended way to download moin2 is to clone
+the moin2 Mercurial repository or its mirror. Open a terminal
+window or a command prompt, cd to the directory that will hold
+your project root directory and enter either one of the commands
+below::
 
  hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
+
  OR
+
  hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
 
 Now make sure your work directory is using the default branch::
 
  hg up -C default
 
-Alternatively, visit http://hg.moinmo.in/moin/2.0 with your web browser and download the archive
-(usually for the "default" branch) and unpack it.
+An alternative installation method is to download the bz2 archive
+from http://hg.moinmo.in/moin/2.0 and unpack it. Once unpacked,
+continue to follow the instructions below.
 
 Installing
 ==========
 Before you can run moin, you need to install it:
 
-Developer install
------------------
-Using your standard Python install or a virtualenv directory
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Please make sure you have `virtualenv` installed, it includes `pip`.
+Using your standard user account, run the following command
+from the project root directory. Replace <python> in the command
+below with the path to a python 2.7 executable. This is usually
+just "python", but may be "python2.7", "/opt/pypy/bin/pypy"
+or even <some-other-path-to-python>::
 
-If you just want to run moin in-place in your mercurial working directory
-with your normal system installation of Python, run the following command
-from your mercurial moin2 working directory. You should not run this as an
-administrator or root user; use your standard user account::
+ <python> quickinstall.py
 
- python quickinstall.py
+ OR
 
-This will use virtualenv to create a directory `../venv-PROJECT-PYTHON/`
-(PROJECT is same as your current project directory, e.g. moin-2.0, PYTHON is
-the name of your python interpreter, e.g. python), create a virtual environment
-for MoinMoin and then install moin2 including all dependencies into that
-directory.
+ <python> quickinstall.py <path-to-venv> --download-cache <path-to-cache>
 
-`pip` will automatically fetch all dependencies from PyPI and install them, so
-this may take a while.
-It will also compile the translations (`*.po` files) to binary `*.mo` files.
+The above will download all dependent packages to a cache,
+install the packages in a virtual environment, and compile the translations
+(`*.po` files) to binary `*.mo` files. This process may take several minutes.
 
-Please review the output of the quickinstall script, and check whether there were fatal errors.
+The default cache and virtual environment directory names are:
 
-Further, the quickinstall script will create a `moin` script for your
-platform which you can use for starting the built-in server or invoke moin script commands.
+ * ~/.pip/pip-download-cache # windows: ~\\pip\\pip-download-cache
+ * ../<PROJECT>-venv-<PYTHON>/
 
-After you activated the virtual environment, the built-in server script, which is named 
-`moin`, will be in the standard PATH, so you can just run the command `moin` on the command line.
+where <PROJECT> is the name of the project root directory, and <PYTHON>
+is the name of your python interpreter. As noted above, the default
+names may be overridden.
 
-**Note:** in this special mode, it won't copy the MoinMoin code to the virtualenv directory,
-it will run everything from your work dir, so you can modify code and directly try it out.
-You only need to do this installation procedure once.
+Check the output of quickinstall.py to determine whether there were
+fatal errors. The output messages will normally state that stdout
+and stderr messages were written to a file, a few key success/failure
+messages will be extracted and written to the terminal window, and
+finally a message to type "m" to display a menu.
 
-Using a different Python
-~~~~~~~~~~~~~~~~~~~~~~~~
+If there are failure messages, see the troubleshooting section below.
 
-If you rather like a different Python, just use it to invoke the quickinstall.py
-script - the same python will then be used for the virtual env also::
+Typing 'm" will display a menu similar to::
 
- /opt/pypy/bin/pypy quickinstall.py  # for linux
+    usage: "m <target>" where <target> is:
 
+    quickinstall    update virtual environment with required packages
+    docs            create moin html documentation
+    extras          install OpenID, Pillow, pymongo, sqlalchemy, ldap, upload.py
+    interwiki       refresh contrib\interwiki\intermap.txt (hg version control)
+    log <target>    view detailed log generated by <target>, omit to see list
 
-Activating the virtual env
---------------------------
+    new-wiki        create empty wiki
+    sample          create wiki and load sample data
+    restore *       create wiki and restore wiki\backup.moin *option, specify file
+    import <dir>    import a moin 1.9 wiki/data instance from <dir>
 
-IMPORTANT: you always need to activate the virtual environment before running
-anything that executes moin code! Otherwise it won't find the moin command,
-nor the moin code nor the libraries it needs. Also, if you want to install
-additional software into the virtual environment, activate it before running pip!::
+    run             run built-in wiki server with local OS and logging options
+    backup *        roll 3 prior backups and create new backup *option, specify file
 
- source ../venv-moin-2.0-python/bin/activate  # for linux (or other posix OSes)
- # or
- ..\venv-moin-2.0-python\Scripts\activate.bat  # for windows
+    css             run Stylus to update CSS files
+    tests           run tests, output goes to pytest.txt and pytestpep8.txt
+    coding-std      correct scripts that taint the repository with trailing spaces..
+    api             update moin api docs (files are under hg version control)
+    dist            delete wiki data, then create distribution archive in /dist
 
-As you have activated the virtual env now, the moin command should be in your
-path now, so you can invoke it using "moin".
+    del-all         same as running the 4 del-* commands below
+    del-orig        delete all files matching *.orig
+    del-pyc         delete all files matching *.pyc
+    del-rej         delete all files matching *.rej
+    del-wiki        create a backup, then delete all wiki data
 
-Note: the quickinstall script outputs the correct commands for activating
-the virtual env and for the moin executable file.
+While most of the above menu choices may be executed now, new users should
+do::
 
-Letting moin find the wiki configuration
-----------------------------------------
+ m sample
 
-moin needs to find the wiki configuration. If you want it to run in the most
-simple way without giving parameters to the moin command, it is easiest if
-you are in the same directory as the configuration files, e.g. wikiconfig.py.
+to create a wiki instance and load it with sample data. Next, run the
+built-in wiki server::
 
-If you are working from a repository workdir, this is the top level
-directory and there is already a ready-to-use wikiconfig.py.
+ m run
 
-In case you want to just give the configuration file location, make sure you
-use an **absolute path**. moin will try to find its configuration in this
-order:
+As the server starts, about 20 log messages will be output to the
+terminal window.  Point your browser to http://127.0.0.1:8080, the
+sample Home page will appear and more log messages will be output
+to the terminal window. Do a quick test by accessing some of the
+demo items and do a modify and save. If all goes well, your installation
+is complete. The built-in wiki server may be stopped by typing ctrl-C
+in the terminal window.
 
-- command line argument `--config /path/to/wikiconfig.py`
-- environment variable `MOINCFG=/path/to/wikiconfig.py`
-- current directory, file `wikiconfig_local.py`
-- current directory, file `wikiconfig.py`
+Next Steps
+==========
 
-Initializing index and/or storage
----------------------------------
-If you have an existing storage AND a valid index (for this storage’s content and for this moin version),
-you can skip this section.
+If you plan on contributing to the moin2 project, there are more
+instructions waiting for you under the Development topic.
 
-If you start from scratch, ie no storage and no index created yet,
-you need to create an empty storage and an empty index::
+If you plan on just using moin2 as a desktop wiki (and maybe
+help by reporting bugs), then some logical menu choices are:
 
- # create storage and index:
- moin index-create -s -i
+ * `m docs` - to create docs, see User tab, Documentation (local)
+ * `m extras` - to install Pillow for manipulating images
+ * `m del-wiki` - get rid of the sample data
+ * `m new-wiki` or `m import ...` - no data or moin 1.9 data
+ * `m backup` - backup wiki data as needed or as scheduled
 
-Loading some items
-------------------
-If you don't want to have a completely empty wiki, you can optionally load
-some example items into the storage like this::
+Warning: Backing up data at this point may provide a false sense
+of security because no migration tool has been developed to migrate
+data between moin2 versions.  In its current alpha state, there
+may be code changes that impact the structure of the wiki data or
+indexes. Should this occur, you must start over with an empty
+wiki and somehow copy and paste the contents of all the old wiki
+items into the new wiki. While no such changes are planned,
+they have happened in the past and may happen in the future.
 
- # load some example items:
- moin load --file contrib/serialized/items.moin
+If you installed moin2 by cloning the Moin2 Mercurial repository,
+then you will likely want to install updates on a periodic basis.
+To determine if there are updates available, open a terminal
+window or command prompt, cd to your project root, and enter the
+command below::
 
-Building the index
-------------------
-If you have some items in your storage, but no index built yet, you need
-to build an index::
+  hg incoming
 
- moin index-build
+If there are any updates, a brief description of each update will
+be displayed. To add the updates to your cloned repository, do::
 
-
-Installing PIL / pillow
-~~~~~~~~~~~~~~~~~~~~~~~
-For some image processing functions that MoinMoin uses like resizing and rotating,
-you need PIL, which is the Python Imaging Library (sometimes also referred to as
-python-imaging). Instead of PIL, you can also use pillow, which is a compatible
-fork of PIL (with more active maintenance and it also has been ported to Python 3).
-
-Windows users who want to install PIL should skip the remainder of this section and read
-Troubleshooting -- PIL Installation Under Windows below.
-
-If you install PIL with pip, then pip will try to find a jpeg support library and associated development
-headers on your system and if you do not have them, there will be no jpeg support in PIL.
-So, if you want jpeg support, make sure you have the jpeg libs/headers::
-
- # install jpeg library and development headers:
- sudo apt-get install libjpeg62-dev  # Ubuntu / Debian-based
- yum install libjpeg-turbo-devel  # Fedora / Redhat-based
-
-Now activate your virtual environment and install PIL into it::
-
- pip install pil  # for Linux (or other POSIX OSes)
-
-Alternatively, if you prefer to use pillow::
-
- pip install pillow  # for Linux (or other POSIX OSes)
-
+  hg pull -u
 
 Troubleshooting
----------------
+===============
 
 PyPi down
-~~~~~~~~~
+---------
 Now and then, PyPi might be down or unreachable.
 
 There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
@@ -175,49 +160,45 @@ you can use in such cases. You just need to tell pip to do so::
  [global]
  index-url = http://c.pypi.python.org/simple
 
-In case that doesn't work either, try our mini pypi that should have all
-packages you need for moin::
-
- # put this into ~/.pip/pip.conf
- [global]
- index-url = http://pypi.moinmo.in/simple
-
 Bad Network Connection
-~~~~~~~~~~~~~~~~~~~~~~
-If you have a poor or limited network connection, you may run into trouble with the commands issued by
-the quickinstall script.
-You may see tracebacks from pip, timeout errors, etc. See the output of the quickinstall script.
+----------------------
+If you have a poor or limited network connection, you may run into
+trouble with the commands issued by the quickinstall.py script.
+You may see tracebacks from pip, timeout errors, etc. within the output
+of the quickinstall script.
 
-If this is the case, try it manually::
+If this is the case, you may try rerunning the "python quickinstall.py"
+script multiple times. With each subsequent run, packages that are
+all ready cached (view the contents of pip-download-cache) will not
+be downloaded again. Hopefully, any temporary download errors will
+cease with multiple tries.
 
- # create a virtual environment:
- virtualenv env
+ActiveState Python
+------------------
+While ActiveState bundles pip and virtualenv in its distribution,
+there are two missing files. The result is the following error
+messages followed by a traceback::
 
- # enter your virtual environment:
- source env/bin/activate
 
- # confirm the problems by running:
- pip install -e .
+  Cannot find sdist setuptools-*.tar.gz
+  Cannot find sdist pip-*.tar.gz
 
-Now install each package into your virtual env manually:
+To install the missing files, do the following and then rerun
+"python quickinstall.py"::
 
-* Find the required packages by looking at "install_requires" within `setup.py`.
-* Download each required package from http://pypi.python.org/
-* Install each of them individually::
+  \Python27\Scripts\pip.exe uninstall virtualenv
+  \Python27\Scripts\easy_install virtualenv
 
-    pip install package.tar
+Other Issues
+------------
 
-* Now try again::
+If you encounter some other issue not described above, try
+researching the unresolved issues at
+https://bitbucket.org/thomaswaldmann/moin-2.0/issues?status=new&status=open.
+If you find a similar issue, please
+add a note saying you also have the problem and add any new
+information that may assist in the problem resolution.
 
-    pip install -e .
-
-Repeat these steps until you don't see fatal errors.
-
-PIL/pillow Installation Under Windows
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PIL version 1.1.7 does not install correctly via "pip install pil" on Windows.
-Some users have had success using "pip install pillow", a fork of PIL fixing
-a packaging issue. Other users have resorted to installing PIL 1.1.6 in the
-main Python directory using the Windows installers available at
-http://www.pythonware.com/products/pil/
-
+If you cannot find a similar issue please create a new issue.
+Or, if you are not sure what to do, join us on IRC at #moin-dev
+and describe the problem you have encountered.
