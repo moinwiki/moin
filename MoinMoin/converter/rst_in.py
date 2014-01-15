@@ -27,7 +27,7 @@ from flask import g as flaskg
 
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink
+from MoinMoin.util.tree import html, moin_page, xlink, xinclude
 
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
@@ -328,7 +328,9 @@ class NodeVisitor(object):
         pass
 
     def visit_image(self, node):
-        new_node = moin_page.object(attrib={xlink.href: node['uri']})
+        target = Iri(scheme='wiki.local', path=node['uri'])
+        attrib = {xinclude.href: target}
+        new_node = xinclude.include(attrib=attrib)
         # TODO: rewrite this more compact
         alt = node.get('alt', None)
         if alt:
