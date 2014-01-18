@@ -55,13 +55,13 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 
     def test_image(self):
         data = [
-            (u'.. image:: images/biohazard.png', '<page><body><object xlink:href="images/biohazard.png" /></body></page>'),
+            (u'.. image:: images/biohazard.png', '<page><body><ns1:include ns1:href="wiki.local:images/biohazard.png" /></body></page>'),
             (u""".. image:: images/biohazard.png
    :height: 100
    :width: 200
    :scale: 50
-   :alt: alternate text""", '<page><body><object alt="images/biohazard.png" height="100" scale="50" width="200" xlink:href="images/biohazard.png" /></body></page>'),
-            (u'abc |a| cba\n\n.. |a| image:: test.png', '<page><body><p>abc <object alt="test.png" xlink:href="test.png" /> cba</p></body></page>'),
+   :alt: alternate text""", '<page><body><ns1:include alt="images/biohazard.png" height="100" scale="50" width="200" ns1:href="wiki.local:images/biohazard.png" /></body></page>'),
+            (u'abc |a| cba\n\n.. |a| image:: test.png', '<page><body><p>abc <ns1:include alt="test.png" ns1:href="wiki.local:test.png" /> cba</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
