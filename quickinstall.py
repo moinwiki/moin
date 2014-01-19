@@ -8,6 +8,8 @@ its requirements.
 needs: virtualenv, pip
 """
 
+PIP15 = False  # dirty hack to support pip >= 1.5 incompatibilities
+
 import MoinMoin  # validate python version
 import argparse
 import logging
@@ -52,15 +54,22 @@ You can run MoinMoin as
         virtualenv.create_environment(self.dir_venv)
 
     def do_install(self):
-        subprocess.check_call((
+        args = [
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
             # XXX: move cache to XDG cache dir
             '--download-cache',
             os.path.join(os.path.dirname(self.dir_venv), '.pip-download-cache'),
             '--editable',
-            self.dir_source
-        ))
+            self.dir_source,
+        ]
+        if PIP15:
+            args += [
+            '--process-dependency-links',
+            '--allow-external', 'flatland',
+            '--allow-unverified', 'flatland',
+        ]
+        subprocess.check_call(args)
 
     def do_catalog(self):
         subprocess.check_call((
