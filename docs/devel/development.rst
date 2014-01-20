@@ -277,14 +277,13 @@ Stylesheets for the Basic theme in MoinMoin are compiled using the source .less 
 in the ``custom-less`` directory inside Basic theme's ``static`` directory.
 
 For instructions on how to set up server-side compilation of .less files refer to
-the "Server Side Usage - Installation" section at `LESS <http://lesscss.org/#usage>`_
+the "Server Side Usage - Installation" section at `LESS. <http://lesscss.org/#usage>`_
 
 Once installed, we can invoke the less compiler from the command line by using
-the following
+the following::
 
-    ``cd MoinMoin/themes/basic/static/custom-less;``
-
-    ``lessc basic.less ../css/basic.css;``
+    cd MoinMoin/themes/basic/static/custom-less
+    lessc basic.less ../css/basic.css
 
 For compiling ``basic.less`` we need to have the source .less files from Bootstrap. It is currently compatible with Bootstrap v3.0.0 RC2.
 You can download the source from `here <https://github.com/twbs/bootstrap/releases/tag/v3.0.0-rc.2>`_ and copy the .less files
