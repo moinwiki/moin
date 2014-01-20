@@ -286,7 +286,7 @@ the following
 
     ``lessc basic.less ../css/basic.css;``
 
-For compiling ``basic.less`` we need to have the source .less files from Bootstrap. It is currently compatible with Bootstrap v3.rc2.
+For compiling ``basic.less`` we need to have the source .less files from Bootstrap. It is currently compatible with Bootstrap v3.0.0 RC2.
 You can download the source from `here <https://github.com/twbs/bootstrap/releases/tag/v3.0.0-rc.2>`_ and copy the .less files
 into the ``custom-less`` directory.
 
