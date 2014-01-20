@@ -23,6 +23,7 @@ import pytest
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+from flask import request
 from flask import g as flaskg
 
 from MoinMoin import config
@@ -53,6 +54,8 @@ class NodeVisitor(object):
         self.header_size = 1
         self.status = ['document']
         self.footnotes = dict()
+        self.last_lineno = 0
+        self.current_lineno = 0
 
     def dispatch_visit(self, node):
         """
@@ -62,6 +65,7 @@ class NodeVisitor(object):
         """
         node_name = node.__class__.__name__
         method = getattr(self, 'visit_' + node_name, self.unknown_visit)
+        self.current_lineno = node.line
         return method(node)
 
     def dispatch_departure(self, node):
@@ -91,6 +95,11 @@ class NodeVisitor(object):
         pass
 
     def open_moin_page_node(self, mointree_element):
+        if request.user_agent and flaskg.user.edit_on_doubleclick:
+            # add data-lineno attribute for auto-scrolling edit textarea (user_agent is None when running tests)
+            if self.last_lineno < self.current_lineno:
+                mointree_element.attrib[html.data_lineno] = self.current_lineno
+                self.last_lineno = self.current_lineno
         self.current_node.append(mointree_element)
         self.current_node = mointree_element
         self.path.append(mointree_element)
