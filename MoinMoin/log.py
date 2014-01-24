@@ -103,7 +103,6 @@ import logging.handlers  # needed for handlers defined there being configurable 
 
 configured = False
 fallback_config = False
-in_email_handler = False
 
 import warnings
 
@@ -193,6 +192,7 @@ class EmailHandler(logging.Handler):
             toaddrs = [toaddrs]
         self.toaddrs = toaddrs
         self.subject = subject
+        self.in_email_handler = False
 
     def emit(self, record):
         """ Emit a record.
@@ -205,15 +205,16 @@ class EmailHandler(logging.Handler):
         if not app.cfg.email_tracebacks:
             return
 
-        global in_email_handler
-        if in_email_handler:
+        if self.in_email_handler:
             return
-        in_email_handler = True
-        toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
-        log_level = logging.getLevelName(self.level)
-        subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
-            app.cfg.sitename, log_level)
-        msg = self.format(record)
-        from MoinMoin.mail.sendmail import sendmail
-        sendmail(subject, msg, to=toaddrs)
-        in_email_handler = False
+        self.in_email_handler = True
+        try:
+            toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
+            log_level = logging.getLevelName(self.level)
+            subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
+                app.cfg.sitename, log_level)
+            msg = self.format(record)
+            from MoinMoin.mail.sendmail import sendmail
+            sendmail(subject, msg, to=toaddrs)
+        finally:
+            self.in_email_handler = False
