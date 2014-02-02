@@ -30,6 +30,7 @@ from babel import parse_locale
 from flask import current_app as app
 from flask import g as flaskg
 from flask import session, request, url_for, render_template
+from jinja2.runtime import Undefined
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -43,12 +44,24 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.mail import sendmail
 from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
 from MoinMoin.util.crypto import generate_token, valid_token, make_uuid
+from MoinMoin.util.subscriptions import get_matched_subscription_patterns
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 
-def create_user(username, password, email, openid=None, validate=True, is_encrypted=False, is_disabled=False):
-    """ create a user """
-    # Create user profile
+def create_user(username, password, email, validate=True, is_encrypted=False, **meta):
+    """
+    Create a new user
+
+    :param username: unique user name
+    :param password: user's password - see also is_encrypted param
+    :param email: unique email address
+    :param validate: if True (default) will validate username, password, email
+                        and the uniqueness of the user created
+    :param is_encrypted: if False (default) defines that the password is in
+                        plaintext, when True - password was already encrypted
+    :param meta: a dictionary of key-value pairs that represent user metadata and
+                    will be stored into user profile metadata
+    """
     theuser = User(auth_method="new-user")
 
     # Don't allow creating users with invalid names
@@ -86,14 +99,15 @@ space between words. Group page name is not allowed.""", name=username)
         theuser.profile[EMAIL] = email
 
     # Openid should be unique
+    openid = meta.get(OPENID)
     if validate and openid and search_users(openid=openid):
         return _('This OpenID already belongs to somebody else.')
 
-    theuser.profile[OPENID] = openid
+    theuser.profile[DISABLED] = meta.get("is_disabled", False)
 
-    theuser.profile[DISABLED] = is_disabled
-
-    # save data
+    # TODO requires validation (preferably using flatland)
+    for key, value in meta.items():
+        theuser.profile[key] = value
     theuser.save()
 
 
@@ -182,6 +196,27 @@ def isValidName(name):
     """
     normalized = normalizeName(name)
     return (name == normalized) and not wikiutil.isGroupItem(name)
+
+
+def assemble_subscription(keyword, value, namespace=None):
+    """ Create a valid subscription string
+
+    :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
+                    the type of the subscription is determined
+    :param value: the subscription value (itemid, name, tag, regexp or nameprefix value)
+    :param namespace: the namespace of the subscription
+    :return: subscription string
+    """
+    if keyword == ITEMID:
+        subscription = "{0}:{1}".format(ITEMID, value)
+    elif keyword in [NAME, TAGS, NAMERE, NAMEPREFIX, ]:
+        if namespace is not None:
+            subscription = "{0}:{1}:{2}".format(keyword, namespace, value)
+        else:
+            raise ValueError("The subscription by {0} keyword requires a namespace".format(keyword))
+    else:
+        raise ValueError("Invalid keyword string: {0}".format(keyword))
+    return subscription
 
 
 class UserProfile(object):
@@ -533,82 +568,84 @@ class User(object):
 
     # Subscribed Items -------------------------------------------------------
 
-    def is_subscribed_to(self, pagelist):
-        """ Check if user subscription matches any page in pagelist.
+    def is_subscribed_to(self, item):
+        """ Check if user is subscribed to the following item
 
-        The subscription contains interwiki page names. e.g 'WikiName:Page_Name'
-
-        TODO: check if it's fast enough when getting called for many
-              users from page.getSubscribersList()
-
-        :param pagelist: list of pages to check for subscription
+        :param item: Item object
         :rtype: bool
-        :returns: if user is subscribed any page in pagelist
+        :returns: if user is subscribed to the item
         """
-        if not self.valid:
+        from MoinMoin.items import NonExistent
+        if not self.valid or isinstance(item, (NonExistent, Undefined)):
             return False
 
-        # Create a new list with interwiki names.
-        pages = [getInterwikiName(pagename) for pagename in pagelist]
-        # Create text for regular expression search
-        text = '\n'.join(pages)
+        meta = item.meta
+        item_namespace = meta[NAMESPACE]
+        subscriptions = set()
+        itemid = meta.get(ITEMID)
+        if itemid is not None:
+            subscriptions.update(["{0}:{1}".format(ITEMID, itemid)])
+        subscriptions.update("{0}:{1}:{2}".format(NAME, item_namespace, name)
+                             for name in meta.get(NAME, []))
+        subscriptions.update("{0}:{1}:{2}".format(TAGS, item_namespace, tag)
+                             for tag in meta.get(TAGS, []))
+        if subscriptions & set(self.subscriptions):
+            return True
 
-        for pattern in self.subscribed_items:
-            # Try simple match first
-            if pattern in pages:
-                return True
-            # Try regular expression search, skipping bad patterns
-            try:
-                pattern = re.compile(r'^{0}$'.format(pattern), re.M)
-            except re.error:
-                continue
-            if pattern.search(text):
-                return True
-
-        return False
-
-    def subscribe(self, pagename):
-        """ Subscribe to a wiki page.
-
-        Page names are saved as interwiki names.
-
-        :param pagename: name of the page to subscribe
-        :type pagename: unicode
-        :rtype: bool
-        :returns: if page was subscribed
-        """
-        pagename = getInterwikiName(pagename)
-        subscribed_items = self.subscribed_items
-        if pagename not in subscribed_items:
-            subscribed_items.append(pagename)
-            self.save(force=True)
-            # XXX SubscribedToPageEvent
+        if get_matched_subscription_patterns(self.subscriptions, **meta):
             return True
         return False
 
-    def unsubscribe(self, pagename):
-        """ Unsubscribe a wiki page.
+    def subscribe(self, keyword, value, namespace=None):
+        """ Subscribe to a wiki page.
 
-        Try to unsubscribe by removing interwiki name from the subscription
-        list.
+        The user can subscribe in 5 different ways:
+        * by itemid - ITEMID:<itemid value>
+        * by item name - NAME:<namespace>:<name value>
+        * by a tagname - TAGS:<namespace>:<tag value>
+        * by a prefix name - NAMEPREFIX:<namespace>:<name prefix>
+        * by a regular expression - NAMERE:<namespace>:<name regexp>
 
-        Its possible that the user will be subscribed to a page by more
-        than one pattern. It can be both interwiki name and a regex pattern that
-        both match the page. Therefore, we must check if the user is
-        still subscribed to the page after we try to remove names from the list.
-
-        :param pagename: name of the page to subscribe
-        :type pagename: unicode
+:       :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
+                        the type of the subscription is determined
+        :param value: the subscription value (itemid, name, tag, regexp or nameprefix value)
+        :param namespace: the namespace of the subscription; itemid keyword doesn't
+                            require a namespace
         :rtype: bool
-        :returns: if unsubscribe was successful. If the user has a
-            regular expression that matches, unsubscribe will always fail.
+        :returns: if user was subscribed
         """
-        interWikiName = getInterwikiName(pagename)
-        subscribed_items = self.profile[SUBSCRIBED_ITEMS]
-        if interWikiName and interWikiName in subscribed_items:
-            subscribed_items.remove(interWikiName)
+        subscription = assemble_subscription(keyword, value, namespace)
+        subscriptions = self.subscriptions
+        if subscription not in subscriptions:
+            subscriptions.append(subscription)
             self.save(force=True)
-        return not self.is_subscribed_to([pagename])
+            return True
+        return False
+
+    def unsubscribe(self, keyword, value, namespace=None, item=None):
+        """ Unsubscribe from a wiki page.
+
+        Same as for subscribing, user can also unsubscribe in 5 ways.
+        The unsubscribe action doesn't guarantee that user will not receive any
+        notification for this item, since user can be subscribed by some other
+        patterns that match current item.
+
+        :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
+                        the type of the subscription is determined
+        :param value: the subscription value (itemid, name, tag, regexp or nameprefix value)
+        :param namespace: the namespace of the subscription; itemid keyword doesn't
+                            require a namespace
+        :param item: Item object to check if the user is still subscribed
+        :rtype: bool
+        :returns: if user was unsubscribed
+        """
+        subscription = assemble_subscription(keyword, value, namespace)
+        subscriptions = self.subscriptions
+        if subscription in subscriptions:
+            subscriptions.remove(subscription)
+            self.save(force=True)
+            return not self.is_subscribed_to(item) if item else True
+        return False
 
     # Quicklinks -------------------------------------------------------------
 

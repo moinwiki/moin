@@ -15,8 +15,9 @@ To use this, please use exactly this line (no less, no more)::
 
 
 from babel import Locale
+from contextlib import contextmanager
 
-from flask import current_app, request
+from flask import current_app, request, _request_ctx_stack
 from flask import g as flaskg
 from flask.ext.babel import Babel, gettext, ngettext, lazy_gettext
 
@@ -66,3 +67,37 @@ def get_timezone():
     u = getattr(flaskg, 'user', None)
     if u and u.timezone is not None:
         return u.timezone
+
+
+# Original source is a patch to Flask Babel
+# https://github.com/lalinsky/flask-babel/commit/09ee1702c7129598bb202aa40a0e2e19f5414c24
+@contextmanager
+def force_locale(locale):
+    """Temporarily overrides the currently selected locale. Sometimes
+    it is useful to switch the current locale to different one, do
+    some tasks and then revert back to the original one. For example,
+    if the user uses German on the web site, but you want to send
+    them an email in English, you can use this function as a context
+    manager::
+
+        with force_locale('en_US'):
+            send_email(gettext('Hello!'), ...)
+    """
+    ctx = _request_ctx_stack.top
+    if ctx is None:
+        yield
+        return
+    babel = ctx.app.extensions['babel']
+    orig_locale_selector_func = babel.locale_selector_func
+    orig_attrs = {}
+    for key in ('babel_translations', 'babel_locale'):
+        orig_attrs[key] = getattr(ctx, key, None)
+    try:
+        babel.locale_selector_func = lambda: locale
+        for key in orig_attrs:
+            setattr(ctx, key, None)
+        yield
+    finally:
+        babel.locale_selector_func = orig_locale_selector_func
+        for key, value in orig_attrs.iteritems():
+            setattr(ctx, key, value)

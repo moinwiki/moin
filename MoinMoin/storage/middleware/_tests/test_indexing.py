@@ -16,8 +16,10 @@ import pytest
 from flask import g as flaskg
 
 from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
-                                     LATEST_REVS, ALL_REVS, NAMESPACE)
+                                     LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
+
+from MoinMoin.util.interwiki import split_fqname
 
 from MoinMoin.auth import GivenAuth
 from MoinMoin._tests import wikiconfig
@@ -367,14 +369,30 @@ class TestIndexingMiddleware(object):
         assert expected_revid == doc[REVID]
         assert unicode(data) == doc[CONTENT]
 
+    def test_indexing_subscriptions(self):
+        item_name = u"foo"
+        meta = dict(name=[item_name, ], subscriptions=[u"{0}::foo".format(NAME),
+                                                       u"{0}::.*".format(NAMERE)])
+        item = self.imw[item_name]
+        item.store_revision(meta, StringIO(str(item_name)))
+        doc1 = self.imw.document(subscription_ids=u"{0}::foo".format(NAME))
+        doc2 = self.imw.document(subscription_patterns=u"{0}::.*".format(NAMERE))
+        assert doc1 is not None
+        assert doc2 is not None
+        doc3 = self.imw.document(subscription_ids=u"{0}::.*".format(NAMERE))
+        doc4 = self.imw.document(subscription_patterns=u"{0}::foo".format(NAMEPREFIX))
+        assert doc3 is None
+        assert doc4 is None
+
     def test_namespaces(self):
         item_name_n = u'normal'
         item = self.imw[item_name_n]
         rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_n)), return_rev=True)
-        item_name_u = u'%s:userprofile' % NAMESPACE_USERPROFILES
-        item = self.imw[item_name_u]
-        rev_u = item.store_revision(dict(name=[item_name_u, ], contenttype=u'text/plain;charset=utf-8'),
+        item_name_u = u'%s/userprofile' % NAMESPACE_USERPROFILES
+        fqname_u = split_fqname(item_name_u)
+        item = self.imw.get_item(**fqname_u.query)
+        rev_u = item.store_revision(dict(name=[fqname_u.value], namespace=fqname_u.namespace, contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_u)), return_rev=True)
         item = self.imw[item_name_n]
         rev_n = item.get_revision(rev_n.revid)
@@ -383,7 +401,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name_u]
         rev_u = item.get_revision(rev_u.revid)
         assert rev_u.meta[NAMESPACE] == NAMESPACE_USERPROFILES
-        assert rev_u.meta[NAME] == [item_name_u.split(':')[1]]
+        assert rev_u.meta[NAME] == [item_name_u.split('/')[1]]
 
     def test_parentnames(self):
         item_name = u'child'

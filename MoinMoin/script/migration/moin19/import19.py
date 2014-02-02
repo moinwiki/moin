@@ -257,7 +257,7 @@ class PageRevision(object):
                     editlog_data = {  # make something up
                         NAME: [item.name],
                         MTIME: int(os.path.getmtime(path)),
-                        ACTION: u'SAVE',
+                        ACTION: ACTION_SAVE,
                     }
             meta, data = split_body(content)
         meta.update(editlog_data)
@@ -333,7 +333,7 @@ class AttachmentRevision(object):
         except KeyError:
             meta = {  # make something up
                 MTIME: int(os.path.getmtime(attpath)),
-                ACTION: u'SAVE',
+                ACTION: ACTION_SAVE,
             }
         meta[NAME] = [u'{0}/{1}'.format(item_name, attach_name)]
         if acl is not None:
@@ -377,12 +377,12 @@ class EditLog(LogFile):
                 if extra:
                     result[NAME_OLD] = extra
                 del result[EXTRA]
-                result[ACTION] = u'RENAME'
+                result[ACTION] = ACTION_RENAME
             elif action == 'SAVE/REVERT':
                 if extra:
                     result[REVERTED_TO] = int(extra)
                 del result[EXTRA]
-                result[ACTION] = u'REVERT'
+                result[ACTION] = ACTION_REVERT
         userid = result[USERID]
         #TODO
         #if userid:
@@ -401,7 +401,7 @@ class EditLog(LogFile):
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         if meta.get(ACTION) == u'SAVENEW':
             # replace SAVENEW with just SAVE
-            meta[ACTION] = u'SAVE'
+            meta[ACTION] = ACTION_SAVE
         return meta
 
     def find_attach(self, attachname):
@@ -416,7 +416,7 @@ class EditLog(LogFile):
             raise KeyError
         del meta['__rev']
         del meta[EXTRA]  # we have full name in NAME
-        meta[ACTION] = u'SAVE'
+        meta[ACTION] = ACTION_SAVE
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
         return meta
 
@@ -479,7 +479,7 @@ class UserRevision(object):
         meta[ITEMID] = make_uuid()
         meta[REVID] = make_uuid()
         meta[SIZE] = 0
-        meta[ACTION] = u'SAVE'
+        meta[ACTION] = ACTION_SAVE
         self.meta = meta
         self.data = StringIO('')
 
@@ -532,8 +532,8 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
-        # rename subscribed_pages to subscribed_items
-        metadata[SUBSCRIBED_ITEMS] = metadata.get('subscribed_pages', [])
+        # transfer subscribed_pages to subscription_patterns
+        metadata[SUBSCRIPTIONS] = migrate_subscriptions(metadata.get('subscribed_pages', []))
 
         # convert bookmarks from usecs (and str) to secs (int)
         metadata[BOOKMARKS] = [(interwiki, int(long(bookmark) / 1000000))
@@ -633,3 +633,19 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
+
+
+def migrate_subscriptions(subscribed_items):
+    """ Transfer subscribed_items meta to subscriptions meta
+
+    :param subscribed_items: a list of moin19-format subscribed_items
+    :return: subscriptions
+    """
+    subscriptions = []
+    for subscribed_item in subscribed_items:
+        # TODO: try to determine if pagename is not a regexp and create
+        # a subscription_id with a NAME keyword
+        # TODO: support interwiki wikiname
+        wikiname, pagename = subscribed_item.split(":", 1)
+        subscriptions.append("{0}::{2}".format(NAMERE, pagename))
+    return subscriptions

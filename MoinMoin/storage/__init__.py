@@ -85,14 +85,14 @@ def create_simple_mapping(uri='stores:fs:instance',
         userprofiles_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
-        NAMESPACE_USERPROFILES + ':': BACKEND_USERPROFILES,
+        NAMESPACE_USERPROFILES + '/': BACKEND_USERPROFILES,
     }
     backends = {
         BACKEND_DEFAULT: None,
         BACKEND_USERPROFILES: None,
     }
     acls = {
-        NAMESPACE_USERPROFILES + ':': userprofiles_acl,
+        NAMESPACE_USERPROFILES + '/': userprofiles_acl,
         NAMESPACE_DEFAULT: default_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

@@ -23,6 +23,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin import error
 from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
@@ -219,7 +220,7 @@ file. It should match the actual charset of the configuration file.
         decode_names = (
             'sitename', 'interwikiname', 'user_homewiki',
             'interwiki_preferred',
-            'item_root', 'item_license', 'mail_from',
+            'item_license', 'mail_from',
             'item_dict_regex', 'item_group_regex',
             'acl_functions', 'supplementation_item_names', 'html_pagetitle',
             'theme_default', 'timezone_default', 'locale_default',
@@ -462,7 +463,8 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'items': ('Special Item Names', None, (
-        ('item_root', u'Home', "Name of the root item (aka 'front page'). [Unicode]"),
+        ('default_root', u'Home', "Default root, use this value in case no match is found in root_mapping. [Unicode]"),
+        ('root_mapping', {}, "mapping of namespaces to item_roots."),
 
         # the following regexes should match the complete name when used in free text
         # the group 'all' shall match all, while the group 'key' shall match the key only
@@ -492,7 +494,7 @@ options_no_group_name = {
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],
-            SUBSCRIBED_ITEMS: [],
+            SUBSCRIPTIONS: [],
             EMAIL_SUBSCRIBED_EVENTS: [
                 # XXX PageChangedEvent.__name__
                 # XXX PageRenamedEvent.__name__

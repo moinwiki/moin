@@ -12,8 +12,11 @@ from __future__ import absolute_import, division
 project = "MoinMoin"
 
 import sys
-if sys.hexversion < 0x2070000:
-    sys.exit("%s requires Python 2.7.x.\n" % project)
+import platform
+
+
+if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
+    sys.exit("Error: %s requires Python 2.7.x., current version is %s\n" % (project, platform.python_version()))
 
 
 from MoinMoin.util.version import Version

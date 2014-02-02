@@ -3,17 +3,12 @@
 # Copyright: 2001-2012 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import sys
 import os
+import MoinMoin  # validate python version
 
-from MoinMoin import project, version
 
-if sys.hexversion < 0x2070000:
-    # we require 2.7.x, python 3.x does not work yet.
-    sys.stderr.write("%s %s requires Python 2.7.x.\n" % (project, str(version)))
-    sys.exit(1)
-
-with open('README.txt') as f:
+basedir = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(basedir, 'README.txt')) as f:
     long_description = f.read()
 
 from setuptools import setup, find_packages
@@ -21,13 +16,13 @@ from setuptools import setup, find_packages
 
 setup_args = dict(
     name="moin",
-    version=str(version),
+    version=str(MoinMoin.version),
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description=long_description,
     author="Juergen Hermann et al.",
     author_email="moin-user@lists.sourceforge.net",
     # maintainer(_email) not active because distutils/register can't handle author and maintainer at once
-    download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (version, ),
+    download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (MoinMoin.version, ),
     url="http://moinmo.in/",
     license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
@@ -103,7 +98,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
                               # note: pytest-pep8 1.0.3 needs pytest 2.3
         'whoosh>=2.5.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
-        'pdfminer',  # pdf -> text/plain conversion
+        'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap>=3.0.0.1',
@@ -112,8 +107,6 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'XStatic-autosize',
         'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=4.4.2',
-        'XStatic-JSON-js',
-        'XStatic-svgweb>=2011.2.3.2',
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2012.11.15.1',

@@ -46,16 +46,19 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail, RequiredPassword, Checkbox,
-                            InlineCheckbox, Select, Names, Tags, Natural, Hidden, MultiSelect, Enum)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError
+from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
+                            RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
+                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions,
+                            validate_name, NameNotValidError)
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
+from MoinMoin.constants.namespaces import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
-from MoinMoin.util.interwiki import url_for_item
+from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -75,7 +78,7 @@ def dispatch():
 
 @frontend.route('/')
 def show_root():
-    item_name = app.cfg.item_root
+    item_name = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
     return redirect(url_for_item(item_name))
 
 
@@ -127,6 +130,17 @@ def favicon():
     # although we tell that favicon.ico is at /static/logos/favicon.ico,
     # some browsers still request it from /favicon.ico...
     return app.send_static_file('logos/favicon.ico')
+
+
+@frontend.route('/all')
+def global_views():
+    """
+    Provides a link to all the global views.
+    """
+    return render_template('all.html',
+                           title_name=_(u"Global Views."),
+                           fqname=CompositeName(u'all', NAME_EXACT, u'')
+                          )
 
 
 class LookupForm(Form):
@@ -309,6 +323,7 @@ def search(item_name):
                                    query=query,
                                    medium_search_form=search_form,
                                    item_name=item_name,
+                                   history=history,
             )
             flaskg.clock.stop('search render')
     else:
@@ -360,14 +375,28 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    flaskg.user.add_trail(item_name)
     item_displayed.send(app._get_current_object(),
                         item_name=item_name)
+    fqname = split_fqname(item_name)
+    if not fqname.value and fqname.field == NAME_EXACT:
+        fqname = fqname.get_root_fqname()
+        return redirect(url_for_item(fqname))
     try:
         item = Item.create(item_name, rev_id=rev)
+        flaskg.user.add_trail(item_name)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
+    except FieldNotUniqueError:
+        revs = flaskg.storage.documents(**fqname.query)
+        fq_names = []
+        for rev in revs:
+            fq_names.extend(rev.fqnames)
+        return render_template("link_list_no_item_panel.html",
+                               headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
+                               fqname=fqname,
+                               fq_names=fq_names,
+                               )
     return result
 
 
@@ -407,6 +436,7 @@ def indexable(item_name, rev):
 def highlight_item(item):
     return render_template('highlight.html',
                            item=item, item_name=item.name,
+                           fqname=item.fqname,
                            data_text=Markup(item.content._render_data_highlight()),
     )
 
@@ -424,6 +454,7 @@ def show_item_meta(item):
             last_rev = rev_ids[-1]
     return render_template('meta.html',
                            item=item, item_name=item.name,
+                           fqname=item.fqname,
                            rev=item.rev,
                            contenttype=item.contenttype,
                            first_rev_id=first_rev,
@@ -438,8 +469,7 @@ def show_item_meta(item):
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
+    item_displayed.send(app, item_name=item_name)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -515,8 +545,27 @@ class TargetChangeForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
 
 
+class ValidRevert(Validator):
+    """
+    Validator for a valid revert form.
+    """
+    invalid_name_msg = ''
+
+    def validate(self, element, state):
+        """
+        Check whether the names present in the previous meta are not taken by some other item.
+        """
+        try:
+            validate_name(state['meta'], state['meta'].get(ITEMID))
+            return True
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
+            return self.note_error(element, state, 'invalid_name_msg')
+
+
 class RevertItemForm(BaseChangeForm):
     name = 'revert_item'
+    validators = [ValidRevert()]
 
 
 class DeleteItemForm(BaseChangeForm):
@@ -547,11 +596,12 @@ def revert_item(item_name, rev):
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
         TextCha(form).amend_form()
-        if form.validate():
+        state = dict(fqname=item.fqname, meta=dict(item.meta))
+        if form.validate(state):
             item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
-                           item=item, item_name=item_name,
+                           item=item, fqname=item.fqname,
                            rev_id=rev,
                            form=form,
     )
@@ -563,7 +613,7 @@ def rename_item(item_name):
         item = Item.create(item_name)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.write(item_name):
+    if not flaskg.user.may.write(item.fqname):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -578,12 +628,14 @@ def rename_item(item_name):
             target = form['target'].value
             comment = form['comment'].value
             try:
+                fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                 item.rename(target, comment)
-                return redirect(url_for_item(target))
+                return redirect(url_for_item(fqname))
             except NameNotUniqueError as e:
                 flash(str(e), "error")
     return render_template(item.rename_template,
                            item=item, item_name=item_name,
+                           fqname=item.fqname,
                            form=form,
     )
 
@@ -594,7 +646,7 @@ def delete_item(item_name):
         item = Item.create(item_name)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.write(item_name):
+    if not flaskg.user.may.write(item.fqname):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
@@ -613,6 +665,7 @@ def delete_item(item_name):
             return redirect(url_for_item(item_name))
     return render_template(item.delete_template,
                            item=item, item_name=item_name,
+                           fqname=split_fqname(item_name),
                            form=form,
     )
 
@@ -695,10 +748,11 @@ def destroy_item(item_name, rev):
         item = Item.create(item_name, rev_id=_rev)
     except AccessDenied:
         abort(403)
-    if not flaskg.user.may.destroy(item_name):
+    fqname = item.fqname
+    if not flaskg.user.may.destroy(fqname):
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404, item_name)
+        abort(404, fqname.fullname)
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
         TextCha(form).amend_form()
@@ -711,9 +765,10 @@ def destroy_item(item_name, rev):
                 item.destroy(comment=comment, destroy_item=destroy_item)
             except AccessDenied:
                 abort(403)
-            return redirect(url_for_item(item_name))
+            return redirect(url_for_item(fqname.fullname))
     return render_template(item.destroy_template,
                            item=item, item_name=item_name,
+                           fqname=fqname,
                            rev_id=rev,
                            form=form,
     )
@@ -737,7 +792,7 @@ def jfu_server(item_name):
         item = Item.create(item_name)
         revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
-                           item_name=item_name)
+                           item_name=item_name, action=ACTION_SAVE)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
@@ -785,16 +840,20 @@ def index(item_name):
 
     dirs, files = item.get_index(startswith, selected_groups)
     # index = sorted(index, key=lambda e: e.relname.lower())
-
+    fqname = item.fqname
+    if fqname.value == NAMESPACE_ALL:
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     item_names = item_name.split(u'/')
     return render_template(item.index_template,
                            item_names=item_names,
                            item_name=item_name,
+                           fqname=fqname,
                            files=files,
                            dirs=dirs,
                            initials=initials,
                            startswith=startswith,
                            form=form,
+                           title_name=_(u'Global Index'),
     )
 
 
@@ -809,13 +868,13 @@ def mychanges():
     return render_template('link_list_no_item_panel.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
-                           item_names=my_changes
+                           fq_names=my_changes
     )
 
 
 def _mychanges(userid):
     """
-    Returns a list with all names of items which user userid has contributed to.
+    Returns a list with all fqnames of items which user userid has contributed to.
 
     :param userid: user itemid
     :type userid: unicode
@@ -823,8 +882,9 @@ def _mychanges(userid):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS)
-    return [rev.name for rev in revs]
+    revs = flaskg.storage.search(q, idx_name=ALL_REVS, limit=None)
+    fq_names = {fq_name for rev in revs for fq_name in rev.fqnames}
+    return fq_names
 
 
 @frontend.route('/+refs/<itemname:item_name>')
@@ -840,7 +900,8 @@ def refs(item_name):
     backrefs = _backrefs(item_name)
     return render_template('refs.html',
                            item_name=item_name,
-                           refs=refs,
+                           fqname=split_fqname(item_name),
+                           refs=split_fqname_list(refs),
                            backrefs=backrefs
     )
 
@@ -857,8 +918,9 @@ def forwardrefs(item_name):
     refs = _forwardrefs(item_name)
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
+                           fqname=split_fqname(item_name),
                            headline=_(u"Items that are referred by '%(item_name)s'", item_name=item_name),
-                           item_names=refs
+                           fq_names=split_fqname_list(refs),
     )
 
 
@@ -870,15 +932,15 @@ def _forwardrefs(item_name):
     :type item_name: unicode
     :returns: the list of all items which are referenced from this item
     """
-    q = {WIKINAME: app.cfg.interwikiname,
-         NAME_EXACT: item_name,
-        }
+    fqname = split_fqname(item_name)
+    q = fqname.query
+    q[WIKINAME] = app.cfg.interwikiname
     rev = flaskg.storage.document(**q)
     if rev is None:
         refs = []
     else:
         refs = rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])
-    return refs
+    return set(refs)
 
 
 @frontend.route('/+backrefs/<itemname:item_name>')
@@ -890,30 +952,37 @@ def backrefs(item_name):
     :type item_name: unicode
     :returns: a page with all the items which link or transclude item_name
     """
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
     refs_here = _backrefs(item_name)
     return render_template('link_list_item_panel.html',
+                           item=item,
                            item_name=item_name,
+                           fqname=split_fqname(item_name),
                            headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
-                           item_names=refs_here
+                           fq_names=refs_here,
     )
 
 
 def _backrefs(item_name):
     """
-    Returns a list with all names of items which ref item_name
+    Returns a list with all names of items which ref fq_name
 
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
-    :returns: the list of all items which ref item_name
+    :returns: the list of all items which ref fq_name
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return [rev.name for rev in revs]
+    return set([fqname for rev in revs for fqname in rev.fqnames])
 
 
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
+    fqname = split_fqname(item_name)
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get('bookmark', 0))
@@ -921,7 +990,8 @@ def history(item_name):
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ]
+    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
     if bookmark_time:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
@@ -929,23 +999,34 @@ def history(item_name):
     # it would be better to use search_page (and an appropriate limit, if needed)
     revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     # get rid of the content value to save potentially big amounts of memory:
-    history = [dict((k, v) for k, v in rev.meta.iteritems() if k != CONTENT) for rev in revs]
+    history = []
+    for rev in revs:
+        entry = dict(rev.meta)
+        entry[FQNAME] = rev.fqname
+        history.append(entry)
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
+                           fqname=fqname,
                            item_name=item_name,  # XXX no item here
                            history_page=history_page,
                            bookmark_time=bookmark_time,
     )
 
 
-@frontend.route('/+history')
-def global_history():
+@frontend.route('/<namespace>/+history')
+@frontend.route('/+history', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
-    query = Term(WIKINAME, app.cfg.interwikiname)
+    terms = [Term(WIKINAME, app.cfg.interwikiname)]
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
+    if namespace != NAMESPACE_ALL:
+        terms.append(Term(NAMESPACE, namespace))
+        fqname = split_fqname(namespace)
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
-        query = And([query, DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None)])
+        terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
+    query = And(terms)
     revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
     history = []
@@ -971,22 +1052,30 @@ def global_history():
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
+                           fqname=fqname,
     )
 
 
 def _compute_item_sets():
     """
-    compute sets of existing, linked, transcluded and no-revision item names
+    compute sets of existing, linked, transcluded and no-revision item fqnames
     """
     linked = set()
     transcluded = set()
     existing = set()
     revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     for rev in revs:
-        existing.add(rev.name)
+        existing |= set(rev.fqnames)
         linked.update(rev.meta.get(ITEMLINKS, []))
         transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
-    return existing, linked, transcluded
+    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded))
+
+
+def split_fqname_list(names):
+    """
+    Converts a list of names to a list of fqnames.
+    """
+    return [split_fqname(name) for name in names]
 
 
 @frontend.route('/+wanteds')
@@ -1003,7 +1092,7 @@ def wanted_items():
     return render_template('link_list_no_item_panel.html',
                            headline=_(u'Wanted Items'),
                            title_name=title_name,
-                           item_names=wanteds)
+                           fq_names=wanteds)
 
 
 @frontend.route('/+orphans')
@@ -1019,7 +1108,7 @@ def orphaned_items():
     return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
                            headline=_(u'Orphaned Items'),
-                           item_names=orphans)
+                           fq_names=orphans)
 
 
 @frontend.route('/+quicklink/<itemname:item_name>')
@@ -1046,18 +1135,25 @@ def subscribe_item(item_name):
     u = flaskg.user
     cfg = app.cfg
     msg = None
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404)
     if not u.valid:
         msg = _("You must login to use this action: %(action)s.", action="subscribe/unsubscribe"), "error"
     elif not u.may.read(item_name):
         msg = _("You are not allowed to subscribe to an item you may not read."), "error"
-    elif u.is_subscribed_to([item_name]):
+    elif u.is_subscribed_to(item):
         # Try to unsubscribe
-        if not u.unsubscribe(item_name):
-            msg = _("Can't remove regular expression subscription!") + u' ' + \
-                _("Edit the subscription regular expressions in your settings."), "error"
+        if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
+            msg = _(
+                "Can't remove the subscription! You are subscribed to this page in some other way.") + u' ' + _(
+                "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
-        if not u.subscribe(item_name):
+        if not u.subscribe(ITEMID, item.meta[ITEMID]):
             msg = _('You could not get subscribed to this item.'), "error"
     if msg:
         flash(*msg)
@@ -1480,6 +1576,12 @@ class UserSettingsOptionsForm(Form):
     submit_label = L_('Save')
 
 
+class UserSettingsSubscriptionsForm(Form):
+    name = 'usersettings_subscriptions'
+    subscriptions = Subscriptions
+    submit_label = L_('Save')
+
+
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
 def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
@@ -1519,6 +1621,7 @@ def usersettings():
         ui=UserSettingsUIForm,
         navigation=UserSettingsNavigationForm,
         options=UserSettingsOptionsForm,
+        subscriptions=UserSettingsSubscriptionsForm,
     )
     forms = dict()
 
@@ -1739,6 +1842,7 @@ def _diff(item, revid1, revid2):
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
+                           fqname=item.fqname,
                            diff_html=Markup(item.content._render_data_diff(oldrev, newrev)),
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
@@ -1765,7 +1869,12 @@ def similar_names(item_name):
     """
     list similar item names
     """
-    start, end, matches = findMatches(item_name)
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    fq_name = split_fqname(item_name)
+    start, end, matches = findMatches(fq_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
     # 8 item_name
@@ -1773,40 +1882,43 @@ def similar_names(item_name):
     # 3 "{0}...{1}".format(start, end)
     # 1 "{0}...".format(start)
     # 2 "...{1}".format(end)
-    item_names = []
+    fq_names = []
     for wanted_rank in [8, 4, 3, 1, 2, ]:
-        for name in keys:
-            rank = matches[name]
+        for fqname in keys:
+            rank = matches[fqname]
             if rank == wanted_rank:
-                item_names.append(name)
+                fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
                            headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
+                           item=item,
                            item_name=item_name,  # XXX no item
-                           item_names=item_names)
+                           fqname=split_fqname(item_name),
+                           fq_names=fq_names)
 
 
-def findMatches(item_name, s_re=None, e_re=None):
+def findMatches(fq_name, s_re=None, e_re=None):
     """ Find similar item names.
 
-    :param item_name: name to match
+    :param fq_name: fqname to match
     :param s_re: start re for wiki matching
     :param e_re: end re for wiki matching
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    item_names = [rev.name for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)
-                  if rev.name is not None]
-    if item_name in item_names:
-        item_names.remove(item_name)
+
+    fq_names = [fqname for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname) for fqname in rev.fqnames
+                if rev.fqname is not None]
+    if fq_name in fq_names:
+        fq_names.remove(fq_name)
     # Get matches using wiki way, start and end of word
-    start, end, matches = wikiMatches(item_name, item_names, start_re=s_re, end_re=e_re)
+    start, end, matches = wikiMatches(fq_name, fq_names, start_re=s_re, end_re=e_re)
     # Get the best 10 close matches
     close_matches = {}
     found = 0
-    for name in closeMatches(item_name, item_names):
-        if name not in matches:
-            # Skip names already in matches
-            close_matches[name] = 8
+    for fqname in closeMatches(fq_name, fq_names):
+        if fqname not in matches:
+            # Skip fqname already in matches
+            close_matches[fqname] = 8
             found += 1
             # Stop after 10 matches
             if found == 10:
@@ -1816,18 +1928,18 @@ def findMatches(item_name, s_re=None, e_re=None):
     return start, end, matches
 
 
-def wikiMatches(item_name, item_names, start_re=None, end_re=None):
+def wikiMatches(fq_name, fq_names, start_re=None, end_re=None):
     """
-    Get item names that starts or ends with same word as this item name.
+    Get fqnames that starts or ends with same word as this fq_name.
 
     Matches are ranked like this:
-        4 - item is subitem of item_name
+        4 - item is subitem of fq_name
         3 - match both start and end
         2 - match end
         1 - match start
 
-    :param item_name: item name to match
-    :param item_names: list of item names
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
     :param start_re: start word re (compile regex)
     :param end_re: end word re (compile regex)
     :rtype: tuple
@@ -1840,6 +1952,7 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.
+    item_name = fq_name.value
     words = item_name.split()
     match = start_re.match(item_name)
     if match:
@@ -1857,41 +1970,43 @@ def wikiMatches(item_name, item_names, start_re=None, end_re=None):
     subitem = item_name + '/'
 
     # Find any matching item names and rank by type of match
-    for name in item_names:
+    for fqname in fq_names:
+        name = fqname.value
         if name.startswith(subitem):
-            matches[name] = 4
+            matches[fqname] = 4
         else:
             if name.startswith(start):
-                matches[name] = 1
+                matches[fqname] = 1
             if name.endswith(end):
-                matches[name] = matches.get(name, 0) + 2
+                matches[fqname] = matches.get(name, 0) + 2
 
     return start, end, matches
 
 
-def closeMatches(item_name, item_names):
+def closeMatches(fq_name, fq_names):
     """ Get close matches.
 
-    Return all matching item names with rank above cutoff value.
+    Return all matching fqnames with rank above cutoff value.
 
-    :param item_name: item name to match
-    :param item_names: list of item names
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
     :rtype: list
     :returns: list of matching item names, sorted by rank
     """
-    if not item_names:
+    if not fq_names:
         return []
     # Match using case insensitive matching
-    # Make mapping from lower item names to item names.
+    # Make mapping from lower item names to fqnames.
     lower = {}
-    for name in item_names:
+    for fqname in fq_names:
+        name = fqname.value
         key = name.lower()
         if key in lower:
-            lower[key].append(name)
+            lower[key].append(fqname)
         else:
-            lower[key] = [name]
-
+            lower[key] = [fqname]
     # Get all close matches
+    item_name = fq_name.value
     all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
                                             n=len(lower), cutoff=0.6)
 
@@ -1909,13 +2024,15 @@ def sitemap(item_name):
     sitemap view shows item link structure, relative to current item
     """
     # first check if this item exists
-    if not flaskg.storage[item_name]:
+    fq_name = split_fqname(item_name)
+    if not flaskg.storage.get_item(**fq_name.query):
         abort(404, item_name)
-    sitemap = NestedItemListBuilder().recurse_build([item_name])
+    sitemap = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
                            sitemap=sitemap,
+                           fqname=fq_name,
     )
 
 
@@ -1925,46 +2042,52 @@ class NestedItemListBuilder(object):
         self.numnodes = 0
         self.maxnodes = 35  # approx. max count of nodes, not strict
 
-    def recurse_build(self, names):
+    def recurse_build(self, fq_names):
         result = []
         if self.numnodes < self.maxnodes:
-            for name in names:
-                self.children.add(name)
-                result.append(name)
+            for fq_name in fq_names:
+                self.children.add(fq_name)
+                result.append(fq_name)
                 self.numnodes += 1
-                childs = self.childs(name)
+                childs = self.childs(fq_name)
                 if childs:
                     childs = self.recurse_build(childs)
                     result.append(childs)
         return result
 
-    def childs(self, name):
+    def childs(self, fq_name):
         # does not recurse
         try:
-            item = flaskg.storage[name]
+            item = flaskg.storage.get_item(**fq_name.query)
             rev = item[CURRENT]
         except (AccessDenied, KeyError):
             return []
-        itemlinks = rev.meta.get(ITEMLINKS, [])
+        itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, [])))
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):
         if child not in self.children:
             if not flaskg.user.may.read(child):
                 return False
-            if flaskg.storage.has_item(child):
+            if flaskg.storage.get_item(**child.query):
                 self.children.add(child)
                 return True
         return False
 
 
-@frontend.route('/+tags')
-def global_tags():
+@frontend.route('/+tags', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags')
+def global_tags(namespace):
     """
     show a list or tag cloud of all tags in this wiki
     """
     title_name = _(u'All tags in this wiki')
-    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = {WIKINAME: app.cfg.interwikiname}
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
+    if namespace != NAMESPACE_ALL:
+        query[NAMESPACE] = namespace
+        fqname = split_fqname(namespace)
+    revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
@@ -1993,21 +2116,26 @@ def global_tags():
     return render_template("global_tags.html",
                            headline=_("All tags in this wiki"),
                            title_name=title_name,
+                           fqname=fqname,
                            tags=tags)
 
 
-@frontend.route('/+tags/<itemname:tag>')
-def tagged_items(tag):
+@frontend.route('/+tags/<itemname:tag>', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
+@frontend.route('/<namespace>/+tags/<itemname:tag>')
+def tagged_items(tag, namespace):
     """
-    show all items' names that have tag <tag>
+    show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
-    revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
-    item_names = [rev.name for rev in revs]
+    terms = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
+    if namespace != NAMESPACE_ALL:
+        terms = And([terms, Term(NAMESPACE, namespace), ])
+    query = And(terms)
+    revs = flaskg.storage.search(query, limit=None)
+    fq_names = [fq_name for rev in revs for fq_name in rev.fqnames]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
-                           item_names=item_names)
+                           fq_names=fq_names)
 
 
 @frontend.route('/+template/<path:filename>')
