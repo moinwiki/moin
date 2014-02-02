@@ -1622,3 +1622,29 @@ h6:hover .moin-permalink
     #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
     #moin-pagelocation, #moin-pageinfo
         display none
+
+ul.moin-bcs-item ul.moin-bcs-subitems
+    background-color panel_color
+
+ul.moin-bcs-item, ul.moin-bcs-item ul.moin-bcs-subitems
+    padding 0
+    margin 0
+    display inline-block
+
+ul.moin-bcs-item li, ul.moin-bcs-item ul.moin-bcs-subitems li
+    list-style-type none
+    display block
+
+ul.moin-bcs-item li ul.moin-bcs-subitems li a
+    padding 5px
+    display inline-block
+
+ul.moin-bcs-item li
+    position relative
+
+ul.moin-bcs-item li ul.moin-bcs-subitems
+    display none
+    position absolute
+
+ul.moin-bcs-item li:hover ul.moin-bcs-subitems
+    display block

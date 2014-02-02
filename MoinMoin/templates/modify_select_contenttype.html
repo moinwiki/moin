@@ -13,7 +13,7 @@
     <tr>
         <td> |&nbsp;
         {% for e in groups[group] %}
-            <a href="{{ url_for('frontend.modify_item', item_name=item_name, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp;|&nbsp;
+            <a href="{{ url_for('frontend.modify_item', item_name=fqname, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp;|&nbsp;
         {% endfor %}
         </td>
     </tr>

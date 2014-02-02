@@ -23,11 +23,17 @@ from flatland.exc import AdaptationError
 from whoosh.query import Term, Or, Not, And
 
 from flask import g as flaskg
+from flask import current_app as app
 
 from MoinMoin.constants.forms import *
-from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS
+from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
+from MoinMoin.constants.namespaces import NAMESPACES_IDENTIFIER
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.forms import FileStorage
+from MoinMoin.storage.middleware.validation import uuid_validator
+
+COLS = 60
+ROWS = 10
 
 
 class Enum(BaseEnum):
@@ -69,30 +75,87 @@ OptionalMultilineText = MultilineText.using(optional=True)
 RequiredMultilineText = MultilineText.validated_by(Present())
 
 
+class NameNotValidError(ValueError):
+    """
+    The name is not valid.
+    """
+
+
+def validate_name(meta, itemid):
+    """
+    Check whether the names are valid.
+    Will just return, if they are valid, will raise a NameNotValidError if not.
+    """
+    names = meta.get(NAME)
+    current_namespace = meta.get(NAMESPACE)
+    if current_namespace is None:
+        raise NameNotValidError(L_("No namespace field in the meta."))
+    namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+
+    if len(names) != len(set(names)):
+        raise NameNotValidError(L_("The names in the name list must be unique."))
+    # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
+    invalid_names = [name for name in names if name.startswith(('@', '+'))]
+    if invalid_names:
+        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names)))
+
+    namespaces = namespaces + NAMESPACES_IDENTIFIER  # Also dont allow item names to match with identifier namespaces.
+    # Item names must not match with existing namespaces.
+    invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
+    if invalid_names:
+        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names)))
+    query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
+    # There should be not item existing with the same name.
+    if itemid is not None:
+        query = And([query, Not(Term(ITEMID, itemid))])  # search for items except the current item.
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        results = searcher.search(query)
+        duplicate_names = {name for result in results for name in result[NAME] if name in names}
+        if duplicate_names:
+            raise NameNotValidError(L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names)))
+
+
+class ValidName(Validator):
+    """Validator for Name
+    """
+    invalid_name_msg = ""
+
+    def validate(self, element, state):
+        # Make sure that the other meta is valid before validating the name.
+        # TODO Change/Make sure that the below statement holds good.
+        try:
+            if not element.parent.parent['extra_meta_text'].valid:
+                return False
+        except AttributeError:
+            pass
+        try:
+            validate_name(state['meta'], state[ITEMID])
+        except NameNotValidError as e:
+            self.invalid_name_msg = _(e)
+            return self.note_error(element, state, 'invalid_name_msg')
+        return True
+
+
 class ValidJSON(Validator):
     """Validator for JSON
     """
     invalid_json_msg = L_('Invalid JSON.')
-    invalid_name_msg = ""
+    invalid_itemid_msg = L_('Itemid not a proper UUID')
+    invalid_namespace_msg = ''
 
-    def validname(self, meta, name, itemid):
-        names = meta.get(NAME)
-        if names is None:
-            self.invalid_name_msg = L_("No name field in the JSON meta.")
+    def validitemid(self, itemid):
+        if not itemid:
+            self.invalid_itemid_msg = L_("No ITEMID field")
             return False
-        if len(names) != len(set(names)):
-            self.invalid_name_msg = L_("The names in the JSON name list must be unique.")
+        return uuid_validator(String(itemid), None)
+
+    def validnamespace(self, current_namespace):
+        if current_namespace is None:
+            self.invalid_namespace_msg = L_("No namespace field in the meta.")
             return False
-        query = Or([Term(NAME, x) for x in names])
-        if itemid is not None:
-            query = And([query, Not(Term(ITEMID, itemid))])
-        duplicate_names = set()
-        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-            results = searcher.search(query)
-            for result in results:
-                duplicate_names |= set([x for x in result[NAME] if x in names])
-        if duplicate_names:
-            self.invalid_name_msg = L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names))
+        namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+        if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
+            self.invalid_namespace_msg = L_("%(_namespace)s is not a valid namespace.", _namespace=current_namespace)
             return False
         return True
 
@@ -101,8 +164,11 @@ class ValidJSON(Validator):
             meta = json.loads(element.value)
         except:  # catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
-        if not self.validname(meta, state[NAME], state[ITEMID]):
-            return self.note_error(element, state, 'invalid_name_msg')
+        if not self.validnamespace(meta.get(NAMESPACE)):
+            return self.note_error(element, state, 'invalid_namespace_msg')
+        if state[FQNAME].field == ITEMID:
+            if not self.validitemid(meta.get(ITEMID, state[FQNAME].value)):
+                return self.note_error(element, state, 'invalid_itemid_msg')
         return True
 
 JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
@@ -152,11 +218,50 @@ class MyJoinedString(JoinedString):
     def u(self):
         return self.separator.join(child.u for child in self)
 
+
+class SubscriptionsJoinedString(JoinedString):
+    """ A JoinedString that offers the list of children as value property and also
+    appends the name of the item to the end of ITEMID subscriptions.
+    """
+    @property
+    def value(self):
+        subscriptions = []
+        for child in self:
+            if child.value.startswith(ITEMID):
+                value = re.sub(r"\(.*\)", "", child.value)
+            else:
+                value = child.value
+            subscriptions.append(value)
+        return subscriptions
+
+    @property
+    def u(self):
+        subscriptions = []
+        for child in self:
+            if child.u.startswith(ITEMID):
+                value = re.sub(r"\(.*\)", "", child.u)
+                item = flaskg.storage.document(**{ITEMID: value.split(":")[1]})
+                try:
+                    name_ = item.meta['name'][0]
+                except IndexError:
+                    name_ = "This item doesn't exist"
+                value = "{0} ({1})".format(value, name_)
+            else:
+                value = child.u
+            subscriptions.append(value)
+        return self.separator.join(subscriptions)
+
+
 Tags = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
     label=L_('Tags'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
 
 Names = MyJoinedString.of(String).with_properties(widget=WIDGET_TEXT).using(
-    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*'))
+    label=L_('Names'), optional=True, separator=', ', separator_regex=re.compile(r'\s*,\s*')).validated_by(ValidName())
+
+Subscriptions = SubscriptionsJoinedString.of(String).with_properties(
+    widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
+    label=L_('Subscriptions'), optional=True, separator='\n',
+    separator_regex=re.compile(r'[\r\n]+'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 

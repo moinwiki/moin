@@ -12,7 +12,11 @@ from werkzeug import escape
 
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.constants.keys import ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, ACTION, ADDRESS
+from MoinMoin.util.interwiki import CompositeName
+from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
+                                     ADDRESS, TRASH, ITEMID, NAME_EXACT,
+                                     ACTION, ACTION_REVERT)
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
@@ -21,7 +25,7 @@ def build_index(basename, relnames):
     """
     Build a list of IndexEntry by hand, useful as a test helper.
     """
-    return [(IndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta))
+    return [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
 
 
@@ -31,7 +35,7 @@ def build_mixed_index(basename, spec):
 
     :spec is a list of (relname, hassubitem) tuples.
     """
-    return [(MixedIndexEntry(relname, '/'.join((basename, relname)), Item.create('/'.join((basename, relname))).meta, hassubitem))
+    return [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
 
 
@@ -132,7 +136,7 @@ class TestItem(object):
         item = Item.create(name)
         result = Item.meta_filter(item, meta)
         # keys like NAME, ITEMID, REVID, DATAID are filtered
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
     def test_meta_dict_to_text(self):
@@ -141,7 +145,7 @@ class TestItem(object):
         meta = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u'test_name']}
         item = Item.create(name)
         result = Item.meta_dict_to_text(item, meta)
-        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "name": [\n    "test_name"\n  ], \n  "test_key": "test_val"\n}'
+        expected = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val"\n}'
         assert result == expected
 
     def test_meta_text_to_dict(self):
@@ -150,7 +154,7 @@ class TestItem(object):
         text = '{\n  "contenttype": "text/plain;charset=utf-8", \n  "test_key": "test_val", \n "name": ["test_name"] \n}'
         item = Item.create(name)
         result = Item.meta_text_to_dict(item, text)
-        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype, NAME: [u"test_name"]}
+        expected = {'test_key': 'test_val', CONTENTTYPE: contenttype}
         assert result == expected
 
     def test_item_can_have_several_names(self):
@@ -329,7 +333,7 @@ class TestItem(object):
         item = Item.create(name)
         item.revert(u'revert')
         item = Item.create(name)
-        assert item.meta[ACTION] == u'REVERT'
+        assert item.meta[ACTION] == ACTION_REVERT
 
     def test_modify(self):
         name = u'Test_Item'
@@ -371,6 +375,38 @@ class TestItem(object):
         assert item.meta['another_test_key'] == update_meta['another_test_key']
         assert item.meta['new_test_key'] == update_meta['new_test_key']
         assert 'none_test_key' not in item.meta
+
+    def test_trash(self):
+        fqname = u'trash_item_test'
+        contenttype = u'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {CONTENTTYPE: contenttype}
+        item = Item.create(fqname)
+        # save rev 0
+        item._save(meta, data)
+        item = Item.create(fqname)
+        assert not item.meta.get(TRASH)
+
+        meta = dict(item.meta)
+        meta[NAME] = []
+        # save new rev with no names.
+        item._save(meta, data)
+        new_fqname = u'@itemid/' + item.meta[ITEMID]
+        item = Item.create(new_fqname)
+        assert item.meta[TRASH]
+
+        new_meta = {NAME: [u'foobar', 'buz'], CONTENTTYPE: contenttype}
+        item._save(new_meta, data)
+        item = Item.create(u'foobar')
+
+        item.delete(u'Deleting foobar.')
+        item = Item.create(u'buz')
+        assert not item.meta.get(TRASH)
+
+        # Also delete the only name left.
+        item.delete(u'Moving item to trash.')
+        item = Item.create(new_fqname)
+        assert item.meta[TRASH]
 
 
 coverage_modules = ['MoinMoin.items']

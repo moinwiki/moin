@@ -120,7 +120,11 @@
             {% for i in range(0, item_names|count) %}
                 {% set fullname = item_names[:i+1]|join('/') %}
                 {% set relname = item_names[i] %}
-                <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                {% if relname.startswith('@') %}
+                    {{ relname }}
+                {% else %}
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                {% endif %}
                 <span class="moin-path-separator">{{ ("/") }}</span>
             {% endfor %}
         </div>
