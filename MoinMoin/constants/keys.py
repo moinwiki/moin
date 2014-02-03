@@ -31,6 +31,7 @@ EXTERNALLINKS = u"externallinks"
 ITEMLINKS = u"itemlinks"
 ITEMTRANSCLUSIONS = u"itemtransclusions"
 TAGS = u"tags"
+CONTENTNGRAM = u"contentngram"
 
 ACTION = u"action"
 ADDRESS = u"address"

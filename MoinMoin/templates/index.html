@@ -219,7 +219,7 @@
 
 {% block body_scripts %}
 {{ super() }}
-    <script src="{{ url_for('frontend.template', filename='index_action.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     {{ forms.file_uploader_scripts() }}
 {% endblock %}

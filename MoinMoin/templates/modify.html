@@ -22,8 +22,7 @@
 {% block subitem_navigation %}
     {% call(fullname, shortname, contenttype, has_children) utils.render_subitem_navigation(fqname, True) %}
         {% set shortname = shortname|json_dumps %}
-        {% set fullname = fullname|json_dumps %}
-        <button class="moin-insertname-action" onclick='InsertName({{ fullname }})'
+        <button class="moin-insertname-action" data-name="{{ fullname }}"
             title="{{ _('Insert Name') }}">{{ _('Insert Name') }}</button>
     {% endcall %}
 {% endblock %}

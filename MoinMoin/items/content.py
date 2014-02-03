@@ -180,7 +180,7 @@ class Content(object):
     data = property(fget=get_data)
 
     @timed('conv_in_dom')
-    def internal_representation(self, converters=['smiley']):
+    def internal_representation(self, converters=['smiley'], attributes=None):
         """
         Return the internal representation of a document using a DOM Tree
         """
@@ -206,7 +206,7 @@ class Content(object):
 
             # We can process the conversion
             links = Iri(scheme='wiki', authority='', path='/' + self.name)
-            doc = input_conv(self.rev, self.contenttype)
+            doc = input_conv(self.rev, self.contenttype, arguments=attributes)
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
             # as not every doc will have that element (e.g. for images, we just get

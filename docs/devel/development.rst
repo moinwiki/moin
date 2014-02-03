@@ -210,7 +210,7 @@ moin2 is a WSGI application and uses:
 * blinker for signalling
 * pygments for syntax highlighting
 * for stores: filesystem, sqlite3, sqlalchemy, kyoto cabinet/tycoon, mongodb, memory
-* jquery javascript lib
+* jquery javascript lib, a simple jQuery i18n plugin `Plugin <https://github.com/recurser/jquery-i18n>`_
 * CKeditor, the GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools
 
@@ -337,11 +337,30 @@ the following::
     cd MoinMoin/themes/basic/static/custom-less
     lessc basic.less ../css/basic.css
 
-For compiling ``basic.less`` we need to have the source .less files from Bootstrap. It is currently compatible with Bootstrap v3.0.0 RC2.
-You can download the source from `here <https://github.com/twbs/bootstrap/releases/tag/v3.0.0-rc.2>`_ and copy the .less files
-into the ``custom-less`` directory.
+For compiling ``basic.less`` we need to have the source .less files from
+Bootstrap. It is currently compatible with Bootstrap v3.0.0 RC2.
+You can download the source from
+`here <https://github.com/twbs/bootstrap/releases/tag/v3.0.0-rc.2>`_
+and copy the .less files into the ``custom-less`` directory.
+    
+
+Internationalization in MoinMoin's JS
+-------------------------------------
+Any string which has to be translated and used in the JavaScript code, has to be defined 
+at ``MoinMoin/templates/dictionary.js``. This dictionary is loaded when the page loads and
+the translation for any string can be received by passing it as a parameter to the ``_`` function,
+also defined in the same file.
+
+For example, if we add the following to ``i18n_dict`` in ``dictionary.js`` ::
+    
+    "Delete this"  : "{{  _("Delete this") }}",
+
+The translated version of "somestring" can be accessed in the JavaScript code by ::
+
+    var a = _("Delete this");
 
 
+=======
 Testing
 =======
 

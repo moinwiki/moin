@@ -10,7 +10,7 @@ import pytest
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, html, xinclude
 
 from MoinMoin.converter.moinwiki_in import Converter
 
@@ -19,6 +19,8 @@ class TestConverter(object):
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
+        html: 'xhtml',
+        xinclude: 'xinclude',
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -42,6 +44,12 @@ class TestConverter(object):
                 '<page><body><p><a xlink:href="http://moinmo.in/">MoinMoin</a></p></body></page>'),
             (u'[[MoinMoin]]',
                 '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
+            (u'{{somelocalimage||width=10, height=10}}',
+                '<page><body><p><xinclude:include xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>'),
+            (u'{{somelocalimage||width=10, &h=10}}',
+                '<page><body><p><xinclude:include xhtml:width="10" xinclude:href="wiki.local:somelocalimage?h=10" /></p></body></page>'),
+            (u'{{http://moinmo.in/|test|width=10, height=10}}',
+                '<page><body><p><object alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/">test</object></p></body></page>'),
             (u'{{http://moinmo.in/}}',
                 '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
             (u'{{http://moinmo.in/|MoinMoin}}',
