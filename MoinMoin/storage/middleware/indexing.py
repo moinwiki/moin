@@ -62,7 +62,7 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN
+from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
@@ -145,6 +145,8 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content
     doc[BACKENDNAME] = backend_name
+    if CONTENTNGRAM in schema:
+        doc[CONTENTNGRAM] = content
     return doc
 
 
@@ -326,7 +328,7 @@ class IndexingMiddleware(object):
             # TRASH from metadata
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
-            CONTENT: TEXT(stored=True),
+            CONTENT: TEXT(stored=True, spelling=True),
         }
 
         latest_revs_fields = {
@@ -338,6 +340,8 @@ class IndexingMiddleware(object):
             ITEMTRANSCLUSIONS: ID(stored=True),
             # tokenized ACL from metadata
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
+            # ngram words, index ngrams of words from main content
+            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
         }
         latest_revs_fields.update(**common_fields)
 

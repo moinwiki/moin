@@ -39,6 +39,7 @@ import pytz
 from babel import Locale
 
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
+from whoosh.analysis import StandardAnalyzer
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -271,12 +272,22 @@ def _compute_item_transclusions(item_name):
 @frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
+    ajax = True if request.args.get('boolajax') else False
     valid = search_form.validate()
-    query = search_form['q'].value
-    if valid:
+    if ajax:
+        query = request.args.get('q')
+        history = request.args.get('history')
+    else:
+        query = search_form['q'].value
         history = bool(request.values.get('history'))
+    if valid or ajax:
+        #most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
+        #this finds such words and reports to the user
+        analyzer = StandardAnalyzer()
+        omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
+
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT], idx_name=idx_name)
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT, CONTENTNGRAM], idx_name=idx_name)
         q = qp.parse(query)
 
         _filter = None
@@ -308,23 +319,41 @@ def search(item_name):
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
+            #terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
             flaskg.clock.start('search')
-            results = searcher.search(q, filter=_filter, limit=100)
+            results = searcher.search(q, filter=_filter, limit=100, terms=True)
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
             name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
-            html = render_template('search.html',
-                                   results=results,
-                                   name_suggestions=u', '.join(name_suggestions),
-                                   content_suggestions=u', '.join(content_suggestions),
-                                   query=query,
-                                   medium_search_form=search_form,
-                                   item_name=item_name,
-                                   history=history,
-            )
+
+            lastword = query.split(' ')[-1]
+            word_suggestions = []
+            if len(lastword) > 2:
+                corrector = searcher.corrector(CONTENT)
+                word_suggestions = corrector.suggest(lastword, limit=3)
+            if ajax:
+                html = render_template('ajaxsearch.html',
+                                       results=results,
+                                       word_suggestions=u', '.join(word_suggestions),
+                                       name_suggestions=u', '.join(name_suggestions),
+                                       content_suggestions=u', '.join(content_suggestions),
+                                       omitted_words=u', '.join(omitted_words),
+                                       history=history,
+                )
+            else:
+                html = render_template('search.html',
+                                       results=results,
+                                       name_suggestions=u', '.join(name_suggestions),
+                                       content_suggestions=u', '.join(content_suggestions),
+                                       query=query,
+                                       medium_search_form=search_form,
+                                       item_name=item_name,
+                                       omitted_words=u', '.join(omitted_words),
+                                       history=history,
+                )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
