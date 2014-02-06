@@ -89,10 +89,10 @@ Successfully created or updated venv at {1}
         ]
         if PIP15:
             args += [
-            '--process-dependency-links',
-            '--allow-external', 'flatland',
-            '--allow-unverified', 'flatland',
-        ]
+                '--process-dependency-links',
+                '--allow-external', 'flatland',
+                '--allow-unverified', 'flatland',
+            ]
         subprocess.check_call(args)
 
     def do_catalog(self):
