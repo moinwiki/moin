@@ -1,0 +1,69 @@
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+{% extends theme("show.html") %}
+
+{% from form.meta_template import meta_editor %}
+{# Import macros data_editor and extra_head from content_form's template.
+   extra_head is optional, so instead of a simple "import from" we need to do
+   this manually #}
+{% import form['content_form'].template as content_template %}
+{% set extra_head = content_template.extra_head %}
+{% set data_editor = content_template.data_editor %}
+
+{% set title = _("Modifying '%(item_name)s'", item_name=fqname.value) %}
+
+{% block head %}
+    {{ super() }}
+    {% if extra_head %}
+        {{ extra_head() }}
+    {% endif %}
+{% endblock %}
+
+{% block subitem_navigation %}
+    {% call(fullname, shortname, contenttype, has_children) utils.render_subitem_navigation(fqname, True) %}
+        {% set shortname = shortname|json_dumps %}
+        <button class="moin-insertname-action" data-name="{{ fullname }}"
+            title="{{ _('Insert Name') }}">{{ _('Insert Name') }}</button>
+    {% endcall %}
+{% endblock %}
+
+
+{% block content %}
+<h1>{{ title }}</h1>
+<div id="moin-modify" class="moin-form">
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+    {{ forms.render_errors(form) }}
+    {#
+       Workaround:
+       For *Draw content, hide submit button and form['comment'], since *Draw
+       POSTs originate from their respective applets.
+    #}
+    {% if not form['content_form'].is_draw %}
+        {{ forms.render_submit(form, id='moin-save-text-button') }}
+        <dl>
+            {{ forms.render_textcha(gen, form) }}
+            {{ forms.render(form['comment']) }}
+        </dl>
+    {% endif %}
+    {{ data_editor(form['content_form'], item_name) }}
+    {% if form['content_form'].help %}
+        <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+    {% endif %}
+    {{ meta_editor(form['meta_form']) }}
+    <dl>
+        {{ forms.render(form['extra_meta_text']) }}
+    </dl>
+    {#
+    {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
+    <br />
+    {{ forms.render_errors(form['meta_text']) }}
+    #}
+    {{ gen.form.close() }}
+</div>
+{% endblock %}
+
+{% block options_for_javascript %}
+{%- if user.scroll_page_after_edit -%}
+    <br id="moin-scroll-page-after-edit" />
+{%- endif %}
+{% endblock %}
