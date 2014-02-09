@@ -161,7 +161,9 @@ class ThemeSupport(object):
                                     label = _('Add Link')
                                     user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
-                                if flaskg.user.is_subscribed_to([item_name]):
+                                from MoinMoin.items import Item
+                                item = Item.create(item_name)
+                                if flaskg.user.is_subscribed_to(item):
                                     label = _('Unsubscribe')
                                 else:
                                     label = _('Subscribe')
