@@ -248,11 +248,7 @@ $("document").ready(function () {
     $(".filter-toggle").click(function () {
         // reverse checked/unchecked for each content type
         $(".moin-contenttypes-wrapper form").find("input[type='checkbox']").each(function () {
-            if ($(this).attr("checked")) {
-                $(this).removeAttr("checked");
-            } else {
-                $(this).attr("checked", "checked");
-            }
+            $(this).prop('checked', !$(this).is(':checked'));
         });
         return false;
     });
@@ -264,7 +260,8 @@ $("document").ready(function () {
         if (helper_texts.length) {
             helper_texts.fadeOut();
         } else {
-            $(".moin-contenttypes-wrapper form").find(".helper-text").css("display", "block");
+            helper_texts = $(".moin-contenttypes-wrapper form").find(".helper-text");
+            helper_texts.fadeIn();
         }
 
         return false;
