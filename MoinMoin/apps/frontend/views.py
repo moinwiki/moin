@@ -873,6 +873,10 @@ def index(item_name):
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     item_names = item_name.split(u'/')
+    if not item_name:
+        title_name = _(u'Global Index')
+    else:
+        title_name = _(u'Subitem Index')
     return render_template(item.index_template,
                            item_names=item_names,
                            item_name=item_name,
@@ -882,7 +886,7 @@ def index(item_name):
                            initials=initials,
                            startswith=startswith,
                            form=form,
-                           title_name=_(u'Global Index'),
+                           title_name=title_name,
     )
 
 

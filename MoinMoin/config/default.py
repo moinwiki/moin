@@ -401,7 +401,7 @@ options_no_group_name = {
             # so we no longer check, if item_exists for the modify item_view.
             ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), False, ),
             ('special.supplementation', None, None, False, ),
-            ('frontend.index', L_('Index'), L_('List sub-items'), False, ),
+            ('frontend.index', L_('Subitems'), L_('Subitems Index'), False, ),
             ('special.comments', L_('Comments'), L_('Hide comments'), True, ),
             ('special.transclusions', L_('Transclusions'), L_('Show transclusions'), True, ),
             ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
