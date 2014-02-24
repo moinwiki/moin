@@ -63,7 +63,6 @@ MoinMoin.prototype.initToggleComments = function () {
     if (pageComments.length > 0) {
         // There are comments, so show itemview Comments button
         $('.moin-toggle-comments-button').css('display', '');
-        $('.moin-toggle-comments-button').click(toggleComments);
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
             this.toggleComments();
@@ -132,7 +131,6 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
     wrappers = $('.moin-item-wrapper');
     if (wrappers.length > 0) {
         $('.moin-transclusions-button').css('display', '');
-        $('.moin-transclusions-button').click(toggleTransclusionOverlays);
     }
     $('.moin-transclusions-button').click(this.toggleTransclusionOverlays);
 };
