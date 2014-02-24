@@ -4,9 +4,20 @@
 {% from theme("modify_meta.html") import basic_meta_editor %}
 {% import theme("itemviews.html") as itemviews with context %}
 {% import theme(form['content_form'].template) as content_template %}
-{% set basic_data_editor = content_template.basic_data_editor %}
-
+{% set extra_head = content_template.extra_head %}
+{%if content_template.basic_data_editor is defined%}
+    {% set data_editor = content_template.basic_data_editor %}
+{%else%}
+    {% set data_editor = content_template.data_editor %}
+{%endif%}
 {% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
+
+{% block head %}
+    {{ super() }}
+    {% if extra_head %}
+        {{ extra_head() }}
+    {% endif %}
+{% endblock %}
 
 {% block views %}
 {{ itemviews }}
@@ -32,7 +43,7 @@
     </ul>    
     <div class="tab-content">
         <div class="tab-pane active" id="editor">
-            {{ basic_data_editor(form['content_form'], item_name, class='form-control') }}
+            {{ data_editor(form['content_form'], item_name) }}
         </div>
         <div class="tab-pane active" id="meta">
             <div class="row">

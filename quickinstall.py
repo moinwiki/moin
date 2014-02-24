@@ -27,8 +27,8 @@ or the virtual environment must be deactivated before rerunning quickinstall.py
 from make import Commands, WINDOWS_OS, M
 
 
-WIN_INFO = 'm.bat, activate.bat, deactivate.bat, and moin.bat are created by quickinstall.py'
-NIX_INFO = 'the m bash script and the activate and moin symlinks are created by quickinstall.py'
+WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
+NIX_INFO = 'the m bash script and the activate symlink are created by quickinstall.py'
 
 
 def create_m():
@@ -112,20 +112,20 @@ Successfully created or updated venv at {1}
 
     def do_helpers(self):
         """Create small helper scripts or symlinks in repo root, avoid keying the long path to virtual env."""
-        create_m()  # recreate m.bat or ./m to insure it is consistent with activate and moin
+        create_m()  # recreate m.bat or ./m to insure it is consistent with activate
         if WINDOWS_OS:
-            # windows commands are: activate | deactivate | moin
+            # windows commands are: activate | deactivate
             self.create_wrapper('activate.bat', 'activate.bat')
             self.create_wrapper('deactivate.bat', 'deactivate.bat')
-            self.create_wrapper('moin.bat', 'moin.exe')
+            if os.path.exists('moin.bat'):  # cleanup obsolete file - TODO remove after 2014-04
+                os.remove('moin.bat')
         else:
-            # linux commands are: source activate | deactivate | ./moin
+            # linux commands are: source activate | deactivate
             if os.path.exists('activate'):
                 os.unlink('activate')
-            if os.path.exists('moin'):
-                os.unlink('moin')
             os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')  # no need to define deactivate on unix
-            os.symlink(os.path.join(self.dir_venv_bin, 'moin'), 'moin')
+            if os.path.exists('moin'):  # cleanup obsolete file - TODO remove after 2014-04
+                os.unlink('moin')
 
 
 if __name__ == '__main__':
