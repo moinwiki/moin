@@ -139,49 +139,68 @@
                         {% if trail_items %}
                             {% for wiki_name, item_name, item_href, exists, err in trail_items %}
                             {% if not loop.last %}
-                              <li>
-                                {%- if wiki_name -%}
-                                    <a href="{{ item_href }}"{{ " " }}
-                                       title="{{ wiki_name }}"
-                                       class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
-                                       {{ item_name|shorten_item_name }}
-                                    </a>
-                                    <i class="icon-double-angle-right icon-fixed-width"></i>
-                                {%- else -%}
-                                    <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
-                                       {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                                       {{ item_name|shorten_item_name }}
-                                    </a>
-                                    <i class="icon-double-angle-right icon-fixed-width"></i>
-                                {%- endif %}
-                              </li>
+                                <li>
+                                    {%- if wiki_name -%}
+                                        <a href="{{ item_href }}"{{ " " }}
+                                            title="{{ wiki_name }}"
+                                            class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+                                            {{ item_name|shorten_item_name }}
+                                        </a>
+                                        <i class="icon-double-angle-right icon-fixed-width"></i>
+                                    {%- else -%}
+                                        <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                                            {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                                            {{ item_name|shorten_item_name }}
+                                        </a>
+                                        <i class="icon-double-angle-right icon-fixed-width"></i>
+                                    {%- endif %}
+                                    <ul class="moin-bcs-subitems">
+                                        {% for fq_name in theme_supp.get_fqnames(item_name) -%}
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                                                    {{ fq_name|shorten_fqname(length=25) }}
+                                                </a>
+                                            </li>
+                                        {%- endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <h4 class="moin-location-breadcrumb">
+                                    {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
+                                        {% if loop.first %}
+                                            <small>~ /</small>
+                                        {% elif not loop.last %}
+                                            <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                                {{ segment_name|shorten_fqname }}
+                                            </a>
+                                        <small>/</small>
+                                        {%- endif %}
+                                        {% if loop.last %}
+                                            {% if title_name %}
+                                                {{ title_name }}
+                                            {% else %}
+                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                                    {{ segment_name|shorten_fqname }}
+                                                </a>  
+                                            {%- endif %}
+                                        {%- endif %}
+                                    {% endfor %}
+                                    </h4>
+                                    <ul class="moin-bcs-subitems">
+                                        {% for fq_name in theme_supp.get_fqnames(item_name) -%}
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                                                    {{ fq_name|shorten_fqname(length=25) }}
+                                                </a>
+                                            </li>
+                                        {%- endfor %}
+                                    </ul>
+                                </li>
                             {% endif %}
                             {% endfor %}
                         {% endif %}
 
-                            <li>
-                                <h4 class="moin-location-breadcrumb">
-                                {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
-                                    {% if loop.first %}
-                                        <small>~ /</small>
-                                    {% elif not loop.last %}
-                                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                            {{ segment_name|shorten_fqname }}
-                                        </a>
-                                        <small>/</small>
-                                    {%- endif %}
-                                    {% if loop.last %}
-                                        {% if title_name %}
-                                            {{ title_name }}
-                                        {% else %}
-                                            <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                                {{ segment_name|shorten_fqname }}
-                                            </a>              
-                                        {%- endif %}
-                                    {%- endif %}
-                                {% endfor %}
-                                </h4>
-                            </li>
                         </ul><!-- complete list of breadcrumbs -->
                     </div>
                 </div>
