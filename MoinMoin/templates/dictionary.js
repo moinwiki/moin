@@ -3,12 +3,12 @@ function _(text){
 }
 
 $(document).ready(function(){
-     i18n_dict = { 
+     i18n_dict = {
         "Hide comments"  : "{{  _("Hide comments") }}",
         "Show comments"  : "{{  _("Show comments") }}",
         "Hide transclusions"  : "{{  _("Hide transclusions") }}",
         "Show transclusions"  : "{{  _("Show transclusions") }}",
-        "Your changes will be discarded if you leave this page without saving." : "{{ _("Your changes will be discarded if you leave this page without saving.") }}", 
+        "Your changes will be discarded if you leave this page without saving." : "{{ _("Your changes will be discarded if you leave this page without saving.") }}",
         "You missed! Double-click on text or to the right of text to auto-scroll text editor."  : "{{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }}",
         "Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."  : "{{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }}",
         "Your browser is old. Upgrade to gain auto-scroll page after edit feature."  : "{{ _("Your browser is old. Upgrade to gain auto-scroll page after edit feature.") }}",

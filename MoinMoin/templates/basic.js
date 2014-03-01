@@ -12,8 +12,8 @@ $(document).ready(function (){
         // it is bad way if we rewrite URL's, hence used a div with id -> "checkmodifyview" in the modify view
         var test = $('#checkmodifyview').length;
         if (test == 1 && edit == false) {
-    		return "Data you may have entered will be discarded!";
-    	}
+            return "Data you may have entered will be discarded!";
+        }
         edit = false;
     }
     $('div.dropup').removeClass('menu');
