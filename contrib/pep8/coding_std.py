@@ -69,6 +69,10 @@ def check_files(filename, suffix):
 
     with open(filename, "wb") as f:
         for line in lines:
+            length_line = len(line)
+            line = line.replace('\t', '    ')
+            if len(line) != length_line:
+                logger.log(u"%s was changed to replace tab characters with 4 spaces" % filename)
             pep8_line = line.rstrip() + line_end
             f.write(pep8_line)
             # if line was changed, issue warning once for each type of change
