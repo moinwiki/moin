@@ -29,13 +29,13 @@
     <div class="col-lg-5">
       {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=item.name, rev=rev_id)) }}
       {{ forms.render_errors(form) }}
-      
+
       <div class="form-group">
         {{ gen.label(form['comment']) }}
         {{ gen.textarea(form['comment'], rows='1', class='form-control') }}
       </div>
       {{ forms.render_textcha(gen, form) }}
-      
+
       <div class="form-group">
         {{ forms.render_submit(form, class='btn btn-primary') }}
       </div>

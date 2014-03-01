@@ -5,9 +5,9 @@
 <h2>{{ _('Create Account') }}</h2>
 <div class="row">
   <div class="col-lg-4">
-    
+
     {{ gen.form.open(form, method="post", action=url_for('frontend.register')) }}
-    
+
     {% if form.errors %}
       <div class="moin-flash moin-flash-error">
       {% for error in form.errors %}
