@@ -358,7 +358,7 @@ class Converter(object):
     # }}}
 
     def __init__(self):
-        self.markdown = Markdown()
+        self.markdown = Markdown(extensions=['extra', 'toc', ])
 
     @classmethod
     def _factory(cls, input, output, **kw):
