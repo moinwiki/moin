@@ -265,3 +265,33 @@ div.moin-item-wrapper {
 a.wikilink{
   color: @brand-primary;
 }
+.moin-bcs-subitems{
+  z-index: 500;
+}
+ul.moin-breadcrumb ul.moin-bcs-subitems{
+  background-color: #1b436d;
+}
+ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-bcs-subitems{
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems li{
+  list-style-type: none;
+  display: block;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems li a{
+  padding: 10px;
+  display: inline-block;
+  color: #ffffff;
+}
+ul.moin-breadcrumb li {
+  position: relative;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems{
+  display: none;
+  position: absolute;
+}
+ul.moin-breadcrumb li:hover ul.moin-bcs-subitems{
+  display: block;
+}
