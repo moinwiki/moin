@@ -25,8 +25,11 @@ from werkzeug import url_encode, url_decode
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from flask import request
-from flask import g as flaskg
+try:
+    from flask import g as flaskg
+except ImportError:
+    # in case converters become an independent package
+    flaskg = None
 
 from MoinMoin import config
 from MoinMoin.util.iri import Iri
@@ -98,8 +101,8 @@ class NodeVisitor(object):
         pass
 
     def open_moin_page_node(self, mointree_element):
-        if request.user_agent and flaskg.user.edit_on_doubleclick:
-            # add data-lineno attribute for auto-scrolling edit textarea (user_agent is None when running tests)
+        if flaskg and flaskg.add_lineno_attr:
+            # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno
                 self.last_lineno = self.current_lineno
