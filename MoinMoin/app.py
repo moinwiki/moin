@@ -255,6 +255,9 @@ def before_wiki():
         flaskg.current_lang = app.cfg.language_default
 
         setup_jinja_env()
+
+        # request.user_agent == '' if this is pytest
+        flaskg.add_lineno_attr = request.user_agent and flaskg.user.edit_on_doubleclick
     finally:
         flaskg.clock.stop('init')
 
