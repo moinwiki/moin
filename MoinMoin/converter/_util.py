@@ -8,8 +8,11 @@ MoinMoin - converter utilities
 
 from __future__ import absolute_import, division
 
-from flask import request
-from flask import g as flaskg
+try:
+    from flask import g as flaskg
+except ImportError:
+    # in case converters become an independent package
+    flaskg = None
 from emeraldtree import ElementTree as ET
 
 from MoinMoin.constants.misc import URI_SCHEMES
@@ -120,14 +123,11 @@ class _Stack(object):
         """
         Add a custom attribute (data-lineno=nn) that will be used by Javascript to scroll edit textarea.
         """
-        if request.user_agent and flaskg.user.edit_on_doubleclick:
-            # this is not py.test and user has option to edit on doubleclick
-            # TODO: move the 2 lines above and 2 related import statements outside of the converters
-            # (this is needed for a standalone converter)
-            if self.last_lineno != self.iter_content.lineno:
-                # avoid adding same lineno to parent and multiple children or grand-children
-                elem.attrib[html.data_lineno] = self.iter_content.lineno
-                self.last_lineno = self.iter_content.lineno
+        if flaskg and flaskg.add_lineno_attr:
+                if self.last_lineno != self.iter_content.lineno:
+                    # avoid adding same lineno to parent and multiple children or grand-children
+                    elem.attrib[html.data_lineno] = self.iter_content.lineno
+                    self.last_lineno = self.iter_content.lineno
 
     def clear(self):
         del self._list[1:]

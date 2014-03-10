@@ -559,7 +559,11 @@ MoinMoin.prototype.enhanceEdit = function () {
                 $('#moin-content').dblclick(function (e) {
                     // get clicked line number, save, and go to +modify page
                     lineno = findLineNo(e.target);
-                    sessionStorage.moinDoubleLineNo = lineno;
+                    if (lineno > 0 || $("*[data-lineno]").length > 0) {
+                        // do only if there were data-lineno attrs - do not give "you missed" message to html or image items
+                        sessionStorage.moinDoubleLineNo = lineno;
+                    }
+
                     document.location = modifyButton.href;
                 });
             }

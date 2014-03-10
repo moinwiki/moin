@@ -55,7 +55,7 @@
                         <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
                             <span class="caret"></span>
                         </button>
-                <ul class="dropdown-menu pull-right submenu"> 
+                <ul class="dropdown-menu pull-right submenu">
                     <li>
                         <a href="{{ url_for('frontend.show_item', item_name=doc.name[0], rev=doc.revid) }}">
                             {{ _('show') }}
@@ -87,7 +87,7 @@
                     <li>
                         <a href="{{ url_for('frontend.destroy_item', item_name=doc.name[0], rev=doc.revid) }}">
                             {{ _('destroy') }}
-                        </a> 
+                        </a>
                     </li>
                     {%- endif %}
                 </ul>
