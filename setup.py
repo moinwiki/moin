@@ -76,7 +76,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
         # use a pre-release emeraldtree (port to 2.6/2.7/3.3):
         'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.3dev',
-	'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
+        'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
     ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
@@ -88,7 +88,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'Flask-Script>=0.3.3',  # scripting support
         'Flask-Themes>=0.2.0',  # theme support
         'emeraldtree>=0.9.3dev',  # xml processing
-        'flatland',  
+        'flatland',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.9',  # wsgi toolkit
