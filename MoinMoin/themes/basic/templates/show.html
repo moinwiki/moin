@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block local_panel %}
-        
+
         <!-- user, site, item actions -->
     <div class="list-group">
         {% if user_actions %}
@@ -37,17 +37,17 @@
         {% endif %}
 
         <div class="list-group-item moin-list-heading">View Options</div>
-        <button type="button" 
-                class="btn btn-default moin-user-action-special moin-toggle-comments-button" 
+        <button type="button"
+                class="btn btn-default moin-user-action-special moin-toggle-comments-button"
                 data-toggle="button"
                 title="Show Comments">
             <span class="pull-left">
                 <i class="icon-comment icon-fixed-width"></i>
-                Comments 
+                Comments
             </span>
         </button>
-        <button type="button" 
-                class="btn btn-default moin-user-action-special moin-transclusions-button" 
+        <button type="button"
+                class="btn btn-default moin-user-action-special moin-transclusions-button"
                 data-toggle="button"
                 title="Show Transclusions">
             <span class="pull-left">
@@ -55,8 +55,8 @@
                 Transclusions
             </span>
         </button>
-         
-        {% if item_actions %}           
+
+        {% if item_actions %}
             <div class="list-group-item moin-list-heading"> {{ _("Item Actions") }} </div>
             {{ self.item_actions() }}
         {% endif %}

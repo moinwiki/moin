@@ -8,7 +8,6 @@ its requirements.
 needs: virtualenv, pip
 """
 
-PIP15 = False  # dirty hack to support pip >= 1.5 incompatibilities
 
 import MoinMoin  # validate python version
 import argparse
@@ -24,7 +23,7 @@ Error: import virtualenv failed, either virtualenv is not installed (see install
 or the virtual environment must be deactivated before rerunning quickinstall.py
 """)
 
-from make import Commands, WINDOWS_OS, M
+from make import Commands, WINDOWS_OS, M, ACTIVATE
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -65,9 +64,9 @@ class QuickInstall(object):
 
     def __call__(self):
         self.do_venv()
+        self.do_helpers()
         self.do_install()
         self.do_catalog()
-        self.do_helpers()
 
         sys.stdout.write("""
 Pip cache location is at {0}
@@ -78,6 +77,18 @@ Successfully created or updated venv at {1}
     def do_venv(self):
         virtualenv.create_environment(self.dir_venv)
 
+    def pip15_plus(self):
+        """Return true if pip version is >= 1.5"""
+        command = ACTIVATE + 'pip --version'
+        pip_txt = subprocess.check_output(command, shell=True)
+        # expecting pip_txt similar to "pip 1.4.1 from /bitbucket/moin-2.0..."
+        pip_txt = pip_txt.split()
+        if pip_txt[0] == 'pip':
+            pip_version = [int(x) for x in pip_txt[1].split('.')]
+            return pip_version >= [1, 5]
+        else:
+            sys.exit("Error: 'pip --version' produced unexpected results.")
+
     def do_install(self):
         args = [
             os.path.join(self.dir_venv_bin, 'pip'),
@@ -87,7 +98,7 @@ Successfully created or updated venv at {1}
             '--editable',
             self.dir_source,
         ]
-        if PIP15:
+        if self.pip15_plus():
             args += [
                 '--process-dependency-links',
                 '--allow-external', 'flatland',

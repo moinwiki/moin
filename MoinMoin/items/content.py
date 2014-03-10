@@ -221,6 +221,7 @@ class Content(object):
 
     def _expand_document(self, doc):
         from MoinMoin.converter import default_registry as reg
+        flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
         link_conv = reg.get(type_moin_document, type_moin_document, links='extern')

@@ -396,6 +396,9 @@ class Converter(object):
                                 # get attributes from page node;
                                 # we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
                                 attrib = Attributes(ret).convert()
+                                # current elem will likely be replaced by container so we need to copy data-lineno attr
+                                if html.data_lineno in elem.attrib:
+                                    attrib[html.data_lineno] = elem.attrib[html.data_lineno]
                                 # make new div node to hold transclusion, copy children, and save in container
                                 div = ET.Element(moin_page.div, attrib=attrib, children=body[:])
                                 container.append(div)  # new_trans_ptr is index to this

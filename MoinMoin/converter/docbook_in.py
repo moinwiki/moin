@@ -19,6 +19,11 @@ from __future__ import absolute_import, division
 import re
 
 from emeraldtree import ElementTree as ET
+try:
+    from flask import g as flaskg
+except ImportError:
+    # in case converters become an independent package
+    flaskg = None
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -31,6 +36,31 @@ from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 class NameSpaceError(Exception):
     pass
+
+
+def XML(text, parser=None):
+    """
+    Copied from EmeraldTree/tree.py to force use of local XMLParser class override.
+    """
+    if not parser:
+        parser = XMLParser(target=ET.TreeBuilder())
+    parser.feed(text)
+    return parser.close()
+
+
+class XMLParser(ET.XMLParser):
+    """
+    Override EmeraldTree/tree.py XMLParser class. Required to add auto-scroll textarea feature.
+
+    There is no need to subclass all tree.py classes and procedures with stubs because this
+    modified _start_list is only needed for the initial construction of the DOM when
+    flaskg.add_lineno_attr may be True.
+    """
+    def _start_list(self, tag, attrib_in):
+        elem = super(XMLParser, self)._start_list(tag, attrib_in)
+        if flaskg and flaskg.add_lineno_attr:
+            elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
+        return elem
 
 
 class Converter(object):
@@ -225,7 +255,7 @@ class Converter(object):
         # We will create an element tree from the DocBook content
         try:
             # XXX: The XML parser need bytestring.
-            tree = ET.XML(docbook_str.encode('utf-8'))
+            tree = XML(docbook_str.encode('utf-8'))  # using local XML override, not ET.XML
         except ET.ParseError as detail:
             return self.error(str(detail))
 
@@ -293,7 +323,7 @@ class Converter(object):
         """
         result = {}
         for key, value in element.attrib.iteritems():
-            if key.uri == xml and key.name in ['id', 'base', 'lang']:
+            if key.uri == xml and key.name in ['id', 'base', 'lang'] or key.name == 'data-lineno':
                 result[key] = value
         if result:
             # We clear standard_attribute, if ancestror attribute
@@ -534,6 +564,8 @@ class Converter(object):
         attrib[key] = "footnote"
         children = self.new(moin_page('note-body'), attrib={},
                             children=self.do_children(element, depth))
+        # must delete lineno because footnote will be placed near end of page and out of sequence
+        children._children[1].attrib.pop(html.data_lineno, None)
         return self.new(moin_page.note, attrib=attrib, children=[children])
 
     def visit_docbook_formalpara(self, element, depth):
