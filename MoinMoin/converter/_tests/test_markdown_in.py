@@ -9,7 +9,7 @@ MoinMoin - Tests for MoinMoin.converter.markdown_in
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, xml
 
 from ..markdown_in import Converter
 
@@ -18,6 +18,7 @@ class TestConverter(object):
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
+        xml: 'xml',
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -76,35 +77,35 @@ class TestConverter(object):
     def test_heading(self):
         data = [
             (u'# Heading 1',
-                '<h outline-level="1">Heading 1</h>'),
+                '<h outline-level="1" xml:id="heading-1">Heading 1</h>'),
             (u'## Heading 2',
-                '<h outline-level="2">Heading 2</h>'),
+                '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
             (u'### Heading 3',
-                '<h outline-level="3">Heading 3</h>'),
+                '<h outline-level="3" xml:id="heading-3">Heading 3</h>'),
             (u'#### Heading 4',
-                '<h outline-level="4">Heading 4</h>'),
+                '<h outline-level="4" xml:id="heading-4">Heading 4</h>'),
             (u'##### Heading 5',
-                '<h outline-level="5">Heading 5</h>'),
+                '<h outline-level="5" xml:id="heading-5">Heading 5</h>'),
             (u'###### Heading 6',
-                '<h outline-level="6">Heading 6</h>'),
+                '<h outline-level="6" xml:id="heading-6">Heading 6</h>'),
             (u'# Heading 1 #',
-                '<h outline-level="1">Heading 1</h>'),
+                '<h outline-level="1" xml:id="heading-1">Heading 1</h>'),
             (u'## Heading 2 ##',
-                '<h outline-level="2">Heading 2</h>'),
+                '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
             (u'### Heading 3 ###',
-                '<h outline-level="3">Heading 3</h>'),
+                '<h outline-level="3" xml:id="heading-3">Heading 3</h>'),
             (u'#### Heading 4 ####',
-                '<h outline-level="4">Heading 4</h>'),
+                '<h outline-level="4" xml:id="heading-4">Heading 4</h>'),
             (u'##### Heading 5 #####',
-                '<h outline-level="5">Heading 5</h>'),
+                '<h outline-level="5" xml:id="heading-5">Heading 5</h>'),
             (u'###### Heading 6 ######',
-                '<h outline-level="6">Heading 6</h>'),
+                '<h outline-level="6" xml:id="heading-6">Heading 6</h>'),
             (u'Heading 1\n=========\nHeading 2\n---------\n',
-                '<h outline-level="1">Heading 1</h>\n<h outline-level="2">Heading 2</h>'),
-            (u'Heading 1\n---------\n',
-                '<h outline-level="2">Heading 1</h>'),
+                '<h outline-level="1" xml:id="heading-1">Heading 1</h>\n<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
+            (u'Heading 2\n---------\n',
+                '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
             (u'Heading\n=======\n\nxxxx',
-                '<h outline-level="1">Heading</h>\n<p>xxxx</p>'),
+                '<h outline-level="1" xml:id="heading">Heading</h>\n<p>xxxx</p>'),
         ]
         for i in data:
             yield (self.do, ) + i
