@@ -152,6 +152,22 @@
 {{ gen.form.close() }}
 {% endmacro %}
 
+{% macro subscriptions(form) %}
+{{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+{{ forms.render_errors(form) }}
+<div class="form-group">
+    {{ gen.label(form['subscriptions']) }}
+    <div class="input-group">
+        {{ gen.textarea(form['subscriptions'], cols="60", rows="10", class="form-control") }}
+    </div>
+</div>
+{{ forms.render_hidden('part', 'subscriptions') }}
+<div class="form-group">
+    {{ forms.render_submit(form, class='btn btn-primary') }}
+</div>
+{{ gen.form.close() }}
+{% endmacro %}
+
 {# javascript functions within basic.js are dependent upon the structure, classes and ids defined here #}
 {% macro all_usersettings_forms(form_objs) %}
 <div id="moin-usersettings">
@@ -175,6 +191,9 @@
                 </div>
                 <div id="options" class="tab-pane active">
                     {{ options(form_objs.options) }}
+                </div>
+                <div id="subscriptions" class="tab-pane active">
+                    {{ subscriptions(form_objs.subscriptions) }}
                 </div>
             </div>
         </div>
