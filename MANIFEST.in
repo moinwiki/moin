@@ -1,7 +1,6 @@
 include README.txt LICENSE.txt
 include quickinstall.py
 include wikiconfig.py
-include Makefile
 
 recursive-include   MoinMoin/translations *
 
