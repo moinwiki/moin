@@ -101,7 +101,7 @@ import <dir>    import a moin 1.9 wiki/data instance from <dir>
 run             run built-in wiki server
 backup *        roll 3 prior backups and create new backup *option, specify file
 
-css             run Stylus to update CSS files
+css             run Stylus and lessc to update theme CSS files
 tests           run tests, output goes to pytest.txt and pytestpep8.txt
 coding-std      correct scripts that taint the repository with trailing spaces..
 api             update moin api docs (files are under hg version control)
@@ -180,6 +180,12 @@ def delete_files(pattern):
             os.remove(os.path.join(root, filename))
             matches += 1
     print 'Deleted %s files matching "%s".' % (matches, pattern)
+
+
+def get_bootstrap_data_location():
+    """Return the virtualenv site-packages/xstatic/pkg/bootstrap/data location."""
+    command = ACTIVATE + 'python -c "from xstatic.pkg.bootstrap import BASE_DIR; print BASE_DIR"'
+    return subprocess.check_output(command, shell=True)
 
 
 class Commands(object):
@@ -341,17 +347,28 @@ class Commands(object):
             print 'Error: cannot backup wiki because it has not been created.'
 
     def cmd_css(self, *args):
-        """run Stylus to update CSS files"""
-        print 'Running Stylus to update CSS files...'
-        command = 'cd {0}{1}stylus --include-css --compress < main.styl > ../common.css'.format(os.path.normpath('MoinMoin/themes/modernized/static/css/stylus'), SEP)
+        """run Stylus and lessc to update CSS files"""
+        print 'Running Stylus to update Modernized theme CSS files...'
+        # Note: we use / here to specify directory offsets; this works as used below in Windows XP, 2000, 7, 8
+        command = 'cd {0}{1}stylus --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP)
         result = subprocess.call(command, shell=True)
-        command = 'cd {0}{1} stylus --include-css --compress < main.styl > ../common.css'.format(os.path.normpath('MoinMoin/themes/foobar/static/css/stylus'), SEP)
+        print 'Running Stylus to update Foobar theme CSS files...'
+        command = 'cd {0}{1} stylus --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP)
         result2 = subprocess.call(command, shell=True)
-
         if result == 0 and result2 == 0:
-            print 'Success: CSS files updated.'
+            print 'Success: Modernized and Foobar CSS files updated.'
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
+
+        print 'Running lessc to update Basic theme CSS files...'
+        data_loc = get_bootstrap_data_location().strip()
+        include = '--include-path=' + data_loc + '/less'
+        command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} basic.less ../css/basic.css'.format(SEP, include)
+        result = subprocess.call(command, shell=True)
+        if result == 0:
+            print 'Success: Basic theme CSS files updated.'
+        else:
+            print 'Error: Basic theme CSS files update failed, see error messages above.'
 
     def cmd_tests(self, *args):
         """run tests, output goes to pytest.txt and pytestpep8.txt"""
