@@ -1,19 +1,22 @@
-admin Package
-=============
+MoinMoin.apps.admin package
+===========================
 
-:mod:`admin` Package
---------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.apps.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`views` Module
--------------------
+MoinMoin.apps.admin.views module
+--------------------------------
 
 .. automodule:: MoinMoin.apps.admin.views
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.apps.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:

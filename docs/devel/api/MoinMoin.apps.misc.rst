@@ -1,19 +1,22 @@
-misc Package
-============
+MoinMoin.apps.misc package
+==========================
 
-:mod:`misc` Package
--------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.apps.misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`views` Module
--------------------
+MoinMoin.apps.misc.views module
+-------------------------------
 
 .. automodule:: MoinMoin.apps.misc.views
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.apps.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:

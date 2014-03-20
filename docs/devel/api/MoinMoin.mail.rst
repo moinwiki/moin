@@ -1,19 +1,22 @@
-mail Package
-============
+MoinMoin.mail package
+=====================
 
-:mod:`mail` Package
--------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.mail
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`sendmail` Module
-----------------------
+MoinMoin.mail.sendmail module
+-----------------------------
 
 .. automodule:: MoinMoin.mail.sendmail
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.mail
+    :members:
+    :undoc-members:
+    :show-inheritance:

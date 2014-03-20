@@ -1,11 +1,10 @@
-i18n Package
-============
+MoinMoin.i18n package
+=====================
 
-:mod:`i18n` Package
--------------------
+Module contents
+---------------
 
 .. automodule:: MoinMoin.i18n
     :members:
     :undoc-members:
     :show-inheritance:
-

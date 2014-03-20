@@ -1,35 +1,38 @@
-items Package
-=============
+MoinMoin.items package
+======================
 
-:mod:`items` Package
---------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.items
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`blog` Module
-------------------
+MoinMoin.items.blog module
+--------------------------
 
 .. automodule:: MoinMoin.items.blog
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`content` Module
----------------------
+MoinMoin.items.content module
+-----------------------------
 
 .. automodule:: MoinMoin.items.content
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ticket` Module
---------------------
+MoinMoin.items.ticket module
+----------------------------
 
 .. automodule:: MoinMoin.items.ticket
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.items
+    :members:
+    :undoc-members:
+    :show-inheritance:

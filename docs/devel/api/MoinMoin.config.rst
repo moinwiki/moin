@@ -1,19 +1,22 @@
-config Package
-==============
+MoinMoin.config package
+=======================
 
-:mod:`config` Package
----------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.config
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`default` Module
----------------------
+MoinMoin.config.default module
+------------------------------
 
 .. automodule:: MoinMoin.config.default
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.config
+    :members:
+    :undoc-members:
+    :show-inheritance:

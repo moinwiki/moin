@@ -1,59 +1,62 @@
-maint Package
-=============
+MoinMoin.script.maint package
+=============================
 
-:mod:`maint` Package
---------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.script.maint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`index` Module
--------------------
+MoinMoin.script.maint.index module
+----------------------------------
 
 .. automodule:: MoinMoin.script.maint.index
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`modify_item` Module
--------------------------
+MoinMoin.script.maint.modify_item module
+----------------------------------------
 
 .. automodule:: MoinMoin.script.maint.modify_item
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`moinshell` Module
------------------------
+MoinMoin.script.maint.moinshell module
+--------------------------------------
 
 .. automodule:: MoinMoin.script.maint.moinshell
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`reduce_revisions` Module
-------------------------------
+MoinMoin.script.maint.reduce_revisions module
+---------------------------------------------
 
 .. automodule:: MoinMoin.script.maint.reduce_revisions
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`serialization` Module
----------------------------
+MoinMoin.script.maint.serialization module
+------------------------------------------
 
 .. automodule:: MoinMoin.script.maint.serialization
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`set_meta` Module
-----------------------
+MoinMoin.script.maint.set_meta module
+-------------------------------------
 
 .. automodule:: MoinMoin.script.maint.set_meta
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.script.maint
+    :members:
+    :undoc-members:
+    :show-inheritance:

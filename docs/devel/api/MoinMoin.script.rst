@@ -1,13 +1,5 @@
-script Package
-==============
-
-:mod:`script` Package
----------------------
-
-.. automodule:: MoinMoin.script
-    :members:
-    :undoc-members:
-    :show-inheritance:
+MoinMoin.script package
+=======================
 
 Subpackages
 -----------
@@ -17,4 +9,12 @@ Subpackages
     MoinMoin.script.account
     MoinMoin.script.maint
     MoinMoin.script.migration
+    MoinMoin.script.win
 
+Module contents
+---------------
+
+.. automodule:: MoinMoin.script
+    :members:
+    :undoc-members:
+    :show-inheritance:

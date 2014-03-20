@@ -1,19 +1,22 @@
-frontend Package
-================
+MoinMoin.apps.frontend package
+==============================
 
-:mod:`frontend` Package
------------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.apps.frontend
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`views` Module
--------------------
+MoinMoin.apps.frontend.views module
+-----------------------------------
 
 .. automodule:: MoinMoin.apps.frontend.views
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.apps.frontend
+    :members:
+    :undoc-members:
+    :show-inheritance:

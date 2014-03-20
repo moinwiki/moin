@@ -1,11 +1,10 @@
-themes Package
-==============
+MoinMoin.themes package
+=======================
 
-:mod:`themes` Package
----------------------
+Module contents
+---------------
 
 .. automodule:: MoinMoin.themes
     :members:
     :undoc-members:
     :show-inheritance:
-

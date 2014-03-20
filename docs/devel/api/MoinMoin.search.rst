@@ -1,19 +1,22 @@
-search Package
-==============
+MoinMoin.search package
+=======================
 
-:mod:`search` Package
----------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.search
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`analyzers` Module
------------------------
+MoinMoin.search.analyzers module
+--------------------------------
 
 .. automodule:: MoinMoin.search.analyzers
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.search
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,51 +1,54 @@
-auth Package
-============
+MoinMoin.auth package
+=====================
 
-:mod:`auth` Package
--------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.auth
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`http` Module
-------------------
+MoinMoin.auth.http module
+-------------------------
 
 .. automodule:: MoinMoin.auth.http
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`ldap_login` Module
-------------------------
+MoinMoin.auth.ldap_login module
+-------------------------------
 
 .. automodule:: MoinMoin.auth.ldap_login
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`log` Module
------------------
+MoinMoin.auth.log module
+------------------------
 
 .. automodule:: MoinMoin.auth.log
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`openidrp` Module
-----------------------
+MoinMoin.auth.openidrp module
+-----------------------------
 
 .. automodule:: MoinMoin.auth.openidrp
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`smb_mount` Module
------------------------
+MoinMoin.auth.smb_mount module
+------------------------------
 
 .. automodule:: MoinMoin.auth.smb_mount
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.auth
+    :members:
+    :undoc-members:
+    :show-inheritance:

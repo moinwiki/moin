@@ -1,13 +1,5 @@
-migration Package
-=================
-
-:mod:`migration` Package
-------------------------
-
-.. automodule:: MoinMoin.script.migration
-    :members:
-    :undoc-members:
-    :show-inheritance:
+MoinMoin.script.migration package
+=================================
 
 Subpackages
 -----------
@@ -16,3 +8,10 @@ Subpackages
 
     MoinMoin.script.migration.moin19
 
+Module contents
+---------------
+
+.. automodule:: MoinMoin.script.migration
+    :members:
+    :undoc-members:
+    :show-inheritance:

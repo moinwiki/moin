@@ -1,35 +1,30 @@
-backends Package
-================
+MoinMoin.storage.backends package
+=================================
 
-:mod:`backends` Package
------------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.storage.backends
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_util` Module
--------------------
-
-.. automodule:: MoinMoin.storage.backends._util
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fileserver` Module
-------------------------
+MoinMoin.storage.backends.fileserver module
+-------------------------------------------
 
 .. automodule:: MoinMoin.storage.backends.fileserver
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stores` Module
---------------------
+MoinMoin.storage.backends.stores module
+---------------------------------------
 
 .. automodule:: MoinMoin.storage.backends.stores
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.storage.backends
+    :members:
+    :undoc-members:
+    :show-inheritance:

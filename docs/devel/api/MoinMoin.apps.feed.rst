@@ -1,19 +1,22 @@
-feed Package
-============
+MoinMoin.apps.feed package
+==========================
 
-:mod:`feed` Package
--------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.apps.feed
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`views` Module
--------------------
+MoinMoin.apps.feed.views module
+-------------------------------
 
 .. automodule:: MoinMoin.apps.feed.views
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.apps.feed
+    :members:
+    :undoc-members:
+    :show-inheritance:
