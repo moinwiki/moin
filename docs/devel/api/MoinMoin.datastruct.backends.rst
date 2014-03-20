@@ -1,67 +1,70 @@
-backends Package
-================
+MoinMoin.datastruct.backends package
+====================================
 
-:mod:`backends` Package
------------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.datastruct.backends
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`composite_dicts` Module
------------------------------
+MoinMoin.datastruct.backends.composite_dicts module
+---------------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.composite_dicts
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`composite_groups` Module
-------------------------------
+MoinMoin.datastruct.backends.composite_groups module
+----------------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.composite_groups
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`config_dicts` Module
---------------------------
+MoinMoin.datastruct.backends.config_dicts module
+------------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.config_dicts
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`config_groups` Module
----------------------------
+MoinMoin.datastruct.backends.config_groups module
+-------------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.config_groups
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`config_lazy_groups` Module
---------------------------------
+MoinMoin.datastruct.backends.config_lazy_groups module
+------------------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.config_lazy_groups
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wiki_dicts` Module
-------------------------
+MoinMoin.datastruct.backends.wiki_dicts module
+----------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.wiki_dicts
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wiki_groups` Module
--------------------------
+MoinMoin.datastruct.backends.wiki_groups module
+-----------------------------------------------
 
 .. automodule:: MoinMoin.datastruct.backends.wiki_groups
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.datastruct.backends
+    :members:
+    :undoc-members:
+    :show-inheritance:

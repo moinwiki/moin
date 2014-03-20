@@ -1,21 +1,5 @@
-storage Package
-===============
-
-:mod:`storage` Package
-----------------------
-
-.. automodule:: MoinMoin.storage
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`error` Module
--------------------
-
-.. automodule:: MoinMoin.storage.error
-    :members:
-    :undoc-members:
-    :show-inheritance:
+MoinMoin.storage package
+========================
 
 Subpackages
 -----------
@@ -26,3 +10,22 @@ Subpackages
     MoinMoin.storage.middleware
     MoinMoin.storage.stores
 
+Submodules
+----------
+
+MoinMoin.storage.error module
+-----------------------------
+
+.. automodule:: MoinMoin.storage.error
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.storage
+    :members:
+    :undoc-members:
+    :show-inheritance:

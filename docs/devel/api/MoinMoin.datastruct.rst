@@ -1,13 +1,5 @@
-datastruct Package
-==================
-
-:mod:`datastruct` Package
--------------------------
-
-.. automodule:: MoinMoin.datastruct
-    :members:
-    :undoc-members:
-    :show-inheritance:
+MoinMoin.datastruct package
+===========================
 
 Subpackages
 -----------
@@ -16,3 +8,10 @@ Subpackages
 
     MoinMoin.datastruct.backends
 
+Module contents
+---------------
+
+.. automodule:: MoinMoin.datastruct
+    :members:
+    :undoc-members:
+    :show-inheritance:

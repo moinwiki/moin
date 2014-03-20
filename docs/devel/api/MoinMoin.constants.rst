@@ -1,75 +1,78 @@
-constants Package
-=================
+MoinMoin.constants package
+==========================
 
-:mod:`constants` Package
-------------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.constants
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`chartypes` Module
------------------------
+MoinMoin.constants.chartypes module
+-----------------------------------
 
 .. automodule:: MoinMoin.constants.chartypes
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`contenttypes` Module
---------------------------
+MoinMoin.constants.contenttypes module
+--------------------------------------
 
 .. automodule:: MoinMoin.constants.contenttypes
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`forms` Module
--------------------
+MoinMoin.constants.forms module
+-------------------------------
 
 .. automodule:: MoinMoin.constants.forms
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`itemtypes` Module
------------------------
+MoinMoin.constants.itemtypes module
+-----------------------------------
 
 .. automodule:: MoinMoin.constants.itemtypes
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`keys` Module
-------------------
+MoinMoin.constants.keys module
+------------------------------
 
 .. automodule:: MoinMoin.constants.keys
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`misc` Module
-------------------
+MoinMoin.constants.misc module
+------------------------------
 
 .. automodule:: MoinMoin.constants.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`namespaces` Module
-------------------------
+MoinMoin.constants.namespaces module
+------------------------------------
 
 .. automodule:: MoinMoin.constants.namespaces
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`rights` Module
---------------------
+MoinMoin.constants.rights module
+--------------------------------
 
 .. automodule:: MoinMoin.constants.rights
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:

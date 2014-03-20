@@ -1,75 +1,78 @@
-stores Package
-==============
+MoinMoin.storage.stores package
+===============================
 
-:mod:`stores` Package
----------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.storage.stores
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`fs` Module
-----------------
+MoinMoin.storage.stores.fs module
+---------------------------------
 
 .. automodule:: MoinMoin.storage.stores.fs
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`kc` Module
-----------------
+MoinMoin.storage.stores.kc module
+---------------------------------
 
 .. automodule:: MoinMoin.storage.stores.kc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`kt` Module
-----------------
+MoinMoin.storage.stores.kt module
+---------------------------------
 
 .. automodule:: MoinMoin.storage.stores.kt
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`memory` Module
---------------------
+MoinMoin.storage.stores.memory module
+-------------------------------------
 
 .. automodule:: MoinMoin.storage.stores.memory
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`mongodb` Module
----------------------
+MoinMoin.storage.stores.mongodb module
+--------------------------------------
 
 .. automodule:: MoinMoin.storage.stores.mongodb
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`sqla` Module
-------------------
+MoinMoin.storage.stores.sqla module
+-----------------------------------
 
 .. automodule:: MoinMoin.storage.stores.sqla
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`sqlite` Module
---------------------
+MoinMoin.storage.stores.sqlite module
+-------------------------------------
 
 .. automodule:: MoinMoin.storage.stores.sqlite
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`wrappers` Module
-----------------------
+MoinMoin.storage.stores.wrappers module
+---------------------------------------
 
 .. automodule:: MoinMoin.storage.stores.wrappers
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.storage.stores
+    :members:
+    :undoc-members:
+    :show-inheritance:

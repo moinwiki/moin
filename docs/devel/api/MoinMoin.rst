@@ -1,77 +1,5 @@
-MoinMoin Package
+MoinMoin package
 ================
-
-:mod:`MoinMoin` Package
------------------------
-
-.. automodule:: MoinMoin.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_template` Module
------------------------
-
-.. automodule:: MoinMoin._template
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`app` Module
------------------
-
-.. automodule:: MoinMoin.app
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`conftest` Module
-----------------------
-
-.. automodule:: MoinMoin.conftest
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`error` Module
--------------------
-
-.. automodule:: MoinMoin.error
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`forms` Module
--------------------
-
-.. automodule:: MoinMoin.forms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`log` Module
------------------
-
-.. automodule:: MoinMoin.log
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`user` Module
-------------------
-
-.. automodule:: MoinMoin.user
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`wikiutil` Module
-----------------------
-
-.. automodule:: MoinMoin.wikiutil
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
@@ -96,3 +24,70 @@ Subpackages
     MoinMoin.themes
     MoinMoin.util
 
+Submodules
+----------
+
+MoinMoin.app module
+-------------------
+
+.. automodule:: MoinMoin.app
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.conftest module
+------------------------
+
+.. automodule:: MoinMoin.conftest
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.error module
+---------------------
+
+.. automodule:: MoinMoin.error
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.forms module
+---------------------
+
+.. automodule:: MoinMoin.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.log module
+-------------------
+
+.. automodule:: MoinMoin.log
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.user module
+--------------------
+
+.. automodule:: MoinMoin.user
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MoinMoin.wikiutil module
+------------------------
+
+.. automodule:: MoinMoin.wikiutil
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin
+    :members:
+    :undoc-members:
+    :show-inheritance:

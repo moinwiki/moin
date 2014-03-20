@@ -1,13 +1,5 @@
-apps Package
-============
-
-:mod:`apps` Package
--------------------
-
-.. automodule:: MoinMoin.apps
-    :members:
-    :undoc-members:
-    :show-inheritance:
+MoinMoin.apps package
+=====================
 
 Subpackages
 -----------
@@ -20,3 +12,10 @@ Subpackages
     MoinMoin.apps.misc
     MoinMoin.apps.serve
 
+Module contents
+---------------
+
+.. automodule:: MoinMoin.apps
+    :members:
+    :undoc-members:
+    :show-inheritance:

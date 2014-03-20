@@ -1,91 +1,86 @@
-macro Package
-=============
+MoinMoin.macro package
+======================
 
-:mod:`macro` Package
---------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.macro
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`Anchor` Module
---------------------
+MoinMoin.macro.Anchor module
+----------------------------
 
 .. automodule:: MoinMoin.macro.Anchor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Date` Module
-------------------
+MoinMoin.macro.Date module
+--------------------------
 
 .. automodule:: MoinMoin.macro.Date
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`DateTime` Module
-----------------------
+MoinMoin.macro.DateTime module
+------------------------------
 
 .. automodule:: MoinMoin.macro.DateTime
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`GetText` Module
----------------------
+MoinMoin.macro.GetText module
+-----------------------------
 
 .. automodule:: MoinMoin.macro.GetText
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`GetVal` Module
---------------------
+MoinMoin.macro.GetVal module
+----------------------------
 
 .. automodule:: MoinMoin.macro.GetVal
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`MailTo` Module
---------------------
+MoinMoin.macro.MailTo module
+----------------------------
 
 .. automodule:: MoinMoin.macro.MailTo
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`PagenameList` Module
---------------------------
+MoinMoin.macro.PagenameList module
+----------------------------------
 
 .. automodule:: MoinMoin.macro.PagenameList
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`RandomItem` Module
-------------------------
+MoinMoin.macro.RandomItem module
+--------------------------------
 
 .. automodule:: MoinMoin.macro.RandomItem
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Verbatim` Module
-----------------------
+MoinMoin.macro.Verbatim module
+------------------------------
 
 .. automodule:: MoinMoin.macro.Verbatim
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`_base` Module
--------------------
 
-.. automodule:: MoinMoin.macro._base
+Module contents
+---------------
+
+.. automodule:: MoinMoin.macro
     :members:
     :undoc-members:
     :show-inheritance:
-

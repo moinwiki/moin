@@ -1,27 +1,30 @@
-signalling Package
-==================
+MoinMoin.signalling package
+===========================
 
-:mod:`signalling` Package
--------------------------
+Submodules
+----------
 
-.. automodule:: MoinMoin.signalling
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`log` Module
------------------
+MoinMoin.signalling.log module
+------------------------------
 
 .. automodule:: MoinMoin.signalling.log
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`signals` Module
----------------------
+MoinMoin.signalling.signals module
+----------------------------------
 
 .. automodule:: MoinMoin.signalling.signals
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: MoinMoin.signalling
+    :members:
+    :undoc-members:
+    :show-inheritance:
