@@ -48,42 +48,71 @@ create your development environment
 
 * if you do not have a bitbucket account, create one at https://bitbucket.org
 * fork the main repository on bitbucket: https://bitbucket.org/thomaswaldmann/moin-2.0
-* clone the main repository to your local development machine
+* clone the main repository to your local development machine::
 
-  - cd to parent directory of your future repo
-  - "hg clone https://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0"
-* ensure you are in default branch "hg update default"
-* create the virtualenv and download packages: "python quickinstall.py"
-* create a wiki instance and load sample data: "m sample"
-* start the built-in server: "m run"
+    cd <parent_directory_of_your_future_repo>
+    hg clone https://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
+* ensure you are in default branch::
+
+    hg update default
+* create the virtualenv and download packages::
+
+    python quickinstall.py
+* create a wiki instance and load sample data::
+
+    ./m sample  # Windows: m sample
+* start the built-in server::
+
+    ./m run  # Windows: m run
 * point your browser at http://127.0.0.1:8080/ to access your development wiki
 * key ctrl+C to stop the built-in server
 
 add more tools, exercise tools
 ------------------------------
 
-* if you do not have a google account, create one at http://codereview.appspot.com
-* download upload.py from http://code.google.com/p/rietveld/wiki/CodeReviewHelp
-  to your repo root, then practice using codereview:
-* make a trivial change to any source file, do "python upload.py"
-* inspect your patch set at http://codereview.appspot.com, add a comment
-* click the "Publish and Mail comments" link, check your email inbox
-* make another trivial change to same source file, do "python upload.py -i nnn"
-  where nnn is ID of existing codereview
-* inspect your patch set again, compare patch set 1 to patch set 2
-* click the "Delete" link to delete patchset 2
-* revert the changes on your local repo "hg revert --all"
-* run the unit tests ("m tests"), note any existing test failures
-* install NodeJS with Linux package manager; Windows users may download from http://nodejs.org/download/
-* install stylus
+* install additional software that developers may require, including upload.py::
 
-  - "sudo npm install stylus -g" or windows "npm install stylus -g"
-  - "stylus -V"  # show version number to prove it works
-* run Stylus to regenerate CSS files: "m css", verify nothing changed: "hg diff"
-* run "m coding-std" to see if there are any coding errors
-* run "m api" to see any uncommitted API doc changes
-* use "hg revert --all" to revert any changes from above
-* optional: create local docs "m docs"
+    ./m extras  # Windows: m extras
+* if you do not have a google account, create one at http://codereview.appspot.com
+* read about code review at: http://code.google.com/p/rietveld/wiki/CodeReviewHelp
+* practice using codereview by making a trivial change to any source file, do "python upload.py"
+
+  * inspect your patch set at http://codereview.appspot.com
+  * experiment by adding comments, upload a second patchset "python upload.py -i <issue_ID>"
+  * revert the changes on your local repo "hg revert --all"
+
+* run the unit tests, note any existing test failures::
+
+     ./m tests  # Windows: m tests
+
+* install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
+* install stylus::
+
+    sudo npm install stylus -g  # Windows: npm install stylus -g
+    stylus -V  # show version number to prove it works
+* install lessc ("less" below is not a typo)::
+
+    sudo npm install less -g  # Windows: npm install less -g
+    lessc --version"  # show version number to prove it works
+* regenerate CSS files::
+
+    ./m css  # Windows: m css
+    hg diff  # verify nothing changed
+* check for coding errors (tabs, trailing spaces, line endings)::
+
+    ./m coding-std  # Windows: m coding-std
+    hg diff  # verify nothing changed
+* check for uncommitted API doc changes::
+
+    ./m api  # Windows m api
+    hg diff  # verify nothing changed
+* revert any changes from above::
+
+    hg revert --all
+
+* create local docs::
+
+    ./m docs  # Windows: m docs
 * set options on your favorite editor or IDE
 
   - convert tabs to 4 spaces
@@ -117,7 +146,7 @@ develop a testing strategy
   implement it
 * make a plan for using a browser to test your changes; which wiki pages are
   effected, how many browsers must be tested
-* run "m tests" to determine if there are any existing test failures before you make changes
+* run "./m tests" to determine if there are any existing test failures before you make changes
 
 develop a working solution
 --------------------------
@@ -131,7 +160,7 @@ develop a working solution
 * obey PEP-8
 * do not fix or change code unrelated to your task, if you find
   unrelated bugs, create new issues on the tracker
-* regularly run the unit tests ("m tests"), the amount of failing tests
+* regularly run the unit tests ("./m tests"), the amount of failing tests
   shall not increase due to your changes
 
 review your working solution
@@ -144,14 +173,14 @@ review your working solution
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
 * fix everything you find before requesting feedback from others
-* run tests again "m tests"
+* run tests again "./m tests", check for trailing spaces, line endings "./m coding-std"
 
 get feedback from other developers
 ----------------------------------
 
 * add changes to codereview: run "python upload.py" in your local repo
 
-  - to update a codereview, "python upload.py -i nnn" where nnn is ID
+  - to update a codereview, "python upload.py -i <issue_ID>"
 * carefully review your changes again on codereview
 
   - if you find errors, delete the patchset, fix and upload again
@@ -166,8 +195,10 @@ publish your change
 * do some final testing - practically and using the unit tests
 * commit your changes to your local repo, use a concise commit comment
   describing the change
+
+  * if your change fixes a bitbucket issue, include the number as "fixes #nnn" in your commit comment
 * pull any changes made by others from the main repo on Bitbucket, then
-  merge and commit
+  merge and commit the merge
 * push the changeset to your public bitbucket repo
 * create a pull request so your changes will get pulled into the
   main repository
@@ -192,7 +223,6 @@ update an issue on the issue tracker
 https://bitbucket.org/thomaswaldmann/moin-2.0/issues)
 or join us on IRC #moin-dev.
 
-
 MoinMoin architecture
 =====================
 moin2 is a WSGI application and uses:
@@ -213,7 +243,6 @@ moin2 is a WSGI application and uses:
 * jquery javascript lib, a simple jQuery i18n plugin `Plugin <https://github.com/recurser/jquery-i18n>`_
 * CKeditor, the GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools
-
 
 How MoinMoin works
 ==================
@@ -319,30 +348,15 @@ dom-dom transformations and output formats.
 Templates and Themes
 --------------------
 Moin uses jinja2 as its templating engine and Flask-Themes as a flask extension to
-support multiple themes, each theme has static data like css and templates.
+support multiple themes. There is a ``MoinMoin/templates`` directory that contains a base set of templates designed for the Modernized theme. Other themes may override or add to the base templates with a directory named ``themes/<theme_name>/templates``. 
 
 When rendering a template, the template is expanded within an environment of
 values it can use. In addition to this general environment, parameters can
 also be given directly to the render call.
 
-Stylesheets for the Basic theme in MoinMoin are compiled using the source .less files 
-in the ``custom-less`` directory inside Basic theme's ``static`` directory.
+Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in MoinMoin are compiled using the source ``basic.less`` file in the Basic theme's ``static/custom-less`` directory. Stylesheets for the Modernized and Foobar themes are compiled using the ``main.styl files`` in their respective ``static/css/stylus`` directories. To compile CSS for all themes::
 
-For instructions on how to set up server-side compilation of .less files refer to
-the "Server Side Usage - Installation" section at `LESS. <http://lesscss.org/#usage>`_
-
-Once installed, we can invoke the less compiler from the command line by using
-the following::
-
-    cd MoinMoin/themes/basic/static/custom-less
-    lessc basic.less ../css/basic.css
-
-For compiling ``basic.less`` we need to have the source .less files from
-Bootstrap. It is currently compatible with Bootstrap v3.0.0 RC2.
-You can download the source from
-`here <https://github.com/twbs/bootstrap/releases/tag/v3.0.0-rc.2>`_
-and copy the .less files into the ``custom-less`` directory.
-    
+    ./m css  # Windows: m css
 
 Internationalization in MoinMoin's JS
 -------------------------------------
@@ -360,7 +374,6 @@ The translated version of "somestring" can be accessed in the JavaScript code by
     var a = _("Delete this");
 
 
-=======
 Testing
 =======
 
@@ -369,12 +382,15 @@ into your virtualenv as a dependency.
 
 Running the tests
 -----------------
-To run the tests, activate your virtual env and invoke py.test from the
+To run all the tests, the easiest way is to do::
+
+    ./m tests  # windows:  m tests
+
+To run selected tests, activate your virtual env and invoke py.test from the
 toplevel directory::
 
-    m tests  # easiest way (all tests, pep8, skipped info)
     py.test --pep8  # run all tests, including pep8 checks
-    py.test -rs  # run all tests and outputs information about skipped tests
+    py.test -rs  # run all tests and output information about skipped tests
     py.test -k somekeyword  # run the tests matching somekeyword only
     py.test --pep8 -k pep8  # runs pep8 checks only
     py.test sometests.py  # run the tests contained in sometests.py
@@ -389,7 +405,7 @@ Most output is quite self-explanatory. The characters mean::
     F test failed
     x test was expected to fail (xfail)
 
-If something went wrong, you will also see some traceback and stdout/stderr.
+If something goes wrong, you will also see tracebacks in stdout/stderr.
 
 Writing tests
 -------------
@@ -407,6 +423,6 @@ are located in the `docs/` directory in the source tree.
 Creating docs
 -------------
 Sphinx can create all kinds of documentation formats. The most common are
-the local HTML docs that are linked to under the User tab.
+the local HTML docs that are linked to under the User tab. To generate local docs::
 
-    m docs
+    ./m docs  # Windows: m docs
