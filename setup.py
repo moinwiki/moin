@@ -102,7 +102,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
         'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
-        'XStatic-Bootstrap>=3.0.0.1',
+        'XStatic-Bootstrap==3.1.1.2',
         'XStatic-Font-Awesome>=3.2.1.1',
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-autosize',
