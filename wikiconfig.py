@@ -73,7 +73,7 @@ class Config(DefaultConfig):
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
-        serve_files.update([(xs.name, xs.base_dir)])
+        serve_files[xs.name] = xs.base_dir
 
     # list of admin emails
     admin_emails = []
