@@ -220,18 +220,18 @@ class Commands(object):
     def cmd_extras(self, *args):
         """install optional packages: OpenID, Pillow, pymongo, sqlalchemy, ldap; and upload.py"""
         upload = '{0} MoinMoin/script/win/wget.py https://codereview.appspot.com/static/upload.py upload.py'.format(sys.executable)
+        packages = ['python-openid', 'pillow', 'pymongo', 'sqlalchemy', ]
         if WINDOWS_OS:
-            print 'Installing OpenId, Pillow, pymongo, sqlalchemy, upload.py... output messages written to {0}.'.format(EXTRAS)
-            # easy_install is used for windows because it installs binary packages, pip does not
-            command = ACTIVATE + 'easy_install python-openid & easy_install pillow & easy_install pymongo & easy_install sqlalchemy & ' + upload
-            # TODO: "easy_install python-ldap" fails on windows
-            # try google: installing python-ldap in a virtualenv on windows
+            installer = 'easy_install --upgrade '
+            # TODO: "easy_install python-ldap" fails on windows. Try google: installing python-ldap in a virtualenv on windows
             # or, download from http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-ldap
-            #   activate.bat
-            #   easy_install <path to downloaded .exe file>
+            #     activate.bat
+            #     easy_install <path to downloaded .exe file>
         else:
-            print 'Installing OpenId, Pillow, pymongo, sqlalchemy, ldap, upload.py... output messages written to {0}.'.format(EXTRAS)
-            command = ACTIVATE + 'pip install python-openid; pip install pillow; pip install pymongo; pip install sqlalchemy; pip install python-ldap; ' + upload
+            installer = 'pip install --upgrade '
+            packages.append('python-ldap')
+        command = ACTIVATE + installer + (SEP + installer).join(packages) + SEP + upload
+        print 'Installing {0}, upload.py... output messages written to {1}.'.format(', '.join(packages), EXTRAS)
         with open(EXTRAS, 'w') as messages:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print 'Important messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M)
