@@ -93,6 +93,7 @@ Successfully created or updated venv at {1}
         args = [
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
+            '--upgrade',
             '--download-cache',
             self.download_cache,
             '--editable',
