@@ -175,14 +175,14 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .moin-diff-removed span{background-color:#f1eeb9}
 body{color:#000;background-color:#d6d5d0;font-family:Helvetica,Arial,sans-serif;background-image:url("../img/base.png")}
 p{margin:.2em .4em;font-size:1em;line-height:1.3em}
-#moin-global-tray{float:left;width:16.55%;padding:.5%;overflow:hidden}
+#moin-global-tray{float:left;width:16.666666666666668%;padding:.5%;overflow:hidden}
 #moin-main-container{float:left;width:81.095%;padding:.5%}
 #moin-main-box{background-color:#f4f4f4;border:1px solid #ccc;border-radius:6px;box-shadow:2px 2px 4px #9d9d9b;overflow:hidden}
 #moin-header{background-color:#2d2d2d;color:#fff;border-bottom:1px solid #ccc;padding:0;overflow:auto;}
 #moin-header a{color:#fff}
 #moin-content-no-panel{float:left;width:98.307%;padding:.5%;border-right:1px solid #ccc}
 #moin-content{float:left;width:81.095%;padding:.5%;border-right:1px solid #ccc}
-#moin-local-panel{float:left;width:16.55%;padding:.5%;margin-left:-1px;border-left:1px solid #ccc}
+#moin-local-panel{float:left;width:16.666666666666668%;padding:.5%;margin-left:-1px;border-left:1px solid #ccc}
 #moin-footer{clear:both;font-size:.8em;color:#616161;padding:.5% .5%;overflow:auto}
 #moin-breadcrumbs-location{float:left;padding:.5em;font-weight:bold}
 #moin-interwiki{vertical-align:middle;}
@@ -415,9 +415,7 @@ input#f_comment{width:96%;border:1px solid #ccc;margin:.3em 0}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation li ul{display:none;border-left:1px dotted #ccc;padding-left:5% !important}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%;box-shadow:none}
-.link-action,.transclude-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none}
-.link-action{background:url("../img/moin-link.png") no-repeat center center}
-.transclude-action{background:url("../img/moin-transclusion.png") no-repeat center center}
+.moin-insertname-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none;background:url("../img/moin-link.png") no-repeat center center}
 .moin-transclusion{max-width:100%}
 .moin-item-wrapper{position:relative;display:inline-block}
 div.moin-item-wrapper{width:100%}
