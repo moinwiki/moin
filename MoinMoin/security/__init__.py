@@ -55,15 +55,15 @@ class DefaultSecurityPolicy(object):
 
     Correct subclassing looks like this::
 
-    class MySecPol(DefaultSecurityPolicy):
-        def read(self, itemname):
-            # Your special security rule
-            if something:
-                return False
+        class MySecPol(DefaultSecurityPolicy):
+            def read(self, itemname):
+                # Your special security rule
+                if something:
+                    return False
 
-            # Do not just return True or you break (ignore) ACLs!
-            # This call will return correct permissions by checking ACLs:
-            return super(MySecPol, self).read(itemname)
+                # Do not just return True or you break (ignore) ACLs!
+                # This call will return correct permissions by checking ACLs:
+                return super(MySecPol, self).read(itemname)
     """
     def __init__(self, user):
         self.names = user.name

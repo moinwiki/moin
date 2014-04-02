@@ -13,8 +13,9 @@ import sys
 import urllib
 
 
-if len(sys.argv) == 3:
-    urllib.urlretrieve(sys.argv[1], sys.argv[2])
-else:
-    print "Error: incorrect parameters passed."
-    print "Usage:  python <path_to>wget.py <url> <output_file>"
+if __name__ == '__main__':
+    if len(sys.argv) == 3:
+        urllib.urlretrieve(sys.argv[1], sys.argv[2])
+    else:
+        print "Error: incorrect parameters passed."
+        print "Usage:  python <path_to>wget.py <url> <output_file>"

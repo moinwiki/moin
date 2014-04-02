@@ -334,9 +334,7 @@ class Converter(object):
 
     def eval_object_type(self, mimetype, href):
         """
-        Returns the type of an object.
-        Return value is an str, one of the following:
-            image, video, audio, object
+        Returns the type of an object as a str, one of the following: img, video, audio, object
         """
         if Type('image/').issupertype(mimetype):
             return "img"

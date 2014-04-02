@@ -175,9 +175,11 @@ def split_fqname(url):
     """
     Split a fully qualified url into namespace, field and pagename
     url -> [NAMESPACE/][@FIELD/]NAME
-    param: url: the url to split
-    returns: a namedtuple CompositeName(namespace, field, itemname)
-    Example:
+
+    :param url: the url to split
+    :returns: a namedtuple CompositeName(namespace, field, itemname)
+    Examples::
+
         url: u'ns1/ns2/@itemid/Page' return u'ns1/ns2', u'itemid', u'Page'
         url: u'@revid/OtherPage' return u'', u'revid', u'OtherPage'
         url: u'ns1/Page' return u'ns1', u'', u'Page'
@@ -197,24 +199,25 @@ def split_fqname(url):
 
 
 def split_interwiki(wikiurl):
-    """ Split a interwiki name, into wikiname and pagename, e.g:
+    """
+    Split a interwiki name, into wikiname and pagename, e.g::
 
-    'MoinMoin/FrontPage' -> "MoinMoin", "", "", "FrontPage"
-    'FrontPage' -> "Self", "", "", "FrontPage"
-    'MoinMoin/Page with blanks' -> "MoinMoin", "", "", "Page with blanks"
-    'MoinMoin/' -> "MoinMoin", "", "", ""
-    'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or "MoinMoin", "", "", "Someid/SomePage" if not
-    'MoinMoin/interwikins/AnyPage' -> "MoinMoin", "interwikins", "", "AnyPage"
-    'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or "Self", "", "", "ns:AnyPage" if not.
-    'ns1/ns2/AnyPage' -> "Self", "ns1/ns2", "", "AnyPage" if ns1/ns2 namespace exists OR
-                         "Self", "ns1", "", "ns2/AnyPage" if ns1 namespace exists OR
-                         "Self", "", "", "ns1/ns2/AnyPage" else.
-    'MoinMoin/ns/@Somefield/AnyPage' -> "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
-                                     "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
-                                     "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
-    :param wikiurl: the url to split
-    :rtype: tuple
-    :returns: (wikiname, namespace, field, pagename)
+        'MoinMoin/FrontPage' -> "MoinMoin", "", "", "FrontPage"
+        'FrontPage' -> "Self", "", "", "FrontPage"
+        'MoinMoin/Page with blanks' -> "MoinMoin", "", "", "Page with blanks"
+        'MoinMoin/' -> "MoinMoin", "", "", ""
+        'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or "MoinMoin", "", "", "Someid/SomePage" if not
+        'MoinMoin/interwikins/AnyPage' -> "MoinMoin", "interwikins", "", "AnyPage"
+        'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or "Self", "", "", "ns:AnyPage" if not.
+        'ns1/ns2/AnyPage' -> "Self", "ns1/ns2", "", "AnyPage" if ns1/ns2 namespace exists OR
+                             "Self", "ns1", "", "ns2/AnyPage" if ns1 namespace exists OR
+                             "Self", "", "", "ns1/ns2/AnyPage" else.
+        'MoinMoin/ns/@Somefield/AnyPage' -> "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
+                                         "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
+                                         "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
+        :param wikiurl: the url to split
+        :rtype: tuple
+        :returns: (wikiname, namespace, field, pagename)
     """
     if not isinstance(wikiurl, unicode):
         wikiurl = wikiurl.decode('utf-8')

@@ -211,17 +211,27 @@ class Converter(object):
 
     def visit_moinpage_blockquote(self, element):
         """
-        <blockquote>text<blockquote>
-          --> <blockquote>
-                <attribution>Uknown</attribution>
+        Convert::
+
+            <blockquote>text<blockquote>
+
+        to::
+
+            <blockquote>
+                <attribution>Unknown</attribution>
                 <simpara>text</text>
-              </blockquote>
+            </blockquote>
+
+        Expand::
 
         <blockquote source="author">text</blockquote>
-          --> <blockquote>
-                <attribution>Uknown</attribution>
+
+        output::
+
+            <blockquote>
+                <attribution>author</attribution>
                 <simpara>text</text>
-              </blockquote>
+            </blockquote>
         """
         author = element.get(moin_page('source'))
         if not author:
@@ -343,11 +353,16 @@ class Converter(object):
 
     def visit_moinpage_object(self, element):
         """
+        Convert::
+
         <object type='image/' xlink:href='uri'/>
-        --> <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="uri" />
-              </imageobject>
+
+        to::
+
+            <inlinemediaobject>
+                  <imageobject>
+                        <imagedata fileref="uri" />
+                  </imageobject>
             </inlinemediaobject>
 
         Similar for video and audio object.

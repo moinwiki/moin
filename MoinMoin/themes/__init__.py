@@ -533,8 +533,7 @@ def shorten_fqname(fqname, length=25):
     the field is a UUID or not.
 
     :param fqname: fqname, namedtuple
-    :param length maximum length for shortened fqnames in case the field
-    is not a UUID.
+    :param length: maximum length for shortened fqnames in case the field is not a UUID.
     :rtype: unicode
     :returns: shortened fqname.
     """

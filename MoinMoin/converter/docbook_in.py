@@ -483,7 +483,7 @@ class Converter(object):
 
     def visit_docbook_admonition(self, element, depth):
         """
-        <tag.name> --> <admonition tye='tag.name'>
+        <tag.name> --> <admonition type='tag.name'>
         """
         attrib = {}
         key = moin_page('type')
@@ -1023,10 +1023,15 @@ class Converter(object):
 
     def visit_qandaentry_number(self, element, depth):
         """
-        <question>Q</question><answer>A</answer>
-          --> <list-item>
+        Convert::
+
+            <question>Q</question><answer>A</answer>
+
+        to::
+
+            <list-item>
                 <list-item-body><p>Q</p><p>A</p></list-item-body>
-              </list-item>
+            </list-item>
         """
         items = []
         for child in element:
@@ -1070,14 +1075,19 @@ class Converter(object):
 
     def visit_qandaentry_qanda(self, element, depth):
         """
-        <question>Q body</question><answer>A Body</answer>
-        --> <list-item>
-              <list-item-label>Q:</list-item-label>
-              <list-item-body>Q Body</list-item-body>
+        Convert::
+
+            <question>Q body</question><answer>A Body</answer>
+
+        to::
+
+            <list-item>
+                <list-item-label>Q:</list-item-label>
+                <list-item-body>Q Body</list-item-body>
             </list-item>
             <list-item>
-              <list-item-label>A:</list-item-label>
-              <list-item-body>A Body</list-item-body>
+                <list-item-label>A:</list-item-label>
+                <list-item-body>A Body</list-item-body>
             </list-item>
         """
         items = []

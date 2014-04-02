@@ -818,8 +818,8 @@ class IndexingMiddleware(object):
         """
         Return item identified by the query (may be a new or existing item).
 
-        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
-                         (must be a unique fieldname=value for the latest-revs index)
+        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+                     (must be a unique fieldname=value for the latest-revs index)
         """
         return Item(self, **query)
 
@@ -827,8 +827,8 @@ class IndexingMiddleware(object):
         """
         Return item identified by the query (must be a new item).
 
-        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
-                         (must be a unique fieldname=value for the latest-revs index)
+        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+                     (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.create(self, **query)
 
@@ -836,8 +836,8 @@ class IndexingMiddleware(object):
         """
         Return item identified by query (must be an existing item).
 
-        :kwargs **query: e.g. name_exact=u"Foo" or itemid="..." or ...
-                         (must be a unique fieldname=value for the latest-revs index)
+        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+                     (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.existing(self, **query)
 

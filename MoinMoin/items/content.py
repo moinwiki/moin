@@ -1066,7 +1066,7 @@ class IRCLog(Text):
 
 class Draw(TarMixin, Image):
     """
-    Base class for *Draw that use special Java/Javascript applets to modify and store data in a tar file.
+    Base class for drawing apps that use special Java/Javascript applets to modify and store data in a tar file.
     """
     group = GROUP_DRAWING
 

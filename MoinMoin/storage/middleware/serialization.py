@@ -5,14 +5,14 @@
 """
 MoinMoin - backend serialization / deserialization
 
-We use a simple custom format here:
+We use a simple custom format here::
 
-4 bytes length of meta (m)
-m bytes metadata (json serialization, utf-8 encoded)
-        (the metadata contains the data length d in meta[SIZE])
-d bytes binary data
-... (repeat for all meta/data)
-4 bytes 00 (== length of next meta -> there is none, this is the end)
+    4 bytes length of meta (m)
+    m bytes metadata (json serialization, utf-8 encoded)
+            (the metadata contains the data length d in meta[SIZE])
+    d bytes binary data
+    ... (repeat for all meta/data)
+    4 bytes 00 (== length of next meta -> there is none, this is the end)
 """
 
 

@@ -404,22 +404,24 @@ class Converter(object):
 
     def visit_xhtml_list(self, element):
         """
-        Convert a list of item (whatever the type : ordered or unordered)
-        So we have a html code like :
-        <ul>
-            <li>Item 1</li>
-            <li>Item 2</li>
-        </ul>
+        Convert a list of items (whatever the type : ordered or unordered)
+        So we have html code like::
 
-        Which will be convert like :
-        <list>
-            <list-item>
-                <list-item-body>Item 1</list-item-body>
-            </list-item>
-            <list-item>
-                <list-item-body>Item 2</list-item-body>
-            </list-item>
-        </list>
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+            </ul>
+
+        Which will be converted to::
+
+            <list>
+                <list-item>
+                    <list-item-body>Item 1</list-item-body>
+                </list-item>
+                <list-item>
+                    <list-item-body>Item 2</list-item-body>
+                </list-item>
+            </list>
         """
         # We will define the appropriate attribute
         # according to the type of the list
@@ -454,24 +456,25 @@ class Converter(object):
 
     def visit_xhtml_dl(self, element):
         """
-        Convert a list of definition. The conversion is like :
-        <dl>
-            <dt>Label 1</dt><dd>Text 1</dd>
-            <dt>Label 2</dt><dd>Text 2</dd>
-        </dl>
+        Convert a list of definition. The starting structure::
 
-        will give
+            <dl>
+                <dt>Label 1</dt><dd>Text 1</dd>
+                <dt>Label 2</dt><dd>Text 2</dd>
+            </dl>
 
-        <list>
-            <list-item>
-                <list-item-label>Label 1</list-item-label>
-                <list-item-body>Text 1</list-item-body>
-            </list-item>
-            <list-item>
-                <list-item-label>Label 2</list-item-label>
-                <list-item-body>Text 2</list-item-body>
-            </list-item>
-        </list>
+        will be converted to::
+
+            <list>
+                <list-item>
+                    <list-item-label>Label 1</list-item-label>
+                    <list-item-body>Text 1</list-item-body>
+                </list-item>
+                <list-item>
+                    <list-item-label>Label 2</list-item-label>
+                    <list-item-body>Text 2</list-item-body>
+                </list-item>
+            </list>
         """
         list_item = []
         pair = []
@@ -508,11 +511,12 @@ class Converter(object):
 
     def visit_xhtml_li(self, element):
         """
-        NB : A list item (<li>) is like the following snippet :
-        <list-item>
-            <list-item-label>label</list-item-label>
-            <list-item-body>Body</list-item-body>
-        </list-item>
+        NB : A list item (<li>) is like the following snippet::
+
+            <list-item>
+                <list-item-label>label</list-item-label>
+                <list-item-body>Body</list-item-body>
+            </list-item>
 
         For <li> element, there is no label
         """
