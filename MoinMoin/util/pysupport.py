@@ -13,7 +13,7 @@ import imp
 
 
 #############################################################################
-### Module import / Plugins
+# Module import / Plugins
 #############################################################################
 
 def load_package_modules(package_name, package_pathes):

@@ -130,7 +130,7 @@ def wikiconfig():
             if cls == defaultconfig.ConfigFunctionality:
                 break
             for name in cls.__dict__:
-                if not name in dedup:
+                if name not in dedup:
                     dedup[name] = True
                     yield name, cls.__dict__[name]
 

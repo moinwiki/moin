@@ -484,7 +484,7 @@ class Converter(ConverterMacro):
 
     def inline_footnote_repl(self, stack, footnote,
                              footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None):
-        #stack.top_check('emphasis'):
+        # stack.top_check('emphasis'):
         if footnote_begin is not None:
             stack.push(moin_page.note(attrib={moin_page.note_class: 'footnote'}))
             stack.push(moin_page.note_body())
@@ -794,7 +794,7 @@ class Converter(ConverterMacro):
     inline_re = re.compile('|'.join(inline), re.X | re.U)
 
     inlinedesc = (
-        #inline_macro,
+        # inline_macro,
         inline_breakline,
         inline_nowiki,
         inline_emphstrong,
@@ -802,7 +802,7 @@ class Converter(ConverterMacro):
     inlinedesc_re = re.compile('|'.join(inlinedesc), re.X | re.U)
 
     # Nowiki end
-    #nowiki_end_re = re.compile(nowiki_end, re.X)
+    # nowiki_end_re = re.compile(nowiki_end, re.X)
 
     # Table
     table_re = re.compile(table, re.X | re.U)
@@ -904,7 +904,7 @@ class Converter(ConverterMacro):
                             tag_name = tag_match.group(1).split(' ')[0]
                         else:
                             tag_name = tag.split(' ')[0]
-                        if not tag_name in self.all_tags or re.match(r'.*/\s*$', tag)\
+                        if tag_name not in self.all_tags or re.match(r'.*/\s*$', tag)\
                                 or self.nowiki and (status or tag_name != self.nowiki_tag):
                             if not len(tags):
                                 post_line.append('<{0}>'.format(tag))
@@ -957,7 +957,7 @@ class Converter(ConverterMacro):
         """
         data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
-        #logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):

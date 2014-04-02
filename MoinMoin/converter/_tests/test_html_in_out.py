@@ -178,7 +178,7 @@ class TestConverter(Base):
                 '/div/div/ul[li="Item"]'),
             ('<div><ul><li>Item 1</li><p>Pouet</p><li>Item 2</li><li>Item 3</li></ul></div>',
                 '/div/ul[li[1]="Item 1"][li[2]="Item 2"][li[3]="Item 3"]'),
-            #Test for bug with line return and spaces
+            # Test for bug with line return and spaces
             ('<div><ul><li>\n Item 1</li>\n<li>\n Item 2</li>\n<li>\n Item 3</li>\n</ul></div>',
                 '/div/ul[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
             ('<div><ol><li>\n Item 1</li>\n<li>\n Item 2</li>\n<li>\n Item 3</li>\n</ol></div>',
@@ -189,7 +189,7 @@ class TestConverter(Base):
 
     def test_object(self):
         data = [
-            #('<html><div><img src="uri:test" /></div></html>',
+            # ('<html><div><img src="uri:test" /></div></html>',
             #  '/page/body/div/object/@xlink:href="uri:test"'),
             ('<html><div><object data="href"></object></div></html>',
                 '/div/div/div/object[@data="href"]'),

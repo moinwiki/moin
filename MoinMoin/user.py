@@ -176,9 +176,10 @@ def normalizeName(name):
     :rtype: unicode
     :returns: user name that can be used in acl lines
     """
-    username_allowedchars = "'@.-_"  # ' for names like O'Brian or email addresses.
-                                     # "," and ":" must not be allowed (ACL delimiters).
-                                     # We also allow _ in usernames for nicer URLs.
+    # ' for names like O'Brian or email addresses.
+    # "," and ":" must not be allowed (ACL delimiters).
+    # We also allow _ in usernames for nicer URLs.
+    username_allowedchars = "'@.-_"
     # Strip non alpha numeric characters (except username_allowedchars), keep white space
     name = ''.join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
 

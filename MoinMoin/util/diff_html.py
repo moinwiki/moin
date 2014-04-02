@@ -22,7 +22,7 @@ def indent(line):
     stripped = line.lstrip()
     if len(line) - len(stripped):
         line = u"&nbsp;" * (len(line) - len(stripped)) + stripped
-    #return "%d / %d / %s" % (len(line), len(stripped), line)
+    # return "%d / %d / %s" % (len(line), len(stripped), line)
     return eol + line
 
 

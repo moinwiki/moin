@@ -100,7 +100,7 @@ class MoinTestFunction(pytest.collect.Function):
             prev_app, prev_ctx, prev_cfg = None, None, None
 
         super(MoinTestFunction, self).setup()
-        #XXX: hack till we get better funcarg tools
+        # XXX: hack till we get better funcarg tools
         if hasattr(self._obj, 'im_self'):
             self._obj.im_self.app = self.app
 

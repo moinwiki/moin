@@ -389,7 +389,7 @@ class Converter(object):
                     text += u"~"
         self.used_references.append((text, href))
         self.all_used_references.append((text, href))
-        #self.objects.append("\n\n.. _%s: %s\n\n" % (text, href))
+        # self.objects.append("\n\n.. _%s: %s\n\n" % (text, href))
         return u"`{0}`_".format(text)
 
     def open_moinpage_blockcode(self, elem):
@@ -562,7 +562,7 @@ class Converter(object):
                                         * (len(u''.join(self.list_item_labels))
                                            + len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':
-                #return ReST.p +\
+                # return ReST.p +\
                 ret = (u"\n" + u' ' * (len(u''.join(self.list_item_labels))
                                        + len(self.list_item_labels)) + self.open_children(elem))
             else:

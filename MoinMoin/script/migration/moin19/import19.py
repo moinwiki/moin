@@ -384,8 +384,8 @@ class EditLog(LogFile):
                 del result[EXTRA]
                 result[ACTION] = ACTION_REVERT
         userid = result[USERID]
-        #TODO
-        #if userid:
+        # TODO
+        # if userid:
         #    result[USERID] = self.idx.user_uuid(old_id=userid, refcount=True)
         return result
 
@@ -408,8 +408,8 @@ class EditLog(LogFile):
         """ Find metadata for some attachment name in the edit-log. """
         for meta in self.reverse():  # use reverse iteration to get the latest upload's data
             if (meta['__rev'] == 99999998 and  # 99999999-1 because of 0-based
-                meta[ACTION] == 'ATTNEW' and
-                meta[EXTRA] == attachname):
+                    meta[ACTION] == 'ATTNEW' and
+                    meta[EXTRA] == attachname):
                 break
         else:
             self.to_end()

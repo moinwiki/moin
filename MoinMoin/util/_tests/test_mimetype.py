@@ -17,7 +17,7 @@ class TestMimeType(object):
         MimeType_obj = mimetype.MimeType(filename='test_file.jpg')
         # format in PARSER_TEXT_MIMETYPE
         test = [
-            #test_format, test_mimetype
+            # test_format, test_mimetype
             ('html', ('text', 'html')),
             ('css', ('text', 'css')),
             ('python', ('text', 'python')),

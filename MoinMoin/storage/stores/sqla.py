@@ -32,8 +32,9 @@ class BytesStore(BytesMutableStoreBase):
         :param cls: Class to create
         :param uri: The database uri that we pass on to SQLAlchemy.
         """
-        params = uri.split("::")  # using "::" to support windows pathnames that
-                                  # may include ":" after the drive letter.
+        # using "::" to support windows pathnames that
+        # may include ":" after the drive letter.
+        params = uri.split("::")
         return cls(*params)
 
     def __init__(self, db_uri=None, table_name='store', verbose=False):

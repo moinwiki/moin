@@ -41,7 +41,7 @@ CHILD_PREFIX_LEN = len(CHILD_PREFIX)
 
 
 #############################################################################
-### Data validation / cleanup
+# Data validation / cleanup
 #############################################################################
 
 # TODO: use similar code in a flatland validator
@@ -110,7 +110,7 @@ def normalize_pagename(name, cfg):
 
 
 #############################################################################
-### Item types / Item names
+# Item types / Item names
 #############################################################################
 
 def isGroupItem(itemname):
@@ -194,7 +194,7 @@ def ParentItemName(itemname):
 
 
 #############################################################################
-### Misc
+# Misc
 #############################################################################
 
 def drawing2fname(drawing):

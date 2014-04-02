@@ -84,28 +84,28 @@ class Config(DefaultConfig):
 MOINCFG = Config  # Flask only likes uppercase stuff
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
-#DEBUG = False # use True for development only, not for public sites!
-#TESTING = False
-#SESSION_COOKIE_NAME = 'session'
-#PERMANENT_SESSION_LIFETIME = timedelta(days=31)
-#USE_X_SENDFILE = False
-#LOGGER_NAME = 'MoinMoin'
-#config for flask-cache:
-#CACHE_TYPE = 'filesystem'
-#CACHE_DIR = '/path/to/flask-cache-dir'
+# DEBUG = False # use True for development only, not for public sites!
+# TESTING = False
+# SESSION_COOKIE_NAME = 'session'
+# PERMANENT_SESSION_LIFETIME = timedelta(days=31)
+# USE_X_SENDFILE = False
+# LOGGER_NAME = 'MoinMoin'
+# config for flask-cache:
+# CACHE_TYPE = 'filesystem'
+# CACHE_DIR = '/path/to/flask-cache-dir'
 
 # DEVELOPERS! Do not add your configuration items here - you could accidentally
 # commit them! Instead, create a wikiconfig_local.py file containing this:
 #
-#from wikiconfig_editme import *
+# from wikiconfig_editme import *
 #
 # In wikiconfig_editme.py (the indirection is needed so that the auto reload
 # mechanism of the builtin server works) you do this:
 #
-#from wikiconfig import *
+# from wikiconfig import *
 #
-#class LocalConfig(Config):
+# class LocalConfig(Config):
 #    configuration_item_1 = 'value1'
 #
-#MOINCFG = LocalConfig
-#DEBUG = True
+# MOINCFG = LocalConfig
+# DEBUG = True

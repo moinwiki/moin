@@ -256,8 +256,9 @@ class AccessControlList(AutoNe):
                             handler = getattr(self, "_special_" + special, None)
                             allowed = handler(name, dowhat, rightsdict)
                             break  # order of self.special_users is important
-            elif entry == name:  # XXX TODO maybe change this to "entry in names"
-                                 # to check users with multiple names in one go
+            # XXX TODO maybe change this to "entry in names"
+            # to check users with multiple names in one go
+            elif entry == name:
                 allowed = rightsdict.get(dowhat)
             if allowed is not None:
                 return allowed

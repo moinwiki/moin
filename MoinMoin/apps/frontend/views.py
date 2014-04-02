@@ -198,9 +198,7 @@ def lookup():
                     ITEMLINKS, ITEMTRANSCLUSIONS, 'refs', ]:
             value = lookup_form[key].value
             if value:
-                if (key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN
-                    or
-                    key in [NAME_EXACT]):
+                if (key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN or key in [NAME_EXACT]):
                     term = Prefix(key, value)
                 elif key == 'refs':
                     term = Or([Term(ITEMLINKS, value), Term(ITEMTRANSCLUSIONS, value)])
@@ -281,8 +279,8 @@ def search(item_name):
         query = search_form['q'].value
         history = bool(request.values.get('history'))
     if valid or ajax:
-        #most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
-        #this finds such words and reports to the user
+        # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
+        # this finds such words and reports to the user
         analyzer = StandardAnalyzer()
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
@@ -319,7 +317,7 @@ def search(item_name):
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
-            #terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
+            # terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
             flaskg.clock.start('search')
             results = searcher.search(q, filter=_filter, limit=100, terms=True)
             flaskg.clock.stop('search')
@@ -1325,8 +1323,7 @@ def verifyemail():
     success = False
     if u and token and u.validate_recovery_token(token):
         unvalidated_email = u.profile[EMAIL_UNVALIDATED]
-        if (app.cfg.user_email_unique and
-            user.search_users(**{EMAIL: unvalidated_email})):
+        if (app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email})):
             msg = _('This email is already in use.')
         else:
             if u.disabled:
@@ -1627,7 +1624,7 @@ def usersettings():
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
-        #_timezones_keys = sorted(Locale('en').time_zones.keys())
+        # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
         _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
@@ -1692,7 +1689,7 @@ def usersettings():
                 else:
                     if part == 'personal':
                         if (form['openid'].value and form['openid'].value != flaskg.user.openid and
-                            user.search_users(openid=form['openid'].value)):
+                                user.search_users(openid=form['openid'].value)):
                             # duplicate openid
                             response['flash'].append((_("This openid is already in use."), "error"))
                             success = False
@@ -1706,7 +1703,7 @@ def usersettings():
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
-                            user.search_users(**{EMAIL: form['email'].value}) and app.cfg.user_email_unique):
+                                user.search_users(**{EMAIL: form['email'].value}) and app.cfg.user_email_unique):
                             # duplicate email
                             response['flash'].append((_('This email is already in use'), 'error'))
                             success = False
@@ -1716,7 +1713,7 @@ def usersettings():
                         for k, v in d.items():
                             flaskg.user.profile[k] = v
                         if (part == 'notification' and app.cfg.user_email_verification and
-                            form['email'].value != user_old_email):
+                                form['email'].value != user_old_email):
                             flaskg.user.profile[EMAIL] = user_old_email
                             flaskg.user.profile[EMAIL_UNVALIDATED] = form['email'].value
                             # send verification mail

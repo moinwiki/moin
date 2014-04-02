@@ -456,7 +456,7 @@ class TarMixin(object):
         :param content_length: byte-length of content (for str, None can be given)
         :param expected_members: set of expected member file names
         """
-        if not name in expected_members:
+        if name not in expected_members:
             raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
         if isinstance(name, unicode):
             name = name.encode('utf-8')
@@ -1129,7 +1129,7 @@ class DrawAWDTWDBase(DrawPNGMap):
             filecontent = filecontent.read()  # read file completely into memory
             filecontent = filecontent.strip()
         elif ext == '.png':
-            #content_length = file_upload.content_length
+            # content_length = file_upload.content_length
             # XXX gives -1 for wsgiref, gives 0 for werkzeug :(
             # If this is fixed, we could use the file obj, without reading it into memory completely:
             filecontent = filecontent.read()
@@ -1183,7 +1183,7 @@ class AnyWikiDraw(DrawAWDTWDBase):
             self.drawing_exists = drawing_exists
 
     def _transform_map(self, image_map, title):
-        #drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
+        # drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
         mapid = 'ImageMapOf' + self.name  # TODO: make it unique
         image_map = image_map.replace(u'id="drawing.svg"', '')
         image_map = image_map.replace(u'name="drawing.svg"', u'name="{0}"'.format(mapid))

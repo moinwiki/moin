@@ -80,7 +80,7 @@ def importBuiltinPlugin(kind, name, function="execute"):
 
     See importPlugin docstring.
     """
-    if not name in builtinPlugins(kind):
+    if name not in builtinPlugins(kind):
         raise PluginMissingError()
     moduleName = 'MoinMoin.{0}.{1}'.format(kind, name)
     return importNameFromPlugin(moduleName, function)
@@ -144,7 +144,7 @@ def wikiPlugins(kind, cfg):
                 packagepath = os.path.dirname(module.__file__)
                 plugins = pysupport.getPluginModules(packagepath)
                 for p in plugins:
-                    if not p in result:
+                    if p not in result:
                         result[p] = '{0}.{1}'.format(modname, kind)
             except AttributeError:
                 pass
@@ -209,7 +209,7 @@ def _loadPluginModule(cfg):
                 csum = 'p_{0}'.format(hashlib.new('sha1', pdir).hexdigest())
                 modname = '{0}.{1}'.format(cfg.siteid, csum)
                 # If the module is not loaded, try to load it
-                if not modname in sys.modules:
+                if modname not in sys.modules:
                     # Find module on disk and try to load - slow!
                     abspath = os.path.abspath(pdir)
                     parent_dir, pname = os.path.split(abspath)
@@ -218,7 +218,7 @@ def _loadPluginModule(cfg):
                         # Load the module and set in sys.modules
                         module = imp.load_module(modname, fp, path, info)
                         # XXX for what was this good for?:
-                        #setattr(sys.modules[cfg.siteid], 'csum', module)
+                        # setattr(sys.modules[cfg.siteid], 'csum', module)
                     finally:
                         # Make sure fp is closed properly
                         if fp:

@@ -50,22 +50,22 @@ class LDAPAuth(BaseAuth):
         bind_dn='',  # We can either use some fixed user and password for binding to LDAP.
                      # Be careful if you need a % char in those strings - as they are used as
                      # a format string, you have to write %% to get a single % in the end.
-                     #bind_dn = 'binduser@example.org' # (AD)
-                     #bind_dn = 'cn=admin,dc=example,dc=org' # (OpenLDAP)
-                     #bind_pw = 'secret'
+                     # bind_dn = 'binduser@example.org' # (AD)
+                     # bind_dn = 'cn=admin,dc=example,dc=org' # (OpenLDAP)
+                     # bind_pw = 'secret'
                      # or we can use the username and password we got from the user:
-                     #bind_dn = '%(username)s@example.org' # DN we use for first bind (AD)
-                     #bind_pw = '%(password)s' # password we use for first bind
+                     # bind_dn = '%(username)s@example.org' # DN we use for first bind (AD)
+                     # bind_pw = '%(password)s' # password we use for first bind
                      # or we can bind anonymously (if that is supported by your directory).
                      # In any case, bind_dn and bind_pw must be defined.
         bind_pw='',
         base_dn='',  # base DN we use for searching
-                     #base_dn = 'ou=SOMEUNIT,dc=example,dc=org'
+                     # base_dn = 'ou=SOMEUNIT,dc=example,dc=org'
         scope=ldap.SCOPE_SUBTREE,  # scope of the search we do (2 == ldap.SCOPE_SUBTREE)
         referrals=0,  # LDAP REFERRALS (0 needed for AD)
         search_filter='(uid=%(username)s)',  # ldap filter used for searching:
-                                             #search_filter = '(sAMAccountName=%(username)s)' # (AD)
-                                             #search_filter = '(uid=%(username)s)' # (OpenLDAP)
+                                             # search_filter = '(sAMAccountName=%(username)s)' # (AD)
+                                             # search_filter = '(uid=%(username)s)' # (OpenLDAP)
                                              # you can also do more complex filtering like:
                                              # "(&(cn=%(username)s)(memberOf=CN=WikiUsers,OU=Groups,DC=example,DC=org))"
         # some attribute names we use to extract information from LDAP:
@@ -149,7 +149,7 @@ class LDAPAuth(BaseAuth):
                         (ldap.OPT_X_TLS_KEYFILE, self.tls_keyfile),
                         (ldap.OPT_X_TLS_REQUIRE_CERT, self.tls_require_cert),
                         (ldap.OPT_X_TLS, self.start_tls),
-                        #(ldap.OPT_X_TLS_ALLOW, 1),
+                        # (ldap.OPT_X_TLS_ALLOW, 1),
                     ):
                         if value is not None:
                             ldap.set_option(option, value)

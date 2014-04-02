@@ -160,7 +160,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
             server = smtplib.SMTP(host, int(port))
             try:
-                #server.set_debuglevel(1)
+                # server.set_debuglevel(1)
                 if cfg.mail_username is not None and cfg.mail_password is not None:
                     try:  # try to do TLS
                         server.ehlo()

@@ -103,7 +103,7 @@ class ConfigFunctionality(object):
             if auth.logout_possible and auth.name:
                 self.auth_can_logout.append(auth.name)
             for input in auth.login_inputs:
-                if not input in self.auth_login_inputs:
+                if input not in self.auth_login_inputs:
                     self.auth_login_inputs.append(input)
         self.auth_have_login = len(self.auth_login_inputs) > 0
         self.auth_methods = found_names
@@ -342,12 +342,12 @@ options_no_group_name = {
             # thus either needs compiling or installing platform-specific binaries)
             schemes=["sha512_crypt", ],
             # default scheme for creating new pw hashes (if not given, passlib uses first from schemes)
-            #default="sha512_crypt",
+            # default="sha512_crypt",
             # deprecated schemes get auto-upgraded to the default scheme at login
             # time or when setting a password (including doing a moin account pwreset).
-            #deprecated=["auto"],
+            # deprecated=["auto"],
             # vary rounds parameter randomly when creating new hashes...
-            #all__vary_rounds=0.1,
+            # all__vary_rounds=0.1,
         ), "passlib CryptContext arguments, see passlib docs"),
     )),
     # ==========================================================================
@@ -431,7 +431,7 @@ options_no_group_name = {
     # ==========================================================================
     'editor': ('Editor', None, (
         ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
-        #('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
+        # ('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
         ('edit_ticketing', True, None),
     )),
     # ==========================================================================

@@ -115,7 +115,7 @@ class Attributes(object):
             if key.uri == moin_page:
                 # We never have _ in attribute names, so ignore them instead of
                 # create ambigues matches.
-                if not '_' in key.name:
+                if '_' not in key.name:
                     n = 'visit_' + key.name.replace('-', '_')
                     f = getattr(self, n, None)
                     if f is not None:
@@ -127,7 +127,7 @@ class Attributes(object):
                 if key.name == 'id' or key.name == 'lang':
                     new[ET.QName(key.name, html.namespace)] = value
             elif key.uri is None:
-                if self.default_uri_input and not '_' in key.name:
+                if self.default_uri_input and '_' not in key.name:
                     n = 'visit_' + key.name.replace('-', '_')
                     f = getattr(self, n, None)
                     if f is not None:

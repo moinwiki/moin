@@ -28,7 +28,7 @@ def button_filter(tagname, attributes, contents, context, bind):
         return contents
     if tagname == 'input':
         if ('value' not in attributes and
-            attributes.get('type') in ['submit', 'reset', ]):
+                attributes.get('type') in ['submit', 'reset', ]):
             attributes['value'] = _(bind.default_value)
     elif tagname == 'button' and not contents:
         contents = _(bind.default_value)

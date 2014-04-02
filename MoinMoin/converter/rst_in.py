@@ -38,14 +38,14 @@ from MoinMoin.constants.contenttypes import CHARSET
 
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
-#### TODO: try block (do not crash if we don't have docutils)
+# ### TODO: try block (do not crash if we don't have docutils)
 pytest.importorskip('docutils')
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
 from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
-#####
+# ####
 
 
 class NodeVisitor(object):
@@ -349,9 +349,9 @@ class NodeVisitor(object):
             if node.get(key):
                 attr[html(key)] = node.get(key)
 
-        #there is no 'scale' attribute, hence absent from whitelist, handled separately
-        #TODO: Error reporting in case of bad input, currently prints on terminal
-        #TODO: mark_item_as_transclusion in html_out conflicts 'align' by adding item-wrapper
+        # there is no 'scale' attribute, hence absent from whitelist, handled separately
+        # TODO: Error reporting in case of bad input, currently prints on terminal
+        # TODO: mark_item_as_transclusion in html_out conflicts 'align' by adding item-wrapper
 
         if node.get('scale'):
             scaling_factor = int(node.get('scale')) / 100.0
@@ -668,10 +668,10 @@ class MoinDirectives(object):
         # used for MoinMoin macros
         directives.register_directive('macro', self.macro)
 
-        #used for MoinMoin tables of content
+        # used for MoinMoin tables of content
         directives.register_directive('contents', self.table_of_content)
 
-        #used for MoinMoin parsers
+        # used for MoinMoin parsers
         directives.register_directive('parser', self.parser)
 
         # disallow a few directives in order to prevent XSS

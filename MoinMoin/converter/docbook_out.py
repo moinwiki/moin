@@ -251,7 +251,7 @@ class Converter(object):
             self.parent_section = self.current_section
             self.current_section = int(depth)
             self.section_children[self.current_section] = []
-            #NB : Error with docbook.title
+            # NB : Error with docbook.title
             title = ET.Element(docbook('title'), attrib={}, children=element[0])
             self.section_children[self.current_section].append(title)
 
@@ -383,7 +383,7 @@ class Converter(object):
         # TODO: Attributes conversion
         title = element.get(html('title'))
         if not title:
-            #TODO: Translation
+            # TODO: Translation
             title = "Table {0}".format(self.table_counter)
         self.table_counter += 1
         caption = ET.Element(docbook('caption'), attrib={}, children=[title])
@@ -415,7 +415,7 @@ class Converter(object):
         return self.new_copy(docbook.tfoot, element, attrib={})
 
     def visit_moinpage_table_row(self, element):
-        #TODO: Attributes conversion
+        # TODO: Attributes conversion
         return self.new_copy(docbook.tr, element, attrib={})
 
     def handle_simple_list(self, docbook_tag, element, attrib):
