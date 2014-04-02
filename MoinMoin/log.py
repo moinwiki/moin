@@ -185,8 +185,8 @@ class EmailHandler(logging.Handler):
     def __init__(self, toaddrs=[], subject=u''):
         """ Initialize the handler
 
-        @param toaddrs: address or a list of email addresses whom to send email
-        @param subject: unicode email's subject
+        :param toaddrs: address or a list of email addresses whom to send email
+        :param subject: unicode email's subject
         """
         logging.Handler.__init__(self)
         if isinstance(toaddrs, basestring):

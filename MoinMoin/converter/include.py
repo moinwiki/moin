@@ -16,11 +16,11 @@ Adjusting the DOM
 After expanding the include elements, in many cases it is necessary to adjust
 the DOM to prevent the generation of invalid HTML.  Using a simple example,
 "\n{{SomeItem}}\n", the starting DOM structure created by the moinwiki_in.py
-(or other parser) is:
+(or other parser) is::
 
     Page > Body > P > Include
 
-After expansion of the Include, the structure will be:
+After expansion of the Include, the structure will be::
 
     Page > Body > P > Page > Body > (P | Div | Object |...)
 
@@ -33,11 +33,11 @@ This works well for things like "\n||mytable||{{BlockOrInline}}||\n" where
 almost any type of element is valid within a table cell's td.
 
 But without DOM adjustment, "\n{{Block}}\n" will generate invalid HTML
-because html_out.py will convert the DOM structure:
+because html_out.py will convert the DOM structure::
 
     Page > Body > P > Page > Body > (Pre | Div | P, P... | ...)
 
-into:
+into::
 
     ...<body><p><div>...</div></p></body>...
 
@@ -45,21 +45,21 @@ where the </p> is invalid.
 
 In some cases it is desirable to coerce a transcluded small image or phrase into a
 inline element embedded within a paragraph. Here html_out.py will wrap the transclusion in
-a Span rather than a Div or convert a P-tag containing a phrase into a Span.
+a Span rather than a Div or convert a P-tag containing a phrase into a Span::
 
     "My pet {{bird.jpg}} flys.", "[[SomePage|{{Logo.png}}]]" or "Yes, we have {{no}} bananas."
 
 In complex cases where a block level item is transcluded within the midst of
-several levels of text markup, such as:
+several levels of text markup, such as::
 
-   "\nplain ''italic '''bold {{BlockItem}} bold''' italic'' plain\n"
+   "plain ''italic '''bold {{BlockItem}} bold''' italic'' plain"
 
-then we must avoid generating invalid html like:
+then we must avoid generating invalid html like::
 
     <p>plain <emphasis>italic <strong>bold <div>
     ...</div> bold</strong> italic</emphasis> plain</p>
 
-where <div...</div> contains the transcluded item, but rather:
+where <div>...</div> contains the transcluded item, but rather::
 
     <p>plain <emphasis>italic <strong>bold</strong></emphasis></p><div>
     ...</div><p><emphasis><strong> bold</strong> italic</emphasis> plain</p>
@@ -69,9 +69,9 @@ the containing element's parent, grand-parent, great-grand-parent...
 
 When a block element is embedded within a comment, it is important that the
 class="comment" is copied to the transclusion to provide the show/hide and
-highlighted styles normally applied to comments.
+highlighted styles normally applied to comments::
 
-    "\n/* normal ''italic ~-small {{detail.csv}} small-~ italic'' normal */\n".
+    /* normal ''italic ~-small {{detail.csv}} small-~ italic'' normal */
 
 Conveniently, the class="comment" is added to the span element within the
 moinwiki_in.py parser and is available to include.py.  However, the moin-big

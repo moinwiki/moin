@@ -30,8 +30,8 @@ def postproc_text(markdown, text):
     """
     Removes HTML or XML character references and entities from a text string.
 
-    @param text The HTML (or XML) source text.
-    @return The plain text, as a Unicode string, if necessary.
+    :param text: The HTML (or XML) source text.
+    :returns: The plain text, as a Unicode string, if necessary.
     """
 
     # http://effbot.org/zone/re-sub.htm#unescape-html
@@ -253,11 +253,12 @@ class Converter(object):
 
     def visit_li(self, element):
         """
-        NB : A list item (<li>) is like the following snippet :
-        <list-item>
-            <list-item-label>label</list-item-label>
-            <list-item-body>Body</list-item-body>
-        </list-item>
+        NB : A list item (<li>) is like the following snippet::
+
+            <list-item>
+                <list-item-label>label</list-item-label>
+                <list-item-body>Body</list-item-body>
+            </list-item>
 
         For <li> element, there is no label
         """
@@ -268,21 +269,23 @@ class Converter(object):
     def visit_list(self, element):
         """
         Convert a list of item (whatever the type : ordered or unordered)
-        So we have a html code like :
-        <ul>
-            <li>Item 1</li>
-            <li>Item 2</li>
-        </ul>
+        So we have html code like::
 
-        Which will be convert like :
-        <list>
-            <list-item>
-                <list-item-body>Item 1</list-item-body>
-            </list-item>
-            <list-item>
-                <list-item-body>Item 2</list-item-body>
-            </list-item>
-        </list>
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+            </ul>
+
+        Which will be converted to::
+
+            <list>
+                <list-item>
+                    <list-item-body>Item 1</list-item-body>
+                </list-item>
+                <list-item>
+                    <list-item-body>Item 2</list-item-body>
+                </list-item>
+            </list>
         """
         # We will define the appropriate attribute
         # according to the type of the list

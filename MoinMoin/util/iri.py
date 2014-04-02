@@ -64,12 +64,12 @@ class Iri(AutoNe):
 
     def __init__(self, _iri=None, _quoted=True, scheme=None, authority=None, path=None, query=None, fragment=None):
         """
-        @param _iri A full IRI in unicode
-        @param scheme Scheme part of the IRI, overrides the same part of the IRI.
-        @param authority Authority part of the IRI, overrides the same part of the IRI.
-        @param path Path part of the IRI, overrides the same part of the IRI.
-        @param query Query part of the IRI, overrides the same part of the IRI.
-        @param fragment Fragment part of the IRI, overrides the same part of the IRI.
+        :param _iri: A full IRI in unicode
+        :param scheme: Scheme part of the IRI, overrides the same part of the IRI.
+        :param authority: Authority part of the IRI, overrides the same part of the IRI.
+        :param path: Path part of the IRI, overrides the same part of the IRI.
+        :param query: Query part of the IRI, overrides the same part of the IRI.
+        :param fragment: Fragment part of the IRI, overrides the same part of the IRI.
         """
 
         if isinstance(_iri, Iri):

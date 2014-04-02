@@ -86,8 +86,8 @@ class ProtectingMiddleware(object):
         for a fully-qualified itemname (namespace:name), get the acl configuration
         for that (part of the) namespace.
 
-        @param fqname: fully qualified itemname
-        @returns: acl configuration (acl dict from the acl_mapping)
+        :param fqname: fully qualified itemname
+        :returns: acl configuration (acl dict from the acl_mapping)
         """
         itemname = fqname.value if fqname.field == NAME_EXACT else u''
         for prefix, acls in self.acl_mapping:

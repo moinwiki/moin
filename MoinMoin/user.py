@@ -601,17 +601,18 @@ class User(object):
         """ Subscribe to a wiki page.
 
         The user can subscribe in 5 different ways:
+
         * by itemid - ITEMID:<itemid value>
         * by item name - NAME:<namespace>:<name value>
         * by a tagname - TAGS:<namespace>:<tag value>
         * by a prefix name - NAMEPREFIX:<namespace>:<name prefix>
         * by a regular expression - NAMERE:<namespace>:<name regexp>
 
-:       :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
+        :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
                         the type of the subscription is determined
         :param value: the subscription value (itemid, name, tag, regexp or nameprefix value)
         :param namespace: the namespace of the subscription; itemid keyword doesn't
-                            require a namespace
+                        require a namespace
         :rtype: bool
         :returns: if user was subscribed
         """
@@ -766,6 +767,7 @@ class User(object):
         """ Check if the session token is valid.
 
         Invalid session tokens happen for these cases:
+
         a) there are multiple sessions (different machines, different browsers)
            open for same user. the user then changes the password in one of
            these, which creates a new session key in the profile also, which
