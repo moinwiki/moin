@@ -30,7 +30,7 @@ for page in PAGES:
     timing = time.time()
     for run in xrange(RUNS):
         appiter, status, headers = client.get('/%s' % page)
-        #result = ''.join(appiter)
+        # result = ''.join(appiter)
         if ((run + 1) % RUNS_MARKER == 0):
             sys.stdout.write('%i' % (run + 1))
         elif ((run + 1) % DOTS_MARKER == 0):

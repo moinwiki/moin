@@ -107,15 +107,16 @@ fallback_config = False
 import warnings
 
 # use something like this to ignore warnings:
-#warnings.filterwarnings('ignore', r'... regex for warning message to ignore ...')
+# warnings.filterwarnings('ignore', r'... regex for warning message to ignore ...')
 
 
 def _log_warning(message, category, filename, lineno, file=None, line=None):
     # for warnings, we just want to use the logging system, not stderr or other files
     msg = "{0}:{1}: {2}: {3}".format(filename, lineno, category.__name__, message)
     logger = getLogger(__name__)
-    logger.warning(msg)  # Note: the warning will look like coming from here,
-                         # but msg contains info about where it really comes from
+    # Note: the warning will look like coming from here,
+    # but msg contains info about where it really comes from
+    logger.warning(msg)
 
 
 def load_config(conf_fname=None):

@@ -209,7 +209,7 @@ class BaseMetaForm(Form):
     acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List")).validated_by(ACLValidator())
     # Disabled - Flatland doesn't distinguish emtpy value and nonexistent
     # value, while an emtpy acl and no acl have different semantics
-    #acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
+    # acl = OptionalText.using(label=L_('ACL')).with_properties(placeholder=L_("Access Control List"))
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     name = Names
     tags = Tags
@@ -319,7 +319,7 @@ class Item(object):
         rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
-        #logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
+        # logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
         # XXX Cannot pass item=item to Content.__init__ via
         # content_registry.get yet, have to patch it later.
@@ -679,7 +679,7 @@ class Item(object):
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
                 fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
-                if not prefix is None:
+                if prefix is not None:
                     relname = fullname[len(prefix):]
                     if '/' in relname:
                         # Find the *direct* subitem that is the ancestor of current

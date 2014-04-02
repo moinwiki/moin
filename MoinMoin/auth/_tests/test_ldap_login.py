@@ -52,7 +52,7 @@ class TestMoinLDAPLogin(LDAPTstBase):
 
     class Config(wikiconfig.Config):
         from MoinMoin.auth.ldap_login import LDAPAuth
-        #ToDo get these vars from the test environment
+        # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3890'
         base_dn = 'ou=testing,dc=example,dc=org'
 
@@ -95,7 +95,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
     class Config(wikiconfig.Config):
         from MoinMoin.auth.ldap_login import LDAPAuth
         from MoinMoin.auth import MoinAuth
-        #ToDo get these vars from the test environment
+        # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3890'
         base_dn = 'ou=testing,dc=example,dc=org'
         ldap_auth = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
@@ -118,7 +118,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
         assert u1.valid
 
         # now we kill the LDAP server:
-        #self.ldap_env.slapd.stop()
+        # self.ldap_env.slapd.stop()
 
         # now try a MoinAuth login:
         # try the default password that worked in 1.7 up to rc1:
@@ -196,7 +196,7 @@ class TestLdapFailover(object):
 
     class Config(wikiconfig.Config):
         from MoinMoin.auth.ldap_login import LDAPAuth
-        #ToDo get these vars from the test environment
+        # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3891'
         base_dn = 'ou=testing,dc=example,dc=org'
         ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,

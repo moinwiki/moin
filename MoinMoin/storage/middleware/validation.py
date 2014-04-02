@@ -200,7 +200,7 @@ def mtime_validator(element, state):
     v = element.value
     if not isinstance(v, (int, long)):
         return False
-    #if v < 31 * 24 * 3600:
+    # if v < 31 * 24 * 3600:
     #    # we don't have negative values nor timestamps from Jan 1970,
     #    # this likely was some crap 0 +/- maybe tz adjustments
     #    return False
@@ -238,9 +238,9 @@ def acl_validator(element, state):
         if not isinstance(v, unicode):
             return False
         # TODO check parent revision acl / whether acl would be changed
-        #acl_changed = v != state['acl_parent']
-        #is_admin = False
-        #if acl_changed and not is_admin:
+        # acl_changed = v != state['acl_parent']
+        # is_admin = False
+        # if acl_changed and not is_admin:
         #    return False
         return True
 
@@ -422,7 +422,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
     List.named(keys.SUBSCRIPTIONS).of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
-    #TODO: DuckDict.named('bookmarks').using(optional=True),
+    # TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta
 )
 

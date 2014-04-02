@@ -36,8 +36,9 @@
 """
 
 
-SLAPD_EXECUTABLE = 'slapd'  # filename of LDAP server executable - if it is not
-                            # in your PATH, you have to give full path/filename.
+# filename of LDAP server executable - if it is not
+# in your PATH, you have to give full path/filename.
+SLAPD_EXECUTABLE = 'slapd'
 
 import os
 import shutil

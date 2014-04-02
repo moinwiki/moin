@@ -1025,7 +1025,7 @@ class Converter(ConverterMacro):
         """
         data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
-        #logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):

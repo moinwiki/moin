@@ -219,7 +219,7 @@ def split_interwiki(wikiurl):
     if not isinstance(wikiurl, unicode):
         wikiurl = wikiurl.decode('utf-8')
     # Base case: no colon in wikiurl
-    if not '/' in wikiurl:
+    if '/' not in wikiurl:
         return u'Self', u'', NAME_EXACT, wikiurl
     wikiname = field = namespace = u''
     if not wikiurl.startswith('/'):

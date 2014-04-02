@@ -209,7 +209,7 @@ def testcontainsConflictMarker():
     result = wikiutil.containsConflictMarker("/!\\ '''Edit conflict - Conflict marker is present")
     assert result
 
-    #text without conflict marker
+    # text without conflict marker
     result = wikiutil.containsConflictMarker('No conflict marker')
     assert not result
 

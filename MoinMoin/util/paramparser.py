@@ -139,9 +139,9 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     matchingbracket = {}
     if brackets:
         for o, c in brackets:
-            assert not o in opening
+            assert o not in opening
             opening.append(o)
-            assert not c in closing
+            assert c not in closing
             closing.append(c)
             matchingbracket[o] = c
 
@@ -167,7 +167,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
             next = args[idx + 1]
         if skipquote:
             skipquote -= 1
-        if not separator is None and not quoted and char in SPACE:
+        if separator is not None and not quoted and char in SPACE:
             spaces = ''
             # accumulate all space
             while char in SPACE and idx < max - 1:
@@ -454,7 +454,7 @@ def get_choice(arg, name=None, choices=[None], default_none=False):
             return choices[0]
     elif not isinstance(arg, unicode):
         raise TypeError('Argument must be None or unicode')
-    elif not arg in choices:
+    elif arg not in choices:
         if name:
             raise ValueError(
                 _('Argument "%(name)s" must be one of "%(choices)s", not "%(value)s"',
@@ -533,7 +533,7 @@ class UnitArgument(IEFArgument):
             except ValueError:
                 pass
         units = ', '.join(self._units)
-        ## XXX: how can we translate this?
+        # XXX: how can we translate this?
         raise ValueError("Invalid unit in value {0} (allowed units: {1})".format(s, units))
 
     def get_default(self):
@@ -681,7 +681,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             continue
         if positional:
             kwargs[argname] = positional.pop()
-        if not argname in kwargs:
+        if argname not in kwargs:
             kwargs[argname] = None
         if idx >= defstart:
             defaults[argname] = defaultlist[idx - defstart]
@@ -713,7 +713,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
                 if isinstance(defaults[argname], IEFArgument):
                     kwargs[argname] = defaults[argname].get_default()
 
-        if not argname in argnames:
+        if argname not in argnames:
             # move argname into _kwargs parameter
             kwargs_to_pass[argname] = kwargs[argname]
             del kwargs[argname]

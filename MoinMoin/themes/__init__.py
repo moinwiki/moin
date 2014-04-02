@@ -154,7 +154,7 @@ class ThemeSupport(object):
                         if flaskg.user.valid:
                             href = url_for(endpoint, item_name=item_name)
                             iconcls = icon[endpoint]
-                            #endpoint = iconcls = label = None
+                            # endpoint = iconcls = label = None
 
                             if endpoint == 'frontend.quicklink_item':
                                 if not flaskg.user.is_quicklinked_to([item_name]):

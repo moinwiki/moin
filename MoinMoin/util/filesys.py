@@ -19,7 +19,7 @@ logging = log.getLogger(__name__)
 
 
 #############################################################################
-### Misc Helpers
+# Misc Helpers
 #############################################################################
 
 def chmod(name, mode, catchexception=True):
@@ -159,9 +159,10 @@ def fuid(filename, max_staleness=3600):
     try:
         st = os.stat(filename)
     except (IOError, OSError):
-        uid = None  # for permanent errors on stat() this does not change, but
-                    # having a changing value would be pointless because if we
-                    # can't even stat the file, it is unlikely we can read it.
+        # for permanent errors on stat() this does not change, but
+        # having a changing value would be pointless because if we
+        # can't even stat the file, it is unlikely we can read it.
+        uid = None
     else:
         fake_mtime = int(st.st_mtime)
         if not st.st_ino and max_staleness:

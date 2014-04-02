@@ -381,7 +381,7 @@ class Converter(object):
             return self.visit_simple_tag(element, depth)
 
         # We have a media element
-        #if element.tag.name in self.media_tags:
+        # if element.tag.name in self.media_tags:
         #    return self.visit_data_object(element, depth)
 
         # We should ignore this element
@@ -456,7 +456,7 @@ class Converter(object):
                     object_to_show = obj
                     break
             else:
-                #XXX: Maybe we could add some verification over the
+                # XXX: Maybe we could add some verification over the
                 #     extension of the file
                 object_to_show = obj
 
@@ -584,10 +584,10 @@ class Converter(object):
                     para_element = child
 
         if not title_element:
-            #XXX: Improve error
+            # XXX: Improve error
             raise SyntaxError("title child missing for formalpara element")
         if not para_element:
-            #XXX: Improve error
+            # XXX: Improve error
             raise SyntaxError("para child missing for formalpara element")
 
         children = self.do_children(para_element, depth + 1)[0]

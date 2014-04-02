@@ -23,7 +23,7 @@ class TestNaviBar(object):
 
     def test_split_navilink(self):
         tests = [
-            #(navilink, (href, text, interwiki)),
+            # (navilink, (href, text, interwiki)),
             ('ItemName', ('/ItemName', 'ItemName', '')),
             ('[[ItemName|LinkText]]', ('/ItemName', 'LinkText', '')),
             ('MoinMoin/ItemName', ('http://moinmo.in/ItemName', 'ItemName', 'MoinMoin')),

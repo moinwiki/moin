@@ -57,7 +57,7 @@ BBB 100
                  4, '<span>BBB 006<br>BBB 007<br>BBB 008<br>BBB 009<br>BBB 100</span>')]
     assert result == expected
 
-    #Case 2 : charobj.ratio() > 0.5 i.e. Some similarities
+    # Case 2 : charobj.ratio() > 0.5 i.e. Some similarities
     test_input3 = """ \n
 
 AAA 006

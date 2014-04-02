@@ -24,7 +24,7 @@ class MacroDateTimeBase(MacroInlineBase):
         :returns: UNIX timestamp (UTC)
         """
         if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
-            args[10] == 'T' and args[13] == ':' and args[16] == ':'):
+                args[10] == 'T' and args[13] == ':' and args[16] == ':'):
             # we ignore any time zone offsets here, assume UTC,
             # and accept (and ignore) any trailing stuff
             try:

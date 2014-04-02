@@ -65,7 +65,7 @@ class RegistryBase(object):
         :param factory: Factory to unregister
         """
         old_entries = self._entries
-        entries = [i for i in old_entries if not i.factory is factory]
+        entries = [i for i in old_entries if i.factory is not factory]
         if len(old_entries) == len(entries):
             # TODO: Is this necessary?
             raise ValueError

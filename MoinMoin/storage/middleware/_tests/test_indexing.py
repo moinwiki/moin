@@ -466,6 +466,6 @@ class TestProtectedIndexingMiddleware(object):
         for i in xrange(100):
             item.store_revision(dict(name=[item_name, ], acl=u'joe:create joe:read'), StringIO('rev number {0}'.format(i)))
         for r in item.iter_revs():
-            #print r.meta
-            #print r.data.read()
+            # print r.meta
+            # print r.data.read()
             pass

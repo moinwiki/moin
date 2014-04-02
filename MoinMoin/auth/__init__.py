@@ -409,7 +409,7 @@ def handle_login(userobj, **kw):
             url = url.replace('%return', url_quote(nextstage))
             abort(redirect(url))
         msg = ret.message
-        if msg and not msg in flaskg._login_messages:
+        if msg and msg not in flaskg._login_messages:
             flaskg._login_messages.append(msg)
 
         if not cont:

@@ -27,28 +27,29 @@ setup_args = dict(
     license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
     platforms="any",
-    classifiers="""\
-Development Status :: 2 - Pre-Alpha
-Environment :: Web Environment
-Intended Audience :: Education
-Intended Audience :: End Users/Desktop
-Intended Audience :: Information Technology
-Intended Audience :: Other Audience
-Intended Audience :: Science/Research
-License :: OSI Approved :: GNU General Public License (GPL)
-Natural Language :: English
-Operating System :: OS Independent
-Programming Language :: Python
-Programming Language :: Python :: 2.7
-Topic :: Internet :: WWW/HTTP :: WSGI
-Topic :: Internet :: WWW/HTTP :: WSGI :: Application
-Topic :: Internet :: WWW/HTTP :: Dynamic Content
-Topic :: Office/Business :: Groupware
-Topic :: Text Processing :: Markup""".splitlines(),
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Environment :: Web Environment",
+        "Intended Audience :: Education",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Other Audience",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Internet :: WWW/HTTP :: WSGI",
+        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+        "Topic :: Office/Business :: Groupware",
+        "Topic :: Text Processing :: Markup",
+    ],
 
     packages=find_packages(exclude=['_tests', ]),
 
-    #package_dir={'MoinMoin.translations': 'MoinMoin/translations',
+    # package_dir={'MoinMoin.translations': 'MoinMoin/translations',
     #             'MoinMoin.static': 'MoinMoin/static',
     #             'MoinMoin.themes.modernized': 'MoinMoin/themes/modernized',
     #             'MoinMoin.themes.foobar': 'MoinMoin/themes/foobar',
@@ -69,9 +70,9 @@ Topic :: Text Processing :: Markup""".splitlines(),
     include_package_data=True,
     zip_safe=False,
     dependency_links=[
-        #'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.9.2-dev',
-        #'https://github.com/mitsuhiko/flask/tarball/master#egg=Flask-0.11-dev',
-        #'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
+        # 'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.9.2-dev',
+        # 'https://github.com/mitsuhiko/flask/tarball/master#egg=Flask-0.11-dev',
+        # 'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
         # use a pre-release emeraldtree (port to 2.6/2.7/3.3):
@@ -114,7 +115,7 @@ Topic :: Text Processing :: Markup""".splitlines(),
     ],
     # optional features and their list of requirements
     extras_require={
-        #'featurename': ["req1", "req2", ],
+        # 'featurename': ["req1", "req2", ],
         'pillow': ["pillow"],  # successor to PIL; used by image get for scaling/rotating/etc.;
                                # requires special libs/header to be installed before it can be compiled successfully
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth

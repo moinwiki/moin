@@ -131,7 +131,7 @@ class Converter(object):
         childrens_output = []
         for child in elem:
             if isinstance(child, ET.Element):
-            # open function can change self.output
+                # open function can change self.output
                 childrens_output.append(self.open(child))
             else:
                 ret = u''
