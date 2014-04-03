@@ -210,11 +210,11 @@ class TestInterWikiMapBackend(object):
         testfile = os.path.join(abspath, 'contrib', 'interwiki', 'intermap.txt')
         testiwm = InterWikiMap.from_file(testfile)
 
-        assert 'MoinSrc' in testiwm.iwmap
+        assert 'MoinMaster' in testiwm.iwmap
         assert testiwm.iwmap['MoinMaster'] == 'http://master.moinmo.in/'
         assert 'PythonInfo' in testiwm.iwmap
         assert 'this' not in testiwm.iwmap
-        assert testiwm.iwmap['MoinCVS'] == 'http://hg.moinmo.in/moin/2.0?f=-1;file='
+        assert testiwm.iwmap['MoinMoin'] == 'http://moinmo.in/'
 
 
 coverage_modules = ['MoinMoin.util.interwiki']
