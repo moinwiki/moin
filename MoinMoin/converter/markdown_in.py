@@ -13,6 +13,7 @@ from __future__ import absolute_import, division
 
 import re
 import htmlentitydefs
+from collections import deque
 
 from MoinMoin.util.tree import moin_page, xml, html, xlink
 from ._util import allowed_uri_scheme, decode_data
@@ -21,6 +22,11 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from emeraldtree import ElementTree as ET
+try:
+    from flask import g as flaskg
+except ImportError:
+    # in case converters become an independent package
+    flaskg = None
 
 from markdown import Markdown
 import markdown.util as md_util
@@ -342,7 +348,7 @@ class Converter(object):
         logging.info("INFO : Unhandled tag : {0}".format(element.tag))
         return
 
-    def do_children(self, element):
+    def do_children(self, element, add_lineno=False):
         new = []
         if hasattr(element, "text") and element.text is not None:
             new.append(postproc_text(self.markdown, element.text))
@@ -352,6 +358,8 @@ class Converter(object):
             if r is None:
                 r = ()
             elif not isinstance(r, (list, tuple)):
+                if add_lineno and self.line_numbers:
+                    r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r, )
             new.extend(r)
             if hasattr(child, "tail") and child.tail is not None:
@@ -359,6 +367,56 @@ class Converter(object):
         return new
 
     # }}}
+
+    def count_lines(self, text):
+        """
+        Create a list of line numbers corresponding to the first line of each markdown block.
+
+        The markdown parser does not provide text line numbers nor is there an easy way to
+        add line numbers. As an alternative, we try to split the input text into the same blocks
+        as the parser does, then calculate the starting line number of each block.  The list will be
+        processed by the do_children method above.
+
+        This method has unresolved problems caused by splitting the text into blocks based upon
+        the presence of 2 adjacent line end characters, including:
+
+            * blank lines within lists create separate blocks
+            * omitting a blank line after a heading combines 2 elements into one block
+
+        The net result is we either have too few or too many line numbers in the generated list which
+        will cause the double-click-to-edit autoscroll textarea to sometimes be off by several lines.
+
+        TODO: revisit this when the parsing errors documented in contrib/serialized/items.moin
+        (markdown item) are fixed.
+        """
+        line_numbers = deque()
+        lineno = 1
+        in_blockquote = False
+        blocks = text.split(u'\n\n')
+        for block in blocks:
+            if not block:
+                # bump count because empty blocks will be discarded
+                lineno += 2
+                continue
+            line_count = block.count(u'\n')
+
+            # detect and fix the problem of interspersed blank lines within blockquotes
+            if block.startswith(u'    ') or block.startswith(u'\n    '):
+                if in_blockquote:
+                    lineno += line_count + 2
+                    continue
+                in_blockquote = True
+            else:
+                in_blockquote = False
+
+            if block.startswith(u'\n'):
+                lineno += 1
+                line_numbers.append(lineno)
+                lineno += line_count + 2 - 1  # -1 is already in count
+            else:
+                line_numbers.append(lineno)
+                lineno += line_count + 2
+        self.line_numbers = line_numbers
 
     def __init__(self):
         self.markdown = Markdown(extensions=['extra', 'toc', ])
@@ -382,8 +440,9 @@ class Converter(object):
 
         text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
         text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
-        text = re.sub(r'\n\s+\n', '\n\n', text)
-        text = text.expandtabs(8)
+        text = text.expandtabs(self.markdown.tab_length)
+        text = re.sub(r'(?<=\n) +\n', '\n', text)
+        self.count_lines(text)
 
         # Split into lines and run the line preprocessors.
         lines = text.split("\n")
@@ -403,7 +462,8 @@ class Converter(object):
 
         # md_root is a list of plain old Python ElementTree objects.
 
-        converted = self.do_children(md_root)
+        add_lineno = bool(flaskg and flaskg.add_lineno_attr)
+        converted = self.do_children(md_root, add_lineno=add_lineno)
         body = moin_page.body(children=converted)
         root = moin_page.page(children=[body])
 
