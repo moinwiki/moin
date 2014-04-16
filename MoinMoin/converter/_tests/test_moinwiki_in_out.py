@@ -115,10 +115,17 @@ class TestConverter(object):
 
     def test_object(self):
         data = [
+            # (u'{{png}}', '{{png}}\n'),
+            # (u'{{png|png}}', '{{png|png}}\n'),
+            # (u'{{png|my png}}', '{{png|my png}}\n'),
+            # (u'{{png|my png|width=100}}', '{{png|my png|width=100}}\n'),
+            # (u'{{png||width=100}}', '{{png||width=100}}\n'),
             # (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
             (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n", '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
+            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
             # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}\n'),
+            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100}}\n'),
+            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 style="float: right"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 style="float: right"}}\n'),
             # (u'{{attachment:image.png}}', '{{attachment:image.png}}\n'),
             # (u'{{attachment:image.png|alt text}}', '{{attachment:image.png|alt text}}\n'),
             # (u'{{attachment:image.png|alt text|width=100 align=left height=150}}', '{{attachment:image.png|alt text|width=100 align=left height=150}}\n'),

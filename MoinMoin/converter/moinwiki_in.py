@@ -843,26 +843,22 @@ class Converter(ConverterMacro):
                 attrib[html(attr)] = value
 
         if object_item is not None:
+            # img tag
             query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_item.startswith(att):
                 object_item = '/' + object_item[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
-            text = object_item
-
             attrib[xinclude.href] = target
-
+            if object_text:
+                attrib[html.alt] = object_text
             element = xinclude.include(attrib=attrib)
             stack.top_append(element)
         else:
+            # object tag
             target = Iri(object_url)
             text = object_url
-
             attrib[xlink.href] = target
-
-            if object_text is not None:
-                attrib[moin_page.alt] = object_text
-
             element = moin_page.object(attrib)
             stack.push(element)
             if object_text:

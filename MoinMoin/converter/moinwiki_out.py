@@ -311,6 +311,7 @@ class Converter(object):
         ret += href
         alt = elem.get(moin_page.alt, u'')
         if alt and alt != href:
+            # TODO: this will fail on: {{png||width=100}}
             ret += u'|' + alt
             if args:
                 ret += u'|' + args

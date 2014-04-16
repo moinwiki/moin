@@ -17,6 +17,7 @@ class TestConverter(object):
         moin_page.namespace: '',
         xlink.namespace: 'xlink',
         html: 'xhtml',
+        xinclude: 'xinclude',
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -56,13 +57,13 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 
     def test_image(self):
         data = [
-            (u'.. image:: images/biohazard.png', '<page><body><object xlink:href="wiki.local:images/biohazard.png?do=get" /></body></page>'),
+            (u'.. image:: images/biohazard.png', '<page><body><xinclude:include xinclude:href="wiki.local:images/biohazard.png" /></body></page>'),
             (u""".. image:: images/biohazard.png
    :height: 100
    :width: 200
    :scale: 50
-   :alt: alternate text""", '<page><body><object xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xlink:href="wiki.local:images/biohazard.png?do=get" /></body></page>'),
-            (u'abc |test| cba\n\n.. |test| image:: test.png', '<page><body><p>abc <object xhtml:alt="test" xlink:href="wiki.local:test.png?do=get" /> cba</p></body></page>'),
+   :alt: alternate text""", '<page><body><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" /></body></page>'),
+            (u'abc |test| cba\n\n.. |test| image:: test.png', '<page><body><p>abc <xinclude:include xhtml:alt="test" xinclude:href="wiki.local:test.png" /> cba</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

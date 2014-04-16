@@ -343,30 +343,38 @@ class NodeVisitor(object):
         pass
 
     def visit_image(self, node):
-        whitelist = ['width', 'height', 'align', 'alt', ]
-        attr = {}
+        """
+        Processes images and other transcluded objects.
+        """
+        # TODO: ReST also defines "align" as a parameter, but it is invalid in HTML5.  Depending upon value
+        # of align, we could add a style attribute of either:
+        #   vertical-align: middle | top | bottom
+        #   float: left | right
+        whitelist = ['width', 'height', 'alt', ]
+        attrib = {}
         for key in whitelist:
             if node.get(key):
-                attr[html(key)] = node.get(key)
+                attrib[html(key)] = node.get(key)
 
         # there is no 'scale' attribute, hence absent from whitelist, handled separately
-        # TODO: Error reporting in case of bad input, currently prints on terminal
-        # TODO: mark_item_as_transclusion in html_out conflicts 'align' by adding item-wrapper
-
         if node.get('scale'):
             scaling_factor = int(node.get('scale')) / 100.0
             for key in ('width', 'height'):
-                if html(key) in attr:
-                    attr[html(key)] = int(int(attr[html(key)]) * scaling_factor)
+                if html(key) in attrib:
+                    attrib[html(key)] = int(int(attrib[html(key)]) * scaling_factor)
 
-        new_node = moin_page.object(attr)
         url = Iri(node['uri'])
         if url.scheme is None:
-            url.scheme = u'wiki.local'
-            query_keys = url_decode(url.query or '')
-            query_keys['do'] = 'get'
-            url.query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
-        new_node.set(xlink.href, url)
+            # img
+            target = Iri(scheme='wiki.local', path=node['uri'], fragment=None)
+            attrib[xinclude.href] = target
+            new_node = xinclude.include(attrib=attrib)
+        else:
+            # obj
+            # TODO: alt is set above, OK on img tags, but invalid here on object tags, it needs to be a text child of object tag for present code in html_out.py
+            # this should be handled consistently for rest, moinwiki, markdown, mediawiki...
+            new_node = moin_page.object(attrib)
+            new_node.set(xlink.href, url)
 
         self.open_moin_page_node(new_node)
 
