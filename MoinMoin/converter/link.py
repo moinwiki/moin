@@ -16,7 +16,7 @@ from flask import g as flaskg
 from MoinMoin.util.interwiki import is_known_wiki, url_for_item
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 from MoinMoin.wikiutil import AbsItemName
 
 
@@ -180,7 +180,7 @@ class ConverterExternOutput(ConverterBase):
 
     def handle_external_links(self, elem, input):
         elem.set(self._tag_xlink_href, input)
-        elem.set(moin_page.class_, 'moin-' + input.scheme)
+        elem.set(html.class_, elem.attrib.get(html.class_, '') + ' moin-' + input.scheme)
 
 
 class ConverterItemRefs(ConverterBase):

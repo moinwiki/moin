@@ -34,7 +34,8 @@ class Converter(object):
         attrib = {}
         if arguments:
             query = arguments.keyword.get(xinclude.href).query
-            query_keys.update(url_decode(query))
+            if query:
+                query_keys.update(url_decode(query))
             attrib = arguments.keyword
 
         query = url_encode(query_keys, charset=CHARSET, encode_keys=True)

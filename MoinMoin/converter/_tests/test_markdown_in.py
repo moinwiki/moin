@@ -9,7 +9,7 @@ MoinMoin - Tests for MoinMoin.converter.markdown_in
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink, xml
+from MoinMoin.util.tree import moin_page, xlink, xml, xinclude, html
 
 from ..markdown_in import Converter
 
@@ -19,6 +19,8 @@ class TestConverter(object):
         moin_page: '',
         xlink: 'xlink',
         xml: 'xml',
+        xinclude: 'xinclude',
+        html: 'html',
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -124,6 +126,22 @@ class TestConverter(object):
                 '<list item-label-generate="unordered">\n<list-item><list-item-body>List 1</list-item-body></list-item>\n</list>\n<p>yo</p>\n<list item-label-generate="unordered">\n<list-item><list-item-body>List 2</list-item-body></list-item>\n</list>'),
             (u'8. Item',
                 '<list item-label-generate="ordered">\n<list-item><list-item-body>Item</list-item-body></list-item>\n</list>'),
+        ]
+        for i in data:
+            yield (self.do, ) + i
+
+    def test_image(self):
+        data = [
+            (u'![Alt text](png "Optional title")',
+                '<p><xinclude:include html:alt="Alt text" xinclude:href="wiki.local:png" /></p>'),
+            (u'![](png "Optional title")',
+                '<p><xinclude:include html:alt="" xinclude:href="wiki.local:png" /></p>'),
+            (u'![remote image](http://static.moinmo.in/logos/moinmoin.png)',
+                '<p><object xlink:href="http://static.moinmo.in/logos/moinmoin.png">remote image</object></p>'),
+            (u'![Alt text](http://test.moinmo.in/png)',
+                '<p><object xlink:href="http://test.moinmo.in/png">Alt text</object></p>'),
+            (u'![transclude local wiki item](someitem)',
+                '<p><xinclude:include html:alt="transclude local wiki item" xinclude:href="wiki.local:someitem" /></p>'),
         ]
         for i in data:
             yield (self.do, ) + i

@@ -347,7 +347,9 @@ class Converter(object):
             return "object"
 
     def visit_moinpage_object(self, elem):
-        # TODO: maybe IE8 would display transcluded external pages if we could do <object... type="text/html" ...>
+        """
+        elem of type img are converted to img tags here, others are left as object tags
+        """
         href = elem.get(xlink.href, None)
         attrib = {}
         whitelist = ['width', 'height']
@@ -371,9 +373,10 @@ class Converter(object):
 
         if obj_type == "img":
             # Images have alt text
-            alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
-            if alt:
-                attrib[html.alt] = alt
+            if not attrib.get(html.alt):
+                alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
+                if alt:
+                    attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
 
         else:
@@ -382,7 +385,7 @@ class Converter(object):
                 attrib[html.controls] = 'controls'
             new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
 
-        if obj_type == "object" and href.scheme:
+        if obj_type == "object" and getattr(href, 'scheme', None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
             return mark_item_as_transclusion(new_elem, href)
         return new_elem
