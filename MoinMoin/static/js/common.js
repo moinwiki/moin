@@ -54,6 +54,7 @@ MoinMoin.prototype.toggleComments = function () {
         pageComments.hide();
         buttons.attr('title', _("Show comments"));
     }
+    return false;  // do not scroll to top of page
 };
 
 // Comments initialization is executed once after document ready.
@@ -66,11 +67,6 @@ MoinMoin.prototype.initToggleComments = function () {
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
             this.toggleComments();
-        }
-        else {
-            var commentButton = $('.moin-toggle-comments-button');
-            commentButton.button('toggle');
-            {{ "commentButton.attr('title', '%s');" % _("Hide comments") }}
         }
     }
     $('.moin-toggle-comments-button').click(this.toggleComments);
@@ -93,6 +89,7 @@ MoinMoin.prototype.toggleTransclusionOverlays = function () {
             buttons.attr('title', _("Hide transclusions"));
         }
     }
+    return false;  // do not scroll to top of page
 };
 
 // Transclusion initialization is executed once after document ready.
@@ -228,14 +225,14 @@ MoinMoin.prototype.toggleSubtree = function (item) {
 
 
 // OnMouseOver show the fqname of the item else only show the value/id.
-function togglefqname(){
+function togglefqname() {
     "use strict";
     var fullname, value;
     $(".moin-fqname").hover(function () {
         fullname = $(this).attr('data-fqname');
         value = $(this).html();
         $(this).html(fullname);
-    },function () {
+    }, function () {
         $(this).html(value);
     });
 }
@@ -278,7 +275,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
         titles.append(li);
         // add click handler to show this form and hide all others
         aTagClone.click(function (ev) {
-            var tab = this.hash;
+            tab = this.hash;
             window.location.hash = tab;
             $('.moin-current-tab').removeClass('moin-current-tab');
             $(ev.target).addClass('moin-current-tab');
@@ -494,7 +491,6 @@ MoinMoin.prototype.enhanceEdit = function () {
             }
         }
         // scroll element into view and then back off 100 pixels
-        // TODO: does not scroll when user setting for show comments is off; user toggles show comments on; user doubleclicks and updates comments; (elem has display:none)
         elem.scrollIntoView();
         window.scrollTo(window.pageXOffset, window.pageYOffset - 100);
         // highlight background of selected element for a second or so
@@ -505,10 +501,10 @@ MoinMoin.prototype.enhanceEdit = function () {
 
     // called after user doubleclicks, return a line number close to doubleclick point
     function findLineNo(elem) {
-        var lineno;
+        var dataLineno;
         // first try easy way via jquery checking event node and all parent nodes
-        lineno = $(elem).closest("[" + LINENOATTR + "]");
-        if (lineno.length) { return $(lineno).attr(LINENOATTR); }
+        dataLineno = $(elem).closest("[" + LINENOATTR + "]");
+        if (dataLineno.length) { return $(dataLineno).attr(LINENOATTR); }
         // walk DOM backward looking for a lineno attr among siblings, cousins, uncles...
         while (elem.id !== TOPID) {
             if (elem.hasAttribute && elem.hasAttribute(LINENOATTR)) {
@@ -535,7 +531,7 @@ MoinMoin.prototype.enhanceEdit = function () {
             caretPoint = textArea.selectionStart;
         } else {
             // IE7, IE8 or
-            // IE9 - user has clicked ouside of textarea and textarea focus and caret position has been lost
+            // IE9 - user has clicked ouside of textarea causing loss of textarea focus and caret position
             return 0;
         }
         // get textarea text, split at caret, return number of lines before caret
@@ -620,7 +616,6 @@ $(document).ready(function () {
     var moin = new MoinMoin();
 
     moin.selected_link();
-    moin.initToggleComments();
     moin.initTransclusionOverlays();
     moin.QuicklinksExpander();
 
@@ -629,10 +624,12 @@ $(document).ready(function () {
         moin.InsertName(fullname);
     });
 
-    $('.expander').click(function() {
+    $('.expander').click(function () {
         moin.toggleSubtree(this);
     });
 
     moin.enhanceUserSettings();
     moin.enhanceEdit();
+    // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
+    moin.initToggleComments();
 });
