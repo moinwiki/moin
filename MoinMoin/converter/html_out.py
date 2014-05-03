@@ -739,7 +739,11 @@ class ConverterPage(Converter):
         return elem_ref
 
     def visit_moinpage_table_of_content(self, elem):
-        level = int(elem.get(moin_page.outline_level, 6))
+        try:
+            level = int(elem.get(moin_page.outline_level))
+            del elem.attrib[moin_page.outline_level]
+        except TypeError:
+            level = 6
 
         attribs = elem.attrib.copy()
         attribs[html.class_] = 'moin-table-of-contents'
