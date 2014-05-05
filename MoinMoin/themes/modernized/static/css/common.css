@@ -71,13 +71,17 @@ input, select { vertical-align: middle; }
 .moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
 .moin-tired:before { content: url('../img/smileys/tired.png'); }
 .moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+#moin-content div.attention{background-image:url("../img/admonitions/important.png")}
 #moin-content div.caution{background-image:url("../img/admonitions/caution.png")}
+#moin-content div.danger{background-image:url("../img/admonitions/warning.png")}
+#moin-content div.error{background-image:url("../img/admonitions/warning.png")}
+#moin-content div.hint{background-image:url("../img/admonitions/tip.png")}
 #moin-content div.important{background-image:url("../img/admonitions/important.png")}
 #moin-content div.note{background-image:url("../img/admonitions/note.png")}
 #moin-content div.tip{background-image:url("../img/admonitions/tip.png")}
 #moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
-#moin-content div.caution,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{color:#000;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;border:1px solid #e5e5e5;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both;}
-#moin-content div.caution p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
+#moin-content div.attention,#moin-content div.caution,#moin-content div.danger,#moin-content div.error,#moin-content div.hint,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{color:#000;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;border:1px solid #e5e5e5;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both;}
+#moin-content div.attention p,#moin-content div.caution p,#moin-content div.danger p,#moin-content div.error p,#moin-content div.hint p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
 /* wiki parser  - no moin- prefix added here, these classes are used within pages: {{{#!wiki solid  */
 .comment { color: #555; background-color: #DDF; }
 .red { background-color: #FCC; }

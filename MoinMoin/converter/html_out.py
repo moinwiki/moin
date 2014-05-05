@@ -206,10 +206,13 @@ class Converter(object):
         return self.new_copy(_tag_html_a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
+        """Used by ReST and docbook."""
         attrib = {}
-        key = html('class')
-        # XXX need to add some keyword to protect the class
-        attrib[key] = elem.get(moin_page.type)
+        valid_classes = set(["attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"])
+        cls = elem.get(moin_page.type)
+        if cls in valid_classes:
+            attrib[html.class_] = cls
+        elem.attrib = {}
         return self.new_copy(html.div, elem, attrib)
 
     def visit_moinpage_blockcode(self, elem):
