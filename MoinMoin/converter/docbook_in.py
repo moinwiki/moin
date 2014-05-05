@@ -171,7 +171,7 @@ class Converter(object):
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
     # admonitions in this list, into the admonition element of the DOM Tree.
-    admonition_tags = set(['caution', 'important', 'note', 'tip', 'warning'])
+    admonition_tags = set(['attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'])
 
     # DocBook can handle three kind of media: audio, image, video. Here
     # is an helper dictionary to process such of element.

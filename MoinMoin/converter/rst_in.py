@@ -125,32 +125,58 @@ class NodeVisitor(object):
         pass
 
     def visit_admonition(self, node):
+        # we do not support generic admonitions per http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
         self.open_moin_page_node(moin_page.admonition())
 
     def depart_admonition(self, node=None):
         self.close_moin_page_node()
 
-    visit_note = visit_admonition
-    visit_important = visit_admonition
-    visit_danger = visit_admonition
-    visit_caution = visit_admonition
-    visit_attention = visit_admonition
-    visit_tip = visit_admonition
-    visit_warning = visit_admonition
+    # see http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
+    def visit_attention(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'attention'}))
 
-    depart_note = depart_admonition
-    depart_important = depart_admonition
-    depart_danger = depart_admonition
-    depart_caution = depart_admonition
     depart_attention = depart_admonition
-    depart_tip = depart_admonition
-    depart_warning = depart_admonition
+
+    def visit_caution(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'caution'}))
+
+    depart_caution = depart_admonition
+
+    def visit_danger(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'danger'}))
+
+    depart_danger = depart_admonition
 
     def visit_error(self, node):
-        self.open_moin_page_node(moin_page.error())
+        # this is used to process parsing errors as well as user error admonitions
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'error'}))
 
-    def depart_error(self, node=None):
-        self.close_moin_page_node()
+    depart_error = depart_admonition
+
+    def visit_hint(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'hint'}))
+
+    depart_hint = depart_admonition
+
+    def visit_important(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'important'}))
+
+    depart_important = depart_admonition
+
+    def visit_note(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'note'}))
+
+    depart_note = depart_admonition
+
+    def visit_tip(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'tip'}))
+
+    depart_tip = depart_admonition
+
+    def visit_warning(self, node):
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'warning'}))
+
+    depart_warning = depart_admonition
 
     def visit_block_quote(self, node):
         self.open_moin_page_node(moin_page.list())
@@ -558,10 +584,11 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_system_message(self, node):
-        node.children = []
+        # we have encountered a parsing error, insert an error message
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'error'}))
 
     def depart_system_message(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_table(self, node):
         self.open_moin_page_node(moin_page.table())
@@ -804,7 +831,7 @@ class Converter(object):
                                   '\n'
                                   '  {1}\n'
                                   '\n'
-                                  '  Go back and try fix that.\n'
+                                  '  Go back and try to fix that.\n'
                                   '\n').format(str_num, string_numb.group(2).replace('\n', '\n  '))]
                         continue
                 else:
