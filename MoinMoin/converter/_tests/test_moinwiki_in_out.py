@@ -15,18 +15,21 @@ import pytest
 import re
 
 from emeraldtree import ElementTree as ET
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 from MoinMoin.converter.moinwiki_in import Converter as conv_in
 from MoinMoin.converter.moinwiki_out import Converter as conv_out
 
 
 class TestConverter(object):
 
-    input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}"'.format(moin_page.namespace, moin_page.namespace, xlink.namespace)
+    input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
+        moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
 
     namespaces = {
         moin_page.namespace: 'page',
         xlink.namespace: 'xlink',
+        xinclude.namespace: 'xinclude',
+        html.namespace: 'html',
     }
     input_re = re.compile(r'^(<[a-z:]+)')
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -87,7 +90,8 @@ class TestConverter(object):
             # (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
             # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
             # (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]\n'),
-            # (u'[[attachment:filename.txt]]', '[[attachment:filename.txt]]\n')
+            # Note: old style attachments are converted to new style sub-item syntax
+            (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n')
         ]
         for i in data:
             yield (self.do, ) + i
@@ -115,20 +119,24 @@ class TestConverter(object):
 
     def test_object(self):
         data = [
-            # (u'{{png}}', '{{png}}\n'),
-            # (u'{{png|png}}', '{{png|png}}\n'),
-            # (u'{{png|my png}}', '{{png|my png}}\n'),
-            # (u'{{png|my png|width=100}}', '{{png|my png|width=100}}\n'),
-            # (u'{{png||width=100}}', '{{png||width=100}}\n'),
-            # (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
+            (u'{{png}}', '{{png}}\n'),
+            (u'{{png|png}}', '{{png|png}}\n'),  # alt text same as default test
+            (u'{{png|my png}}', '{{png|my png}}\n'),
+            # output attributes will always be quoted, even if input is not quoted
+            (u'{{png|my png|width=100}}', '{{png|my png|width="100"}}\n'),
+            (u'{{png|my png|&w=100"}}', '{{png|my png|&w=100}}\n'),
+            (u'{{png||width="100"}}', '{{png||width="100"}}\n'),
+            (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
             (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n", '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
-            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
-            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 align=right}}\n'),
-            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100}}\n'),
-            # (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 style="float: right"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width=100 height=150 style="float: right"}}\n'),
-            # (u'{{attachment:image.png}}', '{{attachment:image.png}}\n'),
-            # (u'{{attachment:image.png|alt text}}', '{{attachment:image.png|alt text}}\n'),
-            # (u'{{attachment:image.png|alt text|width=100 align=left height=150}}', '{{attachment:image.png|alt text|width=100 align=left height=150}}\n'),
+            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
+            # output sequence of height, width, class may not be the same as input, so here we test only one attribute at a time to avoid random test failures
+            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n'),
+            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}\n'),
+            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}\n'),
+            # Note: old style attachments are converted to new style sub-item syntax
+            (u'{{attachment:image.png}}', '{{/image.png}}\n'),
+            (u'{{attachment:image.png|alt text}}', '{{/image.png|alt text}}\n'),
+            (u'{{attachment:image.png|alt text|height="150"}}', '{{/image.png|alt text|height="150"}}\n'),
 
         ]
         for i in data:

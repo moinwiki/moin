@@ -19,8 +19,9 @@ from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.tree import html, moin_page, xlink, xml, Name
+from MoinMoin.util.tree import html, moin_page, xlink, xml, Name, xinclude
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from MoinMoin.util.iri import Iri
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -355,11 +356,13 @@ class Converter(object):
         """
         href = elem.get(xlink.href, None)
         attrib = {}
-        whitelist = ['width', 'height']
+        whitelist = ['width', 'height', 'alt', 'class']
         for key in elem.attrib:
             if key.name in whitelist:
                 attrib[key] = elem.attrib[key]
         mimetype = Type(_type=elem.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
+        if elem.get(moin_page.type_):
+            del elem.attrib[moin_page.type_]
         # Get the object type
         obj_type = self.eval_object_type(mimetype, href)
 
@@ -373,20 +376,28 @@ class Converter(object):
         if href is not None:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
+        alt = convert_getlink_to_showlink(unicode(href))
+        alt = re.sub('^\/', '', alt)
 
         if obj_type == "img":
-            # Images have alt text
+            # Images must have alt attribute in html5, but if user did not specify then default to url
             if not attrib.get(html.alt):
-                alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
-                if alt:
-                    attrib[html.alt] = alt
+                attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
 
         else:
             if obj_type != "object":
-                # Non-objects have the "controls" attribute
+                # Non-objects like video and audio have the "controls" attribute
                 attrib[html.controls] = 'controls'
-            new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
+                new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
+            else:
+                # is an object
+                new_elem = html.object(attrib=attrib)
+                if new_elem.attrib.get(html.alt):
+                    new_elem.append(new_elem.attrib.get(html.alt))
+                    del new_elem.attrib[html.alt]
+                else:
+                    new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, 'scheme', None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py

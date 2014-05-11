@@ -8,7 +8,7 @@ MoinMoin - Tests for MoinMoin.converter.creole_in
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, html
 
 from ..creole_in import Converter
 
@@ -17,6 +17,7 @@ class TestConverter(object):
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
+        html: 'xhtml'
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -47,9 +48,9 @@ class TestConverter(object):
             (u'[[MoinMoin]]',
                 '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
             (u'{{http://moinmo.in/}}',
-                '<page><body><p><object xlink:href="http://moinmo.in/">http://moinmo.in/</object></p></body></page>'),
+                '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
             (u'{{http://moinmo.in/|MoinMoin}}',
-                '<page><body><p><object xlink:href="http://moinmo.in/">MoinMoin</object></p></body></page>'),
+                '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>'),
             (u'----',
                 '<page><body><separator /></body></page>'),
         ]

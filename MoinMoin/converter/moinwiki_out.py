@@ -11,11 +11,12 @@ Converts an internal document tree into moinwiki markup.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
+from MoinMoin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
-from re import findall
+from re import findall, sub
 
 from werkzeug.utils import unescape
 
@@ -69,7 +70,9 @@ class Converter(object):
     Converter application/x.moin.document -> text/x.moin.wiki
     """
     namespaces = {
-        moin_page.namespace: 'moinpage'}
+        moin_page.namespace: 'moinpage',
+        xinclude: 'xinclude',
+    }
 
     supported_tag = {
         'moinpage': (
@@ -92,11 +95,14 @@ class Converter(object):
             'object',
             'table',
             'table_header',
-            'teble_footer',
+            'table_footer',
             'table_body',
             'table_row',
             'table_cell',
-        )
+        ),
+        'xinclude': (
+            'include',
+        ),
     }
 
     @classmethod
@@ -153,7 +159,8 @@ class Converter(object):
             f = getattr(self, n, None)
             if f is not None:
                 return f(elem)
-        return open_children(elem)
+        # process odd things like xinclude
+        return self.open_children(elem)
 
     def open_moinpage(self, elem):
         n = 'open_moinpage_' + elem.tag.name.replace('-', '_')
@@ -295,10 +302,8 @@ class Converter(object):
         return u''
 
     def open_moinpage_object(self, elem):
-        # TODO: this can be done with one regex:
-        href = elem.get(xlink.href, u'')
-        # XXX: We don't have Iri support for now
-        from MoinMoin.util.iri import Iri
+        """Process objects and xincludes."""
+        href = elem.get(xlink.href, elem.get(xinclude.href, u''))
         if isinstance(href, Iri):
             href = unicode(href)
         href = href.split(u'?')
@@ -306,16 +311,25 @@ class Converter(object):
         if len(href) > 1:
             args = u' '.join([s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$)', href[1]) if s[:3] != u'do='])
         href = href[0].split(u'wiki.local:')[-1]
-        # TODO: add '|' to Moinwiki class and rewrite this using % formatting
-        ret = Moinwiki.object_open
-        ret += href
-        alt = elem.get(moin_page.alt, u'')
-        if alt and alt != href:
-            # TODO: this will fail on: {{png||width=100}}
-            ret += u'|' + alt
-            if args:
-                ret += u'|' + args
-        ret += Moinwiki.object_close
+
+        if len(elem) and isinstance(elem[0], unicode):
+            # alt text for objects is enclosed within <object...>...</object>
+            alt = elem[0]
+        else:
+            alt = elem.attrib.get(html.alt, u'')
+
+        whitelist = {html.width: 'width', html.height: 'height', html.class_: 'class'}
+        options = []
+        for attr, value in elem.attrib.items():
+            if attr in whitelist.keys():
+                options.append('{0}="{1}"'.format(whitelist[attr], value))
+
+        if args:
+            args = u'&' + args
+        args += u' '.join(options)
+
+        ret = '{0}{1}|{2}|{3}{4}'.format(Moinwiki.object_open, href, alt, args, Moinwiki.object_close)
+        ret = sub(r"\|+}}", "}}", ret)
         return ret
 
     def open_moinpage_p(self, elem):
@@ -520,6 +534,11 @@ class Converter(object):
 
     def open_moinpage_table_of_content(self, elem):
         return u"<<TableOfContents({0})>>\n".format(elem.get(moin_page.outline_level, u""))
+
+    def open_xinclude(self, elem):
+        """Processing of transclusions is similar to objects."""
+        return self.open_moinpage_object(elem)
+
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
