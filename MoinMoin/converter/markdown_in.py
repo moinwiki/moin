@@ -230,16 +230,17 @@ class Converter(object):
         """
         attrib = {}
         url = Iri(element.attrib.get('src'))
+        if element.attrib.get('alt'):
+            attrib[html.alt] = element.attrib.get('alt')
         if url.scheme is None:
             # img tag
-            attrib[html.alt] = element.attrib.get('alt', '')
             target = Iri(scheme='wiki.local', path=element.attrib.get("src"), fragment=None)
             attrib[xinclude.href] = target
             new_node = xinclude.include(attrib=attrib)
         else:
             # object tag
             attrib[xlink.href] = url
-            new_node = moin_page.object(attrib, children=[element.attrib.get('alt', '')])
+            new_node = moin_page.object(attrib)
         return new_node
 
     def visit_object(self, element):

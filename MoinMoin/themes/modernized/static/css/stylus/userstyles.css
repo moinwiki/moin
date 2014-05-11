@@ -13,3 +13,10 @@
 .right { text-align: right; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
+/* position image or object - the left, center, right rules above are either consistent with or harmless to the rules below */
+.moin-item-wrapper.left { float: left; }
+.moin-item-wrapper.center { width: 100%; text-align: center; }
+.moin-item-wrapper.right { float: right; }
+.moin-item-wrapper.middle { vertical-align: middle; }
+.moin-item-wrapper.top { vertical-align: top; }
+.moin-item-wrapper.bottom { vertical-align: bottom; }

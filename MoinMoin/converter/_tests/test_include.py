@@ -170,6 +170,11 @@ class TestInclude(object):
         rendered = Item.create(u'page1').content._render_data()
         assert '<p><span class="moin-transclusion" data-href="/logo.png"><img alt="logo.png" src=' in rendered
         assert '/logo.png" /></span></p>' in rendered
+        # simple transclusion with alt text and width
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'{{logo.png|my alt text|width="100"}}')
+        rendered = Item.create(u'page1').content._render_data()
+        assert '<p><span class="moin-transclusion" data-href="/logo.png"><img alt="my alt text" src=' in rendered
+        assert 'logo.png" width="100" /></span></p>' in rendered
         # within paragraph
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'text {{logo.png}} text')
         rendered = Item.create(u'page1').content._render_data()

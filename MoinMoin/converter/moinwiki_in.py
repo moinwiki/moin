@@ -835,13 +835,14 @@ class Converter(ConverterMacro):
 
         query_keys = {}
         attrib = {}
-        whitelist = ['width', 'height']
+        whitelist = ['width', 'height', 'class']
         for attr, value in args.iteritems():
             if attr.startswith('&'):
                 query_keys[attr[1:]] = value
             elif attr in whitelist:
                 attrib[html(attr)] = value
-
+        if object_text:
+            attrib[html.alt] = object_text
         if object_item is not None:
             # img tag
             query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
@@ -850,22 +851,14 @@ class Converter(ConverterMacro):
                 object_item = '/' + object_item[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
             attrib[xinclude.href] = target
-            if object_text:
-                attrib[html.alt] = object_text
             element = xinclude.include(attrib=attrib)
             stack.top_append(element)
         else:
             # object tag
             target = Iri(object_url)
-            text = object_url
             attrib[xlink.href] = target
             element = moin_page.object(attrib)
-            stack.push(element)
-            if object_text:
-                self.parse_inline(object_text, stack, self.inlinedesc_re)
-            else:
-                stack.top_append(text)
-            stack.pop()
+            stack.top_append(element)
 
     table = block_table
 

@@ -29,7 +29,7 @@ import re
 
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
@@ -402,26 +402,20 @@ class Converter(ConverterMacro):
 
     def inline_object_repl(self, stack, object, object_page=None, object_url=None, object_text=None):
         """Handles objects included in the page."""
-
+        attrib = {}
+        if object_text:
+            attrib[html.alt] = object_text
         if object_page is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_page.startswith(att):
                 object_page = '/' + object_page[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_page)
-            text = object_page
-
-            attrib = {xinclude.href: target}
+            attrib[xinclude.href] = target
             element = xinclude.include(attrib=attrib)
-            stack.top_append(element)
-
         else:
-            target = object_url
-            text = object_url
-
-            element = moin_page.object({xlink.href: target})
-            stack.push(element)
-            self.parse_inline(object_text or text, stack, self.link_desc_re)
-            stack.pop()
+            attrib[xlink.href] = object_url
+            element = moin_page.object(attrib)
+        stack.top_append(element)
 
     inline_url = r"""
         (?P<url>

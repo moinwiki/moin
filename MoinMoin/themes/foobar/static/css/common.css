@@ -151,6 +151,13 @@ input, select { vertical-align: middle; }
 .right { text-align: right; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
+/* position image or object - the left, center, right rules above are either consistent with or harmless to the rules below */
+.moin-item-wrapper.left { float: left; }
+.moin-item-wrapper.center { width: 100%; text-align: center; }
+.moin-item-wrapper.right { float: right; }
+.moin-item-wrapper.middle { vertical-align: middle; }
+.moin-item-wrapper.top { vertical-align: top; }
+.moin-item-wrapper.bottom { vertical-align: bottom; }
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em;vertical-align:middle}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em;vertical-align:middle}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em;vertical-align:middle}

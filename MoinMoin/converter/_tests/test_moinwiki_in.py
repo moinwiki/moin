@@ -46,13 +46,18 @@ class TestConverter(object):
                 '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
             (u'{{somelocalimage|my alt text|width=10, height=10}}',
                 '<page><body><p><xinclude:include xhtml:alt="my alt text" xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>'),
+            # html5 requires img tags to have an alt attribute, html_out.py will add any required attributes that are missing
             (u'{{somelocalimage||width=10, height=10}}',
                 '<page><body><p><xinclude:include xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>'),
             (u'{{somelocalimage||width=10, &h=10}}',
                 '<page><body><p><xinclude:include xhtml:width="10" xinclude:href="wiki.local:somelocalimage?h=10" /></p></body></page>'),
-            # object tags do not have alt attributes, instead it is placed before the </object>
+            (u'before {{somelocalimage}} middle {{somelocalimage}} after',
+                '<page><body><p>before <xinclude:include xinclude:href="wiki.local:somelocalimage?" /> middle <xinclude:include xinclude:href="wiki.local:somelocalimage?" /> after</p></body></page>'),
+            (u'before {{http://moinmo.in}} middle {{http://moinmo.in}} after',
+                '<page><body><p>before <object xlink:href="http://moinmo.in" /> middle <object xlink:href="http://moinmo.in" /> after</p></body></page>'),
+            # in html5, object tags must not have alt attributes, html_out.py will adjust this so alt text is placed before the </object>
             (u'{{http://moinmo.in/|test|width=10, height=10}}',
-                '<page><body><p><object xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/">test</object></p></body></page>'),
+                '<page><body><p><object xhtml:alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/" /></p></body></page>'),
             (u'{{http://moinmo.in/}}',
                 '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
             (u'{{http://moinmo.in/|MoinMoin}}',
