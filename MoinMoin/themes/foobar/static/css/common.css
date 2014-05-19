@@ -405,6 +405,7 @@ table{margin:1%;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
 table th{border:1px solid #ccc;background-color:#808080;color:#fff}
 table td{border:1px solid #ccc}
+.moin-thead{background-color:#808080}
 table.zebra{border:1px solid #ccc;border-collapse:separate;border-spacing:1px;width:98%;border-radius:6px;}
 table.zebra thead{background-color:#808080;color:#fff}
 table.zebra tfoot{background-color:#d6d5d0}

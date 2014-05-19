@@ -6323,3 +6323,6 @@ ul.moin-breadcrumb li ul.moin-bcs-subitems {
 ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
   display: block;
 }
+.moin-thead {
+  background-color: silver;
+}
