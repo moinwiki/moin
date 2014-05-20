@@ -228,6 +228,7 @@ dt{margin-top:.5em;font-weight:bold}
 dd{font-size:.92em;margin-left:40px;margin-top:0;margin-bottom:0}
 dd p{margin:.25em 0}
 dd + dd p{margin-top:.67em}
+blockquote{margin-left:2em}
 hr{height:1px;background-color:#4e7da9;border:0;margin:.9em 0}
 .moin-hr1{height:2px}
 .moin-hr2{height:3px}
