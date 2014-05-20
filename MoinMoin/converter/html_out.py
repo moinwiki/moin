@@ -316,6 +316,8 @@ class Converter(object):
         else:
             ret = html.dl(attrib=attrib_new)
 
+        # TODO: ReST parser creates definition list classifiers but they are ignored here.
+        # TODO: An extraneous  "<dd></dd>" is created given " object::\n :: desc 1\n :: desc 2\n" -- moinwiki_in error?
         for item in elem:
             if isinstance(item, ET.Element):
                 if item.tag.uri == moin_page and item.tag.name == 'list-item':
@@ -334,6 +336,25 @@ class Converter(object):
                                     ret_body = self.new_copy(html.dd, body)
                                 ret.append(ret_body)
                                 break
+        return ret
+
+    def visit_moinpage_list_item(self, elem):
+        """
+        Used for markdown definition lists.
+
+        Compared to moinwiki and ReST parsers, the markdown parser creates definition lists using only one
+        list-item tag.name for entire list where moinwiki and ReST have one list-item tag.name for
+        each entry in list.
+        """
+        attrib = Attributes(elem)
+        attrib_new = attrib.convert()
+        ret = html.dl(attrib=attrib_new)
+        for item in elem:
+            if isinstance(item, ET.Element) and item.tag.uri == moin_page:
+                if item.tag.name == 'list-item-label':
+                    ret.append(self.new_copy(html.dt, item))
+                elif item.tag.name == 'list-item-body':
+                    ret.append(self.new_copy(html.dd, item))
         return ret
 
     def eval_object_type(self, mimetype, href):
