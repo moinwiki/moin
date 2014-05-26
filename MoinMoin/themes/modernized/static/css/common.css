@@ -539,4 +539,3 @@ ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
 ul.moin-bcs-item li{position:relative}
 ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
 ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
-
