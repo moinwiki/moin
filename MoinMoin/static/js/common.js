@@ -629,7 +629,9 @@ $(document).ready(function () {
 
     moin.selected_link();
     moin.initTransclusionOverlays();
-    moin.QuicklinksExpander();
+    if(document.getElementById('moin-navibar')!=null) {
+        moin.QuicklinksExpander();
+    }
 
     $('.moin-insertname-action').click(function () {
         var fullname = $(this).data('name');
@@ -638,6 +640,21 @@ $(document).ready(function () {
 
     $('.expander').click(function () {
         moin.toggleSubtree(this);
+    });
+
+    $('.moin-useractions').click(function () {
+        $('#user-actions').toggleClass('hidden');
+        return false;
+    });
+
+    $('.moin-viewoptions').click(function () {
+        $('#view-options').toggleClass('hidden');
+        return false;
+    });
+
+    $('.moin-itemactions').click(function () {
+        $('#item-actions').toggleClass('hidden');
+        return false;
     });
 
     moin.enhanceUserSettings();
