@@ -23,7 +23,7 @@ from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatu
                             Reference, BackReference, SelectSubmit)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON)
+                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm
 from MoinMoin.items.content import NonExistentContent
@@ -35,8 +35,8 @@ USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
 
 Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
-OptionalTicketReference = Reference.to(TICKET_QUERY).using(optional=True)
-OptionalUserReference = Reference.to(USER_QUERY).using(optional=True).with_properties(empty_label='(Nobody)')
+OptionalTicketReference = Reference.to(TICKET_QUERY).using(optional=True).with_properties(label_meta_key=ITEMID)
+OptionalUserReference = Reference.to(USER_QUERY).using(optional=True).with_properties(empty_label='(Nobody)', label_meta_key=NAME)
 
 
 class TicketMetaForm(Form):
