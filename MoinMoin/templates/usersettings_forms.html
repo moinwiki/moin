@@ -98,7 +98,7 @@
 {% macro all_usersettings_forms(form_objs) %}
 <div id="moin-usersettings">
     <div id="personal" class="moin-tab-body moin-form">
-        <h2 class="moin-settings-head"><a href="#personal">{{ _("Personal Settings") }}</a></h2>
+        <h2 class="moin-settings-head"><a href="#personal">{{ _("Personal") }}</a></h2>
         {{ personal(form_objs.personal) }}
     </div>
     <div id="password" class="moin-tab-body moin-form">
@@ -106,15 +106,15 @@
         {{ password(form_objs.password) }}
     </div>
     <div id="notification" class="moin-tab-body moin-form">
-        <h2 class="moin-settings-head"><a href="#notification">{{ _("Notification Settings") }}</a></h2>
+        <h2 class="moin-settings-head"><a href="#notification">{{ _("Notifications") }}</a></h2>
         {{ notification(form_objs.notification) }}
     </div>
     <div id="ui" class="moin-tab-body moin-form">
-        <h2 class="moin-settings-head"><a href="#ui">{{ _("Wiki Appearance Settings") }}</a></h2>
+        <h2 class="moin-settings-head"><a href="#ui">{{ _("Appearance") }}</a></h2>
         {{ ui(form_objs.ui) }}
     </div>
     <div id="navigation" class="moin-tab-body moin-form">
-        <h2 class="moin-settings-head"><a href="#navigation">{{ _("Navigation Settings") }}</a></h2>
+        <h2 class="moin-settings-head"><a href="#navigation">{{ _("Navigation") }}</a></h2>
         {{ navigation(form_objs.navigation) }}
     </div>
     <div id="options" class="moin-tab-body moin-form">
