@@ -41,7 +41,11 @@ class Converter(object):
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
+default_registry.register(Converter._factory, Type('video/mp4'), type_moin_document)
 default_registry.register(Converter._factory, Type('video/ogg'), type_moin_document)
 default_registry.register(Converter._factory, Type('video/webm'), type_moin_document)
+
+default_registry.register(Converter._factory, Type('audio/mpeg'), type_moin_document)
 default_registry.register(Converter._factory, Type('audio/ogg'), type_moin_document)
-default_registry.register(Converter._factory, Type('audio/wave'), type_moin_document)
+default_registry.register(Converter._factory, Type('audio/webm'), type_moin_document)
+default_registry.register(Converter._factory, Type('audio/x-wav'), type_moin_document)

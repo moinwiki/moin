@@ -585,7 +585,7 @@ class Audio(Binary):
 
 @register
 class WAV(Audio):
-    contenttype = 'audio/wave'
+    contenttype = 'audio/x-wav'
     display_name = 'WAV'
 
 
