@@ -351,15 +351,8 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
     @classmethod
     def _get_choice_specs(cls):
         revs = flaskg.storage.search(cls._query, **cls._query_args)
-        key = cls.properties['label_meta_key']
-
-        def get_label(rev):
-            label = rev.meta[key]
-            if isinstance(label, list):
-                label = label[0]
-            return label
-        
-        choices = [(rev.meta[ITEMID], get_label(rev)) for rev in revs]
+        label_getter = cls.properties['label_getter']
+        choices = [(rev.meta[ITEMID], label_getter(rev)) for rev in revs]
         if cls.optional:
             choices.append((u'', cls.properties['empty_label']))
         return choices
