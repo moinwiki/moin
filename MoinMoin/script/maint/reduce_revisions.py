@@ -18,6 +18,8 @@ from whoosh.query import Every
 
 from MoinMoin.constants.keys import NAME, NAME_EXACT, REVID
 
+from MoinMoin.app import before_wiki
+
 
 class Reduce_Revisions(Command):
     description = "This command can be used to remove all revisions but the last one from all selected items."
@@ -27,6 +29,7 @@ class Reduce_Revisions(Command):
     )
 
     def run(self, query):
+        before_wiki()
         if query:
             qp = app.storage.query_parser([NAME_EXACT, ])
             q = qp.parse(query_text)
