@@ -23,7 +23,7 @@ from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatu
                             Reference, BackReference, SelectSubmit)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME,  SUMMARY)
+                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm
 from MoinMoin.items.content import NonExistentContent
