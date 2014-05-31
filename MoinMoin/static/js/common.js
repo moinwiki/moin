@@ -95,7 +95,7 @@ MoinMoin.prototype.toggleTransclusionOverlays = function () {
 // Transclusion initialization is executed once after document ready.
 MoinMoin.prototype.initTransclusionOverlays = function () {
     "use strict";
-    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions,
+    var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, classes,
         rightArrow = '\u2192';
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
@@ -116,6 +116,18 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
             // if the parent of this element is an A, then wrap parent (avoid A's within A's)
             if ($(elem).parent()[0].tagName === 'A') {
                 elem = $(elem).parent()[0];
+            }
+            // copy user specified classes from img/object tag to wrapper
+            if (elem.tagName === 'OBJECT') {
+                // do not copy classes starting with moin-
+                classes = $(elem).attr('class');
+                classes = classes.split(" ").filter(function(c) {
+                    return c.lastIndexOf('moin-', 0) !== 0;
+                });
+                $(wrapper).addClass(classes.join(' '));
+            } else {
+                // copy all classes from img tags
+                $(wrapper).addClass($(elem).find(">:first-child").attr('class'));
             }
             // insert wrapper after elem, append (move) elem, append overlays
             $(elem).after(wrapper);
@@ -617,7 +629,9 @@ $(document).ready(function () {
 
     moin.selected_link();
     moin.initTransclusionOverlays();
-    moin.QuicklinksExpander();
+    if(document.getElementById('moin-navibar')!=null) {
+        moin.QuicklinksExpander();
+    }
 
     $('.moin-insertname-action').click(function () {
         var fullname = $(this).data('name');
@@ -626,6 +640,21 @@ $(document).ready(function () {
 
     $('.expander').click(function () {
         moin.toggleSubtree(this);
+    });
+
+    $('.moin-useractions').click(function () {
+        $('#user-actions').toggleClass('hidden');
+        return false;
+    });
+
+    $('.moin-viewoptions').click(function () {
+        $('#view-options').toggleClass('hidden');
+        return false;
+    });
+
+    $('.moin-itemactions').click(function () {
+        $('#item-actions').toggleClass('hidden');
+        return false;
     });
 
     moin.enhanceUserSettings();

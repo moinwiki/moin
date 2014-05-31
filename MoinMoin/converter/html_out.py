@@ -19,8 +19,9 @@ from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.tree import html, moin_page, xlink, xml, Name
+from MoinMoin.util.tree import html, moin_page, xlink, xml, Name, xinclude
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from MoinMoin.util.iri import Iri
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -315,6 +316,8 @@ class Converter(object):
         else:
             ret = html.dl(attrib=attrib_new)
 
+        # TODO: ReST parser creates definition list classifiers but they are ignored here.
+        # TODO: An extraneous  "<dd></dd>" is created given " object::\n :: desc 1\n :: desc 2\n" -- moinwiki_in error?
         for item in elem:
             if isinstance(item, ET.Element):
                 if item.tag.uri == moin_page and item.tag.name == 'list-item':
@@ -333,6 +336,25 @@ class Converter(object):
                                     ret_body = self.new_copy(html.dd, body)
                                 ret.append(ret_body)
                                 break
+        return ret
+
+    def visit_moinpage_list_item(self, elem):
+        """
+        Used for markdown definition lists.
+
+        Compared to moinwiki and ReST parsers, the markdown parser creates definition lists using only one
+        list-item tag.name for entire list where moinwiki and ReST have one list-item tag.name for
+        each entry in list.
+        """
+        attrib = Attributes(elem)
+        attrib_new = attrib.convert()
+        ret = html.dl(attrib=attrib_new)
+        for item in elem:
+            if isinstance(item, ET.Element) and item.tag.uri == moin_page:
+                if item.tag.name == 'list-item-label':
+                    ret.append(self.new_copy(html.dt, item))
+                elif item.tag.name == 'list-item-body':
+                    ret.append(self.new_copy(html.dd, item))
         return ret
 
     def eval_object_type(self, mimetype, href):
@@ -355,11 +377,13 @@ class Converter(object):
         """
         href = elem.get(xlink.href, None)
         attrib = {}
-        whitelist = ['width', 'height']
+        whitelist = ['width', 'height', 'alt', 'class']
         for key in elem.attrib:
             if key.name in whitelist:
                 attrib[key] = elem.attrib[key]
         mimetype = Type(_type=elem.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
+        if elem.get(moin_page.type_):
+            del elem.attrib[moin_page.type_]
         # Get the object type
         obj_type = self.eval_object_type(mimetype, href)
 
@@ -373,20 +397,28 @@ class Converter(object):
         if href is not None:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
+        alt = convert_getlink_to_showlink(unicode(href))
+        alt = re.sub('^\/', '', alt)
 
         if obj_type == "img":
-            # Images have alt text
+            # Images must have alt attribute in html5, but if user did not specify then default to url
             if not attrib.get(html.alt):
-                alt = ''.join(unicode(e) for e in elem)  # XXX handle non-text e
-                if alt:
-                    attrib[html.alt] = alt
+                attrib[html.alt] = alt
             new_elem = html.img(attrib=attrib)
 
         else:
             if obj_type != "object":
-                # Non-objects have the "controls" attribute
+                # Non-objects like video and audio have the "controls" attribute
                 attrib[html.controls] = 'controls'
-            new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
+                new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
+            else:
+                # is an object
+                new_elem = html.object(attrib=attrib)
+                if new_elem.attrib.get(html.alt):
+                    new_elem.append(new_elem.attrib.get(html.alt))
+                    del new_elem.attrib[html.alt]
+                else:
+                    new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, 'scheme', None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
@@ -450,7 +482,7 @@ class Converter(object):
         return html.p()
 
     def visit_moinpage_quote(self, elem):
-        return self.new_copy(html.quote, elem)
+        return self.new_copy(html.q, elem)
 
     def visit_moinpage_separator(self, elem):
         return self.new_copy(html.hr, elem)

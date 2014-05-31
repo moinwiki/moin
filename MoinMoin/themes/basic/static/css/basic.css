@@ -4605,7 +4605,7 @@ a.thumbnail.active {
 .list-group-item {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 5px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
   border: 1px solid #dddddd;
@@ -5900,7 +5900,7 @@ h6:focus .moin-permalink {
 .moin-user-action-special {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 5px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
   width: 100%;
@@ -6133,7 +6133,7 @@ h6:focus .moin-permalink {
 }
 .moin-quicklink {
   position: relative;
-  padding: 10px 15px 10px 15px;
+  padding: 5px 15px 5px 15px;
   border: 1px solid #dddddd;
   margin-bottom: -1px;
 }
@@ -6322,4 +6322,13 @@ ul.moin-breadcrumb li ul.moin-bcs-subitems {
 }
 ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
   display: block;
+}
+.moin-thead {
+  background-color: silver;
+}
+.moin-viewoptions, .moin-itemactions, .moin-useractions {
+  float: right;
+}
+.list-group-item {
+  padding: 5px 15px;
 }

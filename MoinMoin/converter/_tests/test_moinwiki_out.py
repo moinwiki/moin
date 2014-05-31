@@ -13,7 +13,8 @@ from MoinMoin.converter.moinwiki_out import *
 
 
 class Base(object):
-    input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}"'.format(moin_page.namespace, moin_page.namespace, xlink.namespace)
+    input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:html="{3}"'.format(
+        moin_page.namespace, moin_page.namespace, xlink.namespace, html.namespace)
     output_namespaces = {
         moin_page.namespace: 'page'
     }
@@ -74,13 +75,12 @@ class TestConverter(Base):
 
     def test_object(self):
         data = [
-            (u"<page:object xlink:href=\"drawing:anywikitest.adraw\">drawing:anywikitest.adraw</page:object>", '{{drawing:anywikitest.adraw}}'),
+            (u"<page:object xlink:href=\"drawing:anywikitest.adraw\"></page:object>", '{{drawing:anywikitest.adraw}}'),
             (u"<page:object xlink:href=\"http://static.moinmo.in/logos/moinmoin.png\" />", '{{http://static.moinmo.in/logos/moinmoin.png}}'),
             (u'<page:object page:alt="alt text" xlink:href="http://static.moinmo.in/logos/moinmoin.png">alt text</page:object>', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}'),
             (u'<page:object xlink:href="attachment:image.png" />', '{{attachment:image.png}}'),
-            # TODO: review following 2 lines, alt is invalid within object tag, align is not valid in html5
             (u'<page:object page:alt="alt text" xlink:href="attachment:image.png">alt text</page:object>', '{{attachment:image.png|alt text}}'),
-            (u'<page:object page:alt="alt text" xlink:href="attachment:image.png?width=100&amp;height=150&amp;align=left" />', '{{attachment:image.png|alt text|width=100 height=150 align=left}}'),
+            (u'<page:object xlink:href="attachment:image.png" html:width="100" html:height="150" html:class="left">alt text</page:object>', '{{attachment:image.png|alt text|height="150" width="100" class="left"}}'),
         ]
         for i in data:
             yield (self.do, ) + i

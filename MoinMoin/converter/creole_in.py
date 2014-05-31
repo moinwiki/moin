@@ -29,7 +29,8 @@ import re
 
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.tree import moin_page, xlink, xinclude, html
+from MoinMoin.util.interwiki import is_known_wiki
 
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
@@ -222,9 +223,9 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* ---- \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr3'):
         stack.clear()
-        stack.top_append(moin_page.separator())
+        stack.top_append(moin_page.separator(attrib={moin_page.class_: hr_class}))
 
     block_table = r"""
         (?P<table>
@@ -305,7 +306,6 @@ class Converter(ConverterMacro):
     def inline_escape_repl(self, stack, escape, escaped_char):
         stack.top_append(escaped_char)
 
-    # TODO: Parse interwiki the same way as Moin Wiki.
     inline_link = r"""
         (?P<link>
             \[\[
@@ -317,7 +317,13 @@ class Converter(ConverterMacro):
                     [^|]+?
                 )
                 |
-                (?P<link_page> [^|]+? )
+                (
+                    (?P<link_interwiki_site>[A-Z][a-zA-Z]+)
+                    :
+                    (?P<link_interwiki_item>[^|]+) # accept any item name; will verify link_interwiki_site below
+                )
+                |
+                (?P<link_item> [^|]+? )
             )
             \s*
             ([|] \s* (?P<link_text>.+?) \s*)?
@@ -325,21 +331,40 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_link_repl(self, stack, link, link_url=None, link_page=None, link_text=None):
+    def inline_link_repl(self, stack, link, link_url=None, link_item=None, link_text=None,
+                         link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
-
-        if link_page is not None:
+        if link_interwiki_site:
+            if is_known_wiki(link_interwiki_site):
+                link = Iri(scheme='wiki',
+                           authority=link_interwiki_site,
+                           path='/' + link_interwiki_item)
+                element = moin_page.a(attrib={xlink.href: link})
+                stack.push(element)
+                if link_text:
+                    self.parse_inline(link_text, stack, self.inlinedesc_re)
+                else:
+                    stack.top_append(link_interwiki_item)
+                stack.pop()
+                return
+            else:
+                # assume local language uses ":" inside of words, set link_item and continue
+                link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
+        if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
-            if link_page.startswith(att):
-                link_page = '/' + link_page[len(att):]  # now we have a subitem
-            target = unicode(Iri(scheme='wiki.local', path=link_page))
-            text = link_page
+            if link_item.startswith(att):
+                link_item = '/' + link_item[len(att):]  # now we have a subitem
+            target = unicode(Iri(scheme='wiki.local', path=link_item))
+            text = link_item
         else:
             target = link_url
             text = link_url
         element = moin_page.a(attrib={xlink.href: target})
         stack.push(element)
-        self.parse_inline(link_text or text, stack, self.link_desc_re)
+        if link_text:
+            self.parse_inline(link_text, stack, self.inlinedesc_re)
+        else:
+            stack.top_append(text)
         stack.pop()
 
     inline_macro = r"""
@@ -402,26 +427,20 @@ class Converter(ConverterMacro):
 
     def inline_object_repl(self, stack, object, object_page=None, object_url=None, object_text=None):
         """Handles objects included in the page."""
-
+        attrib = {}
+        if object_text:
+            attrib[html.alt] = object_text
         if object_page is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if object_page.startswith(att):
                 object_page = '/' + object_page[len(att):]  # now we have a subitem
             target = Iri(scheme='wiki.local', path=object_page)
-            text = object_page
-
-            attrib = {xinclude.href: target}
+            attrib[xinclude.href] = target
             element = xinclude.include(attrib=attrib)
-            stack.top_append(element)
-
         else:
-            target = object_url
-            text = object_url
-
-            element = moin_page.object({xlink.href: target})
-            stack.push(element)
-            self.parse_inline(object_text or text, stack, self.link_desc_re)
-            stack.pop()
+            attrib[xlink.href] = object_url
+            element = moin_page.object(attrib)
+        stack.top_append(element)
 
     inline_url = r"""
         (?P<url>
@@ -534,12 +553,17 @@ class Converter(ConverterMacro):
     """
 
     def tablerow_cell_repl(self, stack, cell, cell_text, cell_head=None):
-        element = moin_page.table_cell()
+        """
+        Creole has feature that allows table headings to be either row based or column based.
+
+        We avoid use of HTML5 row based thead tag and apply CSS styling to any cell marked as a heading.
+        """
+        attrib = {}
+        if cell_head:
+            attrib[moin_page.class_] = 'moin-thead'
+        element = moin_page.table_cell(attrib=attrib)
         stack.push(element)
-
-        # TODO: support table headings
         self.parse_inline(cell_text, stack)
-
         stack.pop_name('table-cell')
 
     # Block elements
@@ -568,6 +592,15 @@ class Converter(ConverterMacro):
         inline_linebreak,
     )
     inline_re = re.compile('|'.join(inline), re.X | re.U)
+
+    inlinedesc = (
+        inline_macro,
+        inline_nowiki,
+        inline_emph,
+        inline_strong,
+        inline_object,
+    )
+    inlinedesc_re = re.compile('|'.join(inlinedesc), re.X | re.U)
 
     # Link description
     link_desc = (

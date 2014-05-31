@@ -40,7 +40,7 @@ class TestImg(object):
         ]
 
         output = ('<div xmlns="http://www.w3.org/1999/xhtml"><p data-lineno="1"><span class="moin-transclusion" '
-                  'data-href="/imagetest"><img src="/+get/+2882c905b2ab409fbf79cd05637a112d/imagetest">'
+                  'data-href="/imagetest"><img alt="imagetest" src="/+get/+2882c905b2ab409fbf79cd05637a112d/imagetest">'
                   '</span></p></div>')
 
         for imagetype in tests:
@@ -55,7 +55,7 @@ class TestImg(object):
                         'ns2:height="10" ns2:width="10" ns0:type="image/jpeg" />'
                         '</ns0:body></ns0:page></ns0:p></ns0:body></ns0:page>')
 
-        image_resize_out = ('<div xmlns="http://www.w3.org/1999/xhtml"><p><div><img height="10" '
+        image_resize_out = ('<div xmlns="http://www.w3.org/1999/xhtml"><p><div><img alt="imagetest" height="10" '
                             'src="/+get/+2882c905b2ab409fbf79cd05637a112d/imagetest" width="10">'
                             '</div></p></div>')
 

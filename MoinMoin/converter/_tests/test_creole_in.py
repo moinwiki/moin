@@ -8,7 +8,7 @@ MoinMoin - Tests for MoinMoin.converter.creole_in
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, html, xinclude
 
 from ..creole_in import Converter
 
@@ -17,6 +17,8 @@ class TestConverter(object):
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
+        html: 'xhtml',
+        xinclude: 'xinclude',
     }
 
     output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
@@ -40,6 +42,8 @@ class TestConverter(object):
                 '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
             (u'[[http://moinmo.in/]]',
                 '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
+            (u'[[MoinMoin:InterWiki]]',
+                '<page><body><p><a xlink:href="wiki://MoinMoin/InterWiki">InterWiki</a></p></body></page>'),
             (u'[[javascript:alert("xss")]]',
                 '<page><body><p><a xlink:href="wiki.local:javascript:alert%28%22xss%22%29">javascript:alert("xss")</a></p></body></page>'),
             (u'[[http://moinmo.in/|MoinMoin]]',
@@ -47,11 +51,13 @@ class TestConverter(object):
             (u'[[MoinMoin]]',
                 '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
             (u'{{http://moinmo.in/}}',
-                '<page><body><p><object xlink:href="http://moinmo.in/">http://moinmo.in/</object></p></body></page>'),
+                '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
             (u'{{http://moinmo.in/|MoinMoin}}',
-                '<page><body><p><object xlink:href="http://moinmo.in/">MoinMoin</object></p></body></page>'),
+                '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>'),
+            (u'{{my.png}}',
+                '<page><body><p><xinclude:include xinclude:href="wiki.local:my.png" /></p></body></page>'),
             (u'----',
-                '<page><body><separator /></body></page>'),
+                '<page><body><separator class="moin-hr3" /></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
