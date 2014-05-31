@@ -372,10 +372,6 @@ class NodeVisitor(object):
         """
         Processes images and other transcluded objects.
         """
-        # TODO: ReST also defines "align" as a parameter, but it is invalid in HTML5.  Depending upon value
-        # of align, we could add a style attribute of either:
-        #   vertical-align: middle | top | bottom
-        #   float: left | right
         whitelist = ['width', 'height', 'alt', ]
         attrib = {}
         for key in whitelist:
@@ -389,6 +385,19 @@ class NodeVisitor(object):
                 if html(key) in attrib:
                     attrib[html(key)] = int(int(attrib[html(key)]) * scaling_factor)
 
+        # "align" parameter is invalid in HTML5. Convert it to a class defined in userstyles.css.
+        userstyles = {
+            'left': 'left',
+            'center': 'center',
+            'right': 'right',
+            'top': 'top',  # rst parser creates error messages for top, bottom, and middle
+            'bottom': 'bottom',
+            'middle': 'middle',
+        }
+        alignment = userstyles.get(node.get('align'))
+        if alignment:
+            attrib[html.class_] = alignment
+
         url = Iri(node['uri'])
         if url.scheme is None:
             # img
@@ -397,8 +406,6 @@ class NodeVisitor(object):
             new_node = xinclude.include(attrib=attrib)
         else:
             # obj
-            # TODO: alt is set above, OK on img tags, but invalid here on object tags, it needs to be a text child of object tag for present code in html_out.py
-            # this should be handled consistently for rest, moinwiki, markdown, mediawiki...
             new_node = moin_page.object(attrib)
             new_node.set(xlink.href, url)
 

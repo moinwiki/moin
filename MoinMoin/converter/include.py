@@ -323,7 +323,7 @@ class Converter(object):
                         loop = self.stack[self.stack.index(p_href):]
                         loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
                         msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
-                        attrib = {getattr(moin_page, 'class'): 'moin-error'}
+                        attrib = {html.class_: 'moin-error'}
                         strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
                         continue
@@ -340,7 +340,6 @@ class Converter(object):
                         included_elements.append(elem_h)
 
                     page_doc = page.content.internal_representation(attributes=Arguments(keyword=elem.attrib))
-                    # page_doc.tag = self.tag_div # XXX why did we have this?
 
                     self.recurse(page_doc, page_href)
 
@@ -414,7 +413,10 @@ class Converter(object):
                                     # is usually replaced by container
                                     return [container, new_trans_ptr]
                             else:
-                                # default action for odd things like circular transclusion error messages
+                                # default action for inline transclusions or odd things like circular transclusion error messages
+                                classes = child.attrib.get(html.class_, '').split()
+                                classes += ret.attrib.get(html.class_, '').split()
+                                ret.attrib[html.class_] = ' '.join(classes)
                                 elem[i] = ret
                         elif isinstance(ret, types.ListType):
                             # a container has been returned.
@@ -435,20 +437,23 @@ class Converter(object):
                                 new_trans_ptr = len(container)
                                 # child may have classes like "comment" that must be added to transcluded element
                                 classes = child.attrib.get(moin_page.class_, '').split()
-                                # this must be html, not moin_page:
+                                # must use moin_page.class_ above, but use html.class below per html_out.py code
                                 classes += ret_container[trans_ptr].attrib.get(html.class_, '').split()
-                                # this must be html, not moin_page:
                                 ret_container[trans_ptr].attrib[html.class_] = ' '.join(classes)
                                 container.append(ret_container[trans_ptr])  # the transclusion
                                 if len(after):
                                     container.append(after)
                                 return [container, new_trans_ptr]
                             else:
-                                # elem is a block element,
+                                # elem is a block element
+                                for grandchild in child:
+                                    if isinstance(grandchild, ET.Node) and grandchild.tag.name == u'include':
+                                        # the include may have classes that must be added to transcluded element
+                                        classes = grandchild.attrib.get(html.class_, '').split()
+                                        classes += ret_container[trans_ptr].attrib.get(html.class_, '').split()
+                                        ret_container[trans_ptr].attrib[html.class_] = ' '.join(classes)
                                 # replace child element with the container generated in lower recursion
                                 elem[i:i + 1] = ret_container  # elem[i] is the child
-                                # avoid duplicate recursion over nodes already processed
-                                i += len(ret_container) - 1
                         else:
                             # default action for any ret not fitting special cases above,
                             # e.g. tranclusion is within a table cell
@@ -462,7 +467,6 @@ class Converter(object):
     def __call__(self, tree):
         self.stack = []
         self.recurse(tree, None)
-
         return tree
 
 

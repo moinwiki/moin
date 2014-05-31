@@ -564,8 +564,9 @@ class Converter(object):
         attrib[key] = "footnote"
         children = self.new(moin_page('note-body'), attrib={},
                             children=self.do_children(element, depth))
-        # must delete lineno because footnote will be placed near end of page and out of sequence
-        children._children[1].attrib.pop(html.data_lineno, None)
+        if len(children) > 1:
+            # must delete lineno because footnote will be placed near end of page and out of sequence
+            del children._children[1].attrib[html.data_lineno]
         return self.new(moin_page.note, attrib=attrib, children=[children])
 
     def visit_docbook_formalpara(self, element, depth):

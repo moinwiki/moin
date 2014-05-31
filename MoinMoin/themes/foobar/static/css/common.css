@@ -26,8 +26,8 @@ body { line-height: 1; }
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
 section { display: block; }
 nav ul { list-style: none; }
-blockquote, q { quotes: none; }
-blockquote:before, blockquote:after, q:before, q:after { content: none; }
+blockquote { quotes: none; }
+blockquote:before, blockquote:after { content: none; }
 a { margin: 0; padding: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
 ins { background-color: #ff9; color: #000; text-decoration: none; }
 mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
@@ -151,6 +151,13 @@ input, select { vertical-align: middle; }
 .right { text-align: right; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
+/* position image or object - the left, center, right rules above are either consistent with or harmless to the rules below */
+.moin-item-wrapper.left { float: left; }
+.moin-item-wrapper.center { width: 100%; text-align: center; }
+.moin-item-wrapper.right { float: right; }
+.moin-item-wrapper.middle { vertical-align: middle; }
+.moin-item-wrapper.top { vertical-align: top; }
+.moin-item-wrapper.bottom { vertical-align: bottom; }
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/moin-www.png");margin:0 .2em;vertical-align:middle}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/moin-ftp.png");margin:0 .2em;vertical-align:middle}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/moin-news.png");margin:0 .2em;vertical-align:middle}
@@ -366,6 +373,7 @@ ol.moin-upperalpha-list{list-style-type:upper-alpha}
 ol.moin-loweralpha-list{list-style-type:lower-alpha}
 ol.moin-upperroman-list{list-style-type:upper-roman}
 ol.moin-lowerroman-list{list-style-type:lower-roman}
+blockquote{margin-left:2em}
 ul.moin-tags{list-style:none;}
 ul.moin-tags li{display:inline;}
 ul.moin-tags li.weight0{font-size:.4822530864197531em}
@@ -398,6 +406,7 @@ table{margin:1%;border-collapse:collapse;}
 table th,table td{padding:.3em .4em;vertical-align:middle;text-align:left}
 table th{border:1px solid #ccc;background-color:#808080;color:#fff}
 table td{border:1px solid #ccc}
+.moin-thead{background-color:#808080}
 table.zebra{border:1px solid #ccc;border-collapse:separate;border-spacing:1px;width:98%;border-radius:6px;}
 table.zebra thead{background-color:#808080;color:#fff}
 table.zebra tfoot{background-color:#d6d5d0}

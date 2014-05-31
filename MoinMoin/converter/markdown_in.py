@@ -78,19 +78,28 @@ class Converter(object):
     symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote'])
 
     # HTML tags to define a list, except dl which is a little bit different
-    list_tags = set(['ul', 'dir', 'ol'])
+    list_tags = set(['ul', 'ol'])
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
-        'em': moin_page.emphasis, 'i': moin_page.emphasis,
+        'em': moin_page.emphasis,
+        'i': moin_page.emphasis,
         # Strong
-        'b': moin_page.strong, 'strong': moin_page.strong,
+        'b': moin_page.strong,
+        'strong': moin_page.strong,
         # Code and Blockcode
-        'pre': moin_page.blockcode, 'tt': moin_page.code,
+        'pre': moin_page.blockcode,
+        'tt': moin_page.code,
         'samp': moin_page.code,
         # Lists
-        'dt': moin_page.list_item_label, 'dd': moin_page.list_item_body,
-        # TODO : Some tags related to tables can be also simplify
+        'dl': moin_page.list_item,
+        'dt': moin_page.list_item_label,
+        'dd': moin_page.list_item_body,
+        # Table - th and td require special processing for alignment of cell contents
+        'table': moin_page.table,
+        'thead': moin_page.table_header,
+        'tbody': moin_page.table_body,
+        'tr': moin_page.table_row,
     }
 
     # HTML Tag which does not have equivalence in the DOM Tree
@@ -218,11 +227,8 @@ class Converter(object):
         attrib[key] = 'line-through'
         return self.new_copy(moin_page.span, element, attrib)
 
-    def visit_hr(self, element, min_class=u'moin-hr1', max_class=u'moin-hr6', default_class=u'moin-hr3'):
-        hr_class = element.attrib.get('class')
-        if not (min_class <= hr_class <= max_class):
-            element.attrib[html('class')] = default_class
-        return self.new_copy(moin_page.separator, element, {})
+    def visit_hr(self, element, default_class=u'moin-hr3'):
+        return self.new_copy(moin_page.separator, element, {moin_page.class_: default_class})
 
     def visit_img(self, element):
         """
@@ -230,16 +236,17 @@ class Converter(object):
         """
         attrib = {}
         url = Iri(element.attrib.get('src'))
+        if element.attrib.get('alt'):
+            attrib[html.alt] = element.attrib.get('alt')
         if url.scheme is None:
             # img tag
-            attrib[html.alt] = element.attrib.get('alt', '')
             target = Iri(scheme='wiki.local', path=element.attrib.get("src"), fragment=None)
             attrib[xinclude.href] = target
             new_node = xinclude.include(attrib=attrib)
         else:
             # object tag
             attrib[xlink.href] = url
-            new_node = moin_page.object(attrib, children=[element.attrib.get('alt', '')])
+            new_node = moin_page.object(attrib)
         return new_node
 
     def visit_object(self, element):
@@ -262,7 +269,7 @@ class Converter(object):
         For some specific inline tags (defined in inline_tags)
         We just return <span element="tag.name">
         """
-        key = html('class')
+        key = html.class_
         attrib = {}
         attrib[key] = ''.join(['html-', element.tag.name])
         return self.new_copy(moin_page.span, element, attrib)
@@ -323,6 +330,21 @@ class Converter(object):
             return href
         return self.new_copy(moin_page.a, element, attrib)
 
+    def convert_align_to_class(self, attrib):
+        attr = {}
+        alignment = attrib.get('align')
+        if alignment in (u'right', u'center', u'left'):
+            attr[moin_page.class_] = alignment
+        return attr
+
+    def visit_th(self, element):
+        attrib = self.convert_align_to_class(element.attrib)
+        return self.new_copy(html.th, element, attrib=attrib)
+
+    def visit_td(self, element):
+        attrib = self.convert_align_to_class(element.attrib)
+        return self.new_copy(html.td, element, attrib=attrib)
+
     def visit(self, element):
         # Our element can be converted directly, just by changing the namespace
         if element.tag in self.symmetric_tags:
@@ -360,7 +382,8 @@ class Converter(object):
 
     def do_children(self, element, add_lineno=False):
         new = []
-        if hasattr(element, "text") and element.text is not None:
+        # markdown parser surrounds child nodes with u"\n" children, we ignore them here to avoid the issue in html_out.py
+        if hasattr(element, "text") and element.text is not None and element.text != u'\n':
             new.append(postproc_text(self.markdown, element.text))
 
         for child in element:
@@ -372,7 +395,7 @@ class Converter(object):
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r, )
             new.extend(r)
-            if hasattr(child, "tail") and child.tail is not None:
+            if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
