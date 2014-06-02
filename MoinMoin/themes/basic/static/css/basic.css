@@ -6332,3 +6332,18 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 .list-group-item {
   padding: 5px 15px;
 }
+@media (min-width: 768px) {
+  .container {
+    width: auto;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: auto;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: auto;
+  }
+}
