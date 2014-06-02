@@ -4605,7 +4605,7 @@ a.thumbnail.active {
 .list-group-item {
   position: relative;
   display: block;
-  padding: 5px 15px;
+  padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
   border: 1px solid #dddddd;
@@ -5900,13 +5900,14 @@ h6:focus .moin-permalink {
 .moin-user-action-special {
   position: relative;
   display: block;
-  padding: 5px 15px;
+  padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
   width: 100%;
   color: #428bca;
   border: 1px solid #dddddd;
   border-radius: 0;
+  padding: 5px 15px;
 }
 .moin-user-action-special:first-child {
   border-top-right-radius: 4px;
@@ -5930,6 +5931,14 @@ h6:focus .moin-permalink {
   color: #2a6496;
   background-color: #f5f5f5;
   border: 1px solid #dddddd;
+}
+.moin-viewoptions,
+.moin-itemactions,
+.moin-useractions {
+  float: right;
+}
+.list-group-item {
+  padding: 5px 15px;
 }
 .moin-diff-added {
   background-color: #ccffcc;
@@ -6325,10 +6334,4 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 }
 .moin-thead {
   background-color: silver;
-}
-.moin-viewoptions, .moin-itemactions, .moin-useractions {
-  float: right;
-}
-.list-group-item {
-  padding: 5px 15px;
 }
