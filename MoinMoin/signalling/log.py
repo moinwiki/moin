@@ -14,15 +14,15 @@ logging = log.getLogger(__name__)
 
 
 @item_displayed.connect_via(ANY)
-def log_item_displayed(app, item_name):
+def log_item_displayed(app, fqname):
     wiki_name = app.cfg.interwikiname
-    logging.info(u"item {0}:{1} displayed".format(wiki_name, item_name))
+    logging.info(u"item {0}:{1} displayed".format(wiki_name, unicode(fqname)))
 
 
 @item_modified.connect_via(ANY)
-def log_item_modified(app, item_name, **kwargs):
+def log_item_modified(app, fqname, **kwargs):
     wiki_name = app.cfg.interwikiname
-    logging.info(u"item {0}:{1} modified".format(wiki_name, item_name))
+    logging.info(u"item {0}:{1} modified".format(wiki_name, unicode(fqname)))
 
 
 @got_request_exception.connect_via(ANY)
