@@ -8,6 +8,7 @@ MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 
 from flask import current_app as app
 from flask.ext.script import Command, Option
+from flask import g as flaskg
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -52,6 +53,7 @@ class IndexBuild(Command):
     ]
 
     def run(self, tmp, procs, limitmb):
+        flaskg.add_lineno_attr = False  # no need to add lineno attributes while building indexes
         app.storage.rebuild(tmp=tmp, procs=procs, limitmb=limitmb)
 
 

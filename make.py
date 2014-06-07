@@ -359,6 +359,11 @@ class Commands(object):
             print 'Success: Modernized and Foobar CSS files updated.'
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
+        # stylus adds too many blank lines at end of modernized common.css, fix it by running coding_std against css directory
+        command = 'python contrib/pep8/coding_std.py MoinMoin/themes/modernized/static/css'
+        result = subprocess.call(command, shell=True)
+        if result != 0:
+            print 'Error: failure running coding_std.py against modernized css files'
 
         print 'Running lessc to update Basic theme CSS files...'
         data_loc = get_bootstrap_data_location().strip()
