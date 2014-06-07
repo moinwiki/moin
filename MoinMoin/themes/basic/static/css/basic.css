@@ -6335,12 +6335,6 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 .moin-thead {
   background-color: silver;
 }
-.moin-viewoptions, .moin-itemactions, .moin-useractions {
-  float: right;
-}
-.list-group-item {
-  padding: 5px 15px;
-}
 @media (min-width: 768px) {
   .container {
     width: auto;
