@@ -24,6 +24,7 @@ from MoinMoin.themes import render_template
 from MoinMoin.signalling.signals import item_modified
 from MoinMoin.util.subscriptions import get_subscribers
 from MoinMoin.util.diff_datastruct import make_text_diff, diff as dict_diff
+from MoinMoin.util.interwiki import url_for_item
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -44,14 +45,14 @@ def msgs():
     """
     _ = lambda x: x
     messages = {
-        ACTION_CREATE: _("The '%(item_name)s' item on '%(wiki_name)s' has been created by %(user_name)s:"),
-        ACTION_MODIFY: _("The '%(item_name)s' item on '%(wiki_name)s' has been modified by %(user_name)s:"),
-        ACTION_RENAME: _("The '%(item_name)s' item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
-        ACTION_COPY: _("The '%(item_name)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"),
-        ACTION_REVERT: _("The '%(item_name)s' item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
-        ACTION_TRASH: _("The '%(item_name)s' item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
-        DESTROY_REV: _("The '%(item_name)s' item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
-        DESTROY_ALL: _("The '%(item_name)s' item on '%(wiki_name)s' has been destroyed by %(user_name)s:"),
+        ACTION_CREATE: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been created by %(user_name)s:"),
+        ACTION_MODIFY: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been modified by %(user_name)s:"),
+        ACTION_RENAME: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
+        ACTION_COPY: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been copied by %(user_name)s:"),
+        ACTION_REVERT: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
+        ACTION_TRASH: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
+        DESTROY_REV: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
+        DESTROY_ALL: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been destroyed by %(user_name)s:"),
     }
     return messages
 
@@ -65,9 +66,9 @@ class Notification(object):
     txt_template = "mail/notification.txt"
     html_template = "mail/notification_main.html"
 
-    def __init__(self, app, item_name, revs, **kwargs):
+    def __init__(self, app, fqname, revs, **kwargs):
         self.app = app
-        self.item_name = item_name
+        self.fqname = fqname
         self.revs = revs
         self.action = kwargs.get('action', None)
         self.content = kwargs.get('content', None)
@@ -81,7 +82,7 @@ class Notification(object):
         if self.action == ACTION_TRASH:
             self.meta = self.revs[0].meta
 
-        kw = dict(item_name=self.item_name, wiki_name=self.wiki_name, user_name=flaskg.user.name0)
+        kw = dict(fqname=unicode(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0, item_url=url_for_item(self.fqname))
         self.notification_sentence = L_(MESSAGES[self.action], **kw)
 
     def get_content_diff(self):
@@ -135,7 +136,7 @@ class Notification(object):
         else:
             revid1 = self.revs[1].revid
             revid2 = self.revs[0].revid
-        diff_rel_url = url_for('frontend.diff', item_name=self.item_name, rev1=revid1, rev2=revid2)
+        diff_rel_url = url_for('frontend.diff', item_name=self.fqname, rev1=revid1, rev2=revid2)
         return urljoin(domain, diff_rel_url)
 
     def render_templates(self, content_diff, meta_diff):
@@ -147,9 +148,9 @@ class Notification(object):
         meta_diff_txt = list(make_text_diff(meta_diff))
         domain = self.app.cfg.interwiki_map[self.app.cfg.interwikiname]
         unsubscribe_url = urljoin(domain, url_for('frontend.subscribe_item',
-                                                  item_name=self.item_name))
+                                                  item_name=self.fqname))
         diff_url = self.generate_diff_url(domain)
-        item_url = urljoin(domain, url_for('frontend.show_item', item_name=self.item_name))
+        item_url = urljoin(domain, url_for('frontend.show_item', item_name=self.fqname))
         if self.comment is not None:
             comment = self.meta["comment"]
         else:
@@ -177,14 +178,14 @@ class Notification(object):
         return txt_template, html_template
 
 
-def get_item_last_revisions(app, item_name):
+def get_item_last_revisions(app, fqname):
     """ Get 2 or less most recent item revisions from the index
 
     :param app: local proxy app
-    :param item_name: the name of the item
+    :param fqname: the fqname of the item
     :return: a list of revisions
     """
-    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(NAME_EXACT, item_name), ]
+    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
     query = And(terms)
     return list(
         flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME],
@@ -192,18 +193,18 @@ def get_item_last_revisions(app, item_name):
 
 
 @item_modified.connect_via(ANY)
-def send_notifications(app, item_name, **kwargs):
+def send_notifications(app, fqname, **kwargs):
     """ Send mail notifications to subscribers on item change
 
     :param app: local proxy app
-    :param item_name: name of the changed item
+    :param fqname: fqname of the changed item
     :param kwargs: key/value pairs that contain extra information about the item
                    required in order to create a notification
     """
     action = kwargs.get('action')
-    revs = get_item_last_revisions(app, item_name) if action not in [
+    revs = get_item_last_revisions(app, fqname) if action not in [
         DESTROY_REV, DESTROY_ALL, ] else []
-    notification = Notification(app, item_name, revs, **kwargs)
+    notification = Notification(app, fqname, revs, **kwargs)
     content_diff = notification.get_content_diff()
     meta_diff = notification.get_meta_diff()
 
@@ -215,8 +216,8 @@ def send_notifications(app, item_name, **kwargs):
     for locale in subscribers_locale:
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
-            subject = L_('[%(moin_name)s] Update of "%(item_name)s" by %(user_name)s',
-                         moin_name=app.cfg.interwikiname, item_name=item_name, user_name=u.name0)
+            subject = L_('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
+                         moin_name=app.cfg.interwikiname, fqname=unicode(fqname), user_name=u.name0)
             subscribers_emails = [subscriber.email for subscriber in subscribers
                                   if subscriber.locale == locale]
             sendmail(subject, txt_msg, to=subscribers_emails, html=html_msg)

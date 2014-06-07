@@ -402,9 +402,9 @@ def presenter(view, add_trail=False, abort404=True):
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
-    item_displayed.send(app._get_current_object(),
-                        item_name=item_name)
     fqname = split_fqname(item_name)
+    item_displayed.send(app._get_current_object(),
+                        fqname=fqname)
     if not fqname.value and fqname.field == NAME_EXACT:
         fqname = fqname.get_root_fqname()
         return redirect(url_for_item(fqname))
@@ -496,7 +496,8 @@ def show_item_meta(item):
 @frontend.route('/+content/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def content_item(item_name, rev):
     """ same as show_item, but we only show the content """
-    item_displayed.send(app, item_name=item_name)
+    fqname = split_fqname(item_name)
+    item_displayed.send(app, fqname=fqname)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -819,7 +820,7 @@ def jfu_server(item_name):
         item = Item.create(item_name)
         revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
-                           item_name=item_name, action=ACTION_SAVE)
+                           fqname=item.fqname, action=ACTION_SAVE)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
