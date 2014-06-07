@@ -458,7 +458,7 @@ class Item(object):
 
     def destroy(self, comment=u'', destroy_item=False):
         action = DESTROY_ALL if destroy_item else DESTROY_REV
-        item_modified.send(app, item_name=self.name, action=action, meta=self.meta,
+        item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
                            content=self.rev.data, comment=comment)
         # called from destroy UI/POST
         if destroy_item:
@@ -613,11 +613,7 @@ class Item(object):
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
                                              )
-        # XXX TODO name might be None here (we have a failing unit test)
-        # maybe this needs to be changed so a fqname is used instead of
-        # a simple name
-        assert name is not None  # fail early
-        item_modified.send(app, item_name=name, action=action)
+        item_modified.send(app, fqname=self.fqname, action=action)
         return newrev.revid, newrev.meta[SIZE]
 
     @property

@@ -18,6 +18,7 @@ from MoinMoin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, I
                                      NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
 from MoinMoin import log
 logging = log.getLogger(__name__)
+from MoinMoin.util.interwiki import CompositeName
 
 
 Subscriber = namedtuple('Subscriber', [ITEMID, NAME, EMAIL, LOCALE])
@@ -32,6 +33,7 @@ def get_subscribers(**meta):
     itemid = meta.get(ITEMID)
     name = meta.get(NAME)
     namespace = meta.get(NAMESPACE)
+    fqname = CompositeName(namespace, ITEMID, itemid)
     tags = meta.get(TAGS)
     terms = []
     if itemid is not None:
@@ -55,7 +57,7 @@ def get_subscribers(**meta):
             if email:
                 from MoinMoin.user import User
                 u = User(uid=user.get(ITEMID))
-                if u.may.read(name):
+                if u.may.read(fqname):
                     locale = user.get(LOCALE, DEFAULT_LOCALE)
                     subscribers.add(Subscriber(user[ITEMID], user[NAME][0], email, locale))
     return subscribers
