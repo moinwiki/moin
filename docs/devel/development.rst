@@ -86,9 +86,14 @@ add more tools, exercise tools
      ./m tests  # Windows: m tests
 
 * install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
+
+  * On Ubuntu 14.04 you need to install "npm" and "nodejs-legacy" (to get the "node" command).
+
 * install stylus::
 
-    sudo npm install stylus -g  # Windows: npm install stylus -g
+    sudo npm install stylus@0.42.2 -g  # Windows: npm install stylus@0.42.2 -g
+    # we need 0.42.2 because with more recent versions, --compress compresses
+    # complete output to 1 line (0.42.2 compresses to 1 line per rule)
     stylus -V  # show version number to prove it works
 * install lessc ("less" below is not a typo)::
 
