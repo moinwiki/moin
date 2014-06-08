@@ -198,7 +198,7 @@ def lookup():
                     ITEMLINKS, ITEMTRANSCLUSIONS, 'refs', ]:
             value = lookup_form[key].value
             if value:
-                if (key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN or key in [NAME_EXACT]):
+                if key in [ITEMID, REVID, USERID, ] and len(value) < crypto.UUID_LEN or key in [NAME_EXACT]:
                     term = Prefix(key, value)
                 elif key == 'refs':
                     term = Or([Term(ITEMLINKS, value), Term(ITEMTRANSCLUSIONS, value)])
@@ -1324,7 +1324,7 @@ def verifyemail():
     success = False
     if u and token and u.validate_recovery_token(token):
         unvalidated_email = u.profile[EMAIL_UNVALIDATED]
-        if (app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email})):
+        if app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email}):
             msg = _('This email is already in use.')
         else:
             if u.disabled:
