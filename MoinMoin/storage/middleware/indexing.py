@@ -69,9 +69,6 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
