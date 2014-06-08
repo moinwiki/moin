@@ -830,5 +830,3 @@ class User(object):
         email = self.profile[EMAIL_UNVALIDATED]
         mailok, msg = sendmail.sendmail(subject, text, to=[email], mail_from=self._cfg.mail_from)
         return mailok, msg
-
-        self._mail_email_verification(email=self.email)
