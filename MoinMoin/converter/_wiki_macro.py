@@ -80,9 +80,9 @@ class ConverterMacro(object):
         if level:
             add_moin_xpointer(u'level', str(level))
         if titlesonly:
-            add_moin_xpointer(u'titlesonly')
+            add_moin_xpointer(u'titlesonly', u'')
         if editlink:
-            add_moin_xpointer(u'editlink')
+            add_moin_xpointer(u'editlink', u'')
 
         if xpointer_moin:
             xpointer.append(u'page:include({0})'.format(u' '.join(xpointer_moin)))
