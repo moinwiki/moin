@@ -18,7 +18,7 @@ $(document).ready(function(){
         });
     }
     $('#moin-search-query').keyup(function() {
-        var allrev = false
+        var allrev = false;
         if($('[name="history"]').prop('checked')){
             allrev = true;
         }
