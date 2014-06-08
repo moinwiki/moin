@@ -826,7 +826,7 @@ class Converter(object):
                     new.extend(item_tag)
                     counter += 1
                 else:
-                    r = self.visit(child)
+                    r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
@@ -862,7 +862,7 @@ class Converter(object):
                     if child.tag.name == 'seglistitem':
                         r = self.visit_docbook_seglistitem(child, labels, depth)
                     else:
-                        r = self.visit(child)
+                        r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
