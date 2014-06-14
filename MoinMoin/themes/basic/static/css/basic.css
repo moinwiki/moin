@@ -6178,10 +6178,6 @@ h6:focus .moin-permalink {
   position: relative;
   display: inline-block;
 }
-.moin-item-wrapper > a:hover {
-  color: link_color;
-  text-decoration: none;
-}
 div.moin-item-wrapper {
   width: 100%;
 }
@@ -6210,8 +6206,9 @@ div.moin-item-wrapper {
 .moin-item-overlay-ul:hover,
 .moin-item-overlay-lr:hover {
   opacity: .8;
-  background-color: #555555;
+  background-color: #e1edf7;
   color: #428bca;
+  text-decoration: none;
 }
 .comment {
   color: #333333;
