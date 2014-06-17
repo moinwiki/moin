@@ -377,7 +377,7 @@ class Converter(object):
         """
         href = elem.get(xlink.href, None)
         attrib = {}
-        whitelist = ['width', 'height', 'alt', 'class']
+        whitelist = ['width', 'height', 'alt', 'class', 'data-href']
         for key in elem.attrib:
             if key.name in whitelist:
                 attrib[key] = elem.attrib[key]
@@ -414,11 +414,12 @@ class Converter(object):
             else:
                 # is an object
                 new_elem = html.object(attrib=attrib)
-                if new_elem.attrib.get(html.alt):
-                    new_elem.append(new_elem.attrib.get(html.alt))
-                    del new_elem.attrib[html.alt]
-                else:
-                    new_elem.append(alt)
+            # alt attr is invalid within object, audio, and video tags , append alt text as a child
+            if new_elem.attrib.get(html.alt):
+                new_elem.append(new_elem.attrib.get(html.alt))
+                del new_elem.attrib[html.alt]
+            else:
+                new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, 'scheme', None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
