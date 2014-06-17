@@ -29,6 +29,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 from MoinMoin.util.tree import moin_page, xlink, docbook, xml, html
+from MoinMoin.converter.html_out import mark_item_as_transclusion
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -173,21 +174,23 @@ class Converter(object):
     # admonitions in this list, into the admonition element of the DOM Tree.
     admonition_tags = set(['attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'])
 
-    # DocBook can handle three kind of media: audio, image, video. Here
-    # is an helper dictionary to process such of element.
+    # DocBook can handle three kinds of media: audio, image, video.
+    # TODO: a media format attribute is optional, e.g.: <imagedata format="jpeg" fileref="jpeg.jpg"/>
+    #     XXX: quality of supported formats list is suspect, see below
     media_tags = {
+        # <tagname>: (<formats list>, <child tagname>, <mime type>)
         'audioobject': (
-            ['wav', 'mp3', 'ogg'],
+            ['x-wav', 'mpeg', 'ogg', 'webm'],  # XXX: none of these are in http://docbook.org/tdg/en/html/audiodata.html
             'audiodata',
             'audio/',
         ),
         'imageobject': (
-            ['gif', 'png', 'jpg', 'png'],
+            ['gif', 'png', 'jpeg', 'jpg', 'svg'],  # selected from http://docbook.org/tdg/en/html/imagedata.html
             'imagedata',
             'image/',
         ),
         'videoobject': (
-            ['ogg', 'avi', 'mp4'],
+            ['ogg', 'webm', 'mp4'],  # XXX: none of these are in http://docbook.org/tdg/en/html/videodata.html
             'videodata',
             'video/',
         )
@@ -380,10 +383,6 @@ class Converter(object):
         if element.tag.name in self.simple_tags:
             return self.visit_simple_tag(element, depth)
 
-        # We have a media element
-        # if element.tag.name in self.media_tags:
-        #    return self.visit_data_object(element, depth)
-
         # We should ignore this element
         if element.tag.name in self.ignored_tags:
             logging.warning("Ignored tag:{0}".format(element.tag.name))
@@ -405,30 +404,29 @@ class Converter(object):
 
     def visit_data_object(self, element, depth):
         """
-        We need to determine which object we can display.
-        If we are not able to display an object,
-        we will try to display a text.
-        TODO: See for a preference list between image, data, audio
+        Process a mediaobject element. Possible child tags are videoobject, audioobject, imageobject,
+        caption, objectinfo, and textobject.
+
+        <mediaobject><videoobject><videodata fileref="video.mp4"/></videoobject></mediaobject>
         """
-        prefered_format, data_tag, mimetype = ('', '', '')
         object_data = []
         text_object = []
         caption = []
         object_element = ''
         for child in element:
             if isinstance(child, ET.Element):
-                if child.tag.name in self.media_tags:
-                    # XXX: Check the spec to be sure that object tag have only one child.
-                    # TODO: Better way to do it
-                    prefered_format, data_tag, mimetype = self.media_tags[child.tag.name]
+                if child.tag.name in self.media_tags:  # audioobject, imageobject, videoobject
+                    preferred_format, data_tag, mimetype = self.media_tags[child.tag.name]
                     object_element = child
                     for grand_child in child:
-                        if isinstance(grand_child, ET.Element):
+                        if isinstance(grand_child, ET.Element) and grand_child.tag.name == data_tag:
+                            # capture audiodata, imagedata, or videodata tags
                             object_data.append(grand_child)
                 if child.tag.name == 'caption':
                     caption = self.do_children(child, depth + 1)[0]
                 if child.tag.name == 'textobject':
                     text_object = child
+                # we ignore objectinfo tags
         return self.visit_data_element(object_element, depth, object_data, text_object, caption)
 
     def visit_data_element(self, element, depth, object_data, text_object, caption):
@@ -438,48 +436,58 @@ class Converter(object):
         with the content of text_object.
         """
         attrib = {}
-        prefered_format, data_tag, mimetype = self.media_tags[element.tag.name]
+        preferred_format, data_tag, mimetype = self.media_tags[element.tag.name]
         if not object_data:
             if not text_object:
                 return
             else:
-                children = self.do_children(child, depth + 1)[0]
-                return self.new(moin_page.p, attrib={},
-                                children=children)
+                children = self.do_children(element, depth + 1)
+                return self.new(moin_page.p, attrib={}, children=children)
         # We try to determine the best object to show
-        object_to_show = None
         for obj in object_data:
-            format = obj.get('format')
+            format = obj.get('format')  # format is optional: <imagedata format="jpeg" fileref="jpeg.jpg"/>
             if format:
                 format = format.lower()
-                if format in prefered_format:
+                if format in preferred_format:
                     object_to_show = obj
                     break
+                else:
+                    # unsupported format
+                    object_to_show = None
             else:
-                # XXX: Maybe we could add some verification over the
-                #     extension of the file
+                # XXX: Maybe we could add some verification over the extension of the file
                 object_to_show = obj
 
-        # If we could not find any suitable object, we return
-        # the text replacement.
-        if not object_to_show:
-            children = self.do_children(child, depth + 1)[0]
-            return self.new(moin_page.p, attrib={},
-                            children=children)
+        if object_to_show is None:
+            # we could not find any suitable object, return the text_object replacement.
+            children = self.do_children(text_object, depth + 1)
+            return self.new(moin_page.p, attrib={}, children=children)
 
         href = object_to_show.get('fileref')
         if not href:
             # We could probably try to use entityref,
             # but at this time we won't support it.
             return
-        attrib[xlink.href] = href
+        attrib[html.alt] = href
+        attrib[xlink.href] = '+get/' + href
         format = object_to_show.get('format')
         if format:
             format = format.lower()
             attrib[moin_page('type')] = ''.join([mimetype, format])
         else:
             attrib[moin_page('type')] = mimetype
-        return ET.Element(moin_page.object, attrib=attrib)
+        align = object_to_show.get('align')
+        if align and align in set(['left', 'center', 'right', 'top', 'middle', 'bottom']):
+            attrib[html.class_] = align
+
+        # return object tag, html_out.py will convert to img, audio, or video based on type attr
+        ret = ET.Element(moin_page.object, attrib=attrib)
+        ret = mark_item_as_transclusion(ret, href)
+        if caption:
+            caption = self.new(moin_page.span, attrib={moin_page.class_: 'db-caption'}, children=[caption])
+            return self.new(moin_page.span, attrib={}, children=[ret, caption])
+        else:
+            return ret
 
     def visit_docbook_admonition(self, element, depth):
         """
@@ -499,7 +507,7 @@ class Converter(object):
         <tag.name> --> <div html:class="db-tag.name">
         """
         attrib = {}
-        key = html('class')
+        key = html.class_
         attrib[key] = ''.join(['db-', element.tag.name])
         return self.new_copy(moin_page.div, element,
                              depth, attrib=attrib)
@@ -540,7 +548,7 @@ class Converter(object):
         However, it is still semantic, so we call it emphasis and strong.
         """
         for key, value in element.attrib.iteritems():
-            if key.name == 'role' and value == 'strong':
+            if key.name == 'role' and value == 'bold':
                 return self.new_copy(moin_page.strong, element,
                                      depth, attrib={})
         return self.new_copy(moin_page.emphasis, element,
@@ -601,7 +609,7 @@ class Converter(object):
         <informalequation> --> <div html:class="equation">
         """
         attrib = {}
-        attrib[html('class')] = 'db-equation'
+        attrib[html.class_] = 'db-equation'
         return self.new_copy(moin_page('div'), element,
                              depth, attrib=attrib)
 
@@ -610,7 +618,7 @@ class Converter(object):
         <informalexample> --> <div html:class="example">
         """
         attrib = {}
-        attrib[html('class')] = 'db-example'
+        attrib[html.class_] = 'db-example'
         return self.new_copy(moin_page('div'), element,
                              depth, attrib=attrib)
 
@@ -619,7 +627,7 @@ class Converter(object):
         <informalfigure> --> <div html:class="figure">
         """
         attrib = {}
-        attrib[html('class')] = 'db-figure'
+        attrib[html.class_] = 'db-figure'
         return self.new_copy(moin_page('div'), element,
                              depth, attrib=attrib)
 
@@ -628,7 +636,7 @@ class Converter(object):
         For some specific tags (defined in inline_tags)
         We just return <span element="tag.name">
         """
-        key = html('class')
+        key = html.class_
         attrib = {}
         attrib[key] = ''.join(['db-', element.tag.name])
         return self.new_copy(moin_page.span, element,
@@ -645,7 +653,7 @@ class Converter(object):
 
     def visit_docbook_inlinemediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html('class'): 'db-inlinemediaobject'}
+        attrib = {html.class_: 'db-inlinemediaobject'}
         return self.new(moin_page.span, attrib=attrib,
                         children=[data_element])
 
@@ -686,13 +694,13 @@ class Converter(object):
         """
         <literallayout> --> <blockcode html:class="db-literallayout">
         """
-        attrib = {html('class'): 'db-literallayout'}
+        attrib = {html.class_: 'db-literallayout'}
         return self.new_copy(moin_page.blockcode, element,
                              depth, attrib=attrib)
 
     def visit_docbook_mediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html('class'): 'db-mediaobject'}
+        attrib = {html.class_: 'db-mediaobject'}
         return self.new(moin_page.div, attrib=attrib,
                         children=[data_element])
 
@@ -959,9 +967,9 @@ class Converter(object):
         attrib = {}
         children = []
         if class_attribute:
-            attrib[html('class')] = ''.join(['db-tag-', class_attribute])
+            attrib[html.class_] = ''.join(['db-tag-', class_attribute])
         else:
-            attrib[html('class')] = 'db-tag'
+            attrib[html.class_] = 'db-tag'
         if namespace_attribute:
             namespace_str = ''.join(['{', namespace_attribute, '}'])
             children.append(namespace_str)
@@ -970,24 +978,28 @@ class Converter(object):
 
     def visit_docbook_trademark(self, element, depth):
         """
-        Depending of the trademark class, a specific entities is added
-        at the end of the string.
-        <trademark> --> <span element="trademark">
+        Depending of the trademark class, a specific entities is added to the string.
+
+        Docbook supports 4 types of trademark: copyright, registered, trade (mark), and service (mark).
+        <trademark> --> <span class="db-trademark">
         """
-        trademark_entities = {'copyright': '&copy;',
-                              'registred': '&reg;',
-                              'trade': '&trade;',
+        trademark_entities = {'copyright': u'\u00a9 ',
+                              'registered': u'\u00ae',
+                              'trade': u'\u2122',
         }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
         if trademark_class in trademark_entities:
-            children.append(trademark_entities[trademark_class])
+            if trademark_class == 'copyright':
+                children.insert(0, trademark_entities[trademark_class])
+            else:
+                children.append(trademark_entities[trademark_class])
         elif trademark_class == 'service':
             sup_attrib = {moin_page('baseline-shift'): 'super'}
             service_mark = self.new(moin_page.span, attrib=sup_attrib,
                                     children=['SM'])
             children.append(service_mark)
-        attrib = {html('class'): 'db-trademark'}
+        attrib = {html.class_: 'db-trademark'}
         return self.new(moin_page.span, attrib=attrib, children=children)
 
     def visit_docbook_td(self, element, depth):

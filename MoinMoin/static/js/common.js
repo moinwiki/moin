@@ -96,7 +96,8 @@ MoinMoin.prototype.toggleTransclusionOverlays = function () {
 MoinMoin.prototype.initTransclusionOverlays = function () {
     "use strict";
     var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, classes,
-        rightArrow = '\u2192';
+        rightArrow = '\u2192',
+        mediaTags = ['OBJECT', 'IMG', 'AUDIO', 'VIDEO' ]
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
     transclusions.each(function (index) {
@@ -118,7 +119,7 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
                 elem = $(elem).parent()[0];
             }
             // copy user specified classes from img/object tag to wrapper
-            if (elem.tagName === 'OBJECT') {
+            if ($.inArray(elem.tagName, mediaTags) > -1) {
                 // do not copy classes starting with moin-
                 classes = $(elem).attr('class');
                 classes = classes.split(" ").filter(function(c) {
@@ -126,6 +127,9 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
                 });
                 $(wrapper).addClass(classes.join(' '));
             } else {
+                // TODO: try to eliminate above else by changing include.py to
+                //    do: <img class="moin-transclusion"...
+                //    not: <span class="moin-transclusion"... <img...
                 // copy all classes from img tags
                 $(wrapper).addClass($(elem).find(">:first-child").attr('class'));
             }
