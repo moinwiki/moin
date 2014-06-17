@@ -507,11 +507,10 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-creditlogos li{display:inline-block;*display:inline;zoom:1;margin:10px 0 10px 10px}
 .moin-item-wrapper{position:relative;display:inline-block}
 div.moin-item-wrapper{width:100%}
-.moin-item-wrapper > a:hover{color:#1f9ae0;text-decoration:none}
 a.moin-item-overlay-ul,a.moin-item-overlay-lr{display:none;position:absolute;color:transparent;background-color:transparent;font-size:120%;font-weight:bold;margin:0;opacity:.5;padding:1px;border-color:#00f;border-style:double}
 .moin-item-overlay-ul{top:-4px;left:-4px;border-width:3px 0 0 3px}
 .moin-item-overlay-lr{bottom:-4px;right:-4px;border-width:0 3px 3px 0}
-.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;background-color:#eef1f6;color:#1f9ae0}
+.moin-item-overlay-ul:hover,.moin-item-overlay-lr:hover{opacity:.8;background-color:#eef1f6;color:#1f9ae0;text-decoration:none}
 div.moin-item-wrapper,div.moin-item-wrapper > div,div.moin-item-wrapper > div > p:first-child,div.moin-item-wrapper > div > p:last-child{margin:0}
 div.moin-item-wrapper > div > p:first-child ~ p:last-child{margin-top:1em}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
