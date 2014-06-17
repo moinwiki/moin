@@ -20,7 +20,7 @@ from whoosh.query import Term
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
-                            Reference, BackReference, SelectSubmit)
+                            Reference, BackReference, SelectSubmit, Text)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
                                      SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY)
@@ -34,7 +34,7 @@ ITEMTYPE_TICKET = u'ticket'
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
 
-Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
+Rating = SmallNatural.using(optional=False).with_properties(lower=1, upper=5)
 
 
 def get_itemid_short_summary(rev):
@@ -63,7 +63,7 @@ OptionalUserReference = Reference.to(
 
 
 class TicketMetaForm(Form):
-    summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
+    summary = Text.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))

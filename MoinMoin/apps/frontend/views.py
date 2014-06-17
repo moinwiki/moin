@@ -56,7 +56,7 @@ from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.namespaces import *
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
@@ -2197,6 +2197,37 @@ def template(filename):
         response.cache_control.max_age = cache_timeout
         response.expires = int(time.time() + cache_timeout)
     return response
+
+
+@frontend.route('/+tickets', methods=['GET', 'POST'])
+def tickets():
+    """
+    Show a list of ticket items
+    """
+    if request.method == 'POST':
+        query = request.form['q']
+        status = request.form['status']
+    else:
+        query = None
+        status = u'open'
+    idx_name = ALL_REVS
+    qp = flaskg.storage.query_parser([TAGS, SUMMARY, CONTENT, ITEMID], idx_name=idx_name)
+    terms = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
+    if query:
+        terms.append(qp.parse(query))
+    if status == u'open':
+        terms.append(Term(CLOSED, False))
+    elif status == u'closed':
+        terms.append(Term(CLOSED, True))
+    q = And(terms)
+
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        results = searcher.search(q, limit=None)
+        return render_template('tickets.html',
+                               results=results,
+                               query=query,
+                               status=status,
+        )
 
 
 @frontend.errorhandler(404)

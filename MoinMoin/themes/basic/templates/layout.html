@@ -116,18 +116,20 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-lg-3">
-                                    <form class="moin-navbar-form" action="{{ url_for('frontend.search') }}" method="get" role="search">
-                                        <div class="input-group">
-                                            <input name='q' type="text" class="form-control" placeholder="Search ...">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="icon-search"></i>
-                                                </button>
+                                {% if search_form %}
+                                    <div class="col-lg-3">
+                                        <form class="moin-navbar-form" action="{{ url_for('frontend.search') }}" method="get" role="search">
+                                            <div class="input-group">
+                                                <input name='q' type="text" class="form-control" placeholder="Search ...">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="icon-search"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </div>
                         </nav> <!-- navbar-inverse-->
                     </div> <!-- column-12 -->
