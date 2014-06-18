@@ -6371,13 +6371,14 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
   text-shadow: 0 1px 0 #fff;
   border: 1px solid transparent;
 }
-.ticket-query-button.active, .ticket-query-button:hover {
-  background: -webkit-linear-gradient(top,#ccc 0,#ddd 13%);
+.ticket-query-button.active,
+.ticket-query-button:hover {
+  background: -webkit-linear-gradient(top, #cccccc 0, #dddddd 13%);
   color: #333;
   box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 3px;
 }
 .moin-ticketsearch-form {
- display: inline;
+  display: inline;
 }
