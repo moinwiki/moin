@@ -36,4 +36,6 @@ $(document).ready(function(){
         }
     }
 
+    $("#ticket-list").tablesorter();
+
 });
