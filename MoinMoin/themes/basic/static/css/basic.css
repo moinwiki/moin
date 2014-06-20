@@ -6357,9 +6357,10 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
   position: absolute;
 }
 #ticket-list thead th:hover {
-  background: #e8e8e8;
+  background-color: #e8e8e8;
 }
-#ticket-list tr td {
+#ticket-list tr td,
+#ticket-list thead th {
   cursor: pointer;
 }
 #ticket-list tr td:first-child a {
@@ -6381,4 +6382,15 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 }
 .moin-ticketsearch-form {
   display: inline;
+}
+.tablesorter-header {
+  background-image: url('../img/bg.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.tablesorter-headerAsc {
+  background-image: url('../img/asc.png');
+}
+.tablesorter-headerDesc {
+  background-image: url('../img/desc.png');
 }

@@ -83,5 +83,6 @@
 {% endblock %}
 {% block body_scripts %}
 {{ super() }}
+    <script src="{{ url_for('serve.files', name='jquery_tablesorter', filename='jquery.tablesorter.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tickets.js') }}"></script>
 {% endblock %}
