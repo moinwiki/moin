@@ -13,6 +13,7 @@ MoinMoin - Media Wiki input converter
 from __future__ import absolute_import, division
 
 import re
+from htmlentitydefs import name2codepoint
 
 from werkzeug import url_encode
 
@@ -25,7 +26,6 @@ from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import html, moin_page, xlink
 
 from ._args import Arguments
-from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
@@ -98,16 +98,6 @@ class Converter(ConverterMacro):
         root = moin_page.page(children=(body, ))
 
         return root
-
-    block_comment = r"""
-        (?P<comment>
-            ^ \#\#
-        )
-    """
-
-    def block_comment_repl(self, _iter_content, stack, comment):
-        # A comment also ends anything
-        stack.clear()
 
     block_head = r"""
         (?P<head>
@@ -448,7 +438,6 @@ class Converter(ConverterMacro):
                 c = int(entity[2:-1], 10)
             c = unichr(c)
         else:
-            from htmlentitydefs import name2codepoint
             c = unichr(name2codepoint.get(entity[1:-1], 0xfffe))
         stack.top_append(c)
 
@@ -494,25 +483,30 @@ class Converter(ConverterMacro):
 
     inline_strike = r"""
         (?P<strike>
-           (?P<strike_begin>
-           \<del\>
-           |
            \<s\>
-           )
-           |
-           (?P<strike_end>
-           \<\/del\>
            |
            \<\/s\>
-           )
         )
     """
 
-    def inline_strike_repl(self, stack, strike, strike_begin=None, strike_end=None):
-        if strike_begin is not None:
-            attrib = {moin_page.text_decoration: 'line-through'}
-            stack.push(moin_page.span(attrib=attrib))
-        elif strike_end is not None:
+    def inline_strike_repl(self, stack, strike):
+        if not stack.top_check('s'):
+            stack.push(moin_page.s())
+        else:
+            stack.pop()
+
+    inline_delete = r"""
+        (?P<delete>
+           \<del\>
+           |
+           \<\/del\>
+        )
+    """
+
+    def inline_delete_repl(self, stack, delete):
+        if not stack.top_check('del'):
+            stack.push(moin_page.del_())
+        else:
             stack.pop()
 
     inline_subscript = r"""
@@ -550,9 +544,22 @@ class Converter(ConverterMacro):
     """
 
     def inline_underline_repl(self, stack, underline):
-        if not stack.top_check('span'):
-            attrib = {moin_page.text_decoration: 'underline'}
-            stack.push(moin_page.span(attrib=attrib))
+        if not stack.top_check('u'):
+            stack.push(moin_page.u())
+        else:
+            stack.pop()
+
+    inline_insert = r"""
+        (?P<insert>
+            \<ins\>
+            |
+            \<\/ins\>
+        )
+    """
+
+    def inline_insert_repl(self, stack, insert):
+        if not stack.top_check('ins'):
+            stack.push(moin_page.ins())
         else:
             stack.pop()
 
@@ -763,7 +770,6 @@ class Converter(ConverterMacro):
     block = (
         block_line,
         block_table,
-        block_comment,
         block_head,
         block_separator,
         # block_macro,
@@ -786,9 +792,11 @@ class Converter(ConverterMacro):
         inline_footnote,
         # inline_size,
         inline_strike,
+        inline_delete,
         inline_subscript,
         inline_superscript,
         inline_underline,
+        inline_insert,
         inline_entity,
     )
     inline_re = re.compile('|'.join(inline), re.X | re.U)
@@ -885,6 +893,7 @@ class Converter(ConverterMacro):
                 if pre_text:
                     if len(tags):
                         tags[-1].text.append(pre_text)
+                        post_line = []
                     else:
                         post_line = [pre_text]
                 else:

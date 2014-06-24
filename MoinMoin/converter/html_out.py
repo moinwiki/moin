@@ -233,6 +233,9 @@ class Converter(object):
     def visit_moinpage_code(self, elem):
         return self.new_copy(html.code, elem)
 
+    def visit_moinpage_del(self, elem):
+        return self.new_copy(html.del_, elem)
+
     def visit_moinpage_div(self, elem):
         return self.new_copy(html.div, elem)
 
@@ -280,6 +283,9 @@ class Converter(object):
             return html.span(children=(alt, ))
 
         return html.span()
+
+    def visit_moinpage_ins(self, elem):
+        return self.new_copy(html.ins, elem)
 
     def visit_moinpage_line_break(self, elem):
         # TODO: attributes?
@@ -529,6 +535,9 @@ class Converter(object):
         # If no any attributes is handled by our converter, just return span
         return self.new_copy(html.span, elem)
 
+    def visit_moinpage_s(self, elem):
+        return self.new_copy(html.s, elem)
+
     def visit_moinpage_strong(self, elem):
         return self.new_copy(html.strong, elem)
 
@@ -556,6 +565,9 @@ class Converter(object):
 
     def visit_moinpage_table_row(self, elem):
         return self.new_copy(html.tr, elem)
+
+    def visit_moinpage_u(self, elem):
+        return self.new_copy(html.u, elem)
 
 
 class SpecialId(object):
