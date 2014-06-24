@@ -1,0 +1,50 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+<h2>{{ _('Moin Login') }}</h2>
+<div class="row">
+    <div class="col-lg-4">
+        {{ forms.render_errors(form) }}
+
+        {% if 'username' in login_inputs or 'password' in login_inputs %}
+            {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+
+            {% if 'username' in login_inputs %}
+                <div class="form-group">
+                    {{ gen.label(form['username']) }}
+                    {{ gen.input(form['username'], type="text", class="form-control") }}
+                </div>
+            {% endif %}
+            {% if 'password' in login_inputs %}
+                <div class="form-group">
+                    {{ gen.label(form['password']) }}
+                    {{ gen.input(form['password'], type="password", class="form-control") }}
+                </div>
+            {% endif %}
+
+            {{ forms.render(form['submit']) }}
+
+            <div class="form-group">
+                {{ forms.render_submit(form, class='btn btn-primary') }}
+            </div>
+            {{ gen.form.close() }}
+        {% endif %}
+
+        {% if 'openid' in login_inputs %}
+            <h2>{{ _('OpenID Login') }}</h2>
+
+            {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+
+            {{ forms.render(form['openid']) }}
+
+            {{ forms.render(form['submit']) }}
+            <div class="form-group">
+                {{ forms.render_submit(form, class='btn btn-primary') }}
+            </div>
+            {{ gen.form.close() }}
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

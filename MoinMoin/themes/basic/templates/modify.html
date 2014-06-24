@@ -1,0 +1,96 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+{% from theme("modify_meta.html") import basic_meta_editor %}
+{% import theme("itemviews.html") as itemviews with context %}
+{% import theme(form['content_form'].template) as content_template %}
+{% set extra_head = content_template.extra_head %}
+{%if content_template.basic_data_editor is defined%}
+    {% set data_editor = content_template.basic_data_editor %}
+{%else%}
+    {% set data_editor = content_template.data_editor %}
+{%endif%}
+{% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
+
+{% block head %}
+    {{ super() }}
+    {% if extra_head %}
+        {{ extra_head() }}
+    {% endif %}
+{% endblock %}
+
+{% block views %}
+{{ itemviews }}
+{% endblock %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<div id="moin-modify" class="moin-form">
+    <div id="checkmodifyview"> </div>
+    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+    {{ forms.render_errors(form) }}
+    {{ forms.render_errors(form['meta_form']['acl']) }}
+    {#
+       Workaround:
+       For *Draw content, hide submit button and form['comment'], since *Draw
+       POSTs originate from their respective applets.
+    #}
+    <ul class="moin-nav nav-tabs moin-shadow">
+        <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
+        <li><a href="#meta" data-toggle="tab">Edit Meta</a></li>
+        <li><a href="#acl" data-toggle="tab">Edit ACL</a></li>
+        <li><a href="#help" data-toggle="tab">Help</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="editor">
+            {{ data_editor(form['content_form'], item_name) }}
+        </div>
+        <div class="tab-pane active" id="meta">
+            <div class="row">
+                <div class="col-lg-6">
+                    {{ basic_meta_editor(form['meta_form']) }}
+                </div>
+                {% set field = form['extra_meta_text'] %}
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ gen.label(field) }}
+                        {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='form-control') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane active" id="acl">
+            <div class="row">
+                {% set field = form['meta_form']['acl'] %}
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ gen.label(field) }}
+                        {{ gen.textarea(field, rows='1', class='form-control') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane active" id="help">
+            {% if form['content_form'].help %}
+                <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
+            {% endif %}
+        </div>
+    </div>
+    {#
+    {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
+    <br />
+    {{ forms.render_errors(form['meta_text']) }}
+    #}
+    {% if not form['content_form'].is_draw %}
+    <div class="form-group">
+        {{ forms.render_textcha(gen, form) }}
+        {{ gen.input(form['comment'], type="text", class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ forms.render_submit(form, value='Save', class='btn btn-primary', id='moin-save-text-button') }}
+    </div>
+    {% endif %}
+
+    {{ gen.form.close() }}
+</div>
+{% endblock %}
