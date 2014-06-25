@@ -306,10 +306,9 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
-.searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{margin-left:15px;margin-top:0}
-.searchresults .foundtext{margin-left:15px;margin-top:0}
-p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
+.searchresults .searchhitinfobar{margin-top:0;display:inline}
+.searchresults .foundtext{margin-top:0}
+p.searchstats{font-size:.8em;width:100%;padding-left:14px}
 p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .searchpages{margin-left:auto;margin-right:auto}
 .searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#000;font-weight:bold;font-size:1.05em}
@@ -520,6 +519,9 @@ html,body{height:100%}
 #moin-main-wrapper{position:relative;min-height:100%}
 #moin-page{padding-bottom:105px}
 #moin-footer{position:absolute;width:100%;bottom:0}
+.moin-search-option-bar{width:75%;padding-left:14px;}
+.moin-search-option-bar span{float:right;padding:10px}
+.moin-suggestions{padding-left:14px}
 @media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-content-data{margin:0;padding:0}
 a,a:visited,a.moin-nonexistent{color:#939393;text-decoration:none}

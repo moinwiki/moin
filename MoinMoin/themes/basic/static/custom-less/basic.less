@@ -317,6 +317,17 @@ html, body {
   position: absolute;
   width: 100%;
 }
+.moin-search-option-bar {
+  padding-left: 10px;
+  border: 1px solid @gray;
+  background-color: @search_option_bar_color;
+  color: @search_option_bar_text_color;
+  border-radius: 5px;
+  > span {
+    float: right;
+    padding: 10px;
+  }
+}
 // set min-width to prevent search box from floating off window to right
 @media (min-width: 768px) {
   .container {

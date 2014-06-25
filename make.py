@@ -378,7 +378,7 @@ class Commands(object):
             data_loc = '{0};{1}'.format(bootstrap_loc, pygments_loc)
         else:
             data_loc = '{0}:{1}'.format(bootstrap_loc, pygments_loc)
-        include = '--include-path=' + data_loc        
+        include = '--include-path=' + data_loc
         command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} basic.less ../css/basic.css'.format(SEP, include)
         result = subprocess.call(command, shell=True)
         if result == 0:
