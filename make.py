@@ -188,6 +188,12 @@ def get_bootstrap_data_location():
     return subprocess.check_output(command, shell=True)
 
 
+def get_pygments_data_location():
+    """Return the virtualenv site-packages/xstatic/pkg/pygments/data location."""
+    command = ACTIVATE + 'python -c "from xstatic.pkg.pygments import BASE_DIR; print BASE_DIR"'
+    return subprocess.check_output(command, shell=True)
+
+
 class Commands(object):
     """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
@@ -350,10 +356,12 @@ class Commands(object):
         """run Stylus and lessc to update CSS files"""
         print 'Running Stylus to update Modernized theme CSS files...'
         # Note: we use / here to specify directory offsets; this works as used below in Windows XP, 2000, 7, 8
-        command = 'cd {0}{1}stylus --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP)
+        bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
+        pygments_loc = get_pygments_data_location().strip() + '/css'
+        command = 'cd {0}{1}stylus --include {2} --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP, pygments_loc)
         result = subprocess.call(command, shell=True)
         print 'Running Stylus to update Foobar theme CSS files...'
-        command = 'cd {0}{1} stylus --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP)
+        command = 'cd {0}{1} stylus --include {2} --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP, pygments_loc)
         result2 = subprocess.call(command, shell=True)
         if result == 0 and result2 == 0:
             print 'Success: Modernized and Foobar CSS files updated.'
@@ -366,8 +374,11 @@ class Commands(object):
             print 'Error: failure running coding_std.py against modernized css files'
 
         print 'Running lessc to update Basic theme CSS files...'
-        data_loc = get_bootstrap_data_location().strip()
-        include = '--include-path=' + data_loc + '/less'
+        if WINDOWS_OS:
+            data_loc = '{0};{1}'.format(bootstrap_loc, pygments_loc)
+        else:
+            data_loc = '{0}:{1}'.format(bootstrap_loc, pygments_loc)
+        include = '--include-path=' + data_loc        
         command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} basic.less ../css/basic.css'.format(SEP, include)
         result = subprocess.call(command, shell=True)
         if result == 0:
