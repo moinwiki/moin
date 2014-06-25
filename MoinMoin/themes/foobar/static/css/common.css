@@ -449,5 +449,9 @@ ins{background-color:inherit;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
 .moin-integer{text-align:right;padding-right:1em;width:2%}
+html,body{height:100%}
+#moin-main-container{min-height:100%;position:relative}
+#moin-main-box{margin-bottom:60px}
+#moin-footer{position:absolute;bottom:5px;width:98%}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-searchform{display:none}
 }

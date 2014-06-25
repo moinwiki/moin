@@ -6607,18 +6607,36 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 .moin-thead {
   background-color: silver;
 }
+html,
+body {
+  height: 100%;
+}
+.moin-content {
+  padding-bottom: 100px;
+}
+.moin-footer {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
 @media (min-width: 768px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }
 @media (min-width: 992px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }
 @media (min-width: 1200px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }
