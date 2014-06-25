@@ -6619,6 +6619,17 @@ body {
   position: absolute;
   width: 100%;
 }
+.moin-search-option-bar {
+  padding-left: 10px;
+  border: 1px solid #555555;
+  background-color: #1b436d;
+  color: #c8ddf1;
+  border-radius: 5px;
+}
+.moin-search-option-bar > span {
+  float: right;
+  padding: 10px;
+}
 @media (min-width: 768px) {
   .container {
     min-height: 100%;

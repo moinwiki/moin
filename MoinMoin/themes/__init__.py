@@ -23,9 +23,10 @@ logging = log.getLogger(__name__)
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
+from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from MoinMoin.search import SearchForm
-from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname
+from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.clock import timed
@@ -573,24 +574,6 @@ CONTENTTYPE_SHORTEN = {
 }
 
 
-# TODO: Update dictionary with more content-types
-def shorten_content_type(contenttype):
-    """
-    Shorten content-types
-
-    Shortens the content-type to terms that normal users understand.
-
-    :param name: contenttype, unicode
-    :rtype: unicode
-    :returns: shortened version of contenttype
-    """
-    ctype = contenttype.split(';')[0]
-    if ctype in CONTENTTYPE_SHORTEN:
-        return CONTENTTYPE_SHORTEN[ctype]
-    else:
-        return "Unknown"
-
-
 def shorten_id(name, length=7):
     """
     Shorten IDs to specified length
@@ -639,13 +622,24 @@ def utctimestamp(dt):
     return timegm(dt.timetuple())
 
 
+def shorten_ctype(contenttype):
+    """
+    Returns user understandable terms for contenttype.
+
+    :param contenttype: contains the long form of the contenttype
+    :rtype: unicode
+    :returns: user understandable version of contenttype
+    """
+    return CONTENTTYPES_MAP.get(contenttype, "Unknown")
+
+
 def setup_jinja_env():
     app.jinja_env.filters['shorten_fqname'] = shorten_fqname
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
     app.jinja_env.filters['shorten_id'] = shorten_id
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     app.jinja_env.filters['json_dumps'] = dumps
-    app.jinja_env.filters['shorten_ctype'] = shorten_content_type
+    app.jinja_env.filters['shorten_ctype'] = shorten_ctype
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
@@ -664,6 +658,7 @@ def setup_jinja_env():
         'cfg': app.cfg,
         'item_name': u'@NONAMEGIVEN',  # XXX can we just use u'' ?
         'url_for_item': url_for_item,
+        'get_fqname': get_fqname,
         'get_editor_info': lambda meta: get_editor_info(meta),
         'utctimestamp': lambda dt: utctimestamp(dt),
         'gen': make_generator(),

@@ -354,10 +354,9 @@ a.moin-nonexistent:active{color:#ff2727}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
-.searchresults p.info{margin-left:2%}
-.searchresults .searchhitinfobar{margin-left:15px;margin-top:0}
-.searchresults .foundtext{margin-left:15px;margin-top:0}
-p.searchstats{font-size:.8em;text-align:right;width:100%;padding:2px}
+.searchresults .searchhitinfobar{margin-top:0;display:inline}
+.searchresults .foundtext{margin-top:0}
+p.searchstats{font-size:.8em;width:100%;padding-left:14px}
 p.searchhint{background-color:#f4f4f4;border:1px solid #9d9d9b;padding:2px}
 .searchpages{margin-left:auto;margin-right:auto;}
 .searchpages tr,.searchpages td{border:0;padding:5px;margin:0;text-align:center;vertical-align:middle;color:#000;font-weight:bold;font-size:1.05em}
@@ -453,5 +452,8 @@ html,body{height:100%}
 #moin-main-container{min-height:100%;position:relative}
 #moin-main-box{margin-bottom:60px}
 #moin-footer{position:absolute;bottom:5px;width:98%}
+.moin-search-option-bar{width:75%;padding-left:14px;}
+.moin-search-option-bar span{float:right;padding:10px}
+.moin-suggestions{padding-left:14px}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-searchform{display:none}
 }
