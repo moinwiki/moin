@@ -34,7 +34,7 @@ ITEMTYPE_TICKET = u'ticket'
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
 
-Rating = SmallNatural.using(optional=False).with_properties(lower=1, upper=5)
+Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
 
 
 def get_itemid_short_summary(rev):

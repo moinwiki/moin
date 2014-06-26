@@ -49,23 +49,23 @@
                 </a>
             <td>
                 <a href="{{  url_for_item(result['itemid'], field='itemid', namespace=result['namespace'])}}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid'])}}">
-                    {{ result['summary'][:50] }}
+                    {{ result['summary'] }}
                 </a>
             </td>
-            <td title="{{ _('Filter by status: %(status)s', status='Closed' if result['closed'] else 'Open') }}">
+            <td>
                 {{ _("Closed") if result['closed'] else _("Open") }}
             </td>
-            <td title="{{ _('Filter by effort: %(effort)d', effort=result['effort']) }}">
-                {{ result['effort'] }}
+            <td>
+                {{ result.get('effort', '') }}
             </td>
-            <td title="{{ _('Filter by difficulty: %(difficulty)d', difficulty=result['difficulty']) }}">
-                {{ result['difficulty'] }}
+            <td>
+                {{ result.get('difficulty', '') }}
             </td>
-            <td title="{{ _('Filter by severity: %(severity)d', severity=result['severity']) }}">
-                {{ result['severity'] }}
+            <td>
+                {{ result.get('severity', '') }}
             </td>
-            <td title="{{ _('Filter by priority: %(priority)d', priority=result['priority']) }}">
-                {{ result['priority'] }}
+            <td>
+                {{ result.get('priority', '') }}
             </td>
             <td>
                 {% for tag in result['tags'] %}
@@ -76,6 +76,21 @@
     {% endfor %}
     </tbody>
     </table>
+    <h3>{{_("Tags")}}</h3>
+    {% for tag in tags %}
+        {# If user clicks on the tag then it gets selected if it is not already selected #}
+        {# If that tag is already selected then it gets deselected #}
+        {% set selected_tags_value = list(selected_tags.difference([tag]) if tag in selected_tags else selected_tags.union([tag])) %}
+        <form action="{{ url_for('frontend.tickets', selected_tags=selected_tags_value) }}" method="post">
+            <input type="hidden" name="q" value="{{ query if query }}" >
+            <input type="hidden" name="status" value="{{ status }}">
+            <input type="submit" value="{{ tag }}" class="{{ 'ticket-tags-button btn btn-primary active' if tag in selected_tags else 'ticket-tags-button btn btn-default' }}">
+        </form>
+    {% endfor %}
+
+    <p id="ticket-table-tip">
+        {{_("Tip: Sort multiple columns simultaneously by holding down the Shift key and clicking a second, third or even fourth column header!")}}
+    </p>
 {% else %}
     {{ _("No Ticket found.") }}
 {% endif %}

@@ -20,6 +20,7 @@ import difflib
 import time
 import mimetypes
 import json
+from itertools import chain
 from datetime import datetime
 from collections import namedtuple
 from functools import wraps, partial
@@ -2215,18 +2216,25 @@ def tickets():
     terms = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
     if query:
         terms.append(qp.parse(query))
+
     if status == u'open':
         terms.append(Term(CLOSED, False))
     elif status == u'closed':
         terms.append(Term(CLOSED, True))
+
+    selected_tags = set(request.args.getlist(u'selected_tags'))
+    terms.extend(Term(TAGS, tag) for tag in selected_tags)
     q = And(terms)
 
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         results = searcher.search(q, limit=None)
+        tags = set(chain.from_iterable(r[TAGS] for r in results))
         return render_template('tickets.html',
                                results=results,
                                query=query,
                                status=status,
+                               tags=tags,
+                               selected_tags=selected_tags,
         )
 
 
