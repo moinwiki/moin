@@ -247,7 +247,7 @@ class BaseModifyForm(BaseChangeForm):
         return form
 
 
-UNKNOWN_ITEM_GROUP = "unknown items"
+UNKNOWN_ITEM_GROUP = "Unknown Items"
 
 
 def _build_contenttype_query(groups):

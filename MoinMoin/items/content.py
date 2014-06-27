@@ -411,7 +411,7 @@ class OctetStream(Binary):
     Fallback Content for uploaded file of unknown contenttype.
     """
     contenttype = 'application/octet-stream'
-    display_name = 'binary file'
+    display_name = 'Binary File'
 
 
 class RenderableBinary(Binary):
@@ -1037,31 +1037,31 @@ class DocBook(MarkupItem):
 @register
 class PlainText(Text):
     contenttype = 'text/plain'
-    display_name = 'plain text'
+    display_name = 'Plain Text'
 
 
 @register
 class Diff(Text):
     contenttype = 'text/x-diff'
-    display_name = 'diff/patch'
+    display_name = 'Diff/Patch'
 
 
 @register
 class PythonCode(Text):
     contenttype = 'text/x-python'
-    display_name = 'python code'
+    display_name = 'Python Code'
 
 
 @register
 class CSV(Text):
     contenttype = 'text/csv'
-    display_name = 'csv'
+    display_name = 'CSV'
 
 
 @register
 class IRCLog(Text):
     contenttype = 'text/x-irclog'
-    display_name = 'IRC log'
+    display_name = 'IRC Log'
 
 
 class Draw(TarMixin, Image):
