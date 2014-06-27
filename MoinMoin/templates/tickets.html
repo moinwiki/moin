@@ -20,6 +20,30 @@
     </form>
 {% endfor %}
 
+<div class="tickets-sort-button dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+        {% if time_sorting == 'new' %}
+            {% set sortedby = 'Recently updated' %}
+        {% elif time_sorting == 'old' %}
+            {% set sortedby = 'Least recently updated' %}
+        {% endif %}
+        {{_("Sort: %(sortedby)s", sortedby=sortedby if sortedby)}}
+    <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+        <li role="presentation">
+            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', time_sorting='new') }}">
+                {{_("Recently updated")}}
+            </a>
+        </li>
+        <li role="presentation">
+            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', time_sorting='old') }}">
+                {{_("Least recently updated")}}
+            </a>
+        </li>
+    </ul>
+</div>
+
 <form action="{{ url_for('frontend.tickets') }}" method="post">
     <input type="hidden" name="status" value="{{ status }}">
     <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">
