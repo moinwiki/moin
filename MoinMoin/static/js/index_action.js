@@ -126,9 +126,15 @@ $("document").ready(function () {
         if ($(this).hasClass("allitem-toselect")) {
             $(".moin-item-index div").removeClass().addClass("selected-item");
             $(this).removeClass("allitem-toselect").addClass("allitem-selected");
+            $(".moin-select-item > input[type='checkbox']").each(function () {
+                $(this).prop('checked', true);
+            });
         } else {
             $(this).removeClass("allitem-selected").addClass("allitem-toselect");
             $(".moin-item-index div").removeClass();
+            $(".moin-select-item > input[type='checkbox']").each(function () {
+                $(this).prop('checked', false);
+            });
         }
     });
 
@@ -272,6 +278,7 @@ $("document").ready(function () {
     // add click handlers to all items shown on global index page
     $(".moin-select-item").click(function () {
         // toggle selection classes
+        $(this > "input[type='checkbox']").prop('checked', !$(this > "input[type='checkbox']").is(':checked'));
         if ($(this).parent().hasClass("selected-item")) {
             $(this).parent().removeClass("selected-item");
             if ($(".moin-select-allitem").hasClass("allitem-selected")) {

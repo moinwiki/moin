@@ -107,12 +107,12 @@ CONTENTTYPES_MAP = {
     u'application/pdf': 'PDF',
 }
 
-GROUP_MARKUP_TEXT = 'markup text items'
-GROUP_OTHER_TEXT = 'other text items'
-GROUP_IMAGE = 'image items'
-GROUP_AUDIO = 'audio items'
-GROUP_VIDEO = 'video items'
-GROUP_DRAWING = 'drawing items'
-GROUP_OTHER = 'other items'
+GROUP_MARKUP_TEXT = 'Markup Text Items'
+GROUP_OTHER_TEXT = 'Other Text Items'
+GROUP_IMAGE = 'Image Items'
+GROUP_AUDIO = 'Audio Items'
+GROUP_VIDEO = 'Video Items'
+GROUP_DRAWING = 'Drawing Items'
+GROUP_OTHER = 'Other Items'
 
 DRAWING_EXTENSIONS = ['.tdraw', '.adraw', '.svg', '.png', '.jpg', '.jpeg', '.gif', ]

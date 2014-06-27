@@ -251,9 +251,7 @@ input.blank{border-color:#ccc;border-width:2px}
 #moin-initials a:hover,#moin-initials a.selected{background:#1e90ff;border-radius:5px;color:#fff;text-decoration:none}
 .moin-item-index{width:100%;margin-left:.5em;}
 .moin-item-index div{float:left;width:16.5em;}
-.moin-item-index div .moin-select-item{visibility:hidden;display:inline-block;width:17px;cursor:default;background:transparent url("../img/moin-checkbox-off.png") no-repeat;margin-top:1em}
-.moin-item-index div.selected-item .moin-select-item,.moin-item-index div:hover .moin-select-item{visibility:visible}
-.moin-item-index div.selected-item .moin-select-item{background-image:url("../img/moin-checkbox-on.png")}
+.moin-item-index div .moin-select-item{display:inline-block;width:17px;cursor:default;margin-top:1em}
 #lightbox{background:#f4f4f4;opacity:.7;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
 .filter-toggle{margin:0 .2em;font-size:.9em}
 .moin-more-index{background:transparent url("../img/moin-expand.png") no-repeat;display:inline-block;width:20px;}

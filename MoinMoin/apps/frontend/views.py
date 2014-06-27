@@ -898,7 +898,7 @@ def contenttype_selects_gen():
     for g in content_registry.group_names:
         description = u', '.join([e.display_name for e in content_registry.groups[g]])
         yield g, None, description
-    yield u'unknown items', None, u'Items of contenttype unknown to MoinMoin'
+    yield u'Unknown Items', None, u'Items of contenttype unknown to MoinMoin'
 
 ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
 
