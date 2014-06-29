@@ -37,13 +37,13 @@ def get_subscribers(**meta):
     tags = meta.get(TAGS)
     terms = []
     if itemid is not None:
-        terms.extend([Term(SUBSCRIPTION_IDS, "{0}:{1}".format(ITEMID, itemid))])
+        terms.extend([Term(SUBSCRIPTION_IDS, u"{0}:{1}".format(ITEMID, itemid))])
     if namespace is not None:
         if name is not None:
-            terms.extend(Term(SUBSCRIPTION_IDS, "{0}:{1}:{2}".format(NAME, namespace, name_))
+            terms.extend(Term(SUBSCRIPTION_IDS, u"{0}:{1}:{2}".format(NAME, namespace, name_))
                          for name_ in name)
         if tags is not None:
-            terms.extend(Term(SUBSCRIPTION_IDS, "{0}:{1}:{2}".format(TAGS, namespace, tag))
+            terms.extend(Term(SUBSCRIPTION_IDS, u"{0}:{1}:{2}".format(TAGS, namespace, tag))
                          for tag in tags)
     query = Or(terms)
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
@@ -86,7 +86,7 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
                     try:
                         pattern = re.compile(pattern, re.U)
                     except re.error:
-                        logging.error("Subscription pattern '{0}' has failed compilation.".format(pattern))
+                        logging.error(u"Subscription pattern '{0}' has failed compilation.".format(pattern))
                         continue
                     if any(pattern.search(name) for name in item_names):
                         matched_subscriptions.append(subscription)
