@@ -25,7 +25,7 @@ $(document).ready(function(){
             }
         };
     }
-    
+
     var table = document.getElementById('ticket-list');
     var cols = table.rows[0].cells.length;
     var columns = table.getElementsByTagName("td");
@@ -36,5 +36,6 @@ $(document).ready(function(){
         }
     }
 
-});
+    $("#ticket-list").tablesorter();
 
+});
