@@ -245,7 +245,7 @@ class SubscriptionsJoinedString(JoinedString):
                     name_ = item.meta['name'][0]
                 except IndexError:
                     name_ = "This item doesn't exist"
-                value = "{0} ({1})".format(value, name_)
+                value = u"{0} ({1})".format(value, name_)
             else:
                 value = child.u
             subscriptions.append(value)
