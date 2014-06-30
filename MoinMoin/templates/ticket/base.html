@@ -9,6 +9,13 @@
         'severity',
         'priority',
         'tags',
+        ] %}
+        {{ forms.render(form['meta'][e]) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_selectlists() %}
+    {% for e in [
         'assigned_to',
         'superseded_by',
         'depends_on',

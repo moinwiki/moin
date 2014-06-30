@@ -20,7 +20,6 @@ import difflib
 import time
 import mimetypes
 import json
-from itertools import chain
 from datetime import datetime
 from collections import namedtuple
 from functools import wraps, partial
@@ -2235,7 +2234,7 @@ def tickets():
         elif time_sorting == u'old':
             sortedby.append(sorting.FieldFacet(u'mtime', reverse=False))
         results = searcher.search(q, limit=None, sortedby=sortedby)
-        tags = set(chain.from_iterable(r[TAGS] for r in results))
+        tags = list(searcher.field_terms(TAGS))
         return render_template('tickets.html',
                                results=results,
                                query=query,
