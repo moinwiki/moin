@@ -36,13 +36,13 @@
                     </li>
                     <li><a class="moin-action-tab"
                            id="moin-delete-trigger"
-                           data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}"href="#">
+                           data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}" href="#">
                            <span class="icon-minus-sign"></span>
                            {{ _("Delete") }}</a>
                     </li>
                     <li><a class="moin-action-tab"
                            id="moin-destroy-trigger"
-                           data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}"href="#">
+                           data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}" href="#">
                            <span class="icon-remove-sign"></span>
                            {{ _("Destroy") }}</a>
                     </li>
@@ -91,7 +91,6 @@
 {% macro render_dir_entry(e) %}
     <div>
         <a href="{{ url_for('.index', item_name=e.fullname) }}"
-           name="{{ entry_anchor('dir', e) }}"
            {# TODO .moin-dir-item class is not styled yet #}
            class="moin-dir-item"
            title="{{ e.relname }}">
@@ -109,12 +108,11 @@
     <div>
         <span class="moin-select-item">
             <input type="checkbox">
-        </input></span>
+        </span>
         {% set mimetype = "application/x.moin.download" %}
         <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
         </a>
         <a href="{{ url_for('.show_item', item_name=e.fullname) }}"
-           name="{{ entry_anchor('file', e) }}"
            {# TODO .moin-itemtype-* classes are not styled yet #}
            class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
            title="{{ e.relname }}">
