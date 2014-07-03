@@ -28,7 +28,6 @@ class ValidSearch(Validator):
 
 class SearchForm(Form):
     q = Search
-    history = InlineCheckbox.using(label=L_('search all revisions'))
     submit_label = L_('Search')
 
     validators = [ValidSearch()]

@@ -38,6 +38,7 @@ from jinja2 import Markup
 import pytz
 from babel import Locale
 
+from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.analysis import StandardAnalyzer
 from whoosh import sorting
@@ -59,6 +60,7 @@ from MoinMoin.constants.keys import *
 from MoinMoin.constants.namespaces import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
+from MoinMoin.constants.contenttypes import *
 from MoinMoin.util import crypto
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.search import SearchForm
@@ -267,15 +269,74 @@ def _compute_item_transclusions(item_name):
         return transcluded_names
 
 
+def add_file_filters(_filter, filetypes):
+    """
+    Add various terms to the filter for the search query for the selected file types
+    in the search options.
+
+    :param _filter: the current filter
+    :param filetypes: list of selected filetypes
+    :returns: the required _filter for the search query
+    """
+    if filetypes:
+        alltypes = "all" in filetypes
+        contenttypes = []
+        files_filter = []
+        if alltypes or "markup" in filetypes:
+            contenttypes.append(CONTENTTYPE_MARKUP)
+        if alltypes or "text" in filetypes:
+            contenttypes.append(CONTENTTYPE_TEXT)
+        if alltypes or "image" in filetypes:
+            contenttypes.append(CONTENTTYPE_IMAGE)
+        if alltypes or "audio" in filetypes:
+            contenttypes.append(CONTENTTYPE_AUDIO)
+        if alltypes or "video" in filetypes:
+            contenttypes.append(CONTENTTYPE_VIDEO)
+        if alltypes or "drawing" in filetypes:
+            contenttypes.append(CONTENTTYPE_DRAWING)
+        if alltypes or "other" in filetypes:
+            contenttypes.append(CONTENTTYPE_OTHER)
+        for ctype in contenttypes:
+            for itemtype in ctype:
+                files_filter.append(Term("contenttype", itemtype))
+        files_filter = Or(files_filter)
+        _filter.append(files_filter)
+        _filter = And(_filter)
+    return _filter
+
+
+def add_facets(facets, time_sorting):
+    """
+    Adds various facets for the search features.
+
+    :param facets: current facets
+    :param time_sorting: defines the sorting order and can have one of the following 3 values :
+                     1. default - default search
+                     2. old - sort old items first
+                     3. new - sort new items first
+    :returns: required facets for the search query
+    """
+    if time_sorting == "new":
+        facets.append(sorting.FieldFacet("mtime", reverse=True))
+    elif time_sorting == "old":
+        facets.append(sorting.FieldFacet("mtime", reverse=False))
+    return facets
+
+
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
     valid = search_form.validate()
+    time_sorting = False
+    filetypes = []
     if ajax:
         query = request.args.get('q')
-        history = request.args.get('history')
+        history = request.args.get('history') == "true"
+        time_sorting = request.args.get('time_sorting')
+        filetypes = request.args.get('filetypes')
+        filetypes = filetypes.split(',')[:-1]  # To remove the extra u'' at the end of the list
     else:
         query = search_form['q'].value
         history = bool(request.values.get('history'))
@@ -289,7 +350,8 @@ def search(item_name):
         qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT, CONTENTNGRAM], idx_name=idx_name)
         q = qp.parse(query)
 
-        _filter = None
+        _filter = []
+        _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + u'/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
@@ -319,8 +381,10 @@ def search(item_name):
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             # terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
+            facets = []
+            facets = add_facets(facets, time_sorting)
             flaskg.clock.start('search')
-            results = searcher.search(q, filter=_filter, limit=100, terms=True)
+            results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
             name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
@@ -835,7 +899,7 @@ def contenttype_selects_gen():
     for g in content_registry.group_names:
         description = u', '.join([e.display_name for e in content_registry.groups[g]])
         yield g, None, description
-    yield u'unknown items', None, u'Items of contenttype unknown to MoinMoin'
+    yield u'Unknown Items', None, u'Items of contenttype unknown to MoinMoin'
 
 ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
 

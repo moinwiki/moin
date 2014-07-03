@@ -53,6 +53,7 @@
 
     {% block theme_stylesheets %}
     <link media="all" rel="stylesheet" href="{{ theme_static('css/common.css') }}" />
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
     {% endblock %}
     {{ stylesheets }}
     {% if user.valid and user.css_url -%}

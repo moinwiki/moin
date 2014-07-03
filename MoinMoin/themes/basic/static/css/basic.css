@@ -5785,6 +5785,281 @@ button.close {
     display: none !important;
   }
 }
+.hll {
+  background-color: #ffffcc;
+}
+.c {
+  color: #888888;
+}
+/* Comment */
+.err {
+  color: #FF0000;
+  background-color: #ffaaaa;
+}
+/* Error */
+.k {
+  color: #008800;
+  font-weight: bold;
+}
+/* Keyword */
+.o {
+  color: #333333;
+}
+/* Operator */
+.cm {
+  color: #888888;
+}
+/* Comment.Multiline */
+.cp {
+  color: #557799;
+}
+/* Comment.Preproc */
+.c1 {
+  color: #888888;
+}
+/* Comment.Single */
+.cs {
+  color: #cc0000;
+  font-weight: bold;
+}
+/* Comment.Special */
+.gd {
+  color: #a00000;
+}
+/* Generic.Deleted */
+.ge {
+  font-style: italic;
+}
+/* Generic.Emph */
+.gr {
+  color: #ff0000;
+}
+/* Generic.Error */
+.gh {
+  color: #000080;
+  font-weight: bold;
+}
+/* Generic.Heading */
+.gi {
+  color: #00a000;
+}
+/* Generic.Inserted */
+.go {
+  color: #888888;
+}
+/* Generic.Output */
+.gp {
+  color: #c65d09;
+  font-weight: bold;
+}
+/* Generic.Prompt */
+.gs {
+  font-weight: bold;
+}
+/* Generic.Strong */
+.gu {
+  color: #800080;
+  font-weight: bold;
+}
+/* Generic.Subheading */
+.gt {
+  color: #0044dd;
+}
+/* Generic.Traceback */
+.kc {
+  color: #008800;
+  font-weight: bold;
+}
+/* Keyword.Constant */
+.kd {
+  color: #008800;
+  font-weight: bold;
+}
+/* Keyword.Declaration */
+.kn {
+  color: #008800;
+  font-weight: bold;
+}
+/* Keyword.Namespace */
+.kp {
+  color: #003388;
+  font-weight: bold;
+}
+/* Keyword.Pseudo */
+.kr {
+  color: #008800;
+  font-weight: bold;
+}
+/* Keyword.Reserved */
+.kt {
+  color: #333399;
+  font-weight: bold;
+}
+/* Keyword.Type */
+.m {
+  color: #6600EE;
+  font-weight: bold;
+}
+/* Literal.Number */
+.s {
+  background-color: #fff0f0;
+}
+/* Literal.String */
+.na {
+  color: #0000cc;
+}
+/* Name.Attribute */
+.nb {
+  color: #007020;
+}
+/* Name.Builtin */
+.nc {
+  color: #BB0066;
+  font-weight: bold;
+}
+/* Name.Class */
+.no {
+  color: #003366;
+  font-weight: bold;
+}
+/* Name.Constant */
+.nd {
+  color: #555555;
+  font-weight: bold;
+}
+/* Name.Decorator */
+.ni {
+  color: #880000;
+  font-weight: bold;
+}
+/* Name.Entity */
+.ne {
+  color: #FF0000;
+  font-weight: bold;
+}
+/* Name.Exception */
+.nf {
+  color: #0066BB;
+  font-weight: bold;
+}
+/* Name.Function */
+.nl {
+  color: #997700;
+  font-weight: bold;
+}
+/* Name.Label */
+.nn {
+  color: #0e84b5;
+  font-weight: bold;
+}
+/* Name.Namespace */
+.nt {
+  color: #007700;
+}
+/* Name.Tag */
+.nv {
+  color: #996633;
+}
+/* Name.Variable */
+.ow {
+  color: #000000;
+  font-weight: bold;
+}
+/* Operator.Word */
+.w {
+  color: #bbbbbb;
+}
+/* Text.Whitespace */
+.mf {
+  color: #6600EE;
+  font-weight: bold;
+}
+/* Literal.Number.Float */
+.mh {
+  color: #005588;
+  font-weight: bold;
+}
+/* Literal.Number.Hex */
+.mi {
+  color: #0000DD;
+  font-weight: bold;
+}
+/* Literal.Number.Integer */
+.mo {
+  color: #4400EE;
+  font-weight: bold;
+}
+/* Literal.Number.Oct */
+.sb {
+  background-color: #fff0f0;
+}
+/* Literal.String.Backtick */
+.sc {
+  color: #0044dd;
+}
+/* Literal.String.Char */
+.sd {
+  color: #dd4422;
+}
+/* Literal.String.Doc */
+.s2 {
+  background-color: #fff0f0;
+}
+/* Literal.String.Double */
+.se {
+  color: #666666;
+  font-weight: bold;
+  background-color: #fff0f0;
+}
+/* Literal.String.Escape */
+.sh {
+  background-color: #fff0f0;
+}
+/* Literal.String.Heredoc */
+.si {
+  background-color: #eeeeee;
+}
+/* Literal.String.Interpol */
+.sx {
+  color: #DD2200;
+  background-color: #fff0f0;
+}
+/* Literal.String.Other */
+.sr {
+  color: #000000;
+  background-color: #fff0ff;
+}
+/* Literal.String.Regex */
+.s1 {
+  background-color: #fff0f0;
+}
+/* Literal.String.Single */
+.ss {
+  color: #aa6600;
+}
+/* Literal.String.Symbol */
+.bp {
+  color: #007020;
+}
+/* Name.Builtin.Pseudo */
+.vc {
+  color: #336699;
+}
+/* Name.Variable.Class */
+.vg {
+  color: #dd7700;
+  font-weight: bold;
+}
+/* Name.Variable.Global */
+.vi {
+  color: #3333bb;
+}
+/* Name.Variable.Instance */
+.il {
+  color: #0000DD;
+  font-weight: bold;
+}
+/* Literal.Number.Integer.Long */
 @media screen and (min-width: 992px) {
   .moin-pull-right {
     float: right !important;
@@ -6332,18 +6607,323 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 .moin-thead {
   background-color: silver;
 }
+html,
+body {
+  height: 100%;
+}
+#filter-btn {
+  background-color: #428bca;
+  border-radius: 3px;
+  display: inline;
+  padding: 10px;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+.moin-contenttypes-wrapper div {
+  cursor: pointer;
+  display: block;
+}
+.moin-contenttypes-wrapper form {
+  display: none;
+}
+.moin-contenttypes-wrapper form ul {
+  -webkit-padding-start: 0px;
+  -moz-padding-start: 0px;
+  overflow: hidden;
+}
+.moin-contenttypes-wrapper form li {
+  list-style-type: none;
+  float: left;
+  width: 50%;
+  border-radius: 5px;
+  display: inline;
+  padding: 5px;
+  margin-top: 5px;
+}
+.moin-contenttypes-wrapper form li label {
+  cursor: pointer;
+  display: inline;
+  line-height: 1.5em;
+  vertical-align: middle;
+  color: #1e90ff;
+}
+.moin-contenttypes-wrapper form li span {
+  font-size: .8em;
+  display: block;
+}
+.moin-contenttypes-wrapper form .filters {
+  background-color: white;
+  border: none;
+  margin-top: 1em;
+  float: none;
+  display: block;
+}
+.moin-contenttypes-wrapper form .filters .filter-toggle,
+.moin-contenttypes-wrapper form .filters .filter-more {
+  font-size: 1em;
+  background-color: #eeeeee;
+  border: 1px solid #dddddd;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  margin: 0.2em;
+  text-decoration: none;
+}
+.moin-item-index div .moin-select-item {
+  display: inline-block;
+  width: 17px;
+  cursor: default;
+  margin-top: 1em;
+}
+.moin-download-link {
+  display: none;
+}
+.moin-index-message {
+  width: 50%;
+  margin: 1em auto;
+  text-align: center;
+  display: none;
+}
+.moin-index-message span {
+  padding: 4px;
+  background-color: #007cef;
+  color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.moin-index-path {
+  margin-left: .5em;
+}
+.moin-index-path:before {
+  content: icon-folder-close;
+  margin: 0.3em;
+}
+.moin-clr {
+  clear: both;
+}
+.moin-item-index {
+  width: 100%;
+  margin-left: 0.5em;
+}
+.moin-item-index div {
+  float: left;
+  width: 16.5em;
+}
+.moin-item-index div .moin-select-item {
+  display: inline-block;
+  width: 17px;
+  cursor: default;
+  margin-top: 1em;
+}
+.moin-index-separator {
+  clear: both;
+  border-top: 1px dashed #ccc;
+  display: none;
+}
+.popup-container {
+  margin: 0;
+  border: 5px solid #428bca;
+  border-radius: 6px 6px 0 0;
+}
+.popup-header {
+  background-color: #428bca;
+  color: #ffffff;
+  padding: 10px;
+  margin: 0;
+}
+input[value="X"] {
+  padding: 0.1px;
+  margin: -0.2em;
+  width: 19px;
+  border-radius: 2em;
+  float: right;
+}
+input[value="X"]:hover {
+  background: #f4f4f4;
+}
+input[type="text"] {
+  width: 96%;
+}
+input[type="submit"],
+input[type="button"],
+input button {
+  font-weight: bold;
+  font-size: .75em;
+  background: #d6d5d0;
+  padding: 4px 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 1px 1px 2px #9d9d9b;
+  cursor: pointer;
+}
+input:hover {
+  box-shadow: 1px 1px 2px #000;
+}
+input:active {
+  position: relative;
+  top: 1px;
+}
+input,
+select {
+  padding: 3px;
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+.popup-body {
+  clear: both;
+  background-color: #f4f4f4;
+  color: #000000;
+  padding: 10px;
+  margin: 0;
+}
+.popup-body label {
+  margin: 5px;
+}
+.popup-body input {
+  margin: 8px 5px;
+}
+#moin-initials {
+  width: 90%;
+  margin: 5px auto;
+  text-align: center;
+}
+#moin-initials a {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 5px;
+}
+#moin-initials a:hover,
+#moin-initials a.selected {
+  background: #428bca;
+  border-radius: 5px;
+  color: #ffffff;
+  text-decoration: none;
+}
+#popup {
+  background: transparent;
+  padding: 5px;
+  width: 40%;
+  position: absolute;
+  top: 10%;
+  left: 30%;
+  display: none;
+  z-index: 10;
+}
+.moin-error {
+  color: #ff2727;
+  background: #d6d5d0;
+  padding: 4px;
+  margin: 1em;
+  text-align: center;
+  list-style-type: none;
+  border-radius: 5px;
+}
+.moin-textcha {
+  padding-top: .2em;
+}
+#moin-upload-cont {
+  min-height: 10px;
+}
+#file_upload {
+  margin-top: 2em;
+}
+form.upload_file {
+  background-color: #d6d5d0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  direction: ltr;
+  font-weight: bold;
+  height: 2.5em;
+  line-height: 2.5em;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  width: 15em;
+  display: block;
+  box-shadow: 0 0 5px #9d9d9b;
+}
+form.upload_file:hover {
+  box-shadow: 0 0 5px #000;
+}
+form.upload_file input {
+  cursor: pointer;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+}
+form.upload_file button {
+  display: none;
+}
+.file_upload_template .file_upload_start {
+  visibility: hidden;
+  border-width: 0;
+  padding: 0;
+}
+.file_upload_template .file_upload_start button {
+  width: 0;
+}
+.file_name {
+  word-break: break-all;
+  word-wrap: break-word;
+  max-width: 10em;
+}
+.upload-form {
+  display: none;
+}
+.moin-drag {
+  font-size: .7em;
+  color: #9d9d9b;
+}
+#lightbox {
+  background: #f4f4f4;
+  opacity: .7;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  margin: 0;
+  display: none;
+}
+.moin-content {
+  padding-bottom: 100px;
+}
+.moin-footer {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+.moin-search-option-bar {
+  padding-left: 10px;
+  border: 1px solid #555555;
+  background-color: #1b436d;
+  color: #c8ddf1;
+  border-radius: 5px;
+}
+.moin-search-option-bar > span {
+  float: right;
+  padding: 10px;
+}
 @media (min-width: 768px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }
 @media (min-width: 992px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }
 @media (min-width: 1200px) {
   .container {
+    min-height: 100%;
+    position: relative;
     width: auto;
   }
 }

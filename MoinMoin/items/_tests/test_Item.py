@@ -124,7 +124,7 @@ class TestItem(object):
         assert files == build_index(basename, [u'ab'])
 
         # check filtered index when contenttype_groups is passed
-        ctgroups = ["other text items"]
+        ctgroups = ["Other Text Items"]
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
         assert dirs == build_index(basename, [u'cd', u'ij'])
         assert files == build_index(basename, [u'ab', u'gh', u'ij'])
