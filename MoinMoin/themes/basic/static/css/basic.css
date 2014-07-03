@@ -6362,6 +6362,7 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 #ticket-list tr td,
 #ticket-list thead th {
   cursor: pointer;
+  padding-left: 20px;
 }
 #ticket-list tr td:first-child a {
   font-family: monospace;
@@ -6386,11 +6387,32 @@ ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
 .tablesorter-header {
   background-image: url('../img/bg.png');
   background-repeat: no-repeat;
-  background-position: right center;
+  background-position: left center;
 }
 .tablesorter-headerAsc {
   background-image: url('../img/asc.png');
 }
 .tablesorter-headerDesc {
   background-image: url('../img/desc.png');
+}
+.tablesorter-header.sorter-false {
+  background-image: None;
+}
+#ticket-summary {
+  width: 50%;
+}
+#ticket-list {
+  float: right;
+  width: 90%;
+}
+.ticket-tags-button {
+  padding: 4px;
+  width: 100px;
+}
+#ticket-table-tip {
+  float: right;
+  color: #999999;
+}
+.tickets-sort-button.dropdown {
+  display: inline;
 }

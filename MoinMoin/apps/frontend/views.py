@@ -40,6 +40,7 @@ from babel import Locale
 
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.analysis import StandardAnalyzer
+from whoosh import sorting
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -2215,18 +2216,32 @@ def tickets():
     terms = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
     if query:
         terms.append(qp.parse(query))
+
     if status == u'open':
         terms.append(Term(CLOSED, False))
     elif status == u'closed':
         terms.append(Term(CLOSED, True))
+
+    selected_tags = set(request.args.getlist(u'selected_tags'))
+    terms.extend(Term(TAGS, tag) for tag in selected_tags)
     q = And(terms)
 
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-        results = searcher.search(q, limit=None)
+        sortedby = []
+        time_sorting = request.args.get(u'time_sorting')
+        if time_sorting == u'new':
+            sortedby.append(sorting.FieldFacet(u'mtime', reverse=True))
+        elif time_sorting == u'old':
+            sortedby.append(sorting.FieldFacet(u'mtime', reverse=False))
+        results = searcher.search(q, limit=None, sortedby=sortedby)
+        tags = list(searcher.field_terms(TAGS))
         return render_template('tickets.html',
                                results=results,
                                query=query,
                                status=status,
+                               tags=tags,
+                               selected_tags=selected_tags,
+                               time_sorting=time_sorting,
         )
 
 

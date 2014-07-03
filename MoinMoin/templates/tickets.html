@@ -13,14 +13,38 @@
 {% set status_values = ['all', 'open', 'closed']  %}
 {{_("Filter:")}}
 {% for status_value in status_values %}
-    <form action="{{ url_for('frontend.tickets') }}" method="post" class='moin-ticketsearch-form'>
+    <form action="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post" class='moin-ticketsearch-form'>
         <input type="hidden" name="q" value="{{ query if query }}" >
         &nbsp;<input type="hidden" name="status" value="{{ status_value }}">
         <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'ticket-query-button active' if status == status_value  else 'ticket-query-button'}}">
     </form>
 {% endfor %}
 
-<form action="{{ url_for('frontend.tickets') }}" method="post">
+<div class="tickets-sort-button dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+        {% if time_sorting == 'new' %}
+            {% set sortedby = 'Recently updated' %}
+        {% elif time_sorting == 'old' %}
+            {% set sortedby = 'Least recently updated' %}
+        {% endif %}
+        {{_("Sort: %(sortedby)s", sortedby=sortedby if sortedby)}}
+    <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+        <li role="presentation">
+            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='new') }}">
+                {{_("Recently updated")}}
+            </a>
+        </li>
+        <li role="presentation">
+            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='old') }}">
+                {{_("Least recently updated")}}
+            </a>
+        </li>
+    </ul>
+</div>
+
+<form action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post">
     <input type="hidden" name="status" value="{{ status }}">
     <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">
 </form>
@@ -49,23 +73,23 @@
                 </a>
             <td>
                 <a href="{{  url_for_item(result['itemid'], field='itemid', namespace=result['namespace'])}}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid'])}}">
-                    {{ result['summary'][:50] }}
+                    {{ result['summary'] }}
                 </a>
             </td>
-            <td title="{{ _('Filter by status: %(status)s', status='Closed' if result['closed'] else 'Open') }}">
+            <td>
                 {{ _("Closed") if result['closed'] else _("Open") }}
             </td>
-            <td title="{{ _('Filter by effort: %(effort)d', effort=result['effort']) }}">
-                {{ result['effort'] }}
+            <td>
+                {{ result.get('effort', '') }}
             </td>
-            <td title="{{ _('Filter by difficulty: %(difficulty)d', difficulty=result['difficulty']) }}">
-                {{ result['difficulty'] }}
+            <td>
+                {{ result.get('difficulty', '') }}
             </td>
-            <td title="{{ _('Filter by severity: %(severity)d', severity=result['severity']) }}">
-                {{ result['severity'] }}
+            <td>
+                {{ result.get('severity', '') }}
             </td>
-            <td title="{{ _('Filter by priority: %(priority)d', priority=result['priority']) }}">
-                {{ result['priority'] }}
+            <td>
+                {{ result.get('priority', '') }}
             </td>
             <td>
                 {% for tag in result['tags'] %}
@@ -76,9 +100,26 @@
     {% endfor %}
     </tbody>
     </table>
+
+    <p id="ticket-table-tip">
+        {{_("Tip: Sort multiple columns simultaneously by holding down the Shift key and clicking a second, third or even fourth column header!")}}
+    </p>
 {% else %}
     {{ _("No Ticket found.") }}
 {% endif %}
+
+<h3>{{_("Tags")}}</h3>
+{% for tag in tags %}
+    {# If user clicks on the tag then it gets selected if it is not already selected #}
+    {# If that tag is already selected then it gets deselected #}
+    {% set selected_tags_value = list(selected_tags.difference([tag]) if tag in selected_tags else selected_tags.union([tag])) %}
+    <form action="{{ url_for('frontend.tickets', selected_tags=selected_tags_value, time_sorting=time_sorting if time_sorting) }}" method="post">
+        <input type="hidden" name="q" value="{{ query if query }}" >
+        <input type="hidden" name="status" value="{{ status }}">
+        <input type="submit" value="{{ tag }}" class="{{ 'ticket-tags-button btn btn-primary active' if tag in selected_tags else 'ticket-tags-button btn btn-default' }}">
+    </form>
+{% endfor %}
+
 </p>
 {% endblock %}
 {% block body_scripts %}
