@@ -50,7 +50,7 @@
 
 {% block layout %}
     <div class="container">
-        <div class="row">
+        <div class="row moin-header">
             <div class="col-lg-2 moin-logo">
                 {% if logo %}
                 <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
@@ -78,7 +78,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-6 moin-loginsettings">
                                     <div class="moin-navbar-collapse navbar-collapse collapse in" id="target">
                                         <ul class="nav navbar-nav moin-pull-right">
 
@@ -209,7 +209,7 @@
             </div> <!-- col-lg-10 -->
         </div> <!-- row-topnavbar -->
 
-        <div class="row">
+        <div class="row moin-content">
             <div class="col-lg-2">
                 <div class="row">
                     <div class="col-lg-12">
@@ -296,7 +296,7 @@
         </div> <!--/row sidebar, tabs, content - main-->
 
         {% block footer %}
-        <div class="row">
+        <div class="row moin-footer">
             <div class="col-lg-12">
                 <div class="navbar"> <!--footer-->
                     {{ footer_logos }}

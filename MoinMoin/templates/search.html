@@ -10,13 +10,53 @@
 {% endblock %}
 
 {% block content %}
+    <h1>{{_("Search")}}</h1>
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
         {{ forms.render(medium_search_form['q']) }}
         {{ forms.render_submit(medium_search_form) }}
         </p>
+        <div class="moin-search-option-bar"><h4 style="display:inline-block">Search Options</h4><span class="icon-chevron-down"></span></div>
+        <div class="moin-searchoptions hidden">
+            <table>
+                <tr colspan="4">
+                    <th width="20%">Revisions</td>
+                    <th width="20%">Sort By Time</td>
+                    <th width="60%" colspan="3">Content Types</td>
+                </tr>
+                <tr>
+                    <td>
+                        <label id="moin-option"><input type="radio" name="history" value="latest" checked="checked"> Latest</label><br>
+                        <label id="moin-option"><input type="radio" name="history" value="all"> All</label><br>
+                    </td>
+                    <td>
+                        <form>
+                            <label id="moin-option"><input type="radio" name="modified_time" value="default" checked="checked"> Default</label><br>
+                            <label id="moin-option"><input type="radio" name="modified_time" value="old"> Older First</label><br>
+                            <label id="moin-option"><input type="radio" name="modified_time" value="new"> Newer First</label><br>
+                        </form>
+                    </td>
+                    <form>
+                        <td>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="markup"> Markup Text</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="text"> Other Text</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="image"> Image</label><br>
+                        </td>
+                        <td>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="audio"> Audio</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="video"> Video</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="drawing"> Drawing</label><br>
+                        </td>
+                        <td>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="other"> Other</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="unknown"> Unknown</label><br>
+                            <label id="moin-option"><input type="checkbox" name="itemtype" value="all" checked="checked"> All</label><br>
+                        </td>
+                   </form>
+                </tr>
+            </table>
+        </div>
         <p>
-        {{ forms.render(medium_search_form['history']) }}
         {{ forms.render_errors(medium_search_form) }}
         </p>
     {{ gen.form.close() }}

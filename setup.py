@@ -113,6 +113,7 @@ setup_args = dict(
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2012.11.15.1',
         'XStatic-JQuery.TableSorter>=2.14.5.1',
+        'XStatic-Pygments>=1.6.0.1',
     ],
     # optional features and their list of requirements
     extras_require={

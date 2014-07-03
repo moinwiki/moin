@@ -89,7 +89,9 @@
 
 {% macro render_file_entry(e) %}
     <div>
-        <span class="moin-select-item">&nbsp;</span>
+        <span class="moin-select-item">
+            <input type="checkbox"></input>
+        </span>
         {% set mimetype = "application/x.moin.download" %}
         <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
         </a>
