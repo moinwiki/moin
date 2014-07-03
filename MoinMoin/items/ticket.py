@@ -27,6 +27,7 @@ from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm
 from MoinMoin.items.content import NonExistentContent
+from MoinMoin.constants.keys import LATEST_REVS, TAGS
 
 
 ITEMTYPE_TICKET = u'ticket'
@@ -34,7 +35,7 @@ ITEMTYPE_TICKET = u'ticket'
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
 
-Rating = SmallNatural.using(optional=False).with_properties(lower=1, upper=5)
+Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
 
 
 def get_itemid_short_summary(rev):
@@ -193,11 +194,14 @@ class Ticket(Contentful):
 
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
+        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+            suggested_tags = list(searcher.field_terms(TAGS))
 
-        return render_template(self.submit_template if is_new else self.modify_template,
-                               is_new=is_new,
-                               closed=closed,
-                               item_name=self.name,
-                               data_rendered=data_rendered,
-                               form=form,
-                              )
+            return render_template(self.submit_template if is_new else self.modify_template,
+                                   is_new=is_new,
+                                   closed=closed,
+                                   item_name=self.name,
+                                   data_rendered=data_rendered,
+                                   form=form,
+                                   suggested_tags=suggested_tags,
+                                  )
