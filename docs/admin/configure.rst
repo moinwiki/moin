@@ -972,22 +972,21 @@ Group backend configuration
 ---------------------------
 The WikiGroups backend gets groups from wiki items and is used by default::
 
-    def groups(self, request):
+    def groups(self):
         from MoinMoin.datastruct import WikiGroups
-        return WikiGroups(request)
+        return WikiGroups()
 
 The ConfigGroups backend uses groups defined in the configuration file::
 
-    def groups(self, request):
+    def groups(self):
         from MoinMoin.datastruct import ConfigGroups
-        # Groups are defined here.
         groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
-        return ConfigGroups(request, groups)
+        return ConfigGroups(groups)
 
 CompositeGroups can use, for the most part, any combination of backends. The following is an example of using the ConfigGroups and WikiGroups backends::
 
-    def groups(self, request):
+    def groups(self):
         from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
         groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
@@ -995,9 +994,7 @@ CompositeGroups can use, for the most part, any combination of backends. The fol
         # Here ConfigGroups and WikiGroups backends are used.
         # Note that order matters! Since ConfigGroups backend is mentioned first
         # EditorGroup will be retrieved from it, not from WikiGroups.
-        return CompositeGroups(request,
-                               ConfigGroups(request, groups),
-                               WikiGroups(request))
+        return CompositeGroups(ConfigGroups(groups), WikiGroups())
 
 
 Dict backend configuration
