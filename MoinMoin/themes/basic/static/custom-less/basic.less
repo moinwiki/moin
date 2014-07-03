@@ -1,0 +1,368 @@
+@import "notice.less";
+@import "bootstrap.less";
+@import "moin-variables.less";
+
+// ---- Customising the top navbar breakpoint
+@grid-float-breakpoint: @screen-md;
+
+@media screen and (min-width: @grid-float-breakpoint) {
+  .moin-pull-right {
+    .pull-right;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  &:hover, &:focus {
+    .moin-permalink {
+      display: inline;
+      text-decoration: none;
+    }
+  }
+}
+
+.moin-permalink {
+  display: none;
+}
+
+.moin-logo {
+  .text-center;
+  position: relative;
+  padding-top: 23px;
+  padding-bottom: 23px;
+}
+
+.moin-list-heading {
+  background-color: @navbar-bg;
+  font-variant: small-caps;
+}
+
+.moin-flash {
+  .alert;
+  &>a {
+    .alert .alert-link;
+  }
+}
+
+.moin-flash-hint {
+  &>a {
+    .alert-success .alert-link;
+  }
+  .alert-success;
+}
+
+.moin-flash-info {
+  &>a {
+    .alert-info .alert-link;
+  }
+  .alert-info;
+}
+
+.moin-flash-warning, .moin-flash-error, .moin-error {
+  &>a {
+    .alert-danger .alert-link;
+  }
+  &>li {
+    list-style-type: none;
+  }
+  .alert-danger;
+  padding-left: 0px;
+}
+
+.moin-user-action-special {
+  .list-group-item;
+  width: 100%;
+  color: @link-color;
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    color: @link-hover-color;
+    background-color: @list-group-hover-bg;
+    border: 1px solid @list-group-border;
+  }
+  border: 1px solid @list-group-border;
+  border-radius: 0;
+  padding: 5px 15px;
+}
+
+.moin-viewoptions, .moin-itemactions, .moin-useractions {
+  float: right;
+}
+
+.list-group-item {
+  padding: 5px 15px;
+}
+
+.moin-diff-added {
+  background-color: @moin-diff-added;
+}
+
+.moin-diff-removed {
+  background-color: @moin-diff-removed;
+}
+
+.moin-breadcrumb {
+  .breadcrumb;
+  > li {
+    &+li:before {
+      content: "\0020"; // Unicode space which is non-collapsing
+      padding: 0px;
+    }
+  }
+}
+
+.moin-nav {
+  .nav;
+  margin-bottom: 20px;  // override bottom-margin nav-tabs
+}
+
+.moin-shadow {
+  > li {
+    > a {
+      .form-control-focus(); // adds shadow onfocus
+    }
+  }
+}
+
+.moin-location-breadcrumb {
+  display: inline;
+}
+
+.moin-nonexistent {
+  color: @link-nonexistent-color !important;
+  &:hover {
+    color: @link-nonexistent-hover-color;
+  }
+}
+
+.moin-sidebar {
+  .list-group;
+  overflow: hidden;
+}
+
+.moin-navbar-inverse {
+  .navbar-inverse;
+  background-color: @moin-navbar-inverse-bgcolor;
+  padding-left: 0px;
+  padding-right: 0px;
+  .navbar-nav {
+    > li > a {
+      color: @moin-navbar-inverse-textcolor;
+    }
+    > li > a.active {
+      color: @navbar-inverse-link-hover-color;
+    }
+  }
+  .navbar-text {
+    color: @moin-navbar-inverse-textcolor;
+    > a {
+      color: @moin-navbar-inverse-textcolor;
+    }
+  }
+  .navbar-brand {
+    color: @moin-navbar-inverse-textcolor;
+  }
+}
+
+.moin-quicklink {
+  position: relative;
+  padding: 5px 15px 5px 15px;
+  border: 1px solid @list-group-border;
+  margin-bottom: -1px;
+
+  &:last-child {
+    margin-bottom: 0;
+    .border-bottom-radius(@border-radius-base);
+  }
+
+  // Hover state
+  &:hover,
+  &:focus {
+    background-color: @list-group-hover-bg;
+  }
+}
+
+.moin-quicklink-label {
+  display: block;
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.moin-quicklink-delete {
+  position: absolute;
+  left: 80%;
+  top: 25%;
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+// transclusion
+.moin-transclusion {
+    max-width: 100%;
+}
+
+.moin-item-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+div.moin-item-wrapper {
+    width: 100%; // force bottom border of transcluded headings to extend across entire page
+}
+
+.moin-item-overlay-ul,
+.moin-item-overlay-lr {
+    display: none;
+    position: absolute;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    opacity: .5;
+    padding: 1px;
+    border-color: @link-color;
+    border-style: double;
+}
+
+.moin-item-overlay-ul {
+    top: -4px;
+    left: -4px;
+    border-width: 3px 0 0 3px;
+}
+
+.moin-item-overlay-lr {
+    bottom: -4px;
+    right: -4px;
+    border-width: 0 3px 3px 0;
+}
+
+.moin-item-overlay-ul:hover,
+.moin-item-overlay-lr:hover {
+    opacity: .8;
+    background-color: lighten(@link-color, 40%);
+    color: @link-color;
+    text-decoration: none;
+}
+
+.comment {
+  color: @text-color;
+  background-color: lighten(@link-color, 40%);
+}
+
+// added to stretch across the whole width, which is reduced by navbar.less's navbar-form
+.moin-navbar-form{
+  .navbar-form;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.moin-navbar-header{
+  .navbar-header;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.moin-toggle-comments-button, .moin-transclusions-button{
+  font-weight: normal;
+}
+
+a.wikilink{
+  color: @brand-primary;
+}
+.moin-bcs-subitems{
+  z-index: 500;
+}
+ul.moin-breadcrumb ul.moin-bcs-subitems{
+  background-color: #1b436d;
+}
+ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-bcs-subitems{
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems li{
+  list-style-type: none;
+  display: block;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems li a{
+  padding: 10px;
+  display: inline-block;
+  color: #ffffff;
+}
+ul.moin-breadcrumb li {
+  position: relative;
+}
+ul.moin-breadcrumb li ul.moin-bcs-subitems{
+  display: none;
+  position: absolute;
+}
+ul.moin-breadcrumb li:hover ul.moin-bcs-subitems{
+  display: block;
+}
+.moin-thead{
+    background-color: silver;
+}
+// set min-width to prevent search box from floating off window to right
+@media (min-width: 768px) {
+  .container {
+    width: auto;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: auto;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: auto;
+  }
+}
+#moin-ticketsearch-query {
+  background-image: url('../img/search.png');
+  background-repeat: no-repeat;
+  background-position: 5px;
+  padding-left: 24px;
+  width: 200px;
+  right: 40px;
+  position: absolute;
+}
+#ticket-list thead th:hover {
+  background-color: #e8e8e8;
+}
+#ticket-list tr td, #ticket-list thead th {
+  cursor: pointer;
+}
+#ticket-list tr td:first-child a {
+  font-family: monospace;
+}
+.ticket-query-button {
+  background: #ffffff;
+  padding: 1px 7px;
+  text-shadow: 0 1px 0 #fff;
+  border: 1px solid transparent;
+}
+.ticket-query-button.active, .ticket-query-button:hover {
+  background: -webkit-linear-gradient(top, #cccccc 0, #dddddd 13%); 
+  color: #333;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+.moin-ticketsearch-form {
+  display: inline;
+}
+.tablesorter-header {
+  background-image: url('../img/bg.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.tablesorter-headerAsc {
+  background-image: url('../img/asc.png');
+}
+.tablesorter-headerDesc {
+  background-image: url('../img/desc.png');
+}

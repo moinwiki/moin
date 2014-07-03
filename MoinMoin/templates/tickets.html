@@ -1,0 +1,88 @@
+{% extends theme("layout.html") %}
+{% set search_form=None %}
+<head>
+    {% block head %}
+    <title>{{_("Tickets")}}</title>
+    {{ super() }}
+    {% endblock %}
+</head>
+
+{% block content %}
+<h1>{{_("Tickets")}}</h1>
+
+{% set status_values = ['all', 'open', 'closed']  %}
+{{_("Filter:")}}
+{% for status_value in status_values %}
+    <form action="{{ url_for('frontend.tickets') }}" method="post" class='moin-ticketsearch-form'>
+        <input type="hidden" name="q" value="{{ query if query }}" >
+        &nbsp;<input type="hidden" name="status" value="{{ status_value }}">
+        <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'ticket-query-button active' if status == status_value  else 'ticket-query-button'}}">
+    </form>
+{% endfor %}
+
+<form action="{{ url_for('frontend.tickets') }}" method="post">
+    <input type="hidden" name="status" value="{{ status }}">
+    <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">
+</form>
+<br>
+
+<p>
+{% if results %}
+    {{ _("%(result_len)d Tickets found.", result_len=results|length) }}
+    <table class="table table-hover" id="ticket-list">
+    <thead>
+        <th id="ticket-itemid">{{_("ID")}}</th>
+        <th id="ticket-summary">{{_("Summary")}}</th>
+        <th id="ticket-status">{{_("Status")}}</th>
+        <th id="ticket-effort" title="{{ _('Effort') }}">E</th>
+        <th id="ticket-difficulty" title="{{ _('Difficulty') }}">D</th>
+        <th id="ticket-severity" title="{{ _('Severity') }}">S</th>
+        <th id="ticket-priority" title="{{ _('Priority') }}">P</th>
+        <th id="ticket-tags">{{_("Tags")}}</th>
+    </thead>
+    <tbody>
+    {% for result in results %}
+        <tr>
+            <td>
+                <a href="{{  url_for_item(result['itemid'], field='itemid', namespace=result['namespace'])}}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid'])}}">
+                    {{result['itemid'] | shorten_id}}
+                </a>
+            <td>
+                <a href="{{  url_for_item(result['itemid'], field='itemid', namespace=result['namespace'])}}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid'])}}">
+                    {{ result['summary'][:50] }}
+                </a>
+            </td>
+            <td title="{{ _('Filter by status: %(status)s', status='Closed' if result['closed'] else 'Open') }}">
+                {{ _("Closed") if result['closed'] else _("Open") }}
+            </td>
+            <td title="{{ _('Filter by effort: %(effort)d', effort=result['effort']) }}">
+                {{ result['effort'] }}
+            </td>
+            <td title="{{ _('Filter by difficulty: %(difficulty)d', difficulty=result['difficulty']) }}">
+                {{ result['difficulty'] }}
+            </td>
+            <td title="{{ _('Filter by severity: %(severity)d', severity=result['severity']) }}">
+                {{ result['severity'] }}
+            </td>
+            <td title="{{ _('Filter by priority: %(priority)d', priority=result['priority']) }}">
+                {{ result['priority'] }}
+            </td>
+            <td>
+                {% for tag in result['tags'] %}
+                    {{ tag }}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% else %}
+    {{ _("No Ticket found.") }}
+{% endif %}
+</p>
+{% endblock %}
+{% block body_scripts %}
+{{ super() }}
+    <script src="{{ url_for('serve.files', name='jquery_tablesorter', filename='jquery.tablesorter.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tickets.js') }}"></script>
+{% endblock %}
