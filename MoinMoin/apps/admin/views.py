@@ -20,7 +20,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, EMAIL_UNVALIDATED
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
@@ -49,7 +49,7 @@ def userbrowser():
     user_accounts = [dict(uid=rev.meta[ITEMID],
                           name=rev.meta[NAME],
                           fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
-                          email=rev.meta[EMAIL],
+                          email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                           disabled=rev.meta[DISABLED],
                           groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
                      ) for rev in revs]
