@@ -49,7 +49,7 @@
             </div>
             <div id="user-actions" class="hidden">
                 <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="Create or remove a navigation link to this item">
-                    <i class="icon-star-empty icon-fixed-width"> </i>
+                    <i class="icon-star-empty icon-fixed-width"></i>
                     {%- if user.is_quicklinked_to([item.fqname]) %}
                         {{ _('Remove Link') }}
                     {%- else %}
@@ -57,7 +57,7 @@
                     {%- endif %}
                 </a>
                 <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="witch notifications about item changes on or off">
-                    <i class="icon-envelope icon-fixed-width"> </i>
+                    <i class="icon-envelope icon-fixed-width"></i>
                     {%- if user.is_subscribed_to(item) %}
                         {{ _('Unsubscribe') }}
                     {%- else %}
