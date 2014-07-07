@@ -38,7 +38,9 @@
     <ul class="moin-nav nav-tabs moin-shadow">
         <li class="active"><a href="#editor" data-toggle="tab">Edit Content</a></li>
         <li><a href="#meta" data-toggle="tab">Edit Meta</a></li>
-        <li><a href="#acl" data-toggle="tab">Edit ACL</a></li>
+        {% if user.may.admin(fqname) %}
+            <li><a href="#acl" data-toggle="tab">Edit ACL</a></li>
+        {% endif %}
         <li><a href="#help" data-toggle="tab">Help</a></li>
     </ul>
     <div class="tab-content">
@@ -59,17 +61,19 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane active" id="acl">
-            <div class="row">
-                {% set field = form['meta_form']['acl'] %}
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        {{ gen.label(field) }}
-                        {{ gen.textarea(field, rows='1', class='form-control') }}
+        {% if user.may.admin(fqname) %}
+            <div class="tab-pane active" id="acl">
+                <div class="row">
+                    {% set field = form['meta_form']['acl'] %}
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            {{ gen.label(field) }}
+                            {{ gen.textarea(field, rows='1', class='form-control') }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         <div class="tab-pane active" id="help">
             {% if form['content_form'].help %}
                 <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
