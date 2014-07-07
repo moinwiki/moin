@@ -46,13 +46,21 @@ def userbrowser():
     """
     groups = flaskg.groups
     revs = user.search_users()  # all users
-    user_accounts = [dict(uid=rev.meta[ITEMID],
-                          name=rev.meta[NAME],
-                          fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
-                          email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
-                          disabled=rev.meta[DISABLED],
-                          groups=[groupname for groupname in groups if rev.meta[NAME] in groups[groupname]],
-                     ) for rev in revs]
+    user_accounts = []
+    for rev in revs:
+        user_groups = []
+        user_names = rev.meta[NAME]
+        for groupname in groups:
+            group = groups[groupname]
+            for name in user_names:
+                if name in group:
+                    user_groups.append(groupname)
+        user_accounts.append(dict(uid=rev.meta[ITEMID],
+                                  name=user_names,
+                                  fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
+                                  email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
+                                  disabled=rev.meta[DISABLED],
+                                  groups=user_groups))
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
 
 
