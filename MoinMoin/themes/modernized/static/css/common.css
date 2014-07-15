@@ -551,3 +551,20 @@ ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
 ul.moin-bcs-item li{position:relative}
 ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
 ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
+.tickets-sort-button.dropdown{display:inline}
+#ticket-list{float:right;width:85%}
+.moin-ticketsearch-form{display:inline}
+#moin-ticketsearch-query{background-image:url("../../../../static/img/search.png");background-repeat:no-repeat;background-position:5px;padding-left:24px;width:150px;height:25px;right:40px;position:absolute}
+#ticket-list thead th{cursor:pointer;padding-left:20px}
+.tablesorter-header{background-image:url("../../../../static/img/bg.png");background-repeat:no-repeat;background-position:left center;background-color:#d8dfe9;color:#000}
+.tablesorter-headerAsc{background-image:url("../../../../static/img/asc.png")}
+.tablesorter-headerDesc{background-image:url("../../../../static/img/desc.png")}
+.tablesorter-header.sorter-false{background-image:None}
+#ticket-table-tip{float:right;color:#4e7da9}
+#ticket-summary{width:50%}
+.ticket-query-button.active,.ticket-tags-button.active{background-color:#008b8b}
+.tickets-sort-button.dropdown{z-index:500}
+.tickets-sort-button.dropdown ul.dropdown-menu{background-color:#dfdfdf;padding:0;margin:0;display:none;position:absolute;}
+.tickets-sort-button.dropdown ul.dropdown-menu li{list-style-type:none;display:block;position:relative;}
+.tickets-sort-button.dropdown ul.dropdown-menu li a{display:inline}
+.tickets-sort-button.dropdown:hover ul.dropdown-menu{display:inline-block}
