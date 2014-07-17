@@ -3,17 +3,33 @@
 {% macro meta_editor(form) %}
     <h2>Blog entry metadata</h2>
     <dl>
+        {# TODO: Make blog_entry nameless #}
         {% for e in [
             'itemtype',
             'contenttype',
             'summary',
             'tags',
             'acl',
-            {# TODO: Make blog_entry nameless #}
             'name',
             'ptime',
             ] %}
             {{ forms.render(form[e]) }}
         {% endfor %}
     </dl>
+{% endmacro %}
+
+{% macro basic_meta_editor(form) %}
+    {% for e in [
+        'itemtype',
+        'contenttype',
+        'summary',
+        'tags',
+        'name',
+        'ptime',
+        ] %}
+        <div class="form-group">
+            {{ gen.label(form[e]) }}
+            {{ gen.textarea(form[e], rows='1', class='form-control') }}
+        </div>
+    {% endfor %}
 {% endmacro %}

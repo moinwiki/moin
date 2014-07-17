@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
-{% from theme("modify_meta.html") import basic_meta_editor %}
+{% from theme(form.meta_template) import basic_meta_editor %}
 {% import theme("itemviews.html") as itemviews with context %}
 {% import theme(form['content_form'].template) as content_template %}
 {% set extra_head = content_template.extra_head %}
