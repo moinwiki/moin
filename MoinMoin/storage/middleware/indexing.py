@@ -802,6 +802,7 @@ class IndexingMiddleware(object):
             return searcher.document(**kw)
 
     def has_item(self, name):
+        # TODO: Add fqname support to this method
         item = self[name]
         return bool(item)
 
