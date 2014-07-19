@@ -663,6 +663,7 @@ $(document).ready(function () {
 
     moin.enhanceUserSettings();
     moin.enhanceEdit();
+    $('.moin-sortable').tablesorter();
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
 });

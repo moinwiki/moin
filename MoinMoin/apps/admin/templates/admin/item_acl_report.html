@@ -1,0 +1,21 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    <h1>{{ _("Item ACL Report") }}</h1>
+    <table class="table table-hover tablesorter tablesorter-default moin-sortable" data-sortlist="[[0,0]]">
+        <thead>
+            <tr>
+                <th>{{ _("Item Names") }}</th>
+                <th>{{ _("ACL") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_acls %}
+                <tr>
+                    <td><a href="{{ url_for('frontend.modify_item', item_name=item['fqname']) }}">{% if item['name'] %}{{ item['name'] | join(', ') }}{% else %}{{ _("Item Id") }}: {{ item['itemid'] }}{% endif %}</a></td>
+                    <td>{{ item['acl'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
