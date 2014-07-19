@@ -20,7 +20,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, EMAIL_UNVALIDATED
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
@@ -257,3 +257,26 @@ def _trashed(namespace):
         meta = rev.meta
         results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
     return results
+
+
+@admin.route('/user_acl_report/<uid>', methods=['GET'])
+@require_permission(SUPERUSER)
+def user_acl_report(uid):
+    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    groups = flaskg.groups
+    theuser = user.User(uid=uid)
+    itemwise_acl = []
+    for item in all_items:
+        fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item.meta.get(ITEMID))
+        itemwise_acl.append({'name': item.meta.get(NAME),
+                             'itemid': item.meta.get(ITEMID),
+                             'fqname': fqname,
+                             'read': theuser.may.read(fqname),
+                             'write': theuser.may.write(fqname),
+                             'create': theuser.may.create(fqname),
+                             'admin': theuser.may.admin(fqname),
+                             'destroy': theuser.may.destroy(fqname)})
+    return render_template('admin/user_acl_report.html',
+                           title_name=_(u'User ACL Report'),
+                           user_names=theuser.name,
+                           itemwise_acl=itemwise_acl)
