@@ -25,6 +25,7 @@ from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFA
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
 from MoinMoin.util.interwiki import CompositeName
+from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
 
 
 @admin.route('/superuser')
@@ -280,3 +281,26 @@ def user_acl_report(uid):
                            title_name=_(u'User ACL Report'),
                            user_names=theuser.name,
                            itemwise_acl=itemwise_acl)
+
+
+@admin.route('/groupbrowser', methods=['GET'])
+@require_permission(SUPERUSER)
+def groupbrowser():
+    """
+    Display list of all groups and their members
+    """
+    all_groups = flaskg.groups
+    groups = []
+    for group in all_groups:
+        group_type = ''
+        if isinstance(all_groups[group], WikiGroup):
+            group_type = 'WikiGroup'
+        else:
+            group_type = 'ConfigGroup'
+        groups.append(dict(name=all_groups[group].name,
+                           member_users=all_groups[group].members,
+                           member_groups=all_groups[group].member_groups,
+                           grouptype=group_type))
+    return render_template('admin/groupbrowser.html',
+                           title_name=_(u'Groups'),
+                           groups=groups)
