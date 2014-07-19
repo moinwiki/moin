@@ -18,7 +18,7 @@ from whoosh.sorting import FunctionFacet
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
-from MoinMoin.forms import OptionalText, Tags, DateTime
+from MoinMoin.forms import Text, Tags, DateTime
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
 from MoinMoin.items import Item, Default, register, BaseMetaForm
@@ -35,7 +35,7 @@ class BlogMetaForm(BaseMetaForm):
 
 
 class BlogEntryMetaForm(BaseMetaForm):
-    summary = (OptionalText.using(label=L_("Title"))
+    summary = (Text.using(label=L_("Title (required)", optional=False))
                .with_properties(placeholder=L_("One-line title of the blog entry")))
     ptime = DateTime.using(label=L_('Publication time (UTC)'), optional=True)
 
