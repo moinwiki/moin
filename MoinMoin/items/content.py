@@ -64,6 +64,7 @@ from MoinMoin.util.diff_text import diff as text_diff
 from MoinMoin.util.diff_html import diff as html_diff
 from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.clock import timed
+from MoinMoin.util.interwiki import get_download_file_name
 from MoinMoin.forms import File
 from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
@@ -384,7 +385,7 @@ There is no help, you're doomed!
             force_attachment = True
         else:  # content = item revision
             rev = self.rev
-            filename = rev.item.name
+            filename = get_download_file_name(rev.item.fqname)
             try:
                 mimestr = rev.meta[CONTENTTYPE]
             except KeyError:

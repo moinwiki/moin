@@ -107,6 +107,16 @@ def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT
     return url
 
 
+def get_download_file_name(fqname):
+    """
+    returns the filename that is used for downloading items
+    """
+    if fqname.field == NAME_EXACT:
+        return fqname.value
+    else:
+        return '{0}-{1}'.format(fqname.field, fqname.value)
+
+
 def _split_namespace(namespaces, url):
     """
     Find the longest namespace in the set.

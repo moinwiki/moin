@@ -81,18 +81,19 @@ class ThemeSupport(object):
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
 
-    def get_action_tabs(self, item_name, current_endpoint):
+    def get_action_tabs(self, fqname, current_endpoint):
 
-        if item_name in ['@NONAMEGIVEN', '']:
+        if not fqname:
             return []
 
-        exists = flaskg.storage.has_item(item_name)
+        # TODO: Need to add fqname support to has_item in indexing.py
+        exists = bool(flaskg.storage.get_item(**fqname.query))
 
         navtabs_endpoints = ['frontend.show_item', 'frontend.history',
                              'frontend.show_item_meta', 'frontend.highlight_item', 'frontend.backrefs',
                              'frontend.index', 'frontend.sitemap', 'frontend.similar_names', ]
 
-        if self.user.may.write(item_name):
+        if self.user.may.write(fqname):
             navtabs_endpoints.append('frontend.modify_item')
 
         icon = self.get_endpoint_iconmap()
@@ -119,28 +120,28 @@ class ThemeSupport(object):
                             # special case for modify item link, this depends on the double click to edit JS
                             if endpoint == 'frontend.modify_item':
                                 linkcls = "moin-modify-button"
-                            href = url_for(endpoint, item_name=item_name)
+                            href = url_for(endpoint, item_name=fqname)
                             if endpoint == current_endpoint or (endpoint, current_endpoint) in spl_active:
                                 maincls = "active"
 
                         navtabs.append((endpoint, href, maincls, iconcls, linkcls, title, label))
         return navtabs
 
-    def get_local_panel(self, item_name):
+    def get_local_panel(self, fqname):
 
-        if item_name in ['@NONAMEGIVEN', '']:
+        if not fqname:
             return [], [], []
 
-        exists = flaskg.storage.has_item(item_name)
+        item = flaskg.storage.get_item(**fqname.query)
 
-        if not exists:
+        if not item:
             return [], [], []
 
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
                                   'frontend.download_item',
-                                  'frontend.copy_item', ] if self.user.may.write(item_name) else []
+                                  'frontend.copy_item', ] if self.user.may.write(fqname) else []
 
         user_actions = []
         item_navigation = []
@@ -150,21 +151,20 @@ class ThemeSupport(object):
 
         for endpoint, label, title, check_exists in app.cfg.item_views:
             if endpoint not in app.cfg.endpoints_excluded:
-                if not check_exists or exists:
+                if not check_exists or item:
                     if endpoint in user_actions_endpoints:
                         if flaskg.user.valid:
-                            href = url_for(endpoint, item_name=item_name)
+                            href = url_for(endpoint, item_name=fqname)
                             iconcls = icon[endpoint]
                             # endpoint = iconcls = label = None
 
                             if endpoint == 'frontend.quicklink_item':
-                                if not flaskg.user.is_quicklinked_to([item_name]):
+                                if not flaskg.user.is_quicklinked_to([fqname]):
                                     label = _('Add Link')
                                     user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
                                 from MoinMoin.items import Item
-                                item = Item.create(item_name)
-                                if flaskg.user.is_subscribed_to(item):
+                                if flaskg.user.is_subscribed_to(item.item):
                                     label = _('Unsubscribe')
                                 else:
                                     label = _('Subscribe')
@@ -174,18 +174,19 @@ class ThemeSupport(object):
 
                         iconcls = icon[endpoint]
 
-                        href = url_for(endpoint, item_name=item_name)
+                        href = url_for(endpoint, item_name=fqname)
                         item_actions.append((endpoint, href, iconcls, label, title, True))
 
-                    elif endpoint in item_navigation_endpoints:
+                    # Special Supplementation defined only for named items
+                    elif endpoint in item_navigation_endpoints and fqname.field == NAME_EXACT:
 
                         iconcls = icon[endpoint]
 
                         if endpoint == 'special.supplementation':
                             for sub_item_name in app.cfg.supplementation_item_names:
-                                current_sub = item_name.rsplit('/', 1)[-1]
+                                current_sub = fqname.value.rsplit('/', 1)[-1]
                                 if current_sub not in app.cfg.supplementation_item_names:
-                                    supp_name = '%s/%s' % (item_name, sub_item_name)
+                                    supp_name = '%s/%s' % (fqname.value, sub_item_name)
                                     if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
                                         subitem_exists = self.storage.has_item(supp_name)
                                         href = url_for('frontend.show_item', item_name=supp_name)
@@ -194,7 +195,7 @@ class ThemeSupport(object):
 
                                         item_navigation.append((endpoint, href, iconcls, label, title, subitem_exists))
                         else:
-                            href = url_for(endpoint, item_name=item_name)
+                            href = url_for(endpoint, item_name=fqname)
                             item_navigation.append((endpoint, href, iconcls, label, title, True))
 
         return user_actions, item_navigation, item_actions
