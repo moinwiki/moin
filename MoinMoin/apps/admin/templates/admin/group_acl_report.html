@@ -1,0 +1,30 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    <h1>{{ _("Group ACL Report") }}</h1>
+    <h2>{{ _("Group Name") }}: {{ group_name }}</h2>
+    <table class="table table-hover tablesorter tablesorter-default moin-sortable" data-sortlist="[[0,0]]">
+        <thead>
+            <tr>
+                <th>{{ _("Item Names") }}</th>
+                <th>{{ _("read") }}</th>
+                <th>{{ _("write") }}</th>
+                <th>{{ _("create") }}</th>
+                <th>{{ _("destroy") }}</th>
+                <th>{{ _("admin") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in group_items %}
+                <tr>
+                    <td><a href="{{ url_for('frontend.modify_item', item_name=item['fqname']) }}">{% if item['name'] %}{{ item['name']|join(', ') }}{% else %}{{ _("Item Id") }}: {{ item['itemid'] }}{% endif %}</a></td>
+                    <td>{% if 'read' in item['rights'] %}{{ _("read") }}{% endif %}</td>
+                    <td>{% if 'write' in item['rights'] %}{{ _("write") }}{% endif %}</td>
+                    <td>{% if 'create' in item['rights'] %}{{ _("create") }}{% endif %}</td>
+                    <td>{% if 'destroy' in item['rights'] %}{{ _("destroy") }}{% endif %}</td>
+                    <td>{% if 'admin' in item['rights'] %}{{ _("admin") }}{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
