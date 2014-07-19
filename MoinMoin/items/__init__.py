@@ -376,8 +376,8 @@ class Item(object):
     def contenttype(self):
         return self.content.contenttype if self.content else None
 
-    def _render_meta(self):
-        return "<pre>{0}</pre>".format(escape(self.meta_dict_to_text(self.meta, use_filter=False)))
+    def _meta_info(self):
+        return self.meta_to_dict(self.meta, use_filter=False)
 
     def meta_filter(self, meta):
         """ kill metadata entries that we set automatically when saving """
@@ -397,6 +397,13 @@ class Item(object):
             meta.pop(key, None)
         return meta
 
+    def meta_to_dict(self, meta, use_filter=True):
+        """ convert meta data from storage object to python dict """
+        meta = dict(meta)
+        if use_filter:
+            meta = self.meta_filter(meta)
+        return meta
+
     def meta_text_to_dict(self, text):
         """ convert meta data from a text fragment to a dict """
         meta = json.loads(text)
@@ -404,9 +411,7 @@ class Item(object):
 
     def meta_dict_to_text(self, meta, use_filter=True):
         """ convert meta data from a dict to a text fragment """
-        meta = dict(meta)
-        if use_filter:
-            meta = self.meta_filter(meta)
+        meta = self.meta_to_dict(meta, use_filter)
         return json.dumps(meta, sort_keys=True, indent=2, ensure_ascii=False)
 
     def prepare_meta_for_modify(self, meta):

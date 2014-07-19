@@ -551,7 +551,7 @@ def show_item_meta(item):
                            contenttype=item.contenttype,
                            first_rev_id=first_rev,
                            last_rev_id=last_rev,
-                           meta_rendered=Markup(item._render_meta()),
+                           meta=item._meta_info(),
                            show_revision=show_revision,
                            show_navigation=show_navigation,
     )
