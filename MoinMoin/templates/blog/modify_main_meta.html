@@ -8,9 +8,27 @@
             'contenttype',
             'summary',
             'tags',
+            'acl',
+            'name',
             'supertags',
             ] %}
             {{ forms.render(form[e]) }}
         {% endfor %}
     </dl>
+{% endmacro %}
+
+{% macro basic_meta_editor(form) %}
+    {% for e in [
+        'itemtype',
+        'contenttype',
+        'summary',
+        'tags',
+        'name',
+        'supertags',
+        ] %}
+        <div class="form-group">
+            {{ gen.label(form[e]) }}
+            {{ gen.textarea(form[e], rows='1', class='form-control') }}
+        </div>
+    {% endfor %}
 {% endmacro %}

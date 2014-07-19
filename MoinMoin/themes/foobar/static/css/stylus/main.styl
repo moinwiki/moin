@@ -1170,6 +1170,72 @@ body
 .moin-suggestions
     padding-left 14px
 
+.tablesorter-header
+    background-image url('../../../../static/img/bg.png')
+    background-repeat no-repeat
+    background-position left center
+    padding-left 20px
+    cursor pointer
+
+.tablesorter-headerAsc
+    background-image url('../../../../static/img/asc.png')
+
+.tablesorter-headerDesc
+    background-image url('../../../../static/img/desc.png')
+
+.tablesorter-header.sorter-false
+    background-image None
+
+#ticket-summary
+    width 50%
+
+#ticket-list
+    float right
+    width 85%
+
+#ticket-table-tip
+    float right
+    width 85%
+    color shadow_color
+
+#moin-ticketsearch-query
+    background-image url('../../../../static/img/search.png')
+    background-repeat no-repeat
+    background-position 5px
+    padding-left 24px
+    width 150px
+    height 20px
+    right 40px
+    position absolute
+
+.moin-ticketsearch-form
+    display inline
+
+.tickets-sort-button
+    display inline
+
+.ticket-query-button.active, .ticket-tags-button.active
+    background-color visited_color
+
+.tickets-sort-button.dropdown
+    z-index 500
+
+.tickets-sort-button.dropdown ul.dropdown-menu
+    background-color base_color
+    padding 0
+    margin 0
+    display none
+    position absolute
+    li
+        list-style-type none
+        display block
+        position relative
+        a
+            display inline
+
+.tickets-sort-button.dropdown:hover ul.dropdown-menu
+    display inline-block
+
 /* fix tests -- currently checking <big> and <small> */
 @media print
     #moin-global-tray

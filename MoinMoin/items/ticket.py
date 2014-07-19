@@ -204,4 +204,5 @@ class Ticket(Contentful):
                                    data_rendered=data_rendered,
                                    form=form,
                                    suggested_tags=suggested_tags,
+                                   item=self,
                                   )
