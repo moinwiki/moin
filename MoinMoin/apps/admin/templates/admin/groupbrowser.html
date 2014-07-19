@@ -17,7 +17,7 @@
                     <td>{% if group['grouptype'] == 'WikiGroup' %}<a href="{{ url_for('frontend.modify_item', item_name=group['name']) }}">{% endif %}{{ group['name'] }}</a></td>
                     <td>{{ group['member_users']|sort|join(', ') }}</td>
                     <td>{{ group['member_groups']|sort|join(', ') }}</td>
-                    <td>ACL Report</td>
+                    <td><a href="{{ url_for('admin.group_acl_report', group_name=group['name']) }}">{{ _("ACL Report") }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>

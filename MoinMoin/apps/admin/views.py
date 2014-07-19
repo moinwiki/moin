@@ -22,10 +22,11 @@ from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
-from MoinMoin.constants.rights import SUPERUSER
-from MoinMoin.security import require_permission
+from MoinMoin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
+from MoinMoin.security import require_permission, ACLStringIterator
 from MoinMoin.util.interwiki import CompositeName
 from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
+from MoinMoin.datastruct.backends import GroupDoesNotExistError
 
 
 @admin.route('/superuser')
@@ -331,3 +332,37 @@ def item_acl_report():
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
                            items_acls=items_acls)
+
+
+def search_group(group_name):
+    groups = flaskg.groups
+    if groups[group_name]:
+            return groups[group_name]
+    else:
+        raise GroupDoesNotExistError(group_name)
+
+
+@admin.route('/group_acl_report/<group_name>')
+@require_permission(SUPERUSER)
+def group_acl_report(group_name):
+    """
+    Display a 2-column table of items and ACLs, where the ACL rule specifies any
+    WikiGroup or ConfigGroup name.
+    """
+    group = search_group(group_name)
+    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    group_items = []
+    for item in all_items:
+        acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, item.meta.get(ACL, ''))
+        for modifier, entries, rights in acl_iterator:
+            if group_name in entries:
+                item_id = item.meta.get(ITEMID)
+                fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item_id)
+                group_items.append(dict(name=item.meta.get(NAME),
+                                        itemid=item_id,
+                                        fqname=fqname,
+                                        rights=rights))
+    return render_template('admin/group_acl_report.html',
+                           title_name=_(u'Group ACL Report'),
+                           group_items=group_items,
+                           group_name=group_name)
