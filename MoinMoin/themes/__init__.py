@@ -475,6 +475,15 @@ class ThemeSupport(object):
                 namespace_root_mapping.append((namespace or '~', fq_namespace.get_root_fqname()))
         return namespace_root_mapping
 
+    def item_exists(self, itemname):
+        """
+        Check whether the item pointed to by the given itemname exists or not
+
+        :rtype: boolean
+        :returns: whether item pointed to by the link exists or not
+        """
+        return self.storage.has_item(itemname)
+
 
 def get_editor_info(meta, external=False):
     addr = meta.get(ADDRESS)

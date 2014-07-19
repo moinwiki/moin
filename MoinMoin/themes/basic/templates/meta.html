@@ -1,4 +1,5 @@
 {% extends theme("layout.html") %}
+{% import "utils.html" as utils with context %}
 {% import theme("itemviews.html") as itemviews with context %}
 
 {% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
@@ -16,9 +17,9 @@
     {{ title }}
     {% if show_revision %}({{ _("Revision") }} {{ rev.revid | shorten_id }}){% endif %}
 </h2>
-{% if meta_rendered %}
+{% if meta %}
 <div id="moin-content-meta">
-    {{ meta_rendered }}
+    {{ utils.meta_info(meta) }}
 </div>
 {% endif %}
 {% endblock %}
