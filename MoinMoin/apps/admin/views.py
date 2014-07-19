@@ -20,7 +20,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED
+from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.security import require_permission
@@ -304,3 +304,30 @@ def groupbrowser():
     return render_template('admin/groupbrowser.html',
                            title_name=_(u'Groups'),
                            groups=groups)
+
+
+@admin.route('/item_acl_report', methods=['GET'])
+@require_permission(SUPERUSER)
+def item_acl_report():
+    """
+    Return a list of all items in the wiki along with the ACL Meta-data
+    """
+    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    items_acls = []
+    for item in all_items:
+        item_namespace = item.meta.get(NAMESPACE)
+        item_id = item.meta.get(ITEMID)
+        item_name = item.meta.get(NAME)
+        item_acl = item.meta.get(ACL)
+        fqname = CompositeName(item_namespace, u'itemid', item_id)
+        if item_acl is None:
+            for namespace, acl_config in app.cfg.acl_mapping:
+                if item_namespace == namespace or item_namespace == 'userprofiles' and namespace == 'userprofiles/':
+                    item_acl = 'Default ({0})'.format(acl_config['default'])
+        items_acls.append({'name': item_name,
+                           'itemid': item_id,
+                           'fqname': fqname,
+                           'acl': item_acl})
+    return render_template('admin/item_acl_report.html',
+                           title_name=_('Item ACL Report'),
+                           items_acls=items_acls)
