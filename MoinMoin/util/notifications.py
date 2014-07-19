@@ -12,6 +12,7 @@ from urlparse import urljoin
 from whoosh.query import Term, And
 
 from flask import url_for, g as flaskg
+from flask import abort
 
 from MoinMoin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
                                      ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
@@ -97,14 +98,19 @@ class Notification(object):
             contenttype = self.meta[CONTENTTYPE]
             oldfile, newfile = self.revs[0].data, BytesIO("")
         else:
-            newfile = self.revs[0].data
-            if len(self.revs) == 1:
-                contenttype = self.revs[0].meta[CONTENTTYPE]
-                oldfile = BytesIO("")
+            # if user does not have permission to read object,
+            # get_item_last_revisions() returns an empty list to self.revs
+            if len(self.revs) > 0:
+                newfile = self.revs[0].data
+                if len(self.revs) == 1:
+                    contenttype = self.revs[0].meta[CONTENTTYPE]
+                    oldfile = BytesIO("")
+                else:
+                    from MoinMoin.apps.frontend.views import _common_type
+                    contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
+                    oldfile = self.revs[1].data
             else:
-                from MoinMoin.apps.frontend.views import _common_type
-                contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
-                oldfile = self.revs[1].data
+                abort(403)
         content = Content.create(contenttype)
         return content._get_data_diff_text(oldfile, newfile)
 
@@ -185,6 +191,8 @@ def get_item_last_revisions(app, fqname):
     :param fqname: the fqname of the item
     :return: a list of revisions
     """
+    # TODO: Implement AccessDenied or similar error in case the user does not have access to item
+    # and to also to handle the case where the item has no revisions
     terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
     query = And(terms)
     return list(
