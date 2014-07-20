@@ -2,11 +2,7 @@
 {% import "utils.html" as utils %}
 
 {% macro show_blog_entry(entry_item) %}
-    {% if entry_item.meta['summary'] %}
-        {% set title = entry_item.meta['summary'] %}
-    {% else %}
-        {% set title = entry_item.name %}
-    {% endif %}
+    {% set title = entry_item.meta['summary'] %}
     <h1><a href="{{ url_for('frontend.show_item', item_name=entry_item.name) }}"
         title="{{ title }}" class="moin-blog-entry-link">{{ title }}</a></h1>
     {% if user.may.write(entry_item.name) %}

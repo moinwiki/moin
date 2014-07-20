@@ -4,7 +4,7 @@
 {% set logo = snippets.logo() %}
 {% set footer_logos = snippets.creditlogos() %}
 {% set credits = snippets.credits() %}
-{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(item_name) %}
+{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(fqname) %}
 {% set basic_scripts = snippets.add_scripts() %}
 
 {% set current_url = request.url %}

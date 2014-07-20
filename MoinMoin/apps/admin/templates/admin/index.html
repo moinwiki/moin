@@ -6,5 +6,7 @@
     <li><a href="{{ url_for('admin.wikiconfig') }}">{{ _("Show Wiki Configuration") }}</a></li>
     <li><a href="{{ url_for('admin.wikiconfighelp') }}">{{ _("Wiki Configuration Help") }}</a></li>
     <li><a href="{{ url_for('admin.trash', namespace='all') }}">{{ _("Trash") }}</a></li>
+    <li><a href="{{ url_for('admin.groupbrowser') }}">{{ _("Groups") }}</a></li>
+    <li><a href="{{ url_for('admin.item_acl_report') }}">{{ _("Item ACL Report") }}</a></li>
 </ul>
 {% endblock %}

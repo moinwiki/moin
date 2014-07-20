@@ -1,7 +1,7 @@
 {% set exists = storage.has_item(item_name) %}
 {% set current_endpoint = request.endpoint %}
 
-{% set navtabs = theme_supp.get_action_tabs(item_name, current_endpoint) %}
+{% set navtabs = theme_supp.get_action_tabs(fqname, current_endpoint) %}
 
 {% block views %}
     {% if navtabs %}
