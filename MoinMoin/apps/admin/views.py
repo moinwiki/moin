@@ -238,6 +238,7 @@ def itemsize():
 
 @admin.route('/trash', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
 @admin.route('/<namespace>/trash')
+@require_permission(SUPERUSER)
 def trash(namespace):
     """
     Returns the trashed items.
