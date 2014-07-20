@@ -10,6 +10,7 @@ import json
 
 from flask import current_app as app
 from flask.ext.script import Command, Option
+from flask import g as flaskg
 
 from MoinMoin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM
 
@@ -50,6 +51,7 @@ class PutItem(Command):
     )
 
     def run(self, meta_file, data_file, overwrite):
+        flaskg.add_lineno_attr = False
         with open(meta_file, 'rb') as mf:
             meta = mf.read()
         meta = meta.decode('utf-8')
