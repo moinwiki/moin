@@ -359,7 +359,7 @@ When rendering a template, the template is expanded within an environment of
 values it can use. In addition to this general environment, parameters can
 also be given directly to the render call.
 
-Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in MoinMoin are compiled using the source ``basic.less`` file in the Basic theme's ``static/custom-less`` directory. Stylesheets for the Modernized and Foobar themes are compiled using the ``main.styl files`` in their respective ``static/css/stylus`` directories. To compile CSS for all themes::
+Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's ``static/custom-less`` directory. Stylesheets for the Modernized and Foobar themes are compiled using the ``theme.styl files`` in their respective ``static/css/stylus`` directories. To compile CSS for all themes::
 
     ./m css  # Windows: m css
 
