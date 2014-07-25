@@ -358,16 +358,16 @@ class Commands(object):
         # Note: we use / here to specify directory offsets; this works as used below in Windows XP, 2000, 7, 8
         bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
         pygments_loc = get_pygments_data_location().strip() + '/css'
-        command = 'cd {0}{1}stylus --include {2} --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP, pygments_loc)
+        command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP, pygments_loc)
         result = subprocess.call(command, shell=True)
         print 'Running Stylus to update Foobar theme CSS files...'
-        command = 'cd {0}{1} stylus --include {2} --include-css --compress < main.styl > ../common.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP, pygments_loc)
+        command = 'cd {0}{1} stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP, pygments_loc)
         result2 = subprocess.call(command, shell=True)
         if result == 0 and result2 == 0:
             print 'Success: Modernized and Foobar CSS files updated.'
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
-        # stylus adds too many blank lines at end of modernized common.css, fix it by running coding_std against css directory
+        # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
         command = 'python contrib/pep8/coding_std.py MoinMoin/themes/modernized/static/css'
         result = subprocess.call(command, shell=True)
         if result != 0:
@@ -379,7 +379,7 @@ class Commands(object):
         else:
             data_loc = '{0}:{1}'.format(bootstrap_loc, pygments_loc)
         include = '--include-path=' + data_loc
-        command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} basic.less ../css/basic.css'.format(SEP, include)
+        command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} theme.less ../css/theme.css'.format(SEP, include)
         result = subprocess.call(command, shell=True)
         if result == 0:
             print 'Success: Basic theme CSS files updated.'
