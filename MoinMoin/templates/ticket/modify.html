@@ -1,0 +1,30 @@
+{% extends "ticket/base.html" %}
+
+{% block title_text %}
+    {{ _("Ticket: '%(item_name)s'", item_name=item_name) }}
+{% endblock %}
+
+{% block form_controls %}
+    <h2>{{ _("Add comment") }}</h2>
+    <dl>
+    {{ forms.render(form['message']) }}
+    </dl>
+
+    <h2>{{ _("Edit metadata") }}</h2>
+    <dl>
+    {{ forms.render_errors(form) }}
+    {{ render_meta() }}
+    {{ _("Suggested Tags: ") }}
+    {% for suggested_tag in suggested_tags %}
+        {{ suggested_tag }}
+    {% endfor %}
+    {{ render_selectlists() }}
+    </dl>
+
+    {{ forms.render(form['submit']) }}
+
+    <h2>{{ _("Back references") }}</h2>
+    <dl>
+    {{ render_backref() }}
+    </dl>
+{% endblock %}

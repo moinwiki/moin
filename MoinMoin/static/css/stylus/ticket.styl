@@ -1,0 +1,100 @@
+#moin-ticket-form
+    dd
+        width 80%
+        margin-top 0.1em
+    dt
+        width 15%
+        margin-top 0.1em
+
+fields = (effort difficulty severity priority)
+remove_display_radio()
+    ids = ()
+    for level in 1..5
+        for field in fields
+            id = '#f_meta_%s_%s' % (field level)
+            push(ids, unquote(id))
+    ids = join(', ', ids)
+
+{unquote(remove_display_radio())}
+    display none
+
+css_for_label()
+    ids = ()
+    for level in 1..5
+        for field in fields
+            id = '#f_meta_%s_%s + label.moin-inline-label' % (field level)
+            push(ids, unquote(id))
+    ids = join(', ', ids)
+
+{unquote(css_for_label())}
+    padding-left 25px
+    padding-right 10px
+    height 20px
+    display inline-block
+    line-height 20px
+    background-repeat no-repeat
+    background-position 0 0
+    font-size 20px
+    vertical-align middle
+    cursor pointer
+
+css_for_checked_label()
+    ids = ()
+    for level in 1..5
+        for field in fields
+            id = '#f_meta_%s_%s:checked + label.moin-inline-label' % (field level)
+            push(ids, unquote(id))
+    ids = join(', ', ids)
+
+{unquote(css_for_checked_label())}
+    background-position 0 -20px
+
+label.moin-inline-label
+    background-image url('../img/radiobutton.png');
+
+#f_meta_tags, #f_meta_summary
+    -webkit-transition all 0.30s ease-in-out
+    -moz-transition all 0.30s ease-in-out
+    -ms-transition all 0.30s ease-in-out
+    -o-transition all 0.30s ease-in-out
+    outline none
+    width 200px
+    margin-top 20px
+    margin-bottom 20px
+    height 25px
+    padding 3px 0px 3px 3px
+    margin 5px 1px 3px 0px
+    border 1px solid #DDDDDD
+
+#f_meta_tags:focus, #f_meta_summary:focus
+    box-shadow 0 0 5px rgba(81, 203, 238, 1)
+    margin-top 20px
+    margin-bottom 20px
+    height 25px
+    padding 3px 0px 3px 3px
+    margin 5px 1px 3px 0px
+    border 1px solid rgba(81, 203, 238, 1)
+
+input[type=submit], #f_submit
+    margin-top 10px
+    margin-bottom 20px
+    width 150px
+    background-color #1b436d
+    height 40px
+    color #ffffff
+    border 2px solid
+
+select
+    display inline-block
+    margin-bottom 0
+    font-weight normal
+    text-align center
+    vertical-align middle
+    cursor pointer
+    border 1px solid
+    white-space nowrap
+    padding 6px 12px
+    font-size 14px
+    line-height 1.42857143
+    border-radius 4px
+    -webkit-user-select none
