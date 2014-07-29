@@ -108,7 +108,7 @@ setup_args = dict(
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-autosize',
         'XStatic-jQuery>=1.8.2',
-        'XStatic-jQuery-File-Upload>=4.4.2',
+        'XStatic-jQuery-File-Upload==4.4.2',  # newer version not tested yet
         'XStatic-TWikiDraw-moin>=2004.10.23.2',
         'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2012.11.15.1',
