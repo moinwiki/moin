@@ -1,0 +1,118 @@
+## Please edit system and help pages ONLY in the master wiki!
+## For more information, please see MoinMoin:MoinDev/Translation.
+##master-page:None
+##master-date:None
+#acl -All:write Default
+#format plain
+#language en
+
+# MoinMoin master InterWiki list
+# This list is deployed to all MoinMoin users in the file "intermap.txt". Nevertheless
+# you can add your own InterWiki entries to your wiki by editing your local InterWikiMap
+# if you do not want to modify the file directly.
+
+
+# for Germany: bookzilla.de instead of amazon == supporting GNU/Linux and 5% for FSF Europe
+# ISBN http://bookzilla.de/shop/action/advancedSearch?action=search&isbn=
+RFC http://www.ietf.org/rfc/rfc$PAGE.txt
+ISBN http://isbndb.com/search-all.html?kw=
+FreshMeat http://freshmeat.net/
+py2exe http://www.py2exe.org/index.cgi/ 
+ESW http://esw.w3.org/topic/
+OSPedia http://ospedia.osdir.com/
+MsgID http://groups.google.com/groups?as_umsgid=
+BcWireless http://www.bcwireless.net/moin.cgi/
+Debian http://wiki.debian.org/
+DebianBug http://bugs.debian.org/
+DebianPackage http://packages.debian.org/
+DocBook http://wiki.docbook.org/  
+CAKE http://www.cakem.net/mywiki/	
+WLUG http://www.wlug.org.nz/
+OpenOfficeWiki http://www.ooowiki.de/
+CPAN http://search.cpan.org/perldoc?
+NemWiki http://nematologists.org.au/nemwiki
+PostWiki http://www.postwiki.net/
+GentooLinux http://gentoo-wiki.com/
+Ubuntu https://wiki.ubuntu.com/
+LinuxMM http://linux-mm.org/
+LinuxNet http://linux-net.osdl.org/index.php/
+KernelNewbies http://wiki.kernelnewbies.org/
+Spamikaze http://spamikaze.org/
+SpackOrg http://www.spack.org/index.cgi/
+CsWikiPedia http://cs.wikipedia.org/wiki/
+RuWikiPedia http://ru.wikipedia.org/wiki/
+MBWiki http://wiki.musicbrainz.org/
+SquidWiki http://wiki.squid-cache.org/
+AltLinux http://altlinux.org/
+AltLinuxEn http://en.altlinux.org/
+hg http://mercurial.selenic.com/wiki/
+
+## Updated 2004-11-19 from http://www.usemod.com/cgi-bin/mb.pl?InterMapTxt
+## Please modify the upper part of this page only
+
+AbbeNormal http://ourpla.net/cgi/pikie?
+Acronym http://www.acronymfinder.com/af-query.asp?String=exact&Acronym=
+Advogato http://www.advogato.org/
+AtomWiki http://intertwingly.net/wiki/pie/
+BitTorrentFAQ http://www.bamber.org/wiki/ow.asp?
+BookShelved http://bookshelved.org/cgi-bin/wiki.pl?
+C2find http://c2.com/cgi/wiki?FindPage&value= 
+Cache http://www.google.com/search?q=cache:
+CarpeWiki http://carpe.com/wiki/wiki.pl?
+CoLinux http://colinux.wikia.com/wiki/
+CommunityWiki http://www.communitywiki.org/
+CreationMatters http://www.ourpla.net/cgi-bin/wiki.pl?
+DebianforumDeWiki http://wiki.debianforum.de/
+Dictionary http://www.dict.org/bin/Dict?Database=*&Form=Dict1&Strategy=*&Query=
+Disinfopedia http://www.disinfopedia.org/wiki.phtml?title=
+DseWiki http://www.wikiservice.at/dse/wiki.cgi?
+EmacsWiki http://www.emacswiki.org/
+Foldoc http://www.foldoc.org/foldoc/foldoc.cgi?
+FoxWiki http://fox.wikis.com/wc.dll?Wiki~
+FractalWiki http://www.wikiservice.at/fractal/wikidev.cgi?
+Google http://www.google.com/search?q=
+GoogleGroups http://groups.google.com/groups?q=
+HammondWiki http://www.dairiki.org/HammondWiki/
+h2g2 http://h2g2.com/dna/h2g2/
+IAWiki http://www.IAwiki.net/ 	
+IMDB http://www.imdb.com/title/tt$PAGE/
+JargonFile http://www.google.com/search?btnI=Im+Feeling+Lucky&q=$PAGE+site:http://catb.org/jargon/html/ 
+JspWiki http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=
+JuraWiki http://jurawiki.de/
+LinuxWiki http://linuxwiki.org/
+LiveJournal http://www.livejournal.com/users/$PAGE/
+LyricWiki http://lyricwiki.org/
+MeatBall http://www.usemod.com/cgi-bin/mb.pl?
+MetaWiki http://sunir.org/apps/meta.pl?
+MetaWikiPedia http://meta.wikipedia.org/wiki/
+MoinMaster http://master.moinmo.in/
+MoinMoin http://moinmo.in/
+OddMuse http://www.oddmuse.org/
+OpenWiki http://openwiki.com/ow.asp?
+Parawiki http://www.parawiki.org/index.php/ 
+PersonalTelco http://www.personaltelco.net/index.cgi/
+PythonInfo http://wiki.python.org/moin/ 
+PythonWiki http://wiki.python.de/
+ReformSociety http://www.reformsociety.com/
+SeattleWireless http://seattlewireless.net/?
+SenseisLibrary http://senseis.xmp.net/?
+SL4Wiki http://sl4.org/wiki/
+StrikiWiki http://ch.twi.tudelft.nl/~mostert/striki/teststriki.pl?
+ReseauCitoyen http://reseaucitoyen.be/?
+ThoughtStorms http://www.nooranch.com/synaesmedia/wiki/wiki.cgi?
+TWiki http://twiki.org/cgi-bin/view/
+UPC http://www.upcdatabase.com/item/
+Unreal http://wiki.beyondunreal.com/wiki/
+UseMod http://www.usemod.com/cgi-bin/wiki.pl?
+WebSeitzWiki http://webseitz.fluxent.com/wiki/
+Wiki http://c2.com/cgi/wiki?
+WikiPedia http://en.wikipedia.org/wiki/
+DeWikiPedia http://de.wikipedia.org/wiki/
+FrWikiPedia http://fr.wikipedia.org/wiki/
+WcsWiki http://www.myelin.co.nz/wcswiki/w/
+WikiTravel http://www.wikitravel.org/article/
+WikiWorld http://WikiWorld.com/wiki/index.php/
+WikiZnanie http://www.wikiznanie.ru/wiki/wiki.phtml?title=
+WriteHere http://www.writehere.net/moin.cgi/
+WorldWideWiki http://www.worldwidewiki.net/wiki/
+ZWiki http://www.zwiki.org/
