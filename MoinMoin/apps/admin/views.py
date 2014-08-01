@@ -227,7 +227,7 @@ def itemsize():
         _('Size'),
         _('Item name'),
     ]
-    rows = [(rev.meta[SIZE], rev.name)
+    rows = [(rev.meta[SIZE], rev.fqname)
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
