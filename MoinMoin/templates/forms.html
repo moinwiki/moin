@@ -132,7 +132,7 @@ Helpers for using flatland with jinja2 to create html forms.
 
 {% macro small_natural(field) %}
     <dt>
-        {{ gen.label(field) }}
+        {{ field['label'] }}
     </dt>
     <dd>
         {% for i in range(field.properties.lower, field.properties.upper+1) %}
@@ -167,7 +167,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro select_submit(field) %}
   {% set labels = field.properties.get('labels', {}) %}
   {% for value in field.valid_values %}
-    {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value)) }}
+    {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value), id='f_submit_' + value) }}
   {% endfor %}
 {% endmacro %}
 
@@ -200,7 +200,7 @@ Helpers for using flatland with jinja2 to create html forms.
 
 {% macro readonly_item_link_list(field) %}
   <dt>
-    {{ gen.label(field) }}
+    {{ field['label'] }}
   </dt>
   <dd>
     {% for v in field.value %}

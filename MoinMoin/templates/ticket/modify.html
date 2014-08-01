@@ -14,10 +14,12 @@
     <dl>
     {{ forms.render_errors(form) }}
     {{ render_meta() }}
+    </dl>
     {{ _("Suggested Tags: ") }}
     {% for suggested_tag in suggested_tags %}
         {{ suggested_tag }}
     {% endfor %}
+    <dl>
     {{ render_selectlists() }}
     </dl>
 
