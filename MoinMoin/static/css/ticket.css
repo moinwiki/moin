@@ -6,5 +6,5 @@
 label.moin-inline-label{background-image:url("../img/radiobutton.png")}
 #f_meta_tags,#f_meta_summary{-webkit-transition:all .3s ease-in-out;-moz-transition:all .3s ease-in-out;-ms-transition:all .3s ease-in-out;-o-transition:all .3s ease-in-out;outline:none;width:200px;margin-top:20px;margin-bottom:20px;height:25px;padding:3px 0 3px 3px;margin:5px 1px 3px 0;border:1px solid #ddd}
 #f_meta_tags:focus,#f_meta_summary:focus{box-shadow:0 0 5px #51cbee;margin-top:20px;margin-bottom:20px;height:25px;padding:3px 0 3px 3px;margin:5px 1px 3px 0;border:1px solid #51cbee}
-input[type=submit],#f_submit{margin-top:10px;margin-bottom:20px;width:150px;background-color:#1b436d;height:40px;color:#fff;border:2px solid}
+input[type=submit],#f_submit_update,#f_submit_update_negate_status{margin-top:10px;margin-bottom:20px;width:150px;background-color:#1b436d;height:40px;color:#fff;border:2px solid}
 select{display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;vertical-align:middle;cursor:pointer;border:1px solid;white-space:nowrap;padding:6px 12px;font-size:14px;line-height:1.42857143;border-radius:4px;-webkit-user-select:none}
