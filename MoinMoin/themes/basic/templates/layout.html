@@ -130,25 +130,25 @@
                         <ul class="moin-breadcrumb">
                         {% set trail_items = theme_supp.path_breadcrumbs() %}
                         {% if trail_items %}
-                            {% for wiki_name, item_name, item_href, exists, err in trail_items %}
+                            {% for wiki_name, fqname, item_href, exists, err in trail_items %}
                             {% if not loop.last %}
                                 <li>
                                     {%- if wiki_name -%}
                                         <a href="{{ item_href }}"{{ " " }}
                                             title="{{ wiki_name }}"
                                             class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
-                                            {{ item_name|shorten_item_name }}
+                                            {{ fqname|shorten_fqname }}
                                         </a>
                                         <i class="icon-double-angle-right icon-fixed-width"></i>
                                     {%- else -%}
-                                        <a href="{{ url_for('frontend.show_item', item_name=item_name) }}"{{ " " }}
+                                        <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
                                             {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                                            {{ item_name|shorten_item_name }}
+                                            {{ fqname|shorten_fqname }}
                                         </a>
                                         <i class="icon-double-angle-right icon-fixed-width"></i>
                                     {%- endif %}
                                     <ul class="moin-bcs-subitems">
-                                        {% for fq_name in theme_supp.get_fqnames(item_name) -%}
+                                        {% for fq_name in theme_supp.get_fqnames(fqname) -%}
                                             <li>
                                                 <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
                                                     {{ fq_name|shorten_fqname(length=25) }}
@@ -181,7 +181,7 @@
                                     {% endfor %}
                                     </h4>
                                     <ul class="moin-bcs-subitems">
-                                        {% for fq_name in theme_supp.get_fqnames(item_name) -%}
+                                        {% for fq_name in theme_supp.get_fqnames(fqname) -%}
                                             <li>
                                                 <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
                                                     {{ fq_name|shorten_fqname(length=25) }}
