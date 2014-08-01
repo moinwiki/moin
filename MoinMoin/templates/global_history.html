@@ -34,7 +34,17 @@
                                 {%- endif %}
                             </td>
                             <td class="moin-history-time">{{ meta.mtime|timeformat }}</td>
-                            <td class="moin-history-item"><a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.fqname) }}" title="{{ meta.contenttype }}">{{ meta.name|join(' | ') }}</a></td>
+                            <td class="moin-history-item">
+                                <a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.fqname) }}" title="{{ meta.contenttype }}">
+                                    {% if meta.name %}
+                                        {{ meta.name|join(' | ') }}
+                                    {% elif meta.summary %}
+                                        {{ meta.summary }}
+                                    {% else %}
+                                        {{ rev.fqname|shorten_fqname }}
+                                    {% endif %}
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                     </table>
