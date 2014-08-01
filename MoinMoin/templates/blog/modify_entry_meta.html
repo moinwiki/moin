@@ -5,9 +5,9 @@
     <dl>
         {# TODO: Make blog_entry nameless #}
         {% for e in [
+            'summary',
             'itemtype',
             'contenttype',
-            'summary',
             'tags',
             'acl',
             'name',
@@ -20,9 +20,9 @@
 
 {% macro basic_meta_editor(form) %}
     {% for e in [
+        'summary',
         'itemtype',
         'contenttype',
-        'summary',
         'tags',
         'name',
         'ptime',
