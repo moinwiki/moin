@@ -83,7 +83,7 @@ class ThemeSupport(object):
 
     def get_action_tabs(self, fqname, current_endpoint):
 
-        if not fqname:
+        if not fqname or not fqname.value:
             return []
 
         # TODO: Need to add fqname support to has_item in indexing.py

@@ -4,13 +4,13 @@
     <h2>Blog metadata</h2>
     <dl>
         {% for e in [
+            'name',
             'itemtype',
             'contenttype',
             'summary',
             'tags',
-            'acl',
-            'name',
             'supertags',
+            'acl',
             ] %}
             {{ forms.render(form[e]) }}
         {% endfor %}
@@ -19,11 +19,11 @@
 
 {% macro basic_meta_editor(form) %}
     {% for e in [
+        'name',
         'itemtype',
         'contenttype',
         'summary',
         'tags',
-        'name',
         'supertags',
         ] %}
         <div class="form-group">
