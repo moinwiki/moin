@@ -1,11 +1,6 @@
 {% extends theme("layout.html") %}
 {% set search_form=None %}
-<head>
-    {% block head %}
-    <title>{{_("Tickets")}}</title>
-    {{ super() }}
-    {% endblock %}
-</head>
+{% set title = _("Tickets") %}
 
 {% block content %}
 <h1>{{_("Tickets")}}</h1>
@@ -48,22 +43,22 @@
     <input type="hidden" name="status" value="{{ status }}">
     <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">
 </form>
-<br>
 
-<p>
 {% if results %}
-    {{ _("%(result_len)d Tickets found.", result_len=results|length) }}
+    <p>{{ _("%(result_len)d Tickets found.", result_len=results|length) }}</p>
     <table class="table table-hover" id="ticket-list">
-    <thead>
-        <th id="ticket-itemid">{{_("ID")}}</th>
-        <th id="ticket-summary">{{_("Summary")}}</th>
-        <th id="ticket-status">{{_("Status")}}</th>
-        <th id="ticket-effort" title="{{ _('Effort') }}">E</th>
-        <th id="ticket-difficulty" title="{{ _('Difficulty') }}">D</th>
-        <th id="ticket-severity" title="{{ _('Severity') }}">S</th>
-        <th id="ticket-priority" title="{{ _('Priority') }}">P</th>
-        <th id="ticket-tags">{{_("Tags")}}</th>
-    </thead>
+        <thead>
+            <tr>
+                <th id="ticket-itemid">{{_("ID")}}</th>
+                <th id="ticket-summary">{{_("Summary")}}</th>
+                <th id="ticket-status">{{_("Status")}}</th>
+                <th id="ticket-effort" title="{{ _('Effort') }}">E</th>
+                <th id="ticket-difficulty" title="{{ _('Difficulty') }}">D</th>
+                <th id="ticket-severity" title="{{ _('Severity') }}">S</th>
+                <th id="ticket-priority" title="{{ _('Priority') }}">P</th>
+                <th id="ticket-tags">{{_("Tags")}}</th>
+            </tr>
+        </thead>
     <tbody>
     {% for result in results %}
         <tr>
@@ -108,7 +103,7 @@
     {{ _("No Ticket found.") }}
 {% endif %}
 
-<h3>{{_("Tags")}}</h3>
+<h3 class="moin-ticket-tags">{{_("Tags")}}</h3>
 {% for tag in tags %}
     {# If user clicks on the tag then it gets selected if it is not already selected #}
     {# If that tag is already selected then it gets deselected #}
@@ -120,7 +115,6 @@
     </form>
 {% endfor %}
 
-</p>
 {% endblock %}
 {% block body_scripts %}
 {{ super() }}
