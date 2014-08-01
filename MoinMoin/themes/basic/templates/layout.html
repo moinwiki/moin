@@ -39,15 +39,6 @@
     </a>
 {% endmacro %}
 
-{% block bootstrap_stylesheet %}
-    <link media="all" rel="stylesheet" href="{{ theme_static('css/basic.css') }}" />
-{% endblock %}
-
-{% block head %}
-    {{ super() }}
-    <link media="all" rel="stylesheet" href="{{ theme_static('css/custom.css') }}" />
-{% endblock %}
-
 {% block layout %}
     <div class="container">
         <div class="row moin-header">

@@ -462,16 +462,17 @@ class ThemeSupport(object):
         fqnames.remove(fqname)
         return fqnames or []
 
-    def get_namespaces(self, ns):
+    def get_namespaces(self, ns=None):
         """
         Return the list of tuples (composite name, namespace) referring to namespaces other
         than the current namespace.
         """
-        ns = u'' if ns.value == '~' else ns.value
+        if ns is not None and ns.value == '~':
+            ns = u''
         namespace_root_mapping = []
         for namespace, _ in app.cfg.namespace_mapping:
             namespace = namespace.rstrip('/')
-            if namespace != ns:
+            if ns is None or namespace != ns:
                 fq_namespace = CompositeName(namespace, NAME_EXACT, u'')
                 namespace_root_mapping.append((namespace or '~', fq_namespace.get_root_fqname()))
         return namespace_root_mapping

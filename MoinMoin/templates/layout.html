@@ -68,22 +68,14 @@
             <span class="sep">: </span>
         </span>
         {%- endif %}
-        <span id="moin-pagelocation">
-            <span class="moin-pagepath">
+        <div id="moin-pagelocation">
+            <div class="moin-pagepath">
             {% block pagepath %}
             {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
                 {% if loop.first %}
                     <ul class="moin-bcs-item">
                         <li>
                             <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>{{ segment_name|shorten_fqname }}</a>
-                            <ul class="moin-bcs-subitems">
-                                {% for namespace, root in theme_supp.get_namespaces(segment_name) -%}
-                                    <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
-                                {%- endfor %}
-                                {% if fqname and fqname.namespace != "all" %}
-                                    <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
-                                {%- endif %}
-                           </ul>
                         </li>
                     </ul>
                     <span class="sep">/</span>
@@ -109,8 +101,8 @@
                 {%- endif %}
             {%- endfor %}
             {% endblock %}
-            </span>
-        </span>
+            </div>
+        </div>
     </div>
 
     {% set trail_items = theme_supp.path_breadcrumbs() %}
