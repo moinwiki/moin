@@ -19,8 +19,10 @@ from MoinMoin.datastruct.backends._tests import GroupsBackendTest
 from MoinMoin.datastruct import GroupDoesNotExistError
 from MoinMoin.constants.keys import NAME, USERGROUP
 from MoinMoin.security import AccessControlList
-from MoinMoin.user import User
 from MoinMoin._tests import become_trusted, create_random_string_list, update_item
+
+import pytest
+
 
 DATA = "This is a group item"
 
@@ -30,7 +32,8 @@ class TestWikiGroupBackend(GroupsBackendTest):
     # Suppose that default configuration for the groups is used which
     # is WikiGroups backend.
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         become_trusted()
         for group, members in self.test_groups.iteritems():
             update_item(group, {USERGROUP: members}, DATA)
@@ -40,11 +43,11 @@ class TestWikiGroupBackend(GroupsBackendTest):
         Tests renaming of a group item.
         """
         become_trusted()
-        item = update_item(u'SomeGroup', {USERGROUP: ["ExampleUser"]}, DATA)
+        update_item(u'SomeGroup', {USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'SomeGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'AnotherGroup'])
 
-        item = update_item(u'SomeGroup', {NAME: [u'AnotherGroup', ], USERGROUP: ["ExampleUser"]}, DATA)
+        update_item(u'SomeGroup', {NAME: [u'AnotherGroup', ], USERGROUP: ["ExampleUser"]}, DATA)
         assert u'ExampleUser' in flaskg.groups[u'AnotherGroup']
         pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups[u'SomeGroup'])
 

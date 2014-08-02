@@ -8,17 +8,12 @@ MoinMoin - basic tests for feeds
 from flask import url_for
 
 from MoinMoin.constants.keys import COMMENT
-from MoinMoin._tests import update_item, wikiconfig
+from MoinMoin._tests import update_item
 
 
 class TestFeeds(object):
-    class Config(wikiconfig.Config):
-        """
-        we just have this so the test framework creates a new app with empty backends for us.
-        """
-
-    def test_global_atom(self):
-        with self.app.test_client() as c:
+    def test_global_atom(self, app):
+        with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'application/atom+xml'
@@ -26,10 +21,10 @@ class TestFeeds(object):
             assert '<feed xmlns="http://www.w3.org/2005/Atom">' in rv.data
             assert '</feed>' in rv.data
 
-    def test_global_atom_with_an_item(self):
+    def test_global_atom_with_an_item(self, app):
         basename = u'Foo'
-        item = update_item(basename, {COMMENT: u"foo data for feed item"}, '')
-        with self.app.test_client() as c:
+        update_item(basename, {COMMENT: u"foo data for feed item"}, '')
+        with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'application/atom+xml'
@@ -38,7 +33,7 @@ class TestFeeds(object):
 
         # tests the cache invalidation
         update_item(basename, {COMMENT: u"checking if the cache invalidation works"}, '')
-        with self.app.test_client() as c:
+        with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'application/atom+xml'

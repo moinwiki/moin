@@ -93,11 +93,8 @@ setup_args = dict(
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.9',  # wsgi toolkit
-        'pytest>=2.1, <2.3',  # pytest is needed by unit tests
-                              # note: currently 2.3.x is not compatible with our test code,
-                              # likely due to the fixtures changes.
-        'pytest-pep8<1.0.3',  # coding style checker
-                              # note: pytest-pep8 1.0.3 needs pytest 2.3
+        'pytest<2.7',  # pytest is needed by unit tests (only tested with 2.5 and 2.6)
+        'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
         'whoosh>=2.5.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
         'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385

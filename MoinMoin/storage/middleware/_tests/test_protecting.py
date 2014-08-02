@@ -40,13 +40,10 @@ class FakeUser(object):
 
 
 class TestProtectingMiddleware(TestIndexingMiddleware):
-    def setup_method(self, method):
-        super(TestProtectingMiddleware, self).setup_method(method)
-        self.imw = ProtectingMiddleware(self.imw, FakeUser(u'joe'), acl_mapping=acl_mapping)
-
-    def teardown_method(self, method):
-        self.imw = self.imw.indexer
-        super(TestProtectingMiddleware, self).teardown_method(method)
+    @pytest.fixture(autouse=True)
+    def protected_imw(self, imw):
+        self.imw = ProtectingMiddleware(imw, FakeUser(u'joe'), acl_mapping=acl_mapping)
+        return self.imw
 
     def _dummy(self):
         # replacement for tests that use unsupported methods / attributes

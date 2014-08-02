@@ -14,6 +14,8 @@ from MoinMoin.constants.keys import NAME, CONTENTTYPE
 
 from MoinMoin._tests import wikiconfig
 
+import pytest
+
 
 class TestStorageEnvironWithoutConfig(object):
     def setup_method(self, method):
@@ -44,8 +46,12 @@ DEFAULT_ACL = dict(
 
 class TestStorageEnvironWithConfig(object):
 
-    class Config(wikiconfig.Config):
-        default_acl = DEFAULT_ACL
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            default_acl = DEFAULT_ACL
+
+        return Config
 
     def test_config(self):
         assert isinstance(app.cfg, wikiconfig.Config)

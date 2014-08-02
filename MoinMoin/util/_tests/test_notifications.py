@@ -17,11 +17,14 @@ from MoinMoin.util.diff_datastruct import diff as dict_diff
 from MoinMoin.util.notifications import Notification, get_item_last_revisions, DESTROY_REV, DESTROY_ALL
 from MoinMoin.util.interwiki import split_fqname
 
+import pytest
+
 
 class TestNotifications(object):
     reinit_storage = True
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         self.imw = flaskg.unprotected_storage
         self.item_name = u"foo"
         self.fqname = split_fqname(self.item_name)
