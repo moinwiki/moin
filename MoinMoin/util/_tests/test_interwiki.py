@@ -23,13 +23,18 @@ from MoinMoin.app import before_wiki
 
 
 class TestInterWiki(object):
-    class Config(wikiconfig.Config):
-        interwiki_map = {'Self': 'http://localhost:8080/',
-                         'MoinMoin': 'http://moinmo.in/',
-                         'OtherWiki': 'http://otherwiki.com/',
-                         'OtherWiki/ns1': 'http://otherwiki.com/ns1/',
-                         'OtherWiki/ns1/ns2': 'http://otherwiki.com/ns1/ns2/',
-        }
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            interwiki_map = {
+                'Self': 'http://localhost:8080/',
+                'MoinMoin': 'http://moinmo.in/',
+                'OtherWiki': 'http://otherwiki.com/',
+                'OtherWiki/ns1': 'http://otherwiki.com/ns1/',
+                'OtherWiki/ns1/ns2': 'http://otherwiki.com/ns1/ns2/',
+            }
+
+        return Config
 
     def test_url_for_item(self):
         before_wiki()

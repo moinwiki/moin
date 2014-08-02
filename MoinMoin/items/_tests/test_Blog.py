@@ -10,7 +10,7 @@ import re
 from datetime import datetime
 from flask import url_for
 
-from MoinMoin._tests import become_trusted, update_item
+from MoinMoin._tests import update_item
 from MoinMoin.items import Item
 from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
 from MoinMoin.constants.misc import ANON
@@ -18,8 +18,14 @@ from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from MoinMoin.items.blog import Blog, BlogEntry
 from MoinMoin.themes import utctimestamp
 
+import pytest
+
 
 class TestView(object):
+    @pytest.fixture(autouse=True)
+    def set_self_app(self, app):
+        self.app = app
+
     def _test_view(self, item_name, req_args={}, data_tokens=[], exclude_data_tokens=[], regex=None):
         with self.app.test_client() as c:
             rv = c.get(url_for('frontend.show_item', item_name=item_name, **req_args))
@@ -110,12 +116,13 @@ class TestBlog(TestView):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
         # publish some entries with tags
-        entries_meta = [{ITEMTYPE: ITEMTYPE_BLOG_ENTRY, PTIME: 1000, TAGS: [u'foo', u'bar', u'moin', ]},
-                        {ITEMTYPE: ITEMTYPE_BLOG_ENTRY, PTIME: 3000, TAGS: [u'foo', u'bar', u'baz', ]},
-                        {ITEMTYPE: ITEMTYPE_BLOG_ENTRY, PTIME: 2000, TAGS: [u'baz', u'moin', ]}, ]
-        for i in xrange(len(entries_meta)):
-            entry = self.entries[i]
-            entry_meta = entries_meta[i]
+        entries_meta = [
+            {PTIME: 1000, TAGS: [u'foo', u'bar', u'moin']},
+            {PTIME: 3000, TAGS: [u'foo', u'bar', u'baz']},
+            {PTIME: 2000, TAGS: [u'baz', u'moin']},
+        ]
+        for entry, entry_meta in zip(self.entries, entries_meta):
+            entry_meta.update(self.entry_meta)
             item = Item.create(entry['name'], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(entry_meta, entry['data'], comment=self.comment)
         # filter by non-existent tag 'non-existent'

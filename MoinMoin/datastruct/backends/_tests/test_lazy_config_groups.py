@@ -11,6 +11,8 @@ from MoinMoin.datastruct.backends.config_lazy_groups import ConfigLazyGroups
 from MoinMoin.datastruct import ConfigGroups, CompositeGroups
 from MoinMoin._tests import wikiconfig
 
+import pytest
+
 
 class TestLazyConfigGroups(GroupsBackendTest):
 
@@ -21,11 +23,15 @@ class TestLazyConfigGroups(GroupsBackendTest):
 
     expanded_groups = test_groups
 
-    class Config(wikiconfig.Config):
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
 
-        def groups(self):
-            groups = TestLazyConfigGroups.test_groups
-            return ConfigLazyGroups(groups)
+            def groups(self):
+                groups = TestLazyConfigGroups.test_groups
+                return ConfigLazyGroups(groups)
+
+        return Config
 
     def test_contains_group(self):
         """
@@ -36,22 +42,24 @@ class TestLazyConfigGroups(GroupsBackendTest):
 
 
 class TestCompositeAndLazyConfigGroups(GroupsBackendTest):
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
 
-    class Config(wikiconfig.Config):
+            def groups(self):
+                config_groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1', u'John'],
+                                 u'RecursiveGroup': [u'Something', u'OtherRecursiveGroup'],
+                                 u'OtherRecursiveGroup': [u'RecursiveGroup', u'Anything', u'NotExistingGroup'],
+                                 u'ThirdRecursiveGroup': [u'ThirdRecursiveGroup', u'Banana'],
+                                 u'CheckNotExistingGroup': [u'NotExistingGroup']}
 
-        def groups(self):
-            config_groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1', u'John'],
-                             u'RecursiveGroup': [u'Something', u'OtherRecursiveGroup'],
-                             u'OtherRecursiveGroup': [u'RecursiveGroup', u'Anything', u'NotExistingGroup'],
-                             u'ThirdRecursiveGroup': [u'ThirdRecursiveGroup', u'Banana'],
-                             u'CheckNotExistingGroup': [u'NotExistingGroup']}
+                lazy_groups = {u'AdminGroup': [u'Admin1', u'Admin2', u'John'],
+                               u'OtherGroup': [u'SomethingOther'],
+                               u'EmptyGroup': []}
 
-            lazy_groups = {u'AdminGroup': [u'Admin1', u'Admin2', u'John'],
-                           u'OtherGroup': [u'SomethingOther'],
-                           u'EmptyGroup': []}
+                return CompositeGroups(ConfigGroups(config_groups),
+                                       ConfigLazyGroups(lazy_groups))
 
-            return CompositeGroups(ConfigGroups(config_groups),
-                                   ConfigLazyGroups(lazy_groups))
-
+        return Config
 
 coverage_modules = ['MoinMoin.datastruct.backends.config_lazy_groups']

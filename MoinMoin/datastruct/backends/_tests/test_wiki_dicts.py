@@ -14,6 +14,9 @@ from MoinMoin.datastruct.backends import wiki_dicts
 from MoinMoin.constants.keys import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
 
+import pytest
+
+
 DATA = "This is a dict item."
 
 
@@ -22,7 +25,8 @@ class TestWikiDictsBackend(DictsBackendTest):
     # Suppose that default configuration for the dicts is used which
     # is WikiDicts backend.
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         become_trusted()
 
         somedict = {u"First": u"first item",

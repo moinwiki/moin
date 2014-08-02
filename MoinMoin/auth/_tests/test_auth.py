@@ -12,11 +12,17 @@ from MoinMoin.constants.misc import ANON
 from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
 from MoinMoin.user import create_user
 
+import pytest
+
 
 class TestConfiguredGivenAuth(object):
     """ Test: configured GivenAuth """
-    class Config(wikiconfig.Config):
-        auth = [GivenAuth(user_name=u'JoeDoe', autocreate=True), ]
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            auth = [GivenAuth(user_name=u'JoeDoe', autocreate=True)]
+
+        return Config
 
     def test(self):
         assert flaskg.user.name == [u'JoeDoe', ]

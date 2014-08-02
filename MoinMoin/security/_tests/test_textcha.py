@@ -11,10 +11,13 @@ from flask import g as flaskg
 from MoinMoin.security.textcha import TextCha, TextChaValid, TextChaizedForm
 from MoinMoin.constants.keys import LOCALE
 
+import pytest
+
 
 class TestTextCha(object):
     """ Test: class TextCha """
-    def setup_method(self, method):
+    @pytest.yield_fixture(autouse=True)
+    def custom_setup(self):
         cfg = app.cfg
         cfg.textchas = {
             'test_user_locale': {
@@ -25,8 +28,8 @@ class TestTextCha(object):
         cfg.secrets['security/textcha'] = "test_secret"
         flaskg.user.profile[LOCALE] = 'test_user_locale'
 
-    def teardown_method(self, method):
-        cfg = app.cfg
+        yield
+
         cfg.textchas = None
         cfg.secrets.pop('security/textcha')
         flaskg.user.profile[LOCALE] = None
@@ -92,7 +95,8 @@ class TestTextCha(object):
 
 class TestTextChaValid(object):
     """ Test: class TextChaValid """
-    def setup_method(self, method):
+    @pytest.yield_fixture(autouse=True)
+    def custom_setup(self):
         cfg = app.cfg
         cfg.textchas = {
             'test_user_locale': {'Good Question': 'Good Answer'}
@@ -100,8 +104,8 @@ class TestTextChaValid(object):
         cfg.secrets['security/textcha'] = "test_secret"
         flaskg.user.profile[LOCALE] = 'test_user_locale'
 
-    def teardown_method(self, method):
-        cfg = app.cfg
+        yield
+
         cfg.textchas = None
         cfg.secrets.pop('security/textcha')
         flaskg.user.profile[LOCALE] = None
