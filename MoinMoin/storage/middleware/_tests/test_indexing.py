@@ -36,11 +36,10 @@ def dumper(indexer, idx_name):
 class TestIndexingMiddleware(object):
     reinit_storage = True  # cleanup after each test method
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def imw(self):
         self.imw = flaskg.unprotected_storage
-
-    def teardown_method(self, method):
-        pass
+        return self.imw
 
     def test_nonexisting_item(self):
         item = self.imw[u'foo']
@@ -416,14 +415,15 @@ class TestIndexingMiddleware(object):
 class TestProtectedIndexingMiddleware(object):
     reinit_storage = True  # cleanup after each test method
 
-    class Config(wikiconfig.Config):
-        auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            auth = [GivenAuth(user_name=u'joe', autocreate=True), ]
+        return Config
 
-    def setup_method(self, method):
-        self.imw = flaskg.storage
-
-    def teardown_method(self, method):
-        pass
+    @pytest.fixture(autouse=True)
+    def imw(self):
+        self.imw = flaskg.unprotected_storage
 
     def test_documents(self):
         item_name = u'public'

@@ -11,29 +11,21 @@ from flask import g as flaskg
 from MoinMoin.macro.GetVal import *
 from MoinMoin.constants.keys import SOMEDICT
 from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.conftest import init_test_app, deinit_test_app
-from MoinMoin._tests import wikiconfig
-
-DATA = "This is a dict item."
 
 
 class TestMacro(object):
-    """ Test: GetVal.Macro """
-
-    def setup_method(self, method):
-        # temporary hack till we apply test cleanup mechanism on tests.
-        self.app, self.ctx = init_test_app(wikiconfig.Config)
+    @pytest.fixture
+    def test_dict(self):
         become_trusted()
         somedict = {u"One": u"1",
                     u"Two": u"2"}
-        update_item(u'TestDict', {SOMEDICT: somedict}, DATA)
+        update_item(u'TestDict', {SOMEDICT: somedict}, "This is a dict item.")
 
-    def teardown_method(self, method):
-        deinit_test_app(self.app, self.ctx)
+        return u"TestDict"
 
-    def test_Macro(self):
+    def test_Macro(self, test_dict):
         macro_obj = Macro()
-        arguments = [u'TestDict']
+        arguments = [test_dict]
         with pytest.raises(ValueError):
             macro_obj.macro('content', arguments, 'page_url', 'alternative')
 

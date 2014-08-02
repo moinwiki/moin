@@ -6,28 +6,32 @@ Test for auth.http
 """
 
 from flask import g as flaskg
-from flask import request
+from flask import request as flask_request
 
 from MoinMoin.user import create_user
 from MoinMoin.auth.http import HTTPAuthMoin
 from MoinMoin.constants.misc import ANON
 
+import pytest
+
 
 class TestHTTPAuthMoin(object):
     """ Test: HTTPAuthMoin """
 
-    class Auth(object):
-        def __init__(self):
-            self.username = 'ValidUser'
-            self.password = 'test_pass'
+    @pytest.yield_fixture(autouse=True)
+    def custom_setup(self):
+        class Auth(object):
+            def __init__(self):
+                self.username = 'ValidUser'
+                self.password = 'test_pass'
 
-    def setup_method(self, method):
         flaskg.user.auth_method = 'http'
-        request.authorization = self.Auth()
+        flask_request.authorization = Auth()
 
-    def teardown_method(self, method):
+        yield
+
         flaskg.user.auth_method = 'invalid'
-        request.authorization = None
+        flask_request.authorization = None
 
     def test_request(self):
         # create a new user

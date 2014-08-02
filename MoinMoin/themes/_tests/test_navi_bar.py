@@ -13,15 +13,22 @@ from MoinMoin._tests import wikiconfig
 from MoinMoin.themes import ThemeSupport
 from MoinMoin import themes
 
+import pytest
+
 
 class TestNaviBar(object):
-    class Config(wikiconfig.Config):
-        interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            interwiki_map = dict(Self='http://localhost:8080/', MoinMoin='http://moinmo.in/', )
 
-    def setup_method(self, method):
-        self.theme = ThemeSupport(app.cfg)
+        return Config
 
-    def test_split_navilink(self):
+    @pytest.fixture
+    def theme(self):
+        return ThemeSupport(app.cfg)
+
+    def test_split_navilink(self, theme):
         tests = [
             # (navilink, (href, text, interwiki)),
             ('ItemName', ('/ItemName', 'ItemName', '')),
@@ -33,11 +40,11 @@ class TestNaviBar(object):
             ('[[http://example.org/|LinkText]]', ('http://example.org/', 'LinkText', '')),
         ]
         for navilink, expected in tests:
-            result = self.theme.split_navilink(navilink)
+            result = theme.split_navilink(navilink)
             assert result == expected
 
-    def test_location_breadcrumbs(self):
-        test_result = ThemeSupport.location_breadcrumbs(self.theme, 'some/place/test_item')
+    def test_location_breadcrumbs(self, theme):
+        test_result = ThemeSupport.location_breadcrumbs(theme, 'some/place/test_item')
         test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
         test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
         test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
@@ -52,8 +59,8 @@ class TestNaviBar(object):
         assert test_segment_name_4.value == 'test_item'
         assert test_item_name_4.value == 'some/place/test_item'
 
-    def test_parent_item(self):
-        test_result = ThemeSupport.parent_item(self.theme, 'moin/moin-2.0/Item')
+    def test_parent_item(self, theme):
+        test_result = ThemeSupport.parent_item(theme, 'moin/moin-2.0/Item')
         expected = 'moin/moin-2.0'
         assert test_result == expected, 'Expected "%(expected)s" but got "%(test_result)s"' % locals()
 

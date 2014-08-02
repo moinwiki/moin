@@ -15,8 +15,15 @@ from werkzeug import ImmutableMultiDict, FileStorage
 from MoinMoin.apps.frontend import views
 from MoinMoin import user
 
+import pytest
+
 
 class TestFrontend(object):
+
+    @pytest.fixture(autouse=True)
+    def custom_setup(self, app):
+        self.app = app
+
     def _test_view(self, viewname, status='200 OK', data=('<html>', '</html>'), content_types=('text/html; charset=utf-8', ), viewopts=None, params=None):
         if viewopts is None:
             viewopts = {}
@@ -216,26 +223,12 @@ class TestFrontend(object):
 class TestUsersettings(object):
     reinit_storage = True  # avoid username / email collisions
 
-    def setup_method(self, method):
-        # Save original user
-        self.saved_user = flaskg.user
-
-        # Create anon user for the tests
+    @pytest.yield_fixture(autouse=True)
+    def custom_setup(self, app):
+        saved_user = flaskg.user
         flaskg.user = user.User()
-
-        self.user = None
-
-    def teardown_method(self, method):
-        """ Run after each test
-
-        Remove user and reset user listing cache.
-        """
-        # Remove user file and user
-        if self.user is not None:
-            del self.user
-
-        # Restore original user
-        flaskg.user = self.saved_user
+        yield
+        flaskg.user = saved_user
 
     def test_user_password_change(self):
         self.createUser(u'moin', u'Xiwejr622')

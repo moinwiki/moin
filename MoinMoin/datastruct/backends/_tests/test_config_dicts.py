@@ -10,14 +10,21 @@ from MoinMoin.datastruct.backends._tests import DictsBackendTest
 from MoinMoin.datastruct import ConfigDicts
 from MoinMoin._tests import wikiconfig
 
+import pytest
+
 
 class TestConfigDictsBackend(DictsBackendTest):
 
-    class Config(wikiconfig.Config):
+    @pytest.fixture
+    def cfg(self):
 
-        def dicts(self):
-            dicts = DictsBackendTest.dicts
-            return ConfigDicts(dicts)
+        class Config(wikiconfig.Config):
+
+            def dicts(self):
+                dicts = DictsBackendTest.dicts
+                return ConfigDicts(dicts)
+
+        return Config
 
     def test__iter__(self):
         ConfigDicts_obj = ConfigDicts(DictsBackendTest.dicts)
