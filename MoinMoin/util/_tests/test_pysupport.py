@@ -45,7 +45,8 @@ class TestImportNameFromPlugin(object):
 
     name = 'Parser'
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         """ Check for valid plugin package """
         self.pluginDirectory = os.path.join(app.cfg.data_dir, 'plugin', 'parser')
         self.checkPackage(self.pluginDirectory)
@@ -130,4 +131,3 @@ class Parser:
 
 
 coverage_modules = ['MoinMoin.util.pysupport']
-pytest.main("-x test_pysupport.py")

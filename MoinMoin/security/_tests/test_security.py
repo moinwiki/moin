@@ -18,8 +18,7 @@ from MoinMoin.user import User
 from MoinMoin.constants.keys import NAME, ACL
 from MoinMoin.datastruct import ConfigGroups
 
-from MoinMoin._tests import update_item
-from MoinMoin._tests import become_trusted
+from MoinMoin._tests import update_item, become_trusted, wikiconfig
 
 
 def acliter(acl):
@@ -266,20 +265,22 @@ class TestAcl(object):
 
 class TestGroupACL(object):
 
-    from MoinMoin._tests import wikiconfig
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            def groups(cfg):
+                groups = {
+                    u'PGroup': frozenset([u'Antony', u'Beatrice', ]),
+                    u'AGroup': frozenset([u'All', ]),
+                    # note: the next line is a INTENDED misnomer, there is "All" in
+                    # the group NAME, but not in the group members. This makes
+                    # sure that a bug that erroneously checked "in groupname" (instead
+                    # of "in groupmembers") does not reappear.
+                    u'AllGroup': frozenset([]),  # note: intended misnomer
+                }
+                return ConfigGroups(groups)
 
-    class Config(wikiconfig.Config):
-        def groups(cfg):
-            groups = {
-                u'PGroup': frozenset([u'Antony', u'Beatrice', ]),
-                u'AGroup': frozenset([u'All', ]),
-                # note: the next line is a INTENDED misnomer, there is "All" in
-                # the group NAME, but not in the group members. This makes
-                # sure that a bug that erroneously checked "in groupname" (instead
-                # of "in groupmembers") does not reappear.
-                u'AllGroup': frozenset([]),  # note: intended misnomer
-            }
-            return ConfigGroups(groups)
+        return Config
 
     def testApplyACLByGroup(self):
         """ security: applying acl by group name"""
@@ -333,13 +334,16 @@ class TestItemAcls(object):
         (subitem_4boss, u'JoeDoe:read,write', u'Only JoeDoe (the boss) may write'),
     ]
 
-    from MoinMoin._tests import wikiconfig
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            default_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+            acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
 
-    class Config(wikiconfig.Config):
-        default_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
-        acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
+        return Config
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         become_trusted(username=u'WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
@@ -347,7 +351,7 @@ class TestItemAcls(object):
             else:
                 update_item(item_name, {}, item_content)
 
-    def testItemACLs(self):
+    def test_ItemACLs(self):
         """ security: test item acls """
         tests = [
             # itemname, username, expected_rights
@@ -369,23 +373,16 @@ class TestItemAcls(object):
             u = User(auth_username=username)
             u.valid = True
 
-            def _have_right(u, right, itemname):
+            # User should have these rights...
+            for right in may:
                 can_access = getattr(u.may, right)(itemname)
                 assert can_access, "{0!r} may {1} {2!r} (normal)".format(u.name, right, itemname)
 
-            # User should have these rights...
-            for right in may:
-                yield _have_right, u, right, itemname
-
-            def _not_have_right(u, right, itemname):
+            # User should NOT have these rights:
+            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, "{0!r} may not {1} {2!r} (normal)".format(u.name, right, itemname)
-
-            # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_contents
-                      if right not in may]
-            for right in mayNot:
-                yield _not_have_right, u, right, itemname
 
         # check function rights
         u = User(auth_username='SuperUser')
@@ -420,12 +417,15 @@ class TestItemHierachicalAcls(object):
         (subitem_4boss, u'JoeDoe:read,write', u'Only JoeDoe (the boss) may write'),
     ]
 
-    from MoinMoin._tests import wikiconfig
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
 
-    class Config(wikiconfig.Config):
-        default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+        return Config
 
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         become_trusted(username=u'WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
@@ -457,23 +457,17 @@ class TestItemHierachicalAcls(object):
             u = User(auth_username=username)
             u.valid = True
 
-            def _have_right(u, right, itemname):
-                can_access = getattr(u.may, right)(itemname)
-                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
-
             # User should have these rights...
             for right in may:
-                yield _have_right, u, right, itemname
-
-            def _not_have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
-                yield _not_have_right, u, right, itemname
+                can_access = getattr(u.may, right)(itemname)
+                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
 
 class TestItemHierachicalAclsMultiItemNames(object):
@@ -494,12 +488,14 @@ class TestItemHierachicalAclsMultiItemNames(object):
         (c12, None, c12),  # no own acl -> inherit from parents
     ]
 
-    from MoinMoin._tests import wikiconfig
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
+        return Config
 
-    class Config(wikiconfig.Config):
-        default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
-
-    def setup_method(self, method):
+    @pytest.fixture(autouse=True)
+    def custom_setup(self):
         become_trusted(username=u'WikiAdmin')
         for item_names, item_acl, item_content in self.items:
             meta = {NAME: item_names}
@@ -534,23 +530,17 @@ class TestItemHierachicalAclsMultiItemNames(object):
             u.valid = True
             itemname = itemnames[0]
 
-            def _have_right(u, right, itemname):
-                can_access = getattr(u.may, right)(itemname)
-                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
-
             # User should have these rights...
             for right in may:
-                yield _have_right, u, right, itemname
-
-            def _not_have_right(u, right, itemname):
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
-                yield _not_have_right, u, right, itemname
+                can_access = getattr(u.may, right)(itemname)
+                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
 
 # XXX TODO add tests for a user having multiple usernames (one resulting in more permissions than other)

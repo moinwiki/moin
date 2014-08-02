@@ -9,14 +9,14 @@ from flask import url_for
 
 
 class TestServe(object):
-    def test_index(self):
-        with self.app.test_client() as c:
+    def test_index(self, app):
+        with app.test_client() as c:
             rv = c.get(url_for('serve.index'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/plain'
 
-    def test_files(self):
-        with self.app.test_client() as c:
+    def test_files(self, app):
+        with app.test_client() as c:
             rv = c.get(url_for('serve.files', name="DoesntExist"))
             assert rv.status == '404 NOT FOUND'
             assert rv.headers['Content-Type'] == 'text/html'

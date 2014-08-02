@@ -15,6 +15,8 @@ from MoinMoin import user
 from MoinMoin.items import Item
 from MoinMoin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TAGS)
 
+import pytest
+
 
 class TestSimple(object):
     def test_create_retrieve(self):
@@ -38,20 +40,13 @@ class TestSimple(object):
 
 
 class TestUser(object):
-    def setup_method(self, method):
-        # Save original user
-        self.saved_user = flaskg.user
 
-        # Create anon user for the tests
+    @pytest.yield_fixture(autouse=True)
+    def saved_user(self):
+        orig_user = flaskg.user
         flaskg.user = user.User()
-
-    def teardown_method(self, method):
-        """ Run after each test
-
-        Remove user and reset user listing cache.
-        """
-        # Restore original user
-        flaskg.user = self.saved_user
+        yield flaskg.user
+        flaskg.user = orig_user
 
     # Passwords / Login -----------------------------------------------
 

@@ -18,18 +18,30 @@ from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscriptio
 class TestSubscriptions(object):
     reinit_storage = True
 
-    def setup_method(self, method):
-        # create an item
-        self.item_name = u'foo'
-        self.tagname = u'XXX'
-        self.namespace = NAMESPACE_DEFAULT
-        meta = {CONTENTTYPE: u'text/plain;charset=utf-8', TAGS: [self.tagname]}
-        item = Item.create(self.item_name)
-        item._save(meta)
-        self.item = Item.create(self.item_name)
+    @pytest.fixture
+    def item_name(self):
+        return u'foo'
 
-    def test_get_subscribers(self):
-        users = get_subscribers(**self.item.meta)
+    @pytest.fixture
+    def tag_name(self):
+        return u'XXX'
+
+    @pytest.fixture
+    def namespace(self):
+        return NAMESPACE_DEFAULT
+
+    @pytest.fixture
+    def meta(self, tag_name):
+        return {CONTENTTYPE: u'text/plain;charset=utf-8', TAGS: [tag_name]}
+
+    @pytest.fixture
+    def item(self, item_name, meta):
+        item = Item.create(item_name)
+        item._save(meta)
+        return Item.create(item_name)
+
+    def test_get_subscribers(self, item, item_name, namespace, tag_name):
+        users = get_subscribers(**item.meta)
         assert users == set()
 
         name1 = u'baz'
@@ -45,17 +57,17 @@ class TestSubscriptions(object):
         user2 = user.User(name=name2, password=password)
         user.create_user(username=name3, password=password, email=email3, locale=u"en")
         user3 = user.User(name=name3, password=password, email1=email3)
-        subscribers = get_subscribers(**self.item.meta)
+        subscribers = get_subscribers(**item.meta)
         assert subscribers == set()
 
         namere = r'.*'
         nameprefix = u"fo"
         subscription_lists = [
-            ["{0}:{1}".format(ITEMID, self.item.meta[ITEMID])],
-            ["{0}:{1}:{2}".format(TAGS, self.namespace, self.tagname)],
-            ["{0}:{1}:{2}".format(NAME, self.namespace, self.item_name)],
-            ["{0}:{1}:{2}".format(NAMERE, self.namespace, namere)],
-            ["{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, nameprefix)],
+            ["{0}:{1}".format(ITEMID, item.meta[ITEMID])],
+            ["{0}:{1}:{2}".format(TAGS, namespace, tag_name)],
+            ["{0}:{1}:{2}".format(NAME, namespace, item_name)],
+            ["{0}:{1}:{2}".format(NAMERE, namespace, namere)],
+            ["{0}:{1}:{2}".format(NAMEPREFIX, namespace, nameprefix)],
         ]
         users = [user1, user2, user3]
         expected_names = {user1.name0, user2.name0}
@@ -63,32 +75,32 @@ class TestSubscriptions(object):
             for user_ in users:
                 user_.profile._meta[SUBSCRIPTIONS] = subscriptions
                 user_.save(force=True)
-            subscribers = get_subscribers(**self.item.meta)
+            subscribers = get_subscribers(**item.meta)
             subscribers_names = {subscriber.name for subscriber in subscribers}
             assert subscribers_names == expected_names
 
         meta = {CONTENTTYPE: u'text/plain;charset=utf-8',
                 ACL: u"{0}: All:read,write".format(user1.name0)}
-        self.item._save(meta, comment=u"")
-        self.item = Item.create(self.item_name)
-        subscribers = get_subscribers(**self.item.meta)
+        item._save(meta, comment=u"")
+        item = Item.create(item_name)
+        subscribers = get_subscribers(**item.meta)
         assert {subscriber.name for subscriber in subscribers} == {user2.name0}
 
-    def test_get_matched_subscription_patterns(self):
-        meta = self.item.meta
+    def test_get_matched_subscription_patterns(self, item, namespace):
+        meta = item.meta
         patterns = get_matched_subscription_patterns([], **meta)
         assert patterns == []
         non_matching_patterns = [
             "{0}:{1}:{2}".format(NAMERE, NAMESPACE_USERPROFILES, ".*"),
-            "{0}:{1}:{2}".format(NAMERE, self.namespace, "\d+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "bar"),
+            "{0}:{1}:{2}".format(NAMERE, namespace, "\d+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, "bar"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns, **meta)
         assert patterns == []
 
         matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, self.namespace, "fo+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "fo"),
+            "{0}:{1}:{2}".format(NAMERE, namespace, "fo+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, "fo"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns + matching_patterns, **meta)
         assert patterns == matching_patterns
