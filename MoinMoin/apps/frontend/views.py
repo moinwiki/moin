@@ -2309,6 +2309,12 @@ def tickets():
         )
 
 
+@frontend.route('/+new', methods=['GET', 'POST'])
+def new():
+    # TODO: Implement creation of blog entries and ticket items
+    raise NotImplementedError
+
+
 @frontend.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html',

@@ -26,6 +26,11 @@
                     {{ blog_header }}
                 {% endif %}
             </div>
+
+            <a id="moin-blog-entry-create-link" href="{{ url_for('frontend.new', itemtype='blogentry') }}" >
+                <button class="btn btn-primary">{{ _("Create Blog entry") }}</button>
+            </a>
+
             <div id="moin-blog-body">
                 <div id="moin-blog-content">
                 {% block blog_content %}<br />{% endblock %}

@@ -39,6 +39,10 @@
     </ul>
 </div>
 
+<a id="moin-ticket-create-link" href="{{ url_for('frontend.new', itemtype='ticket') }}" >
+    <button class="btn btn-primary btn-lg btn-block">{{ _("Create ticket") }}</button>
+</a>
+
 <form action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post">
     <input type="hidden" name="status" value="{{ status }}">
     <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">

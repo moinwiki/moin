@@ -470,5 +470,7 @@ html,body{height:100%}
 .tickets-sort-button.dropdown ul.dropdown-menu li a{display:inline}
 .tickets-sort-button.dropdown:hover ul.dropdown-menu{display:inline-block}
 .moin-ticket-tags{border-bottom:none}
+#moin-ticket-create-link{display:inline;position:absolute;right:70px;top:80px}
+#moin-ticket-create-link button{width:150px;height:35px}
 @media print{#moin-global-tray,#moin-local-panel,#moin-footer,#moin-searchform{display:none}
 }
