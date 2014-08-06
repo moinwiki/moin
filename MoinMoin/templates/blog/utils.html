@@ -1,0 +1,66 @@
+{% import "forms.html" as forms %}
+{% import "utils.html" as utils %}
+
+{% macro show_blog_entry(entry_item) %}
+    {% set title = entry_item.meta['summary'] %}
+    <h1><a href="{{ url_for('frontend.show_item', item_name=entry_item.name) }}"
+        title="{{ title }}" class="moin-blog-entry-link">{{ title }}</a></h1>
+    {% if user.may.write(entry_item.name) %}
+        <div class="moin-blog-entry-modify">
+            <span class="moin-blog-icon">&#x2710;</span>
+            <a href="{{ url_for('frontend.modify_item', item_name=entry_item.name) }}">{{ _("Modify entry") }}</a>
+        </div>
+    {% endif %}
+    <div class="moin-blog-entry-info">
+        {% set publication_time = entry_item.meta['ptime'] or entry_item.meta['mtime'] %}
+        {% if publication_time %}
+            {{ _("Published on") }} {{ publication_time|datetimeformat }}
+            {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
+        {% else %}
+            {{ _("Not published yet.") }}
+        {% endif %}
+    </div>
+    <div class="moin-blog-entry-content">
+        {{ entry_item.content._render_data()|safe }} {# rendered blog entry content #}
+    </div>
+    <div class="moin-blog-entry-bottominfo">
+        {% set tags = entry_item.meta['tags']|sort %}
+        {% if tags %} {# display blog entry's tags as a list if it is not empty #}
+            <div class="moin-blog-entry-tags">
+                {{ _("Tags:") }}
+                <ul class="moin-blog-entry-tags">
+                    {% for tag in tags %}
+                        <li><a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="moin-blog-entry-comments">
+            {% set discussion_item_name = '{0}/{1}'.format(entry_item.name, cfg.supplementation_item_names[0]) %}
+            <a href="{{ url_for('frontend.show_item', item_name=discussion_item_name) }}">{{ _("Discussion page") }}</a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro widget_supertags(blog_name, supertags) %}
+    <div id="moin-blog-categories">
+        {{ _("Categories") }}
+        <ul>
+            {% for supertag in supertags %}
+                <li><a href="{{ url_for('frontend.show_item', item_name=blog_name, tag=supertag) }}">{{ supertag }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro header_search(blog_name, form) %}
+    {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+            {{ forms.render(form['q']) }}
+            {{ forms.render_submit(form, id='moin-search-submit') }}
+            {{ forms.render_errors(form) }}
+            <br />
+            <input type="checkbox" id="moin-blog-search-this"
+            onclick="$('#moin-searchform').attr('action', this.checked ? '{{ url_for('frontend.search', item_name=blog_name) }}' : '{{ url_for('frontend.search') }}' );" />
+            {{ _("only this blog") }}
+    {{ gen.form.close() }}
+{% endmacro %}
