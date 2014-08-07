@@ -1,0 +1,24 @@
+{% extends theme("layout.html") %}
+{% block content %}
+    <h1>{{ _("User Menu") }}</h1>
+    <h2>{{ _("Documentation") }}</h2>
+    <ul>
+        <li><a href="{{ url_for('serve.files', name='docs', filename='index.html') }}">{{ _("Documentation (local)") }}</a></li>
+    </ul>
+    <h2>{{ _("Reports") }}</h2>
+    <ul>
+        <li><a href="{{ url_for('frontend.mychanges') }}">{{ _("My Changes") }}</a></li>
+        <li><a href="{{ url_for('frontend.wanted_items') }}">{{ _("Wanted Items") }}</a></li>
+        <li><a href="{{ url_for('frontend.orphaned_items') }}">{{ _("Orphaned Items") }}</a></li>
+        <li><a href="{{ url_for('admin.itemsize') }}">{{ _("Item Sizes (last revision)") }}</a></li>
+        <li><a href="{{ url_for('admin.interwikihelp') }}">{{ _("InterWiki Names") }}</a></li>
+        <li><a href="{{ url_for('admin.highlighterhelp') }}">{{ _("Highlighters") }}</a></li>
+    </ul>
+    <h2>{{ _("Namespaces") }}</h2>
+    <ul class="moin-bcs-subitems">
+        <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
+        {% for namespace, root in theme_supp.get_namespaces()|sort -%}
+            <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
+        {%- endfor %}
+    </ul>
+{% endblock %}
