@@ -7,16 +7,14 @@
 {% endblock %}
 
 {% block action_bars_inner %}
+    {% if item_name %}
+        {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
+    {% else %}
+        {% set title = _("Global Index ") %}
+    {% endif %}
+    <h1>{{ title }}</h1>
     <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                {% if item_name %}
-                    {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
-                {% else %}
-                    {% set title = _("Global Index ") %}
-                {% endif %}
-                <a class="navbar-brand" href="#">{{ title }}</a>
-            </div>
+        <div class="container-fluid moin-index-actions">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     {% if dirs or files %}
