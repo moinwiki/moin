@@ -1,15 +1,20 @@
 {% extends "ticket/base.html" %}
 
 {% block title_text %}
-    {{ _("Creating new ticket: '%(item_name)s'", item_name=item_name) }}
+    {{ _("Create new ticket") }}
 {% endblock %}
 
 {% block form_controls %}
     <h2>{{ _("Describe the ticket") }}</h2>
 
     <dl>
-    {{ forms.render(form['message']) }}
+        <div class="form-group">
+            {{ gen.label(form['message']) }}
+            {{ gen.textarea(form['message'], class='form-control') }}
+        </div>
     </dl>
+{% endblock %}
+{% block ticket_metadata %}
 
     <h2>{{ _("Provide metadata") }}</h2>
     <dl>
