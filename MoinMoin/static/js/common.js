@@ -392,6 +392,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
+            location.reload(true);
         }, 'json');
         return false;
     }

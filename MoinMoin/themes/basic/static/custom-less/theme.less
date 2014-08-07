@@ -32,11 +32,6 @@ h1, h2, h3, h4, h5, h6 {
   padding-bottom: 23px;
 }
 
-.moin-list-heading {
-  background-color: @navbar-bg;
-  font-variant: small-caps;
-}
-
 .moin-flash {
   .alert;
   &>a {
@@ -92,6 +87,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .list-group-item {
   padding: 5px 15px;
+  background-color: #c8ddf1;
+  border: 1px solid #c8ddf1;
+  > a {
+    color: #c8ddf1;
+  }
+}
+
+.moin-list-heading {
+  background-color: @navbar-bg;
+  border: 1px solid @navbar-bg;
+  font-variant: small-caps;
+  color: #c8ddf1;
 }
 
 .moin-diff-added {
@@ -271,7 +278,7 @@ div.moin-item-wrapper {
 }
 
 a.wikilink{
-  color: @brand-primary;
+  color: #1b436d;
 }
 .moin-bcs-subitems{
   z-index: 500;
@@ -755,5 +762,11 @@ html{
 }
 .menu:hover .submenu {
   display: block;
+}
+.moin-index-actions {
+  padding-left: 0;
+  .navbar-collapse {
+    padding-left: 0;
+  }
 }
 
