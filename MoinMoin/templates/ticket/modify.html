@@ -1,32 +1,37 @@
 {% extends "ticket/base.html" %}
 
 {% block title_text %}
-    {{ _("Ticket: '%(item_name)s'", item_name=item_name) }}
+    {{ _("Ticket: %(summary)s", summary=item.meta['summary']) }}
 {% endblock %}
 
 {% block form_controls %}
     <h2>{{ _("Add comment") }}</h2>
-    <dl>
-    {{ forms.render(form['message']) }}
-    </dl>
+    <div class="form-group">
+        {{ gen.label(form['message']) }}
+        {{ gen.textarea(form['message'], class='form-control') }}
+    </div>
 
-    <h2>{{ _("Edit metadata") }}</h2>
-    <dl>
-    {{ forms.render_errors(form) }}
-    {{ render_meta() }}
-    </dl>
-    {{ _("Suggested Tags: ") }}
-    {% for suggested_tag in suggested_tags %}
-        {{ suggested_tag }}
-    {% endfor %}
-    <dl>
-    {{ render_selectlists() }}
-    </dl>
+{% endblock %}
 
-    {{ forms.render(form['submit']) }}
+{% block ticket_metadata %}
+    <div class="moin-ticket-metadata">
+        <h2>{{ _("Edit metadata") }}</h2>
+        <dl>
+            {{ forms.render_errors(form) }}
+            {{ render_meta() }}
+        </dl>
+            {{ _("Suggested Tags: ") }}
+            {% for suggested_tag in suggested_tags %}
+                {{ suggested_tag }}
+            {% endfor %}
+        <dl>
+            {{ render_selectlists() }}
+        </dl>
 
-    <h2>{{ _("Back references") }}</h2>
-    <dl>
-    {{ render_backref() }}
-    </dl>
+        {{ forms.render(form['submit']) }}
+        <h2>{{ _("Back references") }}</h2>
+        <dl>
+            {{ render_backref() }}
+        </dl>
+    </div>
 {% endblock %}
