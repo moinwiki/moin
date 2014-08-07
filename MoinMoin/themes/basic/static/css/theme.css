@@ -7046,3 +7046,6 @@ html {
 .moin-index-actions .navbar-collapse {
   padding-left: 0;
 }
+#editor > textarea {
+  width: 100%;
+}
