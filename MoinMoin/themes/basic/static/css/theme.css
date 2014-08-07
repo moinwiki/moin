@@ -6089,10 +6089,6 @@ h6:focus .moin-permalink {
   padding-top: 23px;
   padding-bottom: 23px;
 }
-.moin-list-heading {
-  background-color: #eeeeee;
-  font-variant: small-caps;
-}
 .moin-flash {
   padding: 15px;
   margin-bottom: 20px;
@@ -6178,6 +6174,8 @@ h6:focus .moin-permalink {
   padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
+  background-color: #c8ddf1;
+  border: 1px solid #c8ddf1;
   width: 100%;
   color: #428bca;
   border: 1px solid #dddddd;
@@ -6199,6 +6197,9 @@ h6:focus .moin-permalink {
 .moin-user-action-special > .badge + .badge {
   margin-right: 5px;
 }
+.moin-user-action-special > a {
+  color: #c8ddf1;
+}
 .moin-user-action-special:hover,
 .moin-user-action-special:focus,
 .moin-user-action-special:active,
@@ -6214,6 +6215,17 @@ h6:focus .moin-permalink {
 }
 .list-group-item {
   padding: 5px 15px;
+  background-color: #c8ddf1;
+  border: 1px solid #c8ddf1;
+}
+.list-group-item > a {
+  color: #c8ddf1;
+}
+.moin-list-heading {
+  background-color: #1b436d;
+  border: 1px solid #1b436d;
+  font-variant: small-caps;
+  color: #c8ddf1;
 }
 .moin-diff-added {
   background-color: #ccffcc;
@@ -6571,7 +6583,7 @@ div.moin-item-wrapper {
   font-weight: normal;
 }
 a.wikilink {
-  color: #428bca;
+  color: #1b436d;
 }
 .moin-bcs-subitems {
   z-index: 500;
