@@ -4,7 +4,7 @@
 <h1>{{ headline }}</h1>
 {% endif %}
 {% if tags %}
-<ul class="moin-tags">
+<ul class="moin-tags three-col">
     {% for cls, tag in tags %}
     <li class="{{ cls }}"><a href="{{ url_for('frontend.tagged_items', tag=tag, namespace=fqname.namespace) }}">{{ tag }}</a></li>
     {% endfor %}

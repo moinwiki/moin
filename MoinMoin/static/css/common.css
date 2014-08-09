@@ -49,3 +49,30 @@
   display: none;
   visibility: hidden;
 }
+.one-col,
+.two-col,
+.three-col,
+.four-col {
+  display: block;
+  float: left;
+  padding-left: 0px;
+}
+.one-col li,
+.two-col li,
+.three-col li,
+.four-col li{
+  padding-bottom: 5px;
+  display: inline-block;
+}
+.one-col li{
+  width: 100%;
+}
+.two-col li{
+  width: 50%;
+}
+.three-col li{
+  width: 33%;
+}
+.four-col li{
+  width: 25%;
+}
