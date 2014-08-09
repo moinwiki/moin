@@ -25,9 +25,8 @@ from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
                                      SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.items import Item, Contentful, register, BaseModifyForm
+from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags
 from MoinMoin.items.content import NonExistentContent
-from MoinMoin.constants.keys import LATEST_REVS, TAGS
 
 
 ITEMTYPE_TICKET = u'ticket'
@@ -194,15 +193,15 @@ class Ticket(Contentful):
 
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
-        with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-            suggested_tags = list(searcher.field_terms(TAGS))
 
-            return render_template(self.submit_template if is_new else self.modify_template,
-                                   is_new=is_new,
-                                   closed=closed,
-                                   item_name=self.name,
-                                   data_rendered=data_rendered,
-                                   form=form,
-                                   suggested_tags=suggested_tags,
-                                   item=self,
-                                  )
+        suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
+
+        return render_template(self.submit_template if is_new else self.modify_template,
+                               is_new=is_new,
+                               closed=closed,
+                               item_name=self.name,
+                               data_rendered=data_rendered,
+                               form=form,
+                               suggested_tags=suggested_tags,
+                               item=self,
+                              )
