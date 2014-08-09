@@ -160,7 +160,7 @@
                             {% else %}
                                 <li>
                                     <h4 class="moin-location-breadcrumb">
-                                    {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(item_name) -%}
+                                    {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
                                         {% if loop.first %}
                                             <small>~ /</small>
                                         {% elif not loop.last %}
