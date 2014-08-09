@@ -23,8 +23,8 @@
 {% endmacro %}
 
 
-{% macro table(headings, rows, itemname_cols=[], url_cols=[]) %}
-<table class="zebra">
+{% macro table(headings, rows, itemname_cols=[], url_cols=[], filesize_cols=[]) %}
+<table class="zebra table table-hover">
 <thead>
     <tr>
         {% for heading in headings %}
@@ -40,7 +40,9 @@
 {% for row in rows %}
     <tr>
         {% for col in row %}
-            {% if col is number %}
+            {% if loop.index in filesize_cols %}
+                <td>{{ col|filesizeformat }}</td>
+            {% elif col is number %}
                 <td class="moin-integer">{{ col }}</td>
             {% elif loop.index in itemname_cols %}
                 <td><a href="{{ url_for('frontend.show_item', item_name=col) }}">{{ col }}</a></td>
