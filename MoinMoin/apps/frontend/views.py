@@ -53,7 +53,7 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                             Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions,
                             validate_name, NameNotValidError)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
@@ -2298,7 +2298,7 @@ def tickets():
         elif time_sorting == u'old':
             sortedby.append(sorting.FieldFacet(u'mtime', reverse=False))
         results = searcher.search(q, limit=None, sortedby=sortedby)
-        tags = list(searcher.field_terms(TAGS))
+        tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
         return render_template('tickets.html',
                                results=results,
                                query=query,
