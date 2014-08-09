@@ -48,8 +48,8 @@ from MoinMoin.util.clock import timed
 from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Names
 from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
-    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
+    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME
 )
@@ -507,7 +507,7 @@ class Item(object):
                 meta['acl'] = "None"
 
             self['meta_form'].set(meta, policy='duck')
-            for k in self['meta_form'].field_schema_mapping.keys():
+            for k in self['meta_form'].field_schema_mapping.keys() + IMMUTABLE_KEYS:
                 meta.pop(k, None)
             self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)
@@ -522,7 +522,8 @@ class Item(object):
                       suitable as arguments of the same names to pass to
                       item.modify
             """
-            meta = self['meta_form'].value.copy()
+            meta = dict(item.meta)
+            meta.update(self['meta_form'].value.copy())
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
@@ -580,7 +581,7 @@ class Item(object):
             elif not meta.get(ITEMID):
                 meta[NAME] = [name]
 
-        if not meta.get(NAMESPACE):
+        if meta.get(NAMESPACE) is None:
             meta[NAMESPACE] = self.fqname.namespace
 
         if comment is not None:

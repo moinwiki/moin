@@ -57,6 +57,23 @@ PARENTID = u"parentid"
 DATAID = u"dataid"
 WIKINAME = u"wikiname"
 CONTENT = u"content"
+IMMUTABLE_KEYS = [
+    ACTION,
+    ADDRESS,
+    DATAID,
+    EXTERNALLINKS,
+    ITEMID,
+    ITEMLINKS,
+    ITEMTRANSCLUSIONS,
+    MTIME,
+    NAME_OLD,
+    PARENTID,
+    REVID,
+    HASH_ALGORITHM,
+    SIZE,
+    USERID,
+    WIKINAME,
+]
 
 # magic REVID for current revision:
 CURRENT = u"current"
