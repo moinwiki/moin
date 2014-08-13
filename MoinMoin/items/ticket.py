@@ -189,7 +189,7 @@ class Ticket(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
-                    return redirect(url_for('.show_item', item_name=self.name))
+                    return redirect(url_for('.show_item', item_name=self.fqname))
 
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
