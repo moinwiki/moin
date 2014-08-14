@@ -161,7 +161,9 @@ class ThemeSupport(object):
                             if endpoint == 'frontend.quicklink_item':
                                 if not flaskg.user.is_quicklinked_to([fqname]):
                                     label = _('Add Link')
-                                    user_actions.append((endpoint, href, iconcls, label, title, True))
+                                else:
+                                    label = _('Remove Link')
+                                user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
                                 from MoinMoin.items import Item
                                 if flaskg.user.is_subscribed_to(item.item):
