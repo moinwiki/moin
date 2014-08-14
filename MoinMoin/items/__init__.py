@@ -749,13 +749,12 @@ class Item(object):
             for name in item.meta[NAME]:
                 prefix = self.get_prefix_match(name, prefixes)
                 prefixlen = len(prefix)
-                if prefix:
-                    initial = name[prefixlen]
-                    if uppercase:
-                        initial = initial.upper()
-                    elif lowercase:
-                        initial = initial.lower()
-                    initials.add(initial)
+                initial = name[prefixlen]
+                if uppercase:
+                    initial = initial.upper()
+                elif lowercase:
+                    initial = initial.lower()
+                initials.add(initial)
         return sorted(list(initials))
 
     delete_template = 'delete.html'
