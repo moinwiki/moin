@@ -6955,7 +6955,6 @@ form.upload_file button {
 #ticket-list tr td,
 #ticket-list thead th {
   cursor: pointer;
-  padding-left: 20px;
 }
 #ticket-list tr td:first-child a {
   font-family: monospace;
@@ -7016,7 +7015,7 @@ form.upload_file button {
 #moin-ticket-create-link {
   display: inline;
   position: absolute;
-  right: 100px;
+  right: 90px;
   top: 40px;
 }
 #moin-ticket-create-link button {

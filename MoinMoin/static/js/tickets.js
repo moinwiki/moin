@@ -12,4 +12,6 @@ $(document).ready(function(){
     }
   });
 
+  $('.moin-loginsettings').addClass('navbar-right');
+
 });

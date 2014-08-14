@@ -1,9 +1,7 @@
 #moin-ticket-form
     dd
-        width 80%
         margin-top 0.1em
     dt
-        width 15%
         margin-top 0.1em
 
 fields = (effort difficulty severity priority)
@@ -78,7 +76,7 @@ label.moin-inline-label
 input[type=submit], #f_submit_update, #f_submit_update_negate_status
     margin-top 10px
     margin-bottom 20px
-    width 150px
+    width auto
     background-color #1b436d
     height 40px
     color #ffffff
@@ -101,12 +99,21 @@ select
 
 .moin-ticket-comments
     float right
-    width 60%
+    width 50%
 
 .moin-ticket-metadata
     float left
-    width 40%
+    width 50%
 
 #f_message
     width 100%
     height 150px
+
+h2
+    border-bottom none
+
+dt label
+    padding-top 10px
+
+dl dd
+    padding-bottom 10px
