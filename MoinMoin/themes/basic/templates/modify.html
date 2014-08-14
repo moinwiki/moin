@@ -26,7 +26,6 @@
 {% block content %}
 <h2>{{ title }}</h2>
 <div id="moin-modify" class="moin-form">
-    <div id="checkmodifyview"> </div>
     {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
     {{ forms.render_errors(form) }}
     {{ forms.render_errors(form['meta_form']['acl']) }}

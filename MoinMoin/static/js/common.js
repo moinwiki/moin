@@ -665,6 +665,17 @@ $(document).ready(function () {
     moin.enhanceUserSettings();
     moin.enhanceEdit();
     $('.moin-sortable').tablesorter();
+
+    $('#moin-modify').on('change keyup keydown', 'input, textarea, select', function (e) {
+        $(this).addClass('moin-changed-input');
+    });
+
+    $(window).on('beforeunload', function() {
+        if ($('.moin-changed-input').length) {
+            return "Data you may have entered will be discarded!";
+        }
+    });
+
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
 });
