@@ -91,6 +91,7 @@ class Blog(Default):
                                blog_item=self,
                                blog_entry_items=blog_entry_items,
                                tag=tag,
+                               item=self,
                               )
 
 
@@ -127,4 +128,5 @@ class BlogEntry(Default):
                                fqname=blog_item.fqname,
                                blog_item=blog_item,
                                blog_entry_item=self,
+                               item=self,
                               )
