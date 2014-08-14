@@ -6430,8 +6430,12 @@ h6:focus .moin-permalink {
 .moin-quicklink {
   position: relative;
   padding: 5px 15px 5px 15px;
-  border: 1px solid #dddddd;
+  background-color: #c8ddf1;
+  border: 1px solid #c8ddf1;
   margin-bottom: -1px;
+}
+.moin-quicklink > a {
+  color: #1b436d;
 }
 .moin-quicklink:last-child {
   margin-bottom: 0;

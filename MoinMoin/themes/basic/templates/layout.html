@@ -229,11 +229,8 @@
                                 {% if loop.first %}
                                     <div class="list-group-item moin-list-heading">Quick Links</div>
                                 {% endif %}
-                                    <div class="moin-quicklink">
-                                    <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text|shorten_item_name }}
-                                    </a>
-                                    <a class="moin-quicklink-delete" href="{{ url_for('frontend.quicklink_item', item_name=text) }}">
-                                        <i class="icon-remove"></i>
+                                <div class="moin-quicklink">
+                                    <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text|shorten_item_name(20) }}
                                     </a>
                                 </div>
                             {% endfor %}

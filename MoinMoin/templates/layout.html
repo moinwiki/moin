@@ -131,7 +131,7 @@
         <ul id="moin-navibar" class="panel">
         {% for cls, url, text, title in navibar_items %}
             <li class="{{ cls }}">
-                <a href="{{ url }}" {% if title %}title="{{ title }}"{% endif %}>{{ text }}</a>
+                <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text }}</a>
             </li>
         {% endfor %}
         </ul>
