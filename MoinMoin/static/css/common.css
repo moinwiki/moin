@@ -1,0 +1,78 @@
+/*
+    Add all the css definitions common to the themes here, in order to
+    avoid duplication of code at many places. Also if there are minor
+    differences between the definitions for the different themes,
+    add a definition here and make suitable minor adjustments in the
+    individual css definitions of each theme.
+*/
+.moin-suggestions {
+  color: #FF9900;
+  display: inline;
+}
+.moin-suggestion-terms {
+  font-style: italic;
+  display: inline;
+}
+.moin-wordbreak {
+  font-size: 1.4em;
+}
+.moin-search-meta {
+  color: green;
+}
+.searchstats {
+  color: gray;
+}
+#moin-search-query {
+  width: 70%;
+  border-radius: 5px;
+}
+.searchhitinfobar {
+  display: inline;
+}
+.moin-rights-info {
+  display: inline;
+  float: right;
+}
+.moin-searchoptions > table {
+  table-layout: fixed;
+}
+.moin-searchoptions > table > tbody > tr > th {
+  padding: 5px;
+  text-decoration: underline;
+}
+.moin-searchoptions > table > tbody > tr > td {
+  valign: top;
+  padding-right: 20px;
+  width: 20%;
+}
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+.one-col,
+.two-col,
+.three-col,
+.four-col {
+  display: block;
+  float: left;
+  padding-left: 0px;
+}
+.one-col li,
+.two-col li,
+.three-col li,
+.four-col li{
+  padding-bottom: 5px;
+  display: inline-block;
+}
+.one-col li{
+  width: 100%;
+}
+.two-col li{
+  width: 50%;
+}
+.three-col li{
+  width: 33%;
+}
+.four-col li{
+  width: 25%;
+}

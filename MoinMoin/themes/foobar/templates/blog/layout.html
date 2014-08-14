@@ -1,0 +1,56 @@
+{% extends theme("layout.html") %}
+{% import theme("blog/utils.html") as blog_utils %}
+{% import "itemviews.html" as itemviews with context %}
+
+{% if blog_item %}
+    {% set blog_header = blog_item.content._render_data()|safe %}
+    {% set blog_name = blog_item.name %}
+    {% set supertags = blog_item.meta['supertags'] %}
+{% endif %}
+
+{% if blog_name %}
+    {% macro header_search(form) %}
+        {{ blog_utils.header_search(blog_name, form) }}
+    {% endmacro %}
+{% endif %}
+
+{% block theme_stylesheets %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ theme_static('css/blog.css') }}" />
+{% endblock %}
+
+{% block content %}
+    {% block content_data %}
+        <div id="moin-content-data">
+            <div id="moin-blog-header">
+                {% if blog_header %}
+                    {{ blog_header }}
+                {% endif %}
+            </div>
+
+            <a id="moin-blog-entry-create-link" href="{{ url_for('frontend.new', itemtype='blogentry') }}" >
+                <button class="btn btn-primary">{{ _("Create Blog entry") }}</button>
+            </a>
+
+            <div id="moin-blog-body">
+                <div id="moin-blog-content">
+                {% block blog_content %}<br />{% endblock %}
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+
+{% block local_panel  %}
+    <ul>
+        {% if blog_name and supertags %}
+        <li>
+            {{ blog_utils.widget_supertags(blog_name, supertags) }}
+        </li>
+        {% endif %}
+        <li>
+            {{ _("Views") }}
+            {{ itemviews }}
+        </li>
+    </ul>
+{% endblock %}

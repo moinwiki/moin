@@ -1,0 +1,42 @@
+{% extends theme("layout.html") %}
+{% block content %}
+    <h1>{{ _("Users") }}</h1>
+    <table class="table table-hover tablesorter tablesorter-default moin-sortable" data-sortlist="[[0,0],[1,0]]">
+        <tr>
+            <th>{{ _("User name") }}</th>
+            <th>{{ _("Member of Groups") }}</th>
+            <th>{{ _("Email address") }}</th>
+            <th colspan="3">{{ _("Actions") }}</th>
+        </tr>
+        {% for u in user_accounts %}
+            <tr>
+                <td><a href="{{ url_for('frontend.show_item', item_name=u.fqname) }}">{{ u.name|join(', ') }}</a>{{ u.disabled and " (%s)" % _("disabled") or ""}}</td>
+                <td>{{ u.groups|join(', ') }}</td>
+                <td>
+                    {% if u.email %}
+                        <a href="mailto:{{ u.email|e }}" class="mailto">{{ u.email|e }}</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('admin.userprofile', user_name=u.name[0]) }}" method="POST">
+                        <input type="hidden" name="key" value="disabled" />
+                        <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
+                        <input type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('admin.mail_recovery_token') }}" method="GET">
+                        <input type="hidden" name="email" value="{{ u.email }}" />
+                        <input type="hidden" name="account_sendmail" value="1" />
+                        <input type="submit" name="recoverpass" value="{{ _("Mail account data") }}" />
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('admin.user_acl_report', uid=u.uid) }}" method="GET">
+                        <input type="submit" value="{{ _("User ACL Info") }}" />
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

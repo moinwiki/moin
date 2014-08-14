@@ -1,0 +1,3 @@
+{% for fq_name in fq_names|sort(attribute='value') -%}
+{{ url_for('frontend.show_item', item_name=fq_name, _external=True) }} {{ fq_name.value }}
+{% endfor %}
