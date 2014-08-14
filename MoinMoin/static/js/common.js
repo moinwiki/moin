@@ -667,7 +667,11 @@ $(document).ready(function () {
     $('.moin-sortable').tablesorter();
 
     $('#moin-modify').on('change keyup keydown', 'input, textarea, select', function (e) {
-        $(this).addClass('moin-changed-input');
+        $('#moin-modify').addClass('moin-changed-input');
+    });
+
+    $('#moin-save-text-button').on('click', function() {
+        $('#moin-modify').removeClass('moin-changed-input');
     });
 
     $(window).on('beforeunload', function() {
