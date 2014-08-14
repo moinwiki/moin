@@ -27,14 +27,22 @@
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
         <li role="presentation">
-            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='new') }}">
-                {{_("Recently updated")}}
-            </a>
+            <form action="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='new') }}" method="post">
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="hidden" name="q" value="{{ query if query }}" >
+                <button type="submit">
+                    {{_("Recently updated")}}
+                </button>
+            </form>
         </li>
         <li role="presentation">
-            <a role="menuitem" tabindex="-1" href="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='old') }}">
-                {{_("Least recently updated")}}
-            </a>
+            <form action="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting='old') }}" method="post">
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="hidden" name="q" value="{{ query if query }}" >
+                <button type="submit">
+                    {{_("Least Recently updated")}}
+                </button>
+            </form>
         </li>
     </ul>
 </div>
