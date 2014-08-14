@@ -522,8 +522,7 @@ class Item(object):
                       suitable as arguments of the same names to pass to
                       item.modify
             """
-            meta = dict(item.meta)
-            meta.update(self['meta_form'].value.copy())
+            meta = self['meta_form'].value.copy()
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
