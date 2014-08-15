@@ -76,3 +76,12 @@
 .four-col li{
   width: 25%;
 }
+input[type="text"], .moin-acl-string {
+  width: 70%;
+}
+.tablesorter {
+  width: 100%;
+}
+#moin-acl-form {
+  display: inline;
+}
