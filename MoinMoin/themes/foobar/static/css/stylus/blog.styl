@@ -1,0 +1,63 @@
+// moin2 foobar theme - blog css
+
+// color have been used from the color palette
+@import "color_palette"
+
+.moin-blog-icon
+    font-size 1.6em
+
+.moin-blog-entry-info
+    font-size 0.8em
+    color footer_color
+    margin 1em 0
+
+.moin-blog-entry-bottominfo
+    font-size 0.8em
+    color footer_color
+    margin 1em 0
+    padding 0em 1em
+    border border_style
+
+.moin-blog-entry-comments
+    margin 1em 0
+
+.moin-blog-entry-modify
+    font-size 0.8em
+    float right
+
+div.moin-blog-entry-tags
+    margin 1em 0
+
+ul.moin-blog-entry-tags
+    list-style none
+    display inline
+    margin 0
+    li
+        display inline
+        &:after
+            content ","
+
+ul.moin-blog-entry-tags li:last-child
+    &:after
+        content ""
+
+.moin-blog-entry
+    border 2px solid #d6d5d0
+    padding-left 10px
+    padding-right 10px
+    padding-bottom 10px
+    border-radius 10px
+    background-color #e8e8e8
+
+.blog-entry h1
+    border-bottom none
+    margin: 0.10em
+
+#moin-blog-header
+    margin 1em 0 -1em 0
+    font-size 20px
+    padding-bottom 20px
+
+#moin-blog-content h1 a
+    text-decoration none
+    font-size 30px

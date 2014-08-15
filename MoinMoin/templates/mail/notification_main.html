@@ -1,0 +1,46 @@
+{% extends theme("mail/html_base.html") %}
+{% from "mail/content_diff.html" import content_diff %}
+{% from "mail/meta_diff.html" import meta_diff %}
+
+{% block title %}Wiki Notification{% endblock %}
+
+{% block content -%}
+    <div>
+        <p style="text-align:center; margin-bottom:0.6em;">{{ _("Dear Wiki user,") }}</p>
+        <p style="text-align:center; margin-top:0.4em; margin-bottom:0;">
+            {{ notification_sentence }}
+        </p>
+        <p style="text-align:center; margin-top:0.4em; margin-bottom:0;">
+            {{ _("Item link:") }}
+            <a href="{{ item_url }}"
+               style="text-decoration:none; color:#3CA7DD;">{{ item_url }}
+            </a>
+        </p>
+        <p style="text-align:center; margin-top:0.4em;">
+            <a href="{{ diff_url }}"
+                style="text-decoration:none; color:#3CA7DD;">{{ diff_url }}
+            </a>
+        </p>
+    </div>
+    {% if comment -%}
+    <h3 style="margin:0 1.3em 0.5em;">{{ _("Comment") }}</h3>
+    <p>{{ comment }}</p>
+    {%- endif %}
+    {% if content_diff_ -%}
+    <h3 style="margin:1em 1.3em 0.5em;">{{ _("Content") }}</h3>
+    {{ content_diff(content_diff_) }}
+    {%- endif %}
+    {% if meta_diff_ -%}
+    <h3 style="margin:1em 1.3em 0.5em;">{{ _("Metadata") }}</h3>
+    {{ meta_diff(meta_diff_) }}
+    {%- endif %}
+    <div style="font-size:0.7em; margin-top:2em;">
+        <p style="text-align:center; color:#A6A6A6; margin-bottom:0;">
+            {{ _("You are receiving this because you have subscribed to a wiki
+        item on %(wiki_name)s for change notifications.", wiki_name=wiki_name) }}</p>
+        <p style="text-align:center; margin-top:0;"><strong><a
+                href="{{ unsubscribe_url }}"
+            style="text-decoration:none; color:#3CA7DD;">{{ _("Unsubscribe from
+            this item notifications") }}</a></strong></p>
+    </div>
+{%- endblock %}

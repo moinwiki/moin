@@ -1,0 +1,31 @@
+include README.txt LICENSE.txt
+include quickinstall.py
+include wikiconfig.py
+
+recursive-include   MoinMoin/translations *
+
+recursive-include   MoinMoin/static *
+recursive-include   MoinMoin/templates *
+
+recursive-include   MoinMoin/apps/admin/templates *
+recursive-include   MoinMoin/apps/misc/templates *
+
+recursive-include   MoinMoin/themes/modernized *
+recursive-include   MoinMoin/themes/foobar *
+
+global-include */_tests/*
+
+recursive-include docs *
+recursive-include contrib *
+recursive-include wiki *
+
+global-exclude *.orig
+global-exclude *.rej
+
+prune docs/_build
+
+prune wiki/data/content
+prune wiki/data/userprofiles
+prune wiki/data/flask-cache
+prune wiki/index
+

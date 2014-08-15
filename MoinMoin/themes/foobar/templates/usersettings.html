@@ -1,0 +1,19 @@
+{% extends theme("layout.html") %}
+{% import "usersettings_forms.html" as user_forms %}
+
+{% block local_panel %}
+<div class="moin-tabs">
+    <ul id="moin-usersetting-title">
+        <li class="moin-tab-title"><a href="#moin-personal">{{ _("Personal") }}</a></li>
+        <li class="moin-tab-title"><a href="#moin-password">{{ _("Change Password") }}</a></li>
+        <li class="moin-tab-title"><a href="#moin-notification">{{ _("Notifications") }}</a></li>
+        <li class="moin-tab-title"><a href="#moin-ui">{{ _("Appearance") }}</a></li>
+        <li class="moin-tab-title"><a href="#moin-navigation">{{ _("Navigation") }}</a></li>
+        <li class="moin-tab-title"><a href="#moin-options">{{ _("Options") }}</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+{{ user_forms.all_usersettings_forms(form_objs) }}
+{% endblock %}
