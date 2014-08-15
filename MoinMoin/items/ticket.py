@@ -23,10 +23,11 @@ from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatu
                             Reference, BackReference, SelectSubmit, Text)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY)
+                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY, NAMESPACE)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags
 from MoinMoin.items.content import NonExistentContent
+from MoinMoin.util.interwiki import CompositeName
 
 
 ITEMTYPE_TICKET = u'ticket'
@@ -189,7 +190,11 @@ class Ticket(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
-                    return redirect(url_for('.show_item', item_name=self.fqname))
+                    try:
+                        fqname = CompositeName(self.meta[NAMESPACE], ITEMID, self.meta[ITEMID])
+                    except KeyError:
+                        fqname = self.fqname
+                    return redirect(url_for('.show_item', item_name=fqname))
 
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
