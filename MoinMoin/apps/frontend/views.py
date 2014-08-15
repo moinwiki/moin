@@ -53,12 +53,12 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                             Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions,
                             validate_name, NameNotValidError)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError
+from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.namespaces import *
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
+from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.constants.contenttypes import *
 from MoinMoin.util import crypto
@@ -2288,7 +2288,10 @@ def tickets():
 
     selected_tags = set(request.args.getlist(u'selected_tags'))
     terms.extend(Term(TAGS, tag) for tag in selected_tags)
-    q = And(terms)
+    assigned_username = request.args.get(ASSIGNED_TO)
+    user = [Term(NAME, assigned_username)]
+    user.append(Term(CONTENTTYPE, CONTENTTYPE_USER))
+    user = And(user)
 
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         sortedby = []
@@ -2297,8 +2300,18 @@ def tickets():
             sortedby.append(sorting.FieldFacet(u'mtime', reverse=True))
         elif time_sorting == u'old':
             sortedby.append(sorting.FieldFacet(u'mtime', reverse=False))
+
+        if assigned_username:
+            selected_user = searcher.search(user, limit=None)
+            if selected_user:
+                assigned_to = selected_user[0][ITEMID]
+                terms.append(Term(ASSIGNED_TO, assigned_to))
+            else:
+                terms = []
+
+        q = And(terms)
         results = searcher.search(q, limit=None, sortedby=sortedby)
-        tags = list(searcher.field_terms(TAGS))
+        tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
         return render_template('tickets.html',
                                results=results,
                                query=query,
