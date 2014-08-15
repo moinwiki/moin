@@ -110,13 +110,15 @@
 <div class="moin-form" id="moin-ticket-form">
     {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
 
-    {% if data_rendered %}
-        <div id="moin-content-data">
+    <div id="moin-content-data" class="moin-ticket-comments">
+        {% if data_rendered %}
             {{ data_rendered }}
-        </div>
-    {% endif %}
+        {% endif %}
 
-    {% block form_controls %}
+        {% block form_controls %}
+        {% endblock %}
+    </div>
+    {% block ticket_metadata %}
     {% endblock %}
 
     {{ gen.form.close() }}

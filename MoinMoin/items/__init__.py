@@ -51,7 +51,7 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
-    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME
+    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, LATEST_REVS
 )
 from MoinMoin.constants.namespaces import NAMESPACE_ALL
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
@@ -265,6 +265,18 @@ def _build_contenttype_query(groups):
 IndexEntry = namedtuple('IndexEntry', 'relname fullname meta')
 
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname fullname meta hassubitems')
+
+
+def get_itemtype_specific_tags(itemtype):
+    """
+    Returns the tags of a specific itemtype
+    """
+    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+        items = searcher.search(Term(ITEMTYPE, itemtype), limit=None)
+        tags = set()
+        for item in items:
+            tags.update(item[TAGS])
+        return tags
 
 
 class NameNotUniqueError(ValueError):
