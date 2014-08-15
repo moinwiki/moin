@@ -6198,7 +6198,7 @@ h6:focus .moin-permalink {
   margin-right: 5px;
 }
 .moin-user-action-special > a {
-  color: #c8ddf1;
+  color: #1b436d;
 }
 .moin-user-action-special:hover,
 .moin-user-action-special:focus,
@@ -6219,12 +6219,15 @@ h6:focus .moin-permalink {
   border: 1px solid #c8ddf1;
 }
 .list-group-item > a {
-  color: #c8ddf1;
+  color: #1b436d;
 }
 .moin-list-heading {
   background-color: #1b436d;
   border: 1px solid #1b436d;
   font-variant: small-caps;
+  color: #c8ddf1;
+}
+.moin-list-heading > a {
   color: #c8ddf1;
 }
 .moin-diff-added {
