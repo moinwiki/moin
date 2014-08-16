@@ -47,7 +47,8 @@
     </ul>
 </div>
 
-<a id="moin-ticket-create-link" href="{{ url_for('frontend.new', itemtype='ticket') }}" >
+{# This is just a workaround for creating tickets #}
+<a id="moin-ticket-create-link" href="{{ url_for('frontend.modify_item', itemtype='ticket', item_name='ticket_'+current_timestamp ) }}" >
     <button class="btn btn-primary btn-lg btn-block">{{ _("Create ticket") }}</button>
 </a>
 

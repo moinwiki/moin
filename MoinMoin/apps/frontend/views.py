@@ -2275,6 +2275,8 @@ def tickets():
     else:
         query = None
         status = u'open'
+
+    current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     idx_name = ALL_REVS
     qp = flaskg.storage.query_parser([TAGS, SUMMARY, CONTENT, ITEMID], idx_name=idx_name)
     terms = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
@@ -2319,6 +2321,7 @@ def tickets():
                                tags=tags,
                                selected_tags=selected_tags,
                                time_sorting=time_sorting,
+                               current_timestamp=current_timestamp,
         )
 
 
