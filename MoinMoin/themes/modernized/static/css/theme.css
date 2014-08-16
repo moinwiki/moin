@@ -421,16 +421,16 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #lightbox{background:#fff;opacity:.7;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
 ul.moin-tags{list-style:none}
 ul.moin-tags li{display:inline}
-ul.moin-tags li.weight0{font-size:50%}
-ul.moin-tags li.weight1{font-size:65%}
-ul.moin-tags li.weight2{font-size:80%}
-ul.moin-tags li.weight3{font-size:90%}
-ul.moin-tags li.weight4{font-size:100%}
-ul.moin-tags li.weight5{font-size:120%}
-ul.moin-tags li.weight6{font-size:140%}
-ul.moin-tags li.weight7{font-size:160%}
-ul.moin-tags li.weight8{font-size:180%}
-ul.moin-tags li.weight9{font-size:200%}
+ul.moin-tags li.weight0{font-size:100%}
+ul.moin-tags li.weight1{font-size:120%}
+ul.moin-tags li.weight2{font-size:140%}
+ul.moin-tags li.weight3{font-size:160%}
+ul.moin-tags li.weight4{font-size:180%}
+ul.moin-tags li.weight5{font-size:200%}
+ul.moin-tags li.weight6{font-size:220%}
+ul.moin-tags li.weight7{font-size:240%}
+ul.moin-tags li.weight8{font-size:260%}
+ul.moin-tags li.weight9{font-size:280%}
 #moin-flash{margin:-2px -15px -2px -14px}
 .moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center;border-top-right-radius:9px;border-top-left-radius:9px;color:#000}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png")}
