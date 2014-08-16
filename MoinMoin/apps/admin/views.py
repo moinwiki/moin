@@ -27,6 +27,8 @@ from MoinMoin.security import require_permission, ACLStringIterator
 from MoinMoin.util.interwiki import CompositeName
 from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
 from MoinMoin.datastruct.backends import GroupDoesNotExistError
+from MoinMoin.items import Item
+from MoinMoin.util.interwiki import split_fqname
 
 
 @admin.route('/superuser')
@@ -321,15 +323,17 @@ def item_acl_report():
         item_id = item.meta.get(ITEMID)
         item_name = item.meta.get(NAME)
         item_acl = item.meta.get(ACL)
+        acl_default = item_acl is None
         fqname = CompositeName(item_namespace, u'itemid', item_id)
-        if item_acl is None:
+        if acl_default:
             for namespace, acl_config in app.cfg.acl_mapping:
-                if item_namespace == namespace or item_namespace == 'userprofiles' and namespace == 'userprofiles/':
-                    item_acl = 'Default ({0})'.format(acl_config['default'])
+                if item_namespace == namespace[:-1]:
+                    item_acl = acl_config['default']
         items_acls.append({'name': item_name,
                            'itemid': item_id,
                            'fqname': fqname,
-                           'acl': item_acl})
+                           'acl': item_acl,
+                           'acl_default': acl_default})
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
                            items_acls=items_acls)
@@ -367,3 +371,16 @@ def group_acl_report(group_name):
                            title_name=_(u'Group ACL Report'),
                            group_items=group_items,
                            group_name=group_name)
+
+
+@admin.route('/modify_acl/<itemname:item_name>', methods=['POST'])
+@require_permission(SUPERUSER)
+def modify_acl(item_name):
+    fqname = split_fqname(item_name)
+    item = Item.create(item_name)
+    meta = dict(item.meta)
+    new_acl = request.form.get(fqname.value)
+    meta[ACL] = new_acl
+    item._save(meta=meta)
+    flash("Changes successfully applied", "info")
+    return redirect(url_for('.item_acl_report'))

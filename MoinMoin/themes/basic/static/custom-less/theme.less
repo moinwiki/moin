@@ -87,10 +87,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .list-group-item {
   padding: 5px 15px;
-  background-color: #c8ddf1;
-  border: 1px solid #c8ddf1;
+  background-color: @search_option_bar_text_color;
+  border: 1px solid @search_option_bar_text_color;
   > a {
-    color: #c8ddf1;
+    color: @search_option_bar_color;
   }
 }
 
@@ -98,7 +98,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: @navbar-bg;
   border: 1px solid @navbar-bg;
   font-variant: small-caps;
-  color: #c8ddf1;
+  color: @search_option_bar_text_color;
+  > a {
+    color: @search_option_bar_text_color;
+  }
 }
 
 .moin-diff-added {
@@ -175,12 +178,12 @@ h1, h2, h3, h4, h5, h6 {
 .moin-quicklink {
   position: relative;
   padding: 5px 15px 5px 15px;
-  background-color: #c8ddf1;
-  border: 1px solid #c8ddf1;
+  background-color: @search_option_bar_text_color;
+  border: 1px solid @search_option_bar_text_color;
   margin-bottom: -1px;
 
   > a {
-    color: #1b436d;
+    color: @search_option_bar_color;
   }
 
   &:last-child {
@@ -283,13 +286,13 @@ div.moin-item-wrapper {
 }
 
 a.wikilink{
-  color: #1b436d;
+  color: @search_option_bar_color;
 }
 .moin-bcs-subitems{
   z-index: 500;
 }
 ul.moin-breadcrumb ul.moin-bcs-subitems{
-  background-color: #1b436d;
+  background-color: @search_option_bar_color;
 }
 ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-bcs-subitems{
   padding: 0;
@@ -303,7 +306,7 @@ ul.moin-breadcrumb li ul.moin-bcs-subitems li{
 ul.moin-breadcrumb li ul.moin-bcs-subitems li a{
   padding: 10px;
   display: inline-block;
-  color: #ffffff;
+  color: @white;
 }
 ul.moin-breadcrumb li {
   position: relative;
@@ -323,11 +326,11 @@ html, body {
 }
 // CSS definitions for Index UI borrowed from foobar and modernized theme
 #filter-btn { 
-  background-color: #428bca;
+  background-color: @bootstrap_default_blue;
   border-radius: 3px;
   display: inline;
   padding: 10px;
-  color: #ffffff;
+  color: @white;
   margin-bottom: 10px;
 }
 .moin-contenttypes-wrapper { 
@@ -411,7 +414,7 @@ html, body {
   span {
     padding: 4px;
     background-color: #007cef;
-    color: #ffffff;
+    color: @white;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
@@ -450,12 +453,12 @@ html, body {
 }
 .popup-container {
   margin: 0;
-  border: 5px solid #428bca;
+  border: 5px solid @bootstrap_default_blue;
   border-radius: 6px 6px 0 0;
 }
 .popup-header {
-  background-color: #428bca;
-  color: #ffffff;
+  background-color: @bootstrap_default_blue;
+  color: @white;
   padding: 10px;
   margin: 0;
 }
@@ -529,9 +532,9 @@ input,select {
     padding: 4px 5px;
 
     &:hover,&.selected {
-      background: #428bca;
+      background: @bootstrap_default_blue;
       border-radius: 5px;
-      color: #ffffff;
+      color: @white;
       text-decoration: none
     }
   }
@@ -689,7 +692,7 @@ form.upload_file {
   font-family: monospace;
 }
 .ticket-query-button {
-  background: #ffffff;
+  background: @white;
   padding: 1px 7px;
   text-shadow: 0 1px 0 #fff;
   border: 1px solid transparent;
@@ -805,7 +808,7 @@ html{
 .tickets-sort-button .dropdown-menu li form button {
   display: block;
   border: none;
-  background-color: #ffffff;
+  background-color: @white;
   padding: 3px 20px;
   clear: both;
   font-weight: normal;
@@ -814,4 +817,83 @@ html{
 .tickets-sort-button .dropdown-menu li form button:hover,
 .tickets-sort-button .dropdown-menu li form button:focus {
   background-color: #f5f5f5;
+}
+.moin-text-icon {
+  font-size: 0;
+  color: transparent;
+}
+.moin-alert:before {
+  content: url("../img/smileys/alert.png");
+}
+.moin-angry:before {
+  content: url("../img/smileys/angry.png");
+}
+.moin-attention:before {
+  content: url("../img/smileys/attention.png");
+}
+.moin-biggrin:before {
+  content: url("../img/smileys/biggrin.png");
+}
+.moin-checkmark:before {
+  content: url("../img/smileys/checkmark.png");
+}
+.moin-devil:before {
+  content: url("../img/smileys/devil.png");
+}
+.moin-frown:before {
+  content: url("../img/smileys/frown.png");
+}
+.moin-icon-error:before {
+  content: url("../img/smileys/icon-error.png");
+}
+.moin-icon-info:before {
+  content: url("../img/smileys/icon-info.png");
+}
+.moin-idea:before {
+  content: url("../img/smileys/idea.png");
+}
+.moin-ohwell:before {
+  content: url("../img/smileys/ohwell.png");
+}
+.moin-prio1:before {
+  content: url("../img/smileys/prio1.png");
+}
+.moin-prio2:before {
+  content: url("../img/smileys/prio2.png");
+}
+.moin-prio3:before {
+  content: url("../img/smileys/prio3.png");
+}
+.moin-redface:before {
+  content: url("../img/smileys/redface.png");
+}
+.moin-sad:before {
+  content: url("../img/smileys/sad.png");
+}
+.moin-smile:before {
+  content: url("../img/smileys/smile.png");
+}
+.moin-smile2:before {
+  content: url("../img/smileys/smile2.png");
+}
+.moin-smile3:before {
+  content: url("../img/smileys/smile3.png");
+}
+.moin-smile4:before {
+  content: url("../img/smileys/smile4.png");
+}
+.moin-star_off:before {
+  content: url("../img/smileys/star_off.png");
+}
+.moin-star_on:before {
+  content: url("../img/smileys/star_on.png");
+}
+.moin-thumbs-up:before {
+  content: url("../img/smileys/thumbs-up.png");
+}
+.moin-tired:before {
+  content: url("../img/smileys/tired.png");
+}
+.moin-tongue:before {
+  content: url("../img/smileys/tongue.png");
 }
