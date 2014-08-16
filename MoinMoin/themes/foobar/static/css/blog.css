@@ -1,0 +1,14 @@
+.moin-blog-icon{font-size:1.6em}
+.moin-blog-entry-info{font-size:.8em;color:#616161;margin:1em 0}
+.moin-blog-entry-bottominfo{font-size:.8em;color:#616161;margin:1em 0;padding:0 1em;border:1px solid #ccc}
+.moin-blog-entry-comments{margin:1em 0}
+.moin-blog-entry-modify{font-size:.8em;float:right}
+div.moin-blog-entry-tags{margin:1em 0}
+ul.moin-blog-entry-tags{list-style:none;display:inline;margin:0;}
+ul.moin-blog-entry-tags li{display:inline;}
+ul.moin-blog-entry-tags li:after{content:","}
+ul.moin-blog-entry-tags li:last-child:after{content:""}
+.moin-blog-entry{border:2px solid #d6d5d0;padding-left:10px;padding-right:10px;padding-bottom:10px;border-radius:10px;background-color:#e8e8e8}
+.moin-blog-entry h1{border-bottom:none;margin: 0.10em}
+#moin-blog-header{margin:1em 0 -1em 0;font-size:20px;padding-bottom:20px}
+#moin-blog-content h1 a{text-decoration:none;font-size:30px}
