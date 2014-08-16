@@ -8,8 +8,8 @@
 {% set status_values = ['all', 'open', 'closed']  %}
 {{_("Filter:")}}
 {% for status_value in status_values %}
-    <form action="{{ url_for('frontend.tickets', selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post" class='moin-ticketsearch-form'>
-        <input type="hidden" name="q" value="{{ query if query }}" >
+    <form action="{{ url_for('frontend.tickets', selected_tags=list(), time_sorting=time_sorting if time_sorting) }}" method="post" class='moin-ticketsearch-form'>
+        <input type="hidden" name="q" value="" >
         &nbsp;<input type="hidden" name="status" value="{{ status_value }}">
         <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'ticket-query-button active' if status == status_value  else 'ticket-query-button'}}">
     </form>
