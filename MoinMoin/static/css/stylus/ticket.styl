@@ -73,7 +73,7 @@ label.moin-inline-label
     margin 5px 1px 3px 0px
     border 1px solid rgba(81, 203, 238, 1)
 
-.moin-ticket-metadata input[type=submit], #f_submit_update, #f_submit_update_negate_status
+.moin-ticket-comments input[type=submit], #f_submit_update, #f_submit_update_negate_status
     margin-top 10px
     margin-bottom 20px
     width auto
@@ -97,13 +97,14 @@ select
     border-radius 4px
     -webkit-user-select none
 
-.moin-ticket-comments
-    float right
-    width 50%
+.moin-ticket-submit, .moin-ticket-comments
+    float left
+    width 35em
+    clear both
 
 .moin-ticket-metadata
-    float left
-    width 50%
+    float right
+    width 30em
 
 #f_message
     width 100%
@@ -123,3 +124,11 @@ dl dd
 
 .moin-ticket-tags
     padding-bottom 20px
+
+textarea
+    resize vertical
+
+.moin-form dt, .moin-form dd
+    text-align left
+    width 100%
+    padding-bottom 5px
