@@ -22,12 +22,12 @@
         {{ forms.render_errors(form) }}
         {{ render_meta() }}
         </dl>
-	<div class="moin-ticket-tags">
+        <div class="moin-ticket-tags">
             {{ _("Suggested Tags: ") }}
             {% for suggested_tag in suggested_tags %}
                 {{ suggested_tag }}
             {% endfor %}
-	</div>
+        </div>
         <dl>
         {{ render_selectlists() }}
         </dl>
