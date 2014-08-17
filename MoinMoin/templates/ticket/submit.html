@@ -17,17 +17,21 @@
 {% block ticket_metadata %}
 
     <h2>{{ _("Provide metadata") }}</h2>
-    <dl>
-    {{ forms.render_errors(form) }}
-    {{ render_meta() }}
-    </dl>
-    {{ _("Suggested Tags: ") }}
-    {% for suggested_tag in suggested_tags %}
-        {{ suggested_tag }}
-    {% endfor %}
-    <dl>
-    {{ render_selectlists() }}
-    </dl>
+    <div class="moin-ticket-metadata">
+        <dl>
+        {{ forms.render_errors(form) }}
+        {{ render_meta() }}
+        </dl>
+	<div class="moin-ticket-tags">
+            {{ _("Suggested Tags: ") }}
+            {% for suggested_tag in suggested_tags %}
+                {{ suggested_tag }}
+            {% endfor %}
+	</div>
+        <dl>
+        {{ render_selectlists() }}
+        </dl>
 
-    {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form) }}
+    </div>
 {% endblock %}
