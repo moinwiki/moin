@@ -114,10 +114,9 @@
         <li class="list-group-item">Data ID: {{ meta['dataid'] }}</li>
         <li class="list-group-item">External Links:
         {% if meta['externallinks'] %}
-            {% for item in meta['externallinks'] %}
-                <a href="{{ item|safe }}">
-                    {{ item }}
-                </a>,
+            {% for item in meta['externallinks'] -%}
+                <a href="{{ item|safe }}">{{ item }}</a>
+                {%- if not loop.last -%},{% endif %}
             {% endfor %}
         {% else %}
             (None)
@@ -126,10 +125,9 @@
         <li class="list-group-item">Item ID: {{ meta['itemid'] }}</li>
         <li class="list-group-item">Item Links:
         {% if meta['itemlinks'] %}
-            {% for item in meta['itemlinks'] %}
-                <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>
-                    {{ item }}
-                </a>,
+            {% for item in meta['itemlinks'] -%}
+                <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                {%- if not loop.last -%},{% endif %}
             {% endfor %}
         {% else %}
             (None)
@@ -137,10 +135,9 @@
         </li>
         <li class="list-group-item">Item Transclusions:
         {% if meta['itemtransclusions'] %}
-            {% for item in meta['itemtransclusions'] %}
-                <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>
-                {{ item }}
-                </a>,
+            {% for item in meta['itemtransclusions'] -%}
+                <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                {%- if not loop.last -%},{% endif %}
             {% endfor %}
         {% else %}
             (None)
