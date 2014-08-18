@@ -25,6 +25,8 @@
             {{ blog_utils.show_blog_entry(entry_item) }}
         {% endfor %}
     {% else %}
-        {{ no_entries_msg }}
+        <div class="moin-noblogentry-message">
+            {{ no_entries_msg }}
+        </div>
     {% endif %}
 {% endblock %}
