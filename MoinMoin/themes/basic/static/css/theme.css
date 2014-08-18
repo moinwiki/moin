@@ -7067,6 +7067,9 @@ html {
 .moin-history-revert:before {
   content: url("../img/moin-revert.png");
 }
+.moin-history-container-header {
+  margin-bottom: 5px;
+}
 .moin-history-container-header > h2 {
   display: inline;
 }
