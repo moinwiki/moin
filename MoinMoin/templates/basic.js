@@ -8,4 +8,7 @@ $(document).ready(function (){
     $('ul.dropdown-menu').removeClass('submenu');
     $('.topnavcollapse').addClass('collapse');
     $('.moin-navbar-collapse').removeClass('in');
+    if ($('li.active > a.moin-modify-button').length) {
+        $('.moin-loginsettings').addClass('moin-pull-right');
+    }
 });
