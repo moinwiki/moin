@@ -6,7 +6,7 @@
 
 {# Helper macro to create image links #}
 {% macro creditlogo(link, logo, alt, title) %}
-<a class="navbar-brand" href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
+<a class="navbar-brand moin-footer-logo" href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
 {% endmacro %}
 
 
@@ -26,7 +26,7 @@
 
 
 {# Text links in the footer #}
-{% macro credits(start='<ul class="nav navbar-nav pull-right"> <li>'|safe, end='</li> </ul>'|safe, sep='</li> <li>'|safe) %}
+{% macro credits(start='<ul class="nav navbar-nav pull-right moin-footer-credits"> <li>'|safe, end='</li> </ul>'|safe, sep='</li> <li>'|safe) %}
 {{ start }}
 {{ credit('http://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
 {{ sep }}
