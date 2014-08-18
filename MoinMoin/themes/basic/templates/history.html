@@ -19,7 +19,7 @@
             <a href="{{ url_for('frontend.history', item_name=item_name, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
         {% endif %}
     </div>
-    <h2>{{ title }}</h2>
+    <h1>{{ title }}</h1>
     <form action="{{ url_for('frontend.diff', item_name=item_name) }}" method="GET">
         <div>
         <table class="table table-hover table-condensed">
