@@ -13,10 +13,10 @@
 {% endblock %}
 
 {% block content %}
-<h2>
+<h1>
     {{ title }}
     {% if show_revision %}({{ _("Revision") }} {{ rev.revid | shorten_id }}){% endif %}
-</h2>
+</h1>
 {% if meta %}
 <div id="moin-content-meta">
     {{ utils.meta_info(meta) }}
