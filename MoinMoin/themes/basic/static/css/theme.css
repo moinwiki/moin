@@ -6759,9 +6759,6 @@ input[value="X"] {
 input[value="X"]:hover {
   background: #f4f4f4;
 }
-input[type="text"] {
-  width: 96%;
-}
 input[type="submit"],
 input[type="button"],
 input button {

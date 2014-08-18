@@ -142,7 +142,7 @@ def global_views():
     Provides a link to all the global views.
     """
     return render_template('all.html',
-                           title_name=_(u"Global Views."),
+                           title_name=_(u"Global Views"),
                            fqname=CompositeName(u'all', NAME_EXACT, u'')
                           )
 
