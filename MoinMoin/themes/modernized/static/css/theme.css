@@ -554,7 +554,8 @@ ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
 #ticket-list{float:right;width:85%}
 .moin-ticketsearch-form{display:inline}
 #moin-ticketsearch-query{background-image:url("../../../../static/img/search.png");background-repeat:no-repeat;background-position:5px;padding-left:24px;width:150px;height:25px;right:40px;position:absolute}
-#ticket-list thead th{cursor:pointer;padding-left:20px}
+.tablesorter-header-inner{padding-left:20px;cursor:pointer}
+.sorter-false > .tablesorter-header-inner{padding-left:0}
 .tablesorter-header{background-image:url("../../../../static/img/bg.png");background-repeat:no-repeat;background-position:left center;background-color:#d8dfe9;color:#000}
 .tablesorter-headerAsc{background-image:url("../../../../static/img/asc.png")}
 .tablesorter-headerDesc{background-image:url("../../../../static/img/desc.png")}
