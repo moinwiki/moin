@@ -628,7 +628,7 @@ form.upload_file {
   display: none
 }
 .moin-content {
-  padding-bottom: 100px;
+  padding-bottom: 10%;
 }
 .moin-footer {
   bottom: 0;
@@ -646,25 +646,38 @@ form.upload_file {
     padding: 10px;
   }
 }
+.container {
+  min-height: 100%;
+  position: relative;
+}
 // set min-width to prevent search box from floating off window to right
+@media (max-width: 992px) {
+  .container {
+    width: auto;
+  }
+  .moin-content {
+    padding-bottom: 250px;
+  }
+  .moin-footer-credits {
+    width: 100%;
+    padding-right: 30px;
+  }
+  .moin-footer-logo {
+    padding-left: 30px;
+  }
+}
 @media (min-width: 768px) {
   .container {
-    min-height: 100%;
-    position: relative;
     width: auto;
   }
 }
 @media (min-width: 992px) {
   .container {
-    min-height: 100%;
-    position: relative;
     width: auto;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    min-height: 100%;
-    position: relative;
     width: auto;
   }
 }
