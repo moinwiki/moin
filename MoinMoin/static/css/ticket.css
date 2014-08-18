@@ -1,19 +1,98 @@
-#moin-ticket-form dd{margin-top:.1em}
-#moin-ticket-form dt{margin-top:.1em}
-#f_meta_effort_1, #f_meta_difficulty_1, #f_meta_severity_1, #f_meta_priority_1, #f_meta_effort_2, #f_meta_difficulty_2, #f_meta_severity_2, #f_meta_priority_2, #f_meta_effort_3, #f_meta_difficulty_3, #f_meta_severity_3, #f_meta_priority_3, #f_meta_effort_4, #f_meta_difficulty_4, #f_meta_severity_4, #f_meta_priority_4, #f_meta_effort_5, #f_meta_difficulty_5, #f_meta_severity_5, #f_meta_priority_5{display:none}
-#f_meta_effort_1 + label.moin-inline-label, #f_meta_difficulty_1 + label.moin-inline-label, #f_meta_severity_1 + label.moin-inline-label, #f_meta_priority_1 + label.moin-inline-label, #f_meta_effort_2 + label.moin-inline-label, #f_meta_difficulty_2 + label.moin-inline-label, #f_meta_severity_2 + label.moin-inline-label, #f_meta_priority_2 + label.moin-inline-label, #f_meta_effort_3 + label.moin-inline-label, #f_meta_difficulty_3 + label.moin-inline-label, #f_meta_severity_3 + label.moin-inline-label, #f_meta_priority_3 + label.moin-inline-label, #f_meta_effort_4 + label.moin-inline-label, #f_meta_difficulty_4 + label.moin-inline-label, #f_meta_severity_4 + label.moin-inline-label, #f_meta_priority_4 + label.moin-inline-label, #f_meta_effort_5 + label.moin-inline-label, #f_meta_difficulty_5 + label.moin-inline-label, #f_meta_severity_5 + label.moin-inline-label, #f_meta_priority_5 + label.moin-inline-label{padding-left:25px;padding-right:10px;height:20px;display:inline-block;line-height:20px;background-repeat:no-repeat;background-position:0 0;font-size:20px;vertical-align:middle;cursor:pointer}
-#f_meta_effort_1:checked + label.moin-inline-label, #f_meta_difficulty_1:checked + label.moin-inline-label, #f_meta_severity_1:checked + label.moin-inline-label, #f_meta_priority_1:checked + label.moin-inline-label, #f_meta_effort_2:checked + label.moin-inline-label, #f_meta_difficulty_2:checked + label.moin-inline-label, #f_meta_severity_2:checked + label.moin-inline-label, #f_meta_priority_2:checked + label.moin-inline-label, #f_meta_effort_3:checked + label.moin-inline-label, #f_meta_difficulty_3:checked + label.moin-inline-label, #f_meta_severity_3:checked + label.moin-inline-label, #f_meta_priority_3:checked + label.moin-inline-label, #f_meta_effort_4:checked + label.moin-inline-label, #f_meta_difficulty_4:checked + label.moin-inline-label, #f_meta_severity_4:checked + label.moin-inline-label, #f_meta_priority_4:checked + label.moin-inline-label, #f_meta_effort_5:checked + label.moin-inline-label, #f_meta_difficulty_5:checked + label.moin-inline-label, #f_meta_severity_5:checked + label.moin-inline-label, #f_meta_priority_5:checked + label.moin-inline-label{background-position:0 -20px}
-label.moin-inline-label{background-image:url("../img/radiobutton.png")}
-#f_meta_tags,#f_meta_summary{-webkit-transition:all .3s ease-in-out;-moz-transition:all .3s ease-in-out;-ms-transition:all .3s ease-in-out;-o-transition:all .3s ease-in-out;outline:none;width:200px;margin-top:20px;margin-bottom:20px;height:25px;padding:3px 0 3px 3px;margin:5px 1px 3px 0;border:1px solid #ddd}
-#f_meta_tags:focus,#f_meta_summary:focus{box-shadow:0 0 5px #51cbee;margin-top:20px;margin-bottom:20px;height:25px;padding:3px 0 3px 3px;margin:5px 1px 3px 0;border:1px solid #51cbee}
-.moin-ticket-submit input[type=submit],#f_submit_update,#f_submit_update_negate_status{margin-top:10px;margin-bottom:20px;width:auto;background-color:#1b436d;height:40px;color:#fff;border:2px solid}
-select{display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;vertical-align:middle;cursor:pointer;border:1px solid;white-space:nowrap;padding:6px 12px;font-size:14px;line-height:1.42857143;border-radius:4px;-webkit-user-select:none}
-.moin-ticket-submit,.moin-ticket-comments{float:left;width:35em;clear:both}
-.moin-ticket-metadata{float:right;width:30em}
-#f_message{width:100%;height:150px}
-h2{border-bottom:none}
-dt label{padding-top:10px}
-dl dd{padding-bottom:10px}
-.moin-ticket-link{padding-left:150px}
-.moin-ticket-tags{padding-bottom:20px}
-.moin-form dt,.moin-form dd{text-align:left;width:100%;padding-bottom:5px}
+#moin-ticket-form dd {
+  margin-top: .1em;
+}
+#moin-ticket-form dt {
+  margin-top: .1em;
+}
+dd input[type="radio"] {
+  display: none;
+}
+label.moin-inline-label {
+  padding-left: 25px;
+  padding-right: 10px;
+  height: 20px;
+  display: inline-block;
+  line-height: 20px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  font-size: 20px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+dd input:checked + label {
+  background-position: 0 -20px;
+}
+label.moin-inline-label {
+  background-image: url("../img/radiobutton.png");
+}
+#f_meta_tags, #f_meta_summary {
+  transition: all .3s ease-in-out;
+  outline: none;
+  width: 200px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 25px;
+  padding: 3px 0 3px 3px;
+  margin: 5px 1px 3px 0;
+  border: 1px solid #ddd;
+}
+#f_meta_tags:focus, #f_meta_summary:focus {
+  box-shadow: 0 0 5px #51cbee;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 25px;
+  padding: 3px 0 3px 3px;
+  margin: 5px 1px 3px 0;
+  border: 1px solid #51cbee;
+}
+.moin-ticket-submit input[type=submit], #f_submit_update, #f_submit_update_negate_status {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: auto;
+  background-color: #1b436d;
+  height: 40px;
+  color: #ffffff;
+  border: 2px solid;
+}
+select {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  user-select: none;
+}
+.moin-ticket-submit, .moin-ticket-comments {
+  float: left;
+  width: 35em;
+  clear:both;
+}
+.moin-ticket-metadata {
+  float: right;
+  width: 30em;
+}
+#f_message {
+  width: 100%;
+  height: 150px;
+}
+h2 {
+  border-bottom: none;
+}
+dt label {
+  padding-top: 10px;
+}
+dl dd {
+  padding-bottom: 10px;
+}
+.moin-ticket-link {
+  padding-left: 150px;
+}
+.moin-ticket-tags {
+  padding-bottom: 20px;
+}
