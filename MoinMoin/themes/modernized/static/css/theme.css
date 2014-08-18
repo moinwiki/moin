@@ -250,7 +250,7 @@ table.zebra{border-collapse:separate;border-spacing:1px;width:98%;border:1px sol
 .zebra thead{background-color:#708090}
 .zebra tfoot{background-color:#dfdfdf}
 .zebra td{border:none;}
-.zebra td form input{width:100%;box-shadow:none}
+.zebra td form input{box-shadow:none}
 .zebra tbody tr,.zebra > tr{background-color:#eef1f6}
 .zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d8dfe9}
 div.moin-table-of-contents{border:1px solid #4e7da9;color:#000;background:#fff;font-size:80%;margin:.5em 0 .75em 1em;padding:.5em .75em .5em .5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #9d9d9b;border-radius:15px}
@@ -325,7 +325,7 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 #moin-page-history table thead tr th input[type="Submit"]{padding:4px 10px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;font-size:1em;}
 #moin-page-history table thead tr th input[type="Submit"]:hover{box-shadow:1px 1px 2px #000}
 .moin-wordbreak{word-break:break-all;word-wrap:break-word}
-.moin-history-time{width:10%}
+.moin-history-time{width:10%;text-align:right}
 .moin-history-contenttype{width:18%}
 .moin-history-editorinfo{width:17%}
 .moin-history-comment{width:30%}
@@ -421,16 +421,16 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #lightbox{background:#fff;opacity:.7;position:absolute;left:0;top:0;width:100%;height:100%;z-index:9;margin:0;display:none}
 ul.moin-tags{list-style:none}
 ul.moin-tags li{display:inline}
-ul.moin-tags li.weight0{font-size:50%}
-ul.moin-tags li.weight1{font-size:65%}
-ul.moin-tags li.weight2{font-size:80%}
-ul.moin-tags li.weight3{font-size:90%}
-ul.moin-tags li.weight4{font-size:100%}
-ul.moin-tags li.weight5{font-size:120%}
-ul.moin-tags li.weight6{font-size:140%}
-ul.moin-tags li.weight7{font-size:160%}
-ul.moin-tags li.weight8{font-size:180%}
-ul.moin-tags li.weight9{font-size:200%}
+ul.moin-tags li.weight0{font-size:100%}
+ul.moin-tags li.weight1{font-size:120%}
+ul.moin-tags li.weight2{font-size:140%}
+ul.moin-tags li.weight3{font-size:160%}
+ul.moin-tags li.weight4{font-size:180%}
+ul.moin-tags li.weight5{font-size:200%}
+ul.moin-tags li.weight6{font-size:220%}
+ul.moin-tags li.weight7{font-size:240%}
+ul.moin-tags li.weight8{font-size:260%}
+ul.moin-tags li.weight9{font-size:280%}
 #moin-flash{margin:-2px -15px -2px -14px}
 .moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center;border-top-right-radius:9px;border-top-left-radius:9px;color:#000}
 .moin-flash-hint{background-image:url("../img/smileys/idea.png")}

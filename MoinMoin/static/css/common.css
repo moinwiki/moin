@@ -76,7 +76,7 @@
 .four-col li{
   width: 25%;
 }
-input[type="text"], .moin-acl-string {
+input[type="text"].moin-acl-string {
   width: 70%;
 }
 .tablesorter {
