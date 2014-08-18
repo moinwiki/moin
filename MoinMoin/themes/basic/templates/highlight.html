@@ -1,0 +1,10 @@
+{% extends theme("show.html") %}
+
+{% set title = _("Syntax highlighting of '%(name)s'", name=item_name) %}
+
+{% block content %}
+{% block headline %}
+<h2>{{ title }} </h2>
+{% endblock %}
+{{ data_text }}
+{% endblock %}

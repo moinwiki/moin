@@ -1,0 +1,17 @@
+{% extends theme("show.html") %}
+{% block content %}
+<h1>{{ _('Outgoing Item References') }}</h1>
+<ul>
+    {% for fq_name in refs|sort(attribute='value') %}
+    <li><a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=fq_name) }}" data-fqname="{{fq_name}}">{{ fq_name.value }}</a></li>
+
+    {% endfor %}
+</ul>
+<h1>{{ _('Incoming Item References') }}</h1>
+<ul>
+    {% for fq_name in backrefs|sort(attribute='value') %}
+    <li><a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=fq_name) }}" data-fqname="{{fq_name}}">{{ fq_name.value }}</a></li>
+
+    {% endfor %}
+</ul>
+{% endblock %}
