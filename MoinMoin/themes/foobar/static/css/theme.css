@@ -371,18 +371,6 @@ ol.moin-loweralpha-list{list-style-type:lower-alpha}
 ol.moin-upperroman-list{list-style-type:upper-roman}
 ol.moin-lowerroman-list{list-style-type:lower-roman}
 blockquote{margin-left:2em}
-ul.moin-tags{list-style:none;}
-ul.moin-tags li{display:inline;}
-ul.moin-tags li.weight0{font-size:.4822530864197531em}
-ul.moin-tags li.weight1{font-size:.5787037037037037em}
-ul.moin-tags li.weight2{font-size:.6944444444444444em}
-ul.moin-tags li.weight3{font-size:.8333333333333334em}
-ul.moin-tags li.weight4{font-size:1em}
-ul.moin-tags li.weight5{font-size:1.2em}
-ul.moin-tags li.weight6{font-size:1.44em}
-ul.moin-tags li.weight7{font-size:1.728em}
-ul.moin-tags li.weight8{font-size:2.0736em}
-ul.moin-tags li.weight9{font-size:2.48832em}
 h1{font-size:1.728em;margin:.5787037037037037em 0;border-bottom:3px solid #ccc;padding-bottom:3px}
 h2{font-size:1.44em;margin:.6944444444444444em 0;border-bottom:3px solid #ccc;padding-bottom:3px}
 h3{font-size:1.2em;margin:.8333333333333334em 0;border-bottom:2px solid #ccc;padding-bottom:2px}

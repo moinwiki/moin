@@ -61,8 +61,9 @@
 .two-col li,
 .three-col li,
 .four-col li{
-  padding-bottom: 5px;
+  padding: 0 0 5px 0;
   display: inline-block;
+  overflow: hidden;
 }
 .one-col li{
   width: 100%;
@@ -84,4 +85,36 @@ input[type="text"].moin-acl-string {
 }
 #moin-acl-form {
   display: inline;
+}
+
+/* tags tab */
+ul.moin-tags li.weight0 {
+  font-size: 100%;
+}
+ul.moin-tags li.weight1 {
+  font-size: 120%;
+}
+ul.moin-tags li.weight2 {
+  font-size: 140%;
+}
+ul.moin-tags li.weight3 {
+  font-size: 160%;
+}
+ul.moin-tags li.weight4 {
+  font-size: 180%;
+}
+ul.moin-tags li.weight5 {
+  font-size: 200%;
+}
+ul.moin-tags li.weight6 {
+  font-size: 220%;
+}
+ul.moin-tags li.weight7 {
+  font-size: 240%;
+}
+ul.moin-tags li.weight8 {
+  font-size: 260%;
+}
+ul.moin-tags li.weight9 {
+  font-size: 280%;
 }
