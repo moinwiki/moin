@@ -2,7 +2,7 @@
 {% import "usersettings_forms.html" as user_forms %}
 
 {% block content %}
-<h1>{{ _("User Settings") }}</h1>
-<div class="moin-tabs"></div> {# placeholder - javascript will append UL with clickable tabs here #}
-{{ user_forms.all_usersettings_forms(form_objs) }}
+    <h1>{{ _("User Settings") }}</h1>
+    <div class="moin-tabs"></div> {# placeholder - javascript will append UL with clickable tabs here #}
+    {{ user_forms.all_usersettings_forms(form_objs) }}
 {% endblock %}

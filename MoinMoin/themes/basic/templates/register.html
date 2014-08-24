@@ -2,40 +2,40 @@
 {% import "forms.html" as forms %}
 
 {% block content %}
-<h2>{{ _('Create Account') }}</h2>
-<div class="row">
-  <div class="col-lg-4">
+    <h2>{{ _('Create Account') }}</h2>
+    <div class="row">
+        <div class="col-lg-4">
 
-    {{ gen.form.open(form, method="post", action=url_for('frontend.register')) }}
+            {{ gen.form.open(form, method="post", action=url_for('frontend.register')) }}
 
-    {% if form.errors %}
-      <div class="moin-flash moin-flash-error">
-      {% for error in form.errors %}
-        {{ error }}
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      {% endfor %}
-      </div>
-    {% endif %}
+                {% if form.errors %}
+                    <div class="moin-flash moin-flash-error">
+                        {% for error in form.errors %}
+                            {{ error }}
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-    {% for field, fieldtype in [
-        ('username', 'text'),
-        ('password1', 'password'),
-        ('password2', 'password'),
-        ('email', 'text'),
-        ('openid', 'text'),
-        ] %}
-          <div class="form-group">
-              {{ gen.label(form[field]) }}
-              {{ gen.input(form[field], type=fieldtype, class="form-control") }}
-          </div>
-      {% endfor %}
-      {{ forms.render_textcha(gen, form) }}
+                {% for field, fieldtype in [
+                        ('username', 'text'),
+                        ('password1', 'password'),
+                        ('password2', 'password'),
+                        ('email', 'text'),
+                        ('openid', 'text'),
+                        ] %}
+                    <div class="form-group">
+                        {{ gen.label(form[field]) }}
+                        {{ gen.input(form[field], type=fieldtype, class="form-control") }}
+                    </div>
+                {% endfor %}
+                {{ forms.render_textcha(gen, form) }}
 
-    <div class="form-group">
-        {{ forms.render_submit(form, class='btn btn-primary') }}
+                <div class="form-group">
+                    {{ forms.render_submit(form, class='btn btn-primary') }}
+                </div>
+
+            {{ gen.form.close() }}
+        </div>
     </div>
-
-    {{ gen.form.close() }}
-  </div>
-</div>
 {% endblock %}

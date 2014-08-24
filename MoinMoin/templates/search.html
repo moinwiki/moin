@@ -13,8 +13,8 @@
     <h1>{{_("Search")}}</h1>
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
-        {{ forms.render(medium_search_form['q']) }}
-        {{ forms.render_submit(medium_search_form) }}
+            {{ forms.render(medium_search_form['q']) }}
+            {{ forms.render_submit(medium_search_form) }}
         </p>
         <div class="moin-search-option-bar"><h4 style="display:inline-block">Search Options</h4><span class="icon-chevron-down"></span></div>
         <div class="moin-searchoptions hidden">
@@ -57,7 +57,7 @@
             </table>
         </div>
         <p>
-        {{ forms.render_errors(medium_search_form) }}
+            {{ forms.render_errors(medium_search_form) }}
         </p>
     {{ gen.form.close() }}
     <div id="finalresults">

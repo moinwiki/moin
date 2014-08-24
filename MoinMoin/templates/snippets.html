@@ -2,7 +2,7 @@
 
 {# Logo in the header #}
 {% macro logo() -%}
-<img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
+    <img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
 {%- endmacro %}
 
 {# Additional HTML tags inside <head> #}
@@ -31,36 +31,36 @@
 
 {# Helper macro to create image links #}
 {% macro creditlogo(link, logo, alt, title) %}
-<a href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
+    <a href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
 {% endmacro %}
 
 {# Image links in the footer #}
 {% macro creditlogos(start='<ul id="moin-creditlogos"><li>'|safe, end='</li></ul>'|safe, sep='</li><li>'|safe) %}
-{{ start }}
-{{ creditlogo('http://moinmo.in/', url_for('static', filename='logos/moinmoin_powered.png'),
-   'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}
-{{ sep }}
-{{ creditlogo('http://moinmo.in/Python', url_for('static', filename='logos/python_powered.png'),
-   'Python powered', 'MoinMoin is written in Python.') }}
-{{ end }}
+    {{ start }}
+    {{ creditlogo('http://moinmo.in/', url_for('static', filename='logos/moinmoin_powered.png'),
+       'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}
+    {{ sep }}
+    {{ creditlogo('http://moinmo.in/Python', url_for('static', filename='logos/python_powered.png'),
+       'Python powered', 'MoinMoin is written in Python.') }}
+    {{ end }}
 {% endmacro %}
 
 {# Helper macro to generate text links #}
 {% macro credit(link, text, title) -%}
-<a href="{{ link }}" title="{{ title }}">{{ text }}</a>
+    <a href="{{ link }}" title="{{ title }}">{{ text }}</a>
 {%- endmacro %}
 
 {# Text links in the footer #}
 {% macro credits(start='<p id="moin-credits">'|safe, end='</p>'|safe, sep='<span>&bull;</span>'|safe) %}
-{{ start }}
-{{ credit('http://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
-{{ sep }}
-{{ credit('http://moinmo.in/Python', 'Python Powered', 'MoinMoin is written in Python.') }}
-{{ sep }}
-{{ credit('http://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
-{{ sep }}
-{{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
-{{ end }}
+    {{ start }}
+    {{ credit('http://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
+    {{ sep }}
+    {{ credit('http://moinmo.in/Python', 'Python Powered', 'MoinMoin is written in Python.') }}
+    {{ sep }}
+    {{ credit('http://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
+    {{ sep }}
+    {{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
+    {{ end }}
 {% endmacro %}
 
 {# Additional Stylesheets (after theme css, before user css #}

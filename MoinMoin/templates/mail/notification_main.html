@@ -23,23 +23,23 @@
         </p>
     </div>
     {% if comment -%}
-    <h3 style="margin:0 1.3em 0.5em;">{{ _("Comment") }}</h3>
-    <p>{{ comment }}</p>
+        <h3 style="margin:0 1.3em 0.5em;">{{ _("Comment") }}</h3>
+        <p>{{ comment }}</p>
     {%- endif %}
     {% if content_diff_ -%}
-    <h3 style="margin:1em 1.3em 0.5em;">{{ _("Content") }}</h3>
-    {{ content_diff(content_diff_) }}
+        <h3 style="margin:1em 1.3em 0.5em;">{{ _("Content") }}</h3>
+        {{ content_diff(content_diff_) }}
     {%- endif %}
     {% if meta_diff_ -%}
-    <h3 style="margin:1em 1.3em 0.5em;">{{ _("Metadata") }}</h3>
-    {{ meta_diff(meta_diff_) }}
+        <h3 style="margin:1em 1.3em 0.5em;">{{ _("Metadata") }}</h3>
+        {{ meta_diff(meta_diff_) }}
     {%- endif %}
     <div style="font-size:0.7em; margin-top:2em;">
         <p style="text-align:center; color:#A6A6A6; margin-bottom:0;">
             {{ _("You are receiving this because you have subscribed to a wiki
-        item on %(wiki_name)s for change notifications.", wiki_name=wiki_name) }}</p>
+            item on %(wiki_name)s for change notifications.", wiki_name=wiki_name) }}</p>
         <p style="text-align:center; margin-top:0;"><strong><a
-                href="{{ unsubscribe_url }}"
+            href="{{ unsubscribe_url }}"
             style="text-decoration:none; color:#3CA7DD;">{{ _("Unsubscribe from
             this item notifications") }}</a></strong></p>
     </div>

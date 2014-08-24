@@ -2,37 +2,37 @@
 {% import "forms.html" as forms %}
 
 {% block content %}
-<div class="moin-form">
-{{ forms.render_errors(form) }}
+    <div class="moin-form">
+        {{ forms.render_errors(form) }}
 
-{% if 'username' in login_inputs or 'password' in login_inputs %}
-<h2>{{ _('Moin login') }}</h2>
-{{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
-<dl>
-  {% if 'username' in login_inputs %}
-  {{ forms.render(form['username']) }}
-  {% endif %}
-  {% if 'password' in login_inputs %}
-  {{ forms.render(form['password']) }}
-  {% endif %}
-</dl>
-{{ forms.render(form['submit']) }}
-{{ forms.render_submit(form) }}
-{{ gen.form.close() }}
-{% endif %}
+        {% if 'username' in login_inputs or 'password' in login_inputs %}
+            <h2>{{ _('Moin login') }}</h2>
+            {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+                <dl>
+                    {% if 'username' in login_inputs %}
+                        {{ forms.render(form['username']) }}
+                    {% endif %}
+                    {% if 'password' in login_inputs %}
+                        {{ forms.render(form['password']) }}
+                    {% endif %}
+                </dl>
+                {{ forms.render(form['submit']) }}
+                {{ forms.render_submit(form) }}
+            {{ gen.form.close() }}
+        {% endif %}
 
-{% if 'openid' in login_inputs %}
-<br>
-<h2>{{ _('OpenID login') }}</h2>
+        {% if 'openid' in login_inputs %}
+            <br>
+            <h2>{{ _('OpenID login') }}</h2>
 
-{{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
-<dl>
-  {{ forms.render(form['openid']) }}
-</dl>
-{{ forms.render(form['submit']) }}
-{{ forms.render_submit(form) }}
-{{ gen.form.close() }}
-{% endif %}
+            {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+                <dl>
+                    {{ forms.render(form['openid']) }}
+                </dl>
+                {{ forms.render(form['submit']) }}
+                {{ forms.render_submit(form) }}
+            {{ gen.form.close() }}
+        {% endif %}
 
-</div>
+    </div>
 {% endblock %}

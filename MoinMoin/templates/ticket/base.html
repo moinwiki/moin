@@ -104,30 +104,30 @@
 {% endblock %}
 
 {% block content %}
-<h1>
-    {% block title_text %}
-    {% endblock %}
-    {% if closed %}
-        {# TODO style .moin-ticket-closed #}
-        <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
-    {% endif %}
-</h1>
-<div class="moin-form" id="moin-ticket-form">
-    {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
-
-    <div id="moin-content-data" class="moin-ticket-comments">
-        {% if data_rendered %}
-            {{ data_rendered }}
-        {% endif %}
-
-        {% block form_controls %}
+    <h1>
+        {% block title_text %}
         {% endblock %}
-    </div>
-    {% block ticket_metadata %}
-    {% endblock %}
+        {% if closed %}
+            {# TODO style .moin-ticket-closed #}
+            <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
+        {% endif %}
+    </h1>
+    <div class="moin-form" id="moin-ticket-form">
+        {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
 
-    {{ gen.form.close() }}
-</div>
+            <div id="moin-content-data" class="moin-ticket-comments">
+                {% if data_rendered %}
+                    {{ data_rendered }}
+                {% endif %}
+
+                {% block form_controls %}
+                {% endblock %}
+            </div>
+            {% block ticket_metadata %}
+            {% endblock %}
+
+        {{ gen.form.close() }}
+    </div>
 {% endblock %}
 
 {% block footer_itemviews %}

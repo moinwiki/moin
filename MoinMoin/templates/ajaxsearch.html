@@ -12,12 +12,12 @@
         {% endif %}
         <p class="searchstats">
             {% if results %}
-            {{ _("%(result_len)d results found (%(runtime).3f secs).",
-                  result_len=results|length, runtime=results.runtime
-                )
-            }}
+                {{ _("%(result_len)d results found (%(runtime).3f secs).",
+                      result_len=results|length, runtime=results.runtime
+                    )
+                }}
             {% else %}
-            {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
+                {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
             {% endif %}
         </p>
         {% if results %}
@@ -62,7 +62,7 @@
                         {% else %}
                             <tr>
                                 <td class="moin-wordbreak">
-                                <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                                    <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
                                 </td>
                             </tr>
                         {% endif %}

@@ -25,16 +25,16 @@ Helpers for using flatland with jinja2 to create html forms.
 
 {% macro render_textcha(gen, form) %}
     {% if form.textcha_question.value %}
-    <dt class="moin-textcha">
-        {{ gen.label(form.textcha) }}
-    </dt>
-    <dd class="moin-textcha">
-        {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
-        {{ form.textcha_question.value[:-51] }}
-        {{ gen.input(form.textcha_question, type='hidden') }}<br />
-        {{ gen.input(form.textcha) }}
-        {{ render_errors(form.textcha) }}
-    </dd>
+        <dt class="moin-textcha">
+            {{ gen.label(form.textcha) }}
+        </dt>
+        <dd class="moin-textcha">
+            {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
+            {{ form.textcha_question.value[:-51] }}
+            {{ gen.input(form.textcha_question, type='hidden') }}<br />
+            {{ gen.input(form.textcha) }}
+            {{ render_errors(form.textcha) }}
+        </dd>
     {% endif %}
 {% endmacro %}
 
@@ -213,11 +213,11 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
     <div id="file_upload">
         <div class="upload-form">
-        <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
-            <input type="file" name="data_file" multiple>
-            <button type="submit">{{ _("Upload") }}</button>
-            <div class="file_upload_label" style="margin: 0;">{{ _("Upload files") }}</div>
-        </form>
+            <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
+                <input type="file" name="data_file" multiple>
+                <button type="submit">{{ _("Upload") }}</button>
+                <div class="file_upload_label" style="margin: 0;">{{ _("Upload files") }}</div>
+            </form>
         </div>
         <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
         <div class="file_upload_buttons">
