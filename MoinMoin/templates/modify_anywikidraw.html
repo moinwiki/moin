@@ -1,21 +1,21 @@
 {% macro data_editor(form, item_name) %}
-<p>
-<applet code="org.anywikidraw.moinmoin.MoinMoinDrawingApplet.class" codebase="."
-        archive="{{ url_for('serve.files', name='anywikidraw', filename='AnyWikiDrawForMoinMoin.jar') }}"
-        width="800" height="620">
-<param name="DrawingName" value="drawing.svg" />
-{% if form.drawing_exists %}
-<param name="DrawingURL" value="{{ url_for('frontend.get_item', item_name=item_name, member='drawing.svg') }}" />
-{% endif %}
-<param name="PageURL" value="{{ url_for('frontend.show_item', item_name=item_name) }}" />
-<param name="UploadURL" value="{{ url_for('frontend.modify_item', item_name=item_name, contenttype='application/x-anywikidraw') }}" />
-<param name="Locale" value="en" />
-<param name="codebase_lookup" value="false" />
-<param name="classloader_cache" value="false" />
-<param name="boxborder" value="false" />
-<param name="centerimage" value="true" />
-<strong>{{ _("NOTE:") }}</strong> {{ _("You need a Java enabled browser to edit the drawing.") }}
-</applet>
-</p>
-<br />
+    <p>
+        <applet code="org.anywikidraw.moinmoin.MoinMoinDrawingApplet.class" codebase="."
+                archive="{{ url_for('serve.files', name='anywikidraw', filename='AnyWikiDrawForMoinMoin.jar') }}"
+                width="800" height="620">
+            <param name="DrawingName" value="drawing.svg" />
+            {% if form.drawing_exists %}
+                <param name="DrawingURL" value="{{ url_for('frontend.get_item', item_name=item_name, member='drawing.svg') }}" />
+            {% endif %}
+            <param name="PageURL" value="{{ url_for('frontend.show_item', item_name=item_name) }}" />
+            <param name="UploadURL" value="{{ url_for('frontend.modify_item', item_name=item_name, contenttype='application/x-anywikidraw') }}" />
+            <param name="Locale" value="en" />
+            <param name="codebase_lookup" value="false" />
+            <param name="classloader_cache" value="false" />
+            <param name="boxborder" value="false" />
+            <param name="centerimage" value="true" />
+            <strong>{{ _("NOTE:") }}</strong> {{ _("You need a Java enabled browser to edit the drawing.") }}
+        </applet>
+    </p>
+    <br />
 {% endmacro %}

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block layout %}
-{% if data_rendered %}
-    <div id="moin-content-data">
-    {{ data_rendered }}
-    <div>
-{% endif %}
+    {% if data_rendered %}
+        <div id="moin-content-data">
+            {{ data_rendered }}
+        </div>
+    {% endif %}
 {% endblock %}

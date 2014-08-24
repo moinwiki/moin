@@ -10,50 +10,50 @@
 {% block action_bars_inner %}
     <ul>
         {% if dirs or files %}
-        <li class="action-bar">
-        <div class="moin-select-all">
-            <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">{{ _("Select All") }}</span>
-        </div>
-        </li>
+            <li class="action-bar">
+                <div class="moin-select-all">
+                    <span class="moin-select-allitem allitem-toselect" title="{{ _("Select All") }}">{{ _("Select All") }}</span>
+                </div>
+            </li>
         {% endif %}
         <li class="action-bar">
-        <div class="moin-select-actions">
-            <div>
-                <span class="show-action">Actions</span>
+            <div class="moin-select-actions">
+                <div>
+                    <span class="show-action">Actions</span>
+                </div>
+                <ul>
+                    <li id="moin-create-newitem">{{ _("New item") }}</li>
+                    {% if dirs or files %}
+                        <li id="moin-download-trigger">{{ _("Download") }}</li>
+                        <li class="moin-action-tab"
+                            id="moin-delete-trigger"
+                            data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
+                            {{ _("Delete") }}
+                        </li>
+                        <li class="moin-action-tab"
+                            id="moin-destroy-trigger"
+                            data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
+                            {{ _("Destroy") }}
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
-            <ul>
-                <li id="moin-create-newitem">{{ _("New item") }}</li>
-                {% if dirs or files %}
-                <li id="moin-download-trigger">{{ _("Download") }}</li>
-                <li class="moin-action-tab"
-                    id="moin-delete-trigger"
-                    data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
-                    {{ _("Delete") }}
-                </li>
-                <li class="moin-action-tab"
-                    id="moin-destroy-trigger"
-                    data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
-                    {{ _("Destroy") }}
-                </li>
-                {% endif %}
-            </ul>
-        </div>
         </li>
         <li class="action-bar">
-        <div class="moin-contenttypes-wrapper">
-            <div class="ct-hide">{{ _("Filter by content type") }}</div>
-            {% set unknown_items_label = _("items having unknown mime types") %}
-            {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
-            <ul>
-                <li>
-                    <a href="#" class="filter-toggle">&raquo; {{ _("Toggle") }}</a>
-                    <a href="#" class="filter-more">&raquo; {{ _("More") }}</a>
-                </li>
-                {{ forms.render(form['contenttype']) }}
-            </ul>
-            {{ forms.render_submit(form) }}
-            {{ gen.form.close() }}
-        </div>
+            <div class="moin-contenttypes-wrapper">
+                <div class="ct-hide">{{ _("Filter by content type") }}</div>
+                {% set unknown_items_label = _("items having unknown mime types") %}
+                {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
+                    <ul>
+                        <li>
+                            <a href="#" class="filter-toggle">&raquo; {{ _("Toggle") }}</a>
+                            <a href="#" class="filter-more">&raquo; {{ _("More") }}</a>
+                        </li>
+                        {{ forms.render(form['contenttype']) }}
+                    </ul>
+                    {{ forms.render_submit(form) }}
+                {{ gen.form.close() }}
+            </div>
         </li>
     </ul>
 {% endblock %}
@@ -114,25 +114,25 @@
     <div class="moin-index-message"><span></span></div>
     {{ self.action_bars() }}
     <div>
-    {% if item_name: %}
-        <h1>{{ title }}</h1>
-        <div class="moin-index-path">
-            <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
-            <span class="moin-path-separator">{{ ("/") }}</span>
-            {% for i in range(0, item_names|count) %}
-                {% set fullname = item_names[:i+1]|join('/') %}
-                {% set relname = item_names[i] %}
-                {% if relname.startswith('@') %}
-                    {{ relname }}
-                {% else %}
-                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
-                {% endif %}
+        {% if item_name: %}
+            <h1>{{ title }}</h1>
+            <div class="moin-index-path">
+                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
                 <span class="moin-path-separator">{{ ("/") }}</span>
-            {% endfor %}
-        </div>
-    {% else %}
-        <h1>{{ title }}</h1>
-    {% endif %}
+                {% for i in range(0, item_names|count) %}
+                    {% set fullname = item_names[:i+1]|join('/') %}
+                    {% set relname = item_names[i] %}
+                    {% if relname.startswith('@') %}
+                        {{ relname }}
+                    {% else %}
+                        <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                    {% endif %}
+                    <span class="moin-path-separator">{{ ("/") }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h1>{{ title }}</h1>
+        {% endif %}
     </div>
     <div class='moin-clr'></div>
     <div id="moin-new-index" class="moin-item-index">
@@ -143,38 +143,38 @@
     </div>
     <div class="moin-index-separator"></div>
     {% if files or dirs %}
-    <div id="moin-initials">
-        {% if not startswith %}
-            <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
-        {% else %}
-            <a href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
-        {% endif %}
-        {% for initial in initials %}
-            {% if startswith == initial %}
-                <a class="selected" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+        <div id="moin-initials">
+            {% if not startswith %}
+                <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
             {% else %}
-                <a href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                <a href="{{ url_for('frontend.index', item_name=item_name) }}">{{ _("All") }}</a>
             {% endif %}
-        {% endfor %}
-    </div>
-    {% if dirs %}
-        <div class="moin-item-index">
-            <p>{{ _("These items have subitems that match your filter:") }}</p>
-            {% for e in dirs %}
-                {{ render_dir_entry(e) }}
+            {% for initial in initials %}
+                {% if startswith == initial %}
+                    <a class="selected" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                {% else %}
+                    <a href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                {% endif %}
             {% endfor %}
         </div>
-        <div class="moin-clr"></div>
-        <hr />
-    {% endif %}
-    {% if files %}
-        <div class="moin-item-index">
-            {% for e in files %}
-                {{ render_file_entry(e) }}
-            {% endfor %}
-        </div>
-        <div class="moin-clr"></div>
-    {% endif %}
+        {% if dirs %}
+            <div class="moin-item-index">
+                <p>{{ _("These items have subitems that match your filter:") }}</p>
+                {% for e in dirs %}
+                    {{ render_dir_entry(e) }}
+                {% endfor %}
+            </div>
+            <div class="moin-clr"></div>
+            <hr />
+        {% endif %}
+        {% if files %}
+            <div class="moin-item-index">
+                {% for e in files %}
+                    {{ render_file_entry(e) }}
+                {% endfor %}
+            </div>
+            <div class="moin-clr"></div>
+        {% endif %}
     {% endif %}
     <div id="popup">
         <div id="popup-for-action" class="popup-container">
@@ -212,15 +212,15 @@
     </div>
 
     <div id="moin-upload-cont">
-    {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
-    {{ forms.render_file_uploader(submit_url) }}
+        {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+        {{ forms.render_file_uploader(submit_url) }}
     </div>
     <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
     <div id="lightbox">&nbsp;</div>
 {% endblock %}
 
 {% block body_scripts %}
-{{ super() }}
+    {{ super() }}
     <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     {{ forms.file_uploader_scripts() }}

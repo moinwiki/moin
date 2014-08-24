@@ -1,7 +1,7 @@
 {% from "modify_binary.html" import data_editor as base_editor %}
 
 {% macro basic_data_editor(form, item_name) %}
-{{ gen.textarea(form['data_text'], rows=form.rows|string, cols=form.cols|string, **kwargs) }}
-{{ base_editor(form) }}
-<br />
+    {{ gen.textarea(form['data_text'], rows=form.rows|string, cols=form.cols|string, **kwargs) }}
+    {{ base_editor(form) }}
+    <br />
 {% endmacro %}

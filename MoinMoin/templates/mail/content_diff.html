@@ -1,30 +1,30 @@
 {% macro content_diff(diff) %}
-<table border="0" cellpadding="0" cellspacing="0" style="margin:0; padding:1em;
-        width:100%; font-family:monospace; background-color:#F9F9F9;">
-{% for line in diff -%}
-{% if line[:2] == "+ " -%}
-    <tr style="color:#00B000; height:1.2em;">
-{% elif line[:2] == "- " -%}
-    <tr style="color:#991111; height:1.2em;">
-{% elif line[:2] == "@@" -%}
-    <tr style="color:#440088; height:1.2em;">
-{% else -%}
-    <tr style="color:#000000; height:1.2em;">
-{%- endif %}
-    {% if line[:2] == "+ " %}
-        <td style="font-family:monospace; width:1.2em; vertical-align:top;">{{ line[0] }}</td>
-        <td style="font-family:monospace;"><ins style="text-decoration:none;">{{ line[2:] }}</ins></td>
-    {% elif line[:2] == "- " -%}
-        <td style="font-family:monospace; width:1.2em; vertical-align:top;">{{ line[0] }}</td>
-        <td style="font-family:monospace;"><del style="text-decoration:none;">{{ line[2:] }}</del></td>
-    {% elif line[:2] == "@@" -%}
-        <td style="font-family:monospace; width:1.2em;"></td>
-        <td style="font-family:monospace;">{{ line }}</td>
-    {% else -%}
-        <td style="font-family:monospace; width:1.2em;"></td>
-        <td style="font-family:monospace;">{{ line[2:] }}</td>
-    {%- endif %}
-    </tr>
-{%- endfor %}
-</table>
+    <table border="0" cellpadding="0" cellspacing="0" style="margin:0; padding:1em;
+            width:100%; font-family:monospace; background-color:#F9F9F9;">
+        {% for line in diff -%}
+            {% if line[:2] == "+ " -%}
+                <tr style="color:#00B000; height:1.2em;">
+            {% elif line[:2] == "- " -%}
+                <tr style="color:#991111; height:1.2em;">
+            {% elif line[:2] == "@@" -%}
+                <tr style="color:#440088; height:1.2em;">
+            {% else -%}
+                <tr style="color:#000000; height:1.2em;">
+            {%- endif %}
+            {% if line[:2] == "+ " %}
+                <td style="font-family:monospace; width:1.2em; vertical-align:top;">{{ line[0] }}</td>
+                <td style="font-family:monospace;"><ins style="text-decoration:none;">{{ line[2:] }}</ins></td>
+            {% elif line[:2] == "- " -%}
+                <td style="font-family:monospace; width:1.2em; vertical-align:top;">{{ line[0] }}</td>
+                <td style="font-family:monospace;"><del style="text-decoration:none;">{{ line[2:] }}</del></td>
+            {% elif line[:2] == "@@" -%}
+                <td style="font-family:monospace; width:1.2em;"></td>
+                <td style="font-family:monospace;">{{ line }}</td>
+            {% else -%}
+                <td style="font-family:monospace; width:1.2em;"></td>
+                <td style="font-family:monospace;">{{ line[2:] }}</td>
+            {%- endif %}
+            </tr>
+        {%- endfor %}
+    </table>
 {% endmacro %}

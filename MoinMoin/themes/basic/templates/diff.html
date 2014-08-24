@@ -6,11 +6,11 @@
 {% endblock %}
 
 {% block content %}
-{% block headline %}
-<i class="icon-chevron-sign-left">
-    <a href="{{ url_for('frontend.history', item_name=item_name) }}"> {{ _("Back") }} </a>
-</i>
-<h2>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h2>
-{% endblock %}
-{{ diff_html }}
+    {% block headline %}
+        <i class="icon-chevron-sign-left">
+            <a href="{{ url_for('frontend.history', item_name=item_name) }}"> {{ _("Back") }} </a>
+        </i>
+        <h2>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h2>
+    {% endblock %}
+    {{ diff_html }}
 {% endblock %}

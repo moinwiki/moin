@@ -19,8 +19,8 @@
     <div class="moin-ticket-metadata">
         <h2>{{ _("Provide metadata") }}</h2>
         <dl>
-        {{ forms.render_errors(form) }}
-        {{ render_meta() }}
+            {{ forms.render_errors(form) }}
+            {{ render_meta() }}
         </dl>
         <div class="moin-ticket-tags">
             {{ _("Suggested Tags: ") }}
@@ -29,7 +29,7 @@
             {% endfor %}
         </div>
         <dl>
-        {{ render_selectlists() }}
+            {{ render_selectlists() }}
         </dl>
     </div>
     <div class="moin-ticket-submit">
