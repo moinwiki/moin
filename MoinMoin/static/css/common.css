@@ -14,7 +14,8 @@
   display: inline;
 }
 .moin-wordbreak {
-  font-size: 1.4em;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 .moin-search-meta {
   color: green;

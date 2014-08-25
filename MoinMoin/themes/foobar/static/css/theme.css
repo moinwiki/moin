@@ -302,7 +302,6 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 #moin-page-history table thead tr th input[type="Submit"]:hover{box-shadow:1px 1px 2px #000}
 .moin-hist-rev{margin:0;}
 .moin-hist-rev input{float:left}
-.moin-wordbreak{word-break:break-all;word-wrap:break-word}
 .moin-history-time{width:10%}
 .moin-history-contenttype{width:18%}
 .moin-history-editorinfo{width:17%}
