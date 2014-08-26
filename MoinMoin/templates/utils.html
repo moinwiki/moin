@@ -3,15 +3,15 @@
 {% macro show_editor_info(info) %}
     {%- if info.uri -%}
         <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
+            {{ info.text }}
+        </a>
     {%- elif info.email -%}
         <a href="mailto:{{ info.email }}" class="{{ info.css }}" title="{{ info.title }}">
-    {%- else -%}
-        <span class="{{ info.css }}" title="{{ info.title }}">
-    {%- endif -%}
-    {{ info.text }}
-    {%- if info.uri or info.email -%}
+            {{ info.text }}
         </a>
     {%- else -%}
+        <span class="{{ info.css }}" title="{{ info.title }}">
+            {{ info.text }}
         </span>
     {%- endif -%}
 {% endmacro %}

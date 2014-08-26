@@ -4,26 +4,25 @@
         {% for change in diff -%}
             {% if change[0] == "insert" -%}
                 <tr style="color:#00B000; height:1.2em;">
-                {% set marker = '+' -%}
+                    <td style="font-family:monospace; width:1.2em; vertical-align:top;"> + </td>
+                    <td style="font-family:monospace;">
+                        <ins style="text-decoration:none;">
+                            {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
+                            {{ change[2] }}
+                        </ins>
+                    </td>
+                </tr>
             {% elif change[0] == "delete" -%}
                 <tr style="color:#991111; height:1.2em;">
-                {% set marker = '-' -%}
+                    <td style="font-family:monospace; width:1.2em; vertical-align:top;"> - </td>
+                    <td style="font-family:monospace;">
+                        <del style="text-decoration:none;">
+                            {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
+                            {{ change[2] }}
+                        </del>
+                    </td>
+                </tr>
             {%- endif %}
-                <td style="font-family:monospace; width:1.2em; vertical-align:top;">{{ marker }}</td>
-                <td style="font-family:monospace;">
-                {% if change[0] == "insert" -%}
-                    <ins style="text-decoration:none;">
-                        {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
-                        {{ change[2] }}
-                    </ins>
-                {% elif change[0] == "delete" -%}
-                    <del style="text-decoration:none;">
-                        {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
-                        {{ change[2] }}
-                    </del>
-                {% endif %}
-                </td>
-            </tr>
         {%- endfor %}
     </table>
 {% endmacro %}
