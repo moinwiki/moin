@@ -5,7 +5,7 @@
     {% endif %}
     {% if fq_names %}
         <h2>Total: {{ fq_names|count }}</h2>
-        <ul class="one-col">
+        <ul class="moin-link-list">
             {% for fq_name in fq_names|sort(attribute='value') %}
                 <li>
                     <a class="moin-fqname"
