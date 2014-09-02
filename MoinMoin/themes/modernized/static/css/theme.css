@@ -341,8 +341,6 @@ a.moin-mime-drawing:before{content:url("../img/moin-drawing.png");margin:0 .2em;
 .il { color: #0000DD; font-weight: bold } /* Literal.Number.Integer.Long */
 html{color:#000;font-family:Helvetica,Arial,sans-serif}
 p{margin:1em 0;font-size:1em;line-height:1.3em}
-sub{vertical-align:sub}
-sup{vertical-align:super}
 ins{background-color:inherit;text-decoration:underline}
 .moin-big{font-size:1.17em}
 .moin-small{font-size:.83em}
@@ -407,9 +405,6 @@ div.moin-table-of-contents{border:1px solid #4e7da9;color:#000;background:#fff;f
 .moin-table-of-contents-heading{font-weight:bold;padding:0;margin:0 0 .5em 1em;letter-spacing:.075em}
 .moin-showhide{margin-left:10px}
 table.navigation{background:#fff;float:right;margin:2px}
-.moin-footnote a,.moin-footnotes sup a{font-size:.87em}
-.moin-footnotes{border-top:1px solid #4e7da9;margin:0 1em}
-.moin-footnotes p{margin:0 0 .33em 1em;font-size:.92em}
 #moin-rev-navigation{list-style:none;text-align:center}
 #moin-rev-navigation li{display:inline}
 .moin-disabled{color:#737373}
@@ -674,7 +669,6 @@ h4{font-size:18pt}
 h5{font-size:16pt}
 h6{font-size:14pt}
 tt,pre{font-size:16pt}
-sup,sub{font-size:12pt}
 table.navigation{float:right;margin:2px}
 .navigation td,.navigation a{font-size:10pt;padding:2px}
 #moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation,#moin-pageinfo{display:none}
