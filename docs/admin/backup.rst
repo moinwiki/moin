@@ -21,7 +21,8 @@ If you want a backup of MoinMoin and your data, then backup the following:
 * logging configuration, e.g. logging.conf
 * moin deployment script, e.g. moin.wsgi
 * web server configuration, e.g. apache virtualhost config
-* optional: moin code + dependencies; you should at least know which version you ran, so you can reinstall that version when you need to restore
+* optional: moin code + dependencies; you should at least know which version
+  you ran, so you can reinstall that version when you need to restore
 
 To create a dump of all data stored in moinmoin (wiki items, user profiles), run the
 following command::
