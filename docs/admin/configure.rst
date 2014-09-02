@@ -984,7 +984,8 @@ The ConfigGroups backend uses groups defined in the configuration file::
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
         return ConfigGroups(groups)
 
-CompositeGroups can use, for the most part, any combination of backends. The following is an example of using the ConfigGroups and WikiGroups backends::
+CompositeGroups can use, for the most part, any combination of backends. The
+following is an example of using the ConfigGroups and WikiGroups backends::
 
     def groups(self):
         from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
@@ -1016,7 +1017,8 @@ The ConfigDicts backend uses dicts defined in the configuration file::
                                   u'2': 'Two'}}
         return ConfigDicts(request, dicts)
 
-The CompositeDicts backend can use any combination of backends. The following is an example of using the ConfigDicts and WikiDicts backends::
+The CompositeDicts backend can use any combination of backends. The following
+is an example of using the ConfigDicts and WikiDicts backends::
 
     def dicts(self, request):
         from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
