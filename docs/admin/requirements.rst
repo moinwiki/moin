@@ -19,8 +19,9 @@ installation process for `virtualenv` varies with your OS and
 Python distribution.
 Many linux distributions have a package manager that may do
 the installation. Windows users (and perhaps others) may download
-setuptools from https://pypi.python.org/pypi/setuptools. Once setuptools is installed, do "`easy_install virtualenv`". Current ActiveState
-distributions include virtualenv in the installation bundle.
+setuptools from https://pypi.python.org/pypi/setuptools.
+Once setuptools is installed, do "`easy_install virtualenv`".
+Current ActiveState distributions include virtualenv in the installation bundle.
 If all else fails, try Google.
 
 Mercurial (hg) is required should you wish to contribute
@@ -31,8 +32,7 @@ from the moin2 repositories. Mercurial can be installed
 with most linux package managers or downloaded
 from http://mercurial.selenic.com/. As an alternative,
 most Windows users will prefer to install TortoiseHG
-(includes Mercurial) from
-http://tortoisehg.bitbucket.org/.
+(includes Mercurial) from http://tortoisehg.bitbucket.org/.
 
 
 Servers
@@ -52,7 +52,9 @@ For moin2, you can use any server compatible with WSGI:
 Dependencies
 ============
 
-Dependent packages will be automatically downloaded and installed during the moin2 installation process. For a list of dependencies, see setup.py.
+Dependent packages will be automatically downloaded and installed during the
+moin2 installation process. For a list of dependencies, see setup.py.
+
 
 Clients
 =======

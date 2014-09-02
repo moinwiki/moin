@@ -15,11 +15,12 @@ NAMESPACE
  It is used to access global views like global history, global tags etc.
 
 FIELD
- Whoosh schema value where to lookup the VALUE. Default value for field is ``name_exact`` (search by name). FIELD can be a unique identifier like (``itemid, revid, name_exact``) or can be non-unique like (``tags``).
+ Whoosh schema field where to lookup the VALUE (default: ``name_exact``, lookup by name).
+ FIELD can be a unique identifier like (``itemid, revid, name_exact``) or can be non-unique like (``tags``).
 
 VALUE
- Value to search in the FIELD. The default value is the default root within that namespace. If the FIELD is non-unique, we
- show a list items which can have the ``FIELD value:VALUE``.
+ Value to search in the FIELD (default: the default root within that namespace). If the FIELD is non-unique,
+ we show a list of items that have ``FIELD:VALUE``.
 
 VIEW
  used to select the intended view method (default: ``show``).

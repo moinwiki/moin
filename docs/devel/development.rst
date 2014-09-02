@@ -353,13 +353,19 @@ dom-dom transformations and output formats.
 Templates and Themes
 --------------------
 Moin uses jinja2 as its templating engine and Flask-Themes as a flask extension to
-support multiple themes. There is a ``MoinMoin/templates`` directory that contains a base set of templates designed for the Modernized theme. Other themes may override or add to the base templates with a directory named ``themes/<theme_name>/templates``. 
+support multiple themes. There is a ``MoinMoin/templates`` directory that contains
+a base set of templates designed for the Modernized theme. Other themes may
+override or add to the base templates with a directory named ``themes/<theme_name>/templates``.
 
 When rendering a template, the template is expanded within an environment of
 values it can use. In addition to this general environment, parameters can
 also be given directly to the render call.
 
-Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's ``static/custom-less`` directory. Stylesheets for the Modernized and Foobar themes are compiled using the ``theme.styl files`` in their respective ``static/css/stylus`` directories. To compile CSS for all themes::
+Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
+MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
+``static/custom-less`` directory. Stylesheets for the Modernized and Foobar
+themes are compiled using the ``theme.styl files`` in their respective ``static/css/stylus``
+directories. To compile CSS for all themes::
 
     ./m css  # Windows: m css
 
