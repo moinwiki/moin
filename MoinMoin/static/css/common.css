@@ -105,3 +105,10 @@ ul.moin-tags li.weight8 {
 ul.moin-tags li.weight9 {
     font-size: 280%;
 }
+.moin-footnotes {
+    border-top: 1px solid gray;
+    margin: 2em;
+}
+.moin-footnotes p {
+    margin: 1em;
+}
