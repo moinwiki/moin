@@ -300,8 +300,6 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             return false;
         });
     });
-    // if this is foobar (or similar sidebar theme) remove buttons that work when javascript is disabled
-    $('.moin-tabs ul').remove();
     // add tabs/buttons with click handlers to top/side per theme template
     $('.moin-tabs').prepend(titles);
 

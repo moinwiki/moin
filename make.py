@@ -360,11 +360,8 @@ class Commands(object):
         pygments_loc = get_pygments_data_location().strip() + '/css'
         command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP, pygments_loc)
         result = subprocess.call(command, shell=True)
-        print 'Running Stylus to update Foobar theme CSS files...'
-        command = 'cd {0}{1} stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP, pygments_loc)
-        result2 = subprocess.call(command, shell=True)
-        if result == 0 and result2 == 0:
-            print 'Success: Modernized and Foobar CSS files updated.'
+        if result == 0:
+            print 'Success: Modernized CSS files updated.'
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
