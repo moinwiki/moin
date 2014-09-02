@@ -1,0 +1,94 @@
+{% set exists = fqname and storage.get_item(**fqname.query) %}
+<ul class="moin-itemviews panel">
+    {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {%- if not check_exists or check_exists and exists %}
+            {%- if endpoint in [
+                'frontend.show_item', 'frontend.index', 'frontend.highlight_item',
+                'frontend.show_item_meta', 'frontend.download_item',
+                'frontend.history', 'frontend.refs', 'frontend.sitemap',
+                'frontend.similar_names', 'frontend.copy_item',
+            ] %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+            {%- if endpoint == 'frontend.modify_item' and user.may.write(fqname) %}
+                <li>
+                    <a class="moin-modify-button" href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint in [
+                'frontend.rename_item', 'frontend.delete_item',
+            ] and user.may.write(fqname) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(fqname) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint in [
+                'frontend.global_history', 'frontend.global_index', 'frontend.global_tags',
+                'admin.index', 'admin.index_user',
+            ] %}
+                <li>
+                    <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.quicklink_item' and user.valid %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">
+                        {%- if user.is_quicklinked_to([fqname]) %}
+                            {{ _('Remove Link') }}
+                        {%- else %}
+                            {{ _('Add Link') }}
+                        {%- endif %}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'frontend.subscribe_item' and user.valid %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">
+                        {%- if user.is_subscribed_to(item) %}
+                            {{ _('Unsubscribe') }}
+                        {%- else %}
+                            {{ _('Subscribe') }}
+                        {%- endif %}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if endpoint == 'special.comments' %}
+                <li class="moin-toggle-comments-button" style="display:none;">
+                    <a href="#" title="{{ title }}">{{ label }}</a>
+                </li>
+            {%- endif %}
+
+        {% if endpoint == 'special.transclusions' -%}
+            <li class="moin-transclusions-button" style="display:none;">
+                <a href="#" title="{{ title }}">{{ label }}</a>
+            </li>
+        {%- endif %}
+            {%- if endpoint == 'special.supplementation' and fqname %}
+                {%- for sub_item_name in cfg.supplementation_item_names %}
+                    {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
+                    {%- if not current_sub in cfg.supplementation_item_names %}
+                        {%- set supp_name = '%s/%s/%s' % (fqname.namespace, item_name, sub_item_name) %}
+                        {%- if storage.has_item(supp_name) or user.may.write(supp_name) %}
+                            <li>
+                                <a href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">{{ _(sub_item_name) }}</a>
+                            </li>
+                        {%- endif %}
+                    {%- endif %}
+                {%- endfor %}
+            {%- endif %}
+        {%- endif %}
+    {%- endfor %}
+</ul>

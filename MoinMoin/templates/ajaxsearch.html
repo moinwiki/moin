@@ -1,0 +1,74 @@
+{% if results is defined %}
+    {% if omitted_words %}
+        <p>{{ _("Common words in query: %(termlist)s", termlist=omitted_words) }}</p>
+    {% endif %}
+    {% if results is defined %}
+        {% if word_suggestions %}
+            <p class="moin-suggestions">{{ _("Input suggestions : ") }}</p><p class="moin-suggestion-terms">{{ _(" %(termlist)s", termlist=word_suggestions) }}</p><br>
+        {% endif %}
+        {% if name_suggestions or content_suggestions %}
+            <p class="moin-suggestions">{{ _("Name term suggestions : ") }}</p><p class="moin-suggestion-terms">{{ _( " %(termlist)s", termlist=name_suggestions) }}</p><br>
+            <p class="moin-suggestions">{{ _("Content term suggestions : ") }}</p><p class="moin-suggestion-terms">{{ _(" %(termlist)s", termlist=content_suggestions) }}</p><br><br>
+        {% endif %}
+        <p class="searchstats">
+            {% if results %}
+                {{ _("%(result_len)d results found (%(runtime).3f secs).",
+                      result_len=results|length, runtime=results.runtime
+                    )
+                }}
+            {% else %}
+                {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
+            {% endif %}
+        </p>
+        {% if results %}
+            <div class="searchresults">
+                <table>
+                    {% for result in results %}
+                        {% if result['wikiname'] == cfg.interwikiname %}
+                            <tr>
+                                <td class="moin-wordbreak">
+                                    {% if result['name'] %}
+                                        {% if history %}
+                                            <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}"><b>{{ result['name'] | join(' | ')}}</b></a>
+                                        {% else %}
+                                            <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace']) }}"><b>{{ result['name'] | join(' | ')}}</b></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}"><b>Item ID : {{ result['itemid'] }}</b></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if result['summary'] %}
+                                <tr>
+                                    <td>
+                                        <p class="info searchhitinfobar">{{ _("Summary: %(summary)s", summary=result['summary']) }}</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            <tr class="moin-search-meta">
+                                <td>
+                                    <p class="info searchhitinfobar">{{ _("Revision: %(revid)s - %(size)s - %(mtime)s - %(type)s", type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|datetimeformat, size=result['size']|filesizeformat, revid=result['revid']|shorten_id) }}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {% if user.may.read(get_fqname(item_name=results['itemid'],field='ITEMID',namespace=results['namespace'])) %}
+                                        <p class="info foundtext">{{ result.highlights('content')|safe }}</p><br>
+                                    {% else %}
+                                        <p class="info foundtext">{{ _("You don't have read permission for this item.") }}</p><br>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="moin-wordbreak">
+                                    <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}"><b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b></a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endif %}

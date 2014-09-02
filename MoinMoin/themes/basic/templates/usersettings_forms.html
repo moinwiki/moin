@@ -1,0 +1,202 @@
+{% import "forms.html" as forms %}
+
+{% macro personal(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings'), role="form") }}
+        {{ forms.render_errors(form) }}
+            {% for e in [
+                    'name',
+                    'display_name',
+                    'openid',
+                    ] %}
+                <div class="form-group">
+                    {{ gen.label(form[e]) }}
+                    {{ gen.input(form[e], type="text", class="form-control") }}
+                </div>
+            {% endfor %}
+
+            {% for e in [
+                    'timezone',
+                    'locale',
+                    ] %}
+                <div class="form-group">
+                    <dl>
+                        <dt>
+                            {{ gen.label(form[e]) }}
+                        </dt>
+                        <dd>
+                            {{ gen.select.open(form[e], class="btn") }}
+                                {% for value, label in form[e].properties['choice_specs'] %}
+                                    {{ gen.option(form[e], value=value, contents=label or value) }}
+                                {% endfor %}
+                            {{ gen.select.close() }}
+                        </dd>
+                    </dl>
+                </div>
+            {% endfor %}
+        {{ forms.render_hidden('part', 'personal') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+
+{% macro password(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {{ forms.render_errors(form) }}
+            {% for e in [
+                    'password_current',
+                    'password1',
+                    'password2',
+                    ] %}
+                <div class="form-group">
+                    {{ gen.label(form[e]) }}
+                    {{ gen.input(form[e], type="password", class="form-control") }}
+                </div>
+            {% endfor %}
+        {{ forms.render_hidden('part', 'password') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro notification(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {% if cfg.user_email_verification %}
+            <p>{{ _("Changing your email address requires you to verify it. A link will be sent to you.") }}</p>
+        {% endif %}
+        {{ forms.render_errors(form) }}
+        <div class="form-group">
+            {{ gen.label(form['email']) }}
+            <div class="input-group">
+                {{ gen.input(form['email'], type="email", class="form-control") }}
+                <span class="input-group-addon"><i class="icon-envelope"></i></span>
+            </div>
+        </div>
+        {{ forms.render_hidden('part', 'notification') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro ui(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {{ forms.render_errors(form) }}
+            <div class="form-group">
+                <dl>
+                    <dt>
+                        {{ gen.label(form['theme_name']) }}
+                    </dt>
+                    <dd>
+                        {{ gen.select.open(form['theme_name'], class="btn") }}
+                            {% for value, label in form['theme_name'].properties['choice_specs'] %}
+                                {{ gen.option(form['theme_name'], value=value, contents=label or value) }}
+                            {% endfor %}
+                        {{ gen.select.close() }}
+                    </dd>
+                </dl>
+            </div>
+            {% for e in [
+                    'css_url',
+                    'edit_rows',
+                    'results_per_page'
+                    ] %}
+                <div class="form-group">
+                    {{ gen.label(form[e]) }}
+                    {{ gen.input(form[e], type="text", class="form-control") }}
+                </div>
+            {% endfor %}
+        {{ forms.render_hidden('part', 'ui') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro navigation(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {{ forms.render_errors(form) }}
+        <dl>
+            {# TODO: find a good way to handle quicklinks #}
+        </dl>
+        {{ forms.render_hidden('part', 'navigation') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro options(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {{ forms.render_errors(form) }}
+            {% for e in [
+                    'mailto_author',
+                    'edit_on_doubleclick',
+                    'scroll_page_after_edit',
+                    'show_comments',
+                    'disabled'
+                    ] %}
+                <div class="checkbox">
+                    <label>
+                        {{ gen.input(form[e], type="checkbox") }}
+                        {{ form[e].label }}
+                    </label>
+                </div>
+            {% endfor %}
+        {{ forms.render_hidden('part', 'options') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro subscriptions(form) %}
+    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+        {{ forms.render_errors(form) }}
+        <div class="form-group">
+            {{ gen.label(form['subscriptions']) }}
+            <div class="input-group">
+                {{ gen.textarea(form['subscriptions'], cols="60", rows="10", class="form-control") }}
+            </div>
+        </div>
+        {{ forms.render_hidden('part', 'subscriptions') }}
+        <div class="form-group">
+            {{ forms.render_submit(form, class='btn btn-primary') }}
+        </div>
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{# javascript functions within basic.js are dependent upon the structure, classes and ids defined here #}
+{% macro all_usersettings_forms(form_objs) %}
+    <div id="moin-usersettings">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="tab-content">
+                    <div id="personal" class="tab-pane active">
+                        {{ personal(form_objs.personal) }}
+                    </div>
+                    <div id="password" class="tab-pane active">
+                        {{ password(form_objs.password) }}
+                    </div>
+                    <div id="notification" class="tab-pane active">
+                        {{ notification(form_objs.notification) }}
+                    </div>
+                    <div id="ui" class="tab-pane active">
+                        {{ ui(form_objs.ui) }}
+                    </div>
+                    <div id="navigation" class="tab-pane active">
+                        {{ navigation(form_objs.navigation) }}
+                    </div>
+                    <div id="options" class="tab-pane active">
+                        {{ options(form_objs.options) }}
+                    </div>
+                    <div id="subscriptions" class="tab-pane active">
+                        {{ subscriptions(form_objs.subscriptions) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
