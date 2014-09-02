@@ -197,9 +197,9 @@ Other Issues
 If you encounter some other issue not described above, try
 researching the unresolved issues at
 https://bitbucket.org/thomaswaldmann/moin-2.0/issues?status=new&status=open.
-If you find a similar issue, please
-add a note saying you also have the problem and add any new
-information that may assist in the problem resolution.
+
+If you find a similar issue, please add a note saying you also have the problem
+and add any new information that may assist in the problem resolution.
 
 If you cannot find a similar issue please create a new issue.
 Or, if you are not sure what to do, join us on IRC at #moin-dev

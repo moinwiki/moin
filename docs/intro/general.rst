@@ -73,7 +73,7 @@ Who is using MoinMoin?
 This shows some of the better-known users of MoinMoin:
 
 Web Sites
-~~~~~~~~~~~~~~
+~~~~~~~~~
 * KernelNewbies, Xen, LinuxWireless, GCC
 * Debian, Ubuntu, CentOS
 * Apache, Gnome, Wine, OpenOffice, Squid, Exim, Dovecot
