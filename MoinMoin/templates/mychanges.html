@@ -42,7 +42,7 @@
                             <td>
                                 <div class="moin-hist-rev">
                                     <form action="{{ url_for('frontend.diff', item_name=doc.fqname) }}" method="GET">
-                                        <input type="hidden" name="rev1" value="{{ doc.revid }}" />
+                                        <input type="hidden" name="rev1" value="{{ doc.parentid }}" />
                                         <input type="hidden" name="rev2" value="{{ doc.revid }}" />
                                         <input type="submit" class="btn btn-sm btn-primary" value="Diff" />
                                     </form>
