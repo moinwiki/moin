@@ -164,6 +164,7 @@
             {% endif %}
         </li>
         <li class="list-group-item">Namespace: '{{ meta['namespace'] }}'</li>
+        <li class="list-group-item">Parent Revision ID: {{ meta['parentid'] }}</li>
         <li class="list-group-item">Revision ID: {{ meta['revid'] }}</li>
         <li class="list-group-item">SHA1: {{ meta['sha1'] }}</li>
         <li class="list-group-item">Size: {{ meta['size']|filesizeformat }}</li>
