@@ -42,7 +42,6 @@ import MoinMoin  # validate python version
 # text files created by commands with high volume output
 QUICKINSTALL = 'm-quickinstall.txt'
 PYTEST = 'm-pytest.txt'
-PEP8 = 'm-pep8.txt'
 CODING_STD = 'm-coding-std.txt'
 DOCS = 'm-docs.txt'
 NEWWIKI = 'm-new-wiki.txt'
@@ -68,11 +67,10 @@ else:
     WINDOWS_OS = False
 
 
-# commands that create log files; "tests" creates 2 log files - pytest + pep8
+# commands that create log files
 CMD_LOGS = {
     'quickinstall': QUICKINSTALL,
     'pytest': PYTEST,
-    'pep8': PEP8,
     # 'coding-std': CODING_STD,  # not logged due to small output
     'docs': DOCS,
     'new-wiki': NEWWIKI,
@@ -125,7 +123,6 @@ def search_for_phrase(filename):
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
         PYTEST: ('seconds =', ),
-        PEP8: ('seconds =', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'Exception occurred', )
@@ -396,13 +393,11 @@ class Commands(object):
 
     def cmd_tests(self, *args):
         """run tests, output goes to pytest.txt and pytestpep8.txt"""
-        print 'Running tests... output written to %s and %s.' % (PYTEST, PEP8)
-        command = '{0}py.test > {1} 2>&1{2} py.test --pep8 -k pep8 --clearcache > {3} 2>&1'.format(ACTIVATE, PYTEST, SEP, PEP8)
+        print 'Running tests... output written to {0}.'.format(PYTEST)
+        command = '{0}py.test --pep8 > {1} 2>&1'.format(ACTIVATE, PYTEST)
         result = subprocess.call(command, shell=True)
         print 'Summary message from {0} is shown below. Do "{1} log pytest" to see complete log.'.format(PYTEST, M)
         search_for_phrase(PYTEST)
-        print 'Summary message from {0} is shown below. Do "{1} log pep8" to see complete log.'.format(PEP8, M)
-        search_for_phrase(PEP8)
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
