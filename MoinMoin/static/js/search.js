@@ -30,7 +30,7 @@ $(document).ready(function(){
     }
 
     $('#moin-search-query').keyup(function() {
-        var allrev;
+        var allrev, time_sorting;
         var mtime = false;
         var filetypes= '';
         allrev = $('[name="history"]:checked').val() === "all";
