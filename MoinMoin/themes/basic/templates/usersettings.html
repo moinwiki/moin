@@ -1,0 +1,16 @@
+{% extends theme("layout.html") %}
+{% import theme("usersettings_forms.html") as user_forms %}
+
+{% block content %}
+    <h2>{{ _("User Settings") }}</h2>
+    <ul class="moin-nav nav-tabs moin-shadow">
+        <li class="active"><a href="#personal" data-toggle="tab">{{ _("Personal") }}</a></li>
+        <li><a href="#password" data-toggle="tab">{{ _("Change Password") }}</a></li>
+        <li><a href="#notification" data-toggle="tab">{{ _("Notifications") }}</a></li>
+        <li><a href="#ui" data-toggle="tab">{{ _("Appearance") }}</a></li>
+        <li><a href="#navigation" data-toggle="tab">{{ _("Navigation") }}</a></li>
+        <li><a href="#options" data-toggle="tab">{{ _("Options") }}</a></li>
+        <li><a href="#subscriptions" data-toggle="tab">{{ _("Subscriptions") }}</a></li>
+    </ul>
+    {{ user_forms.all_usersettings_forms(form_objs) }}
+{% endblock %}

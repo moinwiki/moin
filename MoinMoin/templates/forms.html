@@ -1,0 +1,245 @@
+{#
+Helpers for using flatland with jinja2 to create html forms.
+
+@copyright: Thomas Waldmann, Jason Kirtland, Scott Wilson, Cheer Xiao
+@license: see flatland license
+#}
+
+{% macro render_errors(field) %}
+  {% if field.errors %}
+    <ul class="moin-error">
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_hidden(name, value) %}
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+{% endmacro %}
+
+{% macro render_submit(form) %}
+  {{ gen.input(type='submit', value=form.submit_label, class='button', **kwargs) }}
+{% endmacro %}
+
+{% macro render_textcha(gen, form) %}
+    {% if form.textcha_question.value %}
+        <dt class="moin-textcha">
+            {{ gen.label(form.textcha) }}
+        </dt>
+        <dd class="moin-textcha">
+            {# The value of -51 below is the sum of signature length, timestamp and a space (see security/textcha.py) #}
+            {{ form.textcha_question.value[:-51] }}
+            {{ gen.input(form.textcha_question, type='hidden') }}<br />
+            {{ gen.input(form.textcha) }}
+            {{ render_errors(form.textcha) }}
+        </dd>
+    {% endif %}
+{% endmacro %}
+
+{% macro render(field) %}
+  {%- set macro = {
+      'text': annotated_input,
+      'url': annotated_input,
+      'email': annotated_input,
+      'password': annotated_input,
+      'file': annotated_input,
+      'checkbox': annotated_input,
+      'multiline_text': multiline_text,
+      'inline_checkbox': inline_checkbox,
+      'any_integer': any_integer,
+      'small_natural': small_natural,
+      'datetime': datetime,
+      'search': search,
+      'hidden': raw_input,
+      'select': select,
+      'select_submit': select_submit,
+      'multi_select': multi_select,
+      'readonly_string_list': readonly_string_list,
+      'readonly_item_link_list': readonly_item_link_list,
+  }[field.properties.widget] or stub -%}
+  {{ macro(field, *varargs, **kwargs) }}
+{% endmacro %}
+
+{% macro stub(field) %}
+  <fieldset>
+    STUB: no widget for {{ field.name }} ({{ field.properties }}) yet
+  </fieldset>
+{% endmacro %}
+
+{% macro raw_input(field, type=none) %}
+  {{ gen.input(field, type=type or field.properties.widget, class=field.properties.class_ or '', **kwargs) }}
+{% endmacro %}
+
+{% macro annotated_input(field, type=none) %}
+  {% set type = type or field.properties.widget %}
+  <dt>
+    {% if type == 'checkbox' %}
+      {{ _checkbox_label(field) }}
+    {% else %}
+      {{ gen.label(field) }}
+    {% endif %}
+  </dt>
+  <dd>
+    {{ raw_input(field, type) }}
+    {{ render_errors(field) }}
+    {# TODO make the helper more explicit and look better #}
+    {% if field.properties.helper %}
+      <p>{{ field.properties.helper | e }}</p>
+    {% endif %}
+  </dd>
+{% endmacro %}
+
+{% macro multiline_text(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, **kwargs) }}
+    {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro _valued_label(field, value, contents=none) %}
+  {# XXX Patch <label>'s `for` attribute with value when element referred to is
+     checkbox or radio. See: https://bitbucket.org/jek/flatland/issue/9 #}
+  {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value.replace(' ', '')), contents=contents, **kwargs) }}
+{% endmacro %}
+
+{% macro _checkbox_label(field) %}
+  {{ _valued_label(field, '1', **kwargs) }}
+{% endmacro %}
+
+{% macro _radio_label(field, value) %}
+  {{ _valued_label(field, value, value, **kwargs) }}
+{% endmacro %}
+
+{% macro inline_checkbox(field) %}
+  {{ raw_input(field, 'checkbox') }}
+  {{ _checkbox_label(field, class='moin-inline-label') }}
+  {{ render_errors(field) }}
+  {% if field.properties.helper is defined %}
+    <span class="helper-text">
+      {{ field.properties.helper }}
+    </span>
+  {% endif %}
+{% endmacro %}
+
+{% macro any_integer(field) %}
+  {{ annotated_input(field, 'text') }}
+{% endmacro %}
+
+{% macro small_natural(field) %}
+    <dt>
+        {{ field['label'] }}
+    </dt>
+    <dd>
+        {% for i in range(field.properties.lower, field.properties.upper+1) %}
+            {{ gen.input(field, type='radio', value=i|string) }}
+            {{ _radio_label(field, value=i|string, class='moin-inline-label') }}
+        {% endfor %}
+    </dd>
+{% endmacro %}
+
+{% macro datetime(field) %}
+  {{ annotated_input(field, 'text') }}
+{% endmacro %}
+
+{% macro search(field) %}
+  {{ raw_input(field, id='moin-search-query') }}
+{% endmacro %}
+
+{% macro select(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {{ gen.select.open(field) }}
+    {% for value, label in field.properties['choice_specs'] %}
+      {{ gen.option(field, value=value, contents=label or value) }}
+    {% endfor %}
+    {{ gen.select.close() }}
+    {{ render_errors(field) }}
+  </dd>
+{% endmacro %}
+
+{% macro select_submit(field) %}
+  {% set labels = field.properties.get('labels', {}) %}
+  {% for value in field.valid_values %}
+    {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value), id='f_submit_' + value) }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro multi_select(field) %}
+  {% for value, label, description in field.member_schema.properties['choice_specs'] %}
+    <li>
+      {{ raw_input(field, 'checkbox', value=value) }}
+      {{ _valued_label(field, value, label or value, class='moin-inline-label') }}
+      {% if description %}
+        <span class="helper-text">
+          {{ description }}
+        </span>
+      {% endif %}
+    </li>
+  {% endfor %}
+  {{ render_errors(field) }}
+{% endmacro %}
+
+{% macro readonly_string_list(field) %}
+  <dt>
+    {{ gen.label(field) }}
+  </dt>
+  <dd>
+    {% for v in field.value %}
+      {# TODO style .moin-string-list-item #}
+      <span class="moin-string-list-item">{{ v }}</span>
+    {% endfor %}
+  </dd>
+{% endmacro %}
+
+{% macro readonly_item_link_list(field) %}
+  <dt>
+    {{ field['label'] }}
+  </dt>
+  <dd>
+    {% for v in field.value %}
+      {# TODO style .moin-item-link-list-item #}
+      <span class="moin-item-link-list-item"><a href="{{ url_for_item(v) }}">{{ v }}</a></span>
+    {% endfor %}
+  </dd>
+{% endmacro %}
+
+{% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
+    <div id="file_upload">
+        <div class="upload-form">
+            <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
+                <input type="file" name="data_file" multiple>
+                <button type="submit">{{ _("Upload") }}</button>
+                <div class="file_upload_label" style="margin: 0;">{{ _("Upload files") }}</div>
+            </form>
+        </div>
+        <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
+        <div class="file_upload_buttons">
+            <button class="file_upload_start" style="display:none;">{{ _("Start All") }}</button>
+            <button class="file_upload_cancel" style="display:none;">{{ _("Cancel All") }}</button>
+        </div>
+        <table class="files">
+            <tr class="file_upload_template" style="display:none;">
+                <td class="file_upload_start"><button>{{ _("Start") }}</button></td>
+                <td class="file_upload_cancel"><button>{{ _("Cancel") }}</button></td>
+                <td class="file_name"></td>
+                <td class="file_upload_progress"><div></div></td>
+            </tr>
+        </table>
+    </div>
+{% endmacro %}
+
+{% macro file_uploader_styles() %}
+    <link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
+{% endmacro %}
+
+{% macro file_uploader_scripts() %}
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
+{% endmacro %}
