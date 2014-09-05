@@ -42,7 +42,6 @@ import MoinMoin  # validate python version
 # text files created by commands with high volume output
 QUICKINSTALL = 'm-quickinstall.txt'
 PYTEST = 'm-pytest.txt'
-PEP8 = 'm-pep8.txt'
 CODING_STD = 'm-coding-std.txt'
 DOCS = 'm-docs.txt'
 NEWWIKI = 'm-new-wiki.txt'
@@ -68,11 +67,10 @@ else:
     WINDOWS_OS = False
 
 
-# commands that create log files; "tests" creates 2 log files - pytest + pep8
+# commands that create log files
 CMD_LOGS = {
     'quickinstall': QUICKINSTALL,
     'pytest': PYTEST,
-    'pep8': PEP8,
     # 'coding-std': CODING_STD,  # not logged due to small output
     'docs': DOCS,
     'new-wiki': NEWWIKI,
@@ -125,7 +123,6 @@ def search_for_phrase(filename):
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
         PYTEST: ('seconds =', ),
-        PEP8: ('seconds =', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'Exception occurred', )
@@ -354,17 +351,25 @@ class Commands(object):
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
-        print 'Running Stylus to update Modernized theme CSS files...'
-        # Note: we use / here to specify directory offsets; this works as used below in Windows XP, 2000, 7, 8
+        # Note: we use / below within file paths; this works in Windows XP, 2000, 7, 8
         bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
         pygments_loc = get_pygments_data_location().strip() + '/css'
-        command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/modernized/static/css/stylus', SEP, pygments_loc)
+        modernized_loc = 'MoinMoin/themes/modernized/static/css/stylus'
+        basic_loc = 'MoinMoin/themes/basic/static/custom-less'
+
+        print 'Running lessc to create normalize.css for modernized theme...'
+        command = 'lessc {0}/normalize.less > {1}/normalize.css'.format(bootstrap_loc, modernized_loc)
         result = subprocess.call(command, shell=True)
-        print 'Running Stylus to update Foobar theme CSS files...'
-        command = 'cd {0}{1} stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format('MoinMoin/themes/foobar/static/css/stylus', SEP, pygments_loc)
-        result2 = subprocess.call(command, shell=True)
-        if result == 0 and result2 == 0:
-            print 'Success: Modernized and Foobar CSS files updated.'
+        if result == 0:
+            print 'Success: normalize.css created for modernized theme.'
+        else:
+            print 'Error: creation of normalize.css failed, see error messages above.'
+
+        print 'Running Stylus to update Modernized theme CSS files...'
+        command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format(modernized_loc, SEP, pygments_loc)
+        result = subprocess.call(command, shell=True)
+        if result == 0:
+            print 'Success: Modernized CSS files updated.'
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
@@ -379,7 +384,7 @@ class Commands(object):
         else:
             data_loc = '{0}:{1}'.format(bootstrap_loc, pygments_loc)
         include = '--include-path=' + data_loc
-        command = 'cd MoinMoin/themes/basic/static/custom-less{0}lessc {1} theme.less ../css/theme.css'.format(SEP, include)
+        command = 'cd {0}{1}lessc {2} theme.less ../css/theme.css'.format(basic_loc, SEP, include)
         result = subprocess.call(command, shell=True)
         if result == 0:
             print 'Success: Basic theme CSS files updated.'
@@ -388,13 +393,11 @@ class Commands(object):
 
     def cmd_tests(self, *args):
         """run tests, output goes to pytest.txt and pytestpep8.txt"""
-        print 'Running tests... output written to %s and %s.' % (PYTEST, PEP8)
-        command = '{0}py.test > {1} 2>&1{2} py.test --pep8 -k pep8 --clearcache > {3} 2>&1'.format(ACTIVATE, PYTEST, SEP, PEP8)
+        print 'Running tests... output written to {0}.'.format(PYTEST)
+        command = '{0}py.test --pep8 > {1} 2>&1'.format(ACTIVATE, PYTEST)
         result = subprocess.call(command, shell=True)
         print 'Summary message from {0} is shown below. Do "{1} log pytest" to see complete log.'.format(PYTEST, M)
         search_for_phrase(PYTEST)
-        print 'Summary message from {0} is shown below. Do "{1} log pep8" to see complete log.'.format(PEP8, M)
-        search_for_phrase(PEP8)
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
