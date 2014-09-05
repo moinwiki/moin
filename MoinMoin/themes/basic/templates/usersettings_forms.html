@@ -174,23 +174,23 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="tab-content">
-                    <div id="personal" class="tab-pane active">
-                        {{ personal(form_objs.personal) }}
+                    <div id="ui" class="tab-pane active">
+                        {{ ui(form_objs.ui) }}
                     </div>
                     <div id="password" class="tab-pane active">
                         {{ password(form_objs.password) }}
                     </div>
-                    <div id="notification" class="tab-pane active">
-                        {{ notification(form_objs.notification) }}
-                    </div>
-                    <div id="ui" class="tab-pane active">
-                        {{ ui(form_objs.ui) }}
-                    </div>
                     <div id="navigation" class="tab-pane active">
                         {{ navigation(form_objs.navigation) }}
                     </div>
+                    <div id="notification" class="tab-pane active">
+                        {{ notification(form_objs.notification) }}
+                    </div>
                     <div id="options" class="tab-pane active">
                         {{ options(form_objs.options) }}
+                    </div>
+                    <div id="personal" class="tab-pane active">
+                        {{ personal(form_objs.personal) }}
                     </div>
                     <div id="subscriptions" class="tab-pane active">
                         {{ subscriptions(form_objs.subscriptions) }}
