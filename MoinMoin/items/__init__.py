@@ -429,7 +429,7 @@ class Item(object):
     def prepare_meta_for_modify(self, meta):
         """
         transform the meta dict of the current revision into a meta dict
-        that can be used for savind next revision (after "modify").
+        that can be used for saving next revision (after "modify").
         """
         meta = dict(meta)
         revid = meta.pop(REVID, None)
@@ -534,7 +534,11 @@ class Item(object):
                       suitable as arguments of the same names to pass to
                       item.modify
             """
-            meta = self['meta_form'].value.copy()
+            # Since the metadata form for tickets is an incomplete one, we load the
+            # original meta and update it with those from the metadata editor
+            # e.g. we get PARENTID in here
+            meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
+            meta.update(self['meta_form'].value)
             meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value

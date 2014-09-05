@@ -961,11 +961,19 @@ def mychanges():
 
     :returns: a page with all the items the current user has contributed to
     """
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
     my_changes = _mychanges(flaskg.user.itemid)
-    return render_template('link_list_no_item_panel.html',
+    my_changes_page = util.getPageContent(my_changes, offset, results_per_page)
+    return render_template('mychanges.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
-                           fq_names=my_changes
+                           my_changes=my_changes,
+                           my_changes_page=my_changes_page,
     )
 
 
@@ -979,9 +987,14 @@ def _mychanges(userid):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS, limit=None)
-    fq_names = {fq_name for rev in revs for fq_name in rev.fqnames}
-    return fq_names
+    revs = flaskg.storage.search(q, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    # get rid of the content value to save potentially big amounts of memory:
+    history = []
+    for rev in revs:
+        entry = dict(rev.meta)
+        entry[FQNAME] = rev.fqname
+        history.append(entry)
+    return history
 
 
 @frontend.route('/+refs/<itemname:item_name>')

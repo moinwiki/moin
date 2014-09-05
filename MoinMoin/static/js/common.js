@@ -97,7 +97,7 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
     "use strict";
     var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, classes,
         rightArrow = '\u2192',
-        mediaTags = ['OBJECT', 'IMG', 'AUDIO', 'VIDEO' ]
+        mediaTags = ['OBJECT', 'IMG', 'AUDIO', 'VIDEO' ];
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
     transclusions.each(function (index) {

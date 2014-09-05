@@ -132,6 +132,8 @@ To specify the field to search in, just use the `fieldname:searchterm` syntax.
 +-----------------------+-------------------------------------------------------+
 | ``mtime``             | document modification (submission) time, 201112312359 |
 +-----------------------+-------------------------------------------------------+
+| ``username``          | submitter user name, e.g. JoeDoe                      |
++-----------------------+-------------------------------------------------------+
 | ``address``           | submitter IP address, e.g. 127.0.0.1                  |
 +-----------------------+-------------------------------------------------------+
 | ``hostname``          | submitter DNS name, e.g. foo.example.org              |

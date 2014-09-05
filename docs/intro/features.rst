@@ -17,6 +17,7 @@ Servers
 * Any server that talks WSGI to moin:
 
   - Apache2 with mod_wsgi
+  - nginx with uwsgi
   - IIS with isapi-wsgi (not recommended - if you must use Windows, but have
     a choice concerning the web server, please use Apache2).
   - Other WSGI servers, see http://wsgi.org/
