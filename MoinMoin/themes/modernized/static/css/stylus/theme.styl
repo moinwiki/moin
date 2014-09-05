@@ -1,6 +1,4 @@
 //moin2 modernized theme css
-// stylus bug - https://github.com/LearnBoost/stylus/issues/790
-// do NOT end comment lines with colon until the bug is fixed
 
 // includes comments with notice regarding automatically generated css and licensing
 @import "notice.css"
@@ -37,12 +35,6 @@ p
     margin 1em 0
     font-size 1em
     line-height 1.3em
-
-sub
-    vertical-align sub
-
-sup
-    vertical-align super
 
 ins
     background-color inherit // needed for "/* __My Comment__ */"
@@ -302,18 +294,6 @@ table.navigation
     background page_color
     float right
     margin 2px
-
-.moin-footnote a,
-.moin-footnotes sup a
-    font-size .87em
-
-.moin-footnotes
-    border-top border_style
-    margin 0 1em
-
-.moin-footnotes p
-    margin 0 0 .33em 1em
-    font-size .92em
 
 #moin-rev-navigation
     list-style none
@@ -1576,9 +1556,6 @@ body
 
     tt, pre
         font-size 16pt
-
-    sup, sub
-        font-size 12pt
 
     table.navigation
         float right
