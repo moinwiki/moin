@@ -122,7 +122,7 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
             if ($.inArray(elem.tagName, mediaTags) > -1) {
                 // do not copy classes starting with moin-
                 classes = $(elem).attr('class');
-                classes = classes.split(" ").filter(function(c) {
+                classes = classes.split(" ").filter(function (c) {
                     return c.lastIndexOf('moin-', 0) !== 0;
                 });
                 $(wrapper).addClass(classes.join(' '));
@@ -635,7 +635,7 @@ $(document).ready(function () {
 
     moin.selected_link();
     moin.initTransclusionOverlays();
-    if(document.getElementById('moin-navibar')!=null) {
+    if (document.getElementById('moin-navibar') !== null) {
         moin.QuicklinksExpander();
     }
 
@@ -671,11 +671,11 @@ $(document).ready(function () {
         $('#moin-modify').addClass('moin-changed-input');
     });
 
-    $('#moin-save-text-button').on('click', function() {
+    $('#moin-save-text-button').on('click', function () {
         $('#moin-modify').removeClass('moin-changed-input');
     });
 
-    $(window).on('beforeunload', function() {
+    $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
             return "Data you may have entered will be discarded!";
         }
