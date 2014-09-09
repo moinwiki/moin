@@ -8,23 +8,23 @@
     {% if history %}
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
-                <a href="{{ url_for('frontend.history', item_name=item_name, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+                <a href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
             {% endif %}
             {% if next_offset %}
-                <a href="{{ url_for('frontend.history', item_name=item_name, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+                <a href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
             {% endif %}
         </div>
         <h1>{{ title }}</h1>
         <div class="moin-clr"></div>
-        <form action="{{ url_for('frontend.diff', item_name=item_name) }}" method="GET">
+        <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
             <div id="moin-page-history">
                 <table class="zebra">
                     <thead>
                         <tr>
-                            {% if fqname.field == 'name_exact' %}
-                                <th>{{ _("Item ID") }}</th>
-                            {% else %}
+                            {% if fqname.field == NAME_EXACT %}
                                 <th>{{ _("Name") }}</th>
+                            {% else %}
+                                <th>{{ _("ID or Name") }}</th>
                             {% endif %}
 
                             <th>{{ _("Rev.") }}</th>
@@ -40,18 +40,27 @@
                     <tbody>
                         {% for doc in history %}
                             <tr>
-                                {% if fqname.field == 'name_exact' %}
-                                    <td class="moin-wordbreak">
-                                        <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.itemid|shorten_id }}</a>
-                                    </td>
-                                {% else %}
+                                {% if fqname.field == NAME_EXACT %}
                                     <td class="moin-wordbreak">
                                         {% for name in doc.name %}
                                             {% if not loop.first %}|{% endif %}
                                             <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
                                         {% endfor %}
                                     </td>
+                                {% else %}
+                                    <td class="moin-wordbreak">
+                                        {% if doc.name %}
+                                            {# If this is deleted item, earlier versions may have names. #}
+                                            {% for name in doc.name %}
+                                                {% if not loop.first %}|{% endif %}
+                                                <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
+                                            {% endfor %}
+                                        {% else %}
+                                            <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.itemid|shorten_id }}</a>
+                                        {% endif %}
+                                    </td>
                                 {% endif %}
+
                                 <td>{{ doc.revid|shorten_id }}</td>
                                 <td>{{ doc.mtime|datetimeformat }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
