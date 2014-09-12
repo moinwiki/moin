@@ -40,5 +40,5 @@
 
 {# Additional JavaScript #}
 {% macro add_scripts() -%}
-    <script src="{{ url_for('frontend.template', filename='basic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
 {% endmacro %}
