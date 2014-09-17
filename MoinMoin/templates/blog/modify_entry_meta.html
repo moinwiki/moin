@@ -1,15 +1,19 @@
 {% import "forms.html" as forms %}
 
-{% macro meta_editor(form) %}
+{% macro meta_editor(form, may_admin) %}
     <h2>Blog entry metadata</h2>
     <dl>
         {# TODO: Make blog_entry nameless #}
+        {% if may_admin %}
+            {{ forms.render(form['acl']) }}
+        {% else %}
+            {{ forms.raw_input(form['acl'], type='hidden') }}
+        {% endif %}
         {% for e in [
             'summary',
             'itemtype',
             'contenttype',
             'tags',
-            'acl',
             'name',
             'ptime',
             ] %}

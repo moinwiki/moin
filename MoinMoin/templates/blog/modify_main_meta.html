@@ -1,8 +1,13 @@
 {% import "forms.html" as forms %}
 
-{% macro meta_editor(form) %}
+{% macro meta_editor(form, may_admin) %}
     <h2>Blog metadata</h2>
     <dl>
+        {% if may_admin %}
+            {{ forms.render(form['acl']) }}
+        {% else %}
+            {{ forms.raw_input(form['acl'], type='hidden') }}
+        {% endif %}
         {% for e in [
             'name',
             'itemtype',
@@ -10,7 +15,6 @@
             'summary',
             'tags',
             'supertags',
-            'acl',
             ] %}
             {{ forms.render(form[e]) }}
         {% endfor %}

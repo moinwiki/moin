@@ -23,7 +23,7 @@ UNPROTECTED_CONTENT = 'unprotected content'
 PROTECTED_CONTENT = 'protected content'
 
 acl_mapping = [
-    ('', dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)),
+    ('', dict(before=u'', default=u'joe:read,write,create,admin All:read,write,create', after=u'', hierarchic=False)),
 ]
 
 
