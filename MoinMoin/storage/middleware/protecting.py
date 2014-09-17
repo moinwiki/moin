@@ -21,8 +21,8 @@ logging = log.getLogger(__name__)
 
 from whoosh.util.cache import lru_cache
 
-from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, DESTROY, ACL_RIGHTS_CONTENTS)
-from MoinMoin.constants.keys import ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
+from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
+from MoinMoin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
 
 from MoinMoin.security import AccessControlList
 
@@ -309,6 +309,8 @@ class ProtectedItem(object):
             self.require(CREATE)
         if overwrite:
             self.require(DESTROY)
+        if meta.get(ACL) != self.acl:
+            self.require(ADMIN)
         rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, fqname=fqname, **kw)
         self.protector._clear_acl_cache()
         if return_rev:

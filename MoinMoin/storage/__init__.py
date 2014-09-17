@@ -80,7 +80,7 @@ def create_simple_mapping(uri='stores:fs:instance',
     """
     # if no acls are given, use something mostly harmless:
     if not default_acl:
-        default_acl = dict(before=u'', default=u'All:read,write,create', after=u'', hierarchic=False)
+        default_acl = dict(before=u'', default=u'All:read,write,create,admin', after=u'', hierarchic=False)
     if not userprofiles_acl:
         userprofiles_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
     namespaces = {

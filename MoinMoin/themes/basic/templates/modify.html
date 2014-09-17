@@ -60,10 +60,11 @@
                         </div>
                     </div>
                 </div>
+
+                {% set field = form['meta_form']['acl'] %}
                 {% if user.may.admin(fqname) %}
                     <div class="tab-pane active" id="acl">
                         <div class="row">
-                            {% set field = form['meta_form']['acl'] %}
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     {{ gen.label(field) }}
@@ -72,6 +73,8 @@
                             </div>
                         </div>
                     </div>
+                {% else %}
+                    {{ gen.input(field, type='hidden', class='form-control') }}
                 {% endif %}
                 <div class="tab-pane active" id="help">
                     {% if form['content_form'].help %}
