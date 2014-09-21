@@ -1337,7 +1337,7 @@ A sample configuration looks like e.g::
                           after=u'',
                           hierarchic=False, ),
         }
-        namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls
+        namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
 
         # define mapping of namespaces to item_roots (home pages within namespaces).
         root_mapping = {u'foo': u'fooHome'}
@@ -1459,3 +1459,5 @@ needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
+
+
