@@ -49,4 +49,3 @@ To load the backup file into your empty wiki, run::
 Then build an index of the loaded data::
 
  moin index-build
-

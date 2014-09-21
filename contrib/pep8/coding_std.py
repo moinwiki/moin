@@ -22,7 +22,7 @@ import os
 
 
 # file types to be processed
-SELECTED_SUFFIXES = set("py bat cmd html css js styl".split())
+SELECTED_SUFFIXES = set("py bat cmd html css js styl rst".split())
 
 # stuff considered DOS/WIN
 WIN_SUFFIXES = set("bat cmd".split())
@@ -50,7 +50,7 @@ def directories_to_ignore(starting_dir):
     """Return a list of directories that will not be processed."""
     # list format: [(fully qualified directory name, sub-directory name), ... ]
     ignore_dirs = []
-    level2_dirs = ".hg contrib dlc docs env moin.egg-info wiki".split()
+    level2_dirs = ".hg contrib dlc env moin.egg-info wiki".split()
     for dir in level2_dirs:
         ignore_dirs.append((starting_dir, dir))
     ignore_dirs.append((starting_dir + os.sep + "MoinMoin", "translations"))

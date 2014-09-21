@@ -7,7 +7,7 @@ If your language already exists
 
 To find out if someone has already started a translation of moin2 into your
 language; check the folder MoinMoin/translations in the source tree.
-If there is a folder with your language code (locale) [#]_, you can 
+If there is a folder with your language code (locale) [#]_, you can
 start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
 
@@ -19,38 +19,38 @@ language doesn't exist yet`_.
 2. Go to the top directory and execute::
 
        python setup.py update_catalog -l <locale>
-   
+
    where locale is the short language descriptor of your desired
    language. It should be the name of a folder in MoinMoin/translations.
    For German it is "de".
 
 3. Open the file ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``
    and do your translation. A short explanation of this process follows:
-   
+
    * Find an entry with an empty or bad translated text, the text after
      msgstr, and apply your changes.
-   
+
    * **never** edit the 'msgid' string, and only edit the 'msgstr' field
-   
+
    * Variables like ``%(name)x``, where x is any character, must be kept as
      they are. They must occur in the translated text.
-   
+
    * For better readability you can divide a text-string over more than
      one line, by "surrounding" each line with double quotes (").
      It is a usual convention to have a maximal line-length of 80
      characters.
-   
+
    * Comments starting with "#.", "*#:*" or "*#|*" are
      auto-generated and should not be modified.
-   
+
    * Comments starting with "# " (# and at least one whitespace) are
-     translator-comments. You can modify/add them. They have to be 
+     translator-comments. You can modify/add them. They have to be
      placed right before the auto-generated comments.
-   
+
    * Comments starting with "*#,*" and separated with "," are flags.
      They can be auto-generated, but they can also be set by the
      translator.
-     
+
      An important flag is "fuzzy". It shows that the msgstr string might
      not be a correct translation. Only the translator can
      judge if the translation requires further modification, or is
@@ -67,7 +67,7 @@ Guidelines for translators
 In languages where a separate polite form of address exists, like the
 German "Sie"/"Du", always use the polite form.
 
-   
+
 If your language doesn't exist yet
 ----------------------------------
 
@@ -84,7 +84,7 @@ the developers, but ...
 1. Initialize a new catalog::
 
        python setup.py init_catalog -l <locale>
-   
+
 2. Adjust the ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``.
 
    Follow the instructions in `First steps with a new *.po file`_ and
@@ -105,7 +105,7 @@ A newly created translation needs a few initial preparations:
 
 * replace "``PROJECT VERSION``" in the head msgstr with
   "``MoinMoin 2.0``" or newer if neccessary
-  
+
 * change the value of "``Last-Translator``" to your data
 
 * change the value of "``Language-Team``" to
@@ -151,4 +151,3 @@ for this.
 
 .. [#] For more information on locale strings, see
    http://www.gnu.org/software/hello/manual/gettext/Locale-Names.html.
-

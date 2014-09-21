@@ -50,7 +50,7 @@ Authorization
     + admin
 
   - to:
-   
+
     + specific users
     + specific groups of users
     + all logged-in users
@@ -160,4 +160,3 @@ Technologies
 * flask, flask-cache, flask-babel, flask-themes, flask-script
 * whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree
 * sqlalchemy (supports all popular SQL DBMS), sqlite, kyoto tycoon/cabinet
-

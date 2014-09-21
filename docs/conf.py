@@ -244,7 +244,7 @@ todo_include_todos = True
 # Inheritance diagrams, use it like:
 # .. inheritance-diagram::
 #    MoinMoin.items.MoinWiki
-    
+
 inheritance_graph_attrs = dict(rankdir="LR", size='"12.0, 16.0"',
                                fontsize=20, ratio='compress')
 
@@ -252,4 +252,3 @@ inheritance_node_attrs = dict(shape='box', fontsize=20, height=0.75,
                               color='yellow', style='filled')
 
 autosummary_generate = True
-

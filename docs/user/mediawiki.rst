@@ -158,39 +158,39 @@ Syntax
 The syntax for inserting an image is as follows: ::
 
  [[File:<filename>|<options>|<caption>]]
- 
+
 The *options* field can be empty or can contain one or more of
 the following options separated by pipes (``|``).
 
 Format option:
-	Controls how the image is formatted in the item.
-	
-	one of ``border`` and/or ``frameless``, ``frame`` or ``thumb``
+    Controls how the image is formatted in the item.
+
+    one of ``border`` and/or ``frameless``, ``frame`` or ``thumb``
 Resizing option:
-	Controls the display size of the picture.
-	The aspect ratio cannot be changed.
-	
-	one of ``<width>px``, ``x<height>px``, ``<width>x<height>px`` or ``upright``
+    Controls the display size of the picture.
+    The aspect ratio cannot be changed.
+
+    one of ``<width>px``, ``x<height>px``, ``<width>x<height>px`` or ``upright``
 Horizontal alignment option:
-	Controls the horizontal alignment of an image.
-	
-	one of ``left``, ``right``, ``center`` or ``none``
+    Controls the horizontal alignment of an image.
+
+    one of ``left``, ``right``, ``center`` or ``none``
 Vertical alignment option:
-	Controls the vertical alignment of a non-floating inline image.
-	
-	one of ``baseline``, ``sub``, ``super``, ``top``, ``text-top``, ``middle`` (default), ``bottom`` or ``text-bottom``
+    Controls the vertical alignment of a non-floating inline image.
+
+    one of ``baseline``, ``sub``, ``super``, ``top``, ``text-top``, ``middle`` (default), ``bottom`` or ``text-bottom``
 Link option:
-	The option ``link=<target>`` allows to change the
-	target of the link represented by the picture.
-	The image will not be clickable if ``<target>`` is left empty.
-	
-	Please note that the link option cannot be used with one of the options ``thumb`` or ``frame``.
+    The option ``link=<target>`` allows to change the
+    target of the link represented by the picture.
+    The image will not be clickable if ``<target>`` is left empty.
+
+    Please note that the link option cannot be used with one of the options ``thumb`` or ``frame``.
 Other options:
-	The ``alt=<alternative text>`` option sets the alternative
-	text (HTML attribute ``alt=``) of the image.
-	
-	The option ``page=<number>`` sets the number of the page
-	of a .pdf or .djvu file	to be rendered.
+    The ``alt=<alternative text>`` option sets the alternative
+    text (HTML attribute ``alt=``) of the image.
+
+    The option ``page=<number>`` sets the number of the page
+    of a .pdf or .djvu file    to be rendered.
 
 Examples
 --------
@@ -222,7 +222,7 @@ Paragraphs
 **Markup**: ::
 
  You can leave an empty line to start a new paragraph.
- 
+
  Single breaks are ignored.
  To force a line break, use the <br /> HTML tag.
 
@@ -285,7 +285,7 @@ Comments
 
  <!-- This is a comment -->
  Comments are only visible in the modify window.
- 
+
 **Result**:
 
 Comments are only visible in the modify window.
@@ -351,9 +351,9 @@ The count of number signs at the beginning of a line determines the level.
 
  #. First item (second level)
  #. Second item (second level)
- 
+
   #. First item (third level)
-  
+
 3. Third item
 
 Unordered lists
@@ -373,9 +373,9 @@ Unordered lists
 - List item
 
  - List item (second level)
- 
+
   - List item (third level)
-  
+
 - List item
 
 Definition lists
@@ -396,7 +396,7 @@ term
 
 object
   description 1
-  
+
   description 2
 
 Mixed lists
@@ -423,14 +423,14 @@ It is possible to combine different types of lists.
 
  - point one
  - point two
- 
+
 3. third item
 
  term
   definition
-  
+
   continuation of the definition
-  
+
 4. fourth item
 
 Indentations

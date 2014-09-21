@@ -13,7 +13,7 @@ its configuration files:
   - it is written in Python
 
 * Framework Configuration
-  
+
   - this is also located in the same file as the Wiki Engine Configuration
   - there are some UPPERCASE settings at the bottom; this is the framework's
     config (for Flask and Flask extensions)
@@ -46,9 +46,9 @@ config.
 
 Why use Python for configuration?
 ---------------------------------
-At first, you might wonder why we use Python code for configuration. One of the 
+At first, you might wonder why we use Python code for configuration. One of the
 reasons is that it is a powerful language. MoinMoin itself is developed in Python
-and using something else would usually mean much more work when developing new 
+and using something else would usually mean much more work when developing new
 functionality.
 
 
@@ -217,7 +217,7 @@ You can add scripts like this::
 
 Adding CSS
 ~~~~~~~~~~
-To apply some style changes, add some custom css and overwrite any style you 
+To apply some style changes, add some custom css and overwrite any style you
 don't like in the base theme::
 
     {# Additional Stylesheets (after theme css, before user css #}
@@ -239,7 +239,7 @@ A good way to test a stylesheet is to first use it as user CSS before
 configuring it for the public.
 
 Please note that `stylesheets` will be included no matter what theme the
-user has selected, so either only apply changes to all available themes or 
+user has selected, so either only apply changes to all available themes or
 force all users to use the same theme, so that your CSS displays correctly.
 
 Displaying user avatars
@@ -259,13 +259,13 @@ Please note that using the gravatar service has some privacy issues:
 
 XStatic Packages
 ----------------
-`XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard 
-to package external static files as a Python package, often third party. 
-That way they are easily usable on all operating systems, whether it has a package management 
+`XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard
+to package external static files as a Python package, often third party.
+That way they are easily usable on all operating systems, whether it has a package management
 system or not.
 
 In many cases, those external static files are maintained by someone else (like jQuery
-javascript library or larger js libraries) and we definitely do not want to merge 
+javascript library or larger js libraries) and we definitely do not want to merge
 them into our project.
 
 For MoinMoin we require the following XStatic Packages in setup.py:
@@ -280,7 +280,7 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   JSON encoders/decoders in JavaScript.
 
 * `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
-  used in template file modify_text_html. A WYSIWYG editor similar to word processing 
+  used in template file modify_text_html. A WYSIWYG editor similar to word processing
   desktop editing applications.
 
 * `svgweb <http://pypi.python.org/pypi/XStatic-svgweb>`_
@@ -292,9 +292,9 @@ For MoinMoin we require the following XStatic Packages in setup.py:
 
 * `twikidraw_moin <http://pypi.python.org/pypi/XStatic-TWikiDraw-moin>`_
   a Java applet loaded from template file of modify_twikidraw. It is a simple drawing editor.
-  
+
 * `anywikidraw <http://pypi.python.org/pypi/XStatic-AnyWikiDraw>`_
-  a Java applet loaded from template file of modify_anywikidraw. It can be used for 
+  a Java applet loaded from template file of modify_anywikidraw. It can be used for
   editing drawings and diagrams on items.
 
 
@@ -317,8 +317,8 @@ In a template file you access the files of such a package by its module name::
 Adding XStatic Packages
 -----------------------
 
-The following example shows how you can enable the additional package 
-`XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is 
+The following example shows how you can enable the additional package
+`XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
 used for mathml or latex formulas in items content.
 
 Just *pip install xstatic-mathjax* add the name 'mathjax' to mod_names in wikiconfig
@@ -336,10 +336,10 @@ and add the required fragment in base.html::
 
 Custom Themes
 -------------
-In case you want to do major changes to how MoinMoin displays its pages, you 
+In case you want to do major changes to how MoinMoin displays its pages, you
 could also write your own theme.
 
-Caution: developing your own theme means you also have to maintain and update it, 
+Caution: developing your own theme means you also have to maintain and update it,
 which normally requires a long-term effort.
 
 .. todo::
@@ -618,7 +618,7 @@ As you might know, many users are bad at choosing reasonable passwords and some
 are tempted to use easily crackable passwords.
 
 To help users choose reasonable passwords, moin has a simple builtin
-password checker that is enabled by default and does some sanity checks, 
+password checker that is enabled by default and does some sanity checks,
 so users don't choose easily crackable passwords.
 
 It **does** check:
@@ -702,7 +702,7 @@ So keep in mind:
   account and to log in before being able to do changes, you will rarely get
   contributions from casual users and maybe also less from members of your
   community. But, getting spam is then less likely.
- 
+
 
 ACL for functions
 -----------------
@@ -912,7 +912,7 @@ Tips for configuration:
 * do not ask "computable" questions, like "1+1" or "2*3"
 * do not ask overly obvious questions
 * do not share your questions with other sites / copy questions from other
-  sites (or spammers might try to adapt to this) 
+  sites (or spammers might try to adapt to this)
 * you should at least give textchas for 'en' or for your language_default, if
   that is not 'en', as this will be used as fallback if MoinMoin does not find
   a textcha in the user's language
@@ -1073,7 +1073,7 @@ Call it as follows::
                               hierarchiv=False, ),
     )
 
-The `uri` depends on the kind of storage backend and stores you want to use, 
+The `uri` depends on the kind of storage backend and stores you want to use,
 see below. Usually it is a URL-like string in the form of::
 
     stores:fs:/srv/mywiki/%(backend)s/%(kind)s
@@ -1162,7 +1162,7 @@ Features:
   give different table names then
 * uses slqalchemy (without the ORM) for database abstraction
 * supports multiple types of databases, for example:
- 
+
   - sqlite (default, comes built-into Python)
   - postgresql
   - mysql
@@ -1194,7 +1194,7 @@ Features:
   give different table names then
 * can optionally compress/decompress the data using zlib: default compression
   level is 0, which means "do not compress"
- 
+
 `uri` for `create_simple_mapping` looks like e.g.::
 
     stores:sqlite:/srv/mywiki/data/mywiki_%(nsname)s_%(kind)s.db
@@ -1423,7 +1423,7 @@ their docs for details)::
  #PERMANENT_SESSION_LIFETIME = timedelta(days=31)
  #USE_X_SENDFILE = False
  #LOGGER_NAME = 'MoinMoin'
- 
+
  # for Flask-Cache:
  #CACHE_TYPE = 'filesystem'
  #CACHE_DIR = '/path/to/flask-cache-dir'
@@ -1459,5 +1459,3 @@ needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
-
-

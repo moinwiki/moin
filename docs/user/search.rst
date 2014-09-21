@@ -10,7 +10,7 @@ the theme. By submiting a query it will search in item names and
 content, but only in the current contents, not in non-current revisions, and display
 the search results to you.
 
-On the search results view you will get a bigger search query input field, 
+On the search results view you will get a bigger search query input field,
 for example for refining your query, and you may also choose to additionally search
 in non-current item revisions. Selecting that will search in all revisions.
 
@@ -184,4 +184,3 @@ More information
 ================
 
 See the `Whoosh query language docs <http://packages.python.org/Whoosh/querylang.html>`_.
-
