@@ -7,7 +7,7 @@ URL layout
 ``http://server/[NAMESPACE/][[@FIELD/]VALUE][/+VIEW]``
 
 Above defines the URL layout, where uppercase letters are variable parts defined below and [] denotes optional.
-It basically means search for the item field ``FIELD`` value ``VALUE`` in the namespace ``NAMESPACE`` and apply the 
+It basically means search for the item field ``FIELD`` value ``VALUE`` in the namespace ``NAMESPACE`` and apply the
 view ``VIEW`` on it.
 
 NAMESPACE

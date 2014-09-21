@@ -2,8 +2,8 @@
 User Accounts
 =============
 
-Accounts provide an easy way for wiki users to identify themselves to MoinMoin and other wiki users, 
-store personal preferences and track wiki contributions. Account creation is simple and 
+Accounts provide an easy way for wiki users to identify themselves to MoinMoin and other wiki users,
+store personal preferences and track wiki contributions. Account creation is simple and
 straightforward, and provides many benefits over browsing and editing anonymously.
 
 Account Creation
@@ -67,7 +67,7 @@ OpenID
 
 Timezone
  Setting this value will allow you to see edit times as they would appear in your time zone. For
- example, an edit time of 10AM UTC would appear as 8PM AEST if you changed your time zone to 
+ example, an edit time of 10AM UTC would appear as 8PM AEST if you changed your time zone to
  GMT +10/Australian Eastern Standard Time.
 
 Locale
@@ -114,7 +114,7 @@ Editor Size
  The size (in lines) of MoinMoin's plain text editor when you edit an item.
 
 .. warning::
- **MOINTODO** "Editor Size" isn't a very good title as it doesn't specify *which* editor or in what 
+ **MOINTODO** "Editor Size" isn't a very good title as it doesn't specify *which* editor or in what
  units the size is. This setting doesn't seem to affect my MoinMoin instance, either.
 
 History results per page
@@ -171,7 +171,7 @@ To view your modifications to a wiki, click on ``User`` in the navigation area, 
  and item several times, it just inserts several identical links to that item. This behaviour should be
  checked and rectified.
 
- **MOINTODO** +mychanges isn't very pretty if you visit it without making any changes, it just says 
+ **MOINTODO** +mychanges isn't very pretty if you visit it without making any changes, it just says
  "My Changes" at the top with the rest of the page left blank.
 
 Bookmarking
@@ -182,7 +182,7 @@ Some MoinMoin users spend a lot of time sifting through the global changes list 
 To help users remember which revisions they have read and which they have yet to read,
 MoinMoin provides bookmarks. If you have read revisions up until the 13th of January, for example, you would
 simply click the :guilabel:`Set bookmark` button next to the revisions from the 13th of January to hide
-all revisions from before that date. If you wish to examine those revisions again, navigate back to the 
+all revisions from before that date. If you wish to examine those revisions again, navigate back to the
 global history page and click :guilabel:`Remove bookmark`.
 
 Quicklinks
@@ -209,7 +209,7 @@ Subscribing to Items
 --------------------
 
 Subscribing to items allows you to be notified via email when changes are made. To subscribe, navigate
-to the item in question and click the :guilabel:`Subscribe` button at the top or bottom of the page. You 
+to the item in question and click the :guilabel:`Subscribe` button at the top or bottom of the page. You
 will now receive an email each time a user modifies this item. To unsubscribe, navigate to the item
 again and click the :guilabel:`Unsubscribe` button at the top or bottom of the page.
 

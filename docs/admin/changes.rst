@@ -10,4 +10,3 @@ Changes in MoinMoin
 .. todo::
 
    rewrite CHANGES in rst syntax
-

@@ -7,9 +7,9 @@ Features currently not working with moin's ReST parser are marked with **RSTTODO
 Headings
 ========
 
-Rather than imposing a fixed number and order of section title adornment styles, 
+Rather than imposing a fixed number and order of section title adornment styles,
 the order enforced will be the order as encountered.
-The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle, 
+The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle,
 the third will be a subsubtitle, and so on.
 
 The underline below the title must at least be equal to the length of the title itself.  Failure to comply results in messages on the server log. Skipping a heading (e.g. putting an H5 heading directly under an H3) results in a rendering error and an error message will be displayed instead of the expected page.
@@ -105,7 +105,7 @@ External Links
 | ``.. _Python: http://www.python.org/``                          | .. _Python: http://www.python.org/                           |
 +-----------------------------------------------------------------+--------------------------------------------------------------+
 
-**Note** A blank is required before the link definition to make the last syntax work correctly. 
+**Note** A blank is required before the link definition to make the last syntax work correctly.
 
 Internal Links
 --------------
@@ -113,7 +113,7 @@ Internal Links
 **Markup**: ::
 
  Internal crossreferences, like example_.
- 
+
  .. _example:
 
  This is an example crossreference target.
@@ -121,11 +121,11 @@ Internal Links
 **Result**:
 
  Internal crossreferences, like example_.
- 
+
  .. _example:
 
  This is an example crossreference target.
- 
+
 **Notes**
  - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
  - **RSTTODO** The above syntax does not work in moin right now.
@@ -145,7 +145,7 @@ Images
 **Result**:
 
  .. image:: png
- 
+
 Blockquotes and Indentations
 ============================
 
@@ -178,7 +178,7 @@ Every additional space before the first word in a line will add an indent before
     -- Sherlock Holmes
 
 **Notes**
- - A block quote may end with an attribution: a text block beginning with "--", "---", 
+ - A block quote may end with an attribution: a text block beginning with "--", "---",
    or a true em-dash, flush left within the block quote.
  - **RSTTODO** the attribution does not work in moin2.
  - **RSTTODO** indented text should not be displayed the same as term-definition, needs CSS fix
@@ -222,27 +222,27 @@ Ordered Lists
 **Markup**: ::
 
  1. item 1
- 
+
     (A) item 1.1
     (#) item 1.2
 
         i) item 1.2.1
         #) item 1.2.2
-   
+
  #. item 2
 
 **Result**:
 
  1. item 1
- 
+
     (A) item 1.1
     (#) item 1.2
 
         i) item 1.2.1
         #) item 1.2.2
-   
+
  #. item 2
-   
+
 **Notes**:
  - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
    auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
@@ -301,7 +301,7 @@ Field lists are part of an extension syntax for directives usually intended for 
 Option lists
 ============
 
-Option lists are intended to document Unix or DOS command line options. 
+Option lists are intended to document Unix or DOS command line options.
 
 **Markup**: ::
 
@@ -344,7 +344,7 @@ Sometimes there is a need to use special characters as literal characters, but R
 
 333\. is a float, 333 is an integer.
 
-  
+
 Tables
 ======
 
@@ -356,42 +356,42 @@ Easy markup for tables consisting of two rows. This syntax can have no more than
 **Markup**: ::
 
  ======= ======= =======
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 **Result**:
 
  ======= ======= =======
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 
 **Markup**: ::
 
  ======= ======= =======
        foo         Bar
  --------------- -------
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 **Result**:
 
  ======= ======= =======
        foo         Bar
  --------------- -------
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 **Note** **RSTTODO** the foo-bar syntax to group header does not work.
- 
+
 Grid Tables
 -----------
 
@@ -406,7 +406,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  +----------------+---------------+
  | C                              |
  +--------------------------------+
- 
+
 **Result**:
 
  +----------------+---------------+
@@ -416,7 +416,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  +----------------+---------------+
  | C                              |
  +--------------------------------+
- 
+
 **Note** **RSTTODO** C does not extend fully up to the end of D.
 
 Admonitions
@@ -427,16 +427,16 @@ Admonitions are used as a caution/notification block.
 **Markup**: ::
 
  .. caution:: Caution!
- .. danger:: Danger! 
+ .. danger:: Danger!
  .. error:: Error!
 
  .. note:: This is a paragraph
  .. admonition:: By the way
- 
+
 **Result**:
 
  .. caution:: Caution!
- .. danger:: Danger! 
+ .. danger:: Danger!
  .. error:: Error!
 
  .. note:: This is a paragraph
@@ -451,7 +451,7 @@ Comments
 Comments are not shown on the page but depending on the output formatter they might be included as HTML comments (``<!-- -->``).
 
 **Markup**: ::
- 
+
  .. This is a comment
  ..
   _so: is this!
@@ -461,9 +461,9 @@ Comments are not shown on the page but depending on the output formatter they mi
   this:: too!
  ..
   |even| this:: !
- 
+
 **Result**:
- 
+
  .. This is a comment
  ..
   _so: is this!
@@ -473,13 +473,13 @@ Comments are not shown on the page but depending on the output formatter they mi
   this:: too!
  ..
   |even| this:: !
-  
+
 **Note** **RSTTODO** comment markup does not work in moin2.
- 
+
 Literals Blocks
 ===============
 
-Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block. 
+Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**: ::
@@ -487,22 +487,21 @@ A minimum (1) indentation is required for the text block to be recognized as a l
  Paragraph with a space between preceding two colons ::
 
   Literal block
- 
+
 **Result**:
 
  Paragraph with a space between preceding two colons ::
 
   Literal block
-  
+
 **Markup**: ::
 
  Paragraph with no space between text and two colons::
 
   Literal block
- 
+
 **Result**:
 
  Paragraph with no space between text and two colons::
 
   Literal block
-

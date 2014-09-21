@@ -131,4 +131,3 @@ The subject may contain a placeholder for the sitename, which is useful for
 wiki farms (showing the builtin default here)::
 
     '[%(sitename)s] Your wiki account data'
-

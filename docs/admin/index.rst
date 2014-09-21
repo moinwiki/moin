@@ -55,7 +55,7 @@ Creates an empty but valid index.
 
 **Note:** the moin WSGI application needs an index to successfully start up.
 As the moin index-* script commands are also based on the moin WSGI application,
-this can lead to a chicken and egg problem. To solve this, the moin command has 
+this can lead to a chicken and egg problem. To solve this, the moin command has
 a ``-i`` (``--index-create``) option that will trigger index creation on startup.
 
 Additionally, if the storage is also non-existent yet, one might also need
@@ -146,8 +146,8 @@ If you run a wiki farm (multiple related wikis), you may share the index
 between the wikis, so users will be able to search in one wiki
 and also see results from the other wikis.
 
-Before you start, you must prepare your wiki configs. For example, for a company 
-that uses two farm wikis, such as ``Sales`` and ``Engineering``, Their respective 
+Before you start, you must prepare your wiki configs. For example, for a company
+that uses two farm wikis, such as ``Sales`` and ``Engineering``, Their respective
 wiki configs could look like:
 
 ``Sales``::
@@ -173,4 +173,3 @@ Now you should have a shared index for all wikis.
 
 **Note:** Do not build indexes for multiple wikis in parallel. This is not
 supported.
-

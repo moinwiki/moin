@@ -87,7 +87,7 @@ You do this with moin *1.9*, using these commands::
 
 Importing your moin 1.9 data
 ----------------------------
-Assuming you have no moin2 storage and no index created yet, include the 
+Assuming you have no moin2 storage and no index created yet, include the
 -s and -i options to create the storage and an index.
 
 The import19 argument to the `moin` script will then read your 1.9 data_dir (pages, attachments and users),
@@ -117,4 +117,3 @@ Keep your backups
 -----------------
 Make sure you keep all backups of your moin 1.9 installation, such as code, config,
 data, just in case you are not happy with moin2 and need to revert to the old version.
-

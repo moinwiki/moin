@@ -371,13 +371,13 @@ directories. To compile CSS for all themes::
 
 Internationalization in MoinMoin's JS
 -------------------------------------
-Any string which has to be translated and used in the JavaScript code, has to be defined 
+Any string which has to be translated and used in the JavaScript code, has to be defined
 at ``MoinMoin/templates/dictionary.js``. This dictionary is loaded when the page loads and
 the translation for any string can be received by passing it as a parameter to the ``_`` function,
 also defined in the same file.
 
 For example, if we add the following to ``i18n_dict`` in ``dictionary.js`` ::
-    
+
     "Delete this"  : "{{  _("Delete this") }}",
 
 The translated version of "somestring" can be accessed in the JavaScript code by ::

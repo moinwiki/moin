@@ -9,7 +9,7 @@ Software under GNU GPL v2+. For details please read the :ref:`license`.
 
 Project homepage: http://moinmo.in/
 
-Using MoinMoin, wiki users can easily create and maintain web content from 
+Using MoinMoin, wiki users can easily create and maintain web content from
 their browser.
 
 You can use it:
@@ -41,11 +41,11 @@ easy-to-use. We don't try to be everything, but we don't try to be
 minimalistic either.
 
 There are lots of wiki engines out there, making it hard to pick one.
-However, choosing wisely is important because you may have to live with 
+However, choosing wisely is important because you may have to live with
 your choice for a long time because switching wiki engines is not easy.
 
 We won't list all of moin's features, because comparing feature lists
-is just not enough. Some features are best left unimplemented, 
+is just not enough. Some features are best left unimplemented,
 even if they sound great at first. In moin, you will find most
 important features like in most major wiki engines. But still, you and your wiki
 users might feel quite a different overall experience just because of a bunch
@@ -56,7 +56,7 @@ try it and play with it, not just look at feature comparisons.
 MoinMoin has **been around since about 2000**.
 It has rapidly grown and evolved through moin 1.9.x. Its developers have
 increased their experience with Python and wiki technology over the years.
-With **moin 2.0**, there has been a rather **revolutionary cleanup / rewrite** 
+With **moin 2.0**, there has been a rather **revolutionary cleanup / rewrite**
 of how moin works based on that experience. This promises to make it easier,
 cleaner, more consistent, more powerful, more flexible and more
 modular.
@@ -96,6 +96,5 @@ MoinMoin in:
 * government and administration
 * scientific research facilities, universities, schools
 * communities
-  
-Unfortunately, we do not have permission to name them here.
 
+Unfortunately, we do not have permission to name them here.

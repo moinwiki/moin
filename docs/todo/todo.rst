@@ -12,7 +12,7 @@ General
 -------
 
 If someone adds a new type of node in the Moinmoin DOM tree:
-  
+
   TODO: add support of new types of node
 
 Allow creation of unicode URIs for wiki links. This should also provide
@@ -99,4 +99,3 @@ Include macro
   large document using Include, one wants the links to the pages that got
   included point to some anchor where the page inclusion starts. For normal
   anchor links to / within included pages, it should be #Pagename-anchorid.
-

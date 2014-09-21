@@ -56,7 +56,7 @@ application, which you can get using this code::
 MoinMoin is a Flask application, which is a micro framework for WSGI applications,
 so we recommend you read Flask's good deployment documentation.
 
-Make sure you use `create_app()` as shown above to create the application, 
+Make sure you use `create_app()` as shown above to create the application,
 because you can't import the application from MoinMoin.
 
 Continue reading here: http://flask.pocoo.org/docs/deploying/
@@ -70,4 +70,3 @@ moin, but rather with your web server and WSGI app deployment method.
 When the test app starts doing something other than Server Error 500, please
 proceed with the MoinMoin app and its configuration.
 Otherwise, read your web server error log files to troubleshoot the issue from there.
-

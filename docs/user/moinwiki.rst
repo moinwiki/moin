@@ -84,7 +84,7 @@ The following is a table of inline markup that can be used to control text forma
 +-------------------------------------+---------------------------------------+
 | ``,,Sub,,Script``                   | SubScript                             |
 +-------------------------------------+---------------------------------------+
-| ``~-Smaller-~``                     |	Smaller                               |
+| ``~-Smaller-~``                     |    Smaller                               |
 +-------------------------------------+---------------------------------------+
 | ``~+Larger+~``                      | Larger                                |
 +-------------------------------------+---------------------------------------+
@@ -176,12 +176,12 @@ Images and Transclusions
 |                                                   | doesn't make much sense.              |
 +---------------------------------------------------+---------------------------------------+
 
-**Extra Info**: 
+**Extra Info**:
 
 Markup like ``{{ example.jpg || &w=20 }}``, simply adds ``&w`` to the ``src`` URL of the image, the Python Imaging Library (PIL)
-understands that it has to compress the image on the server side and render as shrinked to size ``20``. 
+understands that it has to compress the image on the server side and render as shrinked to size ``20``.
 
-For markup like ``{{ example.jpg || width=20, height=100 }}`` we currently allow only the ``width`` and ``height`` (anything 
+For markup like ``{{ example.jpg || width=20, height=100 }}`` we currently allow only the ``width`` and ``height`` (anything
 else is ignored) to be added as attributes in the HTML, however one can, add anything to the query URL using ``&``, like ``&w`` in the example above.
 
 
@@ -242,7 +242,7 @@ Unordered Lists
   - item 4.1
 
    - item 4.1.1 (bulletless)
-   
+
 **Note**:
  - moin markup allows a square, white and a bulletless item for unordered lists, these cannot be chosen in rst
 
@@ -254,19 +254,19 @@ With Numbers
 
 **Markup**: ::
 
- 1. item 1 
-   1. item 1.1   
-   1. item 1.2   
+ 1. item 1
+   1. item 1.1
+   1. item 1.2
  1. item 2
 
 **Result**:
 
  1. item 1
- 
+
    1. item 1.1
-   
+
    2. item 1.2
-   
+
  2. item 2
 
 With Roman Numbers
@@ -274,19 +274,19 @@ With Roman Numbers
 
 **Markup**: ::
 
- I. item 1 
-   i. item 1.1   
-   i. item 1.2   
+ I. item 1
+   i. item 1.1
+   i. item 1.2
  I. item 2
 
 **Result**:
 
  I. item 1
- 
+
    i. item 1.1
-   
+
    ii. item 1.2
-   
+
  II. item 2
 
 With Letters
@@ -294,30 +294,30 @@ With Letters
 
 **Markup**: ::
 
- A. item 1 
-   a. item 1.1   
-   a. item 1.2   
+ A. item 1
+   a. item 1.1
+   a. item 1.2
  A. item 2
 
 **Result**:
 
  A. item 1
- 
+
    a. item 1.1
-   
+
    b. item 1.2
-   
+
  B. item 2
-   
+
 Definition Lists
 ================
 
 **Markup**: ::
 
- term:: definition 
- object:: 
- :: description 1 
- :: description 2 
+ term:: definition
+ object::
+ :: description 1
+ :: description 2
 
 **Result**:
 
@@ -330,7 +330,7 @@ Definition Lists
 **Notes**:
  - reStructuredText does not support multiple definitions for a single term, so a line break has been forced to illustrate the appearance of several definitions.
    Using the prescribed Moin Wiki markup will, in fact, produce two separate definitions in MoinMoin (using separate ``<dd>`` tags).
-  
+
 Tables
 ======
 
@@ -341,13 +341,13 @@ Tables
 
  ||'''A'''||'''B'''||'''C'''||
  ||1      ||2      ||3      ||
- 
+
 **Result**:
 
 ======= ======= =======
- A       B       C     
+ A       B       C
 ======= ======= =======
- 1       2       3     
+ 1       2       3
 ======= ======= =======
 
 Cell Width
@@ -356,7 +356,7 @@ Cell Width
 **Markup**: ::
 
  ||minimal width ||<99%>maximal width ||
- 
+
 **Result**:
 
 +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -371,12 +371,12 @@ Spanning Rows and Columns
 -------------------------
 
 **Markup**: ::
- 
+
  ||<|2> cell spanning 2 rows ||cell in the 2nd column ||
  ||cell in the 2nd column of the 2nd row ||
  ||<-2> cell spanning 2 columns ||
  ||||use empty cells as a shorthand ||
- 
+
 **Result**:
 
 +----------------------+---------------------------------------+
@@ -396,11 +396,11 @@ Alignment of Cell Contents
 --------------------------
 
 **Markup**: ::
- 
+
  ||<^|3> Top (Combined) ||<:> Center (Combined) ||<v|3> Bottom (Combined) ||
  ||<)> Right ||
  ||<(> Left ||
- 
+
 **Result**:
 
 +----------------+---------------------------------------+-------------------+
@@ -418,11 +418,11 @@ HTML-like Options for Tables
 ----------------------------
 
 **Markup**: ::
- 
+
  ||A ||<rowspan="2"> like <|2> ||
  ||B ||
  ||<colspan="2"> like <-2>||
- 
+
 **Result**:
 
 +----------------+---------------+
@@ -432,7 +432,7 @@ HTML-like Options for Tables
 +----------------+---------------+
 | like <-2>                      |
 +--------------------------------+
-  
+
 Macros
 ------
 
@@ -441,12 +441,12 @@ Macros
  - ``<<FootNote(Note)>>`` inserts a footnote saying Note
  - ``<<Include(HelpOnMacros/Include)>>`` inserts the contents of the page HelpOnMacros/Include inline
  - ``<<MailTo(user AT example DOT com)>>`` obfuscates the email address user@example.com to users not logged in
- 
+
 **Notes**:
  - **MOINTODO:** ``<<Anchor(anchorname)>>`` throws an error ``<<Anchor: execution failed [__init__() takes exactly 2 arguments (1 given)] (see also the log)>>`` in moin 2.
  - **MOINTODO:** ``<<Include(HelpOnMacros/Include)>>`` does not work in moin 2.
- - **MOINTODO:** ``<<MailTo(user AT example DOT com)>>`` throws an error ``<<MailTo: execution failed [__init__() takes exactly 2 arguments (1 given)] (see also the log)>>`` in moin 2.  
- 
+ - **MOINTODO:** ``<<MailTo(user AT example DOT com)>>`` throws an error ``<<MailTo: execution failed [__init__() takes exactly 2 arguments (1 given)] (see also the log)>>`` in moin 2.
+
 Smileys and Icons
 =================
 
@@ -466,8 +466,8 @@ Smileys and Icons
 | ``{X}`` | ``{i}`` | ``{1}`` | ``{2}`` |
 +---------+---------+---------+---------+
 | ``{3}`` | ``{*}`` | ``{o}`` |         |
-+---------+---------+---------+---------+ 	 
- 
++---------+---------+---------+---------+
+
 Parsers
 =======
 
@@ -475,12 +475,12 @@ Verbatim Display
 ----------------
 
 **Markup**: ::
- 
+
  {{{
  def hello():
   print "Hello World!"
  }}}
- 
+
 **Result**: ::
 
  def hello():
@@ -490,12 +490,12 @@ Syntax Highlighting
 -------------------
 
 **Markup**: ::
- 
+
  {{{#!highlight python
  def hello():
     print "Hello World!"
  }}}
- 
+
 **Result**:
 
 .. code-block:: python
@@ -517,11 +517,11 @@ CSS classes for use with wiki parsers include:
  - Comments: comment
 
 **Markup**: ::
- 
+
  {{{#!wiki red/solid
  This is wiki markup in a '''div''' with css `class="red solid"`.
  }}}
- 
+
 **Result**:
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -535,13 +535,13 @@ Admonitions
 -----------
 
 **Markup**: ::
- 
+
  {{{#!wiki caution
  '''Don't overuse admonitions'''
- 
+
  Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
  }}}
- 
+
 **Result**:
 
 .. warning::
@@ -553,13 +553,13 @@ Comments
 --------
 
 **Markup**: ::
- 
+
  {{{#!wiki comment/dotted
  This is a wiki parser section with class "comment dotted" (see HelpOnParsers).
 
  Its visibility gets toggled the same way.
  }}}
- 
+
 **Result**:
 
 +--------------------------------------------------------------------------------+

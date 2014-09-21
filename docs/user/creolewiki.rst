@@ -62,7 +62,7 @@ The following is a table of inline markup that can be used to format text in Cre
 | ``//**Bold and Italic**//``         | :bolditalic:`Bold and Italic`         |
 +-------------------------------------+---------------------------------------+
 | ``First line\\Second line``         | | First line                          |
-|                                     | | Second line                         | 
+|                                     | | Second line                         |
 +-------------------------------------+---------------------------------------+
 
 **RSTTODO**: Restructured Text line blocks are not working in Moin2
@@ -73,13 +73,13 @@ Hyperlinks
 Internal links
 --------------
 
-.. _Item name: 
-.. _ItemName/Subitem: 
-.. _/SubItem: 
-.. _../SiblingItem: 
-.. _Named Item: 
+.. _Item name:
+.. _ItemName/Subitem:
+.. _/SubItem:
+.. _../SiblingItem:
+.. _Named Item:
 .. _#AnchorName:
-.. _Named anchor: 
+.. _Named anchor:
 .. _ItemName#AnchorName:
 .. _Filename.txt: #
 
@@ -154,7 +154,7 @@ Paragraphs
 **Markup**: ::
 
  You can leave an empty line to start a new paragraph.
- 
+
  Single breaks are ignored.
  To force a line break, use <<BR>> or \\.
 
@@ -163,7 +163,7 @@ Paragraphs
 You can leave an empty line to start a new paragraph.
 
 | Single breaks are ignored. To force a line break, use
-| or 
+| or
 | .
 
 **RSTTODO**: reStructuredText line blocks are not working in Moin2
@@ -187,7 +187,7 @@ A horizontal rule can be added by typing four dashes.
 
 This text will be displayed below the rule.
 
-Preformatted text 
+Preformatted text
 =================
 
 **Markup**:  ::
@@ -195,7 +195,7 @@ Preformatted text
     {{{
     This text will [[escape]] **special** WikiCreole //markup//
         It will also preserve indents
-    
+
     And whitespace.
     }}}
     ~[[This text will not be a link, because it uses the tilde (~) escape character]]
@@ -266,9 +266,9 @@ The number of '#' signs at the beginning of a line determines the current level.
 
  #. First item (second level)
  #. Second item (second level)
- 
+
   #. First item (third level)
-  
+
 3. Third item
 
 Unordered lists
@@ -288,9 +288,9 @@ Unordered lists
 - List item
 
  - List item (second level)
- 
+
   - List item (third level)
-  
+
 - List item
 
 Mixed lists
@@ -322,7 +322,7 @@ Tables
 **Markup**: ::
 
 |= Header one |= Header two |
-| Cell one    | Cell two    
+| Cell one    | Cell two
 | Cell three  | Cell four   |
 
 **Result**:
