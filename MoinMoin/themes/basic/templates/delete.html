@@ -6,7 +6,7 @@
 {% block content %}
     <h2>{{ title }}</h2>
     <div class="row">
-        <div class="col-lg-5">
+        <div class="col-md-5">
             {{ gen.form.open(form, method="post", action=url_for('frontend.delete_item', item_name=item.name)) }}
                 {{ forms.render_errors(form) }}
 

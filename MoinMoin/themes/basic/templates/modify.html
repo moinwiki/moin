@@ -48,11 +48,11 @@
                 </div>
                 <div class="tab-pane active" id="meta">
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-md-6">
                             {{ basic_meta_editor(form['meta_form']) }}
                         </div>
                         {% set field = form['extra_meta_text'] %}
-                        <div class="col-lg-6">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 {{ gen.label(field) }}
                                 {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='form-control') }}
@@ -65,7 +65,7 @@
                 {% if user.may.admin(fqname) %}
                     <div class="tab-pane active" id="acl">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     {{ gen.label(field) }}
                                     {{ gen.textarea(field, rows='1', class='form-control') }}

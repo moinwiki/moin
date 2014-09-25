@@ -6174,6 +6174,7 @@ h6:focus .moin-permalink {
   padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
+  padding: 5px 10px;
   background-color: #c8ddf1;
   border: 1px solid #c8ddf1;
   width: 100%;
@@ -6214,7 +6215,7 @@ h6:focus .moin-permalink {
   float: right;
 }
 .list-group-item {
-  padding: 5px 15px;
+  padding: 5px 10px;
   background-color: #c8ddf1;
   border: 1px solid #c8ddf1;
 }

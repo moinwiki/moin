@@ -42,19 +42,19 @@
 {% block layout %}
     <div class="container">
         <div class="row moin-header">
-            <div class="col-lg-2 moin-logo">
+            <div class="col-md-2 moin-logo">
                 {% if logo %}
                     <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
                         <img class="img-circle" src="{{ '/static/logos/moinmoin.png' }}" alt="Site Logo"/>
                     </a>
                 {% endif %}
             </div>
-            <div class="col-lg-10">
+            <div class="col-md-10">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         <nav class="navbar moin-navbar-inverse">
                             <div class="container">
-                                <div class="col-lg-3">
+                                <div class="col-md-3">
                                     <div class="moin-navbar-header">
                                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#target">
                                           <span class="sm-only"></span>
@@ -69,7 +69,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="col-lg-6 moin-loginsettings">
+                                <div class="col-md-6 moin-loginsettings">
                                     <div class="moin-navbar-collapse navbar-collapse collapse in" id="target">
                                         <ul class="nav navbar-nav moin-pull-right">
 
@@ -108,7 +108,7 @@
                                     </div>
                                 </div>
                                 {% if search_form %}
-                                    <div class="col-lg-3">
+                                    <div class="col-md-3">
                                         <form class="moin-navbar-form" action="{{ url_for('frontend.search') }}" method="get" role="search">
                                             <div class="input-group">
                                                 <input name='q' type="text" class="form-control" placeholder="Search ...">
@@ -126,7 +126,7 @@
                     </div> <!-- column-12 -->
                 </div> <!-- row for top-navbar -->
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         <ul class="moin-breadcrumb">
                             {% set trail_items = theme_supp.path_breadcrumbs() %}
                             {% if trail_items %}
@@ -197,13 +197,13 @@
                         </ul><!-- complete list of breadcrumbs -->
                     </div>
                 </div>
-            </div> <!-- col-lg-10 -->
+            </div> <!-- col-md-10 -->
         </div> <!-- row-topnavbar -->
 
         <div class="row moin-content">
-            <div class="col-lg-2">
+            <div class="col-md-2">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         <div class="moin-sidebar">
                             {% set navibar_items = theme_supp.navibar(item_name) %}
                             {% set quicklinks = 'false' %}
@@ -239,7 +239,7 @@
                 </div><!--first row of sidebar-->
 
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         {% if self.local_panel %}
                             {{ self.local_panel() }}
                         {% endif %}
@@ -248,9 +248,9 @@
 
             </div><!--/span-->
 
-            <div class="col-lg-10">
+            <div class="col-md-10">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-12">
                         {# id -> moin-flash is used to add special alerts for ex. for changes to User Settings via JS, see common.js #}
                         <div id="moin-flash">
                             {% for category, msg in get_flashed_messages(with_categories=true) %}
@@ -268,7 +268,7 @@
                 {% endblock %}
 
                 <div class="row">
-                    {% set width = "col-lg-12" %}
+                    {% set width = "col-md-12" %}
 
                     <div class="{{width}}">
                         {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
@@ -285,7 +285,7 @@
 
         {% block footer %}
             <div class="row moin-footer">
-                <div class="col-lg-12">
+                <div class="col-md-12">
                     <div class="navbar"> <!--footer-->
                         {{ footer_logos }}
                         {{ credits }}
