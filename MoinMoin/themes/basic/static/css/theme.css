@@ -6203,7 +6203,6 @@ h6:focus .moin-permalink {
 }
 .moin-user-action-special:hover,
 .moin-user-action-special:focus,
-.moin-user-action-special:active,
 .moin-user-action-special.active {
   color: #2a6496;
   background-color: #f5f5f5;
