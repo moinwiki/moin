@@ -221,13 +221,13 @@ Helpers for using flatland with jinja2 to create html forms.
         </div>
         <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
         <div class="file_upload_buttons">
-            <button class="file_upload_start" style="display:none;">{{ _("Start All") }}</button>
-            <button class="file_upload_cancel" style="display:none;">{{ _("Cancel All") }}</button>
+            <button class="file_upload_start" type="button" style="display:none;">{{ _("Start All") }}</button>
+            <button class="file_upload_cancel" type="button" style="display:none;">{{ _("Cancel All") }}</button>
         </div>
         <table class="files">
             <tr class="file_upload_template" style="display:none;">
-                <td class="file_upload_start"><button>{{ _("Start") }}</button></td>
-                <td class="file_upload_cancel"><button>{{ _("Cancel") }}</button></td>
+                <td class="file_upload_start"><button type="button">{{ _("Start") }}</button></td>
+                <td class="file_upload_cancel"><button type="button">{{ _("Cancel") }}</button></td>
                 <td class="file_name"></td>
                 <td class="file_upload_progress"><div></div></td>
             </tr>
