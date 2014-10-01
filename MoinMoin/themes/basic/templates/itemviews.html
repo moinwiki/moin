@@ -9,7 +9,7 @@
                 <li {% if maincls %}class="{{ maincls }}"{% endif %}>
                     <a {% if linkcls %}class="{{ linkcls }}"{% endif %} href="{{ href }}" title="{{ title }}" rel="nofollow">
                         <span class="{{ iconcls }}"></span>
-                        {{ label }}
+                        <span class="hidden-sm hidden-xs">{{ label }}</span>
                     </a>
                 </li>
             {% endfor %}

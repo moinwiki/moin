@@ -5,6 +5,7 @@
 
         ./m css  # or "m css" for windows
 */
+/* start of bootstrap.less */
 /*! normalize.css v3.0.0 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif;
@@ -605,7 +606,7 @@ dt {
 dd {
   margin-left: 0;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .dl-horizontal dt {
     float: left;
     width: 160px;
@@ -3115,7 +3116,7 @@ input[type="button"].btn-block {
   bottom: 100%;
   margin-bottom: 1px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-right .dropdown-menu {
     left: auto;
     right: 0;
@@ -3642,12 +3643,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-bottom: 20px;
   border: 1px solid transparent;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar {
     border-radius: 4px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-header {
     float: left;
   }
@@ -3664,7 +3665,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-collapse.in {
   overflow-y: auto;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-collapse {
     width: auto;
     border-top: 0;
@@ -3693,7 +3694,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-right: -15px;
   margin-left: -15px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .container > .navbar-header,
   .container-fluid > .navbar-header,
   .container > .navbar-collapse,
@@ -3706,7 +3707,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   z-index: 1000;
   border-width: 0 0 1px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-static-top {
     border-radius: 0;
   }
@@ -3718,7 +3719,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   left: 0;
   z-index: 1030;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-fixed-top,
   .navbar-fixed-bottom {
     border-radius: 0;
@@ -3744,7 +3745,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-brand:focus {
   text-decoration: none;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar > .container .navbar-brand,
   .navbar > .container-fluid .navbar-brand {
     margin-left: -15px;
@@ -3774,7 +3775,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar-toggle .icon-bar + .icon-bar {
   margin-top: 4px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-toggle {
     display: none;
   }
@@ -3787,7 +3788,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding-bottom: 10px;
   line-height: 20px;
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .navbar-nav .open .dropdown-menu {
     position: static;
     float: none;
@@ -3809,7 +3810,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     background-image: none;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-nav {
     float: left;
     margin: 0;
@@ -3825,7 +3826,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     margin-right: -15px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-left {
     float: left !important;
   }
@@ -3879,12 +3880,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     top: 0;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .navbar-form .form-group {
     margin-bottom: 5px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-form {
     width: auto;
     border: 0;
@@ -3924,7 +3925,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-top: 15px;
   margin-bottom: 15px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .navbar-text {
     float: left;
     margin-left: 15px;
@@ -3989,7 +3990,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: #e7e7e7;
   color: #555555;
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: #777777;
   }
@@ -4072,7 +4073,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: #080808;
   color: #ffffff;
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {
     border-color: #080808;
   }
@@ -5785,6 +5786,8 @@ button.close {
     display: none !important;
   }
 }
+/* end of bootstrap.less */
+/* start of pygments colorful.css */
 .hll {
   background-color: #ffffcc;
 }
@@ -6060,7 +6063,9 @@ button.close {
   font-weight: bold;
 }
 /* Literal.Number.Integer.Long */
-@media screen and (min-width: 992px) {
+/* end of pygments colorful.css */
+/* start of basic theme custom css for moin2 */
+@media screen and (min-width: 480px) {
   .moin-pull-right {
     float: right !important;
   }
@@ -6174,6 +6179,7 @@ h6:focus .moin-permalink {
   padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #ffffff;
+  text-align: left;
   padding: 5px 10px;
   background-color: #c8ddf1;
   border: 1px solid #c8ddf1;
@@ -6214,6 +6220,7 @@ h6:focus .moin-permalink {
   float: right;
 }
 .list-group-item {
+  text-align: left;
   padding: 5px 10px;
   background-color: #c8ddf1;
   border: 1px solid #c8ddf1;
@@ -6318,10 +6325,18 @@ h6:focus .moin-permalink {
 .moin-nonexistent:hover {
   color: #d9534f;
 }
-.moin-sidebar {
+.moin-sidebar-panels {
   margin-bottom: 20px;
   padding-left: 0;
   overflow: hidden;
+  padding-top: 15px;
+}
+.moin-sidebar-panels a .hidden-sm,
+.moin-sidebar-panels a .hidden-xs {
+  display: inline !important;
+}
+.moin-sidebar-panels .moin-sidebar-form {
+  padding-bottom: 10px;
 }
 .moin-navbar-inverse {
   background-color: #222222;
@@ -6381,7 +6396,7 @@ h6:focus .moin-permalink {
   background-color: #080808;
   color: #ffffff;
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .moin-navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {
     border-color: #080808;
   }
@@ -6556,12 +6571,12 @@ div.moin-item-wrapper {
     top: 0;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 479px) {
   .moin-navbar-form .form-group {
     margin-bottom: 5px;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .moin-navbar-form {
     width: auto;
     border: 0;
@@ -6580,10 +6595,13 @@ div.moin-item-wrapper {
   padding-left: 0px;
   padding-right: 0px;
 }
-@media (min-width: 992px) {
+@media (min-width: 480px) {
   .moin-navbar-header {
     float: left;
   }
+}
+.moin-navbar-header > button {
+  float: left;
 }
 .moin-toggle-comments-button,
 .moin-transclusions-button {
@@ -7186,4 +7204,49 @@ html {
 }
 .moin-tongue:before {
   content: url("../img/smileys/tongue.png");
+}
+/* Support for extra small viewports */
+@media screen and (max-width: 768px) {
+  #moin-main-wrapper {
+    position: relative;
+  }
+  /* Set sidebar width and shift off canvas */
+  .moin-sidebar {
+    position: absolute;
+    top: 0;
+    width: 33%;
+  }
+  .moin-sidebar {
+    left: -33%;
+  }
+  /* When user toggles button (see basic.js) show/hide sidebar */
+  #moin-main-wrapper.showsidebar {
+    left: 33%;
+  }
+  /* TODO why does bootstrap display navbar-toggle only at width < 480 when <780 is wanted */
+  .navbar-toggle {
+    position: relative;
+    float: left;
+    margin-right: 15px;
+    padding: 9px 10px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: inline;
+  }
+  .navbar-toggle:focus {
+    outline: none;
+  }
+  .navbar-toggle .icon-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .navbar-toggle .icon-bar + .icon-bar {
+    margin-top: 4px;
+  }
 }

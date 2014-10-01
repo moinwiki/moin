@@ -1,11 +1,18 @@
 @import "notice.less";
+
+/* start of bootstrap.less */
 @import "bootstrap.less";
+/* end of bootstrap.less */
+
 @import "moin-variables.less";
+
+/* start of pygments colorful.css */
 @import (less) "colorful.css";
+/* end of pygments colorful.css */
 
-// ---- Customising the top navbar breakpoint
-@grid-float-breakpoint: @screen-md;
+/* start of basic custom css */
 
+@grid-float-breakpoint: @screen-xs;
 @media screen and (min-width: @grid-float-breakpoint) {
   .moin-pull-right {
     .pull-right;
@@ -85,6 +92,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .list-group-item {
+  text-align: left;
   padding: 5px 10px;
   background-color: @search_option_bar_text_color;
   border: 1px solid @search_option_bar_text_color;
@@ -145,9 +153,19 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.moin-sidebar {
+.moin-sidebar-panels {
   .list-group;
   overflow: hidden;
+  padding-top: 15px;
+}
+
+.moin-sidebar-panels a .hidden-sm,
+.moin-sidebar-panels a .hidden-xs {
+  display: inline !important;
+}
+
+.moin-sidebar-panels .moin-sidebar-form {
+  padding-bottom: 10px;
 }
 
 .moin-navbar-inverse {
@@ -278,6 +296,10 @@ div.moin-item-wrapper {
   .navbar-header;
   padding-left: 0px;
   padding-right: 0px;
+}
+
+.moin-navbar-header > button {
+  float: left;
 }
 
 .moin-toggle-comments-button, .moin-transclusions-button{
@@ -908,4 +930,51 @@ html{
 }
 .moin-tongue:before {
   content: url("../img/smileys/tongue.png");
+}
+
+/* Support for extra small viewports */
+@media screen and (max-width: @screen-sm-min) {
+  #moin-main-wrapper {
+    position: relative;
+  }
+  /* Set sidebar width and shift off canvas */
+  .moin-sidebar {
+    position: absolute;
+    top: 0;
+    width: 33%;
+  }
+  .moin-sidebar {
+    left: -33%;
+  }
+  /* When user toggles button (see basic.js) show/hide sidebar */
+  #moin-main-wrapper.showsidebar {
+    left: 33%;
+  }
+  /* TODO why does bootstrap display navbar-toggle only at width < 480 when <780 is wanted */
+  .navbar-toggle {
+    position: relative;
+    float: left;
+    margin-right: 15px;
+    padding: 9px 10px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: inline;
+  }
+  .navbar-toggle:focus {
+    outline: none;
+  }
+  .navbar-toggle .icon-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .navbar-toggle .icon-bar + .icon-bar {
+    margin-top: 4px;
+  }
+
 }
