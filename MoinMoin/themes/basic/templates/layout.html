@@ -74,7 +74,7 @@
                 <div class="moin-logo">
                     {% if logo %}
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                            <img class="img-circle" src="{{ '/static/logos/moinmoin.png' }}" alt="Site Logo"/>
+                            {{ logo }}
                         </a>
                     {% endif %}
                 </div>
