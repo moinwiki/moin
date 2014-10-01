@@ -6940,14 +6940,11 @@ form.upload_file button {
   float: right;
   padding: 10px;
 }
-.container {
+.container-fluid {
   min-height: 100%;
   position: relative;
 }
 @media (max-width: 992px) {
-  .container {
-    width: auto;
-  }
   .moin-content {
     padding-bottom: 250px;
   }
@@ -6957,21 +6954,6 @@ form.upload_file button {
   }
   .moin-footer-logo {
     padding-left: 30px;
-  }
-}
-@media (min-width: 768px) {
-  .container {
-    width: auto;
-  }
-}
-@media (min-width: 992px) {
-  .container {
-    width: auto;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    width: auto;
   }
 }
 #moin-ticketsearch-query {
