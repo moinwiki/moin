@@ -10,7 +10,7 @@
 @import (less) "colorful.css";
 /* end of pygments colorful.css */
 
-/* start of basic custom css */
+/* start of basic theme custom css for moin2 */
 
 @grid-float-breakpoint: @screen-xs;
 @media screen and (min-width: @grid-float-breakpoint) {
@@ -667,15 +667,12 @@ form.upload_file {
     padding: 10px;
   }
 }
-.container {
+.container-fluid {
   min-height: 100%;
   position: relative;
 }
 // set min-width to prevent search box from floating off window to right
 @media (max-width: 992px) {
-  .container {
-    width: auto;
-  }
   .moin-content {
     padding-bottom: 250px;
   }
@@ -685,21 +682,6 @@ form.upload_file {
   }
   .moin-footer-logo {
     padding-left: 30px;
-  }
-}
-@media (min-width: 768px) {
-  .container {
-    width: auto;
-  }
-}
-@media (min-width: 992px) {
-  .container {
-    width: auto;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    width: auto;
   }
 }
 #moin-ticketsearch-query {
