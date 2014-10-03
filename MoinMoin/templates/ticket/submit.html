@@ -6,13 +6,10 @@
 
 {% block form_controls %}
     <h2>{{ _("Describe the ticket") }}</h2>
-
-    <dl>
-        <div class="form-group">
-            {{ gen.label(form['message']) }}
-            {{ gen.textarea(form['message'], class='form-control') }}
-        </div>
-    </dl>
+    <div class="form-group">
+        {{ gen.label(form['message']) }}
+        {{ gen.textarea(form['message'], class='form-control') }}
+    </div>
 {% endblock %}
 {% block ticket_metadata %}
 
