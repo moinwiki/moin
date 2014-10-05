@@ -6,6 +6,11 @@
 
 @import "moin-variables.less";
 
+
+/* start of admonitions.css */
+@import (less) "admonitions.css";
+/* end of admonitions.css */
+
 /* start of pygments colorful.css */
 @import (less) "colorful.css";
 /* end of pygments colorful.css */
@@ -684,6 +689,8 @@ form.upload_file {
     padding-left: 30px;
   }
 }
+
+// special formatting for tickets with basic theme
 #moin-ticketsearch-query {
   background-image: url('../../../../static/img/search.png');
   background-repeat: no-repeat;
@@ -769,6 +776,8 @@ form.upload_file {
   height: 35px;
   padding-top: 6px;
 }
+// end special formatting for tickets with basic theme
+
 html{
   overflow-y: scroll;
 }
