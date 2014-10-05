@@ -1,0 +1,18 @@
+/* mime type icons */
+a.moin-www:before,a.moin-http:before,a.moin-https:before {    content: url("../img/mime-type/moin-www.png");    margin: 0 .2em;    vertical-align: middle;
+}a.moin-file:before,a.moin-ftp:before {    content: url("../img/mime-type/moin-ftp.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-nntp:before,a.moin-news:before {    content: url("../img/mime-type/moin-news.png");    margin: 0 .2em    ;    vertical-align: middle;}
+a.moin-telnet:before,a.moin-ssh:before,a.moin-irc:before,a.moin-ircs:before {    content: url("../img/mime-type/moin-telnet.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mailto:before {    content: url("../img/mime-type/moin-email.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-attachment:before {    content: url("../img/mime-type/moin-attach.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-interwiki:before {    content: url("../img/mime-type/moin-inter.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-action:before {    content: url("../img/mime-type/moin-action.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-text:before {    content: url("../img/mime-type/moin-text.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-image:before {    content: url("../img/mime-type/moin-image.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-audio:before {    content: url("../img/mime-type/moin-audio.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-video:before {    content: url("../img/mime-type/moin-video.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-application:before {    content: url("../img/mime-type/moin-application.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-pdf:before {    content: url("../img/mime-type/moin-pdf.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-package:before {    content: url("../img/mime-type/moin-package.png");    margin: 0 .2em;    vertical-align: middle;}
+a.moin-mime-drawing:before {    content: url("../img/mime-type/moin-drawing.png");    margin: 0 .2em;    vertical-align: middle;}
+/* end of mime type icons */
