@@ -28,7 +28,7 @@ label.moin-inline-label {
 #f_meta_tags, #f_meta_summary {
     transition: all .3s ease-in-out;
     outline: none;
-    width: 200px;
+    width: 30em;
     margin-top: 20px;
     margin-bottom: 20px;
     height: 25px;
@@ -68,14 +68,16 @@ select {
     border-radius: 4px;
     user-select: none;
 }
-.moin-ticket-submit, .moin-ticket-comments {
+.moin-ticket-comments {
     float: left;
     width: 35em;
-    clear:both;
+    margin-right: 35px;
 }
 .moin-ticket-metadata {
-    float: right;
-    width: 30em;
+    float: left;
+}
+.moin-ticket-submit {
+    clear: both;
 }
 #f_message {
     width: 100%;
