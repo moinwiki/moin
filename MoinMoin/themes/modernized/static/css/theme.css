@@ -231,7 +231,7 @@ th {
 #moin-content div.warning{background-image:url("../img/admonitions/warning.png")}
 #moin-content div.attention,#moin-content div.caution,#moin-content div.danger,#moin-content div.error,#moin-content div.hint,#moin-content div.important,#moin-content div.note,#moin-content div.tip,#moin-content div.warning{color:#000;background-color:#f9f9ff;background-repeat:no-repeat;background-position:8px 8px;border:1px solid #e5e5e5;margin:10px 30px 10px 30px;min-height:64px;padding-left:64px;clear:both;}
 #moin-content div.attention p,#moin-content div.caution p,#moin-content div.danger p,#moin-content div.error p,#moin-content div.hint p,#moin-content div.important p,#moin-content div.note p,#moin-content div.tip p,#moin-content div.warning p{margin-top:8px}
-/* wiki parser  - no moin- prefix added here, these classes are used within pages: {{{#!wiki solid  */
+/* start of userstyles - css clases that are defined for use in wiki markup: {{{#!wiki solid  */
 .comment { color: #555; background-color: #DDF; }
 .red { background-color: #FCC; }
 .green { background-color: #CFC; }
@@ -246,13 +246,15 @@ th {
 .right { text-align: right; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
-/* position image or object - the left, center, right rules above are either consistent with or harmless to the rules below */
+
+/* position transcluded image or object - the left, center, right rules in userstyles are compatible with the rules below */
 .moin-item-wrapper.left { float: left; }
 .moin-item-wrapper.center { width: 100%; text-align: center; }
 .moin-item-wrapper.right { float: right; }
 .moin-item-wrapper.middle { vertical-align: middle; }
 .moin-item-wrapper.top { vertical-align: top; }
 .moin-item-wrapper.bottom { vertical-align: bottom; }
+/* end of userstyles */
 a.moin-www:before,a.moin-http:before,a.moin-https:before{content:url("../img/mime-type/moin-www.png");margin:0 .2em;vertical-align:middle}
 a.moin-file:before,a.moin-ftp:before{content:url("../img/mime-type/moin-ftp.png");margin:0 .2em;vertical-align:middle}
 a.moin-nntp:before,a.moin-news:before{content:url("../img/mime-type/moin-news.png");margin:0 .2em;vertical-align:middle}
