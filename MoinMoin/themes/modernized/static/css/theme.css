@@ -219,6 +219,7 @@ th {
 .moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
 .moin-tired:before { content: url('../img/smileys/tired.png'); }
 .moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+/* end of smileys */
 #moin-content div.attention{background-image:url("../img/admonitions/important.png")}
 #moin-content div.caution{background-image:url("../img/admonitions/caution.png")}
 #moin-content div.danger{background-image:url("../img/admonitions/warning.png")}
