@@ -46,7 +46,7 @@ MoinMoin.prototype.toggleComments = function () {
     "use strict";
     // Toggle visibility of every tag with class "comment"
     var pageComments = $('.comment'),   // will hold list of elements with class "comment"
-        buttons = $('.moin-toggle-comments-button > a');
+        buttons = $('.moin-toggle-comments-button > a, button.moin-toggle-comments-button');
     if (pageComments.is(':hidden')) {
         pageComments.show();
         buttons.attr('title', _("Hide comments"));
