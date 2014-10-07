@@ -6371,6 +6371,51 @@ a.moin-mime-drawing:before {
   vertical-align: middle;
 }
 /* end of mime type icons */
+/* diffs */
+.moin-diff {
+  width: 99%;
+  table-layout: fixed;
+}
+.moin-diff-header {
+  vertical-align: top;
+  font-size: 92%;
+}
+.moin-diff-info {
+  margin: 0.33em 0.25em;
+}
+.moin-diff-info-value {
+  white-space: normal;
+}
+.moin-diff-info-caption {
+  display: inline-block;
+  min-width: 5em;
+}
+.moin-diff-line-number {
+  background-color: #c0c0c0;
+}
+.moin-diff-added {
+  background-color: #e0ffe0;
+  vertical-align: top;
+  width: 50%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+.moin-diff-added span {
+  background-color: #80ff80;
+}
+.moin-diff-removed {
+  background-color: #ffffe0;
+  vertical-align: top;
+  width: 50%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+.moin-diff-removed span {
+  background-color: #ffff80;
+}
+/* end diffs */
 /* start of basic theme custom css for moin2 */
 @media screen and (min-width: 480px) {
   .moin-pull-right {
@@ -6543,12 +6588,6 @@ h6:focus .moin-permalink {
 }
 .moin-list-heading > a {
   color: #c8ddf1;
-}
-.moin-diff-added {
-  background-color: #ccffcc;
-}
-.moin-diff-removed {
-  background-color: #ffdddd;
 }
 .moin-breadcrumb {
   padding: 8px 15px;
