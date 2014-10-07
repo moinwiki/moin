@@ -5,6 +5,70 @@
     add a definition here and make suitable minor adjustments in the
     individual css definitions of each theme.
 */
+
+/* transclusion wrapper overlays */
+.moin-transclusion {
+    max-width: 100%;
+}
+.moin-item-wrapper {
+    position: relative;
+    display: inline-block;
+}
+div.moin-item-wrapper {
+    /* force bottom border of transcluded headings to extend across entire page */
+    width: 100%;
+}
+div.moin-item-wrapper,
+div.moin-item-wrapper > div,
+div.moin-item-wrapper > div > p:first-child,
+div.moin-item-wrapper > div > p:last-child {
+    margin: 0;
+}
+div.moin-item-wrapper > div > p:first-child ~ p:last-child {
+    margin-top: 1em;
+}
+a.moin-item-overlay-ul:link,
+a.moin-item-overlay-ul:visited,
+a.moin-item-overlay-ul:active,
+a.moin-item-overlay-lr:link,
+a.moin-item-overlay-lr:visited,
+a.moin-item-overlay-lr:active {
+    color: transparent;
+}
+.moin-item-overlay-ul,
+.moin-item-overlay-lr {
+    display: none;
+    position: absolute;
+    color: transparent;
+    background-color: transparent;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+    opacity: .5;
+    padding: 1px;
+    border-color: #428bca;
+    border-style: double;
+}
+.moin-item-overlay-ul {
+    top: -4px;
+    left: -4px;
+    border-width: 3px 0 0 3px;
+}
+.moin-item-overlay-lr {
+    bottom: -4px;
+    right: -4px;
+    border-width: 0 3px 3px 0;
+}
+a.moin-item-overlay-ul:hover,
+a.moin-item-overlay-ul:hover ~ a.moin-item-overlay-lr,
+a.moin-item-overlay-lr:hover {
+    opacity: .8;
+    background-color: #e1edf7;
+    color: #428bca;
+    text-decoration: none;
+}
+/* end transclusion wrapper overlays */
+
 .moin-suggestions {
     color: #FF9900;
     display: inline;

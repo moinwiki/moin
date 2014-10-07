@@ -96,7 +96,8 @@ MoinMoin.prototype.toggleTransclusionOverlays = function () {
 MoinMoin.prototype.initTransclusionOverlays = function () {
     "use strict";
     var elem, overlayUL, overlayLR, wrapper, wrappers, transclusions, classes,
-        rightArrow = '\u2192',
+        rightArrow = '\u2198',
+        leftArrow = '\u2196',
         mediaTags = ['OBJECT', 'IMG', 'AUDIO', 'VIDEO' ];
     // get list of elements to be wrapped; must work in reverse order in case there are nested transclusions
     transclusions = $($('.moin-transclusion').get().reverse());
@@ -111,8 +112,9 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
             }
             overlayUL = $('<a class="moin-item-overlay-ul"></a>');
             $(overlayUL).attr('href', elem.getAttribute('data-href'));
-            $(overlayUL).append(rightArrow);
             overlayLR = $(overlayUL).clone(true);
+            $(overlayUL).append(rightArrow);
+            $(overlayLR).append(leftArrow);
             $(overlayLR).attr('class', 'moin-item-overlay-lr');
             // if the parent of this element is an A, then wrap parent (avoid A's within A's)
             if ($(elem).parent()[0].tagName === 'A') {
