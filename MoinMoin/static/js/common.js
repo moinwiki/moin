@@ -45,14 +45,14 @@ MoinMoin.prototype.selected_link = function () {
 MoinMoin.prototype.toggleComments = function () {
     "use strict";
     // Toggle visibility of every tag with class "comment"
-    var pageComments = $('.comment'),   // will hold list of elements with class "comment"
-        buttons = $('.moin-toggle-comments-button > a, button.moin-toggle-comments-button');
+    var pageComments = $('.comment'),
+        tooltips = $('.moin-toggle-comments-tooltip');
     if (pageComments.is(':hidden')) {
         pageComments.show();
-        buttons.attr('title', _("Hide comments"));
+        tooltips.attr('title', _("Hide comments"));
     } else {
         pageComments.hide();
-        buttons.attr('title', _("Show comments"));
+        tooltips.attr('title', _("Show comments"));
     }
     return false;  // do not scroll to top of page
 };
@@ -78,15 +78,15 @@ MoinMoin.prototype.initToggleComments = function () {
 MoinMoin.prototype.toggleTransclusionOverlays = function () {
     "use strict";
     var overlays = $('.moin-item-overlay-ul, .moin-item-overlay-lr'),
-        buttons;
+        tooltips;
     if (overlays.length > 0) {
-        buttons = $('.moin-transclusions-button > a, .moin-transclusions-button');
+        tooltips = $('.moin-transclusions-tooltip');
         if (overlays.is(':visible')) {
             overlays.hide();
-            buttons.attr('title', _("Show transclusions"));
+            tooltips.attr('title', _("Show transclusions"));
         } else {
             overlays.show();
-            buttons.attr('title', _("Hide transclusions"));
+            tooltips.attr('title', _("Hide transclusions"));
         }
     }
     return false;  // do not scroll to top of page
