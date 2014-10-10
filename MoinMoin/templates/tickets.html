@@ -6,14 +6,16 @@
     <h1>{{_("Tickets")}}</h1>
 
     {% set status_values = ['all', 'open', 'closed']  %}
-    {{_("Filter:")}}
+    <span>{{_("Filter:")}}</span>
     {% for status_value in status_values %}
         <form action="{{ url_for('frontend.tickets', selected_tags=list(), time_sorting=time_sorting if time_sorting) }}" method="post" class='moin-ticketsearch-form'>
             <input type="hidden" name="q" value="" >
-            &nbsp;<input type="hidden" name="status" value="{{ status_value }}">
+            <input type="hidden" name="status" value="{{ status_value }}">
             <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'ticket-query-button active' if status == status_value  else 'ticket-query-button'}}">
         </form>
     {% endfor %}
+
+    <input type="button" class="ticket-tags-button ticket-tags-toggle" title="{{_("Show all tags")}}" value="{{_("Tags")}}">
 
     <div class="tickets-sort-button dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
@@ -47,15 +49,30 @@
         </ul>
     </div>
 
-    {# This is just a workaround for creating tickets #}
-    <a id="moin-ticket-create-link" href="{{ url_for('frontend.modify_item', itemtype='ticket', item_name='ticket_'+current_timestamp ) }}" >
-        <button class="btn btn-primary btn-lg btn-block">{{ _("Create ticket") }}</button>
-    </a>
-
-    <form action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post">
+    <form class="moin-ticket-search" action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags), time_sorting=time_sorting if time_sorting) }}" method="post">
         <input type="hidden" name="status" value="{{ status }}">
-        <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" class="form-control" placeholder="{{_('Find tickets')}}">
+        <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" placeholder="{{_('Find tickets')}}">
     </form>
+
+    {# TODO: This is a workaround that creates named tickets, rework when there is a means of creating unnamed tickets #}
+    <form method="get" class="moin-ticket-create-link" action="{{ url_for('frontend.modify_item', item_name='ticket_'+current_timestamp ) }}">
+        <input type="submit" value="{{ _('Create ticket') }}">
+        <input type="hidden" name="itemtype" value="ticket">
+    </form>
+
+    <div class="moin-ticket-tags">
+        <span>{{_("Tags:")}}</span>
+        {% for tag in tags %}
+            {# If user clicks on the tag then it gets selected if it is not already selected #}
+            {# If that tag is already selected then it gets deselected #}
+            {% set selected_tags_value = list(selected_tags.difference([tag]) if tag in selected_tags else selected_tags.union([tag])) %}
+            <form class="moin-existing-tags" action="{{ url_for('frontend.tickets', selected_tags=selected_tags_value, time_sorting=time_sorting if time_sorting) }}" method="post">
+                <input type="hidden" name="q" value="{{ query if query }}" >
+                <input type="hidden" name="status" value="{{ status }}">
+                <input type="submit" value="{{ tag }}" class="{{ 'ticket-tags-button btn btn-primary active' if tag in selected_tags else 'ticket-tags-button btn btn-default' }}">
+            </form>
+        {% endfor %}
+    </div>
 
     {% if results %}
         <p>{{ _("%(result_len)d Tickets found.", result_len=results|length) }}</p>
@@ -115,18 +132,6 @@
     {% else %}
         {{ _("No Ticket found.") }}
     {% endif %}
-
-    <h3 class="moin-ticket-tags">{{_("Tags")}}</h3>
-    {% for tag in tags %}
-        {# If user clicks on the tag then it gets selected if it is not already selected #}
-        {# If that tag is already selected then it gets deselected #}
-        {% set selected_tags_value = list(selected_tags.difference([tag]) if tag in selected_tags else selected_tags.union([tag])) %}
-        <form action="{{ url_for('frontend.tickets', selected_tags=selected_tags_value, time_sorting=time_sorting if time_sorting) }}" method="post">
-            <input type="hidden" name="q" value="{{ query if query }}" >
-            <input type="hidden" name="status" value="{{ status }}">
-            <input type="submit" value="{{ tag }}" class="{{ 'ticket-tags-button btn btn-primary active' if tag in selected_tags else 'ticket-tags-button btn btn-default' }}">
-        </form>
-    {% endfor %}
 
 {% endblock %}
 {% block body_scripts %}
