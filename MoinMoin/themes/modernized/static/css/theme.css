@@ -395,6 +395,7 @@ th{border:1px solid #4e7da9;background-color:#00417f;text-align:center;color:#d8
 td{border:1px solid #4e7da9}
 td p{margin:0;padding:0}
 .moin-thead{background-color:#00417f}
+.zebra .tablesorter-header{background-color:#00417f}
 table.zebra{border-collapse:separate;border-spacing:1px;width:98%;border:1px solid #4e7da9;border-radius:6px}
 .zebra thead{background-color:#00417f}
 .zebra tfoot{background-color:#aed4fa}
@@ -674,10 +675,3 @@ ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
 ul.moin-bcs-item li{position:relative}
 ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
 ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
-.tablesorter-header-inner{padding-left:10px}
-.sorter-false > .tablesorter-header-inner{padding-left:0}
-.tablesorter-header{background-image:url("../../../static/img/bg.png");background-repeat:no-repeat;background-position:left center;background-color:#d8dfe9;color:#000}
-.tablesorter-headerAsc{background-image:url("../../../static/img/asc.png")}
-.tablesorter-headerDesc{background-image:url("../../../static/img/desc.png")}
-.tablesorter-header.sorter-false{background-image:None}
-.zebra .tablesorter-header{background-color:#00417f}

@@ -121,11 +121,34 @@ a.moin-item-overlay-lr:hover {
 input[type="text"].moin-acl-string {
     width: 70%;
 }
+#moin-acl-form {
+    display: inline;
+}
+
+/* tablesorter */
 .tablesorter {
     width: 100%;
 }
-#moin-acl-form {
-    display: inline;
+.tablesorter-header {
+  background-image: url('../../../static/img/bg.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+.tablesorter-headerAsc {
+  background-image: url('../../../static/img/asc.png');
+}
+.tablesorter-headerDesc {
+  background-image: url('../../../static/img/desc.png');
+}
+.tablesorter-header.sorter-false {
+  background-image: None;
+}
+.tablesorter-header-inner {
+  padding-left: 10px;
+  cursor: pointer;
+}
+.sorter-false > .tablesorter-header-inner {
+  padding-left: 0px;
 }
 
 /* tickets */
