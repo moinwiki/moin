@@ -391,15 +391,13 @@ pre.comment{background-color:#00417f;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
 table{margin:1%;border-collapse:collapse}
 th,td{padding:.3em .4em;vertical-align:middle;text-align:left}
-th{border:1px solid #4e7da9;background-color:#00417f;text-align:center;color:#d8dfe9}
+th{border:1px solid #4e7da9;background-color:#81bbf2;text-align:center;color:#000}
 td{border:1px solid #4e7da9}
 td p{margin:0;padding:0}
 .moin-thead{background-color:#00417f}
-.zebra .tablesorter-header{background-color:#00417f}
-table.zebra{border-collapse:separate;border-spacing:1px;width:98%;border:1px solid #4e7da9;border-radius:6px}
+table.zebra{border-collapse:collapse;width:98%}
 .zebra thead{background-color:#00417f}
 .zebra tfoot{background-color:#aed4fa}
-.zebra td{border:none;}
 .zebra td form input{box-shadow:none}
 .zebra tbody tr,.zebra > tr{background-color:#eef1f6}
 .zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d8dfe9}
