@@ -218,9 +218,9 @@ th, td
 
 th
     border border_style
-    background-color header_bg_color
+    background-color table_header_bg_color
     text-align center
-    color table_row_color
+    color font_color
 
 td
     border border_style
@@ -232,15 +232,9 @@ td p
 .moin-thead
     background-color header_bg_color
 
-.zebra .tablesorter-header
-    background-color header_bg_color
-
 table.zebra
-    border-collapse separate
-    border-spacing 1px
+    border-collapse collapse
     width 98%
-    border border_style
-    border-radius 6px
 
 .zebra thead
     background-color header_bg_color
@@ -249,7 +243,6 @@ table.zebra
     background-color base_color
 
 .zebra td
-    border none
     form
         input
             box-shadow none
