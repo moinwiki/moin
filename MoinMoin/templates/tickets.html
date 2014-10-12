@@ -62,7 +62,7 @@
 
     <div class="moin-ticket-tags">
         <span>{{_("Tags:")}}</span>
-        {% for tag in tags %}
+        {% for tag in tags|sort %}
             {# If user clicks on the tag then it gets selected if it is not already selected #}
             {# If that tag is already selected then it gets deselected #}
             {% set selected_tags_value = list(selected_tags.difference([tag]) if tag in selected_tags else selected_tags.union([tag])) %}
