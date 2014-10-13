@@ -51,13 +51,13 @@ input[type="text"].moin-acl-string { width: 70%; }
 /* tablesorter */
 .tablesorter { width: 100%; }
 .tablesorter-header {
-  background-image: url('../../../static/img/bg.png');
+  background-image: url('../img/bg.png');
   background-repeat: no-repeat;
   background-position: left center; }
 .tablesorter-headerAsc {
-  background-image: url('../../../static/img/asc.png'); }
+  background-image: url('../img/asc.png'); }
 .tablesorter-headerDesc {
-  background-image: url('../../../static/img/desc.png'); }
+  background-image: url('../img/desc.png'); }
 .tablesorter-header.sorter-false {
   background-image: None; }
 .tablesorter-header-inner {
