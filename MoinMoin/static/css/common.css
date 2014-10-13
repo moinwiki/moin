@@ -1,286 +1,113 @@
 /*
-    Add all the css definitions common to the themes here, in order to
-    avoid duplication of code at many places. Also if there are minor
-    differences between the definitions for the different themes,
-    add a definition here and make suitable minor adjustments in the
-    individual css definitions of each theme.
+    Add the css rules common to all themes here. In general, everything
+    within moin-content should be defined here and everything within
+    the web page header, footer, and sidebars should be defined within the
+    theme CSS files. Themes may override any of the rules defined here as
+    required.
 */
 
 /* transclusion wrapper overlays */
-.moin-transclusion {
-    max-width: 100%;
-}
-.moin-item-wrapper {
-    position: relative;
-    display: inline-block;
-}
-div.moin-item-wrapper {
-    /* force bottom border of transcluded headings to extend across entire page */
-    width: 100%;
-}
+.moin-transclusion { max-width: 100%; }
+.moin-item-wrapper { position: relative; display: inline-block; }
+div.moin-item-wrapper { /* force bottom border of transcluded headings to extend across entire page */ width: 100%; }
 div.moin-item-wrapper,
 div.moin-item-wrapper > div,
 div.moin-item-wrapper > div > p:first-child,
-div.moin-item-wrapper > div > p:last-child {
-    margin: 0;
-}
-div.moin-item-wrapper > div > p:first-child ~ p:last-child {
-    margin-top: 1em;
-}
+div.moin-item-wrapper > div > p:last-child { margin: 0; }
+div.moin-item-wrapper > div > p:first-child ~ p:last-child { margin-top: 1em; }
 a.moin-item-overlay-ul:link,
 a.moin-item-overlay-ul:visited,
 a.moin-item-overlay-ul:active,
 a.moin-item-overlay-lr:link,
 a.moin-item-overlay-lr:visited,
-a.moin-item-overlay-lr:active {
-    color: transparent;
-}
+a.moin-item-overlay-lr:active { color: transparent; }
 .moin-item-overlay-ul,
-.moin-item-overlay-lr {
-    display: none;
-    position: absolute;
-    color: transparent;
-    background-color: transparent;
-    font-size: 1.2em;
-    font-weight: bold;
-    margin: 0;
-    opacity: .5;
-    padding: 1px;
-    border-color: #428bca;
-    border-style: double;
-}
-.moin-item-overlay-ul {
-    top: -4px;
-    left: -4px;
-    border-width: 3px 0 0 3px;
-}
-.moin-item-overlay-lr {
-    bottom: -4px;
-    right: -4px;
-    border-width: 0 3px 3px 0;
-}
+.moin-item-overlay-lr { display: none; position: absolute; color: transparent; background-color: transparent;
+    font-size: 1.2em; font-weight: bold; margin: 0; opacity: .5; padding: 1px; border-color: #428bca; border-style: double; }
+.moin-item-overlay-ul { top: -4px; left: -4px; border-width: 3px 0 0 3px; }
+.moin-item-overlay-lr { bottom: -4px; right: -4px; border-width: 0 3px 3px 0; }
 a.moin-item-overlay-ul:hover,
 a.moin-item-overlay-ul:hover ~ a.moin-item-overlay-lr,
-a.moin-item-overlay-lr:hover {
-    opacity: .8;
-    background-color: #e1edf7;
-    color: #428bca;
-    text-decoration: none;
-}
+a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #428bca; text-decoration: none; }
 /* end transclusion wrapper overlays */
 
-.moin-suggestions {
-    color: #FF9900;
-    display: inline;
-}
-.moin-suggestion-terms {
-    font-style: italic;
-    display: inline;
-}
-.moin-wordbreak {
-    word-break: break-all;
-    word-wrap: break-word;
-}
-.moin-search-meta {
-    color: green;
-}
-.searchstats {
-    color: gray;
-}
-#moin-search-query {
-    width: 70%;
-    border-radius: 5px;
-}
-.searchhitinfobar {
-    display: inline;
-}
-.moin-rights-info {
-    display: inline;
-    float: right;
-}
-.moin-searchoptions > table {
-    table-layout: fixed;
-}
-.moin-searchoptions > table > tbody > tr > th {
-    padding: 5px;
-    text-decoration: underline;
-}
-.moin-searchoptions > table > tbody > tr > td {
-    vertical-align: top;
-    padding-right: 20px;
-    width: 20%;
-}
-.hidden {
-    display: none;
-    visibility: hidden;
-}
+.moin-suggestions { color: #FF9900; display: inline; }
+.moin-suggestion-terms { font-style: italic; display: inline; }
+.moin-wordbreak { word-break: break-all; word-wrap: break-word; }
+.moin-search-meta { color: green; }
+.searchstats { color: gray; }
+#moin-search-query { width: 70%; border-radius: 5px; }
+.searchhitinfobar { display: inline; }
+.moin-rights-info { display: inline; float: right; }
+.moin-searchoptions > table { table-layout: fixed; }
+.moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
+.moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
+.hidden { display: none; visibility: hidden; }
 
-.moin-link-list li {
-    padding: 2px 0 2px 0;
-}
-input[type="text"].moin-acl-string {
-    width: 70%;
-}
-#moin-acl-form {
-    display: inline;
-}
+.moin-link-list li { padding: 2px 0 2px 0; }
+input[type="text"].moin-acl-string { width: 70%; }
+#moin-acl-form { display: inline; }
 
 /* tablesorter */
-.tablesorter {
-    width: 100%;
-}
+.tablesorter { width: 100%; }
 .tablesorter-header {
   background-image: url('../../../static/img/bg.png');
   background-repeat: no-repeat;
-  background-position: left center;
-}
+  background-position: left center; }
 .tablesorter-headerAsc {
-  background-image: url('../../../static/img/asc.png');
-}
+  background-image: url('../../../static/img/asc.png'); }
 .tablesorter-headerDesc {
-  background-image: url('../../../static/img/desc.png');
-}
+  background-image: url('../../../static/img/desc.png'); }
 .tablesorter-header.sorter-false {
-  background-image: None;
-}
+  background-image: None; }
 .tablesorter-header-inner {
   padding-left: 10px;
-  cursor: pointer;
-}
+  cursor: pointer; }
 .sorter-false > .tablesorter-header-inner {
-  padding-left: 0px;
-}
+  padding-left: 0px; }
 
 /* tickets */
-.moin-existing-tags {
-    display: inline;
-}
+.moin-existing-tags { display: inline; }
 .moin-ticket-create-link,
-.moin-ticket-search {
-    display: inline;
-    float: right;
+.moin-ticket-search { display: inline; float: right; }
+#ticket-table-tip { color: #4e7da9; }
+#ticket-summary { width: 50%; }
+.tickets-sort-button.dropdown { z-index: 500; }
+.tickets-sort-button.dropdown ul.dropdown-menu { background-color: #aed4fa; padding: 0; margin: 0; display: none; position: absolute; }
+.tickets-sort-button.dropdown ul.dropdown-menu li { list-style-type: none; display: block; position: relative; }
+.tickets-sort-button.dropdown ul.dropdown-menu li a { display: inline; }
+.tickets-sort-button.dropdown:hover ul.dropdown-menu { display: inline-block; }
+.moin-ticket-tags { border-bottom: none; clear: both; }
+.tickets-sort-button.dropdown { display: inline; padding-left: 8px
 }
-#ticket-table-tip {
-    color: #4e7da9;
+.moin-ticketsearch-form { display: inline
 }
-#ticket-summary {
-    width: 50%;
-}
-.tickets-sort-button.dropdown {
-    z-index: 500;
-}
-.tickets-sort-button.dropdown ul.dropdown-menu {
-    background-color: #aed4fa;
-    padding: 0;
-    margin: 0;
-    display: none;
-    position: absolute;
-}
-.tickets-sort-button.dropdown ul.dropdown-menu li {
-    list-style-type: none;
-    display: block;
-    position: relative;
-}
-.tickets-sort-button.dropdown ul.dropdown-menu li a {
-    display: inline;
-}
-.tickets-sort-button.dropdown:hover ul.dropdown-menu {
-    display: inline-block;
-}
-.moin-ticket-tags {
-    border-bottom: none;
-    clear: both;
-}
-.tickets-sort-button.dropdown {
-    display: inline;
-    padding-left: 8px
-}
-.moin-ticketsearch-form {
-    display: inline
-}
-#moin-ticketsearch-query {
-    background-image: url("../../../static/img/search.png");
-    background-repeat: no-repeat;
-    background-position: 5px;
-    padding-left: 24px;
-    width: 150px;
-    margin-left: 7px;
-}
-.moin-ticket-tags {
-    margin-top: 1em;
-    display: none;
-}
-#ticket-list thead th:hover {
-    background-color: #e8e8e8; cursor: pointer;
-}
-#ticket-list tbody tr:hover {
-    background-color: #e8e8e8;
-}
-#ticket-list tr td:first-child a {
-    font-family: monospace;
-}
-.ticket-query-button {
-    background: #aed4fa;
-    padding: 1px 7px;
-    text-shadow: 0 1px 0 #fff;
-    border: 1px solid transparent;
-}
+#moin-ticketsearch-query { background-image: url("../../../static/img/search.png"); background-repeat: no-repeat; background-position: 5px;
+    padding-left: 24px; width: 150px; margin-left: 7px; }
+.moin-ticket-tags { margin-top: 1em; display: none; }
+#ticket-list thead th:hover { background-color: #e8e8e8; cursor: pointer; }
+#ticket-list tbody tr:hover { background-color: #e8e8e8; }
+#ticket-list tr td:first-child a { font-family: monospace; }
+.ticket-query-button { background: #aed4fa; padding: 1px 7px; text-shadow: 0 1px 0 #fff; border: 1px solid transparent; }
 .ticket-query-button.active,
 .ticket-tags-button.active,
 .ticket-tags-button:hover,
-.ticket-query-button:hover {
-    background-color:#008b8b;
-    color: #333;
-    box-sizing: border-box;
-    border: 1px solid transparent;
-    border-radius: 3px;
-}
+.ticket-query-button:hover { background-color:#008b8b; color: #333; box-sizing: border-box; border: 1px solid transparent; border-radius: 3px; }
 
 /* tags tab */
-ul.moin-tags {
-    display: block;
-    margin-left: 0;
-    }
-ul.moin-tags > li {
-    padding: 5px 0 5px 0;
-    display: inline-block;
-    text-align: center;
-    width: 300px;
-}
-ul.moin-tags li.weight0 {
-    font-size: 100%;
-}
-ul.moin-tags li.weight1 {
-    font-size: 120%;
-}
-ul.moin-tags li.weight2 {
-    font-size: 140%;
-}
-ul.moin-tags li.weight3 {
-    font-size: 160%;
-}
-ul.moin-tags li.weight4 {
-    font-size: 180%;
-}
-ul.moin-tags li.weight5 {
-    font-size: 200%;
-}
-ul.moin-tags li.weight6 {
-    font-size: 220%;
-}
-ul.moin-tags li.weight7 {
-    font-size: 240%;
-}
-ul.moin-tags li.weight8 {
-    font-size: 260%;
-}
-ul.moin-tags li.weight9 {
-    font-size: 280%;
-}
-.moin-footnotes {
-    border-top: 1px solid gray;
-    margin: 2em;
-}
-.moin-footnotes p {
-    margin: 1em;
-}
+ul.moin-tags { display: block; margin-left: 0; }
+ul.moin-tags > li { padding: 5px 0 5px 0; display: inline-block; text-align: center; width: 300px; }
+ul.moin-tags li.weight0 { font-size: 100%; }
+ul.moin-tags li.weight1 { font-size: 120%; }
+ul.moin-tags li.weight2 { font-size: 140%; }
+ul.moin-tags li.weight3 { font-size: 160%; }
+ul.moin-tags li.weight4 { font-size: 180%; }
+ul.moin-tags li.weight5 { font-size: 200%; }
+ul.moin-tags li.weight6 { font-size: 220%; }
+ul.moin-tags li.weight7 { font-size: 240%; }
+ul.moin-tags li.weight8 { font-size: 260%; }
+ul.moin-tags li.weight9 { font-size: 280%; }
+
+/* footnotes */
+.moin-footnotes { border-top: 1px solid gray; margin: 2em; }
+.moin-footnotes p { margin: 1em; }
