@@ -6,6 +6,98 @@
     required.
 */
 
+/* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
+.moin-text-icon { font-size: 0; color: transparent; }
+.moin-alert:before { content: url('../img/smileys/alert.png'); }
+.moin-angry:before { content: url('../img/smileys/angry.png'); }
+.moin-attention:before { content: url('../img/smileys/attention.png'); }
+.moin-biggrin:before { content: url('../img/smileys/biggrin.png'); }
+.moin-checkmark:before { content: url('../img/smileys/checkmark.png'); }
+.moin-devil:before { content: url('../img/smileys/devil.png'); }
+.moin-frown:before { content: url('../img/smileys/frown.png'); }
+.moin-icon-error:before { content: url('../img/smileys/icon-error.png'); }
+.moin-icon-info:before { content: url('../img/smileys/icon-info.png'); }
+.moin-idea:before { content: url('../img/smileys/idea.png'); }
+.moin-ohwell:before { content: url('../img/smileys/ohwell.png'); }
+.moin-prio1:before { content: url('../img/smileys/prio1.png'); }
+.moin-prio2:before { content: url('../img/smileys/prio2.png'); }
+.moin-prio3:before { content: url('../img/smileys/prio3.png'); }
+.moin-redface:before { content: url('../img/smileys/redface.png'); }
+.moin-sad:before { content: url('../img/smileys/sad.png'); }
+.moin-smile:before { content: url('../img/smileys/smile.png'); }
+.moin-smile2:before { content: url('../img/smileys/smile2.png'); }
+.moin-smile3:before { content: url('../img/smileys/smile3.png'); }
+.moin-smile4:before { content: url('../img/smileys/smile4.png'); }
+.moin-star_off:before { content: url('../img/smileys/star_off.png'); }
+.moin-star_on:before { content: url('../img/smileys/star_on.png'); }
+.moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
+.moin-tired:before { content: url('../img/smileys/tired.png'); }
+.moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+/* end of smileys */
+
+/* admonitions  - no moin- prefix added  here, these classes are used within wiki markup:
+      Moin wiki: {{{#!wiki caution
+      ReST: .. caution:: some text
+      Docbook: <caution><para>some text</para></caution>
+
+      TODO: create icons for attention, danger, error, and hint.
+*/
+div.attention { background-image: url("../img/admonitions/important.png"); }
+div.caution { background-image: url("../img/admonitions/caution.png"); }
+div.danger { background-image: url("../img/admonitions/warning.png"); }
+div.error { background-image: url("../img/admonitions/warning.png"); }
+div.hint { background-image: url("../img/admonitions/tip.png"); }
+div.important { background-image: url("../img/admonitions/important.png"); }
+div.note { background-image: url("../img/admonitions/note.png"); }
+div.tip { background-image: url("../img/admonitions/tip.png"); }
+div.warning { background-image: url("../img/admonitions/warning.png"); }
+div.attention,
+div.caution,
+div.danger,
+div.error,
+div.hint,
+div.important,
+div.note,
+div.tip,
+div.warning { color: black; background-color: #F9F9FF; background-repeat: no-repeat; background-position: 8px 8px;
+    border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px; min-height: 64px; padding-left: 64px; clear: both; }
+div.attention > p,
+div.caution > p,
+div.danger > p,
+div.error > p,
+div.hint > p,
+div.important > p,
+div.note > p,
+div.tip > p,
+div.warning > p { margin-top: 8px;  /* to align text with big graphic */ }
+/* end of admonitions */
+
+/* mime type icons */
+a.moin-www:before,
+a.moin-http:before,
+a.moin-https:before { content: url("../img/mime-type/moin-www.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-file:before,
+a.moin-ftp:before { content: url("../img/mime-type/moin-ftp.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-nntp:before,
+a.moin-news:before { content: url("../img/mime-type/moin-news.png"); margin: 0 .2em    ; vertical-align: middle; }
+a.moin-telnet:before,
+a.moin-ssh:before,
+a.moin-irc:before,
+a.moin-ircs:before { content: url("../img/mime-type/moin-telnet.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mailto:before { content: url("../img/mime-type/moin-email.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-attachment:before { content: url("../img/mime-type/moin-attach.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-interwiki:before { content: url("../img/mime-type/moin-inter.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-action:before { content: url("../img/mime-type/moin-action.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-text:before { content: url("../img/mime-type/moin-text.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-image:before { content: url("../img/mime-type/moin-image.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-audio:before { content: url("../img/mime-type/moin-audio.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-video:before { content: url("../img/mime-type/moin-video.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-application:before { content: url("../img/mime-type/moin-application.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-pdf:before { content: url("../img/mime-type/moin-pdf.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-package:before { content: url("../img/mime-type/moin-package.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-drawing:before { content: url("../img/mime-type/moin-drawing.png"); margin: 0 .2em; vertical-align: middle; }
+/* end of mime type icons */
+
 /* transclusion wrapper overlays */
 .moin-transclusion { max-width: 100%; }
 .moin-item-wrapper { position: relative; display: inline-block; }
