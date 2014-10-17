@@ -101,7 +101,7 @@ setup_args = dict(
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
-        'XStatic-Font-Awesome==3.2.1.1',  # see issue #443
+        'XStatic-Font-Awesome>=4.1.0.0',
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-autosize',
         'XStatic-jQuery>=1.8.2',

@@ -52,7 +52,7 @@
                 <input name='q' type="text" class="form-control" placeholder="Search ...">
                 <div class="input-group-btn">
                     <button class="btn btn-primary" type="submit">
-                        <i class="icon-search"></i>
+                        <i class="fa fa-search"></i>
                     </button>
                 </div>
             </div>
@@ -149,19 +149,19 @@
                                         {% if user.name -%}
                                             {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
                                             <li>
-                                                {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white", None) }}
+                                                {{ hyperlink(wiki_href, title, exists, aliasname, "fa fa-user fa-inverse", None) }}
                                             </li>
                                             {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
                                                 <li>
                                                     {{ hyperlink(url_for('frontend.usersettings'), None, True,
-                                                        _('Settings'), "icon-cog icon-white", None) }}
+                                                        _('Settings'), "fa fa-cog fa-inverse", None) }}
                                                 </li>
                                             {%- endif %}
                                         {%- endif %}
                                         {% if user.auth_method in cfg.auth_can_logout %}
                                             <li>
                                                 {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
-                                                        _('Logout'), "icon-off icon-white", None) }}
+                                                        _('Logout'), "fa fa-sign-out fa-inverse", None) }}
                                             </li>
                                         {% endif %}
                                     {% else %}
@@ -193,14 +193,13 @@
                                             class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
                                             {{ fqname|shorten_fqname }}
                                         </a>
-                                        <i class="icon-double-angle-right icon-fixed-width"></i>
                                     {%- else -%}
                                         <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
                                             {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
                                             {{ fqname|shorten_fqname }}
                                         </a>
-                                        <i class="icon-double-angle-right icon-fixed-width"></i>
                                     {%- endif %}
+                                    <i class="fa fa-angle-double-right fa-fw"></i>
                                     <ul class="moin-bcs-subitems">
                                         {% for fq_name in theme_supp.get_fqnames(fqname) -%}
                                             <li>
