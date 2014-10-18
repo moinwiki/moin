@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 
-{% set title = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
+{% set title = _("History of '%(fqname)s'", fqname=fqname) %}
 
 {% block content %}
     {% set (history, next_offset, previous_offset) = history_page %}
