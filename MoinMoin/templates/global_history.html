@@ -55,7 +55,7 @@
             <div class="moin-history-container">
                 <div class="moin-history-container-header">
                     <h2>{{ bookmark_time|datetimeformat }}</h2>
-                    <a class="bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+                    <a class="bookmark-link btn btn-danger" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
                 </div>
             </div>
         {% endif %}
