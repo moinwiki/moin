@@ -1,6 +1,14 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 
+{# map meta.action to font awesome classes #}
+{% set awesome_class = {
+    'REVERT': 'fa fa-undo',
+    'SAVE': 'fa fa-save',
+    'RENAME': 'fa fa-pencil-square-o',
+    'TRASH': 'fa fa-trash-o',
+} %}
+
 {% block head %}
     {{ super() }}
     <link rel="alternate" title="Global History" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
@@ -25,7 +33,7 @@
                             {% set meta = rev.meta %}
                             <tr>
                                 <td class="moin-action col-md-1">
-                                    <span title="{{ meta.action|title }}" class="moin-history-{{ meta.action|lower }}"></span>
+                                    <i title="{{ meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
                                 </td>
                                 <td class="moin-history-links col-md-1">
                                     <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">HIST</a>
