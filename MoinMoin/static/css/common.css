@@ -1,0 +1,205 @@
+/*
+    Add the css rules common to all themes here. In general, everything
+    within moin-content should be defined here and everything within
+    the web page header, footer, and sidebars should be defined within the
+    theme CSS files. Themes may override any of the rules defined here as
+    required.
+*/
+
+/* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
+.moin-text-icon { font-size: 0; color: transparent; }
+.moin-alert:before { content: url('../img/smileys/alert.png'); }
+.moin-angry:before { content: url('../img/smileys/angry.png'); }
+.moin-attention:before { content: url('../img/smileys/attention.png'); }
+.moin-biggrin:before { content: url('../img/smileys/biggrin.png'); }
+.moin-checkmark:before { content: url('../img/smileys/checkmark.png'); }
+.moin-devil:before { content: url('../img/smileys/devil.png'); }
+.moin-frown:before { content: url('../img/smileys/frown.png'); }
+.moin-icon-error:before { content: url('../img/smileys/icon-error.png'); }
+.moin-icon-info:before { content: url('../img/smileys/icon-info.png'); }
+.moin-idea:before { content: url('../img/smileys/idea.png'); }
+.moin-ohwell:before { content: url('../img/smileys/ohwell.png'); }
+.moin-prio1:before { content: url('../img/smileys/prio1.png'); }
+.moin-prio2:before { content: url('../img/smileys/prio2.png'); }
+.moin-prio3:before { content: url('../img/smileys/prio3.png'); }
+.moin-redface:before { content: url('../img/smileys/redface.png'); }
+.moin-sad:before { content: url('../img/smileys/sad.png'); }
+.moin-smile:before { content: url('../img/smileys/smile.png'); }
+.moin-smile2:before { content: url('../img/smileys/smile2.png'); }
+.moin-smile3:before { content: url('../img/smileys/smile3.png'); }
+.moin-smile4:before { content: url('../img/smileys/smile4.png'); }
+.moin-star_off:before { content: url('../img/smileys/star_off.png'); }
+.moin-star_on:before { content: url('../img/smileys/star_on.png'); }
+.moin-thumbs-up:before { content: url('../img/smileys/thumbs-up.png'); }
+.moin-tired:before { content: url('../img/smileys/tired.png'); }
+.moin-tongue:before { content: url('../img/smileys/tongue.png'); }
+/* end of smileys */
+
+/* admonitions  - no moin- prefix added  here, these classes are used within wiki markup:
+      Moin wiki: {{{#!wiki caution
+      ReST: .. caution:: some text
+      Docbook: <caution><para>some text</para></caution>
+
+      TODO: create icons for attention, danger, error, and hint.
+*/
+div.attention { background-image: url("../img/admonitions/important.png"); }
+div.caution { background-image: url("../img/admonitions/caution.png"); }
+div.danger { background-image: url("../img/admonitions/warning.png"); }
+div.error { background-image: url("../img/admonitions/warning.png"); }
+div.hint { background-image: url("../img/admonitions/tip.png"); }
+div.important { background-image: url("../img/admonitions/important.png"); }
+div.note { background-image: url("../img/admonitions/note.png"); }
+div.tip { background-image: url("../img/admonitions/tip.png"); }
+div.warning { background-image: url("../img/admonitions/warning.png"); }
+div.attention,
+div.caution,
+div.danger,
+div.error,
+div.hint,
+div.important,
+div.note,
+div.tip,
+div.warning { color: black; background-color: #F9F9FF; background-repeat: no-repeat; background-position: 8px 8px;
+    border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px; min-height: 64px; padding-left: 64px; clear: both; }
+div.attention > p,
+div.caution > p,
+div.danger > p,
+div.error > p,
+div.hint > p,
+div.important > p,
+div.note > p,
+div.tip > p,
+div.warning > p { margin-top: 8px;  /* to align text with big graphic */ }
+/* end of admonitions */
+
+/* mime type icons */
+a.moin-www:before,
+a.moin-http:before,
+a.moin-https:before { content: url("../img/mime-type/moin-www.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-file:before,
+a.moin-ftp:before { content: url("../img/mime-type/moin-ftp.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-nntp:before,
+a.moin-news:before { content: url("../img/mime-type/moin-news.png"); margin: 0 .2em    ; vertical-align: middle; }
+a.moin-telnet:before,
+a.moin-ssh:before,
+a.moin-irc:before,
+a.moin-ircs:before { content: url("../img/mime-type/moin-telnet.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mailto:before { content: url("../img/mime-type/moin-email.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-attachment:before { content: url("../img/mime-type/moin-attach.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-interwiki:before { content: url("../img/mime-type/moin-inter.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-action:before { content: url("../img/mime-type/moin-action.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-text:before { content: url("../img/mime-type/moin-text.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-image:before { content: url("../img/mime-type/moin-image.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-audio:before { content: url("../img/mime-type/moin-audio.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-video:before { content: url("../img/mime-type/moin-video.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-application:before { content: url("../img/mime-type/moin-application.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-pdf:before { content: url("../img/mime-type/moin-pdf.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-package:before { content: url("../img/mime-type/moin-package.png"); margin: 0 .2em; vertical-align: middle; }
+a.moin-mime-drawing:before { content: url("../img/mime-type/moin-drawing.png"); margin: 0 .2em; vertical-align: middle; }
+/* end of mime type icons */
+
+/* transclusion wrapper overlays */
+.moin-transclusion { max-width: 100%; }
+.moin-item-wrapper { position: relative; display: inline-block; }
+div.moin-item-wrapper { /* force bottom border of transcluded headings to extend across entire page */ width: 100%; }
+div.moin-item-wrapper,
+div.moin-item-wrapper > div,
+div.moin-item-wrapper > div > p:first-child,
+div.moin-item-wrapper > div > p:last-child { margin: 0; }
+div.moin-item-wrapper > div > p:first-child ~ p:last-child { margin-top: 1em; }
+a.moin-item-overlay-ul:link,
+a.moin-item-overlay-ul:visited,
+a.moin-item-overlay-ul:active,
+a.moin-item-overlay-lr:link,
+a.moin-item-overlay-lr:visited,
+a.moin-item-overlay-lr:active { color: transparent; }
+.moin-item-overlay-ul,
+.moin-item-overlay-lr { display: none; position: absolute; color: transparent; background-color: transparent;
+    font-size: 1.2em; font-weight: bold; margin: 0; opacity: .5; padding: 1px; border-color: #428bca; border-style: double; }
+.moin-item-overlay-ul { top: -4px; left: -4px; border-width: 3px 0 0 3px; }
+.moin-item-overlay-lr { bottom: -4px; right: -4px; border-width: 0 3px 3px 0; }
+a.moin-item-overlay-ul:hover,
+a.moin-item-overlay-ul:hover ~ a.moin-item-overlay-lr,
+a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #428bca; text-decoration: none; }
+/* end transclusion wrapper overlays */
+
+.moin-suggestions { color: #FF9900; display: inline; }
+.moin-suggestion-terms { font-style: italic; display: inline; }
+.moin-wordbreak { word-break: break-all; word-wrap: break-word; }
+.moin-search-meta { color: green; }
+.searchstats { color: gray; }
+#moin-search-query { width: 70%; border-radius: 5px; }
+.searchhitinfobar { display: inline; }
+.moin-rights-info { display: inline; float: right; }
+.moin-searchoptions > table { table-layout: fixed; }
+.moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
+.moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
+.hidden { display: none; visibility: hidden; }
+
+.moin-link-list li { padding: 2px 0 2px 0; }
+input[type="text"].moin-acl-string { width: 70%; }
+#moin-acl-form { display: inline; }
+
+/* tablesorter */
+.tablesorter { width: 100%; }
+.tablesorter-header {
+  background-image: url('../img/bg.png');
+  background-repeat: no-repeat;
+  background-position: left center; }
+.tablesorter-headerAsc {
+  background-image: url('../img/asc.png'); }
+.tablesorter-headerDesc {
+  background-image: url('../img/desc.png'); }
+.tablesorter-header.sorter-false {
+  background-image: None; }
+.tablesorter-header-inner {
+  padding-left: 10px;
+  cursor: pointer; }
+.sorter-false > .tablesorter-header-inner {
+  padding-left: 0px; }
+
+/* tickets */
+.moin-existing-tags { display: inline; }
+.moin-ticket-create-link,
+.moin-ticket-search { display: inline; float: right; }
+#ticket-table-tip { color: #4e7da9; }
+#ticket-summary { width: 50%; }
+.tickets-sort-button.dropdown { z-index: 500; }
+.tickets-sort-button.dropdown ul.dropdown-menu { background-color: #aed4fa; padding: 0; margin: 0; display: none; position: absolute; }
+.tickets-sort-button.dropdown ul.dropdown-menu li { list-style-type: none; display: block; position: relative; }
+.tickets-sort-button.dropdown ul.dropdown-menu li a { display: inline; }
+.tickets-sort-button.dropdown:hover ul.dropdown-menu { display: inline-block; }
+.moin-ticket-tags { border-bottom: none; clear: both; }
+.tickets-sort-button.dropdown { display: inline; padding-left: 8px
+}
+.moin-ticketsearch-form { display: inline
+}
+#moin-ticketsearch-query { background-image: url("../../../static/img/search.png"); background-repeat: no-repeat; background-position: 5px;
+    padding-left: 24px; width: 150px; margin-left: 7px; }
+.moin-ticket-tags { margin-top: 1em; display: none; }
+#ticket-list thead th:hover { background-color: #e8e8e8; cursor: pointer; }
+#ticket-list tbody tr:hover { background-color: #e8e8e8; }
+#ticket-list tr td:first-child a { font-family: monospace; }
+.ticket-query-button { background: #aed4fa; padding: 1px 7px; text-shadow: 0 1px 0 #fff; border: 1px solid transparent; }
+.ticket-query-button.active,
+.ticket-tags-button.active,
+.ticket-tags-button:hover,
+.ticket-query-button:hover { background-color:#008b8b; color: #333; box-sizing: border-box; border: 1px solid transparent; border-radius: 3px; }
+
+/* tags tab */
+ul.moin-tags { display: block; margin-left: 0; }
+ul.moin-tags > li { padding: 5px 0 5px 0; display: inline-block; text-align: center; width: 300px; }
+ul.moin-tags li.weight0 { font-size: 100%; }
+ul.moin-tags li.weight1 { font-size: 120%; }
+ul.moin-tags li.weight2 { font-size: 140%; }
+ul.moin-tags li.weight3 { font-size: 160%; }
+ul.moin-tags li.weight4 { font-size: 180%; }
+ul.moin-tags li.weight5 { font-size: 200%; }
+ul.moin-tags li.weight6 { font-size: 220%; }
+ul.moin-tags li.weight7 { font-size: 240%; }
+ul.moin-tags li.weight8 { font-size: 260%; }
+ul.moin-tags li.weight9 { font-size: 280%; }
+
+/* footnotes */
+.moin-footnotes { border-top: 1px solid gray; margin: 2em; }
+.moin-footnotes p { margin: 1em; }

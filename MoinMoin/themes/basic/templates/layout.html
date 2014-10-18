@@ -1,0 +1,289 @@
+{% extends theme("base.html") %}
+
+{% import theme("snippets.html") as snippets %}
+
+{% set logo = snippets.logo() %}
+{% set footer_logos = snippets.creditlogos() %}
+{% set credits = snippets.credits() %}
+{% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(fqname) %}
+{% set basic_scripts = snippets.add_scripts() %}
+{% set current_url = request.url %}
+{% set current_path = request.path %}
+{% set current_url_showview = url_for_item(endpoint='frontend.show_item', item_name=item_name) %}
+{% set login_url = theme_supp.login_url() %}
+
+{# Helper macro to generate the local panel #}
+{% macro local_panel_main(panelname) -%}
+    {% for endpoint, href, iconcls, label, title, exists in panelname %}
+        {# iconcls should be defined, defined for all local_panel_items, see themes/__init.py #}
+        {{ hyperlink(href, title, exists, label, iconcls + " icon-fixed-width", "list-group-item") }}
+    {% endfor %}
+{% endmacro %}
+
+{# Helper macro to generate links #}
+{% macro hyperlink(href, title, exists, label, iconcls, mainclass) -%}
+    <a href="{{ href }}"
+        {% if not exists %} class="moin-nonexistent {% if mainclass %}{{ mainclass }} {% endif %}"
+        {% else %}
+            {% if mainclass %}
+                class="{{ mainclass }}{% if current_url == href %} active{% endif %}"
+            {% elif current_url == href %}
+                class="active"
+            {% elif current_path == href %}
+                class="active"
+            {% endif %}
+        {% endif %}
+        rel="nofollow"
+        {% if title %} title="{{ title }}" {% endif %}>
+        {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
+        {% if href == login_url %}
+            {{label }}
+        {% else %}
+            <span class="hidden-sm hidden-xs">{{ label }}</span>
+        {% endif %}
+    </a>
+{% endmacro %}
+
+{# Helper macro to generate a search form #}
+{% macro make_search_form(klass, clas) %}
+    <div class="{{klass}}">
+        <form class="{{clas}}" action="{{ url_for('frontend.search') }}" method="get" role="search">
+            <div class="input-group">
+                <input name='q' type="text" class="form-control" placeholder="Search ...">
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="icon-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endmacro %}
+
+
+{% block head_meta %}
+    {{ super() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block layout %}
+    <div class="container-fluid">
+        <div id="moin-main-wrapper" class="row">
+
+            <div class="col-md-2 col-sm-3 col-xs-4 moin-sidebar">
+                <div class="moin-logo">
+                    {% if logo %}
+                        <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                            {{ logo }}
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="moin-sidebar-panels">
+                    {% set navibar_items = theme_supp.navibar(item_name) %}
+                    {% set quicklinks = 'false' %}
+
+                    {% if search_form %}
+                        {{ make_search_form("hidden-lg hidden-md hidden-sm", "moin-sidebar-form") }}
+                    {% endif %}
+
+                    {% if navibar_items %}
+                        <div class="list-group-item moin-list-heading"> {{ _("Site Navigation") }} </div>
+                        {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
+                            <a class="list-group-item {{ cls }}
+                                {% if url in [current_url, current_path, current_url_showview] %} active{% endif %}" href="{{ url }}"
+                                {% if title %}title="{{ title }}"{% endif %}>
+                                {{ text|shorten_item_name }}
+                            </a>
+                        {% endfor %}
+                        {% if item_navigation %}
+                            <div class="list-group-item moin-list-heading"> {{ _("Supplementation") }} </div>
+                            {{ local_panel_main(item_navigation) }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
+                        {% if loop.first %}
+                            <div class="list-group-item moin-list-heading">Quick Links</div>
+                        {% endif %}
+                        <div class="moin-quicklink">
+                            <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text|shorten_item_name(20) }}
+                            </a>
+                        </div>
+                    {% endfor %}
+
+                    {% if self.local_panel %}
+                        {{ self.local_panel() }}
+                    {% endif %}
+                </div> {# moin-sidebar-panels #}
+            </div> {# moin-sidebar #}
+
+            <div class="col-md-10 col-sm-9 col-xs-12">
+                <nav class="navbar moin-navbar-inverse">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-5 col-xs-6">
+                            <div class="moin-navbar-header">
+
+                                <button type="button" id="hideshowsidebar" class="navbar-toggle">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+
+                                {% if cfg.sitename %}
+                                    <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                                        {{ cfg.sitename }}
+                                    </a>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-4 col-xs-6 moin-loginsettings">
+                            <div class="moin-navbar-collapse navbar-collapse collapse in">
+                                <ul class="nav navbar-nav moin-pull-right">
+                                    {% if user.valid -%}
+                                        {% set avatar = user.avatar(20) %}
+                                        {% if avatar %}
+                                            <li><img id="moin-avatar" src="{{ avatar }}" /></li>
+                                        {%- endif %}
+                                        {% if user.name -%}
+                                            {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                                            <li>
+                                                {{ hyperlink(wiki_href, title, exists, aliasname, "icon-user icon-white", None) }}
+                                            </li>
+                                            {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                                                <li>
+                                                    {{ hyperlink(url_for('frontend.usersettings'), None, True,
+                                                        _('Settings'), "icon-cog icon-white", None) }}
+                                                </li>
+                                            {%- endif %}
+                                        {%- endif %}
+                                        {% if user.auth_method in cfg.auth_can_logout %}
+                                            <li>
+                                                {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
+                                                        _('Logout'), "icon-off icon-white", None) }}
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+
+                                        {% if login_url %}
+                                            <li>
+                                                {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
+                                            </li>
+                                        {% endif %}
+                                    {%- endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% if search_form %}
+                            {{ make_search_form("col-sm-3 hidden-xs", "moin-navbar-form") }}
+                        {% endif %}
+                    </div>
+                </nav> {# navbar moin-navbar-inverse #}
+
+                <ul class="moin-breadcrumb">
+                    {% set trail_items = theme_supp.path_breadcrumbs() %}
+                    {% if trail_items %}
+                        {% for wiki_name, fqname, item_href, exists, err in trail_items %}
+                            {% if not loop.last %}
+                                <li>
+                                    {%- if wiki_name -%}
+                                        <a href="{{ item_href }}"{{ " " }}
+                                            title="{{ wiki_name }}"
+                                            class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+                                            {{ fqname|shorten_fqname }}
+                                        </a>
+                                        <i class="icon-double-angle-right icon-fixed-width"></i>
+                                    {%- else -%}
+                                        <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
+                                            {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                                            {{ fqname|shorten_fqname }}
+                                        </a>
+                                        <i class="icon-double-angle-right icon-fixed-width"></i>
+                                    {%- endif %}
+                                    <ul class="moin-bcs-subitems">
+                                        {% for fq_name in theme_supp.get_fqnames(fqname) -%}
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                                                    {{ fq_name|shorten_fqname(length=25) }}
+                                                </a>
+                                            </li>
+                                        {%- endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <h4 class="moin-location-breadcrumb">
+                                        {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
+                                            {% if loop.first %}
+                                                <small>~ /</small>
+                                            {% elif not loop.last %}
+                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                                    {{ segment_name|shorten_fqname }}
+                                                </a>
+                                                <small>/</small>
+                                            {%- endif %}
+                                            {% if loop.last %}
+                                                {% if title_name %}
+                                                    {{ title_name }}
+                                                {% else %}
+                                                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                                        {{ segment_name|shorten_fqname }}
+                                                    </a>
+                                                {%- endif %}
+                                            {%- endif %}
+                                        {% endfor %}
+                                    </h4>
+                                    <ul class="moin-bcs-subitems">
+                                        {% for fq_name in theme_supp.get_fqnames(fqname) -%}
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                                                    {{ fq_name|shorten_fqname(length=25) }}
+                                                </a>
+                                            </li>
+                                        {%- endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </ul> {# moin-breadcrumb #}
+
+                <div class="moin-content">
+                    {# id -> moin-flash is used to add special alerts for ex. for changes to User Settings via JS, see common.js #}
+                    <div id="moin-flash">
+                        {% for category, msg in get_flashed_messages(with_categories=true) %}
+                            <div class="moin-flash moin-flash-{{ category }}">
+                                {{ msg }}
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% block views %}
+                    {% endblock %}
+
+                    {% set content_id = self.local_panel and 'moin-content' or 'moin-content-no-panel' %}
+                    <div id="{{ content_id }}" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+                        {% block content %}
+                            {# All content templates should implement this block. #}
+                        {% endblock %}
+                    </div>
+                </div>
+
+                {% block footer %}
+                    <div class="navbar">
+                        {{ footer_logos }}
+                        {{ credits }}
+                    </div>
+                {% endblock %}
+            </div> {# parent of header, breadcrumbs, content, footer #}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block body_scripts %}
+    {{ super() }}
+    {{ basic_scripts }}
+{% endblock %}

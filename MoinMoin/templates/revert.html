@@ -1,0 +1,15 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+{% block content %}
+    <h1>{{ _("Revert '%(item_name)s' (rev %(rev_id)s, names '%(new_names)s') ", item_name=fqname | shorten_item_name, rev_id=rev_id | shorten_id, new_names=item.meta['name'] | join('|')) }}</h1>
+    <div class="moin-form">
+        {{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.fqname, rev=rev_id)) }}
+            {{ forms.render_errors(form) }}
+            <dl>
+                {{ forms.render(form['comment']) }}
+                {{ forms.render_textcha(gen, form) }}
+            </dl>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}

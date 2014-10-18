@@ -1,0 +1,95 @@
+<!DOCTYPE html>{# this is html5, xmlish variant #}
+{%- import "snippets.html" as snippets with context %}
+{%- set head = snippets.head() %}
+{%- set scripts = snippets.scripts() %}
+{%- set stylesheets = snippets.stylesheets() %}
+
+{# This allows child templates passing their header_search macro to the common layout (eg blog).
+   If there is no header_search macro defined in child templates use the default one. #}
+{% if not header_search %}
+    {% from "utils.html" import header_search %}
+{% endif %}
+
+<html>
+    <head>
+        {% block head %}
+            {% block head_meta %}
+                <meta charset="utf-8" />{# must be at the beginning #}
+                {% if pi_refresh -%}
+                    {{ '<meta http-equiv="refresh" content="%d;URL=%s" />' % pi_refresh }}
+                {%- endif %}
+                {% for name, content in theme_supp.meta_items -%}
+                    <meta name="{{ name }}" content="{{ content }}" />
+                {% endfor %}
+            {% endblock %}
+
+            {{ head }}
+
+            {% block head_title %}
+                <title>
+                    {%- if title -%}
+                        {{ title }}
+                    {% elif title_name %}
+                        {{ title_name }}
+                    {% elif headline %}
+                        {{ headline }}
+                    {% else %}
+                        {{ item_name }}
+                    {%- endif %} -
+                    {%- if cfg.html_pagetitle -%} {{ cfg.html_pagetitle }}{% else %} {{ cfg.sitename }}{%- endif -%}
+                </title>
+            {% endblock %}
+
+            {% block head_links %}
+
+                {% block bootstrap_stylesheet %}
+                {% endblock %}
+
+                {% block icons_stylesheet %}
+                    <link rel="stylesheet" href="{{ url_for('serve.files', name='font_awesome', filename='css/font-awesome.css') }}" />
+                {% endblock %}
+
+                <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
+
+                {% block theme_stylesheets %}
+                    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
+                    <link media="all" rel="stylesheet" href="{{ theme_static('css/theme.css') }}" />
+
+                {% endblock %}
+                {{ stylesheets }}
+                {% if user.valid and user.css_url -%}
+                    <link media="all" rel="stylesheet" title="{{ user.name }}'s stylesheet" href="{{ user.css_url }}" />
+                {%- endif %}
+            {% endblock %}
+
+
+        {% endblock %}
+    </head>
+    <body{% if body_onload %} onload="{{ body_onload }}"{% endif %} lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
+        {% block layout %}
+            <h1>Extend this block only if you want to change layout. If you want to put content, extends layout.html and use placeholders item and content.</h1>
+        {% endblock %}
+
+        <div id="moin-options-for-javascript" style="display: none">
+            {% block options_for_javascript %}
+                {# implement this block to pass server side options to client side javascript. #}
+            {% endblock %}
+        </div>
+
+        {% block body_scripts %} {# js before </body> reduces IE8 js errors related to svgweb #}
+            <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/jquery.i18n.min.js') }}"></script>
+            <script src="{{ url_for('frontend.template', filename='dictionary.js') }}"></script>
+            <script src="{{ url_for('serve.files', name='bootstrap', filename='js/bootstrap.min.js') }}"></script>
+            <script src="{{ url_for('serve.files', name='autosize', filename='jquery.autosize-min.js') }}"></script>
+            <script src="{{ url_for('serve.files', name='jquery_tablesorter', filename='jquery.tablesorter.js') }}"></script>
+            <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+            {{ scripts }}
+            <!--[if lt IE 9]>
+                {# TODO: use a local copy later #}
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+        {% endblock %}
+
+    </body>
+</html>

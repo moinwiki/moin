@@ -1,0 +1,136 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% set title = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
+
+{% block views %}
+    {{ itemviews }}
+{% endblock %}
+
+{% block content %}
+    {% set (history, next_offset, previous_offset) = history_page %}
+    {% if history %}
+        <div>
+            {% if previous_offset >= 0 %}
+                <a href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+            {% endif %}
+            {% if next_offset %}
+                <a href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+            {% endif %}
+        </div>
+        <h1>{{ title }}</h1>
+        <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
+            <div>
+                <table class="table table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            {% if fqname.field == NAME_EXACT %}
+                                <th>{{ _("Name") }}</th>
+                            {% else %}
+                                <th>{{ _("ID or Name") }}</th>
+                            {% endif %}
+
+                            <th>{{ _("Rev.") }}</th>
+                            <th>{{ _("Timestamp") }}</th>
+                            <th id="moin-button-diff"><button class="btn btn-sm btn-primary">Diff</button></th>
+                            <th>{{ _("Editor") }}</th>
+                            <th>{{ _("Comment") }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in history %}
+                            <tr>
+                                {% if fqname.field == NAME_EXACT %}
+                                    <td>
+                                        {% for name in doc.name %}
+                                            {% if not loop.first %}|{% endif %}
+                                            <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
+                                        {% endfor %}
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        {% if doc.name %}
+                                            {% for name in doc.name %}
+                                                {% if not loop.first %}|{% endif %}
+                                                <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
+                                            {% endfor %}
+                                        {% else %}
+                                            <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.itemid|shorten_id }}</a>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+
+                                <td title="{{ _("Size") }}: {{ doc.size }} &#10;{{ doc.contenttype|shorten_ctype }}: {{ doc.contenttype }}" >
+                                    {{ doc.revid | shorten_id }}
+                                </td>
+                                <td>{{ doc.mtime|datetimeformat }}</td>
+                                <td>
+                                    <div class="moin-hist-rev">
+                                        <input type="radio" name="rev1" value="{{ doc.revid }}" />
+                                        <input type="radio" name="rev2" value="{{ doc.revid }}" />
+                                    </div>
+                                </td>
+                                <td>{{ utils.editor_info(doc) }}</td>
+                                <td>{{ doc.comment }}</td>
+                                <td>
+                                    <div class="btn-group dropup menu">
+                                        <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" type="button">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right submenu">
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item', item_name=fqname, rev=doc.revid) }}">
+                                                    {{ _('show') }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=doc.revid) }}">
+                                                    {{ _('meta') }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url_for('frontend.download_item', item_name=fqname, rev=doc.revid) }}">
+                                                    {{ _('download') }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url_for('frontend.highlight_item', item_name=fqname, rev=doc.revid) }}">
+                                                    {{ _('highlight') }}
+                                                </a>
+                                            </li>
+                                            {% if user.may.write(item_name) -%}
+                                                <li>
+                                                    <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=doc.revid) }}">
+                                                        {{ _('revert') }}
+                                                    </a>
+                                                </li>
+                                            {%- endif %}
+                                            {% if user.may.destroy(item_name) -%}
+                                                <li>
+                                                    <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=doc.revid) }}">
+                                                        {{ _('destroy') }}
+                                                    </a>
+                                                </li>
+                                            {%- endif %}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if bookmark_time %}
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Bookmark is set to</td>
+                                <td>{{ bookmark_time|datetimeformat }}</td>
+                                <td colspan="11"></td>
+                            </tr>
+                        </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

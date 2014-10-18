@@ -1,0 +1,1537 @@
+//moin2 modernized theme css
+
+// includes comments with notice regarding automatically generated css and licensing
+@import "notice.css"
+
+// normalize.css is compiled by make.py (./m css) from the normalize.less file bundled with bootstrap
+@import "normalize.css"
+
+// user styles used by moin wiki parser (and maybe others) like red/green/solid/dashed/comment...
+@import "userstyles.css"
+
+// color have been used from the color palette
+@import "color_palette"
+
+// moin diff styling
+@import "moin_diff"
+
+// pygments css - colorful theme
+@import "colorful.css"
+
+html
+    color font_color
+    font-family Helvetica, Arial, sans-serif
+
+p
+    margin 1em 0
+    font-size 1em
+    line-height 1.3em
+
+ins
+    background-color inherit // needed for "/* __My Comment__ */"
+    text-decoration underline
+
+.moin-big
+    font-size 1.17em
+
+.moin-small
+    font-size .83em
+
+.moin-inline-label
+    display inline
+
+h1
+    font-size 2em
+    margin .67em 0
+    border-bottom 5px solid border_color
+    padding-bottom 5px
+
+h2
+    font-size 1.5em
+    margin .75em 0
+    padding-bottom 4px
+
+h3
+    font-size 1.17em
+    margin .83em 0
+    padding-bottom 3px
+
+h4
+    margin 1.12em 0
+    padding-bottom 2px
+
+h5
+    font-size .83em
+    margin 1.5em 0
+    padding-bottom 2px
+
+h6
+    font-size .75em
+    margin 1.67em 0
+    padding-bottom 2px
+
+h2,h3,h4,h5,h6
+    border-bottom 3px solid border_color
+
+a
+    text-decoration none
+
+a:link
+    color link_color
+
+a:visited
+    color visited_color
+
+a:hover
+    color hover_color
+
+a:active
+    color active_color
+
+a.moin-nonexistent:visited,
+a.moin-nonexistent
+    color nonexistent_link_color
+    img,
+    object
+        background nonexistent_link_color
+        border 3px dashed footer_color
+
+ol, ul
+    margin-left 3em
+
+ol ol, ul ul, ol ul, ul ol
+    margin-left 2em
+
+li p
+    margin .25em 0
+
+ol.moin-upperalpha-list
+    list-style-type upper-alpha
+
+ol.moin-loweralpha-list
+    list-style-type lower-alpha
+
+ol.moin-upperroman-list
+    list-style-type upper-roman
+
+ol.moin-lowerroman-list
+    list-style-type lower-roman
+
+ul.moin-nobullet-list
+    list-style-type none
+
+ol, ul
+    margin-top .5em
+    margin-bottom .5em
+
+li ol, li ul
+    margin-top .25em
+
+dt
+    margin-top 0.5em
+    font-weight bold
+
+dd
+    font-size .92em
+    margin-left 40px
+    margin-top 0
+    margin-bottom 0
+
+dd p
+    margin 0.25em 0
+
+dd + dd p
+    margin-top .67em
+
+blockquote
+    margin-left 2em
+
+hr
+    height 1px
+    background-color border_color
+    border 0
+    margin .9em 0
+
+.moin-hr1
+    height 2px
+
+.moin-hr2
+    height 3px
+
+.moin-hr3
+    height 5px
+
+.moin-hr4
+    height 7px
+
+.moin-hr5
+    height 9px
+
+.moin-hr6
+    height 12px
+
+.moin-error
+    color error_color
+    background table_bg_color
+    padding 4px
+
+.moin-highlight
+    background-color table_row_color
+    padding 1px
+
+pre
+    border border_style
+    background-color base_color
+    padding 5px
+    clear both
+    font-family monospace
+    margin .33em 0
+    white-space pre-wrap
+
+pre.comment
+    background-color header_bg_color
+    color heading_color
+    padding 0
+    margin 0
+    border 0
+
+pre.comment:before
+    content url(../img/attention.png)
+
+table
+    margin 1%
+    border-collapse collapse
+
+th, td
+    padding 0.3em 0.4em
+    vertical-align middle
+    text-align left
+
+th
+    border border_style
+    background-color table_header_bg_color
+    text-align center
+    color font_color
+
+td
+    border border_style
+
+td p
+    margin 0
+    padding 0
+
+.moin-thead
+    background-color header_bg_color
+
+table.zebra
+    border-collapse collapse
+    width 98%
+
+.zebra thead
+    background-color header_bg_color
+
+.zebra tfoot
+    background-color base_color
+
+.zebra td
+    form
+        input
+            box-shadow none
+
+.zebra tbody tr, .zebra > tr
+    background-color table_bg_color
+
+.zebra tbody tr:nth-child(odd), .zebra > tr:nth-child(odd)
+    background-color table_row_color
+
+div.moin-table-of-contents
+    border border_style
+    color font_color
+    background page_color
+    font-size 80%
+    margin 0.5em 0 0.75em 1em
+    padding 0.5em 0.75em 0.5em 0.5em
+    text-indent -1em
+    max-width 35%
+    text-align left
+    float right
+    clear both
+    box-shadow 3px 3px 6px shadow_color
+    border-radius 15px
+
+.moin-table-of-contents ol
+    margin 0
+    padding 0 0 0 .92em
+
+.moin-table-of-contents li
+    margin .12em 0 0 0
+    padding 0
+    list-style none
+
+.moin-table-of-contents-heading
+    font-weight bold
+    padding 0
+    margin 0 0 0.5em 1em
+    letter-spacing 0.075em
+
+.moin-showhide
+    margin-left 10px
+
+table.navigation
+    background page_color
+    float right
+    margin 2px
+
+#moin-rev-navigation
+    list-style none
+    text-align center
+
+#moin-rev-navigation li
+    display inline
+
+.moin-disabled
+    color footer_color
+
+.moin-rev-navigation-current
+    font-size 1.5em
+    text-transform uppercase
+
+.moin-rev-navigation-older,
+.moin-rev-navigation-newer
+    padding 0 20px 0 20px
+
+// create table
+#moin-create-table
+    width 95%
+    margin-left auto
+    margin-right auto
+    border none
+    tbody tr
+            th
+                text-align center
+                background header_bg_color
+                margin 2px
+            td
+                text-align center
+                background page_color
+                a
+                    color link_color
+
+// form
+label
+    display block
+    font-weight bold
+
+input[type="submit"],
+input[type="button"],
+button
+    font-weight bold
+    font-size .75em
+    background base_color
+    padding 4px 15px
+    border border_style
+    border-radius 6px
+    box-shadow 1px 1px 2px shadow_color
+    cursor pointer
+    &:hover
+        box-shadow 1px 1px 2px font_color
+    &:active
+        position relative
+        top 1px
+
+input,
+select
+    padding 3px
+    background page_color
+    border border_style
+    border-radius 2px
+input[type="text"]
+    width 96%
+input.blank
+    border-color border_color
+    border-width 2px
+
+.moin-form
+    dd
+        float left
+        width 70%
+        margin-bottom 1em
+        margin-left 0
+        input
+            width 75%
+    dt
+        clear both
+        float left
+        width 25%
+        text-align right
+        margin-top .3em
+        padding-right 1%
+        label
+            &.required:after
+                content '*'
+                color font_color
+    button,
+    input[type="submit"]
+        clear both
+        display block
+        margin auto
+
+form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
+    dd
+        input
+            width 100%
+    dt
+        width 20%
+
+#moin-modify
+    dd
+        width 100%
+        float none
+        input
+            width 99%
+    dt
+        width auto
+        text-align left
+    textarea
+        width 99.5%
+    input[type="submit"]
+        margin-left 0
+
+.moin-textcha
+    padding-top .2em
+
+#options
+    dd
+        float none
+        width 38%
+        display table-cell
+        padding 1.2em
+    dt
+        margin-left 10%
+        text-align left
+        width 61%
+        margin-top 1.3em
+
+.moin-tabs .moin-tab-titles
+    a
+        color link_color
+
+.moin-tab-titles
+    margin 0
+    padding -10px 0 0
+    list-style none
+    border-bottom 3px solid border_color
+
+.moin-tab-titles li
+    display inline-block
+    *display: inline; // IE7 hack to display title tabs in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
+    margin 10px 0 -3px
+    padding 0 5px
+    border-bottom 3px solid border_color
+
+.moin-tab-titles a
+    display inline-block
+    padding 4px
+    background-color table_bg_color
+    border-width 1px 1px 0
+    border-style solid
+    border-color border_color
+    color link_color
+    border-top-left-radius 7px
+    border-top-right-radius 7px
+
+.moin-tab-titles a:hover
+    background-color table_row_color
+    text-decoration none
+
+.moin-tab-titles a.moin-current-tab
+    background table_row_color
+    padding-top 8px
+    margin-top -4px
+
+.moin-tab-titles .moin-change-indicator
+    font-weight bold
+    color hover_color
+
+.moin-current-form h2
+    display none // bold tab at top of user setting page makes h2 redundant
+
+.moin-settings-head a
+    color font_color
+    text-decoration none
+
+.searchresults dt
+    margin-top 1em
+    font-weight normal
+
+.searchresults dd,
+.searchresults p
+    font-size 0.85em
+
+.searchresults td
+    border-width 0
+
+.searchresults .searchhitinfobar
+    margin-top 0
+    display inline
+
+.searchresults .foundtext
+    margin-top 0
+
+p.searchstats
+    font-size 0.8em
+    width 100%
+    padding-left 14px
+
+p.searchhint
+    background-color table_bg_color
+    border border_style
+    padding 2px
+
+.searchpages
+    margin-left auto
+    margin-right auto
+
+.searchpages tr,
+.searchpages td
+    border 0
+    padding 5px
+    margin 0
+    text-align center
+    vertical-align middle
+    color font_color
+    font-weight bold
+    font-size 1.05em
+
+.searchpages td a,
+.searchpages td a:link
+    text-decoration underline
+
+#f_data_text
+    border border_style
+    font-family monospace
+    margin .33em 0
+    padding 3px
+    width 100%
+
+#f_comment,
+#f_summary,
+#f_textcha
+    border border_style
+    display inline
+    margin .33em 0
+    padding 3px
+    width 99%
+
+#moin-editor-help
+    font-size small
+    background-color table_bg_color
+
+#preview
+    border border_style
+    padding 10px 30px 20px 30px
+    background url(../img/draft.png)
+    margin-top 0.5em
+
+.moin-hist-rev input
+    float left
+
+.moin-hist-rev
+    margin 0
+
+#moin-global-history,
+#moin-page-history
+    font-size 75%
+
+#moin-page-history
+    table
+        border border_style
+        border-radius 5px
+        thead
+            border-top-left-radius 5px
+            border-top-right-radius 5px
+            tr th
+                    text-align center
+                    input[type="Submit"]
+                        padding 4px 10px
+                        box-shadow 1px 1px 2px shadow_color
+                        cursor pointer
+                        font-size 1em
+                        &:hover
+                            box-shadow 1px 1px 2px font_color
+
+.moin-history-time
+    width 10%
+    text-align right
+
+.moin-history-contenttype
+    width 18%
+
+.moin-history-editorinfo
+    width 17%
+
+.moin-history-comment
+    width 30%
+
+.moin-action
+    width 2%
+
+.moin-action a:hover
+    text-decoration none
+
+.moin-history-container
+    border border_style
+    margin 2em 2em
+    border-top-left-radius 5px
+    border-top-right-radius 5px
+
+.moin-history-container-header
+    background header_bg_color
+    margin 0px
+    padding 4px
+    color heading_color
+    border-bottom border_style
+    border-top-left-radius 5px
+    border-top-right-radius 5px
+    h2
+        display inline
+        border none
+    a.bookmark-link
+        margin-left 10px
+        color heading_color
+
+.moin-history-container-body
+    margin 0
+    padding 0
+    font-size 1.2em
+    table
+        margin 0
+        border none
+        width 100%
+
+.moin-history-save:before
+    content url('../img/moin-edit.png')
+
+.moin-history-trash:before
+    content url('../img/moin-deleted.png')
+
+.moin-history-rename:before
+    content url('../img/moin-renamed.png')
+
+.moin-history-copy:before
+    content url('../img/moin-new.png')
+
+.moin-history-links
+    width 5%
+
+.moin-history-links a
+    display block
+    margin-bottom 4px
+
+.moin-history-editortext,
+.moin-history-links span,
+.moin-history-comment span
+    color font_color
+    display block
+    margin-bottom 5px
+
+.moin-offset-links
+    float right
+    margin-right 20px
+
+.moin-offset-links a
+    margin-right 10px
+    padding 3px 7px
+    font-size 20px
+    background page_color
+    border 1px groove border_color
+    border-radius 5px
+
+.moin-offset-links a:hover
+    box-shadow 0px 0px 12px shadow_color
+
+.moin-clr
+    clear both
+
+.moin-select-all
+    padding 0.5em
+    color link_color
+    background table_bg_color
+    border border_style
+    text-align left
+
+.moin-select-actions
+    position relative
+    margin 0 1em
+    padding 0
+    background table_bg_color
+    z-index 2
+    white-space nowrap
+    color link_color
+    text-align left
+
+.moin-select-actions div
+    margin 0
+    padding 0.5em
+    border 1px groove border_color
+
+.moin-select-actions
+    &div:hover
+        background table_row_color
+        color hover_color
+    &.action-visible div
+        color font_color
+
+.moin-select-actions .show-action
+    cursor pointer
+    &:hover
+        color hover_color
+
+.show-action:after
+    content url("../img/moin-moveup.png")
+    margin 0 0.2em
+
+.action-visible .show-action:after
+    content url("../img/moin-movedown.png")
+    margin 0 0.2em
+
+.moin-select-allitem
+    display inline-block
+    cursor default
+    text-align left
+
+.allitem-selected:after
+    content url("../img/moin-checkbox-on.png")
+    margin 0 0.2em
+
+.allitem-toselect:after
+    content url("../img/moin-checkbox-off.png")
+    margin 0 0.2em
+
+.moin-select-actions ul
+    position absolute
+    float right
+    left 0
+    background page_color
+    border border_style
+    z-index 1
+    display none
+
+.moin-select-actions ul li
+    display list-item
+    list-style-type none
+    padding 0.5em
+    width 5em
+    cursor pointer
+
+.moin-select-actions ul li:hover
+    background-color table_bg_color
+    color link_color
+
+.moin-index-message
+    width 50%
+    margin 1em auto
+    text-align center
+    display none
+
+.moin-index-message span
+    padding 4px
+    background-color table_row_color
+    color font_color
+
+.moin-download-link
+    display none
+
+#moin-initials
+    width 90%
+    margin 5px auto
+    text-align center
+
+#moin-initials a
+    display inline-block
+    margin 0
+    padding 4px 5px
+
+#moin-initials a:hover,
+#moin-initials a.selected
+    background link_color
+    border-radius 5px
+    color heading_color
+    text-decoration none
+
+.moin-item-index
+    width 99%
+    margin-left 0.5%
+
+.moin-item-index div
+    float left
+    width 15em
+
+.moin-item-index div .moin-select-item
+    display inline-block
+    width 17px
+    cursor default
+
+.moin-align-right
+    text-align right
+    float right
+
+.moin-align-right ul
+    margin 0
+    padding 0
+
+.moin-align-right ul li.action-bar
+    list-style-type none
+    display inline-block
+    *display: inline; // IE7 hack to display index action bar in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
+
+.moin-contenttypes-wrapper
+    position relative
+    margin 0
+    color link_color
+    background table_bg_color
+    border border_style
+    min-width 12em
+    text-align left
+
+.moin-contenttypes-wrapper div
+    cursor pointer
+    margin 0.1em
+    padding 0.5em 1.2em 0.5em 0.5em
+    height 1em
+
+div.ct-shown
+    background table_row_color url("../img/moin-movedown.png") no-repeat center right
+    color font_color
+
+div.ct-hide
+    background transparent url("../img/moin-moveup.png") no-repeat center right
+
+.moin-contenttypes-wrapper form
+    position absolute
+    float right
+    max-width 12.5em
+    border-top border_style
+    z-index 2
+    background page_color
+    border border_style
+    padding .2em
+    display none
+
+.moin-contenttypes-wrapper ul li
+    list-style-type none
+    padding 0.3em
+    min-width 11.5em
+
+.moin-contenttypes-wrapper ul li label
+    display inline
+    vertical-align middle
+
+.moin-contenttypes-wrapper ul li .helper-text
+    font-size 0.7em
+    color footer_color
+    display block
+
+.moin-contenttypes-wrapper ul li:hover
+    background table_bg_color
+
+.moin-contenttypes-wrapper ul li:hover .helper-text
+    display block
+
+.moin-contenttypes-wrapper ul li a
+    font-size 80%
+
+.moin-contenttypes-wrapper form input[type="submit"]
+    margin-left 22%
+    padding-left 20%
+    padding-right 20%
+
+.moin-contenttypes-wrapper:hover div
+    background-color table_row_color
+    color hover_color
+
+.filter-toggle
+    margin 0 0.2em
+    font-size 90%
+
+.moin-more-index
+    background transparent url("../img/moin-expand.png") no-repeat
+    display inline-block
+    width 20px
+
+.moin-more-index:hover
+    text-decoration none
+
+.moin-index-path
+    margin-left 0.5em
+
+.moin-index-path:before
+    content url("../img/moin-parent.png")
+    margin 0 0.3em
+
+.moin-path-separator
+    font-size 120%
+    color link_color
+
+.moin-index-separator
+    clear both
+    border-top border_style
+    width 99%
+    margin-left .5%
+    display none
+
+.moin-transclusion
+    max-width 100%
+
+#moin-upload-cont
+    min-height 10px
+
+#file_upload
+    margin-top 2em
+
+form.upload_file
+    background-color header_bg_color
+    border 1px solid border_color
+    color panel_item_color
+    cursor pointer
+    direction ltr
+    font-weight bold
+    height 2.5em
+    line-height 2.5em
+    overflow hidden
+    position relative
+    text-align center
+    width 15em
+    box-shadow 0px 0px 5px header_bg_color
+
+form.upload_file:hover
+    color heading_color
+
+form.upload_file input
+    cursor pointer
+    height 100%
+    margin 0
+    opacity 0
+    position absolute
+    right 0
+    top 0
+
+form.upload_file button
+    display none
+
+form.upload_file
+    display block
+
+.file_upload_template .file_upload_start
+    visibility hidden
+    border-width 0px
+    padding 0px
+
+.file_upload_template .file_upload_start button
+    width 0px
+
+.upload-form
+    display none
+
+.moin-drag
+    font-size 0.7em
+    color footer_color
+
+a.moin-conflict:before
+    content url(../img/moin-conflict.png)
+    margin 0 0.2em
+
+#popup
+    background transparent url("../img/moin-transparent-bg.png") repeat
+    padding 5px
+    width 40%
+    position absolute
+    top 10%
+    left 30%
+    display none
+    z-index 10
+
+.popup-header
+    background-color header_bg_color
+    color heading_color
+    font-size 1em
+    padding 10px
+    margin 0
+
+.popup-closer
+    color heading_color
+    font-size 1em
+    padding 1px 4px
+    margin 0
+    float right
+    cursor pointer
+    border border_style
+
+.popup-closer:hover
+    background-color hover_color
+    color panel_item_color
+
+.popup-body
+    clear both
+    background-color page_color
+    color font_color
+    padding 10px
+    margin 0
+
+.popup-body label
+    margin 5px
+    display block
+    font-weight bold
+
+.popup-body input
+    margin 8px 5px
+    padding 3px
+    border border_style
+
+.popup-body input[type="text"]
+    width 300px
+
+.popup-body input.blank
+    border-color border_color
+    border-width 2px
+
+.popup-container
+    margin 0
+
+#lightbox
+    background page_color
+    opacity 0.7
+    position absolute
+    left 0
+    top 0
+    width 100%
+    height 100%
+    z-index 9
+    margin 0
+    display none
+
+#moin-flash
+    margin -2px -15px -2px -14px
+
+.moin-flash
+    margin 0
+    padding 6px 6px 6px 38px
+    background-color table_row_color
+    border-bottom border_style
+    background-repeat no-repeat
+    background-position 16px center
+    border-top-right-radius 9px
+    border-top-left-radius 9px
+    color font_color
+
+.moin-flash-hint
+    background-image url(../img/smileys/idea.png)
+
+.moin-flash-info
+    background-image url(../img/smileys/icon-info.png)
+
+.moin-flash-warning
+    background-image url(../img/smileys/alert.png)
+    color error_color
+
+.moin-flash-error
+    background-image url(../img/smileys/icon-error.png)
+    color error_color
+
+body
+    background-color body_color
+
+#moin-main-wrapper
+    width 87%
+    min-width 700px
+    margin-left auto
+    margin-right auto
+    margin-top 0px
+
+#moin-page
+    padding 1px
+    display table
+    width 100%
+    background page_color
+    border-radius 9px
+
+#moin-content
+    padding .2em 1em
+    display table-cell
+
+a:link
+    color link_color
+    text-decoration none
+
+a:visited
+    text-decoration none
+    color visited_color
+
+a:visited:hover
+    text-decoration none
+    color hover_color
+
+a:hover,
+a:active
+    text-decoration underline
+    color hover_color
+
+a.moin-nonexistent:link
+    color nonexistent_link_color
+
+a.moin-nonexistent:hover
+    color hover_color
+    text-decoration underline
+
+.current-link
+    color inherit !important
+
+#moin-header
+    margin 0px
+    padding 7px 0px 10px 0px
+    background header_bg_color
+    color heading_color
+    line-height 1.12em
+    border-bottom-left-radius 9px
+    border-bottom-right-radius 9px
+
+#moin-searchform
+    margin 2px 12px 0px 0px
+    padding 0
+    font-size 0.82em
+    float right
+    text-align right
+    width 15em
+
+#moin-search-submit
+    text-indent -9000%
+    margin-left -26px
+    width 20px
+    height 16px
+    background url(../img/moin-search.png) center center no-repeat
+    background-size 16px 16px
+    border none
+    overflow hidden
+    vertical-align middle
+    cursor pointer
+    padding 0px
+    box-shadow none
+
+#moin-search-query
+    padding-right 20px
+    font-size 100%
+    vertical-align middle
+    background-color page_color
+    border border_style
+
+
+#moin-long-searchform
+    padding 0
+    font-size 0.82em
+    text-align left
+
+#moin-long-searchform div
+    margin 0
+
+#moin-search-query
+    width 50%
+
+#moin-logo
+    float left
+    margin 2px 10px
+    padding 0
+    font-size 1.4em
+    line-height 1em
+    font-weight bold
+
+#moin-logo img
+    vertical-align middle
+
+#moin-logo a
+    color heading_color
+    text-decoration none
+
+#moin-username
+    display block
+    margin 0px 12px 4px 12px
+    padding 0
+    font-size 0.82em
+    a
+        color heading_color
+
+#moin-username input:hover
+    color hover_color
+
+#moin-locationline
+    padding 0
+    font-size 100%
+    font-weight normal
+    margin 0.3em .75em .3em .75em
+
+#moin-interwiki
+    a
+        color heading_color
+
+#moin-pagelocation
+    font-size 1.5em
+    letter-spacing 0.05em
+    vertical-align middle
+
+#moin-pagetrail
+    margin 0 0.88em 0.25em .75em
+    padding 0
+    font-size 0.88em
+    a
+        color heading_color
+
+.moin-pagepath
+    a
+        color heading_color !important
+
+#moin-navibar
+    clear both
+    display block
+    margin 0
+    padding 0 10px
+    font-size 0.82em
+    color visited_color
+
+#moin-navibar li
+    float left
+    display inline
+    margin 0 2px
+    padding 2px 5px
+    border border_style
+    border-bottom none
+    white-space nowrap
+    font-size .88em
+    border-top-left-radius 5px
+    border-top-right-radius 5px
+
+#moin-navibar li.wikilink
+    background table_bg_color
+
+#moin-navibar li.userlink
+    background table_bg_color
+
+#moin-navibar a,
+#moin-navibar a:visited
+    color font_color
+    text-decoration none
+
+#moin-navibar li:hover
+    background table_row_color
+
+#moin-pageline
+    clear both
+    margin 4px 10px
+    padding 0
+    width auto
+    height 1px
+    border-bottom 1px solid heading_color
+    border-top 1px solid heading_color
+    background heading_color
+
+.moin-itemviews
+    clear both
+    display block
+    margin 0px 0px -6px 0px
+    padding 2px 8px
+    background panel_color
+    font-size 0.8em
+    border-radius 9px
+    color selected_link_color
+
+.moin-itemviews li
+    display inline-block
+    *display: inline; // IE7 hack to display itemviews in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
+    padding 0
+    margin 4px 6px
+    line-height 1em
+
+.moin-itemviews a,
+.moin-itemviews a:visited
+    color panel_item_color
+    &:hover
+        color heading_color
+
+.moin-itemviews a:hover
+    text-decoration underline
+
+.moin-itemviews form,
+.moin-itemviews form div
+    display inline
+    margin 0
+
+.moin-itemviews select
+    font-size 100%
+    vertical-align middle
+
+.moin-subitem-navigation
+    padding .9em
+    background table_row_color
+    margin 0
+    vertical-align top
+    font-size 0.8em
+    width 15%
+    overflow hidden
+    display table-cell
+    word-wrap break-word
+    border-radius 9px
+
+.moin-subitem-navigation .list-header
+    margin 2px 0
+    padding 0
+    font-size 1.1em
+
+.moin-subitem-navigation .sep
+    font-size 1.2em
+    margin-left 0px
+
+.moin-subitem-navigation ul
+    display block
+    margin 0
+    padding 0 4px
+
+.moin-subitem-navigation li
+    padding 0.5em 2px
+    line-height 1em
+    list-style none
+
+.moin-subitem-navigation li:hover
+    background table_bg_color
+
+.moin-subitem-navigation a
+    color link_color
+
+.moin-subitem-navigation a:hover
+    text-decoration underline
+
+.moin-subitem-navigation li ul
+    border-left 1px dotted border_color
+    display none
+
+.moin-subitem-navigation .expander
+    background url(../img/moin-expand.png) no-repeat center center
+    cursor pointer
+    height 16px
+    overflow hidden
+    vertical-align middle
+    width 16px
+    border hidden
+    text-indent -9000%
+
+.moin-insertname-action
+    border hidden
+    text-indent -9000%
+    padding 0
+    margin 0 -2px
+    vertical-align middle
+    height 16px
+    width 16px
+    overflow hidden
+    cursor pointer
+    box-shadow none
+    background url(../img/moin-link.png) no-repeat center center
+
+#moin-footer
+    clear both
+    margin 0 0
+
+#moin-footer hr
+    margin 0
+    background-color border_color
+
+#moin-pageinfo,
+#moin-wikilicense,
+#moin-credits,
+#moin-version,
+#moin-timings
+    margin 10px 20px
+    text-align left
+    font-size 0.7em
+    color footer_color
+    a
+        color footer_color
+
+#moin-pageinfo
+    margin-top 20px
+
+#moin-timings li
+    display inline-block
+    *display: inline; // IE7 hack to display timings in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
+    margin 0 20px 0 0
+
+#moin-credits span
+    display inline-block
+    margin 0 5px
+
+#moin-creditlogos
+    float right
+    list-style none
+    margin 5px 10px
+
+#moin-creditlogos li
+    display inline-block
+    *display: inline; // IE7 hack to display credit logos in a row ...
+    zoom: 1; // IE7 hack ... rather than a column
+    margin 10px 0 10px 10px
+
+
+
+// headings with mouseover permalinks
+a.moin-permalink
+    display none
+    cursor pointer
+    margin-left .1em
+    color nonexistent_link_color
+    &:hover.moin-permalink
+        color nonexistent_hover_color
+
+h1:hover .moin-permalink,
+h2:hover .moin-permalink,
+h3:hover .moin-permalink,
+h4:hover .moin-permalink,
+h5:hover .moin-permalink,
+h6:hover .moin-permalink
+    display inline
+    text-decoration none
+
+html,
+body
+    height 100%
+
+#moin-main-wrapper
+    position relative
+    min-height 100%
+
+#moin-page
+    padding-bottom 105px
+
+#moin-footer
+    position absolute
+    width 100%
+    bottom 0
+
+.moin-search-option-bar
+    width 75%
+    padding-left 14px
+    span
+        float right
+        padding 10px
+
+.moin-suggestions
+    padding-left 14px
+
+@media print
+    html
+        font-family serif
+        font-size 12pt
+        width 100%
+
+    body, #moin-page, #moin-content-data
+        margin 0
+        padding 0
+
+    a, a:visited,
+    a.moin-nonexistent
+        color nonexistent_link_color
+        text-decoration none
+
+    a.moin-interwiki:before
+        content attr(title) ":"
+
+    a.moin-interwiki img
+        display none
+
+    pre
+        font-size 10pt
+
+    div.moin-table-of-contents
+        box-shadow none
+
+    a.moin-permalink, a.moin-showhide,
+    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+    #moin-pagelocation
+        display none
+
+    #moin-pageinfo
+        color footer_color
+        font-size .67em
+        float right
+
+    #moin-pageinfo a
+        color footer_color
+
+    .moin-subitem-navigation
+        display none
+
+@media projection
+    html
+        line-height 1.8em
+
+    body, b, em, a, span, div, p, td
+        font-size 18pt
+
+    h1
+        font-size 26pt
+
+    h2
+        font-size 22pt
+
+    h3
+        font-size 20pt
+
+    h4
+        font-size 18pt
+
+    h5
+        font-size 16pt
+
+    h6
+        font-size 14pt
+
+    tt, pre
+        font-size 16pt
+
+    table.navigation
+        float right
+        margin 2px
+
+    .navigation td, .navigation a
+        font-size 10pt
+        padding 2px
+
+    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
+    #moin-pagelocation, #moin-pageinfo
+        display none
+
+ul.moin-bcs-item ul.moin-bcs-subitems
+    background-color panel_color
+
+ul.moin-bcs-item, ul.moin-bcs-item ul.moin-bcs-subitems
+    padding 0
+    margin 0
+    display inline-block
+
+ul.moin-bcs-item li, ul.moin-bcs-item ul.moin-bcs-subitems li
+    list-style-type none
+    display block
+
+ul.moin-bcs-item li ul.moin-bcs-subitems li a
+    padding 5px
+    display inline-block
+
+ul.moin-bcs-item li
+    position relative
+
+ul.moin-bcs-item li ul.moin-bcs-subitems
+    display none
+    position absolute
+
+ul.moin-bcs-item li:hover ul.moin-bcs-subitems
+    display block

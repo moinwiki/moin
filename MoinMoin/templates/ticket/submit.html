@@ -1,0 +1,35 @@
+{% extends "ticket/base.html" %}
+
+{% block title_text %}
+    {{ _("Create new ticket") }}
+{% endblock %}
+
+{% block form_controls %}
+    <h2>{{ _("Describe the ticket") }}</h2>
+    <div class="form-group">
+        {{ gen.label(form['message']) }}
+        {{ gen.textarea(form['message'], class='form-control') }}
+    </div>
+{% endblock %}
+{% block ticket_metadata %}
+
+    <div class="moin-ticket-metadata">
+        <h2>{{ _("Provide metadata") }}</h2>
+        <dl>
+            {{ forms.render_errors(form) }}
+            {{ render_meta() }}
+        </dl>
+        <div class="moin-ticket-tags">
+            {{ _("Suggested Tags: ") }}
+            {% for suggested_tag in suggested_tags %}
+                {{ suggested_tag }}
+            {% endfor %}
+        </div>
+        <dl>
+            {{ render_selectlists() }}
+        </dl>
+    </div>
+    <div class="moin-ticket-submit">
+        {{ forms.render_submit(form) }}
+    </div>
+{% endblock %}
