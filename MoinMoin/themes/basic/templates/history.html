@@ -2,7 +2,7 @@
 {% import "utils.html" as utils %}
 {% import theme("itemviews.html") as itemviews with context %}
 
-{% set title = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
+{% set title = _("History of '%(fqname)s'", fqname=fqname) %}
 
 {% block views %}
     {{ itemviews }}
