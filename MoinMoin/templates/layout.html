@@ -89,7 +89,7 @@
                                     {% else %}
                                         <ul class="moin-bcs-item">
                                             <li><a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                                {{ segment_name|shorten_fqname }}</a>
+                                                {{ segment_name }}</a>
                                                 <ul class="moin-bcs-subitems">
                                                     {% for fq_name in theme_supp.get_fqnames(segment_name) -%}
                                                         <li><a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">{{ fq_name|shorten_fqname(length=25) }}</a></li>
