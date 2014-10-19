@@ -1,0 +1,244 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms with context %}
+{% import theme("itemviews.html") as itemviews with context %}
+
+{% block views %}
+    {{ itemviews }}
+{% endblock %}
+
+{% block action_bars_inner %}
+    {% if item_name %}
+        {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
+    {% else %}
+        {% set title = _("Global Index ") %}
+    {% endif %}
+    <h1>{{ title }}</h1>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid moin-index-actions">
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    {% if dirs or files %}
+                        <li class="moin-select-all"><a href="#" class="moin-select-allitem allitem-toselect">
+                           <span class="icon-ok"></span>
+                           {{ _("Select All") }}</a>
+                        </li>
+                    {% endif %}
+                    <li class="moin-select-actions"><a id="moin-create-newitem" href="#">
+                           <span class="icon-file"></span>
+                           {{ _("New Item") }}</a>
+                    </li>
+                    {% if dirs or files %}
+                        <li><a id="moin-download-trigger" href="#">
+                               <span class="icon-download-alt"></span>
+                               {{ _("Download") }}</a>
+                        </li>
+                        <li><a class="moin-action-tab"
+                               id="moin-delete-trigger"
+                               data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}" href="#">
+                               <span class="icon-minus-sign"></span>
+                               {{ _("Delete") }}</a>
+                        </li>
+                        <li><a class="moin-action-tab"
+                               id="moin-destroy-trigger"
+                               data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}" href="#">
+                               <span class="icon-remove-sign"></span>
+                               {{ _("Destroy") }}</a>
+                        </li>
+                   {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="moin-contenttypes-wrapper">
+        <div class="ct-hide" id="filter-btn">
+            <span class="icon-filter"></span>
+            {{ _("Filter by content type") }}
+        </div>
+        {% set unknown_items_label = _("items having unknown mime types") %}
+        {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
+            <ul>
+                <li class="filters">
+                    <a href="#" class="filter-toggle">
+                        <span class="icon-refresh" style="display:inline;"></span>
+                        {{ _("Toggle") }}
+                    </a>
+                    <a href="#" class="filter-more">
+                        <span class="icon-plus" style="display:inline;"></span>
+                        {{ _("More") }}
+                    </a>
+                </li>
+                {{ forms.render(form['contenttype']) }}
+            </ul>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}
+
+{% block action_bars %}
+    <div class="moin-align-right">
+        {{ self.action_bars_inner() }}
+    </div>
+{% endblock %}
+
+{% macro entry_anchor(type, e) -%}
+    index-{{ type }}-{{ e.meta['itemid'] }}
+{%- endmacro %}
+
+{% set maxchars = 16 %}
+
+{% macro render_dir_entry(e) %}
+    <div>
+        <a href="{{ url_for('.index', item_name=e.fullname) }}"
+           class="moin-dir-item"
+           title="{{ e.relname }}">
+           {{ e.relname|truncate(maxchars, true, '..') }}
+        </a>
+        {% if e in files %}
+            <a href="#{{ entry_anchor('file', e) }}"
+               title="{{ _("This item itself also matches your filter.") }}">↓
+            </a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_file_entry(e) %}
+    <div>
+        <span class="moin-select-item">
+            <input type="checkbox">
+        </span>
+        {% set mimetype = "application/x.moin.download" %}
+        <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
+        </a>
+        <a href="{{ url_for('.show_item', item_name=e.fullname) }}"
+           class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
+           title="{{ e.relname }}">
+           {{ e.relname|truncate(maxchars, true, '..') }}
+        </a>
+        {% if e in dirs %}
+            <a href="#{{ entry_anchor('dir', e) }}"
+               title="{{ _("This item also has subitems that match your filter.") }}">↑
+            </a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% block content %}
+    <div class="moin-index-message"><span></span></div>
+    {{ self.action_bars() }}
+    <div>
+        {% if item_name: %}
+            <div class="moin-index-path">
+                <span class="icon icon-folder-close"></span>
+                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
+                <span class="moin-path-separator">{{ ("/") }}</span>
+                {% for i in range(0, item_names|count) %}
+                    {% set fullname = item_names[:i+1]|join('/') %}
+                    {% set relname = item_names[i] %}
+                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                    <span class="moin-path-separator">{{ ("/") }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class='moin-clr'></div>
+        <div id="moin-new-index" class="moin-item-index">
+            <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
+            <div class="file_download_template" style="display: none;">
+                <a></a>
+            </div>
+        </div>
+    <div class="moin-index-separator"></div>
+        {% if files or dirs %}
+            <div id="moin-initials">
+                {% if not startswith %}
+                    <a class="selected" href="{{ url_for('frontend.index', item_name=item_name) }}">
+                        <span class="icon-th"></span>
+                        {{ _("Show All") }}
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('frontend.index', item_name=item_name) }}">
+                        <span class="icon-th"></span>
+                        {{ _("Show All") }}
+                    </a>
+                {% endif %}
+                {% for initial in initials %}
+                    {% if startswith == initial %}
+                        <a class="selected" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    {% else %}
+                        <a href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% if dirs %}
+                <div class="moin-item-index">
+                    <p>{{ _("These items have subitems that match your filter:") }}</p>
+                        {% for e in dirs %}
+                            {{ render_dir_entry(e) }}
+                        {% endfor %}
+                </div>
+                <div class="moin-clr"></div>
+                <hr />
+            {% endif %}
+            {% if files %}
+                <div class="moin-item-index">
+                    {% for e in files %}
+                        {{ render_file_entry(e) }}
+                    {% endfor %}
+                </div>
+                <div class="moin-clr"></div>
+            {% endif %}
+        {% endif %}
+        <div id="popup">
+            <div id="popup-for-action" class="popup-container">
+                <div class="popup-header">
+                    <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
+                    <span>{{ _("Please provide comment for this action") }}</span>
+                </div>
+                <div class="popup-body">
+                    <input type="text" class="popup-comment" placeholder="{{ _("Enter your comment") }}"/>
+                    <input type="hidden" class="popup-action" value=""/>
+                    <br/>
+                    <input type="button" class="popup-submit" value="{{ _("Submit") }}"/>
+                    <input type="button" class="popup-cancel" value="{{ _("Cancel") }}"/>
+                </div>
+            </div>
+            <div id="popup-for-newitem" class="popup-container">
+                <div class="popup-header">
+                    <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
+                    <span>{{ _("Create new item") }}</span>
+                </div>
+                <div class="popup-body">
+                    <form action={{ url_for('.ajaxmodify') }} method="post">
+                        <label for="moin-newitem">{{ _("Item name") }}</label>
+                        {% if item_name %}
+                            <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
+                        {% else %}
+                            <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
+                        {% endif %}
+                        <br/>
+                        <input type="submit" value="{{ _("Create") }}"/>
+                        <input type="button" class="popup-cancel" value="{{ _("Cancel") }}"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <div id="moin-upload-cont">
+        {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+        {{ forms.render_file_uploader(submit_url) }}
+    </div>
+    <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
+    <div id="lightbox">&nbsp;</div>
+{% endblock %}
+
+{% block body_scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
+    {{ forms.file_uploader_scripts() }}
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    {{ forms.file_uploader_styles() }}
+{% endblock %}

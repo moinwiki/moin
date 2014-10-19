@@ -1,0 +1,38 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    <h1>{{ _("Item ACL Report") }}</h1>
+    <table class="zebra table table-hover tablesorter tablesorter-default moin-sortable" data-sortlist="[[0,0]]">
+        <thead>
+            <tr>
+                <th>{{ _("Item Names") }}</th>
+                <th>{{ _("ACL") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_acls %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('frontend.show_item', item_name=item['fqname']) }}">
+                            {% if item['name'] %}
+                                {{ item['name'] | join(', ') }}
+                            {% else %}
+                                {{ _("Item Id") }}: {{ item['itemid'] }}
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {% if user.may.admin(item['fqname']) %}
+                            <form id="moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
+                                <input type="text" class="moin-acl-string" {%if item['acl_default'] %}style="color:green;"{%endif%} name="{{ item['itemid'] }}" value="{{ item['acl'] }}"/>
+                                <input type="submit" value="{{ _("Modify ACL") }}"/>
+                            </form>
+                        {% else %}
+                            {{ item['acl'] }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
