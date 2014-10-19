@@ -228,7 +228,7 @@
                                                     {{ title_name }}
                                                 {% else %}
                                                     <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                                        {{ segment_name|shorten_fqname }}
+                                                        {{ segment_name }}
                                                     </a>
                                                 {%- endif %}
                                             {%- endif %}
