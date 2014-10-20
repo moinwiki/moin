@@ -7053,21 +7053,6 @@ html {
 #editor > textarea {
   width: 100%;
 }
-.moin-history-save:before {
-  content: url("../img/moin-save.png");
-}
-.moin-history-trash:before {
-  content: url("../img/moin-trash.png");
-}
-.moin-history-rename:before {
-  content: url("../img/moin-rename.png");
-}
-.moin-history-copy:before {
-  content: url("../img/moin-copy.png");
-}
-.moin-history-revert:before {
-  content: url("../img/moin-revert.png");
-}
 .moin-history-container-header {
   margin-bottom: 5px;
 }
