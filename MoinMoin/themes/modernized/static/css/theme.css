@@ -426,10 +426,6 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
 .moin-history-container-body{margin:0;padding:0;font-size:1.2em;}
 .moin-history-container-body table{margin:0;border:none;width:100%}
-.moin-history-save:before{content:url("../img/moin-edit.png")}
-.moin-history-trash:before{content:url("../img/moin-deleted.png")}
-.moin-history-rename:before{content:url("../img/moin-renamed.png")}
-.moin-history-copy:before{content:url("../img/moin-new.png")}
 .moin-history-links{width:5%}
 .moin-history-links a{display:block;margin-bottom:4px}
 .moin-history-editortext,.moin-history-links span,.moin-history-comment span{color:#000;display:block;margin-bottom:5px}
