@@ -254,7 +254,7 @@ def trash(namespace):
 
 def _trashed(namespace):
     q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
-    if not namespace == NAMESPACE_ALL:
+    if namespace != NAMESPACE_ALL:
         q = And([q, Term(NAMESPACE, namespace), ])
     trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
     results = []
