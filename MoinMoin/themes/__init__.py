@@ -203,25 +203,25 @@ class ThemeSupport(object):
         return user_actions, item_navigation, item_actions
 
     def get_endpoint_iconmap(self):
-        icon = {'frontend.quicklink_item': "icon-star-empty",
-                'frontend.subscribe_item': "icon-envelope",
-                'frontend.index': "icon-list-alt",
-                'frontend.sitemap': "icon-sitemap",
-                'frontend.rename_item': "icon-tag",
-                'frontend.delete_item': "icon-trash",
-                'frontend.destroy_item': "icon-fire",
-                'frontend.similar_names': "icon-search",
-                'frontend.download_item': "icon-download-alt",
-                'frontend.copy_item': "icon-comment",
-                'special.supplementation': "icon-comments",
-                'frontend.show_item': "icon-eye-open",
-                'frontend.modify_item': "icon-pencil",
-                'frontend.history': "icon-time",
-                'frontend.show_item_meta': "icon-wrench",
-                'frontend.highlight_item': "icon-code",
-                'frontend.backrefs': "icon-share",
-                'special.comments': "icon-comment",
-                'special.transclusions': "icon-edit", }
+        icon = {'frontend.quicklink_item': "fa fa-star-o",
+                'frontend.subscribe_item': "fa fa-envelope-o",
+                'frontend.index': "fa fa-list-alt",
+                'frontend.sitemap': "fa fa-sitemap",
+                'frontend.rename_item': "fa fa-tag",
+                'frontend.delete_item': "fa fa-trash-o",
+                'frontend.destroy_item': "fa fa-fire",
+                'frontend.similar_names': "fa fa-search",
+                'frontend.download_item': "fa fa-download",
+                'frontend.copy_item': "fa fa-comment-o",
+                'special.supplementation': "fa fa-comments-o",
+                'frontend.show_item': "fa fa-eye",
+                'frontend.modify_item': "fa fa-pencil",
+                'frontend.history': "fa fa-clock-o",
+                'frontend.show_item_meta': "fa fa-wrench",
+                'frontend.highlight_item': "fa fa-code",
+                'frontend.backrefs': "fa fa-share",
+                'special.comments': "fa fa-comment-o",
+                'special.transclusions': "fa fa-edit", }
         return icon
 
     def location_breadcrumbs(self, fqname):
