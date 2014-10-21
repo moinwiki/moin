@@ -223,7 +223,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
             if not bracketstack:
                 raise BracketUnexpectedCloseError(char)
             expected, oldresult = bracketstack[-1]
-            if not expected == char:
+            if expected != char:
                 raise BracketUnexpectedCloseError(char)
             del bracketstack[-1]
             oldresult.append(result)
