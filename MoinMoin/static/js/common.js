@@ -652,16 +652,19 @@ $(document).ready(function () {
 
     $('.moin-useractions').click(function () {
         $('#moin-user-actions').toggleClass('hidden');
+        $('.moin-useractions > i').toggleClass('fa-rotate-90');
         return false;
     });
 
     $('.moin-viewoptions').click(function () {
         $('#moin-view-options').toggleClass('hidden');
+        $('.moin-viewoptions > i').toggleClass('fa-rotate-90');
         return false;
     });
 
     $('.moin-itemactions').click(function () {
         $('#moin-item-actions').toggleClass('hidden');
+        $('.moin-itemactions > i').toggleClass('fa-rotate-90');
         return false;
     });
 
