@@ -28,51 +28,47 @@
 {% endblock %}
 
 {% block local_panel %}
-
-        <!-- user, site, item actions -->
-    <div class="list-group">
-        {% if user_actions %}
-            <div class="list-group-item moin-list-heading">
+    {% if user_actions %}
+        <div class="moin-list-heading">
+            <div class="list-group-item-heading">
                 {{ _("User Actions") }}
                 <a class="moin-showhide moin-useractions" href="#" >[+]</a>
             </div>
             <div id="user-actions" class="hidden">{{ self.user_actions() }}</div>
-        {% endif %}
+        </div>
+    {% endif %}
 
-        <div class="list-group-item moin-list-heading">
-            View Options
+    <div class="moin-list-heading">
+        <div class="list-group-item-heading">
+            {{ _("View Options") }}
             <a class="moin-showhide moin-viewoptions" href="#">[+]</a>
         </div>
+
         <div id="view-options" class="hidden">
-            <button type="button"
-                    class="btn btn-default moin-user-action-special moin-toggle-comments-button moin-toggle-comments-tooltip"
-                    data-toggle="button"
-                    title="Show Comments">
-                <span class="pull-left">
+            <div class="moin-toggle-comments-button list-group-item" style="">
+                <a class="moin-toggle-comments-tooltip" href="#" title="Show comments">
                     <i class="fa fa-comment fa-fw"></i>
                     Comments
-                </span>
-            </button>
-            <button type="button"
-                    class="btn btn-default moin-user-action-special moin-transclusions-button moin-transclusions-tooltip"
-                    data-toggle="button"
-                    title="Show Transclusions">
-                <span class="pull-left">
+                </a>
+            </div>
+            <div class="moin-transclusions-button list-group-item" style="">
+                <a class="moin-transclusions-tooltip" href="#" title="Show transclusions">
                     <i class="fa fa-paste fa-fw"></i>
                     Transclusions
-                </span>
-            </button>
+                </a>
+            </div>
         </div>
+    </div>
 
-        {% if item_actions %}
-            <div class="list-group-item moin-list-heading">
+    {% if item_actions %}
+        <div class="moin-list-heading">
+            <div class="list-group-item-heading">
                 {{ _("Item Actions") }}
                 <a class="moin-showhide moin-itemactions" href="#" >[+]</a>
             </div>
             <div id="item-actions" class="hidden">{{ self.item_actions() }}</div>
-        {% endif %}
-    </div>
-
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block options_for_javascript %}
