@@ -99,13 +99,6 @@
                         </div>
                     {% endif %}
 
-                    {% if item_navigation %}
-                        <div class="moin-list-heading">
-                            <div class="list-group-item-heading">{{ _("Supplementation") }}</div>
-                            {{ local_panel_main(item_navigation) }}
-                        </div>
-                    {% endif %}
-
                     {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
                         {% if loop.first %}<div class="moin-list-heading">
                             <div class="list-group-item-heading">{{ _("Quick Links") }}</div>
