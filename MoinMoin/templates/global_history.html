@@ -33,7 +33,7 @@
                             {% set meta = rev.meta %}
                             <tr>
                                 <td class="moin-action col-md-1">
-                                    <i title="{{ meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
+                                    <span title="{{ meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
                                 </td>
                                 <td class="moin-history-links col-md-1">
                                     <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">HIST</a>
