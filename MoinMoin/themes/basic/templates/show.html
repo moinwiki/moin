@@ -34,7 +34,7 @@
                 {{ _("User Actions") }}
                 <a class="moin-showhide moin-useractions" href="#" >[+]</a>
             </div>
-            <div id="user-actions" class="hidden">{{ self.user_actions() }}</div>
+            <div id="moin-user-actions" class="hidden">{{ self.user_actions() }}</div>
         </div>
     {% endif %}
 
@@ -44,7 +44,7 @@
             <a class="moin-showhide moin-viewoptions" href="#">[+]</a>
         </div>
 
-        <div id="view-options" class="hidden">
+        <div id="moin-view-options" class="hidden">
             <div class="moin-toggle-comments-button list-group-item" style="">
                 <a class="moin-toggle-comments-tooltip" href="#" title="Show comments">
                     <i class="fa fa-comment fa-fw"></i>
@@ -66,7 +66,7 @@
                 {{ _("Item Actions") }}
                 <a class="moin-showhide moin-itemactions" href="#" >[+]</a>
             </div>
-            <div id="item-actions" class="hidden">{{ self.item_actions() }}</div>
+            <div id="moin-item-actions" class="hidden">{{ self.item_actions() }}</div>
         </div>
     {% endif %}
 {% endblock %}
