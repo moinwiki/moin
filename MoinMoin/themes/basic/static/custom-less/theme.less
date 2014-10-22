@@ -95,9 +95,13 @@ h1, h2, h3, h4, h5, h6 {
   float: right;
 }
 
+.list-group-item-heading {
+  margin: 7px 10px;
+}
+
 .list-group-item {
   text-align: left;
-  padding: 5px 10px;
+  padding: 2px 10px;
   background-color: @search_option_bar_text_color;
   border: 1px solid @search_option_bar_text_color;
   > a {
@@ -110,6 +114,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid @navbar-bg;
   font-variant: small-caps;
   color: @search_option_bar_text_color;
+  border-radius: 4px;
   > a {
     color: @search_option_bar_text_color;
   }
@@ -150,9 +155,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .moin-sidebar-panels {
-  .list-group;
   overflow: hidden;
-  padding-top: 15px;
 }
 
 .moin-sidebar-panels a .hidden-sm,
@@ -190,7 +193,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .moin-quicklink {
   position: relative;
-  padding: 5px 15px 5px 15px;
+  padding: 2px 10px 2px 10px;
   background-color: @search_option_bar_text_color;
   border: 1px solid @search_option_bar_text_color;
   margin-bottom: -1px;

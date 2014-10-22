@@ -16,7 +16,7 @@
 {% macro local_panel_main(panelname) -%}
     {% for endpoint, href, iconcls, label, title, exists in panelname %}
         {# iconcls should be defined, defined for all local_panel_items, see themes/__init.py #}
-        {{ hyperlink(href, title, exists, label, iconcls + " icon-fixed-width", "list-group-item") }}
+        {{ hyperlink(href, title, exists, label, iconcls, "list-group-item wikilink") }}
     {% endfor %}
 {% endmacro %}
 
@@ -87,28 +87,34 @@
                     {% endif %}
 
                     {% if navibar_items %}
-                        <div class="list-group-item moin-list-heading"> {{ _("Site Navigation") }} </div>
-                        {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
-                            <a class="list-group-item {{ cls }}
-                                {% if url in [current_url, current_path, current_url_showview] %} active{% endif %}" href="{{ url }}"
-                                {% if title %}title="{{ title }}"{% endif %}>
-                                {{ text|shorten_item_name }}
-                            </a>
-                        {% endfor %}
-                        {% if item_navigation %}
-                            <div class="list-group-item moin-list-heading"> {{ _("Supplementation") }} </div>
+                        <div class="moin-list-heading">
+                            <div class="list-group-item-heading">{{ _("Site Navigation") }}</div>
+                            {% for cls, url, text, title in navibar_items if cls != 'userlink' %}
+                                <a class="list-group-item {{ cls }}
+                                    {% if url in [current_url, current_path, current_url_showview] %} active{% endif %}" href="{{ url }}"
+                                    {% if title %}title="{{ title }}"{% endif %}>
+                                    {{ text|shorten_item_name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if item_navigation %}
+                        <div class="moin-list-heading">
+                            <div class="list-group-item-heading">{{ _("Supplementation") }}</div>
                             {{ local_panel_main(item_navigation) }}
-                        {% endif %}
+                        </div>
                     {% endif %}
 
                     {% for cls, url, text, title in navibar_items if cls == 'userlink' %}
-                        {% if loop.first %}
-                            <div class="list-group-item moin-list-heading">Quick Links</div>
+                        {% if loop.first %}<div class="moin-list-heading">
+                            <div class="list-group-item-heading">{{ _("Quick Links") }}</div>
                         {% endif %}
                         <div class="moin-quicklink">
                             <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text|shorten_item_name(20) }}
                             </a>
                         </div>
+                        {% if loop.last %}</div>{% endif %}
                     {% endfor %}
 
                     {% if self.local_panel %}
