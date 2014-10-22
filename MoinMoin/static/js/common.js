@@ -651,17 +651,17 @@ $(document).ready(function () {
     });
 
     $('.moin-useractions').click(function () {
-        $('#user-actions').toggleClass('hidden');
+        $('#moin-user-actions').toggleClass('hidden');
         return false;
     });
 
     $('.moin-viewoptions').click(function () {
-        $('#view-options').toggleClass('hidden');
+        $('#moin-view-options').toggleClass('hidden');
         return false;
     });
 
     $('.moin-itemactions').click(function () {
-        $('#item-actions').toggleClass('hidden');
+        $('#moin-item-actions').toggleClass('hidden');
         return false;
     });
 

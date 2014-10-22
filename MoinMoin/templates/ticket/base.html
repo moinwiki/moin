@@ -52,7 +52,7 @@
                 {{ _("User Actions") }}
                 <a class="moin-showhide moin-useractions" href="#" >[+]</a>
             </div>
-            <div id="user-actions" class="hidden">
+            <div id="moin-user-actions" class="hidden">
                 <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="Create or remove a navigation link to this item">
                     <i class="fa fa-link fa-fw"></i>
                     {%- if user.is_quicklinked_to([item.fqname]) %}
