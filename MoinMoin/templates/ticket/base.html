@@ -50,7 +50,9 @@
         <div class="list-group">
             <div class="list-group-item moin-list-heading">
                 {{ _("User Actions") }}
-                <a class="moin-showhide moin-useractions" href="#" >[+]</a>
+                <a class="moin-showhide moin-useractions" href="#" >
+                    <i class="fa fa-lg fa-caret-right"></i>
+                </a>
             </div>
             <div id="moin-user-actions" class="hidden">
                 <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="Create or remove a navigation link to this item">
