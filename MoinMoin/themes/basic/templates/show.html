@@ -28,6 +28,32 @@
 {% endblock %}
 
 {% block local_panel %}
+
+    <div class="moin-list-heading">
+        <div class="list-group-item-heading">
+            {{ _("View Options") }}
+            <a class="moin-showhide moin-viewoptions" href="#">
+                <i class="fa fa-lg fa-caret-right"></i>
+            </a>
+        </div>
+        <div id="moin-view-options" class="hidden">
+            {# TODO: review themes/init.py and config/default.py to improve support #}
+            {{ local_panel_main(item_navigation) }} {# Discussion #}
+            <div class="moin-toggle-comments-button list-group-item" style="">
+                <a class="moin-toggle-comments-tooltip" href="#" title="Show comments">
+                    <i class="fa fa-comment-o"></i>
+                    Comments
+                </a>
+            </div>
+            <div class="moin-transclusions-button list-group-item" style="">
+                <a class="moin-transclusions-tooltip" href="#" title="Show transclusions">
+                    <i class="fa fa-paste"></i>
+                    Transclusions
+                </a>
+            </div>
+        </div>
+    </div>
+
     {% if user_actions %}
         <div class="moin-list-heading">
             <div class="list-group-item-heading">
@@ -39,30 +65,6 @@
             <div id="moin-user-actions" class="hidden">{{ self.user_actions() }}</div>
         </div>
     {% endif %}
-
-    <div class="moin-list-heading">
-        <div class="list-group-item-heading">
-            {{ _("View Options") }}
-            <a class="moin-showhide moin-viewoptions" href="#">
-                <i class="fa fa-lg fa-caret-right"></i>
-            </a>
-        </div>
-
-        <div id="moin-view-options" class="hidden">
-            <div class="moin-toggle-comments-button list-group-item" style="">
-                <a class="moin-toggle-comments-tooltip" href="#" title="Show comments">
-                    <i class="fa fa-comment fa-fw"></i>
-                    Comments
-                </a>
-            </div>
-            <div class="moin-transclusions-button list-group-item" style="">
-                <a class="moin-transclusions-tooltip" href="#" title="Show transclusions">
-                    <i class="fa fa-paste fa-fw"></i>
-                    Transclusions
-                </a>
-            </div>
-        </div>
-    </div>
 
     {% if item_actions %}
         <div class="moin-list-heading">
