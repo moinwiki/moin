@@ -6336,6 +6336,12 @@ h6:focus .moin-permalink {
 .moin-useractions {
   float: right;
 }
+a.moin-showhide {
+  color: #c8ddf1;
+}
+a:focus.moin-showhide {
+  outline-width: 0;
+}
 .list-group-item-heading {
   margin: 7px 10px;
 }

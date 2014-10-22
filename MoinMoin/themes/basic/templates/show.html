@@ -32,7 +32,9 @@
         <div class="moin-list-heading">
             <div class="list-group-item-heading">
                 {{ _("User Actions") }}
-                <a class="moin-showhide moin-useractions" href="#" >[+]</a>
+                <a class="moin-showhide moin-useractions" href="#" >
+                    <i class="fa fa-lg fa-caret-right"></i>
+                </a>
             </div>
             <div id="moin-user-actions" class="hidden">{{ self.user_actions() }}</div>
         </div>
@@ -41,7 +43,9 @@
     <div class="moin-list-heading">
         <div class="list-group-item-heading">
             {{ _("View Options") }}
-            <a class="moin-showhide moin-viewoptions" href="#">[+]</a>
+            <a class="moin-showhide moin-viewoptions" href="#">
+                <i class="fa fa-lg fa-caret-right"></i>
+            </a>
         </div>
 
         <div id="moin-view-options" class="hidden">
@@ -64,7 +68,9 @@
         <div class="moin-list-heading">
             <div class="list-group-item-heading">
                 {{ _("Item Actions") }}
-                <a class="moin-showhide moin-itemactions" href="#" >[+]</a>
+                <a class="moin-showhide moin-itemactions" href="#" >
+                    <i class="fa fa-lg fa-caret-right"></i>
+                </a>
             </div>
             <div id="moin-item-actions" class="hidden">{{ self.item_actions() }}</div>
         </div>
