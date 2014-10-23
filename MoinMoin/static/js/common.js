@@ -62,12 +62,13 @@ MoinMoin.prototype.initToggleComments = function () {
     "use strict";
     var pageComments = $('.comment');
     if (pageComments.length > 0) {
-        // There are comments, so show itemview Comments button
-        $('.moin-toggle-comments-button').css('display', '');
         // comments are visible; per user option, hide comments if there is not a <br id="moin-show-comments" />
         if (!document.getElementById('moin-show-comments')) {
             this.toggleComments();
         }
+    } else {
+        // There are no comments, so hide Comments button
+        $('.moin-toggle-comments-button').css('display', 'none');
     }
     $('.moin-toggle-comments-button').click(this.toggleComments);
 };
@@ -142,10 +143,10 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
             $(wrapper).append(overlayLR);
         }
     });
-    // if an element was wrapped above, then make the Transclusions buttons visible
     wrappers = $('.moin-item-wrapper');
-    if (wrappers.length > 0) {
-        $('.moin-transclusions-button').css('display', '');
+    if (wrappers.length === 0) {
+        // if there are no transclusions, make the Transclusions buttons invisible
+        $('.moin-transclusions-button').css('display', 'none');
     }
     $('.moin-transclusions-button').click(this.toggleTransclusionOverlays);
 };

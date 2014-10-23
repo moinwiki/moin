@@ -66,13 +66,13 @@
             {%- endif %}
 
             {%- if endpoint == 'special.comments' %}
-                <li class="moin-toggle-comments-button" style="display:none;">
+                <li class="moin-toggle-comments-button">
                     <a class="moin-toggle-comments-tooltip" href="#" title="{{ title }}">{{ label }}</a>
                 </li>
             {%- endif %}
 
         {% if endpoint == 'special.transclusions' -%}
-            <li class="moin-transclusions-button" style="display:none;">
+            <li class="moin-transclusions-button">
                 <a class="moin-transclusions-tooltip" href="#" title="{{ title }}">{{ label }}</a>
             </li>
         {%- endif %}
