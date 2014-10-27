@@ -1,5 +1,5 @@
 {% extends theme("blog/layout.html") %}
-{% import theme("blog/utils.html") as blog_utils %}
+{% import theme("blog/utils.html") as blog_utils with context %}
 
 {% set no_entries_msg = _("There are no entries in this blog.") %}
 {% if tag %}
