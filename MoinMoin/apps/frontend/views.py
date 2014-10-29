@@ -109,7 +109,6 @@ Disallow: /+sitemap/
 Disallow: /+similar_names/
 Disallow: /+quicklink/
 Disallow: /+subscribe/
-Disallow: /+refs/
 Disallow: /+forwardrefs/
 Disallow: /+backrefs/
 Disallow: /+wanteds/
@@ -995,25 +994,6 @@ def _mychanges(userid):
         entry[FQNAME] = rev.fqname
         history.append(entry)
     return history
-
-
-@frontend.route('/+refs/<itemname:item_name>')
-def refs(item_name):
-    """
-    Returns the list of all incoming/outgoing links or transclusions of item item_name
-
-    :param item_name: the name of the current item
-    :type item_name: unicode
-    :returns: a page with all incoming/outgoing item links of this item
-    """
-    refs = _forwardrefs(item_name)
-    backrefs = _backrefs(item_name)
-    return render_template('refs.html',
-                           item_name=item_name,
-                           fqname=split_fqname(item_name),
-                           refs=split_fqname_list(refs),
-                           backrefs=backrefs
-    )
 
 
 @frontend.route('/+forwardrefs/<itemname:item_name>')
@@ -2137,10 +2117,13 @@ def sitemap(item_name):
     fq_name = split_fqname(item_name)
     if not flaskg.storage.get_item(**fq_name.query):
         abort(404, item_name)
+    backrefs = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
+    del backrefs[0]  # don't show current item name as sole toplevel list item
     sitemap = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item_name=item_name,  # XXX no item
+                           backrefs=backrefs,
                            sitemap=sitemap,
                            fqname=fq_name,
     )
@@ -2152,27 +2135,30 @@ class NestedItemListBuilder(object):
         self.numnodes = 0
         self.maxnodes = 35  # approx. max count of nodes, not strict
 
-    def recurse_build(self, fq_names):
+    def recurse_build(self, fq_names, backrefs=False):
         result = []
         if self.numnodes < self.maxnodes:
             for fq_name in fq_names:
                 self.children.add(fq_name)
                 result.append(fq_name)
                 self.numnodes += 1
-                childs = self.childs(fq_name)
+                childs = self.childs(fq_name, backrefs=backrefs)
                 if childs:
-                    childs = self.recurse_build(childs)
+                    childs = self.recurse_build(childs, backrefs=backrefs)
                     result.append(childs)
         return result
 
-    def childs(self, fq_name):
+    def childs(self, fq_name, backrefs=False):
         # does not recurse
         try:
             item = flaskg.storage.get_item(**fq_name.query)
             rev = item[CURRENT]
         except (AccessDenied, KeyError):
             return []
-        itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, [])))
+        if backrefs:
+            itemlinks = _backrefs(fq_name.value)
+        else:
+            itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])))
         return [child for child in itemlinks if self.is_ok(child)]
 
     def is_ok(self, child):
