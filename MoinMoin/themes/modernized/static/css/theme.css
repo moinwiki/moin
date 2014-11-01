@@ -334,18 +334,7 @@ hr{height:1px;background-color:#4e7da9;border:0;margin:.9em 0}
 pre{border:1px solid #4e7da9;background-color:#aed4fa;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre-wrap}
 pre.comment{background-color:#00417f;color:#fff;padding:0;margin:0;border:0}
 pre.comment:before{content:url("../img/attention.png")}
-table{margin:1%;border-collapse:collapse}
-th,td{padding:.3em .4em;vertical-align:middle;text-align:left}
-th{border:1px solid #4e7da9;background-color:#81bbf2;text-align:center;color:#000}
-td{border:1px solid #4e7da9}
-td p{margin:0;padding:0}
 .moin-thead{background-color:#00417f}
-table.zebra{border-collapse:collapse;width:98%}
-.zebra thead{background-color:#00417f}
-.zebra tfoot{background-color:#aed4fa}
-.zebra td form input{box-shadow:none}
-.zebra tbody tr,.zebra > tr{background-color:#eef1f6}
-.zebra tbody tr:nth-child(odd),.zebra > tr:nth-child(odd){background-color:#d8dfe9}
 div.moin-table-of-contents{border:1px solid #4e7da9;color:#000;background:#fff;font-size:80%;margin:.5em 0 .75em 1em;padding:.5em .75em .5em .5em;text-indent:-1em;max-width:35%;text-align:left;float:right;clear:both;box-shadow:3px 3px 6px #9d9d9b;border-radius:15px}
 .moin-table-of-contents ol{margin:0;padding:0 0 0 .92em}
 .moin-table-of-contents li{margin:.12em 0 0 0;padding:0;list-style:none}
