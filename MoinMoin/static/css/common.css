@@ -203,3 +203,17 @@ ul.moin-tags li.weight9 { font-size: 280%; }
 /* footnotes */
 .moin-footnotes { border-top: 1px solid gray; margin: 2em; }
 .moin-footnotes p { margin: 1em; }
+
+/* moin default table styling */
+table { margin: 1%; }
+tr > th,
+tr > td { padding: .3em .4em; vertical-align: middle; text-align: left; }
+tr > th { border: 1px solid #4e7da9; background-color: #81bbf2; text-align: left; color: #000; }
+tr > td { border: 1px solid #4e7da9; }
+td p { margin: 0; padding: 0; }
+
+/* zebra table styling */
+table.zebra { width: 98%; }
+.zebra td form input { box-shadow: none; }
+.zebra tbody tr:nth-child(even),
+.zebra > tr:nth-child(odd) { background-color: #eee; }
