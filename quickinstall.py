@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
         parser = argparse.ArgumentParser()
         parser.add_argument('venv', metavar='VENV', nargs='?', help='location of v(irtual)env')
-        parser.add_argument('--download_cache', dest='download_cache', help='location of pip download cache')
+        parser.add_argument('--download-cache', dest='download_cache', help='location of pip download cache')
         args = parser.parse_args()
 
         QuickInstall(os.path.dirname(os.path.realpath(sys.argv[0])), venv=args.venv, download_cache=args.download_cache)()
