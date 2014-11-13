@@ -1,5 +1,9 @@
 {% extends theme("layout.html") %}
+
 {% import "utils.html" as utils %}
+{% import "snippets.html" as snippets with context %}
+
+{% set footer_meta = snippets.footer_meta() %}
 
 {% block head_links %}
     {{ super() }}
@@ -71,18 +75,7 @@
 {% endblock %}
 
 {% block footer_meta %}
-    {% if rev %}
-        <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
-            {% if cfg.show_interwiki %}{{ cfg.interwikiname }}:{% endif %}{{ item_name }} (rev {{rev.revid | shorten_id}}),
-                {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
-                {{ _("by") }} {{ utils.editor_info(rev.meta) }}{% if rev.tags %},
-                {{ _("tagged") }}
-                {% for tag in rev.tags -%}
-                    <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
-                {%- endfor -%}
-            {%- endif -%}.
-        </p>
-    {% endif %}
+    {{footer_meta}}
 {% endblock %}
 
 {% block options_for_javascript %}

@@ -217,3 +217,12 @@ table.zebra { width: 98%; }
 .zebra td form input { box-shadow: none; }
 .zebra tbody tr:nth-child(even),
 .zebra > tr:nth-child(odd) { background-color: #eee; }
+
+/* footers */
+#moin-footer { clear: both; margin: 0 0; width: 100%; }
+#moin-pageinfo,
+#moin-wiki-license,
+#moin-credits,
+#moin-version,
+#moin-timings { margin: 10px 20px; text-align: left; font-size: .7em; color: #737373; float: left; clear: left; }
+#moin-creditlogos { clear: both; float: right; }

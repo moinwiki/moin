@@ -7009,11 +7009,6 @@ form.upload_file button {
 .moin-content {
   padding-bottom: 10%;
 }
-.moin-footer {
-  bottom: 0;
-  position: absolute;
-  width: 100%;
-}
 .moin-search-option-bar {
   padding-left: 10px;
   border: 1px solid #555555;
@@ -7032,13 +7027,6 @@ form.upload_file button {
 @media (max-width: 992px) {
   .moin-content {
     padding-bottom: 250px;
-  }
-  .moin-footer-credits {
-    width: 100%;
-    padding-right: 30px;
-  }
-  .moin-footer-logo {
-    padding-left: 30px;
   }
 }
 html {

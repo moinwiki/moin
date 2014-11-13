@@ -554,22 +554,12 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
 .moin-insertname-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none;background:url("../img/moin-link.png") no-repeat center center}
-#moin-footer{clear:both;margin:0 0}
-#moin-footer hr{margin:0;background-color:#4e7da9}
-#moin-pageinfo,#moin-wikilicense,#moin-credits,#moin-version,#moin-timings{margin:10px 20px;text-align:left;font-size:.7em;color:#737373;}
-#moin-pageinfo a,#moin-wikilicense a,#moin-credits a,#moin-version a,#moin-timings a{color:#737373}
-#moin-pageinfo{margin-top:20px}
-#moin-timings li{display:inline-block;*display:inline;zoom:1;margin:0 20px 0 0}
-#moin-credits span{display:inline-block;margin:0 5px}
-#moin-creditlogos{float:right;list-style:none;margin:5px 10px}
-#moin-creditlogos li{display:inline-block;*display:inline;zoom:1;margin:10px 0 10px 10px}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
 a.moin-permalink:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
 html,body{height:100%}
 #moin-main-wrapper{position:relative;min-height:100%}
 #moin-page{padding-bottom:105px}
-#moin-footer{position:absolute;width:100%;bottom:0}
 .moin-search-option-bar{width:75%;padding-left:14px;}
 .moin-search-option-bar span{float:right;padding:10px}
 .moin-suggestions{padding-left:14px}

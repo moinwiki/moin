@@ -54,9 +54,8 @@
                 {% block theme_stylesheets %}
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
                     <link media="all" rel="stylesheet" href="{{ theme_static('css/theme.css') }}" />
-
+                    {{ stylesheets }}
                 {% endblock %}
-                {{ stylesheets }}
                 {% if user.valid and user.css_url -%}
                     <link media="all" rel="stylesheet" title="{{ user.name }}'s stylesheet" href="{{ user.css_url }}" />
                 {%- endif %}
