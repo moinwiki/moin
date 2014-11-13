@@ -6181,10 +6181,8 @@ button.close {
 }
 /* end diffs */
 /* start of basic theme custom css for moin2 */
-@media screen and (min-width: 480px) {
-  .moin-pull-right {
-    float: right !important;
-  }
+ul.moin-pull-right {
+  float: right !important;
 }
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
@@ -6568,6 +6566,17 @@ a:focus.moin-showhide {
 }
 .moin-navbar-inverse .navbar-brand {
   color: #c8ddf1;
+}
+.moin-navbar-user > ul.nav > li,
+.moin-navbar-user > ul.nav > li > a {
+  display: inline;
+}
+.moin-navbar-user > ul.nav > li > a {
+  padding: 10px 10px;
+}
+.moin-navbar-user > ul.nav {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 .moin-quicklink {
   position: relative;
@@ -7024,11 +7033,6 @@ form.upload_file button {
   min-height: 100%;
   position: relative;
 }
-@media (max-width: 992px) {
-  .moin-content {
-    padding-bottom: 250px;
-  }
-}
 html {
   overflow-y: scroll;
 }
@@ -7097,7 +7101,6 @@ html {
   #moin-main-wrapper.showsidebar {
     left: 33%;
   }
-  /* TODO why does bootstrap display navbar-toggle only at width < 480 when <780 is wanted */
   .navbar-toggle {
     position: relative;
     float: left;
@@ -7122,5 +7125,8 @@ html {
   }
   .navbar-toggle .icon-bar + .icon-bar {
     margin-top: 4px;
+  }
+  div.moin-navbar-user {
+    margin-right: 15px;
   }
 }
