@@ -16,11 +16,10 @@
 /* start of basic theme custom css for moin2 */
 
 @grid-float-breakpoint: @screen-xs;
-@media screen and (min-width: @grid-float-breakpoint) {
-  .moin-pull-right {
-    .pull-right;
-  }
+ul.moin-pull-right {
+  .pull-right;
 }
+
 
 h1, h2, h3, h4, h5, h6 {
   &:hover, &:focus {
@@ -206,6 +205,20 @@ a:focus.moin-showhide {
   }
 }
 
+.moin-navbar-user > ul.nav > li,
+.moin-navbar-user > ul.nav > li  > a {
+  display: inline;
+}
+
+.moin-navbar-user > ul.nav > li  > a {
+  padding: 10px 10px;
+}
+
+.moin-navbar-user > ul.nav {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 .moin-quicklink {
   position: relative;
   padding: 2px 10px 2px 10px;
@@ -246,10 +259,6 @@ a:focus.moin-showhide {
     text-decoration: none;
   }
 }
-
-
-
-
 
 .comment {
   color: @text-color;
@@ -637,12 +646,6 @@ form.upload_file {
   min-height: 100%;
   position: relative;
 }
-// set min-width to prevent search box from floating off window to right
-@media (max-width: 992px) {
-  .moin-content {
-    padding-bottom: 250px;
-  }
-}
 
 html{
   overflow-y: scroll;
@@ -713,7 +716,6 @@ html{
   #moin-main-wrapper.showsidebar {
     left: 33%;
   }
-  /* TODO why does bootstrap display navbar-toggle only at width < 480 when <780 is wanted */
   .navbar-toggle {
     position: relative;
     float: left;
@@ -738,6 +740,9 @@ html{
   }
   .navbar-toggle .icon-bar + .icon-bar {
     margin-top: 4px;
+  }
+  div.moin-navbar-user {
+    margin-right: 15px;
   }
 
 }
