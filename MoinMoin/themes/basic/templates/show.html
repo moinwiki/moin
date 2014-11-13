@@ -1,7 +1,11 @@
 {% extends theme("layout.html") %}
+
 {% import "utils.html" as utils %}
 {% import theme("itemviews.html") as itemviews with context %}
+{% import "snippets.html" as snippets with context %}
+
 {% set exists = storage.has_item(item_name) %}
+{% set footer_meta = snippets.footer_meta() %}
 
 {% block views %}
     {{ itemviews }}
@@ -77,6 +81,10 @@
             <div id="moin-item-actions" class="hidden">{{ self.item_actions() }}</div>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block footer_meta %}
+    {{footer_meta }}
 {% endblock %}
 
 {% block options_for_javascript %}

@@ -3,10 +3,14 @@
 {% import theme("snippets.html") as snippets %}
 
 {% set logo = snippets.logo() %}
-{% set footer_logos = snippets.creditlogos() %}
+{% set before_header = snippets.before_header() %}
+{% set after_header = snippets.after_header() %}
+{% set before_footer = snippets.before_footer() %}
+{% set after_footer = snippets.after_footer() %}
+{% set license_info = snippets.license_info() %}
 {% set credits = snippets.credits() %}
+{% set creditlogos = snippets.creditlogos() %}
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(fqname) %}
-{% set basic_scripts = snippets.add_scripts() %}
 {% set current_url = request.url %}
 {% set current_path = request.path %}
 {% set current_url_showview = url_for_item(endpoint='frontend.show_item', item_name=item_name) %}
@@ -117,6 +121,7 @@
             </div> {# moin-sidebar #}
 
             <div class="col-md-10 col-sm-9 col-xs-12">
+                {{ before_header }}
                 <nav class="navbar moin-navbar-inverse">
                     <div class="row">
                         <div class="col-md-3 col-sm-5 col-xs-6">
@@ -179,6 +184,8 @@
                         {% endif %}
                     </div>
                 </nav> {# navbar moin-navbar-inverse #}
+
+                {{ after_header }}
 
                 <ul class="moin-breadcrumb">
                     {% set trail_items = theme_supp.path_breadcrumbs() %}
@@ -269,12 +276,20 @@
                     </div>
                 </div>
 
+                {{ before_footer }}
+
                 {% block footer %}
-                    <div class="navbar">
-                        {{ footer_logos }}
+                    <div class="navbar moin-footer">
+                        {% block footer_hr %}<hr/>{% endblock %}
+                        {% block footer_meta %}{% endblock %}
+                        {{ creditlogos }}
                         {{ credits }}
+                        {{ license_info }}
                     </div>
                 {% endblock %}
+
+                {{ after_footer }}
+
             </div> {# parent of header, breadcrumbs, content, footer #}
         </div>
 
@@ -283,5 +298,5 @@
 
 {% block body_scripts %}
     {{ super() }}
-    {{ basic_scripts }}
+    <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
 {% endblock %}

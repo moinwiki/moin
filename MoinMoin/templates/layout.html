@@ -166,20 +166,19 @@
         </div>
 
         {{ before_footer }}
-
         <div id="moin-footer">
+
             {% block footer %}
-                {% block footer_itemviews %}{% endblock %}
                 {% block footer_hr %}<hr/>{% endblock %}
-                {{ creditlogos }}
+                {% block footer_itemviews %}{% endblock %}
                 {% block footer_meta %}{% endblock %}
-                {% if license_info %}<p id="moin-wikilicense">{{ license_info }}</p>{% endif %}
+                {{ creditlogos }}
                 {{ credits }}
+                {{ license_info }}
             {% endblock %}
+
         </div>
-
         {{ after_footer }}
-
     </div>
 
 {% endblock %}
