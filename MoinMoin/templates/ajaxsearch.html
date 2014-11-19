@@ -29,9 +29,9 @@
                                 <td class="moin-wordbreak">
                                     {% if result['name'] %}
                                         {% if history %}
-                                            <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}"><b>{{ result['name'] | join(' | ')}}</b></a>
+                                            <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}"><b>{{ result['name'] | join(' | ') }}</b></a>
                                         {% else %}
-                                            <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace']) }}"><b>{{ result['name'] | join(' | ')}}</b></a>
+                                            <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace']) }}"><b>{{ result['name'] | join(' | ') }}</b></a>
                                         {% endif %}
                                     {% else %}
                                         <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}"><b>Item ID : {{ result['itemid'] }}</b></a>

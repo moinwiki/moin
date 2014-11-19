@@ -7,7 +7,7 @@
         Total: {{ fq_names|count }}
         <ul class="moin-link-list">
             {% for fq_name in fq_names|sort(attribute='value') %}
-                <li><a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=fq_name) }}" data-fqname="{{fq_name}}">{{ fq_name.value }}</a></li>
+                <li><a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=fq_name) }}" data-fqname="{{ fq_name }}">{{ fq_name.value }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}

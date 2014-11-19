@@ -24,7 +24,7 @@
                     <td>
                         {% if user.may.admin(item['fqname']) %}
                             <form id="moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
-                                <input type="text" class="moin-acl-string" {%if item['acl_default'] %}style="color:green;"{%endif%} name="{{ item['itemid'] }}" value="{{ item['acl'] }}"/>
+                                <input type="text" class="moin-acl-string" {% if item['acl_default'] %}style="color:green;"{% endif %} name="{{ item['itemid'] }}" value="{{ item['acl'] }}"/>
                                 <input type="submit" value="{{ _("Modify ACL") }}"/>
                             </form>
                         {% else %}

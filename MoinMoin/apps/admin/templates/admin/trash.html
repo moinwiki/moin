@@ -18,7 +18,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for result in results| sort(attribute='mtime', reverse=True)%}
+                {% for result in results| sort(attribute='mtime', reverse=True) %}
                     <tr>
                         <td class="moin-wordbreak">{{ result.oldname|join(' | ') }}</td>
                         <td>{{ result.revid | shorten_id }}</td>

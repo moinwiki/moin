@@ -19,6 +19,7 @@ Or, pass a directory path on the command line.
 
 import sys
 import os
+import re
 
 
 # file types to be processed
@@ -145,6 +146,30 @@ def check_template_indentation(lines, filename, logger):
                 logger.log(filename, u"Non-standard dedent before line %d -- not fixed!" % (idx + 1))
 
 
+def check_template_spacing(lines, filename, logger):
+    """
+    Create message if there is not a blank afer {{, {%, {%-, {# and before }}, %}, -%}, #}.
+    """
+    pattern = re.compile(r'(\{[{#]\S)|(\S[}#]\})')
+    for idx, line in enumerate(lines):
+        # log missing spaces in {{myfunction}} and {#my comment#}
+        m = pattern.search(line)
+        if m:
+            logger.log(filename, u"Missing space within %s on line %d - not fixed!" % (m.group(0), idx + 1))
+        # log missing spaces in {%if something... and {%-if something...
+        m = [m.start() for m in re.finditer('{%', line)]
+        if m:
+            for index in m:
+                if not line.startswith((' ', '- '), index + 2):
+                    logger.log(filename, 'Missing space within %s on line %d - not fixed!' % (line[index:index + 4], idx + 1))
+        # log missing spaces in ...something%} and ...something-%}
+        m = [m.start() for m in re.finditer('%}', line)]
+        if m:
+            for index in m:
+                if not line.endswith((' ', ' -'), 0, index):
+                    logger.log(filename, 'Missing space within %s on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
+
+
 def check_files(filename, suffix):
     """
     Delete trailing blanks, single linefeed at file end, line ending to be \r\n for bat files and \n for all others.
@@ -161,6 +186,7 @@ def check_files(filename, suffix):
 
     if filename.endswith('.html'):
         check_template_indentation(lines, filename, logger)
+        check_template_spacing(lines, filename, logger)
 
     # now look at file end and get rid of all whitespace-only lines there:
     while lines:
