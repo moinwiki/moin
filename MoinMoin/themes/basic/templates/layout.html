@@ -49,9 +49,9 @@
 {% endmacro %}
 
 {# Helper macro to generate a search form #}
-{% macro make_search_form(klass, clas) %}
-    <div class="{{ klass }}">
-        <form class="{{ clas }}" action="{{ url_for('frontend.search') }}" method="get" role="search">
+{% macro make_search_form(div_class, form_class) %}
+    <div class="{{ div_class }}">
+        <form class="{{ form_class }}" action="{{ url_for('frontend.search') }}" method="get" role="search">
             <div class="input-group">
                 <input name='q' type="text" class="form-control" placeholder="Search ...">
                 <div class="input-group-btn">
