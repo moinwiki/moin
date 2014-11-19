@@ -5,11 +5,11 @@
 {% import theme("itemviews.html") as itemviews with context %}
 {% import theme(form['content_form'].template) as content_template %}
 {% set extra_head = content_template.extra_head %}
-{%if content_template.basic_data_editor is defined%}
+{% if content_template.basic_data_editor is defined %}
     {% set data_editor = content_template.basic_data_editor %}
-{%else%}
+{% else %}
     {% set data_editor = content_template.data_editor %}
-{%endif%}
+{% endif %}
 {% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
 
 {% block head %}

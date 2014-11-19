@@ -41,7 +41,7 @@
         {% if title %} title="{{ title }}" {% endif %}>
         {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
         {% if href == login_url %}
-            {{label }}
+            {{ label }}
         {% else %}
             <span class="hidden-sm hidden-xs">{{ label }}</span>
         {% endif %}
@@ -50,8 +50,8 @@
 
 {# Helper macro to generate a search form #}
 {% macro make_search_form(klass, clas) %}
-    <div class="{{klass}}">
-        <form class="{{clas}}" action="{{ url_for('frontend.search') }}" method="get" role="search">
+    <div class="{{ klass }}">
+        <form class="{{ clas }}" action="{{ url_for('frontend.search') }}" method="get" role="search">
             <div class="input-group">
                 <input name='q' type="text" class="form-control" placeholder="Search ...">
                 <div class="input-group-btn">
@@ -156,14 +156,14 @@
                                                 {{ hyperlink(wiki_href, title, exists, aliasname, "fa fa-user fa-inverse", None) }}
                                             </li>
                                             {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                                                <li title="{{_('Settings')}}">
+                                                <li title="{{ _('Settings') }}">
                                                     {{ hyperlink(url_for('frontend.usersettings'), None, True,
                                                         _('Settings'), "fa fa-cog fa-inverse", None) }}
                                                 </li>
                                             {%- endif %}
                                         {%- endif %}
                                         {% if user.auth_method in cfg.auth_can_logout %}
-                                            <li title="{{_('Logout')}}">
+                                            <li title="{{ _('Logout') }}">
                                                 {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
                                                         _('Logout'), "fa fa-sign-out fa-inverse", None) }}
                                             </li>

@@ -20,7 +20,7 @@
                     <a href="{{ url_for('frontend.sitemap', item_name=entry) }}">
                         <span class="fa fa-sitemap"></span>
                     </a>
-                    <a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=entry) }}" data-fqname="{{entry}}">
+                    <a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=entry) }}" data-fqname="{{ entry }}">
                         {{ entry.value }}
                     </a>
                 </li>

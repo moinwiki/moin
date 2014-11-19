@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{_("Search")}}</h1>
+    <h1>{{ _("Search") }}</h1>
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
             {{ forms.render(medium_search_form['q']) }}
