@@ -32,7 +32,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# License information in the footer #}
 {% macro license_info() -%}
-    {# <p id="moin-wiki-license">Copyright by...</p> #}
+    {# <p id="moin-wiki-license">Copyright © 2014 my.org, contents licensed under ...</p> #}
 {%- endmacro %}
 
 {# Helper macro to create image links #}
@@ -77,9 +77,9 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
             {{ item_name }} (rev {{ rev.revid | shorten_id }}),
             {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
             {{ _("by") }} {{ utils.editor_info(rev.meta) }}
-            {% if item.meta['tags'] %}
+            {% if rev.meta['tags'] %}
                 , {{ _("tags:") }}
-                {% for tag in item.meta['tags'] -%}
+                {% for tag in rev.meta['tags'] -%}
                     <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
                 {%- endfor -%}
             {%- endif -%}.
