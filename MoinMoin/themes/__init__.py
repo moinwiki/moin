@@ -210,7 +210,7 @@ class ThemeSupport(object):
                 'frontend.rename_item': "fa fa-tag",
                 'frontend.delete_item': "fa fa-trash-o",
                 'frontend.destroy_item': "fa fa-fire",
-                'frontend.similar_names': "fa fa-search",
+                'frontend.similar_names': "fa fa-search-minus",
                 'frontend.download_item': "fa fa-download",
                 'frontend.copy_item': "fa fa-comment-o",
                 'special.supplementation': "fa fa-comments-o",
