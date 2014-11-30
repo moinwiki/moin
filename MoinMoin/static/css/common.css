@@ -123,6 +123,7 @@ a.moin-item-overlay-ul:hover ~ a.moin-item-overlay-lr,
 a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #428bca; text-decoration: none; }
 /* end transclusion wrapper overlays */
 
+/* misc moin css keywords */
 .moin-suggestions { color: #FF9900; display: inline; }
 .moin-suggestion-terms { font-style: italic; display: inline; }
 .moin-wordbreak { word-break: break-all; word-wrap: break-word; }
@@ -135,7 +136,10 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
 .moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
 .hidden { display: none; visibility: hidden; }
-
+.moin-integer { text-align: right; padding-right: 1em; }
+.moin-big {font-size: 1.17em; }
+.moin-small { font-size: .83em; }
+.moin-inline-label { display: inline; }
 .moin-link-list li { padding: 2px 0 2px 0; }
 input[type="text"].moin-acl-string { width: 70%; }
 #moin-acl-form { display: inline; }

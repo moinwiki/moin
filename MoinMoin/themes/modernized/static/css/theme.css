@@ -288,11 +288,6 @@ th {
 .vi { color: #3333BB } /* Name.Variable.Instance */
 .il { color: #0000DD; font-weight: bold } /* Literal.Number.Integer.Long */
 html{color:#000;font-family:Helvetica,Arial,sans-serif}
-p{margin:1em 0;font-size:1em;line-height:1.3em}
-ins{background-color:inherit;text-decoration:underline}
-.moin-big{font-size:1.17em}
-.moin-small{font-size:.83em}
-.moin-inline-label{display:inline}
 a{text-decoration:none}
 a:link{color:#00008b}
 a:visited{color:#008b8b}
