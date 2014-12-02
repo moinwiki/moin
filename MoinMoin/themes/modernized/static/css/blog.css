@@ -1,17 +1,16 @@
-#moin-blog-header{margin:1em 0 -1em 0}
-#moin-blog-body{display:table;width:100%}
+#moin-blog-header{margin:1em 0 -1em 0;font-size:20px;padding-bottom:10px}
 #moin-blog-content{padding:0 2em 0 0;display:table-cell;width:80%}
-#moin-blog-sidebar{display:table-cell;width:20%}
+#moin-blog-body{display:table;width:100%}
+#moin-blog-content h1 a{text-decoration:none;font-size:30px}
+.moin-blog-entry{border:2px solid #aed4fa;padding-left:10px;padding-right:10px;padding-bottom:10px;border-radius:10px;background-color:#eef1f6}
 .moin-blog-icon{font-size:1.6em}
 .moin-blog-entry-info{font-size:.8em;color:#737373}
-.moin-blog-entry-bottominfo{font-size:.8em;color:#737373}
 .moin-blog-entry-modify{font-size:.8em;margin:0;float:right}
 ul.moin-blog-entry-tags{list-style:none;display:inline;margin:0;}
 ul.moin-blog-entry-tags li{display:inline;}
 ul.moin-blog-entry-tags li:after{content:","}
+.moin-blog-entry h1{border-bottom:none;margin-top:.1em}
+#moin-blog-sidebar{display:table-cell;width:20%}
 ul.moin-blog-entry-tags li:last-child:after{content:""}
-.moin-blog-entry{border:2px solid #dfdfdf;padding-left:10px;padding-right:10px;padding-bottom:10px;border-radius:10px;background-color:#eef1f6}
-.moin-blog-entry h1{border-bottom:none;margin-top: 0.10em}
-#moin-blog-header{margin:1em 0 -1em 0;font-size:20px;padding-bottom:10px}
-#moin-blog-content h1 a{text-decoration:none;font-size: 30px}
 .moin-noblogentry-message{padding-top:20px}
+.moin-blog-entry-bottominfo{font-size:.8em;color:#737373}
