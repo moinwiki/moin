@@ -5,28 +5,34 @@
 
 #moin-blog-header
     margin 1em 0 -1em 0
-
-#moin-blog-body
-    display table
-    width 100%
+    font-size 20px
+    padding-bottom 10px
 
 #moin-blog-content
     padding 0 2em 0 0
     display table-cell
     width 80%
 
-#moin-blog-sidebar
-    display table-cell
-    width 20%
+#moin-blog-body
+    display table
+    width 100%
+
+#moin-blog-content h1 a
+    text-decoration none
+    font-size 30px
+
+.moin-blog-entry
+    border 2px solid base_color
+    padding-left 10px
+    padding-right 10px
+    padding-bottom 10px
+    border-radius 10px
+    background-color table_bg_color
 
 .moin-blog-icon
     font-size 1.6em
 
 .moin-blog-entry-info
-    font-size 0.8em
-    color footer_color
-
-.moin-blog-entry-bottominfo
     font-size 0.8em
     color footer_color
 
@@ -44,30 +50,23 @@ ul.moin-blog-entry-tags
         &:after
             content ","
 
-ul.moin-blog-entry-tags li:last-child
-    &:after
-        content ""
-
-.moin-blog-entry
-    border 2px solid base_color
-    padding-left 10px
-    padding-right 10px
-    padding-bottom 10px
-    border-radius 10px
-    background-color table_bg_color
+// following rules are not in basic blog.css
 
 .moin-blog-entry h1
     border-bottom none
     margin-top 0.10em
 
-#moin-blog-header
-    margin 1em 0 -1em 0
-    font-size 20px
-    padding-bottom 10px
+#moin-blog-sidebar
+    display table-cell
+    width 20%
 
-#moin-blog-content h1 a
-    text-decoration none
-    font-size 30px
+ul.moin-blog-entry-tags li:last-child
+    &:after
+        content ""
 
 .moin-noblogentry-message
     padding-top 20px
+
+.moin-blog-entry-bottominfo
+    font-size 0.8em
+    color footer_color
