@@ -218,7 +218,7 @@
                                 </li>
                             {% else %}
                                 <li>
-                                    <big class="moin-location-breadcrumb">
+                                    <span class="moin-big moin-location-breadcrumb">
                                         {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
                                             {% if loop.first %}
                                                 <small>~ /</small>
@@ -238,7 +238,7 @@
                                                 {%- endif %}
                                             {%- endif %}
                                         {% endfor %}
-                                    </big>
+                                    </span>
                                     <ul class="moin-bcs-subitems">
                                         {% for fq_name in theme_supp.get_fqnames(fqname) -%}
                                             <li>
