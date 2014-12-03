@@ -6319,7 +6319,7 @@ h6:focus .moin-permalink {
   margin-right: 5px;
 }
 .moin-user-action-special > a {
-  color: #1b436d;
+  color: #00417f;
 }
 .moin-user-action-special:hover,
 .moin-user-action-special:focus,
@@ -6350,11 +6350,11 @@ a:focus.moin-showhide {
   border: 1px solid #c8ddf1;
 }
 .list-group-item > a {
-  color: #1b436d;
+  color: #00417f;
 }
 .moin-list-heading {
-  background-color: #1b436d;
-  border: 1px solid #1b436d;
+  background-color: #00417f;
+  border: 1px solid #00417f;
   font-variant: small-caps;
   color: #c8ddf1;
   border-radius: 4px;
@@ -6460,7 +6460,7 @@ a:focus.moin-showhide {
 .moin-navbar-inverse {
   background-color: #222222;
   border-color: #080808;
-  background-color: #1b436d;
+  background-color: #00417f;
   padding-left: 0px;
   padding-right: 0px;
 }
@@ -6550,19 +6550,19 @@ a:focus.moin-showhide {
   color: #ffffff;
 }
 .moin-navbar-inverse .navbar-nav > li > a {
-  color: #c8ddf1;
+  color: #cce6ff;
 }
 .moin-navbar-inverse .navbar-nav > li > a.active {
   color: #ffffff;
 }
 .moin-navbar-inverse .navbar-text {
-  color: #c8ddf1;
+  color: #cce6ff;
 }
 .moin-navbar-inverse .navbar-text > a {
-  color: #c8ddf1;
+  color: #cce6ff;
 }
 .moin-navbar-inverse .navbar-brand {
-  color: #c8ddf1;
+  color: #cce6ff;
 }
 .moin-navbar-user > ul.nav > li,
 .moin-navbar-user > ul.nav > li > a {
@@ -6583,7 +6583,7 @@ a:focus.moin-showhide {
   margin-bottom: -1px;
 }
 .moin-quicklink > a {
-  color: #1b436d;
+  color: #00417f;
 }
 .moin-quicklink:last-child {
   margin-bottom: 0;
@@ -6699,13 +6699,13 @@ a:focus.moin-showhide {
   font-weight: normal;
 }
 a.wikilink {
-  color: #1b436d;
+  color: #00417f;
 }
 .moin-bcs-subitems {
   z-index: 500;
 }
 ul.moin-breadcrumb ul.moin-bcs-subitems {
-  background-color: #1b436d;
+  background-color: #00417f;
 }
 ul.moin-breadcrumb,
 ul.moin-breadcrumb ul.moin-bcs-subitems {
@@ -7018,7 +7018,7 @@ form.upload_file button {
 .moin-search-option-bar {
   padding-left: 10px;
   border: 1px solid #555555;
-  background-color: #1b436d;
+  background-color: #00417f;
   color: #c8ddf1;
   border-radius: 5px;
 }
