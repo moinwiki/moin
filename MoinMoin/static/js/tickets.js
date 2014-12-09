@@ -1,17 +1,5 @@
 $(document).ready(function () {
     "use strict";
-    $("table").tablesorter({
-        widgets: ["resizable"],
-        widgetOptions : {
-            // css class name applied to the sticky header
-            resizable : false
-        },
-        headers: {
-            // remove sorting option for tags column
-            7: { sorter: false }
-        }
-    });
-
     $('.moin-loginsettings').addClass('navbar-right');
 
     // executed when user clicks tickets tab tags button and conditionally on page load

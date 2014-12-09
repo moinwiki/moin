@@ -2296,13 +2296,6 @@ def tickets():
     user = And(user)
 
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-        sortedby = []
-        time_sorting = request.args.get(u'time_sorting')
-        if time_sorting == u'new':
-            sortedby.append(sorting.FieldFacet(u'mtime', reverse=True))
-        elif time_sorting == u'old':
-            sortedby.append(sorting.FieldFacet(u'mtime', reverse=False))
-
         if assigned_username:
             selected_user = searcher.search(user, limit=None)
             if selected_user:
@@ -2312,7 +2305,7 @@ def tickets():
                 terms = []
 
         q = And(terms)
-        results = searcher.search(q, limit=None, sortedby=sortedby)
+        results = searcher.search(q, limit=None)
         tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
         return render_template('tickets.html',
                                results=results,
@@ -2320,7 +2313,6 @@ def tickets():
                                status=status,
                                tags=tags,
                                selected_tags=selected_tags,
-                               time_sorting=time_sorting,
                                current_timestamp=current_timestamp,
         )
 

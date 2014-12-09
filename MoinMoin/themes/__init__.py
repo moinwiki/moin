@@ -22,7 +22,7 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
-from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT
+from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
 from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from MoinMoin.search import SearchForm
@@ -539,6 +539,15 @@ def get_editor_info(meta, external=False):
     return result
 
 
+def get_assigned_to_info(meta):
+    display_name = ''
+    userid = meta.get(ASSIGNED_TO)
+    if userid:
+        u = user.User(userid)
+        display_name = u.display_name or u.name0
+    return display_name
+
+
 def shorten_fqname(fqname, length=25):
     """
     Shorten fqname
@@ -673,6 +682,7 @@ def setup_jinja_env():
         'url_for_item': url_for_item,
         'get_fqname': get_fqname,
         'get_editor_info': lambda meta: get_editor_info(meta),
+        'get_assigned_to_info': lambda meta: get_assigned_to_info(meta),
         'utctimestamp': lambda dt: utctimestamp(dt),
         'gen': make_generator(),
         'search_form': SearchForm.from_defaults(),
