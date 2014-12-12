@@ -168,16 +168,8 @@ input[type="text"].moin-acl-string { width: 70%; }
 .moin-ticket-search { display: inline; float: right; }
 #ticket-table-tip { color: #4e7da9; }
 #ticket-summary { width: 50%; }
-.tickets-sort-button.dropdown { z-index: 500; }
-.tickets-sort-button.dropdown ul.dropdown-menu { background-color: #aed4fa; padding: 0; margin: 0; display: none; position: absolute; }
-.tickets-sort-button.dropdown ul.dropdown-menu li { list-style-type: none; display: block; position: relative; }
-.tickets-sort-button.dropdown ul.dropdown-menu li a { display: inline; }
-.tickets-sort-button.dropdown:hover ul.dropdown-menu { display: inline-block; }
 .moin-ticket-tags { border-bottom: none; clear: both; }
-.tickets-sort-button.dropdown { display: inline; padding-left: 8px
-}
-.moin-ticketsearch-form { display: inline
-}
+.moin-ticketsearch-form { display: inline; }
 #moin-ticketsearch-query { background-image: url("../../../static/img/search.png"); background-repeat: no-repeat; background-position: 5px;
     padding-left: 24px; width: 150px; margin-left: 7px; }
 .moin-ticket-tags { margin-top: 1em; display: none; }
