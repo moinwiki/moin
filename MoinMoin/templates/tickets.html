@@ -11,11 +11,11 @@
         <form action="{{ url_for('frontend.tickets', selected_tags=list()) }}" method="post" class='moin-ticketsearch-form'>
             <input type="hidden" name="q" value="" >
             <input type="hidden" name="status" value="{{ status_value }}">
-            <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'ticket-query-button active' if status == status_value  else 'ticket-query-button' }}">
+            <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'moin-button active' if status == status_value  else 'moin-button' }}">
         </form>
     {% endfor %}
 
-    <input type="button" class="ticket-tags-button ticket-tags-toggle" title="{{ _("Show all tags") }}" value="{{ _("Tags") }}">
+    <input type="button" class="moin-button ticket-tags-toggle" title="{{ _("Show all tags") }}" value="{{ _("Tags") }}">
 
     <form class="moin-ticket-search" action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags)) }}" method="post">
         <input type="hidden" name="status" value="{{ status }}">
@@ -24,7 +24,7 @@
 
     {# TODO: This is a workaround that creates named tickets, rework when there is a means of creating unnamed tickets #}
     <form method="get" class="moin-ticket-create-link" action="{{ url_for('frontend.modify_item', item_name='ticket_'+current_timestamp ) }}">
-        <input type="submit" value="{{ _('Create ticket') }}">
+        <input class="moin-button" type="submit" value="{{ _('Create ticket') }}">
         <input type="hidden" name="itemtype" value="ticket">
     </form>
 
@@ -37,7 +37,7 @@
             <form class="moin-existing-tags" action="{{ url_for('frontend.tickets', selected_tags=selected_tags_value) }}" method="post">
                 <input type="hidden" name="q" value="{{ query if query }}" >
                 <input type="hidden" name="status" value="{{ status }}">
-                <input type="submit" value="{{ tag }}" class="{{ 'ticket-tags-button active btn btn-primary' if tag in selected_tags else 'ticket-tags-button' }}">
+                <input type="submit" value="{{ tag }}" class="{{ 'moin-button active' if tag in selected_tags else 'moin-button' }}">
             </form>
         {% endfor %}
     </div>

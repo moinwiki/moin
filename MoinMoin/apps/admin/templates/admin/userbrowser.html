@@ -24,19 +24,19 @@
                         <form action="{{ url_for('admin.userprofile', user_name=u.name[0]) }}" method="POST">
                             <input type="hidden" name="key" value="disabled" />
                             <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
-                            <input type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />
+                            <input class="moin-button" type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />
                         </form>
                     </td>
                     <td>
                         <form action="{{ url_for('admin.mail_recovery_token') }}" method="GET">
                             <input type="hidden" name="email" value="{{ u.email }}" />
                             <input type="hidden" name="account_sendmail" value="1" />
-                            <input type="submit" name="recoverpass" value="{{ _("Mail account data") }}" />
+                            <input class="moin-button" type="submit" name="recoverpass" value="{{ _("Mail account data") }}" />
                         </form>
                     </td>
                     <td>
                         <form action="{{ url_for('admin.user_acl_report', uid=u.uid) }}" method="GET">
-                            <input type="submit" value="{{ _("User ACL Info") }}" />
+                            <input class="moin-button" type="submit" value="{{ _("User ACL Info") }}" />
                         </form>
                     </td>
                 </tr>

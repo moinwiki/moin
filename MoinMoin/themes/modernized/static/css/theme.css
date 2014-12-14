@@ -313,8 +313,8 @@ table.navigation{background:#fff;float:right;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
 #moin-create-table tbody tr td a{color:#00008b}
 label{display:block;font-weight:bold}
-input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#aed4fa;padding:4px 15px;border:1px solid #4e7da9;border-radius:6px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;}
-input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:1px 1px 2px #000}
+input[type="submit"],input[type="button"],button{font-weight:bold;font-size:.75em;background:#aed4fa;padding:4px 15px;border:1px solid #4e7da9;border-radius:6px;cursor:pointer;}
+input[type="submit"]:hover,input[type="button"]:hover,button:hover{box-shadow:2px 2px 1px #000}
 input[type="submit"]:active,input[type="button"]:active,button:active{position:relative;top:1px}
 input,select{padding:3px;background:#fff;border:1px solid #4e7da9;border-radius:2px}
 input[type="text"]{width:96%}

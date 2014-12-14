@@ -20,7 +20,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro render_submit(form) %}
-  {{ gen.input(type='submit', value=form.submit_label, class='button', **kwargs) }}
+  {{ gen.input(type='submit', value=form.submit_label, class='moin-button', **kwargs) }}
 {% endmacro %}
 
 {% macro render_textcha(gen, form) %}
