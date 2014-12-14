@@ -176,11 +176,6 @@ input[type="text"].moin-acl-string { width: 70%; }
 #ticket-list thead th:hover { background-color: #e8e8e8; cursor: pointer; }
 #ticket-list tbody tr:hover { background-color: #e8e8e8; }
 #ticket-list tr td:first-child a { font-family: monospace; }
-.ticket-query-button { background: #aed4fa; padding: 1px 7px; text-shadow: 0 1px 0 #fff; border: 1px solid transparent; }
-.ticket-query-button.active,
-.ticket-tags-button.active,
-.ticket-tags-button:hover,
-.ticket-query-button:hover { background-color:#008b8b; color: #333; box-sizing: border-box; border: 1px solid transparent; border-radius: 3px; }
 
 /* tags tab */
 ul.moin-tags { display: block; margin-left: 0; }
@@ -263,6 +258,16 @@ h3,
 h4,
 h5,
 h6 { border-bottom: 3px solid #4e7da9; }
+
+/* buttons */
+#moin-group-browser a.moin-button,
+form > input.moin-button { background: #aed4fa; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
+    color: #000; font-size: 0.75em; font-weight: bold; padding: 4px 15px; }
+#moin-group-browser a.moin-button:hover,
+#moin-group-browser a.moin-button:focus,
+form > input.moin-button:hover,
+form > input.moin-button:focus { box-shadow: 2px 2px 1px #000; color: #000; text-decoration: none; }
+form > input.moin-button.active {background: #00417f; color: #fff; }
 
 /* table of contents (div.toc is for markdown parser) */
 div.moin-table-of-contents,
