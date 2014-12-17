@@ -1,13 +1,13 @@
 {% extends theme("layout.html") %}
 {% block content %}
     <h1>{{ _("Users") }}</h1>
-    <table class="table table-hover tablesorter tablesorter-default zebra moin-sortable" data-sortlist="[[0,0]]">
+    <table class="zebra moin-sortable" data-sortlist="[[0,0]]">
         <thead>
             <tr>
                 <th>{{ _("User name") }}</th>
                 <th>{{ _("Member of Groups") }}</th>
                 <th>{{ _("Email address") }}</th>
-                <th colspan="3">{{ _("Actions") }}</th>
+                <th class="center" colspan="3" data-sorter="false">{{ _("Actions") }}</th>
             </tr>
         </thead>
         <tbody>
