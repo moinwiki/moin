@@ -44,7 +44,7 @@
 
     {% if results %}
         <p>{{ _("%(result_len)d Tickets found.", result_len=results|length) }}</p>
-        <table class="table table-hover moin-sortable" id="ticket-list">
+        <table class="zebra moin-sortable" id="ticket-list">
             <thead>
                 <tr>
                     <th id="ticket-summary">{{ _("Summary") }}</th>
