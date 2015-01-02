@@ -591,10 +591,6 @@ def shorten_item_name(name, length=25):
             name = u'{0}...{1}'.format(name[:half + left], name[-half:])
     return name
 
-CONTENTTYPE_SHORTEN = {
-    'text/x.moin.wiki': 'MoinWiki',
-}
-
 
 def shorten_id(name, length=7):
     """
