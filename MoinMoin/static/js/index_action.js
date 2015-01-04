@@ -126,12 +126,16 @@ $("document").ready(function () {
         if ($(this).hasClass("allitem-toselect")) {
             $(".moin-item-index div").removeClass().addClass("selected-item");
             $(this).removeClass("allitem-toselect").addClass("allitem-selected");
+            $(this).children("i").removeClass("fa-square-o").addClass("fa fa-check-square-o");
+            $(".moin-select-button-text").text(_("Deselect All"));
             $(".moin-select-item > input[type='checkbox']").each(function () {
                 $(this).prop('checked', true);
             });
         } else {
             $(this).removeClass("allitem-selected").addClass("allitem-toselect");
             $(".moin-item-index div").removeClass();
+            $(this).children("i").removeClass("fa-check-square-o").addClass("fa-square-o");
+            $(".moin-select-button-text").text(_("Select All"));
             $(".moin-select-item > input[type='checkbox']").each(function () {
                 $(this).prop('checked', false);
             });
@@ -142,23 +146,23 @@ $("document").ready(function () {
 
     // add click handler to "Actions" drop down list
     // also executed via .click call when user clicks on an action (new, download, delete, destroy)
-    $(".show-action").click(function () {
+    $(".moin-show-action").click(function () {
         // show/hide actions drop down list
         var actionsDiv = $(this).parent().parent();
         if (actionsDiv.find("ul:first").is(":visible")) {
             actionsDiv.find("ul:first").fadeOut(POPUP_FADE_TIME);
-            actionsDiv.removeClass("action-visible");
+            actionsDiv.removeClass("moin-action-visible");
         } else {
             actionsDiv.find("ul:first").fadeIn(POPUP_FADE_TIME);
-            actionsDiv.addClass("action-visible");
+            actionsDiv.addClass("moin-action-visible");
         }
     });
 
     // add click handler to "New Item" action tab entry
-    $("#moin-create-newitem").click(function () {
+    $("#moin-create-new-item").click(function () {
         // show new item popup and hide actions dropdown
         showpop("newitem");
-        $(".show-action").trigger("click");
+        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to close button "X" on new item popup
@@ -203,7 +207,7 @@ $("document").ready(function () {
             });
         }
         // hide the list of actions
-        $(".show-action").trigger("click");
+        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
@@ -222,7 +226,7 @@ $("document").ready(function () {
                 showpop("destroy");
             }
         }
-        $(".show-action").trigger("click");
+        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Submit" button on "Please provide comment..." popup
@@ -238,38 +242,24 @@ $("document").ready(function () {
     // -- Filter by content type handlers start here
 
     // add click handler to "Filter by content type" button
-    $(".moin-contenttypes-wrapper").children("div").click(function () {
+    $(".moin-contenttypes-wrapper").children("span").click(function () {
         // show/hide content type dropdown
         var wrapper = $(this).parent();
         if (wrapper.find("form:visible").length) {
             $(".moin-contenttypes-wrapper").find("form").fadeOut(POPUP_FADE_TIME);
-            $(this).removeClass().addClass("ct-hide");
+            $(this).removeClass("moin-ct-shown").addClass("moin-ct-hide");
         } else {
             $(".moin-contenttypes-wrapper").find("form").fadeIn(POPUP_FADE_TIME);
-            $(this).removeClass().addClass("ct-shown");
+            $(this).removeClass("moin-ct-hide").addClass("moin-ct-shown");
         }
     });
 
     // add click handler to "Toggle" button on "Filter by content type" dropdown
-    $(".filter-toggle").click(function () {
+    $(".moin-filter-toggle").click(function () {
         // reverse checked/unchecked for each content type
         $(".moin-contenttypes-wrapper form").find("input[type='checkbox']").each(function () {
             $(this).prop('checked', !$(this).is(':checked'));
         });
-        return false;
-    });
-
-    // add click handler to "More" button on "Filter by content type" dropdown
-    $(".filter-more").click(function () {
-        // show/hide help text describing each content type
-        var helper_texts = $(".moin-contenttypes-wrapper form").find(".helper-text:visible");
-        if (helper_texts.length) {
-            helper_texts.fadeOut();
-        } else {
-            helper_texts = $(".moin-contenttypes-wrapper form").find(".helper-text");
-            helper_texts.fadeIn();
-        }
-
         return false;
     });
 

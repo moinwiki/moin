@@ -8,6 +8,8 @@ $(document).ready(function(){
         "Show comments"  : "{{  _("Show comments") }}",
         "Hide transclusions"  : "{{  _("Hide transclusions") }}",
         "Show transclusions"  : "{{  _("Show transclusions") }}",
+        "Select All"  : "{{  _("Select All") }}",
+        "Deselect All"  : "{{  _("Deselect All") }}",
         "Your changes will be discarded if you leave this page without saving." : "{{ _("Your changes will be discarded if you leave this page without saving.") }}",
         "You missed! Double-click on text or to the right of text to auto-scroll text editor."  : "{{ _("You missed! Double-click on text or to the right of text to auto-scroll text editor.") }}",
         "Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."  : "{{ _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature.") }}",
