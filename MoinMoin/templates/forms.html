@@ -215,19 +215,19 @@ Helpers for using flatland with jinja2 to create html forms.
         <div class="upload-form">
             <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
                 <input type="file" name="data_file" multiple>
-                <button type="submit">{{ _("Upload") }}</button>
-                <div class="file_upload_label" style="margin: 0;">{{ _("Upload files") }}</div>
+                <button class="moin-button" type="submit">{{ _("Upload") }}</button>
+                <div class="file_upload_label moin-button">{{ _("Upload files") }}</div>
             </form>
         </div>
         <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
         <div class="file_upload_buttons">
-            <button class="file_upload_start" type="button" style="display:none;">{{ _("Start All") }}</button>
-            <button class="file_upload_cancel" type="button" style="display:none;">{{ _("Cancel All") }}</button>
+            <button class="moin-button file_upload_start" type="button" style="display:none;">{{ _("Start All") }}</button>
+            <button class="moin-button file_upload_cancel" type="button" style="display:none;">{{ _("Cancel All") }}</button>
         </div>
         <table class="files">
             <tr class="file_upload_template" style="display:none;">
-                <td class="file_upload_start"><button type="button">{{ _("Start") }}</button></td>
-                <td class="file_upload_cancel"><button type="button">{{ _("Cancel") }}</button></td>
+                <td class="file_upload_start"><button class="moin-button" type="button">{{ _("Start") }}</button></td>
+                <td class="file_upload_cancel"><button class="moin-button" type="button">{{ _("Cancel") }}</button></td>
                 <td class="file_name"></td>
                 <td class="file_upload_progress"><div></div></td>
             </tr>
