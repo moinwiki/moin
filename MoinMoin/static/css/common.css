@@ -146,21 +146,12 @@ input[type="text"].moin-acl-string { width: 70%; }
 
 /* tablesorter */
 .tablesorter { width: 100%; }
-.tablesorter-header {
-  background-image: url('../img/bg.png');
-  background-repeat: no-repeat;
-  background-position: left center; }
-.tablesorter-headerAsc {
-  background-image: url('../img/asc.png'); }
-.tablesorter-headerDesc {
-  background-image: url('../img/desc.png'); }
-.tablesorter-header.sorter-false {
-  background-image: None; }
-.tablesorter-header-inner {
-  padding-left: 10px;
-  cursor: pointer; }
-.sorter-false > .tablesorter-header-inner {
-  padding-left: 0px; }
+.tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }
+.tablesorter-header.tablesorter-headerAsc { background-image: url('../img/asc.png'); }
+.tablesorter-header.tablesorter-headerDesc { background-image: url('../img/desc.png'); }
+.tablesorter-header.sorter-false { background-image: None; }
+.tablesorter-header-inner { padding-left: 10px; cursor: pointer; }
+.sorter-false > .tablesorter-header-inner { padding-left: 0; }
 
 /* tickets */
 .moin-existing-tags { display: inline; }
