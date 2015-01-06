@@ -96,11 +96,11 @@ sample          create wiki and load sample data
 restore *       create wiki and restore wiki/backup.moin *option, specify file
 import <dir>    import a moin 1.9 wiki/data instance from <dir>
 
-run             run built-in wiki server
+run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
 
 css             run Stylus and lessc to update theme CSS files
-tests           run tests, output goes to pytest.txt and pytestpep8.txt
+tests *         run tests, output to pytest.txt *options (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
 api             update moin api docs (files are under hg version control)
 dist            delete wiki data, then create distribution archive in dist/
@@ -394,7 +394,7 @@ class Commands(object):
     def cmd_tests(self, *args):
         """run tests, output goes to pytest.txt and pytestpep8.txt"""
         print 'Running tests... output written to {0}.'.format(PYTEST)
-        command = '{0}py.test --pep8 > {1} 2>&1'.format(ACTIVATE, PYTEST)
+        command = '{0}py.test --pep8 > {1} {2} 2>&1'.format(ACTIVATE, PYTEST, ' '.join(args))
         result = subprocess.call(command, shell=True)
         print 'Summary message from {0} is shown below. Do "{1} log pytest" to see complete log.'.format(PYTEST, M)
         search_for_phrase(PYTEST)
