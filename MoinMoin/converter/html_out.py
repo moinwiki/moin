@@ -544,10 +544,20 @@ class Converter(object):
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
         ret = html.table(attrib=attrib)
-        for item in elem:
+        for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if item.tag.name == 'table-body':
+                if len(elem) > 1 and item.tag.name == 'table-body':
+                    # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
+                    if idx == 0:
+                        # make first table-body into header
+                        tag = html.thead
+                    elif len(elem) > 2 and idx == len(elem) - 1:
+                        # make last table-body into footer
+                        tag = html.tfoot
+                    else:
+                        tag = html.tbody
+                elif item.tag.name == 'table-body':
                     tag = html.tbody
                 elif item.tag.name == 'table-header':
                     tag = html.thead
