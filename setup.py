@@ -132,9 +132,9 @@ setup_args = dict(
     message_extractors={
         '': [
             ('MoinMoin/templates/**.html', 'jinja2', None),
-            ('MoinMoin/templates/**.js', 'javascript', None),
+            ('MoinMoin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
             ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
-            ('MoinMoin/apps/**/templates/**.js', 'javascript', None),
+            ('MoinMoin/themes/**/templates/**.html', 'jinja2', None),
             ('MoinMoin/**/_tests/**', 'ignore', None),
             ('MoinMoin/static/**', 'ignore', None),
             ('MoinMoin/**.py', 'python', None),
