@@ -211,6 +211,8 @@ class TestConverter(object):
                 '<page><body><table><table-body><table-row><table-cell>Row 1</table-cell></table-row><table-row><table-cell>Row 2</table-cell></table-row></table-body></table></body></page>'),
             (u'||Cell 1.1||Cell 1.2||\n||Cell 2.1||Cell 2.2||\n',
                 '<page><body><table><table-body><table-row><table-cell>Cell 1.1</table-cell><table-cell>Cell 1.2</table-cell></table-row><table-row><table-cell>Cell 2.1</table-cell><table-cell>Cell 2.2</table-cell></table-row></table-body></table></body></page>'),
+            (u'||Header||\n===\n||Body||\n=====\n||Footer||',
+                '<page><body><table><table-body><table-row><table-cell>Header</table-cell></table-row></table-body><table-body><table-row><table-cell>Body</table-cell></table-row></table-body><table-body><table-row><table-cell>Footer</table-cell></table-row></table-body></table></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

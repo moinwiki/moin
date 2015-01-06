@@ -317,6 +317,16 @@ class Converter(ConverterMacro):
         $
     """
 
+    header_footer_separator = r"""
+        ^
+        \s*
+        (?P<table_sep>
+            ===+
+        )
+        \s*
+        $
+    """
+
     def block_table_repl(self, iter_content, stack, table):
         stack.clear()
 
@@ -329,10 +339,16 @@ class Converter(ConverterMacro):
         for line in iter_content:
             match = self.table_re.match(line)
             if not match:
-                # Allow the mainloop to take care of the line after a list.
-                iter_content.push(line)
-                break
-
+                match = self.header_footer_re.match(line)
+                if match:
+                    # this is a header/body/footer separator: create multiple table_body's, html_out will convert to thead, tbody or tfoot
+                    stack.pop()
+                    stack.push(moin_page.table_body())
+                    continue
+                else:
+                    # Allow the mainloop to take care of the line after table end.
+                    iter_content.push(line)
+                    break
             self.block_table_row(match.group('table'), stack, element)
 
     def block_table_row(self, content, stack, table):
@@ -959,6 +975,8 @@ class Converter(ConverterMacro):
         self.parse_inline(cell_text, stack, self.inline_re)
 
         stack.pop_name('table-cell')
+
+    header_footer_re = re.compile(header_footer_separator, re.X)
 
     # Block elements
     block = (

@@ -191,6 +191,8 @@ tr > td { padding: .3em .4em; vertical-align: middle; text-align: left; }
 tr > th { border: 1px solid #4e7da9; background-color: #81bbf2; text-align: left; color: #000; }
 tr > td { border: 1px solid #4e7da9; }
 td p { margin: 0; padding: 0; }
+#moin-content table > thead { background-color: #81bbf2; }
+#moin-content table > tfoot { background-color: #81bbf2; }
 
 /* zebra table styling */
 table.zebra { width: 98%; }
