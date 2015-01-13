@@ -455,7 +455,8 @@ html,body{height:100%}
 .moin-search-option-bar{width:75%;padding-left:14px;}
 .moin-search-option-bar span{float:right;padding:10px}
 .moin-suggestions{padding-left:14px}
-@media print{html{font-family:serif;font-size:12pt;width:100%}
+@media (max-width: 820px){#moin-main-wrapper{width:100%;min-width:0;overflow:auto}
+}@media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-content-data{margin:0;padding:0}
 a,a:visited,a.moin-nonexistent{color:#939393;text-decoration:none}
 a.moin-interwiki:before{content:attr(title) ":"}
