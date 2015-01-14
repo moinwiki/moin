@@ -13,6 +13,7 @@ import csv
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
 from MoinMoin.util.tree import moin_page
+from MoinMoin.i18n import _, L_, N_
 
 
 class Converter(TableMixin):
@@ -40,7 +41,17 @@ class Converter(TableMixin):
                 row.append(encoded_cell.decode('utf-8'))
             if row:
                 rows.append(row)
-        table = self.build_dom_table(rows)
+        head = None
+        cls = None
+        try:
+            # fragile function throws errors when csv file is incorrectly formatted
+            if csv.Sniffer().has_header('\n'.join(content)):
+                head = rows[0]
+                rows = rows[1:]
+                cls = 'moin-sortable'
+        except csv.Error as e:
+            head = [_('Error parsing CSV file:'), str(e)]
+        table = self.build_dom_table(rows, head=head, cls=cls)
         body = moin_page.body(children=(table, ))
         return moin_page.page(children=(body, ))
 
