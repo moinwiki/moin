@@ -191,7 +191,7 @@
                     {% set trail_items = theme_supp.path_breadcrumbs() %}
                     {% if trail_items %}
                         {% for wiki_name, fqname, item_href, exists, err in trail_items %}
-                            {% if not loop.last %}
+                            {% if not loop.last or title_name %}
                                 <li>
                                     {%- if wiki_name -%}
                                         <a href="{{ item_href }}"{{ " " }}
@@ -216,7 +216,8 @@
                                         {%- endfor %}
                                     </ul>
                                 </li>
-                            {% else %}
+                            {% endif %}
+                            {% if loop.last %}
                                 <li>
                                     <span class="moin-big moin-location-breadcrumb">
                                         {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
