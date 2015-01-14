@@ -40,7 +40,7 @@ class TableMixin(object):
             table_row = moin_page.table_row()
             for idx, cell in enumerate(head):
                 table_cell = moin_page.table_cell(children=[cell, ],)
-                if rows:
+                if rows and len(rows[0]) == len(head):
                     # add "align: right" to heading cell if cell in first data row is numeric
                     self.add_numeric_class(rows[0][idx], table_cell)
                 table_row.append(table_cell)
