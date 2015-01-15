@@ -129,7 +129,6 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-wordbreak { word-break: break-all; word-wrap: break-word; }
 .moin-search-meta { color: green; }
 .searchstats { color: gray; }
-#moin-search-query { width: 70%; border-radius: 5px; }
 .searchhitinfobar { display: inline; }
 .moin-rights-info { display: inline; float: right; }
 .moin-searchoptions > table { table-layout: fixed; }
