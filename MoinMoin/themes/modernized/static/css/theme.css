@@ -355,7 +355,6 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .searchpages td a,.searchpages td a:link{text-decoration:underline}
 #f_data_text{border:1px solid #4e7da9;font-family:monospace;margin:.33em 0;padding:3px;width:100%}
 #f_comment,#f_summary,#f_textcha{border:1px solid #4e7da9;display:inline;margin:.33em 0;padding:3px;width:99%}
-#moin-editor-help{font-size:small;background-color:#eef1f6}
 #preview{border:1px solid #4e7da9;padding:10px 30px 20px 30px;background:url("../img/draft.png");margin-top:.5em}
 .moin-hist-rev input{float:left}
 .moin-hist-rev{margin:0}

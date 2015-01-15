@@ -46,9 +46,7 @@
                 </dl>
             {% endif %}
             {{ data_editor(form['content_form'], item_name) }}
-            {% if form['content_form'].help %}
-                <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
-            {% endif %}
+            {{ utils.help_on_editing(help) }}
             {% set may_admin = user.may.admin(fqname) %}
             {{ meta_editor(form['meta_form'], may_admin) }}
             <dl>

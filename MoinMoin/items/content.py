@@ -326,9 +326,6 @@ class Binary(Content):
         doc of Item._ModifyForm.
         """
         template = 'modify_binary.html'
-        help = """\
-There is no help, you're doomed!
-"""
         data_file = File.using(optional=True, label=L_('Upload file:'))
 
         def _load(self, item):
@@ -1149,7 +1146,6 @@ class TWikiDraw(DrawAWDTWDBase):
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_twikidraw.html"
-        help = ""
 
     def _transform_map(self, image_map, title):
         mapid = 'ImageMapOf' + self.name  # TODO: make it unique
@@ -1173,7 +1169,6 @@ class AnyWikiDraw(DrawAWDTWDBase):
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
-        help = ""
 
         def _load(self, item):
             super(AnyWikiDraw.ModifyForm, self)._load(item)
@@ -1201,7 +1196,6 @@ class SvgDraw(Draw):
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_svg-edit.html"
-        help = ""
 
     def handle_post(self):
         # called from modify UI/POST

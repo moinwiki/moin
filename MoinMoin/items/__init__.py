@@ -24,7 +24,7 @@ from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, Response, redirect, abort, escape
+from flask import request, Response, redirect, abort, escape, url_for
 
 from flatland import Form
 from flatland.validation import Validator
@@ -32,6 +32,8 @@ from flatland.validation import Validator
 from jinja2 import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
+
+from MoinMoin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -835,6 +837,11 @@ class Default(Contentful):
                                show_navigation=show_navigation,
                               )
 
+    def doc_link(self, filename, link_text):
+        """create a link to serve local doc files as help for wiki editors"""
+        filename = url_for('serve.files', name='docs', filename=filename)
+        return u'<a href="%s">%s</a>' % (filename, link_text)
+
     def do_modify(self):
         method = request.method
         if method in ['GET', 'HEAD']:
@@ -876,6 +883,9 @@ class Default(Contentful):
                     abort(403)
                 else:
                     return redirect(url_for_item(**self.fqname.split))
+        help = CONTENTTYPES_HELP_DOCS[self.contenttype]
+        if isinstance(help, tuple):
+            help = self.doc_link(*help)
         return render_template(self.modify_template,
                                fqname=self.fqname,
                                item_name=self.name,
@@ -883,6 +893,7 @@ class Default(Contentful):
                                rows_meta=str(ROWS_META), cols=str(COLS),
                                form=form,
                                search_form=None,
+                               help=help,
                               )
 
     show_template = 'show.html'

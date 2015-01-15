@@ -5,6 +5,10 @@
 MoinMoin - contenttype related constants
 """
 
+from collections import defaultdict
+from MoinMoin.i18n import _, L_, N_
+
+
 # Charset - we support only 'utf-8'. While older encodings might work,
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!
@@ -116,3 +120,54 @@ GROUP_DRAWING = 'Drawing Items'
 GROUP_OTHER = 'Other Items'
 
 DRAWING_EXTENSIONS = ['.tdraw', '.adraw', '.svg', '.png', '.jpg', '.jpeg', '.gif', ]
+
+
+# help for wiki editors based on content type
+def ext_link(href, link_text=None):
+    return '<a class="moin-http" href="%s">%s</a>' % (href, link_text or href)
+
+
+help_on_plain_text = _("This is a plain text item, there is no markup.")
+help_on_binary = _("This item can not be edited, upload a revised file.")
+help_on_csv = ' '.join((
+    _("Use a semicolon or comma to separate cells."),
+    _("If the first row is recognized as a header, the table will be sortable."),
+    ext_link("https://en.wikipedia.org/wiki/Comma-separated_values"),
+))
+
+CONTENTTYPES_HELP_DOCS = {
+    # content type: tuple - must defer forming url until wiki root is known
+    u'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
+    u'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
+    u'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
+    u'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
+    u'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on ReST Wiki markup."))),
+    u'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
+    # content type: help string
+    u'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),
+    u'text/plain;charset=utf-8': help_on_plain_text,
+    u'text/x-diff;charset=utf-8': help_on_plain_text,
+    u'text/x-python;charset=utf-8': help_on_plain_text,
+    u'text/csv;charset=utf-8': help_on_csv,
+    u'text/x-irclog;charset=utf-8': help_on_plain_text,
+    u'image/svg+xml': help_on_binary,
+    u'image/png': help_on_binary,
+    u'image/jpeg': help_on_binary,
+    u'image/gif': help_on_binary,
+    u'audio/wave': help_on_binary,
+    u'audio/ogg': help_on_binary,
+    u'audio/mpeg': help_on_binary,
+    u'audio/webm': help_on_binary,
+    u'video/ogg': help_on_binary,
+    u'video/webm': help_on_binary,
+    u'video/mp4': help_on_binary,
+    u'application/x-twikidraw': ext_link('http://twiki.org/cgi-bin/view/Plugins/TWikiDrawPlugin'),
+    u'application/x-anywikidraw': ext_link('http://anywikidraw.sourceforge.net/'),
+    u'application/x-svgdraw': ext_link('http://code.google.com/p/svg-edit/'),
+    u'application/octet-stream': help_on_binary,
+    u'application/x-tar': help_on_binary,
+    u'application/x-gtar': help_on_binary,
+    u'application/zip': help_on_binary,
+    u'application/pdf': help_on_binary,
+}
+CONTENTTYPES_HELP_DOCS = defaultdict(lambda: _('No help for unknown content type.'), CONTENTTYPES_HELP_DOCS)
