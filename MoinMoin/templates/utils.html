@@ -102,6 +102,14 @@
     {{ gen.form.close() }}
 {% endmacro %}
 
+{% macro help_on_editing(help) %}
+    {% if help %}
+        <div class="tip">
+            <p> {{ help|safe }} </p>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% macro meta_info(meta) %}
     <!-- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list -->
     <ul class="list-group">

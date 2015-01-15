@@ -76,10 +76,9 @@
                 {% else %}
                     {{ gen.input(field, type='hidden', class='form-control') }}
                 {% endif %}
+
                 <div class="tab-pane active" id="help">
-                    {% if form['content_form'].help %}
-                        <pre id="moin-editor-help">{{ form['content_form'].help }}</pre>
-                    {% endif %}
+                    {{ utils.help_on_editing(help) }}
                 </div>
             </div>
             {#
