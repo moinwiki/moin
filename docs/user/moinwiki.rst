@@ -84,7 +84,7 @@ The following is a table of inline markup that can be used to control text forma
 +-------------------------------------+---------------------------------------+
 | ``,,Sub,,Script``                   | SubScript                             |
 +-------------------------------------+---------------------------------------+
-| ``~-Smaller-~``                     |    Smaller                               |
+| ``~-Smaller-~``                     | Smaller                               |
 +-------------------------------------+---------------------------------------+
 | ``~+Larger+~``                      | Larger                                |
 +-------------------------------------+---------------------------------------+
@@ -100,8 +100,6 @@ Internal Links
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | Markup                                    | Result                                      | Comments                                    |
 +===========================================+=============================================+=============================================+
-| ``ItemName``                              | `ItemName <ItemName>`_                      | Link to an item                             |
-+-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[ItemName]]``                          | `ItemName <ItemName>`_                      | Link to an item                             |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[ItemName|Named Item]]``               | `Named Item <ItemName>`_                    | Named link to an internal item              |
@@ -114,15 +112,11 @@ Internal Links
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[ItemName#AnchorName|Named Item1]]``   | `Named Item1 <ItemName#AnchorName>`_        | Named link to an anchor in an internal item |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
-| ``../SiblingItem``                        | `../SiblingItem <../SiblingItem>`_          | Link to a sibling of the current item       |
-+-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[../SiblingItem]]``                    | `../SiblingItem <../SiblingItem>`_          | Link to a sibling of the current item       |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
-| ``/SubItem``                              | `/SubItem </SubItem>`_                      | Link to a sub-item                          |
+| ``[[/SubItem]]``                          | `/SubItem </SubItem>`_                      | Link to a sub-item of current item          |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
-| ``[[/SubItem]]``                          | `/SubItem </SubItem>`_                      | Link to a sub-item                          |
-+-------------------------------------------+---------------------------------------------+---------------------------------------------+
-| ``Home/ItemName``                         | `Home/ItemName <Home/ItemName>`_            | Link to an item                             |
+| ``[[Home/ItemName]]``                     | `Home/ItemName <Home/ItemName>`_            | Link to a subitem of Home item              |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[/filename.txt]]``                     | `/filename.txt </filename.txt>`_            | Link to a sub-item called Filename.txt      |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
@@ -133,20 +127,17 @@ External Links
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | Markup                                                         | Result                                                                       | Comments                                 |
 +================================================================+==============================================================================+==========================================+
-| ``http://moinmo.in/``                                          | http://moinmo.in/                                                            | External link                            |
-+----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | ``[[http://moinmo.in/]]``                                      | http://moinmo.in/                                                            | External link                            |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | ``[[http://moinmo.in/|MoinMoin Wiki]]``                        | `MoinMoin Wiki <http://moinmo.in/>`_                                         | Named External link                      |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
-| ``MeatBall:InterWiki``                                         | `MeatBall:InterWiki <http://www.usemod.com/cgi-bin/mb.pl?InterWiki>`_        | Link to an item on an external Wiki      |
+| ``[[MeatBall:InterWiki]]``                                     | `MeatBall:InterWiki <http://www.usemod.com/cgi-bin/mb.pl?InterWiki>`_        | Link to an item on an external Wiki      |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | ``[[MeatBall:InterWiki|InterWiki page on MeatBall]]``          | `InterWiki page on MeatBall <http://www.usemod.com/cgi-bin/mb.pl?InterWiki>`_| Named link to an item on an external Wiki|
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
-| ``user@example.com``                                           | `user@example.com <mailto:user@example.com>`_                                | Mailto link                              |
+| ``[[mailto:user@example.com]]``                                | `mailto:user@example.com <mailto:user@example.com>`_                         | Mailto link                              |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 
-**MOINTODO**: every syntax above that is not in a double square bracets ( [[]] ) does not work on moin2, it is also not listed to be a valid syntax on the moin2 syntax help page.
 
 Images and Transclusions
 ========================
@@ -334,107 +325,80 @@ Definition Lists
 Tables
 ======
 
-Tables
-------
+Moin wiki markup supports table headers and footers. To indicate the first row(s) of a table is a header, insert a line of 3 or more = characters. To indicate a footer, include a second line of = characters after the body of the table.
 
 **Markup**: ::
 
- ||'''A'''||'''B'''||'''C'''||
- ||1      ||2      ||3      ||
+ ||Head A ||Head B ||Head C ||
+ =============================
+ ||a      ||b      ||c      ||
+ ||x      ||y      ||z      ||
 
 **Result**:
 
-======= ======= =======
- A       B       C
-======= ======= =======
- 1       2       3
-======= ======= =======
+====== ====== ======
+Head A Head B Head C
+====== ====== ======
+a      b      c
+x      y      z
+====== ====== ======
 
-Cell Width
-----------
+Table Styling
+-------------
+
+To add styling to a table, enclose one or more parameters within angle brackets at the start of any table cell.
+
+================================== ===========================================================
+Markup                             Effect
+================================== ===========================================================
+<tableclass="zebra moin-sortable"> Adds one or more CSS classes to the table
+<rowclass="orange">                Adds one or more CSS classes to the row
+<class="green">                    Adds one or more CSS classes to the cell
+<tablestyle="color: red;">         Add CSS styling to table
+<rowstyle="font-size: 140%; ">     Add CSS styling to row
+<style="text-align: right;">       Add CSS styling to cell
+<80%>                              Set cell width, setting one cell effects entire table column
+<(>                                Align cell contents left
+<)>                                Align cell contents right
+<:>                                Center cell contents
+`<|2>`                             Cell spans 2 rows (omit a cell in next row)
+<-2>                               Cell spans 2 columns (omit a cell in this row)
+<#0000FF>                          Change background color of a table cell
+<rowspan="2">                      Same as `<|2>` above
+<colspan="2">                      Same as <-2> above
+`||||`                             An empty cell has same effect as <-2> above
+================================== ===========================================================
+
+Table Styling Example
+---------------------
 
 **Markup**: ::
 
- ||minimal width ||<99%>maximal width ||
+ ||Head A||Head B||
+ ===
+ ||normal text||normal text||
+ ||<|2>cell spanning 2 rows||cell in the 2nd column||
+ ||cell in the 2nd column of the 2nd row||
+ ||<rowstyle="font-weight: bold;" class="monospaced">monospaced text||bold text||
 
 **Result**:
 
-+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| minimal width | maximal width (will take the maximum screen space)                                                                                                           |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-**Notes**:
- - **MOINTODO:** the cell width does not work in moin 2.
- - reStructuredText does not support percentage cell width so cell has been made long manually. In MoinMoin the second cell will take up the maximum amount of horizontal space.
-
-Spanning Rows and Columns
--------------------------
-
-**Markup**: ::
-
- ||<|2> cell spanning 2 rows ||cell in the 2nd column ||
- ||cell in the 2nd column of the 2nd row ||
- ||<-2> cell spanning 2 columns ||
- ||||use empty cells as a shorthand ||
-
-**Result**:
-
++----------------------+---------------------------------------+
+|Head A                |Head B                                 |
++======================+=======================================+
+| normal text          |normal text                            |
 +----------------------+---------------------------------------+
 | cell spanning 2 rows | cell in the 2nd column                |
 |                      +---------------------------------------+
 |                      | cell in the 2nd column of the 2nd row |
 +----------------------+---------------------------------------+
-| cell spanning 2 columns                                      |
-+-------------+------------------------------------------------+
-|             | use empty cells as a shorthand                 |
-+-------------+------------------------------------------------+
+|``monospaced text``   |**bold text**                          |
++----------------------+---------------------------------------+
 
-**Notes**:
- - **MOINTODO:** use empty cells as a shorthand does not work in moin 2.
-
-Alignment of Cell Contents
---------------------------
-
-**Markup**: ::
-
- ||<^|3> Top (Combined) ||<:> Center (Combined) ||<v|3> Bottom (Combined) ||
- ||<)> Right ||
- ||<(> Left ||
-
-**Result**:
-
-+----------------+---------------------------------------+-------------------+
-| Top (Combined) |           center (combined)           |                   |
-|                +---------------------------------------+                   |
-|                |                                 Right |                   |
-|                +---------------------------------------+                   |
-|                | Left                                  | Bottom (Combined) |
-+----------------+---------------------------------------+-------------------+
-
-**Notes**:
- - Text cannot be aligned in reStructuredText, but the text will appear as is described when used in MoinMoin.
-
-HTML-like Options for Tables
-----------------------------
-
-**Markup**: ::
-
- ||A ||<rowspan="2"> like <|2> ||
- ||B ||
- ||<colspan="2"> like <-2>||
-
-**Result**:
-
-+----------------+---------------+
-| A              |               |
-+----------------+ like ``<|2>`` |
-| B              |               |
-+----------------+---------------+
-| like <-2>                      |
-+--------------------------------+
 
 Macros
-------
+======
 
  - ``<<Anchor(anchorname)>>`` inserts a link anchor anchorname
  - ``<<BR>>`` inserts a hard line break
