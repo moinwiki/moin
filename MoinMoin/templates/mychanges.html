@@ -14,8 +14,8 @@
         </div>
         <h1>{{ _('My Changes') }}</h1>
         <div class="moin-clr"></div>
-        <div id="moin-page-history">
-            <table class="zebra ">
+        <div>
+            <table class="zebra moin-sortable">
                 <thead>
                     <tr>
                         <th>{{ _("Item") }}</th>
@@ -36,7 +36,7 @@
                                     <a href="{{ url_for_item(name, namespace=doc.fqname.namespace, endpoint='frontend.show_item') }}">{{ name }}</a>
                                 {% endfor %}
                             </td>
-                            <td>{{ doc.revid|shorten_id }}</td>
+                            <td class="monospaced">{{ doc.revid|shorten_id }}</td>
                             <td>{{ doc.mtime|datetimeformat }}</td>
                             <td class="moin-integer">{{ doc.size }}</td>
                             <td>
@@ -48,7 +48,7 @@
                                     </form>
                                 </div>
                             </td>
-                            <td class="moin-wordbreak">{{ doc.contenttype }}</td>
+                            <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
                             <td class="moin-wordbreak">{{ doc.comment }}</td>
                         </tr>
                     {% endfor %}
