@@ -71,7 +71,7 @@
                                     </div>
                                 </td>
                                 <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
-                                <td class="moin-wordbreak">{{ doc.contenttype }}</td>
+                                <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
                                 <td class="moin-wordbreak">{{ doc.comment }}</td>
                                 <td><a href="{{ url_for('frontend.show_item', item_name=fqname, rev=doc.revid) }}">{{ _('show') }}</a></td>
                                 <td><a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=doc.revid) }}">{{ _('meta') }}</a></td>
