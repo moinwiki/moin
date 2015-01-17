@@ -419,6 +419,22 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
 
 **Note** **RSTTODO** C does not extend fully up to the end of D.
 
+Grid table column widths can be expanded by adding spaces.
+
+**Markup**: ::
+
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+**Result**:
+
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+**Note** **RSTTODO** The moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%"> HTML markup. Tables will always be of minimal width (unless there is CSS styling to set tables larger).
+
 Admonitions
 ===========
 
