@@ -410,15 +410,20 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 #moin-logo{float:left;margin:2px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
 #moin-logo a{color:#fff;text-decoration:none}
+a.moin-sitename{font-size:1.5em;font-weight:bold;color:#fff;line-height:1.5em}
 #moin-username{display:block;margin:0 12px 4px 12px;padding:0;font-size:.82em;}
 #moin-username a{color:#fff}
 #moin-username input:hover{color:#1f9ae0}
-#moin-locationline{padding:0;font-size:100%;font-weight:normal;margin:.3em .75em .3em .75em}
 #moin-interwiki a{color:#fff}
-#moin-pagelocation{font-size:1.5em;letter-spacing:.05em;vertical-align:middle}
-#moin-pagetrail{margin:0 .88em .25em .75em;padding:0;font-size:.88em;}
-#moin-pagetrail a{color:#fff}
-.moin-pagepath a{color:#fff !important}
+ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-alias{padding:0;margin:0;margin-bottom:4px}
+ul.moin-breadcrumb ul.moin-alias{background-color:#e6f2fe;border:1px solid #00417f;border-radius:6px}
+ul.moin-breadcrumb li ul.moin-alias li{list-style-type:none;display:block}
+ul.moin-breadcrumb li ul.moin-alias li a{padding:2px 10px;display:inline-block;color:#1f9ae0}
+ul.moin-breadcrumb li{position:relative}
+.moin-breadcrumb a{color:#fff}
+ul.moin-breadcrumb li ul.moin-alias{display:none;position:absolute}
+ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
+.moin-breadcrumb > li{display:inline-block}
 #moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em;color:#008b8b}
 #moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em;border-top-left-radius:5px;border-top-right-radius:5px}
 #moin-navibar li.wikilink{background:#eef1f6}
@@ -461,7 +466,7 @@ a.moin-interwiki:before{content:attr(title) ":"}
 a.moin-interwiki img{display:none}
 pre{font-size:10pt}
 div.moin-table-of-contents{box-shadow:none}
-a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation{display:none}
+a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki{display:none}
 #moin-pageinfo{color:#737373;font-size:.67em;float:right}
 #moin-pageinfo a{color:#737373}
 .moin-subitem-navigation{display:none}
@@ -476,11 +481,5 @@ h6{font-size:14pt}
 tt,pre{font-size:16pt}
 table.navigation{float:right;margin:2px}
 .navigation td,.navigation a{font-size:10pt;padding:2px}
-#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation,#moin-pageinfo{display:none}
-}ul.moin-bcs-item ul.moin-bcs-subitems{background-color:#00417f}
-ul.moin-bcs-item,ul.moin-bcs-item ul.moin-bcs-subitems{padding:0;margin:0;display:inline-block}
-ul.moin-bcs-item li,ul.moin-bcs-item ul.moin-bcs-subitems li{list-style-type:none;display:block}
-ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
-ul.moin-bcs-item li{position:relative}
-ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
-ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
+#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pageinfo{display:none}
+}
