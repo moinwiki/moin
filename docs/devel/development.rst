@@ -87,7 +87,7 @@ add more tools, exercise tools
 
 * install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
 
-  * On Ubuntu 14.04 you need to install "npm" and "nodejs-legacy" (to get the "node" command).
+  * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
 * install stylus::
 
@@ -97,7 +97,8 @@ add more tools, exercise tools
     stylus -V  # show version number to prove it works
 * install lessc ("less" below is not a typo)::
 
-    sudo npm install less -g  # Windows: npm install less -g
+    sudo npm install less@1.7.5 -g  # Windows: npm install less@1.7.5 -g
+    # we need 1.7.5 because later versions suppress copying wanted comments to the output css file
     lessc --version"  # show version number to prove it works
 * regenerate CSS files::
 
