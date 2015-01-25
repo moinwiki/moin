@@ -188,3 +188,77 @@
         <li class="list-group-item">Wiki Name: {{ meta['wikiname'] }}</li>
     </ul>
 {% endmacro %}
+
+{% macro alias_list(alias) %}
+    {% if alias %}
+        <ul class="moin-alias">
+            {% for fq_name in alias -%}
+                <li>
+                    <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                        {{ fq_name|shorten_fqname(length=25) }}
+                    </a>
+                </li>
+            {%- endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro page_trail_link(wiki_name, fqname, exists) %}
+    {%- if wiki_name -%}
+        <a href="{{ item_href }}"{{ " " }}
+            title="{{ wiki_name }}"
+            class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+            {{ fqname|shorten_fqname }}
+        </a>
+    {%- else -%}
+        <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
+            {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+            {{ fqname|shorten_fqname }}
+        </a>
+    {%- endif %}
+{% endmacro %}
+
+{% macro breadcrumbs(breadcrumbs, title_name) %}
+    <ul class="moin-breadcrumb">
+        {% set trail_items = breadcrumbs() %}
+        {% if trail_items %}
+            {% for wiki_name, fqname, item_href, exists, err in trail_items %}
+                {% if not loop.last or title_name %}
+                    <li>
+                        {{ page_trail_link(wiki_name, fqname, exists) }}
+                        <i class="fa fa-angle-double-right fa-fw"></i>
+                        {{ alias_list(theme_supp.get_fqnames(fqname)) }}
+                    </li>
+                {% endif %}
+                {% if loop.last %}
+                    <li>
+                        <span class="moin-big">
+                            {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
+                                {% if loop.first %}
+                                    <small>~ /</small>
+                                {% elif not loop.last %}
+                                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                        {{ segment_name|shorten_fqname }}
+                                    </a>
+                                    <small>/</small>
+                                {%- endif %}
+                                {% if loop.last %}
+                                    {% if title_name %}
+                                        {{ title_name }}
+                                    {% else %}
+                                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                            {{ segment_name }}
+                                        </a>
+                                    {%- endif %}
+                                {%- endif %}
+                            {% endfor %}
+                        </span>
+                        {% if not title_name %}
+                            {{ alias_list(theme_supp.get_fqnames(fqname)) }}
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endmacro %}

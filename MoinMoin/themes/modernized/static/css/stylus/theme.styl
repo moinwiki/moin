@@ -582,6 +582,12 @@ a.moin-nonexistent:hover
     color heading_color
     text-decoration none
 
+a.moin-sitename
+    font-size 1.5em
+    font-weight bold
+    color white
+    line-height 1.5em
+
 #moin-username
     display block
     margin 0px 12px 4px 12px
@@ -593,31 +599,45 @@ a.moin-nonexistent:hover
 #moin-username input:hover
     color hover_color
 
-#moin-locationline
-    padding 0
-    font-size 100%
-    font-weight normal
-    margin 0.3em .75em .3em .75em
-
 #moin-interwiki
     a
         color heading_color
 
-#moin-pagelocation
-    font-size 1.5em
-    letter-spacing 0.05em
-    vertical-align middle
-
-#moin-pagetrail
-    margin 0 0.88em 0.25em .75em
+ul.moin-breadcrumb,
+ul.moin-breadcrumb ul.moin-alias
     padding 0
-    font-size 0.88em
-    a
-        color heading_color
+    margin 0
+    margin-bottom 4px
 
-.moin-pagepath
-    a
-        color heading_color !important
+ul.moin-breadcrumb ul.moin-alias
+    background-color body_color
+    border 1px solid panel_color
+    border-radius 6px
+
+ul.moin-breadcrumb li ul.moin-alias li
+    list-style-type none
+    display block
+
+ul.moin-breadcrumb li ul.moin-alias li a
+    padding 2px 10px
+    display inline-block
+    color hover_color
+
+ul.moin-breadcrumb li
+      position relative
+
+.moin-breadcrumb a
+    color heading_color
+
+ul.moin-breadcrumb li ul.moin-alias
+    display none
+    position absolute
+
+ul.moin-breadcrumb li:hover ul.moin-alias
+    display block
+
+.moin-breadcrumb > li
+    display inline-block
 
 #moin-navibar
     clear both
@@ -839,8 +859,7 @@ body
         box-shadow none
 
     a.moin-permalink, a.moin-showhide,
-    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
-    #moin-pagelocation
+    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki
         display none
 
     #moin-pageinfo
@@ -891,31 +910,5 @@ body
         padding 2px
 
     #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
-    #moin-pagelocation, #moin-pageinfo
+    #moin-pageinfo
         display none
-
-ul.moin-bcs-item ul.moin-bcs-subitems
-    background-color panel_color
-
-ul.moin-bcs-item, ul.moin-bcs-item ul.moin-bcs-subitems
-    padding 0
-    margin 0
-    display inline-block
-
-ul.moin-bcs-item li, ul.moin-bcs-item ul.moin-bcs-subitems li
-    list-style-type none
-    display block
-
-ul.moin-bcs-item li ul.moin-bcs-subitems li a
-    padding 5px
-    display inline-block
-
-ul.moin-bcs-item li
-    position relative
-
-ul.moin-bcs-item li ul.moin-bcs-subitems
-    display none
-    position absolute
-
-ul.moin-bcs-item li:hover ul.moin-bcs-subitems
-    display block

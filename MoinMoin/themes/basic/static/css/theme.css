@@ -6362,28 +6362,6 @@ a:focus.moin-showhide {
 .moin-list-heading > a {
   color: #c8ddf1;
 }
-.moin-breadcrumb {
-  padding: 8px 15px;
-  margin-bottom: 20px;
-  list-style: none;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-.moin-breadcrumb > li {
-  display: inline-block;
-}
-.moin-breadcrumb > li + li:before {
-  content: "/\00a0";
-  padding: 0 5px;
-  color: #cccccc;
-}
-.moin-breadcrumb > .active {
-  color: #999999;
-}
-.moin-breadcrumb > li + li:before {
-  content: "\0020";
-  padding: 0px;
-}
 .moin-nav {
   margin-bottom: 0;
   padding-left: 0;
@@ -6701,35 +6679,58 @@ a:focus.moin-showhide {
 a.wikilink {
   color: #00417f;
 }
-.moin-bcs-subitems {
+.moin-alias {
   z-index: 500;
 }
-ul.moin-breadcrumb ul.moin-bcs-subitems {
+.moin-breadcrumb {
+  padding: 8px 15px;
+  margin-bottom: 20px;
+  list-style: none;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+.moin-breadcrumb > li {
+  display: inline-block;
+}
+.moin-breadcrumb > li + li:before {
+  content: "/\00a0";
+  padding: 0 5px;
+  color: #cccccc;
+}
+.moin-breadcrumb > .active {
+  color: #999999;
+}
+.moin-breadcrumb > li + li:before {
+  content: "\0020";
+  padding: 0px;
+}
+ul.moin-breadcrumb ul.moin-alias {
   background-color: #00417f;
+  border-radius: 6px;
 }
 ul.moin-breadcrumb,
-ul.moin-breadcrumb ul.moin-bcs-subitems {
+ul.moin-breadcrumb ul.moin-alias {
   padding: 0;
   margin: 0;
   display: inline-block;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems li {
+ul.moin-breadcrumb li ul.moin-alias li {
   list-style-type: none;
   display: block;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems li a {
-  padding: 10px;
+ul.moin-breadcrumb li ul.moin-alias li a {
+  padding: 2px 10px;
   display: inline-block;
   color: #ffffff;
 }
 ul.moin-breadcrumb li {
   position: relative;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems {
+ul.moin-breadcrumb li ul.moin-alias {
   display: none;
   position: absolute;
 }
-ul.moin-breadcrumb li:hover ul.moin-bcs-subitems {
+ul.moin-breadcrumb li:hover ul.moin-alias {
   display: block;
 }
 .moin-thead {
