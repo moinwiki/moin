@@ -12,6 +12,7 @@
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
 ^MoinMoin/_tests/wiki/index/
+^MoinMoin/themes/modernized/static/css/stylus/normalize.css
 ^docs/_build/
 .coverage
 ^.project
