@@ -97,8 +97,7 @@ add more tools, exercise tools
     stylus -V  # show version number to prove it works
 * install lessc ("less" below is not a typo)::
 
-    sudo npm install less@1.7.5 -g  # Windows: npm install less@1.7.5 -g
-    # we need 1.7.5 because later versions suppress copying wanted comments to the output css file
+    sudo npm install less -g  # Windows: npm install less -g
     lessc --version"  # show version number to prove it works
 * regenerate CSS files::
 
