@@ -241,7 +241,8 @@ class SubscriptionsJoinedString(JoinedString):
         subscriptions = []
         for child in self:
             if child.u.startswith(ITEMID):
-                value = re.sub(r"\(.*\)", "", child.u)
+                # itemid:67155f195938426d82502540493e8acf (creole)
+                value = child.u.split(" ", 1)[0]
                 item = flaskg.storage.document(**{ITEMID: value.split(":")[1]})
                 try:
                     name_ = item.meta['name'][0]
@@ -249,6 +250,7 @@ class SubscriptionsJoinedString(JoinedString):
                     name_ = "This item doesn't exist"
                 value = u"{0} ({1})".format(value, name_)
             else:
+                # name::ExampleItem | tags::demo | nameprefix::jp | namere::.* | name:MyNamespace:ExampleItem
                 value = child.u
             subscriptions.append(value)
         return self.separator.join(subscriptions)
