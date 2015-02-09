@@ -294,6 +294,8 @@ MoinMoin.prototype.enhanceUserSettings = function () {
         titles.append(li);
         // add click handler to show this form and hide all others
         aTagClone.click(function (ev) {
+            
+            $('#moin-flash .moin-flash-javascript').remove();
             tab = this.hash;
             window.location.hash = tab;
             $('.moin-current-tab').removeClass('moin-current-tab');
