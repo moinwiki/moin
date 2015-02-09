@@ -1,0 +1,24 @@
+{% import "forms.html" as forms %}
+{% extends theme("show.html") %}
+
+{% set title = _("Delete '%(item_name)s'", item_name=item.name) %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <div class="row">
+        <div class="col-md-5">
+            {{ gen.form.open(form, method="post", action=url_for('frontend.delete_item', item_name=item.name)) }}
+                {{ forms.render_errors(form) }}
+
+                <div class="form-group">
+                    {{ forms.render_textcha(gen, form) }}
+                    {{ gen.input(form['comment'], type="text", class="form-control") }}
+                </div>
+
+                <div class="form-group">
+                    {{ forms.render_submit(form, class='btn btn-primary') }}
+                </div>
+            {{ gen.form.close() }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% set exists = storage.has_item(item_name) %}
+{% set current_endpoint = request.endpoint %}
+{% set navtabs = theme_supp.get_action_tabs(fqname, current_endpoint) %}
+
+{% block views %}
+    {% if navtabs %}
+        <ul class="moin-nav nav-tabs moin-shadow">
+            {% for endpoint, href, maincls, iconcls, linkcls, title, label in navtabs %}
+                <li {% if maincls %}class="{{ maincls }}"{% endif %}>
+                    <a {% if linkcls %}class="{{ linkcls }}"{% endif %} href="{{ href }}" title="{{ title }}" rel="nofollow">
+                        <span class="{{ iconcls }}"></span>
+                        <span class="hidden-sm hidden-xs">{{ label }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
