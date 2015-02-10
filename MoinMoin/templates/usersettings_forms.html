@@ -10,11 +10,9 @@
             {{ forms.render(form['timezone']) }}
             {{ forms.render(form['locale']) }}
         </dl>
-        {{ forms.render_hidden('part', 'personal') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'personal') }}
     {{ gen.form.close() }}
 {% endmacro %}
-
 
 {% macro password(form) %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
@@ -24,8 +22,7 @@
             {{ forms.render(form['password1']) }}
             {{ forms.render(form['password2']) }}
         </dl>
-        {{ forms.render_hidden('part', 'password') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'password') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -38,8 +35,7 @@
         <dl>
             {{ forms.render(form['email']) }}
         </dl>
-        {{ forms.render_hidden('part', 'notification') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'notification') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -52,8 +48,7 @@
             {{ forms.render(form['edit_rows']) }}
             {{ forms.render(form['results_per_page']) }}
         </dl>
-        {{ forms.render_hidden('part', 'ui') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'ui') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -63,8 +58,7 @@
         <dl>
             {# TODO: find a good way to handle quicklinks #}
         </dl>
-        {{ forms.render_hidden('part', 'navigation') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'navigation') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -78,8 +72,7 @@
             {{ forms.render(form['show_comments']) }}
             {{ forms.render(form['disabled']) }}
         </dl>
-        {{ forms.render_hidden('part', 'options') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'options') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -89,8 +82,7 @@
         <dl>
             {{ forms.render(form['subscriptions']) }}
         </dl>
-        {{ forms.render_hidden('part', 'subscriptions') }}
-        {{ forms.render_submit(form) }}
+        {{ forms.render_submit(form, 'part', 'subscriptions') }}
     {{ gen.form.close() }}
 {% endmacro %}
 

@@ -152,31 +152,6 @@ input.blank
     border-color border_color
     border-width 2px
 
-.moin-form
-    dd
-        float left
-        width 70%
-        margin-bottom 1em
-        margin-left 0
-        input
-            width 75%
-    dt
-        clear both
-        float left
-        width 25%
-        text-align right
-        margin-top .3em
-        padding-right 1%
-        label
-            &.required:after
-                content '*'
-                color font_color
-    button,
-    input[type="submit"]
-        clear both
-        display block
-        margin auto
-
 form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     dd
         input
@@ -200,67 +175,6 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
 
 .moin-textcha
     padding-top .2em
-
-#options
-    dd
-        float none
-        width 38%
-        display table-cell
-        padding 1.2em
-    dt
-        margin-left 10%
-        text-align left
-        width 61%
-        margin-top 1.3em
-
-.moin-tabs .moin-tab-titles
-    a
-        color link_color
-
-.moin-tab-titles
-    margin 0
-    padding -10px 0 0
-    list-style none
-    border-bottom 3px solid border_color
-
-.moin-tab-titles li
-    display inline-block
-    *display: inline; // IE7 hack to display title tabs in a row ...
-    zoom: 1; // IE7 hack ... rather than a column
-    margin 10px 0 -3px
-    padding 0 5px
-    border-bottom 3px solid border_color
-
-.moin-tab-titles a
-    display inline-block
-    padding 4px
-    background-color table_bg_color
-    border-width 1px 1px 0
-    border-style solid
-    border-color border_color
-    color link_color
-    border-top-left-radius 7px
-    border-top-right-radius 7px
-
-.moin-tab-titles a:hover
-    background-color table_row_color
-    text-decoration none
-
-.moin-tab-titles a.moin-current-tab
-    background table_row_color
-    padding-top 8px
-    margin-top -4px
-
-.moin-tab-titles .moin-change-indicator
-    font-weight bold
-    color hover_color
-
-.moin-current-form h2
-    display none // bold tab at top of user setting page makes h2 redundant
-
-.moin-settings-head a
-    color font_color
-    text-decoration none
 
 .searchresults dt
     margin-top 1em
