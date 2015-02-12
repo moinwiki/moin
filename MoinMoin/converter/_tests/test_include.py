@@ -8,7 +8,7 @@ MoinMoin - Tests for MoinMoin.converter.include
 
 from MoinMoin.converter.include import *
 from MoinMoin.items import Item
-from MoinMoin.constants.keys import CONTENTTYPE
+from MoinMoin.constants.keys import CONTENTTYPE, ACL
 from MoinMoin._tests import wikiconfig, update_item
 
 
@@ -72,6 +72,15 @@ class TestInclude(object):
         rendered = page1.content._render_data()
         # an error message will follow strong tag
         assert '<strong class="moin-error">' in rendered
+
+    def test_Include_Read_Permission_Denied(self):
+        # attempt to include an item that user cannot read
+        update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8', ACL: u'All:write,create,admin,destroy'}, u'no one can read')
+        update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'some text{{page1}}more text')
+        page2 = Item.create(u'page2')
+        rendered = page2.content._render_data()
+        # an error message will follow p tag, similar to: Access Denied, transcluded content suppressed.
+        assert '<div class="warning"><p>' in rendered
 
     def test_ExternalInclude(self):
         # external include
