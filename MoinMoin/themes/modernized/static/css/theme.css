@@ -319,11 +319,6 @@ input[type="submit"]:active,input[type="button"]:active,button:active{position:r
 input,select{padding:3px;background:#fff;border:1px solid #4e7da9;border-radius:2px}
 input[type="text"]{width:96%}
 input.blank{border-color:#4e7da9;border-width:2px}
-.moin-form dd{float:left;width:70%;margin-bottom:1em;margin-left:0;}
-.moin-form dd input{width:75%}
-.moin-form dt{clear:both;float:left;width:25%;text-align:right;margin-top:.3em;padding-right:1%;}
-.moin-form dt label.required:after{content:'*';color:#000}
-.moin-form button,.moin-form input[type="submit"]{clear:both;display:block;margin:auto}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
 #moin-modify dd{width:100%;float:none;}
@@ -332,17 +327,6 @@ form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"
 #moin-modify textarea{width:99.5%}
 #moin-modify input[type="submit"]{margin-left:0}
 .moin-textcha{padding-top:.2em}
-#options dd{float:none;width:38%;display:table-cell;padding:1.2em}
-#options dt{margin-left:10%;text-align:left;width:61%;margin-top:1.3em}
-.moin-tabs .moin-tab-titles a{color:#00008b}
-.moin-tab-titles{margin:0;padding:-10px 0 0;list-style:none;border-bottom:3px solid #4e7da9}
-.moin-tab-titles li{display:inline-block;*display:inline;zoom:1;margin:10px 0 -3px;padding:0 5px;border-bottom:3px solid #4e7da9}
-.moin-tab-titles a{display:inline-block;padding:4px;background-color:#eef1f6;border-width:1px 1px 0;border-style:solid;border-color:#4e7da9;color:#00008b;border-top-left-radius:7px;border-top-right-radius:7px}
-.moin-tab-titles a:hover{background-color:#d8dfe9;text-decoration:none}
-.moin-tab-titles a.moin-current-tab{background:#d8dfe9;padding-top:8px;margin-top:-4px}
-.moin-tab-titles .moin-change-indicator{font-weight:bold;color:#1f9ae0}
-.moin-current-form h2{display:none}
-.moin-settings-head a{color:#000;text-decoration:none}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
 .searchresults td{border-width:0}
@@ -402,23 +386,29 @@ a.moin-nonexistent:link{color:#939393}
 a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .current-link{color:inherit !important}
 #moin-header{margin:0;padding:7px 0 10px 0;background:#00417f;color:#fff;line-height:1.12em;border-bottom-left-radius:9px;border-bottom-right-radius:9px}
-#moin-searchform{margin:2px 12px 0 0;padding:0;font-size:.82em;float:right;text-align:right;width:15em}
+#moin-searchform{margin:2px 12px 0 0;padding:0;font-size:.82em;float:right;text-align:right;width:15em;}
+#moin-searchform div.moin-float-fix{display:inline}
 #moin-search-submit{text-indent:-9000%;margin-left:-26px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer;padding:0;box-shadow:none}
 #moin-search-query{padding-right:20px;font-size:100%;vertical-align:middle;color:#000;background-color:#fff;border:1px solid #4e7da9;border-radius:5px}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
 #moin-long-searchform div{margin:0}
-#moin-logo{float:left;margin:2px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
+#moin-logo{float:left;margin:2px 10px 8px 10px;padding:0;font-size:1.4em;line-height:1em;font-weight:bold}
 #moin-logo img{vertical-align:middle}
 #moin-logo a{color:#fff;text-decoration:none}
-#moin-username{display:block;margin:0 12px 4px 12px;padding:0;font-size:.82em;}
+a.moin-sitename{font-size:1.5em;font-weight:bold;color:#fff;line-height:1.5em}
+#moin-username{display:block;margin:6px 4px 4px 4px;padding:0;float:right;font-size:.82em;}
 #moin-username a{color:#fff}
 #moin-username input:hover{color:#1f9ae0}
-#moin-locationline{padding:0;font-size:100%;font-weight:normal;margin:.3em .75em .3em .75em}
 #moin-interwiki a{color:#fff}
-#moin-pagelocation{font-size:1.5em;letter-spacing:.05em;vertical-align:middle}
-#moin-pagetrail{margin:0 .88em .25em .75em;padding:0;font-size:.88em;}
-#moin-pagetrail a{color:#fff}
-.moin-pagepath a{color:#fff !important}
+ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-alias{padding:0;margin:0;margin-bottom:4px}
+ul.moin-breadcrumb ul.moin-alias{background-color:#e6f2fe;border:1px solid #00417f;border-radius:6px}
+ul.moin-breadcrumb li ul.moin-alias li{list-style-type:none;display:block}
+ul.moin-breadcrumb li ul.moin-alias li a{padding:2px 10px;display:inline-block;color:#1f9ae0}
+ul.moin-breadcrumb li{position:relative}
+.moin-breadcrumb a{color:#fff}
+ul.moin-breadcrumb li ul.moin-alias{display:none;position:absolute}
+ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
+.moin-breadcrumb > li{display:inline-block}
 #moin-navibar{clear:both;display:block;margin:0;padding:0 10px;font-size:.82em;color:#008b8b}
 #moin-navibar li{float:left;display:inline;margin:0 2px;padding:2px 5px;border:1px solid #4e7da9;border-bottom:none;white-space:nowrap;font-size:.88em;border-top-left-radius:5px;border-top-right-radius:5px}
 #moin-navibar li.wikilink{background:#eef1f6}
@@ -461,7 +451,7 @@ a.moin-interwiki:before{content:attr(title) ":"}
 a.moin-interwiki img{display:none}
 pre{font-size:10pt}
 div.moin-table-of-contents{box-shadow:none}
-a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation{display:none}
+a.moin-permalink,a.moin-showhide,#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki{display:none}
 #moin-pageinfo{color:#737373;font-size:.67em;float:right}
 #moin-pageinfo a{color:#737373}
 .moin-subitem-navigation{display:none}
@@ -476,11 +466,5 @@ h6{font-size:14pt}
 tt,pre{font-size:16pt}
 table.navigation{float:right;margin:2px}
 .navigation td,.navigation a{font-size:10pt;padding:2px}
-#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pagelocation,#moin-pageinfo{display:none}
-}ul.moin-bcs-item ul.moin-bcs-subitems{background-color:#00417f}
-ul.moin-bcs-item,ul.moin-bcs-item ul.moin-bcs-subitems{padding:0;margin:0;display:inline-block}
-ul.moin-bcs-item li,ul.moin-bcs-item ul.moin-bcs-subitems li{list-style-type:none;display:block}
-ul.moin-bcs-item li ul.moin-bcs-subitems li a{padding:5px;display:inline-block}
-ul.moin-bcs-item li{position:relative}
-ul.moin-bcs-item li ul.moin-bcs-subitems{display:none;position:absolute}
-ul.moin-bcs-item li:hover ul.moin-bcs-subitems{display:block}
+#moin-header,#moin-sidebar,#moin-footer,#moin-timings,#moin-credits,#moin-interwiki,#moin-pageinfo{display:none}
+}

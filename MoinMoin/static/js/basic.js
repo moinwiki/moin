@@ -5,7 +5,6 @@ $(document).ready(function () {
     // this depends on the id's used for different tab-panes in modify.html and usersettings.html (Basic Theme)
     "use strict";
     $('#meta, #help').removeClass('active');
-    $('#password, #notification, #personal, #navigation, #options, #acl, #subscriptions').removeClass('active');
     $('textarea').autosize();
     $('div.dropup').removeClass('menu');
     $('ul.dropdown-menu').removeClass('submenu');

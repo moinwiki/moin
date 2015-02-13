@@ -102,8 +102,8 @@ from MoinMoin.items import Item
 from MoinMoin.util.mime import type_moin_document
 from MoinMoin.util.iri import Iri, IriPath
 from MoinMoin.util.tree import html, moin_page, xinclude, xlink
-
 from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
+from MoinMoin.i18n import _, L_, N_
 
 from ._args import Arguments
 
@@ -293,8 +293,16 @@ class Converter(object):
 
                     link.path = path
 
-                    page = Item.create(unicode(path))
-                    pages = ((page, link), )
+                    if flaskg.user.may.read(unicode(path)):
+                        page = Item.create(unicode(path))
+                        pages = ((page, link), )
+                    else:
+                        # ACLs prevent user from viewing a transclusion - show message
+                        message = moin_page.p(children=(_('Access Denied, transcluded content suppressed.')))
+                        attrib = {html.class_: 'warning'}
+                        div = ET.Element(moin_page.div, attrib, children=(message, ))
+                        container = ET.Element(moin_page.body, children=(div, ))
+                        return [container, 0]  # replace transclusion with container's child
 
                 elif xp_include_pages:
                     # XXX we currently interpret xp_include_pages as wildcard, but it should be regex
@@ -370,7 +378,7 @@ class Converter(object):
 
                     if ret:
                         # Either child or a descendant of child is a transclusion.
-                        # See top of this script for notes on why these DOM adjustmenta are required.
+                        # See top of this script for notes on why these DOM adjustments are required.
                         if isinstance(ret, ET.Node) and elem.tag.name in NO_BLOCK_CHILDREN:
                             body = ret[0]
                             if len(body) == 0:
@@ -420,7 +428,7 @@ class Converter(object):
                                 elem[i] = ret
                         elif isinstance(ret, types.ListType):
                             # a container has been returned.
-                            # Note: there are two places where a container may be returned
+                            # Note: there are multiple places where a container may be constructed
                             ret_container, trans_ptr = ret
                             # trans_ptr points to the transclusion within ret_container.
                             # Here the transclusion will always contain a block level element

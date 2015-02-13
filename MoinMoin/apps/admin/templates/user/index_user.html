@@ -15,7 +15,7 @@
         <li><a href="{{ url_for('admin.highlighterhelp') }}">{{ _("Highlighters") }}</a></li>
     </ul>
     <h2>{{ _("Namespaces") }}</h2>
-    <ul class="moin-bcs-subitems">
+    <ul class="moin-namespaces">
         <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
         {% for namespace, root in theme_supp.get_namespaces()|sort -%}
             <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>

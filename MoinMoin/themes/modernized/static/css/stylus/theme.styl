@@ -152,31 +152,6 @@ input.blank
     border-color border_color
     border-width 2px
 
-.moin-form
-    dd
-        float left
-        width 70%
-        margin-bottom 1em
-        margin-left 0
-        input
-            width 75%
-    dt
-        clear both
-        float left
-        width 25%
-        text-align right
-        margin-top .3em
-        padding-right 1%
-        label
-            &.required:after
-                content '*'
-                color font_color
-    button,
-    input[type="submit"]
-        clear both
-        display block
-        margin auto
-
 form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
     dd
         input
@@ -200,67 +175,6 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
 
 .moin-textcha
     padding-top .2em
-
-#options
-    dd
-        float none
-        width 38%
-        display table-cell
-        padding 1.2em
-    dt
-        margin-left 10%
-        text-align left
-        width 61%
-        margin-top 1.3em
-
-.moin-tabs .moin-tab-titles
-    a
-        color link_color
-
-.moin-tab-titles
-    margin 0
-    padding -10px 0 0
-    list-style none
-    border-bottom 3px solid border_color
-
-.moin-tab-titles li
-    display inline-block
-    *display: inline; // IE7 hack to display title tabs in a row ...
-    zoom: 1; // IE7 hack ... rather than a column
-    margin 10px 0 -3px
-    padding 0 5px
-    border-bottom 3px solid border_color
-
-.moin-tab-titles a
-    display inline-block
-    padding 4px
-    background-color table_bg_color
-    border-width 1px 1px 0
-    border-style solid
-    border-color border_color
-    color link_color
-    border-top-left-radius 7px
-    border-top-right-radius 7px
-
-.moin-tab-titles a:hover
-    background-color table_row_color
-    text-decoration none
-
-.moin-tab-titles a.moin-current-tab
-    background table_row_color
-    padding-top 8px
-    margin-top -4px
-
-.moin-tab-titles .moin-change-indicator
-    font-weight bold
-    color hover_color
-
-.moin-current-form h2
-    display none // bold tab at top of user setting page makes h2 redundant
-
-.moin-settings-head a
-    color font_color
-    text-decoration none
 
 .searchresults dt
     margin-top 1em
@@ -535,6 +449,8 @@ a.moin-nonexistent:hover
     float right
     text-align right
     width 15em
+    div.moin-float-fix
+        display inline
 
 #moin-search-submit
     text-indent -9000%
@@ -569,7 +485,7 @@ a.moin-nonexistent:hover
 
 #moin-logo
     float left
-    margin 2px 10px
+    margin 2px 10px 8px 10px
     padding 0
     font-size 1.4em
     line-height 1em
@@ -582,10 +498,17 @@ a.moin-nonexistent:hover
     color heading_color
     text-decoration none
 
+a.moin-sitename
+    font-size 1.5em
+    font-weight bold
+    color white
+    line-height 1.5em
+
 #moin-username
     display block
-    margin 0px 12px 4px 12px
+    margin 6px 4px 4px 4px
     padding 0
+    float right
     font-size 0.82em
     a
         color heading_color
@@ -593,31 +516,45 @@ a.moin-nonexistent:hover
 #moin-username input:hover
     color hover_color
 
-#moin-locationline
-    padding 0
-    font-size 100%
-    font-weight normal
-    margin 0.3em .75em .3em .75em
-
 #moin-interwiki
     a
         color heading_color
 
-#moin-pagelocation
-    font-size 1.5em
-    letter-spacing 0.05em
-    vertical-align middle
-
-#moin-pagetrail
-    margin 0 0.88em 0.25em .75em
+ul.moin-breadcrumb,
+ul.moin-breadcrumb ul.moin-alias
     padding 0
-    font-size 0.88em
-    a
-        color heading_color
+    margin 0
+    margin-bottom 4px
 
-.moin-pagepath
-    a
-        color heading_color !important
+ul.moin-breadcrumb ul.moin-alias
+    background-color body_color
+    border 1px solid panel_color
+    border-radius 6px
+
+ul.moin-breadcrumb li ul.moin-alias li
+    list-style-type none
+    display block
+
+ul.moin-breadcrumb li ul.moin-alias li a
+    padding 2px 10px
+    display inline-block
+    color hover_color
+
+ul.moin-breadcrumb li
+      position relative
+
+.moin-breadcrumb a
+    color heading_color
+
+ul.moin-breadcrumb li ul.moin-alias
+    display none
+    position absolute
+
+ul.moin-breadcrumb li:hover ul.moin-alias
+    display block
+
+.moin-breadcrumb > li
+    display inline-block
 
 #moin-navibar
     clear both
@@ -839,8 +776,7 @@ body
         box-shadow none
 
     a.moin-permalink, a.moin-showhide,
-    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
-    #moin-pagelocation
+    #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki
         display none
 
     #moin-pageinfo
@@ -891,31 +827,5 @@ body
         padding 2px
 
     #moin-header, #moin-sidebar, #moin-footer, #moin-timings, #moin-credits, #moin-interwiki,
-    #moin-pagelocation, #moin-pageinfo
+    #moin-pageinfo
         display none
-
-ul.moin-bcs-item ul.moin-bcs-subitems
-    background-color panel_color
-
-ul.moin-bcs-item, ul.moin-bcs-item ul.moin-bcs-subitems
-    padding 0
-    margin 0
-    display inline-block
-
-ul.moin-bcs-item li, ul.moin-bcs-item ul.moin-bcs-subitems li
-    list-style-type none
-    display block
-
-ul.moin-bcs-item li ul.moin-bcs-subitems li a
-    padding 5px
-    display inline-block
-
-ul.moin-bcs-item li
-    position relative
-
-ul.moin-bcs-item li ul.moin-bcs-subitems
-    display none
-    position absolute
-
-ul.moin-bcs-item li:hover ul.moin-bcs-subitems
-    display block
