@@ -92,7 +92,7 @@ setup_args = dict(
         'flatland',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=0.9',  # wsgi toolkit
+        'Werkzeug==0.9.6',  # wsgi toolkit
         'pytest<2.7',  # pytest is needed by unit tests (only tested with 2.5 and 2.6)
         'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
         'whoosh>=2.5.0',  # needed for indexed search
