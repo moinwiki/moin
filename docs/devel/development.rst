@@ -87,7 +87,7 @@ add more tools, exercise tools
 
 * install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
 
-  * On Ubuntu 14.04 you need to install "npm" and "nodejs-legacy" (to get the "node" command).
+  * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
 * install stylus::
 

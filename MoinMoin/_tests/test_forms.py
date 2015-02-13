@@ -53,6 +53,11 @@ def test_datetimeunix():
 
 
 def test_validjson():
+    """
+    Tests for changes to metadata when modifying an item.
+
+    Does not apply to usersettings form.
+    """
     app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'ns1/ns2/', 'other_backend')]
     item = Item.create(u'ns1/ns2/existingname')
     meta = {NAMESPACE: u'ns1/ns2', CONTENTTYPE: u'text/plain;charset=utf-8'}
@@ -61,15 +66,16 @@ def test_validjson():
 
     valid_itemid = 'a1924e3d0a34497eab18563299d32178'
     # ('names', 'namespace', 'field', 'value', 'result')
-    tests = [([u'somename', u'@revid'], '', '', 'somename', False),
-             ([u'bar', u'ns1'], '', '', 'bar', False),
-             ([u'foo', u'foo', u'bar'], '', '', 'foo', False),
-             ([u'ns1ns2ns3', u'ns1/subitem'], '', '', 'valid', False),
-             ([u'foobar', u'validname'], '', ITEMID, valid_itemid + '8080', False),
-             ([u'barfoo', u'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),
-             ([], '', 'itemid', valid_itemid, True),
-             ([u'existingname'], 'ns1/ns2', '', 'existingname', False),
-             ]
+    tests = [([u'somename', u'@revid'], '', '', 'somename', False),  # item names cannot begin with @
+             # TODO for above? - create item @x, get error message, change name in meta to xx, get an item with names @40x and alias of xx
+             ([u'bar', u'ns1'], '', '', 'bar', False),  # item names cannot match namespace names
+             ([u'foo', u'foo', u'bar'], '', '', 'foo', False),  # names in the name list must be unique.
+             ([u'ns1ns2ns3', u'ns1/subitem'], '', '', 'valid', False),  # Item names must not match with existing namespaces; items cannot be in 2 namespaces
+             ([u'foobar', u'validname'], '', ITEMID, valid_itemid + '8080', False),  # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
+             ([u'barfoo', u'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
+             ([], '', 'itemid', valid_itemid, True),  # deleting all names from the metadata of an existing item will make it nameless, succeeds
+             ([u'existingname'], 'ns1/ns2', '', 'existingname', False),  # item already exists
+            ]
     for name, namespace, field, value, result in tests:
         meta = {NAME: name, NAMESPACE: namespace}
         x = JSON(json.dumps(meta))

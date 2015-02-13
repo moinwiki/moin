@@ -126,16 +126,6 @@ a:focus.moin-showhide {
   }
 }
 
-.moin-breadcrumb {
-  .breadcrumb;
-  > li {
-    &+li:before {
-      content: "\0020"; // Unicode space which is non-collapsing
-      padding: 0px;
-    }
-  }
-}
-
 .moin-nav {
   .nav;
   margin-bottom: 20px;  // override bottom-margin nav-tabs
@@ -285,34 +275,45 @@ a:focus.moin-showhide {
 a.wikilink{
   color: @search_option_bar_color;
 }
-.moin-bcs-subitems{
+.moin-alias{
   z-index: 500;
 }
-ul.moin-breadcrumb ul.moin-bcs-subitems{
-  background-color: @search_option_bar_color;
+
+.moin-breadcrumb {
+  .breadcrumb;
+  > li {
+    &+li:before {
+      content: "\0020"; // Unicode space which is non-collapsing
+      padding: 0px;
+    }
+  }
 }
-ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-bcs-subitems{
+ul.moin-breadcrumb ul.moin-alias{
+  background-color: @search_option_bar_color;
+  border-radius: 6px;
+}
+ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-alias{
   padding: 0;
   margin: 0;
   display: inline-block;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems li{
+ul.moin-breadcrumb li ul.moin-alias li{
   list-style-type: none;
   display: block;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems li a{
-  padding: 10px;
+ul.moin-breadcrumb li ul.moin-alias li a{
+  padding: 2px 10px;
   display: inline-block;
   color: @white;
 }
 ul.moin-breadcrumb li {
   position: relative;
 }
-ul.moin-breadcrumb li ul.moin-bcs-subitems{
+ul.moin-breadcrumb li ul.moin-alias{
   display: none;
   position: absolute;
 }
-ul.moin-breadcrumb li:hover ul.moin-bcs-subitems{
+ul.moin-breadcrumb li:hover ul.moin-alias{
   display: block;
 }
 .moin-thead{

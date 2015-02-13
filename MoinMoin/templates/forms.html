@@ -15,12 +15,13 @@ Helpers for using flatland with jinja2 to create html forms.
   {% endif %}
 {% endmacro %}
 
-{% macro render_hidden(name, value) %}
-  <input type="hidden" name="{{ name }}" value="{{ value }}" />
-{% endmacro %}
-
-{% macro render_submit(form) %}
-  {{ gen.input(type='submit', value=form.submit_label, class='moin-button', **kwargs) }}
+{% macro render_submit(form, name=None, value=None) %}
+    <div class="moin-float-fix"> {# needed to add vertical whitespace below floated element #}
+        {% if name and value %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}" />
+        {% endif %}
+        {{ gen.input(type='submit', value=form.submit_label, class='moin-button', **kwargs) }}
+    </div>
 {% endmacro %}
 
 {% macro render_textcha(gen, form) %}

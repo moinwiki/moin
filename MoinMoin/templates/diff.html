@@ -2,7 +2,6 @@
 {% block content %}
     {% block headline %}
         <h1>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h1>
-        <br>
     {% endblock %}
     {{ diff_html }}
 {% endblock %}
