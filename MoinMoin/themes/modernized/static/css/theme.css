@@ -386,7 +386,8 @@ a.moin-nonexistent:link{color:#939393}
 a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 .current-link{color:inherit !important}
 #moin-header{margin:0;padding:7px 0 10px 0;background:#00417f;color:#fff;line-height:1.12em;border-bottom-left-radius:9px;border-bottom-right-radius:9px}
-#moin-searchform{margin:2px 12px 0 0;padding:0;font-size:.82em;float:right;text-align:right;width:15em}
+#moin-searchform{margin:2px 12px 0 0;padding:0;font-size:.82em;float:right;text-align:right;width:15em;}
+#moin-searchform div.moin-float-fix{display:inline}
 #moin-search-submit{text-indent:-9000%;margin-left:-26px;width:20px;height:16px;background:url("../img/moin-search.png") center center no-repeat;background-size:16px 16px;border:none;overflow:hidden;vertical-align:middle;cursor:pointer;padding:0;box-shadow:none}
 #moin-search-query{padding-right:20px;font-size:100%;vertical-align:middle;color:#000;background-color:#fff;border:1px solid #4e7da9;border-radius:5px}
 #moin-long-searchform{padding:0;font-size:.82em;text-align:left}
