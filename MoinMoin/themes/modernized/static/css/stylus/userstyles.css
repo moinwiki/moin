@@ -1,0 +1,24 @@
+/* start of userstyles - css clases that are defined for use in wiki markup: {{{#!wiki solid  */
+.comment { color: #555; background-color: #DDF; }
+.red { background-color: #FCC; }
+.green { background-color: #CFC; }
+.blue { background-color: #CCF; }
+.yellow { background-color: #FFF29F; }
+.orange { background-color: #FFD59B; }
+.solid { border: 2px solid #000; padding: 2px; clear: both; }
+.dashed { border: 2px dashed #AEBDCC; padding: 2px; clear: both; }
+.dotted { border: 2px dotted #AEBDCC; padding: 2px; clear: both; }
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.justify { text-align: justify; }
+.monospaced { font-family: monospace; }
+
+/* position transcluded image or object - the left, center, right rules in userstyles are compatible with the rules below */
+.moin-item-wrapper.left { float: left; }
+.moin-item-wrapper.center { width: 100%; text-align: center; }
+.moin-item-wrapper.right { float: right; }
+.moin-item-wrapper.middle { vertical-align: middle; }
+.moin-item-wrapper.top { vertical-align: top; }
+.moin-item-wrapper.bottom { vertical-align: bottom; }
+/* end of userstyles */
