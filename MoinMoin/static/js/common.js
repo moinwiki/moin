@@ -394,8 +394,8 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
-            if (ev.currentTarget.name === 'usersettings_ui') {
-                // theme has changed, show user the new theme
+            if (ev.currentTarget.name === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
+                // theme or language may have changed, show user the new theme/language
                 location.reload(true);
             }
         }, 'json');
