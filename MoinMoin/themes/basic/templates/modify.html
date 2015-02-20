@@ -99,3 +99,9 @@
         {{ gen.form.close() }}
     </div>
 {% endblock %}
+
+{% block options_for_javascript %}
+    {%- if user.scroll_page_after_edit -%}
+        <br id="moin-scroll-page-after-edit" />
+    {%- endif %}
+{% endblock %}
