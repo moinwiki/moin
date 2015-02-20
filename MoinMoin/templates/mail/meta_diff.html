@@ -1,0 +1,28 @@
+{% macro meta_diff(diff) %}
+    <table border="0" cellpadding="0" cellspacing="0" style="margin:0; padding:10px;
+            width:100%; font-family:monospace; background-color:#F9F9F9">
+        {% for change in diff -%}
+            {% if change[0] == "insert" -%}
+                <tr style="color:#00B000; height:1.2em;">
+                    <td style="font-family:monospace; width:1.2em; vertical-align:top;"> + </td>
+                    <td style="font-family:monospace;">
+                        <ins style="text-decoration:none;">
+                            {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
+                            {{ change[2] }}
+                        </ins>
+                    </td>
+                </tr>
+            {% elif change[0] == "delete" -%}
+                <tr style="color:#991111; height:1.2em;">
+                    <td style="font-family:monospace; width:1.2em; vertical-align:top;"> - </td>
+                    <td style="font-family:monospace;">
+                        <del style="text-decoration:none;">
+                            {{ change[1] | join(".") }}{% if change[1] -%}:{%- endif %}
+                            {{ change[2] }}
+                        </del>
+                    </td>
+                </tr>
+            {%- endif %}
+        {%- endfor %}
+    </table>
+{% endmacro %}

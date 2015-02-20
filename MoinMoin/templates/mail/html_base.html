@@ -1,0 +1,28 @@
+{# HTML mail templates are based on htmlemailboilerplate authored by Sean Powell, The Engage Group, MIT licensed #}
+{# For more information visit: http://htmlemailboilerplate.com/ #}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{% block title %}{% endblock %}</title>
+        <style type="text/css">
+            #outlook a {padding:0;}
+            #backgroundTable {margin:0; padding:0; width:100% !important; line-height:100% !important;}
+            .ExternalClass {width:100%;}
+            .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font,
+            .ExternalClass td, .ExternalClass div {line-height:100%;}
+            p {margin:1em 0;}
+            h1, h2, h3, h4, h5, h6 {color:black !important;}
+            table td {border-collapse:collapse; padding:0;}
+        </style>
+    </head>
+    <body style="width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="backgroundTable">
+            <tr>
+                <td>
+                    {% block content %}{% endblock %}
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

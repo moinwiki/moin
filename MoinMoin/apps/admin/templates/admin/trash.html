@@ -1,0 +1,38 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+{% block content %}
+    {% if headline %}
+        <h1>{{ headline }}</h1>
+    {% endif %}
+    Total: {{ results|count }}
+    {% if results %}
+        <table class="zebra">
+            <thead>
+                <tr>
+                    <th>{{ _("Old Name") }}</th>
+                    <th>{{ _("Rev.") }}</th>
+                    <th>{{ _("Timestamp") }}</th>
+                    <th>{{ _("Editor") }}</th>
+                    <th>{{ _("Comment") }}</th>
+                    <th colspan="3">{{ _("Actions") }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results| sort(attribute='mtime', reverse=True) %}
+                    <tr>
+                        <td class="moin-wordbreak">{{ result.oldname|join(' | ') }}</td>
+                        <td>{{ result.revid | shorten_id }}</td>
+                        <td>{{ result.mtime|datetimeformat }}</td>
+                        <td class="moin-wordbreak">{{ utils.show_editor_info(result.editor)  }}</td>
+                        <td class="moin-wordbreak">{{ result.comment }}</td>
+                        <td><a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}">{{ _('show') }}</a></td>
+                        {% if user.may.write(result.fqname) -%}
+                            <td><a href="{{ url_for('frontend.history', item_name=result.fqname) }}">{{ _('History') }}</a></td>
+                            <td><a href="{{ url_for('frontend.destroy_item', item_name=result.fqname) }}">{{ _('Destroy') }}</a></td>
+                        {%- endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
