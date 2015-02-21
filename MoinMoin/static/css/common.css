@@ -365,4 +365,5 @@ form.upload_file button { display: none; }
 
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }
-#subscriptions textarea { width: 80%; max-width: 40em; }
+#subscriptions textarea { width: 80%; max-width: 40em; margin-bottom: 1em; }
+#subscriptions div.tip { width: 80%; max-width: 40em; margin: auto; }

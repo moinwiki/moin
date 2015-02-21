@@ -77,11 +77,26 @@
 {% endmacro %}
 
 {% macro subscriptions(form) %}
+    {% set myitemname =  _('MyItemName')  %}
+    {% set mytagname =  _('MyTagName')  %}
+    {% set mynamespace =  _('MyNameSpace')  %}
+    {% set my =  _('My')  %}
+    {% set itemid =  _('item id')  %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
         {{ forms.render_errors(form) }}
         <dl>
             {{ forms.render(form['subscriptions']) }}
         </dl>
+        <div class="tip">
+            {{ _('Formats for entering subscriptions:') }}
+            <ul>
+                <li>name::{{ myitemname }} or name:{{ mynamespace }}:{{ myitemname }}</li>
+                <li>nameprefix::{{ my }}</li>
+                <li>tags::{{ mytagname }}</li>
+                <li>namere::.*</li>
+                <li>itemid:&lt;{{ itemid }}&gt; {{ _('is created/removed by clicking a Subscribe/Unsubscribe link') }}</li>
+            </ul>
+        </div>
         {{ forms.render_submit(form, 'part', 'subscriptions') }}
     {{ gen.form.close() }}
 {% endmacro %}

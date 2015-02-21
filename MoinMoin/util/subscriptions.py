@@ -75,9 +75,17 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
     item_namespace = meta.get(NAMESPACE)
     matched_subscriptions = []
     for subscription in subscription_patterns:
-        keyword, value = subscription.split(":", 1)
+        try:
+            keyword, value = subscription.split(":", 1)
+        except ValueError:
+            logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+            continue
         if keyword in (NAMEPREFIX, NAMERE, ) and item_namespace is not None and item_names:
-            namespace, pattern = value.split(":", 1)
+            try:
+                namespace, pattern = value.split(":", 1)
+            except ValueError:
+                logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+                continue
             if item_namespace == namespace:
                 if keyword == NAMEPREFIX:
                     if any(name.startswith(pattern) for name in item_names):
