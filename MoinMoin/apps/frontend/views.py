@@ -1666,10 +1666,49 @@ class UserSettingsOptionsForm(Form):
     submit_label = L_('Save')
 
 
+class ValidSubscriptions(Validator):
+    """Validator for a subscriptions change
+    """
+
+    def validate(self, element, state):
+        # TODO: is additional validation for namespaces, itemids, names, or name prefixes needed?
+        invalid_subscription_msg = L_('Invalid subscription syntax: ')
+        invalid_keyword = L_('Invalid keyword: ')
+        invalid_re_expression = L_('Invalid RE syntax: ')
+        errors = []
+        for subscription in element.value['subscriptions']:
+            try:
+                keyword, value = subscription.split(":", 1)
+            except ValueError:
+                errors.append(invalid_subscription_msg + subscription)
+                continue
+            if keyword == ITEMID:
+                continue
+            if keyword not in (NAME, NAMEPREFIX, TAGS, NAMERE, ):
+                errors.append(invalid_keyword + subscription)
+                continue
+            try:
+                namespace, pattern = value.split(":", 1)
+            except ValueError:
+                errors.append(invalid_subscription_msg + subscription)
+                continue
+            if keyword == NAMERE:
+                try:
+                    pattern = re.compile(pattern, re.U)
+                except re.error:
+                    errors.append(invalid_re_expression + subscription)
+                    continue
+        if errors:
+            return self.note_error(element, state, message=', '.join(errors))
+        return True
+
+
 class UserSettingsSubscriptionsForm(Form):
     name = 'usersettings_subscriptions'
     subscriptions = Subscriptions
     submit_label = L_('Save')
+
+    validators = [ValidSubscriptions()]
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1792,7 +1831,9 @@ def usersettings():
                                                           "error"))
                         else:
                             flaskg.user.save()
-
+            else:
+                # validation failed
+                response['flash'].append((_("Nothing saved."), "error"))
             if not response['flash']:
                 # if no flash message was added until here, we add a generic success message
                 response['flash'].append((_("Your changes have been saved."), "info"))
