@@ -4,14 +4,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
+from setuptools import setup, find_packages
+
 import MoinMoin  # validate python version
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(basedir, 'README.txt')) as f:
     long_description = f.read()
-
-from setuptools import setup, find_packages
 
 
 setup_args = dict(

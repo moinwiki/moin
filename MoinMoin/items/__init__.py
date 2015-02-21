@@ -35,9 +35,6 @@ from whoosh.query import Term, Prefix, And, Or, Not
 
 from MoinMoin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
@@ -63,6 +60,10 @@ from MoinMoin.constants.itemtypes import (
 from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
 
 from .content import content_registry, Content, NonExistentContent, Draw
+from ..util.pysupport import load_package_modules
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 COLS = 80
@@ -965,5 +966,4 @@ class NonExistent(Item):
         pass
 
 
-from ..util.pysupport import load_package_modules
 load_package_modules(__name__, __path__)

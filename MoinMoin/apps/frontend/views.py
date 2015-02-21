@@ -43,9 +43,6 @@ from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.analysis import StandardAnalyzer
 from whoosh import sorting
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
@@ -68,6 +65,9 @@ from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_displayed, item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 @frontend.route('/+dispatch', methods=['GET', ])

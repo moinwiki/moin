@@ -47,9 +47,6 @@ try:
 except ImportError:
     PIL = PILImage = PILdiff = None
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin import wikiutil
 from MoinMoin.i18n import _, L_
 from MoinMoin.themes import render_template
@@ -72,6 +69,9 @@ from MoinMoin.constants.contenttypes import (
 )
 from MoinMoin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS,
                                      HASH_ALGORITHM, ACTION_SAVE)
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 COLS = 80
