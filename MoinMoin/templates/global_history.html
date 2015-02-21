@@ -1,0 +1,71 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{# map meta.action to font awesome classes #}
+{% set awesome_class = {
+    'REVERT': 'fa fa-undo',
+    'SAVE': 'fa fa-save',
+    'RENAME': 'fa fa-pencil-square-o',
+    'TRASH': 'fa fa-trash-o',
+} %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="alternate" title="Global History" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
+{% endblock %}
+
+{% block content %}
+    <h1>{{ _("Global History") }}</h1>
+    <div class='moin-clr'></div>
+    <div id="moin-global-history">
+        {% for day, revs in history %}
+           {% set latest_timestamp = revs[0].meta['mtime'] %}
+            <div class="moin-history-container">
+                <div class="moin-history-container-header">
+                    <h2>{{ day }}</h2>
+                    {% if user.valid %}
+                        <a class="bookmark-link btn btn-primary" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
+                    {% endif %}
+                </div>
+                <div class="moin-history-container-body">
+                    <table class="zebra table table-hover">
+                        {% for rev in revs %}
+                            {% set meta = rev.meta %}
+                            <tr>
+                                <td class="moin-action col-md-1">
+                                    <span title="{{ meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
+                                </td>
+                                <td class="moin-history-links col-md-1">
+                                    <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">HIST</a>
+                                    {% if bookmark_time -%}
+                                        <a href="{{ url_for('frontend.diff', item_name=rev.fqname, bookmark=bookmark_time) }}">DIFF</a>
+                                    {%- endif %}
+                                </td>
+                                <td class="moin-history-time col-md-1">{{ meta.mtime|timeformat }}</td>
+                                <td class="moin-history-item col-md-7">
+                                    <a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.fqname) }}" title="{{ meta.contenttype }}">
+                                        {% if meta.name %}
+                                            {{ meta.name|join(' | ') }}
+                                        {% elif meta.summary %}
+                                            {{ meta.summary }}
+                                        {% else %}
+                                            {{ rev.fqname|shorten_fqname }}
+                                        {% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+        {% if bookmark_time %}
+            <div class="moin-history-container">
+                <div class="moin-history-container-header">
+                    <h2>{{ bookmark_time|datetimeformat }}</h2>
+                    <a class="bookmark-link btn btn-danger" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
