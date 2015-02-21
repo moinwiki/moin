@@ -22,6 +22,9 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.tree import html, moin_page, xlink, xml, Name, xinclude
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from MoinMoin.util.iri import Iri
+from MoinMoin.util.mime import Type, type_moin_document
+
+from . import default_registry
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -817,6 +820,4 @@ class ConverterDocument(ConverterPage):
     """
 
 
-from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(ConverterPage._factory, type_moin_document, Type('application/x-xhtml-moin-page'))

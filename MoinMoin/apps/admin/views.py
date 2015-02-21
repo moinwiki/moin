@@ -29,6 +29,7 @@ from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
 from MoinMoin.datastruct.backends import GroupDoesNotExistError
 from MoinMoin.items import Item
 from MoinMoin.util.interwiki import split_fqname
+from MoinMoin.config import default as defaultconfig
 
 
 @admin.route('/superuser')
@@ -110,9 +111,6 @@ def mail_recovery_token():
     """
     flash("mail recovery token not implemented yet")
     return redirect(url_for('.userbrowser'))
-
-
-from MoinMoin.config import default as defaultconfig
 
 
 @admin.route('/wikiconfig', methods=['GET', ])

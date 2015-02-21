@@ -17,9 +17,6 @@ from flask import g as flaskg
 from flask import url_for, request
 from flask.ext.themes import get_theme, render_theme_template
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
@@ -31,6 +28,9 @@ from MoinMoin.util.crypto import cache_key
 from MoinMoin.util.forms import make_generator
 from MoinMoin.util.clock import timed
 from MoinMoin.util.mime import Type
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def get_current_theme():
