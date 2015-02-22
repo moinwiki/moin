@@ -11,10 +11,10 @@
 """
 
 
+from MoinMoin.auth import BaseAuth, CancelLogin, ContinueLogin
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin.auth import BaseAuth, CancelLogin, ContinueLogin
 
 
 class SMBMount(BaseAuth):

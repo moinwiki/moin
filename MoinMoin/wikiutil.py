@@ -15,12 +15,11 @@ from __future__ import absolute_import, division
 
 import os
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from flask import current_app as app
 from flask import g as flaskg
 from flask import request
+
+import werkzeug
 
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.keys import CURRENT
@@ -31,7 +30,9 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
 
-import werkzeug
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 # constants for page names
 PARENT_PREFIX = "../"

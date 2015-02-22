@@ -17,14 +17,14 @@
 """
 
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from flask import request
 
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.auth import BaseAuth, GivenAuth
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class HTTPAuthMoin(BaseAuth):

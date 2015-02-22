@@ -16,9 +16,11 @@ from whoosh.query import Term, Or
 from MoinMoin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
                                      LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
                                      NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
+
+from MoinMoin.util.interwiki import CompositeName
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-from MoinMoin.util.interwiki import CompositeName
 
 
 Subscriber = namedtuple('Subscriber', [ITEMID, NAME, EMAIL, LOCALE])

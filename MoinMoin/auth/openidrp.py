@@ -8,9 +8,6 @@
 """
 
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from openid.store.memstore import MemoryStore
 from openid.consumer import consumer
 from openid.yadis.discover import DiscoveryFailure
@@ -23,6 +20,9 @@ from MoinMoin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, Multi
 from MoinMoin.constants.keys import ITEMID
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class OpenIDAuth(BaseAuth):

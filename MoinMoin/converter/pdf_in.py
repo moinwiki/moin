@@ -8,15 +8,15 @@ MoinMoin - PDF input converter
 
 from __future__ import absolute_import, division
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from pdfminer.pdfparser import PDFDocument, PDFParser
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, process_pdf
 from pdfminer.pdfdevice import PDFDevice
 from pdfminer.converter import TextConverter
 from pdfminer.cmapdb import CMapDB
 from pdfminer.layout import LAParams
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 LAPARAMS = LAParams(

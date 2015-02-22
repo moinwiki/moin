@@ -17,13 +17,12 @@ try:
 except ImportError:
     pygments = None
 
-
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.util.tree import moin_page
 from ._util import decode_data, normalize_split_text
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 if pygments:

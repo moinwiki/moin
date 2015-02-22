@@ -9,10 +9,11 @@ from __future__ import absolute_import, division
 
 import re
 
+from ._util import decode_data
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-from ._util import decode_data
 
 RX_STRIPXML = re.compile(u"<[^>]*?>", re.U | re.DOTALL | re.MULTILINE)
 

@@ -10,10 +10,10 @@ from flask import current_app as app
 from flask.ext.script import Command, Option
 from flask import g as flaskg
 
+from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
 
 
 class IndexCreate(Command):
