@@ -1,0 +1,28 @@
+[DEFAULT]
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=INFO
+
+[loggers]
+keys=root
+
+[handlers]
+keys=stderr
+
+[formatters]
+keys=screen
+
+[logger_root]
+level=%(loglevel)s
+handlers=stderr
+
+[handler_stderr]
+class=StreamHandler
+formatter=screen
+level=%(loglevel)s
+args=(sys.stderr, )
+
+[formatter_screen]
+format=%(asctime)s %(name)s %(levelname)s %(message)s
+datefmt=
+class=logging.Formatter
+
