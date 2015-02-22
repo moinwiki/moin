@@ -25,16 +25,16 @@ from flask.ext.themes import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import i18n_init
 from MoinMoin.i18n import _, L_, N_
-
 from MoinMoin.themes import setup_jinja_env, themed_error
-
 from MoinMoin.util.clock import Clock
+from MoinMoin.storage.middleware import protecting, indexing, routing
+from MoinMoin import auth, config, user
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def create_app(config=None, create_index=False, create_storage=False):
@@ -163,10 +163,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
 def destroy_app(app):
     deinit_backends(app)
-
-
-from MoinMoin.storage.middleware import protecting, indexing, routing
-from MoinMoin import auth, config, user
 
 
 def init_backends(app):

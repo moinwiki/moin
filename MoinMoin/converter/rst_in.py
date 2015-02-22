@@ -22,9 +22,6 @@ import pytest
 
 from werkzeug import url_encode, url_decode
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 try:
     from flask import g as flaskg
 except ImportError:
@@ -46,6 +43,9 @@ from docutils.nodes import reference, literal_block
 from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 # ####
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class NodeVisitor(object):

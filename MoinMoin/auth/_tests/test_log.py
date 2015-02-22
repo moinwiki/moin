@@ -5,13 +5,14 @@
 Test for auth.log
 """
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
 
 from flask import g as flaskg
 
 from MoinMoin.auth.log import AuthLog
 from MoinMoin.constants.misc import ANON
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class TestAuthLog(object):

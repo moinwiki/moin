@@ -12,10 +12,10 @@ from __future__ import absolute_import, division
 
 import zipfile
 
+from .xml_in import strip_xml
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from .xml_in import strip_xml
 
 
 class OpenDocumentIndexingConverter(object):

@@ -16,9 +16,6 @@ from __future__ import absolute_import, division
 
 import time
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from whoosh.util.cache import lru_cache
 
 from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
@@ -27,6 +24,10 @@ from MoinMoin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEM
 from MoinMoin.security import AccessControlList
 
 from MoinMoin.util.interwiki import split_fqname
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 # max sizes of some lru caches:
 LOOKUP_CACHE = 100  # ACL lookup for some itemname

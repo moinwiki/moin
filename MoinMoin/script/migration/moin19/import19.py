@@ -23,9 +23,6 @@ from StringIO import StringIO
 from flask import current_app as app
 from flask.ext.script import Command, Option
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
@@ -40,6 +37,9 @@ from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.crypto import make_uuid
 from MoinMoin import security
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 CHARSET = 'utf-8'

@@ -74,8 +74,7 @@ class DefaultSecurityPolicy(object):
            * READ - gives permission to read, unconditionally
            * PUBREAD - gives permission to read, when published
         """
-        return (flaskg.storage.may(itemname, rights.READ, usernames=self.names)
-                or
+        return (flaskg.storage.may(itemname, rights.READ, usernames=self.names) or
                 flaskg.storage.may(itemname, rights.PUBREAD, usernames=self.names))
 
     def __getattr__(self, attr):

@@ -10,10 +10,10 @@
 import time
 from functools import wraps, partial
 
+from flask import g as flaskg
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from flask import g as flaskg
 
 
 class Clock(object):

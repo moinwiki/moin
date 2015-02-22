@@ -1411,8 +1411,7 @@ class ValidLostPassword(Validator):
     name_or_email_needed_msg = L_('Your user name or your email address is needed.')
 
     def validate(self, element, state):
-        if not(element['username'].valid and element['username'].value
-               or
+        if not(element['username'].valid and element['username'].value or
                element['email'].valid and element['email'].value):
             return self.note_error(element, state, 'name_or_email_needed_msg')
 

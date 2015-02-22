@@ -17,13 +17,13 @@ import re
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.util.tree import html, moin_page, xlink, xml
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class Converter(object):

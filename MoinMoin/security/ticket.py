@@ -13,11 +13,11 @@ import time
 import hmac
 import hashlib
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from flask import current_app as app
 from flask import g as flaskg
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def createTicket(tm=None, **kw):

@@ -36,10 +36,6 @@
 """
 
 
-# filename of LDAP server executable - if it is not
-# in your PATH, you have to give full path/filename.
-SLAPD_EXECUTABLE = 'slapd'
-
 import os
 import shutil
 import tempfile
@@ -57,6 +53,11 @@ try:
     import ldif
 except ImportError:
     ldap = None
+
+
+# filename of LDAP server executable - if it is not
+# in your PATH, you have to give full path/filename.
+SLAPD_EXECUTABLE = 'slapd'
 
 
 def check_environ():

@@ -13,9 +13,6 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin import wikiutil
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
@@ -24,6 +21,9 @@ from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 
 from .moinwiki_in import Converter
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class ConverterFormat19(Converter):

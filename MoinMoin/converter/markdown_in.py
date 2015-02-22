@@ -19,9 +19,6 @@ from MoinMoin.util.tree import moin_page, xml, html, xlink, xinclude
 from ._util import allowed_uri_scheme, decode_data
 from MoinMoin.util.iri import Iri
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from emeraldtree import ElementTree as ET
 try:
     from flask import g as flaskg
@@ -31,6 +28,8 @@ except ImportError:
 
 from markdown import Markdown
 import markdown.util as md_util
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def postproc_text(markdown, text):

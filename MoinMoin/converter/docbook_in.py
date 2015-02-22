@@ -25,14 +25,13 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.util.tree import moin_page, xlink, docbook, xml, html
 from MoinMoin.converter.html_out import mark_item_as_transclusion
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class NameSpaceError(Exception):
