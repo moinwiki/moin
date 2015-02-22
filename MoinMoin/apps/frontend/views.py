@@ -1577,6 +1577,10 @@ def login():
         return Response(flaskg._login_multistage, mimetype='text/html')
 
     if request.method in ['GET', 'HEAD']:
+        # we already have a logged-in user
+        if flaskg.user.valid:
+            flash(_("You are already logged in."), "info")
+            return redirect(url_for('.show_root'))
         form = LoginForm.from_defaults()
         for authmethod in app.cfg.auth:
             hint = authmethod.login_hint()
@@ -1586,7 +1590,8 @@ def login():
         form = LoginForm.from_flat(request.form)
         if form.validate():
             # we have a logged-in, valid user
-            return redirect(url_for('.show_root'))
+            next_url = request.args.get('next', default=url_for('.show_root'))
+            return redirect(next_url)
         # flash the error messages (if any)
         for msg in flaskg._login_messages:
             flash(msg, "error")
@@ -1601,7 +1606,8 @@ def login():
 def logout():
     flash(_("You are now logged out."), "info")
     flaskg.user.logout_session()
-    return redirect(url_for('.show_root'))
+    next_url = request.args.get('next', default=url_for('.show_root'))
+    return redirect(next_url)
 
 
 class ValidChangePass(Validator):

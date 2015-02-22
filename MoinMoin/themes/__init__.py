@@ -439,7 +439,7 @@ class ThemeSupport(object):
 
     # Properties ##############################################################
 
-    def login_url(self):
+    def login_url(self, next_url=None):
         """
         Return URL usable for user login
 
@@ -448,9 +448,9 @@ class ThemeSupport(object):
         """
         url = None
         if self.cfg.auth_login_inputs == ['special_no_input']:
-            url = url_for('frontend.login', login=1)
+            url = url_for('frontend.login', login=1, next=next_url)
         if self.cfg.auth_have_login:
-            url = url or url_for('frontend.login')
+            url = url or url_for('frontend.login', next=next_url)
         return url
 
     def get_fqnames(self, fqname):

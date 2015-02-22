@@ -8,7 +8,7 @@
             {{ forms.render_errors(form) }}
 
             {% if 'username' in login_inputs or 'password' in login_inputs %}
-                {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
+                {{ gen.form.open(form, method="post", action=url_for('frontend.login', next=request.args.get('next'))) }}
 
                     {% if 'username' in login_inputs %}
                         <div class="form-group">

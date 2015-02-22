@@ -15,7 +15,7 @@
 {% set current_url = request.url %}
 {% set current_path = request.path %}
 {% set current_url_showview = url_for_item(endpoint='frontend.show_item', item_name=item_name) %}
-{% set login_url = theme_supp.login_url() %}
+{% set login_url = theme_supp.login_url(current_path) %}
 
 {# Helper macro to generate the local panel #}
 {% macro local_panel_main(panelname) -%}
@@ -41,7 +41,8 @@
         rel="nofollow"
         {% if title %} title="{{ title }}" {% endif %}>
         {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
-        {% if href == login_url %}
+        {# needs a login url without next #}
+        {% if href == theme_supp.login_url() %}
             {{ label }}
         {% else %}
             <span class="hidden-sm hidden-xs">{{ label }}</span>
@@ -165,7 +166,7 @@
                                         {%- endif %}
                                         {% if user.auth_method in cfg.auth_can_logout %}
                                             <li title="{{ _('Logout') }}">
-                                                {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
+                                                {{ hyperlink(url_for('frontend.logout', logout_submit=1, next=current_path), None, True,
                                                         _('Logout'), "fa fa-sign-out fa-inverse", None) }}
                                             </li>
                                         {% endif %}
