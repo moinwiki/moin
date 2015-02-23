@@ -18,6 +18,9 @@
 """
 
 
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 try:
     import ldap
 except ImportError as err:
@@ -27,9 +30,6 @@ except ImportError as err:
 from MoinMoin import user
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.auth import BaseAuth, CancelLogin, ContinueLogin
-
-from MoinMoin import log
-logging = log.getLogger(__name__)
 
 
 class LDAPAuth(BaseAuth):
