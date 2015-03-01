@@ -1,0 +1,38 @@
+{% extends theme("show.html") %}
+
+{% set title = _("SiteMap of '%(item_name)s'", item_name=item_name) %}
+
+{% macro showtree(sitemap) %}
+    <ul>
+        {% for entry in sitemap recursive %}
+            {% if isinstance(entry, list) %}
+                {% if loop.first %}
+                    {{ loop(entry) }}
+                {% else %}
+                    <li style="list-style-type: none;">
+                        <ul class="moin-link-list">
+                            {{ loop(entry) }}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% else %}
+                <li>
+                    <a href="{{ url_for('frontend.sitemap', item_name=entry) }}">
+                        <span class="fa fa-sitemap"></span>
+                    </a>
+                    <a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=entry) }}">
+                        {{ entry.value }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <h2>{{ _('Outgoing') }}</h2>
+    {{ showtree(sitemap) }}
+    <h2>{{ _('Incoming') }}</h2>
+    {{ showtree(backrefs) }}
+{% endblock %}

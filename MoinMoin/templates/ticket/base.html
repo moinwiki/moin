@@ -1,0 +1,137 @@
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+
+{% macro render_meta() %}
+    {% for e in [
+        'summary',
+        'effort',
+        'difficulty',
+        'severity',
+        'priority',
+        'tags',
+        ] %}
+        {{ forms.render(form['meta'][e]) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_selectlists() %}
+    {% for e in [
+        'assigned_to',
+        'superseded_by',
+        'depends_on',
+        ] %}
+        {{ forms.render(form['meta'][e]) }}
+        {% if e!='assigned_to' and item.meta[e] %}
+            <dd>
+                <a class="moin-ticket-link"  href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e]|shorten_id }}</a>
+            </dd>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_backref() %}
+    {% for e in [
+        'supersedes',
+        'required_by',
+        'subscribers',
+        ] %}
+        {{ forms.render(form['backrefs'][e]) }}
+    {% endfor %}
+{% endmacro %}
+
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+{% endblock %}
+
+{% set exists = item.fqname and storage.get_item(**item.fqname.query) %}
+{% block local_panel %}
+    {% if user.valid and exists %}
+        <div class="list-group">
+            <div class="list-group-item moin-list-heading">
+                {{ _("User Actions") }}
+                <a class="moin-showhide moin-useractions" href="#" >
+                    <i class="fa fa-lg fa-caret-right"></i>
+                </a>
+            </div>
+            <div id="moin-user-actions" class="hidden">
+                <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="Create or remove a navigation link to this item">
+                    <i class="fa fa-link fa-fw"></i>
+                    {%- if user.is_quicklinked_to([item.fqname]) %}
+                        {{ _('Remove Link') }}
+                    {%- else %}
+                        {{ _('Add Link') }}
+                    {%- endif %}
+                </a>
+                <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="witch notifications about item changes on or off">
+                    <i class="fa fa-envelope fa-fw"></i>
+                    {%- if user.is_subscribed_to(item) %}
+                        {{ _('Unsubscribe') }}
+                    {%- else %}
+                        {{ _('Subscribe') }}
+                    {%- endif %}
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% macro itemviews() %}
+    {% if user.valid and exists %}
+        <ul class="moin-itemviews panel">
+            <li>
+                <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" title="Create or remove a navigation link to this item" rel="nofollow">
+                    {% if user.is_quicklinked_to([item.fqname]) %}
+                        {{ _('Remove Link') }}
+                    {%- else %}
+                        {{ _('Add Link') }}
+                    {%- endif %}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" title="Switch notifications about item changes on or off" rel="nofollow">
+                    {%- if user.is_subscribed_to(item) %}
+                        {{ _('Unsubscribe') }}
+                    {%- else %}
+                        {{ _('Subscribe') }}
+                    {%- endif %}
+                </a>
+            </li>
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% block header_itemviews %}
+    {{ itemviews() }}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {% block title_text %}
+        {% endblock %}
+        {% if closed %}
+            {# TODO style .moin-ticket-closed #}
+            <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
+        {% endif %}
+    </h1>
+    <div class="moin-form" id="moin-ticket-form">
+        {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+
+            <div id="moin-content-data" class="moin-ticket-comments">
+                {% if data_rendered %}
+                    {{ data_rendered }}
+                {% endif %}
+
+                {% block form_controls %}
+                {% endblock %}
+            </div>
+            {% block ticket_metadata %}
+            {% endblock %}
+
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}
+
+{% block footer_itemviews %}
+    {{ itemviews() }}
+{% endblock %}
