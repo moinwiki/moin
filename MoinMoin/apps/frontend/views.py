@@ -1612,6 +1612,8 @@ class ValidChangePass(Validator):
     password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
+        password_not_accepted_msg = L_('New password not acceptable: ')
+
         if not (element['password_current'].valid and element['password1'].valid and element['password2'].valid):
             return False
 
@@ -1622,6 +1624,11 @@ class ValidChangePass(Validator):
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
         password = element['password1'].value
+        pw_checker = app.cfg.password_checker
+        if pw_checker:
+            pw_error = pw_checker(flaskg.user.name[0], password)
+            if pw_error:
+                return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
             app.cfg.cache.pwd_context.encrypt(password)
         except (ValueError, TypeError) as err:
