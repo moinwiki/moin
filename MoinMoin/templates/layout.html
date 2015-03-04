@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% import "snippets.html" as snippets with context %}
+{% import theme("utils.html") as utils %}
+
+{% set logo = snippets.logo() %}
+{% set before_header = snippets.before_header() %}
+{% set after_header = snippets.after_header() %}
+{% set before_footer = snippets.before_footer() %}
+{% set after_footer = snippets.after_footer() %}
+{% set license_info = snippets.license_info() %}
+{% set creditlogos = snippets.creditlogos() %}
+{% set credits = snippets.credits() %}
+
+{% block layout %}
+
+    <div id="moin-main-wrapper">
+
+        {{ before_header }}
+
+        <div id="moin-header">
+        {% block header %}
+            {% if search_form %}
+                {{ header_search(search_form) }}
+            {% endif %}
+
+            {% if logo %}
+                <div id="moin-logo">
+                    <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
+                </div>
+            {% endif %}
+
+            <div id="moin-username">
+                {% if user.valid -%}
+                    {% set avatar = user.avatar(20) %}
+                    {% if avatar %}
+                        <img id="moin-avatar" src="{{ avatar }}" />
+                    {%- endif %}
+                    {% if user.name -%}
+                        {% set wiki_href, display_name, title, exists = theme_supp.userhome() %}
+                        <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
+                            {{ display_name }}
+                        </a>
+                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                            <span class="sep"> | </span>
+                            <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">{{ _('Settings') }}</a>
+                        {%- endif %}
+                    {%- endif %}
+                    {% if user.auth_method in cfg.auth_can_logout %}
+                        <span class="sep"> | </span>
+                        <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
+                            {{ _('Logout') }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    {% set login_url = theme_supp.login_url() %}
+                    {% if login_url %}
+                        <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                    {% endif %}
+                {%- endif %}
+            </div>
+
+            {% if cfg.sitename %}
+                <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                    {{ cfg.sitename }}
+                </a>
+            {% endif %}
+
+            {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
+
+            {% set navibar_items = theme_supp.navibar(fqname) %}
+            {% if navibar_items %}
+                <ul id="moin-navibar" class="panel">
+                    {% for cls, url, text, title in navibar_items %}
+                        <li class="{{ cls }}">
+                            <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div id="moin-pageline">
+                <hr style="display:none;" />
+            </div>
+
+            {% block header_itemviews %}{% endblock %}
+
+            {% endblock %}
+        </div>
+
+        {{ after_header }}
+
+        <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+
+            {% block item -%}
+                {# If you want itemviews in your template, extend from show.html, not from here. #}
+                <div id="moin-content">
+                    <div id="moin-flash">  {# client side javascript may add messages here #}
+                        {% for category, msg in get_flashed_messages(with_categories=true) %}
+                            <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+                        {% endfor %}
+                    </div>
+                    {% block content %}
+                        {# All content templates should have implement this block. #}
+                    {% endblock %}
+                </div>
+            {%- endblock %}
+        </div>
+
+        {{ before_footer }}
+        <div id="moin-footer">
+
+            {% block footer %}
+                {% block footer_hr %}<hr/>{% endblock %}
+                {% block footer_itemviews %}{% endblock %}
+                {% block footer_meta %}{% endblock %}
+                {{ creditlogos }}
+                {{ credits }}
+                {{ license_info }}
+            {% endblock %}
+
+        </div>
+        {{ after_footer }}
+    </div>
+
+{% endblock %}

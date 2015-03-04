@@ -1,0 +1,32 @@
+[DEFAULT]
+# Logfile to create.
+# Make sure the running moin process has create/write rights there.
+logfile=/tmp/moin.log
+
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=INFO
+
+[loggers]
+keys=root
+
+[handlers]
+keys=logfile
+
+[formatters]
+keys=logfile
+
+[logger_root]
+level=%(loglevel)s
+handlers=logfile
+
+[handler_logfile]
+class=FileHandler
+formatter=logfile
+level=%(loglevel)s
+args=('%(logfile)s', 'at')
+
+[formatter_logfile]
+format=%(levelname)s %(asctime)s %(name)s:%(lineno)d %(message)s
+datefmt=
+class=logging.Formatter
+
