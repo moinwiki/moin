@@ -143,10 +143,10 @@ find a task to work on
 * just before you start to code changes, bring your repo up to date::
 
     hg pull -u      # pull all recent changes
-    ./m coding-std  # just in case someone else forgot to do it 
+    ./m coding-std  # just in case someone else forgot to do it
     ./m css         # just in case
     hg diff         # expect no changes
-    ./m tests       # note existing errors 
+    ./m tests       # note existing errors
 
 develop a testing strategy
 --------------------------
@@ -209,9 +209,9 @@ publish your change
   * while a commit message may have multiple lines, many tools show only 80 characters of the first line
   * stuff as much info as possible into those first 80 characters::
 
-        <concise description of your change>, fixes #123 
+        <concise description of your change>, fixes #123
 
-* pull any changes made by others from the main repo on Bitbucket, 
+* pull any changes made by others from the main repo on Bitbucket,
   merge, then commit the merge
 * push the changeset to your public bitbucket repo
 * create a pull request so your changes will get pulled into the
@@ -454,4 +454,3 @@ While the make.py utility provides a menu of the most frequently used commands, 
 
     source <path-to-venv>/bin/activate  # or ". activate"  windows: "activate"
     moin -h                             # show help
-
