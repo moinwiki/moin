@@ -1,33 +1,12 @@
 {% import "utils.html" as utils %}
 
-{% macro show_meta(rev) %}
-    <div class="moin-diff-info moin-diff-info-rev-id">
-        <span class="moin-diff-info-caption">Revision:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
-    </div>
-    <div class="moin-diff-info moin-diff-info-rev-author">
-        <span class="moin-diff-info-caption">Editor:</span>
-        <span class="moin-diff-info-value">
-            {{ utils.editor_info(rev.meta) }}
-        </span>
-    </div>
-    <div class="moin-diff-info moin-diff-info-rev-size">
-        <span class="moin-diff-info-caption">Size:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['size'] }}</span>
-    </div>
-    <div class="moin-diff-info moin-diff-info-rev-comment">
-        <span class="moin-diff-info-caption">Comment:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['comment'] }}</span>
-    </div>
-{% endmacro %}
-
 <table class="moin-diff">
     <tr>
         <td class="moin-diff-header">
-            {{ show_meta(oldrev) }}
+            {{ utils.show_meta(oldrev) }}
         </td>
         <td class="moin-diff-header">
-            {{ show_meta(newrev) }}
+            {{ utils.show_meta(newrev) }}
         </td>
     </tr>
     <tr>

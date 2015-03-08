@@ -1,18 +1,4 @@
 {% import "utils.html" as utils %}
-{% macro show_meta(rev) %}
-    <div class="moin-diff-info moin-diff-info-rev-id">
-        <span class="moin-diff-info-caption">{{ _('Revision') }}:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['revid'] | shorten_id }}</span>
-    </div>
-    <div class="moin-diff-info moin-diff-info-rev-size">
-        <span class="moin-diff-info-caption">{{ _('Size') }}:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['size'] }}</span>
-    </div>
-    <div class="moin-diff-info moin-diff-info-rev-comment">
-        <span class="moin-diff-info-caption">{{ _('Comment') }}:</span>
-        <span class="moin-diff-info-value">{{ rev.meta['comment'] }}</span>
-    </div>
-{% endmacro %}
 
 {# A few style rules to ensure the content doesn't overflow #}
 {% macro atom_style() %}
@@ -39,7 +25,7 @@
     <table class="moin-diff" cellpadding="10" width="100%">
         <tr>
             <td class="moin-diff-header" style="width: 100%;">
-                <strong>{{ show_meta(rev) }}</strong>
+                <strong>{{ utils.show_meta(rev) }}</strong>
             </td>
         </tr>
     </table>
@@ -50,10 +36,10 @@
     <table class="moin-diff" cellpadding="10" width="100%">
         <tr>
             <td class="moin-diff-header" style="width: 50%;">
-                <strong>{{ show_meta(oldrev) }}</strong>
+                <strong>{{ utils.show_meta(oldrev) }}</strong>
             </td>
             <td class="moin-diff-header" style="width: 50%;">
-                <strong>{{ show_meta(newrev) }}</strong>
+                <strong>{{ utils.show_meta(newrev) }}</strong>
             </td>
         </tr>
     </table>
