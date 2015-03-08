@@ -73,7 +73,9 @@
                             {{ result.get('mtime', '').strftime('%Y-%m-%d') }}
                         </td>
                         <td>
-                            {{ get_assigned_to_info(result) }}
+                            <a href="{{ url_for('frontend.tickets', assigned_to= get_assigned_to_info(result)) }}">
+                                {{ get_assigned_to_info(result) }}
+                            </a>
                         </td>
                         <td>
                             {{ result.get('effort', '') }}
