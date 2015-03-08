@@ -2285,18 +2285,19 @@ def tickets():
     current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     idx_name = ALL_REVS
     qp = flaskg.storage.query_parser([TAGS, SUMMARY, CONTENT, ITEMID], idx_name=idx_name)
-    terms = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
+    term1 = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
+    term2 = []
     if query:
-        terms.append(qp.parse(query))
+        term2.append(qp.parse(query))
 
     if status == u'open':
-        terms.append(Term(CLOSED, False))
+        term1.append(Term(CLOSED, False))
     elif status == u'closed':
-        terms.append(Term(CLOSED, True))
+        term1.append(Term(CLOSED, True))
 
     selected_tags = set(request.args.getlist(u'selected_tags'))
-    terms.extend(Term(TAGS, tag) for tag in selected_tags)
-    assigned_username = request.args.get(ASSIGNED_TO)
+    term1.extend(Term(TAGS, tag) for tag in selected_tags)
+    assigned_username = request.args.get(ASSIGNED_TO) or query
     user = [Term(NAME, assigned_username)]
     user.append(Term(CONTENTTYPE, CONTENTTYPE_USER))
     user = And(user)
@@ -2306,11 +2307,24 @@ def tickets():
             selected_user = searcher.search(user, limit=None)
             if selected_user:
                 assigned_to = selected_user[0][ITEMID]
-                terms.append(Term(ASSIGNED_TO, assigned_to))
-            else:
-                terms = []
-
-        q = And(terms)
+                term2.append(Term(ASSIGNED_TO, assigned_to))
+            elif not query:
+                term2 = []
+                term1 = []
+        q = None
+        # There are two cases when the user uses the search box in the ticket tracker and other
+        # when user clicks on Assignee name in the ticket's table to view all tickets assigned to him
+        # E.g of link for second case is  +tickets?assigned_to=username
+        # for first case i.e while we are using search box, variable 'query' (i.e what ever is searched)  should be present either in
+        # TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be of given status (closed or open).
+        # while in second case we have to get all the results having given status 'and' Assigned_to =  request.args.get(ASSIGNED_TO).
+        # first case we use 'and'  while in second case we use 'or' while adding the assigned_to condition to retrieve the results.
+        if query:
+            term2 = Or(term2)
+            term1.extend([term2])
+        else:
+            term1.extend(term2)
+        q = And(term1)
         results = searcher.search(q, limit=None)
         tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
         return render_template('tickets.html',
