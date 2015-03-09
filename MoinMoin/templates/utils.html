@@ -266,7 +266,7 @@
 {% macro show_meta(rev) %}
     <div>
         <span class="moin-diff-info-caption">
-            Revision:
+            {{ _('Revision') }}
         </span>
         <span class="moin-diff-info-value">
             {{ rev.meta['revid'] | shorten_id }}
@@ -274,7 +274,7 @@
     </div>
     <div>
         <span class="moin-diff-info-caption">
-            Editor:
+            {{ _('Editor') }}:
         </span>
         <span class="moin-diff-info-value">
             {{ editor_info(rev.meta) }}
@@ -282,7 +282,7 @@
     </div>
     <div>
         <span class="moin-diff-info-caption">
-            Size:
+            {{ _('Size') }}:
         </span>
         <span class="moin-diff-info-value">
             {{ rev.meta['size'] }}
@@ -290,7 +290,7 @@
     </div>
     <div>
         <span class="moin-diff-info-caption">
-            Time:
+            {{ _('Time') }}:
         </span>
         <span class="moin-diff-info-value">
             {{ rev.meta.mtime|datetimeformat }}
@@ -298,7 +298,7 @@
     </div>
     <div>
         <span class="moin-diff-info-caption">
-            Comment:
+            {{ _('Comment') }}:
         </span>
         <span class="moin-diff-info-value">
             {{ rev.meta['comment'] }}
