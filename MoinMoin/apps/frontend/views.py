@@ -1569,7 +1569,11 @@ class LoginForm(Form):
 
 @frontend.route('/+login', methods=['GET', 'POST'])
 def login():
-    # TODO use ?next=next_location check if target is in the wiki and not outside domain
+    if flaskg.user.valid:
+        return redirect('Home')
+
+
+# TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _(u'Login')
 
     # multistage return
