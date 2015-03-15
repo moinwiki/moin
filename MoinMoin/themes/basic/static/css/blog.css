@@ -1,0 +1,51 @@
+#moin-blog-header {
+  margin: -0.5em 0 0.5em 0;
+  font-size: 20px;
+}
+#moin-blog-content{
+  padding: 10px 0 0 0;
+  display: table-cell;
+  width: 100%;
+}
+#moin-blog-body {
+  display: table;
+  width: 80%;
+}
+.moin-blog-entry-comments {
+  padding-bottom: 10px;
+}
+#moin-blog-content h1 a {
+  text-decoration: none;
+  font-size: 30px;
+}
+.moin-blog-entry {
+  border: 2px solid #99CCFF;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+}
+.moin-blog-icon {
+  font-size: 1.6em
+}
+.moin-blog-entry-info {
+  font-size: 12px;
+  color: #737373;
+  padding-bottom: 10px;
+}
+.moin-blog-entry-modify {
+  font-size: 15px;
+  margin: 0;
+  float: right;
+  padding-left: 10px;
+}
+ul.moin-blog-entry-tags {
+  list-style: none;
+  display: inline;
+  margin: 0;
+}
+ul.moin-blog-entry-tags li {
+  display: inline;
+}
+ul.moin-blog-entry-tags li:after {
+  content: ",";
+}
