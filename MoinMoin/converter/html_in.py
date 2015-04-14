@@ -96,8 +96,7 @@ class Converter(object):
         # We create an element tree from the HTML content
         # The content is a list of string, line per line
         # We can concatenate all in one string
-        html_str = ''
-        html_str = html_str.join(content)
+        html_str = u'\n'.join(content)
         html_tree = HTML(html_str)
 
         # We should have a root element, which will be converted as <page>
