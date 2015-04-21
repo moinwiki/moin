@@ -18,6 +18,7 @@ from collections import deque
 from MoinMoin.util.tree import moin_page, xml, html, xlink, xinclude
 from ._util import allowed_uri_scheme, decode_data
 from MoinMoin.util.iri import Iri
+from MoinMoin.converter.html_in import Converter as HTML_IN_Converter
 
 from emeraldtree import ElementTree as ET
 try:
@@ -30,6 +31,11 @@ from markdown import Markdown
 import markdown.util as md_util
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+html_in_converter = HTML_IN_Converter()
+block_elements = 'p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table'.split()
+BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 
 def postproc_text(markdown, text):
@@ -381,7 +387,7 @@ class Converter(object):
 
     def do_children(self, element, add_lineno=False):
         new = []
-        # markdown parser surrounds child nodes with u"\n" children, we ignore them here to avoid the issue in html_out.py
+        # markdown parser surrounds child nodes with unwanted u"\n" children, here we remove leading \n
         if hasattr(element, "text") and element.text is not None and element.text != u'\n':
             new.append(postproc_text(self.markdown, element.text))
 
@@ -394,6 +400,7 @@ class Converter(object):
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r, )
             new.extend(r)
+            # markdown parser surrounds child nodes with unwanted u"\n" children, here we drop trailing \n
             if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
@@ -414,6 +421,7 @@ class Converter(object):
 
             * blank lines within lists create separate blocks
             * omitting a blank line after a heading combines 2 elements into one block
+            * using more than one blank lines between blocks
 
         The net result is we either have too few or too many line numbers in the generated list which
         will cause the double-click-to-edit autoscroll textarea to sometimes be off by several lines.
@@ -449,6 +457,61 @@ class Converter(object):
                 line_numbers.append(lineno)
                 lineno += line_count + 2
         self.line_numbers = line_numbers
+
+    def embedded_markup(self, text):
+        """
+        Per http://meta.stackexchange.com/questions/1777/what-html-tags-are-allowed-on-stack-exchange-sites
+        markdown markup allows users to specify several "safe" HTML tags within a document. These tags include:
+
+            a b blockquote code del dd dl dt em h1 h2 h3 i img kbd li ol p pre s sup sub strong strike ul br hr
+
+        In addition, some markdown extensions output raw HTML tags (e.g. fenced outputs "<pre><code>...").
+        To prevent the <, > characters from being escaped, the embedded tags are converted to nodes by using
+        the converter in html_in.py.
+        """
+        try:
+            # work around a possible bug - there is a traceback if HTML document has no tags
+            p_text = html_in_converter(u'<p>%s</p>' % text)
+        except AssertionError:
+            # html_in converter (EmeraldTree) throws exceptions on markup style links: "Some text <http://moinmo.in> more text"
+            p_text = text
+
+        if not isinstance(p_text, unicode) and p_text.tag == moin_page.page and p_text[0].tag == moin_page.body and p_text[0][0].tag == moin_page.p:
+            # will fix possible problem of P node having block children later
+            return p_text[0][0]
+        return p_text
+
+    def convert_embedded_markup(self, node):
+        """
+        Recurse through tree looking for embedded markup.
+
+        :param node: a tree node
+        """
+        for idx, child in enumerate(node):
+            if isinstance(child, unicode):
+                if u'<' in child:
+                    node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
+            else:
+                # do not convert markup within a <pre> tag
+                if not child.tag == moin_page.blockcode:
+                    self.convert_embedded_markup(child)
+
+    def convert_invalid_p_nodes(self, node):
+        """
+        Processing embedded HTML tags within markup or output from extensions with embedded markup can
+        result in invalid HTML output caused by <p> tags enclosing a block element.
+
+        The solution is to search for these occurances and change the <p> tag to a <div>.
+
+        :param node: a tree node
+        """
+        for child in node:
+            if not isinstance(child, unicode):
+                if child.tag == moin_page.p and len(child):
+                    for grandchild in child:
+                        if not isinstance(grandchild, unicode) and grandchild.tag in BLOCK_ELEMENTS:
+                            child.tag = moin_page.div
+                self.convert_invalid_p_nodes(child)
 
     def __init__(self):
         self.markdown = Markdown(extensions=['extra', 'toc', ])
@@ -498,6 +561,8 @@ class Converter(object):
         converted = self.do_children(md_root, add_lineno=add_lineno)
         body = moin_page.body(children=converted)
         root = moin_page.page(children=[body])
+        self.convert_embedded_markup(root)
+        self.convert_invalid_p_nodes(root)
 
         return root
 
