@@ -13,7 +13,7 @@ from openid.consumer import consumer
 from openid.yadis.discover import DiscoveryFailure
 from openid.fetchers import HTTPFetchingError
 
-from flask import session, request, url_for
+from flask import session, request, url_for, flash
 from flask import current_app as app
 from MoinMoin.auth import BaseAuth, get_multistage_continuation_url
 from MoinMoin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, MultistageRedirectLogin
@@ -83,13 +83,14 @@ class OpenIDAuth(BaseAuth):
                 # we get the user with this openid associated to him
                 identity = oid_info.identity_url
                 users = user.search_users(openid=identity)
-                user_obj = users and user.User(users[0][ITEMID], trusted=self.trusted)
+                user_obj = users and user.User(uid=users[0].item.itemid, trusted=self.trusted, auth_method=self.name)
 
                 # if the user actually exists
                 if user_obj:
                     # we get the authenticated user object
                     # success!
                     user_obj.auth_method = self.name
+                    flash(_('You have logged in with OpenID.'), "info")
                     return ContinueLogin(user_obj)
 
                 # there is no user with this openid

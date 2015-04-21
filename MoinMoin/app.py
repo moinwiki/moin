@@ -20,6 +20,12 @@ from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
 
+# workaround Flask 0.10. incompatibility with openid - see #345, #515
+try:
+    from flask_oldsessions import OldSecureCookieSessionInterface
+except ImportError:
+    OldSecureCookieSessionInterface = None
+
 from flask.ext.cache import Cache
 from flask.ext.themes import setup_themes
 
@@ -68,6 +74,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock = Clock()
     clock.start('create_app total')
     app = Flask('MoinMoin')
+
+    if OldSecureCookieSessionInterface:
+        app.session_interface = OldSecureCookieSessionInterface()
+
     clock.start('create_app load config')
     if flask_config_file:
         app.config.from_pyfile(flask_config_file)
