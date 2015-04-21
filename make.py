@@ -191,6 +191,12 @@ def get_pygments_data_location():
     return subprocess.check_output(command, shell=True)
 
 
+def get_sitepackages_location():
+    """Return the location of the virtualenv site-packages directory."""
+    command = ACTIVATE + 'python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"'
+    return subprocess.check_output(command, shell=True).strip()
+
+
 class Commands(object):
     """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
@@ -222,7 +228,12 @@ class Commands(object):
 
     def cmd_extras(self, *args):
         """install optional packages: OpenID, Pillow, pymongo, sqlalchemy, ldap; and upload.py"""
+        sp_dir = get_sitepackages_location()
         upload = '{0} MoinMoin/script/win/wget.py https://codereview.appspot.com/static/upload.py upload.py'.format(sys.executable)
+        # TODO oldsessions is short term fix for obsolete OpenID 2.0, see #515
+        # http://pythonhosted.org//Flask-OldSessions/ docs are broken see https://github.com/mitsuhiko/flask-oldsessions/issues/1
+        # we do wget of flask_oldsessions.py to site-packages as another workaround
+        oldsessions = '{0} MoinMoin/script/win/wget.py https://raw.githubusercontent.com/mitsuhiko/flask-oldsessions/master/flask_oldsessions.py {1}/flask_oldsessions.py'.format(sys.executable, sp_dir)
         packages = ['python-openid', 'pillow', 'pymongo', 'sqlalchemy', ]
         if WINDOWS_OS:
             installer = 'easy_install --upgrade '
@@ -233,7 +244,7 @@ class Commands(object):
         else:
             installer = 'pip install --upgrade '
             packages.append('python-ldap')
-        command = ACTIVATE + installer + (SEP + installer).join(packages) + SEP + upload
+        command = ACTIVATE + installer + (SEP + installer).join(packages) + SEP + upload + SEP + oldsessions
         print 'Installing {0}, upload.py... output messages written to {1}.'.format(', '.join(packages), EXTRAS)
         with open(EXTRAS, 'w') as messages:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
