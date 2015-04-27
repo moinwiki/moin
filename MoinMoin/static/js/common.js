@@ -242,22 +242,6 @@ MoinMoin.prototype.toggleSubtree = function (item) {
 };
 
 
-
-// OnMouseOver show the fqname of the item else only show the value/id.
-function togglefqname() {
-    "use strict";
-    var fullname, value;
-    $(".moin-fqname").hover(function () {
-        fullname = $(this).attr('data-fqname');
-        value = $(this).html();
-        $(this).html(fullname);
-    }, function () {
-        $(this).html(value);
-    });
-}
-$(document).ready(togglefqname);
-
-
 // Executed when user clicks insert-name button defined in modify.html.
 // When a page with subitems is modified, a subitems sidebar is present. User may
 // position caret in textarea and click button to insert name into textarea.
@@ -394,8 +378,8 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
-            if (ev.currentTarget.name === 'usersettings_ui') {
-                // theme has changed, show user the new theme
+            if (ev.currentTarget.name === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
+                // theme or language may have changed, show user the new theme/language
                 location.reload(true);
             }
         }, 'json');
