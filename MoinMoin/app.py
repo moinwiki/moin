@@ -214,7 +214,12 @@ def setup_user():
     flaskg._login_messages = []
 
     # first try setting up from session
-    userobj = auth.setup_from_session()
+    try:
+        userobj = auth.setup_from_session()
+    except KeyError:
+        # error caused due to invalid cookie, recreating session
+        session.clear()
+        userobj = auth.setup_from_session()
 
     # then handle login/logout forms
     form = request.values.to_dict()
