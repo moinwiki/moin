@@ -1270,7 +1270,7 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
+    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"))
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
@@ -1556,7 +1556,7 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
+    username = RequiredText.using(label=L_('Username'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
     openid = YourOpenID.using(optional=True)
     # This field results in a login_submit field in the POST form, which is in
@@ -1573,7 +1573,7 @@ def login():
         return redirect(url_for('.show_root'))
 
 
-# TODO use ?next=next_location check if target is in the wiki and not outside domain
+    # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _(u'Login')
 
     # multistage return
@@ -1616,6 +1616,8 @@ class ValidChangePass(Validator):
     password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
+        password_not_accepted_msg = L_('New password not acceptable: ')
+
         if not (element['password_current'].valid and element['password1'].valid and element['password2'].valid):
             return False
 
@@ -1626,6 +1628,11 @@ class ValidChangePass(Validator):
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
         password = element['password1'].value
+        pw_checker = app.cfg.password_checker
+        if pw_checker:
+            pw_error = pw_checker(flaskg.user.name[0], password)
+            if pw_error:
+                return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
             app.cfg.cache.pwd_context.encrypt(password)
         except (ValueError, TypeError) as err:
@@ -1684,7 +1691,7 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal'  # "name" is duplicate
-        name = Names.using(label=L_('Names')).with_properties(placeholder=L_("The login names you want to use"))
+        name = Names.using(label=L_('Usernames')).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)

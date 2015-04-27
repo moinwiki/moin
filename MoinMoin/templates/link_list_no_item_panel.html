@@ -1,4 +1,5 @@
 {% extends theme("layout.html") %}
+{% from "utils.html" import item_panel %}
 {% block content %}
     {% if headline %}
         <h1>{{ headline }}</h1>
@@ -7,13 +8,7 @@
         <h2>Total: {{ fq_names|count }}</h2>
         <ul class="moin-link-list">
             {% for fq_name in fq_names|sort(attribute='value') %}
-                <li>
-                    <a class="moin-fqname"
-                       href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
-                       data-fqname="{{ fq_name }}">
-                           {{ fq_name.value }}
-                    </a>
-                </li>
+                {{ item_panel(fq_name) }}
             {% endfor %}
         </ul>
     {% endif %}
