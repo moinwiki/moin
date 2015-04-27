@@ -14,13 +14,13 @@ Documentation and Support
 NOTE: moin2 is not released yet, so much information you find on the wiki
 (and elsewhere) will be about moin 1.x (and NOT applicable to moin2).
 
-There is one wiki page collecting all moin2 specific links and infos:
+There is one wiki page collecting all moin2 specific links and info:
 
 http://moinmo.in/MoinMoin2.0 < READ THIS!
 
 
 Project homepage is at http://moinmo.in/ - there are also links to support
-resources and informations about MoinMoin development status and plans.
+resources and information about MoinMoin development status and plans.
 
 In general, please make sure that documentation you read on the wiki or
 somewhere else on the web is written for the moin version you are using.
