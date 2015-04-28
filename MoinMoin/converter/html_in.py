@@ -17,13 +17,13 @@ import re
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.util.tree import html, moin_page, xlink, xml
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class Converter(object):
@@ -96,8 +96,7 @@ class Converter(object):
         # We create an element tree from the HTML content
         # The content is a list of string, line per line
         # We can concatenate all in one string
-        html_str = ''
-        html_str = html_str.join(content)
+        html_str = u'\n'.join(content)
         html_tree = HTML(html_str)
 
         # We should have a root element, which will be converted as <page>

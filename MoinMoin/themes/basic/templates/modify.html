@@ -26,6 +26,9 @@
 {% block content %}
     <h1>{{ title }}</h1>
     <div id="moin-modify" class="moin-form">
+        <a class="btn btn-success" style="float: right" href="{{ url_for('.download_item', item_name=item_name, mimetype='application/x.moin.download') }}">
+        <span class="fa fa-download"></span> {{ _('Download') }}
+        </a>
         {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
             {{ forms.render_errors(form) }}
             {{ forms.render_errors(form['meta_form']['acl']) }}
@@ -98,4 +101,10 @@
 
         {{ gen.form.close() }}
     </div>
+{% endblock %}
+
+{% block options_for_javascript %}
+    {%- if user.scroll_page_after_edit -%}
+        <br id="moin-scroll-page-after-edit" />
+    {%- endif %}
 {% endblock %}

@@ -16,10 +16,10 @@ etree = pytest.importorskip('lxml.etree')
 
 from emeraldtree.tree import *
 
+from MoinMoin.converter.html_out import *
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin.converter.html_out import *
 
 
 class Base(object):

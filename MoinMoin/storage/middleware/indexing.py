@@ -55,8 +55,7 @@ import os
 import shutil
 import datetime
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
+from collections import Mapping
 
 from flask import request
 from flask import g as flaskg
@@ -79,6 +78,15 @@ from MoinMoin.themes import utctimestamp
 from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 from MoinMoin.util.interwiki import split_fqname, CompositeName
+
+from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import moin_page
+from MoinMoin.converter import default_registry
+from MoinMoin.util.iri import Iri
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 WHOOSH_FILESTORAGE = 'FileStorage'
 INDEXES = [LATEST_REVS, ALL_REVS, ]
@@ -164,12 +172,6 @@ def backend_subscriptions_to_index(subscriptions):
         elif keyword in (NAMERE, NAMEPREFIX, ):
             subscription_patterns.append(subscription)
     return subscription_ids, subscription_patterns
-
-
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page
-from MoinMoin.converter import default_registry
-from MoinMoin.util.iri import Iri
 
 
 def convert_to_indexable(meta, data, item_name=None, is_new=False):
@@ -1224,9 +1226,6 @@ class Revision(PropertiesMixin):
 
     def __cmp__(self, other):
         return cmp(self.meta, other.meta)
-
-
-from collections import Mapping
 
 
 class Meta(Mapping):

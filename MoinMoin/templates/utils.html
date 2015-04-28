@@ -263,6 +263,18 @@
     </ul>
 {% endmacro %}
 
+{% macro item_panel(fq_name) %}
+    <li>
+        <a class="moin-fqname"
+           href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
+           {% if fq_name.value != fq_name|string %}
+               title="{{ fq_name }}"
+           {% endif %}>
+           {{ fq_name.value }}
+       </a>
+    </li>
+{% endmacro %}
+
 {% macro show_meta(rev) %}
     <div>
         <span class="moin-diff-info-caption">

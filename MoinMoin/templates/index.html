@@ -68,10 +68,6 @@
         {{ self.action_bars_inner() }}
 {% endblock %}
 
-{% macro entry_anchor(type, e) -%}
-    index-{{ type }}-{{ e.meta['itemid'] }}
-{%- endmacro %}
-
 {% set maxchars = 16 %}
 
 {% macro render_file_entry(e) %}
@@ -88,7 +84,7 @@
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
         {% if e in dirs %}
-            <a href="#{{ entry_anchor('dir', e) }}"
+            <a href="{{ url_for('.index', item_name=e.fullname) }}"
                title="{{ _("This item also has subitems that match your filter.") }}">↓
             </a>
         {% endif %}

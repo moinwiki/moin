@@ -24,9 +24,6 @@
 import re
 import random
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from flask import current_app as app
 from flask import g as flaskg
 from flask import request
@@ -40,6 +37,10 @@ from flatland import Form, String
 from flatland.validation import Validator
 
 from MoinMoin.i18n import _, L_, N_
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 SHA1_LEN = 40  # length of hexdigest
 TIMESTAMP_LEN = 10  # length of timestamp

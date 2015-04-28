@@ -11,11 +11,16 @@ Note: theoretically, it should be enough to test with one kind of store,
 
 from __future__ import absolute_import, division
 
+import os
+import tempfile
+
 from ..stores import MutableBackend
 from . import MutableBackendTestBase
 
 from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
 from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
+from MoinMoin.storage.stores.fs import BytesStore as FSBytesStore
+from MoinMoin.storage.stores.fs import FileStore as FSFileStore
 
 
 class TestMemoryBackend(MutableBackendTestBase):
@@ -25,12 +30,6 @@ class TestMemoryBackend(MutableBackendTestBase):
         self.be = MutableBackend(meta_store, data_store)
         self.be.create()
         self.be.open()
-
-import os
-import tempfile
-
-from MoinMoin.storage.stores.fs import BytesStore as FSBytesStore
-from MoinMoin.storage.stores.fs import FileStore as FSFileStore
 
 
 class TestFSBackend(MutableBackendTestBase):

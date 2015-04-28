@@ -11,10 +11,10 @@ from flask import send_from_directory
 
 from flask import current_app as app
 
+from MoinMoin.apps.serve import serve
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-from MoinMoin.apps.serve import serve
 
 
 @serve.route('/')

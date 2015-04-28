@@ -16,9 +16,6 @@ import os
 
 from babel import parse_locale
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import error
 from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
@@ -28,6 +25,9 @@ from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
 from MoinMoin.security import AccessControlList, DefaultSecurityPolicy
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class CacheClass(object):

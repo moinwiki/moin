@@ -12,13 +12,14 @@ import os
 import re
 from email.header import Header
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from flask import current_app as app
 
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.i18n import _, L_, N_
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
+
 
 _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
