@@ -338,9 +338,7 @@ class Converter(object):
                             u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
                     if self.last_closed == "p":
                         childrens_output.append(
-                            u'\n' + u' '
-                            * (len(''.join(self.list_item_labels)) +
-                               len(self.list_item_labels)))
+                            u'\n' + u' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)))
                 elif self.status[-1] == "text":
                     if self.last_closed == "p":
                         childrens_output.append(self.define_references())
@@ -395,8 +393,8 @@ class Converter(object):
     def open_moinpage_blockcode(self, elem):
         text = u''.join(elem.itertext())
         max_subpage_lvl = 3
-        text = text.replace(u'\n', u'\n  '
-                            + u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)))
+        text = text.replace(u'\n', u'\n  ' +
+                            u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)))
 
         if self.list_level >= 0:
             self.delete_newlines = True
@@ -436,10 +434,7 @@ class Converter(object):
 
     def open_moinpage_line_break(self, elem):
         if self.status[-1] == "list":
-            return (ReST.linebreak
-                    + u' '
-                      * (len(u''.join(self.list_item_labels))
-                         + len(self.list_item_labels)))
+            return (ReST.linebreak + u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)))
         if self.last_closed == 'p':
             return u'\n\n'
         return ReST.linebreak
@@ -473,9 +468,7 @@ class Converter(object):
         if self.list_item_labels[-1] == u'' or self.list_item_labels[-1] == u' ':
             self.list_item_labels[-1] = u' '
             self.list_item_label = self.list_item_labels[-1] + u' '
-            ret = (u' '
-                   * (len(u''.join(self.list_item_labels[:-1]))
-                      + len(self.list_item_labels[:-1])))
+            ret = (u' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1])))
             if self.last_closed and self.last_closed != 'list':
                 ret = u'\n{0}'.format(ret)
             return ret + self.open_children(elem)
@@ -485,9 +478,8 @@ class Converter(object):
         ret = u''
         if self.last_closed:
             ret = u'\n'
-        ret += (u' ' * (len(u''.join(self.list_item_labels[:-1]))
-                        + len(self.list_item_labels[:-1]))
-                + self.list_item_label)
+        ret += (u' ' * (len(u''.join(self.list_item_labels[:-1])) +
+                        len(self.list_item_labels[:-1])) + self.list_item_label)
         if self.list_item_labels[-1] in [u'1.', u'i.', u'I.', u'a.', u'A.']:
             self.list_item_labels[-1] = u'#.'
 
@@ -558,13 +550,12 @@ class Converter(object):
                 and self.last_closed != 'list_item_header' \
                 and self.last_closed != 'list_item_footer' \
                 and self.last_closed != 'p':
-                ret = (ReST.linebreak + u' '
-                                        * (len(u''.join(self.list_item_labels))
-                                           + len(self.list_item_labels)) + self.open_children(elem))
+                ret = (ReST.linebreak + u' ' * (len(u''.join(self.list_item_labels)) +
+                                                len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':
                 # return ReST.p +\
-                ret = (u"\n" + u' ' * (len(u''.join(self.list_item_labels))
-                                       + len(self.list_item_labels)) + self.open_children(elem))
+                ret = (u"\n" + u' ' * (len(u''.join(self.list_item_labels)) +
+                                       len(self.list_item_labels)) + self.open_children(elem))
             else:
                 ret = self.open_children(elem)
             if not self.delete_newlines:
@@ -747,10 +738,10 @@ class Converter(object):
         """
         ret = u''
         self.all_used_references.extend(self.used_references)
-        definitions = [u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels))
-                       + u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
-        definitions.extend(u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels))
-                           + link for link in self.objects)
+        definitions = [u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)) +
+                       u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
+        definitions.extend(u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)) +
+                           link for link in self.objects)
         definition_block = u"\n\n".join(definitions)
 
         if definitions:

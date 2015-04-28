@@ -20,21 +20,27 @@ from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
 
+# workaround Flask 0.10. incompatibility with openid - see #345, #515
+try:
+    from flask_oldsessions import OldSecureCookieSessionInterface
+except ImportError:
+    OldSecureCookieSessionInterface = None
+
 from flask.ext.cache import Cache
 from flask.ext.themes import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.constants.misc import ANON
 from MoinMoin.i18n import i18n_init
 from MoinMoin.i18n import _, L_, N_
-
 from MoinMoin.themes import setup_jinja_env, themed_error
-
 from MoinMoin.util.clock import Clock
+from MoinMoin.storage.middleware import protecting, indexing, routing
+from MoinMoin import auth, config, user
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def create_app(config=None, create_index=False, create_storage=False):
@@ -68,6 +74,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock = Clock()
     clock.start('create_app total')
     app = Flask('MoinMoin')
+
+    if OldSecureCookieSessionInterface:
+        app.session_interface = OldSecureCookieSessionInterface()
+
     clock.start('create_app load config')
     if flask_config_file:
         app.config.from_pyfile(flask_config_file)
@@ -165,10 +175,6 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-from MoinMoin.storage.middleware import protecting, indexing, routing
-from MoinMoin import auth, config, user
-
-
 def init_backends(app):
     """
     initialize the backends
@@ -208,7 +214,12 @@ def setup_user():
     flaskg._login_messages = []
 
     # first try setting up from session
-    userobj = auth.setup_from_session()
+    try:
+        userobj = auth.setup_from_session()
+    except KeyError:
+        # error caused due to invalid cookie, recreating session
+        session.clear()
+        userobj = auth.setup_from_session()
 
     # then handle login/logout forms
     form = request.values.to_dict()

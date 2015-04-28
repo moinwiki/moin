@@ -7,14 +7,15 @@ MoinMoin - Macro and pseudo-macro handling
 Base class for wiki parser with macro support.
 """
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
 
 from emeraldtree import ElementTree as ET
 
 from MoinMoin.util import iri
 from MoinMoin.util.mime import Type
 from MoinMoin.util.tree import moin_page, xinclude
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class ConverterMacro(object):

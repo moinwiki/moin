@@ -17,6 +17,7 @@
                 {{ forms.render(form['email']) }}
                 {{ forms.render_textcha(gen, form) }}
             </dl>
+            <input type="hidden" name="openid_submit" value="1" >
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
     </div>

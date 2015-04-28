@@ -103,7 +103,7 @@ add more tools, exercise tools
 
     ./m css  # Windows: m css
     hg diff  # verify nothing changed
-* check for coding errors (tabs, trailing spaces, line endings)::
+* check for coding errors (tabs, trailing spaces, line endings, template indentation and spacing)::
 
     ./m coding-std  # Windows: m coding-std
     hg diff  # verify nothing changed
@@ -140,7 +140,13 @@ find a task to work on
   channel
 * to avoid duplicate work, add a comment on the issue tracker that you are
   working on that issue
-* just before you start to code changes, update your local repo: "hg pull -u"
+* just before you start to code changes, bring your repo up to date::
+
+    hg pull -u      # pull all recent changes
+    ./m coding-std  # just in case someone else forgot to do it
+    ./m css         # just in case
+    hg diff         # expect no changes
+    ./m tests       # note existing errors
 
 develop a testing strategy
 --------------------------
@@ -151,7 +157,6 @@ develop a testing strategy
   implement it
 * make a plan for using a browser to test your changes; which wiki pages are
   effected, how many browsers must be tested
-* run "./m tests" to determine if there are any existing test failures before you make changes
 
 develop a working solution
 --------------------------
@@ -201,9 +206,13 @@ publish your change
 * commit your changes to your local repo, use a concise commit comment
   describing the change
 
-  * if your change fixes a bitbucket issue, include the number as "fixes #nnn" in your commit comment
-* pull any changes made by others from the main repo on Bitbucket, then
-  merge and commit the merge
+  * while a commit message may have multiple lines, many tools show only 80 characters of the first line
+  * stuff as much info as possible into those first 80 characters::
+
+        <concise description of your change>, fixes #123
+
+* pull any changes made by others from the main repo on Bitbucket,
+  merge, then commit the merge
 * push the changeset to your public bitbucket repo
 * create a pull request so your changes will get pulled into the
   main repository
@@ -437,3 +446,11 @@ Sphinx can create all kinds of documentation formats. The most common are
 the local HTML docs that are linked to under the User tab. To generate local docs::
 
     ./m docs  # Windows: m docs
+
+Moin Shell
+==========
+
+While the make.py utility provides a menu of the most frequently used commands, there may be an occasional need to access the moin shell directly::
+
+    source <path-to-venv>/bin/activate  # or ". activate"  windows: "activate"
+    moin -h                             # show help

@@ -18,6 +18,16 @@ use a Config class to define the required configuration within the test class.
 
 from __future__ import absolute_import, division
 
+import pytest
+import py
+import MoinMoin.log
+import MoinMoin
+
+from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
+from MoinMoin._tests import wikiconfig
+from MoinMoin.storage import create_simple_mapping
+
+
 # exclude some directories from py.test test discovery, pathes relative to this file
 collect_ignore = [
     'static',  # same
@@ -25,19 +35,10 @@ collect_ignore = [
     '../instance',  # tw likes to use this for wiki data (non-revisioned)
 ]
 
-import pytest
-import py
-import MoinMoin.log
-import MoinMoin
-
 # Logging for tests to avoid useless output like timing information on stderr on test failures
 Moindir = py.path.local(MoinMoin.__file__).dirname
 config_file = Moindir + '/_tests/test_logging.conf'
 MoinMoin.log.load_config(config_file)
-
-from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
-from MoinMoin._tests import wikiconfig
-from MoinMoin.storage import create_simple_mapping
 
 
 @pytest.fixture

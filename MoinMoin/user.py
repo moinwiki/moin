@@ -32,9 +32,6 @@ from flask import g as flaskg
 from flask import session, request, url_for, render_template
 from jinja2.runtime import Undefined
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin import wikiutil
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
@@ -46,6 +43,9 @@ from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local
 from MoinMoin.util.crypto import generate_token, valid_token, make_uuid
 from MoinMoin.util.subscriptions import get_matched_subscription_patterns
 from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 def create_user(username, password, email, validate=True, is_encrypted=False, **meta):

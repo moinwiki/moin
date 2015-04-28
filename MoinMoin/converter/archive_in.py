@@ -14,12 +14,12 @@ import zipfile
 
 from ._table import TableMixin
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class ArchiveException(Exception):

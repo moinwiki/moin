@@ -43,9 +43,6 @@ from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.analysis import StandardAnalyzer
 from whoosh import sorting
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
@@ -68,6 +65,9 @@ from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_displayed, item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 @frontend.route('/+dispatch', methods=['GET', ])
@@ -1270,7 +1270,7 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = RequiredText.using(label=L_('Name')).with_properties(placeholder=L_("The login name you want to use"))
+    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"))
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
@@ -1411,8 +1411,7 @@ class ValidLostPassword(Validator):
     name_or_email_needed_msg = L_('Your user name or your email address is needed.')
 
     def validate(self, element, state):
-        if not(element['username'].valid and element['username'].value
-               or
+        if not(element['username'].valid and element['username'].value or
                element['email'].valid and element['email'].value):
             return self.note_error(element, state, 'name_or_email_needed_msg')
 
@@ -1556,7 +1555,7 @@ class LoginForm(Form):
     """
     name = 'login'
 
-    username = RequiredText.using(label=L_('Name'), optional=False).with_properties(autofocus=True)
+    username = RequiredText.using(label=L_('Username'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
     openid = YourOpenID.using(optional=True)
     # This field results in a login_submit field in the POST form, which is in
@@ -1569,6 +1568,10 @@ class LoginForm(Form):
 
 @frontend.route('/+login', methods=['GET', 'POST'])
 def login():
+    if flaskg.user.valid:
+        return redirect(url_for('.show_root'))
+
+
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _(u'Login')
 
@@ -1618,6 +1621,8 @@ class ValidChangePass(Validator):
     password_problem_msg = L_('New password is unacceptable, could not get processed.')
 
     def validate(self, element, state):
+        password_not_accepted_msg = L_('New password not acceptable: ')
+
         if not (element['password_current'].valid and element['password1'].valid and element['password2'].valid):
             return False
 
@@ -1628,6 +1633,11 @@ class ValidChangePass(Validator):
             return self.note_error(element, state, 'passwords_mismatch_msg')
 
         password = element['password1'].value
+        pw_checker = app.cfg.password_checker
+        if pw_checker:
+            pw_error = pw_checker(flaskg.user.name[0], password)
+            if pw_error:
+                return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
             app.cfg.cache.pwd_context.encrypt(password)
         except (ValueError, TypeError) as err:
@@ -1672,10 +1682,49 @@ class UserSettingsOptionsForm(Form):
     submit_label = L_('Save')
 
 
+class ValidSubscriptions(Validator):
+    """Validator for a subscriptions change
+    """
+
+    def validate(self, element, state):
+        # TODO: is additional validation for namespaces, itemids, names, or name prefixes needed?
+        invalid_subscription_msg = L_('Invalid subscription syntax: ')
+        invalid_keyword = L_('Invalid keyword: ')
+        invalid_re_expression = L_('Invalid RE syntax: ')
+        errors = []
+        for subscription in element.value['subscriptions']:
+            try:
+                keyword, value = subscription.split(":", 1)
+            except ValueError:
+                errors.append(invalid_subscription_msg + subscription)
+                continue
+            if keyword == ITEMID:
+                continue
+            if keyword not in (NAME, NAMEPREFIX, TAGS, NAMERE, ):
+                errors.append(invalid_keyword + subscription)
+                continue
+            try:
+                namespace, pattern = value.split(":", 1)
+            except ValueError:
+                errors.append(invalid_subscription_msg + subscription)
+                continue
+            if keyword == NAMERE:
+                try:
+                    pattern = re.compile(pattern, re.U)
+                except re.error:
+                    errors.append(invalid_re_expression + subscription)
+                    continue
+        if errors:
+            return self.note_error(element, state, message=', '.join(errors))
+        return True
+
+
 class UserSettingsSubscriptionsForm(Form):
     name = 'usersettings_subscriptions'
     subscriptions = Subscriptions
     submit_label = L_('Save')
+
+    validators = [ValidSubscriptions()]
 
 
 @frontend.route('/+usersettings', methods=['GET', 'POST'])
@@ -1686,7 +1735,7 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         name = 'usersettings_personal'  # "name" is duplicate
-        name = Names.using(label=L_('Names')).with_properties(placeholder=L_("The login names you want to use"))
+        name = Names.using(label=L_('Usernames')).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         openid = YourOpenID.using(optional=True)
@@ -1798,7 +1847,9 @@ def usersettings():
                                                           "error"))
                         else:
                             flaskg.user.save()
-
+            else:
+                # validation failed
+                response['flash'].append((_("Nothing saved."), "error"))
             if not response['flash']:
                 # if no flash message was added until here, we add a generic success message
                 response['flash'].append((_("Your changes have been saved."), "info"))

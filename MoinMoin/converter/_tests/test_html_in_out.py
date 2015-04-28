@@ -16,12 +16,12 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.converter.html_in import Converter as HTML_IN
 from MoinMoin.converter.html_out import Converter as HTML_OUT
 from MoinMoin.util.tree import html, moin_page, xlink
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class Base(object):

@@ -15,6 +15,9 @@ from ._util import decode_data, normalize_split_text
 from MoinMoin.util.tree import moin_page
 from MoinMoin.i18n import _, L_, N_
 
+from . import default_registry
+from MoinMoin.util.mime import Type, type_moin_document
+
 
 class Converter(TableMixin):
     """
@@ -56,6 +59,4 @@ class Converter(TableMixin):
         return moin_page.page(children=(body, ))
 
 
-from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('text/csv'), type_moin_document)

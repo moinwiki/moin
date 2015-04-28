@@ -16,9 +16,11 @@ from whoosh.query import Term, Or
 from MoinMoin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
                                      LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
                                      NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
+
+from MoinMoin.util.interwiki import CompositeName
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
-from MoinMoin.util.interwiki import CompositeName
 
 
 Subscriber = namedtuple('Subscriber', [ITEMID, NAME, EMAIL, LOCALE])
@@ -75,9 +77,17 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
     item_namespace = meta.get(NAMESPACE)
     matched_subscriptions = []
     for subscription in subscription_patterns:
-        keyword, value = subscription.split(":", 1)
+        try:
+            keyword, value = subscription.split(":", 1)
+        except ValueError:
+            logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+            continue
         if keyword in (NAMEPREFIX, NAMERE, ) and item_namespace is not None and item_names:
-            namespace, pattern = value.split(":", 1)
+            try:
+                namespace, pattern = value.split(":", 1)
+            except ValueError:
+                logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+                continue
             if item_namespace == namespace:
                 if keyword == NAMEPREFIX:
                     if any(name.startswith(pattern) for name in item_names):

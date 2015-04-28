@@ -13,11 +13,11 @@ from __future__ import absolute_import, division
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.util.tree import html, moin_page, xlink, docbook, xml
 from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class Converter(object):

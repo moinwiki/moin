@@ -15,9 +15,6 @@ import re
 
 from werkzeug import url_encode
 
-from MoinMoin import log
-logging = log.getLogger(__name__)
-
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
@@ -29,6 +26,9 @@ from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
+
+from MoinMoin import log
+logging = log.getLogger(__name__)
 
 
 class _TableArguments(object):

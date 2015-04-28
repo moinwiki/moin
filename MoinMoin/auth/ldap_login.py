@@ -17,6 +17,7 @@
     TODO: allow more configuration (display name, ...) by using callables as parameters
 """
 
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
