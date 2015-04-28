@@ -1571,7 +1571,6 @@ def login():
     if flaskg.user.valid:
         return redirect(url_for('.show_root'))
 
-
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _(u'Login')
 
