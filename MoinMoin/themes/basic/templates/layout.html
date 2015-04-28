@@ -41,10 +41,11 @@
         rel="nofollow"
         {% if title %} title="{{ title }}" {% endif %}>
         {% if iconcls %} <i class="{{ iconcls }}"> </i> {% endif %}
-        {# needs a login url without next #}
-        {% if href == theme_supp.login_url() %}
+        {% if href == login_url %}
+            {# show "login" for all screen sizes #}
             {{ label }}
         {% else %}
+            {# hide username, settings, logout labels for sm, xs screen sizes, only icons will be visible #}
             <span class="hidden-sm hidden-xs">{{ label }}</span>
         {% endif %}
     </a>
