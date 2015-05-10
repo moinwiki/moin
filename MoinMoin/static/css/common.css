@@ -347,7 +347,8 @@ form.upload_file button { display: none; }
 .moin-tabs .moin-tab-titles a{ color: #00008b; }
 .moin-tab-titles{ margin: 0; padding: -10px 0 0; list-style: none; border-bottom: 3px solid #4e7da9; }
 .moin-tab-titles li { display: inline-block; *display: inline; zoom: 1; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4e7da9; }
-.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #eef1f6; border-width: 1px 1px 0; border-style: solid; border-color: #4e7da9; color: #00008b; border-top-left-radius: 7px; border-top-right-radius: 7px; }
+.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #eef1f6; border-width: 1px 1px 0; border-style: solid;
+    border-color: #4e7da9; color: #00008b; border-top-left-radius: 7px; border-top-right-radius: 7px; }
 .moin-tab-titles a: hover { background-color: #d8dfe9; text-decoration: none; }
 .moin-tab-titles a.moin-current-tab { background: #d8dfe9; padding-top: 8px; margin-top: -4px; }
 .moin-tab-titles .moin-change-indicator { font-weight: bold; color: #1f9ae0; }
@@ -367,3 +368,21 @@ form.upload_file button { display: none; }
 #options dt { width: 60%; max-width: 40em; }
 #subscriptions textarea { width: 80%; max-width: 40em; margin-bottom: 1em; }
 #subscriptions div.tip { width: 80%; max-width: 40em; margin: auto; }
+
+/* Global history */
+
+#moin-global-history { font-size: 75%; }
+.moin-history-date { font-size: 150%; font-weight: bold; }
+.moin-history-container { border: 1px solid #4e7da9; margin: 2em 0em; border-top-left-radius: 5px; border-top-right-radius: 5px; }
+.moin-history-container-header { background: #00417f; margin: 0; padding: 4px; color: #fff; border-bottom: 1px solid #4e7da9;
+    border-top-left-radius: 5px; border-top-right-radius: 5px; }
+.moin-history-container-header a.moin-bookmark-link { margin-left: 20px; color: #fff; }
+.moin-history-container-body { margin: 0; padding: 0; font-size: 1.2em; }
+.moin-history-container-body table { margin: 0; border: none; width: 100%; }
+.moin-history-time { width: 3em; text-align: right; }
+.moin-history-item { width: 30%; }
+.moin-history-editorinfo { width: 15%; }
+.moin-history-comment { width: 40%; }
+.moin-history-action { width: .5em; cursor: default; }
+.moin-history-action a: hover { text-decoration: none; }
+.moin-history-links { width: .5em; }
