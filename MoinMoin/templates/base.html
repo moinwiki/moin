@@ -15,6 +15,7 @@
         {% block head %}
             {% block head_meta %}
                 <meta charset="utf-8" />{# must be at the beginning #}
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 {% if pi_refresh -%}
                     {{ '<meta http-equiv="refresh" content="%d;URL=%s" />' % pi_refresh }}
                 {%- endif %}
