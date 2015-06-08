@@ -17,64 +17,63 @@
 {% block content %}
     <h1>{{ _("Global History") }}</h1>
     <div class='moin-clr'></div>
-    <div id="moin-global-history">
-        {% for day, revs in history %}
-           {% set latest_timestamp = revs[0].meta['mtime'] %}
-            <div class="moin-history-container">
-                <div class="moin-history-container-header">
-                    <span class="moin-history-date">{{ day }}</span>
-                    {% if user.valid %}
-                        <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
-                    {% endif %}
-                </div>
-                <div class="moin-history-container-body">
-                    <table class="zebra">
-                        {% for rev in revs|sort(attribute='fqname') %}
-                            {% set meta = rev.meta %}
-                            <tr>
-                                <td class="moin-history-item moin-wordbreak">
-                                    <a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.fqname) }}"
-                                            title="{{ meta.contenttype|shorten_ctype }}">
-                                        {% if meta.name %}
-                                            {{ meta.name|join(' | ') }}
-                                        {% elif meta.summary %}
-                                            {{ meta.summary }}
-                                        {% else %}
-                                            {{ rev.fqname|shorten_fqname }}
-                                        {% endif %}
-                                    </a>
-                                </td>
-                                <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(rev.meta) }}</td>
-                                <td class="moin-history-time">{{ meta.mtime|time_hh_mm }}</td>
-                                <td class="moin-history-action">
-                                    <span title="{{ meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
-                                </td>
-                                <td class="moin-history-links">
-                                    <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">
-                                        <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
-                                    </a>
-                                </td>
-                                {% if bookmark_time -%}
-                                    <td class="moin-history-links">
-                                        <a href="{{ url_for('frontend.diff', item_name=rev.fqname, bookmark=bookmark_time) }}">
-                                            <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
-                                        </a>
-                                    </td>
-                                {%- endif %}
-                                <td class="moin-wordbreak moin-history-comment">{{ rev.meta['comment'] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        {% endfor %}
-        {% if bookmark_time %}
-            <div class="moin-history-container">
-                <div class="moin-history-container-header">
-                    <span class="moin-history-date">{{ bookmark_time|datetimeformat }}</span>
-                    <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
-                </div>
-            </div>
-        {% endif %}
-    </div>
+        <table id="moin-global-history">
+            {% for day, revs in history %}
+                {% set latest_timestamp = revs[0].meta['mtime'] %}
+                <tr class="moin-history-day-banner">
+                    <td colspan="7">
+                        <span class="moin-history-date">{{ day }}</span>
+                        {% if user.valid %}
+                            <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time=latest_timestamp+1) }}">{{ _("Set bookmark") }}</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% for rev in revs|sort(attribute='fqname') %}
+                    {% set meta = rev.meta %}
+                    <tr>
+                        <td class="moin-history-item moin-wordbreak">
+                            <a class="{{ meta.contenttype|contenttype_to_class }}" href="{{ url_for('frontend.show_item', item_name=rev.fqname) }}"
+                                    title="{{ meta.contenttype|shorten_ctype }}">
+                                {% if meta.name %}
+                                    {{ meta.name|join(' | ') }}
+                                {% elif meta.summary %}
+                                    {{ meta.summary }}
+                                {% else %}
+                                    {{ rev.fqname|shorten_fqname }}
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(rev.meta) }}</td>
+                        <td class="moin-history-time">{{ meta.mtime|time_hh_mm }}</td>
+                        <td class="moin-history-action">
+                            <span title="{{ _("Last action: ") + meta.action|title }}" class="{{ awesome_class[meta.action] }}"></span>
+                        </td>
+                        <td class="moin-history-links">
+                            <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">
+                                <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
+                            </a>
+                        </td>
+                        {% if bookmark_time -%}
+                            <td class="moin-history-links">
+                                <a href="{{ url_for('frontend.diff', item_name=rev.fqname, bookmark=bookmark_time) }}">
+                                    <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
+                                </a>
+                            </td>
+                        {%- endif %}
+                        <td class="moin-wordbreak moin-history-comment">{{ rev.meta['comment'] }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class="moin-history-end-of-day" colspan="7">&nbsp;</td>
+                </tr>
+            {% endfor %}
+            {% if bookmark_time %}
+                <tr class="moin-history-container">
+                    <td class="moin-history-day-banner" colspan="7">
+                        <span class="moin-history-date">{{ bookmark_time|datetimeformat }}</span>
+                        <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
 {% endblock %}
