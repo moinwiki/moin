@@ -1,0 +1,15 @@
+{% extends theme("show.html") %}
+{% from "utils.html" import item_panel %}
+{% block content %}
+    {% if headline %}
+        <h1>{{ headline }}</h1>
+    {% endif %}
+    {% if fq_names %}
+        Total: {{ fq_names|count }}
+        <ul class="moin-link-list">
+            {% for fq_name in fq_names|sort(attribute='value') %}
+                {{ item_panel(fq_name) }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

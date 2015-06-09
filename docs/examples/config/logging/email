@@ -1,0 +1,36 @@
+[DEFAULT]
+# List of admin emails, if left blank will extract the list from wikiconfig ADMIN_EMAILS
+admins=[]
+
+# Email subject, if left blank will display the default subject: [Sitename][Loglevel] Log message
+subject=u""
+
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=ERROR
+
+# Email loglevel
+emailloglevel=ERROR
+
+[loggers]
+keys=root
+
+[handlers]
+keys=email
+
+[formatters]
+keys=mail
+
+[logger_root]
+level=%(loglevel)s
+handlers=email
+
+[handler_email]
+class=MoinMoin.log.EmailHandler
+level=%(emailloglevel)s
+formatter=default
+args=(%(admins)s, %(subject)s)
+
+[formatter_mail]
+format=%(asctime)s %(levelname)s %(name)s:%(lineno)d %(message)s
+datefmt=
+class=logging.Formatter

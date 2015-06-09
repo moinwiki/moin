@@ -1,0 +1,61 @@
+{% extends theme("layout.html") %}
+{% import "utils.html" as utils %}
+
+{% block content %}
+    {% set (history, next_offset, previous_offset) = my_changes_page %}
+    {% if my_changes %}
+        <div class='moin-offset-links'>
+            {% if previous_offset >= 0 %}
+                <a href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+            {% endif %}
+            {% if next_offset %}
+                <a href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+            {% endif %}
+        </div>
+        <h1>{{ _('My Changes') }}</h1>
+        <div class="moin-clr"></div>
+        <div>
+            <table class="zebra moin-sortable">
+                <thead>
+                    <tr>
+                        <th>{{ _("Item") }}</th>
+                        <th>{{ _("Rev.") }}</th>
+                        <th>{{ _("Timestamp") }}</th>
+                        <th class="moin-integer">{{ _("Size") }}</th>
+                        <th>{{ _("Diff") }}</th>
+                        <th>{{ _("Content-Type") }}</th>
+                        <th>{{ _("Comment") }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in my_changes %}
+                        <tr>
+                            <td class="moin-wordbreak">
+                                {% for name in doc.name %}
+                                    {% if not loop.first %}|{% endif %}
+                                    <a href="{{ url_for_item(name, namespace=doc.fqname.namespace, endpoint='frontend.show_item') }}">{{ name }}</a>
+                                {% endfor %}
+                            </td>
+                            <td class="monospaced">{{ doc.revid|shorten_id }}</td>
+                            <td>{{ doc.mtime|datetimeformat }}</td>
+                            <td class="moin-integer">{{ doc.size }}</td>
+                            <td>
+                                <div class="moin-hist-rev">
+                                    <form action="{{ url_for('frontend.diff', item_name=doc.fqname) }}" method="GET">
+                                        <input type="hidden" name="rev1" value="{{ doc.parentid }}" />
+                                        <input type="hidden" name="rev2" value="{{ doc.revid }}" />
+                                        <input type="submit" class="moin-button" value="Diff" />
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
+                            <td class="moin-wordbreak">{{ doc.comment }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class='moin-flash moin-flash-javascript moin-flash-error'>No changes detected</p>
+    {% endif %}
+{% endblock %}

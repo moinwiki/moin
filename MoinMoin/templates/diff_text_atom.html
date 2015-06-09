@@ -1,0 +1,28 @@
+{% import "utils.html" as utils %}
+
+<table class="moin-diff" style="width: 100%;">
+    {% for llineno, lcontent, rlineno, rcontent in diffs %}
+        <tr>
+            <td style="vertical-align: top;">{{ llineno }}:</td>
+            <td class="moin-diff-removed" style="vertical-align: top; background-color:#ff9; word-wrap: break-word;"><blockquote>{{ lcontent }}</blockquote></td>
+            <td style="vertical-align: top;">{{ rlineno }}:</td>
+            <td class="moin-diff-added" style="vertical-align: top; background-color: #cfc; word-wrap: break-word;"><blockquote>{{ rcontent }}</blockquote></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td class="moin-diff-header-line" style="width: 3%;">
+        </td>
+        <td class="moin-diff-header" style="width: 47%;">
+            <strong>{{ utils.show_meta(oldrev) }}</strong>
+        </td>
+        <td class="moin-diff-header-line" style="width: 3%;">
+        </td>
+        <td class="moin-diff-header" style="width: 47%;">
+            <strong>{{ utils.show_meta(newrev) }}</strong>
+        </td>
+    </tr>
+</table>
+<style type="text/css">
+    .moin-diff-added span { background-color: #80FF80; }
+    .moin-diff-removed span { background-color: #FFFF80; }
+</style>

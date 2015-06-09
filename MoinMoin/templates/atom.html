@@ -1,0 +1,47 @@
+{% import "utils.html" as utils %}
+
+{# A few style rules to ensure the content doesn't overflow #}
+{% macro atom_style() %}
+    <style type="text/css">
+        img {
+            max-width: 100%;
+        }
+        td {
+            padding-right: 10px;
+        }
+        table {
+            width: 100%;
+        }
+    </style>
+{% endmacro %}
+
+{%- if get == 'xml' -%}
+    <?xml-stylesheet type="text/xsl" href="{{ theme_static('atom.xslt') }}"?>
+{%- elif get == 'comment_cont_merge' -%}
+    <p style="font-size: 1.2em">…{{ comment }}</p> <br /> {{ content }}
+{%- elif get == 'first_revision' -%}
+    {{ content }}
+    <br />
+    <table class="moin-diff" cellpadding="10" width="100%">
+        <tr>
+            <td class="moin-diff-header" style="width: 100%;">
+                <strong>{{ utils.show_meta(rev) }}</strong>
+            </td>
+        </tr>
+    </table>
+    {{ atom_style() }}
+{%- elif get == 'binary' -%}
+    {{ content }}
+    <br />
+    <table class="moin-diff" cellpadding="10" width="100%">
+        <tr>
+            <td class="moin-diff-header" style="width: 50%;">
+                <strong>{{ utils.show_meta(oldrev) }}</strong>
+            </td>
+            <td class="moin-diff-header" style="width: 50%;">
+                <strong>{{ utils.show_meta(newrev) }}</strong>
+            </td>
+        </tr>
+    </table>
+    {{ atom_style() }}
+{%- endif -%}
