@@ -75,8 +75,6 @@ setup_args = dict(
         # 'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
         'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
-        # use a pre-release emeraldtree (port to 2.6/2.7/3.3):
-        'https://bitbucket.org/thomaswaldmann/emeraldtree/get/tip.tar.gz#egg=emeraldtree-0.9.3dev',
         'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
     ],
     install_requires=[
@@ -88,7 +86,7 @@ setup_args = dict(
         'Flask-Cache>=0.3.4',  # caching support
         'Flask-Script==1.0.0',  # scripting support
         'Flask-Themes>=0.2.0',  # theme support
-        'emeraldtree>=0.9.3dev',  # xml processing
+        'emeraldtree>=0.10.0',  # xml processing
         'flatland',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
