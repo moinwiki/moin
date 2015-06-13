@@ -39,7 +39,7 @@ class Disable_User(Command):
             print 'This user "{0!r}" does not exists!'.format(u.name)
             return
 
-        print " {0:<20} {1:!r<25} {2:<35}".format(u.itemid, u.name, u.email),
+        print " {0:<20} {1!r:<25} {2:<35}".format(u.itemid, u.name, u.email),
         if not u.disabled:  # only disable once
             u.disabled = 1
             u.name = u"{0}-{1}".format(u.name, u.id)
