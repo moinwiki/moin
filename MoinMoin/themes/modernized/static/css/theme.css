@@ -342,27 +342,12 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 #preview{border:1px solid #4e7da9;padding:10px 30px 20px 30px;background:url("../img/draft.png");margin-top:.5em}
 .moin-hist-rev input{float:left}
 .moin-hist-rev{margin:0}
-#moin-global-history,#moin-page-history{font-size:75%}
+#moin-page-history{font-size:75%}
 #moin-page-history table{border:1px solid #4e7da9;border-radius:5px;}
 #moin-page-history table thead{border-top-left-radius:5px;border-top-right-radius:5px;}
 #moin-page-history table thead tr th{text-align:center;}
 #moin-page-history table thead tr th input[type="Submit"]{padding:4px 10px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;font-size:1em;}
 #moin-page-history table thead tr th input[type="Submit"]:hover{box-shadow:1px 1px 2px #000}
-.moin-history-time{width:10%;text-align:right}
-.moin-history-contenttype{width:18%}
-.moin-history-editorinfo{width:17%}
-.moin-history-comment{width:30%}
-.moin-action{width:2%}
-.moin-action a:hover{text-decoration:none}
-.moin-history-container{border:1px solid #4e7da9;margin:2em 2em;border-top-left-radius:5px;border-top-right-radius:5px}
-.moin-history-container-header{background:#00417f;margin:0;padding:4px;color:#fff;border-bottom:1px solid #4e7da9;border-top-left-radius:5px;border-top-right-radius:5px;}
-.moin-history-container-header h2{display:inline;border:none}
-.moin-history-container-header a.bookmark-link{margin-left:10px;color:#fff}
-.moin-history-container-body{margin:0;padding:0;font-size:1.2em;}
-.moin-history-container-body table{margin:0;border:none;width:100%}
-.moin-history-links{width:5%}
-.moin-history-links a{display:block;margin-bottom:4px}
-.moin-history-editortext,.moin-history-links span,.moin-history-comment span{color:#000;display:block;margin-bottom:5px}
 .moin-offset-links{float:right;margin-right:20px}
 .moin-offset-links a{margin-right:10px;padding:3px 7px;font-size:20px;background:#fff;border:1px groove #4e7da9;border-radius:5px}
 .moin-offset-links a:hover{box-shadow:0 0 12px #9d9d9b}

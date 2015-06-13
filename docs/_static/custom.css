@@ -1,7 +1,7 @@
 /* Custom CSS for Sphinx */
 
 /* Import the default theme's CSS file */
-@import "default.css";
+@import "classic.css";
 
 .bolditalic {
     font-weight: bold;

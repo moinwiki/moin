@@ -347,7 +347,8 @@ form.upload_file button { display: none; }
 .moin-tabs .moin-tab-titles a{ color: #00008b; }
 .moin-tab-titles{ margin: 0; padding: -10px 0 0; list-style: none; border-bottom: 3px solid #4e7da9; }
 .moin-tab-titles li { display: inline-block; *display: inline; zoom: 1; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4e7da9; }
-.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #eef1f6; border-width: 1px 1px 0; border-style: solid; border-color: #4e7da9; color: #00008b; border-top-left-radius: 7px; border-top-right-radius: 7px; }
+.moin-tab-titles a { display: inline-block; padding: 4px; background-color: #eef1f6; border-width: 1px 1px 0; border-style: solid;
+    border-color: #4e7da9; color: #00008b; border-top-left-radius: 7px; border-top-right-radius: 7px; }
 .moin-tab-titles a: hover { background-color: #d8dfe9; text-decoration: none; }
 .moin-tab-titles a.moin-current-tab { background: #d8dfe9; padding-top: 8px; margin-top: -4px; }
 .moin-tab-titles .moin-change-indicator { font-weight: bold; color: #1f9ae0; }
@@ -367,3 +368,16 @@ form.upload_file button { display: none; }
 #options dt { width: 60%; max-width: 40em; }
 #subscriptions textarea { width: 80%; max-width: 40em; margin-bottom: 1em; }
 #subscriptions div.tip { width: 80%; max-width: 40em; margin: auto; }
+
+/* Global history */
+
+#moin-global-history { font-size: 75%; width: 100%; }
+.moin-history-day-banner { background: #00417f; color: #fff; }
+.moin-history-day-banner a.moin-bookmark-link { margin-left: 20px; color: #fff; }
+.moin-history-date { font-size: 125%; font-weight: bold; }
+.moin-history-time { text-align: right; }
+.moin-history-comment { min-width: 30%; }
+.moin-history-action { width: .5em; cursor: default; }
+.moin-history-action a: hover { text-decoration: none; }
+.moin-history-links { width: .5em; }
+.moin-history-end-of-day { border: 0; border-top: 2px solid #4e7da9; }

@@ -558,6 +558,10 @@ class Converter(object):
             attrib[moin_page('number-columns-spanned')] = colspan
         return self.new_copy(moin_page.table_cell, element, attrib=attrib)
 
+    def visit_xhtml_th(self, element):
+        """html_out does not support th tags, so we do td tags like all other converters."""
+        return self.visit_xhtml_td(element)
+
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
