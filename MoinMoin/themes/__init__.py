@@ -9,6 +9,7 @@
 
 
 import urllib
+import datetime
 
 from json import dumps
 
@@ -651,6 +652,14 @@ def shorten_ctype(contenttype):
     return CONTENTTYPES_MAP.get(contenttype, "Unknown")
 
 
+def time_hh_mm(dt):
+    """
+    Convert a datetime object into a short string of the form HH:MM
+    where HH varies from 0 to 23.
+    """
+    return datetime.datetime.fromtimestamp(dt).strftime('%H:%M')
+
+
 def setup_jinja_env():
     app.jinja_env.filters['shorten_fqname'] = shorten_fqname
     app.jinja_env.filters['shorten_item_name'] = shorten_item_name
@@ -658,6 +667,7 @@ def setup_jinja_env():
     app.jinja_env.filters['contenttype_to_class'] = contenttype_to_class
     app.jinja_env.filters['json_dumps'] = dumps
     app.jinja_env.filters['shorten_ctype'] = shorten_ctype
+    app.jinja_env.filters['time_hh_mm'] = time_hh_mm
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
