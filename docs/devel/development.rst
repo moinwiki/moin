@@ -130,11 +130,22 @@ add more tools, exercise tools
 * if you want a graphical interface to Mercurial, install SourceTree (best for mac) or TortoiseHG (best for Windows)
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
+review configuration options
+----------------------------
+
+* review https://moin-20.readthedocs.org/en/latest/admin/configure.html
+* following the instructions in wikiconfig.py, create wikiconfig_local.py and wikiconfig_editme.py
+* configure options by editing wikiconfig_editme.py
+
+  * set superuser privileges on at least one username
+  * the default configuration options are commonly used, it is likely new bugs can be
+    found by testing different options
+
 find a task to work on
 ----------------------
 
 * look at the issue tracker to find a task you can solve
-* in case you want to work on some (non-trivial) new issue or idea that is
+* in case you find a new bug or want to work on some (non-trivial) new issue or idea that is
   not on the issue tracker, create an issue with a detailed description
 * discuss your chosen task with other developers on the #moin-dev IRC
   channel
@@ -183,7 +194,9 @@ review your working solution
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
 * fix everything you find before requesting feedback from others
-* run tests again "./m tests", check for trailing spaces, line endings "./m coding-std"
+* run tests again "./m tests"
+* check for trailing spaces, line endings, template indentation "./m coding-std"
+* if Javascript files were changed, run http://jslint.com/
 
 get feedback from other developers
 ----------------------------------

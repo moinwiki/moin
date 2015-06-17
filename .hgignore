@@ -8,6 +8,7 @@
 ^moin.egg-info/
 ^MoinMoin/_tests/wiki/data/cache/
 ^wiki/
+^wiki_local/
 ^instance/
 ^wikiconfig_.+\.py
 ^MoinMoin/translations/.*/LC_MESSAGES/messages.mo$
