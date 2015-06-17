@@ -69,16 +69,24 @@ class TestConverter(Base):
              # <page><body><div><p>First Paragraph</p><hr /><p>Second Paragraph</p></div></html>
              '/page/body/div/separator'),
             ('<div><p>Test</p></div>',
-             # <page><body><p>Test</p></page></body>
-             '/page/body[p="Test"]'),
+             # <page><body><div><p>Test</p></div></body></page>
+             '/page/body/div[p="Test"]'),
             # Test attributes conversion
             ('<div><p class="class text" style="style text" title="title text">Test</p></div>',
-             # <page><body><p html:class="class text" html:style="style text" html:title="title text">Test</p></body></page>
-             '/page/body/p[@html:class="class text"][@html:style="style text"][@html:title="title text"][text()="Test"]'),
+             # <page><body><div><p html:class="class text" html:style="style text" html:title="title text">Test</p></div></body></page>
+             '/page/body/div/p[@html:class="class text"][@html:style="style text"][@html:title="title text"][text()="Test"]'),
             # Test id
             ('<div><p id="first">Text<strong id="second">strong</strong></p></div>',
-             # <page><body><p xml:id="first">Text<strong xml:id="second">strong</strong></p></div>
-             '/page/body/p[@xml:id="first"][text()="Text"]/strong[@xml:id="second"][text()="strong"]'),
+             # <page><body><div><p xml:id="first">Text<strong xml:id="second">strong</strong></p></div></body></page>
+             '/page/body/div/p[@xml:id="first"][text()="Text"]/strong[@xml:id="second"][text()="strong"]'),
+            # test trailing div part 1
+            ('<p>Paragraph</p><div>Div</div>',
+             # <page><body><p>paragraph</p><div>div</div></body></page>
+             '/page/body[p="Paragraph"]'),
+            # test trailing div part 2
+            ('<p>Paragraph</p><div>Div</div>',
+             # <page><body><p>paragraph</p><div>div</div></body></page>
+             '/page/body/div/text()="Div"'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -240,7 +248,7 @@ class TestConverter(Base):
                 '/page/body/div/list[@item-label-generate="unordered"]/list-item[list-item-body="Item"]'),
             ('<div><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul></div>',
                 # <page><body><div><list item-label-generate="unordered"><list-item><list-item-body>Item 1</list-item-body></list-item><list-item><list-item-body>Item 2</list-item-body></list-item><list-item><list-item-body>Item 3</list-item-body></list-item></list></div></page></body></page>
-                '/page/body/list[@item-label-generate="unordered"][list-item[1]/list-item-body[text()="Item 1"]][list-item[2]/list-item-body[text()="Item 2"]][list-item[3]/list-item-body[text()="Item 3"]]'),
+                '/page/body/div/list[@item-label-generate="unordered"][list-item[1]/list-item-body[text()="Item 1"]][list-item[2]/list-item-body[text()="Item 2"]][list-item[3]/list-item-body[text()="Item 3"]]'),
         ]
         for i in data:
             yield (self.do, ) + i

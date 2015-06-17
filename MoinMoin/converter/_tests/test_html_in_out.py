@@ -65,9 +65,9 @@ class TestConverter(Base):
             ('<html><div><p>First Line<br />Second line</p></div></html>',
              '/div/div/p[1]/br'),
             ('<div><p>Test</p></div>',
-             '/div[p="Test"]'),
+             '/div/div[p="Test"]'),
             ('<div><p class="class" title="title">Test</p></div>',
-             '/div/p[@class="class"][@title="title"][text()="Test"]'),
+             '/div/div/p[@class="class"][@title="title"][text()="Test"]'),
         ]
         for i in data:
             yield(self.do, ) + i
@@ -177,12 +177,12 @@ class TestConverter(Base):
             ('<html><div><dir><li>Item</li></dir></div></html>',
                 '/div/div/ul[li="Item"]'),
             ('<div><ul><li>Item 1</li><p>Pouet</p><li>Item 2</li><li>Item 3</li></ul></div>',
-                '/div/ul[li[1]="Item 1"][li[2]="Item 2"][li[3]="Item 3"]'),
+                '/div/div/ul[li[1]="Item 1"][li[2]="Item 2"][li[3]="Item 3"]'),
             # Test for bug with line return and spaces
             ('<div><ul><li>\n Item 1</li>\n<li>\n Item 2</li>\n<li>\n Item 3</li>\n</ul></div>',
-                '/div/ul[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
+                '/div/div/ul[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
             ('<div><ol><li>\n Item 1</li>\n<li>\n Item 2</li>\n<li>\n Item 3</li>\n</ol></div>',
-                '/div/ol[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
+                '/div/div/ol[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -207,7 +207,7 @@ class TestConverter(Base):
                 '/div/div/table/tbody/tr/td[text()="Cell"][@rowspan="2"]'),
             # Test for bug with newline between cell
             ('<div><table>\n<tbody>\n<tr>\n<td>\n Cell 1:1</td>\n<td>\n Cell 1:2</td>\n</tr>\n<tr>\n<td>\n Cell 2:1</td>\n<td>\n Cell 2:2</td>\n</tr>\n</tbody>\n</table></div>',
-                '/div/table/tbody[tr[1][td[1]="\n Cell 1:1"][td[2]="\n Cell 1:2"]][tr[2][td[1]="\n Cell 2:1"][td[2]="\n Cell 2:2"]]'),
+                '/div/div/table/tbody[tr[1][td[1]="\n Cell 1:1"][td[2]="\n Cell 1:2"]][tr[2][td[1]="\n Cell 2:1"][td[2]="\n Cell 2:2"]]'),
         ]
         for i in data:
             yield (self.do, ) + i
