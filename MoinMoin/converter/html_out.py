@@ -573,11 +573,13 @@ class Converter(object):
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
         ret = html.table(attrib=attrib)
+        has_footer = any((x for x in elem if x.tag.name == 'table-footer'))
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 and item.tag.name == 'table-body':
+                if len(elem) > 1 and item.tag.name == 'table-body' and not has_footer:
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
+                    # ckeditor places tfoot before tbody
                     if idx == 0:
                         # make first table-body into header
                         tag = html.thead

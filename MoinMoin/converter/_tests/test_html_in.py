@@ -47,6 +47,7 @@ class Base(object):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the HTML_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
+        print 'string_to_parse = %s' % string_to_parse
         assert (tree.xpath(path, namespaces=self.namespaces_xpath))
 
 
@@ -177,15 +178,16 @@ class TestConverter(Base):
 
     def test_link(self):
         data = [
-            ('<html><p><a href="uri:test">Test</a></p></html>',
-                # <page><body><p><a xlink:href>Test</a></p></body></page>
-                '/page/body/p/a[text()="Test"][@xlink:href="uri:test"]'),
+            ('<html><p><a href="http:test">Test</a></p></html>',
+                # <page><body><p><a xlink:href="http:test">Test</a></p></body></page>
+                '/page/body/p/a[text()="Test"][@xlink:href="http:test"]'),
             ('<html><base href="http://www.base-url.com/" /><body><div><p><a href="myPage.html">Test</a></p></div></body></html>',
                 # <page><body><div><p><a xlink:href="http://www.base-url.com/myPage.html">Test</a></p></div></body></page>
                 '/page/body/div/p/a[@xlink:href="http://www.base-url.com/myPage.html"]'),
-            ('<html><p><a href="javascript:alert(\'hi\')">Test</a></p></html>',
-                # <page><body><p>Test</p></body></page>
-                '/page/body/p/[text()="Test"]'),
+            # verify invalid or forbidden uri schemes are removed
+            ('''<html><p><a href="javascript:alert('hi')">Test</a></p></html>''',
+                # <page><body><p>javascript:alert('hi')</p></body></page>
+                '''/page/body/p[text()="javascript:alert('hi')"]'''),
         ]
         for i in data:
             yield (self.do, ) + i

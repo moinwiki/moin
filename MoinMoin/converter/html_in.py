@@ -234,6 +234,8 @@ class Converter(object):
         logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
         return self.do_children(element)
 
+    # TODO: if this is useful, it should be documented. Normally <BASE..> tags are in <HEAD> and browser modifies relative urls.
+    # Here the base_url is used to create fully qualified links within A, OBJECT, and IMG tags.
     def visit_xhtml_base(self, element):
         """
         Function to store the base url for the relative url of the document
@@ -361,6 +363,7 @@ class Converter(object):
             if allowed_uri_scheme(href):
                 attrib[key] = href
             else:
+                # invalid uri schemes like: <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
                 return href
         return self.new_copy(moin_page.a, element, attrib)
 
