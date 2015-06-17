@@ -21,6 +21,7 @@ import hashlib
 from StringIO import StringIO
 
 from flask import current_app as app
+from flask import g as flaskg
 from flask.ext.script import Command, Option
 
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
@@ -73,42 +74,45 @@ class ImportMoin19(Command):
     ]
 
     def run(self, data_dir=None):
+        flaskg.add_lineno_attr = False
+        flaskg.item_name2id = {}
+        userid_old2new = {}
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
-        print "Users..."
-        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
-            backend.store(rev.meta, rev.data)
 
-        print "Pages/Attachments..."
+        print "\nConverting Pages/Attachments...\n"
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
             backend.store(rev.meta, rev.data)
+            # item_name to itemid xref required for migrating user subscriptions
+            flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-        print "Building the index..."
-        indexer.rebuild()
+        print "\nConverting Users...\n"
+        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
+            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
+            backend.store(rev.meta, rev.data)
 
-        print "Fix userids..."
-        userid_map = dict([(rev.meta[UID_OLD], rev.meta[ITEMID])
-                           for rev in indexer.documents(contenttype=CONTENTTYPE_USER)])
+        print "\nConverting Revision Editors...\n"
         for mountpoint, revid in backend:
             meta, data = backend.retrieve(mountpoint, revid)
             if USERID in meta:
                 try:
-                    meta[USERID] = userid_map[meta[USERID]]
+                    meta[USERID] = userid_old2new[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print "lost {0!r}".format(meta[USERID])
+                    print "Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
                 meta.pop(UID_OLD, None)  # not needed any more
                 backend.store(meta, data)
 
-        print "Rebuilding the index..."
+        print "\nRebuilding the index..."
         indexer.close()
         indexer.destroy()
         indexer.create()
         indexer.rebuild()
         indexer.open()
+        print "Finished conversion!"
 
 
 class KillRequested(Exception):
@@ -147,6 +151,10 @@ class PageBackend(object):
             itemname = unquoteWikiname(f)
             try:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname)
+            except KillRequested:
+                pass  # a message was already output
+            except (IOError, AttributeError):
+                print "    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))
             except Exception as err:
                 logging.exception("PageItem {0!r} raised exception:".format(itemname))
             else:
@@ -164,6 +172,7 @@ class PageItem(object):
         self.backend = backend
         self.name = itemname
         self.path = path
+        print "Processing item {0}".format(itemname)
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -173,7 +182,9 @@ class PageItem(object):
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
-            PageRevision(self, self.current, revpath)  # will raise exception if killing is requested
+            if not os.path.exists(revpath):
+                print "    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)
+                raise KillRequested('deleted_mode wants killing/ignoring')
 
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
@@ -213,13 +224,12 @@ class PageRevision(object):
         itemid = item.itemid
         editlog = item.editlog
         self.backend = item.backend
+        editlog.to_begin()
         # we just read the page and parse it here, makes the rest of the code simpler:
         try:
             with codecs.open(path, 'r', CHARSET) as f:
                 content = f.read()
         except (IOError, OSError):
-            if revno == item.current and self.backend.deleted_mode == DELETED_MODE_KILL:
-                raise KillRequested('deleted_mode wants killing/ignoring')
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
             # we prepare some values for the case we don't find a better value in edit-log:
             meta = {MTIME: -1,  # fake, will get 0 in the end
@@ -242,7 +252,8 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                if 0 <= revno <= item._fs_current:
+                print "    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)
+                if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: u'SAVE/DELETE',
                     }
@@ -253,6 +264,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
+                print "    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -282,6 +294,7 @@ class PageRevision(object):
         acl_line = self.meta.get(ACL)
         if acl_line is not None:
             self.meta[ACL] = regenerate_acl(acl_line)
+        print "    Processed revision {0} of item {1}, revid = {2}".format(revno, item_name, meta[REVID])
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
@@ -365,7 +378,7 @@ class EditLog(LogFile):
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
         result[MTIME] = int(long(result[MTIME] or 0) / 1000000)  # convert usecs to secs
-        result['__rev'] = int(result['__rev']) - 1  # old storage is 1-based, we want 0-based
+        result['__rev'] = int(result['__rev'])
         result[NAME] = [unquoteWikiname(result[NAME])]
         action = result[ACTION]
         extra = result[EXTRA]
@@ -395,7 +408,6 @@ class EditLog(LogFile):
             if meta['__rev'] == revno:
                 break
         else:
-            self.to_begin()
             raise KeyError
         del meta['__rev']
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
@@ -407,7 +419,7 @@ class EditLog(LogFile):
     def find_attach(self, attachname):
         """ Find metadata for some attachment name in the edit-log. """
         for meta in self.reverse():  # use reverse iteration to get the latest upload's data
-            if (meta['__rev'] == 99999998 and  # 99999999-1 because of 0-based
+            if (meta['__rev'] == 99999999 and
                     meta[ACTION] == 'ATTNEW' and
                     meta[EXTRA] == attachname):
                 break
@@ -532,8 +544,10 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
+        print "Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])
+
         # transfer subscribed_pages to subscription_patterns
-        metadata[SUBSCRIPTIONS] = migrate_subscriptions(metadata.get('subscribed_pages', []))
+        metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
 
         # convert bookmarks from usecs (and str) to secs (int)
         metadata[BOOKMARKS] = [(interwiki, int(long(bookmark) / 1000000))
@@ -594,6 +608,32 @@ class UserRevision(object):
 
         return metadata
 
+    def migrate_subscriptions(self, subscribed_items):
+        """ Transfer subscribed_items meta to subscriptions meta
+
+        WikiFarmNames are converted to namespace names.
+
+        :param subscribed_items: a list of moin19-format subscribed_items
+        :return: subscriptions
+        """
+        RECHARS = ur'.^$*+?{\|('
+        subscriptions = []
+        for subscribed_item in subscribed_items:
+            print "    User is subscribed to {0}".format(subscribed_item)
+            if flaskg.item_name2id.get(subscribed_item):
+                subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
+            else:
+                wikiname = ""
+                if ":" in subscribed_item:
+                    wikiname, subscribed_item = subscribed_item.split(":", 1)
+
+                if subscribed_item.endswith(".*") and len(subscribed_item) > 2 and not any(x in subscribed_item[:-2] for x in RECHARS):
+                    subscriptions.append("{0}:{1}:{2}".format(NAMEPREFIX, wikiname, subscribed_item[:-2]))
+                else:
+                    subscriptions.append("{0}:{1}:{2}".format(NAMERE, wikiname, subscribed_item))
+
+        return subscriptions
+
 
 class UserBackend(object):
     """
@@ -633,19 +673,3 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, unicode(hash.hexdigest())
-
-
-def migrate_subscriptions(subscribed_items):
-    """ Transfer subscribed_items meta to subscriptions meta
-
-    :param subscribed_items: a list of moin19-format subscribed_items
-    :return: subscriptions
-    """
-    subscriptions = []
-    for subscribed_item in subscribed_items:
-        # TODO: try to determine if pagename is not a regexp and create
-        # a subscription_id with a NAME keyword
-        # TODO: support interwiki wikiname
-        wikiname, pagename = subscribed_item.split(":", 1)
-        subscriptions.append("{0}::{2}".format(NAMERE, pagename))
-    return subscriptions
