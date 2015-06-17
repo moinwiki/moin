@@ -238,7 +238,7 @@ class TestConverter(Base):
     def test_admonition(self):
         data = [
             ('<page><body><admonition page:type="warning"><p>text</p></admonition></body></page>',
-             '/div/div[@class="warning"][p="text"]'),
+                '/div/div[@class="warning"][p="text"]'),
         ]
         for i in data:
             yield (self.do, ) + i

@@ -58,36 +58,36 @@ class TestConverter(Base):
     def test_base(self):
         data = [
             ('<html><div><p>Test</p></div></html>',
-             # <page><body><div><p>Test</p></div></body></page>
-             '/page/body/div[p="Test"]'),
+                # <page><body><div><p>Test</p></div></body></page>
+                '/page/body/div[p="Test"]'),
             ('<html><div><p>First paragraph</p><h1>Title</h1><p><em>Paragraph</em></p></div></html>',
-             # <page><body><div><p>First paragraph</p><h outline-level="1">Title</h><p><emphasis>Paragraph</em></p></div></page></body>
-             '/page/body/div/p[2][emphasis="Paragraph"]'),
+                # <page><body><div><p>First paragraph</p><h outline-level="1">Title</h><p><emphasis>Paragraph</em></p></div></page></body>
+                '/page/body/div/p[2][emphasis="Paragraph"]'),
             ('<html><div><p>First Line<br />Second Line</p></div></html>',
-             # <page><body><div>First Line<line-break />Second Line></div></body></page>
-             '/page/body/div/p[1]/line-break'),
+                # <page><body><div>First Line<line-break />Second Line></div></body></page>
+                '/page/body/div/p[1]/line-break'),
             ('<html><div><p>First Paragraph</p><hr /><p>Second Paragraph</p></div></html>',
-             # <page><body><div><p>First Paragraph</p><hr /><p>Second Paragraph</p></div></html>
-             '/page/body/div/separator'),
+                # <page><body><div><p>First Paragraph</p><hr /><p>Second Paragraph</p></div></html>
+                '/page/body/div/separator'),
             ('<div><p>Test</p></div>',
-             # <page><body><div><p>Test</p></div></body></page>
-             '/page/body/div[p="Test"]'),
+                # <page><body><div><p>Test</p></div></body></page>
+                '/page/body/div[p="Test"]'),
             # Test attributes conversion
             ('<div><p class="class text" style="style text" title="title text">Test</p></div>',
-             # <page><body><div><p html:class="class text" html:style="style text" html:title="title text">Test</p></div></body></page>
-             '/page/body/div/p[@html:class="class text"][@html:style="style text"][@html:title="title text"][text()="Test"]'),
+                # <page><body><div><p html:class="class text" html:style="style text" html:title="title text">Test</p></div></body></page>
+                '/page/body/div/p[@html:class="class text"][@html:style="style text"][@html:title="title text"][text()="Test"]'),
             # Test id
             ('<div><p id="first">Text<strong id="second">strong</strong></p></div>',
-             # <page><body><div><p xml:id="first">Text<strong xml:id="second">strong</strong></p></div></body></page>
-             '/page/body/div/p[@xml:id="first"][text()="Text"]/strong[@xml:id="second"][text()="strong"]'),
+                # <page><body><div><p xml:id="first">Text<strong xml:id="second">strong</strong></p></div></body></page>
+                '/page/body/div/p[@xml:id="first"][text()="Text"]/strong[@xml:id="second"][text()="strong"]'),
             # test trailing div part 1
             ('<p>Paragraph</p><div>Div</div>',
-             # <page><body><p>paragraph</p><div>div</div></body></page>
-             '/page/body[p="Paragraph"]'),
+                # <page><body><p>paragraph</p><div>div</div></body></page>
+                '/page/body[p="Paragraph"]'),
             # test trailing div part 2
             ('<p>Paragraph</p><div>Div</div>',
-             # <page><body><p>paragraph</p><div>div</div></body></page>
-             '/page/body/div/text()="Div"'),
+                # <page><body><p>paragraph</p><div>div</div></body></page>
+                '/page/body/div/text()="Div"'),
         ]
         for i in data:
             yield (self.do, ) + i
