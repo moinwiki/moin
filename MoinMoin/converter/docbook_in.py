@@ -982,9 +982,9 @@ class Converter(object):
         Docbook supports 4 types of trademark: copyright, registered, trade (mark), and service (mark).
         <trademark> --> <span class="db-trademark">
         """
-        trademark_entities = {'copyright': u'\u00a9 ',
-                              'registered': u'\u00ae',
-                              'trade': u'\u2122',
+        trademark_entities = {'copyright': u'\xa9 ',  # '&copy; ',
+                              'registered': u'\xae',  # u'&reg;',
+                              'trade': u'\u2122',  # no entity name defined for superscript TM
         }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
@@ -994,6 +994,7 @@ class Converter(object):
             else:
                 children.append(trademark_entities[trademark_class])
         elif trademark_class == 'service':
+            # no entity name nor entity number defined for superscript SM
             sup_attrib = {moin_page('baseline-shift'): 'super'}
             service_mark = self.new(moin_page.span, attrib=sup_attrib,
                                     children=['SM'])
