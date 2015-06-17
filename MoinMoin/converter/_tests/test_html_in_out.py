@@ -47,6 +47,7 @@ class Base(object):
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the roundtrip : {0}".format(string_to_parse))
+        print 'string_to_parse = %s' % string_to_parse
         tree = etree.parse(StringIO.StringIO(string_to_parse))
         assert (tree.xpath(path))
 
@@ -138,8 +139,8 @@ class TestConverter(Base):
 
     def test_link(self):
         data = [
-            ('<html><p><a href="uri:test">Test</a></p></html>',
-                '/div/p/a[text()="Test"][@href="uri:test"]'),
+            ('<html><p><a href="http:test">Test</a></p></html>',
+                '/div/p/a[text()="Test"][@href="http:test"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -192,7 +193,7 @@ class TestConverter(Base):
             # ('<html><div><img src="uri:test" /></div></html>',
             #  '/page/body/div/object/@xlink:href="uri:test"'),
             ('<html><div><object data="href"></object></div></html>',
-                '/div/div/div/object[@data="href"]'),
+                '/div/div/object[@data="href"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -200,6 +201,8 @@ class TestConverter(Base):
     def test_table(self):
         data = [
             ('<html><div><table><thead><tr><td>Header</td></tr></thead><tfoot><tr><td>Footer</td></tr></tfoot><tbody><tr><td>Cell</td></tr></tbody></table></div></html>',
+                '/div/div/table[./thead/tr[td="Header"]][./tfoot/tr[td="Footer"]][./tbody/tr[td="Cell"]]'),
+            ('<html><div><table><thead><tr><td>Header</td></tr></thead><tbody><tr><td>Cell</td></tr></tbody><tfoot><tr><td>Footer</td></tr></tfoot></table></div></html>',
                 '/div/div/table[./thead/tr[td="Header"]][./tfoot/tr[td="Footer"]][./tbody/tr[td="Cell"]]'),
             ('<html><div><table><tbody><tr><td colspan="2">Cell</td></tr></tbody></table></div></html>',
                 '/div/div/table/tbody/tr/td[text()="Cell"][@colspan="2"]'),
