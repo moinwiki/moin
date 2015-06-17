@@ -89,8 +89,10 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Additional Stylesheets (after theme css, before user css #}
 {% macro stylesheets() -%}
+    {# <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='wiki_local', filename='MyStyleSheet.css') }}"> #}
 {%- endmacro %}
 
 {# Additional Javascript #}
 {% macro scripts() -%}
+    {# <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script> #}
 {%- endmacro %}

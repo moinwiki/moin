@@ -51,6 +51,26 @@ reasons is that it is a powerful language. MoinMoin itself is developed in Pytho
 and using something else would usually mean much more work when developing new
 functionality.
 
+Directory Structure
+===================
+
+Shown below are parts of the directory structure after cloning moin or unpacking a release.
+The default uses the OS file system for storage of wiki data and indexes.
+The directories and files shown are referenced in this section of documentation related to configuration::
+
+    moin-2.0/                     # clone root or unpack directory
+        contrib/
+            interwiki/
+                intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
+        docs/
+            _build/
+                html/             # local copy of moin documentation, created by running "./m docs" command
+        MoinMoin/                 # large directory containing moin application code
+        wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
+            data/                 # wiki data is stored here
+            index/                # wiki indexes are stored here
+        wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
+        wikiconfig.py             # main configuration file, modify this to add or change features
 
 wikiconfig.py Layout
 ====================
@@ -103,35 +123,44 @@ Wiki Engine Configuration
 User Interface Customization
 ============================
 
+Customizing a wiki usually requires adding a few files that contain custom templates,
+logo image, CSS, etc. To accomplish this, a directory named "wiki_local"
+is provided. One advantage of using this directory and following the examples below
+is that MoinMoin will serve the files.
+
+If desired, the name of this directory may be changed or a separate subdirectory
+for template files may be created by editing
+the wikiconfig file and changing the line that defines `template_dirs`::
+
+    template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
+
 Using a custom snippets.html template
 -------------------------------------
 The user interface or html elements that often need customization are
 defined as macros in the template file `snippets.html`.
 
-If you would like to customize some parts, you have to make a copy of the built-in
-`MoinMoin/templates/snippets.html` and configure moin so it will use your
-copy instead of the built-in one.
-
-This is done by giving a list of template directories where moin itself will
-look first::
-
-    template_dirs = ['path/to/my/templates', ]
+If you would like to customize some parts, you have to copy the built-in
+`MoinMoin/templates/snippets.html` file and save it in the `wiki_local` directory so moin
+can use your copy instead of the built-in one.
 
 To customize something, you usually have to insert your code between the
 `{% macro ... %}` and `{% endmacro %}` lines, see below for more details.
 
 Logo
 ~~~~
-To replace the default MoinMoin logo with your own logo, apply the following code::
+To replace the default MoinMoin logo with your own logo, copy your logo to
+`wiki_local` and change the logo macro to something like::
 
     {% macro logo() -%}
-    <img src="http://wiki.example.org/logos/my_logo.png" id="moin-img-logo" alt="Example Logo">
+        <img src="{{ url_for('wiki_local', filename='MyLogo.png') }}" id="moin-img-logo" alt="Logo">
     {%- endmacro %}
 
 This is recommended to allow your users to immediately recognize which wiki site they are currently on.
 
-You can even use some simple text or even nothing at all for the logo, it is not
-required to be an image.
+You can use text or even nothing at all for the logo, it is not
+required to be an image::
+
+        <span style="font-size: 50px; color: red;">My Wiki</span>
 
 Make sure the dimensions of your logo image or text fit into the layout of
 the theme(s) your wiki users are using.
@@ -212,7 +241,7 @@ You can add scripts like this::
 
     {# Additional Javascript #}
     {% macro scripts() -%}
-    <script type="text/javascript" src="http://example.org/cool.js"></script>
+    <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script>
     {% endmacro %}
 
 Adding CSS
@@ -222,9 +251,9 @@ don't like in the base theme::
 
     {# Additional Stylesheets (after theme css, before user css #}
     {% macro stylesheets() -%}
-        <link media="screen" href="http://wiki.example.org/static/company.css" title="Company CSS" rel="stylesheet" />
-        <link media="screen" href="http://wiki.example.org/static/red.css" title="Red Style" rel="alternate stylesheet" />
-        <link media="screen" href="http://wiki.example.org/static/green.css" title="Green Style" rel="alternate stylesheet" />
+        <link media="screen" href="{{ url_for('serve.files', name='wiki_local', filename='company.css') }}" title="Company CSS" rel="stylesheet" />
+        <link media="screen" href="{{ url_for('serve.files', name='wiki_local', filename='red.css') }}" title="Red Style" rel="alternate stylesheet" />
+        <link media="screen" href="{{ url_for('serve.files', name='wiki_local', filename='green.css') }}" title="Green Style" rel="alternate stylesheet" />
     {%- endmacro %}
 
 You can either add some normal css stylesheet or add a choice of alternate
@@ -245,7 +274,7 @@ force all users to use the same theme, so that your CSS displays correctly.
 Displaying user avatars
 ~~~~~~~~~~~~~~~~~~~~~~~
 Optionally, moin can display avatar images for the users, using gravatar.com
-service. To enable it, use::
+service. To enable it, add or uncomment this line in wikiconfig::
 
     user_use_gravatar = True
 
@@ -276,15 +305,18 @@ For MoinMoin we require the following XStatic Packages in setup.py:
 * `jquery_file_upload <http://pypi.python.org/pypi/XStatic-jQuery-File-Upload>`_
   loaded in the template file of index view. It allows to upload many files at once.
 
-* `JSON-js <http://pypi.python.org/pypi/XStatic-JSON-js>`_
-  JSON encoders/decoders in JavaScript.
+* `bootstrap <https://pypi.python.org/pypi/XStatic-Bootstrap>`_
+  used by the basic theme.
+
+* `font_awesome <https://pypi.python.org/pypi/XStatic-Font-Awesome>`_
+  provides text icons.
 
 * `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
   used in template file modify_text_html. A WYSIWYG editor similar to word processing
   desktop editing applications.
 
-* `svgweb <http://pypi.python.org/pypi/XStatic-svgweb>`_
-  used at base.html for enabling SVG support on many browsers.
+* `autosize <https://pypi.python.org/pypi/XStatic-autosize>`_
+  used by basic theme to adjust textarea on modify view.
 
 * `svgedit_moin <http://pypi.python.org/pypi/XStatic-svg-edit-moin>`_
   is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
@@ -297,18 +329,32 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   a Java applet loaded from template file of modify_anywikidraw. It can be used for
   editing drawings and diagrams on items.
 
+* `jquery_tablesorter <https://pypi.python.org/pypi/XStatic-JQuery.TableSorter/2.14.5.1>`_
+  used to provide client side table sorting.
+
+* `pygments <https://pypi.python.org/pypi/XStatic-Pygments>`_
+  used to style code fragments.
+
 
 These packages are imported in wikiconfig by::
 
     from xstatic.main import XStatic
-    mod_names = ['jquery', 'jquery_file_upload', 'ckeditor',
-                 'svgweb', 'svgedit_moin', 'twikidraw_moin',
-                 'anywikidraw', ]
+    # names below must be package names
+    mod_names = [
+        'jquery', 'jquery_file_upload',
+        'bootstrap',
+        'font_awesome',
+        'ckeditor',
+        'autosize',
+        'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
+        'jquery_tablesorter',
+        'pygments',
+    ]
     pkg = __import__('xstatic.pkg', fromlist=mod_names)
     for mod_name in mod_names:
         mod = getattr(pkg, mod_name)
         xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
-        serve_files.update([(xs.name, xs.base_dir)])
+        serve_files[xs.name] = xs.base_dir
 
 In a template file you access the files of such a package by its module name::
 
@@ -319,11 +365,14 @@ Adding XStatic Packages
 
 The following example shows how you can enable the additional package
 `XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
-used for mathml or latex formulas in items content.
+used for mathml or latex formulas in an item's content.
 
-Just *pip install xstatic-mathjax* add the name 'mathjax' to mod_names in wikiconfig
-and add the required fragment in base.html::
+* activate the virtual environment and do *pip install xstatic-mathjax*
+* add the name 'mathjax' to to the list of mod_names in wikiconfig
+* copy /templates/snippets.html to the wiki_local directory
+* modify the snippets.html copy by adding the required fragment to the scripts macro::
 
+    {% macro scripts() -%}
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -332,7 +381,7 @@ and add the required fragment in base.html::
     });
     </script>
     <script src="{{ url_for('serve.files', name='mathjax', filename='MathJax.js') }}"></script>
-
+    {%- endmacro %}
 
 Custom Themes
 -------------
@@ -342,10 +391,17 @@ could also write your own theme.
 Caution: developing your own theme means you also have to maintain and update it,
 which normally requires a long-term effort.
 
-.. todo::
+To add a new theme, add a new directory under MoinMoin/themes/ where the directory
+name is the name of your theme. Note the directory structure under the basic and
+modernized themes. At a minimum, a new CSS file will be required; add a file named
+theme.css in the MoinMoin/themes/MyTheme/static/css/ directory.
 
-   Add more details about custom themes
+To change the layout of the theme header, sidebar and footer, create a templates/ directory and
+copy and modify the files layout.html and show.html from either MoinMoin/templates/ or basic/templates.
 
+For many themes, modifying the three files noted above will be sufficient. If changes to
+views are required, copy additional template files. If there is a requirement to change
+the MoinMoin base code, please consider submitting a patch.
 
 Authentication
 ==============
@@ -680,39 +736,38 @@ default is this:
 Authorization
 =============
 Moin uses Access Control Lists (ACLs) to specify who is authorized to perform
-a given action.
+a given action. ACLs enable wiki administrators and possibly users to choose
+between *soft security* and *hard security*.
 
-Please note that wikis usually make much use of so-called *soft security*,
-which means that they are rather open and give freedom to users, while at the same time
-providing the means to revert any damage that may have been caused.
-
-*Hard security* means that one would lock items, etc. so that no damage can possibly be done.
-
-Moin's default configuration tries to give a sane compromise of both soft
-and hard security. However, you may need different settings depending on the situation that the wiki
-admin, wiki owner or wiki community will have to deal with.
-
-So keep in mind:
-
-* if your wiki is rather open, you might make it easy to contribute, e.g. a
+* if your wiki is rather open (soft security), you make it easy to contribute, e.g. a
   user who is not a regular user of your wiki could fix some typos he has just
-  found. However, a hostile user or bot might also put some spam into your wiki
-  with the ability to be able to revoke the spam later.
-* if your wiki is rather closed, e.g. you require every user to first apply for an
+  found. However, a hostile user or bot could easily add spam into your wiki.
+  In this case, an active user community can quickly detect and remove the spam.
+* if your wiki is rather closed (hard security), e.g. you require every user to first apply for an
   account and to log in before being able to do changes, you will rarely get
-  contributions from casual users and maybe also less from members of your
-  community. But, getting spam is then less likely.
+  contributions from casual users and possibly discourage contributions from
+  members of your community. But, getting spam is then less likely.
+* ACLs provide the means of using both methods. Key wiki items that are frequently viewed
+  and infrequently changed may be updated only by selected users while other items that
+  are frequently changed may be updated by any user.
+
+Moin's default configuration makes use of *soft security* which is in use by many wikis to
+maximize collaboration among its user community.
+
+Wiki administrators may harden security by reconfiguring the default ACLs. Later, as wiki
+items are created and updated, the default configuration may be overridden by setting
+an ACL on the item.
+
+Hardening security implies that there will be a registration and login process that enables
+individual users to gain privileges. While wikis with a small user community may function
+with ACLs specifying only usernames, larger wikis will make use of ACLs that reference
+groups or lists of usernames. The definitions of built-in groups and creation of groups are
+discussed below under the headings `ACLs - special groups` and `Groups`.
 
 
 ACL for functions
 -----------------
-This ACL controls access to some specific functions / views of moin::
-
-    # the default value of acl_rights_functions for information, you usually do not have to change it:
-    #acl_rights_functions = ['superuser', 'notextcha', ]
-    acl_functions = u'+YourName:superuser TrustedEditorGroup:notextcha'
-
-Supported capabilities (rights):
+Moin has two built in functions that are protected by ACLs: superuser and notextcha:
 
 * superuser - used for miscellaneous administrative functions. Give this only to
   highly trusted people
@@ -720,23 +775,24 @@ Supported capabilities (rights):
   won't get questions to answer. Give this to known and trusted users who
   regularly edit in your wiki.
 
+Example::
+
+    acl_functions = u'YourName:superuser TrustedEditorGroup:notextcha'
+
 ACLs for contents
 -----------------
-These ACLs control access to contents stored in the wiki, they are configured
-per storage backend (see storage backend docs) and optionally in the metadata of wiki
-items::
+This type of ACL controls access to content stored in the wiki. Wiki items
+may have ACLs defined in their metadata. Within wikiconfig, ACLs are specified
+per namespace and storage backend (see storage backend docs for details). The
+example below shows an entry for the default namespace::
 
-    # the default value of acl_rights_contents for information, you usually do not have to change it:
-    #acl_rights_contents = ['read', 'write', 'create', 'destroy', 'admin', ]
-    ... backend configuration ...
-    ... before=u'YourName:read,write,create,destroy,admin',
-    ... default=u'All:read,write,create',
-    ... after=u'',
-    ... hierarchic=False,
+    default_acl=dict(before=u'SuperUser:read,write,create,destroy,admin',
+                     default=u'TrustedEditorGroup:read,write,create,destroy,admin Known:read,write,create',
+                     after=u'All:read',
+                     hierarchic=False, ),
 
-Usually, you have a `before`, `on item` or `default` and a `after` ACL which
-are processed exactly in this order. The `default` ACL is only used if no ACL
-is specified in the metadata of the item in question.
+As shown above, `before`, `default` and  `after` ACLs are specified. The `default` ACL
+is only used if no ACL is specified in the metadata of the target item.
 
 .. digraph:: acl_order
 
@@ -744,13 +800,14 @@ is specified in the metadata of the item in question.
    "before" -> "item acl from metadata (if specified)" -> "after";
    "before" -> "default (otherwise)"                   -> "after";
 
-How to use before/default/after:
+How to use before, default, and after:
 
 * `before` is usually used to force something, for example if you want to give some
-  wiki admin all permissions indiscriminately
-* `default` is the behavior if nothing special has been specified, ie no ACL in the
-  item's metadata
-* `after` is rarely used and when it is, it is used to "not forget something unless otherwise specified".
+  wiki admin all permissions indiscriminately; in the example above, no one can create an item
+  ACL rule locking out SuperUser's access
+* `default` is the behavior if no ACL was created in the item's metadata; above, only members of a trusted group can write ACL rules or delete items, and a user must be logged in (known) to write or create items
+* `after` is rarely used and when it is, it is used to "not forget something unless otherwise specified";
+  above, all users may read all items unless blocked (or given more privileges) by an ACL on the target item
 
 When configuring content ACLs, you can choose between standard (flat) ACL
 processing and hierarchic ACL processing. Hierarchic processing means that
@@ -772,7 +829,8 @@ Supported capabilities (rights):
 ACLs - special groups
 ---------------------
 In addition to the groups provided by the group backend(s), there are some
-special group names available within ACLs:
+special group names available within ACLs. These names are case-sensitive
+and must be capitalized as shown:
 
 * All - a virtual group containing every user
 * Known - a virtual group containing every logged-in user
@@ -794,7 +852,7 @@ An ACL is processed from left to right, where the first left-side match counts.
 
 Example::
 
-    u"SuperMan:read,write,create,destroy,admin All:read,write"
+    u"SuperMan,WonderWoman:read,write,create,destroy,admin All:read,write"
 
 If "SuperMan" is currently logged in and moin processes this ACL, it will find
 a name match in the first entry. If moin wants to know whether he may destroy,
@@ -828,8 +886,6 @@ Notes:
 
 * A right that is not explicitly given by an applicable ACL is denied.
 
-* For most ACLs there are built-in defaults which give some limited rights.
-
 ACLs - entry prefixes
 ---------------------
 To make the system more flexible, there are two ways to modify an ACL entry: prefixing it with a '+' or a '-'.
@@ -857,8 +913,8 @@ the answer will be "yes".
 
 If "Idiot" is currently logged in and moin wants to know whether he may write,
 it will find no match in the first entry, but the second entry will match. As
-the prefix is '-', the answer will be "no" and it will not even proceed and
-look at the third entry.
+the prefix is '-', the answer will be "no". Because a match has been made,
+the third entry is not processed.
 
 Notes:
 
@@ -916,6 +972,7 @@ Tips for configuration:
 * you should at least give textchas for 'en' or for your language_default, if
   that is not 'en', as this will be used as fallback if MoinMoin does not find
   a textcha in the user's language
+* if a determined bot learns the answers, create new textchas
 
 In your wiki config, do something like this::
 
@@ -957,26 +1014,55 @@ If you don't configure these secrets, moin will detect this and reuse Flask's
 SECRET_KEY for all secrets it needs.
 
 
-Groups and Dicts
-================
-Moin can get group and dictionary information from some supported backends
-like the wiki configuration or wiki items.
+Groups
+======
 
-A group is a list of unicode names. It can be used for any application:
-one application is defining user groups for usage in ACLs.
+Group names can be used in place of usernames within ACLs.
+There are three types of groups: WikiGroups, ConfigGroups, and CompositeGroups.
+A group is a list of unicode names, where a name may be either a username or
+another group name.
 
-A dict is a mapping of unicode keys to unicode values. It can be used for any
-application. Currently, it is not used by moin itself.
+Use of groups will reduce the administrative effort required to maintain ACL rules,
+especially in wikis with a large community of users. Rather than change multiple
+ACL rules to reflect a new or departing member, a group may be updated. To achieve
+maximum benefit, some advance planning is required to determine the kind and names
+of groups suitable for your wiki.
+
+The wiki server must be restarted to reflect updates made to ConfigGroups
+and CompositeGroups.
+
+Names of WikiGroup items must end in "Group". There is no such requirement for the
+names of ConfigGroups or CompositeGroups.
 
 Group backend configuration
 ---------------------------
-The WikiGroups backend gets groups from wiki items and is used by default::
+
+The WikiGroups backend is enabled by default so there is no need to add the following to wikiconfig::
 
     def groups(self):
         from MoinMoin.datastruct import WikiGroups
         return WikiGroups()
 
-The ConfigGroups backend uses groups defined in the configuration file::
+To create a WikiGroup that can be used in an ACL rule:
+
+* Create a wiki item with a name ending in "Group" (the content of the item is not relevant)
+* Edit the metadata and add an entry for "usergroup" under the heading "Extra Metadata (JSON)"::
+
+    {
+      "itemid": "36b6cd973d7e4daa9cfa265dcf751e79",
+      "namespace": "",
+      "usergroup": [
+        "JaneDoe",
+        "JohnDoe"
+      ]
+    }
+
+* Use the new group name in one or more ACL rules.
+
+
+The ConfigGroups backend uses groups defined in the configuration file. Adding the
+following to wikiconfig creates an EditorGroup and an AdminGroup and prevents
+the use of any WikiGroups::
 
     def groups(self):
         from MoinMoin.datastruct import ConfigGroups
@@ -984,52 +1070,17 @@ The ConfigGroups backend uses groups defined in the configuration file::
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
         return ConfigGroups(groups)
 
-CompositeGroups can use, for the most part, any combination of backends. The
-following is an example of using the ConfigGroups and WikiGroups backends::
+CompositeGroups enable both ConfigGroups and WikiGroups to be used. The example
+below defines the same ConfigGroups used above and enables the use of WikiGroups.
+Note that order matters! Since ConfigGroups backend is first in the return tuple,
+the EditGroup and AdminGroup defined below will be used should there be WikiGroup
+items with the same names::
 
     def groups(self):
         from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
         groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
-
-        # Here ConfigGroups and WikiGroups backends are used.
-        # Note that order matters! Since ConfigGroups backend is mentioned first
-        # EditorGroup will be retrieved from it, not from WikiGroups.
         return CompositeGroups(ConfigGroups(groups), WikiGroups())
-
-
-Dict backend configuration
---------------------------
-
-The WikiDicts backend gets dicts from wiki items and is used by default::
-
-    def dicts(self, request):
-        from MoinMoin.datastruct import WikiDicts
-        return WikiDicts(request)
-
-The ConfigDicts backend uses dicts defined in the configuration file::
-
-    def dicts(self, request):
-        from MoinMoin.datastruct import ConfigDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
-        return ConfigDicts(request, dicts)
-
-The CompositeDicts backend can use any combination of backends. The following
-is an example of using the ConfigDicts and WikiDicts backends::
-
-    def dicts(self, request):
-        from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
-        return CompositeDicts(request,
-                              ConfigDicts(request, dicts),
-                              WikiDicts(request))
-
 
 Storage
 =======
