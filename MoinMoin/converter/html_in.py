@@ -36,7 +36,7 @@ class Converter(object):
     }
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote'])
+    symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote', 'span'])
 
     # HTML tags to define a list, except dl which is a little bit different
     list_tags = set(['ul', 'dir', 'ol'])
@@ -369,7 +369,7 @@ class Converter(object):
         <img src="URI" /> --> <object xlink:href="URI />
         """
         key = xlink('href')
-        attrib = {}
+        attrib = self.convert_attributes(element)
         if self.base_url:
             attrib[key] = ''.join([self.base_url, element.get(html.src)])
         else:
@@ -524,6 +524,7 @@ class Converter(object):
         return ET.Element(moin_page.list_item, attrib={}, children=[list_item_body])
 
     def visit_xhtml_table(self, element):
+        attrib = self.convert_attributes(element)
         # we should not have any strings in the child
         list_table_elements = []
         for child in element:
@@ -534,7 +535,7 @@ class Converter(object):
                 elif not isinstance(r, (list, tuple)):
                     r = (r, )
                 list_table_elements.extend(r)
-        return ET.Element(moin_page.table, attrib={}, children=list_table_elements)
+        return ET.Element(moin_page.table, attrib=attrib, children=list_table_elements)
 
     def visit_xhtml_thead(self, element):
         return self.new_copy(moin_page.table_header, element, attrib={})

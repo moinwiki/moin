@@ -15,6 +15,7 @@ from __future__ import absolute_import, division
 import re
 
 from flask import request
+from flask import current_app as app
 from emeraldtree import ElementTree as ET
 
 from MoinMoin import wikiutil
@@ -28,6 +29,22 @@ from . import default_registry
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+# strings not allowed in style attributes
+SUSPECT = set(('/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', ))
+
+
+def style_attr_filter(style):
+    """
+    If allow_style_attributes option is True check style attribute for suspect strings, else return ''.
+    """
+    if app.cfg.allow_style_attributes:
+        s = "".join(style.strip().lower().split())
+        if any(x in s for x in SUSPECT):
+            return ' /*style suppressed, failed test for suspect strings*/ '
+        return style
+    return ''
 
 
 def convert_getlink_to_showlink(href):
@@ -116,6 +133,8 @@ class Attributes(object):
         new_default = {}
 
         for key, value in self.element.attrib.iteritems():
+            if key == html.style:
+                value = style_attr_filter(value)
             if key.uri == moin_page:
                 # We never have _ in attribute names, so ignore them instead of
                 # create ambigues matches.
@@ -382,14 +401,21 @@ class Converter(object):
 
     def visit_moinpage_object(self, elem):
         """
-        elem of type img are converted to img tags here, others are left as object tags
+        elem of type img are converted to img tags here, others are left as object tags.
+
+        We do not use Attributes.convert to convert all attributes, but copy selected attributes
+        and follow html5 validation rules to place right attributes within img and object tags.
         """
         href = elem.get(xlink.href, None)
         attrib = {}
-        whitelist = ['width', 'height', 'alt', 'class', 'data-href']
+
+        whitelist = ['width', 'height', 'alt', 'class', 'data-href', 'style']
         for key in elem.attrib:
             if key.name in whitelist:
-                attrib[key] = elem.attrib[key]
+                if key.name == 'style':
+                    attrib[key] = style_attr_filter(elem.attrib[key])
+                else:
+                    attrib[key] = elem.attrib[key]
         mimetype = Type(_type=elem.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
         if elem.get(moin_page.type_):
             del elem.attrib[moin_page.type_]

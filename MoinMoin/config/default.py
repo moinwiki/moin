@@ -349,6 +349,7 @@ options_no_group_name = {
             # vary rounds parameter randomly when creating new hashes...
             # all__vary_rounds=0.1,
         ), "passlib CryptContext arguments, see passlib docs"),
+        ('allow_style_attributes', False, 'trust editors to not abuse style attribute security holes within HTML (CKEditor) or Markdown items'),
     )),
     # ==========================================================================
     'spam_leech_dos': ('Anti-Spam / Leech / DOS', 'These settings help limiting ressource usage and avoiding abuse.', (
