@@ -60,15 +60,15 @@ class TestConverter(Base):
     def test_base(self):
         data = [
             ('<html><div><p>Test</p></div></html>',
-             '/div/div[p="Test"]'),
+                '/div/div[p="Test"]'),
             ('<html><div><p>First paragraph</p><h1>Title</h1><p><em>Paragraph</em></p></div></html>',
-             '/div/div/p[2][em="Paragraph"]'),
+                '/div/div/p[2][em="Paragraph"]'),
             ('<html><div><p>First Line<br />Second line</p></div></html>',
-             '/div/div/p[1]/br'),
+                '/div/div/p[1]/br'),
             ('<div><p>Test</p></div>',
-             '/div/div[p="Test"]'),
+                '/div/div[p="Test"]'),
             ('<div><p class="class" title="title">Test</p></div>',
-             '/div/div/p[@class="class"][@title="title"][text()="Test"]'),
+                '/div/div/p[@class="class"][@title="title"][text()="Test"]'),
         ]
         for i in data:
             yield(self.do, ) + i
@@ -76,9 +76,9 @@ class TestConverter(Base):
     def test_title(self):
         data = [
             ('<html><h2>Test</h2></html>',
-             '/div[h2="Test"]'),
+                '/div[h2="Test"]'),
             ('<html><h6>Test</h6></html>',
-             '/div[h6="Test"]'),
+                '/div[h6="Test"]'),
         ]
         for i in data:
             yield (self.do, ) + i
