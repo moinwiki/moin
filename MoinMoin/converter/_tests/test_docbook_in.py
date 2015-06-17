@@ -56,6 +56,7 @@ class Base(object):
         string_to_parse = self.handle_output(input)
         logging.debug(u"After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO.StringIO(string_to_parse))
+        print 'string_to_parse = %s' % string_to_parse  # provide a clue for failing tests
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
     def do_nonamespace(self, input, xpath_query):
@@ -325,20 +326,20 @@ class TestConverter(Base):
         data = [
             # Test for image object
             ('<article><para><inlinemediaobject><imageobject><imagedata fileref="test.png"/></imageobject></inlinemediaobject></para></article>',
-                # <page><body><div html:class="article"><p><object xlink:href="test.png" type='image/' /></p></div></body></page>
-                '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="test.png"][@type="image/"]'),
+                # <page><body><div html:class="db-article"><p><span html:class="db-inlinemediaobject"><object type="image/" html:alt="test.png" html:class="moin-transclusion" html:data-href="test.png" xlink:href="+get/test.png" /></span></p></div></body></page>
+                '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="+get/test.png"][@type="image/"]'),
             # Test for audio object
             ('<article><para><inlinemediaobject><audioobject><audiodata fileref="test.wav"/></audioobject></inlinemediaobject></para></article>',
-                # <page><body><div html:class="article"><p><object xlink:href="test.wav" type='audio/' /></p></div></body></page>
-                '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="test.wav"][@type="audio/"]'),
+                # <page><body><div html:class="db-article"><p><span html:class="db-inlinemediaobject"><object type="audio/" html:alt="test.wav" html:class="moin-transclusion" html:data-href="test.wav" xlink:href="+get/test.wav" /></span></p></div></body></page>
+                '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="+get/test.wav"][@type="audio/"]'),
             # Test for video object
             ('<article><para><mediaobject><videoobject><videodata fileref="test.avi"/></videoobject></mediaobject></para></article>',
-                # <page><body><div html:class="article"><p><object xlink:href="test.avi" type='video/' /></p></div></body></page>
-                '/page/body/div/p/div[@html:class="db-mediaobject"]/object[@xlink:href="test.avi"][@type="video/"]'),
+                # <page><body><div html:class="db-article"><p><div html:class="db-mediaobject"><object type="video/" html:alt="test.avi" html:class="moin-transclusion" html:data-href="test.avi" xlink:href="+get/test.avi" /></div></p></div></body></page>
+                '/page/body/div/p/div[@html:class="db-mediaobject"]/object[@xlink:href="+get/test.avi"][@type="video/"]'),
             # Test for image object with different imagedata
             ('<article><mediaobject><imageobject><imagedata fileref="figures/eiffeltower.eps" format="EPS"/></imageobject><imageobject><imagedata fileref="figures/eiffeltower.png" format="PNG"/></imageobject><textobject><phrase>The Eiffel Tower</phrase> </textobject><caption><para>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</para>  </caption></mediaobject></article>',
-                # <page><body><div html:class="article"><div html:class="db-mediaobject"><object xlink:href="figures/eiffeltowe.png" /></div></div></body></page>
-                '/page/body/div/div[@html:class="db-mediaobject"]/object[@xlink:href="figures/eiffeltower.png"][@type="image/png"]'),
+                # <page><body><div html:class="db-article"><div html:class="db-mediaobject"><span><object type="image/png" html:alt="figures/eiffeltower.png" html:class="moin-transclusion" html:data-href="figures/eiffeltower.png" xlink:href="+get/figures/eiffeltower.png" /><span class="db-caption"><p>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</p></span></span></div></div></body></page>
+                '/page/body/div/div[@html:class="db-mediaobject"]/span/object[@xlink:href="+get/figures/eiffeltower.png"][@type="image/png"]'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -351,8 +352,8 @@ class TestConverter(Base):
                 '/page/body/div/p[text()="text"][emphasis="emphasis"]'),
             # EMPHASIS role='strong' --> STRONG
             ('<article><para>text<emphasis role="strong">strong</emphasis></para></article>',
-                # <page><body><div html:class="article"><p>text<strong>strong</strong></p></div></body></page>
-                '/page/body/div/p[text()="text"][strong="strong"]'),
+                # <page><body><div html:class="db-article"><p>text<emphasis>strong</emphasis></p></div></body></page>
+                '/page/body/div/p[text()="text"]/emphasis[text()="strong"]'),
             # SUBSCRIPT --> SPAN baseline-shift = 'sub'
             ('<article><para><subscript>sub</subscript>script</para></article>',
                 # <page><body><div html:class="article"><p>script<span baseline-shift="sub">sub</span></p></div></body></page>
@@ -398,8 +399,14 @@ class TestConverter(Base):
     def test_trademark(self):
         data = [
             ('<article><para><trademark class="copyright">MoinMoin</trademark></para></article>',
-                # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin&copy;</span></p></div></body></page>
-                '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin&copy;"]'),
+                # <page><body><div html:class="db-article"><p><span html:class="db-trademark">\xa9  MoinMoin</span></p></div></body></page>
+                u'/page/body/div/p/span[@html:class="db-trademark"][text()="\xa9 MoinMoin"]'),
+            ('<article><para><trademark class="registered">Nutshell Handbook</trademark></para></article>',
+                # <page><body><div html:class="db-article"><p><span html:class="db-trademark">Nutshell Handbook\xae</span></p></div></body></page>
+                u'/page/body/div/p/span[@html:class="db-trademark"][text()="Nutshell Handbook\xae"]'),
+            ('<article><para><trademark class="trade">Foo Bar</trademark></para></article>',
+                # <page><body><div html:class="db-article"><p><span html:class="db-trademark">Foo Bar\u2122</span></p></div></body></page>
+                u'/page/body/div/p/span[@html:class="db-trademark"][text()="Foo Bar\u2122"]'),
             ('<article><para><trademark class="service">MoinMoin</trademark></para></article>',
                 # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin<span baseline-shift="super">SM</span></span></p></div></body></page>
                 '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin"]/span[@baseline-shift="super"][text()="SM"]'),
