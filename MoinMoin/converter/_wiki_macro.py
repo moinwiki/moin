@@ -104,7 +104,8 @@ class ConverterMacro(object):
         if args:
             try:
                 level = int(args[0])
-            except ValueError:
+                assert 0 < level < 7
+            except (ValueError, AssertionError):
                 pass
             else:
                 attrib[moin_page.outline_level] = str(level)
