@@ -28,8 +28,7 @@ from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags
 from MoinMoin.items.content import NonExistentContent
 from MoinMoin.util.interwiki import CompositeName
-
-
+from MoinMoin.constants.forms import *
 ITEMTYPE_TICKET = u'ticket'
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
@@ -64,7 +63,8 @@ OptionalUserReference = Reference.to(
 
 
 class TicketMetaForm(Form):
-    summary = Text.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
+    summary = Text.using(label=L_("Summary"), optional=False).with_properties \
+            (widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))

@@ -16,6 +16,14 @@
     <div class="moin-ticket-metadata">
         <h2>{{ _("Edit metadata") }}</h2>
         <dl>
+            <dt>
+                <label>{{ _("Summary") }}</label>
+            </dt>
+            <dd>
+                {{ forms.render(form['meta']['summary']) }}
+            </dd>
+        </dl>
+        <dl>
             {{ forms.render_errors(form) }}
             {{ render_meta() }}
         </dl>
