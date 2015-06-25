@@ -11,10 +11,22 @@
         {{ gen.textarea(form['message'], class='form-control') }}
     </div>
 {% endblock %}
-{% block ticket_metadata %}
 
+{% block ticket_metadata %}
     <div class="moin-ticket-metadata">
         <h2>{{ _("Provide metadata") }}</h2>
+        <dl>
+            <dt>
+                <label>{{ _("Summary") }}</label>
+            </dt>
+            <dd>
+                {{ forms.render(form['meta']['summary']) }}
+            </dd>
+        </dl>
+        <div style="clear:both;"></div>
+        <div id="finalresults">
+            {% include "ajaxsearch.html" %}
+        </div>
         <dl>
             {{ forms.render_errors(form) }}
             {{ render_meta() }}

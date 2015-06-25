@@ -335,7 +335,9 @@ def search(item_name):
         history = request.args.get('history') == "true"
         time_sorting = request.args.get('time_sorting')
         filetypes = request.args.get('filetypes')
-        filetypes = filetypes.split(',')[:-1]  # To remove the extra u'' at the end of the list
+        is_ticket = bool(request.args.get('is_ticket'))
+        if filetypes:
+            filetypes = filetypes.split(',')[:-1]  # To remove the extra u'' at the end of the list
     else:
         query = search_form['q'].value
         history = bool(request.values.get('history'))
@@ -404,6 +406,7 @@ def search(item_name):
                                        content_suggestions=u', '.join(content_suggestions),
                                        omitted_words=u', '.join(omitted_words),
                                        history=history,
+                                       is_ticket=is_ticket,
                 )
             else:
                 html = render_template('search.html',

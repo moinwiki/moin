@@ -98,3 +98,8 @@ dl dd {
 .moin-ticket-tags {
     padding-bottom: 20px;
 }
+#ticket-results{
+    height: 150px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

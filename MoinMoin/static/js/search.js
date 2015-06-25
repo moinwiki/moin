@@ -6,7 +6,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#moin-long-searchform .button", (function(){
-        $('#moin-search-query').keyup();
+        $('#moin-search-query').change();
     }));
 
     $(document).on("click", "label", (function(){
@@ -19,11 +19,11 @@ $(document).ready(function(){
 
     $('.moin-loginsettings').addClass('navbar-right');
 
-    function ajaxify(query, allrevs, time_sorting, filetypes) {
+    function ajaxify(query, allrevs, time_sorting, filetypes, is_ticket) {
         $.ajax({
             type: "GET",
             url: "/+search",
-            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, boolajax: true }
+            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, boolajax: true, is_ticket: is_ticket }
         }).done(function( html ) {
             $('#finalresults').html(html)
         });
@@ -33,11 +33,15 @@ $(document).ready(function(){
         var allrev, time_sorting;
         var mtime = false;
         var filetypes= '';
+        var is_ticket = '';
+        if( $('input[name="meta_summary"]').length ){
+            is_ticket = true;
+        }
         allrev = $('[name="history"]:checked').val() === "all";
         time_sorting = $('[name="modified_time"]:checked').val();
         $('[name="itemtype"]:checked').each(function() {
             filetypes += $(this).val() + ',';
         });
-        ajaxify($(this).val(), allrev, time_sorting, filetypes);
+        ajaxify($(this).val(), allrev, time_sorting, filetypes, is_ticket);
     });
 });
