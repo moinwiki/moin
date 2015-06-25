@@ -3,6 +3,7 @@
 }
 #moin-ticket-form dt {
     margin-top: .1em;
+    font-size: 14px;
 }
 dd input[type="radio"] {
     display: none;
@@ -10,17 +11,17 @@ dd input[type="radio"] {
 label.moin-inline-label {
     padding-left: 25px;
     padding-right: 10px;
-    height: 20px;
+    height: 15px;
     display: inline-block;
     line-height: 20px;
     background-repeat: no-repeat;
     background-position: 0 0;
-    font-size: 20px;
+    font-size: 14px;
     vertical-align: middle;
     cursor: pointer;
 }
 dd input:checked + label {
-    background-position: 0 -20px;
+    background-position: 0 -15px;
 }
 label.moin-inline-label {
     background-image: url("../img/radiobutton.png");
@@ -28,7 +29,7 @@ label.moin-inline-label {
 #f_meta_tags, #f_meta_summary {
     transition: all .3s ease-in-out;
     outline: none;
-    width: 30em;
+    width: 20em;
     margin-top: 20px;
     margin-bottom: 20px;
     height: 25px;
@@ -73,9 +74,6 @@ select {
     width: 35em;
     margin-right: 35px;
 }
-.moin-ticket-metadata {
-    float: left;
-}
 .moin-ticket-submit {
     clear: both;
 }
@@ -87,19 +85,29 @@ h2 {
     border-bottom: none;
 }
 dt label {
-    padding-top: 10px;
+    padding-top: 5px;
 }
 dl dd {
     padding-bottom: 10px;
+    padding-left: 15px;
 }
 .moin-ticket-link {
     padding-left: 150px;
 }
 .moin-ticket-tags {
     padding-bottom: 20px;
+    padding-left: 20px;
+    display: block;
 }
 #ticket-results{
     height: 150px;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+#moin-ticket-layout {
+    white-space: nowrap;
+    float: left;
+    min-width: 50%;
+    min-height: 50%;
+    text-align: left;
 }
