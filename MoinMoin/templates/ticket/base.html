@@ -21,9 +21,9 @@
         ] %}
         {{ forms.render(form['meta'][e]) }}
         {% if e!='assigned_to' and item.meta[e] %}
-            <dd>
+            <dt>
                 <a class="moin-ticket-link"  href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e]|shorten_id }}</a>
-            </dd>
+            </dt>
         {% endif %}
     {% endfor %}
 {% endmacro %}
@@ -36,6 +36,32 @@
         ] %}
         {{ forms.render(form['backrefs'][e]) }}
     {% endfor %}
+{% endmacro %}
+
+{% macro subscribe() %}
+    {% if user.valid and exists %}
+        <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="moin-button" rel="nofollow" title="Switch notifications about item changes on or off">
+            <i class="fa fa-envelope fa-fw"></i>
+            {%- if user.is_subscribed_to(item) %}
+                {{ _('Unsubscribe') }}
+            {%- else %}
+                {{ _('Subscribe') }}
+            {%- endif %}
+        </a>
+    {% endif %} 
+{% endmacro %}
+
+{% macro subscribe() %}
+    {% if user.valid and exists %}
+        <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="moin-button" rel="nofollow" title="Switch notifications about item changes on or off">
+            <i class="fa fa-envelope fa-fw"></i>
+            {%- if user.is_subscribed_to(item) %}
+                {{ _('Unsubscribe') }}
+            {%- else %}
+                {{ _('Subscribe') }}
+            {%- endif %}
+        </a>
+    {% endif %} 
 {% endmacro %}
 
 {% block head %}
@@ -62,14 +88,6 @@
                         {{ _('Add Link') }}
                     {%- endif %}
                 </a>
-                <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="list-group-item" rel="nofollow" title="witch notifications about item changes on or off">
-                    <i class="fa fa-envelope fa-fw"></i>
-                    {%- if user.is_subscribed_to(item) %}
-                        {{ _('Unsubscribe') }}
-                    {%- else %}
-                        {{ _('Subscribe') }}
-                    {%- endif %}
-                </a>
             </div>
         </div>
     {% endif %}
@@ -84,15 +102,6 @@
                         {{ _('Remove Link') }}
                     {%- else %}
                         {{ _('Add Link') }}
-                    {%- endif %}
-                </a>
-            </li>
-            <li>
-                <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" title="Switch notifications about item changes on or off" rel="nofollow">
-                    {%- if user.is_subscribed_to(item) %}
-                        {{ _('Unsubscribe') }}
-                    {%- else %}
-                        {{ _('Subscribe') }}
                     {%- endif %}
                 </a>
             </li>
@@ -115,18 +124,11 @@
     </h1>
     <div class="moin-form" id="moin-ticket-form">
         {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
-
-            <div id="moin-content-data" class="moin-ticket-comments">
-                {% if data_rendered %}
-                    {{ data_rendered }}
-                {% endif %}
-
-                {% block form_controls %}
-                {% endblock %}
-            </div>
-            {% block ticket_metadata %}
+            {% block ticket_content %}
             {% endblock %}
-
+            {% if data_rendered %}
+                {{ data_rendered }}
+            {% endif %}
         {{ gen.form.close() }}
     </div>
 {% endblock %}
