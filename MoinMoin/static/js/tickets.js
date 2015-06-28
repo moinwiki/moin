@@ -19,4 +19,15 @@ $(document).ready(function () {
     if (location.search.indexOf("selected_tags") >= 0) {
         $('.ticket-tags-toggle').click();
     }
+    // when user clicks the tag, it is added to input field
+    $('.moin-ticket-tags a').click(function() {
+        var value = $(this).text();
+        var input = $('#f_meta_tags');
+        if( !input.val() ) {
+            input.val(value)
+        } else {
+            input.val(input.val() + ', ' + value);
+        }
+        return false;
+    });
 });
