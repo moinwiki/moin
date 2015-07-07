@@ -35,7 +35,7 @@
         </dt>
     </div>
     <div style="clear:both;"></div>
-    
+
     <h3>{{ _("Back references") }}</h3>
     <div id="moin-ticket-layout">
         <dl>
@@ -43,9 +43,12 @@
         </dl>
     </div>
     <div style="clear:both;"></div>
-    
+
     <h3>{{ _("Add comment") }}</h3>
     <div id="moin-ticket-layout">
+        {% if data_rendered %}
+            {{ data_rendered }}
+        {% endif %}
         <div class="form-group">
             {{ gen.textarea(form['message'], class='form-control') }}
         </div>

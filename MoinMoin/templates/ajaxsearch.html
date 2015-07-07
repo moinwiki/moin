@@ -2,6 +2,7 @@
     {% if is_ticket %}
         {% if results %}
             <div id="ticket-results">
+                <h4>{{ _("Please check these tickets if they cover your issue:") }}</h4>
                 <table>
                     {% for result in results %}
                         {% if result['wikiname'] == cfg.interwikiname and result['itemtype'] == 'ticket' %}
