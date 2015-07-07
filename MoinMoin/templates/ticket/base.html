@@ -48,7 +48,7 @@
                 {{ _('Subscribe') }}
             {%- endif %}
         </a>
-    {% endif %} 
+    {% endif %}
 {% endmacro %}
 
 {% macro subscribe() %}
@@ -61,7 +61,7 @@
                 {{ _('Subscribe') }}
             {%- endif %}
         </a>
-    {% endif %} 
+    {% endif %}
 {% endmacro %}
 
 {% block head %}
@@ -126,9 +126,6 @@
         {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
             {% block ticket_content %}
             {% endblock %}
-            {% if data_rendered %}
-                {{ data_rendered }}
-            {% endif %}
         {{ gen.form.close() }}
     </div>
 {% endblock %}
