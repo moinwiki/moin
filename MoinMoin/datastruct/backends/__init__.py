@@ -3,6 +3,9 @@
 
 """
 MoinMoin - base classes for datastructs.
+
+TODO: Per https://docs.python.org/2/library/userdict.html
+Starting with Python version 2.6, it is recommended to use collections.MutableMapping instead of DictMixin.
 """
 
 
