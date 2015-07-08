@@ -6,7 +6,7 @@ MoinMoin - New style macros
 
 Macros are used to implement complex and/or dynamic page content.
 
-These new-style macros uses a class interface and always works on the internal
+These new-style macros use a class interface and always work on the internal
 tree representation of the document.
 
 TODO: Merge with converters
