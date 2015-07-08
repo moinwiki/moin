@@ -1082,6 +1082,61 @@ items with the same names::
                   u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
         return CompositeGroups(ConfigGroups(groups), WikiGroups())
 
+
+Dict backend configuration
+--------------------------
+
+The dict backend provides a means for translating phrases in documentation through the
+use of the GetVal macro.
+
+The WikiDicts backend is enabled by default so there is no need to add the following to wikiconfig::
+
+    def dicts(self):
+        from MoinMoin.datastruct import WikiDicts
+        return WikiDicts()
+
+To create a WikiDict that can be used in an GetVal macro:
+
+* Create a wiki item with a name ending in "Dict" (the content of the item is not relevant)
+* Edit the metadata and add an entry for "somedict" under the heading "Extra Metadata (JSON)"::
+
+    {
+      "itemid": "332458ceab334991868de8970980494e",
+      "namespace": "",
+      "somedict": {
+        "apple": "red",
+        "banana": "yellow",
+        "pear": "green"
+      }
+    }
+
+The ConfigDicts backend uses dicts defined in the configuration file. Adding the
+following to wikiconfig creates a OneDict and a NumbersDict and prevents
+the use of any WikiDicts::
+
+    def dicts(self):
+        from MoinMoin.datastruct import ConfigDicts
+        dicts = {u'OneDict': {u'first_key': u'first item',
+                              u'second_key': u'second item'},
+                 u'NumbersDict': {u'1': 'One',
+                                  u'2': 'Two'}}
+        return ConfigDicts(dicts)
+
+CompositeDicts enable both ConfigDicts and WikiDicts to be used. The example
+below defines the same ConfigDicts used above and enables the use of WikiDicts.
+Note that order matters! Since ConfigDicts backend is first in the return tuple,
+the OneDict and NumbersDict defined below will be used should there be WikiDict
+items with the same names::
+
+    def dicts(self):
+        from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
+        dicts = {u'OneDict': {u'first_key': u'first item',
+                              u'second_key': u'second item'},
+                 u'NumbersDict': {u'1': 'One',
+                                  u'2': 'Two'}}
+        return CompositeDicts(ConfigDicts(dicts),
+                              WikiDicts())
+
 Storage
 =======
 MoinMoin supports storage backends as different ways of storing wiki items.
