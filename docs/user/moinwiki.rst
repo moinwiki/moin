@@ -400,16 +400,41 @@ Table Styling Example
 Macros
 ======
 
- - ``<<Anchor(anchorname)>>`` inserts a link anchor anchorname
- - ``<<BR>>`` inserts a hard line break
- - ``<<FootNote(Note)>>`` inserts a footnote saying Note
- - ``<<Include(HelpOnMacros/Include)>>`` inserts the contents of the page HelpOnMacros/Include inline
- - ``<<MailTo(user AT example DOT com)>>`` obfuscates the email address user@example.com to users not logged in
+Macros are extensions to standard markup that allow developers to add extra features. The following is a table of MoinMoin's macros.
 
-**Notes**:
- - **MOINTODO:** ``<<Anchor(anchorname)>>`` throws an error ``<<Anchor: execution failed [__init__() takes exactly 2 arguments (1 given)] (see also the log)>>`` in moin 2.
- - **MOINTODO:** ``<<Include(HelpOnMacros/Include)>>`` does not work in moin 2.
- - **MOINTODO:** ``<<MailTo(user AT example DOT com)>>`` throws an error ``<<MailTo: execution failed [__init__() takes exactly 2 arguments (1 given)] (see also the log)>>`` in moin 2.
++-------------------------------------------+------------------------------------------------------------+
+| Markup                                    | Comment                                                    |
++===========================================+============================================================+
+| ``<<Anchor(anchorname)>>``                | Inserts an anchor named "anchorname"                       |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<BR>>``                                | Inserts a forced linebreak                                 |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Date()>>``                            | Inserts current date, or unix timestamp or ISO 8601 date   |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<DateTime()>>``                        | Inserts current datetime, or unix timestamp or ISO 8601    |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<GetText(Settings)>>``                 | Loads I18N texts, Einstellungen if browser is set to German|
++-------------------------------------------+------------------------------------------------------------+
+| ``<<GetVal(WikiDict,var1)>>``             | Loads var1 value from metadata of item named WikiDict      |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<FootNote(Note here)>>``               | Inserts a footnote saying "Note here"                      |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Include(ItemOne/SubItem)>>``          | Embeds the contents of ``ItemOne/SubItem`` inline          |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<MailTo(user AT example DOT org,       | If the user is logged in this macro will display           |
+| write me)>>``                             | ``user@example.org``, otherwise it will display the        |
+|                                           | obfuscated email address supplied                          |
+|                                           | (``user AT example DOT org``)                              |
+|                                           | The second parameter containing link text is optional.     |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered                                    |
++-------------------------------------------+------------------------------------------------------------+
 
 Smileys and Icons
 =================
