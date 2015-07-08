@@ -61,6 +61,8 @@ The following is a table of inline markup that can be used to format text in Cre
 +-------------------------------------+---------------------------------------+
 | ``//**Bold and Italic**//``         | :bolditalic:`Bold and Italic`         |
 +-------------------------------------+---------------------------------------+
+| ``__Underline__``                   | :underline:`Underline`                |
++-------------------------------------+---------------------------------------+
 | ``First line\\Second line``         | | First line                          |
 |                                     | | Second line                         |
 +-------------------------------------+---------------------------------------+
@@ -108,8 +110,6 @@ Internal links
 |                                       |                                   | of the more convenient ``[[/SubItem]]``   |
 |                                       |                                   | syntax                                    |
 +---------------------------------------+-----------------------------------+-------------------------------------------+
-
-**CREOLETODO**: Links to attachments, files and email addresses are not recognised as such (ie. given a special icon, etc), and instead treated as links to normal wiki items. This should be rectified before release.
 
 External links
 --------------
@@ -340,31 +340,41 @@ Tables
 Table cells start with a pipe symbol (``|``), and header cells start with a pipe symbol and equals sign (``|=``).
 The closing pipe symbol at the end of a row is optional.
 
-**CREOLETODO** **RSTTODO**: Table headers are not interpreted as such when rendered.
-
 Macros
 ======
 
 Macros are extensions to standard Creole markup that allow developers to add extra features. The following is a table of MoinMoin's Creole macros.
 
-+-----------------------------------------+------------------------------------------------------------+
-| Markup                                  | Comment                                                    |
-+=========================================+============================================================+
-| ``<<Anchor(anchorname)>>``              | Inserts an anchor named "anchorname" **CREOLETODO**:       |
-|                                         | attempting to use an anchor yields an exception.           |
-+-----------------------------------------+------------------------------------------------------------+
-| ``<<BR>>``                              | Inserts a forced linebreak                                 |
-+-----------------------------------------+------------------------------------------------------------+
-| ``<<FootNote(Note here)>>``             | Inserts a footnote saying "Note here"                      |
-+-----------------------------------------+------------------------------------------------------------+
-| ``<<Include(ItemOne/SubItem)>>``        | Embeds the contents of ``ItemOne/SubItem`` inline          |
-+-----------------------------------------+------------------------------------------------------------+
-| ``<<MailTo(user AT example DOT org)>>`` | If the user is logged in this macro will display           |
-|                                         | ``user@example.org``, otherwise it will display the        |
-|                                         | obfuscated email address supplied                          |
-|                                         | (``user AT example DOT org``)                              |
-|                                         | **CREOLETODO**: attempting to use the MailTo macro         |
-|                                         | yields an exception.                                       |
-+-----------------------------------------+------------------------------------------------------------+
-| ``<<TableOfContents(2)>>``              | Shows a table of contents up to level 2                    |
-+-----------------------------------------+------------------------------------------------------------+
++-------------------------------------------+------------------------------------------------------------+
+| Markup                                    | Comment                                                    |
++===========================================+============================================================+
+| ``<<Anchor(anchorname)>>``                | Inserts an anchor named "anchorname"                       |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<BR>>``                                | Inserts a forced linebreak                                 |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Date()>>``                            | Inserts current date, or unix timestamp or ISO 8601 date   |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<DateTime()>>``                        | Inserts current datetime, or unix timestamp or ISO 8601    |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<GetText(Settings)>>``                 | Loads I18N texts, Einstellungen if browser is set to German|
++-------------------------------------------+------------------------------------------------------------+
+| ``<<GetVal(WikiDict,var1)>>``             | Loads var1 value from metadata of item named WikiDict      |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<FootNote(Note here)>>``               | Inserts a footnote saying "Note here"                      |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Include(ItemOne/SubItem)>>``          | Embeds the contents of ``ItemOne/SubItem`` inline          |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<MailTo(user AT example DOT org,       | If the user is logged in this macro will display           |
+| write me)>>``                             | ``user@example.org``, otherwise it will display the        |
+|                                           | obfuscated email address supplied                          |
+|                                           | (``user AT example DOT org``)                              |
+|                                           | The second parameter containing link text is optional.     |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered                                    |
++-------------------------------------------+------------------------------------------------------------+
