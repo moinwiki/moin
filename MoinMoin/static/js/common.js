@@ -137,7 +137,9 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
                 $(wrapper).addClass($(elem).find(">:first-child").attr('class'));
             }
             // copy float styling to the wrapper so a SPAN enclosing an IMG does the floating (float will be 'none' if not specified)
-            $(wrapper).css('float', $(elem).filter(":first").css('float'));
+            if ($(elem).filter(":first").css('float') !== 'none') {
+                $(wrapper).css('float', $(elem).filter(":first").css('float'));
+            }
             // insert wrapper after elem, append (move) elem, append overlays
             $(elem).after(wrapper);
             $(wrapper).append(elem);
