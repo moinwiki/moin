@@ -93,7 +93,7 @@ setup_args = dict(
         'Werkzeug==0.9.6',  # wsgi toolkit
         'pytest<2.7',  # pytest is needed by unit tests (only tested with 2.5 and 2.6)
         'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
-        'whoosh>=2.5.0',  # needed for indexed search
+        'whoosh==2.6.0',  # needed for indexed search TODO XXX change this after fixing #534
         'sphinx>=1.1',  # needed to build the docs
         'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
