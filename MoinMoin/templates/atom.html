@@ -22,7 +22,7 @@
 {%- elif get == 'first_revision' -%}
     {{ content }}
     <br />
-    <table class="moin-diff" cellpadding="10" width="100%">
+    <table class="moin-diff">
         <tr>
             <td class="moin-diff-header" style="width: 100%;">
                 <strong>{{ utils.show_meta(rev) }}</strong>
@@ -33,7 +33,7 @@
 {%- elif get == 'binary' -%}
     {{ content }}
     <br />
-    <table class="moin-diff" cellpadding="10" width="100%">
+    <table class="moin-diff">
         <tr>
             <td class="moin-diff-header" style="width: 50%;">
                 <strong>{{ utils.show_meta(oldrev) }}</strong>
