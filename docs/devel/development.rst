@@ -12,7 +12,7 @@ IRC channels on chat.freenode.net (quick communication and discussion):
 
 Wikis:
 
-* http://moinmo.in/  (production wiki, using moin 1.9)
+* https://moinmo.in/  (production wiki, using moin 1.9)
 * http://test.moinmo.in/  (test wiki, using moin 2)
 
 Documentation (installation, configuration, user docs, api reference):
