@@ -12,7 +12,7 @@ Markups supported by MoinMoin
    mediawiki
    markdown
 
-.. _MoinWiki: http://moinmo.in/HelpOnMoinWikiSyntax
+.. _MoinWiki: https://moinmo.in/HelpOnMoinWikiSyntax
 .. _WikiCreole: http://www.wikicreole.org/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Docbook: http://www.docbook.org/

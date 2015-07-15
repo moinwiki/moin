@@ -127,9 +127,9 @@ External Links
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | Markup                                                         | Result                                                                       | Comments                                 |
 +================================================================+==============================================================================+==========================================+
-| ``[[http://moinmo.in/]]``                                      | http://moinmo.in/                                                            | External link                            |
+| ``[[https://moinmo.in/]]``                                     | https://moinmo.in/                                                           | External link                            |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
-| ``[[http://moinmo.in/|MoinMoin Wiki]]``                        | `MoinMoin Wiki <http://moinmo.in/>`_                                         | Named External link                      |
+| ``[[https://moinmo.in/|MoinMoin Wiki]]``                       | `MoinMoin Wiki <https://moinmo.in/>`_                                        | Named External link                      |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
 | ``[[MeatBall:InterWiki]]``                                     | `MeatBall:InterWiki <http://www.usemod.com/cgi-bin/mb.pl?InterWiki>`_        | Link to an item on an external Wiki      |
 +----------------------------------------------------------------+------------------------------------------------------------------------------+------------------------------------------+
@@ -142,30 +142,30 @@ External Links
 Images and Transclusions
 ========================
 
-+---------------------------------------------------+---------------------------------------+
-| Markup                                            | Comment                               |
-+===================================================+=======================================+
-| ``{{example.png}}``                               | Embed example.png inline              |
-+---------------------------------------------------+---------------------------------------+
-| ``{{http://static.moinmo.in/logos/moinmoin.png}}``| Embed example.png inline              |
-+---------------------------------------------------+---------------------------------------+
-| ``{{ItemName}}``                                  | Transclude (embed the contents of)    |
-|                                                   | ItemName inline.                      |
-+---------------------------------------------------+---------------------------------------+
-| ``{{/SubItem}}``                                  | Transclude SubItem inline.            |
-+---------------------------------------------------+---------------------------------------+
-| ``{{ example.jpg || width=20, height=100 }}``     | Resizes example.png by using HTML     |
-|                                                   | tag attributes                        |
-+---------------------------------------------------+---------------------------------------+
-| ``{{ example.jpg || &w=20 }}``                    | Resizes example.png by using server-  |
-|                                                   | side compression, PIL needs to be     |
-|                                                   | installed.                            |
-+---------------------------------------------------+---------------------------------------+
-| ``{{ http://moinmo.in/ || width=20 }}``           | Resizes the ``object`` which is       |
-|                                                   | embedded using HTML tags. Also markup |
-|                                                   | involving '&' parameters like ``&w``  |
-|                                                   | doesn't make much sense.              |
-+---------------------------------------------------+---------------------------------------+
++----------------------------------------------------+---------------------------------------+
+| Markup                                             | Comment                               |
++====================================================+=======================================+
+| ``{{example.png}}``                                | Embed example.png inline              |
++----------------------------------------------------+---------------------------------------+
+| ``{{https://static.moinmo.in/logos/moinmoin.png}}``| Embed example.png inline              |
++----------------------------------------------------+---------------------------------------+
+| ``{{ItemName}}``                                   | Transclude (embed the contents of)    |
+|                                                    | ItemName inline.                      |
++----------------------------------------------------+---------------------------------------+
+| ``{{/SubItem}}``                                   | Transclude SubItem inline.            |
++----------------------------------------------------+---------------------------------------+
+| ``{{ example.jpg || width=20, height=100 }}``      | Resizes example.png by using HTML     |
+|                                                    | tag attributes                        |
++----------------------------------------------------+---------------------------------------+
+| ``{{ example.jpg || &w=20 }}``                     | Resizes example.png by using server-  |
+|                                                    | side compression, PIL needs to be     |
+|                                                    | installed.                            |
++----------------------------------------------------+---------------------------------------+
+| ``{{ https://moinmo.in/ || width=800 }}``          | Resizes the ``object`` which is       |
+|                                                    | embedded using HTML tags. Also markup |
+|                                                    | involving '&' parameters like ``&w``  |
+|                                                    | doesn't make much sense.              |
++----------------------------------------------------+---------------------------------------+
 
 **Extra Info**:
 
@@ -174,6 +174,9 @@ understands that it has to compress the image on the server side and render as s
 
 For markup like ``{{ example.jpg || width=20, height=100 }}`` we currently allow only the ``width`` and ``height`` (anything
 else is ignored) to be added as attributes in the HTML, however one can, add anything to the query URL using ``&``, like ``&w`` in the example above.
+
+Most browsers will display a large blank space when a web page using an https protocol is transcluded into a page using http protocol.
+Transcluding a png image using an https protocol into an http protocol page displays OK in all browsers.
 
 
 Blockquotes and Indentations

@@ -5,12 +5,12 @@ Free Support
 ------------
 You can get free support and information here:
 
-* on our chat channels, see http://moinmo.in/MoinMoinChat
-* on our wiki, see http://moinmo.in/ - please note that quite a lot of content
+* on our chat channels, see https://moinmo.in/MoinMoinChat
+* on our wiki, see https://moinmo.in/ - please note that quite a lot of content
   there is about moin 1.x and does not apply to moin2. One page has a lot
   of information about moin2 and also links to all sorts of moin2 resources:
-  http://moinmo.in/MoinMoin2.0
-* on our mailing list, see http://moinmo.in/MoinMoinMailingLists
+  https://moinmo.in/MoinMoin2.0
+* on our mailing list, see https://moinmo.in/MoinMoinMailingLists
 * on our issue tracker: https://bitbucket.org/thomaswaldmann/moin-2.0/issues
 * from our repository: https://bitbucket.org/thomaswaldmann/moin-2.0/overview
 
