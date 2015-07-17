@@ -131,8 +131,8 @@ class TestConverter(Base):
                 # <page><body><p><span baseline-shift="super">super</span></p></body></page>
                 '/page/body/p/span[text()="super"][@baseline-shift="super"]'),
             ('<html><p><u>underline</u></p></html>',
-                # <page><body><p><span text-decoration="underline">underline</span></p></body></page>
-                '/page/body/p/span[text()="underline"][@text-decoration="underline"]'),
+                # <page><body><p><u>underline</u></p></body></page>
+                '/page/body/p/u[text()="underline"]'),
             ('<html><p><big>Test</big></p></html>',
                 # <page><body><p><span font-size="120%">Test</span></p></body></page>
                 '/page/body/p/span[text()="Test"][@font-size="120%"]'),
@@ -140,17 +140,17 @@ class TestConverter(Base):
                 # <page><body><p><span font-size="85%">Test</span></p></body></page>
                 '/page/body/p/span[text()="Test"][@font-size="85%"]'),
             ('<html><p><ins>underline</ins></p></html>',
-                # <page><body><p><span text-decoration="underline">underline</span></p></body></page>
-                '/page/body/p/span[text()="underline"][@text-decoration="underline"]'),
+                # <page><body><p><ins>underline</ins></p></body></page>
+                '/page/body/p/ins[text()="underline"]'),
             ('<html><p><del>Test</del></p></html>',
-                # <page><body><p><span text-decoration="line-through">Test</span></p></body></page>
-                '/page/body/p/span[text()="Test"][@text-decoration="line-through"]'),
+                # <page><body><p><del>Test</del></p></body></page>
+                '/page/body/p/del[text()="Test"]'),
             ('<html><p><s>Test</s></p></html>',
-                # <page><body><p><span text-decoration="line-through">Test</span></p></body></page>
-                '/page/body/p/span[text()="Test"][@text-decoration="line-through"]'),
+                # <page><body><p><s>Test</s></p></body></page>
+                '/page/body/p/s[text()="Test"]'),
             ('<html><p><strike>Test</strike></p></html>',
-                # <page><body><p><span text-decoration="line-through">Test</span></p></body></page>
-                '/page/body/p/span[text()="Test"][@text-decoration="line-through"]'),
+                # <page><body><p><s>Test</s></p></body></page>
+                '/page/body/p/s[text()="Test"]'),
         ]
         for i in data:
             yield (self.do, ) + i

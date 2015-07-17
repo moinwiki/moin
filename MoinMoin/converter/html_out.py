@@ -534,12 +534,6 @@ class Converter(object):
                 return self.new_copy(html.sub, elem)
             elif generate == 'super':
                 return self.new_copy(html.sup, elem)
-        generate = attrib.get('text-decoration')
-        if generate:
-            if generate == 'underline':
-                return self.new_copy(html.ins, elem)
-            elif generate == 'line-through':
-                return self.new_copy(html('del'), elem)
         generate = attrib.get('font-size')
         if generate:
             if generate == '85%':

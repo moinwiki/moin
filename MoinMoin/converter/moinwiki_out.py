@@ -435,14 +435,9 @@ class Converter(object):
         return Moinwiki.separator + hr_ending
 
     def open_moinpage_span(self, elem):
-        text_decoration = elem.get(moin_page.text_decoration, u'')
         font_size = elem.get(moin_page.font_size, u'')
         baseline_shift = elem.get(moin_page.baseline_shift, u'')
 
-        if text_decoration == u'line-through':
-            return Moinwiki.stroke_open + self.open_children(elem) + Moinwiki.stroke_close
-        if text_decoration == u'underline':
-            return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
         if font_size:
             return u"{0}{1}{2}".format(
                 Moinwiki.larger_open if font_size == u"120%" else Moinwiki.smaller_open,
@@ -453,6 +448,12 @@ class Converter(object):
         if baseline_shift == u'sub':
             return u',,{0},,'.format(u''.join(elem.itertext()))
         return u''
+
+    def open_moinpage_del(self, elem):  # stroke or strike-through
+        return Moinwiki.stroke_open + self.open_children(elem) + Moinwiki.stroke_close
+
+    def open_moinpage_ins(self, elem):  # underline
+        return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
 
     def open_moinpage_strong(self, elem):
         ret = Moinwiki.strong

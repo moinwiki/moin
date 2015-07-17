@@ -128,7 +128,7 @@ class TestConverter(object):
     def test_inline(self):
         data = [
             ("__underline__",
-                '<page><body><p><span text-decoration="underline">underline</span></p></body></page>'),
+                '<page><body><p><ins>underline</ins></p></body></page>'),
             (",,sub,,script",
                 '<page><body><p><span baseline-shift="sub">sub</span>script</p></body></page>'),
             ("^super^script",
@@ -138,11 +138,11 @@ class TestConverter(object):
             ("~+larger+~",
                 '<page><body><p><span font-size="120%">larger</span></p></body></page>'),
             ("--(strike through)--",
-                '<page><body><p><span text-decoration="line-through">strike through</span></p></body></page>'),
+                '<page><body><p><del>strike through</del></p></body></page>'),
             ("normal ~+big __underline__ big+~ normal",
-                '<page><body><p>normal <span font-size="120%">big <span text-decoration="underline">underline</span> big</span> normal</p></body></page>'),
+                '<page><body><p>normal <span font-size="120%">big <ins>underline</ins> big</span> normal</p></body></page>'),
             ("/* normal __underline__ normal */",
-                '<page><body><p><span class="comment">normal <span text-decoration="underline">underline</span> normal</span></p></body></page>'),
+                '<page><body><p><span class="comment">normal <ins>underline</ins> normal</span></p></body></page>'),
             (u'&quot;',
                 '<page><body><p>"</p></body></page>'),
             (u'&#34;',
