@@ -9,6 +9,7 @@ from MoinMoin.macro.Verbatim import *
 
 
 def test_Macro():
+    arguments = ['test text']
     macro_obj = Macro()
-    result = macro_obj.macro(u'test_text')
-    assert result == u'test_text'
+    result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
+    assert result == u'test text'

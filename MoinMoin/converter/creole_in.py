@@ -130,9 +130,8 @@ class Converter(ConverterMacro):
     def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
         stack.clear()
-
         if macro_args:
-            macro_args = parse_arguments(macro_args)
+            macro_args = parse_arguments(macro_args, parse_re=None)
         elem = self.macro(macro_name, macro_args, macro, True)
         stack.top_append_ifnotempty(elem)
 
@@ -363,7 +362,12 @@ class Converter(ConverterMacro):
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
                 link_item = '/' + link_item[len(att):]  # now we have a subitem
-            target = unicode(Iri(scheme='wiki.local', path=link_item))
+            # we have Anchor macro, so we support anchor links despite lack of docs in Creole spec
+            if '#' in link_item:
+                path, fragment = link_item.rsplit('#', 1)
+            else:
+                path, fragment = link_item, None
+            target = Iri(scheme='wiki.local', path=path, fragment=fragment)
             text = link_item
         else:
             target = link_url
@@ -398,9 +402,8 @@ class Converter(ConverterMacro):
 
     def inline_macro_repl(self, stack, macro, macro_name, macro_args=None, macro_text=None):
         """Handles macros using the placeholder syntax."""
-
         if macro_args:
-            macro_args = parse_arguments(macro_args)
+            macro_args = parse_arguments(macro_args, parse_re=None)
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
 
@@ -677,6 +680,16 @@ class Converter(ConverterMacro):
 
         # Handle trailing text
         stack.top_append_ifnotempty(text[pos:])
+
+    def macro_text(self, text):
+        """
+        Return an ET tree branch representing the markup present in the input text. Used for FootNotes, etc.
+        """
+        p = moin_page.p()
+        iter_content = _Iter(text)
+        stack = _Stack(p, iter_content=iter_content)
+        self.parse_inline(text, stack, self.inline_re)
+        return p
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_creole

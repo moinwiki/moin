@@ -29,17 +29,15 @@ class TestMacro(object):
         with pytest.raises(ValueError):
             macro_obj.macro('content', arguments, 'page_url', 'alternative')
 
-        # add the second element to arguments
-        arguments.append(u'One')
-
         if not flaskg.user.may.read(arguments[0]):
             with pytest.raises(ValueError):
                 macro_obj.macro('content', arguments, 'page_url', 'alternative')
 
+        arguments = [u'TestDict, One']
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         assert result == u'1'
 
         # change the value of second element
-        arguments[1] = u'Two'
+        arguments = [u'TestDict, Two']
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         assert result == u'2'
