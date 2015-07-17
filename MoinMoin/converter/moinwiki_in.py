@@ -634,8 +634,7 @@ class Converter(ConverterMacro):
 
     def inline_strike_repl(self, stack, strike, strike_begin=None):
         if strike_begin is not None:
-            attrib = {moin_page.text_decoration: 'line-through'}
-            stack.push(moin_page.span(attrib=attrib))
+            stack.push(moin_page.del_())
         else:
             stack.pop()
 
@@ -672,11 +671,10 @@ class Converter(ConverterMacro):
     """
 
     def inline_underline_repl(self, stack, underline):
-        attrib = {moin_page.text_decoration: 'underline'}
-        if stack.top_check('span', attrib=attrib):
-            stack.pop()
+        if not stack.top_check('ins'):
+            stack.push(moin_page.ins())
         else:
-            stack.push(moin_page.span(attrib=attrib))
+            stack.pop()
 
     inline_link = r"""
         (?P<link>

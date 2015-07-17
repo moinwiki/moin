@@ -104,19 +104,23 @@ class TestConverter(Base):
             ('<html><p><sup>super</sup>script</p></html>',
                 '/div/p[sup="super"]'),
             ('<html><p><u>underline</u></p></html>',
-                '/div/p[ins="underline"]'),
+                # <div><p><u>underline</u></p></div>
+                '/div/p/u [text()="underline"]'),
             ('<html><p><big>Test</big></p></html>',
                 '/div/p/span[@class="moin-big"][text()="Test"]'),
             ('<html><p><small>Test</small></p></html>',
                 '/div/p/span[@class="moin-small"][text()="Test"]'),
             ('<html><p><ins>underline</ins></p></html>',
-                '/div/p[ins="underline"]'),
+                # <div><p><ins>underline</ins></p></div>
+                '/div/p/ins [text()="underline"]'),
             ('<html><p><del>Test</del></p></html>',
                 '/div/p[del="Test"]'),
             ('<html><p><s>Test</s></p></html>',
-                '/div/p[del="Test"]'),
+                # <div><p><s>Test</s></p></div>
+                '/div/p/s [text()="Test"]'),
             ('<html><p><strike>Test</strike></p></html>',
-                '/div/p[del="Test"]'),
+                # <div><p><s>Test</s></p></div>
+                '/div/p/s [text()="Test"]'),
         ]
         for i in data:
             yield (self.do, ) + i

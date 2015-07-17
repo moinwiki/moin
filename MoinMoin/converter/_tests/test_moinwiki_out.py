@@ -48,8 +48,8 @@ class TestConverter(Base):
             (u"<page:emphasis>emphasis</page:emphasis>", "''emphasis''"),
             (u"<page:blockcode>blockcode</page:blockcode>", "{{{\nblockcode\n}}}\n"),
             (u"<page:code>monospace</page:code>", '`monospace`'),
-            (u'<page:span page:text-decoration="line-through">stroke</page:span>', '--(stroke)--'),
-            (u'<page:span page:text-decoration="underline">underline</page:span>', '__underline__'),
+            (u'<page:del>stroke</page:del>', '--(stroke)--'),
+            (u'<page:ins>underline</page:ins>', '__underline__'),
             (u'<page:span page:font-size="120%">larger</page:span>', '~+larger+~'),
             (u'<page:span page:font-size="85%">smaller</page:span>', '~-smaller-~'),
             (u'<page:tag><page:span page:baseline-shift="super">super</page:span>script</page:tag>', '^super^script'),
@@ -118,7 +118,7 @@ class TestConverter(Base):
     def test_parser(self):
         data = [
             (u"<page:page><page:body><page:page><page:body page:class=\"comment dotted\"><page:p>This is a wiki parser.</page:p><page:p>Its visibility gets toggled the same way.</page:p></page:body></page:page></page:body></page:page>", "{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}\n"),
-            (u"<page:page><page:body><page:page><page:body page:class=\"red solid\"><page:p>This is wiki markup in a <page:strong>div</page:strong> with <page:span page:text-decoration=\"underline\">css</page:span> <page:code>class=\"red solid\"</page:code>.</page:p></page:body></page:page></page:body></page:page>", "{{{#!wiki red/solid\nThis is wiki markup in a \'\'\'div\'\'\' with __css__ `class=\"red solid\"`.\n}}}\n"),
+            (u"<page:page><page:body><page:page><page:body page:class=\"red solid\"><page:p>This is wiki markup in a <page:strong>div</page:strong> with <page:ins>css</page:ins> <page:code>class=\"red solid\"</page:code>.</page:p></page:body></page:page></page:body></page:page>", "{{{#!wiki red/solid\nThis is wiki markup in a \'\'\'div\'\'\' with __css__ `class=\"red solid\"`.\n}}}\n"),
             (u"<page:page><page:body><page:part page:content-type=\"x-moin/format;name=creole\"><page:arguments><page:argument page:name=\"style\">st: er</page:argument><page:argument page:name=\"class\">par: arg para: arga</page:argument></page:arguments><page:body>... **bold** ...</page:body></page:part></page:body></page:page>", "{{{#!creole(style=\"st: er\" class=\"par: arg para: arga\")\n... **bold** ...\n}}}\n"),
         ]
         for i in data:

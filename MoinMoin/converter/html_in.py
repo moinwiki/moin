@@ -297,49 +297,33 @@ class Converter(object):
 
     def visit_xhtml_u(self, element):
         """
-
-        <u>Text</u> --> <span text-decoration="underline">Text</span>
+        <u>Text</u> --> <u>Text</u>
         """
-        key = moin_page('text-decoration')
-        attrib = {}
-        attrib[key] = 'underline'
-        return self.new_copy(moin_page.span, element, attrib)
+        return self.new_copy(moin_page.u, element, {})
 
     def visit_xhtml_ins(self, element):
         """
-        <ins>Text</ins> --> <span text-decoration="underline">Text</span>
+        <ins>Text</ins> --> <ins>Text</ins>
         """
-        key = moin_page('text-decoration')
-        attrib = {}
-        attrib[key] = 'underline'
-        return self.new_copy(moin_page.span, element, attrib)
+        return self.new_copy(moin_page.ins, element, {})
 
     def visit_xhtml_del(self, element):
         """
-        <del>Text</del> --> <span text-decoration="underline">Text</span>
+        <del>Text</del> --> <del>Text</del>
         """
-        key = moin_page('text-decoration')
-        attrib = {}
-        attrib[key] = 'line-through'
-        return self.new_copy(moin_page.span, element, attrib)
+        return self.new_copy(moin_page.del_, element, {})
 
     def visit_xhtml_s(self, element):
         """
-        <s>Text</s> --> <span text-decoration="line-through">Text</span>
+        <s>Text</s> --> <s>Text</s>
         """
-        key = moin_page('text-decoration')
-        attrib = {}
-        attrib[key] = 'line-through'
-        return self.new_copy(moin_page.span, element, attrib)
+        return self.new_copy(moin_page.s, element, {})
 
     def visit_xhtml_strike(self, element):
         """
-        <strike>Text</strike> --> <span text-decoration="line-through">Text</span>
+        <strike>Text</strike> --> <s>Text</s>  # strike is not a valid tag in html5
         """
-        key = moin_page('text-decoration')
-        attrib = {}
-        attrib[key] = 'line-through'
-        return self.new_copy(moin_page.span, element, attrib)
+        return self.new_copy(moin_page.s, element, {})
 
     def visit_xhtml_hr(self, element, min_class=u'moin-hr1', max_class=u'moin-hr6', default_class=u'moin-hr3'):
         """
