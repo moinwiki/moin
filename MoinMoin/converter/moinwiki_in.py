@@ -212,7 +212,7 @@ class Converter(ConverterMacro):
 
         stack.clear()
         if macro_args:
-            macro_args = parse_arguments(macro_args)
+            macro_args = parse_arguments(macro_args, parse_re=None)
         elem = self.macro(macro_name, macro_args, macro, True)
         stack.top_append_ifnotempty(elem)
 
@@ -779,9 +779,8 @@ class Converter(ConverterMacro):
 
     def inline_macro_repl(self, stack, macro, macro_name, macro_args=u''):
         """Handles macros using the placeholder syntax."""
-
         if macro_args:
-            macro_args = parse_arguments(macro_args)
+            macro_args = parse_arguments(macro_args, parse_re=None)
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
 
@@ -1066,6 +1065,15 @@ class Converter(ConverterMacro):
         # Handle trailing text
         stack.top_append_ifnotempty(text[pos:])
 
+    def macro_text(self, text):
+        """
+        Return an ET tree branch representing the markup present in the input text. Used for FootNotes, etc.
+        """
+        p = moin_page.p()
+        iter_content = _Iter(text)
+        stack = _Stack(p, iter_content=iter_content)
+        self.parse_inline(text, stack, self.inline_re)
+        return p
 
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki

@@ -13,6 +13,9 @@ from emeraldtree import ElementTree as ET
 from MoinMoin.util import iri
 from MoinMoin.util.mime import Type
 from MoinMoin.util.tree import moin_page, xinclude
+from ._args_wiki import parse as parse_arguments
+from ._args_wiki import include_re
+from MoinMoin.i18n import _, L_, N_
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -30,7 +33,8 @@ class ConverterMacro(object):
             elem = moin_page.note()
             return elem
 
-        text = self.macro_text(' '.join(args.positional))
+        text = args[0]
+        text = self.macro_text(text)  # footnotes may have markup, macro_text is likely overridden
         elem_body = moin_page.note_body(children=text)
         attrib = {moin_page.note_class: 'footnote'}
         elem = moin_page.note(attrib=attrib, children=[elem_body])
@@ -43,12 +47,22 @@ class ConverterMacro(object):
         if not context_block:
             return text
 
+        if args:
+            args = parse_arguments(args[0], parse_re=include_re)
+        else:
+            raise ValueError(_("Include Macro: invalid format, try: <<Include(ItemName)>>"))
         pagename = args[0]
-        heading = None  # TODO
-        level = None  # TODO
+        heading = None
+        level = None
+        try:
+            heading = args[1]
+            level = int(args[2])
+        except (IndexError, ValueError):
+            pass
         sort = 'sort' in args and args['sort']
         if sort and sort not in ('ascending', 'descending'):
-            raise RuntimeError
+            raise ValueError(_("Include Macro: invalid format, expected sort=ascending|descending"))
+        # TODO: We need corresponding code in include.py to process items, skipitems, titlesonly, and editlink
         items = 'items' in args and int(args['items'])
         skipitems = 'skipitems' in args and int(args['skipitems'])
         titlesonly = 'titlesonly' in args
@@ -129,7 +143,6 @@ class ConverterMacro(object):
         if args:
             elem_arguments = moin_page.arguments()
             elem.append(elem_arguments)
-
             for key, value in args.items():
                 attrib = {}
                 if key:

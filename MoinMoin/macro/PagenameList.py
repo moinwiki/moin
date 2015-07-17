@@ -17,10 +17,16 @@ from MoinMoin.macro._base import MacroPageLinkListBase
 
 class Macro(MacroPageLinkListBase):
     def macro(self, content, arguments, page_url, alternative):
-        # needle=u'', regex=False
+        # TODO: sub-items are ignored, should they be included?
+        if arguments:
+            arguments = arguments[0].split(',')
+        else:
+            # default is to list all items
+            arguments = (u'^.*', u'True')
+
         needle = arguments[0]
         try:
-            regex = arguments[1] == 'True'
+            regex = arguments[1].strip() == 'True'
         except IndexError:
             regex = False
         re_flags = re.IGNORECASE
@@ -30,12 +36,12 @@ class Macro(MacroPageLinkListBase):
             except re.error as err:
                 raise ValueError("Error in regex {0!r}: {1}".format(needle, err))
         else:
-            needle_re = re.compile(re.escape(needle), re_flags)
+            needle_re = re.compile(u'^' + re.escape(needle), re_flags)
 
         item_names = []
-        for item in flaskg.storage.iteritems():
-            if needle_re.search(item.name):
-                item_names.append(item.name)
+        for item in self.get_item_names():
+            if needle_re.search(item):
+                item_names.append(item)
 
         item_names.sort()
 

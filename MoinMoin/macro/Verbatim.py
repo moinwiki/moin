@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Outputs the text verbatimly.
+Output the input text as is: <<Verbatim(return `same` __text__ '''as''' entered)>>
 """
 
 
@@ -10,5 +10,5 @@ from MoinMoin.macro._base import MacroInlineBase
 
 
 class Macro(MacroInlineBase):
-    def macro(self, text=u''):
-        return text
+    def macro(self, content, arguments, page_url, alternative):
+        return arguments[0]

@@ -17,18 +17,18 @@ from flask import g as flaskg
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink
 from MoinMoin.items import Item
-from MoinMoin.macro._base import MacroInlineBase
+from MoinMoin.macro._base import MacroPageLinkListBase
 from MoinMoin.storage.middleware.protecting import AccessDenied
 
 
-class Macro(MacroInlineBase):
+class Macro(MacroPageLinkListBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments:
             item_count = int(arguments[0])
         else:
             item_count = 1
 
-        all_item_names = [i.name for i in flaskg.storage.iteritems()]
+        all_item_names = self.get_item_names()
 
         # Now select random item from the full list, and if it exists and
         # we can read it, save.

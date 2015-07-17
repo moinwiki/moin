@@ -8,6 +8,8 @@ MoinMoin - Macro base class
 
 from MoinMoin.util import iri
 from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.items import Item
+from MoinMoin.storage.middleware.protecting import AccessDenied
 
 
 class MacroBase(object):
@@ -78,6 +80,19 @@ class MacroPageLinkListBase(MacroBlockBase):
             item = moin_page.list_item(children=[item_body])
             page_list.append(item)
         return page_list
+
+    def get_item_names(self):
+        # TODO: subitems are ignored, should they be included?
+        try:
+            item = Item.create('')  # when item_name='', it gives toplevel index
+        except AccessDenied:
+            abort(403)
+        dirs, files = item.get_index(None, '')
+
+        item_names = []
+        for item in files:
+            item_names.append(item.fullname.value)
+        return item_names
 
 
 class MacroNumberPageLinkListBase(MacroBlockBase):
