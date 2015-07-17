@@ -287,6 +287,15 @@ class Converter(ConverterMacro):
         else:
             stack.pop_name('emphasis')
 
+    inline_insert = r'(?P<insert> (?<!:)__ )'
+
+    def inline_insert_repl(self, stack, insert):
+        # creole docs suggest u, but ins is consistent with moinwiki and html5 ins/u docs
+        if not stack.top_check('ins'):
+            stack.push(moin_page.ins())
+        else:
+            stack.pop_name('ins')
+
     inline_strong = r'(?P<strong> \*\* )'
 
     def inline_strong_repl(self, stack, strong):
@@ -589,6 +598,7 @@ class Converter(ConverterMacro):
         inline_object,
         inline_strong,
         inline_emph,
+        inline_insert,
         inline_linebreak,
     )
     inline_re = re.compile('|'.join(inline), re.X | re.U)
