@@ -174,8 +174,11 @@ class Converter(ConverterMacro):
         stack.clear()
 
         attrib = {moin_page.outline_level: str(len(head_head))}
-        element = moin_page.h(attrib=attrib, children=[head_text])
-        stack.top_append(element)
+        element = moin_page.h(attrib=attrib)
+        stack.push(element)
+        # heading text may have wiki markup, including links
+        self.parse_inline(head_text, stack, self.inline_re)
+        stack.pop()
 
     block_line = r'(?P<line> ^ \s* $ )'
     # empty line that separates paragraphs
@@ -1006,11 +1009,19 @@ class Converter(ConverterMacro):
     )
     inline_re = re.compile('|'.join(inline), re.X | re.U)
 
+    # link text may have markup, excluding links
     inlinedesc = (
         inline_macro,
         inline_nowiki,
-        inline_emphstrong,
         inline_object,
+        inline_emphstrong,
+        inline_comment,
+        inline_size,
+        inline_strike,
+        inline_subscript,
+        inline_superscript,
+        inline_underline,
+        inline_entity,
     )
     inlinedesc_re = re.compile('|'.join(inlinedesc), re.X | re.U)
 
