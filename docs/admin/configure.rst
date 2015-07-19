@@ -152,7 +152,7 @@ To replace the default MoinMoin logo with your own logo, copy your logo to
 `wiki_local` and change the logo macro to something like::
 
     {% macro logo() -%}
-        <img src="{{ url_for('wiki_local', filename='MyLogo.png') }}" id="moin-img-logo" alt="Logo">
+        <img src="{{ url_for('serve.files', name='wiki_local', filename='MyLogo.png') }}" id="moin-img-logo" alt="Logo">
     {%- endmacro %}
 
 This is recommended to allow your users to immediately recognize which wiki site they are currently on.
@@ -160,7 +160,9 @@ This is recommended to allow your users to immediately recognize which wiki site
 You can use text or even nothing at all for the logo, it is not
 required to be an image::
 
+    {% macro logo() -%}
         <span style="font-size: 50px; color: red;">My Wiki</span>
+    {%- endmacro %}
 
 Make sure the dimensions of your logo image or text fit into the layout of
 the theme(s) your wiki users are using.
