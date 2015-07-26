@@ -322,6 +322,8 @@ class Commands(object):
     def cmd_run(self, *args):
         """run built-in wiki server"""
         if wiki_exists():
+            if WINDOWS_OS:
+                args += ('--threaded', )
             command = '{0}moin moin {1}'.format(ACTIVATE, ' '.join(args))
             try:
                 subprocess.call(command, shell=True)
