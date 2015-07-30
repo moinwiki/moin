@@ -69,15 +69,14 @@ class QuickInstall(object):
         self.do_catalog()
 
         sys.stdout.write("""
-Pip cache location is at {0}
 
-Successfully created or updated venv at {1}
-""".format(self.download_cache, self.dir_venv))
+Successfully created or updated venv at {0}
+""".format(self.dir_venv))
 
     def do_venv(self):
         virtualenv.create_environment(self.dir_venv)
 
-    def pip15_plus(self):
+    def get_pip_version(self):
         """Return true if pip version is >= 1.5"""
         command = ACTIVATE + 'pip --version'
         pip_txt = subprocess.check_output(command, shell=True)
@@ -85,21 +84,22 @@ Successfully created or updated venv at {1}
         pip_txt = pip_txt.split()
         if pip_txt[0] == 'pip':
             pip_version = [int(x) for x in pip_txt[1].split('.')]
-            return pip_version >= [1, 5]
+            return pip_version
         else:
-            sys.exit("Error: 'pip --version' produced unexpected results.")
+            sys.exit("Error: 'pip --version' produced unexpected results: '{0}".format(' '.join(pip_txt)))
 
     def do_install(self):
+        pip_version = self.get_pip_version()
         args = [
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
             '--upgrade',
-            '--download-cache',
-            self.download_cache,
             '--editable',
             self.dir_source,
         ]
-        if self.pip15_plus():
+        if pip_version < [6,0]:
+            args += ['--download-cache', self.download_cache, ]
+        if pip_version >= [1, 5]:
             args += [
                 '--process-dependency-links',
                 '--allow-external', 'flatland',
