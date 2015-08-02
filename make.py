@@ -95,6 +95,7 @@ new-wiki        create empty wiki
 sample          create wiki and load sample data
 restore *       create wiki and restore wiki/backup.moin *option, specify file
 import <dir>    import a moin 1.9 wiki/data instance from <dir>
+index           delete and rebuild indexes
 
 run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
@@ -318,6 +319,18 @@ class Commands(object):
                 print 'Error: cannot create wiki because {0} does not exist.'.format(dirname)
         else:
             print 'Error: a path to the Moin 1.9 wiki/data data directory is required.'
+
+    def cmd_index(self, *args):
+        """delete and rebuild index"""
+        if wiki_exists():
+            command = '{0}moin index-create -i{1} moin index-build'.format(ACTIVATE, SEP)
+            print 'Rebuilding indexes...(ignore log messages from rst parser)...'
+            try:
+                subprocess.call(command, shell=True)
+            except KeyboardInterrupt:
+                pass  # eliminates traceback on windows
+        else:
+            print 'Error: a wiki must be created before rebuilding the indexes.'
 
     def cmd_run(self, *args):
         """run built-in wiki server"""
