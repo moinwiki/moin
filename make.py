@@ -70,7 +70,7 @@ else:
 # commands that create log files
 CMD_LOGS = {
     'quickinstall': QUICKINSTALL,
-    'pytest': PYTEST,
+    'tests': PYTEST,
     # 'coding-std': CODING_STD,  # not logged due to small output
     'docs': DOCS,
     'new-wiki': NEWWIKI,
