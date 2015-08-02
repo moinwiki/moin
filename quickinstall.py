@@ -97,7 +97,7 @@ Successfully created or updated venv at {0}
             '--editable',
             self.dir_source,
         ]
-        if pip_version < [6,0]:
+        if pip_version < [6, 0]:
             args += ['--download-cache', self.download_cache, ]
         if pip_version >= [1, 5]:
             args += [
