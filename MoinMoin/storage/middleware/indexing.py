@@ -328,6 +328,10 @@ class IndexingMiddleware(object):
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True, spelling=True),
+            # refers to another item using itemid
+            REFERS_TO: ID(stored=True),
+            # meta field to differentiate elements referring to an item
+            ELEMENT: ID(stored=True),
         }
 
         latest_revs_fields = {

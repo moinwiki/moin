@@ -34,6 +34,16 @@
             {{ subscribe() }}
         </dt>
     </div>
+    <div id="moin-ticket-layout">
+        <dl>
+            <dt>
+                {{ gen.label(form['data_file']) }}
+            </dt>
+            <dd>
+                {{ gen.input(form['data_file'], type='file') }}
+            </dd>
+        </dl>
+    </div>
     <div style="clear:both;"></div>
 
     <h3>{{ _("Back references") }}</h3>
@@ -41,6 +51,19 @@
         <dl>
             {{ render_backref() }}
         </dl>
+    </div>
+    <div style="clear:both;"></div>
+
+    <h3>{{ _("Files") }}</h3>
+    <div id="moin-ticket-layout">
+    {% if files %}
+        <div class="moin-item-index">
+            {% for file in files %}
+                {{ render_file(file) }}
+            {% endfor %}
+        </div>
+        <div class="moin-clr"></div>
+    {% endif %}
     </div>
     <div style="clear:both;"></div>
 
