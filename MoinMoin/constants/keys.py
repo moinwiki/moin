@@ -57,6 +57,7 @@ PARENTID = u"parentid"
 DATAID = u"dataid"
 WIKINAME = u"wikiname"
 CONTENT = u"content"
+REFERS_TO = u"refers_to"
 IMMUTABLE_KEYS = [
     ACTION,
     ADDRESS,
@@ -67,6 +68,7 @@ IMMUTABLE_KEYS = [
     MTIME,
     NAME_OLD,
     PARENTID,
+    REFERS_TO,
     REVID,
     HASH_ALGORITHM,
     SIZE,
@@ -132,6 +134,7 @@ ASSIGNED_TO = u"assigned_to"
 SUPERSEDED_BY = u"superseded_by"
 DEPENDS_ON = u"depends_on"
 CLOSED = u"closed"
+ELEMENT = u"element"
 
 # index names
 LATEST_REVS = 'latest_revs'

@@ -42,6 +42,16 @@
                 {{ subscribe() }}
             </dt>
         </div>
+        <div id="moin-ticket-layout">
+            <dl>
+                <dt>
+                    {{ gen.label(form['data_file']) }}
+                </dt>
+                <dd>
+                    {{ gen.input(form['data_file'], type='file') }}
+                </dd>
+            </dl>
+        </div>
     <div style="clear:both;"></div>
     <h3>{{ _("Describe the ticket") }}</h3>
     <div id="moin-ticket-layout">

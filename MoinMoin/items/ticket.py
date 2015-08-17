@@ -9,23 +9,26 @@ MoinMoin - Ticket itemtype
 from __future__ import absolute_import, division
 
 import time
+import datetime
 
 from flask import request, abort, redirect, url_for
 from flask import g as flaskg
+from flask import current_app as app
 
 from jinja2 import Markup
 
-from whoosh.query import Term
+from whoosh.query import Term, And
 
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
-                            Reference, BackReference, SelectSubmit, Text)
+                            Reference, BackReference, SelectSubmit, Text, File)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, NAME, SUMMARY, NAMESPACE)
+                                    SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, 
+                                    NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags
+from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from MoinMoin.items.content import NonExistentContent
 from MoinMoin.util.interwiki import CompositeName
 from MoinMoin.constants.forms import *
@@ -91,6 +94,7 @@ class TicketForm(BaseModifyForm):
     meta = TicketMetaForm
     backrefs = TicketBackRefForm
     message = OptionalMultilineText.using(label=L_("Message")).with_properties(rows=8, cols=80)
+    data_file = File.using(optional=True, label=L_('Upload file:'))
 
     def _load(self, item):
         meta = item.prepare_meta_for_modify(item.meta)
@@ -112,7 +116,7 @@ class TicketSubmitForm(TicketForm):
             'closed': False,
         }
         meta.update(self['meta'].value)
-        return meta, message_markup(self['message'].value)
+        return meta, message_markup(self['message'].value), self['data_file'].value
 
 
 class TicketUpdateForm(TicketForm):
@@ -139,7 +143,7 @@ class TicketUpdateForm(TicketForm):
         if message:
             data += message_markup(message)
 
-        return meta, data
+        return meta, data, self['data_file'].value
 
 
 # XXX Ideally we should generate DOM instead of moin wiki source. But
@@ -156,6 +160,63 @@ def message_markup(message):
 %(message)s
 }}}}}}
 ''' % dict(author=flaskg.user.name[0], timestamp=time.time(), message=message)
+
+
+def check_itemid(self):
+    # once a ticket has both name and itemid, use itemid
+    if self.meta.get(ITEMID) and self.meta.get(NAME):
+ 	query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, self.meta[NAME])])
+    	revs = flaskg.storage.search(query, limit=None)
+	prefix = self.meta[NAME][0] + '/'
+ 	for rev in revs:
+ 	    old_names = rev.meta[NAME]
+ 	    for old_name in old_names:
+ 		file_name = old_name[len(prefix):]
+ 		try:
+ 		    new_name = self.meta[ITEMID] + '/' + file_name
+ 		    item = Item.create(new_name)
+                    item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID])
+                    item = Item.create(old_name)
+                    item._save(item.meta, name=old_name, action=ACTION_TRASH) # delete
+                except AccessDenied:
+                    abort(403)
+
+
+def file_upload(self, data_file):
+    contenttype = data_file.content_type # guess by browser, based on file name
+    data = data_file.stream
+    check_itemid(self)
+    if self.meta.get(ITEMID) and self.meta.get(NAME):
+        item_name = self.meta[ITEMID] + '/' + data_file.filename
+        refers_to = self.meta[ITEMID]
+    else:
+        item_name = self.fqname.value + '/' + data_file.filename
+        refers_to = self.fqname.value
+    try:
+        item = Item.create(item_name)
+        item.modify({}, data, contenttype_guessed=contenttype, refers_to=refers_to, element=u'file')
+    except AccessDenied:
+        abort(403)
+
+
+def get_files(self):
+    check_itemid(self)
+    if self.meta.get(ITEMID) and self.meta.get(NAME):
+        refers_to = self.meta[ITEMID]
+        prefix = self.meta[ITEMID] + '/'
+    else:
+        refers_to = self.fqname.value
+        prefix = self.fqname.value + '/'
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'file')])
+    revs = flaskg.storage.search(query, limit=None)
+    files = []
+    for rev in revs:
+        names = rev.meta[NAME]
+        for name in names:
+            relname = name[len(prefix):]
+            file_fqname = CompositeName(rev.meta[NAMESPACE], ITEMID, rev.meta[ITEMID])
+            files.append(IndexEntry(relname, file_fqname, rev.meta))
+    return files
 
 
 @register
@@ -184,9 +245,10 @@ class Ticket(Contentful):
         elif request.method == 'POST':
             form = Form.from_request(request)
             if form.validate():
-                meta, data = form._dump(self)
+                meta, data, data_file = form._dump(self)
                 try:
                     self.modify(meta, data)
+                    file_upload(self, data_file)
                 except AccessDenied:
                     abort(403)
                 else:
@@ -199,6 +261,7 @@ class Ticket(Contentful):
         # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
         data_rendered = None if is_new else Markup(self.content._render_data())
 
+        files = get_files(self)
         suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
 
         return render_template(self.submit_template if is_new else self.modify_template,
@@ -209,4 +272,5 @@ class Ticket(Contentful):
                                form=form,
                                suggested_tags=suggested_tags,
                                item=self,
+                               files=files,
                               )

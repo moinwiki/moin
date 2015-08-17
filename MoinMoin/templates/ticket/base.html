@@ -64,6 +64,17 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_file(file) %}
+    <div>
+        <a href="{{ url_for('.show_item', item_name=file.fullname) }}"
+           class="{{ file.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ file.meta['itemtype'] }} moin-item">
+        </a>
+        <a href="{{ url_for('.download_item', item_name=file.fullname) }}" title="{{ file.relname }}">
+            {{ file.relname|shorten_item_name }}
+        </a>
+    </div>
+{% endmacro %}
+
 {% block head %}
     {{ super() }}
     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
