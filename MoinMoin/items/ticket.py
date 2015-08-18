@@ -165,16 +165,16 @@ def message_markup(message):
 def check_itemid(self):
     # once a ticket has both name and itemid, use itemid
     if self.meta.get(ITEMID) and self.meta.get(NAME):
- 	query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, self.meta[NAME])])
-    	revs = flaskg.storage.search(query, limit=None)
-	prefix = self.meta[NAME][0] + '/'
- 	for rev in revs:
- 	    old_names = rev.meta[NAME]
- 	    for old_name in old_names:
- 		file_name = old_name[len(prefix):]
- 		try:
- 		    new_name = self.meta[ITEMID] + '/' + file_name
- 		    item = Item.create(new_name)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, self.meta[NAME])])
+    revs = flaskg.storage.search(query, limit=None)
+    prefix = self.meta[NAME][0] + '/'
+    for rev in revs:
+        old_names = rev.meta[NAME]
+        for old_name in old_names:
+        file_name = old_name[len(prefix):]
+        try:
+            new_name = self.meta[ITEMID] + '/' + file_name
+            item = Item.create(new_name)
                     item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID])
                     item = Item.create(old_name)
                     item._save(item.meta, name=old_name, action=ACTION_TRASH) # delete
