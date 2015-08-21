@@ -30,38 +30,38 @@
                 {% for result in ticket_results %}
                     <tr>
                         <td>
-                            <a href="{{ url_for_item(result.meta['itemid'], field='itemid', namespace=result.meta['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result.meta['itemid']) }}">
-                                {{ result.meta['itemid'][:4] }}
+                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid']) }}">
+                                {{ result['itemid'][:4] }}
                             </a>
                         </td>
                         <td>
-                            <a href="{{ url_for_item(result.meta['itemid'], field='itemid', namespace=result.meta['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result.meta['itemid']) }}">
-                                {{ result.meta['summary'] }}
+                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid']) }}">
+                                {{ result['summary'] }}
                             </a>
                         </td>
                         <td>
-                            {{ _("Closed") if result.meta['closed'] else _("Open") }}
+                            {{ _("Closed") if result['closed'] else _("Open") }}
                         </td>
                         <td>
-                            {{ timestamp(result.meta.get('mtime', '')).strftime('%Y-%m-%d') }}
+                            {{ result.get('mtime', '').strftime('%Y-%m-%d') }}
                         </td>
                         <td>
-                            {{ get_assigned_to_info(result.meta) }}
+                            {{ get_assigned_to_info(result) }}
                         </td>
                         <td>
-                            {{ result.meta.get('effort', '') }}
+                            {{ result.get('effort', '') }}
                         </td>
                         <td>
-                            {{ result.meta.get('difficulty', '') }}
+                            {{ result.get('difficulty', '') }}
                         </td>
                         <td>
-                            {{ result.meta.get('severity', '') }}
+                            {{ result.get('severity', '') }}
                         </td>
                         <td>
-                            {{ result.meta.get('priority', '') }}
+                            {{ result.get('priority', '') }}
                         </td>
                         <td>
-                            {% for tag in result.meta['tags'] %}
+                            {% for tag in result['tags'] %}
                                 {{ tag }}
                             {% endfor %}
                         </td>
@@ -69,6 +69,10 @@
                 {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>
+            {{ _("No tickets found.") }}
+        </p>
     {% endif %}
         <div class="moin-search-option-bar"><h4 style="display:inline-block">Search Options</h4><span class="fa fa-chevron-down"></span></div>
         <div class="moin-searchoptions hidden">
