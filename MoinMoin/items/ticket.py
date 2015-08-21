@@ -319,7 +319,8 @@ class Ticket(Contentful):
                     if not is_new and message:
                         create_comment(self.meta, message)
                     self.modify(meta, data)
-                    file_upload(self, data_file)
+                    if data_file:
+                        file_upload(self, data_file)
                 except AccessDenied:
                     abort(403)
                 else:
