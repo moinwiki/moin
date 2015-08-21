@@ -67,11 +67,17 @@
     </div>
     <div style="clear:both;"></div>
 
-    <h3>{{ _("Add comment") }}</h3>
+    <h3>{{ _("Ticket Description") }}</h3>
     <div id="moin-ticket-layout">
         {% if data_rendered %}
             {{ data_rendered }}
         {% endif %}
+    </div>
+    <div style="clear:both;"></div>
+
+    <h3>{{ _("Add Comment") }}</h3>
+    <div id="moin-ticket-layout">
+        {{ render_comments() }}
         <div class="form-group">
             {{ gen.textarea(form['message'], class='form-control') }}
         </div>
