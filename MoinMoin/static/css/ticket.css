@@ -107,7 +107,8 @@ dl dd {
     text-align: left;
 }
 .moin-ticket-subtext {
-    font-size: 10pt;
+    margin-top: 5px;
+    font-size: 8pt;
     color: #7c7c7f;
 }
 .comment-reply {
@@ -131,7 +132,7 @@ dl dd {
 .comment-content {
     position: relative;
     max-width: 100%;
-    height: auto;
+    height: 70px;
     margin: 10px 10px;
     padding: 5px;
     background-color: #fcfcff;

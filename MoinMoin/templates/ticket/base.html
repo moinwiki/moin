@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro render_comment(comment) %}
-    <div class="comment-content" style="left:{{ comment[1] }}px;">
+    <div class="comment-content" comment_id={{ comment[0].meta['itemid'] }} style="left:{{ comment[1] }}px;">
         <span class="comment-tip comment-tip-left"></span>
         <div class="message">
             <dl id="{{ comment[0].meta['itemid'] }}">
