@@ -332,6 +332,8 @@ class IndexingMiddleware(object):
             REFERS_TO: ID(stored=True),
             # meta field to differentiate elements referring to an item
             ELEMENT: ID(stored=True),
+            # reply to comment
+            REPLY_TO: ID(stored=True),
         }
 
         latest_revs_fields = {

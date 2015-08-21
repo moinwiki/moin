@@ -51,6 +51,40 @@
     {% endif %}
 {% endmacro %}
 
+{% macro render_comment(comment) %}
+    <div class="comment-content" style="left:{{ comment[1] }}px;">
+        <span class="comment-tip comment-tip-left"></span>
+        <div class="message">
+            <dl id="{{ comment[0].meta['itemid'] }}">
+
+                <div class="message-markup">
+                    {{ ((comment[0].meta['content'])) }}
+                </div>
+                <span class="moin-ticket-subtext">
+                    <a href="#" class="reply" reply_to={{ comment[0].meta['itemid'] }} refers_to={{ comment[0].meta['refers_to'] }}>reply</a> | 
+                    <a class="jumper" href="#{{ comment[0].meta['itemid'] }}">{{ comment[0].meta['itemid'][:4] }}</a>
+                    {% if comment[0].meta['reply_to'] %}
+                        In reply to <a class="jumper" href="#{{ comment[0].meta['reply_to'] }}">{{ comment[0].meta['reply_to'][:4] }}</a>
+                    {% endif %}
+                    posted by {{ comment[0].meta['author'] }} on {{ datetime.datetime.fromtimestamp(comment[0].meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
+                </span>
+            </dl>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_comments() %}
+    <div class="moin-ticket-comments">
+        {% for root in roots %}
+            {% set comment_tree = build_tree(comments, root, [], 30) %}
+            {{ render_comment([root, 0]) }}
+            {% for comment in comment_tree %}
+                {{ render_comment(comment) }}
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
 {% macro subscribe() %}
     {% if user.valid and exists %}
         <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="moin-button" rel="nofollow" title="Switch notifications about item changes on or off">

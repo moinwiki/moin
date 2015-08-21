@@ -25,7 +25,7 @@ from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatu
                             Reference, BackReference, SelectSubmit, Text, Search, File)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                    SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, 
+                                    SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, MTIME, TAGS,
                                     NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
@@ -129,7 +129,7 @@ class TicketSubmitForm(TicketForm):
             'closed': False,
         }
         meta.update(self['meta'].value)
-        return meta, message_markup(self['message'].value), self['data_file'].value
+        return meta, message_markup(self['message'].value), None, self['data_file'].value
 
 
 class TicketUpdateForm(TicketForm):
@@ -148,15 +148,28 @@ class TicketUpdateForm(TicketForm):
         # original meta and update it with those from the metadata editor
         meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
         meta.update(self['meta'].value)
+
+        # creates an "Update" comment if changes in metadata
+        for key, value in self['meta'].value.iteritems():
+            if not meta.get(key) == value:
+                if key == TAGS:
+                    original = ', '.join(meta.get(key))
+                    new = ', '.join(value)
+                elif key == DEPENDS_ON or key == SUPERSEDED_BY:
+                    original = meta.get(key)[:4]
+                    new = value[:4]
+                else:
+                    original = meta.get(key)
+                    new = value
+                message = u'Update: ' + key + u' changed from ' + unicode(original) + u' to ' + unicode(new)
+                create_comment(meta, message)        
         if self['submit'].value == 'update_negate_status':
             meta['closed'] = not meta.get('closed')
 
         data = item.content.data_storage_to_internal(item.content.data)
         message = self['message'].value
-        if message:
-            data += message_markup(message)
 
-        return meta, data, self['data_file'].value
+        return meta, data, message, self['data_file'].value
 
 
 # XXX Ideally we should generate DOM instead of moin wiki source. But
@@ -232,6 +245,49 @@ def get_files(self):
     return files
 
 
+def get_comments(self):
+    if self.meta.get(ITEMID) and self.meta.get(NAME):
+        refers_to = self.meta[ITEMID]
+    else:
+        refers_to = self.fqname.value
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'comment')])
+    revs = flaskg.storage.search(query, sortedby=[MTIME], limit=None)
+    comments = dict()
+    lookup = dict()
+    roots = []
+    for rev in revs:
+        lookup[rev.meta[ITEMID]] = rev
+        comments[rev] = []
+    for comment_id, rev in lookup.iteritems():
+        if not rev.meta['reply_to']:
+            roots.append(rev)
+        else:
+            parent = lookup[rev.meta['reply_to']]
+            if comments.get(parent):
+                comments[parent].append(rev)
+            else:
+                comments[parent] = [rev]
+    return comments, roots
+
+
+def build_tree(comments, root, comment_tree, indent):
+    if comments[root]:
+        for comment in comments[root]:
+            comment_tree.append([comment, indent+30])
+            build_tree(comments, comment, comment_tree, indent+30)
+        return comment_tree
+    else:
+        return []
+
+
+def create_comment(meta, message):
+    current_timestamp = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
+    item_name = meta[ITEMID] + u'/' + u'comment_' + unicode(current_timestamp)
+    item = Item.create(item_name)
+    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8', \
+            refers_to=meta[ITEMID], reply_to=u'', author=flaskg.user.name[0], timestamp=time.ctime())
+
+
 @register
 class Ticket(Contentful):
     itemtype = ITEMTYPE_TICKET
@@ -258,8 +314,10 @@ class Ticket(Contentful):
         elif request.method == 'POST':
             form = Form.from_request(request)
             if form.validate():
-                meta, data, data_file = form._dump(self)
+                meta, data, message, data_file = form._dump(self)
                 try:
+                    if not is_new and message:
+                        create_comment(self.meta, message)
                     self.modify(meta, data)
                     file_upload(self, data_file)
                 except AccessDenied:
@@ -275,6 +333,7 @@ class Ticket(Contentful):
         data_rendered = None if is_new else Markup(self.content._render_data())
 
         files = get_files(self)
+        comments, roots = get_comments(self)
         suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
 
         return render_template(self.submit_template if is_new else self.modify_template,
@@ -286,4 +345,9 @@ class Ticket(Contentful):
                                suggested_tags=suggested_tags,
                                item=self,
                                files=files,
+                               comments=comments,
+                               Markup=Markup,
+                               datetime=datetime,
+                               roots=roots,
+                               build_tree=build_tree,
                               )

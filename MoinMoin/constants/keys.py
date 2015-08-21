@@ -135,6 +135,7 @@ SUPERSEDED_BY = u"superseded_by"
 DEPENDS_ON = u"depends_on"
 CLOSED = u"closed"
 ELEMENT = u"element"
+REPLY_TO = u"reply_to"
 
 # index names
 LATEST_REVS = 'latest_revs'

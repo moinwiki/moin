@@ -2435,6 +2435,28 @@ def ticket_search():
                             )
 
 
+@frontend.route('/+comment', defaults=dict(item_name=u''), methods=['POST'])
+def comment(item_name):
+    itemid = request.form.get('refers_to')
+    reply_to = request.form.get('reply_to')
+    data = request.form.get('data')
+    if data:
+        current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
+        item_name = unicode(itemid) + u'/' + u'comment_' + unicode(current_timestamp)
+        item = Item.create(item_name)
+        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8', \
+                refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
+        html = render_template('comments.html',
+                            data=data,
+                            author=flaskg.user.name[0],
+                            timestamp=time.ctime(),
+                            commentid=item.fqname.value,
+                            itemid=reply_to,
+                            item=item,
+                            )
+        return html
+
+
 @frontend.route('/+new', methods=['GET', 'POST'])
 def new():
     # TODO: Implement creation of blog entries and ticket items
