@@ -175,7 +175,7 @@ def check_itemid(self):
                 try:
                     new_name = self.meta[ITEMID] + '/' + file_name
                     item = Item.create(new_name)
-                    item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID])
+                    item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID], element=u'file')
                     item = Item.create(old_name)
                     item._save(item.meta, name=old_name, action=ACTION_TRASH) # delete
                 except AccessDenied:
