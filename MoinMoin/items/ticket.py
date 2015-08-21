@@ -147,7 +147,6 @@ class TicketUpdateForm(TicketForm):
         # Since the metadata form for tickets is an incomplete one, we load the
         # original meta and update it with those from the metadata editor
         meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
-        meta.update(self['meta'].value)
 
         # creates an "Update" comment if changes in metadata
         for key, value in self['meta'].value.iteritems():
@@ -162,7 +161,9 @@ class TicketUpdateForm(TicketForm):
                     original = meta.get(key)
                     new = value
                 message = u'Update: ' + key + u' changed from ' + unicode(original) + u' to ' + unicode(new)
-                create_comment(meta, message)        
+                create_comment(meta, message)
+        meta.update(self['meta'].value)
+
         if self['submit'].value == 'update_negate_status':
             meta['closed'] = not meta.get('closed')
 
