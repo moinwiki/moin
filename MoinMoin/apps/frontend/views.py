@@ -52,6 +52,7 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             validate_name, NameNotValidError)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
+from MoinMoin.items.ticket import AdvancedSearchForm
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.namespaces import *
@@ -2389,6 +2390,49 @@ def tickets():
                                selected_tags=selected_tags,
                                current_timestamp=current_timestamp,
         )
+
+
+@frontend.route('/+tickets/query', methods=['GET', 'POST'])
+def ticket_search():
+    form = AdvancedSearchForm()
+    suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
+
+    if request.method == 'POST':
+        effort = request.form.get('effort')
+        difficulty = request.form.get('difficulty')
+        severity = request.form.get('severity')
+        priority = request.form.get('priority')
+        tags = request.form.get('tags')
+        assigned_to = request.form.get('assigned_to')
+        author = request.form.get('author')
+        term = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
+        if effort:
+            term.append(Term(EFFORT, effort))
+        if difficulty:
+            term.append(Term(DIFFICULTY, difficulty))
+        if severity:
+            term.append(Term(SEVERITY, severity))
+        if priority:
+            term.append(Term(PRIORITY, priority))
+        if tags:
+            term.append(Term(TAGS, tags))
+        if author:
+            term.append(Term(USERID, author))
+        if assigned_to:
+            term.append(Term(ASSIGNED_TO, assigned_to))
+
+        query = And(term)
+        results = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
+    else:
+        results = None
+
+    return render_template('ticket/advanced.html',
+                            search_form=form,
+                            ticket_results=results,
+                            suggested_tags=suggested_tags,
+                            timestamp=datetime.fromtimestamp,
+                            is_ticket=True,
+                            )
 
 
 @frontend.route('/+new', methods=['GET', 'POST'])

@@ -17,6 +17,8 @@
 
     <input type="button" class="moin-button ticket-tags-toggle" title="{{ _("Show all tags") }}" value="{{ _("Tags") }}">
 
+    <a href={{ url_for('frontend.ticket_search') }} class="moin-button">{{ _('Advanced Search') }}</a>
+
     <form class="moin-ticket-search" action="{{ url_for('frontend.tickets',selected_tags=list(selected_tags)) }}" method="post">
         <input type="hidden" name="status" value="{{ status }}">
         <input type="text" name="q" value="{{ query if query }}" id="moin-ticketsearch-query" placeholder="{{ _('Find tickets') }}">

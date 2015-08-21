@@ -22,7 +22,7 @@ from whoosh.query import Term, And
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
 from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
-                            Reference, BackReference, SelectSubmit, Text, File)
+                            Reference, BackReference, SelectSubmit, Text, Search, File)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, 
@@ -63,6 +63,19 @@ OptionalUserReference = Reference.to(
     empty_label='(Nobody)',
     label_getter=get_name,
 )
+
+
+class AdvancedSearchForm(Form):
+    q = Search
+    summary = Text.using(label=L_("Summary"), optional=False).with_properties \
+            (widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
+    effort = Rating.using(label=L_("Effort"))
+    difficulty = Rating.using(label=L_("Difficulty"))
+    severity = Rating.using(label=L_("Severity"))
+    priority = Rating.using(label=L_("Priority"))
+    tags = Tags.using(optional=True)
+    assigned_to = OptionalUserReference.using(label=L_("Assigned To"))
+    author = OptionalUserReference.using(label=L_("Author"))
 
 
 class TicketMetaForm(Form):

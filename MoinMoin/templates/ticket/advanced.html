@@ -1,0 +1,109 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% set title = _("Advanced Search") %}
+{% block content %}
+    <h1>{{ _("Advanced Search") }}</h1>
+    <p>
+        <input type="search" name="meta_summary" value="" class="" id="moin-search-query" placeholder="Search Tickets" required="required" />
+    </p>    
+    <div id="finalresults">
+        {% include "ajaxsearch.html" %}
+    </div>    
+    {% if ticket_results %}
+        <table class="zebra moin-sortable" id="ticket-list">
+            <thead>
+                <tr>
+                    <th id="ticket-id">{{ _("ID") }}</th>
+                    <th id="ticket-summary">{{ _("Summary") }}</th>
+                    <th id="ticket-status">{{ _("Status") }}</th>
+                    <th id="ticket-mtime">{{ _("Updated") }}</th>
+                    <th id="ticket-assigned-to">{{ _("Assignee") }}</th>
+                    <th id="ticket-effort" title="{{ _('Effort') }}">E</th>
+                    <th id="ticket-difficulty" title="{{ _('Difficulty') }}">D</th>
+                    <th id="ticket-severity" title="{{ _('Severity') }}">S</th>
+                    <th id="ticket-priority" title="{{ _('Priority') }}">P</th>
+                    <th id="ticket-tags">{{ _("Tags") }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in ticket_results %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for_item(result.meta['itemid'], field='itemid', namespace=result.meta['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result.meta['itemid']) }}">
+                                {{ result.meta['itemid'][:4] }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for_item(result.meta['itemid'], field='itemid', namespace=result.meta['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result.meta['itemid']) }}">
+                                {{ result.meta['summary'] }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ _("Closed") if result.meta['closed'] else _("Open") }}
+                        </td>
+                        <td>
+                            {{ timestamp(result.meta.get('mtime', '')).strftime('%Y-%m-%d') }}
+                        </td>
+                        <td>
+                            {{ get_assigned_to_info(result.meta) }}
+                        </td>
+                        <td>
+                            {{ result.meta.get('effort', '') }}
+                        </td>
+                        <td>
+                            {{ result.meta.get('difficulty', '') }}
+                        </td>
+                        <td>
+                            {{ result.meta.get('severity', '') }}
+                        </td>
+                        <td>
+                            {{ result.meta.get('priority', '') }}
+                        </td>
+                        <td>
+                            {% for tag in result.meta['tags'] %}
+                                {{ tag }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+        <div class="moin-search-option-bar"><h4 style="display:inline-block">Search Options</h4><span class="fa fa-chevron-down"></span></div>
+        <div class="moin-searchoptions hidden">
+            <div id="moin-ticket-form" class="moin-form">
+                {{ gen.form.open(search_form, method='post', action=url_for('frontend.ticket_search')) }}
+                    <dl>
+                        <div id="moin-ticket-layout">
+                            {% for e in [
+                                    'effort',
+                                    'difficulty',
+                                    'severity',
+                                    'priority',
+                                    'tags',
+                                    'assigned_to',
+                                    'author',
+                            ] %}
+                            <dt>
+                                {{ forms.render(search_form[e]) }}
+                            </dt>
+                            {% endfor %}
+                        </div>
+                    </dl>
+                    <button type="submit" class="moin-button" value="Submit">Search</button> 
+                {{ gen.form.close() }}
+            </div>
+        </div>
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+{% endblock %}
+
+{% block body_scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/tickets.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}
