@@ -115,42 +115,42 @@ dl dd {
     height: 20%;
 }
 .comment-tip {
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  background: transparent;
-  border: 10px solid #E5E5E5;
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    background: transparent;
+    border: 10px solid #E5E5E5;
 }
 .comment-tip-left {
-  top: 10px;
-  left: -20px;
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-bottom-color: transparent;
+    top: 10px;
+    left: -20px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
 }
 .comment-content {
-  position: relative;
-  max-width: 100%;
-  height: auto;
-  margin: 10px 10px;
-  padding: 5px;
-  background-color: #fcfcff;
-  border-radius: 10px;
-  border: 2px solid #E5E5E5;
-  box-shadow: 2px 2px 2px #888888;
+    position: relative;
+    max-width: 100%;
+    height: auto;
+    margin: 10px 10px;
+    padding: 5px;
+    background-color: #fcfcff;
+    border-radius: 10px;
+    border: 2px solid #E5E5E5;
+    box-shadow: 2px 2px 2px #888888;
 }
 .comment-content .message {
-  border-radius: 3px;
-  font-family: Arial;
-  font-size: 14px;
-  line-height: 1.5;
+    border-radius: 3px;
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 1.5;
 }
 .message .message-markup {
-  background-color: #F9F9FF;
-  border: 1px solid #E5E5E5;
-  border-radius: 3px;
-  padding: 5px;
+    background-color: #F9F9FF;
+    border: 1px solid #E5E5E5;
+    border-radius: 3px;
+    padding: 5px;
 }
 #save, #cancel {
-  display:inline-block;
+    display:inline-block;
 }
