@@ -418,11 +418,11 @@ class Commands(object):
             print 'Error: Basic theme CSS files update failed, see error messages above.'
 
     def cmd_tests(self, *args):
-        """run tests, output goes to pytest.txt and pytestpep8.txt"""
+        """run tests, output goes to m-pytest.txt"""
         print 'Running tests... output written to {0}.'.format(PYTEST)
         command = '{0}py.test --pep8 > {1} {2} 2>&1'.format(ACTIVATE, PYTEST, ' '.join(args))
         result = subprocess.call(command, shell=True)
-        print 'Summary message from {0} is shown below. Do "{1} log pytest" to see complete log.'.format(PYTEST, M)
+        print 'Summary message from {0} is shown below. Do "{1} log tests" to see complete log.'.format(PYTEST, M)
         search_for_phrase(PYTEST)
 
     def cmd_coding_std(self, *args):
