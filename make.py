@@ -47,11 +47,13 @@ DOCS = 'm-docs.txt'
 NEWWIKI = 'm-new-wiki.txt'
 DELWIKI = 'm-delete-wiki.txt'
 BACKUPWIKI = 'm-backup-wiki.txt'
+DUMPHTML = 'm-dump-html.txt'
 EXTRAS = 'm-extras.txt'
 DIST = 'm-create-dist.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
 JUST_IN_CASE_BACKUP = os.path.normpath('wiki/deleted-backup.moin')
+DUMP_HTML_DIRECTORY = os.path.normpath('HTML')
 
 
 if os.name == 'nt':
@@ -76,6 +78,7 @@ CMD_LOGS = {
     'new-wiki': NEWWIKI,
     'del-wiki': DELWIKI,
     'backup': BACKUPWIKI,
+    'dump-html': DUMPHTML,
     'extras': EXTRAS,
     'dist': DIST,
 }
@@ -99,6 +102,7 @@ index           delete and rebuild indexes
 
 run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
+dump-html *     create a static HTML image of wiki *option, specify directory
 
 css             run Stylus and lessc to update theme CSS files
 tests *         run tests, output to pytest.txt *options (-v -k my_test)
@@ -121,6 +125,7 @@ def search_for_phrase(filename):
         QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
+        DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
         PYTEST: ('seconds =', ),
@@ -374,6 +379,26 @@ class Commands(object):
                 print '\nError: attempt to backup wiki failed.'
         else:
             print 'Error: cannot backup wiki because it has not been created.'
+
+    def cmd_dump_html(self, *args):
+        """create a static html dump of this wiki"""
+        if wiki_exists():
+            directory = DUMP_HTML_DIRECTORY
+            if args:
+                directory = args[0]
+                print 'Creating static HTML image of wiki to {0}...'.format(directory)
+            command = '{0}moin dump-html --directory {1}'.format(ACTIVATE, directory)
+            with open(DUMPHTML, 'w') as messages:
+                result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
+            if result == 0:
+                print 'Success: wiki was dumped to directory {0}'.format(directory)
+            else:
+                print '\nError: attempt to dump wiki to html files failed.'
+            # always show errors because individual items may fail
+            print 'Important messages from {0} are shown below. Do "{1} log dump-html" to see complete log.'.format(DUMPHTML, M)
+            search_for_phrase(DUMPHTML)
+        else:
+            print 'Error: cannot dump wiki because it has not been created.'
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
