@@ -1,0 +1,68 @@
+/* CMS theme has topbar for small displays and sidebar for wide displays. */
+
+body { margin: 0; }
+#moin-header { background-image: url("../../../static/img/white-clouds.jpg"); text-align: center; min-height: 74px; overflow: hidden; }
+/* logo size of 64x64 px determines min-height and padding of 74px above and below */
+#moin-logo { position: absolute; top: 5px; left: 10px; }
+.moin-sitename { font-size: 2em; z-index: 1; position: relative; }
+.moin-header-links { padding: 0 74px 0 74px; }
+.moin-header-links li { display: inline; margin: 1em .5em; white-space: nowrap; }
+a { text-decoration: none; color: #181be2; }
+a:hover { text-decoration: underline; }
+.moin-permalink { opacity: .25; padding-left: .3em; }
+img { border: 0; } /* override IE default */
+#moin-content,
+#moin-footer { margin: 0 10%; width: auto; }
+
+@media (min-width: 1025px) {
+    #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
+        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; }
+    #moin-logo { padding: 10px 0; position: relative; top: 0; left: 0; }
+    .moin-sitename { font-size: 1.5em; display: block; }
+    .moin-header-links { clear: both; padding-bottom: 1em; padding-left: 0; text-align: left; }
+    .moin-header-links li { display: block; margin: 1em; }
+    #moin-content,
+    #moin-footer { padding-left: 250px; margin: 0 10%; }
+}
+
+@media print {
+    #moin-header { display: none; }
+    #moin-content { padding-left: 0; margin: 0; }
+    .moin-permalink { display: none; }
+}
+
+
+/* TODO: "pre" styling belongs in common.css. The pre styling below is copied from basic theme.css. Merge with pre styling in modernized theme.css. */
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  /* word-break: break-all; */
+  /* word-wrap: break-word; */
+  color: #333333;
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+/* modernized theme adds this: */
+pre {
+    white-space: pre-wrap;
+}
+
+/* TODO: moin-flash styling belongs in common.css. rules below were copied from modernized.css. */
+#moin-flash{margin:-2px -15px -2px -14px}
+/*
+.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;
+    background-repeat:no-repeat;background-position:16px center;border-top-right-radius:9px;border-top-left-radius:9px;color:#000}
+.moin-flash-hint{background-image:url("../img/smileys/idea.png")}
+.moin-flash-info{background-image:url("../img/smileys/icon-info.png")}
+.moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
+.moin-flash-error{background-image:url("../img/smileys/icon-error.png");color:#ff2727}
+*/
+.moin-flash { background-color: #eee; border: 2px solid color: #181be2; padding: 1em 1em 1em 3em; border-radius: 9px; }
+.moin-flash-hint { background-image:url("../../../static/img/smileys/idea.png")}
+.moin-flash-info { background-image:url("../../../static/img/smileys/icon-info.png"); background-repeat: no-repeat; background-position: 1em 1em; }
+.moin-flash-warning { background-image:url("../../../static/img/smileys/alert.png"); color:#ff2727; }
+.moin-flash-error { background-image:url("../../../static/img/smileys/icon-error.png"); color:#ff2727; }

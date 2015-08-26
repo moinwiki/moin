@@ -96,3 +96,42 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 {% macro scripts() -%}
     {# <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script> #}
 {%- endmacro %}
+
+{# Header for CMS theme - this expects items available in developer sample data - see docs for tips on customization #}
+{% macro cms_header() %}
+    <div id="moin-header">
+        {% block header %}
+            <div id="moin-logo">
+                <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                    <img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
+                </a>
+            </div>
+            <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                {{ cfg.sitename }}
+            </a>
+            <br>
+            <ul class="moin-header-links">
+
+                {# wiki admins will want to replace these with key item names present in local wiki #}
+                <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='moin') }}">Moin Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='creole') }}">Creole Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='markdown') }}">Markdown Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
+
+                {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
+                    {% if user.valid -%}
+                        {% if user.auth_method in cfg.auth_can_logout %}
+                            <li><a href="{{ url_for('frontend.show_item', item_name='+logout') }}">Logout</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('frontend.show_item', item_name='+usersettings') }}">Settings</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('frontend.show_item', item_name='+login') }}">Login</a></li>
+                    {%- endif %}
+                {%- endif %}
+
+            </ul>
+        {% endblock %}
+    </div>
+    <br>
+{% endmacro %}
