@@ -1,0 +1,10 @@
+{
+    "identifier":   "cms",
+    "application":  "MoinMoin",
+    "name":         "CMS Theme",
+    "description":  "CMS-like theme for viewing wiki content",
+    "author":       "Roger Haase",
+    "website":      "http://moinmo.in/",
+    "license":      "see MoinMoin license",
+    "doctype":      "html5"
+}
