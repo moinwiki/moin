@@ -85,19 +85,6 @@
     </div>
 {% endmacro %}
 
-{% macro subscribe() %}
-    {% if user.valid and exists %}
-        <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="moin-button" rel="nofollow" title="Switch notifications about item changes on or off">
-            <i class="fa fa-envelope fa-fw"></i>
-            {%- if user.is_subscribed_to(item) %}
-                {{ _('Unsubscribe') }}
-            {%- else %}
-                {{ _('Subscribe') }}
-            {%- endif %}
-        </a>
-    {% endif %}
-{% endmacro %}
-
 {% macro render_file(file) %}
     <div>
         <a href="{{ url_for('.show_item', item_name=file.fullname) }}"
