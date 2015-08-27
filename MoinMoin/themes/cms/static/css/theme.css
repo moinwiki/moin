@@ -1,6 +1,6 @@
 /* CMS theme has topbar for small displays and sidebar for wide displays. */
 
-body { margin: 0; }
+body { margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 #moin-header { background-image: url("../../../static/img/white-clouds.jpg"); text-align: center; min-height: 74px; overflow: hidden; }
 /* logo size of 64x64 px determines min-height and padding of 74px above and below */
 #moin-logo { position: absolute; top: 5px; left: 10px; }
