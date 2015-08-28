@@ -128,7 +128,7 @@ def search_for_phrase(filename):
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
-        PYTEST: ('seconds =', ),
+        PYTEST: ('seconds =', 'INTERNALERROR', 'traceback', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'Exception occurred', )
@@ -447,7 +447,7 @@ class Commands(object):
         print 'Running tests... output written to {0}.'.format(PYTEST)
         command = '{0}py.test --pep8 > {1} {2} 2>&1'.format(ACTIVATE, PYTEST, ' '.join(args))
         result = subprocess.call(command, shell=True)
-        print 'Summary message from {0} is shown below. Do "{1} log tests" to see complete log.'.format(PYTEST, M)
+        print 'Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(PYTEST, M)
         search_for_phrase(PYTEST)
 
     def cmd_coding_std(self, *args):
