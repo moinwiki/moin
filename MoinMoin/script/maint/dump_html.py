@@ -17,9 +17,6 @@ TODO:
         * app.cfg.theme_default = u'cms' - does nothing
         * app.config['MOINCFG'].theme_default = u'cms' - does nothing
     * make basic and modernized theme layout more consistent, add docs to say what is wanted
-    * to get more javascript working (table sorter, etc.), a workaround for i18n is required:
-        * _(...) calls within common.js fail
-        * /templates/dictionary.js cannot be loaded without errors because it is a template
     * fix issues related to missing or misleading filename suffixes. Using data from contrib/serialized/items.moin:
         * all browsers think the audio.mp3 and video.mp4 html files are corrupt, a .html suffix is needed
         * all browsers fail to display the svg image file, a .svg suffix is needed on the /+get/svg file

@@ -17,6 +17,17 @@ MoinMoin.prototype.moinFlashMessage = function (classes, message) {
 };
 
 
+// _ is not defined when runing from static files created by dump-html.
+// This workaround returns untranslated input text; benefit is JS error is avoided
+// and impact to other JS functions (table sorting, etc) is eliminated.
+if (typeof _ == 'undefined') {
+    function _(text) {
+        'use strict';
+        return text;
+    }
+};
+
+
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
     "use strict";
