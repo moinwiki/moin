@@ -5,10 +5,7 @@
 /*jslint browser: true, nomen: true, todo: true*/
 /*global $:true, _:true*/
 
-function _(text) {
-    'use strict';
-    return $.i18n._(text);
-}
+// The _ function is defined in common.js.
 
 $(document).ready(function () {
     'use strict';
