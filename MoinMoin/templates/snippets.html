@@ -103,7 +103,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
         {% block header %}
             <div id="moin-logo">
                 <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
-                    <img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
+                    {{ logo() }}
                 </a>
             </div>
             <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
