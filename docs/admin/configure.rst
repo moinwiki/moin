@@ -273,8 +273,71 @@ Please note that `stylesheets` will be included no matter what theme the
 user has selected, so either only apply changes to all available themes or
 force all users to use the same theme, so that your CSS displays correctly.
 
-Displaying user avatars
+Customize the CMS Theme
 ~~~~~~~~~~~~~~~~~~~~~~~
+The CMS theme replaces the wiki navigation links used by editors and
+administrators with a few links to the most important items within your wiki. Wiki
+admins may want to make the CMS theme the default theme when:
+
+ - casual visitors are interested in viewing the wiki content, but confused by the wiki navigation links
+ - contributors do not mind logging in to edit
+ - errant bots are overloading your server by following the wiki navigation links on every page.
+
+Customizing the CMS header may be done as follows. Several restarts of the server may be required:
+
+ - Replace the Home/moin/creole/markdown links in snippets.html with links to the key pages within your wiki.
+ - If an index to all wiki items is wanted, leave the index link as is, else remove.
+ - If a link to login is wanted, leave that section as is, else remove the entire block.
+ - Test by logging in and setting "cms" as your preferred theme.
+ - After testing, make the "cms" theme the default theme by adding ``theme_default = u"cms"`` to wikiconfig.
+ - Inform your editors to login and set another theme as their preferred theme.
+ - If the login link was removed, the login page is available by keying ``+login`` as the page name in the browser URL.
+
+Here is the source code segment from snippets.html::
+
+    {# Header for CMS theme - see configuration docs for tips on customizing cms theme #}
+    {% macro cms_header() %}
+        <div id="moin-header">
+            {% block header %}
+                <div id="moin-logo">
+                    <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                        {{ logo() }}
+                    </a>
+                </div>
+                <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                    {{ cfg.sitename }}
+                </a>
+                <br>
+                <ul class="moin-header-links">
+
+                    {# wiki admins will want to replace these links with key item names present in local wiki #}
+                    <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                    <li><a href="{{ url_for('frontend.show_item', item_name='moin') }}">Moin Wiki Syntax</a></li>
+                    <li><a href="{{ url_for('frontend.show_item', item_name='creole') }}">Creole Wiki Syntax</a></li>
+                    <li><a href="{{ url_for('frontend.show_item', item_name='markdown') }}">Markdown Wiki Syntax</a></li>
+                    <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
+
+                    {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
+                        {% if user.valid -%}
+                            {% if user.auth_method in cfg.auth_can_logout %}
+                                <li><a href="{{ url_for('frontend.show_item', item_name='+logout') }}">Logout</a></li>
+                            {% endif %}
+                            <li><a href="{{ url_for('frontend.show_item', item_name='+usersettings') }}">Settings</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('frontend.show_item', item_name='+login') }}">Login</a></li>
+                        {%- endif %}
+                    {%- endif %}
+
+                </ul>
+            {% endblock %}
+        </div>
+        <br>
+    {% endmacro %}
+
+
+
+Displaying user avatars
+-----------------------
 Optionally, moin can display avatar images for the users, using gravatar.com
 service. To enable it, add or uncomment this line in wikiconfig::
 
@@ -1567,3 +1630,17 @@ needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
+
+======================================
+Creating a Static Dump of Wiki Content
+======================================
+Creating a wiki static dump consists of rendering all wiki items into formatted HTML
+files. In addition, other static files such as images, CSS, and Javascript are copied
+to the output directory. Although a static dump may be created using any theme,
+use of a CMS-like theme with no login link will create a result with no broken links.
+The default output directory is in the wiki root named HTML.
+
+To create a static dump, change wikiconfig to specify the desired theme
+(``theme_default = u"cms"``), then run the following from a terminal window::
+
+    ./m dump-html <optional output directory>  # for windows do: m dump-html
