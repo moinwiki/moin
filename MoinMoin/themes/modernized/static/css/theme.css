@@ -297,9 +297,6 @@ a.moin-nonexistent:visited,a.moin-nonexistent{color:#939393;}
 a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited object,a.moin-nonexistent object{background:#939393;border:3px dashed #737373}
 .moin-error{color:#ff2727;background:#eef1f6;padding:4px}
 .moin-highlight{background-color:#d8dfe9;padding:1px}
-pre{border:1px solid #4e7da9;background-color:#aed4fa;padding:5px;clear:both;font-family:monospace;margin:.33em 0;white-space:pre-wrap}
-pre.comment{background-color:#00417f;color:#fff;padding:0;margin:0;border:0}
-pre.comment:before{content:url("../img/attention.png")}
 .moin-thead{background-color:#00417f}
 .moin-showhide{margin-left:10px}
 table.navigation{background:#fff;float:right;margin:2px}
