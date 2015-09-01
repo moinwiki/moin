@@ -350,12 +350,6 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 .moin-offset-links a:hover{box-shadow:0 0 12px #9d9d9b}
 .moin-transclusion{max-width:100%}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
-#moin-flash{margin:-2px -15px -2px -14px}
-.moin-flash{margin:0;padding:6px 6px 6px 38px;background-color:#d8dfe9;border-bottom:1px solid #4e7da9;background-repeat:no-repeat;background-position:16px center;border-top-right-radius:9px;border-top-left-radius:9px;color:#000}
-.moin-flash-hint{background-image:url("../img/smileys/idea.png")}
-.moin-flash-info{background-image:url("../img/smileys/icon-info.png")}
-.moin-flash-warning{background-image:url("../img/smileys/alert.png");color:#ff2727}
-.moin-flash-error{background-image:url("../img/smileys/icon-error.png");color:#ff2727}
 body{background-color:#e6f2fe}
 #moin-main-wrapper{width:87%;min-width:700px;margin-left:auto;margin-right:auto;margin-top:0}
 #moin-page{padding:1px;display:table;width:100%;background:#fff;border-radius:9px}
