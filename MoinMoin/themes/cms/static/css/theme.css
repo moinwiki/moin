@@ -32,25 +32,6 @@ img { border: 0; } /* override IE default */
 }
 
 
-/* TODO: "pre" styling belongs in common.css. The pre styling below is copied from basic theme.css. Merge with pre styling in modernized theme.css. */
-pre {
-  display: block;
-  padding: 9.5px;
-  margin: 0 0 10px;
-  font-size: 13px;
-  line-height: 1.42857143;
-  /* word-break: break-all; */
-  /* word-wrap: break-word; */
-  color: #333333;
-  background-color: #f5f5f5;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-}
-/* modernized theme adds this: */
-pre {
-    white-space: pre-wrap;
-}
-
 /* TODO: moin-flash styling belongs in common.css. rules below were copied from modernized.css. */
 #moin-flash{margin:-2px -15px -2px -14px}
 /*
