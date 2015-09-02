@@ -648,6 +648,14 @@ class NodeVisitor(object):
     def depart_title_reference(self, node):
         pass
 
+    def visit_transition(self, node, default_class=u'moin-hr3'):
+        # TODO: add to rst_out
+        attrib = {html.class_: default_class}
+        self.open_moin_page_node(moin_page.separator(attrib=attrib))
+
+    def depart_transition(self, node):
+        self.close_moin_page_node()
+
     def unimplemented_visit(self, node):
         pass
 

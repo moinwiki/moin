@@ -318,6 +318,32 @@ Option lists are intended to document Unix or DOS command line options.
 **Notes**:
  - **RSTTODO**: The above is rendered in a <dl><dd><p> sequence, but there is a lack of CSS to format it.
 
+Transitions
+===========
+
+Transitions, or horizontal rules, separate other body elements. A transition should
+not begin or end a section or document, nor should two transitions be immediately
+adjacent. The syntax for a transition marker is a horizontal line of 4 or more
+repeated punctuation characters. The syntax is the same as section title
+underlines without title text. Transition markers require blank lines before and after.
+
+**Markup**: ::
+
+    Text
+
+    ----
+
+    Text
+
+
+**Result**:
+
+Text
+
+----
+
+Text
+
 
 Backslash Escapes
 =================

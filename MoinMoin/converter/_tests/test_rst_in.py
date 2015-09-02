@@ -39,6 +39,7 @@ class TestConverter(object):
             (u'*Text*', '<page><body><p><emphasis>Text</emphasis></p></body></page>'),
             (u'``Text``', '<page><body><p><code>Text</code></p></body></page>'),
             (u"`Text <javascript:alert('xss')>`_", u'<page><body><p>Text</p></body></page>'),
+            (u'Text\n\n~~~~~\n\nTest', '<page><body><p>Text</p><separator xhtml:class="moin-hr3" /><p>Test</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
