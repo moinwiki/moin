@@ -264,7 +264,8 @@ a.moin-button:active { color: #000; text-decoration: none; }
 
 /* pre */
 pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 7px 10px; clear: both; margin: .75em 0;
-    overflow-x: auto; border-radius: 4px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
+    white-space: pre-wrap; word-wrap: break-word; word-break: break-all; border-radius: 4px;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
 pre.comment { background-color: #CCC; color: red; padding: 0; margin: 0; border: 0; }
 pre.comment:before { content: url(../img/attention.png); }
 
