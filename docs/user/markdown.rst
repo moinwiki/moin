@@ -279,9 +279,6 @@ more text
 ______
 
 
-**RST NOTE**: The Moin RST parser does not render horizontal rules.
-
-
 Backslash Escapes
 =================
 
