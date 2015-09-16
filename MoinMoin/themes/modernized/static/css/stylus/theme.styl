@@ -404,6 +404,9 @@ a.moin-sitename
     font-size 0.82em
     a
         color heading_color
+    li
+        display inline
+        padding-right 10px
 
 #moin-username input:hover
     color hover_color
@@ -639,6 +642,12 @@ body
         width:100%;
         min-width: 0;
         overflow: auto;
+
+    #moin-username
+        li
+            a
+                span
+                    display none
 
 @media print
     html
