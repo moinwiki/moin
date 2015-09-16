@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% import "snippets.html" as snippets with context %}
-{% import theme("utils.html") as utils %}
+{% import theme("utils.html") as utils with context %}
 
 {% set logo = snippets.logo() %}
 {% set before_header = snippets.before_header() %}
@@ -30,35 +30,9 @@
                 </div>
             {% endif %}
 
-            <div id="moin-username">
-                {% if user.valid -%}
-                    {% set avatar = user.avatar(20) %}
-                    {% if avatar %}
-                        <img id="moin-avatar" src="{{ avatar }}" />
-                    {%- endif %}
-                    {% if user.name -%}
-                        {% set wiki_href, display_name, title, exists = theme_supp.userhome() %}
-                        <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
-                            {{ display_name }}
-                        </a>
-                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                            <span class="sep"> | </span>
-                            <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow">{{ _('Settings') }}</a>
-                        {%- endif %}
-                    {%- endif %}
-                    {% if user.auth_method in cfg.auth_can_logout %}
-                        <span class="sep"> | </span>
-                        <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow">
-                            {{ _('Logout') }}
-                        </a>
-                    {% endif %}
-                {% else %}
-                    {% set login_url = theme_supp.login_url() %}
-                    {% if login_url %}
-                        <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
-                    {% endif %}
-                {%- endif %}
-            </div>
+            <ul id="moin-username">
+                {{ utils.user_login_logoff() }}
+            </ul>
 
             {% if cfg.sitename %}
                 <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
