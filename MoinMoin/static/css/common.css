@@ -438,3 +438,10 @@ form.upload_file button { display: none; }
 .moin-flash-info { background-image:url("../../../static/img/smileys/icon-info.png"); }
 .moin-flash-warning { background-image:url("../../../static/img/smileys/alert.png"); color:#ff2727; }
 .moin-flash-error { background-image:url("../../../static/img/smileys/icon-error.png"); color:#ff2727; }
+
+/* +modify template */
+#moin-modify dd{width:100%;float:none;}
+#moin-modify dd input{width:99%}
+#moin-modify dt{width:auto;text-align:left}
+#moin-modify textarea{width:99.5%}
+#moin-modify input[type="submit"]{margin-left:0}
