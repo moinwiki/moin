@@ -679,7 +679,7 @@ $(document).ready(function () {
 
     $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
-            return "Data you may have entered will be discarded!";
+            return _("All changes will be discarded!");
         }
     });
 
