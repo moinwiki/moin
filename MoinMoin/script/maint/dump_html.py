@@ -47,7 +47,6 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 wiki_config = os.path.dirname(os.path.abspath(__file__)) + '/../../../wikiconfig_local.py'
-app = create_app(wiki_config)
 SLASH = '(2f)'
 
 
@@ -60,6 +59,7 @@ class Dump(Command):
     ]
 
     def run(self, directory='HTML'):
+        app = create_app(wiki_config)
         before_wiki()
         html_root = os.path.dirname(os.path.abspath(__file__)) + '/../../../%s/' % directory
         repo_root = os.path.dirname(os.path.abspath(__file__)) + '/../../../'
