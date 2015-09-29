@@ -1,29 +1,66 @@
-/* CMS theme has topbar for small displays and sidebar for wide displays. */
+/* Topside CMS theme has topbar for small displays and left sidebar for wide displays. */
 
-body { margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
-#moin-header { background-image: url("../../../static/img/white-clouds.jpg"); text-align: center; min-height: 74px; overflow: hidden; }
-/* logo size of 64x64 px determines min-height and padding of 74px above and below */
-#moin-logo { position: absolute; top: 5px; left: 10px; }
-.moin-sitename { font-size: 2em; z-index: 1; position: relative; }
-.moin-header-links { padding: 0 74px 0 74px; }
-.moin-header-links li { display: inline; margin: 1em .5em; white-space: nowrap; }
-.moin-header-links li i { display: none; }
-a { text-decoration: none; color: #181be2; }
+body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+/* position footer on bottom of window when content is a few lines. */
+html { font-size: 1em; min-height: 100%; position: relative; }
+#moin-footer { position: absolute; bottom: 0; }
+#moin-content { padding-bottom: 12em; }
+
+a { text-decoration: none; color: #1409B9; }
 a:hover { text-decoration: underline; }
 .moin-permalink { opacity: .25; padding-left: .3em; }
-img { border: 0; } /* override IE default */
-#moin-content,
-#moin-footer { margin: 0 10%; width: auto; }
+.current-link { text-decoration: underline; }
+.moin-header-links li i  { display: none; }
+
+/* styling for topbar */
+@media (max-width: 1024px) {
+    #moin-header { background-image: url("../../../static/img/white-clouds.jpg");
+        text-align: center; min-height: 74px; overflow: hidden; border-bottom: 1px solid #D7E9FD; }
+    /* logo size of 64x64 px determines min-height and padding of 74px above and below */
+    #moin-logo { position: absolute; top: 5px; left: 10px; }
+    .moin-sitename { font-size: 2em; z-index: 1; position: relative; }
+    .moin-header-links { padding: 0 74px 0 74px; }
+    .moin-header-links li { display: inline; margin: 1em .5em; white-space: nowrap; }
+
+    #moin-content { margin: 0 5%; width: auto; }
+
+    #moin-footer { background-image: url("../../../static/img/white-clouds.jpg"); border-top: 1px solid #D7E9FD; }
+    #moin-pageinfo,
+    #moin-wiki-license,
+    #moin-credits,
+    #moin-version,
+    #moin-timings { margin-left: 5%; color: #444; float: none; clear: left; }
+    #moin-footer .moin-itemviews  { margin: 5px 5%; padding: 0; }
+    #moin-creditlogos { margin-right: 5%; padding: 0; }
+}
+
+@media screen and (max-width: 800px) {
+    #moin-content { margin: 0 2%; }
+    #moin-header ul { margin: .1em 2% .4em 2%; }
+    #moin-footer .moin-itemviews  { margin: 5px 2%; }
+}
 
 @media (min-width: 1025px) {
+    /* styling for left sidebar */
     #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
-        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; }
-    #moin-logo { padding: 10px 0; position: relative; top: 0; left: 0; }
-    .moin-sitename { font-size: 1.5em; display: block; }
+        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto;
+        border-right: 1px solid #D7E9FD; font-size: .92em; }
+    #moin-logo { padding: 10px 0; }
+    .moin-sitename { font-size: 1.5rem; display: block; }
+
     .moin-header-links { clear: both; padding-bottom: 1em; padding-left: 0; text-align: left; }
     .moin-header-links li { display: block; margin: 1em; }
-    #moin-content,
-    #moin-footer { padding-left: 250px; margin: 0 10%; }
+
+    #moin-content { padding-left: 250px; margin: 0 7%; }
+
+    #moin-footer { padding-left: 295px; max-width: 680px; }
+    #moin-footer .moin-itemviews { display: none; }
+    /* TODO: if these are all P tags, why float left in common.css? */
+    #moin-pageinfo,
+    #moin-wiki-license,
+    #moin-credits,
+    #moin-version,
+    #moin-timings { color: #444; float: none; clear: left; }
 }
 
 @media print {
