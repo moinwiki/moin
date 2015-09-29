@@ -2,6 +2,11 @@
 
 {% import "snippets.html" as snippets with context %}
 
+{% block theme_stylesheets %}
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
+    {{ super() }}
+{% endblock %}
+
 {% block layout %}
     <div id="moin-main-wrapper">
         {{ before_header }}
@@ -25,9 +30,8 @@
         {{ before_footer }}
         <div id="moin-footer">
             {% block footer %}
-                <hr/>
-                {% block footer_meta %}{% endblock %}
                 {{ snippets.creditlogos() }}
+                {% block footer_meta %}{% endblock %}
                 {{ snippets.credits() }}
                 {{ snippets.license_info() }}
             {% endblock %}
