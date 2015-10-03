@@ -6,7 +6,7 @@
 {# Import macros data_editor and extra_head from content_form's template.
    extra_head is optional, so instead of a simple "import from" we need to do
    this manually #}
-{% import form['content_form'].template as content_template %}
+{% import form['content_form'].template as content_template with context %}
 {% set extra_head = content_template.extra_head %}
 {% set data_editor = content_template.data_editor %}
 

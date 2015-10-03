@@ -2,6 +2,6 @@
 
 {% macro data_editor(form, item_name) %}
     {{ base_editor(form) }}
-    {{ gen.textarea(form['data_text'], rows=form.rows|string, cols=form.cols|string, **kwargs) }}
+    {{ gen.textarea(form['data_text'], rows=edit_rows|string, cols=form.cols|string, **kwargs) }}
     <br />
 {% endmacro %}

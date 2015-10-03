@@ -891,10 +891,12 @@ class Default(Contentful):
                                fqname=self.fqname,
                                item_name=self.name,
                                item=self,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
+                               rows_meta=str(ROWS_META),
+                               cols=str(COLS),
                                form=form,
                                search_form=None,
                                help=help,
+                               edit_rows=str(flaskg.user.profile._meta['edit_rows']),
                               )
 
     show_template = 'show.html'
