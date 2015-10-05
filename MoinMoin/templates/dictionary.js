@@ -31,7 +31,8 @@ $(document).ready(function () {
         ", Items not deleted: ": "{{ _(", Items not deleted: ") }}",
         ", Items not destroyed: ": "{{ _(", Items not destroyed: ") }}",
         "Nothing was selected.": "{{ _("Nothing was selected.") }}",
-        "All changes will be discarded!": "{{ _("All changes will be discarded!") }}"
+        "All changes will be discarded!": "{{ _("All changes will be discarded!") }}",
+        "Toggle font width": "{{ _("Toggle font width") }}"
     };
 
     $.i18n.setDictionary(i18n_dict);

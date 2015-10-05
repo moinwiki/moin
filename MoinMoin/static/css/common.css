@@ -440,8 +440,9 @@ form.upload_file button { display: none; }
 .moin-flash-error { background-image:url("../../../static/img/smileys/icon-error.png"); color:#ff2727; }
 
 /* +modify template */
-#moin-modify dd{width:100%;float:none;}
-#moin-modify dd input{width:99%}
-#moin-modify dt{width:auto;text-align:left}
-#moin-modify textarea{width:99.5%}
-#moin-modify input[type="submit"]{margin-left:0}
+#moin-modify dd { width: 100%; float: none; }
+#moin-modify dd input { width: 99%; }
+#moin-modify dt { width: auto; text-align: left; }
+#moin-modify textarea { width: 99.5%; }
+#moin-modify input[type="submit"] { margin-left: 0; }
+.moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }

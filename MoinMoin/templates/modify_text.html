@@ -2,6 +2,7 @@
 
 {% macro data_editor(form, item_name) %}
     {{ base_editor(form) }}
-    {{ gen.textarea(form['data_text'], rows=edit_rows|string, cols=form.cols|string, **kwargs) }}
+    <input type="button" onclick="moinFontChange()" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
+    {{ gen.textarea(form['data_text'], rows=edit_rows|string, cols=form.cols|string, class="moin-edit-content", **kwargs) }}
     <br />
 {% endmacro %}

@@ -24,6 +24,12 @@ function _(text) {
 }
 
 
+// executed when user clicks button to toggle modify textarea between fixed/variable width fonts
+function moinFontChange() {
+    $(".moin-edit-content").toggleClass("moin-fixed-width");
+}
+
+
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
     "use strict";
