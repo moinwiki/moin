@@ -888,9 +888,9 @@ class Default(Contentful):
         if isinstance(help, tuple):
             help = self.doc_link(*help)
         if flaskg.user.valid:
-            edit_rows=str(flaskg.user.profile._meta[EDIT_ROWS])
+            edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
-            edit_rows=str(flaskg.user.profile._defaults[EDIT_ROWS])
+            edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
         return render_template(self.modify_template,
                                fqname=self.fqname,
                                item_name=self.name,
