@@ -5,6 +5,7 @@ body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Aria
 html { font-size: 1em; min-height: 100%; position: relative; }
 #moin-footer { position: absolute; bottom: 0; }
 #moin-content { padding-bottom: 12em; }
+h1 { text-align: center; }
 
 a { text-decoration: none; color: #1409B9; }
 a:hover { text-decoration: underline; }
