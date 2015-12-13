@@ -50,7 +50,7 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
-    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, LATEST_REVS
+    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, LATEST_REVS, EDIT_ROWS
 )
 from MoinMoin.constants.namespaces import NAMESPACE_ALL
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
@@ -887,14 +887,20 @@ class Default(Contentful):
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
+        if flaskg.user.valid:
+            edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
+        else:
+            edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
         return render_template(self.modify_template,
                                fqname=self.fqname,
                                item_name=self.name,
                                item=self,
-                               rows_meta=str(ROWS_META), cols=str(COLS),
+                               rows_meta=str(ROWS_META),
+                               cols=str(COLS),
                                form=form,
                                search_form=None,
                                help=help,
+                               edit_rows=edit_rows,
                               )
 
     show_template = 'show.html'

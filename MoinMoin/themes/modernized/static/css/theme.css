@@ -192,40 +192,6 @@ td,
 th {
   padding: 0;
 }
-/* start of userstyles - css clases that are defined for use in wiki markup: {{{#!wiki solid  */
-.comment { color: #555; background-color: #DDF; }
-.red { background-color: #FCC; }
-.green { background-color: #CFC; }
-.blue { background-color: #CCF; }
-.yellow { background-color: #FFF29F; }
-.orange { background-color: #FFD59B; }
-.solid { border: 2px solid #000; padding: 2px; clear: both; }
-.dashed { border: 2px dashed #AEBDCC; padding: 2px; clear: both; }
-.dotted { border: 2px dotted #AEBDCC; padding: 2px; clear: both; }
-.left { text-align: left; }
-.center { text-align: center; }
-.right { text-align: right; }
-.justify { text-align: justify; }
-.monospaced { font-family: monospace; }
-
-/* position transcluded image or object - the left, center, right rules in userstyles are compatible with the rules below */
-.moin-item-wrapper.left { float: left; }
-.moin-item-wrapper.center { width: 100%; text-align: center; }
-.moin-item-wrapper.right { float: right; }
-.moin-item-wrapper.middle { vertical-align: middle; }
-.moin-item-wrapper.top { vertical-align: top; }
-.moin-item-wrapper.bottom { vertical-align: bottom; }
-/* end of userstyles */
-.moin-diff{width:99%;table-layout:fixed}
-.moin-diff-header{vertical-align:top;font-size:92%}
-.moin-diff-info{margin:.33em .25em}
-.moin-diff-info-value{white-space:normal}
-.moin-diff-info-caption{display:inline-block;min-width:5em}
-.moin-diff-line-number{background-color:#c0c0c0}
-.moin-diff-added{background-color:#e0ffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
-.moin-diff-added span{background-color:#80ff80}
-.moin-diff-removed{background-color:#ffffe0;vertical-align:top;width:50%;white-space:pre-wrap;word-wrap:break-word;font-family:monospace;}
-.moin-diff-removed span{background-color:#ffff80}
 .hll { background-color: #ffffcc }
 .c { color: #888888 } /* Comment */
 .err { color: #FF0000; background-color: #FFAAAA } /* Error */
@@ -318,11 +284,6 @@ input[type="text"]{width:96%}
 input.blank{border-color:#4e7da9;border-width:2px}
 form[name="delete_item"] dd input,form[name="rename_item"] dd input,form[name="destroy_item"] dd input{width:100%}
 form[name="delete_item"] dt,form[name="rename_item"] dt,form[name="destroy_item"] dt{width:20%}
-#moin-modify dd{width:100%;float:none;}
-#moin-modify dd input{width:99%}
-#moin-modify dt{width:auto;text-align:left}
-#moin-modify textarea{width:99.5%}
-#moin-modify input[type="submit"]{margin-left:0}
 .moin-textcha{padding-top:.2em}
 .searchresults dt{margin-top:1em;font-weight:normal}
 .searchresults dd,.searchresults p{font-size:.85em}
@@ -374,6 +335,7 @@ a.moin-nonexistent:hover{color:#1f9ae0;text-decoration:underline}
 a.moin-sitename{font-size:1.5em;font-weight:bold;color:#fff;line-height:1.5em}
 #moin-username{display:block;margin:6px 4px 4px 4px;padding:0;float:right;font-size:.82em;}
 #moin-username a{color:#fff}
+#moin-username li{display:inline;padding-right:10px}
 #moin-username input:hover{color:#1f9ae0}
 #moin-interwiki a{color:#fff}
 ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-alias{padding:0;margin:0;margin-bottom:4px}
@@ -420,6 +382,7 @@ html,body{height:100%}
 .moin-search-option-bar span{float:right;padding:10px}
 .moin-suggestions{padding-left:14px}
 @media (max-width: 820px){#moin-main-wrapper{width:100%;min-width:0;overflow:auto}
+#moin-username li a span{display:none}
 }@media print{html{font-family:serif;font-size:12pt;width:100%}
 body,#moin-page,#moin-content-data{margin:0;padding:0}
 a,a:visited,a.moin-nonexistent{color:#939393;text-decoration:none}

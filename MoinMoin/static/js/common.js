@@ -24,6 +24,12 @@ function _(text) {
 }
 
 
+// executed when user clicks button to toggle modify textarea between fixed/variable width fonts
+function moinFontChange() {
+    $(".moin-edit-content").toggleClass("moin-fixed-width");
+}
+
+
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
     "use strict";
@@ -679,9 +685,11 @@ $(document).ready(function () {
 
     $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
-            return "Data you may have entered will be discarded!";
+            return _("All changes will be discarded!");
         }
     });
+
+    $('textarea[rows="0"]').autosize();
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
