@@ -1,0 +1,45 @@
+/* diffs */
+.moin-diff {
+    width: 99%;
+    table-layout: fixed;
+}
+.moin-diff-header {
+    vertical-align: top;
+    font-size: 92%;
+}
+.moin-diff-info {
+    margin: .33em .25em
+}
+.moin-diff-info-value {
+    white-space: normal;
+}
+.moin-diff-info-caption {
+    display: inline-block;
+    min-width: 5em;
+}
+.moin-diff-line-number {
+    background-color: #c0c0c0;
+}
+.moin-diff-added {
+    background-color: #e0ffe0;
+    vertical-align: top;
+    width: 50%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: monospace;
+}
+.moin-diff-added span {
+    background-color: #80ff80;
+}
+.moin-diff-removed {
+    background-color: #ffffe0;
+    vertical-align: top;
+    width: 50%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: monospace;
+}
+.moin-diff-removed span {
+    background-color: #ffff80;
+}
+/* end diffs */

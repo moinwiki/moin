@@ -1,0 +1,32 @@
+/* CMS theme has topbar for small displays and sidebar for wide displays. */
+
+body { margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+#moin-header { background-image: url("../../../static/img/white-clouds.jpg"); text-align: center; min-height: 74px; overflow: hidden; }
+/* logo size of 64x64 px determines min-height and padding of 74px above and below */
+#moin-logo { position: absolute; top: 5px; left: 10px; }
+.moin-sitename { font-size: 2em; z-index: 1; position: relative; }
+.moin-header-links { padding: 0 74px 0 74px; }
+.moin-header-links li { display: inline; margin: 1em .5em; white-space: nowrap; }
+a { text-decoration: none; color: #181be2; }
+a:hover { text-decoration: underline; }
+.moin-permalink { opacity: .25; padding-left: .3em; }
+img { border: 0; } /* override IE default */
+#moin-content,
+#moin-footer { margin: 0 10%; width: auto; }
+
+@media (min-width: 1025px) {
+    #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
+        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; }
+    #moin-logo { padding: 10px 0; position: relative; top: 0; left: 0; }
+    .moin-sitename { font-size: 1.5em; display: block; }
+    .moin-header-links { clear: both; padding-bottom: 1em; padding-left: 0; text-align: left; }
+    .moin-header-links li { display: block; margin: 1em; }
+    #moin-content,
+    #moin-footer { padding-left: 250px; margin: 0 10%; }
+}
+
+@media print {
+    #moin-header { display: none; }
+    #moin-content { padding-left: 0; margin: 0; }
+    .moin-permalink { display: none; }
+}

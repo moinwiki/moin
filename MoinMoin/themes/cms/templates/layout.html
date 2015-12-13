@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% import "snippets.html" as snippets with context %}
+
+{% block layout %}
+    <div id="moin-main-wrapper">
+        {{ before_header }}
+        {{ snippets.cms_header() }}
+        {{ after_header }}
+        <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+            {% block item -%}
+                <div id="moin-content">
+                    <div id="moin-flash">
+                        {% for category, msg in get_flashed_messages(with_categories=true) %}
+                            <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+                        {% endfor %}
+                    </div>
+                    {% block content %}
+                        {# default show.html will provide contents #}
+                    {% endblock %}
+                </div>
+            {%- endblock %}
+        </div>
+
+        {{ before_footer }}
+        <div id="moin-footer">
+            {% block footer %}
+                <hr/>
+                {% block footer_meta %}{% endblock %}
+                {{ snippets.creditlogos() }}
+                {{ snippets.credits() }}
+                {{ snippets.license_info() }}
+            {% endblock %}
+        </div>
+        {{ after_footer }}
+    </div>
+{% endblock %}

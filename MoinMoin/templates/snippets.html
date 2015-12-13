@@ -1,0 +1,137 @@
+{#
+Wiki Administrators may use this template (or a copy of it) to customize a wiki.
+See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custom-snippets-html-template
+#}
+
+{# Logo in the header #}
+{% macro logo() -%}
+    <img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
+{%- endmacro %}
+
+{# Additional HTML tags inside <head> #}
+{% macro head() -%}
+    {# <meta name="description" content="Free Web tutorials"> #}
+{%- endmacro %}
+
+{# Additional HTML before #moin-header #}
+{% macro before_header() -%}
+    {# <p style="background-color:yellow">This is before moin-header.</p> #}
+{%- endmacro %}
+
+{# Additional HTML after #moin-header #}
+{% macro after_header() -%}
+{%- endmacro %}
+
+{# Additional HTML before #moin-footer #}
+{% macro before_footer() -%}
+{%- endmacro %}
+
+{# Additional HTML after #moin-footer #}
+{% macro after_footer() -%}
+{%- endmacro %}
+
+{# License information in the footer #}
+{% macro license_info() -%}
+    {# <p id="moin-wiki-license">Copyright © 2014 my.org, contents licensed under ...</p> #}
+{%- endmacro %}
+
+{# Helper macro to create image links #}
+{% macro creditlogo(link, logo, alt, title) %}
+    <a href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
+{% endmacro %}
+
+{# Image links in the footer #}
+{% macro creditlogos(start='<span id="moin-creditlogos">'|safe, end='</span>'|safe) %}
+    {{ start }}
+    {{ creditlogo('https://moinmo.in/', url_for('static', filename='logos/moinmoin_powered.png'),
+       'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}
+    {{ creditlogo('https://moinmo.in/Python', url_for('static', filename='logos/python_powered.png'),
+       'Python powered', 'MoinMoin is written in Python.') }}
+    {{ end }}
+{% endmacro %}
+
+{# Helper macro to generate text links #}
+{% macro credit(link, text, title) -%}
+    <a href="{{ link }}" title="{{ title }}">{{ text }}</a>
+{%- endmacro %}
+
+{# Text links in the footer #}
+{% macro credits(start='<p id="moin-credits">'|safe, end='</p>'|safe, sep='<span>&bull;</span>'|safe) %}
+    {{ start }}
+    {{ credit('https://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
+    {{ sep }}
+    {{ credit('https://moinmo.in/Python', 'Python Powered', 'MoinMoin is written in Python.') }}
+    {{ sep }}
+    {{ credit('https://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
+    {{ sep }}
+    {{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
+    {{ end }}
+{% endmacro %}
+
+{% macro footer_meta() %}
+    {% if rev %}
+        <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
+            {% if cfg.show_interwiki %}
+                {{ cfg.interwikiname }}:
+            {% endif %}
+            {{ item_name }} (rev {{ rev.revid | shorten_id }}),
+            {{ _("modified") }} {{ rev.meta['mtime']|datetimeformat }}
+            {{ _("by") }} {{ utils.editor_info(rev.meta) }}
+            {% if rev.meta['tags'] %}
+                , {{ _("tags:") }}
+                {% for tag in rev.meta['tags'] -%}
+                    <a href="{{ url_for('frontend.tagged_items', tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                {%- endfor -%}
+            {%- endif -%}.
+        </p>
+    {% endif %}
+{% endmacro %}
+
+{# Additional Stylesheets (after theme css, before user css #}
+{% macro stylesheets() -%}
+    {# <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='wiki_local', filename='MyStyleSheet.css') }}"> #}
+{%- endmacro %}
+
+{# Additional Javascript #}
+{% macro scripts() -%}
+    {# <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script> #}
+{%- endmacro %}
+
+{# Header for CMS theme - this expects items available in developer sample data - see docs for tips on customization #}
+{% macro cms_header() %}
+    <div id="moin-header">
+        {% block header %}
+            <div id="moin-logo">
+                <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                    {{ logo() }}
+                </a>
+            </div>
+            <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                {{ cfg.sitename }}
+            </a>
+            <br>
+            <ul class="moin-header-links">
+
+                {# wiki admins will want to replace these with key item names present in local wiki #}
+                <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='moin') }}">Moin Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='creole') }}">Creole Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='markdown') }}">Markdown Wiki Syntax</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
+
+                {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
+                    {% if user.valid -%}
+                        {% if user.auth_method in cfg.auth_can_logout %}
+                            <li><a href="{{ url_for('frontend.show_item', item_name='+logout') }}">Logout</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('frontend.show_item', item_name='+usersettings') }}">Settings</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('frontend.show_item', item_name='+login') }}">Login</a></li>
+                    {%- endif %}
+                {%- endif %}
+
+            </ul>
+        {% endblock %}
+    </div>
+    <br>
+{% endmacro %}

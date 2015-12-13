@@ -1,0 +1,7 @@
+{% import "forms.html" as forms %}
+
+{% macro data_editor(form, item_name) %}
+    <dl>
+        {{ forms.render(form['data_file']) }}
+    </dl>
+{% endmacro %}

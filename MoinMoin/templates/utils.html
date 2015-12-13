@@ -1,0 +1,319 @@
+{% import 'forms.html' as forms %}
+
+{% macro show_editor_info(info) %}
+    {%- if info.uri -%}
+        <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">
+            {{ info.text }}
+        </a>
+    {%- elif info.email -%}
+        <a href="mailto:{{ info.email }}" class="{{ info.css }}" title="{{ info.title }}">
+            {{ info.text }}
+        </a>
+    {%- else -%}
+        <span class="{{ info.css }}" title="{{ info.title }}">
+            {{ info.text }}
+        </span>
+    {%- endif -%}
+{% endmacro %}
+
+
+{% macro editor_info(meta) %}
+    {%- set info = get_editor_info(meta) -%}
+    {{ show_editor_info(info) }}
+{% endmacro %}
+
+
+{% macro table(headings, rows, itemname_cols=[], url_cols=[]) %}
+    <table class="zebra table table-hover">
+        <thead>
+            <tr>
+                {% for heading in headings %}
+                    {% if rows and rows[0][loop.index0] is number %}
+                        <th class="moin-integer">{{ heading }}</th>
+                    {% else %}
+                        <th>{{ heading }}</th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    {% for col in row %}
+                        {% if col is number %}
+                            <td class="moin-integer">{{ col }}</td>
+                        {% elif loop.index in itemname_cols %}
+                            <td><a href="{{ url_for('frontend.show_item', item_name=col) }}">{{ col }}</a></td>
+                        {% elif loop.index in url_cols %}
+                            <td><a href="{{ col }}">{{ col }}</a></td>
+                        {%- else -%}
+                            <td>{{ col }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro _render_subitem_navigation_tree(index, newtab, parentcaller) %}
+    <ul>
+        {% for e in index %}
+            <li>
+                {# call our parent's caller with all the data we have if they exist, used to implement
+                    transclude/link actions in the modify view #}
+                {% if parentcaller %}
+                    {{ parentcaller(e.fullname, e.relname, e.meta['contenttype'], e.hassubitems) }}
+                {% endif %}
+                <a href="{{ url_for('frontend.show_item', item_name=e.fullname) }}"
+                    title="{{ e.relname }}" class="subitem-link"
+                    {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
+                {% if e.hassubitems %}
+                    <button class="expander" title="{{ _('Expand Subitem') }}"></button>
+                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.fullname), newtab, parentcaller) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% macro render_subitem_navigation(fqname, newtab, subitems=None) %}
+    {% if not subitems %}
+        {% set subitems = theme_supp.subitem_index(fqname) %}
+    {% endif %}
+    {% if caller %}
+        {% set mycaller = caller %}
+    {% endif %}
+    {% if subitems %}
+        <div class="moin-subitem-navigation">
+            <div class="list-header">
+                {{ _('Subitems') }}
+            </div>
+            {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro header_search(form) %}
+    {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
+            {{ forms.render(form['q']) }}
+            {{ forms.render_submit(form, id='moin-search-submit') }}
+            {{ forms.render_errors(form) }}
+    {{ gen.form.close() }}
+{% endmacro %}
+
+{% macro help_on_editing(help) %}
+    {% if help %}
+        <div class="tip">
+            <p> {{ help|safe }} </p>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro meta_info(meta) %}
+    <!-- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list -->
+    <ul class="list-group">
+        <li class="list-group-item">Action: {{ meta['action'] }}</li>
+        <li class="list-group-item">Address: {{ meta['address'] }}</li>
+        <li class="list-group-item">Comment: '{{ meta['comment'] }}'</li>
+        <li class="list-group-item">Content Type: {{ meta['contenttype']|shorten_ctype }} [{{ meta['contenttype'] }}]</li>
+        <li class="list-group-item">Data ID: {{ meta['dataid'] }}</li>
+        <li class="list-group-item">External Links:
+            {% if meta['externallinks'] %}
+                {% for item in meta['externallinks'] -%}
+                    <a href="{{ item|safe }}">{{ item }}</a>
+                    {%- if not loop.last -%},{% endif %}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">Item ID: {{ meta['itemid'] }}</li>
+        <li class="list-group-item">Item Links:
+            {% if meta['itemlinks'] %}
+                {% for item in meta['itemlinks'] -%}
+                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                    {%- if not loop.last -%},{% endif %}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">Item Transclusions:
+            {% if meta['itemtransclusions'] %}
+                {% for item in meta['itemtransclusions'] -%}
+                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                    {%- if not loop.last -%},{% endif %}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">Item Type: {{ meta['itemtype'] }}</li>
+        <li class="list-group-item">Modified Time: {{ meta['mtime']|datetimeformat }}</li>
+        <li class="list-group-item">Name:
+            {% if meta['name'] %}
+                {% for name in meta['name'] %}
+                    {{ name }}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">Old Name:
+            {% if meta['name_old'] %}
+                {% for name in meta['name_old'] %}
+                    {{ name }}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">Namespace: '{{ meta['namespace'] }}'</li>
+        <li class="list-group-item">Parent Revision ID: {{ meta['parentid'] }}</li>
+        <li class="list-group-item">Revision ID: {{ meta['revid'] }}</li>
+        <li class="list-group-item">SHA1: {{ meta['sha1'] }}</li>
+        <li class="list-group-item">Size: {{ meta['size']|filesizeformat }}</li>
+        <li class="list-group-item">Summary: '{{ meta['summary'] }}'</li>
+        <li class="list-group-item">Tags:
+            {% if meta['tags'] %}
+                {% for tag in meta['tags'] %}
+                    {{ tag }}
+                {% endfor %}
+            {% else %}
+                (None)
+            {% endif %}
+        </li>
+        <li class="list-group-item">User ID: {{ meta['userid'] }}</li>
+        <li class="list-group-item">Wiki Name: {{ meta['wikiname'] }}</li>
+    </ul>
+{% endmacro %}
+
+{% macro alias_list(alias) %}
+    {% if alias %}
+        <ul class="moin-alias">
+            {% for fq_name in alias -%}
+                <li>
+                    <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
+                        {{ fq_name|shorten_fqname(length=25) }}
+                    </a>
+                </li>
+            {%- endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro page_trail_link(wiki_name, fqname, exists) %}
+    {%- if wiki_name -%}
+        <a href="{{ item_href }}"{{ " " }}
+            title="{{ wiki_name }}"
+            class="{% if err %}moin-badinterwiki{% else %}moin-interwiki{% endif %}">
+            {{ fqname|shorten_fqname }}
+        </a>
+    {%- else -%}
+        <a href="{{ url_for('frontend.show_item', item_name=fqname) }}"{{ " " }}
+            {% if not exists -%}class="moin-nonexistent"{%- endif -%}>
+            {{ fqname|shorten_fqname }}
+        </a>
+    {%- endif %}
+{% endmacro %}
+
+{% macro breadcrumbs(breadcrumbs, title_name) %}
+    <ul class="moin-breadcrumb">
+        {% set trail_items = breadcrumbs() %}
+        {% if trail_items %}
+            {% for wiki_name, fqname, item_href, exists, err in trail_items %}
+                {% if not loop.last or title_name %}
+                    <li>
+                        {{ page_trail_link(wiki_name, fqname, exists) }}
+                        <i class="fa fa-angle-double-right fa-fw"></i>
+                        {{ alias_list(theme_supp.get_fqnames(fqname)) }}
+                    </li>
+                {% endif %}
+                {% if loop.last %}
+                    <li>
+                        <span class="moin-big">
+                            {% for segment_name, segment_path, exists in theme_supp.location_breadcrumbs(fqname) -%}
+                                {% if loop.first %}
+                                    <small>~ /</small>
+                                {% elif not loop.last %}
+                                    <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                        {{ segment_name|shorten_fqname }}
+                                    </a>
+                                    <small>/</small>
+                                {%- endif %}
+                                {% if loop.last %}
+                                    {% if title_name %}
+                                        {{ title_name }}
+                                    {% else %}
+                                        <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                            {{ segment_name }}
+                                        </a>
+                                    {%- endif %}
+                                {%- endif %}
+                            {% endfor %}
+                        </span>
+                        {% if not title_name %}
+                            {{ alias_list(theme_supp.get_fqnames(fqname)) }}
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{% macro item_panel(fq_name) %}
+    <li>
+        <a class="moin-fqname"
+           href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
+           {% if fq_name.value != fq_name|string %}
+               title="{{ fq_name }}"
+           {% endif %}>
+           {{ fq_name.value }}
+       </a>
+    </li>
+{% endmacro %}
+
+{% macro show_meta(rev) %}
+    <div>
+        <span class="moin-diff-info-caption">
+            {{ _('Revision') }}
+        </span>
+        <span class="moin-diff-info-value">
+            {{ rev.meta['revid'] | shorten_id }}
+        </span>
+    </div>
+    <div>
+        <span class="moin-diff-info-caption">
+            {{ _('Editor') }}:
+        </span>
+        <span class="moin-diff-info-value">
+            {{ editor_info(rev.meta) }}
+        </span>
+    </div>
+    <div>
+        <span class="moin-diff-info-caption">
+            {{ _('Size') }}:
+        </span>
+        <span class="moin-diff-info-value">
+            {{ rev.meta['size'] }}
+        </span>
+    </div>
+    <div>
+        <span class="moin-diff-info-caption">
+            {{ _('Time') }}:
+        </span>
+        <span class="moin-diff-info-value">
+            {{ rev.meta.mtime|datetimeformat }}
+        </span>
+    </div>
+    <div>
+        <span class="moin-diff-info-caption">
+            {{ _('Comment') }}:
+        </span>
+        <span class="moin-diff-info-value">
+            {{ rev.meta['comment'] }}
+        </span>
+    </div>
+{% endmacro %}

@@ -1,0 +1,26 @@
+{% import "utils.html" as utils %}
+
+<table class="moin-diff">
+    <tr>
+        <td class="moin-diff-header">
+            {{ utils.show_meta(oldrev) }}
+        </td>
+        <td class="moin-diff-header">
+            {{ utils.show_meta(newrev) }}
+        </td>
+    </tr>
+    <tr>
+        <td class="moin-diff-removed"><span>{{ _('Deletions are marked like this.') }}</span></td>
+        <td class="moin-diff-added"><span>{{ _('Additions are marked like this.') }}</span></td>
+    </tr>
+    {% for llineno, lcontent, rlineno, rcontent in diffs %}
+        <tr class="moin-diff-line-number">
+            <td><a href="#{{ llineno }}">{{ _('Line') }} {{ llineno }}:</a></td>
+            <td><a href="#{{ rlineno }}">{{ _('Line') }} {{ rlineno }}:</a></td>
+        </tr>
+        <tr>
+            <td class="moin-diff-removed">{{ lcontent }}</td>
+            <td class="moin-diff-added">{{ rcontent }}</td>
+        </tr>
+    {% endfor %}
+</table>
