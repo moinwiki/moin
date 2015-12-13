@@ -3,6 +3,8 @@ Wiki Administrators may use this template (or a copy of it) to customize a wiki.
 See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custom-snippets-html-template
 #}
 
+{% import theme("utils.html") as utils with context %}
+
 {# Logo in the header #}
 {% macro logo() -%}
     <img src="{{ url_for('static', filename='logos/moinmoin.png') }}" id="moin-img-logo" alt="Logo">
@@ -120,14 +122,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
                 <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
 
                 {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
-                    {% if user.valid -%}
-                        {% if user.auth_method in cfg.auth_can_logout %}
-                            <li><a href="{{ url_for('frontend.show_item', item_name='+logout') }}">Logout</a></li>
-                        {% endif %}
-                        <li><a href="{{ url_for('frontend.show_item', item_name='+usersettings') }}">Settings</a></li>
-                    {% else %}
-                        <li><a href="{{ url_for('frontend.show_item', item_name='+login') }}">Login</a></li>
-                    {%- endif %}
+                    {{ utils.user_login_logoff() }}
                 {%- endif %}
 
             </ul>

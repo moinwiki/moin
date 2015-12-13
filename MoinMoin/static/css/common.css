@@ -98,6 +98,32 @@ a.moin-mime-package:before { content: url("../img/mime-type/moin-package.png"); 
 a.moin-mime-drawing:before { content: url("../img/mime-type/moin-drawing.png"); margin: 0 .2em; vertical-align: middle; }
 /* end of mime type icons */
 
+/* start of userstyles - css clases that are defined for use in wiki markup: {{{#!wiki solid  */
+.comment { color: #555; background-color: #DDF; }
+.red { background-color: #FCC; }
+.green { background-color: #CFC; }
+.blue { background-color: #CCF; }
+.yellow { background-color: #FFF29F; }
+.orange { background-color: #FFD59B; }
+.solid { border: 2px solid #000; padding: 2px; clear: both; }
+.dashed { border: 2px dashed #AEBDCC; padding: 2px; clear: both; }
+.dotted { border: 2px dotted #AEBDCC; padding: 2px; clear: both; }
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.justify { text-align: justify; }
+.monospaced { font-family: monospace; }
+/* end of userstyles */
+
+/* position transcluded image or object - the left, center, right rules in userstyles are compatible with the rules below */
+.moin-item-wrapper.left { float: left; }
+.moin-item-wrapper.center { width: 100%; text-align: center; }
+.moin-item-wrapper.right { float: right; }
+.moin-item-wrapper.middle { vertical-align: middle; }
+.moin-item-wrapper.top { vertical-align: top; }
+.moin-item-wrapper.bottom { vertical-align: bottom; }
+/* end of transclusion positioning */
+
 /* transclusion wrapper overlays */
 .moin-transclusion { max-width: 100%; }
 .moin-item-wrapper { position: relative; display: inline-block; }
@@ -122,6 +148,21 @@ a.moin-item-overlay-ul:hover,
 a.moin-item-overlay-ul:hover ~ a.moin-item-overlay-lr,
 a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #428bca; text-decoration: none; }
 /* end transclusion wrapper overlays */
+
+/* diffs */
+.moin-diff { width: 99%; table-layout: fixed; }
+.moin-diff-header { vertical-align: top; font-size: 92%; }
+.moin-diff-info { margin: .33em .25em; }
+.moin-diff-info-value { white-space: normal;: }
+.moin-diff-info-caption { display: inline-block; min-width: 5em;: }
+.moin-diff-line-number { background-color: #c0c0c0; }
+.moin-diff-added { background-color: #e0ffe0; vertical-align: top; width: 50%;
+    white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
+.moin-diff-added span { background-color: #80ff80; }
+.moin-diff-removed { background-color: #ffffe0; vertical-align: top; width: 50%;
+    white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
+.moin-diff-removed span { background-color: #ffff80; }
+/* end diffs */
 
 /* misc moin css keywords */
 .moin-suggestions { color: #FF9900; display: inline; }
@@ -391,8 +432,17 @@ form.upload_file button { display: none; }
 
 /* moin-flash */
 #moin-flash { margin:-2px -15px -2px -14px; }
-.moin-flash { background-color: #eee; border: 2px solid color: #181be2; padding: 1em 1em 1em 3em; border-radius: 9px; }
+.moin-flash { background-color: #eee; border: 2px solid color: #181be2; padding: 1em 1em 1em 3em; border-radius: 9px;
+    background-repeat: no-repeat; background-position: 1em 1em; }
 .moin-flash-hint { background-image:url("../../../static/img/smileys/idea.png"); }
-.moin-flash-info { background-image:url("../../../static/img/smileys/icon-info.png"); background-repeat: no-repeat; background-position: 1em 1em; }
+.moin-flash-info { background-image:url("../../../static/img/smileys/icon-info.png"); }
 .moin-flash-warning { background-image:url("../../../static/img/smileys/alert.png"); color:#ff2727; }
 .moin-flash-error { background-image:url("../../../static/img/smileys/icon-error.png"); color:#ff2727; }
+
+/* +modify template */
+#moin-modify dd { width: 100%; float: none; }
+#moin-modify dd input { width: 99%; }
+#moin-modify dt { width: auto; text-align: left; }
+#moin-modify textarea { width: 99.5%; }
+#moin-modify input[type="submit"] { margin-left: 0; }
+.moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }

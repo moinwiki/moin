@@ -6,14 +6,8 @@
 // normalize.css is compiled by make.py (./m css) from the normalize.less file bundled with bootstrap
 @import "normalize.css"
 
-// user styles used by moin wiki parser (and maybe others) like red/green/solid/dashed/comment...
-@import "userstyles.css"
-
 // color have been used from the color palette
 @import "color_palette"
-
-// moin diff styling
-@import "moin_diff"
 
 // pygments css - colorful theme
 @import "colorful.css"
@@ -139,20 +133,6 @@ form[name="delete_item"], form[name="rename_item"], form[name="destroy_item"]
             width 100%
     dt
         width 20%
-
-#moin-modify
-    dd
-        width 100%
-        float none
-        input
-            width 99%
-    dt
-        width auto
-        text-align left
-    textarea
-        width 99.5%
-    input[type="submit"]
-        margin-left 0
 
 .moin-textcha
     padding-top .2em
@@ -404,6 +384,9 @@ a.moin-sitename
     font-size 0.82em
     a
         color heading_color
+    li
+        display inline
+        padding-right 10px
 
 #moin-username input:hover
     color hover_color
@@ -639,6 +622,12 @@ body
         width:100%;
         min-width: 0;
         overflow: auto;
+
+    #moin-username
+        li
+            a
+                span
+                    display none
 
 @media print
     html
