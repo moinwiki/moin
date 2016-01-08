@@ -601,6 +601,8 @@ def convert_item(item_name):
         item = Item.create(item_name, rev_id=CURRENT)
     except AccessDenied:
         abort(403)
+    if isinstance(item, NonExistent):
+        abort(404)
     # We don't care about the name of the converted object
     # It should just be a name which does not exist.
     # XXX Maybe use a random name to be sure it does not exist
