@@ -45,6 +45,7 @@
                 {% set navibar_items = theme_supp.navibar(fqname) %}
                 {% if navibar_items %}
                     <ul id="moin-navibar" class="panel">
+                        <li class="moin-panel-heading">{{ _('Navigation') }}</li>
                         {% for cls, url, text, title in navibar_items %}
                             <li class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text }}</a>

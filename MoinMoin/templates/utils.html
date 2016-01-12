@@ -220,6 +220,7 @@
 
 {% macro breadcrumbs(breadcrumbs, title_name) %}
     <ul class="moin-breadcrumb">
+        <li class="moin-panel-heading">{{ _('Page Trail') }}</li>
         {% set trail_items = breadcrumbs() %}
         {% if trail_items %}
             {% for wiki_name, fqname, item_href, exists, err in trail_items %}

@@ -372,6 +372,7 @@ ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
 .moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
 .moin-insertname-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none;background:url("../img/moin-link.png") no-repeat center center}
+#moin-navibar li.moin-panel-heading,li.moin-panel-heading{display:none}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
 a.moin-permalink:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
