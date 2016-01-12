@@ -75,12 +75,14 @@ Typing "./m" (or "m" on Windows) will display a menu similar to::
     sample          create wiki and load sample data
     restore *       create wiki and restore wiki/backup.moin *option, specify file
     import <dir>    import a moin 1.9 wiki/data instance from <dir>
+    index           delete and rebuild indexes
 
-    run             run built-in wiki server
+    run *           run built-in wiki server *options (--port 8081)
     backup *        roll 3 prior backups and create new backup *option, specify file
+    dump-html *     create a static HTML image of wiki *option, specify directory
 
-    css             run Stylus to update CSS files
-    tests           run tests, output goes to pytest.txt and pytestpep8.txt
+    css             run Stylus and lessc to update theme CSS files
+    tests *         run tests, output to pytest.txt *options (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
     api             update moin api docs (files are under hg version control)
     dist            delete wiki data, then create distribution archive in dist/

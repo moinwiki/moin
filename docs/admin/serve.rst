@@ -20,24 +20,45 @@ Running the built-in server
 Run the moin built-in server as follows::
 
  # easiest for debugging (single-process, single-threaded server):
- moin
+ ./m run  # Windows:  "m run"
 
- # required for some browsers like IE9 or Chrome in incognito mode (try this
- # in case you encounter a hanging browser / not responding server):
- moin moin --threaded
-
- # or, if you need another ip/port:
- moin moin --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
+ # or, if you need another configuration file, ip address, or port:
+ ./m run --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
 
 While the moin server is starting up, you will see some log output, for example::
 
- 2011-03-06 23:35:11,445 INFO werkzeug:116  * Running on http://127.0.0.1:8080/
+ 2016-01-11 13:30:05,394 INFO werkzeug:87  * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
 
 Now point your browser at that URL - your moin wiki is running!
 
 Stopping the built-in server
 ----------------------------
 To stop the wiki server, either use `Ctrl-C` or close the window.
+
+Debugging with the built-in server
+----------------------------------
+Werkzeug has a debugger that may be used to analyze tracebacks. As of version 0.11.0,
+a pin number is written to the log when the server is started::
+
+  INFO werkzeug:87  * Debugger pin code: 123-456-789
+
+The pin code must be entered once per debugging session. If you will never use the
+built-in server for public access, you may disable the pin check by adding::
+
+ WERKZEUG_DEBUG_PIN=off
+
+to your OS's environment variables. See Werkzeug docs for more information.
+
+Using the built-in server for production
+----------------------------------------
+
+.. caution:: Using the built-in server for public wikis is not recommended. Should you
+ wish to do so, turn off the werkzeug debugger and auto reloader by passing the
+ -d and -r flags. The wikiconfig.py settings of `DEBUG = False` and `TESTING = False` are
+ ignored by the built-in server. You must use the -d and -r flags.
+ See Werkzeug docs for more information.::
+
+ ./m run --host 0.0.0.0 --port 80 -d -r
 
 
 External Web Server (advanced)
@@ -70,3 +91,5 @@ moin, but rather with your web server and WSGI app deployment method.
 When the test app starts doing something other than Server Error 500, please
 proceed with the MoinMoin app and its configuration.
 Otherwise, read your web server error log files to troubleshoot the issue from there.
+
+.. tip:: Check contents of /contrib/wsgi/ for sample wsgi files for your server.

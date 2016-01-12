@@ -457,14 +457,15 @@ Caution: developing your own theme means you also have to maintain and update it
 which normally requires a long-term effort.
 
 To add a new theme, add a new directory under MoinMoin/themes/ where the directory
-name is the name of your theme. Note the directory structure under the basic and
-modernized themes. At a minimum, a new CSS file will be required; add a file named
-theme.css in the MoinMoin/themes/MyTheme/static/css/ directory.
+name is the name of your theme. Note the directory structure under the other existing
+themes. Copy an `info.json` file to your theme directory and edit as needed.
+Create a file named theme.css in the MoinMoin/themes/<theme name>/static/css/ directory.
 
 To change the layout of the theme header, sidebar and footer, create a templates/ directory and
-copy and modify the files layout.html and show.html from either MoinMoin/templates/ or basic/templates.
+copy and modify the files layout.html and show.html from either MoinMoin/templates/ or one
+of the existing theme templates directories.
 
-For many themes, modifying the three files noted above will be sufficient. If changes to
+For many themes, modifying the files noted above will be sufficient. If changes to
 views are required, copy additional template files. If there is a requirement to change
 the MoinMoin base code, please consider submitting a patch.
 
@@ -1516,7 +1517,7 @@ A sample configuration looks like e.g::
         default_root = u'Home'
 
     MOINCFG = LocalConfig
-    DEBUG = True
+    DEBUG = False
 
 
 .. _mail-configuration:
@@ -1588,8 +1589,8 @@ their docs for details)::
 
  # for Flask
  SECRET_KEY = 'you need to change this so it is really secret'
- DEBUG = False # use True for development only, not for public sites!
- #TESTING = False
+ DEBUG = False  # use True for development only, not for public sites!
+ TESTING = False  # if true, some servers will detect file changes and restart
  #SESSION_COOKIE_NAME = 'session'
  #PERMANENT_SESSION_LIFETIME = timedelta(days=31)
  #USE_X_SENDFILE = False
