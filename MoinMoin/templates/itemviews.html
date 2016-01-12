@@ -1,5 +1,6 @@
 {% set exists = fqname and storage.get_item(**fqname.query) %}
 <ul class="moin-itemviews panel">
+    <li class="moin-panel-heading">{{ _('Item Views') }}</li>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
         {%- if not check_exists or check_exists and exists %}
             {%- if endpoint in [
