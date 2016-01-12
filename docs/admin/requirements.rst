@@ -40,13 +40,17 @@ Servers
 
 For moin2, you can use any server compatible with WSGI:
 
-* the builtin "moin" server is recommended for desktop wikis, testing,
+* the builtin "./m run" or "moin" server is recommended for desktop wikis, testing,
   debugging, development, adhoc-wikis, etc.
 * apache with mod_wsgi is recommended for bigger/busier wikis.
 * other WSGI-compatible servers or middlewares are usable
 * For cgi, fastcgi, scgi, ajp, etc., you can use the "flup" middleware:
   http://trac.saddi.com/flup
 * IIS with ISAPI-WSGI gateway is also compatible: http://code.google.com/p/isapi-wsgi/
+
+.. caution:: When using the built-in server for public wikis (not recommended), use
+        "./m run -d -r" to turn off the werkzeug debugger and auto reloader. See Werkzeug
+        docs for more information.
 
 
 Dependencies

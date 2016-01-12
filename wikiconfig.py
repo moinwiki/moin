@@ -173,8 +173,8 @@ class Config(DefaultConfig):
 MOINCFG = Config  # Flask requires uppercase
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
-# DEBUG = False # use True for development only, not for public sites!
-# TESTING = False
+DEBUG = False  # use True for development only, not for public sites!
+TESTING = False  # built-in server (./m run) ignores TESTING and DEBUG settings
 # SESSION_COOKIE_NAME = 'session'
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
 # USE_X_SENDFILE = False
