@@ -130,3 +130,14 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
     </div>
     <br>
 {% endmacro %}
+
+{# Custom panel for wiki's that want links to key pages in header or sidebar; not all themes support this #}
+{% macro custom_panels() %}
+    {# add somethig similar to the following:
+        <ul class="moin-custom-panel">
+            <li class="moin-panel-heading">Reports</li>
+            <li><a href="link to favorite page">Favorite Page</a></li>
+            <li><a href="link to another favorite page">Another Favorite Page</a></li>
+        </ul>
+    #}
+{% endmacro %}
