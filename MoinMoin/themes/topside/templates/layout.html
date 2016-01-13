@@ -52,9 +52,6 @@
                 {% if navibar_items %}
                     <ul id="moin-navibar" class="panel">
                         <li class="moin-panel-heading">{{ _('Navigation') }}</li>
-                        {% if user.trusted -%}
-                            <li class="wikilink"><a href="{{ url_for('rockart.menu') }}">DigitalRockArt Menu</a></li>
-                        {% endif %}
                         {% for cls, url, text, title in navibar_items %}
                             <li class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text }}</a>
