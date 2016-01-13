@@ -75,10 +75,10 @@ add more tools, exercise tools
     ./m extras  # Windows: m extras
 * if you do not have a google account, create one at http://codereview.appspot.com
 * read about code review at: http://code.google.com/p/rietveld/wiki/CodeReviewHelp
-* practice using codereview by making a trivial change to any source file, do "python upload.py"
+* practice using codereview by making a trivial change to any source file, do "python upload.py --oauth2"
 
   * inspect your patch set at http://codereview.appspot.com
-  * experiment by adding comments, upload a second patchset "python upload.py -i <issue_ID>"
+  * experiment by adding comments, upload a second patchset "python upload.py --oauth2 -i <issue_ID>"
   * revert the changes on your local repo "hg revert --all"
 
 * run the unit tests, note any existing test failures::
@@ -201,9 +201,9 @@ review your working solution
 get feedback from other developers
 ----------------------------------
 
-* add changes to codereview: run "python upload.py" in your local repo
+* add changes to codereview: run "python upload.py --oauth2" in your local repo
 
-  - to update a codereview, "python upload.py -i <issue_ID>"
+  - to update a codereview, "python upload.py --oauth2 -i <issue_ID>"
 * carefully review your changes again on codereview
 
   - if you find errors, delete the patchset, fix and upload again
