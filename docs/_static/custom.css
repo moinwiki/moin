@@ -26,6 +26,14 @@
     text-decoration: underline;
 }
 
+.smaller {
+    font-size: .8em;
+}
+
+.larger {
+    font-size: 1.2em;
+}
+
 /* We need borders around each cell to clearly demonstrate table boundaries
  * in markup documentation */
 table.docutils th,
