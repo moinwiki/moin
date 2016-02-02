@@ -887,7 +887,7 @@ class Default(Contentful):
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
-        if flaskg.user.valid:
+        if flaskg.user.valid and EDIT_ROWS in flaskg.user.profile._meta:
             edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
