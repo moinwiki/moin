@@ -1,3 +1,5 @@
+.. role:: bolditalic
+
 ===============
 Markdown Markup
 ===============
@@ -118,8 +120,8 @@ by a blank line.
 To create a line break, end a line
 with 2 spaces.
 
-Use asterisk characters to create text attributes: *italic*, **bold**, ***bold italics***.
-Or, do the same with underscores: *Italics*, **bold**, ***bold italics***.
+Use asterisk characters to create text attributes: *italic*, **bold**, :bolditalic:`bold italics`.
+Or, do the same with underscores: *Italics*, **bold**, :bolditalic:`bold italics`.
 Use backticks to create ``monospace``.
 
 **RST NOTE**:
