@@ -1,4 +1,5 @@
 .. role:: bolditalic
+.. role:: underline
 
 ==========================
 WikiCreole markup overview
@@ -62,6 +63,8 @@ The following is a table of inline markup that can be used to format text in Cre
 | ``//**Bold and Italic**//``         | :bolditalic:`Bold and Italic`         |
 +-------------------------------------+---------------------------------------+
 | ``__Underline__``                   | :underline:`Underline`                |
++-------------------------------------+---------------------------------------+
+| ``{{{Monospace}}}``                 | ``Monospace``                         |
 +-------------------------------------+---------------------------------------+
 | ``First line\\Second line``         | | First line                          |
 |                                     | | Second line                         |
