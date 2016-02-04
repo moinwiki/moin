@@ -48,7 +48,7 @@ from MoinMoin.themes import render_template, contenttype_to_class
 from MoinMoin.apps.frontend import frontend
 from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
                             RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
-                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions,
+                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                             validate_name, NameNotValidError)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
@@ -538,7 +538,7 @@ def show_item_meta(item):
     show_navigation = False  # TODO
     first_rev = None
     last_rev = None
-    if show_navigation:
+    if show_quicklinks:
         rev_ids = list(item.rev.item.iter_revs())
         if rev_ids:
             first_rev = rev_ids[0]
@@ -552,7 +552,7 @@ def show_item_meta(item):
                            last_rev_id=last_rev,
                            meta=item._meta_info(),
                            show_revision=show_revision,
-                           show_navigation=show_navigation,
+                           show_quicklinks=show_quicklinks,
     )
 
 
@@ -1665,11 +1665,12 @@ class UserSettingsNotificationForm(Form):
     submit_label = L_('Save')
 
 
-class UserSettingsNavigationForm(Form):
-    name = 'usersettings_navigation'
-    # XXX Flatland insists a form having at least one element
-    dummy = Hidden
-    # TODO: find a good way to handle quicklinks here
+class UserSettingsQuicklinksForm(Form):
+    """
+    No validation is performed as lots of things are valid, existing items, non-existing items, external links, mailto, external wiki links...
+    """
+    name = 'usersettings_quicklinks'
+    quicklinks = Quicklinks
     submit_label = L_('Save')
 
 
@@ -1765,7 +1766,7 @@ def usersettings():
         password=UserSettingsPasswordForm,
         notification=UserSettingsNotificationForm,
         ui=UserSettingsUIForm,
-        navigation=UserSettingsNavigationForm,
+        quicklinks=UserSettingsQuicklinksForm,
         options=UserSettingsOptionsForm,
         subscriptions=UserSettingsSubscriptionsForm,
     )

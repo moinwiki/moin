@@ -52,13 +52,22 @@
     {{ gen.form.close() }}
 {% endmacro %}
 
-{% macro navigation(form) %}
+{% macro quicklinks(form) %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
         {{ forms.render_errors(form) }}
         <dl>
-            {# TODO: find a good way to handle quicklinks #}
+            {{ forms.render(form['quicklinks']) }}
         </dl>
-        {{ forms.render_submit(form, 'part', 'navigation') }}
+        <div class="tip">
+            {{ _('Use the "Add Link" or "Remove Link" controls within Item Views to add or remove quick links.') }}
+            <ul>
+                <li>{{ _('To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem') }}</li>
+                <li>{{ _('To add a link to an external wiki page, use the wiki name as a prefix: MeatBall/RecentChanges') }}</li>
+                <li>{{ _('To add a link to an external web page, use the full URL: http://google.com') }}</li>
+                <li>{{ _('Other types of links, such as mailto: may be added') }}</li>
+            </ul>
+        </div>
+        {{ forms.render_submit(form, 'part', 'quicklinks') }}
     {{ gen.form.close() }}
 {% endmacro %}
 
@@ -112,9 +121,9 @@
             <h2 class="moin-settings-head"><a href="#password">{{ _("Change Password") }}</a></h2>
             {{ password(form_objs.password) }}
         </div>
-        <div id="navigation" class="moin-tab-body moin-form">
-            <h2 class="moin-settings-head"><a href="#navigation">{{ _("Navigation") }}</a></h2>
-            {{ navigation(form_objs.navigation) }}
+        <div id="quicklinks" class="moin-tab-body moin-form">
+            <h2 class="moin-settings-head"><a href="#quicklinks">{{ _("Quick Links") }}</a></h2>
+            {{ quicklinks(form_objs.quicklinks) }}
         </div>
         <div id="notification" class="moin-tab-body moin-form">
             <h2 class="moin-settings-head"><a href="#notification">{{ _("Notifications") }}</a></h2>
