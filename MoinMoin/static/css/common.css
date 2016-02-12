@@ -185,7 +185,6 @@ input[type="text"].moin-acl-string { width: 70%; }
 #moin-acl-form { display: inline; }
 
 /* tablesorter */
-.tablesorter { width: 100%; }
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }
 .tablesorter-header.tablesorter-headerAsc { background-image: url('../img/asc.png'); }
 .tablesorter-header.tablesorter-headerDesc { background-image: url('../img/desc.png'); }
