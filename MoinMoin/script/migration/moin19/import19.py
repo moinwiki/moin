@@ -99,7 +99,7 @@ class ImportMoin19(Command):
                     meta[USERID] = userid_old2new[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print "Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)
+                    print (u"Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)).encode('utf-8')
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
@@ -154,9 +154,9 @@ class PageBackend(object):
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print "    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))
+                print (u"    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))).encode('utf-8')
             except Exception as err:
-                logging.exception("PageItem {0!r} raised exception:".format(itemname))
+                logging.exception((u"PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
                 for rev in item.iter_revisions():
                     yield rev
@@ -172,7 +172,7 @@ class PageItem(object):
         self.backend = backend
         self.name = itemname
         self.path = path
-        print "Processing item {0}".format(itemname)
+        print (u"Processing item {0}".format(itemname)).encode('utf-8')
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -183,7 +183,7 @@ class PageItem(object):
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             if not os.path.exists(revpath):
-                print "    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)
+                print (u"    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)).encode('utf-8')
                 raise KillRequested('deleted_mode wants killing/ignoring')
 
     def iter_revisions(self):
@@ -252,7 +252,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print "    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)
+                print (u"    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: u'SAVE/DELETE',
@@ -264,7 +264,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print "    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)
+                print (u"    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -294,7 +294,7 @@ class PageRevision(object):
         acl_line = self.meta.get(ACL)
         if acl_line is not None:
             self.meta[ACL] = regenerate_acl(acl_line)
-        print "    Processed revision {0} of item {1}, revid = {2}".format(revno, item_name, meta[REVID])
+        print (u"    Processed revision {0} of item {1}, revid = {2}".format(revno, item_name, meta[REVID])).encode('utf-8')
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
@@ -544,7 +544,7 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
-        print "Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])
+        print (u"Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8')
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
@@ -619,7 +619,7 @@ class UserRevision(object):
         RECHARS = ur'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print "    User is subscribed to {0}".format(subscribed_item)
+            print (u"    User is subscribed to {0}".format(subscribed_item)).encode('utf-8')
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:
