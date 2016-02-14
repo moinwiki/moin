@@ -535,10 +535,12 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     show_revision = request.view_args['rev'] != CURRENT
-    show_navigation = False  # TODO
+    # TODO: show_navigation/show_quicklinks? first_rev_id, last_rev_id are not used by meta.html/utils.html
+    # See similar show_navigation todo in items/__init__.py
+    show_navigation = False
     first_rev = None
     last_rev = None
-    if show_quicklinks:
+    if show_navigation:
         rev_ids = list(item.rev.item.iter_revs())
         if rev_ids:
             first_rev = rev_ids[0]
@@ -552,7 +554,7 @@ def show_item_meta(item):
                            last_rev_id=last_rev,
                            meta=item._meta_info(),
                            show_revision=show_revision,
-                           show_quicklinks=show_quicklinks,
+                           show_navigation=show_navigation,
     )
 
 
