@@ -267,7 +267,7 @@ Subscriptions = SubscriptionsJoinedString.of(String).with_properties(
     label=L_('Subscriptions'), optional=True, separator='\n',
     separator_regex=re.compile(r'[\r\n]+'))
 
-Quicklinks = MyJoinedString.of(String).with_properties(widget=WIDGET_MULTILINE_TEXT).using(
+Quicklinks = MyJoinedString.of(String).with_properties(widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
     label=L_('Quick Links'), optional=True, separator='\n', separator_regex=re.compile(r'[\r\n]+'))
 
 Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
