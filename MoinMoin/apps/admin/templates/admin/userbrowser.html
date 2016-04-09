@@ -28,9 +28,8 @@
                         </form>
                     </td>
                     <td>
-                        <form action="{{ url_for('admin.mail_recovery_token') }}" method="GET">
-                            <input type="hidden" name="email" value="{{ u.email }}" />
-                            <input type="hidden" name="account_sendmail" value="1" />
+                        <form action="{{ url_for('admin.mail_recovery_token') }}" method="POST">
+                            <input type="hidden" name="username" value="{{ u.name[0] }}" />
                             <input class="moin-button" type="submit" name="recoverpass" value="{{ _("Mail account data") }}" />
                         </form>
                     </td>
