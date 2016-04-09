@@ -105,11 +105,24 @@ def userprofile(user_name):
 
 
 @admin.route('/mail_recovery_token', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
 def mail_recovery_token():
     """
     Send user an email so he can reset his password.
     """
-    flash("mail recovery token not implemented yet")
+    username = request.form.get('username', '')
+    if username:
+        u = user.User(auth_username=username)
+        if u.valid:
+            is_ok, msg = u.mail_password_recovery()
+            if not is_ok:
+                flash(msg, "error")
+            else:
+                flash(_("{0} has been sent a password recovery email.".format(username)), "info")
+        else:
+            flash(_("{0} is an invalid user, no email has been sent.".format(username)), "error")
+    else:
+        flash(_("No user name provided, no email sent."), "error")
     return redirect(url_for('.userbrowser'))
 
 
