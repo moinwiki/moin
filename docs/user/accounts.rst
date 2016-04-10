@@ -110,29 +110,28 @@ User CSS URL
  custom stylesheet here. Custom CSS provides an advanced level of control over appearance of
  MoinMoin pages.
 
-Editor Size
- The size (in lines) of MoinMoin's plain text editor when you edit an item.
-
-.. warning::
- **MOINTODO** "Editor Size" isn't a very good title as it doesn't specify *which* editor or in what
- units the size is. This setting doesn't seem to affect my MoinMoin instance, either.
+Number rows in edit textarea
+ The size (in lines) of MoinMoin's plain text editor when you edit an item. The default of 0
+ resizes the textarea to hold the entire document being edited.
 
 History results per page
  The number of edits you will see when you look at the history of an item.
 
-Navigation Settings
--------------------
+Quick Links
+-----------
 
-.. warning::
- **MOINTODO** This page is blank. Perhaps it should be removed?
+Quick links enable users to add frequently referenced pages to the Navigation links. In most
+cases, users will use the "Add Link" or "Remove Link" controls within Item Views to add or
+remove quick links to local wiki items. Several different types of links may be added:
+
+ - To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem
+ - To add a link to an external wiki page, use the wiki name as a prefix: MeatBall/RecentChanges
+ - To add a link to an external web page, use the full URL: http://google.com
+ - Other types of links, such as mailto: may be added
+
 
 Options
 -------
-
-.. warning::
- **MOINTODO** "Options" isn't a very good name. Aren't they all "options"? The settings in the
- options page don't seem to be grouped in any particular category, either. Perhaps these options
- should be moved to another settings page?
 
 The "Options" section allows you to control privacy and advanced features of MoinMoin.
 
@@ -141,7 +140,9 @@ Publish my email (not my wiki homepage) in author info
 
 Open editor on double click
  This option allows you to simply double click the text on any MoinMoin item and have it opened
- in the editor.
+ in the editor. When using the MoinMoin text editor, the textarea caret will be positioned on
+ the paragraph that was clicked. If the textarea is larger than the display window, pressing the
+ right-arrow key will scroll the page so the caret is visible near the bottom of the window.
 
 Show comment sections
  Show the comment sections for wiki items you view.
