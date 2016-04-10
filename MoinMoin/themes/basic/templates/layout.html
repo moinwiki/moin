@@ -105,7 +105,7 @@
                             <div class="list-group-item-heading">{{ _("Quick Links") }}</div>
                         {% endif %}
                         <div class="moin-quicklink">
-                            <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text|shorten_item_name(20) }}
+                            <a class="moin-quicklink-label {{ cls }}" href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}title="{{ url|safe }}"{% endif %}>{{ text|shorten_item_name(20) }}
                             </a>
                         </div>
                         {% if loop.last %}</div>{% endif %}
