@@ -1757,7 +1757,7 @@ def usersettings():
             ((unicode(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
-        edit_rows = Natural.using(label=L_('Editor size')).with_properties(
+        edit_rows = Natural.using(label=L_('Number rows in edit textarea')).with_properties(
             placeholder=L_("Editor textarea height (0=auto)"))
         results_per_page = Natural.using(label=L_('History results per page')).with_properties(
             placeholder=L_("Number of results per page (0=no paging)"))
