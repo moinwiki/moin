@@ -86,15 +86,15 @@ class TestInclude(object):
         # external include
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'{{http://moinmo.in}}')
         rendered = Item.create(u'page1').content._render_data()
-        assert '<object class="moin-http moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object>' in rendered
+        assert '<object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object>' in rendered
         # external include embedded within text (object is an inline tag)
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'before {{http://moinmo.in}} after')
         rendered = Item.create(u'page1').content._render_data()
-        assert '<p>before <object class="moin-http moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> after</p>' in rendered
+        assert '<p>before <object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> after</p>' in rendered
         # external include embedded within text italic and bold markup (object is an inline tag)
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u"before ''italic '''bold {{http://moinmo.in}} bold''' italic'' normal")
         rendered = Item.create(u'page1').content._render_data()
-        assert '<p>before <em>italic <strong>bold <object class="moin-http moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> bold</strong> italic</em> normal</p>' in rendered
+        assert '<p>before <em>italic <strong>bold <object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> bold</strong> italic</em> normal</p>' in rendered
 
     def test_InlineInclude(self):
 
@@ -245,4 +245,4 @@ class TestInclude(object):
         # transclude external page as link alternate to nonexistent page
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'text [[MyPage|{{http://moinmo.in}}]] text')
         rendered = Item.create(u'page1').content._render_data()
-        assert '<p>text <a class="moin-nonexistent" href="/MyPage"><object class="moin-http moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object></a> text</p>' in rendered
+        assert '<p>text <a class="moin-nonexistent" href="/MyPage"><object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object></a> text</p>' in rendered
