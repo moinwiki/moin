@@ -69,7 +69,7 @@ class Converter(object):
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = set(['title', 'class', 'style'])
+    standard_attributes = set(['title', 'class', 'style', 'alt'])
 
     # Regular expression to detect an html heading tag
     heading_re = re.compile('h[1-6]')
@@ -357,6 +357,8 @@ class Converter(object):
         """
         key = xlink('href')
         attrib = self.convert_attributes(element)
+        # adding type_ attrib makes html_out create an image tag rather than an object tag
+        attrib[moin_page.type_] = 'image/'
         if self.base_url:
             attrib[key] = ''.join([self.base_url, element.get(html.src)])
         else:

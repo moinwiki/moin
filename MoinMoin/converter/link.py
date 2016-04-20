@@ -180,7 +180,9 @@ class ConverterExternOutput(ConverterBase):
 
     def handle_external_links(self, elem, input):
         elem.set(self._tag_xlink_href, input)
-        elem.set(html.class_, elem.attrib.get(html.class_, '') + ' moin-' + input.scheme)
+        if elem.tag == moin_page.a:
+            # adding this class enables themes to flag external links with an icon
+            elem.set(html.class_, elem.attrib.get(html.class_, '') + ' moin-' + input.scheme)
 
 
 class ConverterItemRefs(ConverterBase):
