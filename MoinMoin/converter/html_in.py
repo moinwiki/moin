@@ -413,7 +413,7 @@ class Converter(object):
         """
         # We will define the appropriate attribute
         # according to the type of the list
-        attrib = {}
+        attrib = self.convert_attributes(element)
         if element.tag.name == "ul" or element.tag.name == "dir":
             attrib[moin_page('item-label-generate')] = 'unordered'
         elif element.tag.name == "ol":
