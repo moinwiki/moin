@@ -115,6 +115,36 @@ a.moin-mime-drawing:before { content: url("../img/mime-type/moin-drawing.png"); 
 .monospaced { font-family: monospace; }
 /* end of userstyles */
 
+/* links */
+a { text-decoration:none; }
+a:link { color:#1409b9; }
+a:visited { color:#1409b9; }
+a:hover { color:#1409b9; }
+a:active { color:#1409b9; }
+a.moin-nonexistent:visited,
+a.moin-nonexistent { color:#939393; }
+a.moin-nonexistent:visited img,
+a.moin-nonexistent img,
+a.moin-nonexistent:visited object,
+a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
+/* end of links */
+
+/* misc highlighting */
+.moin-error { color: #ff2727; background: #eef1f6; padding: 4px; }
+.moin-highlight { background-color: #d8dfe9; padding: 1px; }
+.moin-thead { background-color: #00417f; } /* creole table headings in left column */
+.moin-showhide { margin-left: 10px; }
+.moin-disabled { color: #737373; }
+/* end misc highlighting */
+
+/* create item view */
+#moin-create-table {width: 95%; margin-left: auto; margin-right: auto; border:none; }
+#moin-create-table tbody tr th { margin:2px; }
+#moin-create-table tbody tr td { background: #fff; }
+#moin-create-table tbody tr > td { padding-left: 2em; background: #fff; }
+#moin-create-table tbody tr td a { color: #00008b; }
+/* end create item view */
+
 /* position transcluded image or object - the left, center, right rules in userstyles are compatible with the rules below */
 .moin-item-wrapper.left { float: left; }
 .moin-item-wrapper.center { width: 100%; text-align: center; }
