@@ -130,7 +130,9 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 /* end of links */
 
 /* misc highlighting */
-.moin-error { color: #ff2727; background: #eef1f6; padding: 4px; }
+.moin-error { color: #ff2727; background-image: url("../img/admonitions/warning.png");
+    background-color: #F9F9FF; background-repeat: no-repeat; background-position: 8px 8px;
+    border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px; min-height: 64px; padding: 8px 8px 8px 64px; clear: both; }
 .moin-highlight { background-color: #d8dfe9; padding: 1px; }
 .moin-thead { background-color: #00417f; } /* creole table headings in left column */
 .moin-showhide { margin-left: 10px; }
