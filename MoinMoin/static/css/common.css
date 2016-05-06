@@ -60,7 +60,7 @@ div.important,
 div.note,
 div.tip,
 div.warning { color: black; background-color: #F9F9FF; background-repeat: no-repeat; background-position: 8px 8px;
-    border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px; min-height: 64px; padding-left: 64px; clear: both; }
+    border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px; min-height: 64px; padding: 8px 8px 8px 64px; clear: both; }
 div.attention > p,
 div.caution > p,
 div.danger > p,
