@@ -117,7 +117,18 @@ a:hover { text-decoration: underline; }
 }
 
 @media print {
-    #moin-header { display: none; }
-    #moin-content { padding-left: 0; margin: 0; }
+    html { font-family: serif; font-size: 12pt; width: 100%; }
+    #moin-header,
+    #moin-footer > ul,
+    #moin-creditlogos,
+    #moin-credits,
     .moin-permalink { display: none; }
+    #moin-footer { position: static; }
+    #moin-pageinfo { color: #737373; font-size: .67em; float: right; }
+    #moin-content { padding-left: 0; margin: 0; }
+    a.moin-interwiki:before {content: attr(title) ":" }
+    a.moin-interwiki img { display: none }
+    pre { font-size: 10pt }
+    div.moin-table-of-contents { box-shadow: none }
+    a[href]:after { content: none; }  /* Firefox prints urls after anchor text by default */
 }
