@@ -82,7 +82,7 @@ setup_args = dict(
         'docutils>=0.8.1',  # reST markup processing
         'Markdown>=2.1.1',  # Markdown markup processing
         'Flask>=0.10',  # micro framework
-        'Flask-Babel>=0.7',  # i18n support
+        'Flask-Babel==0.9',  # i18n support
         'Flask-Cache>=0.3.4',  # caching support
         'Flask-Script==1.0.0',  # scripting support
         'Flask-Themes>=0.2.0',  # theme support
