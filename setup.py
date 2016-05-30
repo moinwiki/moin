@@ -95,6 +95,7 @@ setup_args = dict(
         'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
         'whoosh>=2.7.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
+        'sphinx_rtd_theme>=0.1.9',  # mobile ready theme
         'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
