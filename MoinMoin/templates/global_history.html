@@ -68,8 +68,8 @@
                 </tr>
             {% endfor %}
             {% if bookmark_time %}
-                <tr class="moin-history-container">
-                    <td class="moin-history-day-banner" colspan="7">
+                <tr class="moin-history-day-banner">
+                    <td colspan="7">
                         <span class="moin-history-date">{{ bookmark_time|datetimeformat }}</span>
                         <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
                     </td>
