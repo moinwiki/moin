@@ -134,7 +134,6 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-error { color: #ff2727; background-color: #F9F9FF; border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px;
     min-height: 64px; padding: 8px 8px 8px 8px; clear: both; }
 .moin-highlight { background-color: #d8dfe9; padding: 1px; }
-.moin-thead { background-color: #00417f; } /* creole table headings in left column */
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: #737373; }
 /* end misc highlighting */
@@ -265,6 +264,7 @@ tr > td { border: 1px solid #4e7da9; }
 td p { margin: 0; padding: 0; }
 #moin-content table > thead { background-color: #81bbf2; }
 #moin-content table > tfoot { background-color: #81bbf2; }
+.moin-thead { background-color: #81bbf2; } /* creole table headings in left column */
 
 /* zebra table styling */
 table.zebra { width: 98%; }
