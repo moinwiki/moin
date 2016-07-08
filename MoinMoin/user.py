@@ -48,7 +48,7 @@ from MoinMoin import log
 logging = log.getLogger(__name__)
 
 
-def create_user(username, password, email, validate=True, is_encrypted=False, **meta):
+def create_user(username, password, email, validate=True, is_encrypted=False, verify_email=False, **meta):
     """
     Create a new user
 
@@ -94,8 +94,11 @@ space between words. Group page name is not allowed.""", name=username)
     if validate and email and app.cfg.user_email_unique:
         if search_users(email=email):
             return _("This email already belongs to somebody else.")
+
+    if verify_email and email:
+        # caller must send verification email to user
         theuser.profile[EMAIL_UNVALIDATED] = email
-    else:
+    elif email:
         theuser.profile[EMAIL] = email
 
     # Openid should be unique

@@ -55,8 +55,8 @@ class TestSubscriptions(object):
         user1 = user.User(name=name1, password=password)
         user.create_user(username=name2, password=password, email=email2, validate=False)
         user2 = user.User(name=name2, password=password)
-        user.create_user(username=name3, password=password, email=email3, locale=u"en")
-        user3 = user.User(name=name3, password=password, email1=email3)
+        user.create_user(username=name3, password=password, email=email3, verify_email=True, locale=u"en")
+        user3 = user.User(name=name3, password=password, email=email3)
         subscribers = get_subscribers(**item.meta)
         assert subscribers == set()
 

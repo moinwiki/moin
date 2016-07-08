@@ -1355,6 +1355,7 @@ def register():
             }
             if app.cfg.user_email_verification:
                 user_kwargs['is_disabled'] = True
+                user_kwargs['verify_email'] = True
             msg = user.create_user(**user_kwargs)
             if msg:
                 flash(msg, "error")
