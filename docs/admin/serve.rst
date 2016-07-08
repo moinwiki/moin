@@ -1,5 +1,5 @@
 ==============
-Server options
+Server Options
 ==============
 
 Built-in Web Server (easy)

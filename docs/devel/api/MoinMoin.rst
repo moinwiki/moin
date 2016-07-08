@@ -1,4 +1,4 @@
-MoinMoin package
+MoinMoin Package
 ================
 
 Subpackages

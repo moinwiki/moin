@@ -1,5 +1,5 @@
 ==================
-User subscriptions
+User Subscriptions
 ==================
 
 Users can subscribe to moin items in order to receive notifications about item
