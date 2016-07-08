@@ -1,6 +1,6 @@
 :orphan:
 
-moin command line interface
+Moin Command Line Interface
 ===========================
 
 Synopsis
@@ -18,7 +18,7 @@ If you invoke :program:`moin` without any arguments, it will start the
 builtin server and you'll have moin running! This is a shortcut for
 invoking :program:`moin moin`.
 
-:program:`moin help` will give a list of available subcommands.
+:program:`moin --help` will give a list of available subcommands.
 
 :program:`moin <subcommand> --help` will give help for some subcommand.
 

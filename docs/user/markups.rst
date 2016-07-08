@@ -1,5 +1,5 @@
 =============================
-Markups supported by MoinMoin
+Markups Supported by MoinMoin
 =============================
 
 .. toctree::

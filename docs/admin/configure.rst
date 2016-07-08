@@ -1602,7 +1602,7 @@ their docs for details)::
 
 
 =====================
-Logging configuration
+Logging Configuration
 =====================
 
 By default, logging is configured to emit output on `stderr`. This will work
