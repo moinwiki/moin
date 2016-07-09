@@ -59,8 +59,10 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
                         and the uniqueness of the user created
     :param is_encrypted: if False (default) defines that the password is in
                         plaintext, when True - password was already encrypted
+    :verify_email: if True email is saved in user.profile[EMAIL_UNVALIDATED],
+                        else email is saved in user.profile[EMAIL]
     :param meta: a dictionary of key-value pairs that represent user metadata and
-                    will be stored into user profile metadata
+                        will be stored into user profile metadata
     """
     theuser = User(auth_method="new-user")
 
