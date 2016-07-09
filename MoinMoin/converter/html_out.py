@@ -700,7 +700,9 @@ class ConverterPage(Converter):
 
             for elem, headings in special.tocs():
                 headings = list(headings)
-                maxlevel = max(h[1] for h in headings)
+                headings_list = [h[1] for h in headings]
+                if headings_list:
+                    maxlevel = max(headings_list)
                 headtogglelink = html.a(attrib={
                     html.class_: 'moin-showhide',
                     html.href_: '#',
