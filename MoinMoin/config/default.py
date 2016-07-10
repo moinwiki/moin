@@ -71,8 +71,8 @@ class ConfigFunctionality(object):
         self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
 
         # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile(u'^{0}$'.format(self.item_dict_regex, re.UNICODE))
-        self.cache.item_group_regexact = re.compile(u'^{0}$'.format(self.item_group_regex, re.UNICODE))
+        self.cache.item_dict_regexact = re.compile(u'^{0}$'.format(self.item_dict_regex), re.UNICODE)
+        self.cache.item_group_regexact = re.compile(u'^{0}$'.format(self.item_group_regex), re.UNICODE)
 
         # compiled functions ACL
         self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
