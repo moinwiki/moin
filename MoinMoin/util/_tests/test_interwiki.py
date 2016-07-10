@@ -58,7 +58,7 @@ class TestInterWiki(object):
                  (('SomePage', '', '', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', True), 'http://localhost:8080/+meta/ns1/ns2/SomePage'),
                  (('SomePage', '', '', 'ns1', revid, 'frontend.show_item', False), '/+show/+{0}/ns1/SomePage'.format(revid)),
                  (('SomePage', '', '', 'ns1/ns2', revid, 'frontend.show_item_meta', False), '/+meta/+{0}/ns1/ns2/SomePage'.format(revid)),
-                 (('SomeRevID', '', 'revid', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', False), '/+meta/ns1/ns2/%40revid/SomeRevID'.format(revid)),
+                 (('SomeRevID', '', 'revid', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', False), '/+meta/ns1/ns2/%40revid/SomeRevID'),
 
                  (('SomePage', 'MoinMoin', '', 'ns1', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/ns1/SomePage'),
                  (('SomePage', 'MoinMoin', '', '', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/SomePage'),

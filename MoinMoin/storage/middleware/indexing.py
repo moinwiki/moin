@@ -212,7 +212,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             return self.data.tell(*args, **kw)
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
-        logging.info("not indexing content of %r as requested by configuration".format(meta[NAME]))
+        logging.info("not indexing content of {0!r} as requested by configuration".format(meta[NAME]))
         return u''
 
     if not item_name:
