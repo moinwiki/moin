@@ -34,10 +34,10 @@ def create_m():
     """Create an 'm.bat or 'm' bash script that will run make.py using this Python"""
     if WINDOWS_OS:
         with open('m.bat', 'w') as f:
-            f.write(':: {}\n\n@{} make.py %*\n'.format(WIN_INFO, sys.executable))
+            f.write(':: {0}\n\n@{1} make.py %*\n'.format(WIN_INFO, sys.executable))
     else:
         with open('m', 'w') as f:
-            f.write('# {}\n\n{} make.py $*\n'.format(NIX_INFO, sys.executable))
+            f.write('# {0}\n\n{1} make.py $*\n'.format(NIX_INFO, sys.executable))
             os.fchmod(f.fileno(), 0775)
 
 
@@ -47,7 +47,7 @@ class QuickInstall(object):
         if venv is None:
             base, source_name = os.path.split(source)
             executable = os.path.basename(sys.executable).split('.exe')[0]
-            venv = os.path.join(base, '{}-venv-{}'.format(source_name, executable))
+            venv = os.path.join(base, '{0}-venv-{1}'.format(source_name, executable))
         if download_cache is None:
             # make cache sibling of ~/pip/pip.log or ~/.pip/pip.log
             if WINDOWS_OS:
@@ -120,7 +120,7 @@ Successfully created or updated venv at {0}
         """Create files in the repo root that wrap files in <path-to-virtual-env>\Scripts."""
         target = os.path.join(self.dir_venv_bin, target)
         with open(filename, 'w') as f:
-            f.write(':: {}\n\n@call {} %*\n'.format(WIN_INFO, target))
+            f.write(':: {0}\n\n@call {1} %*\n'.format(WIN_INFO, target))
 
     def do_helpers(self):
         """Create small helper scripts or symlinks in repo root, avoid keying the long path to virtual env."""
