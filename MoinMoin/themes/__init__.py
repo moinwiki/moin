@@ -23,6 +23,7 @@ from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
 from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_ALL
+from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
 from MoinMoin.util.crypto import cache_key
@@ -386,6 +387,8 @@ class ThemeSupport(object):
                 args['namespace'] = fqname.namespace
             elif endpoint == "frontend.index":
                 args['item_name'] = fqname.namespace
+            elif endpoint == "admin.index" and not getattr(flaskg.user.may, SUPERUSER)():
+                continue
             items.append((cls, url_for(endpoint, **args), link_text, title))
 
         # Add user links to wiki links.
