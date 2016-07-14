@@ -383,6 +383,8 @@ class ThemeSupport(object):
                 root_fqname = fqname.get_root_fqname()
                 default_root = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
                 args['item_name'] = root_fqname.fullname if fqname.namespace != NAMESPACE_ALL else default_root
+                # override link_text to show untranslated <default_root> itemname or <namespace>/<default_root>
+                link_text = args['item_name']
             elif endpoint in ["frontend.global_history", "frontend.global_tags"]:
                 args['namespace'] = fqname.namespace
             elif endpoint == "frontend.index":
