@@ -25,8 +25,8 @@ from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatu
                             Reference, BackReference, SelectSubmit, Text, Search, File)
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                    SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, MTIME, TAGS,
-                                    NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
+                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, MTIME, TAGS,
+                                     NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from MoinMoin.items.content import NonExistentContent
@@ -67,8 +67,7 @@ OptionalUserReference = Reference.to(
 
 class AdvancedSearchForm(Form):
     q = Search
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties \
-            (widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
+    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -79,8 +78,7 @@ class AdvancedSearchForm(Form):
 
 
 class TicketMetaForm(Form):
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties \
-            (widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
+    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -204,13 +202,13 @@ def check_itemid(self):
                     item = Item.create(new_name)
                     item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID], element=u'file')
                     item = Item.create(old_name)
-                    item._save(item.meta, name=old_name, action=ACTION_TRASH) # delete
+                    item._save(item.meta, name=old_name, action=ACTION_TRASH)  # delete
                 except AccessDenied:
                     abort(403)
 
 
 def file_upload(self, data_file):
-    contenttype = data_file.content_type # guess by browser, based on file name
+    contenttype = data_file.content_type  # guess by browser, based on file name
     data = data_file.stream
     check_itemid(self)
     if self.meta.get(ITEMID) and self.meta.get(NAME):
@@ -274,8 +272,8 @@ def get_comments(self):
 def build_tree(comments, root, comment_tree, indent):
     if comments[root]:
         for comment in comments[root]:
-            comment_tree.append([comment, indent+30])
-            build_tree(comments, comment, comment_tree, indent+30)
+            comment_tree.append([comment, indent + 30])
+            build_tree(comments, comment, comment_tree, indent + 30)
         return comment_tree
     else:
         return []
@@ -285,8 +283,8 @@ def create_comment(meta, message):
     current_timestamp = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     item_name = meta[ITEMID] + u'/' + u'comment_' + unicode(current_timestamp)
     item = Item.create(item_name)
-    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8', \
-            refers_to=meta[ITEMID], reply_to=u'', author=flaskg.user.name[0], timestamp=time.ctime())
+    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
+                refers_to=meta[ITEMID], reply_to=u'', author=flaskg.user.name[0], timestamp=time.ctime())
 
 
 @register

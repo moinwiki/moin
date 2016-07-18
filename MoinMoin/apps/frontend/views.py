@@ -2427,12 +2427,12 @@ def ticket_search():
             results = searcher.search(query, sortedby=NAME_EXACT, limit=None)
 
         return render_template('ticket/advanced.html',
-                                search_form=form,
-                                ticket_results=results,
-                                suggested_tags=suggested_tags,
-                                timestamp=datetime.fromtimestamp,
-                                is_ticket=True,
-                                )
+                               search_form=form,
+                               ticket_results=results,
+                               suggested_tags=suggested_tags,
+                               timestamp=datetime.fromtimestamp,
+                               is_ticket=True,
+                               )
 
 
 @frontend.route('/+comment', defaults=dict(item_name=u''), methods=['POST'])
@@ -2444,16 +2444,16 @@ def comment(item_name):
         current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
         item_name = unicode(itemid) + u'/' + u'comment_' + unicode(current_timestamp)
         item = Item.create(item_name)
-        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8', \
-                refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
+        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
+                    refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
         html = render_template('comments.html',
-                            data=data,
-                            author=flaskg.user.name[0],
-                            timestamp=time.ctime(),
-                            commentid=item.fqname.value,
-                            itemid=reply_to,
-                            item=item,
-                            )
+                               data=data,
+                               author=flaskg.user.name[0],
+                               timestamp=time.ctime(),
+                               commentid=item.fqname.value,
+                               itemid=reply_to,
+                               item=item,
+                               )
         return html
 
 
