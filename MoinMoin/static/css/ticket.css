@@ -99,7 +99,7 @@ dl dd {
     overflow-y: scroll;
     overflow-x: hidden;
 }
-#moin-ticket-layout {
+.moin-ticket-layout {
     white-space: nowrap;
     float: left;
     min-width: 50%;
