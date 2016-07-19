@@ -55,7 +55,7 @@
     <div class="comment-content" comment_id={{ comment[0].meta['itemid'] }} style="left:{{ comment[1] }}px;">
         <span class="comment-tip comment-tip-left"></span>
         <div class="message">
-            <dl id="{{ comment[0].meta['itemid'] }}">
+            <div id="{{ comment[0].meta['itemid'] }}">
 
                 <div class="message-markup">
                     {{ ((comment[0].meta['content'])) }}
@@ -68,7 +68,7 @@
                     {% endif %}
                     posted by {{ comment[0].meta['author'] }} on {{ datetime.datetime.fromtimestamp(comment[0].meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
                 </span>
-            </dl>
+            </div>
         </div>
     </div>
 {% endmacro %}
