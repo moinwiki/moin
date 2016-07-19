@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block ticket_content %}
-    <div id="moin-ticket-layout">
+    <div class="moin-ticket-layout">
         <dl>
             <dt>
                 <label>{{ _("Summary") }}</label>
@@ -22,7 +22,7 @@
         <dl>
     <div style="clear:both;"></div>
     <h3>{{ _("Provide metadata") }}</h3>
-        <div id="moin-ticket-layout">
+        <div class="moin-ticket-layout">
             <dl>
                 {{ forms.render_errors(form) }}
                 {{ render_meta() }}
@@ -34,7 +34,7 @@
                 {% endfor %}
             </div>
         </div>
-        <div id="moin-ticket-layout">
+        <div class="moin-ticket-layout">
             <dl>
                 {{ render_selectlists() }}
             </dl>
@@ -42,7 +42,7 @@
                 {{ subscribe() }}
             </dt>
         </div>
-        <div id="moin-ticket-layout">
+        <div class="moin-ticket-layout">
             <dl>
                 <dt>
                     {{ gen.label(form['data_file']) }}
@@ -54,7 +54,7 @@
         </div>
     <div style="clear:both;"></div>
     <h3>{{ _("Describe the ticket") }}</h3>
-    <div id="moin-ticket-layout">
+    <div class="moin-ticket-layout">
         <div class="form-group">
             {{ gen.label(form['message']) }}
             {{ gen.textarea(form['message'], class='form-control') }}
