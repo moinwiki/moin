@@ -190,6 +190,14 @@ class TestIndexingMiddleware(object):
         assert len(revs) == 1
         assert revs[0].revid == rev2.revid
 
+    def test_xml_document(self):
+        """Test that XML documents can be stored and indexed."""
+        item_name = u'foo'
+        item = self.imw[item_name]
+        meta = dict(name=[item_name, ], contenttype=u'text/xml')
+        rev = item.store_revision(meta, StringIO(u'<?xml version="1.0" encoding="UTF-8"?>'), return_rev=True)
+        assert rev
+
     def test_index_rebuild(self):
         # first we index some stuff the slow "on-the-fly" way:
         expected_latest_revids = []
