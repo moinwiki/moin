@@ -30,20 +30,8 @@
         <dl>
             {{ render_selectlists() }}
         </dl>
-        <dt>
-            {{ subscribe() }}
-        </dt>
     </div>
-    <div class="moin-ticket-layout">
-        <dl>
-            <dt>
-                {{ gen.label(form['data_file']) }}
-            </dt>
-            <dd>
-                {{ gen.input(form['data_file'], type='file') }}
-            </dd>
-        </dl>
-    </div>
+
     <div style="clear:both;"></div>
 
     <h3>{{ _("Back references") }}</h3>
@@ -67,6 +55,16 @@
             <p>No file uploaded.</p>
         {% endif %}
     </div>
+    <div class="moin-ticket-layout">
+        <dl>
+            <dt>
+                {{ gen.label(form['data_file']) }}
+            </dt>
+            <dd>
+                {{ gen.input(form['data_file'], type='file') }}
+            </dd>
+        </dl>
+    </div>
     <div style="clear:both;"></div>
 
     <h3>{{ _("Ticket Description") }}</h3>
@@ -83,6 +81,9 @@
         <div class="form-group">
             {{ gen.textarea(form['message'], class='form-control') }}
         </div>
+    </div>
+    <div class="moin-ticket-layout moin-float-fix">
+            {{ subscribe() }}
     </div>
     {{ forms.render(form['submit']) }}
 {% endblock %}
