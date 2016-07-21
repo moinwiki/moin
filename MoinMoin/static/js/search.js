@@ -6,11 +6,11 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#moin-long-searchform .button", (function(){
-        $('#moin-search-query').change();
+        $('.moin-search-query').change();
     }));
 
     $(document).on("click", "label", (function(){
-        $('#moin-search-query').keyup();
+        $('.moin-search-query').keyup();
     }));
 
     $(document).on("click", ".moin-search-option-bar", (function(){
@@ -29,7 +29,7 @@ $(document).ready(function(){
         });
     }
 
-    $('#moin-search-query').keyup(function() {
+    $('.moin-search-query').keyup(function() {
         var allrev, time_sorting;
         var mtime = false;
         var filetypes= '';

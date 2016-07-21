@@ -17,7 +17,7 @@ a:hover { text-decoration: underline; }
 
 #moin-searchform { width: 200px; display: inline-block; font-size: 1em;
     border: 1px solid #4e7da9; border-radius: 5px; background-color: #fff; }
-#moin-search-query{ float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
+.moin-search-query{ float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
     border: 0; width: 150px; margin-left: 5px; }
 #moin-searchform .moin-float-fix { float: right; clear: none; padding: 0; }
 #moin-search-submit { width: 30px; text-indent: -9000px; border: 0; height: 1.5em;

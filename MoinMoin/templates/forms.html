@@ -148,7 +148,7 @@ Helpers for using flatland with jinja2 to create html forms.
 {% endmacro %}
 
 {% macro search(field) %}
-  {{ raw_input(field, id='moin-search-query') }}
+  {{ raw_input(field, class='moin-search-query') }}
 {% endmacro %}
 
 {% macro select(field) %}
