@@ -4,6 +4,14 @@ MoinMoin.script.maint package
 Submodules
 ----------
 
+MoinMoin.script.maint.dump_html module
+--------------------------------------
+
+.. automodule:: MoinMoin.script.maint.dump_html
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MoinMoin.script.maint.index module
 ----------------------------------
 
