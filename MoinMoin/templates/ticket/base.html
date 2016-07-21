@@ -21,9 +21,9 @@
         ] %}
         {{ forms.render(form['meta'][e]) }}
         {% if e!='assigned_to' and item.meta[e] %}
-            <dt>
+            <dd>
                 <a class="moin-ticket-link"  href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e]|shorten_id }}</a>
-            </dt>
+            </dd>
         {% endif %}
     {% endfor %}
 {% endmacro %}
