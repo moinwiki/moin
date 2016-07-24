@@ -2,7 +2,7 @@
 # Copyright: 2013 MoinMoin:BastianBlank
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
-create a virtual environment and install moin2 (in development mode) and
+Create a virtual environment and install moin2 (in development mode) and
 its requirements.
 
 needs: virtualenv, pip
@@ -129,15 +129,11 @@ Successfully created or updated venv at {0}
             # windows commands are: activate | deactivate
             self.create_wrapper('activate.bat', 'activate.bat')
             self.create_wrapper('deactivate.bat', 'deactivate.bat')
-            if os.path.exists('moin.bat'):  # cleanup obsolete file - TODO remove after 2014-04
-                os.remove('moin.bat')
         else:
             # linux commands are: source activate | deactivate
             if os.path.exists('activate'):
                 os.unlink('activate')
             os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')  # no need to define deactivate on unix
-            if os.path.exists('moin'):  # cleanup obsolete file - TODO remove after 2014-04
-                os.unlink('moin')
 
 
 if __name__ == '__main__':
