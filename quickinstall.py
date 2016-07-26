@@ -102,8 +102,6 @@ Successfully created or updated venv at {0}
         if pip_version >= [1, 5]:
             args += [
                 '--process-dependency-links',
-                '--allow-external', 'flatland',
-                '--allow-unverified', 'flatland',
             ]
         subprocess.check_call(args)
 
