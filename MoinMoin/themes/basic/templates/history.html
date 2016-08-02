@@ -100,7 +100,7 @@
                                                     {{ _('highlight') }}
                                                 </a>
                                             </li>
-                                            {% if user.may.write(item_name) -%}
+                                            {% if user.may.write(item_name) and not doc.trash -%}
                                                 <li>
                                                     <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=doc.revid) }}">
                                                         {{ _('revert') }}

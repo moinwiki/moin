@@ -77,11 +77,15 @@
                                 <td><a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=doc.revid) }}">{{ _('meta') }}</a></td>
                                 <td><a href="{{ url_for('frontend.download_item', item_name=fqname, rev=doc.revid) }}">{{ _('download') }}</a></td>
                                 <td><a href="{{ url_for('frontend.highlight_item', item_name=fqname, rev=doc.revid) }}">{{ _('highlight') }}</a></td>
-                                {% if user.may.write(fqname) -%}
+                                {% if user.may.write(fqname) and not doc.trash -%}
                                     <td><a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=doc.revid) }}">{{ _('revert') }}</a></td>
+                                {% else %}
+                                    <td></td>
                                 {%- endif %}
                                 {% if user.may.destroy(fqname) -%}
                                     <td><a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=doc.revid) }}">{{ _('destroy') }}</a></td>
+                                {% else %}
+                                    <td></td>
                                 {%- endif %}
                             </tr>
                         {% endfor %}
