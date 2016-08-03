@@ -462,7 +462,7 @@ def presenter(view, add_trail=False, abort404=True):
 
 
 # The first form accepts POST to allow modifying behavior like modify_item.
-# The second form only accpets GET since modifying a historical revision is not allowed (yet).
+# The second form only accepts GET since modifying a historical revision is not allowed (yet).
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
@@ -697,9 +697,11 @@ def revert_item(item_name, rev):
             item.revert(form['comment'])
             return redirect(url_for_item(item_name))
     return render_template(item.revert_template,
-                           item=item, fqname=item.fqname,
+                           item=item,
+                           fqname=item.fqname,
                            rev_id=rev,
                            form=form,
+                           data_rendered=Markup(item.content._render_data()),
     )
 
 
