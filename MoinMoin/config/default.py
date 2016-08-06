@@ -392,7 +392,7 @@ options_no_group_name = {
          "Number of items in the trail of recently visited items"),
 
         ('item_views', [
-            # (endpointname, label, check_item_exists
+            # (endpointname, label, title, check_item_exists
             ('frontend.show_item', L_('Show'), L_('Show'), False, ),
             ('frontend.download_item', L_('Download'), L_('Download'), True, ),
             ('frontend.history', L_('History'), L_('Revision History'), True, ),

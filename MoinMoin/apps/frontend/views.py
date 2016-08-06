@@ -462,7 +462,7 @@ def presenter(view, add_trail=False, abort404=True):
 
 
 # The first form accepts POST to allow modifying behavior like modify_item.
-# The second form only accepts GET since modifying a historical revision is not allowed (yet).
+# The second form only accepts GET since modifying a historical revision is not allowed.
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
 @frontend.route('/+show/+<rev>/<itemname:item_name>', methods=['GET'])
 def show_item(item_name, rev):
