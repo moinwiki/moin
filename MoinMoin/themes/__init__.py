@@ -84,6 +84,12 @@ class ThemeSupport(object):
         self.meta_items = []  # list of (name, content) for html head <meta>
 
     def get_action_tabs(self, fqname, current_endpoint):
+        """
+        Create a list of commonly used item views. Used by Basic theme.
+
+        :rtype: list
+        :returns: list of item views
+        """
 
         if not fqname or not fqname.value:
             return []
@@ -130,6 +136,12 @@ class ThemeSupport(object):
         return navtabs
 
     def get_local_panel(self, fqname):
+        """
+        Split uncommonly used cfg.item views into user actions, item actions, and view options.
+
+        :rtype: list
+        :returns: list of lists containing: user actions, item actions, and view options for Basic theme
+        """
 
         if not fqname:
             return [], [], []
@@ -496,6 +508,12 @@ class ThemeSupport(object):
 
 
 def get_editor_info(meta, external=False):
+    """
+    Create a dict of formatted user info.
+
+    :rtype: dict
+    :returns: dict of formatted user info such as name, ip addr, email,...
+    """
     addr = meta.get(ADDRESS)
     hostname = meta.get(HOSTNAME)
     text = _('anonymous')  # link text
