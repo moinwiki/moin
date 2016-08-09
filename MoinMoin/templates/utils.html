@@ -1,5 +1,32 @@
 {% import 'forms.html' as forms %}
 
+{% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') %}
+    {% set prior_rev, current_rev, next_rev, prior_mtime, current_mtime, next_mtime = rev_navigation_ids_dates %}
+    <ul id="moin-rev-navigation">
+        <li class="moin-rev-navigation-older">
+            {% if prior_mtime -%}
+                <a href="{{ url_for(view, item_name=fqname, rev=prior_rev) }}">
+                    <span class="fa fa-arrow-left"></span>
+                    {{ _('older') }} {{ prior_mtime|datetimeformat }}
+                </a>
+            {%- else -%}
+                <span class="moin-disabled">{{ _('no older revision') }}</span>
+            {%- endif %}
+        </li>
+        <li class="moin-rev-navigation-current">current {{ current_mtime|datetimeformat }}</li>
+        <li class="moin-rev-navigation-newer">
+            {% if next_mtime -%}
+                <a href="{{ url_for(view, item_name=fqname, rev=next_rev) }}">
+                    {{ _('newer') }} {{ next_mtime|datetimeformat }}
+                    <span class="fa fa-arrow-right"></span>
+                </a>
+            {%- else -%}
+                <span class="moin-disabled">{{ _('no newer revision') }}</span>
+            {%- endif %}
+        </li>
+    </ul>
+{% endmacro %}
+
 {% macro show_editor_info(info) %}
     {%- if info.uri -%}
         <a href="{{ info.uri }}" class="{{ info.css }}" title="{{ info.title }}">

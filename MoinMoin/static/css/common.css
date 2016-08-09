@@ -136,6 +136,7 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-highlight { background-color: #d8dfe9; padding: 1px; }
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: #737373; }
+.moin-summary { margin-top: .5em; font-style: italic; }
 /* end misc highlighting */
 
 /* create item view */
@@ -479,3 +480,13 @@ form.upload_file button { display: none; }
 #moin-modify textarea { width: 99.5%; }
 #moin-modify input[type="submit"] { margin-left: 0; }
 .moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }
+
+/* revision navigation on show and meta views */
+.moin-rev-navigation-current { font-size: 1.25em; text-transform: uppercase; }
+.moin-rev-navigation-older,
+.moin-rev-navigation-newer {padding: 0 20px 0 20px; }
+ul#moin-rev-navigation li { display: inline; }
+ul#moin-rev-navigation { text-align: center; }
+@media (max-width: 1500px) {
+    ul#moin-rev-navigation li { display: block; text-align: center; }
+}

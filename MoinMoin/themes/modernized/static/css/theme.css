@@ -266,11 +266,7 @@ a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited
 .moin-thead{background-color:#00417f}
 .moin-showhide{margin-left:10px}
 table.navigation{background:#fff;float:right;margin:2px}
-#moin-rev-navigation{list-style:none;text-align:center}
-#moin-rev-navigation li{display:inline}
 .moin-disabled{color:#737373}
-.moin-rev-navigation-current{font-size:1.5em;text-transform:uppercase}
-.moin-rev-navigation-older,.moin-rev-navigation-newer{padding:0 20px 0 20px}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
 #moin-create-table tbody tr th{text-align:center;background:#00417f;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
