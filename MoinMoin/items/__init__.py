@@ -40,6 +40,7 @@ from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
 from MoinMoin.i18n import L_
 from MoinMoin.themes import render_template
+from MoinMoin.util import rev_navigation
 from MoinMoin.util.mime import Type
 from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from MoinMoin.util.registry import RegistryBase
@@ -823,19 +824,24 @@ class Default(Contentful):
                                )
 
     def do_show(self, revid):
+        """
+        Display an item. If this is not the current revision, then page content will include
+        an H1 tag with rev-id and next-rev / prior-rev links.
+        """
         show_revision = revid != CURRENT
-        show_navigation = False  # TODO
-        first_rev = last_rev = None  # TODO
-        return render_template(self.show_template,
-                               item=self, item_name=self.name,
+        if show_revision:
+            rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
+        else:
+            rev_navigation_ids_dates = (None, ) * 6
+        return render_template('show.html',
+                               item=self,
+                               item_name=self.name,
                                fqname=self.fqname,
                                rev=self.rev,
                                contenttype=self.contenttype,
-                               first_rev_id=first_rev,
-                               last_rev_id=last_rev,
+                               rev_navigation_ids_dates=rev_navigation_ids_dates,
                                data_rendered=Markup(self.content._render_data()),
                                show_revision=show_revision,
-                               show_navigation=show_navigation,
                               )
 
     def doc_link(self, filename, link_text):
@@ -891,7 +897,7 @@ class Default(Contentful):
             edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
-        return render_template(self.modify_template,
+        return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,
                                item=self,
@@ -902,9 +908,6 @@ class Default(Contentful):
                                help=help,
                                edit_rows=edit_rows,
                               )
-
-    show_template = 'show.html'
-    modify_template = 'modify.html'
 
 
 @register

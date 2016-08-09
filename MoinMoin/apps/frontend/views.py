@@ -58,7 +58,7 @@ from MoinMoin.constants.namespaces import *
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.constants.contenttypes import *
-from MoinMoin.util import crypto
+from MoinMoin.util import crypto, rev_navigation
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
@@ -535,26 +535,19 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     show_revision = request.view_args['rev'] != CURRENT
-    # TODO: show_navigation/show_quicklinks? first_rev_id, last_rev_id are not used by meta.html/utils.html
-    # See similar show_navigation todo in items/__init__.py
-    show_navigation = False
-    first_rev = None
-    last_rev = None
-    if show_navigation:
-        rev_ids = list(item.rev.item.iter_revs())
-        if rev_ids:
-            first_rev = rev_ids[0]
-            last_rev = rev_ids[-1]
+    if show_revision:
+        rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    else:
+        rev_navigation_ids_dates = (None, ) * 6
     return render_template('meta.html',
-                           item=item, item_name=item.name,
+                           item=item,
+                           item_name=item.name,
                            fqname=item.fqname,
                            rev=item.rev,
                            contenttype=item.contenttype,
-                           first_rev_id=first_rev,
-                           last_rev_id=last_rev,
+                           rev_navigation_ids_dates=rev_navigation_ids_dates,
                            meta=item._meta_info(),
                            show_revision=show_revision,
-                           show_navigation=show_navigation,
     )
 
 

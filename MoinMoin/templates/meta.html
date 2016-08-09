@@ -1,10 +1,14 @@
 {% extends theme("show.html") %}
-{% import "utils.html" as utils with context %}
+
+{% import "utils.html" as utils %}
 
 {% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
 
+{% block item_summary %}
+{% endblock %}
+
 {% block rev_navigation %}
-    {{ rev_navigation(view='frontend.show_item_meta') }}
+    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item_meta') }}
 {% endblock %}
 
 {% block content_data %}

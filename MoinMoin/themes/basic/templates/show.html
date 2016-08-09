@@ -7,11 +7,29 @@
 {% set exists = storage.has_item(item_name) %}
 {% set footer_meta = snippets.footer_meta() %}
 
+
 {% block views %}
     {{ itemviews }}
 {% endblock %}
 
 {% block content %}
+
+    {% block headline %}
+        {% block item_summary %}
+            {% if item.meta['summary'] %}
+                <div class="moin-summary">
+                    {{ _('Summary: %(summary)s', summary=item.meta['summary']) }}
+                </div>
+            {% endif %}
+        {% endblock %}
+        {% if show_revision %}
+            <h1>{{ rev.item.name }} (Revision {{ rev.revid | shorten_id }})</h1>
+            {% block rev_navigation %}
+                {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') }}
+            {% endblock %}
+        {% endif %}
+    {% endblock %}
+
 
     {% block content_data %}
         {% if data_rendered %}
