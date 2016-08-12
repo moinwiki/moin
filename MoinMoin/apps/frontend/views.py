@@ -2446,7 +2446,7 @@ def comment(item_name):
         item = Item.create(item_name)
         item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
-        html = render_template('comments.html',
+        html = render_template('base.html',  # TODO: was 'comments.html', did missing file have more features?
                                data=data,
                                author=flaskg.user.name[0],
                                timestamp=time.ctime(),
