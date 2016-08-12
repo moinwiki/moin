@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro render_comment(comment) %}
-    <div class="comment-content" comment_id={{ comment[0].meta['itemid'] }} style="left:{{ comment[1] }}px;">
+    <div class="comment-content" data-comment_id={{ comment[0].meta['itemid'] }} style="left:{{ comment[1] }}px;">
         <span class="comment-tip comment-tip-left"></span>
         <div class="message">
             <div id="{{ comment[0].meta['itemid'] }}">
@@ -61,7 +61,7 @@
                     {{ ((comment[0].meta['content'])) }}
                 </div>
                 <span class="moin-ticket-subtext">
-                    <a href="#" class="reply" reply_to={{ comment[0].meta['itemid'] }} refers_to={{ comment[0].meta['refers_to'] }}>reply</a> |
+                    <a href="#" class="reply" data-reply_to={{ comment[0].meta['itemid'] }} data-refers_to={{ comment[0].meta['refers_to'] }}>reply</a> |
                     <a class="jumper" href="#{{ comment[0].meta['itemid'] }}">{{ comment[0].meta['itemid'][:4] }}</a>
                     {% if comment[0].meta['reply_to'] %}
                         In reply to <a class="jumper" href="#{{ comment[0].meta['reply_to'] }}">{{ comment[0].meta['reply_to'][:4] }}</a>

@@ -35,9 +35,9 @@ $(document).ready(function () {
 
     $('.reply').click(function (e) {
         e.preventDefault();
-        var reply_to = $(this).attr('reply_to');
-        var refers_to = $(this).attr('refers_to');
-        $('[comment_id=' + reply_to + ']').css('height', '170px');
+        var reply_to = $(this).attr('data-reply_to');
+        var refers_to = $(this).attr('data-refers_to');
+        $('[data-comment_id=' + reply_to + ']').css('height', '170px');
         if (!$('#' + reply_to).find("textarea.comment-reply").length) {
             $('#' + reply_to).append('<div class="comment-box"><textarea class="comment-reply" type="text"/></p><button id="save">Save</button><button id="cancel">Cancel</button></p></div>');
             $('#' + reply_to).find("textarea.comment-reply").focus();
@@ -49,7 +49,7 @@ $(document).ready(function () {
             });
             $('#cancel').on('click', function (e) {
                 $('div.comment-box').remove();
-                $('[comment_id=' + reply_to + ']').css('height', '70px');
+                $('[data-comment_id=' + reply_to + ']').css('height', '70px');
                 return false;
             });
         }
