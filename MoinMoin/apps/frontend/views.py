@@ -2394,6 +2394,13 @@ def tickets():
 
 @frontend.route('/+tickets/query', methods=['GET', 'POST'])
 def ticket_search():
+    """
+    Suggest duplicate tickets while a new ticket is being created. Executed multiple times as user types/clicks.
+
+    TODO: not useful as is, suggestions must match every word in ticket summary.
+    Clicking radio buttons create updates but values seem to have no effect on results.
+    Better suggestions may come from matching on tag values.
+    """
     form = AdvancedSearchForm()
     suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
     results = []
@@ -2437,6 +2444,9 @@ def ticket_search():
 
 @frontend.route('/+comment', defaults=dict(item_name=u''), methods=['POST'])
 def comment(item_name):
+    """
+    Initiated by tickets.js when user clicks Save button adding a reply to a prior comment.
+    """
     itemid = request.form.get('refers_to')
     reply_to = request.form.get('reply_to')
     data = request.form.get('data')
@@ -2446,7 +2456,7 @@ def comment(item_name):
         item = Item.create(item_name)
         item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
-        html = render_template('base.html',  # TODO: was 'comments.html', did missing file have more features?
+        html = render_template('base.html',  # TODO: was 'comments.html' resulting in 404, did missing file have additional features?
                                data=data,
                                author=flaskg.user.name[0],
                                timestamp=time.ctime(),

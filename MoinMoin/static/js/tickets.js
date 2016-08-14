@@ -33,6 +33,7 @@ $(document).ready(function () {
         $('.ticket-tags-toggle').click();
     }
 
+    // executed when user clicks Reply button to respond to a prior comment
     $('.reply').click(function (e) {
         e.preventDefault();
         var reply_to = $(this).attr('data-reply_to');
@@ -41,6 +42,7 @@ $(document).ready(function () {
         if (!$('#' + reply_to).find("textarea.comment-reply").length) {
             $('#' + reply_to).append('<div class="comment-box"><textarea class="comment-reply" type="text"/></p><button id="save">Save</button><button id="cancel">Cancel</button></p></div>');
             $('#' + reply_to).find("textarea.comment-reply").focus();
+            // add click actions to Save and Cancel buttons created above
             $('#save').on('click', function (e) {
                 var data = $('textarea.comment-reply').val();
                 $('div.comment-box').remove();
