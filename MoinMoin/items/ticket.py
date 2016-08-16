@@ -179,7 +179,7 @@ class TicketUpdateForm(TicketForm):
 # XXX How to do i18n on this?
 
 def message_markup(message):
-    return u'''{{{{{{#!wiki tip
+    return u'''{{{{{{#!wiki moin-ticket
 %(author)s wrote on <<DateTime(%(timestamp)d)>>:
 
 %(message)s
@@ -283,7 +283,7 @@ def create_comment(meta, message):
     current_timestamp = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     item_name = meta[ITEMID] + u'/' + u'comment_' + unicode(current_timestamp)
     item = Item.create(item_name)
-    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
+    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
                 refers_to=meta[ITEMID], reply_to=u'', author=flaskg.user.name[0], timestamp=time.ctime())
 
 

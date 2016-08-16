@@ -46,15 +46,6 @@ label.moin-inline-label {
     margin: 5px 1px 3px 0;
     border: 1px solid #51cbee;
 }
-.moin-ticket-submit input[type=submit], #f_submit_update, #f_submit_update_negate_status {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    width: auto;
-    background-color: #1b436d;
-    height: 40px;
-    color: #ffffff;
-    border: 2px solid;
-}
 select {
     display: inline-block;
     margin-bottom: 0;
@@ -75,6 +66,7 @@ select {
 #f_message {
     width: 100%;
     height: 150px;
+    resize: vertical;
 }
 h2 {
     border-bottom: none;
@@ -99,59 +91,80 @@ dl dd {
     overflow-y: scroll;
     overflow-x: hidden;
 }
-.moin-ticket-layout {
-    white-space: nowrap;
-    float: left;
-    min-width: 50%;
-    min-height: 50%;
-    text-align: left;
+
+/* style initial ticket description after save */
+div.moin-ticket {
+    border: 2px solid #E5E5E5;
+    padding: 0 10px;
 }
-.moin-ticket-subtext {
-    margin-top: 5px;
-    font-size: 8pt;
-    color: #7c7c7f;
+div.ticket > p:first-child:before, div.moin-ticket > p:first-child:before {
+    font-family: FontAwesome;
+    content: "\f145" " ";
+    font-size: 1.25em; color: red;
 }
-.comment-reply {
-    width: 50%;
-    height: 20%;
-}
-.comment-tip {
-    width: 0px;
-    height: 0px;
-    position: absolute;
-    background: transparent;
-    border: 10px solid #E5E5E5;
-}
-.comment-tip-left {
-    top: 10px;
-    left: -20px;
-    border-top-color: transparent;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
-}
+
+/* style existing comments */
 .comment-content {
-    position: relative;
     max-width: 100%;
-    height: 70px;
-    margin: 10px 10px;
+    margin: 10px 10px 1px 10px;
     padding: 5px;
     background-color: #fcfcff;
-    border-radius: 10px;
+    border-radius: 5px;
     border: 2px solid #E5E5E5;
-    box-shadow: 2px 2px 2px #888888;
 }
 .comment-content .message {
     border-radius: 3px;
     font-family: Arial;
-    font-size: 14px;
+    font-size: 1em;
     line-height: 1.5;
 }
 .message .message-markup {
-    background-color: #F9F9FF;
+    background-color: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 3px;
     padding: 5px;
+    overflow-x: auto;
 }
+.moin-ticket-subtext:before {
+    font-family: FontAwesome;
+    content: "\f145" " ";
+    font-size: 1em; color: red;
+}
+.moin-ticket-subtext {
+    margin-top: 5px;
+    font-size: .75em;
+    color: #333333;
+}
+
+/* style creation of a new comment to an existing comment */
+textarea.comment-reply {
+    width: 100%;
+    height: 18em;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
 #save, #cancel {
-    display:inline-block;
+    display: inline-block;
+}
+button.moin-button, a.moin-button {
+    display: inline;
+    margin: 1em 3em 0 0;
+}
+/* duplicate moin-button styling because these elements lack the class */
+#f_submit_update, #f_submit_update_negate_status {
+    background: #aed4fa;
+    border: 1px solid #00417F;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75em;
+    font-weight: bold;
+    padding: 4px 15px;
+    margin: 1em 3em 0 0;
+    display: inline;
+}
+#f_submit_update:hover, #f_submit_update_negate_status:hover,
+#f_submit_update:focus, #f_submit_update_negate_status:focus {
+    box-shadow: 2px 2px 1px #000;
+    outline: none;
 }
