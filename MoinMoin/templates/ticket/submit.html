@@ -5,23 +5,26 @@
 {% endblock %}
 
 {% block ticket_content %}
+    <h2>{{ _("Summary") }}</h2>
     <div class="moin-ticket-layout">
-        <dl>
-            <dt>
-                <label>{{ _("Summary") }}</label>
-            </dt>
-            <dd>
-                {{ forms.render(form['meta']['summary']) }}
-            </dd>
-        </dl>
+        {{ forms.render(form['meta']['summary']) }}
     </div>
-        <div style="clear:both;"></div>
-        <div id="finalresults">
-            {% include "ajaxsearch.html" %}
-        </div>
-        <dl>
     <div style="clear:both;"></div>
-    <h3>{{ _("Provide metadata") }}</h3>
+    <div id="finalresults">
+        {% include "ajaxsearch.html" %}
+    </div>
+    <div style="clear:both;"></div>
+
+    <h2>{{ _("Describe the ticket") }}</h2>
+    <div class="moin-ticket-layout">
+        <div class="form-group">
+            {{ gen.label(form['message']) }}
+            {{ gen.textarea(form['message'], class='form-control') }}
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+
+    <h2>{{ _("Metadata") }}</h2>
         <div class="moin-ticket-layout">
             <dl>
                 {{ forms.render_errors(form) }}
@@ -29,7 +32,7 @@
             </dl>
             <div class="moin-ticket-tags">
                 {{ _("Suggested Tags: ") }}
-                {% for suggested_tag in suggested_tags %}
+                {% for suggested_tag in suggested_tags | sort %}
                     <a href="#">{{ suggested_tag }}</a>
                 {% endfor %}
             </div>
@@ -38,9 +41,6 @@
             <dl>
                 {{ render_selectlists() }}
             </dl>
-            <dt>
-                {{ subscribe() }}
-            </dt>
         </div>
         <div class="moin-ticket-layout">
             <dl>
@@ -52,16 +52,9 @@
                 </dd>
             </dl>
         </div>
-    <div style="clear:both;"></div>
-    <h3>{{ _("Describe the ticket") }}</h3>
-    <div class="moin-ticket-layout">
-        <div class="form-group">
-            {{ gen.label(form['message']) }}
-            {{ gen.textarea(form['message'], class='form-control') }}
-        </div>
         <div class="moin-ticket-submit">
             {{ forms.render_submit(form) }}
         </div>
-    </div>
     <div style="clear:both;"></div>
+
 {% endblock %}

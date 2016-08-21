@@ -1,3 +1,6 @@
+.moin-ticket-content h1 { font-size: 1.75em; border-bottom: 3px solid #4e7da9; margin-bottom: 1.5em; }
+.moin-ticket-content h2 { font-size: 1.17em; border-bottom: 2px solid #4e7da9; }
+
 #moin-ticket-form dd {
     margin-top: .1em;
 }
@@ -33,9 +36,11 @@ label.moin-inline-label {
     margin-top: 20px;
     margin-bottom: 20px;
     height: 25px;
+    width: 100%;
     padding: 3px 0 3px 3px;
     margin: 5px 1px 3px 0;
-    border: 1px solid #ddd;
+    border: 1px solid #7A7A7A;
+    border-radius: 4px;
 }
 #f_meta_tags:focus, #f_meta_summary:focus {
     box-shadow: 0 0 5px #51cbee;
@@ -68,18 +73,17 @@ select {
     height: 150px;
     resize: vertical;
 }
-h2 {
-    border-bottom: none;
-}
 dt label {
     padding-top: 5px;
 }
 dl dd {
     padding-bottom: 10px;
-    padding-left: 15px;
+    padding-left: 1em;
 }
-.moin-ticket-link {
-    padding-left: 150px;
+dd.moin-ticket-link {
+    width: 70%;
+    float: right;
+    padding-left: 2em;
 }
 .moin-ticket-tags {
     padding-bottom: 20px;
@@ -93,9 +97,11 @@ dl dd {
 }
 
 /* style initial ticket description after save */
+.moin-ticket-closed { color: red; }
 div.moin-ticket {
-    border: 2px solid #E5E5E5;
+    border: 1px solid #7A7A7A;
     padding: 0 10px;
+    border-radius: 5px;
 }
 div.ticket > p:first-child:before, div.moin-ticket > p:first-child:before {
     font-family: FontAwesome;
@@ -107,10 +113,9 @@ div.ticket > p:first-child:before, div.moin-ticket > p:first-child:before {
 .comment-content {
     max-width: 100%;
     margin: 10px 10px 1px 10px;
-    padding: 5px;
-    background-color: #fcfcff;
+    padding: 0 10px;
     border-radius: 5px;
-    border: 2px solid #E5E5E5;
+    border: 1px solid #7A7A7A;
 }
 .comment-content .message {
     border-radius: 3px;
@@ -119,9 +124,6 @@ div.ticket > p:first-child:before, div.moin-ticket > p:first-child:before {
     line-height: 1.5;
 }
 .message .message-markup {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E5;
-    border-radius: 3px;
     padding: 5px;
     overflow-x: auto;
 }
