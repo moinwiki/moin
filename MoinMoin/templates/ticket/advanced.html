@@ -78,23 +78,21 @@
         <div class="moin-searchoptions hidden">
             <div id="moin-ticket-form" class="moin-form">
                 {{ gen.form.open(search_form, method='post', action=url_for('frontend.ticket_search')) }}
-                    <dl>
-                        <div class="moin-ticket-layout">
+                    <div class="moin-ticket-layout">
+                        <dl>
                             {% for e in [
-                                    'effort',
-                                    'difficulty',
-                                    'severity',
-                                    'priority',
-                                    'tags',
-                                    'assigned_to',
-                                    'author',
-                                    ] %}
-                                <dt>
-                                    {{ forms.render(search_form[e]) }}
-                                </dt>
+                                'effort',
+                                'difficulty',
+                                'severity',
+                                'priority',
+                                'tags',
+                                'assigned_to',
+                                'author',
+                                ] %}
+                                {{ forms.render(search_form[e]) }}
                             {% endfor %}
-                        </div>
-                    </dl>
+                        </dl>
+                    </div>
                     <button type="submit" class="moin-button" value="Submit">Search</button>
                 {{ gen.form.close() }}
             </div>
