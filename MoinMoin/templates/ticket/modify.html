@@ -1,12 +1,12 @@
 {% extends "ticket/base.html" %}
 
 {% block title_text %}
-    {{ _("Ticket: %(summary)s", summary=item.meta['summary']) }}
+    {{ item.meta['summary'] }}
 {% endblock %}
 
 {% block ticket_content %}
 
-    <h3>{{ _("Ticket Description") }}</h3>
+    <h2>{{ _("Description") }}</h2>
     <div class="moin-ticket-layout">
         {% if data_rendered %}
             {{ data_rendered }}
@@ -15,13 +15,13 @@
     <div style="clear:both;"></div>
 
     {% if roots %}
-        <h3>{{ _("Comments") }}</h3>
+        <h2>{{ _("Comments") }}</h2>
         <div class="moin-ticket-layout">
             {{ render_comments() }}
         </div>
     {% endif %}
 
-    <h3>{{ _("Add Comment") }}</h3>
+    <h2>{{ _("Add Comment") }}</h2>
     <div class="form-group">
         {{ gen.textarea(form['message'], class='form-control') }}
     </div>
@@ -30,12 +30,19 @@
         <button type="submit" name="submit" class="moin-button" value="update">
             Update ticket
         </button>
+
+        {% if closed %}
+            {% set txt = _('Update & reopen ticket') %}
+        {% else %}
+            {% set txt = _('Update & close ticket') %}
+        {% endif %}
+
         <button type="submit" name="submit" class="moin-button" value="update_negate_status">
-            Update &amp; close ticket
+            {{ txt }}
         </button>
     </div>
 
-    <h3>{{ _("Metadata") }}</h3>
+    <h2>{{ _("Metadata") }}</h2>
     <div class="moin-ticket-layout">
         <dl>
             <dt>
@@ -63,7 +70,7 @@
     </div>
     <div style="clear:both;"></div>
 
-    <h3>{{ _("Back references") }}</h3>
+    <h2>{{ _("Back references") }}</h2>
     <div class="moin-ticket-layout">
         <dl>
             {{ render_backref() }}
@@ -71,7 +78,7 @@
     </div>
     <div style="clear:both;"></div>
 
-    <h3>{{ _("Files") }}</h3>
+    <h2>{{ _("Files") }}</h2>
     <div class="moin-ticket-layout">
         {% if files %}
             <div class="moin-item-index">

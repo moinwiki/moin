@@ -20,9 +20,9 @@
         'depends_on',
         ] %}
         {{ forms.render(form['meta'][e]) }}
-        {% if e!='assigned_to' and item.meta[e] %}
-            <dd>
-                <a class="moin-ticket-link"  href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e]|shorten_id }}</a>
+        {% if e != 'assigned_to' and item.meta[e] %}
+            <dd class="moin-ticket-link" >
+                <a href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e] | shorten_id }}</a>
             </dd>
         {% endif %}
     {% endfor %}
@@ -57,7 +57,7 @@
             <div id="{{ comment[0].meta['itemid'] }}">
 
                 <div class="message-markup">
-                    {{ ((comment[0].meta['content'])) }}
+                    {{ comment[0].meta['content'] }}
                 </div>
                 <span class="moin-ticket-subtext">
                     <a href="#" class="reply" data-reply_to={{ comment[0].meta['itemid'] }} data-refers_to={{ comment[0].meta['refers_to'] }}>reply</a> |
@@ -148,19 +148,20 @@
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {% block title_text %}
-        {% endblock %}
-        {% if closed %}
-            {# TODO style .moin-ticket-closed #}
-            <span class="moin-ticket-closed">{{ _("(Closed)") }}</span>
-        {% endif %}
-    </h1>
-    <div class="moin-form" id="moin-ticket-form">
-        {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
-            {% block ticket_content %}
+    <div class="moin-ticket-content">
+        <h1>
+            {% if closed %}
+                <span class="moin-ticket-closed">{{ _("Closed:") }}</span>
+            {% endif %}
+            {% block title_text %}
             {% endblock %}
-        {{ gen.form.close() }}
+        </h1>
+        <div class="moin-form" id="moin-ticket-form">
+            {{ gen.form.open(form, method='post', enctype='multipart/form-data') }}
+                {% block ticket_content %}
+                {% endblock %}
+            {{ gen.form.close() }}
+        </div>
     </div>
 {% endblock %}
 

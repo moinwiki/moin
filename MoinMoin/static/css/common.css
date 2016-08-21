@@ -437,7 +437,7 @@ form.upload_file button { display: none; }
 
 .moin-form dd { float: left; width: 70%; margin: .3em 0 .1em 0; }
 .moin-form dd input { width: 75%; }
-.moin-form dt { clear: both; float: left; width: 25%; text-align: right; margin-top: .3em; padding-right: 1%; }
+.moin-form dt { clear: both; float: left; width: 25%; text-align: right; margin-top: .3em; padding-right: 1em; }
 .moin-form dt label.required: after { content: '*'; color: #000; }
 .moin-form button,
 .moin-form input[type="submit"] { clear: both; display: block; margin: auto; }
