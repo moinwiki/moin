@@ -242,22 +242,24 @@ def get_files(self):
             file_fqname = CompositeName(rev.meta[NAMESPACE], ITEMID, rev.meta[ITEMID])
             files.append(IndexEntry(relname, file_fqname, rev.meta))
     return files
-
-
 def get_comments(self):
+    """
+    Return a list of roots (comments to original ticket) and a dict of comments (comments to comments).
+    """
     if self.meta.get(ITEMID) and self.meta.get(NAME):
         refers_to = self.meta[ITEMID]
     else:
         refers_to = self.fqname.value
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'comment')])
     revs = flaskg.storage.search(query, sortedby=[MTIME], limit=None)
-    comments = dict()
-    lookup = dict()
+    comments = dict()  # {rev: [],...} comments to a comment
+    lookup = dict()  # {itemid: rev,...}
     roots = []
+    revs = list(revs)
     for rev in revs:
         lookup[rev.meta[ITEMID]] = rev
         comments[rev] = []
-    for comment_id, rev in lookup.iteritems():
+    for rev in revs:
         if not rev.meta['reply_to']:
             roots.append(rev)
         else:
@@ -267,13 +269,20 @@ def get_comments(self):
             else:
                 comments[parent] = [rev]
     return comments, roots
-
-
 def build_tree(comments, root, comment_tree, indent):
+    """
+    Return an ordered list of comments related to a root comment.
+
+    :param comments: dict containing list of comments related to root
+    :param root: a comment to the ticket description
+    :param comment_tree: empty list on first call, populated through recursion (or not)
+    :rtype: list of comments, not a tree
+    :returns: list of tuples [comments, indent]  pertaining to a comment against original description
+    """
     if comments[root]:
         for comment in comments[root]:
-            comment_tree.append([comment, indent + 30])
-            build_tree(comments, comment, comment_tree, indent + 30)
+            comment_tree.append((comment, indent + 20))  # where 20, 40,... will become an indented left margin
+            build_tree(comments, comment, comment_tree, indent + 20)
         return comment_tree
     else:
         return []

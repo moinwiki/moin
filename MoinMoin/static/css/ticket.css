@@ -99,7 +99,7 @@ dd.moin-ticket-link {
 /* style initial ticket description after save */
 .moin-ticket-closed { color: red; }
 div.moin-ticket {
-    border: 1px solid #7A7A7A;
+    border: 1px solid #DDDDDD;
     padding: 0 10px;
     border-radius: 5px;
 }
@@ -112,10 +112,10 @@ div.ticket > p:first-child:before, div.moin-ticket > p:first-child:before {
 /* style existing comments */
 .comment-content {
     max-width: 100%;
-    margin: 10px 10px 1px 10px;
+    margin: 10px 0 1px 0;
     padding: 0 10px;
     border-radius: 5px;
-    border: 1px solid #7A7A7A;
+    border: 1px solid #DDDDDD;
 }
 .comment-content .message {
     border-radius: 3px;
