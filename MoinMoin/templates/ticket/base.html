@@ -50,12 +50,10 @@
         </a>
     {% endif %}
 {% endmacro %}
-
 {% macro render_comment(comment) %}
-    <div class="comment-content" data-comment_id={{ comment[0].meta['itemid'] }}>
+    <div class="comment-content" data-comment_id={{ comment[0].meta['itemid'] }} style="margin-left:{{ comment[1] }}px;">
         <div class="message">
             <div id="{{ comment[0].meta['itemid'] }}">
-
                 <div class="message-markup">
                     {{ comment[0].meta['content'] }}
                 </div>
@@ -69,20 +67,16 @@
                 </span>
             </div>
         </div>
-    {# closing </div> added by caller so comments to comments appear as related when displayed #}
+    </div>
 {% endmacro %}
-
 {% macro render_comments() %}
     <div class="moin-ticket-comments">
         {% for root in roots %}
-            {% set comment_tree = build_tree(comments, root, [], 30) %}
+            {% set comment_tree = build_tree(comments, root, [], 0) %}
             {{ render_comment([root, 0]) }}
-            {% set end_div = ['</div>'] %}
-            {% for comment in comment_tree %}
-                {{ render_comment(comment) }}
-                {% set junk = end_div.append('</div>') %}
+            {% for comment, indent in comment_tree %}
+                {{ render_comment([comment, indent]) }}
             {% endfor %}
-            {{ ''.join(end_div) | safe }}
         {% endfor %}
     </div>
 {% endmacro %}
