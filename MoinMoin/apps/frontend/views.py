@@ -2454,7 +2454,7 @@ def comment(item_name):
         current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
         item_name = unicode(itemid) + u'/' + u'comment_' + unicode(current_timestamp)
         item = Item.create(item_name)
-        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x-markdown;charset=utf-8',
+        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
         html = render_template('base.html',  # TODO: was 'comments.html' resulting in 404, did missing file have additional features?
                                data=data,

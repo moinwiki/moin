@@ -50,36 +50,39 @@
         </a>
     {% endif %}
 {% endmacro %}
-{% macro render_comment(comment) %}
-    <div class="comment-content" data-comment_id={{ comment[0].meta['itemid'] }} style="margin-left:{{ comment[1] }}px;">
+
+{% macro render_comment(comment, indent) %}
+    <div class="comment-content" data-comment_id={{ comment.meta['itemid'] }} style="margin-left:{{ indent }}px;">
         <div class="message">
-            <div id="{{ comment[0].meta['itemid'] }}">
+            <div id="{{ comment.meta['itemid'] }}">
+
                 <div class="message-markup">
-                    {{ comment[0].meta['content'] }}
+                    {# comment.meta['content'] #}
+                    {{ render_comment_data(comment) | safe }}
                 </div>
                 <span class="moin-ticket-subtext">
-                    <a href="#" class="reply" data-reply_to={{ comment[0].meta['itemid'] }} data-refers_to={{ comment[0].meta['refers_to'] }}>reply</a> |
-                    <a class="jumper" href="#{{ comment[0].meta['itemid'] }}">{{ comment[0].meta['itemid'][:4] }}</a>
-                    {% if comment[0].meta['reply_to'] %}
-                        In reply to <a class="jumper" href="#{{ comment[0].meta['reply_to'] }}">{{ comment[0].meta['reply_to'][:4] }}</a>
+                    <a href="#" class="reply" data-reply_to={{ comment.meta['itemid'] }} data-refers_to={{ comment.meta['refers_to'] }}>reply</a> |
+                    <a class="jumper" href="#{{ comment.meta['itemid'] }}">{{ comment.meta['itemid'][:4] }}</a>
+                    {% if comment.meta['reply_to'] %}
+                        In reply to <a class="jumper" href="#{{ comment.meta['reply_to'] }}">{{ comment.meta['reply_to'][:4] }}</a>
                     {% endif %}
-                    posted by {{ comment[0].meta['author'] }} on {{ datetime.datetime.fromtimestamp(comment[0].meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
+                    posted by {{ comment.meta['author'] }} on {{ datetime.datetime.fromtimestamp(comment.meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
                 </span>
             </div>
         </div>
     </div>
 {% endmacro %}
+
 {% macro render_comments() %}
     <div class="moin-ticket-comments">
-        {% for root in roots %}
-            {% set comment_tree = build_tree(comments, root, [], 0) %}
-            {{ render_comment([root, 0]) }}
-            {% for comment, indent in comment_tree %}
-                {{ render_comment([comment, indent]) }}
-            {% endfor %}
+        {% for comment, indent in ordered_comments %}
+                {{ render_comment(comment, indent) }}
         {% endfor %}
     </div>
 {% endmacro %}
+
+
+
 
 {% macro render_file(file) %}
     <div>

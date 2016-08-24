@@ -242,14 +242,13 @@ def get_files(self):
             file_fqname = CompositeName(rev.meta[NAMESPACE], ITEMID, rev.meta[ITEMID])
             files.append(IndexEntry(relname, file_fqname, rev.meta))
     return files
+
+
 def get_comments(self):
     """
     Return a list of roots (comments to original ticket) and a dict of comments (comments to comments).
     """
-    if self.meta.get(ITEMID) and self.meta.get(NAME):
-        refers_to = self.meta[ITEMID]
-    else:
-        refers_to = self.fqname.value
+    refers_to = self.meta[ITEMID]
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'comment')])
     revs = flaskg.storage.search(query, sortedby=[MTIME], limit=None)
     comments = dict()  # {rev: [],...} comments to a comment
@@ -264,24 +263,33 @@ def get_comments(self):
             roots.append(rev)
         else:
             parent = lookup[rev.meta['reply_to']]
-            if comments.get(parent):
-                comments[parent].append(rev)
-            else:
-                comments[parent] = [rev]
+            comments[parent] = comments.get(parent, []) + [rev]
     return comments, roots
+
+
+def render_comment_data(comment):
+    """
+    Return a rendered comment.
+    """
+    item = Item.create(name=comment.name)
+    txt = item.content._render_data()
+    return txt
+
+
 def build_tree(comments, root, comment_tree, indent):
     """
     Return an ordered list of comments related to a root comment.
 
     :param comments: dict containing list of comments related to root
     :param root: a comment to the ticket description
-    :param comment_tree: empty list on first call, populated through recursion (or not)
-    :rtype: list of comments, not a tree
+    :param comment_tree: empty list on first call, may be populated through recursion
+    :rtype: list of comments
     :returns: list of tuples [comments, indent]  pertaining to a comment against original description
     """
     if comments[root]:
         for comment in comments[root]:
             comment_tree.append((comment, indent + 20))  # where 20, 40,... will become an indented left margin
+            # recursion is used to place comments in order based on comment heirarchy and date
             build_tree(comments, comment, comment_tree, indent + 20)
         return comment_tree
     else:
@@ -337,14 +345,19 @@ class Ticket(Contentful):
                     except KeyError:
                         fqname = self.fqname
                     return redirect(url_for('.show_item', item_name=fqname))
-
-        # XXX When creating new item, suppress the "foo doesn't exist. Create it?" dummy content
-        data_rendered = None if is_new else Markup(self.content._render_data())
-
-        files = get_files(self)
-        comments, roots = get_comments(self)
+        if is_new:
+            data_rendered = None
+            files = {}
+            roots = []
+            comments = {}
+        else:
+            data_rendered = Markup(self.content._render_data())
+            files = get_files(self)
+            comments, roots = get_comments(self)
         suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
-
+        ordered_comments = []  # list of tuples [(comment, indent),,, ]
+        for root in roots:
+            ordered_comments += [(root, 0), ] + build_tree(comments, root, [], 0)
         return render_template(self.submit_template if is_new else self.modify_template,
                                is_new=is_new,
                                closed=closed,
@@ -354,9 +367,7 @@ class Ticket(Contentful):
                                suggested_tags=suggested_tags,
                                item=self,
                                files=files,
-                               comments=comments,
-                               Markup=Markup,
                                datetime=datetime,
-                               roots=roots,
-                               build_tree=build_tree,
+                               ordered_comments=ordered_comments,
+                               render_comment_data=render_comment_data,
                               )
