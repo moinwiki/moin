@@ -2421,10 +2421,10 @@ def ticket_search():
             if author:
                 term.append(Term(USERID, author))
             if assigned_to:
-                term.append(Term(ASSIGNED_TO, assigned_to)) 
+                term.append(Term(ASSIGNED_TO, assigned_to))
 
             query = And(term)
-            results = searcher.search(query, sortedby=NAME_EXACT, limit=None) 
+            results = searcher.search(query, sortedby=NAME_EXACT, limit=None)
 
         return render_template('ticket/advanced.html',
                                 search_form=form,
