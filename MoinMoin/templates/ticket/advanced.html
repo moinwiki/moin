@@ -6,10 +6,10 @@
     <h1>{{ _("Advanced Search") }}</h1>
     <p>
         <input type="search" name="meta_summary" value="" class="" id="moin-search-query" placeholder="Search Tickets" required="required" />
-    </p>    
+    </p>
     <div id="finalresults">
         {% include "ajaxsearch.html" %}
-    </div>    
+    </div>
     {% if ticket_results %}
         <table class="zebra moin-sortable" id="ticket-list">
             <thead>
@@ -95,7 +95,7 @@
                             {% endfor %}
                         </div>
                     </dl>
-                    <button type="submit" class="moin-button" value="Submit">Search</button> 
+                    <button type="submit" class="moin-button" value="Submit">Search</button>
                 {{ gen.form.close() }}
             </div>
         </div>

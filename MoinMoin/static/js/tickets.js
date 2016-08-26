@@ -18,7 +18,7 @@ $(document).ready(function () {
     // ticket tags are initially hidden by css; if a tag is selected: show the tags
     if (location.search.indexOf("selected_tags") >= 0) {
         $('.ticket-tags-toggle').click();
-    }  
+    }
     $('.reply').click(function(e){
         e.preventDefault();
         var reply_to = $(this).attr('reply_to');
