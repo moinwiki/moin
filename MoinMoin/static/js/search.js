@@ -20,9 +20,10 @@ $(document).ready(function(){
     $('.moin-loginsettings').addClass('navbar-right');
 
     function ajaxify(query, allrevs, time_sorting, filetypes, is_ticket) {
+        var wiki_root = $('#moin-wiki-root').val();
         $.ajax({
             type: "GET",
-            url: "/+search",
+            url: wiki_root + "/+search",
             data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, boolajax: true, is_ticket: is_ticket }
         }).done(function( html ) {
             $('#finalresults').html(html)

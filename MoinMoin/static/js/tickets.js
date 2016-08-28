@@ -4,9 +4,10 @@ $(document).ready(function () {
     "use strict";
 
     function post_comment(reply_to, refers_to, data) {
+        var wiki_root = $('#moin-wiki-root').val();
         $.ajax({
             type: "POST",
-            url: "/+comment",
+            url: wiki_root + "/+comment",
             data: {reply_to: reply_to, refers_to: refers_to, data: data}
         }).done(function (html) {
             location.reload(true);
