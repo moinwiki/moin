@@ -71,6 +71,7 @@
         {% endblock %}
 
         <div id="moin-options-for-javascript" style="display: none">
+            <input id="moin-wiki-root" value="{{ theme_supp.wiki_root }}" >
             {% block options_for_javascript %}
                 {# implement this block to pass server side options to client side javascript. #}
             {% endblock %}
