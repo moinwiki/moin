@@ -82,7 +82,10 @@ class ThemeSupport(object):
         self.content_lang = flaskg.content_lang  # XXX
         self.content_dir = 'ltr'  # XXX
         self.meta_items = []  # list of (name, content) for html head <meta>
-        self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
+        if request.url_root[len(request.host_url):-1]:
+            self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
+        else:
+            self.wiki_root = ''
 
     def get_action_tabs(self, fqname, current_endpoint):
         """
