@@ -1,0 +1,27 @@
+{# Create an HTML fragment formatting a newly saved comment. JS/Ajax will insert fragment into page. #}
+
+{# TODO: following macro is a duplicate of same in base.html because it can not be imported #}
+{% macro render_comment(comment, indent) %}
+    <div class="comment-content" data-comment_id={{ comment.meta['itemid'] }} style="margin-left:{{ indent }}px;">
+        <div class="message">
+            <div id="{{ comment.meta['itemid'] }}">
+
+                <div class="message-markup">
+
+                    {{ render_comment_data(comment) | safe }}
+                </div>
+                <span class="moin-ticket-subtext">
+                    <a href="#" class="reply" data-reply_to={{ comment.meta['itemid'] }} data-refers_to={{ comment.meta['refers_to'] }}>reply</a> |
+                    <a class="jumper" href="#{{ comment.meta['itemid'] }}">{{ comment.meta['itemid'][:4] }}</a>
+                    {% if comment.meta['reply_to'] %}
+                        In reply to <a class="jumper" href="#{{ comment.meta['reply_to'] }}">{{ comment.meta['reply_to'][:4] }}</a>
+                    {% endif %}
+                    posted by {{ comment.meta['author'] }} on {{ datetime.fromtimestamp(comment.meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
+                </span>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{{ render_comment(comment, 10) }}

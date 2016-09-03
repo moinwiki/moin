@@ -66,7 +66,7 @@
                     {% if comment.meta['reply_to'] %}
                         In reply to <a class="jumper" href="#{{ comment.meta['reply_to'] }}">{{ comment.meta['reply_to'][:4] }}</a>
                     {% endif %}
-                    posted by {{ comment.meta['author'] }} on {{ datetime.datetime.fromtimestamp(comment.meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
+                    posted by {{ comment.meta['author'] }} on {{ datetime.fromtimestamp(comment.meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
                 </span>
             </div>
         </div>

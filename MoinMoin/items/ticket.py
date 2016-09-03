@@ -367,7 +367,7 @@ class Ticket(Contentful):
                                suggested_tags=suggested_tags,
                                item=self,
                                files=files,
-                               datetime=datetime,
+                               datetime=datetime.datetime,
                                ordered_comments=ordered_comments,
                                render_comment_data=render_comment_data,
                               )
