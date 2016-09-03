@@ -52,7 +52,7 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             validate_name, NameNotValidError)
 from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
-from MoinMoin.items.ticket import AdvancedSearchForm
+from MoinMoin.items.ticket import AdvancedSearchForm, render_comment_data
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
 from MoinMoin.constants.namespaces import *
@@ -2446,6 +2446,8 @@ def ticket_search():
 def comment(item_name):
     """
     Initiated by tickets.js when user clicks Save button adding a reply to a prior comment.
+
+    An html fragment formatting a new comment is produced. It is inserted into the page via javascript.
     """
     itemid = request.form.get('refers_to')
     reply_to = request.form.get('reply_to')
@@ -2456,13 +2458,11 @@ def comment(item_name):
         item = Item.create(item_name)
         item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
-        html = render_template('base.html',  # TODO: was 'comments.html' resulting in 404, did missing file have additional features?
-                               data=data,
-                               author=flaskg.user.name[0],
-                               timestamp=time.ctime(),
-                               commentid=item.fqname.value,
-                               itemid=reply_to,
-                               item=item,
+        item = Item.create(item.name, rev_id=CURRENT)
+        html = render_template('ticket/comment.html',
+                               comment=item,
+                               render_comment_data=render_comment_data,
+                               datetime=datetime,
                                )
         return html
 

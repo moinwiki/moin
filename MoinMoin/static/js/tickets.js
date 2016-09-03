@@ -3,6 +3,35 @@
 $(document).ready(function () {
     "use strict";
 
+    // add action to all comment reply buttons to insert textarea with save/cancel buttons
+    function do_reply_action (e) {
+        e.preventDefault();
+        var reply_to = $(this).attr('data-reply_to');
+        var refers_to = $(this).attr('data-refers_to');
+        var reply_insert = '<div class="comment-box">' +
+                '<textarea class="comment-reply" type="text" />' +
+                '<p>' +
+                '<button type="button" class="moin-button" id="save">Save</button>' +
+                '<button type="button" class="moin-button" id="cancel">Cancel</button>' +
+                '</p>' +
+                '</div>';
+        if (!$('#' + reply_to).find("textarea.comment-reply").length) {
+            $('#' + reply_to).append(reply_insert);
+            $('#' + reply_to).find("textarea.comment-reply").focus();
+            // add click actions to Save and Cancel buttons created above
+            $('#save').on('click', function (e) {
+                var data = $('textarea.comment-reply').val();
+                post_comment(reply_to, refers_to, data);
+                return false;
+            });
+            $('#cancel').on('click', function (e) {
+                $('div.comment-box').remove();
+                return false;
+            });
+        }
+    };
+
+    // called after user clicks save button to reply to a prior comment
     function post_comment(reply_to, refers_to, data) {
         var wiki_root = $('#moin-wiki-root').val();
         $.ajax({
@@ -10,7 +39,10 @@ $(document).ready(function () {
             url: wiki_root + "/+comment",
             data: {reply_to: reply_to, refers_to: refers_to, data: data}
         }).done(function (html) {
-            location.reload(true);
+            // place new comment inside parent comment because it is easy; user sees formatted result in place of textarea
+            $('div.comment-box').after(html);
+            $('div.comment-box').remove();
+            $('.reply').click(do_reply_action);
         });
     }
 
@@ -34,34 +66,8 @@ $(document).ready(function () {
         $('.ticket-tags-toggle').click();
     }
 
-    // executed when user clicks Reply button to respond to a prior comment
-    $('.reply').click(function (e) {
-        e.preventDefault();
-        var reply_to = $(this).attr('data-reply_to');
-        var refers_to = $(this).attr('data-refers_to');
-        var reply_insert = '<div class="comment-box">' +
-                '<textarea class="comment-reply" type="text" />' +
-                '<p>' +
-                '<button type="button" class="moin-button" id="save">Save</button>' +
-                '<button type="button" class="moin-button" id="cancel">Cancel</button>' +
-                '</p>' +
-                '</div>';
-        if (!$('#' + reply_to).find("textarea.comment-reply").length) {
-            $('#' + reply_to).append(reply_insert);
-            $('#' + reply_to).find("textarea.comment-reply").focus();
-            // add click actions to Save and Cancel buttons created above
-            $('#save').on('click', function (e) {
-                var data = $('textarea.comment-reply').val();
-                $('div.comment-box').remove();
-                post_comment(reply_to, refers_to, data);
-                return false;
-            });
-            $('#cancel').on('click', function (e) {
-                $('div.comment-box').remove();
-                return false;
-            });
-        }
-    });
+    // add action to Reply buttons that will be executed when user clicks button to respond to a prior comment
+    $('.reply').click(do_reply_action);
 
     $(".jumper").on("click", function (e) {
         e.preventDefault();
