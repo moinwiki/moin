@@ -1,4 +1,9 @@
+{# Display a form to create a new ticket #}
+
 {% extends "ticket/base.html" %}
+
+{% import "forms.html" as forms %}
+{% import "ticket/ticket_macros.html" as ticket_macros with context %}
 
 {% block title_text %}
     {{ _("Create new ticket") }}
@@ -28,7 +33,7 @@
         <div class="moin-ticket-layout">
             <dl>
                 {{ forms.render_errors(form) }}
-                {{ render_meta() }}
+                {{ ticket_macros.render_meta() }}
             </dl>
             <div class="moin-ticket-tags">
                 {{ _("Suggested Tags: ") }}
@@ -39,7 +44,7 @@
         </div>
         <div class="moin-ticket-layout">
             <dl>
-                {{ render_selectlists() }}
+                {{ ticket_macros.render_selectlists() }}
             </dl>
         </div>
         <div class="moin-ticket-layout">
