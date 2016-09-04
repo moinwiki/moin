@@ -1,99 +1,8 @@
-{% import "forms.html" as forms %}
+{# Define custom layout for creating and modifying a ticket; add supporting css and javascript. #}
+
 {% extends theme("layout.html") %}
 
-{% macro render_meta() %}
-    {% for e in [
-        'effort',
-        'difficulty',
-        'severity',
-        'priority',
-        'tags',
-        ] %}
-        {{ forms.render(form['meta'][e]) }}
-    {% endfor %}
-{% endmacro %}
-
-{% macro render_selectlists() %}
-    {% for e in [
-        'assigned_to',
-        'superseded_by',
-        'depends_on',
-        ] %}
-        {{ forms.render(form['meta'][e]) }}
-        {% if e != 'assigned_to' and item.meta[e] %}
-            <dd class="moin-ticket-link" >
-                <a href="{{ url_for_item(item.meta[e], field='itemid') }}">{{ item.meta[e] | shorten_id }}</a>
-            </dd>
-        {% endif %}
-    {% endfor %}
-{% endmacro %}
-
-{% macro render_backref() %}
-    {% for e in [
-        'supersedes',
-        'required_by',
-        'subscribers',
-        ] %}
-        {{ forms.render(form['backrefs'][e]) }}
-    {% endfor %}
-{% endmacro %}
-
-{% macro subscribe() %}
-    {% if user.valid and exists %}
-        <a href="{{ url_for('frontend.subscribe_item', item_name=item.fqname) }}" class="moin-button" rel="nofollow" title="Switch notifications about item changes on or off">
-            <i class="fa fa-envelope fa-fw"></i>
-            {%- if user.is_subscribed_to(item) %}
-                {{ _('Unsubscribe') }}
-            {%- else %}
-                {{ _('Subscribe') }}
-            {%- endif %}
-        </a>
-    {% endif %}
-{% endmacro %}
-
-{% macro render_comment(comment, indent) %}
-    <div class="comment-content" data-comment_id={{ comment.meta['itemid'] }} style="margin-left:{{ indent }}px;">
-        <div class="message">
-            <div id="{{ comment.meta['itemid'] }}">
-
-                <div class="message-markup">
-                    {# comment.meta['content'] #}
-                    {{ render_comment_data(comment) | safe }}
-                </div>
-                <span class="moin-ticket-subtext">
-                    <a href="#" class="reply" data-reply_to={{ comment.meta['itemid'] }} data-refers_to={{ comment.meta['refers_to'] }}>reply</a> |
-                    <a class="jumper" href="#{{ comment.meta['itemid'] }}">{{ comment.meta['itemid'][:4] }}</a>
-                    {% if comment.meta['reply_to'] %}
-                        In reply to <a class="jumper" href="#{{ comment.meta['reply_to'] }}">{{ comment.meta['reply_to'][:4] }}</a>
-                    {% endif %}
-                    posted by {{ comment.meta['author'] }} on {{ datetime.fromtimestamp(comment.meta['mtime']).strftime('%Y-%m-%d %H:%M:%S') }}
-                </span>
-            </div>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro render_comments() %}
-    <div class="moin-ticket-comments">
-        {% for comment, indent in ordered_comments %}
-                {{ render_comment(comment, indent) }}
-        {% endfor %}
-    </div>
-{% endmacro %}
-
-
-
-
-{% macro render_file(file) %}
-    <div>
-        <a href="{{ url_for('.show_item', item_name=file.fullname) }}"
-           class="{{ file.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ file.meta['itemtype'] }} moin-item">
-        </a>
-        <a href="{{ url_for('.download_item', item_name=file.fullname) }}" title="{{ file.relname }}">
-            {{ file.relname|shorten_item_name }}
-        </a>
-    </div>
-{% endmacro %}
+{% import "ticket/ticket_macros.html" as ticket_macros with context %}
 
 {% block head %}
     {{ super() }}
@@ -124,24 +33,8 @@
     {% endif %}
 {% endblock %}
 
-{% macro itemviews() %}
-    {% if user.valid and exists %}
-        <ul class="moin-itemviews panel">
-            <li>
-                <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" title="Create or remove a navigation link to this item" rel="nofollow">
-                    {% if user.is_quicklinked_to([item.fqname]) %}
-                        {{ _('Remove Link') }}
-                    {%- else %}
-                        {{ _('Add Link') }}
-                    {%- endif %}
-                </a>
-            </li>
-        </ul>
-    {% endif %}
-{% endmacro %}
-
 {% block header_itemviews %}
-    {{ itemviews() }}
+    {{ ticket_macros.itemviews(exists) }}
 {% endblock %}
 
 {% block content %}
@@ -163,7 +56,7 @@
 {% endblock %}
 
 {% block footer_itemviews %}
-    {{ itemviews() }}
+    {{ ticket_macros.itemviews(exists) }}
 {% endblock %}
 
 {% block body_scripts %}

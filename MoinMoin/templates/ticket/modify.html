@@ -1,4 +1,9 @@
+{# Display existing ticket with all comments,  textarea to add new comment, and buttons to reply to comments. #}
+
 {% extends "ticket/base.html" %}
+
+{% import "forms.html" as forms %}
+{% import "ticket/ticket_macros.html" as ticket_macros with context %}
 
 {% block title_text %}
     {{ item.meta['summary'] }}
@@ -17,7 +22,7 @@
     {% if ordered_comments %}
         <h2>{{ _("Comments") }}</h2>
         <div class="moin-ticket-layout">
-            {{ render_comments() }}
+            {{ ticket_macros.render_comments() }}
         </div>
     {% endif %}
 
@@ -26,17 +31,15 @@
         {{ gen.textarea(form['message'], class='form-control') }}
     </div>
     <div>
-        {{ subscribe() }}
+        {{ ticket_macros.subscribe(exists) }}
         <button type="submit" name="submit" class="moin-button" value="update">
             Update ticket
         </button>
-
         {% if closed %}
             {% set txt = _('Update & reopen ticket') %}
         {% else %}
             {% set txt = _('Update & close ticket') %}
         {% endif %}
-
         <button type="submit" name="submit" class="moin-button" value="update_negate_status">
             {{ txt }}
         </button>
@@ -54,7 +57,7 @@
         </dl>
         <dl>
             {{ forms.render_errors(form) }}
-            {{ render_meta() }}
+            {{ ticket_macros.render_meta() }}
         </dl>
         <div class="moin-ticket-tags">
             {{ _("Suggested Tags: ") }}
@@ -65,7 +68,7 @@
     </div>
     <div class="moin-ticket-layout">
         <dl>
-            {{ render_selectlists() }}
+            {{ ticket_macros.render_selectlists() }}
         </dl>
     </div>
     <div style="clear:both;"></div>
@@ -73,7 +76,7 @@
     <h2>{{ _("Back references") }}</h2>
     <div class="moin-ticket-layout">
         <dl>
-            {{ render_backref() }}
+            {{ ticket_macros.render_backref() }}
         </dl>
     </div>
     <div style="clear:both;"></div>
@@ -83,7 +86,7 @@
         {% if files %}
             <div class="moin-item-index">
                 {% for file in files %}
-                    {{ render_file(file) }}
+                    {{ ticket_macros.render_file(file) }}
                 {% endfor %}
             </div>
             <div class="moin-clr"></div>
@@ -102,7 +105,7 @@
         </dl>
     </div>
     <div style="clear:both;"></div>
-    {{ subscribe() }}
+    {{ ticket_macros.subscribe(exists) }}
     {{ forms.render(form['submit']) }}
 
 {% endblock %}
