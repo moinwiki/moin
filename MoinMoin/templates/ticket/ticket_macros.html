@@ -94,6 +94,7 @@
 {% macro itemviews(exists) %}
     {% if user.valid and exists %}
         <ul class="moin-itemviews panel">
+            <li class="moin-panel-heading">{{ _('Item Views') }}</li>
             <li>
                 <a href="{{ url_for('frontend.quicklink_item', item_name=item.fqname) }}" title="Create or remove a navigation link to this item" rel="nofollow">
                     {% if user.is_quicklinked_to([item.fqname]) %}
