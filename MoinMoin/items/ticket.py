@@ -146,7 +146,8 @@ class TicketUpdateForm(TicketForm):
         # original meta and update it with those from the metadata editor
         meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
 
-        # creates an "Update" comment if changes in metadata
+        # create an "Update" comment if metadata changes
+        meta_changes = []
         for key, value in self['meta'].value.iteritems():
             if not meta.get(key) == value:
                 if key == TAGS:
@@ -158,8 +159,11 @@ class TicketUpdateForm(TicketForm):
                 else:
                     original = meta.get(key)
                     new = value
-                message = u'Update: ' + key + u' changed from ' + unicode(original) + u' to ' + unicode(new)
-                create_comment(meta, message)
+                msg = L_('{key} changed from {original} to {new}'.format(key=key, original=original, new=new))
+                meta_changes.append(u' * ' + msg)
+        if meta_changes:
+            meta_changes = 'Meta updates:\n' + '\n'.join(meta_changes)
+            create_comment(meta, meta_changes)
         meta.update(self['meta'].value)
 
         if self['submit'].value == 'update_negate_status':
@@ -193,7 +197,7 @@ def check_itemid(self):
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, self.meta[NAME])])
         revs = flaskg.storage.search(query, limit=None)
         prefix = self.meta[NAME][0] + '/'
-        for rev in revs:
+        for rev in revs:  # TODO: if this is not dead code add a comment how to get here
             old_names = rev.meta[NAME]
             for old_name in old_names:
                 file_name = old_name[len(prefix):]
@@ -297,6 +301,9 @@ def build_tree(comments, root, comment_tree, indent):
 
 
 def create_comment(meta, message):
+    """
+    Create a new item comment against original description, refers_to links to original.
+    """
     current_timestamp = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     item_name = meta[ITEMID] + u'/' + u'comment_' + unicode(current_timestamp)
     item = Item.create(item_name)
@@ -320,6 +327,12 @@ class Ticket(Contentful):
             return self.do_modify()
 
     def do_modify(self):
+        """
+        Process changes to meta data and/or a new comment against original ticket description.
+
+        User has clicked "update ticket" button to get here. If user clicks Save button to
+        add a comment to a prior comment it is not processed here - see /+comment in views.py.
+        """
         is_new = isinstance(self.content, NonExistentContent)
         closed = self.meta.get('closed')
 
@@ -333,7 +346,9 @@ class Ticket(Contentful):
                 meta, data, message, data_file = form._dump(self)
                 try:
                     if not is_new and message:
+                        # user created a new comment
                         create_comment(self.meta, message)
+                    # TODO: next line creates new revision of original ticket even if nothing has changed, deletes name, sets trash=True
                     self.modify(meta, data)
                     if data_file:
                         file_upload(self, data_file)
