@@ -175,20 +175,16 @@ class TicketUpdateForm(TicketForm):
         return meta, data, message, self['data_file'].value
 
 
-# XXX Ideally we should generate DOM instead of moin wiki source. But
-# currently this is not very useful, since
-# * DOM cannot be stored directly, it has to be converted to some markup first
-# * DOM -> markup conversion is only available for moinwiki
-
-# XXX How to do i18n on this?
-
 def message_markup(message):
-    return u'''{{{{{{#!wiki moin-ticket
-%(author)s wrote on <<DateTime(%(timestamp)d)>>:
-
+    """
+    Add a heading with author and timestamp to message (aka ticket description).
+    """
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    heading = L_('{author} wrote on {timestamp}:').format(author=flaskg.user.name[0], timestamp=timestamp)
+    message = u'{heading}\n\n{message}'.format(heading=heading, message=message)
+    return u"""{{{{{{#!wiki moin-ticket
 %(message)s
-}}}}}}
-''' % dict(author=flaskg.user.name[0], timestamp=time.time(), message=message)
+}}}}}}""" % dict(message=message)
 
 
 def check_itemid(self):
