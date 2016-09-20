@@ -172,6 +172,10 @@ class TicketUpdateForm(TicketForm):
         data = item.content.data_storage_to_internal(item.content.data)
         message = self['message'].value
 
+        if meta_changes:
+            # user changed meta, create new revision of ticket
+            item.modify(meta, data)
+
         return meta, data, message, self['data_file'].value
 
 
@@ -324,9 +328,9 @@ class Ticket(Contentful):
 
     def do_modify(self):
         """
-        Process changes to meta data and/or a new comment against original ticket description.
+        Process new ticket, changes to ticket meta data, and/or a new comment against original ticket description.
 
-        User has clicked "update ticket" button to get here. If user clicks Save button to
+        User has clicked "Submit ticket" or "Update ticket" button to get here. If user clicks Save button to
         add a comment to a prior comment it is not processed here - see /+comment in views.py.
         """
         is_new = isinstance(self.content, NonExistentContent)
@@ -339,13 +343,13 @@ class Ticket(Contentful):
         elif request.method == 'POST':
             form = Form.from_request(request)
             if form.validate():
-                meta, data, message, data_file = form._dump(self)
+                meta, data, message, data_file = form._dump(self)  # saves new ticket revision if ticket meta has changed
                 try:
                     if not is_new and message:
                         # user created a new comment
                         create_comment(self.meta, message)
-                    # TODO: next line creates new revision of original ticket even if nothing has changed, deletes name, sets trash=True
-                    self.modify(meta, data)
+                    if is_new:
+                        self.modify(meta, data)
                     if data_file:
                         file_upload(self, data_file)
                 except AccessDenied:
