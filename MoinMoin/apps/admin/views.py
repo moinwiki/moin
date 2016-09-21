@@ -40,7 +40,7 @@ def index():
 
 @admin.route('/user')
 def index_user():
-    return render_template('user/index_user.html', title_name=_(u"User"))
+    return render_template('user/index_user.html', title_name=_(u"User"), flaskg=flaskg)
 
 
 @admin.route('/userbrowser')
