@@ -7,7 +7,11 @@
     </ul>
     <h2>{{ _("Reports") }}</h2>
     <ul>
-        <li><a href="{{ url_for('frontend.mychanges') }}">{{ _("My Changes") }}</a></li>
+        {% if flaskg.user.valid %}
+            <li><a href="{{ url_for('frontend.mychanges') }}">{{ _("My Changes") }}</a></li>
+        {% else %}
+            <li class="moin-disabled">{{ _("My Changes") }}</li>
+        {% endif %}
         <li><a href="{{ url_for('frontend.wanted_items') }}">{{ _("Wanted Items") }}</a></li>
         <li><a href="{{ url_for('frontend.orphaned_items') }}">{{ _("Orphaned Items") }}</a></li>
         <li><a href="{{ url_for('admin.itemsize') }}">{{ _("Item Sizes (last revision)") }}</a></li>
