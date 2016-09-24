@@ -31,10 +31,13 @@
                     {% for doc in my_changes %}
                         <tr>
                             <td class="moin-wordbreak">
-                                {% for name in doc.name %}
-                                    {% if not loop.first %}|{% endif %}
-                                    <a href="{{ url_for_item(name, namespace=doc.fqname.namespace, endpoint='frontend.show_item') }}">{{ name }}</a>
-                                {% endfor %}
+                                {% if doc.summary %}
+                                    {{ doc.summary }}
+                                {% elif doc.name %}
+                                    {{ doc.name|join(' | ') }}
+                                {% else %}
+                                    {{ doc.fqname|shorten_fqname }}
+                                {% endif %}
                             </td>
                             <td class="monospaced">{{ doc.revid|shorten_id }}</td>
                             <td>{{ doc.mtime|datetimeformat }}</td>
@@ -56,6 +59,6 @@
             </table>
         </div>
     {% else %}
-        <p class='moin-flash moin-flash-javascript moin-flash-error'>No changes detected</p>
+        <p class='moin-flash moin-flash-javascript moin-flash-error'>{{ _("No changes found.") }}</p>
     {% endif %}
 {% endblock %}
