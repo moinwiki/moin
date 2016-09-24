@@ -34,7 +34,6 @@ from jinja2 import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from MoinMoin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
@@ -56,7 +55,7 @@ from MoinMoin.constants.keys import (
 from MoinMoin.constants.namespaces import NAMESPACE_ALL
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
 from MoinMoin.constants.itemtypes import (
-    ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT,
+    ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
 from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
 
@@ -612,7 +611,8 @@ class Item(object):
             deleted_names = set(current_names) - set(new_names)
             if deleted_names:  # some names have been deleted.
                 meta[NAME_OLD] = current_names
-                if not new_names:  # if no names left, then set the trash flag.
+                # if no names left, then set the trash but not if the item is a ticket (tickets get closed, not deleted)
+                if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
                     meta[TRASH] = True
 
         if not overwrite and REVID in meta:
