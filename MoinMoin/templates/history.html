@@ -1,10 +1,17 @@
+{#
+    Display a table showing an item's edit history, one row per revision.
+    In first column, show ticket's summary, active item's name, or deleted item's ID.
+#}
+
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 
-{% set title = _("History of '%(fqname)s'", fqname=fqname) %}
+{% set (history, next_offset, previous_offset) = history_page %}
+{% set summary = history[0].get('summary', None) %}
+{% set name = summary or fqname %}
+{% set title = _("History of '%(name)s'", name=name) %}
 
 {% block content %}
-    {% set (history, next_offset, previous_offset) = history_page %}
     {% if history %}
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
@@ -21,7 +28,9 @@
                 <table class="zebra">
                     <thead>
                         <tr>
-                            {% if fqname.field == NAME_EXACT %}
+                            {% if summary %}
+                                <th>{{ _("Summary") }}</th>
+                            {% elif fqname.field == NAME_EXACT %}
                                 <th>{{ _("Name") }}</th>
                             {% else %}
                                 <th>{{ _("ID or Name") }}</th>
@@ -40,15 +49,15 @@
                     <tbody>
                         {% for doc in history %}
                             <tr>
-                                {% if fqname.field == NAME_EXACT %}
-                                    <td class="moin-wordbreak">
+                                <td class="moin-wordbreak">
+                                    {% if doc.get('summary', None) %}
+                                        <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.summary }}</a>
+                                    {% elif fqname.field == NAME_EXACT %}
                                         {% for name in doc.name %}
                                             {% if not loop.first %}|{% endif %}
                                             <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
                                         {% endfor %}
-                                    </td>
-                                {% else %}
-                                    <td class="moin-wordbreak">
+                                    {% else %}
                                         {% if doc.name %}
                                             {# If this is deleted item, earlier versions may have names. #}
                                             {% for name in doc.name %}
@@ -58,8 +67,8 @@
                                         {% else %}
                                             <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.itemid|shorten_id }}</a>
                                         {% endif %}
-                                    </td>
-                                {% endif %}
+                                    {% endif %}
+                                </td>
 
                                 <td>{{ doc.revid|shorten_id }}</td>
                                 <td>{{ doc.mtime|datetimeformat }}</td>
