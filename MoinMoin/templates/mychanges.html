@@ -2,19 +2,19 @@
 {% import "utils.html" as utils %}
 
 {% block content %}
-    {% set (history, next_offset, previous_offset) = my_changes_page %}
+    {% set (my_changes, next_offset, previous_offset) = my_changes_page %}
     {% if my_changes %}
+        <h1>{{ _('My Changes') }}</h1>
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
-                <a href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+                <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
             {% endif %}
             {% if next_offset %}
-                <a href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+                <a class='moin-next-page'href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
             {% endif %}
         </div>
-        <h1>{{ _('My Changes') }}</h1>
         <div class="moin-clr"></div>
-        <div>
+        <div class="moin-mychanges">
             <table class="zebra moin-sortable">
                 <thead>
                     <tr>

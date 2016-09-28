@@ -971,10 +971,10 @@ def mychanges():
         results_per_page = app.cfg.results_per_page
     my_changes = _mychanges(flaskg.user.itemid)
     my_changes_page = util.getPageContent(my_changes, offset, results_per_page)
+
     return render_template('mychanges.html',
                            title_name=_(u'My Changes'),
                            headline=_(u'My Changes'),
-                           my_changes=my_changes,
                            my_changes_page=my_changes_page,
     )
 
