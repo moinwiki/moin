@@ -6581,12 +6581,6 @@ body {
 html {
   overflow-y: scroll;
 }
-.moin-hist-rev {
-  text-align: center;
-}
-#moin-button-diff {
-  text-align: center;
-}
 .menu .submenu {
   display: none;
   margin-bottom: 0px;

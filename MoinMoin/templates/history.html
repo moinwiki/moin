@@ -13,15 +13,15 @@
 
 {% block content %}
     {% if history %}
+        <h1>{{ title }}</h1>
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
-                <a href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+                <a class='moin-prior-page' href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
             {% endif %}
             {% if next_offset %}
-                <a href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+                <a class='moin-next-page' href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
             {% endif %}
         </div>
-        <h1>{{ title }}</h1>
         <div class="moin-clr"></div>
         <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
             <div id="moin-page-history">
@@ -39,7 +39,7 @@
                             <th>{{ _("Rev.") }}</th>
                             <th>{{ _("Timestamp") }}</th>
                             <th class="moin-integer">{{ _("Size") }}</th>
-                            <th><input type="submit" value="Diff" /></th>
+                            <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff" /></th>
                             <th>{{ _("Editor") }}</th>
                             <th>{{ _("Content-Type") }}</th>
                             <th>{{ _("Comment") }}</th>

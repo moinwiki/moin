@@ -294,17 +294,6 @@ p.searchhint{background-color:#eef1f6;border:1px solid #4e7da9;padding:2px}
 #f_data_text{border:1px solid #4e7da9;font-family:monospace;margin:.33em 0;padding:3px;width:100%}
 #f_comment,#f_summary,#f_textcha{border:1px solid #4e7da9;display:inline;margin:.33em 0;padding:3px;width:99%}
 #preview{border:1px solid #4e7da9;padding:10px 30px 20px 30px;background:url("../img/draft.png");margin-top:.5em}
-.moin-hist-rev input{float:left}
-.moin-hist-rev{margin:0}
-#moin-page-history{font-size:75%}
-#moin-page-history table{border:1px solid #4e7da9;border-radius:5px;}
-#moin-page-history table thead{border-top-left-radius:5px;border-top-right-radius:5px;}
-#moin-page-history table thead tr th{text-align:center;}
-#moin-page-history table thead tr th input[type="Submit"]{padding:4px 10px;box-shadow:1px 1px 2px #9d9d9b;cursor:pointer;font-size:1em;}
-#moin-page-history table thead tr th input[type="Submit"]:hover{box-shadow:1px 1px 2px #000}
-.moin-offset-links{float:right;margin-right:20px}
-.moin-offset-links a{margin-right:10px;padding:3px 7px;font-size:20px;background:#fff;border:1px groove #4e7da9;border-radius:5px}
-.moin-offset-links a:hover{box-shadow:0 0 12px #9d9d9b}
 .moin-transclusion{max-width:100%}
 a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 body{background-color:#e6f2fe}
