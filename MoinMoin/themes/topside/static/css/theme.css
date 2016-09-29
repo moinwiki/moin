@@ -7,7 +7,7 @@ body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Aria
 /* position footer on bottom of window when content is a few lines. */
 html { font-size: 1em; min-height: 100%; position: relative; }
 #moin-footer { position: absolute; bottom: 0; }
-#moin-content { padding-bottom: 12em; }
+#moin-content { padding-bottom: 8em; }
 h1 { text-align: center; }
 
 a { text-decoration: none; color: #1409B9; }
@@ -74,7 +74,7 @@ a:hover { text-decoration: underline; }
 }
 
 @media screen and (max-width: 800px) {
-    #moin-content { margin: 0 2%; }
+    #moin-content { margin: 0 2%; padding-bottom: 16em; }
     #moin-header ul { margin: .1em 2% .4em 2%; }
     #moin-footer .moin-itemviews  { margin: 5px 2%; }
 }
