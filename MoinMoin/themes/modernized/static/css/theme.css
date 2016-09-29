@@ -299,7 +299,9 @@ a.moin-conflict:before{content:url("../img/moin-conflict.png");margin:0 .2em}
 body{background-color:#e6f2fe}
 #moin-main-wrapper{width:87%;min-width:700px;margin-left:auto;margin-right:auto;margin-top:0}
 #moin-page{padding:1px;display:table;width:100%;background:#fff;border-radius:9px}
-#moin-content{padding:.2em 1em;display:table-cell}
+#moin-content{padding:.2em 1em 4em 1em;display:table-cell}
+@media (max-width: 600px){#moin-content{padding:.2em 1em 9em 1em}
+}#moin-footer{position:absolute;bottom:0}
 a:link{color:#00008b;text-decoration:none}
 a:visited{text-decoration:none;color:#008b8b}
 a:visited:hover{text-decoration:none;color:#1f9ae0}

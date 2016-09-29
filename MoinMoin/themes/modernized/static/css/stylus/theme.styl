@@ -216,8 +216,16 @@ body
     border-radius 9px
 
 #moin-content
-    padding .2em 1em
+    padding .2em 1em 4em 1em
     display table-cell
+
+@media (max-width: 600px)
+    #moin-content
+        padding .2em 1em 9em 1em
+
+#moin-footer
+    position absolute
+    bottom 0
 
 a:link
     color link_color
