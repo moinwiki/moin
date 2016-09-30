@@ -38,20 +38,19 @@ or even <some-other-path-to-python>::
 
  OR
 
- <python> quickinstall.py <path-to-venv> --download-cache <path-to-cache>
+ <python> quickinstall.py <path-to-venv>
 
-The above will download all dependent packages to a cache,
+The above will download all dependent packages to the PIP cache,
 install the packages in a virtual environment, and compile the translations
 (`*.po` files) to binary `*.mo` files. This process may take several minutes.
 
-The default cache and virtual environment directory names are:
+The default virtual environment directory name is:
 
- * ~/.pip/pip-download-cache # windows: ~\\pip\\pip-download-cache
  * ../<PROJECT>-venv-<PYTHON>/
 
 where <PROJECT> is the name of the project root directory, and <PYTHON>
 is the name of your python interpreter. As noted above, the default
-names may be overridden.
+name may be overridden.
 
 Check the output of quickinstall.py to determine whether there were
 fatal errors. The output messages will normally state that stdout
@@ -118,6 +117,16 @@ Next Steps
 
 If you plan on contributing to the moin2 project, there are more
 instructions waiting for you under the Development topic.
+
+If you plan on using this wiki as a production wiki,
+then before you begin adding or importing data and registering users
+review the configuration options. See the sections on configuration for
+details. Be sure to edit `wikiconfig.py` (or `wikiconfig_editme.py`) and
+change the settings for:
+
+ * interwikiname
+ * SECRET_KEY
+ * secrets
 
 If you plan on just using moin2 as a desktop wiki (and maybe
 help by reporting bugs), then some logical menu choices are:
