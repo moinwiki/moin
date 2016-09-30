@@ -8,8 +8,7 @@
 
 {% set (history, next_offset, previous_offset) = history_page %}
 {% set summary = history[0].get('summary', None) %}
-{% set name = summary or fqname %}
-{% set title = _("History of '%(name)s'", name=name) %}
+{% set title = _("History of '%(fqname)s'", fqname=fqname) %}
 
 {% block content %}
     {% if history %}
@@ -28,10 +27,10 @@
                 <table class="zebra">
                     <thead>
                         <tr>
-                            {% if summary %}
-                                <th>{{ _("Summary") }}</th>
-                            {% elif fqname.field == NAME_EXACT %}
+                            {% if fqname.field == NAME_EXACT %}
                                 <th>{{ _("Name") }}</th>
+                            {% elif summary %}
+                                <th>{{ _("Summary") }}</th>
                             {% else %}
                                 <th>{{ _("ID or Name") }}</th>
                             {% endif %}
@@ -50,13 +49,13 @@
                         {% for doc in history %}
                             <tr>
                                 <td class="moin-wordbreak">
-                                    {% if doc.get('summary', None) %}
-                                        <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.summary }}</a>
-                                    {% elif fqname.field == NAME_EXACT %}
+                                    {% if fqname.field == NAME_EXACT %}
                                         {% for name in doc.name %}
                                             {% if not loop.first %}|{% endif %}
                                             <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
                                         {% endfor %}
+                                    {% elif doc.get('summary', None) %}
+                                        <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.summary }}</a>
                                     {% else %}
                                         {% if doc.name %}
                                             {# If this is deleted item, earlier versions may have names. #}
