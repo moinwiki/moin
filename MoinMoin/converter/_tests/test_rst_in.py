@@ -91,6 +91,13 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         for i in data:
             yield (self.do, ) + i
 
+    def test_field_list(self):
+        data = [
+            (u':Date: 2001-08-16\n:Version: 1\n:Authors: Joe Doe', '<page><body><table><table-body>2001-08-16<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1</table-cell></table-row><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row></table-body></table></body></page>'),
+        ]
+        for i in data:
+            yield (self.do, ) + i
+
     def test_link(self):
         data = [
             (u'Abra test_ arba\n\n.. _test: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>'),
