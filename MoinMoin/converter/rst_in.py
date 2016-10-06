@@ -179,13 +179,9 @@ class NodeVisitor(object):
     depart_warning = depart_admonition
 
     def visit_block_quote(self, node):
-        self.open_moin_page_node(moin_page.list())
-        self.open_moin_page_node(moin_page.list_item())
-        self.open_moin_page_node(moin_page.list_item_body())
+        self.open_moin_page_node(moin_page.blockquote())
 
     def depart_block_quote(self, node):
-        self.close_moin_page_node()
-        self.close_moin_page_node()
         self.close_moin_page_node()
 
     def visit_bullet_list(self, node):
