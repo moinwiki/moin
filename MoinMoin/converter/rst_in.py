@@ -312,10 +312,13 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_field_list(self, node):
-        pass
+        attrib = {html.class_: 'moin-rst-fieldlist'}
+        self.open_moin_page_node(moin_page.table(attrib=attrib))
+        self.open_moin_page_node(moin_page.table_body())
 
     def depart_field_list(self, node):
-        pass
+        self.close_moin_page_node()
+        self.close_moin_page_node()
 
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell())
