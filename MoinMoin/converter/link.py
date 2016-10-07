@@ -180,7 +180,8 @@ class ConverterExternOutput(ConverterBase):
 
     def handle_external_links(self, elem, input):
         elem.set(self._tag_xlink_href, input)
-        if elem.tag == moin_page.a:
+        # rst_in.py may create a link similar to "http:Home", we check input.authority to verify link is external
+        if elem.tag == moin_page.a and input.authority:
             # adding this class enables themes to flag external links with an icon
             elem.set(html.class_, elem.attrib.get(html.class_, '') + ' moin-' + input.scheme)
 
