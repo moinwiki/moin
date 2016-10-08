@@ -79,7 +79,7 @@ a.moin-https:before { content: url("../img/mime-type/moin-www.png"); margin: 0 .
 a.moin-file:before,
 a.moin-ftp:before { content: url("../img/mime-type/moin-ftp.png"); margin: 0 .2em; vertical-align: middle; }
 a.moin-nntp:before,
-a.moin-news:before { content: url("../img/mime-type/moin-news.png"); margin: 0 .2em    ; vertical-align: middle; }
+a.moin-news:before { content: url("../img/mime-type/moin-news.png"); margin: 0 .2em; vertical-align: middle; }
 a.moin-telnet:before,
 a.moin-ssh:before,
 a.moin-irc:before,
@@ -300,6 +300,8 @@ dl > dd { font-size: .92em; margin-left: 3em; margin-top: 0; margin-bottom: 0; }
 dd p { margin: .25em 0; }
 dd + dd p { margin-top: .67em; }
 blockquote { padding-left: 2em; font-size: .92em; }
+.moin-rst-attribution { font-style: italic; }
+.moin-rst-attribution:before { content: "--"; }
 
 /* horizontal rules */
 hr { height: 1px; background-color: #4e7da9; border: 0; margin: .9em 0; }
