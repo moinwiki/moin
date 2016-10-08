@@ -608,6 +608,16 @@ class NodeVisitor(object):
     def depart_tbody(self, node):
         self.close_moin_page_node()
 
+    def visit_target(self, node):
+        ".. _example:"
+        anchor = node.get('refid')
+        if anchor:
+            self.open_moin_page_node(moin_page.span(attrib={moin_page.id: anchor}))
+            self.close_moin_page_node()
+
+    def depart_target(self, node):
+        pass
+
     def visit_term(self, node):
         self.open_moin_page_node(moin_page.list_item_label())
 
