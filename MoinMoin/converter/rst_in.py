@@ -184,6 +184,13 @@ class NodeVisitor(object):
     def depart_block_quote(self, node):
         self.close_moin_page_node()
 
+    def visit_attribution(self, node):
+        attrib = {html.class_: 'moin-rst-attribution'}
+        self.open_moin_page_node(moin_page.p(attrib=attrib))
+
+    def depart_attribution(self, node):
+        self.close_moin_page_node()
+
     def visit_bullet_list(self, node):
         self.open_moin_page_node(moin_page.list(
             attrib={moin_page.item_label_generate: u'unordered'}))
