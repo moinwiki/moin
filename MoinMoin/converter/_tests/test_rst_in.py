@@ -101,7 +101,9 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     def test_link(self):
         data = [
             (u'Abra test_ arba\n\n.. _test: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>'),
-            (u'Abra test__ arba\n\n.. __: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>')
+            (u'Abra test__ arba\n\n.. __: http://python.org', '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>'),
+            (u'Abra\n\n.. _example:\n\nAbra example_ arba\n', '<page><body><p>Abra</p><span id="example" /><p>Abra <a xlink:href="">example</a> arba</p></body></page>'),
+            (u'Abra example_ arba\n\n.. _example:\n\ntext', '<page><body><p>Abra <a xlink:href="">example</a> arba</p><span id="example" /><p>text</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
