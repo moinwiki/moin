@@ -269,6 +269,16 @@ class NodeVisitor(object):
         self.close_moin_page_node()
         self.close_moin_page_node()
 
+    def visit_comment(self, node):
+        """
+        Create moinwiki style hidden comment rather than html style: <!-- a comment -->
+        """
+        attrib = {html.class_: 'comment dashed'}
+        self.open_moin_page_node(moin_page.div(attrib=attrib))
+
+    def depart_comment(self, node):
+        self.close_moin_page_node()
+
     def visit_emphasis(self, node):
         self.open_moin_page_node(moin_page.emphasis())
 
