@@ -276,12 +276,13 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_entry(self, node):
+        # process a table cell <td> tag
         new_element = moin_page.table_cell()
         if 'morerows' in node.attributes:
             new_element.set(moin_page.number_rows_spanned,
                             repr(int(node['morerows']) + 1))
         if 'morecols' in node.attributes:
-            new_element.set(moin_page.number_cols_spanned,
+            new_element.set(moin_page.number_columns_spanned,
                             repr(int(node['morecols']) + 1))
         self.open_moin_page_node(new_element)
 
