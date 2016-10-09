@@ -492,6 +492,30 @@ class NodeVisitor(object):
     def depart_literal_block(self, node):
         self.close_moin_page_node()
 
+    def visit_option_list(self, node):
+        attrib = {html.class_: 'moin-rst-optionlist'}
+        self.open_moin_page_node(moin_page.table(attrib=attrib))
+        self.open_moin_page_node(moin_page.table_body())
+
+    def depart_option_list(self, node):
+        self.close_moin_page_node()
+        self.close_moin_page_node()
+
+    def visit_option_list_item(self, node):
+        self.open_moin_page_node(moin_page.table_row())
+
+    def depart_option_list_item(self, node):
+        self.close_moin_page_node()
+
+    def visit_option(self, node):
+        self.open_moin_page_node(moin_page.table_cell())
+
+    def depart_option(self, node):
+        self.close_moin_page_node()
+
+    visit_description = visit_option
+    depart_description = depart_option
+
     def visit_paragraph(self, node):
         if self.status[-1] == 'footnote':
             footnote_node = self.footnotes.get(self.footnote_lable, None)

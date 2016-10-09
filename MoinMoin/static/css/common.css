@@ -509,8 +509,11 @@ ul#moin-rev-navigation { text-align: center; }
     ul#moin-rev-navigation li { display: block; text-align: center; }
 }
 
-/* ReST field lists */
+/* ReST field lists and option lists*/
 
+.moin-rst-optionlist,
 .moin-rst-fieldlist { margin-left: 2em; }
+.moin-rst-optionlist td,
 .moin-rst-fieldlist td { border-width: 0; }
+.moin-rst-optionlist td:first-child,
 .moin-rst-fieldlist td:first-child { font-weight: bold; }
