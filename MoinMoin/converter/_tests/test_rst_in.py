@@ -62,6 +62,14 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         for i in data:
             yield (self.do, ) + i
 
+    def test_definition_list(self):
+        data = [
+            (u'term 1\n definition 1', '<page><body><list><list-item><list-item-label>term 1</list-item-label><list-item-body><p>definition 1</p></list-item-body></list-item></list></body></page>'),
+            (u'term 2 : classifier 1 : classifier 2\n definition 2', '<page><body><list><list-item><list-item-label>term 2<span>:classifier 1</span><span>:classifier 2</span></list-item-label>classifier 1classifier 2<list-item-body><p>definition 2</p></list-item-body></list-item></list></body></page>'),
+        ]
+        for i in data:
+            yield (self.do, ) + i
+
     def test_image(self):
         data = [
             (u'.. image:: images/biohazard.png', '<page><body><xinclude:include xinclude:href="wiki.local:images/biohazard.png" /></body></page>'),
