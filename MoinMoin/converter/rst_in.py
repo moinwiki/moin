@@ -19,6 +19,7 @@ from __future__ import absolute_import, division
 
 import re
 import pytest
+import docutils
 
 from werkzeug import url_encode, url_decode
 
@@ -664,6 +665,12 @@ class NodeVisitor(object):
         self.open_moin_page_node(moin_page.list_item_label())
 
     def depart_term(self, node):
+        # classifiers arrive as siblings of the term; search the parent and convert them to children
+        for child in node.parent:
+            if isinstance(child, docutils.nodes.classifier):
+                classifier = u":" + child[0]
+                self.open_moin_page_node(moin_page.span(children=[classifier]))
+                self.close_moin_page_node()
         self.close_moin_page_node()
 
     def visit_tgroup(self, node):
