@@ -123,7 +123,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 
     def test_table(self):
         data = [
-            (u"+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n", '<page><body><table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-cols-spanned="2"><p>C</p></table-cell></table-row></table-body></table></body></page>'),
+            (u"+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n", '<page><body><table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>C</p></table-cell></table-row></table-body></table></body></page>'),
             (u"+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n", '<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>'),
             ("""+--------------------+-------------------------------------+
 |cell spanning 2 rows|cell in the 2nd column               |
@@ -135,7 +135,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 |test                                                      |
 +----------------------------------------------------------+
 
-""", '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-cols-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-cols-spanned="2"><p>test</p></table-cell></table-row></table-body></table></body></page>'),
+""", '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table></body></page>'),
             ("""
 +--------------------+-------------------------------------+
 | AAAAAAAAAAAAAAAAAA | BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB |
@@ -149,7 +149,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 |test                                                      |
 +----------------------------------------------------------+
 
-""", '<page><body><table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned=\"2\"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-cols-spanned=\"2\"><p>test</p></table-cell></table-row><table-row><table-cell number-cols-spanned=\"2\"><p>test</p></table-cell></table-row></table-body></table></body></page>'),
+""", '<page><body><table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned=\"2\"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned=\"2\"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned=\"2\"><p>test</p></table-cell></table-row></table-body></table></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
