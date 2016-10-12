@@ -1,0 +1,31 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "text/x.moin.wiki;charset=utf-8", 
+  "dataid": "62c5fd40953b44829728a82846439b6c", 
+  "externallinks": [
+    "https://moinmo.in/HelpOnMacros/Include"
+  ], 
+  "itemid": "8b76f40497fe4fcf8c37cb90fc89b49a", 
+  "itemlinks": [
+    "WikiDict"
+  ], 
+  "itemtransclusions": [
+    "StronaGłówna", 
+    "png"
+  ], 
+  "itemtype": "default", 
+  "mtime": 1476221785, 
+  "name": [
+    "MoinWikiMacros"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "0987770715f44fc7a2a0b19942300bb0", 
+  "sha1": "fa111694f444cecb03816ce2ecbd55d9620bbbef", 
+  "size": 5389, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

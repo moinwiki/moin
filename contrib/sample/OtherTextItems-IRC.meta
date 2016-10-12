@@ -1,0 +1,24 @@
+{
+  "action": "SAVE", 
+  "address": "127.0.0.1", 
+  "comment": "", 
+  "contenttype": "text/x-irclog;charset=utf-8", 
+  "dataid": "dd5340b081924cfe8ad928ae19be0136", 
+  "externallinks": [], 
+  "itemid": "e30255c6cb9c4df69f01468ff77b93da", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1436476504, 
+  "name": [
+    "OtherTextItems/IRC"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "833cfc9b4bcc4ebbb79d1e17d20ac5f1", 
+  "sha1": "f627f6c2aabd477ea8242a627b50210bbebf2710", 
+  "size": 364, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

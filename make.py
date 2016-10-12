@@ -159,20 +159,61 @@ def wiki_exists():
     return bool(glob.glob('wiki/index/_all_revs_*.toc'))
 
 
-def make_wiki(command):
+def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
     """Process command to create a new wiki."""
-    if wiki_exists():
+    if wiki_exists() and mode == 'w':
         print 'Error: a wiki exists, delete it and try again.'
     else:
         print 'Output messages redirected to {0}.'.format(NEWWIKI)
-        with open(NEWWIKI, 'w') as messages:
+        with open(NEWWIKI, mode) as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         if result == 0:
-            print '\nSuccess: a new wiki has been created.'
+            print msg
+            return True
         else:
             print 'Important messages from %s are shown below:' % NEWWIKI
             search_for_phrase(NEWWIKI)
             print '\nError: attempt to create wiki failed. Do "%s log new-wiki" to see complete log.' % M
+            return False
+
+
+def put_items(dir='contrib/sample/'):
+    """Load sample items into wiki"""
+    metas = []
+    datas = []
+    files = []
+    for (dirpath, dirnames, filenames) in os.walk(dir):
+        files.extend(filenames)
+        break
+    for file in files:
+        if file.endswith('.meta'):
+            metas.append(file)
+        if file.endswith('.data'):
+            datas.append(file)
+    if not len(datas) == len(metas):
+        print 'Error: the number of .data and .meta files should be equal'
+        return False
+    commands = []
+    command = 'moin item-put --meta {0} --data {1}'
+    for meta in metas:
+        data = meta.replace('.meta', '.data')
+        if data in datas:
+            commands.append(command.format(dir + meta, dir + data))
+        else:
+            print 'Error: file "{0} is missing'.format(data)
+            return False
+    commands = ACTIVATE + SEP.join(commands)
+
+    with open(NEWWIKI, 'a') as messages:
+        result = subprocess.call(commands, shell=True, stderr=messages, stdout=messages)
+    if result == 0:
+        print '{0} items were added to wiki'.format(len(metas))
+        return True
+    else:
+        print 'Important messages from %s are shown below:' % NEWWIKI
+        search_for_phrase(NEWWIKI)
+        print '\nError: attempt to add items to wiki failed. Do "%s log new-wiki" to see complete log.' % M
+        return False
 
 
 def delete_files(pattern):
@@ -293,11 +334,30 @@ class Commands(object):
         print 'Creating a new empty wiki...'
         make_wiki(command)  # share code with loading sample data and restoring backups
 
-    def cmd_sample(self, *args):
-        """create wiki and load sample data"""
+    def cmd_sample_old(self, *args):
+        """
+        create wiki and load sample data; obsolete, but still works with './m sample_old'
+
+        TODO: delete this and contrib/serialized/ sometime in 2017
+        """
         command = '{0}moin index-create -s -i{1} moin load --file contrib/serialized/items.moin{1} moin index-build'.format(ACTIVATE, SEP)
         print 'Creating a new wiki populated with sample data...'
         make_wiki(command)
+
+
+    def cmd_sample(self, *args):
+        """create wiki and load sample data"""
+        # load items with non-ASCII names from a serialized backup
+        command = '{0}moin index-create -s -i{1} moin load --file contrib/sample/unicode.moin'.format(ACTIVATE, SEP)
+        print 'Creating a new wiki populated with sample data...'
+        success = make_wiki(command, msg='\nSuccess: a new wiki has been created... working...')
+        # build the index
+        if success:
+            command = '{0}moin index-build'.format(ACTIVATE, SEP)
+            success = make_wiki(command, mode='a', msg='\nSuccess: the index has been created for the sample wiki... working...')
+        # load individual items from contrib/sample, index will be updated
+        if success:
+            success = put_items()
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""

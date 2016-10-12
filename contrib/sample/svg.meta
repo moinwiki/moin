@@ -1,0 +1,24 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "image/svg+xml", 
+  "dataid": "6c29c4179218487d8c68c01c9b93feed", 
+  "externallinks": [], 
+  "itemid": "961ef50b87c04a7bb88a95cc42e3ca8c", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1476221805, 
+  "name": [
+    "svg"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "8a1941700c7541bc98d8e03cbb3ffd1f", 
+  "sha1": "2765b030d3fac1234c68bf7f07459f4682fedac9", 
+  "size": 7029, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

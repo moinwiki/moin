@@ -1,0 +1,44 @@
+= Moin2 Test Content =
+
+This test content displays a wide variety of moin2 features.
+
+== Test Comment ==
+
+Click the '''Comments''' link to show/hide comments:  /* ''a test comment'' */
+
+== Test Transclusion ==
+
+Click the '''Transclusions''' link to show the content of the transclusions below:
+
+{{Home/subitem}}
+
+== Parsers with Auto Scroll ==
+
+When using the Modernized theme, double-clicking any line within the content of this page or on any of the items below will auto-scroll the edit textarea to the line clicked. 
+
+The Basic theme increases the edit textarea size to hold all content so the textarea does not have a scrollbar. In this case, the caret will be correctly positioned within the textarea, but the window will not automatically scroll to make the caret visible. Pressing the keyboard right-arrow key will scroll the window so the caret is visible at the bottom.
+
+Because of the way the Markdown parser is constructed, it is frequently not possible to calculate an accurate line number in the text source. This causes auto-scroll to miss the target text. The error can be minimized by consistent use of one blank line between text blocks.
+
+ * [[moin|Moin Wiki markup item]]
+ * [[creole|Creole Wiki markup item]]
+ * [[rst|ReST markup item]]
+ * [[markdown|Markdown markup item]]
+ * [[docbook|DocBook XML markup item]]
+ * [[mediawiki|Media Wiki markup item]]
+
+== Other Demo Items ==
+
+ * [[html|html markup item using CKEditor]]
+ * [[MoinWikiMacros|extension macros]]
+ * [[zip]] and [[targz]]
+ * [[images]] - [[jpeg]], [[png]] and [[svg]]
+ * Media - [[video.mp4]] and [[audio.mp3]]
+ * [[OtherTextItems]]
+
+== Items with Non-English Names ==
+
+ * [[AjudaNaFormatação]]
+ * [[StronaGłówna]]
+ * [[ШаблонДомашняяСтраница]]
+

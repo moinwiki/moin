@@ -1,0 +1,601 @@
+===============================
+ReST (ReStructured Text) Markup
+===============================
+
+Features currently not working with moin's ReST parser are marked with **RSTTODO**.
+
+Headings
+========
+
+Rather than imposing a fixed number and order of section title adornment styles, 
+the order enforced will be the order as encountered.
+The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle, 
+the third will be a subsubtitle, and so on.
+
+The underline below the title must at least be equal to the length of the title itself.  Failure to comply results in messages on the server log. Skipping a heading (e.g. putting an H5 heading directly under an H3) results in a rendering error and an error message will be displayed instead of the expected page.
+
+If any markup appears before the first heading on a page, then the first heading will be an H2 and all subsequent headings will be demoted by 1 level.
+
+**Markup**: ::
+
+ =======
+ Level 1
+ =======
+
+ Level 2
+ =======
+
+ # levels 1 and 2 are not shown below, see top of page and this section heading.
+
+ Level 3
+ -------
+
+ Level 4
+ *******
+
+ Level 5
+ :::::::
+
+ Level 6
+ +++++++
+
+
+**Result**:
+
+
+Level 3
+-------
+
+Level 4
+*******
+
+Level 5
+:::::::
+
+Level 6
++++++++
+
+
+Table of Contents
+=================
+
+**Markup**: ::
+
+    .. contents::
+
+**Result**:
+
+.. contents::
+
+The table of contents may appear above or floated to the right side due to CSS styling.
+
+
+Text formatting
+===============
+
+The following is a table of inline markup that can be used to format text in Moin.
+
++----------------------------------------------+---------------------------------------+
+| Markup                                       | Result                                |
++==============================================+=======================================+
+| ``**Bold Text**``                            | **Bold text**                         |
++----------------------------------------------+---------------------------------------+
+| ``*Italic*``                                 | *Italic*                              |
++----------------------------------------------+---------------------------------------+
+| ````Inline Literals````                      | ``Inline Literals``                   |
++----------------------------------------------+---------------------------------------+
+| ``***nested markup is not supported***``     | ***nested markup is not supported***  |
++----------------------------------------------+---------------------------------------+
+
+Hyperlinks
+==========
+
+External Links
+--------------
+
++-----------------------------------------------------------------+--------------------------------------------------------------+
+| Markup                                                          | Result                                                       |
++=================================================================+==============================================================+
+| ``http://www.python.org/``                                      | http://www.python.org/                                       |
++-----------------------------------------------------------------+--------------------------------------------------------------+
+| ``External hyperlinks, like `Python <http://www.python.org/>`_``| External hyperlinks, like `Python <http://www.python.org/>`_ |
++-----------------------------------------------------------------+--------------------------------------------------------------+
+| ``External hyperlinks, like Moin_.``                            | External hyperlinks, like Moin_.                             |
+|                                                                 |                                                              |
+| ``.. _Moin: http://moinmo.in/``                                 | .. _Moin: http://moinmo.in/                                  |
++-----------------------------------------------------------------+--------------------------------------------------------------+
+
+**Note** A blank is required before the link definition to make the last syntax work correctly. 
+
+Internal Links
+--------------
+
+**Markup**: ::
+
+ To reference another item with this wiki, do http:Home or `Home <http:Home>`_.
+
+ To reference an anchor within this item, first create an invisible anchor:
+ 
+ .. _example:
+
+ Then reference the anchor, like this: example_
+
+ To link to section headings do Headings_ or Internal_Links_.
+
+**Result**:
+
+To reference another item with this wiki, do http:Home or `Home <http:Home>`_.
+
+To reference an anchor within this item, first create an invisible anchor:
+ 
+.. _example:
+
+Then reference the anchor, like this: example_
+
+To link to section headings do Headings_ or Internal_Links_.
+ 
+**Notes**
+ - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
+ - **RSTTODO** The example anchor is not created, the links to example and headings are missing the leading #, Internal_Links is not recognized as a link.
+
+Images
+======
+
+Images may be positioned by using the align parameter with a value of left, center, or right. There is no facility to embed an image within a paragraph. There must be a blank line before and after the image declaration. Images are not enclosed within a block level element so several images declared successively without any positioning will display in a horizontal row.
+
+**Markup**: ::
+
+    Before text.
+
+    .. image:: png
+       :height: 100
+       :width: 200
+       :scale: 50
+       :alt: alternate text png
+       :align: center
+
+    After text.
+
+**Result**:
+
+Before text.
+
+.. image:: png
+   :height: 100
+   :width: 200
+   :scale: 50
+   :alt: alternate text png
+   :align: center
+
+After text.
+ 
+Blockquotes and Indentations
+============================
+
+Every additional space before the first word in a line will add an indent before the line.
+
+**Markup**: ::
+
+ indented text
+  text indented for the 2nd level
+
+**Result**:
+
+ indented text
+  text indented for the 2nd level
+
+**Markup**: ::
+
+  This is an ordinary paragraph, introducing a block quote.
+
+    "It is my business to know things.  That is my trade."
+
+    -- Sherlock Holmes
+
+**Result**:
+
+  This is an ordinary paragraph, introducing a block quote.
+
+    "It is my business to know things.  That is my trade."
+
+    -- Sherlock Holmes
+
+**Notes**
+ - A block quote may end with an attribution: a text block beginning with "--", "---", 
+   or a true em-dash, flush left within the block quote.
+ - **RSTTODO** the attribution does not work in moin2.
+ - **RSTTODO** indented text should not be displayed the same as term-definition, needs CSS fix
+
+   - term-definition: <dl><dt>term 1</dt><dd><p>Definition 1.</p>
+   - indented text: <dl><dd><dl><dt>indented text</dt><dd><p>text indented for the 2nd level</p>
+
+Lists
+=====
+
+Unordered Lists
+---------------
+
+**Markup**: ::
+
+ - item 1
+
+ - item 2
+
+  - item 2.1
+
+   - item 2.1.1
+
+ - item 3
+
+**Result**:
+
+ - item 1
+
+ - item 2
+
+  - item 2.1
+
+   - item 2.1.1
+
+ - item 3
+
+Ordered Lists
+---------------
+
+**Markup**: ::
+
+ 1. item 1
+ 
+    (A) item 1.1
+    (#) item 1.2
+
+        i) item 1.2.1
+        #) item 1.2.2
+   
+ #. item 2
+
+**Result**:
+
+ 1. item 1
+ 
+    (A) item 1.1
+    (#) item 1.2
+
+        i) item 1.2.1
+        #) item 1.2.2
+   
+ #. item 2
+   
+**Notes**:
+ - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
+   auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
+   (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
+   enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+ - One or more blank lines are required before and after reStructuredText lists.
+ - **RSTTODO**: Formatting types (1) and 1) do not render correctly in moin2.
+
+Definition Lists
+================
+
+Definition lists are formed by an unindented one line term followed by an indented definition.
+
+**Markup**: ::
+
+ term 1
+  Definition 1.
+
+ term 2 : classifier
+  Definition 2.
+
+ term 3 : classifier one : classifier two
+  Definition 3.
+
+**Result**:
+
+term 1
+ Definition 1.
+
+term 2 : classifier
+ Definition 2.
+
+term 3 : classifier one : classifier two
+ Definition 3.
+
+ - **RSTTODO**: Definition list classifiers are not working, they are ignored in html_out.py.
+
+Field Lists
+===========
+
+Field lists are part of an extension syntax for directives usually intended for further processing.
+
+**Markup**: ::
+
+    :Date: 2001-08-16
+    :Version: 1
+    :Authors: Joe Doe
+
+**Result**:
+
+:Date: 2001-08-16
+:Version: 1
+:Authors: Joe Doe
+
+**Notes**:
+ - **RSTTODO**: This could use some CSS changes to enhance the format.
+
+Option lists
+============
+
+Option lists are intended to document Unix or DOS command line options. 
+
+**Markup**: ::
+
+    -a      command definition
+    --a     another command definition
+    /S      dos command definition
+
+**Result**:
+
+-a      command definition
+--a     another command definition
+/S      dos command definition
+
+**Notes**:
+ - **RSTTODO**: The above is rendered incorrectly.  The commands are not inclosed within any tag, the definitions are enclosed in P tags making styling impossible.
+
+Backslash Escapes
+=================
+
+Sometimes there is a need to use special characters as literal characters, but ReST's syntax gets in the way. Use the backslash character as an escape.
+
+**Markup**: ::
+
+    *hot*
+
+    333. is a float, 333 is an integer.
+
+    \*hot\*
+
+    333\. is a float, 333 is an integer.
+
+**Result**:
+
+*hot*
+
+333. is a float, 333 is an integer.
+
+\*hot\*
+
+333\. is a float, 333 is an integer.
+
+**Notes**:
+ - The ReST parser changed the 333. to a 1. above and inserted an error message into the document.
+
+  
+Tables
+======
+
+Simple Tables
+-------------
+
+Easy markup for tables consisting of two rows. This syntax can have no more than two rows.
+
+**Markup**: ::
+
+ ======= ======= =======
+  A       B       C     
+ ======= ======= =======
+  1       2       3     
+ ======= ======= =======
+ 
+**Result**:
+
+ ======= ======= =======
+  A       B       C     
+ ======= ======= =======
+  1       2       3     
+ ======= ======= =======
+ 
+
+**Markup**: ::
+
+ ======= ======= =======
+       foo         Bar
+ --------------- -------
+  A       B       C     
+ ======= ======= =======
+  1       2       3     
+ ======= ======= =======
+ 
+**Result**:
+
+ ======= ======= =======
+       foo         Bar
+ --------------- -------
+  A       B       C     
+ ======= ======= =======
+  1       2       3     
+ ======= ======= =======
+ 
+**Note** **RSTTODO** the foo-bar syntax to group headers does not work.
+ 
+Grid Tables
+-----------
+
+Complex tables can have any number of rows or columns. They are made by ``|``, ``+``, ``-`` and ``=``.
+
+**Markup**: ::
+
+ +----------------+---------------+
+ | A              |               |
+ +----------------+ D             |
+ | B              |               |
+ +----------------+---------------+
+ | C                              |
+ +--------------------------------+
+ 
+**Result**:
+
+ +----------------+---------------+
+ | A              |               |
+ +----------------+ D             |
+ | B              |               |
+ +----------------+---------------+
+ | C                              |
+ +--------------------------------+
+ 
+**Note** **RSTTODO** C does not extend fully up to the end of D.
+
+Admonitions
+===========
+
+Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+
+The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
+
+**Markup**: ::
+
+    .. caution:: Be careful!
+    .. danger:: Watch out! 
+    .. note:: Phone home.
+
+ 
+**Result**:
+
+.. caution:: Be careful!
+.. danger:: Watch out! 
+.. note:: Phone home.
+
+
+Comments
+========
+
+Comments are not shown on the page but depending on the output formatter they might be included as HTML comments (``<!-- -->``).
+
+**Markup**: ::
+ 
+ .. This is a comment
+ ..
+  _so: is this!
+ ..
+  [and] this!
+ ..
+  this:: too!
+ ..
+  |even| this:: !
+ 
+**Result**:
+ 
+ .. This is a comment
+ ..
+  _so: is this!
+ ..
+  [and] this!
+ ..
+  this:: too!
+ ..
+  |even| this:: !
+  
+**Note** **RSTTODO** comment markup does not work in moin2.
+
+Digraphs
+========
+
+There is a general problem caused by the difference between the ReST feature set in Sphinx and the feature set in Python Docutils. For example, if a digraph is copied from admin/configure.rst:
+
+**Markup**: ::
+
+    .. digraph:: acl_order
+
+       rankdir=LR;
+       "before" -> "item acl from metadata (if specified)" -> "after";
+       "before" -> "default (otherwise)"                   -> "after";
+
+**Result**:
+
+.. digraph:: acl_order
+
+   rankdir=LR;
+   "before" -> "item acl from metadata (if specified)" -> "after";
+   "before" -> "default (otherwise)"                   -> "after";
+
+**Notes**:
+ - **RSTTODO**: Digraphs do not work in moin2. Two errors are displayed instead of the desired graphics.
+ 
+Literals Blocks
+===============
+
+Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block. 
+A minimum (1) indentation is required for the text block to be recognized as a literal block.
+
+**Markup**: ::
+
+ Paragraph with a space between preceding two colons ::
+
+  Literal block
+ 
+**Result**:
+
+ Paragraph with a space between preceding two colons ::
+
+  Literal block
+  
+**Markup**: ::
+
+ Paragraph with no space between text and two colons::
+
+  Literal block
+ 
+**Result**:
+
+ Paragraph with no space between text and two colons::
+
+  Literal block
+
+HTML Validation
+===============
+
+**RSTTODO**: This page generates numerous HTML validation errors::
+
+        Result: 33 errors / 5 warnings
+
+        Info: W3c Online Validation
+
+        line 309 column 220 - Error: Bad value http:Home for attribute href on element a: Expected a slash ("/").
+        line 309 column 276 - Error: Bad value http:Home for attribute href on element a: Expected a slash ("/").
+        line 319 column 95 - Error: Element dl is missing a required child element.
+        line 323 column 83 - Error: Element dl is missing a required child element.
+        line 323 column 173 - Error: Element dl is missing a required child element.
+        line 332 column 71 - Error: Element dl is missing a required child element.
+        line 332 column 168 - Error: Element dl is missing a required child element.
+        line 332 column 227 - Error: Element dl is missing a required child element.
+        line 340 column 72 - Error: Element dl is missing a required child element.
+        line 352 column 94 - Error: Stray start tag tr.
+        line 352 column 98 - Error: Stray start tag td.
+        line 352 column 125 - Error: Stray end tag td.
+        line 352 column 129 - Error: Stray start tag td.
+        line 352 column 151 - Error: Stray end tag td.
+        line 352 column 156 - Error: Stray end tag tr.
+        line 352 column 178 - Error: Stray start tag tr.
+        line 352 column 182 - Error: Stray start tag td.
+        line 352 column 212 - Error: Stray end tag td.
+        line 352 column 216 - Error: Stray start tag td.
+        line 352 column 229 - Error: Stray end tag td.
+        line 352 column 234 - Error: Stray end tag tr.
+        line 352 column 256 - Error: Stray start tag tr.
+        line 352 column 260 - Error: Stray start tag td.
+        line 352 column 290 - Error: Stray end tag td.
+        line 352 column 294 - Error: Stray start tag td.
+        line 352 column 313 - Error: Stray end tag td.
+        line 352 column 318 - Error: Stray end tag tr.
+        line 364 column 86 - Error: Element dl is missing a required child element.
+        line 370 column 86 - Error: Element dl is missing a required child element.
+        line 370 column 243 - Warning: A table row was 3 columns wide and exceeded the column count established by the first row (2).
+        line 370 column 336 - Warning: A table row was 3 columns wide and exceeded the column count established by the first row (2).
+        line 376 column 97 - Error: Element dl is missing a required child element.
+        line 376 column 290 - Warning: A table row was 1 columns wide, which is less than the column count established by the first row (2).
+        line 386 column 79 - Error: Element dl is missing a required child element.
+        line 399 column 77 - Error: Element dl is missing a required child element.
+        line 401 column 77 - Error: Element dl is missing a required child element.
+
+

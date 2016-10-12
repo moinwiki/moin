@@ -1,0 +1,24 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "audio/mpeg", 
+  "dataid": "5064b72b3f7e407ea820d1149b15d397", 
+  "externallinks": [], 
+  "itemid": "6d1ea5fe218741d982c45b1dea0e2372", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1476221758, 
+  "name": [
+    "audio.mp3"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "663c67400e6242208c034a974680ce89", 
+  "sha1": "c4d09e061cc6667054aab15f30b93472aea3cb4d", 
+  "size": 80666, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

@@ -1,0 +1,24 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "text/plain;charset=utf-8", 
+  "dataid": "6e5950637419466691743138d3d51d24", 
+  "externallinks": [], 
+  "itemid": "64a3dccc43bf4e929d08b0266264b55e", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1476221791, 
+  "name": [
+    "OtherTextItems/PlainText"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "0d0cbf0b45d247fc8ecd2ebd3ca2f9af", 
+  "sha1": "225a558e14e2f8a937097f62be0ed7e6b946d190", 
+  "size": 37, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

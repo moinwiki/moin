@@ -1,0 +1,442 @@
+= Moin Wiki Syntax =
+
+== Table Of Contents ==
+
+'''Markup:'''
+
+{{{
+<<TableOfContents>>
+}}}
+
+'''Results:'''
+
+<<TableOfContents>>
+
+== Headings ==
+
+'''Markup:'''
+
+{{{
+=== heading 3rd level ===
+==== heading 4th level ====
+===== heading 5th level =====
+====== heading 6th level ======
+}}}
+
+'''Results:'''
+
+=== heading 3rd level ===
+==== heading 4th level ====
+===== heading 5th level =====
+====== heading 6th level ======
+
+== Text Formatting ==
+
+||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result'''   ||
+||  `''italic''`     || ''italic''       ||
+||  `'''bold'''`     || '''bold'''       ||
+||  `__underline__`  || __underline__   ||
+||  `^super^script`  || ^super^script    ||
+||  `,,sub,,script`  || ,,sub,,script    ||
+||  `~-smaller-~`    || ~-smaller-~     ||
+||  `~+larger+~`     || ~+larger+~       ||
+|| `--(stroke)--`    || --(stroke)--     ||
+
+
+=== Internal Links ===
+
+||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result''' ||
+|| `[[Home]]` || [[Home]] ||
+|| `[[Home/subitem]]` || [[Home/subitem]] ||
+|| `[[/MissingSubitem]]` || [[/MissingSubitem]] ||
+|| `[[../Home]]` || [[../Home]] ||
+|| `[[Home|named link]]` || [[Home|named link]] ||
+|| `[[#Lists]]` || [[#Lists]] ||
+|| `[[#Lists|description]]` || [[#Lists|description]] ||
+|| `[[creole#Internal_Links]]` || [[creole#Internal_Links]] ||
+|| `[[creole#Internal_Links|description]]` || [[creole#Internal_Links|description]] ||
+|| `[[MissingPage]]` || [[MissingPage]] ||
+
+
+=== External Links ===
+
+||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result''' ||
+|| `[[https://moinmo.in/]]` || [[https://moinmo.in/]] ||
+|| `[[https://moinmo.in/|MoinMoin Wiki]]` || [[https://moinmo.in/|MoinMoin Wiki]] ||
+|| `[[https://static.moinmo.in/logos/moinmoin.png]]` || [[https://static.moinmo.in/logos/moinmoin.png]] ||
+
+|| `[[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]` || [[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]] ||
+|| `[[MeatBall:InterWiki]]` || [[MeatBall:InterWiki]] ||
+|| `[MeatBall:InterWiki|InterWiki page on MeatBall]]` || [[MeatBall:InterWiki|InterWiki page on MeatBall]] ||
+|| `[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]` || [[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]] ||
+
+== Transclusions ==
+
+Transcluded images can be positioned by using any of the classes left, center, right, top, middle, or bottom. Images can be resized on the client side by specifying an option of width=nn or height=nn where nn is the desired size in pixels. If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of &w=nn or &h=nn where nn is the desired size in pixels.
+
+
+
+'''Markup:'''
+
+{{{
+ 1. Images are aligned to bottom {{png}} of text by default. 
+ 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
+ 1. Transclude a web page: <<BR>>{{http://www.xkcd.com/||width=800}}
+ 1. Transcluding an https protocol web page into an http protocol web page will fail: most browsers will show a blank space: <<BR>>{{https://moinmo.in||width=800}}
+}}}
+
+'''Result:'''
+
+ 1. Images are aligned to bottom {{png}} of text by default. 
+ 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
+ 1. Transclude a web page: <<BR>>{{http://www.xkcd.com/||width=800}}
+ 1. Transcluding an https protocol web page into an http protocol web page will fail: most browsers will show a blank space: <<BR>>{{https://moinmo.in||width=800}}
+
+== Blockquotes and Indentations ==
+
+'''Markup:'''
+
+{{{
+ indented text
+  text indented to the 2nd level
+}}}
+
+'''Result:'''
+
+ indented text
+  text indented to the 2nd level
+
+== Lists ==
+=== Unordered Lists ===
+
+'''Markup:'''
+
+{{{
+ * item 1
+
+ * item 2 (preceding white space)
+  * item 2.1
+   * item 2.1.1
+ * item 3
+  . item 3.1 (bulletless)
+ . item 4 (bulletless)
+  * item 4.1
+   . item 4.1.1 (bulletless)
+}}}
+
+'''Result:'''
+
+ * item 1
+
+ * item 2 (preceding white space)
+  * item 2.1
+   * item 2.1.1
+ * item 3
+  . item 3.1 (bulletless)
+ . item 4 (bulletless)
+  * item 4.1
+   . item 4.1.1 (bulletless)
+
+=== Ordered Lists ===
+==== with Numbers ====
+
+'''Markup:'''
+
+{{{
+ 1. item 1
+   1. item 1.1
+   1. item 1.2
+ 1. item 2
+}}}
+
+'''Result:'''
+
+ 1. item 1
+   1. item 1.1
+   1. item 1.2
+ 1. item 2
+
+==== with Roman Numbers ====
+
+'''Markup:'''
+
+{{{
+ I. item 1
+   i. item 1.1
+   i. item 1.2
+ I. item 2
+}}}
+
+'''Result:'''
+
+ I. item 1
+   i. item 1.1
+   i. item 1.2
+ I. item 2
+
+==== with Letters ====
+
+'''Markup:'''
+
+{{{
+ A. item A
+   a. item A. a)
+   a. item A. b)
+ A. item B
+}}}
+
+'''Result:'''
+
+ A. item A
+   a. item A. a)
+   a. item A. b)
+ A. item B
+
+=== Definition Lists ===
+
+'''Markup:'''
+
+{{{
+ term:: definition
+ object::
+ :: description 1
+ :: description 2
+}}}
+
+'''Result:'''
+
+ term:: definition
+ object::
+ :: description 1
+ :: description 2
+
+== Horizontal Rules ==
+
+'''Markup:'''
+
+{{{
+----
+------
+---------
+}}}
+
+'''Result:'''
+
+----
+------
+---------
+
+== Tables ==
+
+'''Markup:'''
+
+{{{
+||'''A'''||'''B'''||'''C'''||
+||1      ||2      ||3      ||
+}}}
+
+'''Result:'''
+
+||'''A'''||'''B'''||'''C'''||
+||1      ||2      ||3      ||
+
+=== Sortable with Headers and Footers ===
+
+Use 3 or more equal characters to separate headers and footers from the table body.  Footers are optional. Adding the moin-sortable table class makes the table sortable on the client side.
+
+'''Markup:'''
+
+{{{
+||<tableclass="moin-sortable">Fruit||Quantity||
+=====
+||Apple||2||
+||Orange||1||
+||Banana||4||
+===
+||Total||7||
+}}}
+
+'''Result:'''
+
+||<tableclass="moin-sortable">Fruit||Quantity||
+=====
+||Apple||2||
+||Orange||1||
+||Banana||4||
+===
+||Total||7||
+
+
+=== Cell Width ===
+
+'''Markup:'''
+
+{{{
+||minimal width ||<99%>maximal width ||
+}}}
+
+'''Result:'''
+
+||minimal width ||<99%>maximal width ||
+
+=== Spanning Rows and Columns  ===
+
+'''Markup:'''
+
+{{{
+||<|2> cell spanning 2 rows ||cell in the 2nd column ||
+||cell in the 2nd column of the 2nd row ||
+||<-2> cell spanning 2 columns ||
+||||use empty cells as a shorthand ||
+}}}
+
+'''Result:'''
+
+||<|2> cell spanning 2 rows ||cell in the 2nd column ||
+||cell in the 2nd column of the 2nd row ||
+||<-2> cell spanning 2 columns ||
+||||use empty cells as a shorthand ||
+
+=== Alignment of Cell Contents ===
+
+'''Markup:'''
+
+{{{
+||<^|3> top (combined) ||<:99%> center (combined) ||<v|3> bottom (combined) ||
+||<)> right ||
+||<(> left ||
+}}}
+
+'''Result:'''
+
+||<^|3> top (combined) ||<:99%> center (combined) ||<v|3> bottom (combined) ||
+||<)> right ||
+||<(> left ||
+
+=== Coloured Table Cells ===
+
+'''Markup:'''
+
+{{{
+||<#0000FF> blue ||<#00FF00> green    ||<#FF0000> red    ||
+||<#00FFFF> cyan ||<#FF00FF> magenta  ||<#FFFF00> yellow ||
+}}}
+
+'''Result:'''
+
+||<#0000FF> blue ||<#00FF00> green    ||<#FF0000> red    ||
+||<#00FFFF> cyan ||<#FF00FF> magenta  ||<#FFFF00> yellow ||
+
+=== HTML-like Options for Tables ===
+
+Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, rowclass, tableclass, style, rowstyle, tablestyle, id, rowid, tableid, rowspan, and colspan.
+
+'''Markup:'''
+
+{{{
+||A ||<rowspan="2"> like <|2> ||
+||<bgcolor="#00FF00"> like <#00FF00> ||
+||<colspan="2"> like <-2>||
+}}}
+
+'''Result:'''
+
+||A ||<rowspan="2"> like <|2> ||
+||<bgcolor="#00FF00"> like <#00FF00> ||
+||<colspan="2"> like <-2>||
+
+== Smileys and Icons ==
+
+'''Markup:'''
+
+{{{
+:-) ;-) /!\ (!)
+}}}
+
+'''Result:'''
+
+:-) ;-) /!\ (!)
+
+== Admonitions ==
+
+Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+
+'''Markup:'''
+
+{{{
+ {{{#!wiki caution
+ '''Don't overuse admonitions'''
+
+ Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+ }}}
+}}}
+
+'''Result:'''
+
+{{{#!wiki caution
+'''Don't overuse admonitions'''
+
+Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+}}}
+
+== Macros ==
+
+Macros are extensions to standard markup that allow developers to add extra features. See [[MoinWikiMacros]] for a list of all macros.
+
+=== FootNotes ===
+
+**Markup:**
+
+{{{
+Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
+}}}
+
+**Result:**
+
+Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
+
+== Media ==
+
+'''Markup:'''
+
+{{{
+{{video.mp4}}
+
+{{audio.mp3}}
+}}}
+
+'''Result:'''
+
+{{video.mp4}}
+
+{{audio.mp3}}
+
+== Comments ==
+
+Logged in users may set User Preferences to display or hide comments, overriding the default set in the wiki configuration.
+
+'''Markup:'''
+
+{{{
+ Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
+
+ {{{#!wiki comment/dashed
+ This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
+
+ Its visibility gets toggled the same way.
+ }}}
+}}}
+
+'''Result:'''
+
+Click on "Comments" within Item Views to toggle the /* comments */ visibility.
+
+{{{#!wiki comment/dashed
+This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
+
+Its visibility gets toggled the same way.
+}}}

@@ -1,0 +1,487 @@
+<article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'>
+<section>
+<title>A docbook document</title>
+<simpara>
+This page shows the different features of our native DocBook support. Features currently not working with moin's Docbook parser are marked with <emphasis role="bold">DBTODO</emphasis>.
+</simpara>
+
+
+
+<section>
+<title>Lists</title>
+
+<section>
+<title>Itemized List</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<itemizedlist>
+  <listitem>
+    <para>Item 1
+    </para>
+  </listitem>
+  <listitem>
+    <para>Item 2
+    </para>
+  </listitem>
+  <listitem>
+    <para> Item 3
+    </para>
+  </listitem>
+</itemizedlist>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<itemizedlist>
+  <listitem>
+    <para>Item 1
+    </para>
+  </listitem>
+  <listitem>
+    <para>Item 2
+    </para>
+  </listitem>
+  <listitem>
+    <para> Item 3
+    </para>
+  </listitem>
+</itemizedlist>
+</section>
+
+
+<section>
+<title>Ordered List</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<orderedlist numeration="lowerroman">
+  <listitem>
+    <para>One</para>
+  </listitem>
+  <listitem>
+    <para>Two</para>
+  </listitem>
+  <listitem>
+    <para>Three</para>
+  </listitem>
+  <listitem>
+    <para>Four</para>
+  </listitem>
+</orderedlist>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<orderedlist numeration="lowerroman">
+  <listitem>
+    <para>One</para>
+  </listitem>
+  <listitem>
+    <para>Two</para>
+  </listitem>
+  <listitem>
+    <para>Three</para>
+  </listitem>
+  <listitem>
+    <para>Four</para>
+  </listitem>
+</orderedlist>
+</section>
+
+
+<section>
+<title>Variable List</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<variablelist><title>Font Filename Extensions</title>
+  <varlistentry>
+    <term><filename>TTF</filename></term>
+    <listitem>
+      <para>TrueType fonts.</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><filename>PFA</filename></term>
+    <term><filename>PFB</filename></term>
+    <listitem>
+      <para>
+        PostScript fonts. <filename>PFA</filename> files are common
+        on <acronym>UNIX</acronym> systems, <filename>PFB</filename>
+        files are more common on Windows systems.
+      </para>
+    </listitem>
+  </varlistentry>
+ </variablelist>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<variablelist><title>Font Filename Extensions</title>
+  <varlistentry>
+    <term><filename>TTF</filename></term>
+    <listitem>
+      <para>TrueType fonts.</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><filename>PFA</filename></term>
+    <term><filename>PFB</filename></term>
+    <listitem>
+      <para>
+        PostScript fonts. <filename>PFA</filename> files are common
+        on <acronym>UNIX</acronym> systems, <filename>PFB</filename>
+        files are more common on Windows systems.
+      </para>
+    </listitem>
+  </varlistentry>
+ </variablelist>
+
+</section>
+
+</section>
+
+
+
+<section>
+<title>Simple text formatting</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<para>
+<emphasis role="bold">This</emphasis> paragraph contains
+<emphasis>some <emphasis>emphasized</emphasis> text</emphasis>
+and a <superscript>super</superscript>script
+and a <subscript>sub</subscript>script.
+</para>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<emphasis role="bold">This</emphasis> paragraph contains
+<emphasis>some <emphasis>emphasized</emphasis> text</emphasis>
+and a <superscript>super</superscript>script
+and a <subscript>sub</subscript>script.
+</para>
+
+</section>
+
+
+
+<section>
+<title>Footnotes</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<para>An annual percentage rate (<abbrev>APR</abbrev>) of 13.9%
+<footnote>
+The prime rate, as published in the Wall Street
+Journal on the first business day of the month,
+plus 7.0%.
+</footnote>
+will be charged on all balances carried forward.
+</para>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>An annual percentage rate (<abbrev>APR</abbrev>) of 13.9%
+<footnote>
+The prime rate, as published in the Wall Street
+Journal on the first business day of the month,
+plus 7.0%.
+</footnote>
+will be charged on all balances carried forward.
+</para>
+
+</section>
+
+
+
+<section>
+<title>Quotes</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<para>This software is provided <quote>as is</quote>, without expressed
+or implied warranty.
+</para>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>This software is provided <quote>as is</quote>, without expressed
+or implied warranty.
+</para>
+
+</section>
+
+
+
+<section>
+<title>Trademarks and Copyrights</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<para><trademark class='registered'>Nutshell Handbook</trademark> is a
+registered trademark of O'Reilly Media, Inc.
+</para><para>
+<trademark class="copyright">2014 Joe Doe</trademark>
+</para><para>
+<trademark class="trade">Foo Bar</trademark> is an unregistered trademark.
+</para><para>
+<trademark class="service">Foo Bar</trademark> is an unregistered servicemark.
+</para>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para><trademark class='registered'>Nutshell Handbook</trademark> is a
+registered trademark of O'Reilly Media, Inc.
+</para><para>
+<trademark class="copyright">2014 Joe Doe</trademark>
+</para><para>
+<trademark class="trade">Foo Bar</trademark> is an unregistered trademark.
+</para><para>
+<trademark class="service">Foo Bar</trademark> is an unregistered servicemark.
+</para>
+
+</section>
+
+
+
+<section>
+<title>Preformatted Data</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<screen><![CDATA[
+<para>
+My  preformatted      data.
+
+Remove blanks from "] ] >" below:
+</para>
+] ] ></screen>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<screen><![CDATA[
+<para>
+My  preformatted      data.
+
+Remove blanks from "] ] >" below:
+</para>
+]]></screen>
+
+</section>
+
+
+
+<section>
+<title>Links</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
+</para>
+
+</section>
+
+
+
+<section>
+<title>Tables</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<table frame='all'>
+  <title>Sample Table</title>
+  <tgroup cols='2' align='left' colsep='1' rowsep='1'>
+    <colspec colname='c1'  colwidth="1*"/>
+    <colspec colname='c2'  colwidth="1*"/>
+    <thead>
+      <row>
+        <entry>a4</entry>
+        <entry>a5</entry>
+      </row>
+    </thead>
+    <tfoot>
+      <row>
+        <entry>f4</entry>
+        <entry>f5</entry>
+      </row>
+    </tfoot>
+    <tbody>
+      <row>
+        <entry>b1</entry>
+        <entry>b2</entry>
+      </row>
+      <row>
+        <entry>d1</entry>
+        <entry>d5</entry>
+      </row>
+    </tbody>
+  </tgroup>
+</table>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<emphasis role="bold">DBTODO:</emphasis> Tables are not working.  Attempts to create a table will cause a traceback and the rendering of the entire document will fail.
+</para>
+
+</section>
+
+
+
+<section>
+<title>Objects</title>
+<para>
+An "inlinemediaobject" may be positioned within a paragraph and aligned to the text top, middle, or bottom
+through use of the align attribute.  A "mediaobject" is a block level element that may
+be positioned to the left, center, or right through use of the align attribute.
+</para>
+
+
+<section>
+<title>Image embedded in a sentence</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<para>
+Here is an image
+<inlinemediaobject>
+  <imageobject>
+    <imagedata format="png" align="middle" fileref="png"/>
+  </imageobject><caption>My Logo</caption>
+</inlinemediaobject>
+embedded in a sentence.
+</para>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+Here is an image
+<inlinemediaobject>
+  <imageobject>
+    <imagedata format="png" align="middle" fileref="png"/>
+  </imageobject><caption>My Logo</caption>
+</inlinemediaobject>
+embedded in a sentence.
+</para>
+
+</section>
+
+
+<section>
+<title>Video with caption</title>
+
+<simpara>
+Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-files-for-html5/. This video has a caption.
+</simpara>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<mediaobject>
+  <videoobject>
+    <videodata fileref="video.mp4"/>
+  </videoobject>
+  <caption>MY VIDEO</caption>
+</mediaobject>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<mediaobject>
+  <videoobject>
+    <videodata fileref="video.mp4"/>
+  </videoobject>
+  <caption>MY VIDEO</caption>
+</mediaobject>
+
+<simpara>
+<emphasis role="bold">DBTODO:</emphasis> Media captions are poorly positioned.
+</simpara>
+
+</section>
+
+
+<section>
+<title>Audio centered</title>
+<simpara>
+Here is a sound, courtesy of http://www.mediacollege.com/audio/tone/download/.
+The align="center" attribute centers the object.
+</simpara>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<mediaobject>
+  <audioobject>
+    <audiodata align="center" fileref="audio.mp3"/>
+  </audioobject>
+</mediaobject>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<mediaobject>
+  <audioobject>
+    <audiodata align="center" fileref="audio.mp3"/>
+  </audioobject>
+</mediaobject>
+
+</section>
+
+
+<section>
+<title>Invalid media format</title>
+<simpara>
+Display textobject when an invalid format is specified.
+</simpara>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<mediaobject>
+  <audioobject><audiodata format="qqq" fileref="audio.mp3"/></audioobject>
+  <textobject>The media format "qqq" is not supported!</textobject>
+</mediaobject>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<mediaobject>
+  <audioobject><audiodata format="qqq" fileref="audio.mp3"/></audioobject>
+  <textobject>The media format "qqq" is not supported!</textobject>
+</mediaobject>
+
+</section>
+
+</section>
+
+</section>
+</article>
