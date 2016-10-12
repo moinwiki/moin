@@ -1,0 +1,26 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "image/jpeg", 
+  "dataid": "fcfb7fe0f5c24abeb34537f6b4b2510c", 
+  "externallinks": [], 
+  "itemid": "ec2e6eaae66c4809bac853772508c525", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1476221773, 
+  "name": [
+    "jpeg", 
+    "jpeg.jpg"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "parentid": "a24ca44662764240926f04085a721034", 
+  "revid": "56556d31a930403396d2cd30830f4ace", 
+  "sha1": "d9325d2239cf82d8459aabf0c73f0cbc6fa4e094", 
+  "size": 16683, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

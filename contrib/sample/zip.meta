@@ -1,0 +1,24 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "application/zip", 
+  "dataid": "31fe017c370e40feac62a9d7ea23ad89", 
+  "externallinks": [], 
+  "itemid": "64002ac8d8614743bff2bc82e96784f9", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1476221817, 
+  "name": [
+    "zip"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "105b9a23f15248a0bd0668455ac541f2", 
+  "sha1": "1780330a7df50fde2e3a41268d59503c03286837", 
+  "size": 8777, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

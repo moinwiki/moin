@@ -1,0 +1,44 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "text/x.moin.wiki;charset=utf-8", 
+  "dataid": "809472d36df04eca97e47db920d55dd1", 
+  "externallinks": [
+    "https://moinmo.in/", 
+    "https://static.moinmo.in/logos/moinmoin.png", 
+    "http://static.moinmo.in/logos/moinmoin.png", 
+    "http://www.xkcd.com/", 
+    "https://moinmo.in", 
+    "file://///server/share/filename%20with%20spaces.txt"
+  ], 
+  "itemid": "0eb80a06571748cd9ca07668681e34de", 
+  "itemlinks": [
+    "MoinWikiMacros", 
+    "MissingPage", 
+    "Home/subitem", 
+    "moin/MissingSubitem", 
+    "Home", 
+    "creole"
+  ], 
+  "itemtransclusions": [
+    "svg", 
+    "audio.mp3", 
+    "jpeg", 
+    "png", 
+    "video.mp4"
+  ], 
+  "itemtype": "default", 
+  "mtime": 1476221783, 
+  "name": [
+    "moin"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "d4537273fa6e42768b4c8e596487d833", 
+  "sha1": "76c76cc35b01170a77a4e95d146e46429bf60096", 
+  "size": 9956, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

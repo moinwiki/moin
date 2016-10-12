@@ -1,0 +1,47 @@
+{
+  "action": "SAVE", 
+  "address": "None", 
+  "comment": "", 
+  "contenttype": "text/x.moin.wiki;charset=utf-8", 
+  "dataid": "5f492e94f9334a509c02c838aa712659", 
+  "externallinks": [], 
+  "itemid": "2eded15e9ede48638c4a7022b243c052", 
+  "itemlinks": [
+    "ШаблонДомашняяСтраница", 
+    "StronaGłówna", 
+    "markdown", 
+    "zip", 
+    "targz", 
+    "svg", 
+    "images", 
+    "video.mp4", 
+    "MoinWikiMacros", 
+    "jpeg", 
+    "mediawiki", 
+    "html", 
+    "docbook", 
+    "rst", 
+    "moin", 
+    "AjudaNaFormatação", 
+    "creole", 
+    "audio.mp3", 
+    "png", 
+    "OtherTextItems"
+  ], 
+  "itemtransclusions": [
+    "Home/subitem"
+  ], 
+  "itemtype": "default", 
+  "mtime": 1476221766, 
+  "name": [
+    "Home"
+  ], 
+  "name_old": [], 
+  "namespace": "", 
+  "revid": "57dd266e615b4a268b732cced247617b", 
+  "sha1": "41ba9489cd56c8b08355d63566b8fe3db7ce7225", 
+  "size": 1800, 
+  "summary": "", 
+  "tags": [], 
+  "wikiname": "MyMoinMoin"
+}

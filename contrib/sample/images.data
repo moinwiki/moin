@@ -1,0 +1,12 @@
+= Images =
+
+== png ==
+This is a png image: {{png}}
+
+== svg ==
+
+This is a svg image: {{svg}}
+
+== jpeg ==
+
+This is a jpeg image: {{jpeg}}

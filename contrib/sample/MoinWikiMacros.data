@@ -1,0 +1,196 @@
+= Moin Wiki Macros =
+
+With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page. 
+
+Features that are not working correctly are marked with **MOINTODO:**
+
+== Four Built-in Macros ==
+
+There are four built-in macros.
+
+=== TableOfContents ===
+
+The number of levels in the table of contents can be limited by passing an integer parameter.
+
+**Markup:**
+
+{{{
+<<TableOfContents(3)>>
+}}}
+
+**Result:**
+<<TableOfContents(3)>>
+See TOC floated to right.
+
+=== FootNotes ===
+
+**Markup:**
+
+{{{
+Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
+
+By default footnotes are placed at the bottom of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter:
+<<FootNote>>
+Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
+}}}
+
+**Result:**
+
+Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
+
+By default footnotes are placed at the bottom of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter:
+<<FootNote>>
+Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
+
+=== BR - Forced Line Break ===
+
+**Markup:**
+
+{{{
+Use a BR macro <<BR>>to force a line break.
+}}}
+
+**Result:**
+
+Use a BR macro <<BR>>to force a line break.
+
+
+
+=== Include ===
+
+**Markup:**
+
+{{{
+Include an image (very similar to transclusion):
+<<Include(png)>>
+Including all items with names beginning with "ma" fails with no visible output:
+<<Include(^ma)>>
+Include a page with a non-ascii name and a heading level 6:
+<<Include(StronaGłówna,My Favorite Page, 6)>>
+< < < < < end of include > > > > >
+}}}
+
+**Result:**
+
+Include an image (very similar to transclusion):
+<<Include(png)>>
+Including all items with names beginning with "ma" fails with no visible output:
+<<Include(^ma)>>
+Include a page with a non-ascii name and a heading level 6:
+<<Include(StronaGłówna,My Favorite Page, 6)>>
+< < < < < end of include > > > > >
+
+**MOINTODO:** Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
+
+**MOINTODO:** Using a regex (^ma) as a pagename fails, no visible output, generates HTML validation errors.
+
+== Extension Macros from MoinMoin/macro/ ==
+
+=== Anchor ===
+Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following **Result** below.
+
+**Markup:**
+
+{{{
+<<Anchor(anchorname)>>
+}}}
+
+**Result:**
+
+<<Anchor(anchorname)>>
+
+
+=== Date ===
+{{{
+<<Date()>>
+<<Date(1434563755)>>
+<<Date(2002-01-23T12:34:56)>>
+Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
+}}}
+
+<<Date()>>
+<<Date(1434563755)>>
+<<Date(2002-01-23T12:34:56)>>
+Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
+
+=== DateTime ===
+{{{
+<<DateTime()>>
+<<DateTime(1434563755)>>
+<<DateTime(2002-01-23T12:34:56)>>
+Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
+}}}
+
+<<DateTime()>>
+<<DateTime(1434563755)>>
+<<DateTime(2002-01-23T12:34:56)>>
+Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
+
+=== GetText ===
+Loads I18N texts. If this browser is set to German/Deutsch the macro output will be: Einstellungen ("Settings" is included in the translation files).
+
+{{{
+<<GetText(Settings)>>
+}}}
+
+<<GetText(Settings)>>
+
+=== GetVal ===
+For GetVal to work, there must be either a ConfigDict or WikiDict defined (see config docs). This example depends upon an item named [[WikiDict]] having specific metadata. See configuration docs for details.
+
+{{{
+<<GetVal(WikiDict,var1)>>
+}}}
+<<GetVal(WikiDict,var1)>>
+
+=== MailTo ===
+The MailTo macro exports different markup when the user is logged in.
+
+{{{
+<<MailTo(user AT example DOT org)>>
+<<MailTo(user AT example DOT org, write me)>>
+
+}}}
+<<MailTo(user AT example DOT org)>>
+<<MailTo(user AT example DOT org, write me)>>
+
+
+=== PagenameList ===
+{{{
+All Pages:
+<<PagenameList()>>
+Pages having letters "ma":
+<<PagenameList(ma, True)>>
+Pages starting with "ma":
+<<PagenameList(ma)>>
+}}}
+All Pages:
+<<PagenameList()>>
+Pages having letters "ma":
+<<PagenameList(ma, True)>>
+Pages starting with "ma":
+<<PagenameList(ma)>>
+
+=== RandomItem ===
+{{{
+One random item:
+<<RandomItem()>>
+Five random items:
+<<RandomItem(5)>>
+}}}
+One random item:
+<<RandomItem()>>
+Five random items:
+<<RandomItem(5)>>
+
+=== Verbatim ===
+{{{
+Verbatim macro Returns `same` __text__ '''as''' entered
+<<Verbatim(Returns `same` __text__ '''as''' entered)>>
+<<Verbatim(<script>alert(1);</script>)>>
+}}}
+Verbatim macro Returns `same` __text__ '''as''' entered
+<<Verbatim(Returns `same` __text__ '''as''' entered)>>
+<<Verbatim(<script>alert(1);</script>)>>
+
+
