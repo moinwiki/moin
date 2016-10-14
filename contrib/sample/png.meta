@@ -1,24 +1,28 @@
 {
   "action": "SAVE", 
-  "address": "None", 
+  "address": "127.0.0.1", 
   "comment": "", 
   "contenttype": "image/png", 
-  "dataid": "7fd9542988504075ae35caf4f50e12de", 
+  "dataid": "54447a0dbfee417bbd8a355b0f098d40", 
   "externallinks": [], 
   "itemid": "4431543520a040c4b3d53fc3e1416565", 
   "itemlinks": [], 
   "itemtransclusions": [], 
   "itemtype": "default", 
-  "mtime": 1476221801, 
+  "mtime": 1476480076, 
   "name": [
     "png"
   ], 
   "name_old": [], 
   "namespace": "", 
-  "revid": "31ffc5721b1b4ccd8bd0a79d19060bc3", 
+  "parentid": "aaa98a874b7c4fa3a55fa2b3c2a6071f", 
+  "revid": "5c4370ed55e944d9b2a039e75cea9fbd", 
   "sha1": "959de9d9fde601bce040c44e3f7b01b17d38f463", 
   "size": 6190, 
   "summary": "", 
-  "tags": [], 
+  "tags": [
+    "image", 
+    "png"
+  ], 
   "wikiname": "MyMoinMoin"
 }

@@ -1,9 +1,9 @@
 {
   "action": "SAVE", 
-  "address": "None", 
+  "address": "127.0.0.1", 
   "comment": "", 
   "contenttype": "text/x-mediawiki;charset=utf-8", 
-  "dataid": "05acfcccb6e14de7a6b87f5d38146437", 
+  "dataid": "7057cccefa1c4d9c8cda39eb707551f4", 
   "externallinks": [
     "http://moinmo.in", 
     "http://www.mediawiki.org/wiki/Help:Tables", 
@@ -21,16 +21,21 @@
   ], 
   "itemtransclusions": [], 
   "itemtype": "default", 
-  "mtime": 1476221778, 
+  "mtime": 1476479749, 
   "name": [
     "mediawiki"
   ], 
   "name_old": [], 
   "namespace": "", 
-  "revid": "221db485432744fc9d02379d361bd0c4", 
+  "parentid": "5b5147f5522045f4b3e0fc9a281e9e95", 
+  "revid": "7c43e53faecc4e418fc2c877897770e8", 
   "sha1": "3c8a072104d5eaa375bc7e49c210155267fc113b", 
   "size": 18163, 
   "summary": "", 
-  "tags": [], 
+  "tags": [
+    "parser", 
+    "demo", 
+    "mediwiki"
+  ], 
   "wikiname": "MyMoinMoin"
 }
