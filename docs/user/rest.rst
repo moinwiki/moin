@@ -2,19 +2,36 @@
 ReST (ReStructured Text) Markup
 ===============================
 
-Features currently not working with moin's ReST parser are marked with **RSTTODO**.
+..
+ This document is duplicated within Moin2 as `/docs/user/rest.rst` and
+ `contrib/sample/rst.data`. Please update both.
+
+Depending upon your source, this document may have been created by
+the Moin2 ReST parser (Docutils) or the Sphinx ReST parser. These parsers
+have slight differences in the rendering of ReST markup, some of those differences
+are noted below.
+
+The purpose of this document is to define the features of the Moin2 ReST (Docutils)
+parser. The Sphinx extensions to ReST markup that are not supported
+by the Docutils parser are not included here.
+
+See the the Docutils Restructured Text documentation for more information.
 
 Headings
 ========
 
 Rather than imposing a fixed number and order of section title adornment styles,
 the order enforced will be the order as encountered.
-The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle,
-the third will be a subsubtitle, and so on.
+The first style encountered will be an outermost title (like HTML H1), the
+second style will be a subtitle, the third will be a subsubtitle, and so on.
 
-The underline below the title must at least be equal to the length of the title itself.  Failure to comply results in messages on the server log. Skipping a heading (e.g. putting an H5 heading directly under an H3) results in a rendering error and an error message will be displayed instead of the expected page.
+The underline below the title must at least be equal to the length of the title itself.
+Failure to comply results in messages on the server log. Skipping a heading
+(e.g. putting an H5 heading directly under an H3) results in a rendering error and an
+error message will be displayed instead of the expected page.
 
-If any markup appears before the first heading on a page, then the first heading will be an H2 and all subsequent headings will be demoted by 1 level.
+If any markup appears before the first heading on a page, then the first heading
+will be an H2 and all subsequent headings will be demoted by 1 level.
 
 **Markup**: ::
 
@@ -84,7 +101,7 @@ The following is a table of inline markup that can be used to format text in Moi
 +----------------------------------------------+---------------------------------------+
 | ````Inline Literals````                      | ``Inline Literals``                   |
 +----------------------------------------------+---------------------------------------+
-| ````***nested markup is not supported***```` | ***nested markup is not supported***  |
+| ``***nested markup is not supported***``     | ***nested markup is not supported***  |
 +----------------------------------------------+---------------------------------------+
 
 Hyperlinks
@@ -100,66 +117,97 @@ External Links
 +-----------------------------------------------------------------+--------------------------------------------------------------+
 | ``External hyperlinks, like `Python <http://www.python.org/>`_``| External hyperlinks, like `Python <http://www.python.org/>`_ |
 +-----------------------------------------------------------------+--------------------------------------------------------------+
-| ``External hyperlinks, like Python_.``                          | External hyperlinks, like Python_.                           |
+| ``External hyperlinks, like Moin_.``                            | External hyperlinks, like Moin_.                             |
 |                                                                 |                                                              |
-| ``.. _Python: http://www.python.org/``                          | .. _Python: http://www.python.org/                           |
+| ``.. _Moin: http://moinmo.in/``                                 | .. _Moin: http://moinmo.in/                                  |
 +-----------------------------------------------------------------+--------------------------------------------------------------+
-
-**Note** A blank is required before the link definition to make the last syntax work correctly.
 
 Internal Links
 --------------
 
 **Markup**: ::
 
- Internal crossreferences, like example_.
+ To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page
+ is not a wiki page, then the Home links are not valid.)
+
+ To reference an anchor within this item, first create an invisible anchor:
 
  .. _example:
 
- This is an example crossreference target.
+ Then reference the anchor, like this: example_
+
+ To link to section headings do Headings_. If a section title has embeded blanks, you must
+ enclose the heading with backtic characters: `Internal Links`_.
 
 **Result**:
 
- Internal crossreferences, like example_.
+To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page is not
+a wiki page, then the Home links are not valid.)
 
- .. _example:
+To reference an anchor within this item, first create an invisible anchor:
 
- This is an example crossreference target.
+.. _example:
+
+Then reference the anchor, like this: example_
+
+To link to section headings do Headings_. If a section title has embeded blanks, you must enclose the
+heading with backtic characters: `Internal Links`_.
 
 **Notes**
  - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
- - **RSTTODO** The above syntax does not work in moin right now.
 
 Images
 ======
 
+Images may be positioned by using the align parameter with a value of left, center, or right. There is no facility to embed an image within a paragraph. There must be a blank line before and after the image declaration. Images are not enclosed within a block level element so several images declared successively without any positioning will display in a horizontal row.
+
 **Markup**: ::
 
- .. image:: png
-   :height: 100
-   :width: 200
-   :scale: 50%
-   :alt: text
-   :align: right
+    Before text.
+
+    .. image:: png
+       :height: 100
+       :width: 200
+       :scale: 50
+       :alt: alternate text png
+       :align: center
+
+    After text.
 
 **Result**:
 
- .. image:: png
+Before text.
+
+.. image:: png
+   :height: 100
+   :width: 200
+   :scale: 50
+   :alt: alternate text png
+   :align: center
+
+After text.
+
+**Note** The Sphinx parser does not have an image named "png" so the alternate text
+will be displayed.
 
 Blockquotes and Indentations
 ============================
 
-Every additional space before the first word in a line will add an indent before the line.
+To create a blockquote, indent all lines of a paragraph or paragraphs with an
+equal number of spaces. To add an attribution, begin the last indented paragraph
+with "-- ".
 
 **Markup**: ::
 
- indented text
-  text indented for the 2nd level
+ Text introducing a blockquote:
+
+  If you chase two rabbits, you will lose them both.
 
 **Result**:
 
- indented text
-  text indented for the 2nd level
+Text introducing a blockquote:
+
+  If you chase two rabbits, you will lose them both.
 
 **Markup**: ::
 
@@ -171,20 +219,11 @@ Every additional space before the first word in a line will add an indent before
 
 **Result**:
 
-  This is an ordinary paragraph, introducing a block quote.
+This is an ordinary paragraph, introducing a block quote.
 
     "It is my business to know things.  That is my trade."
 
     -- Sherlock Holmes
-
-**Notes**
- - A block quote may end with an attribution: a text block beginning with "--", "---",
-   or a true em-dash, flush left within the block quote.
- - **RSTTODO** the attribution does not work in moin2.
- - **RSTTODO** indented text should not be displayed the same as term-definition, needs CSS fix
-
-   - term-definition: <dl><dt>term 1</dt><dd><p>Definition 1.</p>
-   - indented text: <dl><dd><dl><dt>indented text</dt><dd><p>text indented for the 2nd level</p>
 
 Lists
 =====
@@ -249,7 +288,7 @@ Ordered Lists
    (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
    enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
- - **RSTTODO**: Formatting types (1) and 1) do not render correctly in moin2.
+ - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
 
 Definition Lists
 ================
@@ -295,9 +334,6 @@ Field lists are part of an extension syntax for directives usually intended for 
 :Version: 1
 :Authors: Joe Doe
 
-**Notes**:
- - **RSTTODO**: This could use some CSS changes to enhance the format.
-
 Option lists
 ============
 
@@ -314,9 +350,6 @@ Option lists are intended to document Unix or DOS command line options.
 -a      command definition
 --a     another command definition
 /S      dos command definition
-
-**Notes**:
- - **RSTTODO**: The above is rendered in a <dl><dd><p> sequence, but there is a lack of CSS to format it.
 
 Transitions
 ===========
@@ -344,11 +377,11 @@ Text
 
 Text
 
-
 Backslash Escapes
 =================
 
-Sometimes there is a need to use special characters as literal characters, but ReST's syntax gets in the way. Use the backslash character as an escape.
+Sometimes there is a need to use special characters as literal characters,
+but ReST's syntax gets in the way. Use the backslash character as an escape.
 
 **Markup**: ::
 
@@ -370,6 +403,9 @@ Sometimes there is a need to use special characters as literal characters, but R
 
 333\. is a float, 333 is an integer.
 
+**Notes**:
+ - The Moin2 ReST parser changes the 333. to a 1. and inserts an error message into the document.
+ - The Sphinx ReST parser begins an ordered list with 333. The visual effect is a dedented line.
 
 Tables
 ======
@@ -416,8 +452,6 @@ Easy markup for tables consisting of two rows. This syntax can have no more than
   1       2       3
  ======= ======= =======
 
-**Note** **RSTTODO** the foo-bar syntax to group header does not work.
-
 Grid Tables
 -----------
 
@@ -429,7 +463,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | A              |               |
  +----------------+ D             |
  | B              |               |
- +----------------+---------------+
+ +================+===============+
  | C                              |
  +--------------------------------+
 
@@ -439,13 +473,12 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | A              |               |
  +----------------+ D             |
  | B              |               |
- +----------------+---------------+
+ +================+===============+
  | C                              |
  +--------------------------------+
 
-**Note** **RSTTODO** C does not extend fully up to the end of D.
-
-Grid table column widths can be expanded by adding spaces.
+One difference between the Sphinx and Moin ReST parsers is demonstrated below.
+With the Spinx parser, grid table column widths can be expanded by adding spaces.
 
 **Markup**: ::
 
@@ -459,38 +492,40 @@ Grid table column widths can be expanded by adding spaces.
  | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-**Note** **RSTTODO** The moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%"> HTML markup. Tables will always be of minimal width (unless there is CSS styling to set tables larger).
+**Note**
+The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+HTML markup added by the Sphinx parser (the width attribute generates an HTML
+validation error), nor does it use Javascript to adjust the width of tables.
+Under Moin2, tables and table cells will be of minimal width
+(unless there is CSS styling to set tables larger).
 
 Admonitions
 ===========
 
-Admonitions are used as a caution/notification block.
+Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+
+The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
 
 **Markup**: ::
 
- .. caution:: Caution!
- .. danger:: Danger!
- .. error:: Error!
+    .. caution:: Be careful!
+    .. danger:: Watch out!
+    .. note:: Phone home.
 
- .. note:: This is a paragraph
- .. admonition:: By the way
 
 **Result**:
 
- .. caution:: Caution!
- .. danger:: Danger!
- .. error:: Error!
-
- .. note:: This is a paragraph
- .. admonition:: By the way
-
-**Notes**:
- - **RSTTODO**: Admonitions are not working. Generates: <div class="None"> and <p style="">
+.. caution:: Be careful!
+.. danger:: Watch out!
+.. note:: Phone home.
 
 Comments
 ========
 
-Comments are not shown on the page but depending on the output formatter they might be included as HTML comments (``<!-- -->``).
+Comments are not shown on the page. Some parsers may create HTML comments
+(``<!-- -->``). The Sphinx parser suppresses comments in the HTML output.
+Within the Moin2 wiki, comments may be made visible/invisible by clicking the
+Comments link within item views.
 
 **Markup**: ::
 
@@ -515,8 +550,6 @@ Comments are not shown on the page but depending on the output formatter they mi
   this:: too!
  ..
   |even| this:: !
-
-**Note** **RSTTODO** comment markup does not work in moin2.
 
 Literals Blocks
 ===============
@@ -526,7 +559,11 @@ A minimum (1) indentation is required for the text block to be recognized as a l
 
 **Markup**: ::
 
- Paragraph with a space between preceding two colons ::
+ Paragraph with a space before two colons ::
+
+  Literal block
+
+ Paragraph with no space before two colons::
 
   Literal block
 
@@ -535,14 +572,6 @@ A minimum (1) indentation is required for the text block to be recognized as a l
  Paragraph with a space between preceding two colons ::
 
   Literal block
-
-**Markup**: ::
-
- Paragraph with no space between text and two colons::
-
-  Literal block
-
-**Result**:
 
  Paragraph with no space between text and two colons::
 

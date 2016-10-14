@@ -2,19 +2,36 @@
 ReST (ReStructured Text) Markup
 ===============================
 
-Features currently not working with moin's ReST parser are marked with **RSTTODO**.
+..
+ This document is duplicated within Moin2 as `/docs/user/rest.rst` and
+ `contrib/sample/rst.data`. Please update both.
+
+Depending upon your source, this document may have been created by
+the Moin2 ReST parser (Docutils) or the Sphinx ReST parser. These parsers
+have slight differences in the rendering of ReST markup, some of those differences
+are noted below.
+
+The purpose of this document is to define the features of the Moin2 ReST (Docutils)
+parser. The Sphinx extensions to ReST markup that are not supported
+by the Docutils parser are not included here.
+
+See the the Docutils Restructured Text documentation for more information.
 
 Headings
 ========
 
-Rather than imposing a fixed number and order of section title adornment styles, 
+Rather than imposing a fixed number and order of section title adornment styles,
 the order enforced will be the order as encountered.
-The first style encountered will be an outermost title (like HTML H1), the second style will be a subtitle, 
-the third will be a subsubtitle, and so on.
+The first style encountered will be an outermost title (like HTML H1), the
+second style will be a subtitle, the third will be a subsubtitle, and so on.
 
-The underline below the title must at least be equal to the length of the title itself.  Failure to comply results in messages on the server log. Skipping a heading (e.g. putting an H5 heading directly under an H3) results in a rendering error and an error message will be displayed instead of the expected page.
+The underline below the title must at least be equal to the length of the title itself.
+Failure to comply results in messages on the server log. Skipping a heading
+(e.g. putting an H5 heading directly under an H3) results in a rendering error and an
+error message will be displayed instead of the expected page.
 
-If any markup appears before the first heading on a page, then the first heading will be an H2 and all subsequent headings will be demoted by 1 level.
+If any markup appears before the first heading on a page, then the first heading
+will be an H2 and all subsequent headings will be demoted by 1 level.
 
 **Markup**: ::
 
@@ -105,38 +122,39 @@ External Links
 | ``.. _Moin: http://moinmo.in/``                                 | .. _Moin: http://moinmo.in/                                  |
 +-----------------------------------------------------------------+--------------------------------------------------------------+
 
-**Note** A blank is required before the link definition to make the last syntax work correctly. 
-
 Internal Links
 --------------
 
 **Markup**: ::
 
- To reference another item with this wiki, do http:Home or `Home <http:Home>`_.
+ To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page
+ is not a wiki page, then the Home links are not valid.)
 
  To reference an anchor within this item, first create an invisible anchor:
- 
+
  .. _example:
 
  Then reference the anchor, like this: example_
 
- To link to section headings do Headings_ or Internal_Links_.
+ To link to section headings do Headings_. If a section title has embeded blanks, you must
+ enclose the heading with backtic characters: `Internal Links`_.
 
 **Result**:
 
-To reference another item with this wiki, do http:Home or `Home <http:Home>`_.
+To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page is not
+a wiki page, then the Home links are not valid.)
 
 To reference an anchor within this item, first create an invisible anchor:
- 
+
 .. _example:
 
 Then reference the anchor, like this: example_
 
-To link to section headings do Headings_ or Internal_Links_.
- 
+To link to section headings do Headings_. If a section title has embeded blanks, you must enclose the
+heading with backtic characters: `Internal Links`_.
+
 **Notes**
  - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
- - **RSTTODO** The example anchor is not created, the links to example and headings are missing the leading #, Internal_Links is not recognized as a link.
 
 Images
 ======
@@ -168,21 +186,28 @@ Before text.
    :align: center
 
 After text.
- 
+
+**Note** The Sphinx parser does not have an image named "png" so the alternate text
+will be displayed.
+
 Blockquotes and Indentations
 ============================
 
-Every additional space before the first word in a line will add an indent before the line.
+To create a blockquote, indent all lines of a paragraph or paragraphs with an
+equal number of spaces. To add an attribution, begin the last indented paragraph
+with "-- ".
 
 **Markup**: ::
 
- indented text
-  text indented for the 2nd level
+ Text introducing a blockquote:
+
+  If you chase two rabbits, you will lose them both.
 
 **Result**:
 
- indented text
-  text indented for the 2nd level
+Text introducing a blockquote:
+
+  If you chase two rabbits, you will lose them both.
 
 **Markup**: ::
 
@@ -194,20 +219,11 @@ Every additional space before the first word in a line will add an indent before
 
 **Result**:
 
-  This is an ordinary paragraph, introducing a block quote.
+This is an ordinary paragraph, introducing a block quote.
 
     "It is my business to know things.  That is my trade."
 
     -- Sherlock Holmes
-
-**Notes**
- - A block quote may end with an attribution: a text block beginning with "--", "---", 
-   or a true em-dash, flush left within the block quote.
- - **RSTTODO** the attribution does not work in moin2.
- - **RSTTODO** indented text should not be displayed the same as term-definition, needs CSS fix
-
-   - term-definition: <dl><dt>term 1</dt><dd><p>Definition 1.</p>
-   - indented text: <dl><dd><dl><dt>indented text</dt><dd><p>text indented for the 2nd level</p>
 
 Lists
 =====
@@ -245,34 +261,34 @@ Ordered Lists
 **Markup**: ::
 
  1. item 1
- 
+
     (A) item 1.1
     (#) item 1.2
 
         i) item 1.2.1
         #) item 1.2.2
-   
+
  #. item 2
 
 **Result**:
 
  1. item 1
- 
+
     (A) item 1.1
     (#) item 1.2
 
         i) item 1.2.1
         #) item 1.2.2
-   
+
  #. item 2
-   
+
 **Notes**:
  - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
    auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
    (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
    enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
- - **RSTTODO**: Formatting types (1) and 1) do not render correctly in moin2.
+ - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
 
 Definition Lists
 ================
@@ -301,8 +317,6 @@ term 2 : classifier
 term 3 : classifier one : classifier two
  Definition 3.
 
- - **RSTTODO**: Definition list classifiers are not working, they are ignored in html_out.py.
-
 Field Lists
 ===========
 
@@ -320,13 +334,10 @@ Field lists are part of an extension syntax for directives usually intended for 
 :Version: 1
 :Authors: Joe Doe
 
-**Notes**:
- - **RSTTODO**: This could use some CSS changes to enhance the format.
-
 Option lists
 ============
 
-Option lists are intended to document Unix or DOS command line options. 
+Option lists are intended to document Unix or DOS command line options.
 
 **Markup**: ::
 
@@ -340,13 +351,37 @@ Option lists are intended to document Unix or DOS command line options.
 --a     another command definition
 /S      dos command definition
 
-**Notes**:
- - **RSTTODO**: The above is rendered incorrectly.  The commands are not inclosed within any tag, the definitions are enclosed in P tags making styling impossible.
+Transitions
+===========
+
+Transitions, or horizontal rules, separate other body elements. A transition should
+not begin or end a section or document, nor should two transitions be immediately
+adjacent. The syntax for a transition marker is a horizontal line of 4 or more
+repeated punctuation characters. The syntax is the same as section title
+underlines without title text. Transition markers require blank lines before and after.
+
+**Markup**: ::
+
+    Text
+
+    ----
+
+    Text
+
+
+**Result**:
+
+Text
+
+----
+
+Text
 
 Backslash Escapes
 =================
 
-Sometimes there is a need to use special characters as literal characters, but ReST's syntax gets in the way. Use the backslash character as an escape.
+Sometimes there is a need to use special characters as literal characters,
+but ReST's syntax gets in the way. Use the backslash character as an escape.
 
 **Markup**: ::
 
@@ -369,9 +404,9 @@ Sometimes there is a need to use special characters as literal characters, but R
 333\. is a float, 333 is an integer.
 
 **Notes**:
- - The ReST parser changed the 333. to a 1. above and inserted an error message into the document.
+ - The Moin2 ReST parser changes the 333. to a 1. and inserts an error message into the document.
+ - The Sphinx ReST parser begins an ordered list with 333. The visual effect is a dedented line.
 
-  
 Tables
 ======
 
@@ -383,42 +418,40 @@ Easy markup for tables consisting of two rows. This syntax can have no more than
 **Markup**: ::
 
  ======= ======= =======
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 **Result**:
 
  ======= ======= =======
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 
 **Markup**: ::
 
  ======= ======= =======
        foo         Bar
  --------------- -------
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
+
 **Result**:
 
  ======= ======= =======
        foo         Bar
  --------------- -------
-  A       B       C     
+  A       B       C
  ======= ======= =======
-  1       2       3     
+  1       2       3
  ======= ======= =======
- 
-**Note** **RSTTODO** the foo-bar syntax to group headers does not work.
- 
+
 Grid Tables
 -----------
 
@@ -430,21 +463,41 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | A              |               |
  +----------------+ D             |
  | B              |               |
- +----------------+---------------+
+ +================+===============+
  | C                              |
  +--------------------------------+
- 
+
 **Result**:
 
  +----------------+---------------+
  | A              |               |
  +----------------+ D             |
  | B              |               |
- +----------------+---------------+
+ +================+===============+
  | C                              |
  +--------------------------------+
- 
-**Note** **RSTTODO** C does not extend fully up to the end of D.
+
+One difference between the Sphinx and Moin ReST parsers is demonstrated below.
+With the Spinx parser, grid table column widths can be expanded by adding spaces.
+
+**Markup**: ::
+
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+**Result**:
+
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+ | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
+ +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+**Note**
+The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+HTML markup added by the Sphinx parser (the width attribute generates an HTML
+validation error), nor does it use Javascript to adjust the width of tables.
+Under Moin2, tables and table cells will be of minimal width
+(unless there is CSS styling to set tables larger).
 
 Admonitions
 ===========
@@ -456,24 +509,26 @@ The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
 **Markup**: ::
 
     .. caution:: Be careful!
-    .. danger:: Watch out! 
+    .. danger:: Watch out!
     .. note:: Phone home.
 
- 
+
 **Result**:
 
 .. caution:: Be careful!
-.. danger:: Watch out! 
+.. danger:: Watch out!
 .. note:: Phone home.
-
 
 Comments
 ========
 
-Comments are not shown on the page but depending on the output formatter they might be included as HTML comments (``<!-- -->``).
+Comments are not shown on the page. Some parsers may create HTML comments
+(``<!-- -->``). The Sphinx parser suppresses comments in the HTML output.
+Within the Moin2 wiki, comments may be made visible/invisible by clicking the
+Comments link within item views.
 
 **Markup**: ::
- 
+
  .. This is a comment
  ..
   _so: is this!
@@ -483,9 +538,9 @@ Comments are not shown on the page but depending on the output formatter they mi
   this:: too!
  ..
   |even| this:: !
- 
+
 **Result**:
- 
+
  .. This is a comment
  ..
   _so: is this!
@@ -495,107 +550,29 @@ Comments are not shown on the page but depending on the output formatter they mi
   this:: too!
  ..
   |even| this:: !
-  
-**Note** **RSTTODO** comment markup does not work in moin2.
 
-Digraphs
-========
-
-There is a general problem caused by the difference between the ReST feature set in Sphinx and the feature set in Python Docutils. For example, if a digraph is copied from admin/configure.rst:
-
-**Markup**: ::
-
-    .. digraph:: acl_order
-
-       rankdir=LR;
-       "before" -> "item acl from metadata (if specified)" -> "after";
-       "before" -> "default (otherwise)"                   -> "after";
-
-**Result**:
-
-.. digraph:: acl_order
-
-   rankdir=LR;
-   "before" -> "item acl from metadata (if specified)" -> "after";
-   "before" -> "default (otherwise)"                   -> "after";
-
-**Notes**:
- - **RSTTODO**: Digraphs do not work in moin2. Two errors are displayed instead of the desired graphics.
- 
 Literals Blocks
 ===============
 
-Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block. 
+Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**: ::
 
- Paragraph with a space between preceding two colons ::
+ Paragraph with a space before two colons ::
 
   Literal block
- 
+
+ Paragraph with no space before two colons::
+
+  Literal block
+
 **Result**:
 
  Paragraph with a space between preceding two colons ::
 
   Literal block
-  
-**Markup**: ::
 
  Paragraph with no space between text and two colons::
 
   Literal block
- 
-**Result**:
-
- Paragraph with no space between text and two colons::
-
-  Literal block
-
-HTML Validation
-===============
-
-**RSTTODO**: This page generates numerous HTML validation errors::
-
-        Result: 33 errors / 5 warnings
-
-        Info: W3c Online Validation
-
-        line 309 column 220 - Error: Bad value http:Home for attribute href on element a: Expected a slash ("/").
-        line 309 column 276 - Error: Bad value http:Home for attribute href on element a: Expected a slash ("/").
-        line 319 column 95 - Error: Element dl is missing a required child element.
-        line 323 column 83 - Error: Element dl is missing a required child element.
-        line 323 column 173 - Error: Element dl is missing a required child element.
-        line 332 column 71 - Error: Element dl is missing a required child element.
-        line 332 column 168 - Error: Element dl is missing a required child element.
-        line 332 column 227 - Error: Element dl is missing a required child element.
-        line 340 column 72 - Error: Element dl is missing a required child element.
-        line 352 column 94 - Error: Stray start tag tr.
-        line 352 column 98 - Error: Stray start tag td.
-        line 352 column 125 - Error: Stray end tag td.
-        line 352 column 129 - Error: Stray start tag td.
-        line 352 column 151 - Error: Stray end tag td.
-        line 352 column 156 - Error: Stray end tag tr.
-        line 352 column 178 - Error: Stray start tag tr.
-        line 352 column 182 - Error: Stray start tag td.
-        line 352 column 212 - Error: Stray end tag td.
-        line 352 column 216 - Error: Stray start tag td.
-        line 352 column 229 - Error: Stray end tag td.
-        line 352 column 234 - Error: Stray end tag tr.
-        line 352 column 256 - Error: Stray start tag tr.
-        line 352 column 260 - Error: Stray start tag td.
-        line 352 column 290 - Error: Stray end tag td.
-        line 352 column 294 - Error: Stray start tag td.
-        line 352 column 313 - Error: Stray end tag td.
-        line 352 column 318 - Error: Stray end tag tr.
-        line 364 column 86 - Error: Element dl is missing a required child element.
-        line 370 column 86 - Error: Element dl is missing a required child element.
-        line 370 column 243 - Warning: A table row was 3 columns wide and exceeded the column count established by the first row (2).
-        line 370 column 336 - Warning: A table row was 3 columns wide and exceeded the column count established by the first row (2).
-        line 376 column 97 - Error: Element dl is missing a required child element.
-        line 376 column 290 - Warning: A table row was 1 columns wide, which is less than the column count established by the first row (2).
-        line 386 column 79 - Error: Element dl is missing a required child element.
-        line 399 column 77 - Error: Element dl is missing a required child element.
-        line 401 column 77 - Error: Element dl is missing a required child element.
-
-
