@@ -674,7 +674,13 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_tgroup(self, node):
-        # TODO: Color style of tbody
+        """
+        The tgroup node is presented as the parent of thead and tbody. These should be siblings.
+        Other children are colspec which have a colwidth attribute. Using these numbers to specify
+        a width on the col element similar to Sphinx results in an HTML validation error.
+        There is no markup to specify styling such as background color. Best result is to
+        discard this node.
+        """
         pass
 
     def depart_tgroup(self, node):
