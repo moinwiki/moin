@@ -111,6 +111,7 @@ class Converter(ConverterMacro):
             (?P<macro_name> \w+)
             (
                 \(
+                (?!.*>>.*>>)
                 (?P<macro_args> .*?)
                 \)
             )?

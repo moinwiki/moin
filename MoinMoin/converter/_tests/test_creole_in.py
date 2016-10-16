@@ -173,6 +173,8 @@ class TestConverter(object):
                 '<page><body><p>Text<line-break />Text</p></body></page>'),
             (u'<<Macro>>',
                 '<page><body><part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /></body></page>'),
+            (u'<<Macro>><<Macro>>',
+                '<page><body><p><inline-part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /><inline-part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /></p></body></page>'),
             (u'<<Macro(arg)>>',
                 '<page><body><part alt="&lt;&lt;Macro(arg)&gt;&gt;" content-type="x-moin/macro;name=Macro"><arguments><argument>arg</argument></arguments></part></body></page>'),
             (u' <<Macro>> ',
