@@ -344,7 +344,6 @@ class Commands(object):
         print 'Creating a new wiki populated with sample data...'
         make_wiki(command)
 
-
     def cmd_sample(self, *args):
         """create wiki and load sample data"""
         # load items with non-ASCII names from a serialized backup
