@@ -4,7 +4,7 @@ To add an improved item to the sample wiki:
   * in a console window, activate the Python environment
     * Unix: . activate
     * Windows: activate
-  * Run the following command, replacing Home with the target item name
+  * Run the following command, replacing 3 instances of 'Home' with the target item name
       moin item-get --name Home --meta contrib/sample/Home.meta --data contrib/sample/Home.data
   * Review the changes, do code review, commit, pull request, or push (whatever is appropriate)
 
