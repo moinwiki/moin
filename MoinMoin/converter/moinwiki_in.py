@@ -199,21 +199,12 @@ class Converter(ConverterMacro):
                 \)
             )?
             \s*
-            (
-                [|]
-                \s*
-                (?P<macro_text> .+? )
-                \s*
-            )?
             >>
         )
         \s*
         $
     """
 
-    # TODO: remove macro_text? see above, inline_macro_repl, and similar code in creole_in.py
-    # Appears to be an artifact of a never implemented feature in moin 1.x: /parser/_creole.py
-    # Intended usage: <<Include(MissingPage|hey, MissingPage is missing!)>>
     def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=u''):
         """Handles macros using the placeholder syntax."""
 
@@ -774,12 +765,6 @@ class Converter(ConverterMacro):
                 \)
             )?
             \s*
-            (
-                [|]
-                \s*
-                (?P<macro_text> .+? )
-                \s*
-            )?
             >>
         )
     """
