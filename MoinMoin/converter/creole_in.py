@@ -116,19 +116,13 @@ class Converter(ConverterMacro):
                 \)
             )?
             \s*
-            (
-                [|]
-                \s*
-                (?P<macro_text> .+?)
-                \s*
-            )?
             >>
         )
         \s*
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None, macro_text=None):
+    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=None):
         """Handles macros using the placeholder syntax."""
         stack.clear()
         if macro_args:
@@ -391,17 +385,11 @@ class Converter(ConverterMacro):
                 \)
             )?
             \s*
-            (
-                [|]
-                \s*
-                (?P<macro_text> .+?)
-                \s*
-            )?
             >>
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name, macro_args=None, macro_text=None):
+    def inline_macro_repl(self, stack, macro, macro_name, macro_args=None):
         """Handles macros using the placeholder syntax."""
         if macro_args:
             macro_args = parse_arguments(macro_args, parse_re=None)
