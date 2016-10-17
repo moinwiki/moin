@@ -5,10 +5,11 @@
 """
 make.py provides a menu of commands frequently used by moin2 developers and desktop wiki users.
 
-    - wraps a few commonly used moin commands, do "moin --help" for other alternatives
+    - wraps a few commonly used moin commands, do "moin --help" for infrequently used commands
     - adds default file names for selected moin commands (backup, restore, ...)
     - creates log files for functions with large output, extracts success/failure messages
     - displays error messages if user tries to run commands out of sequence
+    - activates the virtual env in a subprocess (no need for user to do ". activate" or "activate")
 
 usage (to display a menu of commands):
 
@@ -26,6 +27,12 @@ Executing m.bat or ./m will run make.py. The name of the python executable is wi
 script.  The location of the virtual env is within the activate symlink or activate.bat.
 Depending upon the command to be executed, some mix of the python executable
 or activate will be used to construct a command string to pass to a subprocess call.
+
+One possible command is "./m quickinstall" which the user may use to occasionally
+update the virtual env with newly released supporting software. This same code is
+used by quickinstall.py to run itself in a subprocess: hundreds of messages are written
+to a file and the few important success/failure messages are extracted and written
+to the terminal window.
 """
 
 import os

@@ -136,20 +136,20 @@ Successfully created or updated venv at {0}
 
 if __name__ == '__main__':
     if os.path.isfile('m') or os.path.isfile('m.bat'):
-        # create the virtual env
+        # create the virtual env directory and fill it with moin2 requirements
         logging.basicConfig(level=logging.INFO)
-
         parser = argparse.ArgumentParser()
         parser.add_argument('venv', metavar='VENV', nargs='?', help='location of v(irtual)env')
         parser.add_argument('--download-cache', dest='download_cache', help='location of pip download cache')
         args = parser.parse_args()
-
         QuickInstall(os.path.dirname(os.path.realpath(sys.argv[0])), venv=args.venv, download_cache=args.download_cache)()
     else:
-        # run this same script (quickinstall.py) again to create the virtual env
-        create_m()  # create file so above IF will be true next time around
-        # Use the make.py subprocess so user will see a few success/failure messages instead of ~500 info messages.
+        # user is running "python quickinstall.py" after fresh clone
+        create_m()  # create "m" or "m.bat" file so above IF will be true next time around
+        # run the cmd_quickinstall code in make.py so user will see a few success/failure messages instead of ~500 info messages
         commands = Commands()
-        choice = getattr(commands, 'cmd_quickinstall')
-        choice(*sys.argv[1:])  # <override-path-to-venv> --download_cache <override-path-to-cache>
+        command = getattr(commands, 'cmd_quickinstall')
+        # run this same script (quickinstall.py) again in a subprocess to create the virtual env
+        command(*sys.argv[1:])  # pass args user may have entered: <override-path-to-venv> --download_cache <override-path-to-cache>
+        # a few success/failure messages will have printed on users terminal, suggest next step
         print '\n> > > Type "%s" for menu < < <' % M
