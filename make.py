@@ -468,19 +468,11 @@ class Commands(object):
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
-        # Note: we use / below within file paths; this works in Windows XP, 2000, 7, 8
+        # Note: we use / below within file paths; this works in Windows XP, 2000, 7, 8, 10
         bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
         pygments_loc = get_pygments_data_location().strip() + '/css'
         modernized_loc = 'MoinMoin/themes/modernized/static/css/stylus'
         basic_loc = 'MoinMoin/themes/basic/static/custom-less'
-
-        print 'Running lessc to create normalize.css for modernized theme...'
-        command = 'lessc {0}/normalize.less > {1}/normalize.css'.format(bootstrap_loc, modernized_loc)
-        result = subprocess.call(command, shell=True)
-        if result == 0:
-            print 'Success: normalize.css created for modernized theme.'
-        else:
-            print 'Error: creation of normalize.css failed, see error messages above.'
 
         print 'Running Stylus to update Modernized theme CSS files...'
         command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format(modernized_loc, SEP, pygments_loc)
