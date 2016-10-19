@@ -15,33 +15,26 @@
 {% block layout %}
 
     <div id="moin-main-wrapper">
-
         {{ before_header }}
-
         <div id="moin-header">
             {% block header %}
                 {% if search_form %}
                     {{ header_search(search_form) }}
                 {% endif %}
-
                 {% if logo %}
                     <div id="moin-logo">
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
                     </div>
                 {% endif %}
-
                 <ul id="moin-username">
                     {{ utils.user_login_logoff() }}
                 </ul>
-
                 {% if cfg.sitename %}
                     <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
                         {{ cfg.sitename }}
                     </a>
                 {% endif %}
-
                 {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
-
                 {% set navibar_items = theme_supp.navibar(fqname) %}
                 {% if navibar_items %}
                     <ul id="moin-navibar" class="panel">
@@ -53,20 +46,15 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
-
                 <div id="moin-pageline">
                     <hr style="display:none;" />
                 </div>
-
                 {% block header_itemviews %}{% endblock %}
-
             {% endblock %}
         </div>
-
         {{ after_header }}
 
         <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
-
             {% block item -%}
                 {# If you want itemviews in your template, extend from show.html, not from here. #}
                 <div id="moin-content">
@@ -84,7 +72,6 @@
 
         {{ before_footer }}
         <div id="moin-footer">
-
             {% block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
                 {% block footer_itemviews %}{% endblock %}
@@ -93,9 +80,7 @@
                 {{ credits }}
                 {{ license_info }}
             {% endblock %}
-
         </div>
         {{ after_footer }}
     </div>
-
 {% endblock %}
