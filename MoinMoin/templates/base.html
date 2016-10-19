@@ -66,7 +66,7 @@
     </head>
     <body{% if body_onload %} onload="{{ body_onload }}"{% endif %} lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
         {% block layout %}
-            <h1>Extend this block only if you want to change layout. If you want to put content, extends layout.html and use placeholders item and content.</h1>
+            <h1>Extend this block only if you want to change layout. If you want to put content, extend layout.html and use placeholders item and content.</h1>
         {% endblock %}
 
         <div id="moin-options-for-javascript" style="display: none">
@@ -76,11 +76,10 @@
             {% endblock %}
         </div>
 
-        {% block body_scripts %} {# js before </body> reduces IE8 js errors related to svgweb #}
+        {% block body_scripts %}
             <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
             <script src="{{ url_for('static', filename='js/jquery.i18n.min.js') }}"></script>
             <script src="{{ url_for('frontend.template', filename='dictionary.js') }}"></script>
-            <script src="{{ url_for('serve.files', name='bootstrap', filename='js/bootstrap.min.js') }}"></script>
             <script src="{{ url_for('serve.files', name='autosize', filename='jquery.autosize-min.js') }}"></script>
             <script src="{{ url_for('serve.files', name='jquery_tablesorter', filename='jquery.tablesorter.js') }}"></script>
             <script src="{{ url_for('static', filename='js/common.js') }}"></script>

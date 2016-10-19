@@ -229,5 +229,6 @@
 
 {% block body_scripts %}
     {{ super() }}
+    <script src="{{ url_for('serve.files', name='bootstrap', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/basic.js') }}"></script>
 {% endblock %}
