@@ -18,6 +18,7 @@ from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
 from MoinMoin.util.tree import html, moin_page, xlink, xml
+from MoinMoin.i18n import _
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -97,7 +98,20 @@ class Converter(object):
         # The content is a list of string, line per line
         # We can concatenate all in one string
         html_str = u'\n'.join(content)
-        html_tree = HTML(html_str)
+        try:
+            html_tree = HTML(html_str)
+        except AssertionError as reason:
+            # we suspect user has created or uploaded malformed HTML, try to show input as preformatted code
+            msg = _('Error: malformed HTML: {reason}.').format(reason=reason)
+            msg = '<div class="error"><p><strong>%s</strong></p></div>' % msg
+            html_str = ''.join(['<html>', msg, '<pre>', html_str, '</pre></html>'])
+            try:
+                html_tree = HTML(html_str)
+            except ValueError:
+                msg = _('Error: malformed HTML. Try viewing source with Highlight or Modify links.')
+                msg = '<div class="error"><p><strong>%s</strong></p></div>' % msg
+                html_str = ''.join(['<html>', msg, '</html>'])
+                html_tree = HTML(html_str)
 
         # We should have a root element, which will be converted as <page>
         # for the DOM Tree.
