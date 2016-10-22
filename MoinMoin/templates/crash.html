@@ -3,7 +3,7 @@
     {{ _("An error happened while processing your request.") }}
 </p>
 <p>
-    {{ _("More details have been logged. The following data is helpful for locating the corresponding log entries:") }}
+    {{ _("More details have been logged. The following data will be helpful for the site admin in locating the corresponding log entries :") }}
 </p>
 <dl>
     <dt>{{ _("Error ID") }}</dt>
@@ -13,3 +13,25 @@
     <dt>{{ _("URL") }}</dt>
     <dd>{{ url }} </dd>
 </dl>
+<p>
+    {{ _("""If the error on this web site appears confined to this one item,
+            then the problem may be that the current revision has invalid or
+            corrupted data or there is a mismatch between the
+            content type and the item data (e.g. the content type is text/x.moin.wiki
+            and the data is a PNG file). """) }}
+</p>
+<p>
+    {{ _("Possible ways to identify the cause of the problem:") }}
+</p>
+<ul>
+    <li>Click the Highlight link within Item Views to view the raw text data.</li>
+    <li>Click the Meta link within Item Views to check the content type.</li>
+    <li>Click the Download link within Item Views and examine the data with a hex editor.</li>
+</ul>
+<p>
+    {{ _("Possible ways to fix the problem:") }}
+</p>
+<ul>
+    <li>Click the History link within Item Views and revert to a prior revision.</li>
+    <li>Click the Delete or Destroy link within Item Views and then recreate the item.</li>
+</ul>
