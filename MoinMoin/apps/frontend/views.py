@@ -632,7 +632,10 @@ def modify_item(item_name):
         abort(403)
     if not flaskg.user.may.write(item_name):
         abort(403)
-    return item.do_modify()
+    try:
+        return item.do_modify()
+    except UnicodeDecodeError:
+        return _crash(item, None, None)
 
 
 class TargetChangeForm(BaseChangeForm):
