@@ -3,7 +3,7 @@
     {{ _("An error happened while processing your request.") }}
 </p>
 <p>
-    {{ _("More details have been logged. The following data will be helpful for the site admin in locating the corresponding log entries :") }}
+    {{ _("More details have been logged. The following data will be helpful for the site admin in locating the corresponding log entries:") }}
 </p>
 <dl>
     <dt>{{ _("Error ID") }}</dt>
@@ -12,6 +12,12 @@
     <dd>{{ server_time }}</dd>
     <dt>{{ _("URL") }}</dt>
     <dd>{{ url }} </dd>
+    {% if oldrev and newrev %}
+        <dt>{{ _("Old Revision") }}</dt>
+        <dd>{{ oldrev.revid  }} </dd>
+        <dt>{{ _("New Revision") }}</dt>
+        <dd>{{ newrev.revid }} </dd>
+    {% endif %}
 </dl>
 <p>
     {{ _("""If the error on this web site appears confined to this one item,
