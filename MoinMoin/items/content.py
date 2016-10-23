@@ -18,6 +18,8 @@
 """
 
 import os
+import time
+import uuid
 import re
 import base64
 import tarfile
@@ -252,8 +254,6 @@ class Content(object):
             # we really want to make sure that invalid data or a malfunctioning
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
-            import time
-            import uuid
             error_id = uuid.uuid4()
             logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
             rendered_data = render_template('crash.html',
