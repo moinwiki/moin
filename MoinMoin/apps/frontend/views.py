@@ -530,11 +530,14 @@ def indexable(item_name, rev):
 
 @presenter('highlight')
 def highlight_item(item):
-    return render_template('highlight.html',
-                           item=item, item_name=item.name,
-                           fqname=item.fqname,
-                           data_text=Markup(item.content._render_data_highlight()),
-    )
+    try:
+        return render_template('highlight.html',
+                               item=item, item_name=item.name,
+                               fqname=item.fqname,
+                               data_text=Markup(item.content._render_data_highlight()),
+        )
+    except UnicodeDecodeError:
+        return _crash(item, None, None)
 
 
 @presenter('meta', add_trail=True)
