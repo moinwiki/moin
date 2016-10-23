@@ -213,7 +213,12 @@ def send_notifications(app, fqname, **kwargs):
     revs = get_item_last_revisions(app, fqname) if action not in [
         DESTROY_REV, DESTROY_ALL, ] else []
     notification = Notification(app, fqname, revs, **kwargs)
-    content_diff = notification.get_content_diff()
+    try:
+        content_diff = notification.get_content_diff()
+    except Exception:
+        # current user has likely corrupted an item or fixed a corrupted item
+        # if current item is corrupt, another exception will occur in a downstream script
+        content_diff = [u'- ' + _('An error has occurred, the current or prior revision of this item may be corrupt.')]
     meta_diff = notification.get_meta_diff()
 
     u = flaskg.user
