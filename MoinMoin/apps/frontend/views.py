@@ -18,6 +18,7 @@
 import re
 import difflib
 import time
+import uuid
 import mimetypes
 import json
 from datetime import datetime
@@ -1975,6 +1976,20 @@ def _common_type(ct1, ct2):
     return commonmt
 
 
+def _crash(item, oldrev, newrev):
+    error_id = uuid.uuid4()
+    logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
+    return render_template("crash_view.html",
+                           server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
+                           url=request.url,
+                           error_id=error_id,
+                           oldrev=oldrev,
+                           newrev=newrev,
+                           fqname=item.fqname,
+                           item=item,
+    )
+
+
 def _diff(item, revid1, revid2):
     try:
         oldrev = item[revid1]
@@ -1987,11 +2002,17 @@ def _diff(item, revid1, revid2):
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
+
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
+    try:
+        diff_html = Markup(item.content._render_data_diff(oldrev, newrev)),
+    except Exception:
+        return _crash(item, oldrev, newrev)
+
     return render_template(item.diff_template,
                            item=item, item_name=item.name,
                            fqname=item.fqname,
-                           diff_html=Markup(item.content._render_data_diff(oldrev, newrev)),
+                           diff_html=diff_html,
                            rev=item.rev,
                            first_rev_id=rev_ids[0],
                            last_rev_id=rev_ids[-1],
