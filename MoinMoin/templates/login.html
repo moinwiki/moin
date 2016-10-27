@@ -16,6 +16,7 @@
                         {{ forms.render(form['password']) }}
                     {% endif %}
                 </dl>
+                {{ forms.render(form['nexturl']) }}
                 {{ forms.render(form['submit']) }}
                 {{ forms.render_submit(form) }}
             {{ gen.form.close() }}

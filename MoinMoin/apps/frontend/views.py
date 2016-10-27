@@ -1573,6 +1573,7 @@ class LoginForm(Form):
     username = RequiredText.using(label=L_('Username'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
     openid = YourOpenID.using(optional=True)
+    nexturl = Hidden.using(default='')
     # This field results in a login_submit field in the POST form, which is in
     # turn looked for by setup_user() in app.py as marker for login requests.
     submit = Hidden.using(default='1')
@@ -1584,10 +1585,10 @@ class LoginForm(Form):
 @frontend.route('/+login', methods=['GET', 'POST'])
 def login():
     if flaskg.user.valid:
-        flash(_("You are already logged in."), "info")
-        return redirect(url_for('.show_root'))
-
-    # TODO use ?next=next_location check if target is in the wiki and not outside domain
+        flash(_("You are logged in."), "info")
+        form = LoginForm.from_flat(request.form)
+        nexturl = form['nexturl']
+        return redirect(nexturl)
     title_name = _(u'Login')
 
     # multistage return
@@ -1596,16 +1597,21 @@ def login():
 
     if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
+        next_url = request.referrer or url_for('.show_root')
+        if not next_url.startswith(request.host_url) or '/+' in next_url:
+            next_url = url_for('.show_root')
+        form['nexturl'].set(next_url)
         for authmethod in app.cfg.auth:
             hint = authmethod.login_hint()
             if hint:
                 flash(hint, "info")
     elif request.method == 'POST':
+        # this is executed when login fails do to bad ID or pw - app.py > def setup_user does successful logins
         form = LoginForm.from_flat(request.form)
         if form.validate():
-            # we have a logged-in, valid user
-            next_url = request.args.get('next', default=url_for('.show_root'))
-            return redirect(next_url)
+            # is this dead code? we have a logged-in, valid user
+            nexturl = form['nexturl']
+            return redirect(nexturl)
         # flash the error messages (if any)
         for msg in flaskg._login_messages:
             flash(msg, "error")
@@ -1618,9 +1624,11 @@ def login():
 
 @frontend.route('/+logout')
 def logout():
-    flash(_("You are now logged out."), "info")
+    flash(_("You are logged out."), "info")
     flaskg.user.logout_session()
-    next_url = request.args.get('next', default=url_for('.show_root'))
+    next_url = request.referrer or url_for('.show_root')
+    if not next_url.startswith(request.host_url) or '/+' in next_url:
+        next_url = url_for('.show_root')
     return redirect(next_url)
 
 
