@@ -54,13 +54,14 @@
                                 <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
                             </a>
                         </td>
-                        {% if bookmark_time -%}
-                            <td class="moin-history-links">
+                        <td class="moin-history-links">
+                            {% if bookmark_time -%}
                                 <a href="{{ url_for('frontend.diff', item_name=rev.fqname, bookmark=bookmark_time) }}">
                                     <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
                                 </a>
-                            </td>
-                        {%- endif %}
+                            {%- endif %}
+                        </td>
+
                         <td class="moin-wordbreak moin-history-comment">{{ rev.meta['comment'] }}</td>
                     </tr>
                 {% endfor %}
