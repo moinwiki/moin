@@ -461,9 +461,10 @@ form.upload_file button { display: none; }
 .moin-history-date { font-size: 125%; font-weight: bold; }
 .moin-history-time { text-align: right; }
 .moin-history-comment { min-width: 30%; }
+.moin-history-editorinfo { min-width: 13%; }
 .moin-history-action { width: .5em; cursor: default; }
 .moin-history-action a: hover { text-decoration: none; }
-.moin-history-links { width: .5em; }
+.moin-history-links { width: 1em; }
 .moin-history-end-of-day { border: 0; border-top: 2px solid #4e7da9; }
 
 /* item history */
@@ -517,3 +518,7 @@ ul#moin-rev-navigation { text-align: center; }
 .moin-rst-fieldlist td { border-width: 0; }
 .moin-rst-optionlist td:first-child,
 .moin-rst-fieldlist td:first-child { font-weight: bold; }
+
+@media print {
+    .moin-no-print { display: none; }
+}

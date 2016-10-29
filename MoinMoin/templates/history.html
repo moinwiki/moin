@@ -13,6 +13,19 @@
 {% block content %}
     {% if history %}
         <h1>{{ title }}</h1>
+        {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
+            <p class="moin-no-print">
+                <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqname, bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
+                Click to show history spanning item delete and recreate.
+            </p>
+
+        {% else %}
+            <p class="moin-no-print">
+                <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
+                Click to show history spanning item renames.
+            </p>
+        {% endif %}
+
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
                 <a class='moin-prior-page' href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
