@@ -198,7 +198,6 @@ class Converter(object):
     # DocBook tags which can be convert directly to a DOM Tree element
     simple_tags = {'code': moin_page.code,
                    'computeroutput': moin_page.code,
-                   'entry': moin_page('table-cell'),
                    'glossdef': moin_page('list-item-body'),
                    'glossentry': moin_page('list-item'),
                    'glosslist': moin_page('list'),
@@ -296,7 +295,9 @@ class Converter(object):
                     r = (r, )
                 new_children.extend(r)
             else:
-                new_children.append(child)
+                # avoid problems in html_out by ignoring unicode '\n', '\n  ', '\n    '
+                if child.strip():
+                    new_children.append(child)
         return new_children
 
     def new(self, tag, attrib, children):
@@ -1002,17 +1003,20 @@ class Converter(object):
         attrib = {html.class_: 'db-trademark'}
         return self.new(moin_page.span, attrib=attrib, children=children)
 
-    def visit_docbook_td(self, element, depth):
+    def visit_docbook_entry(self, element, depth):
         """
         <td> --> <table-cell>
         """
         attrib = {}
-        rowspan = element.get('rowspan')
-        colspan = element.get('colspan')
-        if rowspan:
-            attrib[moin_page('number-rows-spanned')] = rowspan
-        if colspan:
-            attrib[moin_page('number-columns-spanned')] = colspan
+        rowspan = element.get('morerows')
+        colspan = element.get('morecols')
+        try:
+            if rowspan:
+                attrib[moin_page.number_rows_spanned] = unicode(1 + int(rowspan))
+            if colspan:
+                attrib[moin_page.number_columns_spanned] = unicode(1 + int(colspan))
+        except ValueError:
+            pass
         return self.new_copy(moin_page.table_cell,
                              element, depth, attrib=attrib)
 
