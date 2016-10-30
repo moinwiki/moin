@@ -566,7 +566,7 @@ class Converter(object):
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
         ret = html.table(attrib=attrib)
-        has_footer = any((x for x in elem if x.tag.name == 'table-footer'))
+        has_footer = any((x for x in elem if isinstance(x, ET.Element) and x.tag.name == 'table-footer'))
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
