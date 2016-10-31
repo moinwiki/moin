@@ -2,9 +2,9 @@
 <section>
 <title>A docbook document</title>
 <simpara>
-This page shows the different features of our native DocBook support. Features currently not working with moin's Docbook parser are marked with <emphasis role="bold">DBTODO</emphasis>.
+This page shows the different features of our native DocBook support. A table of contents is automatically
+generated from section titles.
 </simpara>
-
 
 
 <section>
@@ -418,15 +418,14 @@ Remove blanks from "] ] >" below:
 
 <section>
 <title>Objects</title>
-<para>
-An "inlinemediaobject" may be positioned within a paragraph and aligned to the text top, middle, or bottom
-through use of the align attribute.  A "mediaobject" is a block level element that may
-be positioned to the left, center, or right through use of the align attribute.
-</para>
-
 
 <section>
 <title>Image embedded in a sentence</title>
+
+<para>
+An "inlinemediaobject" may be positioned within a paragraph and aligned to the text top, middle, or bottom
+through use of the align attribute. 
+</para>
 
 <emphasis role="bold">Markup:</emphasis>
 
@@ -460,6 +459,11 @@ embedded in a sentence.
 <section>
 <title>Video with caption</title>
 
+<para>
+A "mediaobject" is a block level element that may
+be positioned to the left, center, or right through use of the align attribute.
+</para>
+
 <simpara>
 Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-files-for-html5/. This video has a caption.
 </simpara>
@@ -469,7 +473,7 @@ Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-
 <screen><![CDATA[
 <mediaobject>
   <videoobject>
-    <videodata fileref="video.mp4"/>
+    <videodata fileref="video.mp4" align="center"/>
   </videoobject>
   <caption>MY VIDEO</caption>
 </mediaobject>
@@ -479,20 +483,16 @@ Here is a video courtesy of http://techslides.com/sample-webm-ogg-and-mp4-video-
 
 <mediaobject>
   <videoobject>
-    <videodata fileref="video.mp4"/>
+    <videodata fileref="video.mp4" align="center"/>
   </videoobject>
   <caption>MY VIDEO</caption>
 </mediaobject>
-
-<simpara>
-<emphasis role="bold">DBTODO:</emphasis> Media captions are poorly positioned.
-</simpara>
 
 </section>
 
 
 <section>
-<title>Audio centered</title>
+<title>Audio with caption</title>
 <simpara>
 Here is a sound, courtesy of http://www.mediacollege.com/audio/tone/download/.
 The align="center" attribute centers the object.
@@ -505,6 +505,7 @@ The align="center" attribute centers the object.
   <audioobject>
     <audiodata align="center" fileref="audio.mp3"/>
   </audioobject>
+  <caption>My Audio</caption>
 </mediaobject>
 ]]></screen>
 
@@ -514,6 +515,7 @@ The align="center" attribute centers the object.
   <audioobject>
     <audiodata align="center" fileref="audio.mp3"/>
   </audioobject>
+  <caption>My Audio</caption>
 </mediaobject>
 
 </section>

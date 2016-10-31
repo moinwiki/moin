@@ -154,6 +154,13 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-item-wrapper.middle { vertical-align: middle; }
 .moin-item-wrapper.top { vertical-align: top; }
 .moin-item-wrapper.bottom { vertical-align: bottom; }
+/* docbook transclusions */
+.db-inlinemediaobject.left { float: left; }
+.db-inlinemediaobject.center { width: 100%; text-align: center; }
+.db-inlinemediaobject.right { float: right; }
+.db-inlinemediaobject.middle { vertical-align: middle; }
+.db-inlinemediaobject.top { vertical-align: top; }
+.db-inlinemediaobject.bottom { vertical-align: bottom; }
 /* end of transclusion positioning */
 
 /* transclusion wrapper overlays */
@@ -354,6 +361,12 @@ div.toc ul { margin: 0; padding: 0 0 0 .92em; }
 div.moin-table-of-contents li,
 div.toc li { margin: .12em 0 0 0; padding: 0; list-style: none; }
 div.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 .5em 1em; letter-spacing: .075em; }
+
+/* docbook captions for video and audio */
+div.db-mediaobject > span,
+div.db-mediaobject > span > span.moin-item-wrapper,
+div.db-mediaobject > span > span.db.caption { display: block; text-align: center; }
+span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions are ugly */
 
 /* Global Index */
 

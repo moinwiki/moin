@@ -87,7 +87,6 @@ MoinMoin.prototype.initToggleComments = function () {
 };
 
 
-
 // toggleTransclusionOverlays is executed when user clicks a Transclusions button on the Show item page.
 MoinMoin.prototype.toggleTransclusionOverlays = function () {
     "use strict";
@@ -160,6 +159,17 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
             $(wrapper).append(overlayLR);
         }
     });
+    // docbook inline transclusions require classes to be copied up 2 levels
+    transclusions = $($('.db-inlinemediaobject').get().reverse());
+    transclusions.each(function (index) {
+        elem = transclusions[index];
+        classes = $($(elem).children('span').children('.moin-item-wrapper')[0]).attr('class');
+        classes = classes.split(" ").filter(function (c) {
+            return c.lastIndexOf('moin-', 0) !== 0;
+        });
+        $(elem).addClass(classes.join(' '));
+    });
+    // most themes will have a transclusions link within item views
     wrappers = $('.moin-item-wrapper');
     if (wrappers.length === 0) {
         // if there are no transclusions, make the Transclusions buttons invisible
@@ -167,7 +177,6 @@ MoinMoin.prototype.initTransclusionOverlays = function () {
     }
     $('.moin-transclusions-button').click(this.toggleTransclusionOverlays);
 };
-
 
 
 // Executed on page load.  If logged in user has less than 6 quicklinks,  do nothing.
