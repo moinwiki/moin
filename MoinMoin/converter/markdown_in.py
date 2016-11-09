@@ -425,9 +425,6 @@ class Converter(object):
 
         The net result is we either have too few or too many line numbers in the generated list which
         will cause the double-click-to-edit autoscroll textarea to sometimes be off by several lines.
-
-        TODO: revisit this when the parsing errors documented in contrib/serialized/items.moin
-        (markdown item) are fixed.
         """
         line_numbers = deque()
         lineno = 1
