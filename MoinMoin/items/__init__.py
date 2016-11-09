@@ -755,8 +755,6 @@ class Item(object):
         index_dict.update(dirs_dict)
         return sorted(index_dict.values())
 
-    index_template = 'index.html'
-
     def name_initial(self, subitems, uppercase=False, lowercase=False):
         """
         return a sorted list of first characters of subitem names,
