@@ -241,6 +241,7 @@ class Converter(ConverterMacro):
 
     nowiki_end = r"""
         ^
+        \s*
         (?P<marker> }{3,} )
         \s*
         $
