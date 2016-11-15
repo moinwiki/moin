@@ -15,6 +15,10 @@ import re
 
 from werkzeug import url_encode
 
+import pygments
+from . pygments_in import TreeFormatter
+from pygments.util import ClassNotFound
+
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
@@ -282,6 +286,26 @@ class Converter(ConverterMacro):
                 elem = moin_page.page(children=(body, ))
                 stack.top_append(elem)
                 return
+
+            if nowiki_interpret.startswith(u'#!highlight '):
+                # we expect imput like "{{{#!highlight python", but pygments wants mime-type like "text/x-python"
+                m_types = (u'text/x-' + nowiki_args_old,
+                           u'application/x-' + nowiki_args_old,
+                           u'text/' + nowiki_args_old,  # text/css
+                           nowiki_args_old)
+                for m_type in m_types:
+                    try:
+                        lexer = pygments.lexers.get_lexer_for_mimetype(m_type)
+                        break
+                    except ClassNotFound:
+                        lexer = None
+                if lexer:
+                    content = u'\n'.join(lines)
+                    blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
+                    pygments.highlight(content, lexer, TreeFormatter(), blockcode)
+                    body = moin_page.body(children=(blockcode, ))
+                    stack.top_append(moin_page.page(children=(body, )))
+                    return
 
             stack.top_append(self.parser(nowiki_name, args, lines))
             return

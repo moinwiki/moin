@@ -291,6 +291,8 @@ class TestConverter(object):
                 '<page><body><page><body><p>wiki</p></body></page></body></page>'),
             (u'{{{#!wiki(style="background-color: red")\nwiki\n}}}',
                 '<page><body><page><body style="background-color: red"><p>wiki</p></body></page></body></page>'),
+            (u'{{{#!highlight python\nimport os\n}}}',
+                '<page><body><page><body><blockcode class="highlight"><span class="kn">import</span> <span class="nn">os</span>\n</blockcode></body></page></body></page>'),
             # TODO: Backward compatibility
             (u'{{{#!wiki red/solid\nwiki\n}}}',
                 '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),
