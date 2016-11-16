@@ -288,17 +288,10 @@ class Converter(ConverterMacro):
                 return
 
             if nowiki_interpret.startswith(u'#!highlight '):
-                # we expect imput like "{{{#!highlight python", but pygments wants mime-type like "text/x-python"
-                m_types = (u'text/x-' + nowiki_args_old,
-                           u'application/x-' + nowiki_args_old,
-                           u'text/' + nowiki_args_old,  # text/css
-                           nowiki_args_old)
-                for m_type in m_types:
-                    try:
-                        lexer = pygments.lexers.get_lexer_for_mimetype(m_type)
-                        break
-                    except ClassNotFound:
-                        lexer = None
+                try:
+                    lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
+                except ClassNotFound:
+                    lexer = None
                 if lexer:
                     content = u'\n'.join(lines)
                     blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
