@@ -1,9 +1,9 @@
 /*
     Add the css rules common to all themes here. In general, everything
-    within moin-content should be defined here and everything within
+    within div.moin-content should be defined here and everything within
     the web page header, footer, and sidebars should be defined within the
-    theme CSS files. Themes may override any of the rules defined here as
-    required.
+    "theme.css" files. Themes may override any of the rules defined here
+    by adding rules to the theme.css file.
 */
 
 /* smileys -- <span class="moin-text-icon moin-smile">:-)</span> */
@@ -223,7 +223,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 input[type="text"].moin-acl-string { width: 70%; }
 #moin-acl-form { display: inline; }
 
-/* tablesorter */
+/* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }
 .tablesorter-header.tablesorter-headerAsc { background-image: url('../img/asc.png'); }
 .tablesorter-header.tablesorter-headerDesc { background-image: url('../img/desc.png'); }
