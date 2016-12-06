@@ -2,10 +2,10 @@
 {% import "utils.html" as utils %}
 {% block content %}
     <h1>{{ _("Item ACL Report") }}</h1>
-    <table class="zebra moin-sortable" data-sortlist="[[0,0]]">
+    <table class="zebra moin-sortable moin-acl-report" data-sortlist="[[0,0]]">
         <thead>
             <tr>
-                <th>{{ _("Item Names") }}</th>
+                <th class="moin-acl-name">{{ _("Item Names") }}</th>
                 <th>{{ _("ACL") }}</th>
             </tr>
         </thead>
@@ -23,9 +23,9 @@
                     </td>
                     <td>
                         {% if user.may.admin(item['fqname']) %}
-                            <form id="moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
+                            <form class="moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
                                 <input type="text" class="moin-acl-string" {% if item['acl_default'] %}style="color:green;"{% endif %} name="{{ item['itemid'] }}" value="{{ item['acl'] }}"/>
-                                <input class="moin-button" type="submit" value="{{ _("Modify ACL") }}"/>
+                                <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
                             </form>
                         {% else %}
                             {{ item['acl'] }}
