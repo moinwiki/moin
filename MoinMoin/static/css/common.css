@@ -220,8 +220,12 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-small { font-size: .83em; }
 .moin-inline-label { display: inline; }
 .moin-link-list li { padding: 2px 0 2px 0; }
-input[type="text"].moin-acl-string { width: 70%; }
-#moin-acl-form { display: inline; }
+
+/* item ACL report */
+.moin-acl-report { width: 100%; }
+.moin-acl-name { width: 10%; }
+.moin-acl-report .moin-acl-string { width: 80%; }
+.moin-acl-form { display: inline; }
 
 /* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }
