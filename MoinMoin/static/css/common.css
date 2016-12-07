@@ -226,6 +226,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-acl-name { width: 10%; }
 .moin-acl-report .moin-acl-string { width: 80%; }
 .moin-acl-form { display: inline; }
+.moin-acl-default .moin-acl-string { color: green; }
 
 /* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }
