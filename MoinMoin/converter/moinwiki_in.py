@@ -285,19 +285,6 @@ class Converter(ConverterMacro):
                 stack.top_append(elem)
                 return
 
-
-
-            #~ if nowiki_interpret == u'#!csv' or nowiki_interpret.startswith(u'#!csv '):
-                #~ arg = args.get('_old') if args else None
-                #~ from MoinMoin.converter import default_registry as reg
-                #~ input_conv = reg.get((u'text/csv;charset=utf-8',), (type_moin_document),)
-                #~ csv = input_conv(u'\n'.join(lines), u'text/csv;charset=utf-8', arguments=args)
-                #~ stack.top_append(csv)
-                #~ return
-
-
-
-
             if nowiki_interpret.startswith(u'#!highlight '):
                 try:
                     lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
@@ -306,7 +293,7 @@ class Converter(ConverterMacro):
                 if lexer:
                     content = u'\n'.join(lines)
                     blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
-                    pygments.highlight(content, lexer, TreeFormatter(linenos=True, cssclass="source"), blockcode)
+                    pygments.highlight(content, lexer, TreeFormatter(), blockcode)
                     body = moin_page.body(children=(blockcode, ))
                     stack.top_append(moin_page.page(children=(body, )))
                     return
