@@ -47,12 +47,12 @@ class MacroInlineBase(MacroBase):
     """
     Macro base class for inline element macros.
 
-    The macro is wrapped into a paragraph in block context.
+    The macro is wrapped into a div in block context.
     """
     def __call__(self, content, arguments, page_url, alternative, context_block):
         ret = self.macro(content, arguments, page_url, alternative)
         if context_block:
-            return moin_page.p(children=(ret, ))
+            return moin_page.div(children=(ret, ))
         return ret
 
 
