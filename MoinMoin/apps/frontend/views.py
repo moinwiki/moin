@@ -2018,7 +2018,7 @@ def _diff(item, revid1, revid2):
 
     rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
     try:
-        diff_html = Markup(item.content._render_data_diff(oldrev, newrev)),
+        diff_html = Markup(item.content._render_data_diff(oldrev, newrev))
     except Exception:
         return _crash(item, oldrev, newrev)
 
