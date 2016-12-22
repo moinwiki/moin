@@ -566,27 +566,29 @@ class Converter(object):
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
         ret = html.table(attrib=attrib)
-        has_footer = any((x for x in elem if isinstance(x, ET.Element) and x.tag.name == 'table-footer'))
+        caption = 1 if elem[0].tag.name == 'caption' else 0
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 and item.tag.name == 'table-body' and not has_footer:
+                if len(elem) > 1 + caption and html('class') in attrib and u'moin-wiki-table' in attrib[html('class')]:
+                    # moinwiki tables require special handling because
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
-                    # ckeditor places tfoot before tbody
-                    if idx == 0:
-                        # make first table-body into header
+                    if idx == 0 + caption:
+                        # make first table-body after caption into header
                         tag = html.thead
-                    elif len(elem) > 2 and idx == len(elem) - 1:
+                    elif len(elem) > 2 + caption and idx == len(elem) - 1:
                         # make last table-body into footer
                         tag = html.tfoot
                     else:
-                        tag = html.tbody
+                        tag = html.caption if (caption and idx == 0) else html.tbody
                 elif item.tag.name == 'table-body':
                     tag = html.tbody
                 elif item.tag.name == 'table-header':
                     tag = html.thead
                 elif item.tag.name == 'table-footer':
                     tag = html.tfoot
+                elif item.tag.name == 'caption':
+                    tag = html.caption
             elif item.tag.uri == html and \
                     item.tag.name in ('tbody', 'thead', 'tfoot'):
                 tag = item.tag

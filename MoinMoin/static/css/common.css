@@ -269,15 +269,16 @@ ul.moin-tags li.weight9 { font-size: 280%; }
 
 /* moin default table styling */
 table { margin: 1% 0; }
+caption { border: 1px solid #4e7da9; border-bottom: 0; background-color: #C9E2F8; font-size: 1.25em; font-weight: bold; }
 tr > th,
 tr > td { padding: .3em .4em; vertical-align: middle; text-align: left; }
 thead > tr > td,
-tr > th { border: 1px solid #4e7da9; background-color: #81bbf2; text-align: left; color: #000; }
+tr > th { border: 1px solid #4e7da9; background-color: #C9E2F8; text-align: left; color: #000; }
 tr > td { border: 1px solid #4e7da9; }
 td p { margin: 0; padding: 0; }
-#moin-content table > thead { background-color: #81bbf2; }
-#moin-content table > tfoot { background-color: #81bbf2; }
-.moin-thead { background-color: #81bbf2; } /* creole table headings in left column */
+#moin-content table > thead { background-color: #C9E2F8; }
+#moin-content table > tfoot { background-color: #C9E2F8; }
+.moin-thead { background-color: #C9E2F8; } /* creole table headings in left column */
 
 /* zebra table styling */
 

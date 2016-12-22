@@ -30,6 +30,16 @@
 ===== heading 5th level =====
 ====== heading 6th level ======
 
+== Preformatted code ==
+
+{{{
+no indent
+}}}
+
+    {{{
+    indent
+    }}}
+
 == Text Formatting ==
 
 ||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result'''   ||
@@ -333,19 +343,19 @@ Use 3 or more equal characters to separate headers and footers from the table bo
 
 === HTML-like Options for Tables ===
 
-Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, rowclass, tableclass, style, rowstyle, tablestyle, id, rowid, tableid, rowspan, and colspan.
+Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, rowclass, tableclass, style, rowstyle, tablestyle, id, rowid, tableid, rowspan, colspan and caption. Separate multiple options with spaces.
 
 '''Markup:'''
 
 {{{
-||A ||<rowspan="2"> like <|2> ||
+||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
 }}}
 
 '''Result:'''
 
-||A ||<rowspan="2"> like <|2> ||
+||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
 
@@ -421,7 +431,7 @@ Logged in users may set User Preferences to display or hide comments, overriding
 
 '''Markup:'''
 
-{{{
+{{{{
  Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
 
  {{{#!wiki comment/dashed
@@ -429,7 +439,7 @@ Logged in users may set User Preferences to display or hide comments, overriding
 
  Its visibility gets toggled the same way.
  }}}
-}}}
+}}}}
 
 '''Result:'''
 

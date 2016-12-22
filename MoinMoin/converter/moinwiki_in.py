@@ -344,7 +344,7 @@ class Converter(ConverterMacro):
     def block_table_repl(self, iter_content, stack, table):
         stack.clear()
 
-        element = moin_page.table()
+        element = moin_page.table(attrib={moin_page('class'): u'moin-wiki-table'})
         stack.push(element)
         stack.push(moin_page.table_body())
 
@@ -939,8 +939,10 @@ class Converter(ConverterMacro):
                     add_attr_to_style(element.attrib, 'width: {0};'.format(value))
                 elif key == 'tablewidth':
                     add_attr_to_style(table.attrib, 'width: {0};'.format(value))
+                elif key == 'caption':
+                    table.insert(0, moin_page.caption(children=[value, ]))
                 elif key == 'tableclass':
-                    table.attrib[moin_page('class')] = value
+                    table.attrib[moin_page('class')] = value + u' moin-wiki-table'
                 elif key == 'rowclass':
                     row.attrib[moin_page('class')] = value
                 elif key == 'class':

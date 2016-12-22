@@ -354,7 +354,10 @@ x      y      z
 Table Styling
 -------------
 
-To add styling to a table, enclose one or more parameters within angle brackets at the start of any table cell.
+To add styling to a table, enclose one or more parameters within angle 
+brackets at the start of any table cell. Options for tables must be 
+within first cell of first row. Options for rows must be within first 
+cell of the row. Separate multiple options with a blank character. 
 
 ================================== ===========================================================
 Markup                             Effect
@@ -365,6 +368,17 @@ Markup                             Effect
 <tablestyle="color: red;">         Add CSS styling to table
 <rowstyle="font-size: 140%; ">     Add CSS styling to row
 <style="text-align: right;">       Add CSS styling to cell
+<bgcolor="#ff0000">                Add CSS background color to cell
+<rowbgcolor="#ff0000">             Add CSS background color to row
+<tablebgcolor="#ff0000">           Add CSS background color to table
+width                              Add CSS width to cell
+tablewidth                         Add CSS width to table
+id                                 Add HTML ID to cell
+rowid                              Add HTML ID to row
+tableid                            Add HTML ID to table
+rowspan                            Add HTML rowspan attribute to cell
+colspan                            Add HTML colspan attribute to cell
+caption                            Add HTML caption attribute to table
 <80%>                              Set cell width, setting one cell effects entire table column
 <(>                                Align cell contents left
 <)>                                Align cell contents right
@@ -374,7 +388,8 @@ Markup                             Effect
 <#0000FF>                          Change background color of a table cell
 <rowspan="2">                      Same as `<|2>` above
 <colspan="2">                      Same as <-2> above
-`||||`                             An empty cell has same effect as <-2> above
+-- no content --                   An empty cell has same effect as <-2> above
+`===`	                           A line of 3+ "=" separates table header, body and footer
 ================================== ===========================================================
 
 Table Styling Example
