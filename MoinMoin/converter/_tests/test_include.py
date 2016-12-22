@@ -122,7 +122,7 @@ class TestInclude(object):
         rendered = Item.create(u'page1').content._render_data()
         assert '<p>before </p><div class="moin-transclusion" data-href="/page2"><table' in rendered
         assert '</table></div><p> after</p>' in rendered
-        assert rendered.count('<table>') == 1
+        assert rendered.count('<table') == 1
         # transclude two row table within a paragraph, block element forces paragraph to be split into 2 parts
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'before {{page2}} after')
         update_item(u'page2', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u"|| this || has ||\n|| two || rows ||")
@@ -130,7 +130,7 @@ class TestInclude(object):
         # inclusion of block item within a paragraph results in a before and after p
         assert '<p>before </p><div class="moin-transclusion" data-href="/page2"><table' in rendered
         assert '</table></div><p> after</p>' in rendered
-        assert rendered.count('<table>') == 1
+        assert rendered.count('<table') == 1
         # transclude nonexistent item
         update_item(u'page1', {CONTENTTYPE: u'text/x.moin.wiki;charset=utf-8'}, u'before {{nonexistent}} after')
         rendered = Item.create(u'page1').content._render_data()

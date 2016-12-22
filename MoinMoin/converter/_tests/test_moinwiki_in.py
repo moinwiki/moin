@@ -213,50 +213,72 @@ class TestConverter(object):
     def test_table(self):
         data = [
             (u'||Cell||',
-                '<page><body><table><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||Cell 1||Cell 2||',
-                '<page><body><table><table-body><table-row><table-cell>Cell 1</table-cell><table-cell>Cell 2</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Cell 1</table-cell><table-cell>Cell 2</table-cell></table-row></table-body></table></body></page>'),
             (u'||Row 1||\n||Row 2||\n',
-                '<page><body><table><table-body><table-row><table-cell>Row 1</table-cell></table-row><table-row><table-cell>Row 2</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Row 1</table-cell></table-row><table-row><table-cell>Row 2</table-cell></table-row></table-body></table></body></page>'),
             (u'||Cell 1.1||Cell 1.2||\n||Cell 2.1||Cell 2.2||\n',
-                '<page><body><table><table-body><table-row><table-cell>Cell 1.1</table-cell><table-cell>Cell 1.2</table-cell></table-row><table-row><table-cell>Cell 2.1</table-cell><table-cell>Cell 2.2</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Cell 1.1</table-cell><table-cell>Cell 1.2</table-cell></table-row><table-row><table-cell>Cell 2.1</table-cell><table-cell>Cell 2.2</table-cell></table-row></table-body></table></body></page>'),
             (u'||Header||\n===\n||Body||\n=====\n||Footer||',
-                '<page><body><table><table-body><table-row><table-cell>Header</table-cell></table-row></table-body><table-body><table-row><table-cell>Body</table-cell></table-row></table-body><table-body><table-row><table-cell>Footer</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Header</table-cell></table-row></table-body><table-body><table-row><table-cell>Body</table-cell></table-row></table-body><table-body><table-row><table-cell>Footer</table-cell></table-row></table-body></table></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
 
     def test_table_attributes(self):
         data = [
+            # a class of moin-wiki-table is added to all tables, html_out may create thead and tfoot tags
             (u'||||Span||\n\n',
-                '<page><body><table><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
             (u'||<-2>Span||\n\n',
-                '<page><body><table><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
             (u'||<|2>Span||\n\n',
-                '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-rows-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),
             (u'||<tableclass="table" rowclass="row" class="cell">Cell||\n',
-                '<page><body><table class="table"><table-body><table-row class="row"><table-cell class="cell">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="table moin-wiki-table"><table-body><table-row class="row"><table-cell class="cell">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<tablestyle="table" rowstyle="row" style="cell">Cell||\n',
-                '<page><body><table style="table;"><table-body><table-row style="row;"><table-cell style="cell;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table" style="table;"><table-body><table-row style="row;"><table-cell style="cell;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<tablestyle="background-color: yellow" rowstyle="background-color: red" tablewidth="99%" #0000FF>Cell||\n',
-                '<page><body><table style="background-color: yellow; width: 99%;"><table-body><table-row style="background-color: red;"><table-cell style="background-color: #0000FF;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table" style="background-color: yellow; width: 99%;"><table-body><table-row style="background-color: red;"><table-cell style="background-color: #0000FF;">Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<width="20em">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="width: 20em;">Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<tablebgcolor="red">Cell||\n',
+                '<page><body><table class="moin-wiki-table" style="background-color: red;"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<rowbgcolor="red">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row style="background-color: red;"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<bgcolor="red">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="background-color: red;">Cell</table-cell></table-row></table-body></table></body></page>'),
+
+            (u'||<tableid="my-id">Cell||\n',
+                '<page><body><table class="moin-wiki-table" id="my-id"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<rowid="my-id">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<id="my-id">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell id="my-id">Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<rowspan="2">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-rows-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<colspan="2">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<caption="My Table">Cell||\n',
+                '<page><body><table class="moin-wiki-table"><caption>My Table</caption><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
             (u"||'''Cell'''||\n",
-                '<page><body><table><table-body><table-row><table-cell><strong>Cell</strong></table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><strong>Cell</strong></table-cell></table-row></table-body></table></body></page>'),
             (u'||<^>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="vertical-align: top;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="vertical-align: top;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<v>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="vertical-align: bottom;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="vertical-align: bottom;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<(>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="text-align: left;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="text-align: left;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<:>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="text-align: center;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="text-align: center;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<)>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="text-align: right;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="text-align: right;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<99%>Cell||\n',
-                '<page><body><table><table-body><table-row><table-cell style="width: 99%;">Cell</table-cell></table-row></table-body></table></body></page>'),
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="width: 99%;">Cell</table-cell></table-row></table-body></table></body></page>'),
             (u'||<X>Cell||\n',
                 # u'\xa0' below is equal to &nbsp;
-                '<page><body><table><table-body><table-row><table-cell style="background-color: pink; color: black;">[ Error: "X" is invalid within &lt;X&gt;' +
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="background-color: pink; color: black;">[ Error: "X" is invalid within &lt;X&gt;' +
                 u'\xa0' + ']<line-break />Cell</table-cell></table-row></table-body></table></body></page>'),
         ]
         for i in data:
@@ -309,7 +331,7 @@ class TestConverter(object):
             (u'Text\n * Item\n\nText',
                 '<page><body><p>Text</p><list item-label-generate="unordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list><p>Text</p></body></page>'),
             (u'Text\n||Item||\nText',
-                '<page><body><p>Text</p><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
+                '<page><body><p>Text</p><table class="moin-wiki-table"><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

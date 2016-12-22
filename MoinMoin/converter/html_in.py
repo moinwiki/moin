@@ -540,6 +540,9 @@ class Converter(object):
                 list_table_elements.extend(r)
         return ET.Element(moin_page.table, attrib=attrib, children=list_table_elements)
 
+    def visit_xhtml_caption(self, element):
+        return self.new_copy(moin_page.caption, element, attrib={})
+
     def visit_xhtml_thead(self, element):
         return self.new_copy(moin_page.table_header, element, attrib={})
 
