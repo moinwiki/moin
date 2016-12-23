@@ -555,8 +555,8 @@ class Converter(object):
     def visit_xhtml_tr(self, element):
         return self.new_copy(moin_page.table_row, element, attrib={})
 
-    def visit_xhtml_td(self, element):
-        attrib = {}
+    def visit_xhtml_td(self, element, attr={}):
+        attrib = attr
         rowspan = element.get(html.rowspan)
         colspan = element.get(html.colspan)
         if rowspan:
@@ -567,7 +567,7 @@ class Converter(object):
 
     def visit_xhtml_th(self, element):
         """html_out does not support th tags, so we do td tags like all other converters."""
-        return self.visit_xhtml_td(element)
+        return self.visit_xhtml_td(element, {moin_page.class_: 'moin-thead'})
 
 
 from . import default_registry

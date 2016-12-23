@@ -38,10 +38,6 @@
 	<span style="font-size: 16px;">Centered</span></p>
 <p style="text-align: right;">
 	<span style="font-size: 16px;">Right aligned</span></p>
-<p>
-	<span style="font-size: 16px;"><code style="padding: 0px; border-radius: 0px; color: inherit; font-family: Menlo, Monaco, Consolas, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap; box-sizing: border-box; background-color: transparent;"><span style="font-family: arial,helvetica,sans-serif;">Justified text: Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus</span>.</code></span></p>
-<p>
-	<span style="font-size: 16px;"><strong>HTMLTODO:</strong> Justified text does not display as expected.</span></p>
 <h2>
 	Internal Links</h2>
 <p>
@@ -143,6 +139,28 @@
 		<tr>
 			<td>
 				Banana</td>
+			<td>
+				Yellow</td>
+		</tr>
+	</tbody>
+</table>
+<table border="1" cellpadding="1" cellspacing="1" height="44" width="499">
+	<caption>
+		Fruit Colors</caption>
+	<tbody>
+		<tr>
+			<th scope="row">
+				Fruit</th>
+			<td>
+				Apple</td>
+			<td>
+				Banana</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				Color</th>
+			<td>
+				Red</td>
 			<td>
 				Yellow</td>
 		</tr>
