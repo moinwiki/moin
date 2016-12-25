@@ -354,10 +354,10 @@ x      y      z
 Table Styling
 -------------
 
-To add styling to a table, enclose one or more parameters within angle 
-brackets at the start of any table cell. Options for tables must be 
-within first cell of first row. Options for rows must be within first 
-cell of the row. Separate multiple options with a blank character. 
+To add styling to a table, enclose one or more parameters within angle
+brackets at the start of any table cell. Options for tables must be
+within first cell of first row. Options for rows must be within first
+cell of the row. Separate multiple options with a blank character.
 
 ================================== ===========================================================
 Markup                             Effect
@@ -389,7 +389,7 @@ caption                            Add HTML caption attribute to table
 <rowspan="2">                      Same as `<|2>` above
 <colspan="2">                      Same as <-2> above
 -- no content --                   An empty cell has same effect as <-2> above
-`===`	                           A line of 3+ "=" separates table header, body and footer
+`===`                              A line of 3+ "=" separates table header, body and footer
 ================================== ===========================================================
 
 Table Styling Example
