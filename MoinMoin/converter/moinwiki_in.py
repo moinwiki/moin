@@ -285,18 +285,22 @@ class Converter(ConverterMacro):
                 stack.top_append(elem)
                 return
 
+            lexer = None
             if nowiki_interpret.startswith(u'#!highlight '):
                 try:
                     lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
                 except ClassNotFound:
                     lexer = pygments.lexers.get_lexer_by_name('text')
-                if lexer:
-                    content = u'\n'.join(lines)
-                    blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
-                    pygments.highlight(content, lexer, TreeFormatter(), blockcode)
-                    body = moin_page.body(children=(blockcode, ))
-                    stack.top_append(moin_page.page(children=(body, )))
-                    return
+            elif nowiki_name in u'diff cplusplus python java pascal irc'.split():
+                # support old highlighting markup as it was prior to moin 1.9
+                lexer = pygments.lexers.get_lexer_by_name(nowiki_name)
+            if lexer:
+                content = u'\n'.join(lines)
+                blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
+                pygments.highlight(content, lexer, TreeFormatter(), blockcode)
+                body = moin_page.body(children=(blockcode, ))
+                stack.top_append(moin_page.page(children=(body, )))
+                return
 
             stack.top_append(self.parser(nowiki_name, args, lines))
             return
