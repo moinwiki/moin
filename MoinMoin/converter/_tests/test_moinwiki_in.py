@@ -317,6 +317,10 @@ class TestConverter(object):
                 '<page><body><page><body><blockcode class="highlight"><span class="kn">import</span> <span class="nn">os</span>\n</blockcode></body></page></body></page>'),
             (u'{{{#!python\nimport os\n}}}',
                 '<page><body><page><body><blockcode class="highlight"><span class="kn">import</span> <span class="nn">os</span>\n</blockcode></body></page></body></page>'),
+            (u'{{{#!csv\na;b;c\nd;e;22\n}}}',
+                '<page><body><page><body><table class="moin-csv-table moin-sortable"><table-header><table-row><table-cell>a</table-cell><table-cell>b</table-cell><table-cell class="moin-integer">c</table-cell></table-row></table-header><table-body><table-row><table-cell>d</table-cell><table-cell>e</table-cell><table-cell class="moin-integer">22</table-cell></table-row></table-body></table></body></page></body></page>'),
+            (u'{{{#!csv ,\na,b,c\nd,e,22\n}}}',
+                '<page><body><page><body><table class="moin-csv-table moin-sortable"><table-header><table-row><table-cell>a</table-cell><table-cell>b</table-cell><table-cell class="moin-integer">c</table-cell></table-row></table-header><table-body><table-row><table-cell>d</table-cell><table-cell>e</table-cell><table-cell class="moin-integer">22</table-cell></table-row></table-body></table></body></page></body></page>'),
             # TODO: Backward compatibility
             (u'{{{#!wiki red/solid\nwiki\n}}}',
                 '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),

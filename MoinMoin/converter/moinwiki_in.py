@@ -30,6 +30,7 @@ from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
+from ._table import TableMixin
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -299,6 +300,19 @@ class Converter(ConverterMacro):
                 blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
                 pygments.highlight(content, lexer, TreeFormatter(), blockcode)
                 body = moin_page.body(children=(blockcode, ))
+                stack.top_append(moin_page.page(children=(body, )))
+                return
+
+            if nowiki_name == u'csv':
+                # TODO: support moin 1.9 options: quotechar, show, hide, autofilter, name, link, static_cols, etc
+                sep = nowiki_args_old if nowiki_args_old else u';'
+                contents = u'\n'.join(lines)
+                content = contents.split('\n')
+                head = content[0].split(sep)
+                rows = [x.split(sep) for x in content[1:]]
+                csv_builder = TableMixin()
+                table = csv_builder.build_dom_table(rows, head=head, cls='moin-csv-table moin-sortable')
+                body = moin_page.body(children=(table, ))
                 stack.top_append(moin_page.page(children=(body, )))
                 return
 
