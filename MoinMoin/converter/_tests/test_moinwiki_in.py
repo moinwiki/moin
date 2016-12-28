@@ -324,10 +324,18 @@ class TestConverter(object):
             # TODO: Backward compatibility
             (u'{{{#!wiki red/solid\nwiki\n}}}',
                 '<page><body><page><body class="red solid"><p>wiki</p></body></page></body></page>'),
+            (u'{{{#!wiki red/solid\nwiki\n\nwiki\n}}}',
+                '<page><body><page><body class="red solid"><p>wiki</p><p>wiki</p></body></page></body></page>'),
+            (u'{{{#!rst\nHeading\n-------\n}}}',
+                '<page><body><page><body><h outline-level="1">Heading</h></body></page></body></page>'),
+            (u"{{{#!docbook\n<article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'>\n<section>\n<title>A docbook document</title>\n</section>\n</article>\n}}}",
+                '<page><body><page><body><table-of-content /><div xhtml:class="db-article"><h outline-level="1">A docbook document</h></div></body></page></body></page>'),
+            (u'{{{#!creole\n|=A|1\n|=B|2\n}}}',
+                '<page><body><page><body><table><table-body><table-row><table-cell class="moin-thead">A</table-cell><table-cell>1</table-cell></table-row><table-row><table-cell class="moin-thead">B</table-cell><table-cell>2</table-cell></table-row></table-body></table></body></page></body></page>'),
             (u'{{{#!text/plain\ntext\n}}}',
-                u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
+                u'<page><body><blockcode>text</blockcode></body></page>'),
             (u'{{{#!text/x.moin.creole\ntext\n}}}',
-                u'<page><body><part content-type="text/x.moin.creole"><body>text</body></part></body></page>'),
+                u'<page><body><page><body><p>text</p></body></page></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

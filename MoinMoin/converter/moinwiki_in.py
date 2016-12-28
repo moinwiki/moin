@@ -280,7 +280,7 @@ class Converter(ConverterMacro):
                 args = None
             logging.debug("nowiki_name: %r" % nowiki_name)
             # Parse it directly if the type is ourself
-            if not nowiki_name or nowiki_name == 'wiki':
+            if not nowiki_name or nowiki_name in ('wiki', 'text/x.moin.wiki'):
                 body = self.parse_block(lines, args)
                 elem = moin_page.page(children=(body, ))
                 stack.top_append(elem)
@@ -303,7 +303,7 @@ class Converter(ConverterMacro):
                 stack.top_append(moin_page.page(children=(body, )))
                 return
 
-            if nowiki_name == u'csv':
+            if nowiki_name in ('csv', 'text/csv'):
                 # TODO: support moin 1.9 options: quotechar, show, hide, autofilter, name, link, static_cols, etc
                 sep = nowiki_args_old if nowiki_args_old else u';'
                 contents = u'\n'.join(lines)
@@ -316,9 +316,29 @@ class Converter(ConverterMacro):
                 stack.top_append(moin_page.page(children=(body, )))
                 return
 
-            stack.top_append(self.parser(nowiki_name, args, lines))
-            return
+            if nowiki_name in ('creole', 'text/x.moin.creole'):
+                from .creole_in import Converter as creole_converter
+                creole = creole_converter()
+                body = creole.parse_block(lines, args)
+                elem = moin_page.page(children=(body, ))
+                stack.top_append(elem)
+                return
 
+            if nowiki_name in ('rst', 'text/x-rst'):
+                from .rst_in import Converter as rst_converter
+                rst = rst_converter()
+                page = rst(u'\n'.join(lines), contenttype=u'text/x-rst;charset=utf-8')
+                stack.top_append(page)
+                return
+
+            if nowiki_name in ('docbook', 'application/docbook+xml'):
+                from .docbook_in import Converter as docbook_converter
+                docbook = docbook_converter()
+                page = docbook(u'\n'.join(lines), contenttype=u'application/docbook+xml;charset=utf-8')
+                stack.top_append(page)
+                return
+
+        # input similar to: {{{\n...\n}}} or {{{#!typing-error\n...\n}}}
         elem = moin_page.blockcode()
         stack.top_append(elem)
 
