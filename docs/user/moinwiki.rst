@@ -481,11 +481,11 @@ To add a small section of markup using another parser, follow the example below 
 
 **Result**:
 
-======= ======= 
+======= =======
  X       1
  Y       123
  Z       12345
-======= ======= 
+======= =======
 
 csv
 ---
@@ -520,16 +520,16 @@ The wiki parser is the moinwiki parser. If there is a need to emphasize a sectio
 
  {{{#!wiki solid/orange
  * plain
- * ''italic'' 
- * '''bold''' 
+ * ''italic''
+ * '''bold'''
  * '''''bold italic.'''''
  }}}
 
 **Result**:
 
  - plain
- - ''italic'' 
- - '''bold''' 
+ - ''italic''
+ - '''bold'''
  - '''''bold italic.'''''
 
 Admonitions
