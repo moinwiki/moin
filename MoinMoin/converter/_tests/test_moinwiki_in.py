@@ -336,6 +336,10 @@ class TestConverter(object):
                 u'<page><body><blockcode>text</blockcode></body></page>'),
             (u'{{{#!text/x.moin.creole\ntext\n}}}',
                 u'<page><body><page><body><p>text</p></body></page></body></page>'),
+            (u'{{{#!markdown\n~~~\naaa\nbbb\nccc\n~~~\n}}}',
+                u'<page><body><page><body><div><div><blockcode><code>aaa\nbbb\nccc\n</code></blockcode></div></div></body></page></body></page>'),
+            (u'{{{#!mediawiki\n=== Level 3 ===\n}}}',
+                u'<page><body><page><body><h outline-level="3">Level 3</h></body></page></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

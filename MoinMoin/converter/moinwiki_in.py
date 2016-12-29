@@ -338,6 +338,21 @@ class Converter(ConverterMacro):
                 stack.top_append(page)
                 return
 
+            if nowiki_name in ('markdown', 'text/x-markdown'):
+                from .markdown_in import Converter as markdown_converter
+                markdown = markdown_converter()
+                page = markdown(u'\n'.join(lines), contenttype=u'text/x-markdown;charset=utf-8')
+                stack.top_append(page)
+                return
+
+            if nowiki_name in ('mediawiki', 'text/x-mediawiki'):
+                from .mediawiki_in import Converter as mediawiki_converter
+                mediawiki = mediawiki_converter()
+                body = mediawiki.parse_block(lines, args)
+                elem = moin_page.page(children=(body, ))
+                stack.top_append(elem)
+                return
+
         # input similar to: {{{\n...\n}}} or {{{#!typing-error\n...\n}}}
         elem = moin_page.blockcode()
         stack.top_append(elem)
