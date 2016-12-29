@@ -420,6 +420,148 @@ Table Styling Example
 +----------------------+---------------------------------------+
 
 
+
+Verbatim Display
+----------------
+
+To show plain text preformatted code, just enclose the text in three or more curly braces.
+
+**Markup**: ::
+
+ {{{
+ no indentation example
+ }}}
+
+    {{{{
+    {{{
+    indentation; using 4 curly braces to show example with 3 curly braces
+    }}}
+    }}}}
+
+**Result**: ::
+
+ no indentation example
+
+    {{{
+    indentation; using 4 curly braces to show example with 3 curly braces
+    }}}
+
+Parsers
+=======
+
+Syntax Highlighting
+-------------------
+
+**Markup**: ::
+
+ {{{#!highlight python
+ def hello():
+    print "Hello World!"
+ }}}
+
+**Result**:
+
+.. code-block:: python
+
+    def hello():
+        print "Hello, world!"
+
+creole, rst, markdown, docbook, and mediawiki
+---------------------------------------------
+
+To add a small section of markup using another parser, follow the example below replacing "creole" with the target parser name. The moinwiki parser does not have the facility to place table headings in the first column, but the creole parser can be used to create the desired table.
+
+**Markup**: ::
+
+ {{{#!creole
+ |=X|1
+ |=Y|123
+ |=Z|12345
+ }}}
+
+**Result**:
+
+======= ======= 
+ X       1
+ Y       123
+ Z       12345
+======= ======= 
+
+csv
+---
+
+The default separator for CSV cells is a semi-colon (;). The example below specifies a comma (,) is to be used as the separator.
+
+**Markup**: ::
+
+ {{{#!csv ,
+ Fruit,Color,Quantity
+ apple,red,5
+ banana,yellow,23
+ grape,purple,126
+ }}}
+
+**Result**:
+
+======= ======= =======
+ Fruit   Color   Quantity
+======= ======= =======
+ apple   red     5
+ banana  yellow  23
+ grape   purple  126
+======= ======= =======
+
+wiki
+----
+
+The wiki parser is the moinwiki parser. If there is a need to emphasize a section, pass some predefined classes to the wiki parser.
+
+**Markup**: ::
+
+ {{{#!wiki solid/orange
+ * plain
+ * ''italic'' 
+ * '''bold''' 
+ * '''''bold italic.'''''
+ }}}
+
+**Result**:
+
+ - plain
+ - ''italic'' 
+ - '''bold''' 
+ - '''''bold italic.'''''
+
+Admonitions
+-----------
+
+Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+
+
+**Markup**: ::
+
+ {{{#!wiki caution
+ '''Don't overuse admonitions'''
+
+ Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+ }}}
+
+**Result**:
+
+.. caution::
+ '''Don't overuse admonitions'''
+
+ Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+
+CSS classes for use with the wiki parser
+----------------------------------------
+
+ - Background colors: red, green, blue, yellow, or orange
+ - Borders: solid, dashed, or dotted
+ - Text-alignment: left, center, right, or justify
+ - Admonitions: caution, important, note, tip, warning
+ - Comments: comment
+
 Macros
 ======
 
@@ -480,63 +622,6 @@ Smileys and Icons
 | ``{3}`` | ``{*}`` | ``{o}`` |         |
 +---------+---------+---------+---------+
 
-Parsers
-=======
-
-Verbatim Display
-----------------
-
-**Markup**: ::
-
- {{{
- def hello():
-  print "Hello World!"
- }}}
-
-**Result**: ::
-
- def hello():
-  print "Hello World!"
-
-Syntax Highlighting
--------------------
-
-**Markup**: ::
-
- {{{#!highlight python
- def hello():
-    print "Hello World!"
- }}}
-
-**Result**:
-
-.. code-block:: python
-
-    def hello():
-        print "Hello, world!"
-
-**Notes**:
- - The syntax crashes moin2.
-
-Using the wiki parser with css classes
---------------------------------------
-
-CSS classes for use with wiki parsers include:
- - Background colors: red, green, blue, yellow, or orange
- - Borders: solid, dashed, or dotted
- - Text-alignment: left, center, right, or justify
- - Admonitions: caution, important, note, tip, warning
- - Comments: comment
-
-**Markup**: ::
-
- {{{#!wiki red/solid
- This is wiki markup in a '''div''' with css `class="red solid"`.
- }}}
-
-**Result**:
-
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | This is wiki markup in a **div** with css `class="red solid"`.                                                                                                       |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
