@@ -7,7 +7,7 @@ MoinMoin - disable a user account
 """
 
 
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 
 from MoinMoin import user
 from MoinMoin.app import before_wiki

@@ -4,7 +4,7 @@ import code
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 
 from MoinMoin.app import before_wiki
 

@@ -19,7 +19,7 @@ from contextlib import contextmanager
 
 from flask import current_app, request, _request_ctx_stack
 from flask import g as flaskg
-from flask.ext.babel import Babel, gettext, ngettext, lazy_gettext
+from flask_babel import Babel, gettext, ngettext, lazy_gettext
 
 _ = gettext
 N_ = ngettext

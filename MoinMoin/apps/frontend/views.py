@@ -28,8 +28,8 @@ from functools import wraps, partial
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flask.ext.babel import format_date
-from flask.ext.themes import get_themes_list
+from flask_babel import format_date
+from flask_themes import get_themes_list
 
 from flatland import Form, List
 from flatland.validation import Validator

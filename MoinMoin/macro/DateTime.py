@@ -9,7 +9,7 @@ adapted to the TZ settings of the user viewing the content.
 import time
 from datetime import datetime
 
-from flask.ext.babel import format_datetime
+from flask_babel import format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase
 

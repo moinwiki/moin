@@ -7,7 +7,7 @@ MoinMoin - manage whoosh indexes (building, updating, (re)moving and displaying)
 
 
 from flask import current_app as app
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 from flask import g as flaskg
 
 from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
