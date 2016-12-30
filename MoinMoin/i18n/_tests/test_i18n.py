@@ -8,7 +8,7 @@ Test for i18n
 import pytest
 
 from flask import Flask
-from flask.ext import babel
+import flask_babel as babel
 
 from MoinMoin.i18n import get_locale, get_timezone, force_locale
 from MoinMoin.i18n import _, L_, N_

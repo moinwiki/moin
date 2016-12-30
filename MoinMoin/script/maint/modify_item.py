@@ -9,7 +9,7 @@ import shutil
 import json
 
 from flask import current_app as app
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 from flask import g as flaskg
 
 from MoinMoin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM

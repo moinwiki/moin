@@ -22,7 +22,7 @@ from StringIO import StringIO
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile

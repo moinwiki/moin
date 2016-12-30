@@ -395,7 +395,7 @@ class User(object):
             return None
 
         from MoinMoin.themes import get_current_theme
-        from flask.ext.themes import static_file_url
+        from flask_themes import static_file_url
 
         theme = get_current_theme()
 

@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 import pytest
-from flask.ext.babel import format_date, format_datetime
+from flask_babel import format_date, format_datetime
 
 from MoinMoin.macro.Date import MacroDateTimeBase, Macro
 

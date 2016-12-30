@@ -11,7 +11,7 @@ MoinMoin - set a user password
 import sys
 
 from flask import current_app as app
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 
 from MoinMoin.constants.keys import (
     ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED,

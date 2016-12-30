@@ -12,7 +12,7 @@ This script removes all revisions but the last one from all selected items.
 
 
 from flask import current_app as app
-from flask.ext.script import Command, Option
+from flask_script import Command, Option
 
 from whoosh.query import Every
 
