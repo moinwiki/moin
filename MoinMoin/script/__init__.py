@@ -34,9 +34,9 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("index-dump", index.IndexDump())
     from MoinMoin.script.maint import serialization
     manager.add_command("save", serialization.Serialize())
+    manager.add_command("load", serialization.Deserialize())
     from MoinMoin.script.maint import dump_html
     manager.add_command("dump-html", dump_html.Dump())
-    manager.add_command("load", serialization.Deserialize())
     from MoinMoin.script.account.create import Create_User
     manager.add_command("account-create", Create_User())
     from MoinMoin.script.account.disable import Disable_User
