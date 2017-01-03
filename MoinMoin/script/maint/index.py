@@ -22,6 +22,10 @@ class IndexCreate(Command):
     option_list = [
         Option('--tmp', action="store_true", required=False, dest='tmp', default=False,
                help='use the temporary location.'),
+        Option('-i', '--index-create', action='store_true', dest='create_index',
+               required=False, default=False),
+        Option('-s', '--storage-create', action='store_true', dest='create_storage',
+               required=False, default=False),
     ]
 
     def run(self, tmp):
@@ -50,6 +54,10 @@ class IndexBuild(Command):
                help='Number of processors the writer will use.'),
         Option('--limitmb', '-l', required=False, dest='limitmb', type=int, default=10,
                help='Maximum memory (in megabytes) each index-writer will use for the indexing pool.'),
+        Option('-i', '--index-create', action='store_true', dest='create_index',
+               required=False, default=False),
+        Option('-s', '--storage-create', action='store_true', dest='create_storage',
+               required=False, default=False),
     ]
 
     def run(self, tmp, procs, limitmb):

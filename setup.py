@@ -89,7 +89,7 @@ setup_args = dict(
         'Flask>=0.10',  # micro framework
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Cache>=0.3.4',  # caching support
-        'Flask-Script==1.0.0',  # scripting support; see #429, test "./m sample" after changing this
+        'Flask-Script>=2.0.5',  # scripting support
         'Flask-Themes>=0.3.0',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'flatland',  # form handling
