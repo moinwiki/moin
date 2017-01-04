@@ -1,4 +1,5 @@
-/* Topside theme has topbar for small displays and left sidebar for wide displays. */
+/* Topside and topside_cms themes have topbar for small displays and left sidebar for wide displays. */
+/* This CSS is imported by topside_cms theme. */
 
 body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 /* position footer on bottom of window when content is a few lines. */
@@ -12,9 +13,10 @@ a:hover { text-decoration: underline; }
 .moin-permalink { opacity: .25; padding-left: .3em; }
 .current-link { text-decoration: underline; }
 
-#moin-searchform { width: 200px; display: inline-block; font-size: 1em;
-    border: 1px solid #4e7da9; border-radius: 5px; background-color: #fff; }
-.moin-search-query{ float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
+#moin-searchform,
+#moin-long-searchform > p > input { width: 200px; display: inline-block; font-size: 1em;
+    border: 1px solid #4e7da9; border-radius: 3px; background-color: #fff; }
+.moin-search-query { float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
     border: 0; width: 150px; margin-left: 5px; }
 #moin-searchform .moin-float-fix { float: right; clear: none; padding: 0; }
 #moin-search-submit { width: 30px; text-indent: -9000px; border: 0; height: 1.5em;

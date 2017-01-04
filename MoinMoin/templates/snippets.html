@@ -1,5 +1,5 @@
 {#
-Wiki Administrators may use this template (or a copy of it) to customize a wiki.
+Wiki Administrators should use a copy of this template to customize a wiki.
 See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custom-snippets-html-template
 #}
 
@@ -103,28 +103,32 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 {% macro cms_header() %}
     <div id="moin-header">
         {% block header %}
-            <div id="moin-logo">
-                <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
-                    {{ logo() }}
+            {% if logo() %}
+                <div id="moin-logo">
+                    <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                        {{ logo() }}
+                    </a>
+                </div>
+            {%- endif %}
+            {% if cfg.sitename %}
+                <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                    {{ cfg.sitename }}
                 </a>
-            </div>
-            <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
-                {{ cfg.sitename }}
-            </a>
-            <br>
-
-            {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
-                <ul class="moin-header-links">
-                    <li class="moin-panel-heading">User Actions</li>
+                <br>
+            {%- endif %}
+            {% if search_form %}
+                {{ utils.header_search(search_form) }}
+            {% endif %}
+            {% if request.user_agent %} {# true if browser, false if run as ./m dump-html #}
+                <ul id="moin-username" class="moin-header-links">
                     {{ utils.user_login_logoff() }}
                 </ul>
             {%- endif %}
-
-            <ul class="moin-header-links">
-                {# wiki admins will want to add links to key items present in the local wiki  #}
+            <ul id="moin-navibar" class="moin-header-links panel">
+                {# wiki admins should add links and headings for key items within the local wiki below #}
                 <li class="moin-panel-heading">Navigation</li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
+                <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
             </ul>
         {% endblock %}
     </div>
