@@ -1,37 +1,48 @@
+{#
+    Define layout of wiki headers and footers: logo, site name, search, user login/logout...
+
+    The difference between this file and /templates/layout.html is sequence of panels,
+    omission of many of the typical wiki navigation links, addition of custom_panels from snippets.html,
+    and addition of LI tags containing panel headings (imported from snippets.cms_header).
+
+    This theme is designed for use with "./ moin dump-html" command.
+#}
+
 {% extends "base.html" %}
 
 {% import "snippets.html" as snippets with context %}
 
 {% block layout %}
     <div id="moin-main-wrapper">
-        {{ before_header }}
+        {{ snippets.before_header() }}
         {{ snippets.cms_header() }}
-        {{ after_header }}
+        {{ snippets.after_header() }}
 
         <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
             {% block item -%}
                 <div id="moin-content">
-                    <div id="moin-flash">
+                    <div id="moin-flash">  {# client side javascript may add messages here #}
                         {% for category, msg in get_flashed_messages(with_categories=true) %}
                             <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
                         {% endfor %}
                     </div>
                     {% block content %}
-                        {# default show.html will provide contents #}
+                        {# show.html or other template will provide content #}
                     {% endblock %}
                 </div>
             {%- endblock %}
         </div>
 
-        {{ before_footer }}
+        {{ snippets.before_footer() }}
         <div id="moin-footer">
             {% block footer %}
+                {% block footer_hr %}<hr/>{% endblock %}
                 {{ snippets.creditlogos() }}
                 {% block footer_meta %}{% endblock %}
                 {{ snippets.credits() }}
                 {{ snippets.license_info() }}
             {% endblock %}
         </div>
-        {{ after_footer }}
+        {{ snippets.after_footer() }}
     </div>
 {% endblock %}

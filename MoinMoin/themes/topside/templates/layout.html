@@ -1,5 +1,5 @@
 {#
-    Create wiki navigation links: logo, site name, search, user login/logout, page trail...
+    Define layout of wiki headers and footers: logo, site name, search, user login/logout, page trail...
 
     The difference between this file and /templates/layout.html is sequence of panels,
     addition of custom_panels from snippets.html, and addition of LI tags containing panel headings.
@@ -63,7 +63,7 @@
                         {% endfor %}
                     </div>
                     {% block content %}
-                        {# All content templates should have implement this block. #}
+                        {# show.html or other template will provide content #}
                     {% endblock %}
                 </div>
             {%- endblock %}
