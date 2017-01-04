@@ -93,7 +93,11 @@ class Dump(Command):
 
         # copy directories for theme's static files
         theme = app.cfg.user_defaults[THEME_NAME]
-        from_dir = moin_root + '/themes/%s/static' % theme
+        if theme == 'topside_cms':
+            # topside_cms uses topside CSS files
+            from_dir = moin_root + '/themes/topside/static'
+        else:
+            from_dir = moin_root + '/themes/%s/static' % theme
         to_dir = html_root + '_themes/%s' % theme
         shutil.copytree(from_dir, to_dir)
 
