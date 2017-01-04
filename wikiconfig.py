@@ -77,8 +77,8 @@ class Config(DefaultConfig):
     # sitename is displayed in heading of all wiki pages
     sitename = u'My MoinMoin'
 
-    # default theme is basic
-    # theme_default = u"modernized"
+    # default theme is topside
+    # theme_default = u"modernized"  # or basic or topside_cms
 
     # read about PRIVACY ISSUES in docs before uncommenting the line below to use gravatars
     # user_use_gravatar = True
