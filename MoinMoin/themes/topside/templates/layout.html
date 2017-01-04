@@ -10,24 +10,15 @@
 {% import "snippets.html" as snippets with context %}
 {% import "utils.html" as utils with context %}
 
-{% set logo = snippets.logo() %}
-{% set before_header = snippets.before_header() %}
-{% set after_header = snippets.after_header() %}
-{% set before_footer = snippets.before_footer() %}
-{% set after_footer = snippets.after_footer() %}
-{% set license_info = snippets.license_info() %}
-{% set creditlogos = snippets.creditlogos() %}
-{% set credits = snippets.credits() %}
-
 {% block layout %}
 
     <div id="moin-main-wrapper">
-        {{ before_header }}
+        {{ snippets.before_header() }}
         <div id="moin-header">
             {% block header %}
-                {% if logo %}
+                {% if snippets.logo() %}
                     <div id="moin-logo">
-                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
+                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ snippets.logo() }}</a>
                     </div>
                 {% endif %}
                 {% if cfg.sitename %}
@@ -60,7 +51,7 @@
                 {{ snippets.custom_panels() }}
             {% endblock %}
         </div>
-        {{ after_header }}
+        {{ snippets.after_header() }}
 
         <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
             {% block item -%}
@@ -78,17 +69,17 @@
             {%- endblock %}
         </div>
 
-        {{ before_footer }}
+        {{ snippets.before_footer() }}
         <div id="moin-footer">
             {% block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
                 {% block footer_itemviews %}{% endblock %}
-                {{ creditlogos }}
+                {{ snippets.creditlogos() }}
                 {% block footer_meta %}{% endblock %}
-                {{ credits }}
-                {{ license_info }}
+                {{ snippets.credits() }}
+                {{ snippets.license_info() }}
             {% endblock %}
         </div>
-        {{ after_footer }}
+        {{ snippets.after_footer() }}
     </div>
 {% endblock %}
