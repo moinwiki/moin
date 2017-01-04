@@ -7,7 +7,7 @@
 {% import "utils.html" as utils %}
 
 {% set (history, next_offset, previous_offset) = history_page %}
-{% set summary = history[0].get('summary', None) %}
+{% set summary = history[0].get('summary', None) if history else None %}
 {% set title = _("History of '%(fqname)s'", fqname=fqname) %}
 
 {% block content %}
