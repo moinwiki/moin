@@ -12,6 +12,8 @@ a:hover { text-decoration: underline; }
 .moin-permalink { opacity: .25; padding-left: .3em; }
 .current-link { text-decoration: underline; }
 .moin-header-links li i  { display: none; }
+.wikilink,
+.moin-panel-heading { font-weight: bold; display: inherit; }
 
 /* styling for topbar */
 @media (max-width: 1024px) {

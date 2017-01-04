@@ -1,24 +1,32 @@
-# Copyright: 2015 MoinMoin:RogerHaase
+# Copyright: 2015-2017 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Creates a static dump of HTML files for each item in this wiki. Not all html filenames end with .html.
+Creates a static dump of HTML files for each current item in this wiki.
 
-Works best with
-    theme_default = u"cms"
-option set in wikiconfig. Other themes have many broken links in header.
+Usage (activate the virtual environment):
+    moin dump-html --theme=topside_cms --directory=HTML
 
-For convenience, copies of the starting page and index page filenames end with .html, all browsers
-tested follow links to pages with non-conforming filenames without complaint.
+    where:
+        --directory specifies output location, defaults to HTML
+        --theme specifies theme, defaults to wikiconfig theme_default value
+
+Works best with a CMS-like theme that suppresses the wiki navigation links for login, edit,
+etc. that are not useful within a static HTML dump.
+
+The html files created will not have names ending with .html, just as the paths used by the wiki
+server do not end with .html (e.g. http://127.0.0.1/Home)
+
+For convenience, copies of the starting page and index page are created with
+names ending with .html. All browsers tested follow links to pages
+not having .html suffixes without complaint.
 
 TODO:
-    * add feature to pass a userid and password to any maint script
-    * add feature allowing a maint script to override default theme
-        * app.cfg.theme_default = u'cms' - does nothing
-        * app.config['MOINCFG'].theme_default = u'cms' - does nothing
-    * make basic and modernized theme layout more consistent, add docs to say what is wanted
-    * fix issues related to missing or misleading filename suffixes. Using data from contrib/serialized/items.moin:
+    * add feature to accept userid and password options (in case items are protected with ACLs)
+    * add feature to limit output to selected pages
+    * fix issues related to missing or misleading filename suffixes. Using data from contrib/sample/:
         * all browsers think the audio.mp3 and video.mp4 html files are corrupt, a .html suffix is needed
+            * actual media files are in the +get sub-directory
         * all browsers fail to display the svg image file, a .svg suffix is needed on the /+get/svg file
 """
 
@@ -39,14 +47,13 @@ from xstatic.main import XStatic
 from MoinMoin.app import create_app
 from MoinMoin.apps.frontend.views import show_item
 from MoinMoin.app import before_wiki
-from MoinMoin.constants.keys import CURRENT
+from MoinMoin.constants.keys import CURRENT, THEME_NAME
 
 from wikiconfig import Config
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
-wiki_config = os.path.dirname(os.path.abspath(__file__)) + '/../../../wikiconfig_local.py'
 SLASH = '(2f)'
 
 
@@ -54,14 +61,17 @@ class Dump(Command):
     description = 'Create a static HTML image of this wiki.'
 
     option_list = [
-        Option('--directory', '-f', dest='directory', type=unicode, required=False,
+        Option('--directory', '-d', dest='directory', type=unicode, required=False, default='HTML',
                help='Directory name containing the output files.'),
+        Option('-t', '--theme', dest='theme', required=False, default=None,
+               help='Name of theme to be used in creating output pages'),
     ]
 
-    def run(self, directory='HTML'):
-        app = create_app(wiki_config)
+    def run(self, directory='HTML', theme=None):
+        if theme:
+            app.cfg.user_defaults[THEME_NAME] = theme
         before_wiki()
-        html_root = os.path.dirname(os.path.abspath(__file__)) + '/../../../%s/' % directory
+        html_root = os.path.dirname(os.path.abspath(__file__)) + '/../../../{0}/'.format(directory)
         repo_root = os.path.dirname(os.path.abspath(__file__)) + '/../../../'
         moin_root = os.path.dirname(os.path.abspath(__file__)) + '/../../'
         # make an empty output directory
@@ -76,12 +86,13 @@ class Dump(Command):
         shutil.copytree(repo_root + '/wiki_local', html_root + '+serve/wiki_local')
         # copy files from xstatic packaging
         pkg = Config.pkg
+        # TODO: add option to not load bootstrap; is autosize wanted?
         for dirs in ['font_awesome', 'jquery', 'bootstrap', 'autosize', 'jquery_tablesorter', ]:
             xs = XStatic(getattr(pkg, dirs), root_url='/static', provider='local', protocol='http')
             shutil.copytree(xs.base_dir, html_root + '+serve/%s' % dirs)
 
-        # copy directories for current theme
-        theme = app.cfg.theme_default
+        # copy directories for theme's static files
+        theme = app.cfg.user_defaults[THEME_NAME]
         from_dir = moin_root + '/themes/%s/static' % theme
         to_dir = html_root + '_themes/%s' % theme
         shutil.copytree(from_dir, to_dir)
@@ -102,7 +113,7 @@ class Dump(Command):
             filename = html_root + file_name
 
             try:
-                rendered = show_item(current_rev.name, current_rev.revid)
+                rendered = show_item(current_rev.name, CURRENT)
                 names.append(file_name)  # build index containing items successfully rendered
             except Forbidden:  # Forbidden
                 print 'Failed to dump %s: Forbidden' % current_rev.name
@@ -133,6 +144,7 @@ class Dump(Command):
                 shutil.copyfileobj(rev.data, df)
 
         # work around differences is basic and modernized theme layout
+        # TODO: this is likely to break as new themes are added
         if theme == 'basic':
             start = '<div id="moin-content" lang="en" dir="ltr">'  # basic
             end = '<div class="navbar moin-footer">'

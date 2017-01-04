@@ -99,7 +99,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
     {# <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script> #}
 {%- endmacro %}
 
-{# Header for CMS theme - this expects items available in developer sample data - see docs for tips on customization #}
+{# Header for topside_cms theme (and maybe custom themes) - see docs for tips on customization #}
 {% macro cms_header() %}
     <div id="moin-header">
         {% block header %}
@@ -112,19 +112,19 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
                 {{ cfg.sitename }}
             </a>
             <br>
-            <ul class="moin-header-links">
 
-                {# wiki admins will want to replace these with key item names present in local wiki #}
-                <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='moin') }}">Moin Wiki Syntax</a></li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='creole') }}">Creole Wiki Syntax</a></li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='markdown') }}">Markdown Wiki Syntax</a></li>
-                <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
-
-                {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
+            {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
+                <ul class="moin-header-links">
+                    <li class="moin-panel-heading">User Actions</li>
                     {{ utils.user_login_logoff() }}
-                {%- endif %}
+                </ul>
+            {%- endif %}
 
+            <ul class="moin-header-links">
+                {# wiki admins will want to add links to key items present in the local wiki  #}
+                <li class="moin-panel-heading">Navigation</li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
             </ul>
         {% endblock %}
     </div>
