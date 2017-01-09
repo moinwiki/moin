@@ -113,8 +113,12 @@ class Dump(Command):
                 continue
 
             # remove / characters from sub-item filenames
-            file_name = current_rev.name.replace('/', SLASH)
-            filename = html_root + file_name
+            if current_rev.name:
+                file_name = current_rev.name.replace('/', SLASH)
+                filename = html_root + file_name
+            else:
+                # TODO: we skip nameless tickets, but named tickets and comments are processed with ugly names
+                continue
 
             try:
                 rendered = show_item(current_rev.name, CURRENT)
