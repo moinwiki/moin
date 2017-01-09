@@ -159,6 +159,12 @@ be displayed. To add the updates to your cloned repository, do::
 
   hg pull -u
 
+After pulling updates, it is best to also rerun the quickinstall process
+to install any changes or new releases to the dependant packages::
+
+ m quickinstall  # in Windows
+ ./m run         # in Unix
+
 Troubleshooting
 ===============
 

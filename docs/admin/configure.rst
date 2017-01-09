@@ -1631,17 +1631,3 @@ needs (use an absolute path).
 
 Please note that the logging configuration has to be a separate file, so don't
 try this in your wiki configuration file!
-
-======================================
-Creating a Static Dump of Wiki Content
-======================================
-Creating a wiki static dump consists of rendering all wiki items into formatted HTML
-files. In addition, other static files such as images, CSS, and Javascript are copied
-to the output directory. Although a static dump may be created using any theme,
-use of a CMS-like theme with no login link will create a result with no broken links.
-The default output directory is in the wiki root named HTML.
-
-To create a static dump, change wikiconfig to specify the desired theme
-(``theme_default = u"cms"``), then run the following from a terminal window::
-
-    ./m dump-html <optional output directory>  # for windows do: m dump-html
