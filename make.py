@@ -105,17 +105,16 @@ new-wiki        create empty wiki
 sample          create wiki and load sample data
 restore *       create wiki and restore wiki/backup.moin *option, specify file
 import <dir>    import a moin 1.9 wiki/data instance from <dir>
-index           delete and rebuild indexes
 
 run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
 dump-html *     create a static HTML image of wiki *option, specify directory
+index           delete and rebuild indexes
 
 css             run Stylus and lessc to update theme CSS files
 tests *         run tests, output to pytest.txt *options (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
 api             update moin api docs (files are under hg version control)
-dist            delete wiki data, then create distribution archive in dist/
 
 del-all         same as running the 4 del-* commands below
 del-orig        delete all files matching *.orig
@@ -453,7 +452,7 @@ class Commands(object):
             if args:
                 directory = args[0]
                 print 'Creating static HTML image of wiki to {0}...'.format(directory)
-            command = '{0}moin dump-html --directory {1}'.format(ACTIVATE, directory)
+            command = '{0}moin dump-html --directory {1} --theme topside_cms'.format(ACTIVATE, directory)
             with open(DUMPHTML, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
@@ -524,6 +523,7 @@ class Commands(object):
             command = '{0}sphinx-apidoc -f -o docs/devel/api MoinMoin'.format(ACTIVATE)
         result = subprocess.call(command, shell=True)
 
+    # not on menu, rarely used, similar code was in moin 1.9
     def cmd_dist(self, *args):
         """create distribution archive in dist/"""
         print 'Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST)
