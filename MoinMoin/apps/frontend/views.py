@@ -925,6 +925,23 @@ class IndexForm(Form):
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
+
+    def name_initial(files, uppercase=False, lowercase=False):
+        """
+        return a sorted list of first characters of subitem names,
+        optionally all uppercased or lowercased.
+        """
+        import time
+        initials = set()
+        for item in files:
+            initial = item.relname[0]
+            if uppercase:
+                initial = initial.upper()
+            elif lowercase:
+                initial = initial.lower()
+            initials.add(initial)
+        return sorted(list(initials))
+
     try:
         item = Item.create(item_name)  # when item_name='', it gives toplevel index
     except AccessDenied:
@@ -936,16 +953,10 @@ def index(item_name):
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
     form = IndexForm.from_flat(request.args.items(multi=True))
-    if not form['contenttype']:
-        form['contenttype'].set(ContenttypeGroup.member_schema.valid_values)
-
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
-
-    initials = item.name_initial(item.get_subitem_revs(), uppercase=True)
-
     dirs, files = item.get_index(startswith, selected_groups)
-    # index = sorted(index, key=lambda e: e.relname.lower())
+    initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
