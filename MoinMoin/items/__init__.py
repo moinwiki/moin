@@ -718,6 +718,7 @@ class Item(object):
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
                     else:
                         files.append(IndexEntry(relname, fullname_fqname, rev.meta))
+        files.sort()  # files with multiple names are not in sequence
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):
