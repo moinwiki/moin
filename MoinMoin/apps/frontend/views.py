@@ -931,7 +931,6 @@ def index(item_name):
         return a sorted list of first characters of subitem names,
         optionally all uppercased or lowercased.
         """
-        import time
         initials = set()
         for item in files:
             initial = item.relname[0]
