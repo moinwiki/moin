@@ -50,16 +50,19 @@ def userbrowser():
     User Account Browser
     """
     groups = flaskg.groups
+    member_groups = {}  # {username: [list of groups], ...}
+    for groupname in groups:
+        group = groups[groupname]
+        for member in group.members:
+            member_groups[member] = member_groups.get(member, []) + [group.name]
+
     revs = user.search_users()  # all users
     user_accounts = []
     for rev in revs:
-        user_groups = []
         user_names = rev.meta[NAME]
-        for groupname in groups:
-            group = groups[groupname]
-            for name in user_names:
-                if name in group:
-                    user_groups.append(groupname)
+        user_groups = member_groups.get(user_names[0], [])
+        for name in user_names[1:]:
+            user_groups = user_groups + member_groups.get(name, [])
         user_accounts.append(dict(uid=rev.meta[ITEMID],
                                   name=user_names,
                                   fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
