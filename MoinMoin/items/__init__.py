@@ -699,8 +699,8 @@ class Item(object):
             fullnames = rev.meta[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
-                fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
                 if prefix is not None:
+                    fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
                     relname = fullname[len(prefix):]
                     if '/' in relname:
                         # Find the *direct* subitem that is the ancestor of current
@@ -754,25 +754,6 @@ class Item(object):
         index_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
         index_dict.update(dirs_dict)
         return sorted(index_dict.values())
-
-    def name_initial(self, subitems, uppercase=False, lowercase=False):
-        """
-        return a sorted list of first characters of subitem names,
-        optionally all uppercased or lowercased.
-        """
-        prefixes = self.subitem_prefixes
-        initials = set()
-        for item in subitems:
-            for name in item.meta[NAME]:
-                prefix = self.get_prefix_match(name, prefixes)
-                prefixlen = len(prefix)
-                initial = name[prefixlen]
-                if uppercase:
-                    initial = initial.upper()
-                elif lowercase:
-                    initial = initial.lower()
-                initials.add(initial)
-        return sorted(list(initials))
 
     delete_template = 'delete.html'
     destroy_template = 'destroy.html'
