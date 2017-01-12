@@ -755,12 +755,6 @@ class Item(object):
         index_dict.update(dirs_dict)
         return sorted(index_dict.values())
 
-    delete_template = 'delete.html'
-    destroy_template = 'destroy.html'
-    diff_template = 'diff.html'
-    rename_template = 'rename.html'
-    revert_template = 'revert.html'
-
 
 class Contentful(Item):
     """

@@ -704,7 +704,7 @@ def revert_item(item_name, rev):
         if form.validate(state):
             item.revert(form['comment'])
             return redirect(url_for_item(item_name))
-    return render_template(item.revert_template,
+    return render_template('revert.html',
                            item=item,
                            fqname=item.fqname,
                            rev_id=rev,
@@ -739,7 +739,7 @@ def rename_item(item_name):
                 return redirect(url_for_item(fqname))
             except NameNotUniqueError as e:
                 flash(str(e), "error")
-    return render_template(item.rename_template,
+    return render_template('rename.html',
                            item=item, item_name=item_name,
                            fqname=item.fqname,
                            form=form,
@@ -769,7 +769,7 @@ def delete_item(item_name):
             except AccessDenied:
                 abort(403)
             return redirect(url_for_item(item_name))
-    return render_template(item.delete_template,
+    return render_template('delete.html',
                            item=item, item_name=item_name,
                            fqname=split_fqname(item_name),
                            form=form,
@@ -872,7 +872,7 @@ def destroy_item(item_name, rev):
             except AccessDenied:
                 abort(403)
             return redirect(url_for_item(fqname.fullname))
-    return render_template(item.destroy_template,
+    return render_template('destroy.html',
                            item=item, item_name=item_name,
                            fqname=fqname,
                            rev_id=rev,
@@ -2033,7 +2033,7 @@ def _diff(item, revid1, revid2):
     except Exception:
         return _crash(item, oldrev, newrev)
 
-    return render_template(item.diff_template,
+    return render_template('diff.html',
                            item=item, item_name=item.name,
                            fqname=item.fqname,
                            diff_html=diff_html,
