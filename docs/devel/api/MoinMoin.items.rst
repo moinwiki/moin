@@ -1,6 +1,13 @@
 MoinMoin.items package
 ======================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    MoinMoin.items.sharma
+
 Submodules
 ----------
 

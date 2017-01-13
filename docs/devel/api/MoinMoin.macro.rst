@@ -44,6 +44,14 @@ MoinMoin.macro.GetVal module
     :undoc-members:
     :show-inheritance:
 
+MoinMoin.macro.HighlighterList module
+-------------------------------------
+
+.. automodule:: MoinMoin.macro.HighlighterList
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MoinMoin.macro.MailTo module
 ----------------------------
 
