@@ -172,6 +172,14 @@ MoinMoin.util.registry module
     :undoc-members:
     :show-inheritance:
 
+MoinMoin.util.rev_navigation module
+-----------------------------------
+
+.. automodule:: MoinMoin.util.rev_navigation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MoinMoin.util.send_file module
 ------------------------------
 
