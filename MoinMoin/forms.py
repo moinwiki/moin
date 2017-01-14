@@ -247,7 +247,9 @@ class SubscriptionsJoinedString(JoinedString):
                 try:
                     name_ = item.meta['name'][0]
                 except IndexError:
-                    name_ = "This item doesn't exist"
+                    name_ = _("This item doesn't exist.")
+                except AttributeError:
+                    name_ = _("This item name is corrupt, delete and recreate.")
                 value = u"{0} ({1})".format(value, name_)
             else:
                 # name::ExampleItem | tags::demo | nameprefix::jp | namere::.* | name:MyNamespace:ExampleItem
