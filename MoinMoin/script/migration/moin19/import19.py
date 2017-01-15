@@ -71,6 +71,10 @@ class ImportMoin19(Command):
     option_list = [
         Option('--data_dir', '-d', dest='data_dir', type=unicode, required=True,
                help='moin 1.9 data_dir (contains pages and users subdirectories).'),
+        Option('-i', '--index-create', action='store_true', dest='create_index',
+               required=False, default=False),
+        Option('-s', '--storage-create', action='store_true', dest='create_storage',
+               required=False, default=False),
     ]
 
     def run(self, data_dir=None):
