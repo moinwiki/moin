@@ -322,18 +322,19 @@ def process_categories(meta, data, item_category_regex):
             categories = data[-start:]
         else:
             categories = u''
-        # remove the ---- line from the content
-        data = data[:-end]
         if categories:
             # for CategoryFoo, group 'all' matches CategoryFoo, group 'key' matches just Foo
             # we use 'all' so we don't need to rename category items
             matches = list(item_category_regex.finditer(categories))
             if matches:
+                data = data[:-end]  # remove the ---- line from the content
                 tags = [m.group('all') for m in matches]
                 meta.setdefault(TAGS, []).extend(tags)
                 # remove everything between first and last category from the content
+                # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
+                print '    Converted Categories to Tags: {0}'.format(tags)
                 rest = categories[:start] + categories[end:]
                 data += u'\r\n' + rest.lstrip()
         data = data.rstrip() + u'\r\n'
