@@ -44,7 +44,6 @@ from werkzeug.exceptions import Forbidden
 
 from xstatic.main import XStatic
 
-from MoinMoin.app import create_app
 from MoinMoin.apps.frontend.views import show_item
 from MoinMoin.app import before_wiki
 from MoinMoin.constants.keys import CURRENT, THEME_NAME
