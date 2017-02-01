@@ -137,12 +137,18 @@ class Converter(object):
         childrens_output = []
         for child in elem:
             if isinstance(child, ET.Element):
+                if self.last_closed in (u'table', u'p') and child.tag.name == u'table':
+                    # avoid joining consecutive tables, nicer spacing between p's and tables
+                    childrens_output.append(u'\n')
                 # open function can change self.output
                 childrens_output.append(self.open(child))
             else:
                 ret = u''
                 if self.status[-1] == "table" or self.status[-1] == "list":
                     if self.last_closed == "p":
+                        # TODO: adding BR macro seems wrong, but cannot create input to test this line
+                        # moin 1.9 creates P tags within TD, moin 2 does not; see 'table' comments above
+                        # see test_p within test_moinwiki_out
                         ret = u'<<BR>>'
                 elif self.status[-1] == "text":
                     if self.last_closed == "p":
@@ -266,7 +272,7 @@ class Converter(object):
             ret_end = u''
         else:
             ret_end = u'\n'
-        return "{0}{1}{2}".format(ret, childrens_output, ret_end)
+        return u"{0}{1}{2}".format(ret, childrens_output, ret_end)
 
     def open_moinpage_list_item(self, elem):
         self.list_item_label = self.list_item_labels[-1] + u' '
@@ -460,8 +466,10 @@ class Converter(object):
         return u"{0}{1}{2}".format(Moinwiki.strong, self.open_children(elem), Moinwiki.strong)
 
     def open_moinpage_table(self, elem):
-        self.table_tableclass = elem.attrib.get('class', u'')
-        self.table_tablestyle = elem.attrib.get('style', u'')
+        self.table_tableclass = elem.attrib.get(moin_page.class_, u'')
+        # moin-wiki-table class was added by moinwiki_in so html_out can convert multiple body's into head, foot
+        self.table_tableclass = self.table_tableclass.replace(u'moin-wiki-table', u'')
+        self.table_tablestyle = elem.attrib.get(moin_page.style, u'')
         self.table_rowsstyle = u''
         self.table_rowsclass = u''
         self.status.append('table')
@@ -488,9 +496,9 @@ class Converter(object):
         return self.open_children(elem)
 
     def open_moinpage_table_row(self, elem):
-        self.table_rowclass = elem.attrib.get('class', u'')
+        self.table_rowclass = elem.attrib.get(moin_page.class_, u'')
         self.table_rowclass = u' '.join([s for s in [self.table_rowsclass, self.table_rowclass] if s])
-        self.table_rowstyle = elem.attrib.get('style', u'')
+        self.table_rowstyle = elem.attrib.get(moin_page.style, u'')
         self.table_rowstyle = u' '.join([s for s in [self.table_rowsstyle, self.table_rowstyle] if s])
         ret = self.open_children(elem)
         self.table_rowstyle = u''
@@ -498,8 +506,8 @@ class Converter(object):
         return ret + Moinwiki.table_marker + u'\n'
 
     def open_moinpage_table_cell(self, elem):
-        table_cellclass = elem.attrib.get('class', u'')
-        table_cellstyle = elem.attrib.get('style', u'')
+        table_cellclass = elem.attrib.get(moin_page.class_, u'')
+        table_cellstyle = elem.attrib.get(moin_page.style, u'')
         number_columns_spanned = int(elem.get(moin_page.number_columns_spanned, 1))
         number_rows_spanned = elem.get(moin_page.number_rows_spanned, None)
         ret = Moinwiki.table_marker * number_columns_spanned
@@ -512,12 +520,12 @@ class Converter(object):
             self.table_tableclass = u''
         if self.table_tablestyle:
             attrib.append(u'tablestyle="{0}"'.format(self.table_tablestyle))
-            self.table_tableclass = u''
+            self.table_tablestyle = u''
         if self.table_rowclass:
             attrib.append(u'rowclass="{0}"'.format(self.table_rowclass))
             self.table_rowclass = u''
         if self.table_rowstyle:
-            attrib.append(u'rowclass="{0}"'.format(self.table_rowstyle))
+            attrib.append(u'rowstyle="{0}"'.format(self.table_rowstyle))
             self.table_rowstyle = u''
         if table_cellclass:
             attrib.append(u'class="{0}"'.format(table_cellclass))
