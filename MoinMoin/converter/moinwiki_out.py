@@ -58,6 +58,7 @@ class Moinwiki(object):
         (u'ordered', u'lower-roman'): u'i.',
         (u'ordered', u'upper-roman'): u'I.',
         (u'unordered', None): u'*',
+        (u'unordered', u'no-bullet'): u'.',
         (None, None): u'::',
     }
 
