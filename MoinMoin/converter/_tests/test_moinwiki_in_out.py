@@ -98,8 +98,12 @@ class TestConverter(object):
 
     def test_list(self):
         data = [
-            # (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n'),
+            (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n   1. C\n   1. D\n      I. E\n      I. F\n'),
+            (u" * A\n  1. C\n   I. E\n", ' * A\n   1. C\n      I. E\n'),
+            (u" * A\n  1. C\n  1. D\n", ' * A\n   1. C\n   1. D\n'),
             (u" i. E\n i. F\n", " i. E\n i. F\n"),
+            (u" i.#11 K\n i. L\n", " i.#11 K\n i. L\n"),
+            (u" 1.#11 eleven\n 1. twelve\n", " 1.#11 eleven\n 1. twelve\n"),
             (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
             # (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
         ]
