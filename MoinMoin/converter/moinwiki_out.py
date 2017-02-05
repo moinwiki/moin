@@ -266,6 +266,10 @@ class Converter(object):
         self.status.append('list')
         self.last_closed = None
         childrens_output = self.open_children(elem)
+        list_start = elem.attrib.get(moin_page.list_start)
+        if list_start:
+            child_out1, child_out2 = childrens_output.split(u'.', 1)
+            childrens_output = u'{0}.#{1}{2}'.format(child_out1, list_start, child_out2)
         self.list_item_labels.pop()
         self.list_level -= 1
         self.status.pop()
