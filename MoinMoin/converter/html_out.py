@@ -344,7 +344,6 @@ class Converter(object):
         else:
             ret = html.dl(attrib=attrib_new)
 
-        # TODO: An extraneous  "<dd></dd>" is created given " object::\n :: desc 1\n :: desc 2\n" -- moinwiki_in error?
         for item in elem:
             if isinstance(item, ET.Element):
                 if item.tag.uri == moin_page and item.tag.name == 'list-item':
