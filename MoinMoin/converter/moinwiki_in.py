@@ -553,12 +553,13 @@ class Converter(ConverterMacro):
                 new_stack = _Stack(element_label, iter_content=iter_content)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
+            if not list_definition_text or text:
+                # if text == true, then we have object:: definition, not object::\n ::definition
+                element_body = moin_page.list_item_body()
+                element_body.level, element_body.type = level, type
 
-            element_body = moin_page.list_item_body()
-            element_body.level, element_body.type = level, type
-
-            stack.push(element_body)
-            new_stack = _Stack(element_body, iter_content=iter_content)
+                stack.push(element_body)
+                new_stack = _Stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
 

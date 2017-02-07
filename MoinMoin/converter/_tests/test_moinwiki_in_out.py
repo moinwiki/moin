@@ -105,7 +105,7 @@ class TestConverter(object):
             (u" i.#11 K\n i. L\n", " i.#11 K\n i. L\n"),
             (u" 1.#11 eleven\n 1. twelve\n", " 1.#11 eleven\n 1. twelve\n"),
             (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
-            # (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
+            (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
         ]
         for i in data:
             yield (self.do, ) + i
