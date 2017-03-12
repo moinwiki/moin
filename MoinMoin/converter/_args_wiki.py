@@ -65,19 +65,13 @@ def parse(input, parse_re=parse_re):
     :returns: Argument instance
     """
     ret = Arguments()
-
-    if parse_re:
-        for match in parse_re.finditer(input):
-            key = match.group(1)
-            value = (match.group(2) or match.group(3) or match.group(4)).encode('ascii', errors='backslashreplace').decode('unicode-escape')
-            if key:
-                ret.keyword[key] = value
-            else:
-                ret.positional.append(value)
-    else:
-        # macros have unique requirements for parsing, pass entire input string as if it were quoted
-        ret.positional.append(input)
-
+    for match in parse_re.finditer(input):
+        key = match.group(1)
+        value = (match.group(2) or match.group(3) or match.group(4)).encode('ascii', errors='backslashreplace').decode('unicode-escape')
+        if key:
+            ret.keyword[key] = value
+        else:
+            ret.positional.append(value)
     return ret
 
 
