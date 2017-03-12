@@ -31,6 +31,7 @@ from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
 from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 from MoinMoin.util.interwiki import is_known_wiki
+from MoinMoin.converter._args import Arguments
 
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
@@ -126,7 +127,7 @@ class Converter(ConverterMacro):
         """Handles macros using the placeholder syntax."""
         stack.clear()
         if macro_args:
-            macro_args = parse_arguments(macro_args, parse_re=None)
+            macro_args = Arguments([macro_args])
         elem = self.macro(macro_name, macro_args, macro, True)
         stack.top_append_ifnotempty(elem)
 
@@ -392,7 +393,7 @@ class Converter(ConverterMacro):
     def inline_macro_repl(self, stack, macro, macro_name, macro_args=None):
         """Handles macros using the placeholder syntax."""
         if macro_args:
-            macro_args = parse_arguments(macro_args, parse_re=None)
+            macro_args = Arguments([macro_args])
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
 

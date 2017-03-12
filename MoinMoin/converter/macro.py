@@ -46,28 +46,8 @@ class Converter(object):
             return
 
         name = type.parameters['name']
-
         context_block = elem.tag == moin_page.part
-
-        args_tree = None
-        for item in elem:
-            if item.tag.uri == moin_page.namespace:
-                if item.tag.name in ('body', 'inline-body'):
-                    return
-                if item.tag.name == 'arguments':
-                    args_tree = item
-
-        args = None
-        if args_tree:
-            args = Arguments()
-            for arg in args_tree:
-                key = arg.get(moin_page.name)
-                value = arg[0]
-                if key:
-                    args.keyword[key] = value
-                else:
-                    args.positional.append(value)
-
+        args = elem[0][0] if len(elem) else None
         elem_body = context_block and moin_page.body() or moin_page.inline_body()
         elem_error = moin_page.error()
 
