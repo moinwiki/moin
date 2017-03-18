@@ -88,6 +88,7 @@ class Converter(object):
             'list_item',
             'list_item_label',
             'list_item_body',
+            'nowiki',
             'p',
             'page',
             'separator',
@@ -311,6 +312,13 @@ class Converter(object):
                 return u'<<FootNote({0})>>'.format(self.open_children(elem))
             self.status.pop()
         return u''
+
+    def open_moinpage_nowiki(self, elem):
+        """{{{#!wiki ... or {{{#!highlight ... etc."""
+        nowiki_marker_len, nowiki_args, content = elem._children
+        nowiki_args = nowiki_args[0]
+        nowiki_marker_len = int(nowiki_marker_len)
+        return u'{' * nowiki_marker_len + '#!{0}\n{1}\n'.format(nowiki_args, content) + u'}' * nowiki_marker_len
 
     def open_moinpage_object(self, elem):
         """Process objects and xincludes."""

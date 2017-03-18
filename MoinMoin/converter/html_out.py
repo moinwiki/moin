@@ -238,6 +238,9 @@ class Converter(object):
         elem.attrib = {}
         return self.new_copy(html.div, elem, attrib)
 
+    def visit_moinpage_nowiki(self, elem):
+        return self.new_copy(html.div, elem)
+
     def visit_moinpage_blockcode(self, elem):
         pre = self.new_copy(html.pre, elem)
 

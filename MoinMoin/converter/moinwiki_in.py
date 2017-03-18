@@ -15,10 +15,6 @@ import re
 
 from werkzeug import url_encode
 
-import pygments
-from . pygments_in import TreeFormatter
-from pygments.util import ClassNotFound
-
 from MoinMoin.constants.contenttypes import CHARSET
 from MoinMoin.constants.misc import URI_SCHEMES
 from MoinMoin.util.iri import Iri
@@ -263,7 +259,7 @@ class Converter(ConverterMacro):
             match = self.nowiki_end_re.match(line)
             if match:
                 marker = match.group('marker')
-                if len(marker) >= marker_len:
+                if len(marker) == marker_len:
                     return
             yield line
 
@@ -273,97 +269,25 @@ class Converter(ConverterMacro):
         stack.clear()
         nowiki_marker_len = len(nowiki_marker)
         lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len), startno=iter_content.lineno)
-
+        content = u'\n'.join(lines)
+        parsers = set(('wiki', 'text/x.moin.wiki', 'python', 'diff', 'irc', 'java', 'cplusplus', 'pascal',
+                       'csv', 'text/csv', 'creole', 'text/x.moin.creole',
+                       'docbook', 'application/docbook+xml', 'markdown', 'text/x-markdown',
+                       'mediawiki', 'text/x-mediawiki', 'rst', 'text/x-rst', ))
         if nowiki_interpret:
-            if nowiki_args:
-                args = parse_arguments(nowiki_args)
-            elif nowiki_args_old:
-                args = Arguments(keyword={'_old': nowiki_args_old})
-            else:
-                args = None
-            logging.debug("nowiki_name: %r" % nowiki_name)
-            # Parse it directly if the type is ourself
-            if not nowiki_name or nowiki_name in ('wiki', 'text/x.moin.wiki'):
-                body = self.parse_block(lines, args)
-                elem = moin_page.page(children=(body, ))
+            # {{{#!wiki ... OR {{{#!highlight ... OR {{{#!csv ... etc
+            # add to DOM, will be expanded in items/content.py or saved in moinwiki_out.py
+            if nowiki_interpret.startswith(u'#!highlight ') or nowiki_name in parsers:
+                nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret[2:], ))
+                # we avoid adjacent text siblings because serializer within tests merges them
+                elem = moin_page.nowiki(children=(str(nowiki_marker_len), nowiki_args, content, ))
                 stack.top_append(elem)
                 return
 
-            lexer = None
-            if nowiki_interpret.startswith(u'#!highlight '):
-                try:
-                    lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
-                except ClassNotFound:
-                    lexer = pygments.lexers.get_lexer_by_name('text')
-            elif nowiki_name in u'diff cplusplus python java pascal irc'.split():
-                # support old highlighting markup as it was prior to moin 1.9
-                lexer = pygments.lexers.get_lexer_by_name(nowiki_name)
-            if lexer:
-                content = u'\n'.join(lines)
-                blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
-                pygments.highlight(content, lexer, TreeFormatter(), blockcode)
-                body = moin_page.body(children=(blockcode, ))
-                stack.top_append(moin_page.page(children=(body, )))
-                return
-
-            if nowiki_name in ('csv', 'text/csv'):
-                # TODO: support moin 1.9 options: quotechar, show, hide, autofilter, name, link, static_cols, etc
-                sep = nowiki_args_old if nowiki_args_old else u';'
-                contents = u'\n'.join(lines)
-                content = contents.split('\n')
-                head = content[0].split(sep)
-                rows = [x.split(sep) for x in content[1:]]
-                csv_builder = TableMixin()
-                table = csv_builder.build_dom_table(rows, head=head, cls='moin-csv-table moin-sortable')
-                body = moin_page.body(children=(table, ))
-                stack.top_append(moin_page.page(children=(body, )))
-                return
-
-            if nowiki_name in ('creole', 'text/x.moin.creole'):
-                from .creole_in import Converter as creole_converter
-                creole = creole_converter()
-                body = creole.parse_block(lines, args)
-                elem = moin_page.page(children=(body, ))
-                stack.top_append(elem)
-                return
-
-            if nowiki_name in ('rst', 'text/x-rst'):
-                from .rst_in import Converter as rst_converter
-                rst = rst_converter()
-                page = rst(u'\n'.join(lines), contenttype=u'text/x-rst;charset=utf-8')
-                stack.top_append(page)
-                return
-
-            if nowiki_name in ('docbook', 'application/docbook+xml'):
-                from .docbook_in import Converter as docbook_converter
-                docbook = docbook_converter()
-                page = docbook(u'\n'.join(lines), contenttype=u'application/docbook+xml;charset=utf-8')
-                stack.top_append(page)
-                return
-
-            if nowiki_name in ('markdown', 'text/x-markdown'):
-                from .markdown_in import Converter as markdown_converter
-                markdown = markdown_converter()
-                page = markdown(u'\n'.join(lines), contenttype=u'text/x-markdown;charset=utf-8')
-                stack.top_append(page)
-                return
-
-            if nowiki_name in ('mediawiki', 'text/x-mediawiki'):
-                from .mediawiki_in import Converter as mediawiki_converter
-                mediawiki = mediawiki_converter()
-                body = mediawiki.parse_block(lines, args)
-                elem = moin_page.page(children=(body, ))
-                stack.top_append(elem)
-                return
-
-        # input similar to: {{{\n...\n}}} or {{{#!typing-error\n...\n}}}
-        elem = moin_page.blockcode()
+        # input similar to: {{{\ntext\n}}}\n OR {{{#!typing-error\n...\n}}}|n
+        elem = moin_page.blockcode(children=(content, ))
         stack.top_append(elem)
-
-        for line in lines:
-            if len(elem):
-                elem.append('\n')
-            elem.append(line)
+        return
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
@@ -1111,13 +1035,10 @@ class Converter(ConverterMacro):
         attrib = {}
         if arguments:
             for key, value in arguments.keyword.iteritems():
-                if key in ('style', ):
+                if key in ('style', 'class', ):
                     attrib[moin_page(key)] = value
-                elif key == '_old':
-                    attrib[moin_page.class_] = value.replace('/', ' ')
 
         body = moin_page.body(attrib=attrib)
-
         stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
