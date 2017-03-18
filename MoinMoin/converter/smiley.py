@@ -67,7 +67,7 @@ class Converter(object):
     smiley_re = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
-    tags_to_ignore = set(['code', 'blockcode', ])
+    tags_to_ignore = set(['code', 'blockcode', 'nowiki', ])
 
     @classmethod
     def _factory(cls, input, output, icon=None, **kw):

@@ -227,7 +227,11 @@ class Content(object):
         flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
+        nowiki_conv = reg.get(type_moin_document, type_moin_document, nowiki='expandall')
         link_conv = reg.get(type_moin_document, type_moin_document, links='extern')
+        flaskg.clock.start('nowiki')
+        doc = nowiki_conv(doc)
+        flaskg.clock.stop('nowiki')
         flaskg.clock.start('conv_include')
         doc = include_conv(doc)
         flaskg.clock.stop('conv_include')

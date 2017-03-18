@@ -6,17 +6,18 @@
 MoinMoin - Tests for moinwiki->DOM->moinwiki using moinwiki_in and moinwiki_out converters
 
 It is merge of test_moinwiki_in and test_moinwiki_out, looks bad but works.
+
+TODO: Failing tests are commented out and need to be fixed.
 """
 
 
 import pytest
-# failing tests are commented out and need to be fixed XXX TODO
-
 import re
 
 from emeraldtree import ElementTree as ET
 from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-from MoinMoin.converter.moinwiki_in import Converter as conv_in
+# from MoinMoin.converter.moinwiki_in import Converter as conv_in
+from MoinMoin.converter.moinwiki19_in import ConverterFormat19 as conv_in
 from MoinMoin.converter.moinwiki_out import Converter as conv_out
 
 
@@ -70,20 +71,10 @@ class TestConverter(object):
         for i in data:
             yield (self.do, ) + i
 
-    def test_parsers(self):
-        data = [
-            (u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}", u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}\n"),
-            (u"{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class=\"red solid\"`.\n}}}", "{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class=\"red solid\"`.\n}}}\n"),
-            # (u"{{{#!creole(class=\"par: arg para: arga\" style=\"st: er\")\n... **bold** ...\n}}}", u"{{{#!creole(style=\"st: er\" class=\"par: arg para: arga\")\n... **bold** ...\n}}}\n"),
-            # (u"#format creole\n... **bold** ...\n", "#format creole\n... **bold** ...\n"),
-        ]
-        for i in data:
-            yield (self.do, ) + i
-
     def test_link(self):
         data = [
             (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
-            # (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
+            # (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{/samplegraphic.png}}|target=_blank]]\n'),
             # (u'[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]\n'),
             (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
             # (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
