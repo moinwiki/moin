@@ -15,6 +15,7 @@ TODO
 
 
 import os
+import time
 import re
 import codecs
 import hashlib
@@ -31,17 +32,18 @@ from MoinMoin.constants.keys import *
 from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
-
-UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
-
 from MoinMoin.storage.error import NoSuchRevisionError
 from MoinMoin.util.mimetype import MimeType
 from MoinMoin.util.crypto import make_uuid
 from MoinMoin import security
+from MoinMoin.converter.moinwiki19_in import ConverterFormat19 as conv_in
+from MoinMoin.converter.moinwiki_out import Converter as conv_out
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
+
+UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
 
 CHARSET = 'utf-8'
 
@@ -51,7 +53,7 @@ DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
 
 CONTENTTYPE_DEFAULT = u'text/plain;charset=utf-8'
-CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki;charset=utf-8'
+CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki;format=1.9;charset=utf-8'
 FORMAT_TO_CONTENTTYPE = {
     'wiki': CONTENTTYPE_MOINWIKI,
     'text/wiki': CONTENTTYPE_MOINWIKI,
@@ -63,6 +65,8 @@ FORMAT_TO_CONTENTTYPE = {
     'plain': u'text/plain;charset=utf-8',
     'text/plain': u'text/plain;charset=utf-8',
 }
+
+last_moin19_rev = {}
 
 
 class ImportMoin19(Command):
@@ -110,12 +114,35 @@ class ImportMoin19(Command):
                 meta.pop(UID_OLD, None)  # not needed any more
                 backend.store(meta, data)
 
+        print "\nConverting last revision of Moin 1.9 items to Moin 2.0"
+        self.conv_in = conv_in()
+        self.conv_out = conv_out()
+        for item_name, revno in sorted(last_moin19_rev.items()):
+            print "    Processing {0} revision {1}".format(item_name, revno)
+            meta, data = backend.retrieve('default', revno)
+            data_in = ''.join(data.readlines())
+            dom = self.conv_in(data_in, 'text/x.moin.wiki;format=1.9;charset=utf-8')
+            out = self.conv_out(dom)
+            out = out.encode(CHARSET)
+            size, hash_name, hash_digest = hash_hexdigest(out)
+            out = StringIO(out)
+            meta[hash_name] = hash_digest
+            meta[SIZE] = size
+            meta[REVID] = make_uuid()
+            meta[MTIME] = int(time.time())
+            meta[COMMENT] = 'Auto conversion from moin 1.9 markup to moin 2.0 markup'
+            meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
+            del meta['dataid']
+            out.seek(0)
+            backend.store(meta, out)
+
         print "\nRebuilding the index..."
         indexer.close()
         indexer.destroy()
         indexer.create()
         indexer.rebuild()
         indexer.open()
+
         print "Finished conversion!"
 
 
@@ -298,7 +325,12 @@ class PageRevision(object):
         acl_line = self.meta.get(ACL)
         if acl_line is not None:
             self.meta[ACL] = regenerate_acl(acl_line)
-        print (u"    Processed revision {0} of item {1}, revid = {2}".format(revno, item_name, meta[REVID])).encode('utf-8')
+        print (u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+               item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8')
+
+        global last_moin19_rev
+        if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
+            last_moin19_rev[item_name] = meta[REVID]
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
@@ -549,7 +581,7 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
-        print (u"Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8')
+        print (u"    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8')
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
@@ -624,7 +656,7 @@ class UserRevision(object):
         RECHARS = ur'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print (u"    User is subscribed to {0}".format(subscribed_item)).encode('utf-8')
+            print (u"        User is subscribed to {0}".format(subscribed_item)).encode('utf-8')
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:
