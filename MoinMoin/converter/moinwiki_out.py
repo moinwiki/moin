@@ -139,9 +139,6 @@ class Converter(object):
         childrens_output = []
         for child in elem:
             if isinstance(child, ET.Element):
-                if self.last_closed in (u'table', u'p') and child.tag.name == u'table':
-                    # avoid joining consecutive tables, nicer spacing between p's and tables
-                    childrens_output.append(u'\n')
                 # open function can change self.output
                 childrens_output.append(self.open(child))
             else:
@@ -155,9 +152,14 @@ class Converter(object):
                 elif self.status[-1] == "text":
                     if self.last_closed == "p":
                         ret = u'\n'
+                if child == '\n' and getattr(elem, 'level', 0):
+                    child = child + ' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
                 childrens_output.append(u'{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
-        return u''.join(childrens_output)
+        # adding the correct number of '\n' characters between block elements is difficult, too few may result in merged blocks
+        # we want one blank line between block level elements
+        out = u''.join(childrens_output)
+        return out.replace('\n\n\n', '\n\n')
 
     def open(self, elem):
         uri = elem.tag.uri
@@ -223,7 +225,7 @@ class Converter(object):
                 max_subpage_lvl = len(s) + 1
         ret = u'{0}\n{1}\n{2}\n'.format(
             Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
-        return ret
+        return '\n' + ret + '\n'
 
     def open_moinpage_code(self, elem):
         ret = Moinwiki.monospace
@@ -251,7 +253,7 @@ class Converter(object):
         ret = Moinwiki.h * level + u' '
         ret += u''.join(elem.itertext())
         ret += u' {0}\n'.format(Moinwiki.h * level)
-        return ret
+        return u'\n' + ret
 
     def open_moinpage_line_break(self, elem):
         return Moinwiki.linebreak
@@ -318,7 +320,8 @@ class Converter(object):
         nowiki_marker_len, nowiki_args, content = elem._children
         nowiki_args = nowiki_args[0]
         nowiki_marker_len = int(nowiki_marker_len)
-        return u'{' * nowiki_marker_len + '#!{0}\n{1}\n'.format(nowiki_args, content) + u'}' * nowiki_marker_len
+        return u'\n' + u'{' * nowiki_marker_len + '#!{0}\n{1}\n'.format(nowiki_args, content) + \
+               u'}' * nowiki_marker_len + u'\n'
 
     def open_moinpage_object(self, elem):
         """Process objects and xincludes."""
@@ -366,7 +369,7 @@ class Converter(object):
                 ret = Moinwiki.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
-        elif self.status[-2] == 'list':
+        elif self.status[-2] == 'list':  # TODO: still possible? <p> after <li> removed from moinwiki_in
             if self.last_closed and (
                 self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
                 self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
@@ -489,7 +492,7 @@ class Converter(object):
         self.last_closed = None
         ret = self.open_children(elem)
         self.status.pop()
-        return ret
+        return u'\n' + ret + u'\n'
 
     def open_moinpage_table_header(self, elem):
         # is this correct rowclass?
