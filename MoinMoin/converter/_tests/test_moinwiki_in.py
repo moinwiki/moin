@@ -156,27 +156,27 @@ class TestConverter(object):
     def test_list(self):
         data = [
             (u' *Item',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>'),
             (u' * Item',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>'),
             (u' 1. Item',
-                '<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="ordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>'),
             (u' Key:: Item',
-                '<page><body><list><list-item><list-item-label>Key</list-item-label><list-item-body><p>Item</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list><list-item><list-item-label>Key</list-item-label><list-item-body>Item</list-item-body></list-item></list></body></page>'),
             (u'  Item',
-                '<page><body><list item-label-generate="unordered" list-style-type="no-bullet"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered" list-style-type="no-bullet"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>'),
             (u' *Item\nText',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list><p>Text</p></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list><p>Text</p></body></page>'),
             (u' *Item\n Item',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item\nItem</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item\nItem</list-item-body></list-item></list></body></page>'),
             (u' *Item 1\n *Item 2',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item 1</p></list-item-body></list-item><list-item><list-item-body><p>Item 2</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item 1</list-item-body></list-item><list-item><list-item-body>Item 2</list-item-body></list-item></list></body></page>'),
             (u' *Item 1\n  *Item 1.2\n *Item 2',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>Item 1</p><list item-label-generate="unordered"><list-item><list-item-body><p>Item 1.2</p></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>Item 2</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item 1<list item-label-generate="unordered"><list-item><list-item-body>Item 1.2</list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body>Item 2</list-item-body></list-item></list></body></page>'),
             (u' *List 1\n\n *List 2',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>List 1</p></list-item-body></list-item></list><list item-label-generate="unordered"><list-item><list-item-body><p>List 2</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>List 1</list-item-body></list-item></list><list item-label-generate="unordered"><list-item><list-item-body>List 2</list-item-body></list-item></list></body></page>'),
             (u' * List 1\n 1. List 2',
-                '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>List 1</p></list-item-body></list-item></list><list item-label-generate="ordered"><list-item><list-item-body><p>List 2</p></list-item-body></list-item></list></body></page>'),
+                '<page><body><list item-label-generate="unordered"><list-item><list-item-body>List 1</list-item-body></list-item></list><list item-label-generate="ordered"><list-item><list-item-body>List 2</list-item-body></list-item></list></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -355,7 +355,7 @@ class TestConverter(object):
     def test_composite(self):
         data = [
             (u'Text\n * Item\n\nText',
-                '<page><body><p>Text</p><list item-label-generate="unordered"><list-item><list-item-body><p>Item</p></list-item-body></list-item></list><p>Text</p></body></page>'),
+                '<page><body><p>Text</p><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list><p>Text</p></body></page>'),
             (u'Text\n||Item||\nText',
                 '<page><body><p>Text</p><table class="moin-wiki-table"><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
         ]

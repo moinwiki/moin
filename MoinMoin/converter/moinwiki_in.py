@@ -359,12 +359,11 @@ class Converter(ConverterMacro):
     def block_text_repl(self, _iter_content, stack, text):
         if stack.top_check('table', 'table-body', 'list'):
             stack.clear()
-
-        if stack.top_check('body', 'list-item-body'):
+        if stack.top_check('body', ):
             element = moin_page.p()
             stack.push(element)
-        # If we are in a paragraph already, don't loose the whitespace
-        else:
+        elif stack.top_check('p', ) or len(stack.top()):
+            # we are in a paragraph or multi-line list item, don't loose the whitespace
             stack.top_append('\n')
         self.parse_inline(text, stack, self.inline_re)
 
