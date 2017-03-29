@@ -36,6 +36,8 @@ class Moinwiki(object):
     strong = u"'''"
     emphasis = u"''"
     underline = u'__'
+    samp_open = u'{{{'  # 3 brackets is only option for inline
+    samp_close = u'}}}'
     stroke_open = u'--('
     stroke_close = u')--'
     table_marker = u'||'
@@ -436,6 +438,13 @@ class Converter(object):
         ret = self.open_moinpage_part(elem)
         if ret[-1] == u'\n':
             ret = ret[:-1]
+        return ret
+
+    def open_moinpage_samp(self, elem):
+        # text {{{more text}}} end
+        ret = Moinwiki.samp_open
+        ret += u''.join(elem.itertext())
+        ret += Moinwiki.samp_close
         return ret
 
     def open_moinpage_separator(self, elem, hr_class_prefix=u'moin-hr'):
