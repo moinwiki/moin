@@ -143,13 +143,7 @@ class Converter(object):
                 childrens_output.append(self.open(child))
             else:
                 ret = u''
-                if self.status[-1] == "table" or self.status[-1] == "list":
-                    if self.last_closed == "p":
-                        # TODO: adding BR macro seems wrong, but cannot create input to test this line
-                        # moin 1.9 creates P tags within TD, moin 2 does not; see 'table' comments above
-                        # see test_p within test_moinwiki_out
-                        ret = u'<<BR>>'
-                elif self.status[-1] == "text":
+                if self.status[-1] == "text":
                     if self.last_closed == "p":
                         ret = u'\n'
                 if child == '\n' and getattr(elem, 'level', 0):
