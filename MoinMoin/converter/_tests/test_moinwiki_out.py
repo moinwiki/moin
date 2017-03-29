@@ -125,14 +125,13 @@ class TestConverter(Base):
         for i in data:
             yield (self.do, ) + i
 
-    def test_p(self):
+    def test_br(self):
         data = [
             (u"<page:page><page:body><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:body></page:page>", "A\n\nB\n\nC\n\nD\n"),
-            # XXX moin 1.9 creates Ps within TDs, moin 2 does not. Moin 2 transclusions produce DIVs. What does this test -- expanded moin 1.9 MiniPage macro?
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "||A<<BR>>B<<BR>>C<<BR>>D||\n"),
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "||Z||A<<BR>>B<<BR>>C<<BR>>D||\n"),
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell></page:table_row><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "||Z||\n||A<<BR>>B<<BR>>C<<BR>>D||\n"),
-            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p>A<page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", " * A<<BR>>A\n * A<<BR>>A<<BR>>A\n * A\n")
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>A<page:line-break></page:line-break>B<page:line-break></page:line-break>C<page:line-break></page:line-break>D</page:table_cell></page:table_row></page:table></page:body></page:page>", "||A<<BR>>B<<BR>>C<<BR>>D||\n"),
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell><page:table_cell>A<page:line-break></page:line-break>B<page:line-break></page:line-break>C<page:line-break></page:line-break>D</page:table_cell></page:table_row></page:table></page:body></page:page>", "||Z||A<<BR>>B<<BR>>C<<BR>>D||\n"),
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell></page:table_row><page:table_row><page:table_cell>A<page:line-break></page:line-break>B<page:line-break></page:line-break>C<page:line-break></page:line-break>D</page:table_cell></page:table_row></page:table></page:body></page:page>", "||Z||\n||A<<BR>>B<<BR>>C<<BR>>D||\n"),
+            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body>A<page:line-break></page:line-break>A</page:list-item-body></page:list-item><page:list-item><page:list-item-body>A<page:line-break></page:line-break>A<page:line-break></page:line-break>A</page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", " * A<<BR>>A\n * A<<BR>>A<<BR>>A\n * A\n"),
         ]
         for i in data:
             yield (self.do, ) + i
