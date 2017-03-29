@@ -521,6 +521,9 @@ class Converter(object):
     def visit_moinpage_quote(self, elem):
         return self.new_copy(html.q, elem)
 
+    def visit_moinpage_samp(self, elem):
+        return self.new_copy(html.samp, elem)
+
     def visit_moinpage_separator(self, elem):
         return self.new_copy(html.hr, elem)
 

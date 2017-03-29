@@ -787,14 +787,10 @@ class Converter(ConverterMacro):
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None, nowiki_text_backtick=None):
         text = None
         if nowiki_text is not None:
-            text = nowiki_text
+            return stack.top_append(moin_page.samp(children=[nowiki_text]))
         # Remove empty backtick nowiki samples
         elif nowiki_text_backtick:
-            text = nowiki_text_backtick
-        else:
-            return
-
-        stack.top_append(moin_page.code(children=[text]))
+            return stack.top_append(moin_page.code(children=[nowiki_text_backtick]))
 
     inline_object = r"""
         (?P<object>
