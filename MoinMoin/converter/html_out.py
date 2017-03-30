@@ -255,6 +255,10 @@ class Converter(object):
     def visit_moinpage_blockquote(self, elem):
         return self.new_copy(html.blockquote, elem)
 
+    def visit_moinpage_block_comment(self, elem):
+        # ## a block comment in wiki page source is suppressed here
+        return
+
     def visit_moinpage_code(self, elem):
         return self.new_copy(html.code, elem)
 
