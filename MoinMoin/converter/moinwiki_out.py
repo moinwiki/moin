@@ -462,7 +462,9 @@ class Converter(object):
     def open_moinpage_span(self, elem):
         font_size = elem.get(moin_page.font_size, u'')
         baseline_shift = elem.get(moin_page.baseline_shift, u'')
-
+        class_ = elem.get(moin_page.class_, u'')
+        if class_ == 'comment':
+            return u'/* {0} */'.format(self.open_children(elem))
         if font_size:
             return u"{0}{1}{2}".format(
                 Moinwiki.larger_open if font_size == u"120%" else Moinwiki.smaller_open,
