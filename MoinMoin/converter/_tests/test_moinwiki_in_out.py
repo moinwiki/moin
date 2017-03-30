@@ -61,6 +61,17 @@ class TestConverter(object):
         for i in data:
             yield (self.do, ) + i
 
+    def test_comments(self):
+        data = [
+            (u"/* simple inline */", u"/* simple inline */"),
+            (u"text /* text ''with '''markup''''' */ text", u"text /* text ''with '''markup''''' */ text"),
+            (u"## block 1\n\n## block 2", u"## block 1\n\n## block 2"),
+            # \n is omitted from output because serialize method (see below) joins adjacent text children
+            (u"## block line 1\n## block line 2\n\n", u"## block line 1## block line 2\n\n"),
+        ]
+        for i in data:
+            yield (self.do, ) + i
+
     def test_macros(self):
         data = [
             (u"<<Anchor(anchorname)>>", '<<Anchor(anchorname)>>\n'),
