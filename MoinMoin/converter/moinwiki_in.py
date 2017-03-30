@@ -149,13 +149,18 @@ class Converter(ConverterMacro):
 
     block_comment = r"""
         (?P<comment>
-            ^ \#\#
+            ^ \#\#.*$
         )
     """
 
     def block_comment_repl(self, _iter_content, stack, comment):
         # A comment also ends anything
-        stack.clear()
+        if not stack.top_check('block-comment'):
+            stack.clear()
+            elem = moin_page.block_comment(children=(comment, ))
+            stack.push(elem)
+        else:
+            stack.top_append(comment)
 
     block_head = r"""
         (?P<head>

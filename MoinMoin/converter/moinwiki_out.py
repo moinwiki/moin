@@ -223,6 +223,10 @@ class Converter(object):
             Moinwiki.verbatim_open * max_subpage_lvl, text, Moinwiki.verbatim_close * max_subpage_lvl)
         return '\n' + ret + '\n'
 
+    def open_moinpage_block_comment(self, elem):
+        # text child similar to: ## some block comment
+        return '\n\n' + '\n'.join(elem) + '\n\n'
+
     def open_moinpage_code(self, elem):
         ret = Moinwiki.monospace
         ret += u''.join(elem.itertext())
