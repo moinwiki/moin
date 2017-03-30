@@ -874,9 +874,7 @@ class Converter(ConverterMacro):
                 (?P<cell_args> .*? )
                 >
             )?
-            \s*
             (?P<cell_text> .*? )
-            \s*
             (?=
                 \|\|
                 |

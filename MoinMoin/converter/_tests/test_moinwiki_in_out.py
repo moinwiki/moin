@@ -115,18 +115,24 @@ class TestConverter(object):
 
     def test_table(self):
         data = [
-            (u"||A||B||<|2>D||\n||||C||\n", '||A||B||<|2>D||\n||||C||\n'),
-            (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n", u"||'''A'''||'''B'''||'''C'''||\n||1||2||3||\n"),
+            (u"||A||B||<|2>D||\n||||C||\n",
+             u'||A||B||<|2>D||\n||||C||\n'),
+            (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n",
+             u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n"),
             (u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||",
-             u"||<|2>cell spanning 2 rows||cell in the 2nd column||\n||cell in the 2nd column of the 2nd row||\n||||test||\n||||test||\n"),
-            (u'|| narrow ||<99%> wide ||', u'||narrow||<style="width: 99%;">wide||\n'),
-            (u'|| narrow ||<:> wide ||', u'||narrow||<style="text-align: center;">wide||\n'),
-            (u'||table 1||\n\n||table 2||', u'||table 1||\n\n||table 2||\n'),
-            (u'||<#FF8080> red ||<#80FF80> green ||<#8080FF> blue ||', u'||<style="background-color: #FF8080;">red||<style="background-color: #80FF80;">green||<style="background-color: #8080FF;">blue||\n'),
+             u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||||test||\n||||test||\n"),
+            (u'|| narrow ||<99%> wide ||',
+             u'|| narrow ||<style="width: 99%;"> wide ||\n'),
+            (u'|| narrow ||<:> wide ||',
+             u'|| narrow ||<style="text-align: center;"> wide ||\n'),
+            (u'||table 1||\n\n||table 2||',
+             u'||table 1||\n\n||table 2||\n'),
+            (u'||<#FF8080> red ||<#80FF80> green ||<#8080FF> blue ||',
+             u'||<style="background-color: #FF8080;"> red ||<style="background-color: #80FF80;"> green ||<style="background-color: #8080FF;"> blue ||\n'),
             (u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||',
-             u'||normal||<style="font-weight: bold;">bold||<style="color: #FF0000;">red||<style="color: #FF0000; font-weight: bold;">boldred||\n'),
+             u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||\n'),
             (u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||',
-             u'||<style="background-color: red;">red||<style="background-color: green;">green||<style="background-color: blue;">blue||\n'),
+             u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||\n'),
         ]
         for i in data:
             yield (self.do, ) + i
