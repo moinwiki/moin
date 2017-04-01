@@ -116,11 +116,11 @@ class TestConverter(object):
     def test_table(self):
         data = [
             (u"||A||B||<|2>D||\n||||C||\n",
-             u'||A||B||<|2>D||\n||||C||\n'),
+             u'||A||B||<rowspan="2">D||\n||||C||\n'),
             (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n",
              u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n"),
             (u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||",
-             u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||||test||\n||||test||\n"),
+             u"||<rowspan="2"> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||||test||\n||||test||\n"),
             (u'|| narrow ||<99%> wide ||',
              u'|| narrow ||<style="width: 99%;"> wide ||\n'),
             (u'|| narrow ||<:> wide ||',
