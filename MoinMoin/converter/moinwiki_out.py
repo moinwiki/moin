@@ -535,8 +535,7 @@ class Converter(object):
         table_cellstyle = elem.attrib.get(moin_page.style, u'')
         number_columns_spanned = int(elem.get(moin_page.number_columns_spanned, 1))
         number_rows_spanned = elem.get(moin_page.number_rows_spanned, None)
-        ret = Moinwiki.table_marker * number_columns_spanned
-
+        ret = Moinwiki.table_marker
         attrib = []
 
         # TODO: maybe this can be written shorter
@@ -557,7 +556,9 @@ class Converter(object):
         if table_cellstyle:
             attrib.append(u'style="{0}"'.format(table_cellstyle))
         if number_rows_spanned:
-            attrib.append(u'|' + unicode(number_rows_spanned))
+            attrib.append(u'rowspan="{0}"'.format(number_rows_spanned))
+        if number_columns_spanned > 1:
+            attrib.append(u'colspan="{0}"'.format(number_columns_spanned))
 
         attrib = u' '.join(attrib)
 
