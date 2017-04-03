@@ -8,12 +8,22 @@ MoinMoin - Tests for MoinMoin.converter.moinwiki19_in
 
 import pytest
 
+import re
+
 from MoinMoin.converter.moinwiki19_in import ConverterFormat19
+from MoinMoin.util.tree import moin_page, xlink, html, xinclude
 
-from test_moinwiki_in import TestConverter as _Base
 
+class TestConverter(object):
+    namespaces = {
+        moin_page: '',
+        xlink: 'xlink',
+        html: 'xhtml',
+        xinclude: 'xinclude',
+    }
 
-class TestConverterFormat19(_Base):
+    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+
     def setup_class(self):
         self.conv = ConverterFormat19()
 
@@ -37,3 +47,15 @@ class TestConverterFormat19(_Base):
         ]
         for i in data:
             yield (self.do, ) + i
+
+    def serialize(self, elem, **options):
+        from StringIO import StringIO
+        buffer = StringIO()
+        elem.write(buffer.write, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', buffer.getvalue())
+
+    def do(self, input, output, args={}, skip=None):
+        if skip:
+            pytest.skip(skip)
+        out = self.conv(input, 'text/x.moin.wiki;charset=utf-8', **args)
+        assert self.serialize(out) == output
