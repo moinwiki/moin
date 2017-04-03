@@ -316,8 +316,7 @@ class Converter(ConverterMacro):
             \s*
             (
                 (?P<link_url>
-                    [a-zA-Z0-9+.-]+
-                    ://
+                    (%(uri_schemes)s):
                     [^|]+?
                 )
                 |
@@ -333,7 +332,7 @@ class Converter(ConverterMacro):
             ([|] \s* (?P<link_text>.+?) \s*)?
             \]\]
         )
-    """
+    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None, link_text=None,
                          link_interwiki_site=None, link_interwiki_item=None):
@@ -366,7 +365,7 @@ class Converter(ConverterMacro):
             target = Iri(scheme='wiki.local', path=path, fragment=fragment)
             text = link_item
         else:
-            target = link_url
+            target = Iri(link_url)
             text = link_url
         element = moin_page.a(attrib={xlink.href: target})
         stack.push(element)
