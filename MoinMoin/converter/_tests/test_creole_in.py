@@ -44,6 +44,13 @@ class TestConverter(object):
                 '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
             (u'[[MoinMoin:InterWiki]]',
                 '<page><body><p><a xlink:href="wiki://MoinMoin/InterWiki">InterWiki</a></p></body></page>'),
+            (u'[[mailto:fred@flinstones.org|drop me a note]]',
+                '<page><body><p><a xlink:href="mailto:fred@flinstones.org">drop me a note</a></p></body></page>'),
+            (u'[[xmpp:room@conference.example.com?join|the chatroom]]',
+                '<page><body><p><a xlink:href="xmpp:room@conference.example.com?join">the chatroom</a></p></body></page>'),
+            # garbage input defaults to wiki.local name
+            (u'[[invalid:fred@flinstones.org|drop me a note]]',
+                '<page><body><p><a xlink:href="wiki.local:invalid:fred@flinstones.org">drop me a note</a></p></body></page>'),
             (u'[[javascript:alert("xss")]]',
                 '<page><body><p><a xlink:href="wiki.local:javascript:alert%28%22xss%22%29">javascript:alert("xss")</a></p></body></page>'),
             (u'[[http://moinmo.in/|MoinMoin]]',
