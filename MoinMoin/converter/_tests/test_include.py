@@ -3,6 +3,8 @@
 
 """
 MoinMoin - Tests for MoinMoin.converter.include
+
+Note: Tests will fail if caching is turned on in wikiconfig.
 """
 
 
