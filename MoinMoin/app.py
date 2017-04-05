@@ -26,7 +26,7 @@ try:
 except ImportError:
     OldSecureCookieSessionInterface = None
 
-from flask_cache import Cache
+from flask_caching import Cache
 from flask_themes import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader

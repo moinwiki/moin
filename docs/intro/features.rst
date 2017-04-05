@@ -157,6 +157,6 @@ Technologies
 ============
 * html5, css, javascript with jquery, svg
 * python
-* flask, flask-cache, flask-babel, flask-themes, flask-script
+* flask, flask-caching, flask-babel, flask-themes, flask-script
 * whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree
 * sqlalchemy (supports all popular SQL DBMS), sqlite, kyoto tycoon/cabinet
