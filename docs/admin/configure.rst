@@ -1596,9 +1596,10 @@ their docs for details)::
  #USE_X_SENDFILE = False
  #LOGGER_NAME = 'MoinMoin'
 
- # for Flask-Cache:
+ # for Flask-Caching:
  #CACHE_TYPE = 'filesystem'
  #CACHE_DIR = '/path/to/flask-cache-dir'
+ #CACHE_THRESHOLD = 300  # expiration time in seconds
 
 
 =====================
