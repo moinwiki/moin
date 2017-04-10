@@ -60,6 +60,9 @@ def themed_error(e):
     if e.code == 403:
         title = L_('Access Denied')
         description = L_('You are not allowed to access this resource.')
+        if e.description.startswith(' '):
+            # leading blank indicates supplemental info, not standard werkzeug message
+            description += e.description
     else:
         # if we have no special code, we just return the HTTPException instance
         return e

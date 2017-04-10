@@ -37,7 +37,7 @@ from MoinMoin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.i18n import L_
+from MoinMoin.i18n import _, L_, N_
 from MoinMoin.themes import render_template
 from MoinMoin.util import rev_navigation
 from MoinMoin.util.mime import Type
@@ -824,6 +824,8 @@ class Default(Contentful):
         return u'<a href="%s">%s</a>' % (filename, link_text)
 
     def do_modify(self):
+        if not flaskg.user.may.create(self.name):
+            abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
         method = request.method
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
