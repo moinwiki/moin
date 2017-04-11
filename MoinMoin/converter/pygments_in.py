@@ -98,6 +98,13 @@ if pygments:
                 ct = Type(contenttype)
                 # pygments can't process parameters (like e.g. ...;charset=utf-8):
                 mimetype = '{0}/{1}'.format(ct.type, ct.subtype)
+
+                # TODO: fix pygments and remove this workaround for missing mimetypes; see issue #16
+                alias_mimetypes = {'text/x.moin.wiki': 'text/x-trac-wiki',
+                                   'text/x.moin.creole': 'text/x-trac-wiki',
+                                   'application/docbook+xml': 'application/xml'}
+                mimetype = alias_mimetypes[mimetype] if mimetype in alias_mimetypes else mimetype
+
                 try:
                     lexer = pygments.lexers.get_lexer_for_mimetype(mimetype)
                 except pygments.util.ClassNotFound:
