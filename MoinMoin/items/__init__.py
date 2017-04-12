@@ -824,7 +824,7 @@ class Default(Contentful):
         return u'<a href="%s">%s</a>' % (filename, link_text)
 
     def do_modify(self):
-        if not flaskg.user.may.create(self.name):
+        if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
             abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
         method = request.method
         if method in ['GET', 'HEAD']:
