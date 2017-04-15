@@ -17,16 +17,13 @@ from pygments.util import ClassNotFound
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.tree import moin_page
+from ._args import Arguments
 
 from ._table import TableMixin
 from ._util import normalize_split_text, _Iter
-from ._args_wiki import parse as parse_arguments
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
-
-
-common_highlighters = u'diff cplusplus python java pascal irc'.split()
 
 
 class Converter(object):
@@ -35,24 +32,42 @@ class Converter(object):
         if nowiki == 'expandall':
             return cls()
 
-    def handle_nowiki(self, elem, page):
+    def invalid_args(self, elem, nowiki_args):
+        """Insert an error message into output."""
+        message = _('Defaulting to plain text due to invalid arguments: "{arguments}"').format(arguments=' '.join(nowiki_args))
+        admonition = moin_page.div(attrib={moin_page.class_: 'error'}, children=[moin_page.p(children=[message])])
+        elem.append(admonition)
 
+    def handle_nowiki(self, elem, page):
+        """{{{* where * may be #!wiki, #!csv, #!highlight python, etc., or an invalid argument."""
         logging.debug("handle_nowiki elem: %r" % elem)
         marker_len, nowiki_args, content = elem._children
-        arguments = parse_arguments(nowiki_args[0])
-        nowiki_name = arguments.positional[0]
-        nowiki_args_old = arguments.positional[1] if len(arguments.positional) > 1 else None
+        nowiki_args = nowiki_args[0].rstrip()
+
+        if nowiki_args.startswith('#!') and len(nowiki_args) > 2:
+            arguments = nowiki_args[2:].split(' ', 1)  # skip leading #!
+            nowiki_name = arguments[0]
+            nowiki_args_old = arguments[1] if len(arguments) > 1 else None
+        else:
+            nowiki_name = nowiki_args_old = None
+
         # all the old children of the element will be removed and new children added
         elem.remove_all()
         lexer = None
+        if nowiki_name in set(('diff', 'cplusplus', 'python', 'java', 'pascal', 'irc')):
+            # make old style markup similar to {{{#!python like new style {{{#!highlight python
+            nowiki_args_old = nowiki_name
+            nowiki_name = 'highlight'
+
         if nowiki_name == u'highlight':
             try:
                 lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
             except ClassNotFound:
-                lexer = pygments.lexers.get_lexer_by_name('text')
-        elif nowiki_name in common_highlighters:
-            # support old highlighting markup as it was prior to moin 1.9
-            lexer = pygments.lexers.get_lexer_by_name(nowiki_name)
+                try:
+                    lexer = pygments.lexers.get_lexer_for_mimetype(nowiki_args_old)
+                except ClassNotFound:
+                    self.invalid_args(elem, nowiki_args)
+                    lexer = pygments.lexers.get_lexer_by_name('text')
         if lexer:
             blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
             pygments.highlight(content, lexer, TreeFormatter(), blockcode)
@@ -75,9 +90,9 @@ class Converter(object):
             moinwiki = moinwiki_converter()
             lines = normalize_split_text(content)
             lines = _Iter(lines)
-            if len(arguments.positional) > 1:
-                arguments.keyword['class'] = u' '.join(arguments.positional[1:])
-                del arguments.positional[1:]
+            arguments = Arguments()
+            if nowiki_args_old:
+                arguments.keyword['class'] = nowiki_args_old.replace('/', ' ')
             body = moinwiki.parse_block(lines, arguments)
             page = moin_page.page(children=(body, ))
             elem.append(page)
@@ -121,10 +136,11 @@ class Converter(object):
             elem.append(page)
             return
 
-        elem.append(nowiki_name)
-        elem.append(nowiki_args_old)
-        elem.append(content)
-        logging.error("Failed to process elem: %r" % elem)
+        self.invalid_args(elem, nowiki_args)
+        lexer = pygments.lexers.get_lexer_by_name('text')
+        blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
+        pygments.highlight(content, lexer, TreeFormatter(), blockcode)
+        elem.append(blockcode)
         return
 
     def recurse(self, elem, page):
