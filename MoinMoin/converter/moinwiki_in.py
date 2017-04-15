@@ -275,21 +275,16 @@ class Converter(ConverterMacro):
         nowiki_marker_len = len(nowiki_marker)
         lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len), startno=iter_content.lineno)
         content = u'\n'.join(lines)
-        parsers = set(('wiki', 'text/x.moin.wiki', 'python', 'diff', 'irc', 'java', 'cplusplus', 'pascal',
-                       'csv', 'text/csv', 'creole', 'text/x.moin.creole',
-                       'docbook', 'application/docbook+xml', 'markdown', 'text/x-markdown',
-                       'mediawiki', 'text/x-mediawiki', 'rst', 'text/x-rst', ))
         if nowiki_interpret:
-            # {{{#!wiki ... OR {{{#!highlight ... OR {{{#!csv ... etc
-            # add to DOM, will be expanded in items/content.py or saved in moinwiki_out.py
-            if nowiki_interpret.startswith(u'#!highlight ') or nowiki_name in parsers:
-                nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret[2:], ))
-                # we avoid adjacent text siblings because serializer within tests merges them
-                elem = moin_page.nowiki(children=(str(nowiki_marker_len), nowiki_args, content, ))
-                stack.top_append(elem)
-                return
+            # {{{#!wiki ... OR {{{#!highlight ... OR {{{#!csv ... OR {{{typo ... etc
+            # we push eveything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
+            nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
+            # we avoid adjacent text siblings because serializer within tests merges them
+            elem = moin_page.nowiki(children=(str(nowiki_marker_len), nowiki_args, content, ))
+            stack.top_append(elem)
+            return
 
-        # input similar to: {{{\ntext\n}}}\n OR {{{#!typing-error\n...\n}}}|n
+        # input similar to: {{{\ntext\n}}}\n  TODO: multiple {{{{{{{{ are lost in moinwiki_out
         elem = moin_page.blockcode(children=(content, ))
         stack.top_append(elem)
         return
