@@ -56,7 +56,6 @@ class TestConverter(object):
             (u"~-smaller-~\n", '~-smaller-~\n'),
             (u"^super^script\n", '^super^script\n'),
             (u",,sub,,script\n", ',,sub,,script\n'),
-            # (u"## comment\n", "## comment\n"), # can not work -- "## comments" are not pushed to DOM
             (u"#ANY any", "#ANY any\n"),
         ]
         for i in data:
