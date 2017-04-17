@@ -228,18 +228,18 @@ class Converter(ConverterMacro):
             ^
             \s*
             (?P<nowiki_marker> \{{3,} )
-            \s*
+            \s*                               # spaces not defined here, but accepted with no error messages
             (?P<nowiki_interpret>
                 \#!
-                \s*
-                (?P<nowiki_name> [\w/.-]+ )?  # stuff like creole or text/x.moin.creole or text/x-python
+                \s*                           # spaces not allowed here, error message generated
+                (?P<nowiki_name> [\w/.-]+ )?  # wiki | csv | highlight | creole (same result as highlight creole)
                 \s*
                 (:?
                     \(
-                    (?P<nowiki_args> .*? )
+                    (?P<nowiki_args> .*? )    # (style="color: red;")
                     \)
                     |
-                    (?P<nowiki_args_old> .+ )
+                    (?P<optional_args> .+ )   # csv , -2 -3 | highlight python numbers=on start=222
                 )?
             )?
             \s*
@@ -269,25 +269,17 @@ class Converter(ConverterMacro):
             yield line
 
     def block_nowiki_repl(self, iter_content, stack, nowiki, nowiki_marker,
-                          nowiki_interpret=None, nowiki_name=None, nowiki_args=None,
-                          nowiki_args_old=None):
+                          nowiki_interpret='', nowiki_name=None, nowiki_args=None,
+                          optional_args=None):
         stack.clear()
-        nowiki_marker_len = len(nowiki_marker)
-        lines = _Iter(self.block_nowiki_lines(iter_content, nowiki_marker_len), startno=iter_content.lineno)
+        lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
         content = u'\n'.join(lines)
-        if nowiki_interpret:
-            # {{{#!wiki ... OR {{{#!highlight ... OR {{{#!csv ... OR {{{typo ... etc
-            # we push eveything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
-            nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
-            # we avoid adjacent text siblings because serializer within tests merges them
-            elem = moin_page.nowiki(children=(str(nowiki_marker_len), nowiki_args, content, ))
-            stack.top_append(elem)
-            return
-
-        # input similar to: {{{\ntext\n}}}\n  TODO: multiple {{{{{{{{ are lost in moinwiki_out
-        elem = moin_page.blockcode(children=(content, ))
+        # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
+        # we push eveything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
+        all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
+        # we avoid adjacent text siblings because serializer within tests merges them
+        elem = moin_page.nowiki(children=(str(len(nowiki_marker)), all_nowiki_args, content, ))
         stack.top_append(elem)
-        return
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 

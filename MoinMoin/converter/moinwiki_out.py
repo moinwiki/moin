@@ -317,8 +317,8 @@ class Converter(object):
 
     def open_moinpage_nowiki(self, elem):
         """{{{#!wiki ... or {{{#!highlight ... etc."""
-        nowiki_marker_len, nowiki_args, content = elem._children
-        nowiki_args = nowiki_args[0]
+        nowiki_marker_len, all_nowiki_args, content = elem._children
+        nowiki_args = all_nowiki_args[0]
         nowiki_marker_len = int(nowiki_marker_len)
         return u'\n' + u'{' * nowiki_marker_len + '{0}\n{1}\n'.format(nowiki_args, content) + \
                u'}' * nowiki_marker_len + u'\n'
