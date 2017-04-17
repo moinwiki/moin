@@ -9,6 +9,8 @@ Expands nowiki elements in an internal Moin document.
 
 from __future__ import absolute_import, division
 
+import re
+
 from emeraldtree import ElementTree as ET
 
 import pygments
@@ -86,10 +88,16 @@ class Converter(object):
 
         if nowiki_name in ('csv', 'text/csv'):
             # TODO: support moin 1.9 options: quotechar, show, hide, autofilter, name, link, static_cols, etc
-            optional_args = optional_args.split()[0]  # ignore all parameters except a delimiter in first position
-            if len(optional_args) > 1:
-                optional_args = None
-            sep = optional_args or u';'
+            delim = None
+            if optional_args:
+                m = re.search('delimiter=(.?)', optional_args)
+                if m and m.group(1):
+                    delim = m.group(1)
+                if not delim:
+                    delim = optional_args.split()[0]  # ignore all parameters except a delimiter in first position
+                    if len(delim) > 1:
+                        delim = None
+            sep = delim or u';'
             content = content.split('\n')
             head = content[0].split(sep)
             rows = [x.split(sep) for x in content[1:]]
