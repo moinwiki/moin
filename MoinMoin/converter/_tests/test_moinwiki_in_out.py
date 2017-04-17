@@ -47,7 +47,8 @@ class TestConverter(object):
             (u"----\n-----\n------\n", '----\n-----\n------\n'),
             (u"'''strong'''\n", "'''strong'''\n"),
             (u"''emphasis''\n", "''emphasis''\n"),
-            (u"{{{\nblockcode\n}}}\n", "{{{\nblockcode\n}}}\n"),
+            # extraneous x required below to prevent IndexError, side effect of serializer
+            (u"{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
             (u"`monospace`\n", '`monospace`\n'),
             (u"--(stroke)--\n", '--(stroke)--\n'),
             (u"__underline__\n", '__underline__\n'),

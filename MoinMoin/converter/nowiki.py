@@ -17,6 +17,7 @@ from pygments.util import ClassNotFound
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.tree import moin_page
+from ._args_wiki import parse as parse_arguments
 from ._args import Arguments
 
 from ._table import TableMixin
@@ -32,41 +33,50 @@ class Converter(object):
         if nowiki == 'expandall':
             return cls()
 
-    def invalid_args(self, elem, nowiki_args):
+    def invalid_args(self, elem, all_nowiki_args):
         """Insert an error message into output."""
-        message = _('Defaulting to plain text due to invalid arguments: "{arguments}"').format(arguments=' '.join(nowiki_args))
+        message = _('Defaulting to plain text due to invalid arguments: "{arguments}"').format(arguments=all_nowiki_args[0])
         admonition = moin_page.div(attrib={moin_page.class_: 'error'}, children=[moin_page.p(children=[message])])
         elem.append(admonition)
 
     def handle_nowiki(self, elem, page):
-        """{{{* where * may be #!wiki, #!csv, #!highlight python, etc., or an invalid argument."""
+        """{{{* where * may be #!wiki, #!csv, #!highlight python, "", etc., or an invalid argument."""
         logging.debug("handle_nowiki elem: %r" % elem)
-        marker_len, nowiki_args, content = elem._children
-        nowiki_args = nowiki_args[0].rstrip()
+        marker_len, all_nowiki_args, content = elem._children
+        nowiki_args = all_nowiki_args[0].strip()
+
+        # remove all the old children of the element, new children will be added
+        elem.remove_all()
+
+        if not nowiki_args:
+            # input similar to: {{{\ntext\n}}}\n
+            blockcode = moin_page.blockcode(children=(content, ))
+            elem.append(blockcode)
+            return
 
         if nowiki_args.startswith('#!') and len(nowiki_args) > 2:
             arguments = nowiki_args[2:].split(' ', 1)  # skip leading #!
             nowiki_name = arguments[0]
-            nowiki_args_old = arguments[1] if len(arguments) > 1 else None
+            optional_args = arguments[1] if len(arguments) > 1 else None
         else:
-            nowiki_name = nowiki_args_old = None
+            nowiki_name = optional_args = None
 
-        # all the old children of the element will be removed and new children added
-        elem.remove_all()
         lexer = None
         if nowiki_name in set(('diff', 'cplusplus', 'python', 'java', 'pascal', 'irc')):
             # make old style markup similar to {{{#!python like new style {{{#!highlight python
-            nowiki_args_old = nowiki_name
+            optional_args = nowiki_name if not optional_args else nowiki_name + ' ' + optional_args
             nowiki_name = 'highlight'
 
         if nowiki_name == u'highlight':
+            # TODO: support moin 1.9 options like numbers=on start=222 step=10
+            optional_args = optional_args.split()[0]  # ignore all parameters except lexer name
             try:
-                lexer = pygments.lexers.get_lexer_by_name(nowiki_args_old)
+                lexer = pygments.lexers.get_lexer_by_name(optional_args)
             except ClassNotFound:
                 try:
-                    lexer = pygments.lexers.get_lexer_for_mimetype(nowiki_args_old)
+                    lexer = pygments.lexers.get_lexer_for_mimetype(optional_args)
                 except ClassNotFound:
-                    self.invalid_args(elem, nowiki_args)
+                    self.invalid_args(elem, all_nowiki_args)
                     lexer = pygments.lexers.get_lexer_by_name('text')
         if lexer:
             blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
@@ -76,7 +86,10 @@ class Converter(object):
 
         if nowiki_name in ('csv', 'text/csv'):
             # TODO: support moin 1.9 options: quotechar, show, hide, autofilter, name, link, static_cols, etc
-            sep = nowiki_args_old or u';'
+            optional_args = optional_args.split()[0]  # ignore all parameters except a delimiter in first position
+            if len(optional_args) > 1:
+                optional_args = None
+            sep = optional_args or u';'
             content = content.split('\n')
             head = content[0].split(sep)
             rows = [x.split(sep) for x in content[1:]]
@@ -90,10 +103,12 @@ class Converter(object):
             moinwiki = moinwiki_converter()
             lines = normalize_split_text(content)
             lines = _Iter(lines)
-            arguments = Arguments()
-            if nowiki_args_old:
-                arguments.keyword['class'] = nowiki_args_old.replace('/', ' ')
-            body = moinwiki.parse_block(lines, arguments)
+            # reparse arguments from original: {{{#!wiki solid/orange (style="color: red;")
+            wiki_args = parse_arguments(all_nowiki_args[0][2:])
+            if len(wiki_args.positional) > 1:
+                wiki_args.keyword['class'] = u' '.join(wiki_args.positional[1:])
+            del wiki_args.positional[:]
+            body = moinwiki.parse_block(lines, wiki_args)
             page = moin_page.page(children=(body, ))
             elem.append(page)
             return
@@ -103,7 +118,7 @@ class Converter(object):
             creole = creole_converter()
             lines = normalize_split_text(content)
             lines = _Iter(lines)
-            body = creole.parse_block(lines, nowiki_args_old)
+            body = creole.parse_block(lines, optional_args)
             page = moin_page.page(children=(body, ))
             elem.append(page)
             return
@@ -132,11 +147,11 @@ class Converter(object):
         if nowiki_name in ('mediawiki', 'text/x-mediawiki'):
             from .mediawiki_in import Converter as mediawiki_converter
             mediawiki = mediawiki_converter()
-            page = mediawiki(content, nowiki_args_old)
+            page = mediawiki(content, optional_args)
             elem.append(page)
             return
 
-        self.invalid_args(elem, nowiki_args)
+        self.invalid_args(elem, all_nowiki_args)
         lexer = pygments.lexers.get_lexer_by_name('text')
         blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
         pygments.highlight(content, lexer, TreeFormatter(), blockcode)
