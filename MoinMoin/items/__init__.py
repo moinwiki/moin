@@ -714,7 +714,10 @@ class Item(object):
                             direct_fullname = prefix + direct_relname
                             direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
                             fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
-                            direct_rev = get_storage_revision(fqname)
+                            try:
+                                direct_rev = get_storage_revision(fqname)
+                            except AccessDenied:
+                                continue  # user has permission to see parent, but not this subitem
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
                     else:
                         files.append(IndexEntry(relname, fullname_fqname, rev.meta))
