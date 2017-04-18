@@ -35,6 +35,11 @@
                <i class="fa fa-times-circle fa-lg"></i>
                {{ _("Destroy") }}
             </a>
+        {% else %}
+            <p>
+                <i class="fa fa-minus-circle fa-lg"></i>
+                {{ _("You lack read permission for all existing subitems.") }}
+            </p>
         {% endif %}
         <a class="moin-button" id="moin-create-new-item" href="#">
            <i class="fa fa-file-o fa-lg"></i>
