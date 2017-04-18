@@ -418,12 +418,13 @@ class Converter(object):
         type = elem.get(moin_page.content_type, u"").split(u';')
         if len(type) == 2:
             if type[0] == "x-moin/macro":
+                name = type[1].split(u'=')[1]
+                eol = '\n\n' if elem.tag.name == 'part' else ''
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    return u"<<{0}({1})>>\n".format(
-                        type[1].split(u'=')[1],
-                        u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
+                    return u"{0}<<{1}({2})>>{0}".format(
+                        eol, name, u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
                 else:
-                    return u"<<{0}()>>\n".format(type[1].split(u'=')[1])
+                    return u"{0}<<{1}()>>{0}".format(eol, name)
             elif type[0] == "x-moin/format":
                 elem_it = iter(elem)
                 ret = u"{{{{{{#!{0}".format(type[1].split(u'=')[1])
