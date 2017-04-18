@@ -79,6 +79,7 @@ class TestConverter(object):
             (u"<<FootNote(test)>>", "<<FootNote(test)>>\n"),
             (u"<<TableOfContents(2)>>", "<<TableOfContents(2)>>\n"),
             (u"<<TeudView()>>", "<<TeudView()>>\n"),
+            (u"||<<TeudView()>>||", "||<<TeudView()>>||\n"),
         ]
         for i in data:
             yield (self.do, ) + i
