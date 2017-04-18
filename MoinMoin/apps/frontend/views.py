@@ -969,6 +969,7 @@ def index(item_name):
                            initials=initials,
                            startswith=startswith,
                            form=form,
+                           item=item,
     )
 
 
