@@ -222,6 +222,8 @@ class TestConverter(object):
                 '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Cell 1.1</table-cell><table-cell>Cell 1.2</table-cell></table-row><table-row><table-cell>Cell 2.1</table-cell><table-cell>Cell 2.2</table-cell></table-row></table-body></table></body></page>'),
             (u'||Header||\n===\n||Body||\n=====\n||Footer||',
                 '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell>Header</table-cell></table-row></table-body><table-body><table-row><table-cell>Body</table-cell></table-row></table-body><table-body><table-row><table-cell>Footer</table-cell></table-row></table-body></table></body></page>'),
+            (u'||<<DateTime>>||',
+                '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><inline-part alt="&lt;&lt;DateTime&gt;&gt;" content-type="x-moin/macro;name=DateTime" /></table-cell></table-row></table-body></table></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
