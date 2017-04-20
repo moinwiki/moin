@@ -31,6 +31,7 @@ EXTERNALLINKS = u"externallinks"
 ITEMLINKS = u"itemlinks"
 ITEMTRANSCLUSIONS = u"itemtransclusions"
 TAGS = u"tags"
+TEMPLATE = u'template'  # a TAGS value identifying an item as a template
 CONTENTNGRAM = u"contentngram"
 
 ACTION = u"action"

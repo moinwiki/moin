@@ -50,7 +50,8 @@ from MoinMoin.constants.keys import (
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
-    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, LATEST_REVS, EDIT_ROWS
+    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
+    LATEST_REVS, EDIT_ROWS
 )
 from MoinMoin.constants.namespaces import NAMESPACE_ALL
 from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
@@ -841,7 +842,7 @@ class Default(Contentful):
                                       )
             item = self
             if isinstance(self.rev, DummyRev):
-                template_name = request.values.get('template')
+                template_name = request.values.get(TEMPLATE)
                 if template_name is None:
                     return self._do_modify_show_templates()
                 elif template_name:
