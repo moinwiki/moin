@@ -19,7 +19,7 @@ from MoinMoin.util import diff_html
 from MoinMoin._tests import become_trusted, update_item
 from MoinMoin.items import Item
 from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.constants.keys import CONTENTTYPE, TAGS
+from MoinMoin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
 from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
@@ -41,21 +41,21 @@ class TestContent(object):
         item_name1 = u'Template_Item1'
         item1 = Item.create(item_name1)
         contenttype1 = u'text/plain;charset=utf-8'
-        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
+        meta = {CONTENTTYPE: contenttype1, TAGS: [TEMPLATE]}
         item1._save(meta)
         item1 = Item.create(item_name1)
 
         item_name2 = u'Template_Item2'
         item2 = Item.create(item_name2)
         contenttype1 = u'text/plain;charset=utf-8'
-        meta = {CONTENTTYPE: contenttype1, TAGS: ['template']}
+        meta = {CONTENTTYPE: contenttype1, TAGS: [TEMPLATE]}
         item2._save(meta)
         item2 = Item.create(item_name2)
 
         item_name3 = u'Template_Item3'
         item3 = Item.create(item_name3)
         contenttype2 = u'image/png'
-        meta = {CONTENTTYPE: contenttype2, TAGS: ['template']}
+        meta = {CONTENTTYPE: contenttype2, TAGS: [TEMPLATE]}
         item3._save(meta)
         item3 = Item.create(item_name3)
         # two items of same content type

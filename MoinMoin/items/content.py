@@ -69,7 +69,7 @@ from MoinMoin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
-from MoinMoin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS,
+from MoinMoin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
                                      HASH_ALGORITHM, ACTION_SAVE)
 
 from MoinMoin import log
@@ -290,7 +290,7 @@ class Content(object):
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, u'template')]
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE)]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
