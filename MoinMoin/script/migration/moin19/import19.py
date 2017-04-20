@@ -315,6 +315,11 @@ class PageRevision(object):
         meta[REVID] = make_uuid()
         meta[NAMESPACE] = NAMESPACE_DEFAULT
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        if meta[NAME][0].endswith('Template'):
+            if TAGS in meta:
+                meta[TAGS].append(TEMPLATE)
+            else:
+                meta[TAGS] = [TEMPLATE]
         self.meta = {}
         for k, v in meta.iteritems():
             if isinstance(v, list):
