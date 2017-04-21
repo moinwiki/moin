@@ -130,7 +130,7 @@ class ImportMoin19(Command):
             meta[SIZE] = size
             meta[REVID] = make_uuid()
             meta[MTIME] = int(time.time())
-            meta[COMMENT] = 'Auto conversion from moin 1.9 markup to moin 2.0 markup'
+            meta[COMMENT] = 'Convert moin 1.9 markup to 2.0'
             meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
             del meta['dataid']
             out.seek(0)
