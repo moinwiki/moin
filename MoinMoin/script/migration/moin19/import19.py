@@ -59,6 +59,7 @@ FORMAT_TO_CONTENTTYPE = {
     'text/wiki': CONTENTTYPE_MOINWIKI,
     'text/moin-wiki': CONTENTTYPE_MOINWIKI,
     'creole': u'text/x.moin.creole;charset=utf-8',
+    'python': u'text/x-python;charset=utf-8',
     'text/creole': u'text/x.moin.creole;charset=utf-8',
     'rst': u'text/rst;charset=utf-8',
     'text/rst': u'text/rst;charset=utf-8',
