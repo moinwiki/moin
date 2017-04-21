@@ -26,6 +26,7 @@ def split_body(body):
     Returns a list of (pi, restofline) tuples and a string with the rest of the body.
     """
     pi = {}
+    comments = []
     while body.startswith('#'):
         try:
             line, body = body.split('\n', 1) # extract first line
@@ -39,26 +40,22 @@ def split_body(body):
             body = line + '\n' + body
             break
 
-        if line[1] == '#':# two hash marks are a comment
-            comment = line[2:]
-            if not comment.startswith(' '):
-                # we don't require a blank after the ##, so we put one there
-                comment = ' ' + comment
-                line = '##{0}'.format(comment)
-
-        verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
-        pi.setdefault(verb.lower(), []).append(args.strip())
+        if line[1] == '#':  # two hash marks are a comment
+            comments.append(line + '\n')
+        else:
+            verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
+            pi.setdefault(verb.lower(), []).append(args.strip())
 
     for key, value in pi.iteritems():
-        if key in ['#', ]:
-            # transform the lists to tuples:
-            pi[key] = tuple(value)
-        elif key in ['acl', ]:
+        if key in ['acl', ]:
             # join the list of values to a single value
             pi[key] = u' '.join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1] # use the last value to copy 1.9 parsing behaviour
+
+    if comments:
+        body = ''.join(comments) + body
 
     return pi, body
 
