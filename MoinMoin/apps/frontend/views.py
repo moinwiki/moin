@@ -639,9 +639,9 @@ def modify_item(item_name):
         return item.do_modify()
     except UnicodeDecodeError:
         return _crash(item, None, None)
-    except ValueError:  # strict data validation failed in indexing.py
-        flash(_("""Error: nothing changed. Data validation failed because input data did not match content-type.
-                   To change an item to a different content-type: delete the item, then recreate."""), "error")
+    except ValueError:
+        # user may have changed or deleted namespace, contenttype, or strict data validation failed in indexing.py
+        flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
         return redirect(url_for_item(item_name))
 
 
