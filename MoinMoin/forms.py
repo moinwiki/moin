@@ -24,6 +24,7 @@ from whoosh.query import Term, Or, Not, And
 
 from flask import g as flaskg
 from flask import current_app as app
+from flask import flash
 
 from MoinMoin.constants.forms import *
 from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
@@ -93,17 +94,23 @@ def validate_name(meta, itemid):
     namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
 
     if len(names) != len(set(names)):
-        raise NameNotValidError(L_("The names in the name list must be unique."))
+        msg = L_("The names in the name list must be unique.")
+        flash(msg, "error")  # duplicate message at top of form
+        raise NameNotValidError(msg)
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
-        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names)))
+        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names))
+        flash(msg, "error")  # duplicate message at top of form
+        raise NameNotValidError(msg)
 
     namespaces = namespaces + NAMESPACES_IDENTIFIER  # Also dont allow item names to match with identifier namespaces.
     # Item names must not match with existing namespaces.
     invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
     if invalid_names:
-        raise NameNotValidError(L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names)))
+        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names))
+        flash(msg, "error")  # duplicate message at top of form
+        raise NameNotValidError(msg)
     query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
     # There should be not item existing with the same name.
     if itemid is not None:
@@ -112,7 +119,9 @@ def validate_name(meta, itemid):
         results = searcher.search(query)
         duplicate_names = {name for result in results for name in result[NAME] if name in names}
         if duplicate_names:
-            raise NameNotValidError(L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names)))
+            msg = L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names))
+            flash(msg, "error")  # duplicate message at top of form
+            raise NameNotValidError(msg)
 
 
 class ValidName(Validator):
