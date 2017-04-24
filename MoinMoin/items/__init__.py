@@ -848,6 +848,10 @@ class Default(Contentful):
                 elif template_name:
                     item = Item.create(template_name)
             form = self.ModifyForm.from_item(item)
+            if template_name:
+                # replace template name with new item name and remove TEMPLATE tag
+                form['meta_form']['name'] = self.names[0]
+                form['meta_form']['tags'].remove(TEMPLATE)
         elif method == 'POST':
             # XXX workaround for *Draw items
             if isinstance(self.content, Draw):
