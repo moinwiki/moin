@@ -646,7 +646,7 @@ def modify_item(item_name):
 
 
 class TargetChangeForm(BaseChangeForm):
-    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"))
+    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"), autofocus=True)
 
 
 class ValidRevert(Validator):
@@ -1290,7 +1290,7 @@ class RegistrationForm(TextChaizedForm):
     """a simple user registration form"""
     name = 'register'
 
-    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"))
+    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"), autofocus=True)
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail

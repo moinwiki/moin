@@ -190,7 +190,7 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
 
 
 class BaseChangeForm(TextChaizedForm):
-    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"))
+    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=True)
     submit_label = L_('OK')
 
 
