@@ -35,6 +35,7 @@ Because of the way the Markdown parser is constructed, it is frequently not poss
  * [[images]] - [[jpeg]], [[png]] and [[svg]]
  * Media - [[video.mp4]] and [[audio.mp3]]
  * [[OtherTextItems]]
+ * [[TemplateSample]]
 
 == Items with Non-English Names ==
 

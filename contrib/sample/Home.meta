@@ -3,7 +3,7 @@
   "address": "127.0.0.1", 
   "comment": "", 
   "contenttype": "text/x.moin.wiki;charset=utf-8", 
-  "dataid": "6699b57734e04ba2a91debf97dda93c0", 
+  "dataid": "fd4df86234244a6baf35ea70e5e42c4b", 
   "externallinks": [], 
   "itemid": "2eded15e9ede48638c4a7022b243c052", 
   "itemlinks": [
@@ -19,6 +19,7 @@
     "jpeg", 
     "mediawiki", 
     "html", 
+    "TemplateSample", 
     "docbook", 
     "rst", 
     "moin", 
@@ -32,16 +33,16 @@
     "Home/subitem"
   ], 
   "itemtype": "default", 
-  "mtime": 1476479428, 
+  "mtime": 1493093751, 
   "name": [
     "Home"
   ], 
   "name_old": [], 
   "namespace": "", 
-  "parentid": "c460a8141d654b08ad286036ff6c4f7b", 
-  "revid": "ef1c76b33d7c4dab82800daace983858", 
-  "sha1": "41ba9489cd56c8b08355d63566b8fe3db7ce7225", 
-  "size": 1800, 
+  "parentid": "017b1d125f2b48d7b80c4e8206837395", 
+  "revid": "94024ace6c604d12adcf064da8fa4755", 
+  "sha1": "199b2e4b6e297c62c1a91f697aaabd4516403b5f", 
+  "size": 1823, 
   "summary": "", 
   "tags": [
     "parser", 
