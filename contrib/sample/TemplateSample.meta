@@ -1,0 +1,32 @@
+{
+  "acl": "BadGuy: All:read,write", 
+  "action": "RENAME", 
+  "address": "127.0.0.1", 
+  "comment": "", 
+  "contenttype": "text/x.moin.wiki;charset=utf-8", 
+  "dataid": "90343e7615ab4b6a83d5909763856bc9", 
+  "externallinks": [], 
+  "itemid": "096937b50a2749ea80fd802edac18cfc", 
+  "itemlinks": [], 
+  "itemtransclusions": [], 
+  "itemtype": "default", 
+  "mtime": 1493093717, 
+  "name": [
+    "TemplateSample"
+  ], 
+  "name_old": [
+    "SampleTemplate"
+  ], 
+  "namespace": "", 
+  "parentid": "fbba63c54dcf4a4ab8aa1fe064af1432", 
+  "revid": "73e0979f87df490bb132b8ed26f786d6", 
+  "sha1": "5e2b9b16a352ffb0e707f968346366953d8fa59d", 
+  "size": 891, 
+  "summary": "this page created using SampleTemplate", 
+  "tags": [
+    "template", 
+    "coffee", 
+    "tea"
+  ], 
+  "wikiname": "MoinMoin2"
+}
