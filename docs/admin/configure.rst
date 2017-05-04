@@ -1475,8 +1475,8 @@ A sample configuration looks like e.g::
             # maps namespace name -> backend name
             # first, configure the required, standard namespaces:
             NAMESPACE_DEFAULT: u'default',
-            NAMESPACE_USERPROFILES + '/': u'userprofiles',
-            # then some additional custom namespaces:
+            NAMESPACE_USERPROFILES: u'userprofiles',
+            # some additional custom namespaces stored in default backend:
             u'foo/': u'default',
             u'bar/': u'default',
             u'baz/': u'default',
@@ -1488,15 +1488,15 @@ A sample configuration looks like e.g::
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
-            NAMESPACE_USERPROFILES + '/': dict(before=u'',
-                                               default=u'All:read,write,create,destroy,admin',
-                                               after=u'',
-                                               hierarchic=False, ),
+            NAMESPACE_USERPROFILES: dict(before=u'',
+                                         default=u'All:read,write,create,destroy,admin',
+                                         after=u'',
+                                         hierarchic=False, ),
             NAMESPACE_DEFAULT: dict(before=u'',
                                     default=u'All:read,write,create,destroy,admin',
                                     after=u'',
                                     hierarchic=False, ),
-            u'foo/': dict(before=u'',
+            u'foo/': dict(before=u'',  # trailing / required because foo is stored in default backend
                           default=u'All:read,write,create,destroy,admin',
                           after=u'',
                           hierarchic=False, ),
