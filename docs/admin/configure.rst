@@ -1453,8 +1453,9 @@ Features:
 
 namespaces
 ----------
-Moin has support for multiple namespaces. You can configure them as per your need.
-A sample configuration looks like e.g::
+Moin has support for multiple namespaces. You can configure them per your needs.
+URLs for items within a namespace are similar to sub-items.
+A sample configuration looks like this::
 
     import os
 
@@ -1479,12 +1480,16 @@ A sample configuration looks like e.g::
             # some additional custom namespaces stored in default backend:
             u'foo/': u'default',
             u'bar/': u'default',
-            u'baz/': u'default',
+            # custom namespace with a backend - note absence of trailing /
+            # u'baz': u'baz',
         }
         backends = {
             # maps backend name -> storage
+            # not implemented; storage type for all backends is set in 'uri' above; issue #566
             u'default': None,
             u'userprofiles': None,
+            # required for baz namespace defined above
+            # u'baz': None,
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
