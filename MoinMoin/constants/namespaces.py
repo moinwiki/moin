@@ -7,5 +7,6 @@ MoinMoin - namespaces related constants
 
 NAMESPACE_DEFAULT = u''
 NAMESPACE_USERPROFILES = u'userprofiles'
+NAMESPACE_USERS = u'users'
 NAMESPACE_ALL = u'all'  # An identifier namespace which acts like a union of all the namespaces.
 NAMESPACES_IDENTIFIER = [NAMESPACE_ALL, ]  # List containing all the identifier namespaces.
