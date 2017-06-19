@@ -22,7 +22,7 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
 from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_ALL
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.search import SearchForm
 from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
@@ -328,7 +328,7 @@ class ThemeSupport(object):
         else:
             # We cannot check if wiki pages exists in remote wikis
             exists = True
-        wiki_href = url_for_item(itemname, wiki_name=wikiname, namespace=NAMESPACE_USERPROFILES)
+        wiki_href = url_for_item(itemname, wiki_name=wikiname, namespace=NAMESPACE_USERS)
         return wiki_href, display_name, title, exists
 
     def split_navilink(self, text):
@@ -560,7 +560,7 @@ def get_editor_info(meta, external=False):
                 css = 'editor homepage local'
             else:
                 css = 'editor homepage interwiki'
-            uri = url_for_item(name, wiki_name=homewiki, _external=external)
+            uri = url_for_item(name, wiki_name=homewiki, _external=external, namespace=NAMESPACE_USERS)
 
     result = dict(name=name, text=text, css=css, title=title)
     if uri:

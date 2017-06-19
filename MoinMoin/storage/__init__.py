@@ -24,9 +24,11 @@ We use a layered approach like this::
 
 BACKENDS_PACKAGE = 'MoinMoin.storage.backends'
 
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
-BACKEND_DEFAULT, BACKEND_USERPROFILES = u'default', u'userprofiles'
+BACKEND_DEFAULT = u'default'
+BACKEND_USERPROFILES = u'userprofiles'
+BACKEND_USERS = u'users'
 
 
 def backend_from_uri(uri):
@@ -54,7 +56,7 @@ def create_mapping(uri, namespaces, backends, acls):
 
 
 def create_simple_mapping(uri='stores:fs:instance',
-                          default_acl=None, userprofiles_acl=None):
+                          default_acl=None, userprofiles_acl=None, users_acl=None):
     """
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
@@ -83,16 +85,21 @@ def create_simple_mapping(uri='stores:fs:instance',
         default_acl = dict(before=u'', default=u'All:read,write,create,admin', after=u'', hierarchic=False)
     if not userprofiles_acl:
         userprofiles_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
+    if not users_acl:
+        users_acl = dict(before=u'', default=u'All:read,write,create,admin', after=u'', hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES: BACKEND_USERPROFILES,
+        NAMESPACE_USERS: BACKEND_USERS,
     }
     backends = {
         BACKEND_DEFAULT: None,
         BACKEND_USERPROFILES: None,
+        BACKEND_USERS: None,
     }
     acls = {
         NAMESPACE_USERPROFILES: userprofiles_acl,
+        NAMESPACE_USERS: users_acl,
         NAMESPACE_DEFAULT: default_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

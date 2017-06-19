@@ -141,8 +141,13 @@ class Config(DefaultConfig):
                          default=u'All:read,write,create,destroy,admin',
                          after=u'',
                          hierarchic=False, ),
-        userprofiles_acl=dict(before=u'',
-                              default=u'All:read,write,create,destroy,admin',
+        users_acl=dict(before=u'',
+                       default=u'All:read,write,create,destroy,admin',
+                       after=u'',
+                       hierarchic=False, ),
+        # userprofiles contain only metadata, no content will be created
+        userprofiles_acl=dict(before=u'All:',
+                              default=u'',
                               after=u'',
                               hierarchic=False, ),
     )

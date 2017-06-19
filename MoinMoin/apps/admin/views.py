@@ -21,7 +21,7 @@ from MoinMoin.themes import render_template, get_editor_info
 from MoinMoin.apps.admin import admin
 from MoinMoin import user
 from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
-from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT, NAMESPACE_ALL
+from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from MoinMoin.security import require_permission, ACLStringIterator
 from MoinMoin.util.interwiki import CompositeName
@@ -65,7 +65,7 @@ def userbrowser():
             user_groups = user_groups + member_groups.get(name, [])
         user_accounts.append(dict(uid=rev.meta[ITEMID],
                                   name=user_names,
-                                  fqname=CompositeName(NAMESPACE_USERPROFILES, NAME_EXACT, rev.name),
+                                  fqname=CompositeName(NAMESPACE_USERS, NAME_EXACT, rev.name),
                                   email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                                   disabled=rev.meta[DISABLED],
                                   groups=user_groups))
