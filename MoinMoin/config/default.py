@@ -575,8 +575,8 @@ options = {
            "All items sharing a common namespace as prefix are then stored within the same backend. "
            "The common prefix for all data is ''.", (
         ('content', '/', "All content is by default stored below /, hence the prefix is ''."),  # Not really necessary. Just for completeness.
-        ('user_profile', 'UserProfile/', 'User profiles (i.e. user data, not their homepage) are stored in this namespace.'),
-        ('user_homepage', 'User/', 'All user homepages are stored below this namespace.'),
+        ('user_profile', 'userprofiles/', 'User profiles (i.e. user data, not their homepage) are stored in this namespace.'),
+        ('user_homepage', 'users/', 'All user homepages are stored in this namespace.'),
     )),
 
     'user': ('User', None, (
