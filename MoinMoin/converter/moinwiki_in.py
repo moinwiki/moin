@@ -275,7 +275,7 @@ class Converter(ConverterMacro):
         lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
         content = u'\n'.join(lines)
         # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
-        # we push eveything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
+        # we push everything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
         all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
         # we avoid adjacent text siblings because serializer within tests merges them
         elem = moin_page.nowiki(children=(str(len(nowiki_marker)), all_nowiki_args, content, ))
@@ -349,7 +349,7 @@ class Converter(ConverterMacro):
     block_text = r'(?P<text> .+ )'
 
     def block_text_repl(self, _iter_content, stack, text):
-        if stack.top_check('table', 'table-body', 'list'):
+        if stack.top_check('table', 'table-body', 'list', 'block-comment'):
             stack.clear()
         if stack.top_check('body', ):
             element = moin_page.p()
