@@ -7,13 +7,6 @@
 {% endblock %}
 
 {% block action_bars_inner %}
-    {% if item_name %}
-        {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
-    {% else %}
-        {% set title = _("Global Index ") %}
-    {% endif %}
-    <h1>{{ title }}</h1>
-
     <div class="moin-index-menu">
         {% if dirs or files %}
             <a href="#" class="moin-select-allitem allitem-toselect moin-button">
@@ -98,6 +91,28 @@
 
 {% block content %}
     <div class="moin-index-message"><span></span></div>
+
+    {% if item_name %}
+        {% set title = _("Index of subitems of '%(item_name)s'", item_name=item_name) %}
+    {% else %}
+        {% set title = _("Global Index ") %}
+    {% endif %}
+    <h1>{{ title }}</h1>
+    {% if missing_dirs %}
+        <div class="error">
+            <p><strong> {{ _("These missing items have sub-items that cannot be accessed from the index. Click to create.") }} </strong></p>
+            {% for dir in missing_dirs %}
+                {% set full_dir = item_name + '/' + dir if item_name else dir %}
+                <p>
+                    <a href="{{ url_for('.show_item', item_name=full_dir) }}"
+                       class="moin-nonexistent moin-item"
+                       title="{{ full_dir }}">
+                       {{ dir }}
+                    </a>
+                </p>
+            {% endfor %}
+        </div>
+    {% endif %}
     {{ self.action_bars() }}
     <div>
         {% if item_name: %}

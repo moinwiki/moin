@@ -960,12 +960,22 @@ def index(item_name):
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     item_names = item_name.split(u'/')
+
+    # detect orphan subitems and make a list of their missing parents
+    used_dirs = set()
+    for file in files:
+        if file in dirs:
+            used_dirs.add(file[0])
+    all_dirs = set(x[0] for x in dirs)
+    missing_dirs = all_dirs - used_dirs
+
     return render_template('index.html',
                            item_names=item_names,
                            item_name=item_name,
                            fqname=fqname,
                            files=files,
                            dirs=dirs,
+                           missing_dirs=missing_dirs,
                            initials=initials,
                            startswith=startswith,
                            form=form,
