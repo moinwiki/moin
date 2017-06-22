@@ -83,8 +83,8 @@
             </a>
         {% else %}
             <p>
-                <i class="fa fa-minus-circle fa-lg"></i>
-                {{ _("You lack read permission for all existing subitems.") }}
+                <i class="fa fa-minus-circle fa-lg" style="color: red;"></i>
+                {{ _("Read permission denied for all existing subitems.") }}
             </p>
         {% endif %}
         <a class="moin-button" id="moin-create-new-item" href="#">
