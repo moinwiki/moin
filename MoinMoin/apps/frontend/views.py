@@ -960,6 +960,7 @@ def index(item_name):
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     item_names = item_name.split(u'/')
+    ns_len = len(item.meta['namespace']) + 1 if item.meta['namespace'] else 0
 
     # detect orphan subitems and make a list of their missing parents
     used_dirs = set()
@@ -980,6 +981,7 @@ def index(item_name):
                            startswith=startswith,
                            form=form,
                            item=item,
+                           ns_len=ns_len,
     )
 
 
