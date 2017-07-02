@@ -24,6 +24,7 @@ PROTECTED_CONTENT = 'protected content'
 
 acl_mapping = [
     ('', dict(before=u'', default=u'joe:read,write,create,admin All:read,write,create', after=u'', hierarchic=False)),
+    ('users', dict(before=u'', default=u'joe:read,write,create,admin All:read,write,create', after=u'', hierarchic=False)),
 ]
 
 

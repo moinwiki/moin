@@ -17,7 +17,7 @@ from flask import g as flaskg
 
 from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
                                      LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
-from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
+from MoinMoin.constants.namespaces import NAMESPACE_USERS
 
 from MoinMoin.util.interwiki import split_fqname
 
@@ -396,7 +396,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name_n]
         rev_n = item.store_revision(dict(name=[item_name_n, ], contenttype=u'text/plain;charset=utf-8'),
                                     StringIO(str(item_name_n)), return_rev=True)
-        item_name_u = u'%s/userprofile' % NAMESPACE_USERPROFILES
+        item_name_u = u'%s/user' % NAMESPACE_USERS
         fqname_u = split_fqname(item_name_u)
         item = self.imw.get_item(**fqname_u.query)
         rev_u = item.store_revision(dict(name=[fqname_u.value], namespace=fqname_u.namespace, contenttype=u'text/plain;charset=utf-8'),
@@ -407,7 +407,7 @@ class TestIndexingMiddleware(object):
         assert rev_n.meta[NAME] == [item_name_n, ]
         item = self.imw[item_name_u]
         rev_u = item.get_revision(rev_u.revid)
-        assert rev_u.meta[NAMESPACE] == NAMESPACE_USERPROFILES
+        assert rev_u.meta[NAMESPACE] == NAMESPACE_USERS
         assert rev_u.meta[NAME] == [item_name_u.split('/')[1]]
 
     def test_parentnames(self):
