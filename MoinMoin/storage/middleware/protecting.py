@@ -92,7 +92,7 @@ class ProtectingMiddleware(object):
         """
         itemname = fqname.value if fqname.field == NAME_EXACT else u''
         for prefix, acls in self.acl_mapping:
-            if itemname.startswith(prefix):
+            if prefix == fqname.namespace:
                 return acls
         else:
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(fqname))

@@ -58,9 +58,9 @@ def test_validjson():
 
     Does not apply to usersettings form.
     """
-    app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'ns1/ns2/', 'other_backend')]
-    item = Item.create(u'ns1/ns2/existingname')
-    meta = {NAMESPACE: u'ns1/ns2', CONTENTTYPE: u'text/plain;charset=utf-8'}
+    app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'users/', 'other_backend')]
+    item = Item.create(u'users/existingname')
+    meta = {NAMESPACE: u'users', CONTENTTYPE: u'text/plain;charset=utf-8'}
     become_trusted()
     item._save(meta, data='This is a valid Item.')
 
@@ -74,7 +74,7 @@ def test_validjson():
              ([u'foobar', u'validname'], '', ITEMID, valid_itemid + '8080', False),  # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
              ([u'barfoo', u'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
              ([], '', 'itemid', valid_itemid, True),  # deleting all names from the metadata of an existing item will make it nameless, succeeds
-             ([u'existingname'], 'ns1/ns2', '', 'existingname', False),  # item already exists
+             ([u'existingname'], 'users', '', 'existingname', False),  # item already exists
             ]
     for name, namespace, field, value, result in tests:
         meta = {NAME: name, NAMESPACE: namespace}
