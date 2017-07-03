@@ -68,6 +68,7 @@ FORMAT_TO_CONTENTTYPE = {
 }
 
 last_moin19_rev = {}
+user_names = []
 
 
 class ImportMoin19(Command):
@@ -89,16 +90,22 @@ class ImportMoin19(Command):
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
 
+        print "\nConverting Users...\n"
+        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
+            global user_names
+            user_names.append(rev.meta['name'][0])
+            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
+            backend.store(rev.meta, rev.data)
+
         print "\nConverting Pages/Attachments...\n"
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
+            for user_name in user_names:
+                if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
+                    rev.meta['namespace'] = u'users'
+                    break
             backend.store(rev.meta, rev.data)
             # item_name to itemid xref required for migrating user subscriptions
             flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
-
-        print "\nConverting Users...\n"
-        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
-            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
-            backend.store(rev.meta, rev.data)
 
         print "\nConverting Revision Editors...\n"
         for mountpoint, revid in backend:
@@ -118,9 +125,11 @@ class ImportMoin19(Command):
         print "\nConverting last revision of Moin 1.9 items to Moin 2.0"
         self.conv_in = conv_in()
         self.conv_out = conv_out()
-        for item_name, revno in sorted(last_moin19_rev.items()):
-            print "    Processing {0} revision {1}".format(item_name, revno)
-            meta, data = backend.retrieve('default', revno)
+        for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
+            print '    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno)
+            if namespace == u'':
+                namespace = u'default'
+            meta, data = backend.retrieve(namespace, revno)
             data_in = ''.join(data.readlines())
             dom = self.conv_in(data_in, 'text/x.moin.wiki;format=1.9;charset=utf-8')
             out = self.conv_out(dom)
@@ -331,12 +340,18 @@ class PageRevision(object):
         acl_line = self.meta.get(ACL)
         if acl_line is not None:
             self.meta[ACL] = regenerate_acl(acl_line)
+
+        for user_name in user_names:
+            if meta['name'][0] == user_name or meta['name'][0].startswith(user_name + '/'):
+                meta['namespace'] = u'users'
+                break
+
         print (u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
                item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8')
 
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
-            last_moin19_rev[item_name] = meta[REVID]
+            last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
