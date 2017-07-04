@@ -939,6 +939,30 @@ class NonExistent(Item):
         return self._select_itemtype()
 
     def _select_itemtype(self):
+        """
+        TODO: Here we bypass the code that allows a user to select an itemtype just before
+        creating a new item:
+
+            Default - Wiki item
+            User profile - User profile item (not implemented yet!)
+            Blog - Blog item
+            Blog entry - Blog entry item
+            Ticket - Ticket item
+
+        Blogs and Tickets are broken, why User Profile is here is an undocumented mystery (it is
+        probably no longer required).
+
+        If you want to work on tickets or blogs, create a new branch and revert the change
+        made on or about 2017-07-04:
+        """
+        return render_template('modify_select_contenttype.html',
+                               fqname=self.fqname,
+                               item_name=self.name,
+                               itemtype='default',  # create a normal wiki item
+                               group_names=content_registry.group_names,
+                               groups=content_registry.groups,
+                              )
+        # dead code, see above
         return render_template('modify_select_itemtype.html',
                                item=self,
                                item_name=self.name,
