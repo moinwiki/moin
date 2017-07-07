@@ -20,6 +20,7 @@ from whoosh.util.cache import lru_cache
 
 from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
 from MoinMoin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
+from MoinMoin.constants.namespaces import NAMESPACE_ALL
 
 from MoinMoin.security import AccessControlList
 
@@ -91,10 +92,13 @@ class ProtectingMiddleware(object):
         :returns: acl configuration (acl dict from the acl_mapping)
         """
         itemname = fqname.value if fqname.field == NAME_EXACT else u''
-        for prefix, acls in self.acl_mapping:
-            if prefix == fqname.namespace:
+        for namespace, acls in self.acl_mapping:
+            if namespace == fqname.namespace:
                 return acls
         else:
+            if fqname.namespace == NAMESPACE_ALL:
+                # prevent traceback, /+index/all page has several links to /+index/all
+                return {'default': u'All:', 'hierarchic': False, 'after': u'', 'before': u''}
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(fqname))
 
     def _get_acls(self, itemid=None, fqname=None):
