@@ -65,7 +65,8 @@ class TestConverter(object):
         data = [
             (u"/* simple inline */", u"/* simple inline */"),
             (u"text /* text ''with '''markup''''' */ text", u"text /* text ''with '''markup''''' */ text"),
-            (u"## block 1\n\n## block 2", u"## block 1\n\n## block 2"),
+            (u"## block 1\n\n## block 2", u"## block 1\n\n\n\n## block 2"),
+
             # \n is omitted from output because serialize method (see below) joins adjacent text children
             (u"## block line 1\n## block line 2\n\n", u"## block line 1## block line 2\n\n"),
         ]
@@ -127,7 +128,7 @@ class TestConverter(object):
             (u'|| narrow ||<:> wide ||',
              u'|| narrow ||<style="text-align: center;"> wide ||\n'),
             (u'||table 1||\n\n||table 2||',
-             u'||table 1||\n\n||table 2||\n'),
+             u'||table 1||\n\n\n||table 2||'),
             (u'||<#FF8080> red ||<#80FF80> green ||<#8080FF> blue ||',
              u'||<style="background-color: #FF8080;"> red ||<style="background-color: #80FF80;"> green ||<style="background-color: #8080FF;"> blue ||\n'),
             (u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||',
