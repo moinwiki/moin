@@ -135,7 +135,10 @@ class Converter(object):
         self.status = ['text', ]
         self.last_closed = None
         self.list_item_label = []
-        return self.open(root)
+        content = self.open(root)
+        content.replace('\n\n\n', '\n\n')
+        content = content[1:] if content.startswith('\n') else content
+        return content
 
     def open_children(self, elem):
         childrens_output = []
@@ -155,7 +158,7 @@ class Converter(object):
         # adding the correct number of '\n' characters between block elements is difficult, too few may result in merged blocks
         # we want one blank line between block level elements
         out = u''.join(childrens_output)
-        return out.replace('\n\n\n', '\n\n')
+        return out
 
     def open(self, elem):
         uri = elem.tag.uri
