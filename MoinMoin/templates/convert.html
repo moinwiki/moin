@@ -1,0 +1,21 @@
+{% import "forms.html" as forms %}
+{% extends theme("show.html") %}
+
+{% set title = _("Convert '%(item_name)s'", item_name=item.fqname.value) %}
+{% block content %}
+    <h1>{{ title }}</h1>
+    <div class="moin-form">
+        {{ gen.form.open(form, method="post", action=url_for('frontend.convert_item', item_name=fqname)) }}
+            {{ forms.render_errors(form) }}
+            <dl>
+                <dt>Current Content Type</dt>
+                <dd> {{ contenttype }} </dd>
+                <br>
+                {{ forms.render(form['new_type']) }}
+                {{ forms.render(form['comment']) }}
+                {{ forms.render_textcha(gen, form) }}
+            </dl>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}

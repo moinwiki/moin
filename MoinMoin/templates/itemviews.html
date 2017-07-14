@@ -34,6 +34,14 @@
                 </li>
             {%- endif %}
 
+            {%- if endpoint in [
+                'frontend.convert_item',
+            ] and user.may.write(fqname) and theme_supp.allow_item_conversion(item.contenttype) %}
+                <li>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                </li>
+            {%- endif %}
+
             {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(fqname) %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>

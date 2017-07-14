@@ -21,7 +21,7 @@ from flask_themes import get_theme, render_theme_template
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
 from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
-from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP
+from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
 from MoinMoin.constants.rights import SUPERUSER
 from MoinMoin.search import SearchForm
@@ -512,6 +512,14 @@ class ThemeSupport(object):
         :returns: whether item pointed to by the link exists or not
         """
         return self.storage.has_item(itemname)
+
+    def allow_item_conversion(self, contenttype):
+        """
+        Return true if item may be converted to another contenttype.
+
+        Any text-like item may be converted to a type having an "out" converter.
+        """
+        return contenttype in CONTENTTYPE_MARKUP + CONTENTTYPE_TEXT + CONTENTTYPE_MOIN_19
 
 
 def get_editor_info(meta, external=False):
