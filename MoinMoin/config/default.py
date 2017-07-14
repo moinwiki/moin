@@ -412,6 +412,7 @@ options_no_group_name = {
             ('frontend.quicklink_item', None, L_('Create or remove a navigation link to this item'), False, ),
             ('frontend.subscribe_item', None, L_('Switch notifications about item changes on or off'), False, ),
             ('frontend.rename_item', L_('Rename'), L_('Rename this item'), True, ),
+            ('frontend.convert_item', L_('Convert'), L_('Convert this item'), True, ),
             ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
             ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
             ('frontend.sitemap', L_('Site Map'), L_('Local Site Map of this item'), True, ),

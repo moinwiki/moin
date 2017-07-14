@@ -35,6 +35,16 @@ CONTENTTYPE_MARKUP = [
     u'application/docbook+xml;charset=utf-8',
 ]
 
+CONTENTTYPE_NO_EXPANSION = [
+    # no need to expand transclusions, etc. when converting to/from these types
+    u'text/x.moin.wiki;charset=utf-8',
+    u'text/x.moin.creole;charset=utf-8',
+]
+
+CONTENTTYPE_MOIN_19 = [
+    u'text/x.moin.wiki;format=1.9;charset=utf-8',
+]
+
 CONTENTTYPE_TEXT = [
     u'text/plain;charset=utf-8',
     u'text/x-diff;charset=utf-8',

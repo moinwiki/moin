@@ -170,7 +170,8 @@ class ConverterExternOutput(ConverterBase):
         if input.path:
             # this can be a relative path, make it absolute:
             path = input.path
-            path = self.absolute_path(path, page.path)
+            if page:
+                path = self.absolute_path(path, page.path)
             item_name = unicode(path)
             if not flaskg.storage.has_item(item_name):
                 # XXX these index accesses slow down the link converter quite a bit
@@ -179,6 +180,8 @@ class ConverterExternOutput(ConverterBase):
             item_name = unicode(page.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
+        if not page:
+            url = url[1:]
         link = Iri(url, query=query, fragment=input.fragment)
         elem.set(self._tag_xlink_href, link)
 

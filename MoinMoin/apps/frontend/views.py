@@ -21,6 +21,7 @@ import time
 import uuid
 import mimetypes
 import json
+from StringIO import StringIO
 from datetime import datetime
 from collections import namedtuple
 from functools import wraps, partial
@@ -51,7 +52,7 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                             Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                             validate_name, NameNotValidError)
-from MoinMoin.items import BaseChangeForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
+from MoinMoin.items import BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
 from MoinMoin.items.content import content_registry
 from MoinMoin.items.ticket import AdvancedSearchForm, render_comment_data
 from MoinMoin import user, util
@@ -61,12 +62,16 @@ from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEM
 from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from MoinMoin.constants.contenttypes import *
 from MoinMoin.util import crypto, rev_navigation
+from MoinMoin.util.crypto import make_uuid
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
+from MoinMoin.util.mime import Type, type_moin_document
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
 from MoinMoin.signalling import item_displayed, item_modified
 from MoinMoin.storage.middleware.protecting import AccessDenied
+from MoinMoin.converter import default_registry as reg
+from MoinMoin.script.migration.moin19.import19 import hash_hexdigest
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
@@ -588,34 +593,72 @@ def download_item(item):
     return item.content.do_get(force_attachment=True, mimetype=mimetype)
 
 
-@frontend.route('/+convert/<itemname:item_name>')
+class ConvertForm(TextChaizedForm):
+    new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'moinwiki: text/x.moin.wiki;charset=utf-8'),
+                                                                  ('text/x-rst;charset=utf-8', 'rst: text/x-rst;charset=utf-8'),
+                                                                  ('text/html;charset=utf-8', 'html: text/html;charset=utf-8'),
+                                                                  ('application/docbook+xml;charset=utf-8', 'docbook: application/docbook+xml;charset=utf-8')))
+    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), )
+    submit_label = L_('OK')
+
+
+@frontend.route('/+convert/<itemname:item_name>', methods=['GET', 'POST'])
 def convert_item(item_name):
     """
-    return a converted item.
+    Convert an item to a new or same content type.
 
-    We create two items : the original one, and an empty
-    one with the expected mimetype for the converted item.
+    Converting an item to the same content type and then showing a diff
+    is useful for hand-checking round trip conversions.
 
-    To get the converted item, we just feed his converter,
-    with the internal representation of the item.
+    The input may be any text-like item, the output is limited to
+    the available converters.
     """
-    contenttype = request.values.get('contenttype')
     try:
         item = Item.create(item_name, rev_id=CURRENT)
     except AccessDenied:
         abort(403)
     if isinstance(item, NonExistent):
         abort(404)
-    # We don't care about the name of the converted object
-    # It should just be a name which does not exist.
-    # XXX Maybe use a random name to be sure it does not exist
-    item_name_converted = item_name + 'converted'
-    try:
-        # TODO implement Content.create and use it here
-        converted_item = Item.create(item_name_converted, itemtype=ITEMTYPE_DEFAULT, contenttype=contenttype)
-    except AccessDenied:
-        abort(403)
-    return converted_item.content._convert(item.content.internal_representation())
+    form = ConvertForm.from_flat(request.form)
+    if request.method in ['GET', 'HEAD']:
+        return render_template('convert.html',
+                               item=item,
+                               form=form,
+                               contenttype=item.contenttype,
+                               fqname=split_fqname(item_name),
+                               )
+
+    namespace = item.rev.meta.revision.namespace or 'default'
+    revno = item.rev.revid
+    item.rev.data.seek(0)
+    content = item.rev.data.read()
+    input_conv = reg.get(Type(item.contenttype), type_moin_document)
+    dom = input_conv(content, item.contenttype)
+    if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+        dom = item.content._expand_document(dom)
+    conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
+    out = conv_out(dom)
+    out = out.encode(CHARSET)
+    size, hash_name, hash_digest = hash_hexdigest(out)
+    out = StringIO(out)
+    meta = dict(item.meta)
+    meta[hash_name] = hash_digest
+    meta[SIZE] = size
+    meta[REVID] = make_uuid()
+    meta[MTIME] = int(time.time())
+    meta[CONTENTTYPE] = form['new_type'].value
+    del meta['dataid']
+    out.seek(0)
+    backend = flaskg.storage
+    storage_item = backend.get_item(**item.fqname.query)
+    newrev = storage_item.store_revision(meta, out, overwrite=False,
+                                         action=unicode(ACTION_SAVE),
+                                         contenttype_current=Type(form['new_type'].value),
+                                         contenttype_guessed=Type(form['new_type'].value),
+                                         return_rev=True,
+                                         )
+    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE)
+    return redirect(url_for_item(**item.fqname.split))
 
 
 @frontend.route('/+modify/<itemname:item_name>', methods=['GET', 'POST'])
