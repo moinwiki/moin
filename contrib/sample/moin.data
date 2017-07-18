@@ -502,17 +502,34 @@ Admonitions should be used with care. A page riddled with admonitions will look 
  * Admonitions: caution, important, note, tip, warning
  * Comments: comment
 
-== Smileys and Icons ==
+== Variables ==
 
-'''Markup:'''
+Variables within the content of a moin wiki item are transformed when the item is saved. An exception is if the item has a tag of '''template''', then no variables are processed. This makes variables particularly useful within template items. Another frequent use is to add signatures (`@``SIG@`) to a comment within a discussion item.
 
-{{{
-:-) ;-) /!\ (!)
-}}}
+Variable expansion is global and happens everywhere within an item, including code displays, comments, tables, headings, inline parsers, etc.. Variables within transclusions are not expanded because they are not part of the including item's content.
 
-'''Result:'''
+'''MOINTODO:''' Allow wiki admins and users to add custom variables. There is no difference between system date format and user date format in Moin 2, fix code or docs.
 
-:-) ;-) /!\ (!)
+=== Predefined Variables ===
+
+||<rowbgcolor="#ffffcc"> '''Variable''' || '''Description'''                            || '''Resulting Markup'''                             || '''Example Rendering''' ||
+|| @``PAGE@                             || Name of the item (useful for templates) || `HelpOnPageCreation`                               || HelpOnPageCreation     ||
+|| @``ITEM@                             || Name of the item (useful for templates) || `HelpOnPageCreation`                               || HelpOnPageCreation     ||
+|| @``TIMESTAMP@                        || Raw time stamp                               || `2004-08-30T06:38:05Z`                             || 2004-08-30T06:38:05Z   ||
+|| @``DATE@                             || Current date in the system's format          || `<<Date(2004-08-30T06:38:05Z)>>`                   || <<Date(2004-08-30T06:38:05Z)>> ||
+|| @``TIME@                             || Current date and time in the user's format   || `<<DateTime(2004-08-30T06:38:05Z)>>`               || <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``ME@                               || user's name or "anonymous"                        || `TheAnarcat`                                       || TheAnarcat ||
+|| @``USERNAME@                         || user's name or his domain/IP      || `TheAnarcat`                                       || TheAnarcat ||
+|| @``USER@                             || Signature "-- loginname"                     || `-- TheAnarcat`                                    || -- TheAnarcat ||
+|| @``SIG@                              || Dated Signature "-- loginname date time"     || `-- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>>` || -- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``EMAIL@                            || Replaced with `<<MailTo()>>` macro with editor's obfuscated email address ||`<<MailTo(testuser AT example DOT com)` ||testuser@example.com <<BR>> or <<BR>> testuser AT example DOT com ||
+|| @``MAILTO@                           || Replaced with `<<MailTo()>>` macro with editor's email address||`<<MailTo(testuser@example.com)`  ||`testuser@example.com` -- no obfuscation, use @``EMAIL@ on public sites ||
+
+'''Notes:'''
+
+@``PAGE@ and @``ITEM@ results are identical, item being a moin 2 term and page a moin 1.x term.
+
+If an editor is not logged in, then any @``EMAIL@ or @``MAILTO@ variables in the content are made harmless by inserting a space character. This prevents a subsequent logged in editor from adding his email address to the item accidentally.
 
 == Macros ==
 
@@ -529,6 +546,18 @@ Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed
 **Result:**
 
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
+
+== Smileys and Icons ==
+
+'''Markup:'''
+
+{{{
+:-) ;-) /!\ (!)
+}}}
+
+'''Result:'''
+
+:-) ;-) /!\ (!)
 
 == Media ==
 

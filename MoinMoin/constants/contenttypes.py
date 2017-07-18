@@ -41,6 +41,12 @@ CONTENTTYPE_NO_EXPANSION = [
     u'text/x.moin.creole;charset=utf-8',
 ]
 
+CONTENTTYPE_VARIABLES = [
+    # content types that support variables: @SIG@, @EMAIL@, @TIME@, @DATE@, etc
+    u'text/x.moin.wiki;charset=utf-8',
+    u'text/x.moin.wiki;format=1.9;charset=utf-8',
+]
+
 CONTENTTYPE_MOIN_19 = [
     u'text/x.moin.wiki;format=1.9;charset=utf-8',
 ]

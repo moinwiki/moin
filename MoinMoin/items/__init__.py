@@ -17,6 +17,7 @@
     Each class in this module corresponds to an itemtype.
 """
 
+from time import time, gmtime, strftime
 import json
 from StringIO import StringIO
 from collections import namedtuple
@@ -51,14 +52,15 @@ from MoinMoin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS
+    LATEST_REVS, EDIT_ROWS, TEMPLATE
 )
 from MoinMoin.constants.namespaces import NAMESPACE_ALL
-from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT
+from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from MoinMoin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
 from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
+from MoinMoin.mail.sendmail import encodeSpamSafeEmail
 
 from .content import content_registry, Content, NonExistentContent, Draw
 from ..util.pysupport import load_package_modules
@@ -628,6 +630,8 @@ class Item(object):
             else:
                 data = ''
 
+        data = self.handle_variables(data, meta)
+
         if isinstance(data, unicode):
             data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
@@ -641,6 +645,55 @@ class Item(object):
                                              )
         item_modified.send(app, fqname=self.fqname, action=action)
         return newrev.revid, newrev.meta[SIZE]
+
+    def handle_variables(self, data, meta):
+        """ Expand @VARIABLE@ in data, where variable is SIG, DATE, etc
+
+        TODO: add a means for wiki admins and users to add custom variables.
+
+        @param data: text of wikipage
+        @param meta: meta of wikipage
+        @rtype: string
+        @return: new text of wikipage, variables replaced
+        """
+        logging.debug("handle_variable data: %r" % data)
+        if self.contenttype not in CONTENTTYPE_VARIABLES:
+            return data
+        if '@' not in data:
+            return data
+        if not request.path.startswith('/+modify'):
+            return data
+        if TEMPLATE in meta['tags']:
+            return data
+
+        item_name = request.path.split('/', 2)[-1]
+        signature = flaskg.user.name0 if flaskg.user.valid else request.remote_addr
+
+        variables = {
+            'PAGE': item_name,
+            'ITEM': item_name,
+            'TIMESTAMP': strftime("%Y-%m-%d %H:%M:%S %Z"),
+            'TIME': "<<DateTime(%s)>>" % time(),
+            'DATE': "<<Date(%s)>>" % time(),
+            'ME': flaskg.user.name0,
+            'USERNAME': signature,
+            'USER': "-- %s" % signature,
+            'SIG': "-- %s <<DateTime(%s)>>" % (signature, time()),
+        }
+
+        email = flaskg.user.profile._meta.get('email', None)
+        if email:
+            obfuscated_email_address = encodeSpamSafeEmail(email)
+            variables['MAILTO'] = "<<MailTo(%s)>>" % obfuscated_email_address
+            variables['EMAIL'] = "<<MailTo(%s)>>" % email
+        else:
+            # penality for not being logged in is a mangled variable, else next user to save item may accidently reveal his email address
+            variables['MAILTO'] = "@ EMAIl@"
+            variables['EMAIL'] = "@ MAILTO@"
+
+        for name in variables:
+            data = data.replace('@%s@' % name, variables[name])
+        return data
 
     @property
     def subitem_prefixes(self):
