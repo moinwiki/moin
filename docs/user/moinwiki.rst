@@ -562,6 +562,50 @@ CSS classes for use with the wiki parser
  - Admonitions: caution, important, note, tip, warning
  - Comments: comment
 
+Variables
+=========
+
+Variables within the content of a moin wiki item are transformed when the item is saved. An exception is if the item has a tag of '''template''', then no variables are processed. This makes variables particularly useful within template items. Another frequent use is to add signatures (@SIG@) to a comment within a discussion item.
+
+Variable expansion is global and happens everywhere within an item, including code displays, comments, tables, headings, inline parsers, etc.. Variables within transclusions are not expanded because they are not part of the including item's content.
+
+**TODO:** Allow wiki admins and users to add custom variables. There is no difference between system date format and user date format in Moin 2, fix code or docs.
+
+Predefined Variables
+--------------------
+
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|Variable   |Description                              |Resulting Markup                           |Example Rendering                                    |
++===========+=========================================+===========================================+=====================================================+
+|@PAGE@     |Name of the item (useful for templates)  |HelpOnPageCreation                         |HelpOnPageCreation                                   |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@ITEM@     |Name of the item (useful for templates)  |HelpOnPageCreation                         |HelpOnPageCreation                                   |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@TIMESTAMP@|Raw time stamp                           |2004-08-30T06:38:05Z                       |2004-08-30T06:38:05Z                                 |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@DATE@     |Current date in the system format        |<<Date(2004-08-30T06:38:05Z)>>             |<<Date(2004-08-30T06:38:05Z)>>                       |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@TIME@     |Current date and time in the user format |<<DateTime(2004-08-30T06:38:05Z)>>         |<<DateTime(2004-08-30T06:38:05Z)>>                   |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@ME@       |user's name or "anonymous"               |TheAnarcat                                 |TheAnarcat                                           |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@USERNAME@ |user's name or his domain/IP             | TheAnarcat                                |TheAnarcat                                           |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@USER@     |Signature "-- loginname"                 |-- TheAnarcat                              |-- TheAnarcat                                        |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@SIG@      |Dated Signature "-- login name date time"|-- TheAnarcat <<DateTime(...)>>            |-- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>>     |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@EMAIL@    |<<MailTo()>> macro, obfuscated email     |<<MailTo(user AT example DOT com)          |user@example.com OR user AT example DOT com          |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+|@MAILTO@   |<<MailTo()>> macro                       |<<MailTo(testuser@example.com)             |testuser@example.com, no obfuscation                 |
++-----------+-----------------------------------------+-------------------------------------------+-----------------------------------------------------+
+
+**Notes:**
+
+ - @PAGE@ and @ITEM@ results are identical, item being a moin 2 term and page a moin 1.x term.
+
+ - If an editor is not logged in, then any @EMAIL@ or @MAILTO@ variables in the content are made harmless by inserting a space character. This prevents a subsequent logged in editor from adding his email address to the item accidentally.
+
 Macros
 ======
 
@@ -604,6 +648,8 @@ Macros are extensions to standard markup that allow developers to add extra feat
 Smileys and Icons
 =================
 
+This table shows moin smiley markup, the rendering of smiley icons cannot be shown in Rest markup.
+
 +---------+---------+---------+---------+
 | ``X-(`` | ``:D``  | ``<:(`` | ``:o``  |
 +---------+---------+---------+---------+
@@ -621,30 +667,6 @@ Smileys and Icons
 +---------+---------+---------+---------+
 | ``{3}`` | ``{*}`` | ``{o}`` |         |
 +---------+---------+---------+---------+
-
-| This is wiki markup in a **div** with css `class="red solid"`.                                                                                                       |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-**Notes**:
- - The div cannot be shown in reStructuredText, so a table cell has been made to demonstrate the border produced. In MoinMoin, this border will appear red.
-
-Admonitions
------------
-
-**Markup**: ::
-
- {{{#!wiki caution
- '''Don't overuse admonitions'''
-
- Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
- }}}
-
-**Result**:
-
-.. warning::
-    **Don't overuse admonitions**
-
-    Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
 
 Comments
 --------
