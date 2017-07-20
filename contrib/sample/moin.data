@@ -549,15 +549,38 @@ Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed
 
 == Smileys and Icons ==
 
-'''Markup:'''
+(!) To insert a smiley icon into your wiki content, type in the markup characters from the table below. Be sure to include a 
+space character before and after the smiley text, or add the smiley text at the beginning or end of a line. :)
 
-{{{
-:-) ;-) /!\ (!)
-}}}
-
-'''Result:'''
-
-:-) ;-) /!\ (!)
+||Markup||Display||Emotion   ||
+==========
+||`X-(` || X-(   ||angry     ||
+||`:D`  || :D    ||biggrin   ||
+||`>:>` || >:>   ||devil     ||
+||`<:(` || <:(   ||frown     ||
+||`:\`  || :\    ||ohwell    ||
+||`:o`  || :o    ||redface   ||
+||`:-(` || :-(   ||sad       ||
+||`:(`  || :(    ||sad       ||
+||`:)`  || :)    ||smile     ||
+||`B)`  || B)    ||smile2    ||
+||`:))` || :))   ||smile3    ||
+||`;)`  || ;)    ||smile4    ||
+||`|)`  || |)    ||tired     ||
+||`|-)` || |-)   ||tired     ||
+||`:-?` || :-?   ||tongue    ||
+||`/!\` || /!\   ||alert     ||
+||`<!>` || <!>   ||attention ||
+||`(./)`|| (./)  ||checkmark ||
+||`{X}` || {X}   ||icon-error||
+||`{i}` || {i}   ||icon-info ||
+||`(!)` || (!)   ||idea      ||
+||`{1}` || {1}   ||prio1     ||
+||`{2}` || {2}   ||prio2     ||
+||`{3}` || {3}   ||prio3     ||
+||`{*}` || {*}   ||star_on   ||
+||`{o}` || {o}   ||star_off  ||
+||`{OK}`|| {OK}  ||thumbs-up ||
 
 == Media ==
 
