@@ -684,15 +684,15 @@ class Item(object):
         email = flaskg.user.profile._meta.get('email', None)
         if email:
             obfuscated_email_address = encodeSpamSafeEmail(email)
-            variables['MAILTO'] = "<<MailTo(%s)>>" % obfuscated_email_address
-            variables['EMAIL'] = "<<MailTo(%s)>>" % email
+            variables['MAILTO'] = "<<MailTo({0})>>".format(obfuscated_email_address)
+            variables['EMAIL'] = "<<MailTo({0})>>".format(email)
         else:
             # penality for not being logged in is a mangled variable, else next user to save item may accidently reveal his email address
             variables['MAILTO'] = "@ EMAIl@"
             variables['EMAIL'] = "@ MAILTO@"
 
         for name in variables:
-            data = data.replace('@%s@' % name, variables[name])
+            data = data.replace(u'@{0}@'.format(name), variables[name])
         return data
 
     @property
