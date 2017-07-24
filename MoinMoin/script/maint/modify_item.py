@@ -13,6 +13,7 @@ from flask_script import Command, Option
 from flask import g as flaskg
 
 from MoinMoin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM
+from MoinMoin.util.interwiki import split_fqname
 
 
 class GetItem(Command):
@@ -29,7 +30,8 @@ class GetItem(Command):
     )
 
     def run(self, name, meta_file, data_file, revid):
-        item = app.storage[name]
+        fqname = split_fqname(name)
+        item = app.storage.get_item(**fqname.query)
         rev = item[revid]
         meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
         meta = meta.encode('utf-8')
