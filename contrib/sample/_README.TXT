@@ -5,10 +5,12 @@ To add an improved item to the sample wiki:
     * Unix: . activate
     * Windows: activate
   * Run the following command, replacing 3 instances of 'Home' with the target item name.
-    If the item is a subitem, replace the "/" in the name with "-" in the meta and data options.
-      
-      moin item-get --name Home --meta contrib/sample/Home.meta --data contrib/sample/Home.data
-      
+    * If the item is a subitem or has a leading namespace, then avoid creating
+      subdirectories within contrib/sample by replacing the "/" in the names within the
+      meta and data options with "-".
+
+        moin item-get --name Home --meta contrib/sample/Home.meta --data contrib/sample/Home.data
+
   * Review the changes, do code review, commit, pull request, or push (whatever is appropriate)
 
 
