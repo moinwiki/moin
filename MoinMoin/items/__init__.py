@@ -22,6 +22,7 @@ import json
 from StringIO import StringIO
 from collections import namedtuple
 from operator import attrgetter
+import re
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -922,6 +923,10 @@ class Default(Contentful):
                     return "OK"
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
+            if contenttype_guessed:
+                m = re.search('charset=(.+?)($|;)', contenttype_guessed)
+                if m:
+                    data = unicode(data, m.group(1))
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
                 contenttype_qs = request.values.get('contenttype')
