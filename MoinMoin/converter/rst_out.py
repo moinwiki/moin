@@ -13,7 +13,8 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import moin_page, xlink
+from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
@@ -499,7 +500,9 @@ class Converter(object):
 
     def open_moinpage_object(self, elem):
         # TODO: object parameters support
-        href = elem.get(xlink.href, u'')
+        href = elem.get(xlink.href, elem.get(xinclude.href, u''))
+        if isinstance(href, Iri):
+            href = unicode(href)
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
