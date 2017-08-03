@@ -499,13 +499,22 @@ class Converter(object):
         # moin-wiki-table class was added by moinwiki_in so html_out can convert multiple body's into head, foot
         self.table_tableclass = self.table_tableclass.replace(u'moin-wiki-table', u'')
         self.table_tablestyle = elem.attrib.get(moin_page.style, u'')
+        if elem[0].tag == moin_page.caption:
+            self.table_caption = elem[0][0]
+        else:
+            self.table_caption = u''
         self.table_rowsstyle = u''
         self.table_rowsclass = u''
+        self.table_multi_body = u''
         self.status.append('table')
         self.last_closed = None
         ret = self.open_children(elem)
         self.status.pop()
         return u'\n' + ret + u'\n'
+
+    def open_moinpage_caption(self, elem):
+        # return empty string, text has already been processed in open_moinpage_table above
+        return u''
 
     def open_moinpage_table_header(self, elem):
         # is this correct rowclass?
@@ -522,7 +531,10 @@ class Converter(object):
 
     def open_moinpage_table_body(self, elem):
         self.table_rowsclass = ''
-        return self.open_children(elem)
+        ret = self.table_multi_body + self.open_children(elem)
+        # multible body elements separate header/body/footer within DOM created by moinwiki_in
+        self.table_multi_body = u'=====\n'
+        return ret
 
     def open_moinpage_table_row(self, elem):
         self.table_rowclass = elem.attrib.get(moin_page.class_, u'')
@@ -549,6 +561,9 @@ class Converter(object):
         if self.table_tablestyle:
             attrib.append(u'tablestyle="{0}"'.format(self.table_tablestyle))
             self.table_tablestyle = u''
+        if self.table_caption:
+            attrib.append(u'caption="{0}"'.format(self.table_caption))
+            self.table_caption = u''
         if self.table_rowclass:
             attrib.append(u'rowclass="{0}"'.format(self.table_rowclass))
             self.table_rowclass = u''
