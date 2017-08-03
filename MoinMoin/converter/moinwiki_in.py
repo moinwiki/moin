@@ -13,6 +13,7 @@ from __future__ import absolute_import, division
 
 import re
 
+from flask import request
 from werkzeug import url_encode
 
 from MoinMoin.constants.contenttypes import CHARSET
@@ -728,6 +729,9 @@ class Converter(ConverterMacro):
                 link_item = '/' + link_item[len(att):]  # now we have a subitem
             if '#' in link_item:
                 path, fragment = link_item.rsplit('#', 1)
+                if link_item.startswith('#') and '/+convert/' in request.url:
+                    # avoid traceback in link.py when converting moinwiki item to ReST | HTML | Docbook
+                    path = request.url.split('+convert/')[-1]
             else:
                 path, fragment = link_item, None
             target = Iri(scheme='wiki.local', path=path, query=query, fragment=fragment)
