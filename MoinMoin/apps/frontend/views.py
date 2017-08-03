@@ -53,7 +53,7 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                             validate_name, NameNotValidError)
 from MoinMoin.items import BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
-from MoinMoin.items.content import content_registry
+from MoinMoin.items.content import content_registry, conv_serialize
 from MoinMoin.items.ticket import AdvancedSearchForm, render_comment_data
 from MoinMoin import user, util
 from MoinMoin.constants.keys import *
@@ -65,6 +65,7 @@ from MoinMoin.util import crypto, rev_navigation
 from MoinMoin.util.crypto import make_uuid
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.util.mime import Type, type_moin_document
+from MoinMoin.util.tree import html
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -594,10 +595,10 @@ def download_item(item):
 
 
 class ConvertForm(TextChaizedForm):
-    new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'moinwiki: text/x.moin.wiki;charset=utf-8'),
-                                                                  ('text/x-rst;charset=utf-8', 'rst: text/x-rst;charset=utf-8'),
-                                                                  ('text/html;charset=utf-8', 'html: text/html;charset=utf-8'),
-                                                                  ('application/docbook+xml;charset=utf-8', 'docbook: application/docbook+xml;charset=utf-8')))
+    new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'MoinWiki'),
+                                                                  ('text/x-rst;charset=utf-8', 'ReST'),
+                                                                  ('application/x-xhtml-moin-page', 'HTML'),
+                                                                  ('application/docbook+xml;charset=utf-8', 'DocBook')))
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), )
     submit_label = L_('OK')
 
@@ -634,19 +635,27 @@ def convert_item(item_name):
     content = item.rev.data.read()
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
     dom = input_conv(content, item.contenttype)
-    if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+
+    if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
+        # expand macros, includes,... when converting from moin or creole to something other than moin or creole
         dom = item.content._expand_document(dom)
+
     conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
     out = conv_out(dom)
+    meta = dict(item.meta)
+    if form['new_type'].value == 'application/x-xhtml-moin-page':
+        # serialize the html tree created by the html converter, and change content type
+        out = conv_serialize(out, {html.namespace: ''})
+        meta[CONTENTTYPE] = 'text/html;charset=utf-8'
+    else:
+        meta[CONTENTTYPE] = form['new_type'].value
     out = out.encode(CHARSET)
     size, hash_name, hash_digest = hash_hexdigest(out)
     out = StringIO(out)
-    meta = dict(item.meta)
     meta[hash_name] = hash_digest
     meta[SIZE] = size
     meta[REVID] = make_uuid()
     meta[MTIME] = int(time.time())
-    meta[CONTENTTYPE] = form['new_type'].value
     del meta['dataid']
     out.seek(0)
     backend = flaskg.storage
