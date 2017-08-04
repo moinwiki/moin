@@ -2280,16 +2280,21 @@ def sitemap(item_name):
     """
     sitemap view shows item link structure, relative to current item
     """
-    # first check if this item exists
     fq_name = split_fqname(item_name)
-    if not flaskg.storage.get_item(**fq_name.query):
-        abort(404, item_name)
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404)
+
     backrefs = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
     sitemap = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
-                           item_name=item_name,  # XXX no item
+                           item=item,
+                           item_name=item_name,
                            backrefs=backrefs,
                            sitemap=sitemap,
                            fqname=fq_name,
