@@ -1,9 +1,28 @@
+{#
+    Tell user why a "404 Not Found" error occurred.
+
+    To involk this from any method:
+        abort(404, item_name)  # where item_name is the local item name
+#}
+
 {% import "forms.html" as forms %}
 {% extends theme("layout.html") %}
+
 {% block content %}
-
-    <p>
-        {{ _("The item '%(item_name)s' does not exist.", item_name=item_name) }}
-    </p>
-
+    <h1> {{ _("Not Found") }}</h1>
+    <div class="error">
+        <p>
+            <strong>
+                {{ _("The item '%(item_name)s' does not exist.", item_name=item_name) }}
+            </strong>
+        </p>
+        {% if path %}
+            <p>
+                {{ _("The full path is:") }}
+                <strong>
+                    {{ path }}
+                </strong>
+            </p>
+        {% endif %}
+    </div>
 {% endblock %}
