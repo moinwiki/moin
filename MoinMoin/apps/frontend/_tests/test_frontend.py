@@ -133,7 +133,7 @@ class TestFrontend(object):
         self._test_view('frontend.backrefs', status='200 OK', viewopts=dict(item_name='DoesntExist'))
 
     def test_history(self):
-        self._test_view('frontend.history', status='200 OK', viewopts=dict(item_name='DoesntExist'))
+        self._test_view('frontend.history', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_diff(self):
         # TODO another test with valid rev1 and rev2 url args and an existing item is needed

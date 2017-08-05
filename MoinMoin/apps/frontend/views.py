@@ -619,7 +619,7 @@ def convert_item(item_name):
     except AccessDenied:
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404)
+        abort(404, item_name)
     form = ConvertForm.from_flat(request.form)
     if request.method in ['GET', 'HEAD']:
         return render_template('convert.html',
@@ -1157,6 +1157,13 @@ def _backrefs(item_name):
 @frontend.route('/+history/<itemname:item_name>')
 def history(item_name):
     fqname = split_fqname(item_name)
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
+
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get('bookmark', 0))
@@ -1181,7 +1188,8 @@ def history(item_name):
     history_page = util.getPageContent(history, offset, results_per_page)
     return render_template('history.html',
                            fqname=fqname,
-                           item_name=item_name,  # XXX no item here
+                           item=item,
+                           item_name=item_name,
                            history_page=history_page,
                            bookmark_time=bookmark_time,
                            NAME_EXACT=NAME_EXACT,
@@ -1315,7 +1323,7 @@ def subscribe_item(item_name):
     except AccessDenied:
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404)
+        abort(404, item_name)
     if not u.valid:
         msg = _("You must login to use this action: %(action)s.", action="subscribe/unsubscribe"), "error"
     elif not u.may.read(item_name):
@@ -2286,7 +2294,7 @@ def sitemap(item_name):
     except AccessDenied:
         abort(403)
     if isinstance(item, NonExistent):
-        abort(404)
+        abort(404, item_name)
 
     backrefs = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
@@ -2587,4 +2595,5 @@ def new():
 @frontend.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html',
+                           path=request.path,
                            item_name=e.description), 404
