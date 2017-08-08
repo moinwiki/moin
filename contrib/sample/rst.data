@@ -33,7 +33,7 @@ error message will be displayed instead of the expected page.
 If any markup appears before the first heading on a page, then the first heading
 will be an H2 and all subsequent headings will be demoted by 1 level.
 
-**Markup**: ::
+**Markup**::
 
  =======
  Level 1
@@ -76,7 +76,7 @@ Level 6
 Table of Contents
 =================
 
-**Markup**: ::
+**Markup**::
 
     .. contents::
 
@@ -125,7 +125,7 @@ External Links
 Internal Links
 --------------
 
-**Markup**: ::
+**Markup**::
 
  To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page
  is not a wiki page, then the Home links are not valid.)
@@ -161,7 +161,7 @@ Images
 
 Images may be positioned by using the align parameter with a value of left, center, or right. There is no facility to embed an image within a paragraph. There must be a blank line before and after the image declaration. Images are not enclosed within a block level element so several images declared successively without any positioning will display in a horizontal row.
 
-**Markup**: ::
+**Markup**::
 
     Before text.
 
@@ -197,7 +197,7 @@ To create a blockquote, indent all lines of a paragraph or paragraphs with an
 equal number of spaces. To add an attribution, begin the last indented paragraph
 with "-- ".
 
-**Markup**: ::
+**Markup**::
 
  Text introducing a blockquote:
 
@@ -209,7 +209,7 @@ Text introducing a blockquote:
 
   If you chase two rabbits, you will lose them both.
 
-**Markup**: ::
+**Markup**::
 
   This is an ordinary paragraph, introducing a block quote.
 
@@ -231,7 +231,7 @@ Lists
 Unordered Lists
 ---------------
 
-**Markup**: ::
+**Markup**::
 
  - item 1
 
@@ -258,7 +258,7 @@ Unordered Lists
 Ordered Lists
 ---------------
 
-**Markup**: ::
+**Markup**::
 
  1. item 1
 
@@ -295,7 +295,7 @@ Definition Lists
 
 Definition lists are formed by an unindented one line term followed by an indented definition.
 
-**Markup**: ::
+**Markup**::
 
  term 1
   Definition 1.
@@ -322,7 +322,7 @@ Field Lists
 
 Field lists are part of an extension syntax for directives usually intended for further processing.
 
-**Markup**: ::
+**Markup**::
 
     :Date: 2001-08-16
     :Version: 1
@@ -339,7 +339,7 @@ Option lists
 
 Option lists are intended to document Unix or DOS command line options.
 
-**Markup**: ::
+**Markup**::
 
     -a      command definition
     --a     another command definition
@@ -360,7 +360,7 @@ adjacent. The syntax for a transition marker is a horizontal line of 4 or more
 repeated punctuation characters. The syntax is the same as section title
 underlines without title text. Transition markers require blank lines before and after.
 
-**Markup**: ::
+**Markup**::
 
     Text
 
@@ -383,7 +383,7 @@ Backslash Escapes
 Sometimes there is a need to use special characters as literal characters,
 but ReST's syntax gets in the way. Use the backslash character as an escape.
 
-**Markup**: ::
+**Markup**::
 
     *hot*
 
@@ -415,7 +415,7 @@ Simple Tables
 
 Easy markup for tables consisting of two rows. This syntax can have no more than two rows.
 
-**Markup**: ::
+**Markup**::
 
  ======= ======= =======
   A       B       C
@@ -432,7 +432,7 @@ Easy markup for tables consisting of two rows. This syntax can have no more than
  ======= ======= =======
 
 
-**Markup**: ::
+**Markup**::
 
  ======= ======= =======
        foo         Bar
@@ -457,7 +457,7 @@ Grid Tables
 
 Complex tables can have any number of rows or columns. They are made by ``|``, ``+``, ``-`` and ``=``.
 
-**Markup**: ::
+**Markup**::
 
  +----------------+---------------+
  | A              |               |
@@ -480,7 +480,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
 One difference between the Sphinx and Moin ReST parsers is demonstrated below.
 With the Spinx parser, grid table column widths can be expanded by adding spaces.
 
-**Markup**: ::
+**Markup**::
 
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
  | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
@@ -506,7 +506,7 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 
 The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
 
-**Markup**: ::
+**Markup**::
 
     .. caution:: Be careful!
     .. danger:: Watch out!
@@ -527,7 +527,7 @@ Comments are not shown on the page. Some parsers may create HTML comments
 Within the Moin2 wiki, comments may be made visible/invisible by clicking the
 Comments link within item views.
 
-**Markup**: ::
+**Markup**::
 
  .. This is a comment
  ..
@@ -557,7 +557,7 @@ Literals Blocks
 Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
-**Markup**: ::
+**Markup**::
 
  Paragraph with a space before two colons ::
 
