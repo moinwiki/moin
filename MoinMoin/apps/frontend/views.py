@@ -65,7 +65,7 @@ from MoinMoin.util import crypto, rev_navigation
 from MoinMoin.util.crypto import make_uuid
 from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
 from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import html
+from MoinMoin.util.tree import html, docbook
 from MoinMoin.search import SearchForm
 from MoinMoin.search.analyzers import item_name_analyzer
 from MoinMoin.security.textcha import TextCha, TextChaizedForm
@@ -647,6 +647,10 @@ def convert_item(item_name):
         # serialize the html tree created by the html converter, and change content type
         out = conv_serialize(out, {html.namespace: ''})
         meta[CONTENTTYPE] = 'text/html;charset=utf-8'
+    elif form['new_type'].value == 'application/docbook+xml;charset=utf-8':
+        namespaces = {docbook.namespace: '', }
+        out = conv_serialize(out, namespaces)
+        meta[CONTENTTYPE] = form['new_type'].value
     else:
         meta[CONTENTTYPE] = form['new_type'].value
     out = out.encode(CHARSET)
