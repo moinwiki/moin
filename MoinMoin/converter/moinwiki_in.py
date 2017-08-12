@@ -784,8 +784,8 @@ class Converter(ConverterMacro):
         text = None
         if nowiki_text is not None:
             return stack.top_append(moin_page.samp(children=[nowiki_text]))
-        # Remove empty backtick nowiki samples
-        elif nowiki_text_backtick:
+        # we must pass empty strings for moinwiki in > out conversions (@``DATE@ must not be converted to @DATE@)
+        elif nowiki_text_backtick is not None:
             return stack.top_append(moin_page.code(children=[nowiki_text_backtick]))
 
     inline_object = r"""
