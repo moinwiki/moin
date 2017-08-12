@@ -94,8 +94,10 @@ class TestConverter(object):
             # (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
             # (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
             # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
-            # (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]\n'),
-            # Note: old style attachments are converted to new style sub-item syntax
+
+            # TODO: attachments should be converted within import19.py and support removed from moin2
+            # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is passed but ignored
+            (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[/HelpOnImages/pineapple.jpg|a pineapple|&2526do=get]]\n'),
             (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n')
         ]
         for i in data:
