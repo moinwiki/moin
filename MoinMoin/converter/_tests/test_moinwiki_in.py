@@ -305,7 +305,7 @@ class TestConverter(object):
             (u'{{{}}}',
                 '<page><body><p><samp></samp></p></body></page>'),
             (u'``',
-                '<page><body><p /></body></page>'),
+                '<page><body><p><code></code></p></body></page>'),
             # XXX: Is <page> correct?
             (u'{{{#!\ntest\n}}}',
                 '<page><body><nowiki>3<nowiki-args>#!</nowiki-args>test</nowiki></body></page>'),
