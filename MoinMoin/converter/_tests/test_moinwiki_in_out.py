@@ -90,10 +90,14 @@ class TestConverter(object):
             (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
             # (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{/samplegraphic.png}}|target=_blank]]\n'),
             # (u'[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]\n'),
+            # (u'[[SomePage||&target=_blank]]', '[[SomePage||&target=_blank]]\n'),
             (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
             # (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
             # (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
+            # interwiki
             # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
+            (u'[[MeatBall:InterWiki]]', '[[MeatBall:InterWiki]]'),
+            (u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]', '[[MeatBall:InterWiki|InterWiki page on MeatBall]]'),
 
             # TODO: attachments should be converted within import19.py and support removed from moin2
             # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is passed but ignored

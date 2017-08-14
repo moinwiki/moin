@@ -192,7 +192,6 @@ class Converter(object):
         params = u','.join([u'{0}={1}'.format(p, params[p]) for p in params if params[p]])
 
         # XXX: We don't have Iri support for now
-        from MoinMoin.util.iri import Iri
         if isinstance(href, Iri):
             href = unicode(href)
         # TODO: this can be done using one regex, can it?
@@ -205,16 +204,19 @@ class Converter(object):
         args = u','.join(s for s in [args, params] if s)
 
         # TODO: rewrite this using % formatting
-        ret = Moinwiki.a_open
-        ret += href
+        ret = href
         text = u''.join(elem.itertext())
         if not args and text == href:
             text = u''
         if text:
-            ret += Moinwiki.a_separator + text
+            ret += Moinwiki.a_separator + text  # XXX future bug when args are supported: [[SomePage||&target=_blank]]
         if args:
             ret += Moinwiki.a_separator + args
-        return ret + Moinwiki.a_close
+        if ret.startswith('wiki://'):
+            # interwiki fixup
+            ret = ret[7:]
+            ret = ret.replace('/', ':', 1)
+        return Moinwiki.a_open + ret + Moinwiki.a_close
 
     def open_moinpage_blockcode(self, elem):
         text = u''.join(elem.itertext())
