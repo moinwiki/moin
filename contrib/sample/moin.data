@@ -51,6 +51,7 @@
 || `[[/MissingSubitem]]` || [[/MissingSubitem]] ||
 || `[[../Home]]` || [[../Home]] ||
 || `[[Home|named link]]` || [[Home|named link]] ||
+|| `[[Home|{{png}}]]` || [[Home|{{png}}]] ||
 || `[[#Lists]]` || [[#Lists]] ||
 || `[[#Lists|description]]` || [[#Lists|description]] ||
 || `[[creole#Internal_Links]]` || [[creole#Internal_Links]] ||
@@ -67,7 +68,7 @@
 
 || `[[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]` || [[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]] ||
 || `[[MeatBall:InterWiki]]` || [[MeatBall:InterWiki]] ||
-|| `[MeatBall:InterWiki|InterWiki page on MeatBall]]` || [[MeatBall:InterWiki|InterWiki page on MeatBall]] ||
+|| `[[MeatBall:InterWiki|InterWiki page on MeatBall]]` || [[MeatBall:InterWiki|InterWiki page on MeatBall]] ||
 || `[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]` || [[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]] ||
 
 == Transclusions ==
