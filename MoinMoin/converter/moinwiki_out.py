@@ -353,7 +353,10 @@ class Converter(object):
 
         if args:
             args = u'&' + args
-        args += u' '.join(options)
+        if options:
+            if args:
+                args += u' '
+            args += u' '.join(options)
 
         ret = '{0}{1}|{2}|{3}{4}'.format(Moinwiki.object_open, href, alt, args, Moinwiki.object_close)
         ret = sub(r"\|+}}", "}}", ret)
