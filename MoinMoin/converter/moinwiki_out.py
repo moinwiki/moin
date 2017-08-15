@@ -314,11 +314,9 @@ class Converter(object):
     def open_moinpage_note(self, elem):
         class_ = elem.get(moin_page.note_class, u"")
         if class_:
-            self.status.append('table')
             if class_ == "footnote":
                 return u'<<FootNote({0})>>'.format(self.open_children(elem))
-            self.status.pop()
-        return u''
+        return u'\n<<FootNote()>>\n'
 
     def open_moinpage_nowiki(self, elem):
         """{{{#!wiki ... or {{{#!highlight ... etc."""
