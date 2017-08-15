@@ -538,13 +538,13 @@ Macros are extensions to standard markup that allow developers to add extra feat
 
 === FootNotes ===
 
-**Markup:**
+'''Markup:'''
 
 {{{
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
 }}}
 
-**Result:**
+'''Result:'''
 
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
 
