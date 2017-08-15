@@ -499,7 +499,7 @@ class Converter(object):
     def open_moinpage_table(self, elem):
         self.table_tableclass = elem.attrib.get(moin_page.class_, u'')
         # moin-wiki-table class was added by moinwiki_in so html_out can convert multiple body's into head, foot
-        self.table_tableclass = self.table_tableclass.replace(u'moin-wiki-table', u'')
+        self.table_tableclass = self.table_tableclass.replace(u'moin-wiki-table', u'').strip()
         self.table_tablestyle = elem.attrib.get(moin_page.style, u'')
         if elem[0].tag == moin_page.caption:
             self.table_caption = elem[0][0]
