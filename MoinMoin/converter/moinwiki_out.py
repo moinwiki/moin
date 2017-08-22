@@ -155,8 +155,6 @@ class Converter(object):
                     child = child + ' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
                 childrens_output.append(u'{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
-        # adding the correct number of '\n' characters between block elements is difficult, too few may result in merged blocks
-        # we want one blank line between block level elements
         out = u''.join(childrens_output)
         return out
 
