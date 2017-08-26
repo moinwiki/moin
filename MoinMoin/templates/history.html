@@ -87,8 +87,16 @@
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>
                                     <div class="moin-hist-rev">
-                                        <input type="radio" name="rev1" value="{{ doc.revid }}" />
-                                        <input type="radio" name="rev2" value="{{ doc.revid }}" />
+                                        {% set check1, check2 = '', '' %}
+                                        {% if len and len(history) > 1 %}
+                                            {% if loop.index == 1 %}
+                                                {% set check2 = 'checked' %}
+                                            {% elif loop.index == 2 %}
+                                                {% set check1 = 'checked' %}
+                                            {% endif %}
+                                        {% endif %}
+                                        <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
+                                        <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
                                     </div>
                                 </td>
                                 <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
