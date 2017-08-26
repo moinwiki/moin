@@ -1197,6 +1197,7 @@ def history(item_name):
                            history_page=history_page,
                            bookmark_time=bookmark_time,
                            NAME_EXACT=NAME_EXACT,
+                           len=len,
     )
 
 
