@@ -139,6 +139,7 @@ class ImportMoin19(Command):
             meta[hash_name] = hash_digest
             meta[SIZE] = size
             meta[REVID] = make_uuid()
+            meta[REV_NUMBER] = meta[REV_NUMBER] + 1
             meta[MTIME] = int(time.time())
             meta[COMMENT] = 'Convert moin 1.9 markup to 2.0'
             meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
@@ -323,6 +324,7 @@ class PageRevision(object):
         meta[SIZE] = size
         meta[ITEMID] = itemid
         meta[REVID] = make_uuid()
+        meta[REV_NUMBER] = revno
         meta[NAMESPACE] = NAMESPACE_DEFAULT
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if meta[NAME][0].endswith('Template'):
@@ -418,6 +420,7 @@ class AttachmentRevision(object):
         meta[SIZE] = size
         meta[ITEMID] = make_uuid()
         meta[REVID] = make_uuid()
+        meta[REV_NUMBER] = 1
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         self.meta = meta
 

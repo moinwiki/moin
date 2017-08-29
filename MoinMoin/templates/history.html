@@ -82,7 +82,7 @@
                                     {% endif %}
                                 </td>
 
-                                <td>{{ doc.revid|shorten_id }}</td>
+                                <td class="moin-integer">{{ doc.rev_number or doc.revid|shorten_id }}</td>
                                 <td>{{ doc.mtime|datetimeformat }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>

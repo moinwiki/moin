@@ -54,6 +54,7 @@ HASH_LEN = 40  # length of hex str representation of hash value
 NAME_EXACT = u"name_exact"
 ITEMID = u"itemid"
 REVID = u"revid"
+REV_NUMBER = u"rev_number"
 PARENTID = u"parentid"
 DATAID = u"dataid"
 WIKINAME = u"wikiname"

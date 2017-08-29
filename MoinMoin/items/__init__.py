@@ -51,7 +51,7 @@ from MoinMoin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
-    UFIELDS_TYPELIST, UFIELDS, TRASH,
+    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
     LATEST_REVS, EDIT_ROWS, TEMPLATE
 )
@@ -618,6 +618,9 @@ class Item(object):
                 # if no names left, then set the trash but not if the item is a ticket (tickets get closed, not deleted)
                 if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
                     meta[TRASH] = True
+            meta[REV_NUMBER] = currentrev.meta.get(REV_NUMBER, 0) + 1
+        else:
+            meta[REV_NUMBER] = 1
 
         if not overwrite and REVID in meta:
             # we usually want to create a new revision, thus we must remove the existing REVID
