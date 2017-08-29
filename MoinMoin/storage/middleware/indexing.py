@@ -293,6 +293,8 @@ class IndexingMiddleware(object):
             NAME_EXACT: ID(field_boost=3.0),
             # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
+            # sequential revision number for humans: 1, 2, 3...
+            REV_NUMBER: NUMERIC(stored=True),
             # parent revision id
             PARENTID: ID(stored=True),
             # backend name (which backend is this rev stored in?)

@@ -19,7 +19,7 @@
                 <thead>
                     <tr>
                         <th>{{ _("Item") }}</th>
-                        <th>{{ _("Rev.") }}</th>
+                        <th class="moin-integer">{{ _("Rev.") }}</th>
                         <th>{{ _("Timestamp") }}</th>
                         <th class="moin-integer">{{ _("Size") }}</th>
                         <th>{{ _("Diff") }}</th>
@@ -39,7 +39,7 @@
                                     {{ doc.fqname|shorten_fqname }}
                                 {% endif %}
                             </td>
-                            <td class="monospaced">{{ doc.revid|shorten_id }}</td>
+                            <td class="moin-integer">{{ doc.rev_number  or doc.revid|shorten_id }}</td>
                             <td>{{ doc.mtime|datetimeformat }}</td>
                             <td class="moin-integer">{{ doc.size }}</td>
                             <td>
