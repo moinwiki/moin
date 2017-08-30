@@ -536,11 +536,20 @@ def indexable(item_name, rev):
 
 @presenter('highlight')
 def highlight_item(item):
+    show_revision = request.view_args['rev'] != CURRENT
+    if show_revision:
+        rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    else:
+        rev_navigation_ids_dates = (None, ) * 6
     try:
         return render_template('highlight.html',
                                item=item, item_name=item.name,
                                fqname=item.fqname,
                                data_text=Markup(item.content._render_data_highlight()),
+                               rev=item.rev,
+                               rev_navigation_ids_dates=rev_navigation_ids_dates,
+                               meta=item._meta_info(),
+                               show_revision=show_revision,
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
