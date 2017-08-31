@@ -863,11 +863,7 @@ class Default(Contentful):
         Display an item. If this is not the current revision, then page content will include
         an H1 tag with rev-id and next-rev / prior-rev links.
         """
-        show_revision = revid != CURRENT
-        if show_revision:
-            rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
-        else:
-            rev_navigation_ids_dates = (None, ) * 6
+        rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
         return render_template('show.html',
                                item=self,
                                item_name=self.name,
@@ -876,7 +872,6 @@ class Default(Contentful):
                                contenttype=self.contenttype,
                                rev_navigation_ids_dates=rev_navigation_ids_dates,
                                data_rendered=Markup(self.content._render_data()),
-                               show_revision=show_revision,
                               )
 
     def doc_link(self, filename, link_text):
