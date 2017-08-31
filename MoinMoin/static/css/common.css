@@ -525,12 +525,12 @@ form.upload_file button { display: none; }
 #moin-modify input[type="submit"] { margin-left: 0; }
 .moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }
 
-/* revision navigation on show and meta views */
-.moin-rev-navigation-current { font-size: 1.25em; text-transform: uppercase; }
+/* revision navigation on show, highlight, and meta views */
+.moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }
 .moin-rev-navigation-older,
 .moin-rev-navigation-newer {padding: 0 20px 0 20px; }
 ul#moin-rev-navigation li { display: inline; }
-ul#moin-rev-navigation { text-align: center; }
+ul#moin-rev-navigation { text-align: center; background-color: #eee; }
 @media (max-width: 1500px) {
     ul#moin-rev-navigation li { display: block; text-align: center; }
 }

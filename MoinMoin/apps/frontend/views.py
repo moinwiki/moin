@@ -536,11 +536,7 @@ def indexable(item_name, rev):
 
 @presenter('highlight')
 def highlight_item(item):
-    show_revision = request.view_args['rev'] != CURRENT
-    if show_revision:
-        rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    else:
-        rev_navigation_ids_dates = (None, ) * 6
+    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
     try:
         return render_template('highlight.html',
                                item=item, item_name=item.name,
@@ -549,7 +545,6 @@ def highlight_item(item):
                                rev=item.rev,
                                rev_navigation_ids_dates=rev_navigation_ids_dates,
                                meta=item._meta_info(),
-                               show_revision=show_revision,
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
@@ -557,11 +552,7 @@ def highlight_item(item):
 
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
-    show_revision = request.view_args['rev'] != CURRENT
-    if show_revision:
-        rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    else:
-        rev_navigation_ids_dates = (None, ) * 6
+    rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
     return render_template('meta.html',
                            item=item,
                            item_name=item.name,
@@ -570,7 +561,6 @@ def show_item_meta(item):
                            contenttype=item.contenttype,
                            rev_navigation_ids_dates=rev_navigation_ids_dates,
                            meta=item._meta_info(),
-                           show_revision=show_revision,
     )
 
 

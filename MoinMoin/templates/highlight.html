@@ -1,18 +1,13 @@
 {% extends theme("show.html") %}
 
+{% import "utils.html" as utils %}
+
 {% set title = _("Syntax highlighting of '%(name)s'", name=item_name) %}
 
 {% block content %}
+    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item') }}
     {% block headline %}
         <h1>{{ title }} </h1>
     {% endblock %}
-
-    {% if show_revision %}
-        <h2>{{ rev.item.name }} (Revision {{ rev.meta.rev_number or rev.revid | shorten_id }})</h2>
-        {% block rev_navigation %}
-            {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item') }}
-        {% endblock %}
-    {% endif %}
-
     {{ data_text }}
 {% endblock %}

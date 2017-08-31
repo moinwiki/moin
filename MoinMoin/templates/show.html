@@ -32,12 +32,7 @@
                 </div>
             {% endblock %}
         {% endif %}
-        {% if show_revision %}
-            <h1>{{ rev.item.name }} (Revision {{ rev.meta.rev_number or rev.revid | shorten_id }})</h1>
-            {% block rev_navigation %}
-                {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') }}
-            {% endblock %}
-        {% endif %}
+        {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') }}
     {% endblock %}
 
     {% block content_data %}

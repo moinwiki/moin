@@ -22,14 +22,12 @@
                 </div>
             {% endif %}
         {% endblock %}
-        {% if show_revision %}
-            <h1>{{ rev.item.name }} (Revision {{ rev.revid | shorten_id }})</h1>
-            {% block rev_navigation %}
-                {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') }}
-            {% endblock %}
-        {% endif %}
-    {% endblock %}
 
+        {% block rev_navigation %}
+            {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') }}
+        {% endblock %}
+
+    {% endblock %}
 
     {% block content_data %}
         {% if data_rendered %}

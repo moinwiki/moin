@@ -7,30 +7,35 @@
 
 from flask import g as flaskg
 from flask import current_app as app
+from flask import request
 from whoosh.query import Term, And
 from MoinMoin.constants.keys import *
 
 
 def prior_next_revs(revid, fqname):
     """
-    Return prior, current, and next revids and time stamps.
+    If viewing a revision other than the current revision,
+    return prior, current, and next revids and time stamps else return None * 6.
     """
-    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
-    query = And(terms)
-    revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
-    rev_ids = []
-    mtimes = []
-    for rev in revs:
-        mtimes.append(dict(rev.meta)[u'mtime'])
-        rev_ids.append(rev.revid)
-    prior_rev = next_rev = prior_mtime = next_mtime = None
-    current_idx = rev_ids.index(revid)
-    current_mtime = mtimes[current_idx]
-    if current_idx:
-        next_rev = rev_ids[current_idx - 1]
-        next_mtime = mtimes[current_idx - 1]
-    if current_idx < len(rev_ids) - 1:
-        prior_rev = rev_ids[current_idx + 1]
-        prior_mtime = mtimes[current_idx + 1]
-    return (prior_rev, revid, next_rev, prior_mtime, current_mtime, next_mtime)
+    show_revision = request.view_args['rev'] != CURRENT
+    if show_revision:
+        terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+        terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
+        query = And(terms)
+        revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        rev_ids = []
+        mtimes = []
+        for rev in revs:
+            mtimes.append(dict(rev.meta)[u'mtime'])
+            rev_ids.append(rev.revid)
+        prior_rev = next_rev = prior_mtime = next_mtime = None
+        current_idx = rev_ids.index(revid)
+        current_mtime = mtimes[current_idx]
+        if current_idx:
+            next_rev = rev_ids[current_idx - 1]
+            next_mtime = mtimes[current_idx - 1]
+        if current_idx < len(rev_ids) - 1:
+            prior_rev = rev_ids[current_idx + 1]
+            prior_mtime = mtimes[current_idx + 1]
+        return (prior_rev, revid, next_rev, prior_mtime, current_mtime, next_mtime)
+    return (None, ) * 6
