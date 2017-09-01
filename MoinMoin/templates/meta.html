@@ -1,6 +1,6 @@
 {% extends theme("show.html") %}
 
-{% import "utils.html" as utils %}
+{% import "utils.html" as utils with context %}
 
 {% set title = _("Metadata of '%(item_name)s'", item_name=item_name) %}
 
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item_meta') }}
+    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item_meta', item=item) }}
     <h1>
         {{ title }}
     </h1>

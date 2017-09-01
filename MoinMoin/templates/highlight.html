@@ -1,11 +1,11 @@
 {% extends theme("show.html") %}
 
-{% import "utils.html" as utils %}
+{% import "utils.html" as utils with context %}
 
 {% set title = _("Syntax highlighting of '%(name)s'", name=item_name) %}
 
 {% block content %}
-    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item') }}
+    {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item', item=item) }}
     {% block headline %}
         <h1>{{ title }} </h1>
     {% endblock %}

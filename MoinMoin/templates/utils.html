@@ -1,6 +1,7 @@
 {% import 'forms.html' as forms %}
 
-{% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item') %}
+{# item must be passed because of flakey jinja2 context passing: required for basic theme using bootstrap #}
+{% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item', item=item) %}
     {% set prior_rev, current_rev, next_rev, prior_mtime, current_mtime, next_mtime = rev_navigation_ids_dates %}
     {% if not current_rev == None %}
         <ul id="moin-rev-navigation">
