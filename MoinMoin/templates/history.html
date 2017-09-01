@@ -4,7 +4,8 @@
 #}
 
 {% extends theme("show.html") %}
-{% import "utils.html" as utils %}
+
+{% import "utils.html" as utils with context %}
 
 {% set (history, next_offset, previous_offset) = history_page %}
 {% set summary = history[0].get('summary', None) if history else None %}
@@ -55,7 +56,7 @@
                             <th>{{ _("Editor") }}</th>
                             <th>{{ _("Content-Type") }}</th>
                             <th>{{ _("Comment") }}</th>
-                            <th colspan="6">{{ _("Actions") }}</th>
+                            <th class="center" colspan="6">{{ _("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,17 +108,41 @@
                                 {% else %}
                                     {% set revid = doc.revid %}
                                 {% endif %}
-                                <td><a href="{{ url_for('frontend.show_item', item_name=fqname, rev=revid) }}">{{ _('show') }}</a></td>
-                                <td><a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=revid) }}">{{ _('meta') }}</a></td>
-                                <td><a href="{{ url_for('frontend.download_item', item_name=fqname, rev=revid) }}">{{ _('download') }}</a></td>
-                                <td><a href="{{ url_for('frontend.highlight_item', item_name=fqname, rev=revid) }}">{{ _('highlight') }}</a></td>
+                                <td>
+                                    <a href="{{ url_for('frontend.show_item', item_name=fqname, rev=revid) }}" title="{{ _('show') }}">
+                                        <span class="fa fa-eye"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('frontend.highlight_item', item_name=fqname, rev=revid) }}" title="{{ _('highlight') }}">
+                                        <span class="fa fa-code"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('frontend.show_item_meta', item_name=fqname, rev=revid) }}" title="{{ _('meta') }}">
+                                        <span class="fa fa-wrench"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('frontend.download_item', item_name=fqname, rev=revid) }}" title="{{ _('download') }}">
+                                        <span class="fa fa-download"></span>
+                                    </a>
+                                </td>
                                 {% if user.may.write(fqname) and not doc.trash and not loop.first -%}
-                                    <td><a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}">{{ _('revert') }}</a></td>
+                                    <td>
+                                        <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
+                                            <span class="fa fa-reply"></span>
+                                        </a>
+                                    </td>
                                 {% else %}
                                     <td></td>
                                 {%- endif %}
                                 {% if user.may.destroy(fqname) -%}
-                                    <td><a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}">{{ _('destroy') }}</a></td>
+                                    <td>
+                                        <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy') }}">
+                                            <span class="fa fa-trash"></span>
+                                        </a>
+                                    </td>
                                 {% else %}
                                     <td></td>
                                 {%- endif %}
