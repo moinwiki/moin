@@ -414,7 +414,7 @@ div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat ce
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: #00008b; border-radius: 5px; color: #fff; text-decoration: none; }
 .moin-item-index { width: 99%; margin-left: .5%; }
-.moin-item-index div { float: left; width: 15em; }
+.moin-item-index div { float: left; width: 16em; }
 .moin-item-index div .moin-select-item { display: inline-block; width: 17px; cursor: default; }
 .moin-align-right { text-align: right; float: right; }
 .moin-align-right ul { margin: 0; padding: 0; }
