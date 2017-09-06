@@ -77,7 +77,7 @@ Successfully created or updated venv at {0}
         virtualenv.create_environment(self.dir_venv)
 
     def get_pip_version(self):
-        """Return true if pip version is >= 1.5"""
+        """Return pip version as a list: [1, 5, 1]"""
         command = ACTIVATE + 'pip --version'
         pip_txt = subprocess.check_output(command, shell=True)
         # expecting pip_txt similar to "pip 1.4.1 from /bitbucket/moin-2.0..."
