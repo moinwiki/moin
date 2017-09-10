@@ -345,7 +345,7 @@ class Binary(Content):
             else:
                 return None, None
 
-    def _render_data_diff(self, oldrev, newrev):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}):
         hash_name = HASH_ALGORITHM
         if oldrev.meta[hash_name] == newrev.meta[hash_name]:
             return _("The items have the same data hash code (that means they very likely have the same data).")
@@ -734,7 +734,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                                oldrev=oldrev, newrev=newrev, get='binary',
                                content=Markup(u'<img src="{0}" />'.format(escape(url))))
 
-    def _render_data_diff(self, oldrev, newrev):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
@@ -854,7 +854,7 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(CHARSET).replace(u'\r\n', u'\n')
 
-    def _render_data_diff_html(self, oldrev, newrev, template):
+    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}):
         """ Render HTML formatted meta and content diff of 2 revisions
 
         :param oldrev: old revision object
@@ -862,12 +862,17 @@ class Text(Binary):
         :param template: name of the template to be rendered
         :return: HTML data with meta and content diff
         """
+        from MoinMoin.items import Item  # XXX causes import error if placed near top
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
+        item = Item.create(newrev.meta['name'][0], rev_id=newrev.meta['revid'])
+        rendered = Markup(item.content._render_data())
         return render_template(template,
                                item_name=self.name,
                                oldrev=oldrev,
                                newrev=newrev,
                                diffs=diffs,
+                               rendered=rendered,
+                               rev_links=rev_links,
                                )
 
     def _get_data_diff_html(self, oldfile, newfile):
@@ -897,8 +902,8 @@ class Text(Binary):
         """ renders diff in HTML for atom feed """
         return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
 
-    def _render_data_diff(self, oldrev, newrev):
-        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html')
+    def _render_data_diff(self, oldrev, newrev, rev_links={}):
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links)
 
     def _render_data_diff_text(self, oldrev, newrev):
         """ Render text diff of 2 revisions' contents

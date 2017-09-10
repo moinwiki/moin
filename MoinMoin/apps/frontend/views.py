@@ -2096,16 +2096,43 @@ def _diff(item, revid1, revid2):
         newrev = item[revid2]
     except KeyError:
         abort(404)
+    if oldrev.meta['mtime'] > newrev.meta['mtime']:
+        # within diff, always place oldest on left, newest on right
+        oldrev, newrev = newrev, oldrev
+        revid1, revid2 = revid2, revid1
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
-
     try:
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
 
-    rev_ids = [CURRENT]  # XXX TODO we need a reverse sorted list
+    # create dict containing older and newer revids to be used in formatting links
+    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+    terms.extend(Term(term, value) for term, value in item.fqname.query.iteritems())
+    query = And(terms)
+    rev_ids = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=False, limit=None)
+    rev_ids = [x.meta['revid'] for x in rev_ids]
+    rev_links = {}
+    if len(rev_ids) > 2:
+        rev1_idx = rev_ids.index(revid1)
+        rev2_idx = rev_ids.index(revid2)
+        if rev1_idx > 0:
+            rev_links['r1_oldest'] = rev_ids[0]
+            rev_links['r1_older'] = rev_ids[rev1_idx - 1]
+        if rev2_idx > rev1_idx + 1:
+            rev_links['r1_newer'] = rev_ids[rev1_idx + 1]
+        end = len(rev_ids) - 1
+        if rev2_idx < end:
+            rev_links['r2_newer'] = rev_ids[rev2_idx + 1]
+            rev_links['r2_newest'] = rev_ids[-1]
+        if rev2_idx > rev1_idx + 1:
+            rev_links['r2_older'] = rev_ids[rev2_idx - 1]
+    if rev_links:
+        rev_links['revid1'] = revid1
+        rev_links['revid2'] = revid2
+
     try:
-        diff_html = Markup(item.content._render_data_diff(oldrev, newrev))
+        diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links))
     except Exception:
         return _crash(item, oldrev, newrev)
 
@@ -2114,8 +2141,7 @@ def _diff(item, revid1, revid2):
                            fqname=item.fqname,
                            diff_html=diff_html,
                            rev=item.rev,
-                           first_rev_id=rev_ids[0],
-                           last_rev_id=rev_ids[-1],
+                           rev_links=rev_links,
                            oldrev=oldrev,
                            newrev=newrev,
     )
@@ -2124,6 +2150,9 @@ def _diff(item, revid1, revid2):
 def _diff_raw(item, revid1, revid2):
     oldrev = item[revid1]
     newrev = item[revid2]
+    if oldrev.meta['mtime'] > newrev.meta['mtime']:
+        oldrev, newrev = newrev, oldrev
+        revid1, revid2 = revid2, revid1
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
     try:

@@ -3,10 +3,12 @@
 <table class="moin-diff">
     <tr>
         <td class="moin-diff-header">
-            {{ utils.show_meta(oldrev) }}
+            {{ utils.show_older_rev_links(item_name, oldrev, rev_links) }}
+            {{ utils.show_meta(oldrev, do_rev=False) }}
         </td>
         <td class="moin-diff-header">
-            {{ utils.show_meta(newrev) }}
+            {{ utils.show_newer_rev_links(item_name, newrev, rev_links) }}
+            {{ utils.show_meta(newrev, do_rev=False) }}
         </td>
     </tr>
     <tr>
@@ -15,6 +17,7 @@
     </tr>
     {% for llineno, lcontent, rlineno, rcontent in diffs %}
         <tr class="moin-diff-line-number">
+            {# these links are to non-existant anchors, see diffScroll in common.js #}
             <td><a href="#{{ llineno }}">{{ _('Line') }} {{ llineno }}:</a></td>
             <td><a href="#{{ rlineno }}">{{ _('Line') }} {{ rlineno }}:</a></td>
         </tr>
@@ -24,3 +27,11 @@
         </tr>
     {% endfor %}
 </table>
+{% if rev_links['r2_newer'] %}
+    <div>
+        {{ _('Revision') }}:
+        {{ newrev.meta['rev_number'] or newrev.revid|shorten_id }} -
+        {{ newrev.meta.mtime|datetimeformat }}
+    </div>
+{% endif %}
+{{ rendered | safe }}
