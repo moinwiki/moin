@@ -1,6 +1,6 @@
 {% import 'forms.html' as forms %}
 
-{# item must be passed because of flakey jinja2 context passing: required for basic theme using bootstrap #}
+{# "item" must be passed because of flakey jinja2 context passing #}
 {% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item', item=item) %}
     {% set prior_rev, current_rev, next_rev, prior_mtime, current_mtime, next_mtime = rev_navigation_ids_dates %}
     {% if not current_rev == None %}
@@ -312,15 +312,73 @@
     </li>
 {% endmacro %}
 
-{% macro show_meta(rev) %}
-    <div>
+
+{# called by diff to provide revision navigation on right column:  <  revision: 5  >  >> #}
+{% macro show_newer_rev_links(item_name, rev, rev_links) %}
+    <div class="moin-diff-revision-caption">
+        {% if rev_links['r2_older'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev1=rev_links['revid1'], rev2=rev_links['r2_older']) }}" title="{{ _('older') }}">
+                <i class="fa fa-backward"> </i>
+            </a>
+        {% endif %}
         <span class="moin-diff-info-caption">
-            {{ _('Revision') }}
+            {{ _('Revision') }}:
         </span>
         <span class="moin-diff-info-value">
             {{ rev.meta['rev_number'] or rev.revid|shorten_id }}
         </span>
+        {% if rev_links['r2_newer'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev1=rev_links['revid1'], rev2=rev_links['r2_newer']) }}" title="{{ _('newer') }}">
+                <i class="fa fa-forward"> </i>
+            </a>
+        {% endif %}
+        {% if rev_links['r2_newest'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev1=rev_links['revid1'], rev2=rev_links['r2_newest']) }}" title="{{ _('newest') }}">
+                <i class="fa fa-fast-forward"> </i>
+            </a>
+        {% endif %}
     </div>
+{% endmacro %}
+
+{# called by diff to provide revision navigation on left column:  <<  <  revision: 5  >  #}
+{% macro show_older_rev_links(item_name, rev, rev_links) %}
+    <div class="moin-diff-revision-caption">
+        {% if rev_links['r1_oldest'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev2=rev_links['revid2'], rev1=rev_links['r1_oldest']) }}" title="{{ _('oldest') }}">
+                <i class="fa fa-fast-backward"> </i>
+            </a>
+        {% endif %}
+        {% if rev_links['r1_older'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev2=rev_links['revid2'], rev1=rev_links['r1_older']) }}" title="{{ _('older') }}">
+                <i class="fa fa-backward"> </i>
+            </a>
+        {% endif %}
+        <span class="moin-diff-info-caption">
+            {{ _('Revision') }}:
+        </span>
+        <span class="moin-diff-info-value">
+            {{ rev.meta['rev_number'] or rev.revid|shorten_id }}
+        </span>
+        {% if rev_links['r1_newer'] %}
+            <a href="{{ url_for('frontend.diff', item_name=item_name, rev2=rev_links['revid2'], rev1=rev_links['r1_newer']) }}" title="{{ _('newer') }}">
+                <i class="fa fa-forward"> </i>
+            </a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# create a header for a diff revision #}
+{% macro show_meta(rev, do_rev=True) %}
+    {% if do_rev %}
+        <div>
+            <span class="moin-diff-info-caption">
+                {{ _('Revision') }}:
+            </span>
+            <span class="moin-diff-info-value">
+                {{ rev.meta['rev_number'] or rev.revid|shorten_id }}
+            </span>
+        </div>
+    {% endif %}
     <div>
         <span class="moin-diff-info-caption">
             {{ _('Editor') }}:
@@ -334,7 +392,7 @@
             {{ _('Size') }}:
         </span>
         <span class="moin-diff-info-value">
-            {{ rev.meta['size'] }}
+            {{ rev.meta['size'] }}:
         </span>
     </div>
     <div>

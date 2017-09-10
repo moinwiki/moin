@@ -198,7 +198,9 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-diff-header { vertical-align: top; font-size: 92%; }
 .moin-diff-info { margin: .33em .25em; }
 .moin-diff-info-value { white-space: normal;: }
-.moin-diff-info-caption { display: inline-block; min-width: 5em;: }
+.moin-diff-info-caption { display: inline-block; min-width: 5em; }
+.moin-diff-revision-caption { text-align: center; font-weight: bold; font-size: 1.25em; padding-bottom: 5px; }
+.moin-diff-revision-caption i { padding: 0 6px; }
 .moin-diff-line-number { background-color: #c0c0c0; }
 .moin-diff-added { background-color: #e0ffe0; vertical-align: top; width: 50%;
     white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
@@ -206,6 +208,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-diff-removed { background-color: #ffffe0; vertical-align: top; width: 50%;
     white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
 .moin-diff-removed span { background-color: #ffff80; }
+.moin-diff-highlight { background-color: #ffffc0; }
 /* end diffs */
 
 /* misc moin css keywords */

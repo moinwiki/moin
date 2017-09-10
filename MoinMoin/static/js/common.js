@@ -643,10 +643,53 @@ MoinMoin.prototype.enhanceEdit = function () {
     }
 };
 
+
+// diffScroll is executed on page load.
+// Adds an onclick function to the line # links in a diff view.
+// Multiple consecutive blank lines in markup source make diff and DOM line numbers out of sync,
+// so window may be scrolled to wrong line.
+MoinMoin.prototype.diffScroll = function () {
+    "use strict";
+    var difflinks = $(".moin-diff-line-number");
+    // the above class is used only on TR tags within a diff view,  if this is not a diff page, do nothing
+    if (difflinks.length === 0) { return; }
+    difflinks.each(function (index) {
+        // loop through TR tags, change all left-side hrefs to value on right side because only right side revision is displayed
+        var tr = difflinks[index],
+            href = $(tr).find("td:last-child").children("a").attr("href");
+        $(tr).find("td:first-child").children("a").attr("href", href);
+        // add onclick function to both line number anchors under TR > TDs
+        $(tr).children().find("a").click(function () {
+            var url = window.location.href.split("#")[0],
+                start = parseInt(href.slice(1)),
+                next,
+                j,
+                target;
+            // find the element that has the current data-lineno attribute or next higher
+            for (j = 0; j < 99; j += 1) {
+                next = j + start;
+                target = $('[data-lineno="' + next + '"]');
+                if (target.length === 1) { break; }
+            }
+            next = parseInt(next);
+            // remove any prior duplicate ID or class addition
+            $("#" + next).remove();
+            $(".moin-diff-highlight").removeClass("moin-diff-highlight");
+            // if target has been found, highlight element and scroll to it
+            $(target).addClass("moin-diff-highlight");
+            $(target).append($('<span id="' + next + '"></span>'));
+            window.location.href = url + "#" + next
+            return false;
+        });
+    });
+};
+
+
 $(document).ready(function () {
     "use strict";
     var moin = new MoinMoin();
 
+    moin.diffScroll();
     moin.selected_link();
     moin.initTransclusionOverlays();
     if (document.getElementById('moin-navibar') !== null) {
