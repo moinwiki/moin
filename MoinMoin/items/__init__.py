@@ -193,7 +193,8 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
 
 
 class BaseChangeForm(TextChaizedForm):
-    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=True)
+    # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
+    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
     submit_label = L_('OK')
 
 
