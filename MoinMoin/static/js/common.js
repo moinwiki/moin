@@ -483,7 +483,8 @@ MoinMoin.prototype.enhanceEdit = function () {
             textAreaClone.rows = 1;
             scrollAmount = textAreaClone.scrollHeight - 100; // get total height of clone - 100 pixels
             textAreaClone.parentNode.removeChild(textAreaClone);
-            // position the caret
+            // position the caret, works for all browsers if textarea rows option is > 0
+            // if textarea rows == 0, works for FF, IE11, Edge; user must press right arrow key for Chrome, Opera, Maxthon
             textArea.focus();
             if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
             if (textArea.setSelectionRange) {
