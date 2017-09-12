@@ -3,7 +3,7 @@
   "address": "None",
   "comment": "",
   "contenttype": "text/x-rst;charset=utf-8",
-  "dataid": "a4cb78a842734202bd8db4cc5e60f057",
+  "dataid": "92b72235f4bc4852a3f2f9e450dbb48b",
   "externallinks": [
     "http:Home",
     "http://www.python.org/",
@@ -16,14 +16,15 @@
     "png"
   ],
   "itemtype": "default",
-  "mtime": 1505166057,
+  "mtime": 1505237261,
   "name": [
     "rst"
   ],
   "name_old": [],
   "namespace": "",
   "parentid": "b5bf7653b3ed44b79b4c8be2afef19d2",
-  "revid": "17e708aede854b3f9fd821476fd5883b",
+  "rev_number": 1,
+  "revid": "093bf715d6064566ab5777c3c83b049a",
   "sha1": "dd572793828364c8b8de603b75c3215b7918dd04",
   "size": 15737,
   "summary": "",

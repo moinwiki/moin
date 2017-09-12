@@ -3,7 +3,7 @@
   "address": "None",
   "comment": "",
   "contenttype": "text/x-mediawiki;charset=utf-8",
-  "dataid": "9518fb6f22bb450eb0d031e90f013316",
+  "dataid": "fea417aa43b94fb7999b8d81d4b07ac2",
   "externallinks": [
     "http://moinmo.in",
     "http://www.mediawiki.org/wiki/Help:Tables",
@@ -21,14 +21,15 @@
   ],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1505166023,
+  "mtime": 1505237226,
   "name": [
     "mediawiki"
   ],
   "name_old": [],
   "namespace": "",
   "parentid": "5b5147f5522045f4b3e0fc9a281e9e95",
-  "revid": "48e141046ec04b4cb8946c54617794b7",
+  "rev_number": 1,
+  "revid": "f61a8d649ef74d0486bc39f82679e420",
   "sha1": "3c8a072104d5eaa375bc7e49c210155267fc113b",
   "size": 18163,
   "summary": "",
