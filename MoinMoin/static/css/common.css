@@ -142,6 +142,7 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: #737373; }
 .moin-summary { margin-top: .5em; font-style: italic; }
+.moin-icon-macro { color: #ff2727; }
 /* end misc highlighting */
 
 /* create item view */
