@@ -126,6 +126,38 @@ Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 <<DateTime(2002-01-23T12:34:56)>>
 Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 
+=== FontAwesome ===
+
+The FontAwesome macro displays any of the Font Awesome characters. See [[http://fontawesome.io/icons/|the Font Awesome site]] for a complete list.
+
+The format of the macro is:
+
+{{{
+<<FontAwesome(classes,color,size)>>
+}}}
+
+The color and size parameters are optional. 
+
+    * color must be a hex digit color code of either 3 or 6 digits with a leading #: 
+        * #f00 or #F80000
+    * size may be an unsigned decimal integer or float that will adjust the size of the character relative to the current font size.
+        * 2 or 2.0 will create double the character size
+        * .5 will create a character half the current size
+
+In most cases, the class will consist of the single character name. If multiple classes are wanted, separate the names with spaces. Although the size parameter is more robust, the special Font Awesome "lg", "2x", "3x", and "4x" may be used. The "spin" class may be used for the spinner fonts.
+
+Font awesome experts will know about the special "fa" class and the "fa-" name prefixes. It is acceptable, but not necessary to provide these.
+
+{{{
+<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
+
+<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
+}}}
+
+<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
+
+<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
+
 === GetText ===
 Loads I18N texts. If this browser is set to German/Deutsch the macro output will be: Einstellungen ("Settings" is included in the translation files).
 
@@ -141,7 +173,17 @@ For GetVal to work, there must be either a ConfigDict or WikiDict defined (see c
 {{{
 <<GetVal(WikiDict,var1)>>
 }}}
+
 <<GetVal(WikiDict,var1)>>
+
+=== Icon ===
+The Icon macro displays an icon. The complete list of available icons are listed within [[MoinWikiMacros/Icons]].
+
+{{{
+Here is the moin icon: <<Icon(moin-logo.png)>>
+}}}
+
+Here is the moin icon: <<Icon(moin-logo.png)>>
 
 === MailTo ===
 The MailTo macro exports different markup when the user is logged in.
