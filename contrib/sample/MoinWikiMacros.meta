@@ -1,32 +1,34 @@
 {
   "action": "SAVE",
-  "address": "None",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
-  "dataid": "4601cb2a13d844c1b203903a3a491e11",
+  "dataid": "e847beee2d064b03b5fee8d4921afe77",
   "externallinks": [
-    "https://moinmo.in/HelpOnMacros/Include"
+    "https://moinmo.in/HelpOnMacros/Include",
+    "http://fontawesome.io/icons/"
   ],
   "itemid": "8b76f40497fe4fcf8c37cb90fc89b49a",
   "itemlinks": [
-    "WikiDict"
+    "WikiDict",
+    "MoinWikiMacros/Icons"
   ],
   "itemtransclusions": [
     "StronaGłówna",
     "png"
   ],
   "itemtype": "default",
-  "mtime": 1505237234,
+  "mtime": 1505840154,
   "name": [
     "MoinWikiMacros"
   ],
   "name_old": [],
   "namespace": "",
-  "parentid": "32688d905bc747638c5542040dfd6752",
+  "parentid": "922336162d974f26a66cc396a809aac2",
   "rev_number": 1,
-  "revid": "742f3e36a38e41c0b1ce64fe2d152122",
-  "sha1": "fa111694f444cecb03816ce2ecbd55d9620bbbef",
-  "size": 5389,
+  "revid": "72ec8f9d4c6d4282a89b992672952b1f",
+  "sha1": "45e8b08028a921285bb5b99da1a9a8bcd1732570",
+  "size": 7133,
   "summary": "",
   "tags": [
     "macros",
