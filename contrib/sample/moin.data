@@ -99,17 +99,33 @@ Transcluded images can be positioned by using any of the classes left, center, r
 
 == Blockquotes and Indentations ==
 
+The most common use of blockquotes is to indent several lines of text at the same level. In this case the lines will be combined, word-wrapped as a single paragraph, and displayed as indented text.
+
+When blockquotes contain several levels of indentation, the rendering will be similar to bulletless lists. The difference is that any adjacent lines with the same indentation will be combined and word-wrapped to fit the page width. 
+
+In the example below, the second to last line has a leading bulletless list character (a period) that results in the creation of a new list item. 
+
 '''Markup:'''
 
 {{{
- indented text
-  text indented to the 2nd level
+    indented text
+        text indented to the 2nd level
+    first level
+        second level
+        second level again, will be combined with line above
+        . second level as no bullet list
+        continuation of no bullet list
 }}}
 
 '''Result:'''
 
- indented text
-  text indented to the 2nd level
+    indented text
+        text indented to the 2nd level
+    first level
+        second level
+        second level again, will be combined with line above
+        . second level as no bullet list
+        continuation of no bullet list
 
 == Lists ==
 === Unordered Lists ===
@@ -126,7 +142,9 @@ Transcluded images can be positioned by using any of the classes left, center, r
   . item 3.1 (bulletless)
  . item 4 (bulletless)
   * item 4.1
-   . item 4.1.1 (bulletless)
+  * item 4.2
+   . item 4.2.1 (bulletless)
+   . item 4.2.2 (bulletless)
 }}}
 
 '''Result:'''
@@ -140,7 +158,9 @@ Transcluded images can be positioned by using any of the classes left, center, r
   . item 3.1 (bulletless)
  . item 4 (bulletless)
   * item 4.1
-   . item 4.1.1 (bulletless)
+  * item 4.2
+   . item 4.2.1 (bulletless)
+   . item 4.2.2 (bulletless)
 
 === Ordered Lists ===
 ==== with Numbers ====
