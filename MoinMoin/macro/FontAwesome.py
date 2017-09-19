@@ -52,9 +52,12 @@ class Macro(MacroInlineBase):
 
         style = color + size
 
-        classes = ['fa']
+        classes = []
         for font in fonts:
-            classes.append('fa-' + font)
+            f = font if font.startswith('fa-') or font == 'fa' else 'fa-' + font
+            classes.append(f)
+        if 'fa' not in classes:
+            classes.insert(0, 'fa')
         classes = ' '.join(classes)
 
         attrib = {html.class_: classes}
