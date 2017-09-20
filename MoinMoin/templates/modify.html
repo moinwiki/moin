@@ -55,11 +55,6 @@
             <dl>
                 {{ forms.render(form['extra_meta_text']) }}
             </dl>
-            {#
-            {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
-            <br />
-            {{ forms.render_errors(form['meta_text']) }}
-            #}
         {{ gen.form.close() }}
     </div>
 {% endblock %}
