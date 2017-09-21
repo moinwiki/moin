@@ -365,6 +365,10 @@ Macros are extensions to standard Creole markup that allow developers to add ext
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<FootNote(Note here)>>``               | Inserts a footnote saying "Note here"                      |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<FontAwesome(name,color,size)>>``      | displays Font Awsome icon, color and size are optional     |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<Icon(my-icon.png)>>``                 | displays icon from /static/img/icons                       |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<Include(ItemOne/SubItem)>>``          | Embeds the contents of ``ItemOne/SubItem`` inline          |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<MailTo(user AT example DOT org,       | If the user is logged in this macro will display           |
@@ -376,6 +380,8 @@ Macros are extensions to standard Creole markup that allow developers to add ext
 | ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<ShowIcons()>>``                       | displays all icons in /static/img/icons directory          |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
