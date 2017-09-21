@@ -528,6 +528,8 @@ form.upload_file button { display: none; }
 #moin-modify textarea { width: 99.5%; }
 #moin-modify input[type="submit"] { margin-left: 0; }
 .moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }
+.moin-edit-help { float: right; }
+.moin-edit-help a { color: black; }
 
 /* revision navigation on show, highlight, and meta views */
 .moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }

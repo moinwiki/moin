@@ -45,8 +45,8 @@
                     {{ forms.render(form['comment']) }}
                 </dl>
             {% endif %}
-            {{ data_editor(form['content_form'], item_name) }}
             {{ utils.help_on_editing(help) }}
+            {{ data_editor(form['content_form'], item_name) }}
             {% set may_admin = user.may.admin(fqname) %}
             {{ meta_editor(form['meta_form'], may_admin) }}
             <dl>
