@@ -58,7 +58,6 @@
 || `[[creole#Internal_Links|description]]` || [[creole#Internal_Links|description]] ||
 || `[[MissingPage]]` || [[MissingPage]] ||
 
-
 === External Links ===
 
 ||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result''' ||
@@ -73,9 +72,14 @@
 
 == Transclusions ==
 
-Transcluded images can be positioned by using any of the classes left, center, right, top, middle, or bottom. Images can be resized on the client side by specifying an option of width=nn or height=nn where nn is the desired size in pixels. If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of &w=nn or &h=nn where nn is the desired size in pixels.
+Transcluded images can be positioned by using any of the classes left, center, right, top, middle, or bottom. 
 
+  * Images can be resized on the client side by specifying an option of width=nn or height=nn where nn is the desired size in pixels. 
+  * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of &w=nn or &h=nn where nn is the desired size in pixels.
 
+{{{#!wiki caution
+Most browsers will suppress transcluded content having a different protocol (HTTP/HTTPS) than the parent page. Some browsers may provide a warning icon or message.
+}}}
 
 '''Markup:'''
 
@@ -84,8 +88,8 @@ Transcluded images can be positioned by using any of the classes left, center, r
  1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
  1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
- 1. Transclude a web page: <<BR>>{{http://www.xkcd.com/||width=800}}
- 1. Transcluding an https protocol web page into an http protocol web page will fail: most browsers will show a blank space: <<BR>>{{https://moinmo.in||width=800}}
+ 1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
+ 1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
 }}}
 
 '''Result:'''
@@ -94,8 +98,8 @@ Transcluded images can be positioned by using any of the classes left, center, r
  1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
  1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
- 1. Transclude a web page: <<BR>>{{http://www.xkcd.com/||width=800}}
- 1. Transcluding an https protocol web page into an http protocol web page will fail: most browsers will show a blank space: <<BR>>{{https://moinmo.in||width=800}}
+ 1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
+ 1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
 
 == Blockquotes and Indentations ==
 
