@@ -660,6 +660,7 @@ def convert_item(item_name):
     meta[REVID] = make_uuid()
     meta[MTIME] = int(time.time())
     meta[REV_NUMBER] = meta.get(REV_NUMBER, 0) + 1
+    meta[COMMENT] = form['comment'].value
     del meta['dataid']
     out.seek(0)
     backend = flaskg.storage
