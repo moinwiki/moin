@@ -3,7 +3,7 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
-  "dataid": "eb3fdfd92df8436493a34e111feea8d2",
+  "dataid": "8c21d027c61044869b760b293a01d6e5",
   "externallinks": [
     "https://moinmo.in/",
     "https://static.moinmo.in/logos/moinmoin.png",
@@ -30,23 +30,22 @@
     "video.mp4"
   ],
   "itemtype": "default",
-  "mtime": 1505835093,
+  "mtime": 1506267595,
   "name": [
     "moin"
   ],
   "name_old": [],
   "namespace": "",
-  "parentid": "bd330d6a6c834f70ac95de9b67cc998b",
+  "parentid": "6280a5b531d0468bae15fb3afbd7e545",
   "rev_number": 1,
-  "revid": "9df3fe2cd0a74369b605af260661dfa6",
-  "sha1": "1d9bf9e58135c8e818d595d32b66c6b59a6fbdc7",
-  "size": 18254,
+  "revid": "2bcf4b2dcdaf4b409d24d64c698c6de5",
+  "sha1": "48d32cfaed78dc7d65feb390587828a56f1e3f53",
+  "size": 18283,
   "summary": "",
   "tags": [
     "parser",
     "demo",
     "moinwiki"
   ],
-  "userid": "ba4df64d8d754553a0952c8947cef44c",
   "wikiname": "MyMoinMoin"
 }
