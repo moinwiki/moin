@@ -321,7 +321,7 @@ class Converter(object):
         nowiki_marker_len, all_nowiki_args, content = elem._children
         nowiki_args = all_nowiki_args[0]
         nowiki_marker_len = int(nowiki_marker_len)
-        return u'\n' + u'{' * nowiki_marker_len + '{0}\n{1}\n'.format(nowiki_args, content) + \
+        return u'\n' + u'{' * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
                u'}' * nowiki_marker_len + u'\n'
 
     def open_moinpage_object(self, elem):
@@ -354,7 +354,7 @@ class Converter(object):
                 args += u' '
             args += u' '.join(options)
 
-        ret = '{0}{1}|{2}|{3}{4}'.format(Moinwiki.object_open, href, alt, args, Moinwiki.object_close)
+        ret = u'{0}{1}|{2}|{3}{4}'.format(Moinwiki.object_open, href, alt, args, Moinwiki.object_close)
         ret = sub(r"\|+}}", "}}", ret)
         return ret
 
