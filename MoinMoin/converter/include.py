@@ -188,15 +188,6 @@ class XPointer(list):
 
 
 class Converter(object):
-    tag_a = moin_page.a
-    tag_div = moin_page.div
-    tag_h = moin_page.h
-    tag_href = xlink.href
-    tag_page_href = moin_page.page_href
-    tag_outline_level = moin_page.outline_level
-    tag_xi_href = xinclude.href
-    tag_xi_include = xinclude.include
-    tag_xi_xpointer = xinclude.xpointer
 
     @classmethod
     def _factory(cls, input, output, includes=None, **kw):
@@ -208,7 +199,7 @@ class Converter(object):
         # Descendants (body, div, p, include, page, etc.) are processed by recursing through DOM
 
         # stack is used to detect transclusion loops
-        page_href_new = elem.get(self.tag_page_href)
+        page_href_new = elem.get(moin_page.page_href)
         if page_href_new:
             page_href_new = Iri(page_href_new)
             if page_href_new != page_href:
@@ -220,12 +211,12 @@ class Converter(object):
             self.stack.append(None)
 
         try:
-            if elem.tag == self.tag_xi_include:
+            if elem.tag == xinclude.include:
                 # we have already recursed several levels and found a transclusion: "{{SomePage}}" or similar
                 # process the transclusion and add it to the DOM.  Subsequent recursions will traverse through
                 # the transclusion's elements.
-                href = elem.get(self.tag_xi_href)
-                xpointer = elem.get(self.tag_xi_xpointer)
+                href = elem.get(xinclude.href)
+                xpointer = elem.get(xinclude.xpointer)
 
                 xp_include_pages = None
                 xp_include_sort = None
@@ -341,11 +332,11 @@ class Converter(object):
                         continue
 
                     if xp_include_heading is not None:
-                        attrib = {self.tag_href: p_href}
+                        attrib = {xlink.href: p_href}
                         children = (xp_include_heading or page.name, )
-                        elem_a = ET.Element(self.tag_a, attrib, children=children)
-                        attrib = {self.tag_outline_level: xp_include_level or '1'}
-                        elem_h = ET.Element(self.tag_h, attrib, children=(elem_a, ))
+                        elem_a = ET.Element(moin_page.a, attrib, children=children)
+                        attrib = {moin_page.outline_level: xp_include_level or '1'}
+                        elem_h = ET.Element(moin_page.h, attrib, children=(elem_a, ))
                         included_elements.append(elem_h)
 
                     page_doc = page.content.internal_representation(attributes=Arguments(keyword=elem.attrib))
@@ -358,7 +349,7 @@ class Converter(object):
 
                 if len(included_elements) > 1:
                     # use a div as container
-                    result = ET.Element(self.tag_div)
+                    result = ET.Element(moin_page.div)
                     result.extend(included_elements)
                 elif included_elements:
                     result = included_elements[0]
