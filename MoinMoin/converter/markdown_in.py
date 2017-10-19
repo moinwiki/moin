@@ -385,9 +385,16 @@ class Converter(object):
         logging.info("INFO : Unhandled tag : {0}".format(element.tag))
         return
 
+    # }}} end of html conversion
+
     def do_children(self, element, add_lineno=False):
+        """
+        markdown parser surrounds child nodes with unwanted u"\n" children, remove them.
+
+        Conditionally add data-lineno attributes to children
+        """
         new = []
-        # markdown parser surrounds child nodes with unwanted u"\n" children, here we remove leading \n
+        # copy everything but '\n'
         if hasattr(element, "text") and element.text is not None and element.text != u'\n':
             new.append(postproc_text(self.markdown, element.text))
 
@@ -400,12 +407,10 @@ class Converter(object):
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r, )
             new.extend(r)
-            # markdown parser surrounds child nodes with unwanted u"\n" children, here we drop trailing \n
+            # copy everything but '\n'
             if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
-
-    # }}}
 
     def count_lines(self, text):
         """
@@ -457,14 +462,18 @@ class Converter(object):
 
     def embedded_markup(self, text):
         """
-        Per http://meta.stackexchange.com/questions/1777/what-html-tags-are-allowed-on-stack-exchange-sites
-        markdown markup allows users to specify several "safe" HTML tags within a document. These tags include:
+        Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
+        This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
 
-            a b blockquote code del dd dl dt em h1 h2 h3 i img kbd li ol p pre s sup sub strong strike ul br hr
+        In addition to editors being able to insert raw HTML into markdown items,
+        some markdown extensions output raw HTML strings (e.g. fenced_code outputs "<pre><code>...").
 
-        In addition, some markdown extensions output raw HTML tags (e.g. fenced outputs "<pre><code>...").
-        To prevent the <, > characters from being escaped, the embedded tags are converted to nodes by using
-        the converter in html_in.py.
+        To prevent dangerous HTML from being processed, the strings of embedded HTML is converted to
+        tree nodes by using the converter in html_in.py.
+
+        TODO: fix bug - fenced_code should not be converted: ~~~\n<b>not bold</b>\n~~~
+        TODO: potential bug - if the codehilite extension is added, lots of span tags will be added to fenced_code
+        that may enclose code that should not be converted: ~~~ {html}\n<b>not bold</b>\n~~~
         """
         try:
             # work around a possible bug - there is a traceback if HTML document has no tags
@@ -480,7 +489,7 @@ class Converter(object):
 
     def convert_embedded_markup(self, node):
         """
-        Recurse through tree looking for embedded markup.
+        Recurse through tree looking for embedded or generated markup.
 
         :param node: a tree node
         """
@@ -511,6 +520,7 @@ class Converter(object):
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
+        # TODO add codehilite extension
         self.markdown = Markdown(extensions=['extra', 'toc', ])
 
     @classmethod
@@ -518,6 +528,27 @@ class Converter(object):
         return cls()
 
     def __call__(self, data, contenttype=None, arguments=None):
+        """
+        Convert markdown to moin DOM.
+
+        data is a ProtectedRevision object,
+        contenttype is likely == u'text/x-markdown;charset=utf-8',
+        arguments is not used
+
+        Markdown processing takes place in five steps:
+
+        1. A bunch of "preprocessors" munge the input text.
+        2. BlockParser() parses the high-level structural elements of the
+           pre-processed text into an ElementTree.
+        3. A bunch of "treeprocessors" are run against the ElementTree. One
+           such treeprocessor runs InlinePatterns against the ElementTree,
+           detecting inline markup.
+        4. Some post-processors are run against the ElementTree
+            (not against text after the ElementTree has been serialized into text).
+        5. The root of the ElementTree is returned.
+
+        """
+        # read the data from wiki storage
         text = decode_data(data, contenttype)
 
         # {{{ stolen from Markdown.convert
@@ -530,10 +561,13 @@ class Converter(object):
             e.reason += '. -- Note: Markdown only accepts unicode input!'
             raise
 
+        # Normalize whitespace for consistant parsing. - from NormalizeWhitespace in markdown/preprocessors.py
         text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
         text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
         text = text.expandtabs(self.markdown.tab_length)
         text = re.sub(r'(?<=\n) +\n', '\n', text)
+
+        # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
 
         # Split into lines and run the line preprocessors.
@@ -550,15 +584,17 @@ class Converter(object):
             if new_md_root:
                 md_root = new_md_root
 
-        # }}}
+        # }}} end stolen from Markdown.convert
 
-        # md_root is a list of plain old Python ElementTree objects.
-
+        # post processors - md_root is a list of plain old Python ElementTree objects.
+        # add line numbers and remove unwanted \n
         add_lineno = bool(flaskg and flaskg.add_lineno_attr)
         converted = self.do_children(md_root, add_lineno=add_lineno)
         body = moin_page.body(children=converted)
         root = moin_page.page(children=[body])
+        # convert html embedded in text strings to tree nodes
         self.convert_embedded_markup(root)
+        # convert P-tags containing block elements to DIV-tags
         self.convert_invalid_p_nodes(root)
 
         return root
@@ -567,5 +603,3 @@ from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
 default_registry.register(Converter._factory, Type('x-moin/format;name=markdown'), type_moin_document)
-
-# vim: foldmethod=marker
