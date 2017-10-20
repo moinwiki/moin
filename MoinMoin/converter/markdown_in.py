@@ -55,6 +55,9 @@ def postproc_text(markdown, text):
     for pp in markdown.postprocessors.values():
         text = pp.run(text)
 
+    if text.startswith('<pre>'):
+        return text
+
     def fixup(m):
         text = m.group(0)
         if text[:2] == "&#":
