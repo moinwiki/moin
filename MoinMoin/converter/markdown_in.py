@@ -29,6 +29,7 @@ except ImportError:
 
 from markdown import Markdown
 import markdown.util as md_util
+
 from MoinMoin import log
 logging = log.getLogger(__name__)
 
@@ -548,7 +549,7 @@ class Converter(object):
         5. The root of the ElementTree is returned.
 
         """
-        # read the data from wiki storage
+        # read the data from wiki storage and convert to unicode
         text = decode_data(data, contenttype)
 
         # {{{ stolen from Markdown.convert
@@ -561,7 +562,7 @@ class Converter(object):
             e.reason += '. -- Note: Markdown only accepts unicode input!'
             raise
 
-        # Normalize whitespace for consistant parsing. - from NormalizeWhitespace in markdown/preprocessors.py
+        # Normalize whitespace for consistent parsing. - from NormalizeWhitespace in markdown/preprocessors.py
         text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
         text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
         text = text.expandtabs(self.markdown.tab_length)
@@ -590,6 +591,8 @@ class Converter(object):
         # add line numbers and remove unwanted \n
         add_lineno = bool(flaskg and flaskg.add_lineno_attr)
         converted = self.do_children(md_root, add_lineno=add_lineno)
+
+        # convert to moin DOM using EmeraldTree
         body = moin_page.body(children=converted)
         root = moin_page.page(children=[body])
         # convert html embedded in text strings to tree nodes
