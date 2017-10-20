@@ -555,24 +555,10 @@ class Converter(object):
         # read the data from wiki storage and convert to unicode
         text = decode_data(data, contenttype)
 
-        # {{{ stolen from Markdown.convert
-
-        # Fixup the source text
-        try:
-            text = unicode(text)
-        except UnicodeDecodeError, e:
-            # Customise error message while maintaining original traceback
-            e.reason += '. -- Note: Markdown only accepts unicode input!'
-            raise
-
-        # Normalize whitespace for consistent parsing. - from NormalizeWhitespace in markdown/preprocessors.py
-        text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
-        text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
-        text = text.expandtabs(self.markdown.tab_length)
-        text = re.sub(r'(?<=\n) +\n', '\n', text)
-
         # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
+
+        # {{{ stolen from Markdown.convert
 
         # Split into lines and run the line preprocessors.
         lines = text.split("\n")
