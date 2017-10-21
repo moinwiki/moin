@@ -55,7 +55,7 @@ def postproc_text(markdown, text):
     for pp in markdown.postprocessors.values():
         text = pp.run(text)
 
-    if text.startswith('<pre>'):
+    if text.startswith('<pre>') or text.startswith('<div class="codehilite"><pre>'):
         return text
 
     def fixup(m):
@@ -516,7 +516,8 @@ class Converter(object):
         :param node: a tree node
         """
         for child in node:
-            if not isinstance(child, unicode):
+            # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
+            if not isinstance(child, (unicode, str)):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
                         if not isinstance(grandchild, unicode) and grandchild.tag in BLOCK_ELEMENTS:
@@ -524,8 +525,7 @@ class Converter(object):
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
-        # TODO add codehilite extension
-        self.markdown = Markdown(extensions=['extra', 'toc', ])
+        self.markdown = Markdown(extensions=['extra', 'toc', 'codehilite(guess_lang=False)'])
 
     @classmethod
     def _factory(cls, input, output, **kw):
