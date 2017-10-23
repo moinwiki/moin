@@ -393,12 +393,16 @@ class Converter(object):
 
     def do_children(self, element, add_lineno=False):
         """
-        markdown parser surrounds child nodes with unwanted u"\n" children, remove them.
+        Incoming element is an ElementTree object or unicode,
+        an EmeraldTree object or a list of unicode is returned.
 
-        Conditionally add data-lineno attributes to children
+        Markdown parser may have set text and tail attributes of ElementTree
+        objects to u"\n" values, omit these.
+
+        Add data-lineno attributes to children if requested.
         """
         new = []
-        # copy everything but '\n'
+        # copy anything but '\n'
         if hasattr(element, "text") and element.text is not None and element.text != u'\n':
             new.append(postproc_text(self.markdown, element.text))
 
@@ -408,10 +412,11 @@ class Converter(object):
                 r = ()
             elif not isinstance(r, (list, tuple)):
                 if add_lineno and self.line_numbers:
+                    # the line numbers for the start of each block were counted and saved before preprocessors were run
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r, )
             new.extend(r)
-            # copy everything but '\n'
+            # copy anything but '\n'
             if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
@@ -469,27 +474,20 @@ class Converter(object):
         Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
         This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
 
-        In addition to editors being able to insert raw HTML into markdown items,
+        In addition to users being able to insert raw HTML into markdown items,
         some markdown extensions output raw HTML strings (e.g. fenced_code outputs "<pre><code>...").
 
-        To prevent dangerous HTML from being processed, the strings of embedded HTML is converted to
-        tree nodes by using the converter in html_in.py.
-
-        TODO: fix bug - fenced_code should not be converted: ~~~\n<b>not bold</b>\n~~~
-        TODO: potential bug - if the codehilite extension is added, lots of span tags will be added to fenced_code
-        that may enclose code that should not be converted: ~~~ {html}\n<b>not bold</b>\n~~~
+        To prevent hackers from exploiting raw HTML, the strings of safe HTML is converted to
+        tree nodes by using the html_in.py converter.
         """
         try:
-            # work around a possible bug - there is a traceback if HTML document has no tags
-            p_text = html_in_converter(u'<p>%s</p>' % text)
-        except AssertionError:
-            # html_in converter (EmeraldTree) throws exceptions on markup style links: "Some text <http://moinmo.in> more text"
-            p_text = text
-
-        if not isinstance(p_text, unicode) and p_text.tag == moin_page.page and p_text[0].tag == moin_page.body and p_text[0][0].tag == moin_page.p:
-            # will fix possible problem of P node having block children later
+            # we enclose plain text and block tags with DIV-tags
+            p_text = html_in_converter(u'<div>%s</div>' % text)
+            # discard page and body tags
             return p_text[0][0]
-        return p_text
+        except AssertionError:
+            # malformed tags, will be escaped so user can see and fix
+            return text
 
     def convert_embedded_markup(self, node):
         """
@@ -535,8 +533,8 @@ class Converter(object):
         """
         Convert markdown to moin DOM.
 
-        data is a ProtectedRevision object,
-        contenttype is likely == u'text/x-markdown;charset=utf-8',
+        data is a pointer to an open file (ProtectedRevision object)
+        contenttype is likely == u'text/x-markdown;charset=utf-8'
         arguments is not used
 
         Markdown processing takes place in five steps:
@@ -547,13 +545,19 @@ class Converter(object):
         3. A bunch of "treeprocessors" are run against the ElementTree. One
            such treeprocessor runs InlinePatterns against the ElementTree,
            detecting inline markup.
-        4. Some post-processors are run against the ElementTree
-            (not against text after the ElementTree has been serialized into text).
-        5. The root of the ElementTree is returned.
+        4. Some post-processors are run against the ElementTree nodes containing text
+            and the ElementTree is converted to an EmeraldTree.
+        5. The root of the EmeraldTree is returned.
 
         """
         # read the data from wiki storage and convert to unicode
         text = decode_data(data, contenttype)
+
+        # Normalize whitespace for consistent parsing. - copied from NormalizeWhitespace in markdown/preprocessors.py
+        text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
+        text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
+        text = text.expandtabs(self.markdown.tab_length)
+        text = re.sub(r'(?<=\n) +\n', '\n', text)
 
         # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
@@ -565,7 +569,7 @@ class Converter(object):
         for prep in self.markdown.preprocessors.values():
             lines = prep.run(lines)
 
-        # Parse the high-level elements.
+        # Parse the high-level elements, md_root is an ElementTree object
         md_root = self.markdown.parser.parseDocument(lines).getroot()
 
         # Run the tree-processors
@@ -576,18 +580,18 @@ class Converter(object):
 
         # }}} end stolen from Markdown.convert
 
-        # post processors - md_root is a list of plain old Python ElementTree objects.
-        # add line numbers and remove unwanted \n
         add_lineno = bool(flaskg and flaskg.add_lineno_attr)
+
+        # run markdown post processors and convert from ElementTree to an EmeraldTree object
         converted = self.do_children(md_root, add_lineno=add_lineno)
 
-        # convert to moin DOM using EmeraldTree
+        # convert html embedded in text strings to EmeraldTree nodes
+        self.convert_embedded_markup(converted)
+        # convert P-tags containing block elements to DIV-tags
+        self.convert_invalid_p_nodes(converted)
+
         body = moin_page.body(children=converted)
         root = moin_page.page(children=[body])
-        # convert html embedded in text strings to tree nodes
-        self.convert_embedded_markup(root)
-        # convert P-tags containing block elements to DIV-tags
-        self.convert_invalid_p_nodes(root)
 
         return root
 
