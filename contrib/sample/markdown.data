@@ -338,7 +338,10 @@ Transcluding a page from a remote site works, but there is no way to change the 
 
 ## Inline HTML
 
-You may embed a small subset of HTML tags directly into your markdown documents.
+You may embed a subset of HTML tags directly into your markdown documents. 
+If there were an official list of allowed tags, it may look like the list below. However, the
+Moin implementation of Markdown uses the html_in converter to convert inline HTML: anything
+permitted within an HTML item will likely also work within a Markdown item.
 
     <a>              - hyperlink.
     <b>              - bold, use as last resort <h1>-<h3>, <em>, and <strong> are preferred.
@@ -392,6 +395,40 @@ This word is <strong style="color:red;background-color:yellow">bold</strong>; co
 
 **Note:** See top of [html](html) and configuration docs for information on allow_style_attributes.
 
+### Unsupported HTML Tags
+
+**Markup:**
+
+    Unsupported tags within paragraphs are ignored and create no output.
+    <script>alert(1);</script>
+    <center>Center</center>
+    End of paragraph.
+
+**Result:**
+
+Unsupported tags within paragraphs are ignored and create no output.
+<script>alert(1);</script>
+<center>Center</center>
+End of paragraph.
+
+### Malformed HTML Tags
+
+**Markup:**
+
+    Malformed tags within paragraphs are escaped. 
+    <script>alert(1);</script>
+    <center>Center</center> 
+    <b>
+    End of paragraph.
+
+**Result:**
+
+Malformed tags within paragraphs are escaped. 
+<script>alert(1);</script>
+<center>Center</center> 
+<b>
+End of paragraph.
+
 ## Extensions
 
 In addition to the TOC extension shown near the top of this page, the following features are installed as part of the "extras" extension.
@@ -432,12 +469,37 @@ As shown in the second table below, use of outside borders and neat alignment of
 `col 2 is`|*centered*|$12|Gloves  
 `col 4 is`|*left-aligned*|$100|Hat   
 
+### Fenced Code
+
+A second way to display a block of preformatted code is to "fence" the code with lines starting with three tilde (~) or backtick (`) characters.
+
+**Markup:**
+
+    ~~~
+    <html>
+    <body>
+    <p>
+    Test
+    </p>
+    </body>
+    </html>
+    ~~~
+
+**Result:**
+
+~~~
+<html>
+<body>
+<p>
+Test
+</p>
+</body>
+</html>
+~~~
 
 ### Syntax Highlighting of Preformatted Code
 
-A second way to create a block of preformatted code without indenting every line is to wrap the block in triple backticks.
-
-To highlight code syntax, wrap the code in triple backtick characters and specify the language on the first line.  Many languages are supported.
+To highlight code syntax, wrap the code in triple backtick (`) or tilde (~) characters and specify the language on the first line.  Many languages are supported.
 
 **Markup:**
 
@@ -446,6 +508,11 @@ To highlight code syntax, wrap the code in triple backtick characters and specif
     alert(s);
     ```
 
+    ~~~ {python}
+    def hello():
+       print "Hello World!"
+    ~~~
+
 **Result:**
 
 ``` javascript
@@ -453,27 +520,9 @@ var s = "JavaScript syntax highlighting";
 alert(s);
 ```
 
-**MDTODO**: Syntax highlighting is not working. [#169](https://bitbucket.org/thomaswaldmann/moin-2.0/issue/169/highlight-python-does-not-work) documents a similar issue for the moinwiki converter.
-
-
-### Fenced Code
-
-Another way to display a block of preformatted code is to "fence" the code with lines starting with three ~ characters.
-
-**Markup:**
-
-    ~~~
-    ddd
-    eee
-    fff
-    ~~~
-
-**Result:**
-
-~~~
-ddd
-eee
-fff
+~~~ {python}
+def hello():
+   print "Hello World!"
 ~~~
 
 ### Smart Strong
