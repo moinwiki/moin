@@ -5,10 +5,14 @@
 """
 MoinMoin - Include handling
 
-Expands include elements in an internal Moin document.
+Expands include and transclusion elements in an internal Moin document. Note
+these two forms produce similar results:
 
-Although this module is named include.py, many comments within and the moin docs
-use the word transclude as defined by http://www.linfo.org/transclusion.html, etc.
+    {{jpeg.jpg}}
+    <<Include(jpeg.jpg)>>
+
+However, the Include macro has many optional parameters to tailor the output.
+See the docs for an explanation of include arguments.
 
 Adjusting the DOM
 =================
