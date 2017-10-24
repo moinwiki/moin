@@ -401,7 +401,7 @@ class Converter(object):
         elem of type img are converted to img tags here, others are left as object tags.
 
         We do not use Attributes.convert to convert all attributes, but copy selected attributes
-        and follow html5 validation rules to place right attributes within img and object tags.
+        and follow html5 rules to place right attributes within img and object tags.
         """
         href = elem.get(xlink.href, None)
         attrib = {}

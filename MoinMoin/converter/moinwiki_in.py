@@ -820,7 +820,7 @@ class Converter(ConverterMacro):
 
     def inline_object_repl(self, stack, object, object_url=None, object_item=None,
                            object_text=None, object_args=None):
-        """Handles objects included in the page."""
+        """Handles objects transcluded within the page."""
         if object_args:
             args = parse_arguments(object_args).keyword  # XXX needs different parsing
         else:
