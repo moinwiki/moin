@@ -42,7 +42,7 @@ _include_rules = r'''
     =
 )?
 (?:
-    (\^?[-/\w\d]+[-\s\w]*)
+    (\^?[-/\.\w\d]+[-\s\w]*)  # pagenames like "jpeg.jpg", "/sub/my page"
     |
     "
     (.*?)
