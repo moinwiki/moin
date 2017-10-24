@@ -242,15 +242,7 @@ class Converter(object):
         return self.new_copy(html.div, elem)
 
     def visit_moinpage_blockcode(self, elem):
-        pre = self.new_copy(html.pre, elem)
-
-        # TODO: Unify somehow
-        if elem.get(moin_page.class_) == 'codearea':
-            div = html.div(attrib={html.class_: 'codearea'})
-            div.append(pre)
-            return div
-
-        return pre
+        return self.new_copy(html.pre, elem)
 
     def visit_moinpage_blockquote(self, elem):
         return self.new_copy(html.blockquote, elem)
