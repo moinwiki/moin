@@ -497,7 +497,7 @@ class Converter(object):
                     error = item
 
         if body:
-            return self.new_copy(html.div, item)
+            return self.new_copy(html.div, item, attrib={html.class_: 'moin-p'})
 
         elif error:
             if len(error):
