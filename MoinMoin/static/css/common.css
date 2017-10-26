@@ -143,6 +143,7 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-disabled { color: #737373; }
 .moin-summary { margin-top: .5em; font-style: italic; }
 .moin-icon-macro { color: #ff2727; }
+.moin-p { margin: 1em 0 1em 0; }  /* when we need a div styled like a p */
 /* end misc highlighting */
 
 /* create item view */

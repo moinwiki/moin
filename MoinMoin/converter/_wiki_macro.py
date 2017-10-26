@@ -44,9 +44,17 @@ class ConverterMacro(object):
         return elem
 
     def _Include_repl(self, args, text, context_block):
-        if not context_block:
-            return text
+        """
+        Return a moin_page node representing an include macro that will be processed
+        further in /converter/include.py.
 
+        The transclusion {{jpeg.jpg}} and the macro <<Include(jpeg.jpg)>> will have
+        identical output.
+
+        If context_block is true, the macro expansion will be enclosed in a DIV-tag, else the
+        macro output will be enclosed in a SPAN-tag. converter/include.py will resolve
+        HTML 5 validation issues should the macro output block tags within an inline context.
+        """
         if args:
             args = parse_arguments(args[0], parse_re=include_re)
         else:
@@ -108,7 +116,11 @@ class ConverterMacro(object):
 
             attrib[xinclude.xpointer] = ns + ' '.join(xpointer)
 
-        return xinclude.include(attrib=attrib)
+        span_wrap = xinclude.include(attrib=attrib)
+        if not context_block:
+            return span_wrap
+        attrib = {moin_page.class_: 'moin-p'}
+        return moin_page.div(attrib=attrib, children=[span_wrap])
 
     def _TableOfContents_repl(self, args, text, context_block):
         if not context_block:
