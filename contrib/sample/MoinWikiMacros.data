@@ -2,7 +2,7 @@
 
 With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page. 
 
-Features that are not working correctly are marked with **MOINTODO:**
+Features that are not working correctly are marked with '''MOINTODO:'''
 
 == Four Built-in Macros ==
 
@@ -12,19 +12,20 @@ There are four built-in macros.
 
 The number of levels in the table of contents can be limited by passing an integer parameter.
 
-**Markup:**
+'''Markup:'''
 
 {{{
 <<TableOfContents(3)>>
 }}}
 
-**Result:**
+'''Result:'''
+
 <<TableOfContents(3)>>
 See TOC floated to right.
 
 === FootNotes ===
 
-**Markup:**
+'''Markup:'''
 
 {{{
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
@@ -34,7 +35,7 @@ By default footnotes are placed at the bottom of the page. Explicit placement of
 Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
 }}}
 
-**Result:**
+'''Result:'''
 
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
 
@@ -44,21 +45,19 @@ Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by defa
 
 === BR - Forced Line Break ===
 
-**Markup:**
+'''Markup:'''
 
 {{{
 Use a BR macro <<BR>>to force a line break.
 }}}
 
-**Result:**
+'''Result:'''
 
 Use a BR macro <<BR>>to force a line break.
-
-
 
 === Include ===
 
-**Markup:**
+'''Markup:'''
 
 {{{
 Include an image (very similar to transclusion):
@@ -70,7 +69,7 @@ Include a page with a non-ascii name and a heading level 6:
 < < < < < end of include > > > > >
 }}}
 
-**Result:**
+'''Result:'''
 
 Include an image (very similar to transclusion):
 <<Include(png)>>
@@ -80,33 +79,37 @@ Include a page with a non-ascii name and a heading level 6:
 <<Include(StronaGłówna,My Favorite Page, 6)>>
 < < < < < end of include > > > > >
 
-**MOINTODO:** Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
+'''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
 
-**MOINTODO:** Using a regex (^ma) as a pagename fails, no visible output, generates HTML validation errors.
+'''MOINTODO:''' Using a regex (^ma) as a pagename fails, no visible output, generates HTML validation errors.
 
 == Extension Macros from MoinMoin/macro/ ==
 
 === Anchor ===
-Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following **Result** below.
+Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
 
-**Markup:**
+'''Markup:'''
 
 {{{
 <<Anchor(anchorname)>>
 }}}
 
-**Result:**
+'''Result:'''
 
 <<Anchor(anchorname)>>
 
-
 === Date ===
+
+'''Markup:'''
+
 {{{
 <<Date()>>
 <<Date(1434563755)>>
 <<Date(2002-01-23T12:34:56)>>
 Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 }}}
+
+'''Result:'''
 
 <<Date()>>
 <<Date(1434563755)>>
@@ -114,12 +117,17 @@ Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 
 === DateTime ===
+
+'''Markup:'''
+
 {{{
 <<DateTime()>>
 <<DateTime(1434563755)>>
 <<DateTime(2002-01-23T12:34:56)>>
 Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 }}}
+
+'''Result:'''
 
 <<DateTime()>>
 <<DateTime(1434563755)>>
@@ -148,56 +156,82 @@ In most cases, the class will consist of the single character name. If multiple 
 
 Font awesome experts will know about the special "fa" class and the "fa-" name prefixes. It is acceptable, but not necessary to provide these.
 
+'''Markup:'''
+
 {{{
 <<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
 
 <<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
 }}}
+
+'''Result:'''
 
 <<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
 
 <<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
 
 === GetText ===
+
 Loads I18N texts. If this browser is set to German/Deutsch the macro output will be: Einstellungen ("Settings" is included in the translation files).
+
+'''Markup:'''
 
 {{{
 <<GetText(Settings)>>
 }}}
+
+'''Result:'''
 
 <<GetText(Settings)>>
 
 === GetVal ===
+
 For GetVal to work, there must be either a ConfigDict or WikiDict defined (see config docs). This example depends upon an item named [[WikiDict]] having specific metadata. See configuration docs for details.
+
+'''Markup:'''
 
 {{{
 <<GetVal(WikiDict,var1)>>
 }}}
+
+'''Result:'''
 
 <<GetVal(WikiDict,var1)>>
 
 === Icon ===
+
 The Icon macro displays an icon. The complete list of available icons are listed within [[MoinWikiMacros/Icons]].
+
+'''Markup:'''
 
 {{{
 Here is the moin icon: <<Icon(moin-logo.png)>>
 }}}
+
+'''Result:'''
 
 Here is the moin icon: <<Icon(moin-logo.png)>>
 
 === MailTo ===
+
 The MailTo macro exports different markup when the user is logged in.
+
+'''Markup:'''
 
 {{{
 <<MailTo(user AT example DOT org)>>
 <<MailTo(user AT example DOT org, write me)>>
-
 }}}
+
+'''Result:'''
+
 <<MailTo(user AT example DOT org)>>
 <<MailTo(user AT example DOT org, write me)>>
 
-
 === PagenameList ===
+
+'''Markup:'''
+
 {{{
 All Pages:
 <<PagenameList()>>
@@ -206,6 +240,9 @@ Pages having letters "ma":
 Pages starting with "ma":
 <<PagenameList(ma)>>
 }}}
+
+'''Result:'''
+
 All Pages:
 <<PagenameList()>>
 Pages having letters "ma":
@@ -214,23 +251,35 @@ Pages starting with "ma":
 <<PagenameList(ma)>>
 
 === RandomItem ===
+
+'''Markup:'''
+
 {{{
 One random item:
 <<RandomItem()>>
 Five random items:
 <<RandomItem(5)>>
 }}}
+
+'''Result:'''
+
 One random item:
 <<RandomItem()>>
 Five random items:
 <<RandomItem(5)>>
 
 === Verbatim ===
+
+'''Markup:'''
+
 {{{
 Verbatim macro Returns `same` __text__ '''as''' entered
 <<Verbatim(Returns `same` __text__ '''as''' entered)>>
 <<Verbatim(<script>alert(1);</script>)>>
 }}}
+
+'''Result:'''
+
 Verbatim macro Returns `same` __text__ '''as''' entered
 <<Verbatim(Returns `same` __text__ '''as''' entered)>>
 <<Verbatim(<script>alert(1);</script>)>>
