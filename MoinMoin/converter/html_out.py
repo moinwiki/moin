@@ -497,6 +497,7 @@ class Converter(object):
                     error = item
 
         if body:
+            # returning a Div styled like a P avoids HTML validation errors
             return self.new_copy(html.div, item, attrib={html.class_: 'moin-p'})
 
         elif error:

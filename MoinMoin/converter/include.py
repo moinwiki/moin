@@ -5,7 +5,7 @@
 """
 MoinMoin - Include handling
 
-Expands include and transclusion elements in an internal Moin document. Note
+Expands the Include macro and transclusion elements in an internal Moin document. Note
 these two forms produce similar results:
 
     {{jpeg.jpg}}
@@ -13,6 +13,9 @@ these two forms produce similar results:
 
 However, the Include macro has many optional parameters to tailor the output.
 See the docs for an explanation of include arguments.
+
+The Include macro is the only macro processed here. All other macros are left as is
+and will be processed later. See /items/content.py, _expand_document method.
 
 Adjusting the DOM
 =================
@@ -251,6 +254,10 @@ class Converter(object):
                     if xp_include:
                         for entry in xp_include:
                             name, data = entry.name, entry.data_unescape
+                            # TODO: These do not include all parameters in moin 1.9 Include macro docs:
+                            # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
+                            # was there a decision to drop from, to, titlesonly, editlink?
+                            # is pages same as pagename?
                             if name == 'pages':
                                 xp_include_pages = data
                             elif name == 'sort':
