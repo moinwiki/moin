@@ -58,7 +58,9 @@ class ConverterMacro(object):
         if args:
             args = parse_arguments(args[0], parse_re=include_re)
         else:
-            raise ValueError(_("Include Macro: invalid format, try: <<Include(ItemName)>>"))
+            ret = moin_page.p(children=(_("Include Macro: invalid format, try: <<Include(ItemName)>>"), ))
+            ret.set(moin_page.class_, 'moin-error')
+            return ret
         pagename = args[0]
         heading = None
         level = None
@@ -69,7 +71,9 @@ class ConverterMacro(object):
             pass
         sort = 'sort' in args and args['sort']
         if sort and sort not in ('ascending', 'descending'):
-            raise ValueError(_("Include Macro: invalid format, expected sort=ascending|descending"))
+            ret = moin_page.p(children=(_("Include Macro: invalid format, expected sort=ascending|descending"), ))
+            ret.set(moin_page.class_, 'moin-error')
+            return ret
         # TODO: We need corresponding code in include.py to process items, skipitems, titlesonly, and editlink
         items = 'items' in args and int(args['items'])
         skipitems = 'skipitems' in args and int(args['skipitems'])
