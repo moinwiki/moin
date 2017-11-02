@@ -11,6 +11,8 @@ Converts an internal document tree into moinwiki markup.
 
 from __future__ import absolute_import, division
 
+import urllib
+
 from MoinMoin.util.tree import moin_page, xlink, xinclude, html
 from MoinMoin.util.iri import Iri
 
@@ -136,7 +138,8 @@ class Converter(object):
         self.last_closed = None
         self.list_item_label = []
         content = self.open(root)
-        content.replace('\n\n\n', '\n\n')
+        while '\n\n\n' in content:
+            content = content.replace('\n\n\n', '\n\n')
         content = content[1:] if content.startswith('\n') else content
         return content
 
@@ -237,7 +240,8 @@ class Converter(object):
         return ret
 
     def open_moinpage_div(self, elem):
-        return u''
+        childrens_output = self.open_children(elem)
+        return '\n\n' + childrens_output + '\n\n'
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
@@ -324,11 +328,47 @@ class Converter(object):
         return u'\n' + u'{' * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
                u'}' * nowiki_marker_len + u'\n'
 
+    def include_object(self, xpointer, href):
+        """
+        Return an include macro.
+
+        xpointer similar to: u'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
+        TODO: xpointer format is ugly, Arguments class would be easier to use here.
+
+        The include moin 2.x macro (per include.py) supports: pages, sort, items, skipitems, heading, and level.
+        TODO: the use of pages is not defined anywhere, some 1.9 features have been dropped.
+        """
+        arguments = {}
+        href = href.split(':')[-1]
+        args = xpointer.split('page:include(')[1][:-1]
+        args = args[:-1].split(') ')
+        for arg in args:
+            key, val = arg.split('(')
+            arguments[key] = val
+        parms = ',{0},{1}'.format(arguments.get('heading', ''), arguments.get('level', ''))
+        for key in ('sort', 'items', 'skipitems'):
+            if key in arguments:
+                parms += ',{0}="{1}"'.format(key, arguments[key])
+        while parms.endswith(','):
+            parms = parms[:-1]
+        return u'<<Include({0}{1})>>'.format(href, parms)
+
     def open_moinpage_object(self, elem):
-        """Process objects and xincludes."""
+        """
+        Process objects: {{transclusions}}  and <<Include(parameters,...)>>
+
+        Other macros are processes by open_moinpage_part.
+        """
         href = elem.get(xlink.href, elem.get(xinclude.href, u''))
         if isinstance(href, Iri):
             href = unicode(href)
+            href = urllib.unquote(href)
+
+        try:
+            return self.include_object(elem.attrib[xinclude.xpointer], href)
+        except KeyError:
+            pass
+
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
