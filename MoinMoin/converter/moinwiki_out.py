@@ -399,6 +399,10 @@ class Converter(object):
         return ret
 
     def open_moinpage_p(self, elem):
+        if moin_page.class_ in elem.attrib and 'moin-error' in elem.attrib[moin_page.class_]:
+            # ignore error messages inserted into DOM
+            return u''
+
         self.status.append("p")
         ret = u""
         if self.status[-2] == 'text':
