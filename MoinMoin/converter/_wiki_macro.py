@@ -55,12 +55,17 @@ class ConverterMacro(object):
         macro output will be enclosed in a SPAN-tag. converter/include.py will resolve
         HTML 5 validation issues should the macro output block tags within an inline context.
         """
+        def error_message(msg):
+            txt = moin_page.p(children=(text, ))
+            msg = moin_page.p(children=(msg, ))
+            msg.set(moin_page.class_, 'moin-error')
+            div = moin_page.div(children=(txt, msg))
+            return div
+
         if args:
             args = parse_arguments(args[0], parse_re=include_re)
         else:
-            ret = moin_page.p(children=(_("Include Macro: invalid format, try: <<Include(ItemName)>>"), ))
-            ret.set(moin_page.class_, 'moin-error')
-            return ret
+            return error_message(_("Include Macro above has invalid format, missing item name"))
         pagename = args[0]
         heading = None
         level = None
@@ -71,9 +76,7 @@ class ConverterMacro(object):
             pass
         sort = 'sort' in args and args['sort']
         if sort and sort not in ('ascending', 'descending'):
-            ret = moin_page.p(children=(_("Include Macro: invalid format, expected sort=ascending|descending"), ))
-            ret.set(moin_page.class_, 'moin-error')
-            return ret
+            return error_message(_("Include Macro above has invalid format, expected sort=ascending or descending"))
         # TODO: We need corresponding code in include.py to process items, skipitems, titlesonly, and editlink
         items = 'items' in args and int(args['items'])
         skipitems = 'skipitems' in args and int(args['skipitems'])
