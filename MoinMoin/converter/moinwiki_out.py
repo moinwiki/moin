@@ -330,13 +330,14 @@ class Converter(object):
 
     def include_object(self, xpointer, href):
         """
-        Return an include macro.
+        Return a properly formatted include macro.
 
         xpointer similar to: u'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
         TODO: xpointer format is ugly, Arguments class would be easier to use here.
 
-        The include moin 2.x macro (per include.py) supports: pages, sort, items, skipitems, heading, and level.
-        TODO: the use of pages is not defined anywhere, some 1.9 features have been dropped.
+        The include moin 2.x macro (per include.py) supports: pages (pagename), sort, items, skipitems, heading, and level.
+        If incoming href == '', then there will be a pages value similar to '^^ma' that needs to be unescaped.
+        TODO: some 1.9 features have been dropped.
         """
         arguments = {}
         href = href.split(':')[-1]
@@ -351,6 +352,9 @@ class Converter(object):
                 parms += ',{0}="{1}"'.format(key, arguments[key])
         while parms.endswith(','):
             parms = parms[:-1]
+        if not href and 'pages' in arguments:
+            # xpointer needs unescaping, see comments above
+            href = arguments['pages'].replace('^(', '(').replace('^)', ')').replace('^^', '^')
         return u'<<Include({0}{1})>>'.format(href, parms)
 
     def open_moinpage_object(self, elem):

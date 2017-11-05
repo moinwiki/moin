@@ -99,7 +99,7 @@ import copy
 from flask import current_app as app
 from flask import g as flaskg
 
-from whoosh.query import Term, And, Wildcard
+from whoosh.query import Term, And, Wildcard, Regex
 
 from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME
 from MoinMoin.items import Item
@@ -256,9 +256,8 @@ class Converter(object):
                             name, data = entry.name, entry.data_unescape
                             # TODO: These do not include all parameters in moin 1.9 Include macro docs:
                             # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
-                            # was there a decision to drop from, to, titlesonly, editlink?
-                            # is pages same as pagename?
-                            if name == 'pages':
+                            # these are currently unsupported in moin 2.0: from, to, titlesonly, editlink
+                            if name == 'pages':  # pages == pagename in moin 1.9
                                 xp_include_pages = data
                             elif name == 'sort':
                                 xp_include_sort = data
@@ -271,6 +270,7 @@ class Converter(object):
                             elif name == 'level':
                                 xp_include_level = data
 
+                included_elements = []
                 if href:
                     # We have a single page to transclude
                     href = Iri(href)
@@ -308,24 +308,21 @@ class Converter(object):
                         return [container, 0]  # replace transclusion with container's child
 
                 elif xp_include_pages:
-                    # XXX we currently interpret xp_include_pages as wildcard, but it should be regex
-                    # for compatibility with moin 1.9. whoosh has upcoming regex support, but it is not
-                    # released yet.
-                    if xp_include_pages.startswith('^'):
-                        # get rid of the leading ^ the Include macro needed to get into "regex mode"
-                        xp_include_pages = xp_include_pages[1:]
-                    query = And([Term(WIKINAME, app.cfg.interwikiname), Wildcard(NAME_EXACT, xp_include_pages)])
+                    query = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
                     results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
-                    pagelist = [result[NAME] for result in results]
+                    pagelist = [result.name for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]
                     if xp_include_items is not None:
                         pagelist = pagelist[xp_include_items + 1:]
-
                     pages = ((Item.create(p), Iri(scheme='wiki', authority='', path='/' + p)) for p in pagelist)
+                    if not pagelist:
+                        msg = _('Error: no items found matching "<<Include({0})>>"').format(xp_include_pages)
+                        attrib = {html.class_: 'moin-error'}
+                        strong = ET.Element(moin_page.strong, attrib, (msg, ))
+                        included_elements.append(strong)
 
-                included_elements = []
                 for page, p_href in pages:
                     if p_href.path[0] != '/':
                         p_href.path = IriPath('/' + '/'.join(p_href.path))
