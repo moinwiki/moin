@@ -285,9 +285,10 @@ admins may want to make the CMS theme the default theme when:
 
 Customizing the CMS header may be done as follows. Several restarts of the server may be required:
 
- - Replace the Home/moin/creole/markdown links in snippets.html with links to the key pages within your wiki.
+ - Replace the Home, moin, creole, and markdown links in snippets.html with links to the key pages
+   within your wiki (see moin-header-links below).
  - If an index to all wiki items is wanted, leave the index link as is, else remove.
- - If a link to login is wanted, leave that section as is, else remove the entire block.
+ - If a link to login is wanted, leave the "request.user_agent" section as is, else remove the entire block.
  - Test by logging in and setting "cms" as your preferred theme.
  - After testing, make the "cms" theme the default theme by adding ``theme_default = u"cms"`` to wikiconfig.
  - Inform your editors to login and set another theme as their preferred theme.
