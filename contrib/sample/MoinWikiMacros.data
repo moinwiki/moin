@@ -62,26 +62,37 @@ Use a BR macro <<BR>>to force a line break.
 {{{
 Include an image (very similar to transclusion):
 <<Include(png)>>
-Including all items with names beginning with "ma" fails with no visible output:
-<<Include(^ma)>>
+< < < < end of <Include(png)> > > > >
+
+Including all items with names beginning with "zi" (there is only 1). Any regex should work,
+but first character must be "^".
+<<Include(^zi)>>
+< < < < < end of <Include(^zi)> > > > > >
+
 Include a page with a non-ascii name and a heading level 6:
 <<Include(StronaGłówna,My Favorite Page, 6)>>
-< < < < < end of include > > > > >
+< < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
 }}}
 
 '''Result:'''
 
 Include an image (very similar to transclusion):
 <<Include(png)>>
-Including all items with names beginning with "ma" fails with no visible output:
-<<Include(^ma)>>
+< < < < end of <Include(png)> > > > >
+
+Including all items with names beginning with "zi" (there is only 1). Any regex should work,
+but first character must be "^".
+<<Include(^zi)>>
+< < < < < end of <Include(^zi)> > > > > >
+
 Include a page with a non-ascii name and a heading level 6:
 <<Include(StronaGłówna,My Favorite Page, 6)>>
-< < < < < end of include > > > > >
+< < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
+
 
 '''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
 
-'''MOINTODO:''' Using a regex (^ma) as a pagename fails, no visible output, generates HTML validation errors.
+'''MOINTODO:''' There is a console traceback when a regex pattern is used to select PNG or SVG images: `<<Include(^pn)>>`. See issue #573.
 
 == Extension Macros from MoinMoin/macro/ ==
 
