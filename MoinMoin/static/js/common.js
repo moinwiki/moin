@@ -742,7 +742,7 @@ $(document).ready(function () {
         }
     });
 
-    $('textarea[rows="0"]').autosize();
+    $('textarea[rows="1"]').autosize();
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
