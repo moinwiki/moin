@@ -1,8 +1,9 @@
 {% from "modify_binary.html" import data_editor as base_editor %}
 
 {% macro data_editor(form, item_name) %}
+    {% set textarea_rows = '1' if edit_rows == '0' else edit_rows %}
     <input type="button" onclick="moinFontChange()" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
-    {{ gen.textarea(form['data_text'], rows=edit_rows|string, cols=form.cols|string, class="moin-edit-content", **kwargs) }}
+    {{ gen.textarea(form['data_text'], rows=textarea_rows|string, cols=form.cols|string, class="moin-edit-content", **kwargs) }}
     {{ base_editor(form) }}
     <br />
 {% endmacro %}
