@@ -232,11 +232,16 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-link-list li { padding: 2px 0 2px 0; }
 
 /* item ACL report */
-.moin-acl-report { width: 100%; }
-.moin-acl-name { width: 10%; }
-.moin-acl-report .moin-acl-string { width: 80%; }
-.moin-acl-form { display: inline; }
-.moin-acl-default .moin-acl-string { color: green; }
+.moin-acl-report { width: 100%; border-collapse: collapse; }
+.moin-acl-heading > div { border: 1px solid #4e7da9; background-color: #C9E2F8; text-align: left; color: #000;
+    padding: .3em .4em; vertical-align: middle; font-weight: bold; }
+.moin-acl-name-cell { border: 1px solid #4e7da9; vertical-align: top; position:relative; padding: .3em .4em; }
+.moin-acl-name-cell > input { position:absolute; bottom: 0; right: 0; }
+.moin-acl-rule-cell { border: 1px solid #4e7da9; overflow: hidden; width: 90%; }
+.moin-acl-rule-cell textarea { border: 1px solid #fff; min-height: 3em; }
+.moin-acl-default { color: green; }
+.moin-acl-string { padding: .3em .4em; width: 100%; overflow: scroll; overflow-wrap: break-word; }
+span.moin-acl-string { vertical-align: middle; }
 
 /* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }

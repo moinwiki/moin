@@ -348,6 +348,7 @@ def item_acl_report():
                            'fqname': fqname,
                            'acl': item_acl,
                            'acl_default': acl_default})
+        items_acls = sorted(items_acls, key=lambda k: k['name'][0].lower())
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
                            items_acls=items_acls)
