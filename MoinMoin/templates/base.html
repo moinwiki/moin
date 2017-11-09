@@ -85,8 +85,8 @@
             <script src="{{ url_for('static', filename='js/common.js') }}"></script>
             {{ scripts }}
             <!--[if lt IE 9]>
-                {# TODO: use a local copy later #}
-                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+                {# from https://github.com/aFarkas/html5shiv/ #}
+                <script src="{{ url_for('static', filename='js/html5shiv.min.js') }}"></script>
             <![endif]-->
         {% endblock %}
 
