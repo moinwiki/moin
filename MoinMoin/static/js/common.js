@@ -24,9 +24,42 @@ function _(text) {
 }
 
 
+// return true if browser localStorage is available
+function localStorageAvailable() {
+    try {
+        var x = '__storage_test__';
+        localStorage.setItem(x, x);
+        localStorage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return false;
+    }
+}
+
 // executed when user clicks button to toggle modify textarea between fixed/variable width fonts
 function moinFontChange() {
     $(".moin-edit-content").toggleClass("moin-fixed-width");
+    if (localStorageAvailable()) {
+        if ($(".moin-edit-content").hasClass("moin-fixed-width")) {
+            localStorage.setItem("moin-textarea-font", "moin-fixed-width");
+        } else {
+            localStorage.setItem("moin-textarea-font", "");
+        }
+    }
+}
+
+// executed on page ready, change textarea font to last saved value fixed/proportional
+function moinFontChangeOnReady() {
+    if ($(".moin-edit-content")) {
+        if (localStorageAvailable()) {
+            if (localStorage.getItem("moin-textarea-font") === "moin-fixed-width") {
+                $(".moin-edit-content").addClass("moin-fixed-width");
+            } else {
+                $(".moin-edit-content").removeClass("moin-fixed-width");
+            }
+        }
+    }
 }
 
 
@@ -741,6 +774,8 @@ $(document).ready(function () {
             return _("All changes will be discarded!");
         }
     });
+
+    moinFontChangeOnReady();
 
     $('textarea[rows="1"]').autosize();
 
