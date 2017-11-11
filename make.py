@@ -206,7 +206,7 @@ def put_items(dir='contrib/sample/'):
         if data in datas:
             commands.append(command.format(dir + meta, dir + data))
         else:
-            print 'Error: file "{0} is missing'.format(data)
+            print u'Error: file "{0} is missing'.format(data)
             return False
     commands = ACTIVATE + SEP.join(commands)
 
@@ -372,10 +372,10 @@ class Commands(object):
             filename = args[0]
         if os.path.isfile(filename):
             command = command % filename
-            print 'Creating a new wiki and loading it with data from {0}...'.format(filename)
+            print u'Creating a new wiki and loading it with data from {0}...'.format(filename)
             make_wiki(command)
         else:
-            print 'Error: cannot create wiki because {0} does not exist.'.format(filename)
+            print u'Error: cannot create wiki because {0} does not exist.'.format(filename)
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
@@ -383,10 +383,10 @@ class Commands(object):
             dirname = args[0]
             if os.path.isdir(dirname):
                 command = '{0}moin import19 -s -i --data_dir {1}'.format(ACTIVATE, dirname)
-                print 'Creating a new wiki populated with data from {0}...'.format(dirname)
+                print u'Creating a new wiki populated with data from {0}...'.format(dirname)
                 make_wiki(command)
             else:
-                print 'Error: cannot create wiki because {0} does not exist.'.format(dirname)
+                print u'Error: cannot create wiki because {0} does not exist.'.format(dirname)
         else:
             print 'Error: a path to the Moin 1.9 wiki/data data directory is required.'
 
@@ -421,9 +421,9 @@ class Commands(object):
             filename = BACKUP_FILENAME
             if args:
                 filename = args[0]
-                print 'Creating a wiki backup to {0}...'.format(filename)
+                print u'Creating a wiki backup to {0}...'.format(filename)
             else:
-                print 'Creating a wiki backup to {0} after rolling 3 prior backups...'.format(filename)
+                print u'Creating a wiki backup to {0} after rolling 3 prior backups...'.format(filename)
                 b3 = BACKUP_FILENAME.replace('.', '3.')
                 b2 = BACKUP_FILENAME.replace('.', '2.')
                 b1 = BACKUP_FILENAME.replace('.', '1.')
@@ -437,7 +437,7 @@ class Commands(object):
             with open(BACKUPWIKI, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
-                print 'Success: wiki was backed up to {0}'.format(filename)
+                print u'Success: wiki was backed up to {0}'.format(filename)
             else:
                 print 'Important messages from {0} are shown below. Do "{1} log backup" to see complete log.'.format(BACKUPWIKI, M)
                 search_for_phrase(BACKUPWIKI)
@@ -451,12 +451,12 @@ class Commands(object):
             directory = DUMP_HTML_DIRECTORY
             if args:
                 directory = args[0]
-                print 'Creating static HTML image of wiki to {0}...'.format(directory)
+            print u'Creating static HTML image of wiki to {0}...'.format(directory)
             command = '{0}moin dump-html --directory {1} --theme topside_cms'.format(ACTIVATE, directory)
             with open(DUMPHTML, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
-                print 'Success: wiki was dumped to directory {0}'.format(directory)
+                print u'Success: wiki was dumped to directory {0}'.format(directory)
             else:
                 print '\nError: attempt to dump wiki to html files failed.'
             # always show errors because individual items may fail
