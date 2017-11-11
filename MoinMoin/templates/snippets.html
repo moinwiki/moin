@@ -101,7 +101,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Header for topside_cms theme (and maybe custom themes) - see docs for tips on customization #}
 {% macro cms_header() %}
-    <div id="moin-header">
+    <header id="moin-header">
         {% block header %}
             {% if logo() %}
                 <div id="moin-logo">
@@ -131,7 +131,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
                 <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
             </ul>
         {% endblock %}
-    </div>
+    </header>
     <br>
 {% endmacro %}
 

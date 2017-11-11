@@ -16,7 +16,7 @@
 
     <div id="moin-main-wrapper">
         {{ before_header }}
-        <div id="moin-header">
+        <header id="moin-header">
             {% block header %}
                 {% if search_form %}
                     {{ header_search(search_form) }}
@@ -51,10 +51,10 @@
                 </div>
                 {% block header_itemviews %}{% endblock %}
             {% endblock %}
-        </div>
+        </header>
         {{ after_header }}
 
-        <div id="moin-page" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+        <div id="moin-page" role="main" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
             {% block item -%}
                 {# If you want itemviews in your template, extend from show.html, not from here. #}
                 <div id="moin-content">
@@ -71,7 +71,7 @@
         </div>
 
         {{ before_footer }}
-        <div id="moin-footer">
+        <footer id="moin-footer">
             {% block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
                 {% block footer_itemviews %}{% endblock %}
@@ -80,7 +80,7 @@
                 {{ credits }}
                 {{ license_info }}
             {% endblock %}
-        </div>
+        </footer>
         {{ after_footer }}
     </div>
 {% endblock %}

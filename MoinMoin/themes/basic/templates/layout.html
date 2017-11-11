@@ -71,7 +71,7 @@
     <div class="container-fluid">
         <div id="moin-main-wrapper" class="row">
 
-            <div class="col-md-2 col-sm-3 col-xs-4 moin-sidebar">
+            <header class="col-md-2 col-sm-3 col-xs-4 moin-sidebar">
                 <div class="moin-logo">
                     {% if logo %}
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
@@ -115,7 +115,7 @@
                         {{ self.local_panel() }}
                     {% endif %}
                 </div> {# moin-sidebar-panels #}
-            </div> {# moin-sidebar #}
+            </header> {# moin-sidebar #}
 
             <div class="col-md-10 col-sm-9 col-xs-12">
                 {{ before_header }}
@@ -185,7 +185,7 @@
                 {{ after_header }}
                 {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
 
-                <div class="moin-content">
+                <div class="moin-content" role="main">
                     {# id -> moin-flash is used to add special alerts for ex. for changes to User Settings via JS, see common.js #}
                     <div id="moin-flash">
                         {% for category, msg in get_flashed_messages(with_categories=true) %}
@@ -210,13 +210,13 @@
                 {{ before_footer }}
 
                 {% block footer %}
-                    <div class="navbar moin-footer">
+                    <footer class="navbar moin-footer">
                         {% block footer_hr %}<hr/>{% endblock %}
                         {% block footer_meta %}{% endblock %}
                         {{ creditlogos }}
                         {{ credits }}
                         {{ license_info }}
-                    </div>
+                    </footer>
                 {% endblock %}
 
                 {{ after_footer }}
