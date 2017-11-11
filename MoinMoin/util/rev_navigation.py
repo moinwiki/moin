@@ -17,7 +17,11 @@ def prior_next_revs(revid, fqname):
     If viewing a revision other than the current revision,
     return prior, current, and next revids and time stamps else return None * 6.
     """
-    show_revision = request.view_args['rev'] != CURRENT
+    try:
+        show_revision = request.view_args['rev'] != CURRENT
+    except KeyError:
+        # maintenance scripts, such as dump-html, have request.view_args == {}
+        show_revision = False
     if show_revision:
         terms = [Term(WIKINAME, app.cfg.interwikiname), ]
         terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
