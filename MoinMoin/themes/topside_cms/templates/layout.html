@@ -34,7 +34,7 @@
         </div>
 
         {{ snippets.before_footer() }}
-        <div id="moin-footer">
+        <footer id="moin-footer">
             {% block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
                 {{ snippets.creditlogos() }}
@@ -42,7 +42,7 @@
                 {{ snippets.credits() }}
                 {{ snippets.license_info() }}
             {% endblock %}
-        </div>
+        </footer>
         {{ snippets.after_footer() }}
     </div>
 {% endblock %}
