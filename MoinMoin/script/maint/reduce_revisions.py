@@ -14,9 +14,9 @@ This script removes all revisions but the last one from all selected items.
 from flask import current_app as app
 from flask_script import Command, Option
 
-from whoosh.query import Every
+from whoosh.query import Every, Term, And, Regex
 
-from MoinMoin.constants.keys import NAME, NAME_EXACT, REVID
+from MoinMoin.constants.keys import NAME, NAME_EXACT, REVID, WIKINAME
 
 from MoinMoin.app import before_wiki
 
@@ -31,8 +31,7 @@ class Reduce_Revisions(Command):
     def run(self, query):
         before_wiki()
         if query:
-            qp = app.storage.query_parser([NAME_EXACT, ])
-            q = qp.parse(query_text)
+            q = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, query)])
         else:
             q = Every()
 
