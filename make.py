@@ -60,7 +60,6 @@ DIST = 'm-create-dist.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
 JUST_IN_CASE_BACKUP = os.path.normpath('wiki/deleted-backup.moin')
-DUMP_HTML_DIRECTORY = os.path.normpath('HTML')
 
 
 if os.name == 'nt':
@@ -108,7 +107,7 @@ import19 <dir>  import a moin 1.9 wiki/data instance from <dir>
 
 run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
-dump-html *     create a static HTML image of wiki *option, specify directory
+dump-html *     create a static HTML image of wiki *options, see docs
 index           delete and rebuild indexes
 
 css             run Stylus and lessc to update theme CSS files
@@ -448,15 +447,12 @@ class Commands(object):
     def cmd_dump_html(self, *args):
         """create a static html dump of this wiki"""
         if wiki_exists():
-            directory = DUMP_HTML_DIRECTORY
-            if args:
-                directory = args[0]
-            print u'Creating static HTML image of wiki to {0}...'.format(directory)
-            command = '{0}moin dump-html --directory {1} --theme topside_cms'.format(ACTIVATE, directory)
+            print u'Creating static HTML image of wiki...'
+            command = '{0}moin dump-html {1}'.format(ACTIVATE, ' '.join(args))
             with open(DUMPHTML, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
-                print u'Success: wiki was dumped to directory {0}'.format(directory)
+                print u'Success: wiki was dumped to html files'
             else:
                 print '\nError: attempt to dump wiki to html files failed.'
             # always show errors because individual items may fail
