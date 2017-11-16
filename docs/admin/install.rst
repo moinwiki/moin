@@ -73,18 +73,17 @@ Typing "./m" (or "m" on Windows) will display a menu similar to::
     new-wiki        create empty wiki
     sample          create wiki and load sample data
     restore *       create wiki and restore wiki/backup.moin *option, specify file
-    import <dir>    import a moin 1.9 wiki/data instance from <dir>
-    index           delete and rebuild indexes
+    import19 <dir>  import a moin 1.9 wiki/data instance from <dir>
 
     run *           run built-in wiki server *options (--port 8081)
     backup *        roll 3 prior backups and create new backup *option, specify file
-    dump-html *     create a static HTML image of wiki *option, specify directory
+    dump-html *     create a static HTML image of wiki *options, see docs
+    index           delete and rebuild indexes
 
     css             run Stylus and lessc to update theme CSS files
     tests *         run tests, output to pytest.txt *options (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
     api             update moin api docs (files are under hg version control)
-    dist            delete wiki data, then create distribution archive in dist/
 
     del-all         same as running the 4 del-* commands below
     del-orig        delete all files matching *.orig
@@ -131,18 +130,19 @@ change the settings for:
 If you plan on just using moin2 as a desktop wiki (and maybe
 help by reporting bugs), then some logical menu choices are:
 
- * `m docs` - to create docs, see User tab, Documentation (local)
- * `m extras` - to install Pillow for manipulating images
- * `m del-wiki` - get rid of the sample data
- * `m new-wiki` or `m import ...` - no data or moin 1.9 data
- * `m backup` - backup wiki data as needed or as scheduled
+ * `./m docs` - to create docs, see User tab, Documentation (local)
+ * `./m extras` - to install Pillow for manipulating images
+ * `./m del-wiki` - get rid of the sample data
+ * `./m new-wiki` or `m import19 ...` - no data or moin 1.9 data
+ * `./m backup` - backup wiki data as needed or as scheduled
 
 Warning: Backing up data at this point may provide a false sense
 of security because no migration tool has been developed to migrate
 data between moin2 versions.  In its current alpha state, there
 may be code changes that impact the structure of the wiki data or
-indexes. Should this occur, you must start over with an empty
-wiki and somehow copy and paste the contents of all the old wiki
+indexes. Should this occur, first try rebuilding the indexes with the
+`./m index` command. If that fails, you must start over with an empty
+wiki and copy and paste the contents of all the old wiki
 items into the new wiki. While no such changes are planned,
 they have happened in the past and may happen in the future.
 

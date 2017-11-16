@@ -23,7 +23,7 @@ It is not necessary to activate the virtual environment before using the ./m
 interface. Executing **./m** (**m** on windows) without any options produces
 the menu::
 
-    usage: "m <target>" where <target> is:
+    usage: "./m <target>" where <target> is:
 
     quickinstall    update virtual environment with required packages
     docs            create moin html documentation
@@ -34,11 +34,11 @@ the menu::
     new-wiki        create empty wiki
     sample          create wiki and load sample data
     restore *       create wiki and restore wiki/backup.moin *option, specify file
-    import <dir>    import a moin 1.9 wiki/data instance from <dir>
+    import19 <dir>  import a moin 1.9 wiki/data instance from <dir>
 
     run *           run built-in wiki server *options (--port 8081)
     backup *        roll 3 prior backups and create new backup *option, specify file
-    dump-html *     create a static HTML image of wiki *option, specify directory
+    dump-html *     create a static HTML image of wiki *options, see docs
     index           delete and rebuild indexes
 
     css             run Stylus and lessc to update theme CSS files
@@ -69,31 +69,39 @@ invoking :program:`moin moin`.
 
 :program:`moin --help` will give a list of available subcommands.
 
-:program:`moin <subcommand> --help` will give help for some subcommand::
+:program:`moin <subcommand> --help` will give help for some subcommand.
 
-    usage: moin-script.py [-c CONFIG] [-i] [-s] [-?]
-        {load,index-optimize,maint-reduce-revisions,index-move,dump-html,item-get,
-        index-build,account-password,index-dump,runserver,shell,index-destroy,
-        account-disable,item-put,account-create,moin,index-update,save,
-        index-create,maint-set-meta,import19}
-                          ...
+Example output of the `moin --help` command follows::
+
+    usage: moin [-c CONFIG] [-i] [-s] [-?]
+        {moin,index-create,index-build,index-update,index-destroy,index-move,index-optimize,
+        index-dump,save,load,dump-html,account-create,account-disable,account-password,
+        maint-reduce-revisions,maint-set-meta,item-get,item-put,import19,shell,runserver}
+        ...
 
     positional arguments:
-        {load,index-optimize,maint-reduce-revisions,index-move,dump-html,item-get,
-        index-build,account-password,index-dump,runserver,shell,index-destroy,
-        account-disable,item-put,account-create,moin,index-update,save,
-        index-create,maint-set-meta,import19}
-
-        load
-        index-optimize
-        maint-reduce-revisions
-        index-move
-        dump-html
-        item-get
+      {moin,index-create,index-build,index-update,index-destroy,index-move,index-optimize,
+      index-dump,save,load,dump-html,account-create,account-disable,account-password,
+      maint-reduce-revisions,maint-set-meta,item-get,item-put,import19,shell,runserver}
+        moin                Runs the Flask development server i.e. app.run()
+        index-create
         index-build
-        account-password
+        index-update
+        index-destroy
+        index-move
+        index-optimize
         index-dump
-        runserver           Runs the Flask development server i.e. app.run()
+        save
+        load
+        dump-html
+        account-create
+        account-disable
+        account-password
+        maint-reduce-revisions
+        maint-set-meta
+        item-get
+        item-put
+        import19
         shell               Runs a Python shell inside Flask application context.
                             :param banner: banner appearing at top of shell when
                             started :param make_context: a callable returning a
@@ -102,16 +110,7 @@ invoking :program:`moin moin`.
                             :param use_ipython: use IPython shell if available,
                             ignore if not. The IPython shell can be turned off in
                             command line by passing the **--no-ipython** flag.
-        index-destroy
-        account-disable
-        item-put
-        account-create
-        moin                Runs the Flask development server i.e. app.run()
-        index-update
-        save
-        index-create
-        maint-set-meta
-        import19
+        runserver           Runs the Flask development server i.e. app.run()
 
     optional arguments:
       -c CONFIG, --config CONFIG
