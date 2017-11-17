@@ -328,14 +328,20 @@ def groupbrowser():
 @require_permission(SUPERUSER)
 def item_acl_report():
     """
-    Return a list of all items in the wiki along with the ACL Meta-data
+    Return a sorted list of all items in the wiki along with the ACL Meta-data.
+
+    Item names are prefixed with the namespace, if there is a non-default namespace.
+    If there are multiple names, the first name is used for sorting.
     """
     all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
     items_acls = []
     for item in all_items:
         item_namespace = item.meta.get(NAMESPACE)
         item_id = item.meta.get(ITEMID)
-        item_name = item.meta.get(NAME)
+        if item_namespace:
+            item_name = [item_namespace + '/' + name for name in item.meta.get(NAME)]
+        else:
+            item_name = item.meta.get(NAME)
         item_acl = item.meta.get(ACL)
         acl_default = item_acl is None
         fqname = CompositeName(item_namespace, u'itemid', item_id)
@@ -348,7 +354,7 @@ def item_acl_report():
                            'fqname': fqname,
                            'acl': item_acl,
                            'acl_default': acl_default})
-        items_acls = sorted(items_acls, key=lambda k: k['name'][0].lower())
+        items_acls = sorted(items_acls, key=lambda k: k['name'][0])
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
                            items_acls=items_acls)
