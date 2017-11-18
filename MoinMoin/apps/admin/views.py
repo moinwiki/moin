@@ -347,7 +347,7 @@ def item_acl_report():
         fqname = CompositeName(item_namespace, u'itemid', item_id)
         if acl_default:
             for namespace, acl_config in app.cfg.acl_mapping:
-                if item_namespace == namespace[:-1]:
+                if item_namespace == namespace:
                     item_acl = acl_config['default']
         items_acls.append({'name': item_name,
                            'itemid': item_id,
