@@ -171,7 +171,9 @@ def wikiconfig():
     found.sort()
     return render_template('admin/wikiconfig.html',
                            title_name=_(u"Show Wiki Configuration"),
-                           found=found, settings=settings)
+                           len=len,
+                           found=found,
+                           settings=settings)
 
 
 @admin.route('/wikiconfighelp', methods=['GET', ])
