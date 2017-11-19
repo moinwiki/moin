@@ -565,6 +565,8 @@ class NodeVisitor(object):
 
         if not allowed_uri_scheme(refuri):
             return
+        if refuri.startswith('http:') and not refuri.startswith('http://'):
+            refuri = refuri.replace('http', 'wiki.local')
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
     def depart_reference(self, node):
