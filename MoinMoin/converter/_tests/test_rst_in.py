@@ -113,8 +113,8 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             (u'Abra\n\n.. _example:\n\nAbra example_ arba\n', '<page><body><p>Abra</p><span id="example" /><p>Abra <a xlink:href="">example</a> arba</p></body></page>'),
             (u'Abra example_ arba\n\n.. _example:\n\ntext', '<page><body><p>Abra <a xlink:href="">example</a> arba</p><span id="example" /><p>text</p></body></page>'),
             (u'http://www.python.org/', '<page><body><p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p></body></page>'),
-            (u'http:Home', '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>'),
-            (u'`Home <http:Home>`_', '<page><body><p><a xlink:href="wiki.local:Home">Home</a></p></body></page>'),
+            (u'http:Home', '<page><body><p><a xlink:href="http:Home">http:Home</a></p></body></page>'),
+            (u'`Home <http:Home>`_', '<page><body><p><a xlink:href="http:Home">Home</a></p></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
