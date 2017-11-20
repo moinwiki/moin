@@ -76,7 +76,7 @@ class ConverterBase(object):
 
         elif xlink_href == u'':
             # ReST link to page fragment
-            elem.set(self._tag_xlink_href, u'#' + elem.text)
+            elem.set(self._tag_xlink_href, u'#' + elem.text.replace(' ', '_'))
 
         for child in elem.iter_elements():
             self.traverse_tree(child, page)
