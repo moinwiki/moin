@@ -731,3 +731,7 @@ def setup_jinja_env():
         'gen': make_generator(),
         'search_form': SearchForm.from_defaults(),
     })
+
+    # if Jinja whitespace control options are turned on, it becomes obvious why the default is off
+    # app.jinja_env.trim_blocks = True
+    # app.jinja_env.lstrip_blocks = True
