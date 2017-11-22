@@ -214,7 +214,12 @@ class ReST(object):
     ReST syntax elements
     It's dummy
     """
-    h = u"""= - ` : ' " ~ ^ _ * + # < >""".split()
+    # moin2 ReST standard headings, uses = above and below h1, = below h2, - below h3... + below h6
+    # these heading styles are used in all .rst files under /docs/
+    # does not agree with: http://documentation-style-guide-sphinx.readthedocs.io/en/latest/style-guide.html#headings
+    h_top = u" =     "
+    h_bottom = u" ==-*:+"
+
     a_separator = u'|'
     verbatim = u'::'
     monospace = u'``'
@@ -408,7 +413,7 @@ class Converter(object):
                 if i:
                     self.output[-1] = self.output[-1][:i]
             """
-        return u"::\n\n  {0}{1}\n\n".format(
+        return u"\n::\n\n  {0}{1}\n\n".format(
             u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
 
     def open_moinpage_code(self, elem):
@@ -430,7 +435,10 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        ret = u"\n\n{0}\n{1}\n{2}\n\n".format(ReST.h[level] * len(text), text, ReST.h[level] * len(text))
+        if ReST.h_top[level] == ' ':
+            ret = u"\n\n{0}\n{1}\n\n".format(text, ReST.h_bottom[level] * len(text))
+        else:
+            ret = u"\n\n{0}\n{1}\n{2}\n\n".format(ReST.h_top[level] * len(text), text, ReST.h_bottom[level] * len(text))
         return ret
 
     def open_moinpage_line_break(self, elem):
