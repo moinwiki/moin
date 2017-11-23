@@ -1,28 +1,26 @@
 {
   "acl": "BadGuy: All:read,write",
-  "action": "RENAME",
+  "action": "SAVE",
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
-  "dataid": "90343e7615ab4b6a83d5909763856bc9",
+  "dataid": "e3f2b81c034e43c78ba60d36709b5765",
   "externallinks": [],
   "itemid": "096937b50a2749ea80fd802edac18cfc",
   "itemlinks": [],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1493093717,
+  "mtime": 1511361212,
   "name": [
     "TemplateSample"
   ],
-  "name_old": [
-    "SampleTemplate"
-  ],
+  "name_old": [],
   "namespace": "",
-  "parentid": "fbba63c54dcf4a4ab8aa1fe064af1432",
+  "parentid": "8a03526626574f3fab0062c698307a8e",
   "rev_number": 1,
-  "revid": "73e0979f87df490bb132b8ed26f786d6",
-  "sha1": "5e2b9b16a352ffb0e707f968346366953d8fa59d",
-  "size": 891,
+  "revid": "3473a3928af94f6b979ad1e11cb0047f",
+  "sha1": "12e8c1b3b78e964e104f7de5692b06b3d23010ba",
+  "size": 879,
   "summary": "this page created using SampleTemplate",
   "tags": [
     "template",

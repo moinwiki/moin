@@ -11,6 +11,7 @@ Templates are specific to a content type. This template can only be used to crea
 ## note the meta data for ACL, Summary, and Tags have been copied from
 ## the template.
 
-||<caption="Fruit Colors" tablestyle="width: 90%;">Fruit||Color||
-====
+||<tablestyle="width: 90%;" caption="Fruit Colors">Fruit||Color||
+=====
 ||Apple||Red||
+

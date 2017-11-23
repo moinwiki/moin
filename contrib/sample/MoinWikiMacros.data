@@ -19,8 +19,8 @@ The number of levels in the table of contents can be limited by passing an integ
 }}}
 
 '''Result:'''
-
 <<TableOfContents(3)>>
+
 See TOC floated to right.
 
 === FootNotes ===
@@ -31,7 +31,9 @@ See TOC floated to right.
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
 
 By default footnotes are placed at the bottom of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter:
-<<FootNote>>
+
+<<FootNote()>>
+
 Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
 }}}
 
@@ -40,7 +42,9 @@ Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by defa
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets, and '''may''' have markup.)>>
 
 By default footnotes are placed at the bottom of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter:
-<<FootNote>>
+
+<<FootNote()>>
+
 Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
 
 === BR - Forced Line Break ===
@@ -61,34 +65,45 @@ Use a BR macro <<BR>>to force a line break.
 
 {{{
 Include an image (very similar to transclusion):
+
 <<Include(png)>>
+
 < < < < end of <Include(png)> > > > >
 
 Including all items with names beginning with "zi" (there is only 1). Any regex should work,
 but first character must be "^".
+
 <<Include(^zi)>>
+
 < < < < < end of <Include(^zi)> > > > > >
 
 Include a page with a non-ascii name and a heading level 6:
+
 <<Include(StronaGłówna,My Favorite Page, 6)>>
+
 < < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
 }}}
 
 '''Result:'''
 
 Include an image (very similar to transclusion):
+
 <<Include(png)>>
+
 < < < < end of <Include(png)> > > > >
 
 Including all items with names beginning with "zi" (there is only 1). Any regex should work,
 but first character must be "^".
+
 <<Include(^zi)>>
+
 < < < < < end of <Include(^zi)> > > > > >
 
 Include a page with a non-ascii name and a heading level 6:
-<<Include(StronaGłówna,My Favorite Page, 6)>>
-< < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
 
+<<Include(StronaGłówna,My Favorite Page, 6)>>
+
+< < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
 
 '''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
 
@@ -97,7 +112,8 @@ Include a page with a non-ascii name and a heading level 6:
 == Extension Macros from MoinMoin/macro/ ==
 
 === Anchor ===
-Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
+
+Anchors are created (but invisible of course). Click [[MoinWikiMacros#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
 
 '''Markup:'''
 
@@ -115,16 +131,22 @@ Anchors are created (but invisible of course). Click [[#anchorname|here]] to scr
 
 {{{
 <<Date()>>
+
 <<Date(1434563755)>>
+
 <<Date(2002-01-23T12:34:56)>>
+
 Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 }}}
 
 '''Result:'''
 
 <<Date()>>
+
 <<Date(1434563755)>>
+
 <<Date(2002-01-23T12:34:56)>>
+
 Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 
 === DateTime ===
@@ -133,16 +155,22 @@ Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 
 {{{
 <<DateTime()>>
+
 <<DateTime(1434563755)>>
+
 <<DateTime(2002-01-23T12:34:56)>>
+
 Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 }}}
 
 '''Result:'''
 
 <<DateTime()>>
+
 <<DateTime(1434563755)>>
+
 <<DateTime(2002-01-23T12:34:56)>>
+
 Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 
 === FontAwesome ===
@@ -157,11 +185,11 @@ The format of the macro is:
 
 The color and size parameters are optional. 
 
-    * color must be a hex digit color code of either 3 or 6 digits with a leading #: 
-        * #f00 or #F80000
-    * size may be an unsigned decimal integer or float that will adjust the size of the character relative to the current font size.
-        * 2 or 2.0 will create double the character size
-        * .5 will create a character half the current size
+ * color must be a hex digit color code of either 3 or 6 digits with a leading #: 
+   * #f00 or #F80000
+ * size may be an unsigned decimal integer or float that will adjust the size of the character relative to the current font size.
+   * 2 or 2.0 will create double the character size
+   * .5 will create a character half the current size
 
 In most cases, the class will consist of the single character name. If multiple classes are wanted, separate the names with spaces. Although the size parameter is more robust, the special Font Awesome "lg", "2x", "3x", and "4x" may be used. The "spin" class may be used for the spinner fonts.
 
@@ -231,12 +259,14 @@ The MailTo macro exports different markup when the user is logged in.
 
 {{{
 <<MailTo(user AT example DOT org)>>
+
 <<MailTo(user AT example DOT org, write me)>>
 }}}
 
 '''Result:'''
 
 <<MailTo(user AT example DOT org)>>
+
 <<MailTo(user AT example DOT org, write me)>>
 
 === PagenameList ===
@@ -245,20 +275,30 @@ The MailTo macro exports different markup when the user is logged in.
 
 {{{
 All Pages:
+
 <<PagenameList()>>
+
 Pages having letters "ma":
+
 <<PagenameList(ma, True)>>
+
 Pages starting with "ma":
+
 <<PagenameList(ma)>>
 }}}
 
 '''Result:'''
 
 All Pages:
+
 <<PagenameList()>>
+
 Pages having letters "ma":
+
 <<PagenameList(ma, True)>>
+
 Pages starting with "ma":
+
 <<PagenameList(ma)>>
 
 === RandomItem ===
@@ -267,16 +307,22 @@ Pages starting with "ma":
 
 {{{
 One random item:
+
 <<RandomItem()>>
+
 Five random items:
+
 <<RandomItem(5)>>
 }}}
 
 '''Result:'''
 
 One random item:
+
 <<RandomItem()>>
+
 Five random items:
+
 <<RandomItem(5)>>
 
 === Verbatim ===
@@ -285,14 +331,17 @@ Five random items:
 
 {{{
 Verbatim macro Returns `same` __text__ '''as''' entered
+
 <<Verbatim(Returns `same` __text__ '''as''' entered)>>
+
 <<Verbatim(<script>alert(1);</script>)>>
 }}}
 
 '''Result:'''
 
 Verbatim macro Returns `same` __text__ '''as''' entered
-<<Verbatim(Returns `same` __text__ '''as''' entered)>>
-<<Verbatim(<script>alert(1);</script>)>>
 
+<<Verbatim(Returns `same` __text__ '''as''' entered)>>
+
+<<Verbatim(<script>alert(1);</script>)>>
 
