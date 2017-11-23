@@ -40,8 +40,9 @@ class GetItem(Command):
         meta = '\n'.join(meta_lines)
         with open(meta_file, 'wb') as mf:
             mf.write(meta)
+        data = rev.data.read().replace('\r\n', '\n')
         with open(data_file, 'wb') as df:
-            shutil.copyfileobj(rev.data, df)
+            df.write(data)
 
 
 class PutItem(Command):
