@@ -13,7 +13,7 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import moin_page, xlink, xinclude
+from MoinMoin.util.tree import html, moin_page, xlink, xinclude
 from MoinMoin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
@@ -419,6 +419,23 @@ class Converter(object):
     def open_moinpage_code(self, elem):
         ret = u"{0}{1}{2}".format(ReST.monospace, u''.join(elem.itertext()), ReST.monospace)
         return ret
+
+    def open_moinpage_div(self, elem):
+        """Only expected use of div is for a comment coming from rst_in:
+
+        ..
+          ReST has unique block comment, similar moinwiki comments /* are inline */
+        """
+        if moin_page.class_ in elem.attrib:
+            classes = elem.attrib[moin_page.class_].split()
+            if 'comment' in classes:
+                comment = self.open_children(elem)
+                if comment.startswith('\n'):
+                    comment = comment[1:]
+                comment = comment.replace('\n', '\n ')
+                return u'\n..\n {0}\n'.format(comment)
+        # in case div has another use
+        return self.open_children(elem)
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
