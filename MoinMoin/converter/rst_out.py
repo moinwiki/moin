@@ -72,7 +72,7 @@ class Table(object):
 
     def end_row(self):
         """
-        Adds empyt cells to current row if it's too short.
+        Adds empty cells to current row if it's too short.
 
         Moves the row to the head of the table if it is table header.
         """
@@ -212,7 +212,6 @@ class Table(object):
 class ReST(object):
     """
     ReST syntax elements
-    It's dummy
     """
     # moin2 ReST standard headings, uses = above and below h1, = below h2, - below h3... + below h6
     # these heading styles are used in all .rst files under /docs/
