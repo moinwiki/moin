@@ -706,7 +706,7 @@ class Converter(object):
                 re.sub(r"\n(.)", lambda m: u"\n{0}{1}".format(
                     u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), u"\n" + table)
             return table + ReST.p
-        return table + ReST.linebreak
+        return u'\n' + table + ReST.linebreak
 
     def open_moinpage_table_header(self, elem):
         # is this correct rowclass?
