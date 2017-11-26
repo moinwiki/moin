@@ -244,7 +244,8 @@ class Converter(object):
     Converter application/x.moin.document -> text/x.moin.rst
     """
     namespaces = {
-        moin_page.namespace: 'moinpage'}
+        moin_page.namespace: 'moinpage',
+        xinclude: 'xinclude', }
 
     supported_tag = {
         'moinpage': (
@@ -376,6 +377,15 @@ class Converter(object):
             return ret
         return self.open_children(elem)
 
+    def open_xinclude(self, elem):
+        n = 'open_xinclude_' + elem.tag.name.replace('-', '_')
+        f = getattr(self, n, None)
+        if f:
+            ret = f(elem)
+            self.last_closed = elem.tag.name.replace('-', '_')
+            return ret
+        return self.open_children(elem)
+
     def open_moinpage_a(self, elem):
         href = elem.get(xlink.href, None)
         text = u''.join(elem.itertext()).replace(u'\n', u' ')
@@ -456,6 +466,23 @@ class Converter(object):
         else:
             ret = u"\n\n{0}\n{1}\n{2}\n\n".format(ReST.h_top[level] * len(text), text, ReST.h_bottom[level] * len(text))
         return ret
+
+    def open_xinclude_include(self, elem):
+        """
+        Return markup for a ReST included item, something similar to:
+
+        .. image:: png
+           :height: 100
+           :width: 200
+           :alt: alternate text png
+           :align: center
+        """
+        whitelist = {html.width: 'width', html.height: 'height', html.class_: 'align', html.alt: 'alt'}
+        ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
+        for key, val in whitelist.items():
+            if key in elem.attrib:
+                ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
+        return u'\n'.join(ret) + u'\n'
 
     def open_moinpage_line_break(self, elem):
         if self.status[-1] == "list":
