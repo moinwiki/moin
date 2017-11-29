@@ -33,7 +33,7 @@ error message will be displayed instead of the expected page.
 If any markup appears before the first heading on a page, then the first heading
 will be an H2 and all subsequent headings will be demoted by 1 level.
 
-**Markup**: ::
+**Markup**::
 
  =======
  Level 1
@@ -76,7 +76,7 @@ Level 6
 Table of Contents
 =================
 
-**Markup**: ::
+**Markup**::
 
     .. contents::
 
@@ -92,17 +92,17 @@ Text formatting
 
 The following is a table of inline markup that can be used to format text in Moin.
 
-+----------------------------------------------+---------------------------------------+
-| Markup                                       | Result                                |
-+==============================================+=======================================+
-| ``**Bold Text**``                            | **Bold text**                         |
-+----------------------------------------------+---------------------------------------+
-| ``*Italic*``                                 | *Italic*                              |
-+----------------------------------------------+---------------------------------------+
-| ````Inline Literals````                      | ``Inline Literals``                   |
-+----------------------------------------------+---------------------------------------+
-| ``***nested markup is not supported***``     | ***nested markup is not supported***  |
-+----------------------------------------------+---------------------------------------+
++----------------------------------------+------------------------------------+
+|Markup                                  |Result                              |
++========================================+====================================+
+|``**Bold Text**``                       |**Bold text**                       |
++----------------------------------------+------------------------------------+
+|``*Italic*``                            |*Italic*                            |
++----------------------------------------+------------------------------------+
+|````Inline Literals````                 |``Inline Literals``                 |
++----------------------------------------+------------------------------------+
+|``***nested markup is not supported***``|***nested markup is not supported***|
++----------------------------------------+------------------------------------+
 
 Hyperlinks
 ==========
@@ -110,22 +110,22 @@ Hyperlinks
 External Links
 --------------
 
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| Markup                                                          | Result                                                       |
-+=================================================================+==============================================================+
-| ``http://www.python.org/``                                      | http://www.python.org/                                       |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| ``External hyperlinks, like `Python <http://www.python.org/>`_``| External hyperlinks, like `Python <http://www.python.org/>`_ |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| ``External hyperlinks, like Moin_.``                            | External hyperlinks, like Moin_.                             |
-|                                                                 |                                                              |
-| ``.. _Moin: http://moinmo.in/``                                 | .. _Moin: http://moinmo.in/                                  |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
++----------------------------------------------------------------+------------------------------------------------------------+
+|Markup                                                          |Result                                                      |
++================================================================+============================================================+
+|``http://www.python.org/``                                      |http://www.python.org/                                      |
++----------------------------------------------------------------+------------------------------------------------------------+
+|``External hyperlinks, like `Python <http://www.python.org/>`_``|External hyperlinks, like `Python <http://www.python.org/>`_|
++----------------------------------------------------------------+------------------------------------------------------------+
+|``External hyperlinks, like Moin_.``                            |External hyperlinks, like Moin_.                            |
+|                                                                |                                                            |
+|``.. _Moin: http://moinmo.in/``                                 |.. _Moin: http://moinmo.in/                                 |
++----------------------------------------------------------------+------------------------------------------------------------+
 
 Internal Links
 --------------
 
-**Markup**: ::
+**Markup**::
 
  To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page
  is not a wiki page, then the Home links are not valid.)
@@ -153,7 +153,7 @@ Then reference the anchor, like this: example_
 To link to section headings do Headings_. If a section title has embeded blanks, you must enclose the
 heading with backtic characters: `Internal Links`_.
 
-**Notes**
+**Notes:**
  - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
 
 Images
@@ -161,7 +161,7 @@ Images
 
 Images may be positioned by using the align parameter with a value of left, center, or right. There is no facility to embed an image within a paragraph. There must be a blank line before and after the image declaration. Images are not enclosed within a block level element so several images declared successively without any positioning will display in a horizontal row.
 
-**Markup**: ::
+**Markup**::
 
     Before text.
 
@@ -187,8 +187,53 @@ Before text.
 
 After text.
 
-**Note** The Sphinx parser does not have an image named "png" so the alternate text
-will be displayed.
+**Notes:**
+ - The Sphinx parser does not have an image named "png" so the alternate text
+   will be displayed.
+
+Figures
+=======
+
+Figures display graphics like images, but have the added feature of supporting captions and explanatory text. Figures are block elements, so figures declared successively will display in a column.
+
+**Markup**::
+
+    Before text.
+
+    .. figure:: png
+       :height: 100
+       :width: 200
+       :scale: 50
+       :alt: alternate text png
+
+       Moin Logo
+
+       This logo replaced the "MoinMoin Man"
+       logo long ago.
+
+    After text.
+
+**Result**:
+
+Before text.
+
+.. figure:: png
+   :height: 100
+   :width: 200
+   :scale: 50
+   :alt: alternate text png
+
+   Moin Logo
+
+   This logo replaced the "MoinMoin Man"
+   logo long ago.
+
+After text.
+
+**Notes:**
+ - The Sphinx parser does not have an image named "png" so the alternate text
+   will be displayed.
+ - The Sphinx parser does not support figures so the caption and explanatory text will not display correctly.
 
 Blockquotes and Indentations
 ============================
@@ -197,7 +242,7 @@ To create a blockquote, indent all lines of a paragraph or paragraphs with an
 equal number of spaces. To add an attribution, begin the last indented paragraph
 with "-- ".
 
-**Markup**: ::
+**Markup**::
 
  Text introducing a blockquote:
 
@@ -209,7 +254,7 @@ Text introducing a blockquote:
 
   If you chase two rabbits, you will lose them both.
 
-**Markup**: ::
+**Markup**::
 
   This is an ordinary paragraph, introducing a block quote.
 
@@ -231,7 +276,7 @@ Lists
 Unordered Lists
 ---------------
 
-**Markup**: ::
+**Markup**::
 
  - item 1
 
@@ -258,7 +303,7 @@ Unordered Lists
 Ordered Lists
 ---------------
 
-**Markup**: ::
+**Markup**::
 
  1. item 1
 
@@ -283,10 +328,15 @@ Ordered Lists
  #. item 2
 
 **Notes**:
- - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
-   auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
-   (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
-   enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+ - Ordered lists can be automatically enumerated using the ``#`` character as
+   demonstrated above. Note that the first item of an ordered list
+   auto-enumerated in this fashion must use explicit numbering notation
+   (e.g. ``1.``) in order to select the enumeration sequence type
+   (e.g. Roman numerals, Arabic numerals, etc.), initial number
+   (for lists which do not start at "1") and formatting type
+   (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
+   enumerated lists can be found in the `reStructuredText documentation
+   <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
  - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
 
@@ -295,7 +345,7 @@ Definition Lists
 
 Definition lists are formed by an unindented one line term followed by an indented definition.
 
-**Markup**: ::
+**Markup**::
 
  term 1
   Definition 1.
@@ -322,7 +372,7 @@ Field Lists
 
 Field lists are part of an extension syntax for directives usually intended for further processing.
 
-**Markup**: ::
+**Markup**::
 
     :Date: 2001-08-16
     :Version: 1
@@ -339,7 +389,7 @@ Option lists
 
 Option lists are intended to document Unix or DOS command line options.
 
-**Markup**: ::
+**Markup**::
 
     -a      command definition
     --a     another command definition
@@ -360,7 +410,7 @@ adjacent. The syntax for a transition marker is a horizontal line of 4 or more
 repeated punctuation characters. The syntax is the same as section title
 underlines without title text. Transition markers require blank lines before and after.
 
-**Markup**: ::
+**Markup**::
 
     Text
 
@@ -383,7 +433,7 @@ Backslash Escapes
 Sometimes there is a need to use special characters as literal characters,
 but ReST's syntax gets in the way. Use the backslash character as an escape.
 
-**Markup**: ::
+**Markup**::
 
     *hot*
 
@@ -415,7 +465,7 @@ Simple Tables
 
 Easy markup for tables consisting of two rows. This syntax can have no more than two rows.
 
-**Markup**: ::
+**Markup**::
 
  ======= ======= =======
   A       B       C
@@ -432,7 +482,7 @@ Easy markup for tables consisting of two rows. This syntax can have no more than
  ======= ======= =======
 
 
-**Markup**: ::
+**Markup**::
 
  ======= ======= =======
        foo         Bar
@@ -457,7 +507,7 @@ Grid Tables
 
 Complex tables can have any number of rows or columns. They are made by ``|``, ``+``, ``-`` and ``=``.
 
-**Markup**: ::
+**Markup**::
 
  +----------------+---------------+
  | A              |               |
@@ -480,7 +530,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
 One difference between the Sphinx and Moin ReST parsers is demonstrated below.
 With the Spinx parser, grid table column widths can be expanded by adding spaces.
 
-**Markup**: ::
+**Markup**::
 
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
  | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
@@ -492,12 +542,12 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
  | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-**Note**
-The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
-HTML markup added by the Sphinx parser (the width attribute generates an HTML
-validation error), nor does it use Javascript to adjust the width of tables.
-Under Moin2, tables and table cells will be of minimal width
-(unless there is CSS styling to set tables larger).
+**Notes:**
+ - The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+   HTML markup added by the Sphinx parser (the width attribute generates an HTML
+   validation error), nor does it use Javascript to adjust the width of tables.
+ - Under Moin2, tables and table cells will be of minimal width
+   (unless there is CSS styling to set tables larger).
 
 Admonitions
 ===========
@@ -506,7 +556,7 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 
 The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
 
-**Markup**: ::
+**Markup**::
 
     .. caution:: Be careful!
     .. danger:: Watch out!
@@ -527,7 +577,7 @@ Comments are not shown on the page. Some parsers may create HTML comments
 Within the Moin2 wiki, comments may be made visible/invisible by clicking the
 Comments link within item views.
 
-**Markup**: ::
+**Markup**::
 
  .. This is a comment
  ..
@@ -557,7 +607,7 @@ Literals Blocks
 Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
-**Markup**: ::
+**Markup**::
 
  Paragraph with a space before two colons ::
 
