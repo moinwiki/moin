@@ -522,6 +522,11 @@ form.upload_file button { display: none; }
 
 .moin-show-wikiconfig td { vertical-align: top; }
 
+/* ReST figures */
+
+.moin-figure { text-align: center; }
+figcaption { font-weight: bold; }
+
 /* moin-flash */
 #moin-flash { margin:-2px -15px -2px -14px; }
 .moin-flash { background-color: #eee; border: 2px solid color: #181be2; padding: 1em 1em 1em 3em; border-radius: 9px;

@@ -263,6 +263,12 @@ class Converter(object):
     def visit_moinpage_emphasis(self, elem):
         return self.new_copy(html.em, elem)
 
+    def visit_moinpage_figure(self, elem):
+        return self.new_copy(html.figure, elem)
+
+    def visit_moinpage_figcaption(self, elem):
+        return self.new_copy(html.figcaption, elem)
+
     def visit_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
         try:
