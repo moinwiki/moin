@@ -92,17 +92,17 @@ Text formatting
 
 The following is a table of inline markup that can be used to format text in Moin.
 
-+----------------------------------------------+---------------------------------------+
-| Markup                                       | Result                                |
-+==============================================+=======================================+
-| ``**Bold Text**``                            | **Bold text**                         |
-+----------------------------------------------+---------------------------------------+
-| ``*Italic*``                                 | *Italic*                              |
-+----------------------------------------------+---------------------------------------+
-| ````Inline Literals````                      | ``Inline Literals``                   |
-+----------------------------------------------+---------------------------------------+
-| ``***nested markup is not supported***``     | ***nested markup is not supported***  |
-+----------------------------------------------+---------------------------------------+
++----------------------------------------+------------------------------------+
+|Markup                                  |Result                              |
++========================================+====================================+
+|``**Bold Text**``                       |**Bold text**                       |
++----------------------------------------+------------------------------------+
+|``*Italic*``                            |*Italic*                            |
++----------------------------------------+------------------------------------+
+|````Inline Literals````                 |``Inline Literals``                 |
++----------------------------------------+------------------------------------+
+|``***nested markup is not supported***``|***nested markup is not supported***|
++----------------------------------------+------------------------------------+
 
 Hyperlinks
 ==========
@@ -110,17 +110,17 @@ Hyperlinks
 External Links
 --------------
 
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| Markup                                                          | Result                                                       |
-+=================================================================+==============================================================+
-| ``http://www.python.org/``                                      | http://www.python.org/                                       |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| ``External hyperlinks, like `Python <http://www.python.org/>`_``| External hyperlinks, like `Python <http://www.python.org/>`_ |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
-| ``External hyperlinks, like Moin_.``                            | External hyperlinks, like Moin_.                             |
-|                                                                 |                                                              |
-| ``.. _Moin: http://moinmo.in/``                                 | .. _Moin: http://moinmo.in/                                  |
-+-----------------------------------------------------------------+--------------------------------------------------------------+
++----------------------------------------------------------------+------------------------------------------------------------+
+|Markup                                                          |Result                                                      |
++================================================================+============================================================+
+|``http://www.python.org/``                                      |http://www.python.org/                                      |
++----------------------------------------------------------------+------------------------------------------------------------+
+|``External hyperlinks, like `Python <http://www.python.org/>`_``|External hyperlinks, like `Python <http://www.python.org/>`_|
++----------------------------------------------------------------+------------------------------------------------------------+
+|``External hyperlinks, like Moin_.``                            |External hyperlinks, like Moin_.                            |
+|                                                                |                                                            |
+|``.. _Moin: http://moinmo.in/``                                 |.. _Moin: http://moinmo.in/                                 |
++----------------------------------------------------------------+------------------------------------------------------------+
 
 Internal Links
 --------------
@@ -153,7 +153,7 @@ Then reference the anchor, like this: example_
 To link to section headings do Headings_. If a section title has embeded blanks, you must enclose the
 heading with backtic characters: `Internal Links`_.
 
-**Notes**
+**Notes:**
  - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
 
 Images
@@ -187,8 +187,53 @@ Before text.
 
 After text.
 
-**Note** The Sphinx parser does not have an image named "png" so the alternate text
-will be displayed.
+**Notes:** 
+ - The Sphinx parser does not have an image named "png" so the alternate text
+   will be displayed.
+
+Figures
+=======
+
+Figures display graphics like images, but have the added feature of supporting captions and explanatory text. Figures are block elements, so figures declared successively will display in a column.
+
+**Markup**::
+
+    Before text.
+
+    .. figure:: png
+       :height: 100
+       :width: 200
+       :scale: 50
+       :alt: alternate text png
+
+       Moin Logo
+
+       This logo replaced the "MoinMoin Man"
+       logo long ago.
+
+    After text.
+
+**Result**:
+
+Before text.
+
+.. figure:: png
+   :height: 100
+   :width: 200
+   :scale: 50
+   :alt: alternate text png
+
+   Moin Logo
+
+   This logo replaced the "MoinMoin Man"
+   logo long ago.
+
+After text.
+
+**Notes:** 
+ - The Sphinx parser does not have an image named "png" so the alternate text
+   will be displayed.
+ - The Sphinx parser does not support figures so the caption and explanatory text will not display correctly.
 
 Blockquotes and Indentations
 ============================
@@ -283,10 +328,15 @@ Ordered Lists
  #. item 2
 
 **Notes**:
- - Ordered lists can be automatically enumerated using the ``#`` character as demonstrated above. Note that the first item of an ordered list
-   auto-enumerated in this fashion must use explicit numbering notation (e.g. ``1.``) in order to select the enumeration sequence type
-   (e.g. Roman numerals, Arabic numerals, etc.), initial number (for lists which do not start at "1") and formatting type (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
-   enumerated lists can be found in the `reStructuredText documentation <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+ - Ordered lists can be automatically enumerated using the ``#`` character as 
+   demonstrated above. Note that the first item of an ordered list
+   auto-enumerated in this fashion must use explicit numbering notation 
+   (e.g. ``1.``) in order to select the enumeration sequence type
+   (e.g. Roman numerals, Arabic numerals, etc.), initial number 
+   (for lists which do not start at "1") and formatting type  
+   (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
+   enumerated lists can be found in the `reStructuredText documentation 
+   <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
  - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
 
@@ -492,12 +542,12 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
  | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-**Note**
-The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
-HTML markup added by the Sphinx parser (the width attribute generates an HTML
-validation error), nor does it use Javascript to adjust the width of tables.
-Under Moin2, tables and table cells will be of minimal width
-(unless there is CSS styling to set tables larger).
+**Notes:**
+ - The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+   HTML markup added by the Sphinx parser (the width attribute generates an HTML
+   validation error), nor does it use Javascript to adjust the width of tables.
+ - Under Moin2, tables and table cells will be of minimal width
+   (unless there is CSS styling to set tables larger).
 
 Admonitions
 ===========
