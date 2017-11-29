@@ -67,9 +67,9 @@ class TestConverter(Base):
 
     def test_table(self):
         data = [
-            (u"<page:table><page:table-body><page:table-row><page:table-cell>A</page:table-cell><page:table-cell>B</page:table-cell><page:table-cell page:number-rows-spanned=\"2\">D</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\">C</page:table-cell></page:table-row></page:table-body></page:table>", "+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n"),
-            (u"<page:table><page:table-body><page:table-row><page:table-cell><page:strong>A</page:strong></page:table-cell><page:table-cell><page:strong>B</page:strong></page:table-cell><page:table-cell><page:strong>C</page:strong></page:table-cell></page:table-row><page:table-row><page:table-cell><page:p>1</page:p></page:table-cell><page:table-cell>2</page:table-cell><page:table-cell>3</page:table-cell></page:table-row></page:table-body></page:table>", u"+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n"),
-            (u'<page:page><page:body><page:table><page:table-header><page:table-row><page:table-cell><page:p>AAAAAAAAAAAAAAAAAA</page:p></page:table-cell><page:table-cell><page:p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</page:p></page:table-cell></page:table-row></page:table-header><page:table-body><page:table-row><page:table-cell page:number-rows-spanned=\"2\"><page:p>cell spanning 2 rows</page:p></page:table-cell><page:table-cell><page:p>cell in the 2nd column</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell><page:p>cell in the 2nd column of the 2nd row</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>test</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>test</page:p></page:table-cell></page:table-row></page:table-body></page:table></page:body></page:page>', """+--------------------+-------------------------------------+
+            (u"<page:table><page:table-body><page:table-row><page:table-cell>A</page:table-cell><page:table-cell>B</page:table-cell><page:table-cell page:number-rows-spanned=\"2\">D</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\">C</page:table-cell></page:table-row></page:table-body></page:table>", "\n+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n"),
+            (u"<page:table><page:table-body><page:table-row><page:table-cell><page:strong>A</page:strong></page:table-cell><page:table-cell><page:strong>B</page:strong></page:table-cell><page:table-cell><page:strong>C</page:strong></page:table-cell></page:table-row><page:table-row><page:table-cell><page:p>1</page:p></page:table-cell><page:table-cell>2</page:table-cell><page:table-cell>3</page:table-cell></page:table-row></page:table-body></page:table>", u"\n+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n"),
+            (u'<page:page><page:body><page:table><page:table-header><page:table-row><page:table-cell><page:p>AAAAAAAAAAAAAAAAAA</page:p></page:table-cell><page:table-cell><page:p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</page:p></page:table-cell></page:table-row></page:table-header><page:table-body><page:table-row><page:table-cell page:number-rows-spanned=\"2\"><page:p>cell spanning 2 rows</page:p></page:table-cell><page:table-cell><page:p>cell in the 2nd column</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell><page:p>cell in the 2nd column of the 2nd row</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>test</page:p></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>test</page:p></page:table-cell></page:table-row></page:table-body></page:table></page:body></page:page>', """\n+--------------------+-------------------------------------+
 |AAAAAAAAAAAAAAAAAA  |BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB  |
 +====================+=====================================+
 |cell spanning 2 rows|cell in the 2nd column               |
@@ -82,7 +82,7 @@ class TestConverter(Base):
 +----------------------------------------------------------+
 
 """),
-            (u"<page:table><page:table-body><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:strong>A</page:strong></page:table-cell><page:table-cell><page:strong>C</page:strong></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>1</page:p></page:table-cell></page:table-row></page:table-body></page:table>", u"+------+-----+\n|**A** |**C**|\n+------+-----+\n|1     |     |\n+------+-----+\n\n"),
+            (u"<page:table><page:table-body><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:strong>A</page:strong></page:table-cell><page:table-cell><page:strong>C</page:strong></page:table-cell></page:table-row><page:table-row><page:table-cell page:number-cols-spanned=\"2\"><page:p>1</page:p></page:table-cell></page:table-row></page:table-body></page:table>", u"\n+------+-----+\n|**A** |**C**|\n+------+-----+\n|1     |     |\n+------+-----+\n\n"),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -90,9 +90,9 @@ class TestConverter(Base):
     def test_p(self):
         data = [
             (u"<page:page><page:body><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:body></page:page>", "A\n\nB\n\nC\n\nD\n"),
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "+-+-+\n|Z|A|\n| | |\n| |B|\n| | |\n| |C|\n| | |\n| |D|\n+-+-+\n\n"),
-            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell></page:table_row><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "+-+\n|Z|\n+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+-+\n|Z|A|\n| | |\n| |B|\n| | |\n| |C|\n| | |\n| |D|\n+-+-+\n\n"),
+            (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell></page:table_row><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+\n|Z|\n+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
             (u"<page:page><page:body>A<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p>A<page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>A</page:body></page:page>", "A\n\n* A\n\n  A\n\n* A\n\n  A\n\n  A\n\n* A\n\nA")
         ]
         for i in data:
@@ -100,7 +100,7 @@ class TestConverter(Base):
 
     def test_docutils_features(self):
         data = [
-            (u'<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>', """+--------------+----+
+            (u'<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>', """\n+--------------+----+
 |**Author:**   |Test|
 +--------------+----+
 |**Version:**  |1.17|
@@ -148,7 +148,7 @@ class TestConverter(Base):
 
 """),
             (u"<page:page><page:body><page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:blockcode> test </page:blockcode></page:list-item-body></page:list-item></page:list></page:body></page:page>", u"* A\n::\n\n     test \n\n\n"),
-            (u'<page:page><page:body><page:table><page:table-body><page:table-row><page:table-cell><page:p><page:strong>A</page:strong></page:p><page:line_break /><page:p><page:strong>A</page:strong></page:p></page:table-cell><page:table-cell><page:strong>B</page:strong><page:line_break /><page:strong>B</page:strong></page:table-cell></page:table-row></page:table-body></page:table></page:body></page:page>', '+-----+-----+\n|**A**|**B**|\n|     |     |\n|**A**|**B**|\n+-----+-----+\n\n'),
+            (u'<page:page><page:body><page:table><page:table-body><page:table-row><page:table-cell><page:p><page:strong>A</page:strong></page:p><page:line_break /><page:p><page:strong>A</page:strong></page:p></page:table-cell><page:table-cell><page:strong>B</page:strong><page:line_break /><page:strong>B</page:strong></page:table-cell></page:table-row></page:table-body></page:table></page:body></page:page>', '\n+-----+-----+\n|**A**|**B**|\n|     |     |\n|**A**|**B**|\n+-----+-----+\n\n'),
         ]
         for i in data:
             yield (self.do, ) + i
