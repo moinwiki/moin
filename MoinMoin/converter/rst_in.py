@@ -255,6 +255,12 @@ class NodeVisitor(object):
         self.close_moin_page_node()
         self.close_moin_page_node()
 
+    def visit_caption(self, node):
+        self.open_moin_page_node(moin_page.figcaption())
+
+    def depart_caption(self, node):
+        self.close_moin_page_node()
+
     def visit_copyright(self, node):
         self.open_moin_page_node(moin_page.table_row())
         self.open_moin_page_node(moin_page.table_cell())
@@ -351,10 +357,10 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_figure(self, node):
-        pass
+        self.open_moin_page_node(moin_page.figure(attrib={moin_page.class_: "moin-figure"}))
 
     def depart_figure(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_footer(self, node):
         pass
