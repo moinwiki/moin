@@ -571,6 +571,9 @@ class NodeVisitor(object):
 
         if not allowed_uri_scheme(refuri):
             return
+        if refuri == u'':
+            # build a link to a heading or an explicitly defined anchor
+            refuri = Iri(scheme='wiki.local', fragment=node.attributes['name'].replace(' ', '_'))
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
     def depart_reference(self, node):
@@ -925,7 +928,8 @@ class Converter(object):
             break
         visitor = NodeVisitor()
         walkabout(docutils_tree, visitor)
-        return visitor.tree()
+        ret = visitor.tree()
+        return ret
 
 
 from . import default_registry
