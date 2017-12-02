@@ -15,20 +15,20 @@
     <div id="moin-main-wrapper">
         {{ snippets.before_header() }}
         <header id="moin-header">
-            {% block header %}
-                {% if snippets.logo() %}
+            {%- block header %}
+                {%- if snippets.logo() %}
                     <div id="moin-logo">
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ snippets.logo() }}</a>
                     </div>
-                {% endif %}
-                {% if cfg.sitename %}
+                {%- endif %}
+                {%- if cfg.sitename %}
                     <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
                         {{ cfg.sitename }}
                     </a>
-                {% endif %}
-                {% if search_form %}
+                {%- endif %}
+                {%- if search_form %}
                     {{ header_search(search_form) }}
-                {% endif %}
+                {%- endif %}
                 <ul id="moin-username">
                     {{ utils.user_login_logoff() }}
                 </ul>
