@@ -137,10 +137,10 @@ def check_template_indentation(lines, filename, logger):
                         # found lines similar to: <td>...\n</td>
                         continue
                 if stripped.startswith(ends):
-                    # convert {% endif %} to tuple ('{% if', '{%- if') or similar
-                    block_open = (stripped.split(' %}')[0].replace('end', '').replace('-', ''),)
-                    block_open += ((block_open[0].replace('{%', '{%-')), )
-                    if prior_line.startswith(block_open):
+                    # convert end of block to prior beginning of block by removing "end" and any "-"s
+                    block_end = stripped.split(' %}')[0].split(' -%}')[0].replace('end', '').replace('-', '')
+                    prior_line = prior_line.replace('-', '')
+                    if prior_line.startswith(block_end):
                         # found lines similar to: {% block...\n{% endblock %}
                         continue
                 logger.log(filename, u"Non-standard dedent before line %d -- not fixed!" % (idx + 1))
@@ -148,26 +148,21 @@ def check_template_indentation(lines, filename, logger):
 
 def check_template_spacing(lines, filename, logger):
     """
-    Create message if there is not a blank afer {{, {%, {%-, {# and before }}, %}, -%}, #}.
+    Create message if there is not a blank afer {{, {%, {#, {{-, {%-, {#- and before }}, %}, #},  -}}, -%}, -#}.
     """
-    pattern = re.compile(r'(\{[{#]\S)|(\S[}#]\})')
+    pattern = re.compile(r'(\{[{#%])|([}#%]\})')
     for idx, line in enumerate(lines):
-        # log missing spaces in {{myfunction}} and {#my comment#}
+        # log missing spaces in {{-myfunction}}, {#mycomment-#}, {%-myoperator%}
         m = pattern.search(line)
         if m:
-            logger.log(filename, u"Missing space within %s on line %d - not fixed!" % (m.group(0), idx + 1))
-        # log missing spaces in {%if something... and {%-if something...
-        m = [m.start() for m in re.finditer('{%', line)]
-        if m:
-            for index in m:
-                if not line.startswith((' ', '- '), index + 2):
-                    logger.log(filename, 'Missing space within %s on line %d - not fixed!' % (line[index:index + 4], idx + 1))
-        # log missing spaces in ...something%} and ...something-%}
-        m = [m.start() for m in re.finditer('%}', line)]
-        if m:
-            for index in m:
-                if not line.endswith((' ', ' -'), 0, index):
-                    logger.log(filename, 'Missing space within %s on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
+            m_start = [m.start() for m in re.finditer('{%|{{|{#', line)]
+            for index in m_start:
+                if not line.startswith((' ', '- '), index + 2) and not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-'):
+                    logger.log(filename, u'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
+            m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
+            for index in m_end:
+                if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}',  '-}}', '-%}', '-#}'):
+                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
 
 
 def check_files(filename, suffix):
