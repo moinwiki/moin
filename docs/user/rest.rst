@@ -125,36 +125,28 @@ External Links
 Internal Links
 --------------
 
-**Markup**::
+.. _myanchor:
 
- To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page
- is not a wiki page, then the Home links are not valid.)
-
- To reference an anchor within this item, first create an invisible anchor:
-
- .. _example:
-
- Then reference the anchor, like this: example_
-
- To link to section headings do Headings_. If a section title has embeded blanks, you must
- enclose the heading with backtic characters: `Internal Links`_.
-
-**Result**:
-
-To reference another item with this wiki, do http:Home or `Home <http:Home>`_. (If this page is not
-a wiki page, then the Home links are not valid.)
-
-To reference an anchor within this item, first create an invisible anchor:
-
-.. _example:
-
-Then reference the anchor, like this: example_
-
-To link to section headings do Headings_. If a section title has embeded blanks, you must enclose the
-heading with backtic characters: `Internal Links`_.
++----------------------------------------------------------------+------------------------------------------------------------+
+|Markup                                                          |Result                                                      |
++================================================================+============================================================+
+|``http:Home`` link to a page in this wiki                       |http:Home link to a page in this wiki                       |
++----------------------------------------------------------------+------------------------------------------------------------+
+|```Home <http:Home>`_`` link to a page in this wiki             |`Home <http:Home>`_ link to a page in this wiki             |
++----------------------------------------------------------------+------------------------------------------------------------+
+|``Headings_`` link to heading anchor on this page               |Headings_ link to heading anchor on this page               |
++----------------------------------------------------------------+------------------------------------------------------------+
+|```Internal Links`_`` link to heading with embedded blanks      |`Internal Links`_ link to heading with embedded blanks      |
++----------------------------------------------------------------+------------------------------------------------------------+
+|``.. _myanchor:`` create anchor, real anchor is above this table|create anchor, real anchor is above this table              |
++----------------------------------------------------------------+------------------------------------------------------------+
+|``myanchor_`` link to above anchor                              |myanchor_ link to above anchor                              |
++----------------------------------------------------------------+------------------------------------------------------------+
 
 **Notes:**
- - Section titles automatically generate hyperlink targets (the title text is used as the hyperlink name).
+ - If this page was created by Sphinx, none of the above internal link examples work correctly.
+ - The ".. _myanchor:" directive must begin in column one.
+ - Section titles (or headings) automatically generate hyperlink targets (the title text is used as the hyperlink name).
 
 Images
 ======
