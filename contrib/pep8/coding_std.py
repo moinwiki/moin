@@ -161,7 +161,7 @@ def check_template_spacing(lines, filename, logger):
                     logger.log(filename, u'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
             m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
             for index in m_end:
-                if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}',  '-}}', '-%}', '-#}'):
+                if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}'):
                     logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
 
 
