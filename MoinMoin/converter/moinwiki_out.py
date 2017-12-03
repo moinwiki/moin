@@ -566,17 +566,14 @@ class Converter(object):
         return u''
 
     def open_moinpage_table_header(self, elem):
-        # is this correct rowclass?
-        self.table_rowsclass = 'table-header'
+        # used for ReST to moinwiki conversion, maybe others that generate table head
         ret = self.open_children(elem)
-        self.table_rowsclass = u''
-        return ret
+        return ret + u'=====\n'
 
     def open_moinpage_table_footer(self, elem):
-        self.table_rowsclass = 'table-footer'
+        # no known use, need some markup that generates table foot
         ret = self.open_children(elem)
-        self.table_rowsclass = u''
-        return ret
+        return u'=====\n' + ret
 
     def open_moinpage_table_body(self, elem):
         self.table_rowsclass = ''
