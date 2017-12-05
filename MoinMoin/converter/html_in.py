@@ -90,6 +90,11 @@ class Converter(object):
         TODO: Add support for different arguments
         """
         text = decode_data(data, contenttype)
+        # data cleanup is not needed by html_out, but is needed by moinwiki_out; CKEditor adds unwanted \n\t
+        while '\t\t' in text:
+            text = text.replace('\t\t', '\t')
+        text = text.replace('\r\n\t', '').replace('\n\t', '')
+
         content = normalize_split_text(text)
         # Be sure we have empty string in the base url
         self.base_url = ''
@@ -164,13 +169,6 @@ class Converter(object):
         attrib_new = self.convert_attributes(element)
         attrib.update(attrib_new)
         children = self.do_children(element)
-        if isinstance(children, list) and len(children) and isinstance(children[0], unicode) and children[0].startswith(u'\n\t'):
-            # strip \n\t chars inserted by CKEditor
-            # these are harmless if passed from html_out to browser;
-            # but harmful if content is passed to moinwiki_out for a conversion
-            children[0] = children[0][2:]
-            if children[0] == u'':
-                children = children[1:]
         return self.new(tag, attrib, children)
 
     def new_copy_symmetric(self, element, attrib):
