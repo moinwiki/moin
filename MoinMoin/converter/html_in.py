@@ -164,6 +164,13 @@ class Converter(object):
         attrib_new = self.convert_attributes(element)
         attrib.update(attrib_new)
         children = self.do_children(element)
+        if isinstance(children, list) and len(children) and isinstance(children[0], unicode) and children[0].startswith(u'\n\t'):
+            # strip \n\t chars inserted by CKEditor
+            # these are harmless if passed from html_out to browser;
+            # but harmful if content is passed to moinwiki_out for a conversion
+            children[0] = children[0][2:]
+            if children[0] == u'':
+                children = children[1:]
         return self.new(tag, attrib, children)
 
     def new_copy_symmetric(self, element, attrib):
@@ -265,7 +272,8 @@ class Converter(object):
         key = moin_page('outline-level')
         attrib = {}
         attrib[key] = heading_level
-        return self.new_copy(moin_page.h, element, attrib)
+        ret = self.new_copy(moin_page.h, element, attrib)
+        return ret
 
     def visit_xhtml_br(self, element):
         """
