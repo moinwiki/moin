@@ -531,7 +531,7 @@ class Converter(object):
             return u'^{0}^'.format(u''.join(elem.itertext()))
         if baseline_shift == u'sub':
             return u',,{0},,'.format(u''.join(elem.itertext()))
-        return u''
+        return u''.join(elem.itertext())
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
         return Moinwiki.stroke_open + self.open_children(elem) + Moinwiki.stroke_close
