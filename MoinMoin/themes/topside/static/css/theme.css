@@ -10,7 +10,6 @@ h1 { text-align: center; }
 
 a { text-decoration: none; color: #1409B9; }
 a:hover { text-decoration: underline; }
-.moin-permalink { opacity: .25; padding-left: .3em; }
 .current-link { text-decoration: underline; }
 
 #moin-searchform,

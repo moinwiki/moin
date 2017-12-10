@@ -5809,6 +5809,10 @@ h6:focus .moin-permalink {
 .moin-permalink {
   display: none;
 }
+.moin-permalink:after {
+  content: "\f1dd";
+  font-family: FontAwesome;
+}
 .moin-logo {
   text-align: center;
   position: relative;
