@@ -543,13 +543,19 @@ class Converter(object):
             return u'^{0}^'.format(u''.join(elem.itertext()))
         if baseline_shift == u'sub':
             return u',,{0},,'.format(u''.join(elem.itertext()))
-        return u''.join(elem.itertext())
+        return u''.join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
         return Moinwiki.stroke_open + self.open_children(elem) + Moinwiki.stroke_close
 
+    def open_moinpage_s(self, elem):  # s is used for stroke or strike by html_in
+        return self.open_moinpage_del(elem)
+
     def open_moinpage_ins(self, elem):  # underline
         return Moinwiki.underline + self.open_children(elem) + Moinwiki.underline
+
+    def open_moinpage_u(self, elem):  # underline via html_in
+        return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
         ret = Moinwiki.strong
