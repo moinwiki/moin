@@ -781,7 +781,12 @@ class ConverterPage(Converter):
             id = self._id.gen_text(''.join(elem.itertext()))
             elem.set(_tag_html_id, id)
 
-        self._special_stack[-1].add_heading(elem, elem.level, id)
+        try:
+            # do not create duplicate anchors to this heading when converting from one markup to another
+            if not elem[-1].attrib[html.class_] == u'moin-permalink':
+                self._special_stack[-1].add_heading(elem, elem.level, id)
+        except AttributeError:
+            self._special_stack[-1].add_heading(elem, elem.level, id)
         return elem
 
     def create_footnotes(self, top):
