@@ -653,7 +653,7 @@ class SpecialPage(object):
             html.href: "#{0}".format(id),
             html.class_: "moin-permalink",
             html.title_: _("Link to this heading")
-        }, children=(u"¶", )))
+        }))
         self._headings.append((elem, level, id))
 
     def add_toc(self, elem, maxlevel):

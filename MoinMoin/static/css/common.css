@@ -353,6 +353,11 @@ h4,
 h5,
 h6 { border-bottom: 3px solid #4e7da9; }
 
+/* heading permalinks */
+.moin-permalink { opacity: .2; padding-left: .3em; }
+/* link = foc1; paragraph = f1dd; eject = fo52; */
+.moin-permalink:after { content: "\f0c1"; font-family: FontAwesome; }
+
 /* buttons */
 
 a.moin-button:link,

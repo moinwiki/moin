@@ -122,6 +122,7 @@ ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
 a.moin-permalink:hover.moin-permalink{color:#1f62ad}
 h1:hover .moin-permalink,h2:hover .moin-permalink,h3:hover .moin-permalink,h4:hover .moin-permalink,h5:hover .moin-permalink,h6:hover .moin-permalink{display:inline;text-decoration:none}
+.moin-permalink:after{content:"\f1dd";font-family:FontAwesome}
 html,body{height:100%}
 #moin-main-wrapper{position:relative;min-height:100%}
 #moin-page{padding-bottom:105px}
