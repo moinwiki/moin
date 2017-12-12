@@ -183,7 +183,7 @@ class Content(object):
     data = property(fget=get_data)
 
     @timed('conv_in_dom')
-    def internal_representation(self, converters=['smiley'], attributes=None):
+    def internal_representation(self, attributes=None):
         """
         Return the internal representation of a document using a DOM Tree
         """
@@ -215,9 +215,8 @@ class Content(object):
             # as not every doc will have that element (e.g. for images, we just get
             # moin_page.object, for a tar item, we get a moin_page.table):
             doc.set(moin_page.page_href, unicode(links))
-            for conv in converters:
-                if conv == 'smiley':
-                    doc = smiley_conv(doc)
+            if self.contenttype.startswith((u'text/x.moin.wiki', u'text/x-mediawiki', u'text/x.moin.creole', )):
+                doc = smiley_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
         return doc
