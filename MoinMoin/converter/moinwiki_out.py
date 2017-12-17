@@ -484,9 +484,9 @@ class Converter(object):
             if type[0] == "x-moin/macro":
                 name = type[1].split(u'=')[1]
                 eol = '\n\n' if elem.tag.name == 'part' else ''
-                if len(elem) and iter(elem).next().tag.name == "arguments":
+                if len(elem) and elem[0].tag.name == "arguments":
                     return u"{0}<<{1}({2})>>{0}".format(
-                        eol, name, u','.join([u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == u"argument"]))
+                        eol, name, elem[0][0])
                 else:
                     return u"{0}<<{1}()>>{0}".format(eol, name)
             elif type[0] == "x-moin/format":

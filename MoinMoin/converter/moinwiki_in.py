@@ -219,8 +219,6 @@ class Converter(ConverterMacro):
         """
 
         stack.clear()
-        if macro_args:
-            macro_args = Arguments([macro_args])
         elem = self.macro(macro_name, macro_args, macro, True)
         stack.top_append_ifnotempty(elem)
 
@@ -763,8 +761,6 @@ class Converter(ConverterMacro):
 
     def inline_macro_repl(self, stack, macro, macro_name, macro_args=u''):
         """Handles macros using the placeholder syntax."""
-        if macro_args:
-            macro_args = Arguments([macro_args])
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
 

@@ -20,7 +20,6 @@ from pygments.util import ClassNotFound
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin.util.tree import moin_page
 from ._args_wiki import parse as parse_arguments
-from ._args import Arguments
 
 from ._table import TableMixin
 from ._util import normalize_split_text, _Iter

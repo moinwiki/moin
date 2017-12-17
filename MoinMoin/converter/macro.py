@@ -19,7 +19,6 @@ logging = log.getLogger(__name__)
 
 from MoinMoin.util import plugins
 from MoinMoin.i18n import _, L_, N_
-from MoinMoin.converter._args import Arguments
 from MoinMoin.util import iri
 from MoinMoin.util.mime import type_moin_document, Type
 from MoinMoin.util.tree import moin_page
@@ -47,7 +46,7 @@ class Converter(object):
 
         name = type.parameters['name']
         context_block = elem.tag == moin_page.part
-        args = elem[0][0] if len(elem) else None
+        args = elem[0] if len(elem) else None
         elem_body = context_block and moin_page.body() or moin_page.inline_body()
         elem_error = moin_page.error()
 
