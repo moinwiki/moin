@@ -33,7 +33,7 @@ class ConverterMacro(object):
             elem = moin_page.note()
             return elem
 
-        text = args[0]
+        text = args
         text = self.macro_text(text)  # footnotes may have markup, macro_text is likely overridden
         elem_body = moin_page.note_body(children=text)
         attrib = {moin_page.note_class: 'footnote'}
@@ -63,7 +63,7 @@ class ConverterMacro(object):
             return div
 
         if args:
-            args = parse_arguments(args[0], parse_re=include_re)
+            args = parse_arguments(args, parse_re=include_re)
         else:
             return error_message(_("Include Macro above has invalid format, missing item name"))
         pagename = args[0]
@@ -160,14 +160,8 @@ class ConverterMacro(object):
         })
 
         if args:
-            elem_arguments = moin_page.arguments()
+            elem_arguments = moin_page.arguments(children=(args, ))
             elem.append(elem_arguments)
-            for key, value in args.items():
-                attrib = {}
-                if key:
-                    attrib[moin_page.name] = key
-                elem_arg = moin_page.argument(attrib=attrib, children=(value, ))
-                elem_arguments.append(elem_arg)
 
         return elem
 

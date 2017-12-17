@@ -124,12 +124,12 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     def test_directive(self):
         data = [
             (u'.. macro:: <<TableOfContents()>>', '<page><body><table-of-content /></body></page>'),
-            (u'.. macro:: <<Macro()>>', '<page><body><part content-type="x-moin/macro;name=Macro"><arguments><argument></argument></arguments>&lt;&lt;Macro()&gt;&gt;</part></body></page>'),
-            (u'.. macro:: Macro(arg)', '<page><body><part content-type="x-moin/macro;name=Macro"><arguments><argument>arg</argument></arguments>&lt;&lt;Macro(arg)&gt;&gt;</part></body></page>'),
-            (u'test |a| test\n\n.. |a| macro:: <<Macro()>>', '<page><body><p>test <part content-type="x-moin/macro;name=Macro"><arguments><argument></argument></arguments>&lt;&lt;Macro()&gt;&gt;</part> test</p></body></page>'),
+            (u'.. macro:: <<Macro()>>', '<page><body><part content-type="x-moin/macro;name=Macro"><arguments></arguments></part></body></page>'),
+            (u'.. macro:: Macro(arg)', '<page><body><part content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></part></body></page>'),
+            (u'test |a| test\n\n.. |a| macro:: <<Macro()>>', '<page><body><p>test <part content-type="x-moin/macro;name=Macro"><arguments></arguments></part> test</p></body></page>'),
             (u'.. contents::\n  :depth: 1\n', '<page><body><table-of-content outline-level="1" /></body></page>'),
             (u'.. parser:: python test=test\n  import test\n  test.s = 11', '<page><body><part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part></body></page>'),
-            (u'.. include:: RecentChanges', '<page><body><part content-type="x-moin/macro;name=Include"><arguments><argument>RecentChanges</argument></arguments>&lt;&lt;Include(RecentChanges)&gt;&gt;</part></body></page>'),
+            (u'.. include:: RecentChanges', '<page><body><part content-type="x-moin/macro;name=Include"><arguments>RecentChanges</arguments></part></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i

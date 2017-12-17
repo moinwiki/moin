@@ -555,17 +555,18 @@ class NodeVisitor(object):
                 if arguments and arguments[0]:
                     node.set(moin_page.outline_level, arguments[0])
                 return
-            arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
+            try:
+                arguments = refuri[2:-2].split(u'(')[1][:-1]
+            except IndexError:
+                arguments = u''  # <<DateTime>>
+
             self.open_moin_page_node(
                 moin_page.part(
                     attrib={moin_page.content_type: "x-moin/macro;name={0}".format(macro_name)}))
-            if arguments:
-                self.open_moin_page_node(moin_page.arguments())
-                for i in arguments:
-                    self.open_moin_page_node(moin_page.argument(children=[i]))
-                    self.close_moin_page_node()
-                self.close_moin_page_node()
-            self.open_moin_page_node(refuri)
+
+            self.open_moin_page_node(moin_page.arguments())
+            self.open_moin_page_node(arguments)
+            self.close_moin_page_node()
             self.close_moin_page_node()
             return
 
@@ -846,6 +847,7 @@ class MoinDirectives(object):
     # document tree which is a reference, but through a much better user
     # interface.
     def macro(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
+        # .. macro:: <<DateTime()>>
         # content contains macro to be called
         if len(content):
             # Allow either with or without brackets
