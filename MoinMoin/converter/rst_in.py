@@ -555,6 +555,18 @@ class NodeVisitor(object):
                 if arguments and arguments[0]:
                     node.set(moin_page.outline_level, arguments[0])
                 return
+            if macro_name == u"Include":
+                # include macros are expanded by include.py similar to transclusions
+                # rst include handles only wiki pages and does not support additional arguments like moinwiki
+                arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
+                link = Iri(scheme=u'wiki.local', path=arguments)
+                node = xinclude.include(attrib={
+                    xinclude.href: link,
+                    moin_page.alt: refuri,
+                    moin_page.content_type: 'x-moin/macro;name=' + macro_name,
+                })
+                self.open_moin_page_node(node)
+                return
             try:
                 arguments = refuri[2:-2].split(u'(')[1][:-1]
             except IndexError:
@@ -563,11 +575,11 @@ class NodeVisitor(object):
             self.open_moin_page_node(
                 moin_page.part(
                     attrib={moin_page.content_type: "x-moin/macro;name={0}".format(macro_name)}))
-
-            self.open_moin_page_node(moin_page.arguments())
-            self.open_moin_page_node(arguments)
-            self.close_moin_page_node()
-            self.close_moin_page_node()
+            if arguments:
+                self.open_moin_page_node(moin_page.arguments())
+                self.open_moin_page_node(arguments)
+                self.close_moin_page_node()
+                self.close_moin_page_node()
             return
 
         if not allowed_uri_scheme(refuri):
