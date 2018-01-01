@@ -562,7 +562,7 @@ class Converter(object):
                 key = html('class')
                 attribute[key] = "element-{0}".format(generate)
                 return self.new_copy(html.span, elem, attribute)
-        # If no any attributes is handled by our converter, just return span
+        # If no attributes are handled by our converter, just return span
         return self.new_copy(html.span, elem)
 
     def visit_moinpage_s(self, elem):
