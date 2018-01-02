@@ -304,6 +304,7 @@ class Converter(object):
         self.list_item_label = []
         self.footnotes = []
         self.objects = []
+        self.headings = []
         self.all_used_references = []
         self.anonymous_reference = None
         self.used_references = []
@@ -401,8 +402,6 @@ class Converter(object):
                 while text in [t for (t, h) in self.all_used_references]:
                     text += u"~"
         self.used_references.append((text, href))
-        self.all_used_references.append((text, href))
-        # self.objects.append("\n\n.. _%s: %s\n\n" % (text, href))
         return u"`{0}`_".format(text)
 
     def open_moinpage_blockcode(self, elem):
@@ -461,6 +460,7 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
+        self.headings.append(text)
         if ReST.h_top[level] == ' ':
             ret = u"\n\n{0}\n{1}\n\n".format(text, ReST.h_bottom[level] * len(text))
         else:
@@ -627,19 +627,15 @@ class Converter(object):
     def open_moinpage_body(self, elem):
         return self.open_children(elem)
 
-    def open_moinpage_part(self, elem):
+    def open_moinpage_part(self, elem, sep=u'\n'):
         type = elem.get(moin_page.content_type, u"").split(u';')
         if len(type) == 2:
             if type[0] == u"x-moin/macro":
                 if len(elem) and iter(elem).next().tag.name == "arguments":
-                    alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], u','.join(
-                        [u''.join(c.itertext()) for c in iter(elem).next() if c.tag.name == "argument"]))
+                    alt = u"<<{0}({1})>>".format(type[1].split(u'=')[1], elem[0][0])
                 else:
                     alt = u"<<{0}()>>".format(type[1].split(u'=')[1])
-
-                obj = u".. |{0}| macro:: {1}".format(alt, alt)
-                self.objects.append(obj)
-                return u" |{0}| ".format(alt)
+                return sep + u".. macro:: {0}".format(alt) + sep
             elif type[0] == u"x-moin/format":
                 elem_it = iter(elem)
                 ret = u"\n\n.. parser:{0}".format(type[1].split(u'=')[1])
@@ -654,7 +650,7 @@ class Converter(object):
                 return ret
         return elem.get(moin_page.alt, u'') + u"\n"
 
-    def open_moinpage_inline_part(self, elem):
+    def open_moinpage_inline_part(self, elem, sep=u''):
         return self.open_moinpage_part(elem)
 
     def open_moinpage_separator(self, elem):
@@ -684,6 +680,10 @@ class Converter(object):
             return u"\\ :sup:`{0}`\\ ".format(u''.join(elem.itertext()))
         if baseline_shift == 'sub':
             return u"\\ :sub:`{0}`\\ ".format(u''.join(elem.itertext()))
+        id = elem.get(moin_page.id, u'')
+        if id:
+            self.headings.append(id)
+            return u'\n.. _{0}:\n'.format(id)
         return self.open_children(elem)
 
     def open_moinpage_strong(self, elem):
@@ -788,14 +788,16 @@ class Converter(object):
 
     def define_references(self):
         """
-        Adds defenitions of founded links and objects to the converter output.
+        Adds definitions of found links and objects to the converter output.
         """
         ret = u''
         self.all_used_references.extend(self.used_references)
         definitions = [u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)) +
-                       u".. _{0}: {1}".format(t, h) for t, h in self.used_references]
+                       u".. _{0}: {1}".format(t, h) for t, h in self.used_references if t not in self.headings]
         definitions.extend(u" " * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)) +
                            link for link in self.objects)
+        # convert ".. _example: wiki.local:#example" to ".. _example:"
+        definitions = [x.split(' wiki.local')[0] for x in definitions]
         definition_block = u"\n\n".join(definitions)
 
         if definitions:

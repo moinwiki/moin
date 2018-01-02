@@ -125,9 +125,12 @@ class TestConverter(Base):
 
     def test_link(self):
         data = [
-            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba</page:p></page:body></page:page>', u'Abra `test`_ arba\n\n\n.. _test: http://python.org\n\n'),
-            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba <page:a xlink:href="http://python.ru">test</page:a></page:p></page:body></page:page>', u'Abra `test`_ arba `test`__\n\n\n.. __: http://python.ru\n\n.. _test: http://python.org\n\n'),
-            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba <page:a xlink:href="http://python.ru">test</page:a> rbaa <page:a xlink:href="http://python.su">test</page:a></page:p></page:body></page:page>', u'Abra `test`_ arba `test`__ rbaa `test~`_\n\n\n.. __: http://python.ru\n\n.. _test: http://python.org\n\n.. _test~: http://python.su\n\n'),
+            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba</page:p></page:body></page:page>',
+                u'Abra `test`_ arba\n\n\n.. _test: http://python.org\n\n'),
+            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba <page:a xlink:href="http://python.ru">test</page:a></page:p></page:body></page:page>',
+                u'Abra `test`_ arba `test`_\n\n\n.. _test: http://python.org\n\n.. _test: http://python.ru\n\n'),
+            (u'<page:page><page:body><page:p>Abra <page:a xlink:href="http://python.org">test</page:a> arba <page:a xlink:href="http://python.ru">test</page:a> rbaa <page:a xlink:href="http://python.su">test</page:a></page:p></page:body></page:page>',
+                u'Abra `test`_ arba `test`_ rbaa `test`_\n\n\n.. _test: http://python.org\n\n.. _test: http://python.ru\n\n.. _test: http://python.su\n\n'),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -168,8 +171,10 @@ class TestConverter(Base):
     def test_macros(self):
         data = [
             (u"<page:tag><page:table-of-content page:outline-level=\"2\" /></page:tag>", "\n\n.. contents::\n   :depth: 2\n\n"),
-            (u"<page:part page:alt=\"&lt;&lt;Anchor(anchorname)&gt;&gt;\" page:content-type=\"x-moin/macro;name=Anchor\"><page:arguments><page:argument>anchorname</page:argument></page:arguments></page:part>", " |<<Anchor(anchorname)>>| \n\n.. |<<Anchor(anchorname)>>| macro:: <<Anchor(anchorname)>>\n\n"),
-            (u"<page:part page:alt=\"&lt;&lt;MonthCalendar(,,12)&gt;&gt;\" page:content-type=\"x-moin/macro;name=MonthCalendar\"><page:arguments><page:argument /><page:argument /><page:argument>12</page:argument></page:arguments></page:part>", u' |<<MonthCalendar(,,12)>>| \n\n.. |<<MonthCalendar(,,12)>>| macro:: <<MonthCalendar(,,12)>>\n\n'),
+            (u"<page:part page:alt=\"&lt;&lt;Anchor(anchorname)&gt;&gt;\" page:content-type=\"x-moin/macro;name=Anchor\"><page:arguments>anchorname</page:arguments></page:part>",
+                "\n.. macro:: <<Anchor(anchorname)>>\n"),
+            (u"<page:part page:alt=\"&lt;&lt;MonthCalendar(,,12)&gt;&gt;\" page:content-type=\"x-moin/macro;name=MonthCalendar\"><page:arguments>,,12</page:arguments></page:part>",
+                u'\n.. macro:: <<MonthCalendar(,,12)>>\n'),
         ]
         for i in data:
             yield (self.do, ) + i
