@@ -38,7 +38,7 @@ class TestConverter(object):
             (u'**Text**', '<page><body><p><strong>Text</strong></p></body></page>'),
             (u'*Text*', '<page><body><p><emphasis>Text</emphasis></p></body></page>'),
             (u'``Text``', '<page><body><p><code>Text</code></p></body></page>'),
-            (u"`Text <javascript:alert('xss')>`_", u'<page><body><p>Text</p></body></page>'),
+            (u"`Text <javascript:alert('xss')>`_", u'<page><body><p><admonition type="error">Text</admonition></p></body></page>'),
             (u'Text\n\n~~~~~\n\nTest', '<page><body><p>Text</p><separator xhtml:class="moin-hr3" /><p>Test</p></body></page>'),
             (u'.. comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
             (u'..\n comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
@@ -124,9 +124,9 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     def test_directive(self):
         data = [
             (u'.. macro:: <<TableOfContents()>>', '<page><body><table-of-content /></body></page>'),
-            (u'.. macro:: <<Macro()>>', '<page><body><part content-type="x-moin/macro;name=Macro" /></body></page>'),
-            (u'.. macro:: Macro(arg)', '<page><body><part content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></part></body></page>'),
-            (u'test |a| test\n\n.. |a| macro:: <<Macro()>>', '<page><body><p>test <part content-type="x-moin/macro;name=Macro" /> test</p></body></page>'),
+            (u'.. macro:: <<Macro()>>', '<page><body><inline-part content-type="x-moin/macro;name=Macro" /></body></page>'),
+            (u'.. macro:: Macro(arg)', '<page><body><inline-part content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></inline-part></body></page>'),
+            (u'test |a| test\n\n.. |a| macro:: <<Macro()>>', '<page><body><p>test <inline-part content-type="x-moin/macro;name=Macro" /> test</p></body></page>'),
             (u'.. contents::\n  :depth: 1\n', '<page><body><table-of-content outline-level="1" /></body></page>'),
             (u'.. parser:: python test=test\n  import test\n  test.s = 11', '<page><body><part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part></body></page>'),
             (u'.. include:: RecentChanges', '<page><body><xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" /></body></page>'),
