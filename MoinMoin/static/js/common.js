@@ -711,7 +711,7 @@ MoinMoin.prototype.diffScroll = function () {
             $(".moin-diff-highlight").removeClass("moin-diff-highlight");
             // if target has been found, highlight element and scroll to it
             $(target).addClass("moin-diff-highlight");
-            $(target).append($('<span id="' + next + '"></span>'));
+            $(target).prepend($('<span id="' + next + '"></span>'));
             window.location.href = url + "#" + next
             return false;
         });
