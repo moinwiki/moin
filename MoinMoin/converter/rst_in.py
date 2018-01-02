@@ -573,7 +573,7 @@ class NodeVisitor(object):
                 arguments = u''  # <<DateTime>>
 
             self.open_moin_page_node(
-                moin_page.part(
+                moin_page.inline_part(
                     attrib={moin_page.content_type: "x-moin/macro;name={0}".format(macro_name)}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
@@ -583,6 +583,7 @@ class NodeVisitor(object):
             return
 
         if not allowed_uri_scheme(refuri):
+            self.visit_error(node)
             return
         if refuri == u'':
             # build a link to a heading or an explicitly defined anchor
@@ -605,6 +606,12 @@ class NodeVisitor(object):
         self.depart_paragraph(node)
 
     def visit_substitution_definition(self, node):
+        """
+        All substitutions have been made by docutils rst parser, so no need to put anything on DOM.
+        Input was similar to:
+
+        .. |a| macro:: <<Date()>>
+        """
         node.children = []
 
     def depart_substitution_definition(self, node):
@@ -674,7 +681,11 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_target(self, node):
-        ".. _example:"
+        """
+        Pass explicit anchor as a SPAN with no children, just an ID attribute
+
+        .. _example:
+        """
         anchor = node.get('refid')
         if anchor:
             self.open_moin_page_node(moin_page.span(attrib={moin_page.id: anchor}))
