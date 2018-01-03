@@ -86,9 +86,37 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             yield (self.do, ) + i
 
     def test_headers(self):
+        """
+        ReST has a unique method of defining heading levels.
+
+        Depending on sequence of headings and reuse of heading underlining, then the docutils parser returns
+        nodes to the moin2 rst_in parser as either a:
+            * title
+            * subtitle
+            * section, then again as title
+        where title and subtitle are similar to the left and right headings on pages of a book,
+        but this usage is lost on html pages.
+
+        The result is heading levels have unexpected values:
+            * title, subtitle, section, subsection... (then subtitle and section are rendered as h2, subsection is h3)
+            * <paragraph>, section, subsection... (then section is an h2, subsection is h3)
+        """
         data = [
-            (u'Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n', '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>'),
-            (u'================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============', '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>')
+            # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#sections; note first header is level 2 because same underlining was used for Chapter 2 Title
+            (u'Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n',
+                '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>'),
+            # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#document-title-subtitle; note Subtitle and Section Title are level 2
+            (u'================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============',
+                '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>'),
+            # similar to test above; note that H3 is level 2, H4 is level 3, ...
+            (u'==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\n',
+                '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="2">H3</h><h outline-level="3">H4</h><h outline-level="4">H5</h><h outline-level="5">H6</h></body></page>'),
+            # adding a H2a heading using the H2 style underlining results in "normal" heading levels: H1 is a title, h2 and all other headings are sections
+            (u'==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n\n',
+                '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="3">H3</h><h outline-level="4">H4</h><h outline-level="5">H5</h><h outline-level="6">H6</h><h outline-level="2">H2a</h></body></page>'),
+            # when a document starts with a paragraph, then the first heading is rendered as a section level 2 heading
+            (u'Paragraph\n\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\n',
+                '<page><body><p>Paragraph</p><h outline-level="2">H1</h><h outline-level="3">H2</h><h outline-level="4">H3</h><h outline-level="5">H4</h><h outline-level="6">H5</h></body></page>'),
         ]
         for i in data:
             yield (self.do, ) + i
