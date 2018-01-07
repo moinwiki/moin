@@ -462,9 +462,9 @@ class Converter(object):
             level = 6
         self.headings.append(text)
         if ReST.h_top[level] == ' ':
-            ret = u"\n\n{0}\n{1}\n\n".format(text, ReST.h_bottom[level] * len(text))
+            ret = u"\n{0}\n{1}\n".format(text, ReST.h_bottom[level] * len(text))
         else:
-            ret = u"\n\n{0}\n{1}\n{2}\n\n".format(ReST.h_top[level] * len(text), text, ReST.h_bottom[level] * len(text))
+            ret = u"\n{0}\n{1}\n{2}\n".format(ReST.h_top[level] * len(text), text, ReST.h_bottom[level] * len(text))
         return ret
 
     def open_xinclude_include(self, elem):
