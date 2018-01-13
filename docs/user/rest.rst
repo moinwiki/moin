@@ -146,12 +146,16 @@ Internal Links
 **Notes:**
  - If this page was created by Sphinx, none of the above internal link examples work correctly.
  - The ".. _myanchor:" directive must begin in column one.
- - Section titles (or headings) automatically generate hyperlink targets (the title text is used as the hyperlink name).
+ - Section titles (or headings) automatically generate hyperlink targets (the title
+   text is used as the hyperlink name).
 
 Images
 ======
 
-Images may be positioned by using the align parameter with a value of left, center, or right. There is no facility to embed an image within a paragraph. There must be a blank line before and after the image declaration. Images are not enclosed within a block level element so several images declared successively without any positioning will display in a horizontal row.
+Images may be positioned by using the align parameter with a value of left, center, or right.
+There is no facility to embed an image within a paragraph. There must be a blank line before
+and after the image declaration. Images are not enclosed within a block level element so
+several images declared successively without any positioning will display in a horizontal row.
 
 **Markup**::
 
@@ -186,7 +190,9 @@ After text.
 Figures
 =======
 
-Figures display graphics like images, but have the added feature of supporting captions and explanatory text. Figures are block elements, so figures declared successively will display in a column.
+Figures display graphics like images, but have the added feature of supporting captions
+and explanatory text. Figures are block elements, so figures declared successively
+will display in a column.
 
 **Markup**::
 
@@ -225,7 +231,8 @@ After text.
 **Notes:**
  - The Sphinx parser does not have an image named "png" so the alternate text
    will be displayed.
- - The Sphinx parser does not support figures so the caption and explanatory text will not display correctly.
+ - The Sphinx parser does not support figures so the caption and explanatory text
+   will not display correctly.
 
 Blockquotes and Indentations
 ============================
@@ -271,26 +278,28 @@ Unordered Lists
 **Markup**::
 
  - item 1
-
  - item 2
 
-  - item 2.1
+   - item 2.1
+   - item 2.2
 
-   - item 2.1.1
+     - item 2.2.1
+     - item 2.2.2
 
  - item 3
 
 **Result**:
 
- - item 1
-
- - item 2
+- item 1
+- item 2
 
   - item 2.1
+  - item 2.2
 
-   - item 2.1.1
+    - item 2.2.1
+    - item 2.2.2
 
- - item 3
+- item 3
 
 Ordered Lists
 ---------------
@@ -298,26 +307,28 @@ Ordered Lists
 **Markup**::
 
  1. item 1
-
-    (A) item 1.1
-    (#) item 1.2
-
-        i) item 1.2.1
-        #) item 1.2.2
-
  #. item 2
+
+    (A) item 2.1
+    (#) item 2.2
+
+        i) item 2.2.1
+        #) item 2.2.2
+
+ #. item 3
 
 **Result**:
 
  1. item 1
-
-    (A) item 1.1
-    (#) item 1.2
-
-        i) item 1.2.1
-        #) item 1.2.2
-
  #. item 2
+
+    (A) item 2.1
+    (#) item 2.2
+
+        i) item 2.2.1
+        #) item 2.2.2
+
+ #. item 3
 
 **Notes**:
  - Ordered lists can be automatically enumerated using the ``#`` character as
@@ -330,6 +341,7 @@ Ordered Lists
    enumerated lists can be found in the `reStructuredText documentation
    <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
+ - The Moin2 parser requires a blank line between items when changing indentation levels.
  - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
 
 Definition Lists
@@ -544,7 +556,9 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
 Admonitions
 ===========
 
-Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+Admonitions are used to draw the reader's attention to an important paragraph.
+There are nine admonition types: attention, caution, danger, error, hint,
+important, note, tip, and warning.
 
 The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
 
@@ -593,8 +607,8 @@ Comments link within item views.
  ..
   |even| this:: !
 
-Literals Blocks
-===============
+Literal Blocks
+==============
 
 Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
@@ -618,3 +632,54 @@ A minimum (1) indentation is required for the text block to be recognized as a l
  Paragraph with no space between text and two colons::
 
   Literal block
+
+Line Blocks
+===========
+
+.. Copied from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#line-blocks
+
+Line blocks are useful for address blocks, verse (poetry, song lyrics), and
+unadorned lists, where the structure of lines is significant. Line blocks
+are groups of lines beginning with vertical bar ("|") prefixes. Each vertical
+bar prefix indicates a new line, so line breaks are preserved. Initial
+indents are also significant, resulting in a nested structure. Inline markup
+is supported. Continuation lines are wrapped portions of long lines; they
+begin with a space in place of the vertical bar. The left edge of a
+continuation line must be indented, but need not be aligned with the left
+edge of the text above it. A line block ends with a blank line.
+
+**Markup**::
+
+ Take it away, Eric the Orchestra Leader!
+
+    | A one, two, a one two three four
+    |
+    | Half a bee, philosophically,
+    |     must, *ipso facto*, half not be.
+    | But half the bee has got to be,
+    |     *vis a vis* its entity.  D'you see?
+    |
+    | But can a bee be said to be
+    |     or not to be an entire bee,
+    |         when half the bee is not a bee,
+    |             due to some ancient injury?
+    |
+    | Singing...
+
+**Result**:
+
+Take it away, Eric the Orchestra Leader!
+
+    | A one, two, a one two three four
+    |
+    | Half a bee, philosophically,
+    |     must, *ipso facto*, half not be.
+    | But half the bee has got to be,
+    |     *vis a vis* its entity.  D'you see?
+    |
+    | But can a bee be said to be
+    |     or not to be an entire bee,
+    |         when half the bee is not a bee,
+    |             due to some ancient injury?
+    |
+    | Singing...
