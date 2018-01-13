@@ -453,16 +453,18 @@ class NodeVisitor(object):
         pass
 
     def visit_line(self, node):
-        pass
+        """| first line of a line_block"""
+        self.open_moin_page_node(moin_page.line_blk())
 
     def depart_line(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_line_block(self, node):
-        pass
+        """one or more line nodes make a line_block"""
+        self.open_moin_page_node(moin_page.line_block())
 
     def depart_line_block(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_list_item(self, node):
         self.open_moin_page_node(moin_page.list_item())
