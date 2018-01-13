@@ -318,6 +318,18 @@ class Converter(object):
         # TODO: attributes?
         return html.br()
 
+    def visit_moinpage_line_blk(self, elem):
+        return self.new_copy(html.div, elem, attrib={html.class_: 'moin-line-blk'})
+
+    def visit_moinpage_line_block(self, elem):
+        """
+        Used for ReST similar to:
+
+        | roses are red,
+        | violets are blue,
+        """
+        return self.new_copy(html.div, elem, attrib={html.class_: 'moin-line-block'})
+
     def visit_moinpage_list(self, elem):
         attrib = Attributes(elem)
         attrib_new = attrib.convert()
