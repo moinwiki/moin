@@ -50,6 +50,7 @@ class TestConverter(Base):
             (u'<page:page><page:body><page:p>H<page:span page:baseline-shift="sub">2</page:span>O</page:p><page:p>E = mc<page:span page:baseline-shift="super">2</page:span></page:p></page:body></page:page>', u'H\\ :sub:`2`\\ O\n\nE = mc\\ :sup:`2`\\ \n'),
             (u'<page:page><page:body><page:p>H<page:span>2</page:span>O</page:p></page:body></page:page>', 'H2O\n'),
             (u'<page:page><page:body><page:div page:class="comment dashed">comment</page:div></page:body></page:page>', '\n..\n comment\n'),
+            (u'<page><body><line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block></body></page>', '\n| Lend us a couple of bob till Thursday.\n'),
         ]
         for i in data:
             yield (self.do, ) + i

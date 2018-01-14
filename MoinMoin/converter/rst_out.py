@@ -309,6 +309,7 @@ class Converter(object):
         self.anonymous_reference = None
         self.used_references = []
         self.delete_newlines = False
+        self.line_block_indent = -4
         ret = self.open(root)
         notes = u"\n\n".join(u".. [#] {0}".format(note.replace(u"\n", u"\n  ")) for note in self.footnotes)
         if notes:
@@ -483,6 +484,22 @@ class Converter(object):
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
         return u'\n'.join(ret) + u'\n'
+
+    def open_moinpage_line_blk(self, elem):
+        out = self.open_children(elem)
+        if out.startswith(u'\n'):
+            out = out[1:]
+        return u'| {0}{1}\n'.format(u' ' * self.line_block_indent, out)
+
+    def open_moinpage_line_block(self, elem):
+        ret = []
+        if self.line_block_indent < 0:
+            ret.append(u'\n')
+        self.line_block_indent += 4
+        for child in elem:
+            ret.append(self.open(child))
+        self.line_block_indent -= 4
+        return u''.join(ret)
 
     def open_moinpage_line_break(self, elem):
         if self.status[-1] == "list":
