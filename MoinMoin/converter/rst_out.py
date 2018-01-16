@@ -446,6 +446,27 @@ class Converter(object):
         # in case div has another use
         return self.open_children(elem)
 
+    def open_moinpage_figure(self, elem):
+        """
+        Rework children to create an ReST figure. Children are:
+            * an image (.. image:: myimage)
+            * a caption, figures have captions, images do not
+            * optional text (may be several)
+        """
+        ret = self.open_children(elem).replace('image', 'figure')
+        ret = ret.split('\n')
+        lines = []
+        for r in ret:
+            if r.startswith(('   ', '..')) or not r:
+                lines.append(r)
+            else:
+                lines.append(u'   ' + r)
+        return '\n'.join(lines)
+
+    def open_moinpage_figcaption(self, elem):
+        ret = self.open_children(elem).split('\n')
+        return '\n   {0}\n'.format(self.open_children(elem))
+
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
         return u"{0}{1}{2}".format(ReST.emphasis, childrens_output, ReST.emphasis)
@@ -479,7 +500,12 @@ class Converter(object):
            :align: center
         """
         whitelist = {html.width: 'width', html.height: 'height', html.class_: 'align', html.alt: 'alt'}
-        ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
+        try:
+            ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
+        except:
+            href = elem.attrib[xinclude.href]
+            href = href.split(u'wiki.local:')[-1]
+            ret = [u'\n.. image:: {0}'.format(href)]
         for key, val in whitelist.items():
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
