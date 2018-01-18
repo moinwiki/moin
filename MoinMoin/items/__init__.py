@@ -845,6 +845,9 @@ class Default(Contentful):
         # call this if the item is still empty
         rev_ids = []
         item_templates = self.content.get_templates(self.contenttype)
+        if not item_templates:
+            return redirect(url_for('frontend.modify_item', item_name=self.fqname, itemtype=self.itemtype,
+                                    contenttype=self.contenttype, template=''))
         return render_template('modify_select_template.html',
                                item=self,
                                item_name=self.name,
