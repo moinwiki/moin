@@ -410,18 +410,8 @@ class Converter(object):
         max_subpage_lvl = 3
         text = text.replace(u'\n', u'\n  ' +
                             u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)))
-
         if self.list_level >= 0:
             self.delete_newlines = True
-            """
-            while self.output and re.match(r'(\n*)\Z', self.output[-1]):
-                self.output.pop()
-            last_newlines = r'(\n*)\Z'
-            if self.output:
-                i = -len(re.search(last_newlines, self.output[-1]).groups(1)[0])
-                if i:
-                    self.output[-1] = self.output[-1][:i]
-            """
         return u"\n::\n\n  {0}{1}\n\n".format(
             u' ' * (len(u''.join(self.list_item_labels)) + len(self.list_item_labels)), text)
 
@@ -698,24 +688,6 @@ class Converter(object):
 
     def open_moinpage_span(self, elem):
         baseline_shift = elem.get(moin_page.baseline_shift, u'')
-
-        # No text decoration and text size in rst, this can be deleted
-        """
-        text_decoration = elem.get(moin_page.text_decoration, u'')
-        font_size = elem.get(moin_page.font_size, u'')
-        if text_decoration == 'line-through':
-            self.children.append(iter(elem))
-            self.opened.append(elem)
-            return ''
-        if text_decoration == 'underline':
-            self.children.append(iter(elem))
-            self.opened.append(elem)
-            return ''
-        if font_size:
-            self.children.append(iter(elem))
-            self.opened.append(elem)
-            return ''
-        """
         if baseline_shift == 'super':
             return u"\\ :sup:`{0}`\\ ".format(u''.join(elem.itertext()))
         if baseline_shift == 'sub':
@@ -753,19 +725,6 @@ class Converter(object):
         self.tablec.rowclass = 'table-header'
         return self.open_children(elem)
 
-    # No table footer support, TODO if needed
-    """
-    def open_moinpage_table_footer(self, elem):
-        self.tablec.rowclass = 'table-footer'
-        self.children.append(iter(elem))
-        self.opened.append(elem)
-        return ''
-
-    def close_moinpage_table_footer(self, elem):
-        self.table_rowsclass = ''
-        return ''
-    """
-
     def open_moinpage_table_body(self, elem):
         self.tablec.rowclass = 'table-body'
         return self.open_children(elem)
@@ -788,32 +747,6 @@ class Converter(object):
         table_cellstyle = elem.attrib.get('style', u'')
         number_cols_spanned = int(elem.get(moin_page.number_cols_spanned, 1))
         number_rows_spanned = int(elem.get(moin_page.number_rows_spanned, 1))
-
-        attrib = []
-
-        # TODO: styles and classes
-        """
-        if self.table_tableclass:
-            attrib.append('tableclass="{0}"'.format(self.table_tableclass))
-            self.table_tableclass = ''
-        if self.table_tablestyle:
-            attrib.append('tablestyle="{0}"'.format(self.table_tablestyle))
-            self.table_tableclass = ''
-        if self.table_rowclass:
-            attrib.append('rowclass="{0}"'.format(self.table_rowclass))
-            self.table_rowclass = ''
-        if self.table_rowstyle:
-            attrib.append('rowclass="{0}"'.format(self.table_rowstyle))
-            self.table_rowstyle = ''
-        if table_cellclass:
-            attrib.append('class="{0}"'.format(table_cellclass))
-        if table_cellstyle:
-            attrib.append('style="{0}"'.format(table_cellstyle))
-        if number_rows_spanned:
-            attrib.append('|'+str(number_rows_spanned))
-
-        attrib = ' '.join(attrib)
-        """
         self.table[-1].append((number_cols_spanned, number_rows_spanned, [self.open_children(elem)]))
         cell = self.table[-1][-1]
         self.tablec.add_cell(cell[0], cell[1], Cell(u''.join(cell[2])))
