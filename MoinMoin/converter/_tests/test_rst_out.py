@@ -57,11 +57,11 @@ class TestConverter(Base):
 
     def test_list(self):
         data = [
-            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", "* A\n\n"),
-            (u"<page:list page:item-label-generate=\"ordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", "1. A\n\n"),
-            (u"<page:list page:item-label-generate=\"ordered\" page:list-style-type=\"upper-roman\"><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>", "I. A\n\n"),
-            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>B</page:p><page:list page:item-label-generate=\"ordered\"><page:list-item><page:list-item-body><page:p>C</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>D</page:p><page:list page:item-label-generate=\"ordered\" page:list-style-type=\"upper-roman\"><page:list-item><page:list-item-body><page:p>E</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>F</page:p></page:list-item-body></page:list-item></page:list></page:list-item-body></page:list-item></page:list></page:list-item-body></page:list-item></page:list>", "* A\n\n* B\n\n  1. C\n\n  #. D\n\n     I. E\n\n     #. F\n\n"),
-            (u"<page:list><page:list-item><page:list-item-label>A</page:list-item-label><page:list-item-body><page:p>B</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>C</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>D</page:p></page:list-item-body></page:list-item></page:list>", "A\n  B\n\n  C\n\n  D\n\n"),
+            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", "\n* A\n"),
+            (u"<page:list page:item-label-generate=\"ordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>", "\n1. A\n"),
+            (u"<page:list page:item-label-generate=\"ordered\" page:list-style-type=\"upper-roman\"><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>", "\nI. A\n"),
+            (u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>B</page:p><page:list page:item-label-generate=\"ordered\"><page:list-item><page:list-item-body><page:p>C</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>D</page:p><page:list page:item-label-generate=\"ordered\" page:list-style-type=\"upper-roman\"><page:list-item><page:list-item-body><page:p>E</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>F</page:p></page:list-item-body></page:list-item></page:list></page:list-item-body></page:list-item></page:list></page:list-item-body></page:list-item></page:list>", "\n* A\n* B\n\n  1. C\n  #. D\n\n     I. E\n     #. F\n"),
+            (u"<page:list><page:list-item><page:list-item-label>A</page:list-item-label><page:list-item-body><page:p>B</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>C</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>D</page:p></page:list-item-body></page:list-item></page:list>", "A\n  B\n  C\n  D\n"),
         ]
         for i in data:
             yield (self.do, ) + i
@@ -94,7 +94,7 @@ class TestConverter(Base):
             (u"<page:page><page:body><page:table><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
             (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+-+\n|Z|A|\n| | |\n| |B|\n| | |\n| |C|\n| | |\n| |D|\n+-+-+\n\n"),
             (u"<page:page><page:body><page:table><page:table_row><page:table_cell>Z</page:table_cell></page:table_row><page:table_row><page:table_cell><page:p>A</page:p><page:p>B</page:p>C<page:p>D</page:p></page:table_cell></page:table_row></page:table></page:body></page:page>", "\n+-+\n|Z|\n+-+\n|A|\n| |\n|B|\n| |\n|C|\n| |\n|D|\n+-+\n\n"),
-            (u"<page:page><page:body>A<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p>A<page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>A</page:body></page:page>", "A\n\n* A\n\n  A\n\n* A\n\n  A\n\n  A\n\n* A\n\nA")
+            (u"<page:page><page:body>A<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p>A<page:p>A</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body>A</page:list-item-body></page:list-item></page:list>A</page:body></page:page>", "A\n* A\n\n  A\n* A\n\n  A\n\n  A\n* A\nA")
         ]
         for i in data:
             yield (self.do, ) + i
@@ -138,7 +138,7 @@ class TestConverter(Base):
 
     def test_mixed(self):
         data = [
-            (u"<page:page><page:body><page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:table><page:table-body><page:table-row><page:table-cell><page:strong>Author:</page:strong></page:table-cell><page:table-cell>Test</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Version:</page:strong></page:table-cell><page:table-cell>1.17</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Copyright:</page:strong></page:table-cell><page:table-cell>c</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Test:</page:strong></page:table-cell><page:table-cell><page:p>t</page:p></page:table-cell></page:table-row></page:table-body></page:table></page:list-item-body></page:list-item></page:list></page:body></page:page>", """* A
+            (u"<page:page><page:body><page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:table><page:table-body><page:table-row><page:table-cell><page:strong>Author:</page:strong></page:table-cell><page:table-cell>Test</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Version:</page:strong></page:table-cell><page:table-cell>1.17</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Copyright:</page:strong></page:table-cell><page:table-cell>c</page:table-cell></page:table-row><page:table-row><page:table-cell><page:strong>Test:</page:strong></page:table-cell><page:table-cell><page:p>t</page:p></page:table-cell></page:table-row></page:table-body></page:table></page:list-item-body></page:list-item></page:list></page:body></page:page>", """\n* A
 
   +--------------+----+
   |**Author:**   |Test|
@@ -149,9 +149,8 @@ class TestConverter(Base):
   +--------------+----+
   |**Test:**     |t   |
   +--------------+----+
-
 """),
-            (u"<page:page><page:body><page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:blockcode> test </page:blockcode></page:list-item-body></page:list-item></page:list></page:body></page:page>", u"* A\n::\n\n     test \n\n\n"),
+            (u"<page:page><page:body><page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body><page:p>A</page:p><page:blockcode> test </page:blockcode></page:list-item-body></page:list-item></page:list></page:body></page:page>", u"\n* A\n::\n\n     test \n\n"),
             (u'<page:page><page:body><page:table><page:table-body><page:table-row><page:table-cell><page:p><page:strong>A</page:strong></page:p><page:line_break /><page:p><page:strong>A</page:strong></page:p></page:table-cell><page:table-cell><page:strong>B</page:strong><page:line_break /><page:strong>B</page:strong></page:table-cell></page:table-row></page:table-body></page:table></page:body></page:page>', '\n+-----+-----+\n|**A**|**B**|\n|     |     |\n|**A**|**B**|\n+-----+-----+\n\n'),
         ]
         for i in data:
