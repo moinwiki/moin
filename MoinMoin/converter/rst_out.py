@@ -540,19 +540,13 @@ class Converter(object):
             ReST.list_type.get(label_type, u' '))
         self.list_level += 1
         ret = u''
-        if self.status[-1] == 'text' and self.last_closed:
-            ret = u'\n\n'
-        elif self.status[-1] != 'text' or self.last_closed:
-            ret = u'\n'
         self.status.append('list')
         self.last_closed = None
         ret += self.open_children(elem)
         self.list_item_labels.pop()
         self.list_level -= 1
         self.status.pop()
-        if self.status[-1] == 'list':
-            return ret + u''
-        return ret + u'\n'
+        return ret
 
     def open_moinpage_list_item(self, elem):
         self.list_item_label = self.list_item_labels[-1] + u' '
@@ -571,7 +565,7 @@ class Converter(object):
 
     def open_moinpage_list_item_body(self, elem):
         ret = u''
-        if self.last_closed:
+        if not self.last_closed == u'list_item':
             ret = u'\n'
         ret += (u' ' * (len(u''.join(self.list_item_labels[:-1])) +
                         len(self.list_item_labels[:-1])) + self.list_item_label)
