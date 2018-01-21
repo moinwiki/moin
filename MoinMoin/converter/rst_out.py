@@ -509,6 +509,9 @@ class Converter(object):
         for key, val in whitelist.items():
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
+        if len(ret) == 1:
+            # if there are no attributes, then (for now) we assume it is an include
+            ret[0] = ret[0].replace('image', 'include')
         return u'\n'.join(ret) + u'\n'
 
     def open_moinpage_line_blk(self, elem):
