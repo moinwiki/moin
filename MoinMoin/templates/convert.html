@@ -1,3 +1,8 @@
+{#
+    This template is rendered by apps/frontend/views.py. It enables convertion of
+    an item to a different text markup language.
+#}
+
 {% import "forms.html" as forms %}
 {% extends theme("show.html") %}
 
@@ -11,6 +16,7 @@
                 <dt>Current Content Type</dt>
                 <dd> {{ contenttype }} </dd>
                 <br>
+                {# common.js adds a size attribute to following select clause #}
                 {{ forms.render(form['new_type']) }}
                 {{ forms.render(form['comment']) }}
                 {{ forms.render_textcha(gen, form) }}

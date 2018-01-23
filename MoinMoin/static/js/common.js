@@ -719,6 +719,15 @@ MoinMoin.prototype.diffScroll = function () {
 };
 
 
+// show all options on item convert form so user can choose output type with one click
+function showAllOptions() {
+    var numberOptions = $('#f_new_type > option').length;
+    if (numberOptions) {
+        $('#f_new_type')[0].setAttribute('size', numberOptions);
+    }
+}
+
+
 $(document).ready(function () {
     "use strict";
     var moin = new MoinMoin();
@@ -778,6 +787,8 @@ $(document).ready(function () {
     moinFontChangeOnReady();
 
     $('textarea[rows="1"]').autosize();
+
+    showAllOptions();
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
