@@ -80,7 +80,7 @@ setup_args = dict(
         # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
         # 'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
         'https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0',
-        'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
+        # 'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
     ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
@@ -92,7 +92,7 @@ setup_args = dict(
         'Flask-Script>=2.0.5',  # scripting support
         'Flask-Themes>=0.3.0',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
-        'flatland',  # form handling
+        'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.11.2',  # wsgi toolkit
