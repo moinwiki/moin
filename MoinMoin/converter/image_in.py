@@ -33,9 +33,10 @@ class Converter(object):
         query_keys = {'do': 'get', 'rev': rev.revid}
         attrib = {}
         if arguments:
-            query = arguments.keyword.get(xinclude.href).query
-            if query:
-                query_keys.update(url_decode(query))
+            query = arguments.keyword.get(xinclude.href)
+            if query and query.query:
+                # query.query value is similar to  "w=75" given a transclusion "{{jpeg||&w=75 class="top"}}"
+                query_keys.update(url_decode(query.query))
             attrib = arguments.keyword
 
         query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
