@@ -132,6 +132,8 @@ NO_BLOCK_CHILDREN = [
 class XPointer(list):
     """
     Simple XPointer parser
+
+    parses strings like u'xmlns(page=http://moinmo.in/namespaces/page)page:include(pages(^^pn))'
     """
 
     tokenizer_rules = r"""
@@ -219,7 +221,7 @@ class Converter(object):
 
         try:
             if elem.tag == xinclude.include:
-                # we have already recursed several levels and found a transclusion: "{{SomePage}}" or similar
+                # we have already recursed several levels and found a transclusion: "{{SomePage}}" or <<Include(...)>>
                 # process the transclusion and add it to the DOM.  Subsequent recursions will traverse through
                 # the transclusion's elements.
                 href = elem.get(xinclude.href)
@@ -233,6 +235,7 @@ class Converter(object):
                 xp_include_level = None
 
                 if xpointer:
+                    # we are working on an <<Include(abc)>> macro, not a {{transclusion}}
                     xp = XPointer(xpointer)
                     xp_include = None
                     xp_namespaces = {}
@@ -272,7 +275,7 @@ class Converter(object):
 
                 included_elements = []
                 if href:
-                    # We have a single page to transclude
+                    # We have a single page to transclude or include
                     href = Iri(href)
                     link = Iri(scheme='wiki', authority='')
                     if href.scheme == 'wiki':
@@ -308,6 +311,7 @@ class Converter(object):
                         return [container, 0]  # replace transclusion with container's child
 
                 elif xp_include_pages:
+                    # we have regex of pages to include:  <<Include(^qqq)>>
                     query = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
                     results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
@@ -334,9 +338,6 @@ class Converter(object):
                         attrib = {html.class_: 'moin-error'}
                         strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
-                        continue
-                    # TODO: Is this correct?
-                    if not flaskg.user.may.read(page.name):
                         continue
 
                     if xp_include_heading is not None:
