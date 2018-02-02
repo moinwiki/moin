@@ -30,7 +30,7 @@ from flask import request, url_for, flash, Response, make_response, redirect, ab
 from flask import current_app as app
 from flask import g as flaskg
 from flask_babel import format_date
-from flask_themes import get_themes_list
+from flask_theme import get_themes_list
 
 from flatland import Form, List
 from flatland.validation import Validator
