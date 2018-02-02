@@ -16,7 +16,7 @@ from json import dumps
 from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request
-from flask_themes import get_theme, render_theme_template
+from flask_theme import get_theme, render_theme_template
 
 from MoinMoin.i18n import _, L_, N_
 from MoinMoin import wikiutil, user
@@ -715,7 +715,7 @@ def setup_jinja_env():
         'isinstance': isinstance,
         'list': list,
         'Type': Type,
-        # please note that flask-themes installs:
+        # please note that flask-theme installs:
         # theme, theme_static
         'theme_supp': ThemeSupport(app.cfg),
         'user': flaskg.user,

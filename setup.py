@@ -79,7 +79,7 @@ setup_args = dict(
         # 'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
         # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
         # 'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
-        'https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0',
+        # 'https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0',
         # 'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
     ],
     install_requires=[
@@ -90,7 +90,9 @@ setup_args = dict(
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
-        'Flask-Themes>=0.3.0',  # theme support
+        # TODO: Flask-Theme 0.2.0 does not have python 3 support
+        # fix Flask-Theme or add new package to pypi based upon: https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0
+        'Flask-Theme>=0.2.0',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine

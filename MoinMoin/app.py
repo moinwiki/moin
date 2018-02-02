@@ -27,7 +27,7 @@ except ImportError:
     OldSecureCookieSessionInterface = None
 
 from flask_caching import Cache
-from flask_themes import setup_themes
+from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
@@ -157,7 +157,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     i18n_init(app)
     clock.stop('create_app flask-babel')
     # configure templates
-    clock.start('create_app flask-themes')
+    clock.start('create_app flask-theme')
     setup_themes(app)
     if app.cfg.template_dirs:
         app.jinja_env.loader = ChoiceLoader([
@@ -165,7 +165,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
             app.jinja_env.loader,
         ])
     app.register_error_handler(403, themed_error)
-    clock.stop('create_app flask-themes')
+    clock.stop('create_app flask-theme')
     clock.stop('create_app total')
     del clock
     return app
