@@ -1242,6 +1242,7 @@ def global_history(namespace):
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
                            fqname=fqname,
+                           namespace=namespace if namespace != NAMESPACE_ALL else None,
     )
 
 
@@ -2398,6 +2399,9 @@ def global_tags(namespace):
     if namespace != NAMESPACE_ALL:
         query[NAMESPACE] = namespace
         fqname = split_fqname(namespace)
+        headline = _("All Tags in Namespace '%(namespace)s'", namespace=namespace)
+    else:
+        headline = _("All Tags in This Wiki")
     revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
@@ -2425,7 +2429,7 @@ def global_tags(namespace):
     else:
         tags = []
     return render_template("global_tags.html",
-                           headline=_("All tags in this wiki"),
+                           headline=headline,
                            title_name=title_name,
                            fqname=fqname,
                            tags=tags)
