@@ -36,7 +36,7 @@
     {% if item_name %}
         {% set what = '' %}
         {% if item.meta['namespace'] %}
-            {% set what = _("namespace '%(name)s' ", name=item.meta['namespace']) %}
+            {% set what = _("Namespace '%(name)s' ", name=item.meta['namespace']) %}
             {% set subitem = item_name[ns_len:] %}
             {% if subitem %}
                 {% set what = what + _("subitems '%(item_name)s'", item_name=subitem) %}
