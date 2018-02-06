@@ -1027,6 +1027,21 @@ def index(item_name):
     all_dirs = set(x[0] for x in dirs)
     missing_dirs = all_dirs - used_dirs
 
+    if item_name:
+        what = ''
+        if item.fqname.value == NAMESPACE_ALL:
+            title = _("Global Index of All Namespaces")
+        elif item.meta['namespace']:
+            what = _("Namespace '%(name)s' ", name=item.meta['namespace'])
+            subitem = item_name[ns_len:]
+            if subitem:
+                what = what + _("subitems '%(item_name)s'", item_name=subitem)
+            title = _("Index of %(what)s", what=what)
+        else:
+            title = _("Index of subitems '%(item_name)s'", item_name=item_name)
+    else:
+        title = _("Global Index")
+
     return render_template('index.html',
                            item_names=item_names,
                            item_name=item_name,
@@ -1038,7 +1053,7 @@ def index(item_name):
                            startswith=startswith,
                            form=form,
                            item=item,
-                           ns_len=ns_len,
+                           title=title,
     )
 
 
@@ -1235,6 +1250,12 @@ def global_history(namespace):
     del history[0]  # kill the dummy
 
     title_name = _(u'Global History')
+    if namespace == NAMESPACE_ALL:
+        title = _("Global History of All Namespaces")
+    elif namespace:
+        title = _("History of Namespace '%(namespace)s'", namespace=namespace)
+    else:
+        title = _("Global History")
     current_timestamp = int(time.time())
     return render_template('global_history.html',
                            title_name=title_name,
@@ -1242,7 +1263,7 @@ def global_history(namespace):
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
                            fqname=fqname,
-                           namespace=namespace if namespace != NAMESPACE_ALL else None,
+                           title=title,
     )
 
 
@@ -2399,9 +2420,12 @@ def global_tags(namespace):
     if namespace != NAMESPACE_ALL:
         query[NAMESPACE] = namespace
         fqname = split_fqname(namespace)
-        headline = _("All Tags in Namespace '%(namespace)s'", namespace=namespace)
+    if namespace == NAMESPACE_DEFAULT:
+        headline = _("Global Tags")
+    elif namespace == NAMESPACE_ALL:
+        headline = _("Global Tags in All Namespaces")
     else:
-        headline = _("All Tags in This Wiki")
+        headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
     revs = flaskg.storage.documents(**query)
     tags_counts = {}
     for rev in revs:
