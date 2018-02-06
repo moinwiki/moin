@@ -32,22 +32,6 @@
 
 {% block content %}
     <div class="moin-index-message"><span></span></div>
-
-    {% if item_name %}
-        {% set what = '' %}
-        {% if item.meta['namespace'] %}
-            {% set what = _("Namespace '%(name)s' ", name=item.meta['namespace']) %}
-            {% set subitem = item_name[ns_len:] %}
-            {% if subitem %}
-                {% set what = what + _("subitems '%(item_name)s'", item_name=subitem) %}
-            {% endif %}
-            {% set title = _("Index of %(what)s", what=what) %}
-        {% else %}
-            {% set title = _("Index of subitems '%(item_name)s'", item_name=item_name) %}
-        {% endif %}
-    {% else %}
-        {% set title = _("Global Index ") %}
-    {% endif %}
     <h1>{{ title }}</h1>
 
     {% if missing_dirs %}

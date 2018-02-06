@@ -9,12 +9,6 @@
     'TRASH': 'fa fa-trash-o',
 } %}
 
-{% if namespace %}
-    {% set title = _("History of Namespace  '%(namespace)s'", namespace=namespace) %}
-{% else %}
-    {% set title = _("Global History") %}
-{% endif %}
-
 {% block head %}
     {{ super() }}
     <link rel="alternate" title="Global History" href="{{ url_for('feed.atom') }}" type="application/atom+xml" />
