@@ -161,7 +161,7 @@ class ThemeSupport(object):
         user_actions_endpoints = ['frontend.quicklink_item', 'frontend.subscribe_item', ]
         item_navigation_endpoints = ['special.supplementation']
         item_actions_endpoints = ['frontend.rename_item', 'frontend.delete_item', 'frontend.destroy_item',
-                                  'frontend.download_item',
+                                  'frontend.download_item', 'frontend.convert_item',
                                   'frontend.copy_item', ] if self.user.may.write(fqname) else []
 
         user_actions = []
@@ -231,6 +231,7 @@ class ThemeSupport(object):
                 'frontend.rename_item': "fa fa-tag",
                 'frontend.delete_item': "fa fa-trash-o",
                 'frontend.destroy_item': "fa fa-fire",
+                'frontend.convert_item': "fa fa-clone",
                 'frontend.similar_names': "fa fa-search-minus",
                 'frontend.download_item': "fa fa-download",
                 'frontend.copy_item': "fa fa-comment-o",
