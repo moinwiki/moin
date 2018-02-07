@@ -228,7 +228,7 @@ class ThemeSupport(object):
                 'frontend.subscribe_item': "fa fa-envelope-o",
                 'frontend.index': "fa fa-list-alt",
                 'frontend.sitemap': "fa fa-sitemap",
-                'frontend.rename_item': "fa fa-tag",
+                'frontend.rename_item': "fa fa-i-cursor",
                 'frontend.delete_item': "fa fa-trash-o",
                 'frontend.destroy_item': "fa fa-fire",
                 'frontend.convert_item': "fa fa-clone",
@@ -238,12 +238,12 @@ class ThemeSupport(object):
                 'special.supplementation': "fa fa-comments-o",
                 'frontend.show_item': "fa fa-eye",
                 'frontend.modify_item': "fa fa-pencil",
-                'frontend.history': "fa fa-clock-o",
-                'frontend.show_item_meta': "fa fa-wrench",
+                'frontend.history': "fa fa-history",
+                'frontend.show_item_meta': "fa fa-table",
                 'frontend.highlight_item': "fa fa-code",
                 'frontend.backrefs': "fa fa-share",
                 'special.comments': "fa fa-comment-o",
-                'special.transclusions': "fa fa-edit", }
+                'special.transclusions': "fa fa-object-group", }
         return icon
 
     def location_breadcrumbs(self, fqname):
