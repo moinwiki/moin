@@ -719,11 +719,17 @@ MoinMoin.prototype.diffScroll = function () {
 };
 
 
-// show all options on item convert form so user can choose output type with one click
+// show all options on form so user can choose output type with one click
 function showAllOptions() {
+    //  itemviews convert
     var numberOptions = $('#f_new_type > option').length;
     if (numberOptions) {
         $('#f_new_type')[0].setAttribute('size', numberOptions);
+    }
+    // usersettings theme name
+    numberOptions = $('#f_usersettings_ui_theme_name > option').length;
+    if (numberOptions) {
+        $('#f_usersettings_ui_theme_name')[0].setAttribute('size', numberOptions);
     }
 }
 
