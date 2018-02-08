@@ -67,8 +67,9 @@ a:hover { text-decoration: underline; }
 }
 
 @media screen and (max-width: 950px) {
-    /* no room for text, show only icons for <UserName>, Settings, Logout */
+    /* no room for text, show only icons for username and itemviews */
     ul#moin-username span { display: none; }
+    ul.moin-itemviews span { display: none; }
 }
 
 @media screen and (max-width: 800px) {
@@ -90,6 +91,7 @@ a:hover { text-decoration: underline; }
 
     #moin-header ul li { display: block; padding-left: 30px; text-align: left; }
     #moin-username i,
+    .moin-itemviews i,
     .moin-breadcrumb i { display: none; }
     #moin-username,
     .moin-breadcrumb,
