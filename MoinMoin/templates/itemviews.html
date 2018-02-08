@@ -1,9 +1,17 @@
 {% set exists = fqname and storage.get_item(**fqname.query) %}
 
 {% set item = item %}
+{% set icon_classes = theme_supp.get_endpoint_iconmap() %}
+
+{%- macro a_label(icon_class, label) %}
+    <i class="{{ icon_class }}"></i>
+    <span>{{ label }}</span>
+{%- endmacro %}
+
 <ul class="moin-itemviews panel">
     <li class="moin-panel-heading">{{ _('Item Views') }}</li>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
+        {% set icon_class = icon_classes[endpoint] %}
         {%- if not check_exists or check_exists and exists %}
             {%- if endpoint in [
                 'frontend.show_item', 'frontend.index',
@@ -12,19 +20,19 @@
                 'frontend.similar_names', 'frontend.copy_item',
             ] %}
                 <li>
-                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
             {%- if endpoint == 'frontend.highlight_item' and item and ('text' in item.contenttype or 'docbook' in item.contenttype) %}
                 <li>
-                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
             {%- if endpoint == 'frontend.modify_item' and user.may.write(fqname) %}
                 <li>
-                    <a class="moin-modify-button" href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a class="moin-modify-button" href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
@@ -32,7 +40,7 @@
                 'frontend.rename_item', 'frontend.delete_item',
             ] and user.may.write(fqname) %}
                 <li>
-                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
@@ -40,13 +48,13 @@
                 'frontend.convert_item',
             ] and user.may.write(fqname) and item and theme_supp.allow_item_conversion(item.contenttype) %}
                 <li>
-                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
             {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(fqname) %}
                 <li>
-                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
@@ -55,7 +63,7 @@
                 'admin.index', 'admin.index_user',
             ] %}
                 <li>
-                    <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ label }}</a>
+                    <a href="{{ url_for(endpoint) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
@@ -63,9 +71,9 @@
                 <li>
                     <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">
                         {%- if user.is_quicklinked_to([fqname]) %}
-                            {{ _('Remove Link') }}
+                            {{ a_label(icon_class, _('Remove Link')) }}
                         {%- else %}
-                            {{ _('Add Link') }}
+                            {{ a_label(icon_class, _('Add Link')) }}
                         {%- endif %}
                     </a>
                 </li>
@@ -75,9 +83,9 @@
                 <li>
                     <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">
                         {%- if user.is_subscribed_to(item) %}
-                            {{ _('Unsubscribe') }}
+                            {{ a_label(icon_class, _('Unsubscribe')) }}
                         {%- else %}
-                            {{ _('Subscribe') }}
+                            {{ a_label(icon_class, _('Subscribe')) }}
                         {%- endif %}
                     </a>
                 </li>
@@ -85,13 +93,13 @@
 
             {%- if endpoint == 'special.comments' %}
                 <li class="moin-toggle-comments-button">
-                    <a class="moin-toggle-comments-tooltip" href="#" title="{{ title }}">{{ label }}</a>
+                    <a class="moin-toggle-comments-tooltip" href="#" title="{{ title }}">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
         {% if endpoint == 'special.transclusions' -%}
             <li class="moin-transclusions-button">
-                <a class="moin-transclusions-tooltip" href="#" title="{{ title }}">{{ label }}</a>
+                <a class="moin-transclusions-tooltip" href="#" title="{{ title }}">{{ a_label(icon_class, label) }}</a>
             </li>
         {%- endif %}
             {%- if endpoint == 'special.supplementation' and fqname %}
@@ -100,8 +108,9 @@
                     {%- if not current_sub in cfg.supplementation_item_names %}
                         {%- set supp_name = '%s/%s/%s' % (fqname.namespace, item_name, sub_item_name) %}
                         {%- if storage.has_item(supp_name) or user.may.write(supp_name) %}
+                            {% set title = _('Discuss contents of this item') %}
                             <li>
-                                <a href="{{ url_for('frontend.show_item', item_name=supp_name) }}" rel="nofollow">{{ _(sub_item_name) }}</a>
+                                <a href="{{ url_for('frontend.show_item', item_name=supp_name) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, _(sub_item_name)) }}</a>
                             </li>
                         {%- endif %}
                     {%- endif %}

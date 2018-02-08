@@ -107,7 +107,10 @@ ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
 .moin-itemviews a:hover{text-decoration:underline}
 .moin-itemviews form,.moin-itemviews form div{display:inline;margin:0}
 .moin-itemviews select{font-size:100%;vertical-align:middle}
-.moin-subitem-navigation{padding:.9em;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:15%;overflow:hidden;display:table-cell;word-wrap:break-word;border-radius:9px}
+@media (max-width: 1800px){ul.moin-itemviews i{display:none}
+}@media (max-width: 1025px){ul.moin-itemviews span{display:none}
+ul.moin-itemviews i{display:inline}
+}.moin-subitem-navigation{padding:.9em;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:15%;overflow:hidden;display:table-cell;word-wrap:break-word;border-radius:9px}
 .moin-subitem-navigation .list-header{margin:2px 0;padding:0;font-size:1.1em}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation ul{display:block;margin:0;padding:0 4px}
