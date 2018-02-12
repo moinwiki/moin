@@ -74,6 +74,21 @@ COLS = 80
 ROWS_META = 10
 
 
+def _verify_parents(self, name, namespace):
+    """
+    If this is a subitem, verify all parent items exist. Return None if OK, abort if not OK.
+    """
+    name_segments = self.name.split('/')
+    for idx in range(len(name_segments) - 1):
+        root_name = '/'.join(name_segments[:idx + 1])
+        fqname = CompositeName(namespace, NAME_EXACT, root_name)
+        parent_item = flaskg.unprotected_storage.get_item(**fqname.query)
+        if parent_item.itemid is None:
+            if namespace:
+                root_name = namespace + '/' + root_name
+            abort(404, root_name)  # errmsg similar to: "The item '<root_name>' does not exist.\n\nThe full path is: <full path>"
+
+
 class RegistryItem(RegistryBase):
     class Entry(namedtuple('Entry', 'factory itemtype display_name description order')):
         def __call__(self, itemtype, *args, **kw):
@@ -470,6 +485,8 @@ class Item(object):
         fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
         if flaskg.storage.get_item(**fqname.query):
             raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
+        # if this is a subitem, verify all parent items exist
+        _verify_parents(self, name, self.fqname.namespace)
         return self._rename(name, comment, action=ACTION_RENAME)
 
     def delete(self, comment=u''):
@@ -1015,6 +1032,9 @@ class NonExistent(Item):
         If you want to work on tickets or blogs, create a new branch and revert the change
         made on or about 2017-07-04:
         """
+        # if this is a subitem, verify all parent items exist
+        _verify_parents(self, self.name, self.meta[NAMESPACE])
+
         return render_template('modify_select_contenttype.html',
                                fqname=self.fqname,
                                item_name=self.name,
