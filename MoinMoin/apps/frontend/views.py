@@ -1043,6 +1043,7 @@ def index(item_name):
         title = _("Global Index")
 
     return render_template('index.html',
+                           title_name='Global Index',
                            item_names=item_names,
                            item_name=item_name,
                            fqname=fqname,
@@ -2412,9 +2413,13 @@ class NestedItemListBuilder(object):
 @frontend.route('/<namespace>/+tags')
 def global_tags(namespace):
     """
-    show a list or tag cloud of all tags in this wiki
+    Show a list or tag cloud of tags in this wiki.
+
+    If namespace == 'all' tags from all namespaces are shown.
+    If namespace == '' tags from the default namespace are shown.
+    If namespace == '<namespace>' tags from that namespace are shown.
     """
-    title_name = _(u'All tags in this wiki')
+    title_name = _(u'Global Tags')
     query = {WIKINAME: app.cfg.interwikiname}
     fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
     if namespace != NAMESPACE_ALL:
