@@ -24,8 +24,6 @@ a:hover { text-decoration: underline; }
 
 .wikilink,
 .moin-panel-heading { font-weight: bold; display: inherit; }
-/* do not display alias names within page trail */
-#moin-header .moin-breadcrumb ul { display: none; }
 
 /* styling for topbar */
 @media (max-width: 1024px) {
@@ -64,6 +62,16 @@ a:hover { text-decoration: underline; }
     #moin-timings { margin-left: 5%; color: #444; float: none; clear: left; }
     #moin-footer .moin-itemviews  { margin: 5px 5%; padding: 0; }
     #moin-creditlogos { margin-right: 5%; padding: 0; }
+
+    /* style page trail alias names on top bar */
+    #moin-header ul.moin-breadcrumb ul.moin-alias { padding: 0; margin: 0; margin-bottom: 4px; }
+    ul.moin-breadcrumb ul.moin-alias { background-color: #e6f2fe; border: 1px solid #00417f; border-radius :6px; }
+    ul.moin-breadcrumb li ul.moin-alias li { list-style-type: none; display:block; }
+    ul.moin-breadcrumb li ul.moin-alias li a { padding: 2px 10px; display: inline-block; }
+    ul.moin-breadcrumb li { position: relative; display: inline-block; }
+    ul.moin-breadcrumb li ul.moin-alias { display: none; position: absolute; right: 0; bottom: .9em; }
+    ul.moin-breadcrumb li:hover ul.moin-alias { display: block; overflow: visible; }
+    ul.moin-breadcrumb li i { color: #1409b9;; }
 }
 
 @media screen and (max-width: 950px) {
@@ -93,6 +101,9 @@ a:hover { text-decoration: underline; }
     #moin-username i,
     .moin-itemviews i,
     .moin-breadcrumb i { display: none; }
+    .moin-breadcrumb li { margin-left: .5em; text-indent: -.5em; }
+    #moin-header .moin-breadcrumb .moin-alias { padding-left: .5em; margin-top: 0; margin-bottom: 0; }
+    #moin-header .moin-breadcrumb .moin-alias li { margin-left: 0; padding-left: 0; }
     #moin-username,
     .moin-breadcrumb,
     .moin-itemviews,
