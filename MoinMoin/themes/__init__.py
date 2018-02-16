@@ -248,7 +248,9 @@ class ThemeSupport(object):
 
     def location_breadcrumbs(self, fqname):
         """
-        Assemble the location using breadcrumbs (was: title)
+        Split the incoming fqname into segments. Reassemble into a list of tuples.
+        If the fqname has a namespace, the first tuple's segment_name will have the
+        namespace as a prefix.
 
         :rtype: list
         :returns: location breadcrumbs items in tuple (segment_name, fq_name, exists)
@@ -258,20 +260,18 @@ class ThemeSupport(object):
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         if fqname.field != NAME_EXACT:
-            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
-        namespace = fqname.namespace
-        fq_current = CompositeName(u'', NAME_EXACT, namespace)
-        fq_segment = CompositeName(u'', NAME_EXACT, namespace or '~')
-        breadcrumbs.append((fq_segment, fq_current, False))
+            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]  # flaskg.unprotected_storage.get_item(**fqname.query)
+        namespace = segment1_namespace = fqname.namespace
         item_name = fqname.value
         if not item_name:
             return breadcrumbs
         for segment in item_name.split('/'):
             current_item += segment
             fq_current = CompositeName(namespace, NAME_EXACT, current_item)
-            fq_segment = CompositeName(namespace, NAME_EXACT, segment)
+            fq_segment = CompositeName(segment1_namespace, NAME_EXACT, segment)
             breadcrumbs.append((fq_segment, fq_current, bool(self.storage.get_item(**fq_current.query))))
             current_item += '/'
+            segment1_namespace = u''
         return breadcrumbs
 
     def path_breadcrumbs(self):
@@ -601,6 +601,8 @@ def shorten_fqname(fqname, length=25):
     :returns: shortened fqname.
     """
     name = fqname.value
+    if fqname.namespace:
+        name = fqname.namespace + '/' + name
     if len(name) > length:
         if fqname.field in [REVID, ITEMID]:
             name = shorten_id(name)
@@ -624,11 +626,16 @@ def shorten_item_name(name, length=25):
     """
     # First use only the sub page name, that might be enough
     if len(name) > length:
-        name = name.split('/')[-1]
+        name_part = name.split('/')[-1]
         # If it's not enough, replace the middle with '...'
-        if len(name) > length:
+        if len(name_part) > length:
             half, left = divmod(length - 3, 2)
-            name = u'{0}...{1}'.format(name[:half + left], name[-half:])
+            name = u'{0}...{1}'.format(name_part[:half + left], name_part[-half:])
+        elif len(name_part) < length - 6:
+            # now it is too short, add back starting characters
+            name = u'{0}...{1}'.format(name[:length - len(name_part) - 3], name_part)
+        else:
+            name = name_part
     return name
 
 

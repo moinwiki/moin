@@ -44,20 +44,33 @@ class TestNaviBar(object):
             assert result == expected
 
     def test_location_breadcrumbs(self, theme):
-        test_result = ThemeSupport.location_breadcrumbs(theme, 'some/place/test_item')
+        test_result = ThemeSupport.location_breadcrumbs(theme, u'some/place/test_item')
         test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
         test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
         test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
-        test_segment_name_4, test_item_name_4, test_item_exists_4 = test_result[3]
 
-        assert test_segment_name_1.value == '~'
-        assert test_item_name_1.value == ''
-        assert test_segment_name_2.value == 'some'
-        assert test_item_name_2.value == 'some'
-        assert test_segment_name_3.value == 'place'
-        assert test_item_name_3.value == 'some/place'
-        assert test_segment_name_4.value == 'test_item'
-        assert test_item_name_4.value == 'some/place/test_item'
+        assert test_segment_name_1.namespace == u''
+        assert test_item_name_1.namespace == u''
+        assert test_segment_name_1.value == 'some'
+        assert test_item_name_1.value == 'some'
+        assert test_segment_name_2.value == 'place'
+        assert test_item_name_2.value == 'some/place'
+        assert test_segment_name_3.value == 'test_item'
+        assert test_item_name_3.value == 'some/place/test_item'
+
+        test_result = ThemeSupport.location_breadcrumbs(theme, u'users/some/place/test_item')
+        test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
+        test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
+        test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
+
+        assert test_segment_name_1.namespace == u'users'
+        assert test_item_name_1.namespace == u'users'
+        assert test_segment_name_1.value == u'some'
+        assert test_item_name_1.value == u'some'
+        assert test_segment_name_2.value == u'place'
+        assert test_item_name_2.value == u'some/place'
+        assert test_segment_name_3.value == u'test_item'
+        assert test_item_name_3.value == u'some/place/test_item'
 
     def test_parent_item(self, theme):
         test_result = ThemeSupport.parent_item(theme, 'moin/moin-2.0/Item')
