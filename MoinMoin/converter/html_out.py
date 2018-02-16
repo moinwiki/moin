@@ -745,8 +745,7 @@ class ConverterPage(Converter):
                 old_toggle = ""
                 for elem, level, id in headings:
                     need_item = last_level >= level
-                    # Ignore the last character in the text so permalink icon doesn't show in TOC
-                    text = ''.join(elem.itertext())[:-1]
+                    text = ''.join(elem.itertext())
                     while last_level > level:
                         stack.pop()
                         stack.pop()
