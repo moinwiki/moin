@@ -21,7 +21,6 @@ a:active{color:#51d443}
 a.moin-nonexistent:visited,a.moin-nonexistent{color:#939393;}
 a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited object,a.moin-nonexistent object{background:#939393;border:3px dashed #737373}
 .moin-error{color:#ff2727;background:#eef1f6;padding:4px}
-.moin-highlight{background-color:#d8dfe9;padding:1px}
 .moin-thead{background-color:#00417f}
 .moin-showhide{margin-left:10px}
 table.navigation{background:#fff;float:right;margin:2px}

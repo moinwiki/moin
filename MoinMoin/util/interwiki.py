@@ -52,7 +52,7 @@ def get_fqname(item_name, field, namespace):
     return item_name
 
 
-def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT, endpoint=u'frontend.show_item', _external=False):
+def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT, endpoint=u'frontend.show_item', _external=False, regex=''):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -104,6 +104,8 @@ def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT
                 i = local_url.index('/+')
                 path = local_url[i + 1:]
                 url = wiki_base_url + path
+    if regex:
+        url += '?regex={0}'.format(url_quote(regex, charset=CHARSET))
     return url
 
 
