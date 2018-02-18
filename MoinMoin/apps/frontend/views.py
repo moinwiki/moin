@@ -42,6 +42,7 @@ from babel import Locale
 
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
+from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
 from whoosh import sorting
 
@@ -393,7 +394,15 @@ def search(item_name):
             facets = []
             facets = add_facets(facets, time_sorting)
             flaskg.clock.start('search')
-            results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+            try:
+                results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+            except QueryError:
+                flash(_("""QueryError: invalid search term: %(search_term)s""", search_term=q), "error")
+                return render_template('search.html',
+                                       query=query,
+                                       medium_search_form=search_form,
+                                       item_name=item_name,
+                                       )
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
             name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
