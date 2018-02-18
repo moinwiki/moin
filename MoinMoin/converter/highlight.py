@@ -8,25 +8,30 @@ MoinMoin - Text highlighting converter
 
 from __future__ import absolute_import, division
 
+import re
+
+from flask import request
+
 from MoinMoin.util.tree import html, moin_page
 
 
 class Converter(object):
     @classmethod
-    def _factory(cls, input, output, highlight='', re='', **kw):
-        if highlight == 'regex':
-            return cls(re)
+    def _factory(cls, input, output, highlight='', regex='', **kw):
+        if highlight == 'highlight':
+            regex = request.args['regex']
+            return cls(regex)
 
     def recurse(self, elem):
         new_childs = []
 
         for child in elem:
-            if isinstance(child, unicode):
+            if isinstance(child, (unicode, str)):
                 pos = 0
 
                 # Restrict it to our own namespace for now
                 if elem.tag.uri == moin_page.namespace:
-                    for match in self.re.finditer(child):
+                    for match in re.finditer(self.pattern, child):
                         text = child[pos:match.start()]
                         new_childs.append(text)
 
@@ -46,8 +51,8 @@ class Converter(object):
         if len(new_childs) > len(elem):
             elem[:] = new_childs
 
-    def __init__(self, re):
-        self.re = re
+    def __init__(self, regex):
+        self.pattern = re.compile(regex)
 
     def __call__(self, tree):
         self.recurse(tree)

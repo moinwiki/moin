@@ -138,7 +138,7 @@ a.moin-nonexistent object { background: #939393; border: 3px dashed #737373; }
 .moin-error:before { content: url("../img/admonitions/warning.png"); float: left; height: 100%; padding: 0 1em; }
 .moin-error { color: #ff2727; background-color: #F9F9FF; border: 1px solid #E5E5E5; margin: 10px 30px 10px 30px;
     min-height: 64px; padding: 8px 8px 8px 8px; clear: both; display: inline-block; }
-.moin-highlight { background-color: #d8dfe9; padding: 1px; }
+.moin-highlight { background-color: yellow; padding: 1px; }
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: #737373; }
 .moin-summary { margin-top: .5em; font-style: italic; }

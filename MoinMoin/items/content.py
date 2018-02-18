@@ -240,6 +240,11 @@ class Content(object):
         flaskg.clock.start('conv_link')
         doc = link_conv(doc)
         flaskg.clock.stop('conv_link')
+        if 'regex' in request.args:
+            highlight_conv = reg.get(type_moin_document, type_moin_document, highlight='highlight')
+            flaskg.clock.start('highlight')
+            doc = highlight_conv(doc)
+            flaskg.clock.stop('highlight')
         return doc
 
     def _render_data(self):
