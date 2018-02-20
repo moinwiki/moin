@@ -799,12 +799,18 @@ def rename_item(item_name):
         if form.validate():
             target = form['target'].value
             comment = form['comment'].value
-            try:
-                fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
-                item.rename(target, comment)
-                return redirect(url_for_item(fqname))
-            except NameNotUniqueError as e:
-                flash(str(e), "error")
+            namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
+            namespaces = namespaces + NAMESPACES_IDENTIFIER
+            if target.split('/', 1)[0] in namespaces:
+                msg = L_("Item name segment (%(invalid_name)s) must not match existing namespaces.", invalid_name=target.split('/', 1)[0])
+                flash(msg, "error")
+            else:
+                try:
+                    fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
+                    item.rename(target, comment)
+                    return redirect(url_for_item(fqname))
+                except NameNotUniqueError as e:
+                    flash(str(e), "error")
     return render_template('rename.html',
                            item=item, item_name=item_name,
                            fqname=item.fqname,
