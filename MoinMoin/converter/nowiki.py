@@ -158,6 +158,13 @@ class Converter(object):
             elem.append(page)
             return
 
+        if nowiki_name in ('html', 'HTML', 'text/html'):
+            from .html_in import Converter as html_converter
+            html = html_converter()
+            page = html(content, optional_args)
+            elem.append(page)
+            return
+
         self.invalid_args(elem, all_nowiki_args)
         lexer = pygments.lexers.get_lexer_by_name('text')
         blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
