@@ -1,0 +1,24 @@
+{#
+Simple form allowing a user to correct an invalid item name that was entered into
+the +index Create dialog or the browsers address/url field.
+
+The process rendering this template should have flashed a message describing the error.
+#}
+
+{% import "forms.html" as forms %}
+{% extends theme("layout.html") %}
+
+{% set title = _("Create New Item") %}
+{% block content %}
+    <h1>{{ title }}</h1>
+    <div class="moin-form">
+        {{ gen.form.open(form, method="post", action=url_for('frontend.create_item')) }}
+            {{ forms.render_errors(form) }}
+            <dl>
+                {{ forms.render(form['target']) }}
+                {{ forms.render_textcha(gen, form) }}
+            </dl>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}

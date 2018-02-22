@@ -53,7 +53,8 @@ from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEma
                             RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                             Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                             validate_name, NameNotValidError)
-from MoinMoin.items import BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError, FieldNotUniqueError, get_itemtype_specific_tags
+from MoinMoin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError,
+                            FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
 from MoinMoin.items.content import content_registry, conv_serialize
 from MoinMoin.items.ticket import AdvancedSearchForm, render_comment_data
 from MoinMoin import user, util
@@ -110,6 +111,7 @@ Disallow: /+ajaxdelete/
 Disallow: /+ajaxdestroy/
 Disallow: /+ajaxmodify/
 Disallow: /+destroy/
+Disallow: /+create/
 Disallow: /+rename/
 Disallow: /+revert/
 Disallow: /+index/
@@ -750,6 +752,16 @@ class RenameItemForm(TargetChangeForm):
     name = 'rename_item'
 
 
+@frontend.route('/+create', methods=['POST'])
+def create_item():
+    """
+    A user has corrected an invalid item name keyed into the +index > Create dialog or brower's URL.
+    """
+    form = CreateItemForm.from_flat(request.form)
+    item_name = form['target']
+    return redirect(url_for_item(item_name))
+
+
 @frontend.route('/+revert/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 def revert_item(item_name, rev):
     try:
@@ -808,6 +820,7 @@ def rename_item(item_name):
                 try:
                     fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                     item.rename(target, comment)
+                    # the item was successfully renamed, show it with new name
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
@@ -908,8 +921,7 @@ def ajaxmodify(item_name):
         abort(404, item_name)
     if item_name:
         newitem = item_name + u'/' + newitem
-
-    return redirect(url_for('.modify_item', item_name=newitem))
+    return redirect(url_for_item(newitem))
 
 
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
