@@ -26,7 +26,7 @@ import re
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, Response, redirect, abort, escape, url_for
+from flask import request, Response, redirect, abort, escape, url_for, flash
 
 from flatland import Form
 from flatland.validation import Validator
@@ -74,19 +74,17 @@ COLS = 80
 ROWS_META = 10
 
 
-def _verify_parents(self, name, namespace):
+def _verify_parents(self, new_name, namespace, old_name=''):
     """
-    If this is a subitem, verify all parent items exist. Return None if OK, abort if not OK.
+    If this is a subitem, verify all parent items exist. Return None if OK, raise error if not OK.
     """
-    name_segments = self.name.split('/')
+    name_segments = new_name.split('/')
     for idx in range(len(name_segments) - 1):
         root_name = '/'.join(name_segments[:idx + 1])
         fqname = CompositeName(namespace, NAME_EXACT, root_name)
         parent_item = flaskg.unprotected_storage.get_item(**fqname.query)
         if parent_item.itemid is None:
-            if namespace:
-                root_name = namespace + '/' + root_name
-            abort(404, root_name)  # errmsg similar to: "The item '<root_name>' does not exist.\n\nThe full path is: <full path>"
+            raise MissingParentError(_("Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.", new_name=new_name, parent_name=name_segments[idx]))
 
 
 class RegistryItem(RegistryBase):
@@ -213,6 +211,10 @@ class BaseChangeForm(TextChaizedForm):
     submit_label = L_('OK')
 
 
+class CreateItemForm(BaseChangeForm):
+    target = RequiredText.using(label=L_('Target')).with_properties(autofocus=True)
+
+
 class ACLValidator(Validator):
     """
     Meta Validator - currently used for validating ACLs only
@@ -305,6 +307,12 @@ def get_itemtype_specific_tags(itemtype):
 class NameNotUniqueError(ValueError):
     """
     An item with the same name exists.
+    """
+
+
+class MissingParentError(ValueError):
+    """
+    Cannot create a subitem before creating the parent item.
     """
 
 
@@ -486,7 +494,7 @@ class Item(object):
         if flaskg.storage.get_item(**fqname.query):
             raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
         # if this is a subitem, verify all parent items exist
-        _verify_parents(self, name, self.fqname.namespace)
+        _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
         return self._rename(name, comment, action=ACTION_RENAME)
 
     def delete(self, comment=u''):
@@ -1033,7 +1041,17 @@ class NonExistent(Item):
         made on or about 2017-07-04:
         """
         # if this is a subitem, verify all parent items exist
-        _verify_parents(self, self.name, self.meta[NAMESPACE])
+        try:
+            _verify_parents(self, self.name, self.meta[NAMESPACE])
+        except MissingParentError as e:
+            flash(str(e), "error")
+            form = CreateItemForm().from_defaults()
+            TextCha(form).amend_form()
+            form['target'] = self.fqname.fullname
+            return render_template('create_new_item.html',
+                                   fqname=self.fqname,
+                                   form=form,
+            )
 
         return render_template('modify_select_contenttype.html',
                                fqname=self.fqname,
