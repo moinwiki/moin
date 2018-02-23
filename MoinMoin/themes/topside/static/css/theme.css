@@ -90,7 +90,7 @@ a:hover { text-decoration: underline; }
 @media (min-width: 1025px) {
     /* styling for left sidebar */
     #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
-        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto;
+        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; overflow-x: hidden;
         border-right: 1px solid #D7E9FD; font-size: .92em; }
     #moin-logo { padding: 10px 0; }
     .moin-sitename { font-size: 1.5rem; display: block; }
