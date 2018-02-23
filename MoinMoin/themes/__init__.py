@@ -600,9 +600,7 @@ def shorten_fqname(fqname, length=25):
     :rtype: unicode
     :returns: shortened fqname.
     """
-    name = fqname.value
-    if fqname.namespace:
-        name = fqname.namespace + '/' + name
+    name = fqname.fullname
     if len(name) > length:
         if fqname.field in [REVID, ITEMID]:
             name = shorten_id(name)

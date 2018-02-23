@@ -158,10 +158,7 @@ class Dump(Command):
                 continue
 
             try:
-                if current_rev.namespace:
-                    item_name = current_rev.namespace + '/' + current_rev.name
-                else:
-                    item_name = current_rev.name
+                item_name = current_rev.fqname.fullname
                 rendered = show_item(item_name, CURRENT)  # @@@  userid is needed for acls here
                 # convert / characters in sub-items and namespaces and save names for index
                 file_name = item_name.replace('/', SLASH)
