@@ -161,18 +161,22 @@ def wikiconfig():
                     yield name, cls.__dict__[name]
 
     found = []
+    found_default = []
     for vname, value in iter_vnames(app.cfg):
         if hasattr(defaultconfig.ConfigFunctionality, vname):
             continue
         if vname in settings and settings[vname] == value:
+            found_default.append((vname, value))
             continue
         found.append((vname, value))
 
     found.sort()
+    found_default.sort()
     return render_template('admin/wikiconfig.html',
                            title_name=_(u"Show Wiki Configuration"),
                            len=len,
                            found=found,
+                           found_default=found_default,
                            settings=settings)
 
 
