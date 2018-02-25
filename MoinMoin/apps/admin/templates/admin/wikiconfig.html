@@ -1,18 +1,11 @@
 {% extends theme("layout.html") %}
-{% block content %}
-    <h1>{{ _("Show Wiki Configuration") }}</h1>
-    <p>
-        {{ _("This table shows all settings in this wiki that do not have default values. "
-             "Settings that the configuration system doesn't know about are shown in italic, "
-             "those may be due to third-party extensions needing configuration or settings that "
-             "were removed from Moin.")
-        }}
-    </p>
+
+{% macro show_settings(found, head2) %}
     <table class="zebra moin-show-wikiconfig">
         <thead>
             <tr>
                 <th>{{ _('Variable Name') }}</th>
-                <th>{{ _('Setting') }}</th>
+                <th>{{ head2 }}</th>
             </tr>
         </thead>
         <tbody>
@@ -50,4 +43,26 @@
             {% endfor %}
         </tbody>
     </table>
+{% endmacro %}
+
+
+{% block content %}
+    <h1>{{ _("Show Wiki Configuration") }}</h1>
+    <h2>{{ _("Customized Configuration Settings") }}</h2>
+    <p>
+        {{ _("This table shows all settings in this wiki that do not have default values. "
+             "Settings that the configuration system doesn't know about are shown in italic, "
+             "those may be due to third-party extensions needing configuration or settings that "
+             "were removed from Moin.")
+        }}
+    </p>
+    {% set head2 = _('Setting') %}
+    {{ show_settings(found, head2) }}
+
+    <h2>{{ _("Default configuration Settings") }}</h2>
+    <p>
+        {{ _("This table shows all settings in this wiki that retain their default values. ") }}
+    </p>
+    {% set head2 = _('Default Setting') %}
+    {{ show_settings(found_default, head2) }}
 {% endblock %}
