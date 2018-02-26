@@ -530,9 +530,12 @@ form.upload_file button { display: none; }
 
 .moin-mychanges > table { width: 100%; }
 
-/* show wikiconfig */
+/* show wikiconfig and wikiconfighelp */
 
 .moin-show-wikiconfig td { vertical-align: top; }
+.moin-wikiconfighelp i.fa { color: blue; }
+.moin-wikiconfighelp i.fa:hover { cursor: pointer; }
+.moin-wikiconfighelp table { width: 100%; }
 
 /* ReST figures */
 

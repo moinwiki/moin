@@ -183,13 +183,26 @@ def wikiconfig():
 @admin.route('/wikiconfighelp', methods=['GET', ])
 @require_permission(SUPERUSER)
 def wikiconfighelp():
+    max_len_default = 60
+
     def format_default(default):
         if isinstance(default, defaultconfig.DefaultExpression):
             default_txt = default.text
         else:
-            default_txt = repr(default)
-            if len(default_txt) > 30:
-                default_txt = '...'
+            if len(repr(default)) > max_len_default and isinstance(default, list) and len(default) > 1:
+                txt = [u'[']
+                for entry in default:
+                    txt.append(u'&#013;{0},'.format(repr(entry)))
+                txt.append(u'&#013;]')
+                return u''.join(txt)
+            elif len(repr(default)) > max_len_default and isinstance(default, dict) and len(default) > 1:
+                txt = [u'{']
+                for key, val in default.items():
+                    txt.append(u'&#013;{0}: {1},'.format(repr(key), repr(val)))
+                txt.append(u'&#013;}')
+                return u''.join(txt)
+            else:
+                default_txt = repr(default)
         return default_txt
 
     groups = []
@@ -206,7 +219,10 @@ def wikiconfighelp():
     groups.sort()
     return render_template('admin/wikiconfighelp.html',
                            title_name=_(u"Wiki Configuration Help"),
-                           groups=groups)
+                           groups=groups,
+                           len=len,
+                           max_len_default=max_len_default,
+                           )
 
 
 @admin.route('/highlighterhelp', methods=['GET', ])
