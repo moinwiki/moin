@@ -108,7 +108,7 @@ class ConfigFunctionality(object):
         self.auth_have_login = len(self.auth_login_inputs) > 0
         self.auth_methods = found_names
 
-        # internal dict for plugin `modules' lists
+        # internal dict for plugin 'modules' lists
         self._site_plugin_lists = {}
 
         # check if mail is possible and set flag:
@@ -116,19 +116,13 @@ class ConfigFunctionality(object):
         self.mail_enabled = self.mail_enabled and True or False
 
         if self.namespace_mapping is None:
-            raise error.ConfigurationError(
-                "No storage configuration specified! You need to define a namespace_mapping. "
-                "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError("No storage configuration specified! You need to define a namespace_mapping.")
 
         if self.backend_mapping is None:
-            raise error.ConfigurationError(
-                "No storage configuration specified! You need to define a backend_mapping. " +
-                "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError("No storage configuration specified! You need to define a backend_mapping.")
 
         if self.acl_mapping is None:
-            raise error.ConfigurationError(
-                "No acl configuration specified! You need to define a acl_mapping. "
-                "For further reference, please see HelpOnStorageConfiguration.")
+            raise error.ConfigurationError("No acl configuration specified! You need to define a acl_mapping.")
 
         if self.secrets is None:  # admin did not setup a real secret
             raise error.ConfigurationError(
@@ -189,7 +183,7 @@ class ConfigFunctionality(object):
             msg = """
 Unknown configuration options: {0}.
 
-For more information, visit HelpOnConfiguration. Please check your
+For more information, see configuration docs. Please check your
 configuration for typos before requesting support or reporting a bug.
 """.format(', '.join(unknown))
             raise error.ConfigurationError(msg)
@@ -324,7 +318,7 @@ options_no_group_name = {
     # ==========================================================================
     'auth': ('Authentication / Authorization / Security', None, (
         ('auth', DefaultExpression('[MoinAuth()]'),
-         "list of auth objects, to be called in this order (see HelpOnAuthentication)"),
+         "list of auth objects, to be called in order as specified"),
         ('secrets', None, """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes."""),
         ('SecurityPolicy',
          DefaultSecurityPolicy,
@@ -333,7 +327,7 @@ options_no_group_name = {
          [],
          "Exclude unwanted endpoints (list of strings)"),
         ('password_checker', DefaultExpression('_default_password_checker'),
-         'does simple checks whether a password is acceptable (you can switch this off by using `None` or enhance it by using a custom checker)'),
+         'does simple checks whether a password is acceptable (you can switch this off by using "None" or enhance it by using a custom checker)'),
 
         ('passlib_crypt_context', dict(
             # schemes we want to support (or deprecated schemes for which we still have
@@ -352,18 +346,16 @@ options_no_group_name = {
         ('allow_style_attributes', False, 'trust editors to not abuse style attribute security holes within HTML (CKEditor) or Markdown items'),
     )),
     # ==========================================================================
-    'spam_leech_dos': ('Anti-Spam / Leech / DOS', 'These settings help limiting ressource usage and avoiding abuse.', (
-        ('textchas', None,
-         "Spam protection setup using site-specific questions/answers, see HelpOnSpam."),
-        ('textchas_expiry_time', 600,
-         "Time [s] for a !TextCha to expire."),
+    'spam_leech_dos': ('Anti-Spam / Leech / DOS', 'These settings help limiting resource usage and avoiding abuse.', (
+        ('textchas', None, "Spam protection setup using site-specific questions/answers."),
+        ('textchas_expiry_time', 600, "Expiration time in seconds for a TextCha response."),
     )),
     # ==========================================================================
     'style': ('Style / Theme / UI', 'These settings control how the wiki user interface will look like.', (
         ('sitename', u'Untitled Wiki',
          "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]"),
         ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
-        ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of `sitename`) [Unicode]"),
+        ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]"),
         ('navi_bar', [
             ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
             ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
@@ -387,7 +379,7 @@ options_no_group_name = {
          "List of names of the supplementation (sub)items [Unicode]"),
 
         ('interwiki_preferred', [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
-        ('sistersites', [], "list of tuples `('WikiName', 'sisterpagelist_fetch_url')`"),
+        ('sistersites', [], "list of tuples: (<WikiName>, <sisterpagelist_fetch_url>)"),
 
         ('trail_size', 5,
          "Number of items in the trail of recently visited items"),
@@ -417,14 +409,14 @@ options_no_group_name = {
             ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
             ('frontend.sitemap', L_('Site Map'), L_('Local Site Map of this item'), True, ),
             ('frontend.similar_names', L_('Similar'), L_('Items with similar names'), False, ),
-        ], 'list of edit bar entries (list of tuples (endpoint, label))'),
+        ], 'list of edit bar entries (list of tuples (endpoint, label, title, exists))'),
 
         ('show_hosts', True,
          "if True, show host names and IPs. Set to False to hide them."),
         ('show_interwiki', False,
          "if True, let the theme display your interwiki name"),
         ('show_names', True,
-         "if True, show user names in the revision history and on Recent``Changes. Set to False to hide them."),
+         "if True, show user names in the revision history. Set to False to hide them."),
         ('show_section_numbers', False,
          'show section numbers in headings by default'),
         ('show_rename_redirect', False, "if True, offer creation of redirect pages when renaming wiki pages"),
@@ -432,11 +424,11 @@ options_no_group_name = {
         ('template_dirs', [], "list of directories with templates that will override theme and base templates."),
     )),
     # ==========================================================================
-    'editor': ('Editor', None, (
-        ('item_license', u'', 'if set, show the license item within the editor. [Unicode]'),
-        # ('edit_locking', 'warn 10', "Editor locking policy: `None`, `'warn <timeout in minutes>'`, or `'lock <timeout in minutes>'`"),
-        ('edit_ticketing', True, None),
-    )),
+    # 'editor': ('Editor', None, (
+    #     ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
+    #     # ('edit_locking', 'warn 10', "Editor locking policy: 'None', 'warn <timeout in minutes>', or 'lock <timeout in minutes>'"),
+    #     ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
+    # )),
     # ==========================================================================
     'paging': ('Paging', None, (
         ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
@@ -450,13 +442,13 @@ options_no_group_name = {
          "Dictionary of wiki_name -> wiki_url"),
         ('namespace_mapping', None,
          "A list of tuples, each tuple containing: Namespace identifier, backend name. " +
-         "E.g.: [('', 'default')), ]. Please see HelpOnStorageConfiguration for further reference."),
+         "E.g.: [('', 'default')), ]."),
         ('backend_mapping', None,
          "A dictionary that maps backend names to backends. " +
-         "E.g.: {'default': Backend(), }. Please see HelpOnStorageConfiguration for further reference."),
+         "E.g.: {'default': Backend(), }."),
         ('acl_mapping', None,
          "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " +
-         "E.g.: [('', dict(default='All:read,write,create,admin')), ]. Please see HelpOnStorageConfiguration for further reference."),
+         "E.g.: [('', dict(default='All:read,write,create,admin')), ]."),
         ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
         ('create_index', False, "Create (initialize) the index before trying to use them."),
         ('destroy_storage', False, "Destroy (empty) the storage backends after using them."),
@@ -515,15 +507,14 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'various': ('Various', None, (
-        ('bang_meta', True, 'if True, enable {{{!NoWikiName}}} markup'),
+        # ('bang_meta', True, 'if True, enable {{{#!NoWikiName}}} markup'),
 
         ('config_check_enabled', False, "if True, check configuration for unknown settings."),
 
         ('timezone_default', u'UTC', "Default time zone."),
         ('locale_default', u'en_US', "Default locale for user interface and content."),
 
-        ('log_remote_addr', True,
-         "if True, log the remote IP address (and maybe hostname)."),
+        # ('log_remote_addr', True, "if True, log the remote IP address (and maybe hostname)."),
         ('log_reverse_dns_lookups', True,
          "if True, do a reverse DNS lookup on page SAVE. If your DNS is broken, set this to False to speed up SAVE."),
 
@@ -536,7 +527,7 @@ options_no_group_name = {
             'application/xhtml+xml',
         ], '"content-disposition: inline" is not used for downloads of such data'),
 
-        ('refresh', None, "refresh = (minimum_delay_s, targets_allowed) enables use of `#refresh 5 PageName` processing instruction, targets_allowed must be either `'internal'` or `'external'`"),
+        # ('refresh', None, "refresh = (minimum_delay_s, targets_allowed) enables use of '#refresh 5 PageName' processing instruction, targets_allowed must be either 'internal' or 'external'"),
         ('siteid', 'MoinMoin', None),  # XXX just default to some existing module name to
                                        # make plugin loader etc. work for now
     )),
@@ -552,8 +543,6 @@ options_no_group_name = {
 #
 # each option tuple consists of
 #   option name, default value, help text
-#
-# All the help texts will be displayed by the WikiConfigHelp() macro.
 #
 # Unlike the options_no_group_name dict, option names in this dict
 # are automatically prefixed with "group name '_'" (i.e. the name of
