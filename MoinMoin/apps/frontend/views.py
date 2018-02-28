@@ -510,6 +510,8 @@ def show_item(item_name, rev):
                                fqname=fqname,
                                fq_names=fq_names,
                                )
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
     return result
 
 

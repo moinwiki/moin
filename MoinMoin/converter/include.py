@@ -349,6 +349,8 @@ class Converter(object):
                         included_elements.append(elem_h)
 
                     page_doc = page.content.internal_representation(attributes=Arguments(keyword=elem.attrib))
+                    if isinstance(page.rev.data, file):
+                        page.rev.data.close()
 
                     self.recurse(page_doc, page_href)
 
