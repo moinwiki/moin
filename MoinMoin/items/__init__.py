@@ -507,10 +507,12 @@ class Item(object):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment=u'', destroy_item=False):
+        # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
                            content=self.rev.data, comment=comment)
-        # called from destroy UI/POST
+        if isinstance(self.rev.data, file):
+            self.rev.data.close()
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
@@ -962,6 +964,8 @@ class Default(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
+                    if isinstance(self.rev.data, file):
+                        self.rev.data.close()
                     return redirect(url_for_item(**self.fqname.split))
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
@@ -970,6 +974,8 @@ class Default(Contentful):
             edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
+        if isinstance(self.rev.data, file):
+            self.rev.data.close()
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,

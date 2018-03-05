@@ -1019,6 +1019,8 @@ def index(item_name):
         """
         initials = set()
         for item in files:
+            if isinstance(item.meta.revision.data, file):
+                item.meta.revision.data.close()
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
@@ -1041,6 +1043,7 @@ def index(item_name):
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
     dirs, files = item.get_index(startswith, selected_groups)
+    dirs_fullname = [x.fullname for x in dirs]
     initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
@@ -1050,9 +1053,10 @@ def index(item_name):
 
     # detect orphan subitems and make a list of their missing parents
     used_dirs = set()
-    for file in files:
-        if file in dirs:
-            used_dirs.add(file[0])
+    for file_ in files:
+        # if file_ in dirs:  # XXX if true the file is opened twice, windows servers will not be able to destroy file until after python garbage collection
+        if file_.fullname in dirs_fullname:
+            used_dirs.add(file_[0])
     all_dirs = set(x[0] for x in dirs)
     missing_dirs = all_dirs - used_dirs
 
@@ -1078,6 +1082,7 @@ def index(item_name):
                            fqname=fqname,
                            files=files,
                            dirs=dirs,
+                           dirs_fullname=dirs_fullname,
                            missing_dirs=missing_dirs,
                            initials=initials,
                            startswith=startswith,
@@ -1235,7 +1240,13 @@ def history(item_name):
         entry = dict(rev.meta)
         entry[FQNAME] = rev.fqname
         history.append(entry)
+        if isinstance(rev.data, file):
+            rev.data.close()
     history_page = util.getPageContent(history, offset, results_per_page)
+    if isinstance(item.rev.rev.data, file):  # XXX why is there a item.rev.REV.data that is the almost the same as item.rev.data
+        item.rev.data.close()
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
     return render_template('history.html',
                            fqname=fqname,
                            item=item,
