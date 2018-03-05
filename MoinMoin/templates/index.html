@@ -21,7 +21,8 @@
            title="{{ e.relname }}">
            {{ e.relname|truncate(maxchars, true, '..') }}
         </a>
-        {% if e in dirs %}
+        {# if e in dirs:  # XXX if true the file is opened twice, windows servers will not be able to destroy file until after python garbage collection #}
+        {% if e.fullname in dirs_fullname %}
             <a href="{{ url_for('.index', item_name=e.fullname) }}"
                title="{{ _("This item has subitems that match your filter.") }}">
                <i class="fa fa-arrow-down"></i>
