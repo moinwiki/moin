@@ -140,7 +140,7 @@
                                 {% if user.may.destroy(fqname) -%}
                                     <td>
                                         <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy') }}">
-                                            <span class="fa fa-trash"></span>
+                                            <span class="fa fa-fire"></span>
                                         </a>
                                     </td>
                                 {% else %}
