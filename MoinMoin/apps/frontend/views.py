@@ -551,30 +551,36 @@ def indexable(item_name, rev):
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
     try:
-        return render_template('highlight.html',
-                               item=item, item_name=item.name,
-                               fqname=item.fqname,
-                               data_text=Markup(item.content._render_data_highlight()),
-                               rev=item.rev,
-                               rev_navigation_ids_dates=rev_navigation_ids_dates,
-                               meta=item._meta_info(),
+        ret = render_template('highlight.html',
+                              item=item, item_name=item.name,
+                              fqname=item.fqname,
+                              data_text=Markup(item.content._render_data_highlight()),
+                              rev=item.rev,
+                              rev_navigation_ids_dates=rev_navigation_ids_dates,
+                              meta=item._meta_info(),
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
+    if isinstance(item.meta.revision.data, file):
+        item.meta.revision.data.close()
+    return ret
 
 
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    return render_template('meta.html',
-                           item=item,
-                           item_name=item.name,
-                           fqname=item.fqname,
-                           rev=item.rev,
-                           contenttype=item.contenttype,
-                           rev_navigation_ids_dates=rev_navigation_ids_dates,
-                           meta=item._meta_info(),
+    ret = render_template('meta.html',
+                          item=item,
+                          item_name=item.name,
+                          fqname=item.fqname,
+                          rev=item.rev,
+                          contenttype=item.contenttype,
+                          rev_navigation_ids_dates=rev_navigation_ids_dates,
+                          meta=item._meta_info(),
     )
+    if isinstance(item.meta.revision.data, file):
+        item.meta.revision.data.close()
+    return ret
 
 
 @frontend.route('/+content/+<rev>/<itemname:item_name>')
@@ -706,13 +712,19 @@ def modify_item(item_name):
     if not flaskg.user.may.write(item_name):
         abort(403)
     try:
-        return item.do_modify()
+        ret = item.do_modify()
     except UnicodeDecodeError:
         return _crash(item, None, None)
     except ValueError:
         # user may have changed or deleted namespace, contenttype, or strict data validation failed in indexing.py
         flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
         return redirect(url_for_item(item_name))
+    try:
+        if isinstance(item.meta.revision.data, file):
+            item.meta.revision.data.close()
+    except AttributeError:
+        pass
+    return ret
 
 
 class TargetChangeForm(BaseChangeForm):
@@ -783,14 +795,19 @@ def revert_item(item_name, rev):
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
+            if isinstance(item.meta.revision.data, file):
+                item.meta.revision.data.close()
             return redirect(url_for_item(item_name))
-    return render_template('revert.html',
-                           item=item,
-                           fqname=item.fqname,
-                           rev_id=rev,
-                           form=form,
-                           data_rendered=Markup(item.content._render_data()),
+    ret = render_template('revert.html',
+                          item=item,
+                          fqname=item.fqname,
+                          rev_id=rev,
+                          form=form,
+                          data_rendered=Markup(item.content._render_data()),
     )
+    if isinstance(item.meta.revision.data, file):
+        item.meta.revision.data.close()
+    return ret
 
 
 @frontend.route('/+rename/<itemname:item_name>', methods=['GET', 'POST'])
@@ -822,15 +839,20 @@ def rename_item(item_name):
                 try:
                     fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                     item.rename(target, comment)
+                    if isinstance(item.meta.revision.data, file):
+                        item.meta.revision.data.close()
                     # the item was successfully renamed, show it with new name
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
-    return render_template('rename.html',
-                           item=item, item_name=item_name,
-                           fqname=item.fqname,
-                           form=form,
+    ret = render_template('rename.html',
+                          item=item, item_name=item_name,
+                          fqname=item.fqname,
+                          form=form,
     )
+    if isinstance(item.meta.revision.data, file):
+        item.meta.revision.data.close()
+    return ret
 
 
 @frontend.route('/+delete/<itemname:item_name>', methods=['GET', 'POST'])
@@ -957,13 +979,19 @@ def destroy_item(item_name, rev):
                 item.destroy(comment=comment, destroy_item=destroy_item)
             except AccessDenied:
                 abort(403)
+            # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(fqname.fullname))
-    return render_template('destroy.html',
-                           item=item, item_name=item_name,
-                           fqname=fqname,
-                           rev_id=rev,
-                           form=form,
+    if isinstance(item.meta.revision.data, file):
+        item.meta.revision.data.close()
+    ret = render_template('destroy.html',
+                          item=item, item_name=item_name,
+                          fqname=fqname,
+                          rev_id=rev,
+                          form=form,
     )
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
+    return ret
 
 
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
@@ -1243,19 +1271,20 @@ def history(item_name):
         if isinstance(rev.data, file):
             rev.data.close()
     history_page = util.getPageContent(history, offset, results_per_page)
-    if isinstance(item.rev.rev.data, file):  # XXX why is there a item.rev.REV.data that is the almost the same as item.rev.data
-        item.rev.data.close()
     if isinstance(item.rev.data, file):
         item.rev.data.close()
-    return render_template('history.html',
-                           fqname=fqname,
-                           item=item,
-                           item_name=item_name,
-                           history_page=history_page,
-                           bookmark_time=bookmark_time,
-                           NAME_EXACT=NAME_EXACT,
-                           len=len,
+    ret = render_template('history.html',
+                          fqname=fqname,
+                          item=item,
+                          item_name=item_name,
+                          history_page=history_page,
+                          bookmark_time=bookmark_time,
+                          NAME_EXACT=NAME_EXACT,
+                          len=len,
     )
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
+    return ret
 
 
 @frontend.route('/<namespace>/+history')
