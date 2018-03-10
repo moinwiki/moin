@@ -14,12 +14,13 @@
 {% block content %}
     {% if history %}
         <h1>{{ title }}</h1>
+
+        {# add button to switch between history by name or history by item id #}
         {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
             <p class="moin-no-print">
                 <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqname, bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
                 Click to show history spanning item delete and recreate.
             </p>
-
         {% else %}
             <p class="moin-no-print">
                 <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
@@ -27,6 +28,7 @@
             </p>
         {% endif %}
 
+        {# if history is long, create links to show next and/or prior pages #}
         <div class='moin-offset-links'>
             {% if previous_offset >= 0 %}
                 <a class='moin-prior-page' href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
@@ -35,6 +37,7 @@
                 <a class='moin-next-page' href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
             {% endif %}
         </div>
+
         <div class="moin-clr"></div>
         <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
             <div id="moin-page-history">
@@ -128,21 +131,37 @@
                                         <span class="fa fa-download"></span>
                                     </a>
                                 </td>
-                                {% if user.may.write(fqname) and not doc.trash and not loop.first -%}
-                                    <td>
-                                        <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
-                                            <span class="fa fa-reply"></span>
-                                        </a>
-                                    </td>
+                                {% if user.may.write(fqname) and not doc.trash -%}
+                                    {%- if loop.first %}
+                                        <td>
+                                            <a href="{{ url_for('frontend.delete_item', item_name=fqname) }}" title="{{ _('delete item') }}">
+                                                <span class="fa fa-trash"></span>
+                                            </a>
+                                        </td>
+                                    {%- else %}
+                                        <td>
+                                            <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
+                                                <span class="fa fa-reply"></span>
+                                            </a>
+                                        </td>
+                                    {% endif %}
                                 {% else %}
                                     <td></td>
                                 {%- endif %}
                                 {% if user.may.destroy(fqname) -%}
-                                    <td>
-                                        <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy') }}">
-                                            <span class="fa fa-fire"></span>
-                                        </a>
-                                    </td>
+                                    {%- if loop.first %}
+                                        <td>
+                                            <a href="{{ url_for('frontend.destroy_item', item_name=fqname) }}" title="{{ _('destroy all revisions') }}">
+                                                <span class="fa fa-fire"></span>
+                                            </a>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy this revision') }}">
+                                                <span class="fa fa-fire"></span>
+                                            </a>
+                                        </td>
+                                    {% endif %}
                                 {% else %}
                                     <td></td>
                                 {%- endif %}
