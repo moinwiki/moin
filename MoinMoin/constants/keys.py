@@ -155,6 +155,7 @@ DEFAULT_LOCALE = u"en"
 
 # key for composite name
 FQNAME = u'fqname'
+FQNAMES = u'fqnames'
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
 FIELDS = [
     NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS

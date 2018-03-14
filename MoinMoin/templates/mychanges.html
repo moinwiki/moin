@@ -1,63 +1,60 @@
+{#
+    Display user's recent changes starting with most recent. Include icon
+    indicating last action or a link to a diff if a text item was changed, a
+    link to display item or deleted item, date, size, rev number, and comments.
+#}
+
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
+
+{# Create next page, prior page links shown at top and bottom of report. #}
+{% macro next_page(next_offset, previous_offset) %}
+    <div class='moin-offset-links'>
+        {% if previous_offset >= 0 %}
+            <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+        {% endif %}
+        {% if next_offset %}
+            <a class='moin-next-page'href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+        {% endif %}
+    </div>
+{% endmacro %}
 
 {% block content %}
     {% set (my_changes, next_offset, previous_offset) = my_changes_page %}
     {% if my_changes %}
         <h1>{{ _('My Changes') }}</h1>
-        <div class='moin-offset-links'>
-            {% if previous_offset >= 0 %}
-                <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
-            {% endif %}
-            {% if next_offset %}
-                <a class='moin-next-page'href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
-            {% endif %}
-        </div>
+        {{ next_page(next_offset, previous_offset) }}
         <div class="moin-clr"></div>
         <div class="moin-mychanges">
-            <table class="zebra moin-sortable">
+            <table class="zebra">
                 <thead>
                     <tr>
-                        <th>{{ _("Item") }}</th>
-                        <th class="moin-integer">{{ _("Rev.") }}</th>
+                        <th>{{ _("Diff") }}</th>
+                        <th>{{ _("Name or ID ~ Old Name") }}</th>
                         <th>{{ _("Timestamp") }}</th>
                         <th class="moin-integer">{{ _("Size") }}</th>
-                        <th>{{ _("Diff") }}</th>
-                        <th>{{ _("Content-Type") }}</th>
+                        <th class="moin-integer">{{ _("Rev.") }}</th>
                         <th>{{ _("Comment") }}</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for doc in my_changes %}
                         <tr>
-                            <td class="moin-wordbreak">
-                                {% if doc.name %}
-                                    {{ doc.name|join(' | ') }}
-                                {% elif doc.summary %}
-                                    {{ doc.summary }}
-                                {% else %}
-                                    {{ doc.fqname|shorten_fqname }}
-                                {% endif %}
-                            </td>
-                            <td class="moin-integer">{{ doc.rev_number  or doc.revid|shorten_id }}</td>
+                            {# create an icon with a link to diff, or other icon indicating state of item #}
+                            <td class="moin-history-links">{{ utils.item_status_icon(doc.fqname, doc, None) }}</td>
+                            {# show item name or item id and old name if the item is nameless (deleted) #}
+                            <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
                             <td>{{ doc.mtime|datetimeformat }}</td>
                             <td class="moin-integer">{{ doc.size }}</td>
-                            <td>
-                                <div class="moin-hist-rev">
-                                    <form action="{{ url_for('frontend.diff', item_name=doc.fqname) }}" method="GET">
-                                        <input type="hidden" name="rev1" value="{{ doc.parentid }}" />
-                                        <input type="hidden" name="rev2" value="{{ doc.revid }}" />
-                                        <input type="submit" class="moin-button" value="Diff" />
-                                    </form>
-                                </div>
-                            </td>
-                            <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
+                            <td class="moin-integer">{{ doc.rev_number  or doc.revid|shorten_id }}</td>
                             <td class="moin-wordbreak">{{ doc.comment }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        {{ next_page(next_offset, previous_offset) }}
     {% else %}
         <p class='moin-flash moin-flash-javascript moin-flash-error'>{{ _("No changes found.") }}</p>
     {% endif %}
