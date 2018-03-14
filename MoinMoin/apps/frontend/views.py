@@ -1159,6 +1159,7 @@ def _mychanges(userid):
     for rev in revs:
         entry = dict(rev.meta)
         entry[FQNAME] = rev.fqname
+        entry[FQNAMES] = rev.fqnames
         history.append(entry)
     return history
 
@@ -2146,8 +2147,8 @@ def diff(item_name):
                 rev1 = revid
                 break
         else:
-            rev1 = revid  # if we didn't find a rev, we just take oldest rev we have
-        rev2 = CURRENT  # and compare it with latest we have
+            rev1 = revs[-1][1]  # if we didn't find a rev, we just take oldest rev we have
+        rev2 = revs[0][1]  # and compare it with latest we have
     else:
         # otherwise we should get the 2 revids directly
         rev1, rev2 = get_revs()
