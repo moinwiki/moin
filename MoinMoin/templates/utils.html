@@ -456,3 +456,50 @@
         {% endif %}
     {%- endif %}
 {% endmacro %}
+
+
+{# create an icon with a link to diff, or other icon indicating state of item #}
+{% macro item_status_icon(fqname, meta, bookmark_time) %}
+    {% if theme_supp.allow_item_conversion(meta.contenttype) %}
+        {% if meta.trash %}
+            <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+        {% elif meta.parentid %}
+            {% if bookmark_time -%}
+                <a href="{{ url_for('frontend.diff', item_name=fqname, bookmark=bookmark_time) }}">
+                    <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('frontend.diff', item_name=fqname, rev1=meta.parentid, rev2=meta.revid) }}">
+                    <span class="fa fa-copy" title="{{ _('Diff') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+                </a>
+            {%- endif %}
+        {% else %}
+            <span class="fa fa-file-o" title="{{ _('New item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+        {% endif %}
+    {% else %}
+        {% if meta.trash %}
+            <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+        {% else %}
+            <span class="{{ meta.contenttype|contenttype_to_class }}" title="{{ meta.contenttype|shorten_ctype }}"></span>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+
+{# Display an item name, item alias names, item summary or item ID and old names #}
+{% macro item_moniker(meta, fqnames) %}
+    {% if meta.name %}
+        {# if there are alias names, create a link to each alias #}
+        {% for name in fqnames %}
+            <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
+        {% endfor %}
+    {% elif meta.summary %}
+        <a href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ meta.summary }}</a>
+    {% else %}
+        <a class="moin-nameless-item" href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ fqnames[0]|shorten_fqname }}</a>
+    {% endif %}
+    {% if not meta.name and not meta.summary and meta.name_old %}
+        {# this is a deleted item, show old name(s) #}
+        <span class="moin-history-name-old" title="{{ meta.name_old[0] }} was deleted">~({{ meta.name_old|join(' | ') }})</span>
+    {% endif %}
+{% endmacro %}

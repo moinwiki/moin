@@ -649,7 +649,8 @@ def shorten_id(name, length=7):
     :rtype: unicode
     :returns: <name> truncated to <length> characters
     """
-
+    if name.startswith('@itemid/'):
+        return name[8:8 + length]
     return name[:length]
 
 MIMETYPE_TO_CLASS = {
