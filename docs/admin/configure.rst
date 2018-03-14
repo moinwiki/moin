@@ -888,10 +888,16 @@ rename or delete items.
 Supported capabilities (rights):
 
 * read - read content
-* write - write (edit, modify) content
+* write - write (edit, modify, delete) content
 * create - create new items
 * destroy - completely destroy revisions or items; to be given only to *fully-trusted* users
 * admin - change (create, remove) ACLs for the item; to be given only to *fully-trusted* users
+
+The write capability includes the authority to delete an item since any user with write authority
+may edit and remove or replace all content. A deleted item does not appear in the Global Index,
+but the deletion event does appear in the global history. To recover a deleted item, find the
+deleted item line in global history, click the link to the item's history, and then click a revert
+link to one of the prior revisions.
 
 ACLs - special groups
 ---------------------
