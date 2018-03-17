@@ -366,17 +366,18 @@ def item_acl_report():
             item_name = item.meta.get(NAME)
         item_acl = item.meta.get(ACL)
         acl_default = item_acl is None
-        fqname = CompositeName(item_namespace, u'itemid', item_id)
         if acl_default:
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
         items_acls.append({'name': item_name,
+                           'name_old': item.meta['name_old'],
                            'itemid': item_id,
-                           'fqname': fqname,
+                           'fqname': item.rev.fqname,
+                           'fqnames': item.rev.fqnames,
                            'acl': item_acl,
                            'acl_default': acl_default})
-        items_acls = sorted(items_acls, key=lambda k: k['name'][0])
+    items_acls = sorted(items_acls, key=lambda k: (k['name'], k['name_old']))
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
                            items_acls=items_acls)
@@ -422,7 +423,7 @@ def modify_acl(item_name):
     fqname = split_fqname(item_name)
     item = Item.create(item_name)
     meta = dict(item.meta)
-    new_acl = request.form.get(fqname.value)
+    new_acl = request.form.get(fqname.fullname)
     meta[ACL] = new_acl
     item._save(meta=meta)
     flash("Changes successfully applied", "info")

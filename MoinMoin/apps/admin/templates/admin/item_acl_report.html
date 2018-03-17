@@ -7,7 +7,7 @@
 {% extends theme("layout.html") %}
 
 {% block content %}
-    <h1>{{ _("Item ACL Report") }}</h1>
+    <h1>{{ _("Item ACLs") }}</h1>
     {% set button_text = _("Show/Hide items with default ACLs") %}
     <input onclick="$('.moin-acl-default').toggle()" value="{{ button_text }}" class="moin-button" type="button">
     <div style="display: table;" class="moin-acl-report">
@@ -24,24 +24,17 @@
             {% endif %}
             <form style="display: table-row;" class="{{ default_style }} moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
                 <div style="display: table-cell;" class="moin-acl-name-cell">
-                    <a class="moin-acl-name" href="{{ url_for('frontend.show_item', item_name=item['fqname']) }}">
-                        {% if item['name'] %}
-                            {{ item['name'] | join(', ') }}
-                        {% else %}
-                            {# nameless ticket or blog item? can there be an acl rule for a nameless item? #}
-                            {{ _("Item Id") }}: {{ item['itemid'] }}
-                        {% endif %}
-                    </a>
+                    {{ utils.item_moniker(item, item.fqnames) }}
                     {% if user.may.admin(item['fqname']) %}
                         <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
                     {% endif %}
                 </div>
                 <div style="display: table-cell;" class="moin-acl-rule-cell">
                     {% if user.may.admin(item['fqname']) %}
-                            <textarea class="moin-acl-string" name="{{ item['itemid'] }}" rows="1">{{ item['acl'] }}</textarea>
+                            <textarea class="moin-acl-string" name="{{ item['fqname'] }}" rows="1">{{ item['acl'] }}</textarea>
                     {% else %}
                         {# user may read item, but cannot "admin" this rule #}
-                        <span class="moin-acl-string"> {{ item['acl'] }} </span>
+                        <span class="moin-acl-string moin-acl-edit-disable"> {{ item['acl'] }} </span>
                     {% endif %}
                 </div>
             </form>
