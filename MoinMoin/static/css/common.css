@@ -237,9 +237,10 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
     padding: .3em .4em; vertical-align: middle; font-weight: bold; }
 .moin-acl-name-cell { border: 1px solid #4e7da9; vertical-align: top; position:relative; padding: .3em .4em; }
 .moin-acl-name-cell > input { position:absolute; bottom: 0; right: 0; }
-.moin-acl-rule-cell { border: 1px solid #4e7da9; overflow: hidden; width: 90%; }
+.moin-acl-rule-cell { border: 1px solid #4e7da9; overflow: hidden; width: 70%; }
 .moin-acl-rule-cell textarea { border: 1px solid #fff; min-height: 3em; }
-.moin-acl-default { color: green; }
+.moin-acl-default .moin-acl-string { color: green; }
+.moin-acl-rule-cell .moin-acl-edit-disable { color: #ccc; }
 .moin-acl-string { padding: .3em .4em; width: 100%; overflow: scroll; overflow-wrap: break-word; }
 span.moin-acl-string { vertical-align: middle; }
 
