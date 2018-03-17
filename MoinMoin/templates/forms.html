@@ -7,11 +7,11 @@ Helpers for using flatland with jinja2 to create html forms.
 
 {% macro render_errors(field) %}
   {% if field.errors %}
-    <ul class="moin-error">
+    <div>
       {% for error in field.errors %}
-        <li>{{ error }}</li>
+        <p><span class="moin-error">{{ error }}</span></p>
       {% endfor %}
-    </ul>
+    </div>
   {% endif %}
 {% endmacro %}
 
