@@ -27,7 +27,7 @@ from MoinMoin.security import require_permission, ACLStringIterator
 from MoinMoin.util.interwiki import CompositeName
 from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
 from MoinMoin.datastruct.backends import GroupDoesNotExistError
-from MoinMoin.items import Item
+from MoinMoin.items import Item, acl_validate
 from MoinMoin.util.interwiki import split_fqname
 from MoinMoin.config import default as defaultconfig
 
@@ -424,7 +424,16 @@ def modify_acl(item_name):
     item = Item.create(item_name)
     meta = dict(item.meta)
     new_acl = request.form.get(fqname.fullname)
-    meta[ACL] = new_acl
-    item._save(meta=meta)
-    flash("Changes successfully applied", "info")
+    is_valid = acl_validate(new_acl)
+    if is_valid:
+        if new_acl in ('Empty', ''):
+            meta[ACL] = ''
+        elif new_acl == 'None' and ACL in meta:
+            del(meta[ACL])
+        else:
+            meta[ACL] = new_acl
+        item._save(meta=meta)
+        flash(L_("Changes successfully applied for '%(item_name)s': '%(acl_rule)s'.", item_name=fqname.fullname, acl_rule=new_acl), "info")
+    else:
+        flash(L_("Nothing changed, invalid ACL submitted for '%(item_name)s': '%(acl_rule)s'.", item_name=fqname.fullname, acl_rule=new_acl), "error")
     return redirect(url_for('.item_acl_report'))
