@@ -19,13 +19,14 @@ MoinMoin.prototype.moinFlashMessage = function (classes, message) {
 
 // if /template/dictionary.js has not been loaded, untranslated strings will be returned by _(...)
 function _(text) {
-    'use strict';
+    "use strict";
     return $.i18n._(text);
 }
 
 
 // return true if browser localStorage is available
 function localStorageAvailable() {
+    "use strict";
     try {
         var x = '__storage_test__';
         localStorage.setItem(x, x);
@@ -39,6 +40,7 @@ function localStorageAvailable() {
 
 // executed when user clicks button to toggle modify textarea between fixed/variable width fonts
 function moinFontChange() {
+    "use strict";
     $(".moin-edit-content").toggleClass("moin-fixed-width");
     if (localStorageAvailable()) {
         if ($(".moin-edit-content").hasClass("moin-fixed-width")) {
@@ -51,6 +53,7 @@ function moinFontChange() {
 
 // executed on page ready, change textarea font to last saved value fixed/proportional
 function moinFontChangeOnReady() {
+    "use strict";
     if ($(".moin-edit-content")) {
         if (localStorageAvailable()) {
             if (localStorage.getItem("moin-textarea-font") === "moin-fixed-width") {
@@ -712,7 +715,7 @@ MoinMoin.prototype.diffScroll = function () {
             // if target has been found, highlight element and scroll to it
             $(target).addClass("moin-diff-highlight");
             $(target).prepend($('<span id="' + next + '"></span>'));
-            window.location.href = url + "#" + next
+            window.location.href = url + "#" + next;
             return false;
         });
     });
@@ -721,6 +724,7 @@ MoinMoin.prototype.diffScroll = function () {
 
 // show all options on form so user can choose output type with one click
 function showAllOptions() {
+    "use strict";
     //  itemviews convert
     var numberOptions = $('#f_new_type > option').length;
     if (numberOptions) {
