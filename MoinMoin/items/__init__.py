@@ -215,16 +215,43 @@ class CreateItemForm(BaseChangeForm):
     target = RequiredText.using(label=L_('Target')).with_properties(autofocus=True)
 
 
+def acl_validate(acl_string):
+    """
+    Validate ACL strings, allowing special values 'None' and 'Empty'.
+
+    In later processes, None means no item ACLs, so the configured default ACLs will be used.
+    Empty is same as "". If there are no configured 'after' ACLs, then Empty and "" are equivalent to "All:".
+    """
+    all_rights = set(('read', 'write', 'create', 'destroy', 'admin'))
+    acls = unicode(acl_string)
+    if acls in (u'None', u'Empty', u''):
+        return True
+    acls = acls.split()
+    for acl in acls:
+        acl_rules = acl.split(':')
+        if len(acl_rules) == 2:
+            who, rights = acl_rules
+            if rights:
+                rights = rights.split(',')
+                for right in rights:
+                    if right not in all_rights:
+                        return False
+        else:
+            return False
+    return True
+
+
 class ACLValidator(Validator):
     """
     Meta Validator - currently used for validating ACLs only
     """
-    acl_fail_msg = L_("The ACL string is invalid")
+    acl_fail_msg = L_("The ACL string is invalid.")
 
     def validate(self, element, state):
-        return True
-        # return self.note_error(element, state, 'acl_fail_msg')
-        # remove the comment from the code above to see the ACL invalid message.
+        if acl_validate(element) is True:
+            return True
+        flash(L_("The ACL string is invalid."), "error")
+        return self.note_error(element, state, 'acl_fail_msg')
 
 
 class BaseMetaForm(Form):
