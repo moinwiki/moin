@@ -433,7 +433,7 @@ def modify_acl(item_name):
         else:
             meta[ACL] = new_acl
         item._save(meta=meta)
-        flash(L_("Changes successfully applied for '%(item_name)s': '%(acl_rule)s'.", item_name=fqname.fullname, acl_rule=new_acl), "info")
+        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
-        flash(L_("Nothing changed, invalid ACL submitted for '%(item_name)s': '%(acl_rule)s'.", item_name=fqname.fullname, acl_rule=new_acl), "error")
+        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "error")
     return redirect(url_for('.item_acl_report'))
