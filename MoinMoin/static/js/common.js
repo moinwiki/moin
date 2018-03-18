@@ -734,6 +734,16 @@ function showAllOptions() {
 }
 
 
+// admin/item_acl_report.html processing - disable all Save buttons, then selectively enable after item ACL selected or changed
+function aclSaveButtons() {
+    "use strict";
+    $(".moin-acl-name-cell .moin-button").attr("disabled", true);
+    $("textarea.moin-acl-string").one("click keydown", function (e) {
+        $(e.target).parent().parent().find(".moin-button").attr("disabled", false);
+    });
+}
+
+
 $(document).ready(function () {
     "use strict";
     var moin = new MoinMoin();
@@ -795,6 +805,8 @@ $(document).ready(function () {
     $('textarea[rows="1"]').autosize();
 
     showAllOptions();
+
+    aclSaveButtons();
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
