@@ -514,9 +514,9 @@ class ThemeSupport(object):
         """
         return self.storage.has_item(itemname)
 
-    def allow_item_conversion(self, contenttype):
+    def is_markup_or_text(self, contenttype):
         """
-        Return true if item may be converted to another contenttype.
+        Return true if contenttype is markup or text-like.
 
         Any text-like item may be converted to a type having an "out" converter.
         """

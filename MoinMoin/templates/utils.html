@@ -460,7 +460,7 @@
 
 {# create an icon with a link to diff, or other icon indicating state of item #}
 {% macro item_status_icon(fqname, meta, bookmark_time) %}
-    {% if theme_supp.allow_item_conversion(meta.contenttype) %}
+    {% if theme_supp.is_markup_or_text(meta.contenttype) %}
         {% if meta.trash %}
             <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
         {% elif meta.parentid %}
