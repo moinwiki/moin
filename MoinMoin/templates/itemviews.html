@@ -46,7 +46,7 @@
 
             {%- if endpoint in [
                 'frontend.convert_item',
-            ] and user.may.write(fqname) and item and theme_supp.allow_item_conversion(item.contenttype) %}
+            ] and user.may.write(fqname) and item and theme_supp.is_markup_or_text(item.contenttype) %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name=fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
