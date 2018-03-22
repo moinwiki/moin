@@ -50,7 +50,7 @@
                     {% set meta = rev.meta %}
                     <tr>
                         {# create an icon with a link to diff, or other icon indicating state of item #}
-                        <td class="moin-history-links">{{ utils.item_status_icon(fqname, meta, bookmark_time) }}</td>
+                        <td class="moin-history-links">{{ utils.item_status_icon(rev.fqname, meta, bookmark_time) }}</td>
                         {# show item name or item id and old name if the item is nameless (deleted) #}
                         <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(meta, rev.fqnames) }}</td>
                         <td class="moin-history-time">{{ meta.mtime|time_hh_mm }}</td>
