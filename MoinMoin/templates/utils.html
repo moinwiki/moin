@@ -463,7 +463,7 @@
     {% if theme_supp.is_markup_or_text(meta.contenttype) %}
         {% if meta.trash %}
             <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
-        {% elif meta.parentid %}
+        {% elif meta.parentid or 'rev_number' in meta and meta.rev_number > 1 %}
             {% if bookmark_time -%}
                 <a href="{{ url_for('frontend.diff', item_name=fqname, bookmark=bookmark_time) }}">
                     <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
